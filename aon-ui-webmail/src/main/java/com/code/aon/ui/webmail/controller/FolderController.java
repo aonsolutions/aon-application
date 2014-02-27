@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
@@ -16,13 +15,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
 import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -33,13 +31,11 @@ import com.code.aon.webmail.bean.AonMessageSortableList;
 import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
-public class FolderController extends BasicTemplateController implements IMessageContainer, IWebMailConstants {
+public class FolderController extends DataScrollerState implements IMessageContainer, IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
 	
 	private AonFolder folder;
-	
-	private ModifiableModel model;
 	
 	private WebMailController webMailController;
 	
@@ -56,17 +52,12 @@ public class FolderController extends BasicTemplateController implements IMessag
 	public FolderController() {
 	}
 	
-	public DataModel getModel() {
-		return this.model;
-	}
-	
 	public void resetCurrentPage() {
-		setPage(1);
 		updateModel();		
 	}
 
 	public void updateModel() {
-		this.model = new MessageDataModel(folder.getMessageList()); 
+		setModel(new MessageDataModel(folder.getMessageList())); 
 	}
 	
 	/**
@@ -395,7 +386,7 @@ public class FolderController extends BasicTemplateController implements IMessag
 
     public void onSelect(ActionEvent event) throws MessagingException {
     	AonMessage aonMessage = getSelectedMessage();
-    	this.currentIndex = getModel().getRowIndex();
+    	this.currentIndex = getDirectModel().getRowIndex();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	if ( getFolder().isDraftFolder() ) {
     		IMAPFolder imapFolder = (IMAPFolder) getFolder().getFolder();
@@ -429,7 +420,7 @@ public class FolderController extends BasicTemplateController implements IMessag
 	}
 	
     public AonMessage getSelectedMessage() {
-    	return (AonMessage) getModel().getRowData();
+    	return (AonMessage) getDirectModel().getRowData();
     }
 
     public void markAsReadCheckedMessages(ActionEvent event) {

@@ -18,7 +18,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
 
@@ -38,15 +37,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ZipUtil;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class FileManager extends BasicTemplateController implements IRichConstants {
+public class FileManager extends DataScrollerState implements IRichConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileManager.class);
-	
-	private DataModel model;
 	
 	private boolean _new;
 	
@@ -77,14 +74,6 @@ public class FileManager extends BasicTemplateController implements IRichConstan
 	private String searchName;
 	
 	private String searchContent;
-	
-	public DataModel getModel() {
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
 	
 	public String getBackActionListener() {
 		return backActionListener;
@@ -207,7 +196,7 @@ public class FileManager extends BasicTemplateController implements IRichConstan
 		for( File file : list ) {
 			fws.add( new FileWrapper(file) );
 		}
-		this.model = new ListDataModel( fws );
+		setModel(new ListDataModel(fws));
 	}
 
 	public void onInit( ActionEvent event ) {
@@ -221,9 +210,9 @@ public class FileManager extends BasicTemplateController implements IRichConstan
 	
 	public File getFile() {
 		File file = null;
-		if ( getModel().isRowAvailable() ) {
-			file = ((FileWrapper) getModel().getRowData()).getWrappedObject();
-		}
+		if ( getDirectModel().isRowAvailable() ) {
+			file = ((FileWrapper) getDirectModel().getRowData()).getWrappedObject();
+		}			
 		return file;		
 	}
 

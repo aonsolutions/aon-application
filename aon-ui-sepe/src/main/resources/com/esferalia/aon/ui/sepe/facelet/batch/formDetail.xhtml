@@ -33,30 +33,33 @@
 			</aon:div>
 		</c:if>
 	
-		<aon:dataTable id="batchDetailData" value="#{controllerDetail.model}"
-			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{controllerDetail}" />
+			<ui:param name="skipSelectButton" value="true" />
+			<ui:param name="rowSelectorToggleOnClick" value="false" />
+	
+			<ui:define name="columns">
 			
-			<aon:rowSelector toggleOnClick="#{false}"/>
-			
-			<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
-			
-			<c:if test="#{!controller.recorded}" >
-				<aon:column styleClass="aon-editDataTable-iconColumn">
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-					<aon:selectBooleanCheckbox id="Included_Row_checked"
-						value="#{controllerDetail.checkHandler.rowChecked}"
-						valueChangeListener="#{controllerDetail.checkHandler.rowSelected}" >
-						<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
-					</aon:selectBooleanCheckbox>	
-				</aon:column>
-			</c:if>
-			
-			<ui:insert name="detailDataColumns" />
-			
-		</aon:dataTable>
-		<aon:dataScroller2 for="batchDetailData" showNote="true" />
+				<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
+				
+				<c:if test="#{!controller.recorded}" >
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:selectBooleanCheckbox id="Included_Row_checked"
+							value="#{controllerDetail.checkHandler.rowChecked}"
+							valueChangeListener="#{controllerDetail.checkHandler.rowSelected}" >
+							<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
+						</aon:selectBooleanCheckbox>	
+					</aon:column>
+				</c:if>
+				
+				<ui:insert name="detailDataColumns" />
+				
+			</ui:define>
+		</ui:decorate>			
+
 	</aon:div>
 
 </ui:composition>

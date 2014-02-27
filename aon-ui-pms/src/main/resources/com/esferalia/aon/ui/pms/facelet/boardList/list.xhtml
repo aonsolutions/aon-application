@@ -103,8 +103,11 @@
 					
 				</aon:div>
 				
-				<aon:dataTable id="roomBoardList" value="#{boardList.model}" 
-					rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{boardList}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
@@ -154,9 +157,8 @@
 							</aon:outputText>
 						</aon:column>
 
-				</aon:dataTable>
-			
-				<aon:dataScroller2 for="roomBoardList" showNote="true" />
+					</ui:define>
+				</ui:decorate>
 				
 			</aon:div>
 			

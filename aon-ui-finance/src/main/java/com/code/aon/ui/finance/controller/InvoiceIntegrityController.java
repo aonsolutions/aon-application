@@ -22,13 +22,13 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceIntegrityController {
+public class InvoiceIntegrityController extends DataScrollerState {
 
 	private Date startDate;
 	private Date endDate;
-	private DataModel model;
 	private DataModel breakDownModel;
 	private Integer registry;
 	
@@ -81,13 +81,6 @@ public class InvoiceIntegrityController {
 	}
 	public void setRegistry(Integer registry) {
 		this.registry = registry;
-	}
-
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 
 	public DataModel getBreakDownModel() {
@@ -147,7 +140,7 @@ public class InvoiceIntegrityController {
 	}
 	
 	public void onSelect(ActionEvent event) {
-		Preview preview = (Preview) getModel().getRowData();
+		Preview preview = (Preview) getDirectModel().getRowData();
 		setRegistry( preview.getId());
 		onBreakDown(event);
 	}
@@ -176,7 +169,7 @@ public class InvoiceIntegrityController {
 
 	@SuppressWarnings("unchecked")
 	private void previewCheckAll(boolean check) {
-		List<Preview> list =  (List<Preview>) getModel().getWrappedData();
+		List<Preview> list =  (List<Preview>) getDirectModel().getWrappedData();
 		int i = 0;
 		for (Preview p : list) {
 			p.setChecked(check);
@@ -290,7 +283,7 @@ public class InvoiceIntegrityController {
 	@SuppressWarnings("unchecked")
 	public void onUpdatePreview(ActionEvent event) {
 		try {
-			List<Preview> list =  (List<Preview>) getModel().getWrappedData();
+			List<Preview> list =  (List<Preview>) getDirectModel().getWrappedData();
 			for (Preview p : list) {
 				if (p.isChecked()) {
 					setRegistry( p.getId());

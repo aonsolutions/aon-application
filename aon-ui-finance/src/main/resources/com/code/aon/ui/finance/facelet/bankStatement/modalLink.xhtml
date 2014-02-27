@@ -109,68 +109,71 @@
 											</aon:div>
 
 											<aon:div id="statementLinkListDiv">
-												<aon:dataTable id="statementLinkData" value="#{bankStatementLink.model}"
-													var="to" rows="10" rendered="#{bankStatementLink.model.rowCount > 0}">
+												<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+													<ui:param name="controller" value="#{bankStatementLink}" />
+													<ui:param name="rows" value="10" />
+													<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+													<ui:param name="skipSelectButton" value="#{true}" />
+													<ui:define name="columns">
 
-													<aon:column styleClass="aon-editDataTable-iconColumn">
-														<f:facet name="header">
-															<aon:outputText value="&#160;" />
-														</f:facet>
-														<aon:selectBooleanCheckbox id="StatementLinkCheck"
-															value="#{bankStatementLink.rowChecked}"
-															valueChangeListener="#{bankStatementLink.rowSelected}" />	
-			 										</aon:column>
-			
-													<aon:column styleClass="aon-editDataTable-textColumn">
-														<f:facet name="header">
-															<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
-														</f:facet>
-														<aon:outputText value="#{to.date}">
-															<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-																timeZone="#{timeZoneController.timeZoneId}" />
-														</aon:outputText>
-													</aon:column>
-
-													<c:if test="#{aonRole.confidentiality}">
-														<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+														<aon:column styleClass="aon-editDataTable-iconColumn">
 															<f:facet name="header">
-																<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
-																	styleClass="aon-icon-confidential" style="padding-left:15px" />
+																<aon:outputText value="&#160;" />
 															</f:facet>
-															<aon:outputText value="&#160;"
-																styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
-																style="padding-left:20px" />
+															<aon:selectBooleanCheckbox id="StatementLinkCheck"
+																value="#{bankStatementLink.rowChecked}"
+																valueChangeListener="#{bankStatementLink.rowSelected}" />	
+				 										</aon:column>
+				
+														<aon:column styleClass="aon-editDataTable-textColumn">
+															<f:facet name="header">
+																<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
+															</f:facet>
+															<aon:outputText value="#{to.date}">
+																<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+																	timeZone="#{timeZoneController.timeZoneId}" />
+															</aon:outputText>
 														</aon:column>
-													</c:if>
+	
+														<c:if test="#{aonRole.confidentiality}">
+															<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+																<f:facet name="header">
+																	<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+																		styleClass="aon-icon-confidential" style="padding-left:15px" />
+																</f:facet>
+																<aon:outputText value="&#160;"
+																	styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+																	style="padding-left:20px" />
+															</aon:column>
+														</c:if>
+	
+														<aon:column styleClass="aon-editDataTable-textColumn">
+															<f:facet name="header">
+																<aon:outputText value="#{bundle.aon_id}" />
+															</f:facet>
+															<aon:outputText value="#{to.concept}" />
+														</aon:column>
+	
+														<aon:column styleClass="aon-editDataTable-textColumn">
+															<f:facet name="header">
+																<aon:outputText	value="#{bundle.aon_description}" />
+															</f:facet>
+															<aon:outputText value="#{to.description}">
+																<aon:abbreviateConverter maxWidth="50" />
+															</aon:outputText>
+														</aon:column>
+	
+														<aon:column styleClass="aon-editDataTable-numberColumn">
+															<f:facet name="header">
+																<aon:outputText value="#{bundle.aon_amount}" />
+															</f:facet>
+															<aon:outputText value="#{to.amount}">
+																<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+															</aon:outputText>
+														</aon:column>
+													</ui:define>
+												</ui:decorate>
 
-													<aon:column styleClass="aon-editDataTable-textColumn">
-														<f:facet name="header">
-															<aon:outputText value="#{bundle.aon_id}" />
-														</f:facet>
-														<aon:outputText value="#{to.concept}" />
-													</aon:column>
-
-													<aon:column styleClass="aon-editDataTable-textColumn">
-														<f:facet name="header">
-															<aon:outputText	value="#{bundle.aon_description}" />
-														</f:facet>
-														<aon:outputText value="#{to.description}">
-															<aon:abbreviateConverter maxWidth="50" />
-														</aon:outputText>
-													</aon:column>
-
-													<aon:column styleClass="aon-editDataTable-numberColumn">
-														<f:facet name="header">
-															<aon:outputText value="#{bundle.aon_amount}" />
-														</f:facet>
-														<aon:outputText value="#{to.amount}">
-															<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-														</aon:outputText>
-													</aon:column>
-
-												</aon:dataTable>
-					
-												<aon:dataScroller2 for="statementLinkData" showNote="false" />
 											</aon:div>
 										</aon:panelTab>
 
@@ -224,89 +227,93 @@
 														</aon:div>
 													</f:facet>
 
-													<aon:dataTable id="financeData"	value="#{financeList.model}" 
-														style="margin-top: 5px;" var="to" rendered="#{financeList.model.rowCount > 0}"
-														rows="#{financeTrackingList.model.rowCount > 0 ? '5' : '10'}">
+													<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+														<ui:param name="controller" value="#{financeList}" />
+														<ui:param name="dataTableStyle" value="margin-top: 5px;" />
+														<ui:param name="rows" value="#{financeTrackingList.model.rowCount > 0 ? '5' : '10'}" />
+														<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+														<ui:param name="skipSelectButton" value="#{true}" />
+														<ui:define name="columns">
 
-														<aon:column styleClass="aon-editDataTable-iconColumn">
-															<f:facet name="header">
-																<aon:outputText value="&#160;" />
-															</f:facet>
-															<aon:selectBooleanCheckbox id="FinanceCheck"
-																value="#{financeList.rowChecked}"
-																valueChangeListener="#{financeList.rowSelected}" />	
-				 										</aon:column>
-			
-														<aon:column alias="Finance.dueDate" 
-															styleClass="aon-editDataTable-textColumn">
-															<f:facet name="header">
-																<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
-															</f:facet>
-															<aon:outputText value="#{to.dueDate}">
-																<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-																	timeZone="#{timeZoneController.timeZoneId}" />
-															</aon:outputText>
-														</aon:column>
-
-														<c:if test="#{aonRole.confidentiality}">
-															<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+															<aon:column styleClass="aon-editDataTable-iconColumn">
 																<f:facet name="header">
-																	<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
-																		styleClass="aon-icon-confidential" style="padding-left:15px" />
+																	<aon:outputText value="&#160;" />
 																</f:facet>
-																<aon:outputText value="&#160;"
-																	styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
-																	style="padding-left:20px" />
-															</aon:column>
-														</c:if>
-
-														<aon:column alias="Finance.concept" 
-															styleClass="aon-editDataTable-textColumn">
-															<f:facet name="header">
-																<aon:outputText value="#{bundle.aon_document_number}" />
-															</f:facet>
-															<aon:outputText value="#{to.concept}">
-																<aon:abbreviateConverter maxWidth="20" />
-															</aon:outputText>
-															<rich:toolTip rendered="#{financeList.conceptLength > 20}">
-																<aon:outputText value="#{to.concept}" />
-															</rich:toolTip>
-														</aon:column>
-
-														<aon:column alias="Finance.registryName" 
-															styleClass="aon-editDataTable-textColumn">
-															<f:facet name="header">
-																<aon:outputText	value="#{bundle.aon_name}" />
-															</f:facet>
-															<aon:outputText value="#{to.registryName}">
-																<aon:abbreviateConverter maxWidth="45" />
-															</aon:outputText>
-															<rich:toolTip rendered="#{financeList.registryNameLength > 45}">
-																<aon:outputText value="#{to.registryName}" />
-															</rich:toolTip>
-														</aon:column>
-
-														<aon:column alias="Finance.amount" 
-															styleClass="aon-editDataTable-numberColumn">
-															<f:facet name="header">
-																<aon:outputText value="#{bundle.aon_amount}" />
-															</f:facet>
-															<aon:commandLink immediate="#{true}" 
-																styleClass="aon-dataTable-link"
-																title="#{bundle.finance_to_fraction}"
-																actionListener="#{linkManager.onFractionShow}"
-																reRender="showFinanceFractionWindow">
-																<aon:outputText styleClass="aon-italic" value="#{to.totalAmount}">
-																	<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+																<aon:selectBooleanCheckbox id="FinanceCheck"
+																	value="#{financeList.rowChecked}"
+																	valueChangeListener="#{financeList.rowSelected}" />	
+					 										</aon:column>
+				
+															<aon:column alias="Finance.dueDate" 
+																styleClass="aon-editDataTable-textColumn">
+																<f:facet name="header">
+																	<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
+																</f:facet>
+																<aon:outputText value="#{to.dueDate}">
+																	<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+																		timeZone="#{timeZoneController.timeZoneId}" />
 																</aon:outputText>
-																<f:setPropertyActionListener target="#{financeList.showFinanceFractionWindow}"
-																	value="#{true}" />
-															</aon:commandLink>
-														</aon:column>
+															</aon:column>
+	
+															<c:if test="#{aonRole.confidentiality}">
+																<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+																	<f:facet name="header">
+																		<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+																			styleClass="aon-icon-confidential" style="padding-left:15px" />
+																	</f:facet>
+																	<aon:outputText value="&#160;"
+																		styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+																		style="padding-left:20px" />
+																</aon:column>
+															</c:if>
+	
+															<aon:column alias="Finance.concept" 
+																styleClass="aon-editDataTable-textColumn">
+																<f:facet name="header">
+																	<aon:outputText value="#{bundle.aon_document_number}" />
+																</f:facet>
+																<aon:outputText value="#{to.concept}">
+																	<aon:abbreviateConverter maxWidth="20" />
+																</aon:outputText>
+																<rich:toolTip rendered="#{financeList.conceptLength > 20}">
+																	<aon:outputText value="#{to.concept}" />
+																</rich:toolTip>
+															</aon:column>
+	
+															<aon:column alias="Finance.registryName" 
+																styleClass="aon-editDataTable-textColumn">
+																<f:facet name="header">
+																	<aon:outputText	value="#{bundle.aon_name}" />
+																</f:facet>
+																<aon:outputText value="#{to.registryName}">
+																	<aon:abbreviateConverter maxWidth="45" />
+																</aon:outputText>
+																<rich:toolTip rendered="#{financeList.registryNameLength > 45}">
+																	<aon:outputText value="#{to.registryName}" />
+																</rich:toolTip>
+															</aon:column>
+	
+															<aon:column alias="Finance.amount" 
+																styleClass="aon-editDataTable-numberColumn">
+																<f:facet name="header">
+																	<aon:outputText value="#{bundle.aon_amount}" />
+																</f:facet>
+																<aon:commandLink immediate="#{true}" 
+																	styleClass="aon-dataTable-link"
+																	title="#{bundle.finance_to_fraction}"
+																	actionListener="#{linkManager.onFractionShow}"
+																	reRender="showFinanceFractionWindow">
+																	<aon:outputText styleClass="aon-italic" value="#{to.totalAmount}">
+																		<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+																	</aon:outputText>
+																	<f:setPropertyActionListener target="#{financeList.showFinanceFractionWindow}"
+																		value="#{true}" />
+																</aon:commandLink>
+															</aon:column>
+														
+														</ui:define>
+													</ui:decorate>
 
-													</aon:dataTable>
-					
-													<aon:dataScroller2 for="financeData" showNote="true" />
 												</aon:panel>
 											</aon:div>
 
@@ -323,81 +330,85 @@
 														</aon:div>
 													</f:facet>
 
-													<aon:dataTable id="financeTrackingData" value="#{financeTrackingList.model}" 
-														style="margin-top: 5px;" var="to" rendered="#{financeTrackingList.model.rowCount > 0}"
-														rows="#{financeTrackingList.model.rowCount > 0 ? '5' : '10'}">
+													<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+														<ui:param name="controller" value="#{financeTrackingList}" />
+														<ui:param name="dataTableStyle" value="margin-top: 5px;" />
+														<ui:param name="rows" value="#{financeTrackingList.model.rowCount > 0 ? '5' : '10'}" />
+														<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+														<ui:param name="skipSelectButton" value="#{true}" />
+														<ui:define name="columns">
 
-														<aon:column styleClass="aon-editDataTable-iconColumn">
-															<f:facet name="header">
-																<aon:outputText value="&#160;" />
-															</f:facet>
-															<aon:selectBooleanCheckbox id="FinanceTrackingCheck"
-																value="#{financeTrackingList.rowChecked}"
-																valueChangeListener="#{financeTrackingList.rowSelected}" />	
-				 										</aon:column>
-			
-														<aon:column alias="FinanceTracking.trackingDate" 
-															styleClass="aon-editDataTable-textColumn">
-															<f:facet name="header">
-																<aon:outputText value="#{bundle.finance_pay_date}" />
-															</f:facet>
-															<aon:outputText value="#{to.trackingDate}">
-																<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-																	timeZone="#{timeZoneController.timeZoneId}" />
-															</aon:outputText>
-														</aon:column>
-
-														<c:if test="#{aonRole.confidentiality}">
-															<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+															<aon:column styleClass="aon-editDataTable-iconColumn">
 																<f:facet name="header">
-																	<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
-																		styleClass="aon-icon-confidential" style="padding-left:15px" />
+																	<aon:outputText value="&#160;" />
 																</f:facet>
-																<aon:outputText value="&#160;"
-																	styleClass="#{to.finance.confidential?'aon-icon-checked':'aon-icon-check'}" 
-																	style="padding-left:20px" />
+																<aon:selectBooleanCheckbox id="FinanceTrackingCheck"
+																	value="#{financeTrackingList.rowChecked}"
+																	valueChangeListener="#{financeTrackingList.rowSelected}" />	
+					 										</aon:column>
+				
+															<aon:column alias="FinanceTracking.trackingDate" 
+																styleClass="aon-editDataTable-textColumn">
+																<f:facet name="header">
+																	<aon:outputText value="#{bundle.finance_pay_date}" />
+																</f:facet>
+																<aon:outputText value="#{to.trackingDate}">
+																	<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+																		timeZone="#{timeZoneController.timeZoneId}" />
+																</aon:outputText>
 															</aon:column>
-														</c:if>
+	
+															<c:if test="#{aonRole.confidentiality}">
+																<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+																	<f:facet name="header">
+																		<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+																			styleClass="aon-icon-confidential" style="padding-left:15px" />
+																	</f:facet>
+																	<aon:outputText value="&#160;"
+																		styleClass="#{to.finance.confidential?'aon-icon-checked':'aon-icon-check'}" 
+																		style="padding-left:20px" />
+																</aon:column>
+															</c:if>
+	
+															<aon:column alias="FinanceTracking.finance.concept"
+																styleClass="aon-editDataTable-textColumn">
+																<f:facet name="header">
+																	<aon:outputText value="#{bundle.aon_document_number}" />
+																</f:facet>
+																<aon:outputText value="#{to.finance.concept}">
+																	<aon:abbreviateConverter maxWidth="20" />
+																</aon:outputText>
+																<rich:toolTip rendered="#{financeTrackingList.conceptLength > 20}">
+																	<aon:outputText value="#{to.finance.concept}" />
+																</rich:toolTip>
+															</aon:column>
+	
+															<aon:column alias="FinanceTracking.finance.registryName"
+																styleClass="aon-editDataTable-textColumn">
+																<f:facet name="header">
+																	<aon:outputText	value="#{bundle.aon_name}" />
+																</f:facet>
+																<aon:outputText value="#{to.finance.registryName}">
+																	<aon:abbreviateConverter maxWidth="45" />
+																</aon:outputText>
+																<rich:toolTip rendered="#{financeTrackingList.registryNameLength > 45}">
+																	<aon:outputText value="#{to.finance.registryName}" />
+																</rich:toolTip>
+															</aon:column>
+	
+															<aon:column alias="FinanceTracking.amount"
+																styleClass="aon-editDataTable-numberColumn">
+																<f:facet name="header">
+																	<aon:outputText value="#{bundle.aon_amount}" />
+																</f:facet>
+																<aon:outputText value="#{to.amount}">
+																	<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+																</aon:outputText>
+															</aon:column>
+	
+														</ui:define>
+													</ui:decorate>					
 
-														<aon:column alias="FinanceTracking.finance.concept"
-															styleClass="aon-editDataTable-textColumn">
-															<f:facet name="header">
-																<aon:outputText value="#{bundle.aon_document_number}" />
-															</f:facet>
-															<aon:outputText value="#{to.finance.concept}">
-																<aon:abbreviateConverter maxWidth="20" />
-															</aon:outputText>
-															<rich:toolTip rendered="#{financeTrackingList.conceptLength > 20}">
-																<aon:outputText value="#{to.finance.concept}" />
-															</rich:toolTip>
-														</aon:column>
-
-														<aon:column alias="FinanceTracking.finance.registryName"
-															styleClass="aon-editDataTable-textColumn">
-															<f:facet name="header">
-																<aon:outputText	value="#{bundle.aon_name}" />
-															</f:facet>
-															<aon:outputText value="#{to.finance.registryName}">
-																<aon:abbreviateConverter maxWidth="45" />
-															</aon:outputText>
-															<rich:toolTip rendered="#{financeTrackingList.registryNameLength > 45}">
-																<aon:outputText value="#{to.finance.registryName}" />
-															</rich:toolTip>
-														</aon:column>
-
-														<aon:column alias="FinanceTracking.amount"
-															styleClass="aon-editDataTable-numberColumn">
-															<f:facet name="header">
-																<aon:outputText value="#{bundle.aon_amount}" />
-															</f:facet>
-															<aon:outputText value="#{to.amount}">
-																<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-															</aon:outputText>
-														</aon:column>
-
-													</aon:dataTable>
-					
-													<aon:dataScroller2 for="financeTrackingData" showNote="false" />
 												</aon:panel>
 											</aon:div>
 										</aon:panelTab>
@@ -414,75 +425,79 @@
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
 											<aon:div id="fbatchListDiv">
-												<aon:dataTable id="fBatchData" value="#{fbatchList.model}"
-													var="to" rows="10" rendered="#{fbatchList.model.rowCount > 0}">
+												<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+													<ui:param name="controller" value="#{fbatchList}" />
+													<ui:param name="rows" value="10" />
+													<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+													<ui:param name="skipSelectButton" value="#{true}" />
+													<ui:define name="columns">
 
-													<aon:column styleClass="aon-editDataTable-iconColumn">
-														<f:facet name="header">
-															<aon:outputText value="&#160;" />
-														</f:facet>
-														<aon:selectBooleanCheckbox id="FinanceBatchCheck"
-															value="#{fbatchList.rowChecked}"
-															valueChangeListener="#{fbatchList.uniqueRowSelected}"
-															ajaxSingle="true" reRender="fbatchListDiv" />	
-			 										</aon:column>
-			
-													<aon:column alias="FinanceBatch.issueDate"
-														 styleClass="aon-editDataTable-textColumn">
-														<f:facet name="header">
-															<aon:outputText value="#{bundle.aon_date}" />
-														</f:facet>
-														<aon:outputText value="#{to.issueDate}">
-															<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-																timeZone="#{timeZoneController.timeZoneId}" />
-														</aon:outputText>
-													</aon:column>
-
-													<c:if test="#{aonRole.confidentiality}">
-														<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+														<aon:column styleClass="aon-editDataTable-iconColumn">
 															<f:facet name="header">
-																<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
-																	styleClass="aon-icon-confidential" style="padding-left:15px" />
+																<aon:outputText value="&#160;" />
 															</f:facet>
-															<aon:outputText value="&#160;"
-																styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
-																style="padding-left:20px" />
+															<aon:selectBooleanCheckbox id="FinanceBatchCheck"
+																value="#{fbatchList.rowChecked}"
+																valueChangeListener="#{fbatchList.uniqueRowSelected}"
+																ajaxSingle="true" reRender="fbatchListDiv" />	
+				 										</aon:column>
+				
+														<aon:column alias="FinanceBatch.issueDate"
+															 styleClass="aon-editDataTable-textColumn">
+															<f:facet name="header">
+																<aon:outputText value="#{bundle.aon_date}" />
+															</f:facet>
+															<aon:outputText value="#{to.issueDate}">
+																<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+																	timeZone="#{timeZoneController.timeZoneId}" />
+															</aon:outputText>
 														</aon:column>
-													</c:if>
+	
+														<c:if test="#{aonRole.confidentiality}">
+															<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+																<f:facet name="header">
+																	<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+																		styleClass="aon-icon-confidential" style="padding-left:15px" />
+																</f:facet>
+																<aon:outputText value="&#160;"
+																	styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+																	style="padding-left:20px" />
+															</aon:column>
+														</c:if>
+	
+														<aon:column alias="FinanceBatch.id"
+															 styleClass="aon-editDataTable-textColumn">
+															<f:facet name="header">
+																<aon:outputText value="#{bundle.aon_id}" />
+															</f:facet>
+															<aon:outputText value="#{to.id}" />
+														</aon:column>
+	
+														<aon:column alias="FinanceBatch.description"
+															 styleClass="aon-editDataTable-textColumn">
+															<f:facet name="header">
+																<aon:outputText	value="#{bundle.aon_description}" />
+															</f:facet>
+															<aon:outputText value="#{to.description}">
+																<aon:abbreviateConverter maxWidth="50" />
+															</aon:outputText>
+															<rich:toolTip rendered="#{fbatchList.descriptionLength > 50}">
+																<aon:outputText value="#{to.description}" />
+															</rich:toolTip>
+														</aon:column>
+	
+														<aon:column	styleClass="aon-editDataTable-numberColumn">
+															<f:facet name="header">
+																<aon:outputText value="#{bundle.aon_amount}" />
+															</f:facet>
+															<aon:outputText value="#{to.financeBatchTotalAmount}">
+																<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+															</aon:outputText>
+														</aon:column>
 
-													<aon:column alias="FinanceBatch.id"
-														 styleClass="aon-editDataTable-textColumn">
-														<f:facet name="header">
-															<aon:outputText value="#{bundle.aon_id}" />
-														</f:facet>
-														<aon:outputText value="#{to.id}" />
-													</aon:column>
+													</ui:define>
+												</ui:decorate>
 
-													<aon:column alias="FinanceBatch.description"
-														 styleClass="aon-editDataTable-textColumn">
-														<f:facet name="header">
-															<aon:outputText	value="#{bundle.aon_description}" />
-														</f:facet>
-														<aon:outputText value="#{to.description}">
-															<aon:abbreviateConverter maxWidth="50" />
-														</aon:outputText>
-														<rich:toolTip rendered="#{fbatchList.descriptionLength > 50}">
-															<aon:outputText value="#{to.description}" />
-														</rich:toolTip>
-													</aon:column>
-
-													<aon:column	styleClass="aon-editDataTable-numberColumn">
-														<f:facet name="header">
-															<aon:outputText value="#{bundle.aon_amount}" />
-														</f:facet>
-														<aon:outputText value="#{to.financeBatchTotalAmount}">
-															<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-														</aon:outputText>
-													</aon:column>
-
-												</aon:dataTable>
-					
-												<aon:dataScroller2 for="fBatchData" showNote="true" />
 											</aon:div>
 										</aon:panelTab>
 

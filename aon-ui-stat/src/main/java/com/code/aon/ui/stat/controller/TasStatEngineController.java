@@ -15,14 +15,13 @@ import com.code.aon.stat.tas.TasStatDetail;
 import com.code.aon.stat.tas.TasStatHeader;
 import com.code.aon.tas.TasItem;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class TasStatEngineController extends BasicTemplateController {
+public class TasStatEngineController extends DataScrollerState {
 
 	private TasStatParams params;
-	private DataModel headerModel;
 	private DataModel detailModel;
 	private TasStatHeader header;
 	private boolean ownerSelected;
@@ -36,10 +35,10 @@ public class TasStatEngineController extends BasicTemplateController {
 	}
 	
 	public DataModel getHeaderModel() {
-		return headerModel;
+		return getDirectModel();
 	}
 	public void setHeaderModel(DataModel headerModel) {
-		this.headerModel = headerModel;
+		setModel(headerModel);
 	}
 	public DataModel getDetailModel() {
 		return detailModel;
@@ -162,11 +161,6 @@ public class TasStatEngineController extends BasicTemplateController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		} 
-	}
-
-	@Override
-	public DataModel getModel() throws ManagerBeanException {
-		return getHeaderModel();
 	}
 	
 }

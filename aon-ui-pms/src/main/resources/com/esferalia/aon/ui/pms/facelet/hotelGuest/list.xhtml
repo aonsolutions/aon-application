@@ -61,8 +61,11 @@
 				
 				</aon:panel>
 			
-				<aon:dataTable id="hotelGuestDataList" value="#{hotelGuest.model}" 
-					rendered="#{hotelGuest.model!=null and hotelGuest.model.rowCount > 0}" rows="20" var="to">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{hotelGuest}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
 			
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
@@ -133,9 +136,8 @@
 							</aon:outputText>
 						</aon:column>
 						
-				</aon:dataTable>
-			
-				<aon:dataScroller2 for="hotelGuestDataList" showNote="true" />
+					</ui:define>
+				</ui:decorate>
 				
 			</aon:div>
 

@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
@@ -22,11 +21,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.DataScrollerState;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
 
-public class EmptyRoomController implements ICollectionProvider {
+public class EmptyRoomController extends DataScrollerState implements ICollectionProvider {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmptyRoomController.class.getName());
 	
@@ -34,7 +34,6 @@ public class EmptyRoomController implements ICollectionProvider {
 	private Date date;
 	
 	private List<RoomStatus> roomStatusList;
-	private DataModel model;
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -53,12 +52,6 @@ public class EmptyRoomController implements ICollectionProvider {
 	}
 	public void setRoomStatusList(List<RoomStatus> roomStatusList) {
 		this.roomStatusList = roomStatusList;
-	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 	
 	private void buildRoomStatusList() throws ManagerBeanException {

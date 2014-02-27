@@ -2,15 +2,13 @@ package com.code.aon.ui.webmail.controller;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
 
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
 import com.code.aon.webmail.WebmailException;
@@ -18,10 +16,8 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonSearcher;
 
-public class SearchController extends BasicTemplateController implements IMessageContainer, IWebMailConstants {
+public class SearchController extends DataScrollerState implements IMessageContainer, IWebMailConstants {
 
-	private ModifiableModel model;
-	
 	private Ordering[] sortOrders;
 	
 	private String bodyText;
@@ -129,7 +125,7 @@ public class SearchController extends BasicTemplateController implements IMessag
 			}
 			AonMessage[] list = as.search();
 			setMessagesFound(! ArrayUtils.isEmpty(list) );
-			this.model = new MessageDataModel(list);
+			setModel(new MessageDataModel(list));
 			setShowResults(true);
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -143,15 +139,11 @@ public class SearchController extends BasicTemplateController implements IMessag
 	}
 	
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {
-    	AonMessage aonMessage = (AonMessage) getModel().getRowData();
-    	this.currentIndex = getModel().getRowIndex();
+    	AonMessage aonMessage = (AonMessage) getDirectModel().getRowData();
+    	this.currentIndex = getDirectModel().getRowIndex();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
        	messageController.setMessage( aonMessage );      				
     }	
-    
-    public DataModel getModel() {
-    	return this.model;
-    }
 
 	public int getCurrentIndex() {
 		return currentIndex;

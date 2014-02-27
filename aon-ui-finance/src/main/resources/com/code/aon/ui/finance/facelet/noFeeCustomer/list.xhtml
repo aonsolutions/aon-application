@@ -34,43 +34,48 @@
 				</ui:define>
 			</ui:decorate> 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:editDataTable id="yearsStats"
-					value="#{customerFee.noFeeCustomersModel}" rows="20"
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn"
-					var="to">
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}" />
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.document}" />
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.fullName}" />
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.alias}" />
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.status}" />
-					</aon:column>
-				</aon:editDataTable>
-				<aon:dataScroller2 for="yearsStats" showNote="true" />
-				</aon:div>
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="dataTableId" value="yearsStats" />
+					<ui:param name="dataModel" value="#{customerFee.noFeeCustomersModel}" />
+					<ui:param name="rows" value="20" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:define name="columns">
+			
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.document}" />
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.fullName}" />
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.registry.alias}" />
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
 		</aon:form>
 	</ui:define>
 </ui:composition>

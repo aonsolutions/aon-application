@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -20,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -28,24 +28,17 @@ import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.RoomWorkPlanning;
 
 
-public class WorkPlanningController implements ICollectionProvider {
+public class WorkPlanningController extends DataScrollerState implements ICollectionProvider {
 	
 	private Hotel hotel;
 	private Date date;
 	private List<RoomPlanning> roomPlanningList;	
-	private DataModel model;
 	
 	public List<RoomPlanning> getRoomPlanningList() {
 		return roomPlanningList;
 	}
 	public void setRoomPlanningList(List<RoomPlanning> roomPlanningList) {
 		this.roomPlanningList = roomPlanningList;
-	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 	public Hotel getHotel() {
 		return hotel;

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.hibernate.Criteria;
@@ -22,24 +21,18 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
-public class ActionMoreUsedController extends BasicTemplateController implements IAuditConstants {
+public class ActionMoreUsedController extends DataScrollerState implements IAuditConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionMoreUsedController.class);
 	
 	private static final int MORE_USED_COUNT = 5;
 	
-	private DataModel model;
-	
 	public void onSearch( ActionEvent event ) {
 		List<ActionMoreUsed> list = getMoreUsed(-1);
-		this.model = new ListDataModel( list );
-	}
-
-	public DataModel getModel() {
-		return model;
+		setModel(new ListDataModel(list));
 	}
 
 	private ApplicationOptionController getOptionController() {

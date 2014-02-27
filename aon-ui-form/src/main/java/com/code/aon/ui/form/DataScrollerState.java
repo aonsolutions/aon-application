@@ -1,8 +1,11 @@
 package com.code.aon.ui.form;
 
+import javax.faces.model.DataModel;
+
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 
-public abstract class BasicTemplateController implements ITemplateController {
+public class DataScrollerState implements ITemplateController {
 
 	private String beanName;
 	
@@ -10,7 +13,9 @@ public abstract class BasicTemplateController implements ITemplateController {
 	
 	private int page;
 	
-	public BasicTemplateController() {
+	private DataModel model;
+	
+	public DataScrollerState() {
 		setPage(1);
 	}
 
@@ -43,6 +48,20 @@ public abstract class BasicTemplateController implements ITemplateController {
 	@Override
 	public void setPage(int page) {
 		this.page = page;
+	}
+
+	@Override
+	public DataModel getModel() throws ManagerBeanException {
+		return model;
+	}
+	
+	public DataModel getDirectModel() {
+		return model;
+	}
+
+	public void setModel(DataModel model) {
+		setPage(1);
+		this.model = model;
 	}
 	
 }

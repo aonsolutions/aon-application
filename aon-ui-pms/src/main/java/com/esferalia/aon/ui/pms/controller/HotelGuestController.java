@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
@@ -15,29 +14,22 @@ import org.hibernate.Session;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.ui.form.DataScrollerState;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 
-public class HotelGuestController implements ICollectionProvider {
+public class HotelGuestController extends DataScrollerState implements ICollectionProvider {
 	
 	private Hotel hotel;
 	private Date date;
 	private List<HotelGuest> hotelGuestList;	
-	private DataModel model;
-	
 	
 	public List<HotelGuest> getHotelGuestList() {
 		return hotelGuestList;
 	}
 	public void setHotelGuestList(List<HotelGuest> hotelGuestList) {
 		this.hotelGuestList = hotelGuestList;
-	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 	public Hotel getHotel() {
 		return hotel;

@@ -17,16 +17,16 @@ import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountE
 import com.code.aon.ui.accounting.check.modules.account.invoice.DuplicatedInvoicesCheck;
 import com.code.aon.ui.accounting.check.modules.account.invoice.NoRecordedInvoiceCheck;
 import com.code.aon.ui.accounting.check.modules.balance.BalanceCheck;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class CheckController {
+public class CheckController extends DataScrollerState {
 
 	private CheckParams params;
 
 	private List<ICheckModule> accountChecks;
 	private List<ICheckEntry> checkEntryList;
-	private DataModel accountCheckModel;
 	
 	public CheckParams getParams() {
 		return params;
@@ -67,15 +67,12 @@ public class CheckController {
 		return checkEntryList;
 	}
 
-	public DataModel getAccountCheckModel() {
-		if (accountCheckModel == null) {
-			accountCheckModel = new ListDataModel( getCheckEntryList() );	
+	@Override
+	public DataModel getModel() {
+		if (getDirectModel() == null) {
+			setModel(new ListDataModel(getCheckEntryList()));	
 		}
-		return accountCheckModel;
-	}
-
-	public void setAccountCheckModel(DataModel accountCheckModel) {
-		this.accountCheckModel = accountCheckModel;
+		return getDirectModel();
 	}
 
 	public void setCheckEntryList(List<ICheckEntry> checkEntryList) {
@@ -88,7 +85,7 @@ public class CheckController {
 		for (ICheckModule accountCheck: getAccountChecks()) {
 			accountCheck.setEnabled(true);
 		}
-		setAccountCheckModel(null);
+		setModel(null);
 	}
 
 	public void onExecute(ActionEvent event) {
@@ -116,7 +113,7 @@ public class CheckController {
 
 	public void onFix(ActionEvent event) {
 		try {
-			ICheckEntry entry = (ICheckEntry) getAccountCheckModel().getRowData();
+			ICheckEntry entry = (ICheckEntry) getModel().getRowData();
 			entry.onFix(event);
 		} catch (AonCheckException e) {
 			String msg = "Error en la corrección de la incidencia. " + e.getMessage();
@@ -126,7 +123,7 @@ public class CheckController {
 	}
 	public String fixAction() {
 		try {
-			ICheckEntry entry = (ICheckEntry) getAccountCheckModel().getRowData();
+			ICheckEntry entry = (ICheckEntry) getModel().getRowData();
 			return entry.fixAction();
 		} catch (AonCheckException e) {
 			String msg = "Error en la navegación de la incidencia. " + e.getMessage();

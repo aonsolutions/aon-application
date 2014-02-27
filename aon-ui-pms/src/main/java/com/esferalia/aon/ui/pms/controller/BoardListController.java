@@ -8,7 +8,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
@@ -27,18 +26,18 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
-public class BoardListController implements ICollectionProvider {
+public class BoardListController extends DataScrollerState implements ICollectionProvider {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoardListController.class.getName());
 	
 	private ProductCategory category;
 	private List<DayBoard> boardList;
-	private DataModel model;
 	private BoardParams params;
 	private List<BoardTotal> boardsTotalList;
 	
@@ -75,12 +74,6 @@ public class BoardListController implements ICollectionProvider {
 	}
 	public void setCategory(ProductCategory category) {
 		this.category = category;
-	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{

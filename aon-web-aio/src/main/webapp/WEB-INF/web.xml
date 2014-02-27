@@ -250,12 +250,12 @@
 		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
 		<param-value>server</param-value>
 	</context-param>
-	<!--  context-param>
+	<context-param>
 		<description>If enabled the component state (not the tree) will be serialized before being stored in the session. 
 		</description>
 		<param-name>com.sun.faces.serializeServerState</param-name>
 		<param-value>true</param-value>
-	</context-param -->
+	</context-param>
 
 	<context-param>
 		<description>Use Documents Saved as *.xhtml</description>

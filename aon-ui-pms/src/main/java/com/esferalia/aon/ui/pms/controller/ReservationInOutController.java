@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -23,6 +22,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
@@ -31,7 +31,7 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class ReservationInOutController implements ICollectionProvider, ISQLConstants, IPmsConstants {
+public class ReservationInOutController extends DataScrollerState implements ICollectionProvider, ISQLConstants, IPmsConstants {
 
 	private Hotel hotel;
 	private boolean checkin;
@@ -41,7 +41,6 @@ public class ReservationInOutController implements ICollectionProvider, ISQLCons
 	private Integer sortMode;
 
 	private List<ReservationIO> reservationIOList;
-	private DataModel model;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -90,13 +89,6 @@ public class ReservationInOutController implements ICollectionProvider, ISQLCons
 	}
 	public void setReservationIOList(List<ReservationIO> reservationIOList) {
 		this.reservationIOList = reservationIOList;
-	}
-
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 
 	public void onInit(ActionEvent event) {

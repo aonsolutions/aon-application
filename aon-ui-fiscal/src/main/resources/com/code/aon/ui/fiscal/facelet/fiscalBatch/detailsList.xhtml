@@ -34,59 +34,66 @@
 	</aon:div>
 
 	<aon:div id="detailsDataDiv">
-		<aon:dataTable id="fiscalBatchDetailsData" value="#{fiscalBatch.details}"
-			var="to" rows="20" rendered="#{fiscalBatch.details.rowCount > 0}">
-			<c:if test="#{!fiscalBatch.to.generated}">
-				<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="dataTableId" value="fiscalBatchDetailsData" />
+			<ui:param name="dataModel" value="#{fiscalBatch.details}" />
+			<ui:param name="rows" value="20" />
+			<ui:param name="skipSelectButton" value="true" />
+			<ui:param name="rowSelectorToggleOnClick" value="false" />
+	
+			<ui:define name="columns">			
+	
+				<c:if test="#{!fiscalBatch.to.generated}">
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
+						<f:facet name="header">
+							<aon:outputText value="#{fiscalBatch.detailsCheckedCount}" />
+						</f:facet>
+						<aon:selectBooleanCheckbox id="Included_Row_checked"
+							value="#{fiscalBatch.detailsRowChecked}"
+							reRender="aonContent">
+						</aon:selectBooleanCheckbox>	
+					</aon:column>
+				</c:if>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 					<f:facet name="header">
-						<aon:outputText value="#{fiscalBatch.detailsCheckedCount}" />
+						<aon:outputText value="#{bundle.aon_company_name}" />
 					</f:facet>
-					<aon:selectBooleanCheckbox id="Included_Row_checked"
-						value="#{fiscalBatch.detailsRowChecked}"
-						reRender="aonContent">
-					</aon:selectBooleanCheckbox>	
+					<aon:outputText value="#{to.company}"/>
 				</aon:column>
-			</c:if>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_company_name}" />
-				</f:facet>
-				<aon:outputText value="#{to.company}"/>
-			</aon:column>
-<!-- 			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.fiscal_complementary}" />
-				</f:facet>
-				<aon:outputText styleClass="aon-nowrap" value="#{to.complementary}" />
-			</aon:column>
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_replacement}" />
-				</f:facet>
-				<aon:outputText styleClass="aon-nowrap" value="#{to.replacement}" />
-			</aon:column>
- -->
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}"/>
-			</aon:column>
-	
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_amount}" />
-				</f:facet>
-				<aon:outputText value="#{to.result}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:column>
+	<!-- 			
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.fiscal_complementary}" />
+					</f:facet>
+					<aon:outputText styleClass="aon-nowrap" value="#{to.complementary}" />
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_replacement}" />
+					</f:facet>
+					<aon:outputText styleClass="aon-nowrap" value="#{to.replacement}" />
+				</aon:column>
+	 -->
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.description}"/>
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_amount}" />
+					</f:facet>
+					<aon:outputText value="#{to.result}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:column>
 
-		</aon:dataTable>					
-	
-		<aon:dataScroller2 for="fiscalBatchDetailsData" showNote="true" />
+			</ui:define>
+		</ui:decorate>
+		
 	</aon:div>
 </ui:composition>

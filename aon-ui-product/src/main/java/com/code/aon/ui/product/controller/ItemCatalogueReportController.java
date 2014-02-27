@@ -32,12 +32,12 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ItemCatalogueReportController extends BasicTemplateController implements ICollectionProvider {
+public class ItemCatalogueReportController extends DataScrollerState implements ICollectionProvider {
 	
 	private WorkPlace workPlace;
 	
@@ -53,17 +53,11 @@ public class ItemCatalogueReportController extends BasicTemplateController imple
 		this.list = list;
 	}
 	
-	private DataModel model;
-	
 	public DataModel getModel() {
-		if(model==null){
-			model = new ListDataModel(getList());
+		if(getDirectModel()==null){
+			setModel(new ListDataModel(getList()));
 		}
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
+		return getDirectModel();
 	}
 
 	public WorkPlace getWorkPlace() {

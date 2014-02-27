@@ -18,7 +18,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,9 +40,10 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.fiscal.vat.VatReportTypeBreakdown;
 import com.code.aon.ui.fiscal.vat.VatTypeBreakdown;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
-public class VatReportController implements ICollectionProvider {
+public class VatReportController extends DataScrollerState implements ICollectionProvider {
 
 	private static final Double GENERAL_PERCENT = new Double(16);
 	private static final Double REDUCED_PERCENT = new Double(7);
@@ -78,7 +78,6 @@ public class VatReportController implements ICollectionProvider {
 	private InvoiceReportOrder order;
 	private SecurityLevel securityLevel;
 	private Map<VatType,VatTypeBreakdown> summary;
-	private DataModel model;
 	private String title;
 
 	private String invoiceViewer;
@@ -566,14 +565,6 @@ public class VatReportController implements ICollectionProvider {
 			throw new AbortProcessingException(e);
 		}
 	}
-
-	public DataModel getModel() {
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
 	
 	public void onYearChanged(ValueChangeEvent event) {
 		setFromDate(null);
@@ -617,7 +608,7 @@ public class VatReportController implements ICollectionProvider {
 	
 	
 	public void onShowInvoice(ActionEvent event) {
-		Vat vat = (Vat) getModel().getRowData();
+		Vat vat = (Vat) getDirectModel().getRowData();
 		String invoiceControllerName = "";
 		if (vat.getInvoiceType() == InvoiceType.SALES) {
 			invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;

@@ -92,98 +92,104 @@
 				</aon:panelGrid>
 				
 				<aon:div rendered="#{journalReport.model.rowCount > 0}" styleClass="aon-margin-top">
-					<aon:dataTable id="journalReportList" value="#{journalReport.model}" rows="20" var="to">
-						<f:facet name="header">
-							<rich:columnGroup>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.account_account}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.aon_description}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.aon_concept}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.account_debit}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.account_credit}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText
-										value="#{bundle.finance_balancing_account}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText
-										value="#{bundle.account_document_number}" />
-								</aon:column>
-							</rich:columnGroup>
-						</f:facet>
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+						<ui:param name="controller" value="#{journalReport}" />
+						<ui:param name="skipSelectButton" value="true" />
+						<ui:param name="rowSelectorToggleOnClick" value="false" />
+					
+						<ui:define name="columns">
 
-						<aon:column colspan="7" rendered="#{journalReport.firstEntry}" 
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-			
-								<aon:div style="text-align:center; font-size: 1em;">
-									<aon:commandLink id="accountEntry-search" 
-										immediate="#{true}" 
-										styleClass="aon-dataTable-link"
-										title="#{bundle.accounting_lookup_account_entry}"
-										actionListener="#{journalReport.onAccountEntry}"
-										action="accountEntry_form">
-										<aon:outputText styleClass="aon-italic" value="#{bundle.account_account_entry}: " />
-										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" rendered="#{!journalReport.journal}"/>
-										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.journal}" rendered="#{journalReport.journal}"/>
-										<aon:outputText styleClass="aon-italic" value=" #{bundle.aon_date}: " />
-										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.entryDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-									</aon:commandLink>
-								</aon:div>
-						</aon:column>
-						
-						<aon:column breakBefore="#{journalReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.account.code}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.account.description}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.concept}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-50"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.balancingAccount.code}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
-							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
-							<aon:outputText value="#{to.documentNumber}" />
-						</aon:column>
-					</aon:dataTable>
+							<f:facet name="header">
+								<rich:columnGroup>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.account_account}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.aon_description}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.aon_concept}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.account_debit}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.account_credit}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText
+											value="#{bundle.finance_balancing_account}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText
+											value="#{bundle.account_document_number}" />
+									</aon:column>
+								</rich:columnGroup>
+							</f:facet>
+	
+							<aon:column colspan="7" rendered="#{journalReport.firstEntry}" 
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+				
+									<aon:div style="text-align:center; font-size: 1em;">
+										<aon:commandLink id="accountEntry-search" 
+											immediate="#{true}" 
+											styleClass="aon-dataTable-link"
+											title="#{bundle.accounting_lookup_account_entry}"
+											actionListener="#{journalReport.onAccountEntry}"
+											action="accountEntry_form">
+											<aon:outputText styleClass="aon-italic" value="#{bundle.account_account_entry}: " />
+											<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" rendered="#{!journalReport.journal}"/>
+											<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.journal}" rendered="#{journalReport.journal}"/>
+											<aon:outputText styleClass="aon-italic" value=" #{bundle.aon_date}: " />
+											<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.entryDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:commandLink>
+									</aon:div>
+							</aon:column>
+							
+							<aon:column breakBefore="#{journalReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.account.code}" />
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.account.description}" />
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.concept}" />
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-50"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.balancingAccount.code}" />
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
+								<aon:outputText value="#{to.documentNumber}" />
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
 				</aon:div>
-				<aon:dataScroller2 for="journalReportList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

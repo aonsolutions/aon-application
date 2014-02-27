@@ -85,165 +85,169 @@
 					</c:if>
 				</aon:div>
 
-				<aon:dataTable id="statementList" value="#{trialBalance.model}"
-					rows="#{trialBalance.parameters.rowsPerPage}" var="to"
-					rendered="#{trialBalance.model.rowCount > 0}">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{trialBalance}" />
+					<ui:param name="skipSelectButton" value="true" />
+					<ui:param name="rowSelectorToggleOnClick" value="false" />
+				
+					<ui:define name="columns">
 
-					<f:facet name="header">
-						<rich:columnGroup>
-							<aon:column styleClass="aon-dataTable-header" colspan="2">
-								<aon:outputText value="&#160;" />
-							</aon:column>
-							<aon:column styleClass="aon-dataTable-header" colspan="2">
-								<aon:outputText value="Saldos Iniciales" />
-							</aon:column>
-							<aon:column styleClass="aon-dataTable-header" colspan="2">
-								<aon:outputText value="Saldos Periodo" />
-							</aon:column>
-							<aon:column styleClass="aon-dataTable-header" colspan="2">
-								<aon:outputText value="Saldos Finales" />
-							</aon:column>
-						</rich:columnGroup>
-					</f:facet>
-
-					<aon:column styleClass="aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_account}" />
+							<rich:columnGroup>
+								<aon:column styleClass="aon-dataTable-header" colspan="2">
+									<aon:outputText value="&#160;" />
+								</aon:column>
+								<aon:column styleClass="aon-dataTable-header" colspan="2">
+									<aon:outputText value="Saldos Iniciales" />
+								</aon:column>
+								<aon:column styleClass="aon-dataTable-header" colspan="2">
+									<aon:outputText value="Saldos Periodo" />
+								</aon:column>
+								<aon:column styleClass="aon-dataTable-header" colspan="2">
+									<aon:outputText value="Saldos Finales" />
+								</aon:column>
+							</rich:columnGroup>
 						</f:facet>
-						<aon:commandLink id="statement-search" 
-							immediate="#{true}" 
-							style="margin-left: #{(to.level-1)/2}em;" 
-							styleClass="aon-dataTable-link"
-							actionListener="#{trialBalance.onStatement}"
-							title="#{bundle.accounting_statement_module}"
-							action="accountStatement_list">
-							<aon:outputText value="#{to.code}" />
-							<f:setPropertyActionListener 
-								value="trialBalance_list" 
-								target="#{statement.backAction}" />
-						</aon:commandLink>
-					</aon:column>
+	
+						<aon:column styleClass="aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_account}" />
+							</f:facet>
+							<aon:commandLink id="statement-search" 
+								immediate="#{true}" 
+								style="margin-left: #{(to.level-1)/2}em;" 
+								styleClass="aon-dataTable-link"
+								actionListener="#{trialBalance.onStatement}"
+								title="#{bundle.accounting_statement_module}"
+								action="accountStatement_list">
+								<aon:outputText value="#{to.code}" />
+								<f:setPropertyActionListener 
+									value="trialBalance_list" 
+									target="#{statement.backAction}" />
+							</aon:commandLink>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-auto #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.shortDescription}"  style="font-size: 0.9em;"/>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText value="#{bundle.aon_total}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_debit_balance}" />
+							</f:facet>
+							<aon:outputText value="#{to.initialUnpaidBalance}" rendered="#{to.initialUnpaidBalance != 0}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText value="#{trialBalance.summaryCollection.initialUnpaidBalance}"
+										rendered="#{trialBalance.summaryCollection.initialUnpaidBalance != 0}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_credit_balance}" />
+							</f:facet>
+							<aon:outputText value="#{to.initialCreditBalance}" rendered="#{to.initialCreditBalance != 0}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText value="#{trialBalance.summaryCollection.initialCreditBalance}"
+										rendered="#{trialBalance.summaryCollection.initialCreditBalance != 0}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_debit}" />
+							</f:facet>
+							<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText value="#{trialBalance.summaryCollection.debit}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_credit}" />
+							</f:facet>
+							<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText value="#{trialBalance.summaryCollection.credit}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_debit_balance}" />
+							</f:facet>
+							<aon:outputText value="#{to.unpaidBalance}" rendered="#{to.unpaidBalance != 0}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText rendered="#{trialBalance.summaryCollection.unpaidBalance!=0}" 
+										value="#{trialBalance.summaryCollection.unpaidBalance}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.account_credit_balance}" />
+							</f:facet>
+							<aon:outputText value="#{to.creditBalance}" rendered="#{to.creditBalance != 0}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-text-right">
+									<aon:outputText rendered="#{trialBalance.summaryCollection.creditBalance!=0}" 
+										value="#{trialBalance.summaryCollection.creditBalance}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
 
-					<aon:column styleClass="aon-width-auto #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.shortDescription}"  style="font-size: 0.9em;"/>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_debit_balance}" />
-						</f:facet>
-						<aon:outputText value="#{to.initialUnpaidBalance}" rendered="#{to.initialUnpaidBalance != 0}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{trialBalance.summaryCollection.initialUnpaidBalance}"
-									rendered="#{trialBalance.summaryCollection.initialUnpaidBalance != 0}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_credit_balance}" />
-						</f:facet>
-						<aon:outputText value="#{to.initialCreditBalance}" rendered="#{to.initialCreditBalance != 0}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{trialBalance.summaryCollection.initialCreditBalance}"
-									rendered="#{trialBalance.summaryCollection.initialCreditBalance != 0}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_debit}" />
-						</f:facet>
-						<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{trialBalance.summaryCollection.debit}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_credit}" />
-						</f:facet>
-						<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{trialBalance.summaryCollection.credit}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_debit_balance}" />
-						</f:facet>
-						<aon:outputText value="#{to.unpaidBalance}" rendered="#{to.unpaidBalance != 0}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText rendered="#{trialBalance.summaryCollection.unpaidBalance!=0}" 
-									value="#{trialBalance.summaryCollection.unpaidBalance}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100 #{to.lastLevel?'':'aon-row-auxiliary'}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.account_credit_balance}" />
-						</f:facet>
-						<aon:outputText value="#{to.creditBalance}" rendered="#{to.creditBalance != 0}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:div styleClass="aon-text-right">
-								<aon:outputText rendered="#{trialBalance.summaryCollection.creditBalance!=0}" 
-									value="#{trialBalance.summaryCollection.creditBalance}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-				</aon:dataTable>
-				<aon:dataScroller2 for="statementList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

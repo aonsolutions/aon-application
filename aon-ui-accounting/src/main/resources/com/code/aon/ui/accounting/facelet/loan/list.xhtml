@@ -17,28 +17,19 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div rendered="#{loan.model.rowCount > 0}">
-					<aon:dataTable id="loanList" value="#{loan.model}" rows="20"
-						var="to"
-						columnClasses="aon-editDataTable-numberColumn
-							,aon-editDataTable-textColumn
-							,aon-editDataTable-textColumn
-							,aon-editDataTable-textColumn
-							,aon-editDataTable-numberColumn
-							,aon-editDataTable-numberColumn
-							,aon-editDataTable-textColumn">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{loan}" />
+				
+					<ui:define name="columns">
 
-						<aon:rowSelector action="loan_form"
-							actionListener="#{loan.onSelect}" />
-
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
 							<aon:outputText value="#{to.id}" />
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{bundle.aon_description}" />
@@ -46,7 +37,7 @@
 							<aon:outputText value="#{to.description}" />
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{bundle.aon_date}" />
@@ -57,7 +48,7 @@
 							</aon:outputText>
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{bundle.aon_bank}" />
@@ -65,7 +56,7 @@
 							<aon:outputText value="#{to.registryBank.fullName}" />
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{bundle.finance_cashflow_payment_day}" />
@@ -73,7 +64,7 @@
 							<aon:outputText value="#{to.payDay}" />
 						</aon:column>
 						
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{bundle.accounting_fee_amount}" />
@@ -83,16 +74,15 @@
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
-					</aon:dataTable>
-				</aon:div>
-				<aon:dataScroller2 for="loanList" showNote="true" />
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 	</ui:define>

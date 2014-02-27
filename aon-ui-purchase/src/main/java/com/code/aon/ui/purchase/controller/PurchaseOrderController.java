@@ -42,7 +42,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.event.PurchaseSearchListener;
@@ -51,13 +51,12 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
-public class PurchaseOrderController extends BasicTemplateController {
+public class PurchaseOrderController extends DataScrollerState {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderController.class.getName());
 	
 	private PurchaseUtils utils;
 	private OrderParams params;
-	private DataModel model;
 	private DataModel detailModel;
 	private List<ItemGroup> itemGroupList;
 	private List<PurchaseGroup> purchaseGroupList;
@@ -119,12 +118,7 @@ public class PurchaseOrderController extends BasicTemplateController {
 	public void setParams(OrderParams params) {
 		this.params = params;
 	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
+
 	public DataModel getDetailModel() {
 		return detailModel;
 	}

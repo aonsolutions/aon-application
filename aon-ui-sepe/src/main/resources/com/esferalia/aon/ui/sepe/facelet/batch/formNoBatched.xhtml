@@ -63,32 +63,31 @@
 			</aon:panelCollapsible>
 		</a4j:region>
 
-		<aon:dataTable id="listData" value="#{controllerList.model}"
-			var="to" rows="20" rendered="#{controllerList.model.rowCount > 0}" >	
-			
-			<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>
-			
-			<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />		
-
-			<aon:column styleClass="aon-editDataTable-iconColumn">
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:selectBooleanCheckbox id="Included_Row_checked"
-					value="#{controllerList.checkHandler.rowChecked}"
-					disabled="#{rowCheckDisabled}"
-					title="#{rowCheckDisabled?checkboxTooltipText:''}"
-					ajaxSingle="#{true}"
-					valueChangeListener="#{controllerList.checkHandler.rowSelected}" >
-					<a4j:support event="onclick" reRender="listDataDiv, #{checkReRender}" ajaxSingle="#{true}" />
-				</aon:selectBooleanCheckbox>
-			</aon:column>
-			
-			<ui:insert name="listDataColumns" />
-
-		</aon:dataTable>
-		
-		<aon:dataScroller2 for="listData" showNote="true" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{controllerList}" />
+			<ui:param name="skipSelectButton" value="true" />
+			<ui:param name="rowSelectorToggleOnClick" value="false" />
+	
+			<ui:define name="columns">
+				<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />		
+	
+				<aon:column styleClass="aon-editDataTable-iconColumn">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:selectBooleanCheckbox id="Included_Row_checked"
+						value="#{controllerList.checkHandler.rowChecked}"
+						disabled="#{rowCheckDisabled}"
+						title="#{rowCheckDisabled?checkboxTooltipText:''}"
+						ajaxSingle="#{true}"
+						valueChangeListener="#{controllerList.checkHandler.rowSelected}" >
+						<a4j:support event="onclick" reRender="listDataDiv, #{checkReRender}" ajaxSingle="#{true}" />
+					</aon:selectBooleanCheckbox>
+				</aon:column>
+				
+				<ui:insert name="listDataColumns" />
+			</ui:define>
+		</ui:decorate>
 	</aon:div>
 	
 </ui:composition>

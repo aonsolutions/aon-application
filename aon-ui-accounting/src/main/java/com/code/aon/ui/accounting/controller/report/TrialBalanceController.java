@@ -31,17 +31,17 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class TrialBalanceController implements ICollectionProvider,IAccountingBookItem{
+public class TrialBalanceController extends DataScrollerState implements ICollectionProvider,IAccountingBookItem{
 
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TrialBalanceController.class);
 	private SummaryProviderParameters parameters;
 	private SummaryCollection summaryCollection;
-	private DataModel model;
 	private String backAction;
 	private AccountingUtil accountingUtil;
 	
@@ -197,15 +197,12 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		this.summaryCollection = summaryCollection;
 	}
 
+	@Override
 	public DataModel getModel() {
-		if (model == null) {
-			model = new ListDataModel();
+		if (getDirectModel() == null) {
+			setModel(new ListDataModel());
 		}
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
+		return getDirectModel();
 	}
 
 	public void onStatement(ActionEvent event) {
@@ -324,4 +321,10 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		}
 		return true;
 	}
+
+	@Override
+	public int getPageLimit() {
+		return getParameters().getRowsPerPage();
+	}
+	
 }

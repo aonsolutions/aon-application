@@ -30,19 +30,18 @@ import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AddCampaignProjectController extends BasicTemplateController {
+public class AddCampaignProjectController extends DataScrollerState {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AddCampaignProjectController.class);
 	
 	private boolean addPanelVisible;
 	private List<CampaignProject> checked;
 	private List<CampaignProject> dossiers;
-	private DataModel model;
 	private List<SelectItem> availableProjects;
 	
 	private TaskManager taskManager;
@@ -80,13 +79,10 @@ public class AddCampaignProjectController extends BasicTemplateController {
 	}
 
 	public DataModel getModel() {
-		if (model == null) {
-			model = new ListDataModel( getProjects() );
+		if (getDirectModel() == null) {
+			setModel(new ListDataModel(getProjects()));
 		}
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
+		return getDirectModel();
 	}
 
 	public boolean isAddPanelVisible() {
@@ -123,17 +119,17 @@ public class AddCampaignProjectController extends BasicTemplateController {
 		}
 	}
 	public boolean getRowChecked() {
-    	CampaignProject to = (CampaignProject) model.getRowData();
+    	CampaignProject to = (CampaignProject) getDirectModel().getRowData();
         return getChecked().contains(to);
     }
     public void setRowChecked(boolean rowChecked) {
         if (rowChecked) {
-        	CampaignProject to = (CampaignProject) model.getRowData();
+        	CampaignProject to = (CampaignProject) getDirectModel().getRowData();
             if (!getChecked().contains(to)) {
             	getChecked().add(to);
             }
         } else {
-        	Project to = (Project) model.getRowData();
+        	Project to = (Project) getDirectModel().getRowData();
             if (getChecked().contains(to)) {
             	getChecked().remove(to);
             }

@@ -60,167 +60,169 @@
 					</aon:div>
 				</aon:panel>
 
-				<aon:dataTable id="reservationIOData" value="#{reservationIO.model}"
-					rendered="#{reservationIO.model!=null and reservationIO.model.rowCount > 0}" rows="20" var="to">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{reservationIO}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
 
-					<f:facet name="header">
-						<rich:columnGroup>
-							<rich:column colspan="3">
-								<aon:outputText value="&#160;" />
-							</rich:column>
-							
-							<rich:column colspan="4">
-								<aon:outputText value="#{bundle.pms_room}" />
-							</rich:column>
-							
-							<rich:column colspan="7">
-								<aon:outputText value="#{bundle.aon_reservation}" />
-							</rich:column>
-						</rich:columnGroup>
-					</f:facet>
-
-					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
-							<aon:outputText value="S" />
+							<rich:columnGroup>
+								<rich:column colspan="3">
+									<aon:outputText value="&#160;" />
+								</rich:column>
+								
+								<rich:column colspan="4">
+									<aon:outputText value="#{bundle.pms_room}" />
+								</rich:column>
+								
+								<rich:column colspan="7">
+									<aon:outputText value="#{bundle.aon_reservation}" />
+								</rich:column>
+							</rich:columnGroup>
 						</f:facet>
-						<aon:commandLink id="reservationIOData-selectButton" 
-							styleClass="#{(to.invoiced) ? 
-											('aon-icon-predetermine') : 
-											((to.blocked) ? 
-												('aon-icon-lock') : 
+	
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="S" />
+							</f:facet>
+							<aon:commandLink id="reservationIOData-selectButton" 
+								styleClass="#{(to.invoiced) ? 
+												('aon-icon-predetermine') : 
+												((to.blocked) ? 
+													('aon-icon-lock') : 
+													((to.roomNumber == null) ?
+														('aon-icon-point-red') :
+														((to.mealPlan == null) ?
+															('aon-icon-point-yellow') :
+															('aon-icon-point-green'))))}" 
+								value="&#160;&#160;&#160;&#160;"
+								title="#{(to.invoiced) ? 
+											(bundle.pms_invoiced) :
+											((to.blocked) ?
+												(bundle.pms_blocked) :
 												((to.roomNumber == null) ?
-													('aon-icon-point-red') :
+													(bundle.pms_room_assignation_pending_msg) :
 													((to.mealPlan == null) ?
-														('aon-icon-point-yellow') :
-														('aon-icon-point-green'))))}" 
-							value="&#160;&#160;&#160;&#160;"
-							title="#{(to.invoiced) ? 
-										(bundle.pms_invoiced) :
-										((to.blocked) ?
-											(bundle.pms_blocked) :
-											((to.roomNumber == null) ?
-												(bundle.pms_room_assignation_pending_msg) :
-												((to.mealPlan == null) ?
-													(bundle.pms_service_assignation_pending_msg) :
-													(bundle.pms_active))))}" 
-							immediate="true" ajaxSingle="true" requestDelay="100"
-							action="reservation_form"
-							actionListener="#{reservationIO.onSelect}">
-						</aon:commandLink>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-iconColumn">
-						<f:facet name="header">
-							<aon:outputText value="C" />
-						</f:facet>
-						<aon:outputText value="&#160;" 
-							styleClass="aon-icon-commandButton #{(to.checkIn) ? ('aon-icon-check-in') : ((to.checkOut) ? ('aon-icon-check-out') : (''))}"
-							title="#{(to.checkIn) ? (bundle.pms_check_in) : ((to.checkOut) ? (bundle.pms_check_out) : (''))}" /> 
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-iconColumn">
-						<f:facet name="header">
-							<aon:outputText value="O" />
-						</f:facet>
-						<aon:outputText value="&#160;" 
-							styleClass="aon-icon-commandButton #{(to.wrongCheck) ? ('aon-icon-comment-red') : ('aon-icon-comment')}"
-							rendered="#{!empty to.comments}" /> 
-						<rich:toolTip showEvent="onclick" hideEvent="onmouseout">
-							<aon:outputText value="#{to.comments}" /> 
-						</rich:toolTip>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_number_abr}" />
-						</f:facet>
-						<aon:outputText value="#{to.roomNumber}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_type}" />
-						</f:facet>
-						<aon:outputText value="#{to.roomCode}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.report_pax}" />
-						</f:facet>
-						<aon:outputText value="#{to.pax}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.pms_board}" />
-						</f:facet>
-						<aon:outputText value="#{to.mealPlan}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_number_abr}" />
-						</f:facet>
-						<aon:outputText value="#{to.reservation}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.report_checkin}" />
-						</f:facet>
-						<aon:outputText value="#{to.checkInDate}"
-							style="#{reservationIO.checkin and to.checkInDate != to.stayDate ? 'color:red;' : ''}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
+														(bundle.pms_service_assignation_pending_msg) :
+														(bundle.pms_active))))}" 
+								immediate="true" ajaxSingle="true" requestDelay="100"
+								action="reservation_form"
+								actionListener="#{reservationIO.onSelect}">
+							</aon:commandLink>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="C" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="aon-icon-commandButton #{(to.checkIn) ? ('aon-icon-check-in') : ((to.checkOut) ? ('aon-icon-check-out') : (''))}"
+								title="#{(to.checkIn) ? (bundle.pms_check_in) : ((to.checkOut) ? (bundle.pms_check_out) : (''))}" /> 
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="O" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="aon-icon-commandButton #{(to.wrongCheck) ? ('aon-icon-comment-red') : ('aon-icon-comment')}"
+								rendered="#{!empty to.comments}" /> 
+							<rich:toolTip showEvent="onclick" hideEvent="onmouseout">
+								<aon:outputText value="#{to.comments}" /> 
+							</rich:toolTip>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_number_abr}" />
+							</f:facet>
+							<aon:outputText value="#{to.roomNumber}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.roomCode}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.report_pax}" />
+							</f:facet>
+							<aon:outputText value="#{to.pax}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.pms_board}" />
+							</f:facet>
+							<aon:outputText value="#{to.mealPlan}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_number_abr}" />
+							</f:facet>
+							<aon:outputText value="#{to.reservation}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_checkin}" />
+							</f:facet>
+							<aon:outputText value="#{to.checkInDate}"
+								style="#{reservationIO.checkin and to.checkInDate != to.stayDate ? 'color:red;' : ''}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_checkout}" />
+							</f:facet>
+							<aon:outputText value="#{to.checkOutDate}"
+								style="#{!reservationIO.checkin and to.checkOutDate != to.stayDate ? 'color:red;' : ''}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_guest}" />
+							</f:facet>
+							<aon:outputText value="#{to.guest}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_agency}" />
+							</f:facet>
+							<aon:outputText value="#{to.agency}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-110">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_reservation_code}" />
+							</f:facet>
+							<aon:outputText value="#{to.code}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.total}" rendered="#{to.guestHolder}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:outputText value="#{bundle.pms_credit}" rendered="#{to.agencyHolder}" />
+						</aon:column>
 					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.report_checkout}" />
-						</f:facet>
-						<aon:outputText value="#{to.checkOutDate}"
-							style="#{!reservationIO.checkin and to.checkOutDate != to.stayDate ? 'color:red;' : ''}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.report_guest}" />
-						</f:facet>
-						<aon:outputText value="#{to.guest}" />
-					</aon:column>
-					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.report_agency}" />
-						</f:facet>
-						<aon:outputText value="#{to.agency}" />
-					</aon:column>
-					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-110">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.report_reservation_code}" />
-						</f:facet>
-						<aon:outputText value="#{to.code}" />
-					</aon:column>
-					
-					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_amount}" />
-						</f:facet>
-						<aon:outputText value="#{to.total}" rendered="#{to.guestHolder}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputText value="#{bundle.pms_credit}" rendered="#{to.agencyHolder}" />
-					</aon:column>
-
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="reservationIOData" showNote="true" />
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 

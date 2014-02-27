@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import com.code.aon.academy.AcademicSkill;
@@ -24,10 +23,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.academy.model.AlumnMarkHeader;
 import com.code.aon.ui.academy.model.AlumnMarks;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CourseMarkController extends BasicTemplateController {
+public class CourseMarkController extends DataScrollerState {
 
 	private Course course;
 	
@@ -36,8 +35,6 @@ public class CourseMarkController extends BasicTemplateController {
 	private List<ITransferObject> academicSkills;
 	
 	private List<AlumnMarkHeader> alumnMarkHeaders;
-	
-	private DataModel model;
 	
 	private boolean isNew;
 	
@@ -70,7 +67,7 @@ public class CourseMarkController extends BasicTemplateController {
 	}
 
     public void onSelect(ActionEvent event) {
-    	setTo((AlumnMarks) this.model.getRowData());
+    	setTo((AlumnMarks) getDirectModel().getRowData());
     }
 
     public void onAccept(ActionEvent event) throws ManagerBeanException {
@@ -130,13 +127,6 @@ public class CourseMarkController extends BasicTemplateController {
 	 */
 	public void setEvaluation(int evaluation) {
 		this.evaluation = evaluation;
-	}
-
-	/**
-	 * @return the result
-	 */
-	public DataModel getModel() {
-		return model;
 	}
 
 	/**
@@ -201,7 +191,7 @@ public class CourseMarkController extends BasicTemplateController {
         	alumnMarks.setValues(obtainOrderedValues(markMap));
         	alumnMarksList.add(alumnMarks);
     	}
-		this.model = new ListDataModel(alumnMarksList);
+		setModel(new ListDataModel(alumnMarksList));
     }
 
     private Mark[] obtainOrderedValues(Map<Integer, Mark> markMap) {
@@ -231,8 +221,8 @@ public class CourseMarkController extends BasicTemplateController {
 		boolean printAverage = false;
 		Double averageMark = 0.0;
 		Double weightSum = 0.0;
-		if (getModel().isRowAvailable()) {
-			AlumnMarks marks = (AlumnMarks) getModel().getRowData();
+		if (getDirectModel().isRowAvailable()) {
+			AlumnMarks marks = (AlumnMarks) getDirectModel().getRowData();
 			for(int i=0; i<marks.getValues().length; i++) {
 				Mark mark = (Mark)marks.getValues()[i];
 				if (mark.getMark() != null) {

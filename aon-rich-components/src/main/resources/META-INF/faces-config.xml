@@ -113,10 +113,6 @@
         <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
     </component>
     <component>
-        <component-type>com.code.aon.faces.ExtendedDataTable</component-type>
-        <component-class>org.richfaces.component.html.HtmlExtendedDataTable</component-class>
-    </component>
-    <component>
         <component-type>com.code.aon.faces.EditDataTable</component-type>
         <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
     </component>

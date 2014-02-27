@@ -43,143 +43,133 @@
 			</ui:decorate>
 
 			<!--  aon-region-body -->
-			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
-				<aon:dataTable id="vatReportList" value="#{vatReport.model}"
-					rows="20" var="to" rendered="#{vatReport.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn,
-								aon-editDataTable-numberColumn">
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:outputText value="#{to.nature}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.finance_tax_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.date}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_document_number}" />
-						</f:facet>
-						<aon:outputText value="#{to.documentNumber}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_invoice_number}" />
-						</f:facet>
-						<aon:commandLink id="vatReport-invoice"
-							style="#{to.vatAccrualPayment?'color:blue;':''}" 
-							immediate="#{true}"
-							styleClass="aon-dataTable-link"
-							actionListener="#{vatReport.onShowInvoice}"
-							action="#{vatReport.getInvoiceViewer}"
-							title="#{bundle.aon_go}">
-							<aon:outputText value="#{to.reference}" />
-						</aon:commandLink>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.invoiceDate}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.document}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_taxable_base}" />
-						</f:facet>
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{vatReport}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
+			
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="#{to.nature}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
+						</aon:column>
 						
-						<aon:outputText value="#{to.base}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="%" />
-						</f:facet>
-						<aon:outputText value="#{to.percent}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_vat_quota}" />
-						</f:facet>
-						<aon:outputText value="#{to.vatQuota}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_surcharge}" />
-						</f:facet>
-						<aon:outputText value="#{to.surcharge}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_surcharge_quota}" />
-						</f:facet>
-						<aon:outputText value="#{to.surchargeQuota}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_total}" />
-						</f:facet>
-						<aon:outputText value="#{to.total}" style="#{to.vatAccrualPayment?'color:blue;':''}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="vatReportList" showNote="true" />
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.finance_tax_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.date}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_document_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.documentNumber}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_invoice_number}" />
+							</f:facet>
+							<aon:commandLink id="vatReport-invoice"
+								style="#{to.vatAccrualPayment?'color:blue;':''}" 
+								immediate="#{true}"
+								styleClass="aon-dataTable-link"
+								actionListener="#{vatReport.onShowInvoice}"
+								action="#{vatReport.getInvoiceViewer}"
+								title="#{bundle.aon_go}">
+								<aon:outputText value="#{to.reference}" />
+							</aon:commandLink>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoiceDate}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.document}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_taxable_base}" />
+							</f:facet>
+							
+							<aon:outputText value="#{to.base}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="%" />
+							</f:facet>
+							<aon:outputText value="#{to.percent}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_vat_quota}" />
+							</f:facet>
+							<aon:outputText value="#{to.vatQuota}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_surcharge}" />
+							</f:facet>
+							<aon:outputText value="#{to.surcharge}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_surcharge_quota}" />
+							</f:facet>
+							<aon:outputText value="#{to.surchargeQuota}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{to.total}" style="#{to.vatAccrualPayment?'color:blue;':''}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 	</ui:define>

@@ -331,6 +331,10 @@
 		<managed-bean-name>vatReport</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.fiscal.controller.VatReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>vatReport</value>
+		</managed-property>				
 	</managed-bean>
 
 	<!-- **************** VAT TAX  *************** -->

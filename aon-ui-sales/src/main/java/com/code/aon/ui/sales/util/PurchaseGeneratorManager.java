@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +40,7 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -51,13 +50,12 @@ import com.esferalia.aon.entity.IEntityAlias;
  * @author Esferalia
  *
  */
-public class PurchaseGeneratorManager extends BasicTemplateController {
+public class PurchaseGeneratorManager extends DataScrollerState {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
 	private boolean customerShippingAddress;
 	private List<TempPurchaseDetail> tempPurchaseDetail;
-	private DataModel model;
 	private Sales sales;
 	private TempPurchaseDetail to;
 	private String massiveDiscountExpr;
@@ -91,8 +89,8 @@ public class PurchaseGeneratorManager extends BasicTemplateController {
 	}
 
 	public void onSelect(ActionEvent event) {
-		if ( this.model.isRowAvailable() ) {
-			setTo((TempPurchaseDetail) this.model.getRowData());
+		if ( getDirectModel().isRowAvailable() ) {
+			setTo((TempPurchaseDetail) getDirectModel().getRowData());
 			if(getTo().isReadOnly()){
 				onCancel(event);
 			}
@@ -134,14 +132,6 @@ public class PurchaseGeneratorManager extends BasicTemplateController {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
 		return bean.getList(criteria);
-	}
-	
-	public DataModel getModel() {
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 
 	public List<TempPurchaseDetail> getTempPurchaseDetail() {

@@ -47,8 +47,11 @@
 						value="#{(allotmentBooking.agencyGroup!=null and allotmentBooking.agencyGroup.id!=null) ? (allotmentBooking.agencyGroup.description) : ('-')}" />
 				</aon:panel>
 
-				<aon:dataTable id="allotmentBookingData" value="#{allotmentBooking.model}" 
-					rendered="#{allotmentBooking.model!=null and allotmentBooking.model.rowCount > 0}" rows="20" var="to">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{allotmentBooking}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
 
 						<f:facet name="header">
 							<rich:columnGroup>
@@ -177,10 +180,9 @@
 									style="#{(to.roomFreePotential >= 0 or to.agencyBookingMap[agency].roomAvailable == 0) ? ('') : ('color:red;')}" />
 							</aon:column>				
 						</c:forEach>
-
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="allotmentBookingData" showNote="true" />
+						
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 

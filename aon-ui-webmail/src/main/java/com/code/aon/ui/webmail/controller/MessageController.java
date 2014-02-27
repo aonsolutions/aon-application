@@ -850,13 +850,13 @@ public class MessageController implements IWebMailConstants {
 		return index > 0;
 	}
 
-	public boolean isNextMessage(){
+	public boolean isNextMessage() throws ManagerBeanException{
 		IMessageContainer mc = getMessageContainer();
 		int index = mc.getCurrentIndex();
 		return (index+1) < mc.getModel().getRowCount();
 	}
 	
-	private AonMessage getMessage( int offset ) {
+	private AonMessage getMessage( int offset ) throws ManagerBeanException {
 		IMessageContainer mc = getMessageContainer();
 		int index = mc.getCurrentIndex()+offset;
 		mc.getModel().setRowIndex(index);
@@ -864,11 +864,11 @@ public class MessageController implements IWebMailConstants {
 		return (AonMessage) mc.getModel().getRowData();		
 	}
 	
-	public void onPreviousMessage(ActionEvent event) {
+	public void onPreviousMessage(ActionEvent event) throws ManagerBeanException {
 		setMessage(getMessage(-1));
 	}
 
-	public void onNextMessage(ActionEvent event) {
+	public void onNextMessage(ActionEvent event) throws ManagerBeanException {
 		setMessage(getMessage(1));
 	}
 

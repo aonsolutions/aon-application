@@ -12,7 +12,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.mail.Address;
@@ -67,7 +66,7 @@ import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -84,7 +83,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CommunicationCenterController extends BasicTemplateController implements IMarketingConstants {
+public class CommunicationCenterController extends DataScrollerState implements IMarketingConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationCenterController.class.getName());
 	
@@ -139,8 +138,6 @@ public class CommunicationCenterController extends BasicTemplateController imple
 	private boolean newsletterSelected;
 	
 	private int pendingTargets;
-	
-	private ListDataModel model;
 	
 	private User user;
 	
@@ -720,7 +717,7 @@ public class CommunicationCenterController extends BasicTemplateController imple
 
 	@SuppressWarnings("unchecked")
 	public void onDownloadMailing(ActionEvent event) throws IOException {
-        List<MailData> data = (List<MailData>) this.model.getWrappedData();
+        List<MailData> data = (List<MailData>) getDirectModel().getWrappedData();
         MailingManager.generateMailing(data);
 	}		
 	
@@ -954,15 +951,6 @@ public class CommunicationCenterController extends BasicTemplateController imple
 			};			
 		}
 		return this.projectCommercialListener;
-	}
-
-	@Override
-	public DataModel getModel() throws ManagerBeanException {
-		return model;
-	}
-
-	public void setModel(ListDataModel model) {
-		this.model = model;
 	}
 	
 }

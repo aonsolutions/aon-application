@@ -8,14 +8,12 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IContact;
 
-public class MultiSelectionEmailBean extends BasicTemplateController {
+public class MultiSelectionEmailBean extends DataScrollerState {
 
-	private ListDataModel model;
-	
 	private List<SelectionEmail> emails; 
 
 	public MultiSelectionEmailBean() {
@@ -23,7 +21,6 @@ public class MultiSelectionEmailBean extends BasicTemplateController {
 	}
 
 	public void init( boolean loadContacts ) {
-		setPage(1);
 		if ( loadContacts ) {
 	        emails = new ArrayList<SelectionEmail>();
     		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
@@ -36,28 +33,24 @@ public class MultiSelectionEmailBean extends BasicTemplateController {
 		            emails.add(se);
 	            }					
 			}
-	    	this.model = new ListDataModel( emails );
+	    	setModel(new ListDataModel(emails));
 		} else {
 			for( SelectionEmail email : emails ) {
 				email.setSelected( false );
 			}
 		}
     }
-    
-	public ListDataModel getModel() {
-		return model;
-	}
 	
 	public void onSelect(ActionEvent event) {
-		if ( model.isRowAvailable() ) {
-			SelectionEmail selectionEmail = (SelectionEmail) model.getRowData();
+		if ( getDirectModel().isRowAvailable() ) {
+			SelectionEmail selectionEmail = (SelectionEmail) getDirectModel().getRowData();
 			selectionEmail.setSelected(! selectionEmail.isSelected() );
 		}
 	}	
 
 	private void setSelectAllPageContacts( boolean value ) {
 		int start = (getPage() - 1) * getPageLimit();
-		int last = Math.min(model.getRowCount(), getPageLimit());
+		int last = Math.min(getDirectModel().getRowCount(), getPageLimit());
 		for( int i = 0; i < last; i++ ) {
 			this.emails.get(i+start).setSelected(value);
 		}

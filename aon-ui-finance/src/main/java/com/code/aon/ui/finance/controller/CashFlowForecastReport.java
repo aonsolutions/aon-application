@@ -38,13 +38,13 @@ import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CashFlowForecastReport extends BasicTemplateController {
+public class CashFlowForecastReport extends DataScrollerState {
 	
 	private static final String NO_BANK = "SIN BANCO ASIGNADO";
 	private Date fromDate;
@@ -55,7 +55,6 @@ public class CashFlowForecastReport extends BasicTemplateController {
 	private List<CashFlowBank> bankList;
 	private List<CashFlowBank> banks;
 	private List<CashFlowBank> disabledBanks;
-	private DataModel model;
 	private double total;
 	private Integer bankToEnable;
 	
@@ -111,13 +110,6 @@ public class CashFlowForecastReport extends BasicTemplateController {
 	}
 	public void setBankList(List<CashFlowBank> bankList) {
 		this.bankList = bankList;
-	}
-	
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 	
 	public List<CashFlowBank> getBanks() {
@@ -259,9 +251,9 @@ public class CashFlowForecastReport extends BasicTemplateController {
 	
 	@SuppressWarnings("unchecked")
 	public void onSimulate(ActionEvent event) {
-		CashFlowReport cfr = (CashFlowReport) getModel().getRowData();
+		CashFlowReport cfr = (CashFlowReport) getDirectModel().getRowData();
 		cfr.setDisabled(!cfr.isDisabled());
-		List<CashFlowReport> list = (List<CashFlowReport>) getModel().getWrappedData();
+		List<CashFlowReport> list = (List<CashFlowReport>) getDirectModel().getWrappedData();
 		CashFlowReport initial = list.get(0);
 		initializeBalances(initial);
 		calculateBalance(list);
@@ -269,7 +261,7 @@ public class CashFlowForecastReport extends BasicTemplateController {
 	
 	public void onShow(ActionEvent event) {
 		try {
-			CashFlowReport cfr = (CashFlowReport) getModel().getRowData();
+			CashFlowReport cfr = (CashFlowReport) getDirectModel().getRowData();
 			if  ("Pr.".equals(cfr.getType())) {
 				CashFlowForecastController cffc = (CashFlowForecastController) FormUtil.getController(IFinanceConstants.CASH_FLOW_FORECAST_CONTROLLER_NAME);
 				Criteria criteria = new Criteria();
@@ -291,7 +283,7 @@ public class CashFlowForecastReport extends BasicTemplateController {
 	}
 	
 	public String showAction() {
-		CashFlowReport cfr = (CashFlowReport) getModel().getRowData();
+		CashFlowReport cfr = (CashFlowReport) getDirectModel().getRowData();
 		if  ("Pr.".equals(cfr.getType())) {
 			return "cashFlowForecast_form";
 		}
@@ -309,7 +301,7 @@ public class CashFlowForecastReport extends BasicTemplateController {
 				for (CashFlowBank bank : getBankList()) {
 					if (bank.getId().intValue() == id) {
 						bank.setEnabled(false);
-						List<CashFlowReport> list = (List<CashFlowReport>) getModel().getWrappedData();
+						List<CashFlowReport> list = (List<CashFlowReport>) getDirectModel().getWrappedData();
 						CashFlowReport initial = list.get(0);
 						initializeBalances(initial);
 						initializeData();
@@ -331,7 +323,7 @@ public class CashFlowForecastReport extends BasicTemplateController {
 			for (CashFlowBank bank : getBankList()) {
 				if (bank.getId().equals(getBankToEnable())) {
 					bank.setEnabled(true);
-					List<CashFlowReport> list = (List<CashFlowReport>) getModel().getWrappedData();
+					List<CashFlowReport> list = (List<CashFlowReport>) getDirectModel().getWrappedData();
 					CashFlowReport initial = list.get(0);
 					initializeBalances(initial);
 					initializeData();
@@ -598,7 +590,7 @@ public class CashFlowForecastReport extends BasicTemplateController {
 
 	private List<CashFlowReport> getStrippedCollection() {
 		List<CashFlowReport> list = new LinkedList<CashFlowReport>();
-		List<?> model = (List<?>) getModel().getWrappedData();
+		List<?> model = (List<?>) getDirectModel().getWrappedData();
 		for (Object o: model) {
 			CashFlowReport r = (CashFlowReport) o;
 			if (!r.isDisabled()) {

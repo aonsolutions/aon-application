@@ -24,36 +24,41 @@
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
-				<aon:dataTable id="accountCheckList"
-					value="#{accountCheck.accountCheckModel}" var="to"
-					style="text-align: left;" rows="20">
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{accountCheck}" />
+					<ui:param name="dataTableStyle" value="text-align: left;" />
+					<ui:param name="skipSelectButton" value="true" />
+					<ui:param name="rowSelectorToggleOnClick" value="false" />
+					
+					<ui:define name="columns">
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.accounting_check_error}" />
-						</f:facet>
-						<aon:outputText value="#{to.message}" />
-					</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.accounting_check_error}" />
+							</f:facet>
+							<aon:outputText value="#{to.message}" />
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.accounting_check_action}" />
+							</f:facet>
+							<aon:div rendered="#{to.fixAvailable}">
+								<aon:commandLink id="accountCheckFix" 
+									rendered="#{!to.fixed}" 
+									actionListener="#{accountCheck.onFix}"
+									action="#{accountCheck.fixAction}"
+									styleClass="aon-dataTable-link">
+									<aon:outputText value="#{to.fixActionLabel}" style="color:red;"/>
+								</aon:commandLink>
+								<aon:outputText rendered="#{to.fixed}" value="#{bundle.accounting_check_fixed}"  
+									styleClass="aon-icon-checked" style="color:green;padding-left: 18px; padding-top: 5px;"/>	
+							</aon:div>
+						</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.accounting_check_action}" />
-						</f:facet>
-						<aon:div rendered="#{to.fixAvailable}">
-							<aon:commandLink id="accountCheckFix" 
-								rendered="#{!to.fixed}" 
-								actionListener="#{accountCheck.onFix}"
-								action="#{accountCheck.fixAction}"
-								styleClass="aon-dataTable-link">
-								<aon:outputText value="#{to.fixActionLabel}" style="color:red;"/>
-							</aon:commandLink>
-							<aon:outputText rendered="#{to.fixed}" value="#{bundle.accounting_check_fixed}"  
-								styleClass="aon-icon-checked" style="color:green;padding-left: 18px; padding-top: 5px;"/>	
-						</aon:div>
-					</aon:column>
-				</aon:dataTable>
-				<aon:dataScroller2 for="accountCheckList" showNote="true" />
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 	</ui:define>

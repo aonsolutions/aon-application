@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -42,13 +41,14 @@ import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class AllotmentBookingController implements ISQLConstants {
+public class AllotmentBookingController extends DataScrollerState implements ISQLConstants {
 
 	private Hotel hotel;
 	private Customer agency;
@@ -58,7 +58,6 @@ public class AllotmentBookingController implements ISQLConstants {
 	private String[] agencies;
 
 	private List<DayBooking> bookingList;
-	private DataModel model;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -107,13 +106,6 @@ public class AllotmentBookingController implements ISQLConstants {
 	}
 	public void setBookingList(List<DayBooking> bookingList) {
 		this.bookingList = bookingList;
-	}
-
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 
 	public void onInit(ActionEvent event) {

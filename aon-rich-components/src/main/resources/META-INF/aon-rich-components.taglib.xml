@@ -338,17 +338,6 @@
 		</component>
 	</tag>
 	<tag>
-		<tag-name>extendedDataTable </tag-name>
-		<component>
-			<component-type>
-				com.code.aon.faces.ExtendedDataTable 
-			</component-type>
-			<handler-class>
-				com.code.aon.faces.component.richfaces.dataTable.DataTableHandler
-			</handler-class>
-		</component>
-	</tag>
-	<tag>
 		<tag-name>editDataTable</tag-name>
 		<component>
 			<component-type>
@@ -386,12 +375,6 @@
 		<tag-name>dataScroller</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler
-		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>dataScroller2</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.richfaces.dataScroller2.DataScroller2Handler
 		</handler-class>
 	</tag>
 	<tag>

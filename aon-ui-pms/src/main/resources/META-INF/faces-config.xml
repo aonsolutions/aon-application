@@ -1057,6 +1057,10 @@
 		<managed-bean-name>reservationIO</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationInOutController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>reservationIO</value>
+		</managed-property>				
 	</managed-bean>
 	
 	<!-- ************* GEVERNESS - WORK PLANNING ************ -->
@@ -1064,6 +1068,10 @@
 		<managed-bean-name>workPlanning</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.WorkPlanningController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>workPlanning</value>
+		</managed-property>						
 	</managed-bean>		
 	
 	<!-- ************* BOARD LIST *************************** -->
@@ -1071,6 +1079,10 @@
 		<managed-bean-name>boardList</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BoardListController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>boardList</value>
+		</managed-property>						
 	</managed-bean>		
 	
 	<!-- ************* BOARD BOOKING ************************ -->
@@ -1078,13 +1090,21 @@
 		<managed-bean-name>boardBooking</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BoardBookingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>boardBooking</value>
+		</managed-property>						
 	</managed-bean>
 	
 	<!-- ************* ROOM BOOKING ************************* -->
 	<managed-bean>
 		<managed-bean-name>roomBooking</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomBookingController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>				
+		<managed-bean-scope>session</managed-bean-scope>		
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>roomBooking</value>
+		</managed-property>						
 	</managed-bean>
 	
 	<!-- ************* ALLOTMENT BOOKING ******************** -->
@@ -1092,6 +1112,10 @@
 		<managed-bean-name>allotmentBooking</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AllotmentBookingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>allotmentBooking</value>
+		</managed-property>						
 	</managed-bean>
 	
 	<!-- ************* EMPTY ROOM *************************** -->
@@ -1099,6 +1123,10 @@
 		<managed-bean-name>emptyRoom</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.EmptyRoomController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>emptyRoom</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<!-- ************* HOTEL GUESTS ************************* -->
@@ -1106,6 +1134,10 @@
 		<managed-bean-name>hotelGuest</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.HotelGuestController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>hotelGuest</value>
+		</managed-property>		
 	</managed-bean>		
 	
 	<!-- ************* DIVERT ******************************* -->

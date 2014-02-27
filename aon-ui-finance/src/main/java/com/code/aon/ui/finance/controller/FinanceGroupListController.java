@@ -12,12 +12,12 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
+import com.code.aon.ui.form.DataScrollerState;
 
-public class FinanceGroupListController {
+public class FinanceGroupListController extends DataScrollerState {
 
 	private ArrayList<Finance> checks = new ArrayList<Finance>();
 	private List<Finance> groupList;
-	private DataModel model;
 	
 	public List<Finance> getGroupList() {
 		if(groupList==null){
@@ -31,14 +31,10 @@ public class FinanceGroupListController {
 	}
 
 	public DataModel getModel() {
-		if(model==null){
-			model = new ListDataModel(getGroupList());
+		if (getDirectModel()==null) {
+			setModel(new ListDataModel(getGroupList()));
 		}
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
+		return getDirectModel();
 	}
 
 	public void init(){
@@ -54,18 +50,18 @@ public class FinanceGroupListController {
 	}
 
 	public boolean getRowChecked() {
-		Finance to = (Finance) model.getRowData();
+		Finance to = (Finance) getDirectModel().getRowData();
 		return checks.contains(to);
 	}
 
 	public void setRowChecked(boolean rowChecked) {
 		if (rowChecked) {
-			Finance to = (Finance) model.getRowData();
+			Finance to = (Finance) getDirectModel().getRowData();
 			if (!checks.contains(to)) {
 				checks.add(to);
 			}
 		} else {
-			Finance to = (Finance) model.getRowData();
+			Finance to = (Finance) getDirectModel().getRowData();
 			if (checks.contains(to)) {
 				checks.remove(to);
 			}

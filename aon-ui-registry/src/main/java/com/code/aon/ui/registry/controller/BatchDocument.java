@@ -31,32 +31,26 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
-public class BatchDocument extends BasicTemplateController {
+public class BatchDocument extends DataScrollerState {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BatchDocument.class);
 	
 	private Set<IAttachment> documents;
-	
-	private DataModel model;
 	
 	/** A list that contains the selected objects of the model. */
 	private Set<IAttachment> checkList;
 
 	public BatchDocument() {
 		this.documents = new HashSet<IAttachment>();
-		this.model = new ListDataModel();
+		setModel(new ListDataModel());
 		this.checkList = new HashSet<IAttachment>();
-	}
-
-	public DataModel getModel() {
-		return model;
 	}
 	
     private File getZipFile() throws IOException {
@@ -100,7 +94,7 @@ public class BatchDocument extends BasicTemplateController {
 	
 	public void onClear(ActionEvent event) {
 		this.documents.clear();
-		this.model = new ListDataModel();
+		setModel(new ListDataModel());
 	}
 	
 	public boolean isInBatch( IAttachment attachment ) {
@@ -108,7 +102,7 @@ public class BatchDocument extends BasicTemplateController {
 	}
 	
 	private void updateModel() {
-		this.model = new ArrayDataModel(this.documents.toArray());		
+		setModel(new ArrayDataModel(this.documents.toArray()));		
 	}
 
 	public void addToBatch(IAttachment attachment) {
@@ -124,8 +118,8 @@ public class BatchDocument extends BasicTemplateController {
 	}
 
 	public void onRemoveFromtBatch(ActionEvent event) {
-		if ( model.isRowAvailable() ) {
-			IAttachment ed = (IAttachment) this.model.getRowData();
+		if ( getDirectModel().isRowAvailable() ) {
+			IAttachment ed = (IAttachment) getDirectModel().getRowData();
 			this.documents.remove(ed);
 			updateModel();		
 		}

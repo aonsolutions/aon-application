@@ -7,7 +7,7 @@
 
 	<aon:dataTable id="#{dataTableId}" var="to" sortMode="#{sortMode}"
 		value="#{dataModel}" rows="#{rows}" rendered="#{showDataTable}"
-		columnClasses=", #{columnClasses}">
+		columnClasses=", #{columnClasses}" sytle="#{dataTableStyle}">
 
 		<aon:rowSelector id="#{dataTableId}-select" reRender="#{rowSelectorReRender}"
 			actionListener="#{rowSelectorActionListener}" action="#{rowSelectorAction}"

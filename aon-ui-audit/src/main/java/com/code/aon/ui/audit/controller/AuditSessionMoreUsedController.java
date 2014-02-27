@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import com.code.aon.audit.ActionEntry;
@@ -17,15 +16,13 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.BasicTemplateController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AuditSessionMoreUsedController extends BasicTemplateController {
+public class AuditSessionMoreUsedController extends DataScrollerState {
 
-	private DataModel model;
-	
 	@SuppressWarnings("unchecked")
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
 		IController sessionController = FormUtil.getController(IAuditConstants.SESSION_CONTROLLER_NAME);
@@ -59,16 +56,6 @@ public class AuditSessionMoreUsedController extends BasicTemplateController {
 		}
 		setModel(new ListDataModel( list ));
 	}
-
-	@Override
-	public DataModel getModel() {
-		return model;
-	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
-
 
 	public String getCurrentDescription() throws ManagerBeanException {
 		String description = null;

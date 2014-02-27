@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -28,12 +27,13 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
-public class BoardBookingController implements ICollectionProvider {
+public class BoardBookingController extends DataScrollerState implements ICollectionProvider {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoardBookingController.class.getName());
 	
@@ -42,7 +42,6 @@ public class BoardBookingController implements ICollectionProvider {
 	private Date toDate;
 	
 	private List<Booking> bookingList;
-	private DataModel model;
 	
 	private List<ITransferObject> boardItems;
 	
@@ -78,12 +77,6 @@ public class BoardBookingController implements ICollectionProvider {
 	}
 	public void setBookingList(List<Booking> bookingList) {
 		this.bookingList = bookingList;
-	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 	private Integer getBoardCategoryId() {
 		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4

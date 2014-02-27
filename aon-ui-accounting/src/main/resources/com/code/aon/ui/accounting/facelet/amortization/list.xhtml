@@ -33,62 +33,60 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="amortizationDataList"
-					value="#{amortization.model}" rows="20" var="to"
-					rendered="#{amortization.model.rowCount > 0}">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{amortization}" />
 
-					<aon:rowSelector action="amortization_form"
-						actionListener="#{amortization.onSelect}" />
+					<ui:define name="columns">
 
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" alias="Amortization.initialDate">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date_from}" />
-						</f:facet>
-						<aon:outputText value="#{to.initialDate}">
-							<f:convertDateTime type="date"
-								pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" alias="Amortization.description">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-300" alias="Amortization.fixedAssetAccount.description">
-						<f:facet name="header">
-							<aon:outputLabel for="fixedAccountId" value="#{bundle.accounting_fixed_asset_account}" />
-						</f:facet>
-						<aon:outputText value="#{to.fixedAssetAccount.fullDescription}">
-							<aon:abbreviateConverter maxWidth="35" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" alias="Amortization.deadline">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date_to}" />
-						</f:facet>
-
-						<aon:outputText value="#{to.deadline}">
-							<f:convertDateTime type="date"
-								pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" alias="Amortization.comments">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_comment}" />
-						</f:facet>
-						<aon:outputText value="#{to.comments}" >
-							<aon:abbreviateConverter maxWidth="20" />
-						</aon:outputText>
-					</aon:column>
-				</aon:dataTable>
-				<aon:dataScroller2 for="amortizationDataList" showNote="true" />
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" alias="Amortization.initialDate">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date_from}" />
+							</f:facet>
+							<aon:outputText value="#{to.initialDate}">
+								<f:convertDateTime type="date"
+									pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" alias="Amortization.description">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-300" alias="Amortization.fixedAssetAccount.description">
+							<f:facet name="header">
+								<aon:outputLabel for="fixedAccountId" value="#{bundle.accounting_fixed_asset_account}" />
+							</f:facet>
+							<aon:outputText value="#{to.fixedAssetAccount.fullDescription}">
+								<aon:abbreviateConverter maxWidth="35" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80" alias="Amortization.deadline">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date_to}" />
+							</f:facet>
+	
+							<aon:outputText value="#{to.deadline}">
+								<f:convertDateTime type="date"
+									pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" alias="Amortization.comments">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_comment}" />
+							</f:facet>
+							<aon:outputText value="#{to.comments}" >
+								<aon:abbreviateConverter maxWidth="20" />
+							</aon:outputText>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 	</ui:define>

@@ -12,7 +12,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
@@ -27,6 +26,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
@@ -34,7 +34,7 @@ import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class RoomBookingController implements ICollectionProvider, ISQLConstants {
+public class RoomBookingController extends DataScrollerState implements ICollectionProvider, ISQLConstants {
 
 	private Hotel hotel;
 	private Item item;
@@ -43,7 +43,6 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	private Date toDate;
 
 	private List<DayBooking> bookingList;
-	private DataModel model;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -85,13 +84,6 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	}
 	public void setBookingList(List<DayBooking> bookingList) {
 		this.bookingList = bookingList;
-	}
-
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
 	}
 
 	public void onInit(ActionEvent event) {

@@ -646,6 +646,10 @@
 		<managed-bean-name>trialBalance</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>trialBalance</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ********** OFFICIAL TRIAL BALANCE REPORT CONTROLLER ********* -->
@@ -653,6 +657,10 @@
 		<managed-bean-name>officialTrialBalance</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>officialTrialBalance</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- **************** STATEMENT ACCOUNT ************************** -->
@@ -757,6 +765,10 @@
 		<managed-bean-name>accountCheck</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.check.CheckController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountCheck</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- **************** REPORTS LAUNCHER ************************** -->
