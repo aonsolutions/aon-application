@@ -1260,7 +1260,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		
 		String quoteExpr = DefaultMysqlDB.format ( quote, script );
 
-		if ( quoteExpr.length() > 128 ) {
+		if ( quoteExpr != null && quoteExpr.length() > 128 ) {
 			MysqlDB.info("percep{}{}: Quote expression too long {}", percep.getNumero(), percep.getCdg(),quoteExpr );
 			quoteExpr = quoteExpr.replaceAll(" ", "");
 			quoteExpr = quoteExpr.replaceAll(IPREM_BASE.getName(), IPREM_BASE_SHORT.getName());
