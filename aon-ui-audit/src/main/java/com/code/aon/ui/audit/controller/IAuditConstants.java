@@ -8,7 +8,6 @@ public interface IAuditConstants {
 	String ACTION_DENIED_CONTROLLER_NAME = "actionDenied";	
 	String AUDIT_CONTROLLER_NAME = "audit";
 	String ACTION_MORE_USED_CONTROLLER_NAME = "actionMoreUsed";
-	String SESSION_CONTROLLER_NAME = "auditSession";
 
 	// Properties
 	String MODULES_ENABLED = "modulesEnabled";

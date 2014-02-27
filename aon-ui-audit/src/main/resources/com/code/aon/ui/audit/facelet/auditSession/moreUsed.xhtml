@@ -24,7 +24,9 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{sessionMoreUsed}" />
+					<ui:param name="dataTableId" value="#{auditSession.beanName}Data" />
+					<ui:param name="dataModel" value="#{auditSession.moreUsedModel}" />
+					<ui:param name="rows" value="#{auditSession.moreUsedPageLimit}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />					
 					<ui:define name="columns">
@@ -40,7 +42,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.audit_option}" />
 							</f:facet>
-							<aon:outputText value="#{sessionMoreUsed.currentDescription}"/>
+							<aon:outputText value="#{auditSession.currentDescription}"/>
 						</aon:column>
 	
 					</ui:define>

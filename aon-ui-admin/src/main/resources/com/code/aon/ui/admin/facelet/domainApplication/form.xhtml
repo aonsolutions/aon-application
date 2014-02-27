@@ -69,6 +69,7 @@
 							<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
 								<ui:param name="controller" value="#{domainApplicationProfile}" />
 								<ui:param name="skipDomainColumn" value="#{adminDomain.parentDomain == null}" />
+								<ui:param name="rows" value="10" />	
 							</ui:include>
 								
 	                    </aon:panelTab>

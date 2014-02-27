@@ -1913,7 +1913,6 @@ color:#000;
 	}
 .aon-dataScroller-text{	
 	text-align:left;
-	font-size:1em;
 	padding:0 1em 0 0;
 	}
 .aon-dataScroller-text table, aon-dataScroller-text table td{	
@@ -1927,7 +1926,6 @@ color:#000;
 	}
 .aon-dataScroller-buttons td{
 	padding:2px 0;
-	width: 16px;
 	}
 .aon-dataScroller-button{
 	border:0;
@@ -1975,6 +1973,7 @@ color:#000;
 	
 .aon-dataScroller-selected{
 		font-weight:bold;
+		font-size:1.4em;
 		color:#000;
 	}	
 .aon-dataScroller-inactive{

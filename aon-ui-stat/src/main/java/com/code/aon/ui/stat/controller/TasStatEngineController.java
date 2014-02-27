@@ -15,11 +15,10 @@ import com.code.aon.stat.tas.TasStatDetail;
 import com.code.aon.stat.tas.TasStatHeader;
 import com.code.aon.tas.TasItem;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class TasStatEngineController extends BasicTemplateController {
+public class TasStatEngineController {
 
 	private TasStatParams params;
 	private DataModel headerModel;
@@ -166,11 +165,6 @@ public class TasStatEngineController extends BasicTemplateController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		} 
-	}
-
-	@Override
-	public DataModel getModel() throws ManagerBeanException {
-		return getHeaderModel();
 	}
 	
 }

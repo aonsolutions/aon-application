@@ -61,7 +61,7 @@ import com.code.aon.ui.util.AonUtil;
  * @author Consulting & Development. Iñaki Ayerbe - 06-abr-2005
  */
 public class BasicController extends AbstractPojoController implements IController,
-		ICollectionProvider, ITemplateController {
+		ICollectionProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
 	
@@ -79,8 +79,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	/** Represent a manager of listeners */
 	private ControllerListenerSupport controllerListenerSupport;
 
-	private int page;
-	
 	private Integer pageLimit;
 
 	private int selectedIndex;
@@ -860,7 +858,6 @@ public class BasicController extends AbstractPojoController implements IControll
 			}
 			((ExtendedPageDataModel) model).update( 0, getPageLimit() ); 
 			selectedIndex = -1;
-			setPage(0);
 			LOGGER.debug("initializeModel RowCount {}",model.getRowCount());
 			controllerListenerSupport.fireAfterModelInitialized(evt);
 		} catch (ControllerListenerException e) {
@@ -1488,16 +1485,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public boolean isEditableTo() {
 		return isNew() || isCurrentDomainTo(getTo());
-	}
-
-	@Override
-	public int getPage() {
-		return page;
-	}
-
-	@Override
-	public void setPage(int page) {
-		this.page = page;
 	}
 	
 }

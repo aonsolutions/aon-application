@@ -1,13 +1,14 @@
 package com.code.aon.faces.component.richfaces.lookup.button.popup;
 
-import static com.code.aon.faces.controller.IRichConstants.LOOKUP_MODAL_PANEL_SET;
+import static com.code.aon.faces.controller.IRichConstants.LOOKUP_MODAL_PANEL_MAP;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -16,12 +17,12 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.util.FaceletUtil;
-import com.code.aon.faces.controller.RichLookupBean;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagConfig;
 import com.sun.facelets.tag.TagHandler;
+import com.sun.facelets.tag.jsf.ComponentSupport;
 
 /**
  * The Class TabbedPaneComponentHandler.
@@ -55,20 +56,19 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupConst
 		lookup = getRequiredAttribute(LOOKUP);
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean isInsertTemplate(FaceletContext ctx, UIComponent parent) {
 		boolean insert = true;
-		RichLookupBean bean = (RichLookupBean) lookup.getObject(ctx, RichLookupBean.class);
-		String lookupName = bean.getBeanName();
-		Set<String> set = (Set<String>) FaceletUtil.getRequestValue(ctx, LOOKUP_MODAL_PANEL_SET); 
-		if (set == null) {
-			set = new HashSet<String>();
-			FaceletUtil.putRequestValue(ctx, LOOKUP_MODAL_PANEL_SET, set);
+		UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
+		Map map = (Map) root.getAttributes().get(LOOKUP_MODAL_PANEL_MAP);
+		if (map == null) {
+			map = new HashMap();
+			root.getAttributes().put(LOOKUP_MODAL_PANEL_MAP, map);
 		} else {
-			insert = ! set.contains(lookupName);
+			String value = (String) map.get(lookup);
+			insert = (value == null) || (value.equals(this.tagId));
 		}
 		if (insert) {
-			set.add(lookupName);
+			map.put(lookup, this.tagId);
 		}
 		return insert;
 	}

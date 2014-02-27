@@ -80,8 +80,7 @@
 	<ui:insert name="additionalDataTableContent"/>
 
 	<c:if test="#{showDataScroller}">
-		<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
-			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
+		<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();" />
 	</c:if>	
 
 </ui:composition>

@@ -16,7 +16,7 @@ public interface IRichConstants {
 	
 	String LABELS_MAP = ATTRIBUTE_PREFFIX + "OutputLabel.map";
 	
-	String LOOKUP_MODAL_PANEL_SET = ATTRIBUTE_PREFFIX + "LookupButtonPopup.set";
+	String LOOKUP_MODAL_PANEL_MAP = ATTRIBUTE_PREFFIX + "LookupButtonPopup.map";
 	
 	String SELECTED_MENU_ATTRIBUTE = ATTRIBUTE_PREFFIX + "selectedMenu";
 	

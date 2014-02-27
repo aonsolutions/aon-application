@@ -72,10 +72,4 @@ public interface IRichFacesTags {
 	
 	String FREQUENCY = "frequency";
 	
-   	String HIDE_PAGE_SIZE_SELECTOR = "hidePageSizeSelector";
-   	
-	String ROWS = "rows";
-	
-   	String PAGE = "page";
-	
 }

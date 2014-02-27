@@ -8,8 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:lookupSuggestionBox
-		suggestAlias="#{aon_lst_suggestAlias}" matchBeginOnly="#{aon_lst_matchBeginOnly}"
+	<aon:suggestionBox
 		width="#{aon_lst_width}" height="#{aon_lst_height}" 
 		frequency="#{aon_lst_frequency}" minChars="#{aon_lst_minChars}"
 		nothingLabel="#{bundle.aon_search_no_results}" fetchValue=""
@@ -22,6 +21,6 @@
 			<f:setPropertyActionListener value="#{lto}" target="#{lookup.suggestedTo}" />
 			<aon:actionListener method="#{lookup.onSuggestSelect}" />
 		</a4j:support>			
-	</aon:lookupSuggestionBox>
+	</aon:suggestionBox>
 			
 </ui:composition>

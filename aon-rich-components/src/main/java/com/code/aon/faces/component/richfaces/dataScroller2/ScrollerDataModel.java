@@ -9,8 +9,6 @@ import javax.faces.model.DataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.faces.component.richfaces.IRichFacesTags;
-
 public class ScrollerDataModel extends DataModel {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ScrollerDataModel.class);
@@ -97,7 +95,7 @@ public class ScrollerDataModel extends DataModel {
 	
 	public void setPageSize( Integer pageSize ) {
 		if ( pageSize != getPageSize() ) {
-			ValueExpression ve = table.getValueExpression(IRichFacesTags.ROWS);
+			ValueExpression ve = table.getValueExpression("rows");
 			if ( ve != null ) {
 				try {
 					ve.setValue(FacesContext.getCurrentInstance().getELContext(), pageSize);
@@ -179,7 +177,7 @@ public class ScrollerDataModel extends DataModel {
 	public void moveToPage(ActionEvent event) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Integer page = (Integer) context.getExternalContext().getRequestMap()
-				.get(IRichFacesTags.PAGE);
+				.get("page");
 		if (page != null) {
 			setCurrentPage( page - 1 );
 		}

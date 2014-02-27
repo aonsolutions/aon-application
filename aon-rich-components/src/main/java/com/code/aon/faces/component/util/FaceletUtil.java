@@ -1,13 +1,10 @@
 package com.code.aon.faces.component.util;
 
-import static com.code.aon.faces.controller.IRichConstants.LABELS_MAP;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.el.ELException;
 import javax.el.ExpressionFactory;
@@ -210,15 +207,5 @@ public class FaceletUtil {
 		}
 		return rendered;
 	}	
-
-	public static Object getRequestValue( FaceletContext ctx, String key ) {
-		Map<String,Object> requestMap = ctx.getFacesContext().getExternalContext().getRequestMap();
-		return requestMap.get(key);
-	}
-
-	public static void putRequestValue( FaceletContext ctx, String key, Object value ) {
-		Map<String,Object> requestMap = ctx.getFacesContext().getExternalContext().getRequestMap();
-		requestMap.put(key, value);
-	}	
-
+	
 }

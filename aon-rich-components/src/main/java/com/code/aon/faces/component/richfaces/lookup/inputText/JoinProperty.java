@@ -3,15 +3,11 @@
  */
 package com.code.aon.faces.component.richfaces.lookup.inputText;
 
-import java.io.Serializable;
-
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 
-public class JoinProperty implements Serializable { 
-	
-	private static final long serialVersionUID = 1L;
+public class JoinProperty {
 
 	private String alias;
 	

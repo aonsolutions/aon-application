@@ -145,17 +145,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- ************ SESSION MORE USED ************** -->
-	<managed-bean>
-		<managed-bean-name>sessionMoreUsed</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.audit.controller.AuditSessionMoreUsedController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>sessionMoreUsed</value> 
-		</managed-property>
-	</managed-bean>
-
 	<!-- ************ ACTION ENTRY ************** -->
 	<managed-bean>
 		<managed-bean-name>actionEntry</managed-bean-name>

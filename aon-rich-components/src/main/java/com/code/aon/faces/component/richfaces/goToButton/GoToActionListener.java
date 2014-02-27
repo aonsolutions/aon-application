@@ -16,7 +16,7 @@ import com.code.aon.ui.form.BasicController;
 
 public class GoToActionListener implements ActionListener, StateHolder {
 	
-	private ValueExpression controllerExpression;
+	private BasicController controller;
 	
 	private ValueExpression toExpression;
 	
@@ -33,8 +33,8 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	public GoToActionListener() {
 	}
 
-	public GoToActionListener(ValueExpression controllerExpression) {
-		this.controllerExpression = controllerExpression;
+	public GoToActionListener(BasicController controller) {
+		this.controller = controller;
 	}
 
 	public MethodExpression getActionListener() {
@@ -80,7 +80,6 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	@Override
 	public void processAction(ActionEvent event) throws AbortProcessingException {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		BasicController controller = (BasicController) controllerExpression.getValue(ctx.getELContext());		
 		if ( actionListener != null ) {
 			actionListener.invoke(ctx.getELContext(), new Object[] {event} );
 		} else {
@@ -97,13 +96,13 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	}
 
     public Object saveState(FacesContext context) {
-        return new Object[] { controllerExpression, toExpression, actionListener,
+        return new Object[] { controller, toExpression, actionListener,
         		backAction, backActionListener, idExpression };
     }
 
     public void restoreState(FacesContext context, Object state) {
     	Object[] _state = (Object[]) state;
-    	controllerExpression = (ValueExpression) _state[0];
+        controller = (BasicController) _state[0];
         toExpression = (ValueExpression) _state[1];
         actionListener = (MethodExpression) _state[2];
         backAction = (String) _state[3];

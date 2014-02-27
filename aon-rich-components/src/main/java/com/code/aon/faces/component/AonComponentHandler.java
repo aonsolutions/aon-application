@@ -10,6 +10,7 @@ import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.component.UIOutput;
+import javax.faces.component.UIViewRoot;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,7 @@ import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentHandler;
+import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class AonComponentHandler extends ComponentHandler {
 
@@ -79,7 +81,8 @@ public class AonComponentHandler extends ComponentHandler {
 	}	
 	
 	private void updateLabel(FaceletContext ctx, UIInput c) {
-		Map map = (Map) FaceletUtil.getRequestValue(ctx, LABELS_MAP);
+		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
+		Map map = (Map) root.getAttributes().get(LABELS_MAP);
 		if (map != null) {
 			String id = StringUtils.substringBefore(getId(ctx), "-");
 			UIOutput label = (UIOutput) map.get(id);

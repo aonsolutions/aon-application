@@ -19,7 +19,7 @@
 					<aon:commandButton id="optionMoreUsed"
 						value="#{bundle.audit_more_used_module}"
 						action="auditSession_moreUsed"
-						actionListener="#{sessionMoreUsed.onInit}"
+						actionListener="#{auditSession.onInitMoreUsed}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" />
 					<c:if test="#{aonRole.sysAdmin}">				
 						<aon:confirmButton id="removeSessions"

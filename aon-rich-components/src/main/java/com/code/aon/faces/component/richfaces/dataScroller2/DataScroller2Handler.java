@@ -41,6 +41,10 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
    	
    	private static final String MODEL = "model";
    	
+   	private static final String PAGE = "page";
+   	
+   	private static final String HIDE_PAGE_SIZE_SELECTOR = "hidePageSizeSelector";
+   	
 	private TagAttribute forTag;
 
 	/**

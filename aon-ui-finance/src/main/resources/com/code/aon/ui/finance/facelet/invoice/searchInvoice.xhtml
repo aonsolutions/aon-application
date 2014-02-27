@@ -23,13 +23,15 @@
 			<aon:lookupButtonPopup lookup="#{customerLookup}" />
 			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		</c:if>
+		<c:if test="#{searchController.purchase}">
+			<aon:lookupButtonPopup lookup="#{supplierLookup}" />		
+		</c:if>
 		<c:if test="#{!(searchController.sales or searchController.purchase)}">
 			<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 			<aon:lookupButtonPopup lookup="#{expenseItemLookup}" />
 		</c:if>
 		<c:if test="#{searchController.sales or searchController.purchase}">
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
-			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
