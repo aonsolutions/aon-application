@@ -130,36 +130,43 @@
 		<module>aon-ui-pms</module>
 		<module>aon-ui-sepe</module>
 
-		<!-- GWT MODULES -->
+		<!-- GWT MODULES 
 		<module>aon-gwt-payroll</module>
+		-->
 
-		<!-- GENERATED -->
+		<!-- GENERATED 
 		<module>aon-audabridge-api</module>
 		<module>aon-pms-api</module>
 		<module>aon-sepe-api</module>
+		-->
 
-		<!-- UTILITY -->
+		<!-- UTILITY 
 		<module>aon-file-format</module>
 		<module>aon-file-bank</module>
 		<module>aon-file-tax</module>
 		<module>aon-file-payroll</module>
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
+		-->
 
-		<!-- WEB MODULES -->
+		<!-- WEB MODULES >
 		<module>aon-web-aio</module>
+		-->
 
-		<!-- WS MODULES -->
+		<!-- WS MODULES 
 		<module>aon-ws-gps</module>
+		-->
 
 		<!-- OTHER -->
 		<module>aon-payroll-ctsql2mysql</module>
+		<!-- 
 		<module>aon-common-resources</module>
 		<module>aon.python</module>
 		<module>aon.aeat.mipf</module>
 		<module>aon-jasperreports</module>
-
 		<module>aon-solutions-release</module>
+		-->
+
 	</modules>
 
 	<scm>
