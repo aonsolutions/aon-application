@@ -2,16 +2,20 @@ package com.code.aon.file.tax.model.MOD347;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD347.check.CheckDeclared;
 import com.code.aon.file.tax.model.MOD347.check.CheckDeponent;
+import com.code.aon.file.tax.model.MOD347.data.Asset;
 import com.code.aon.file.tax.model.MOD347.data.Declared;
 import com.code.aon.file.tax.model.MOD347.data.Deponent;
 
@@ -19,11 +23,13 @@ public class MOD347  extends AbstractFileFiller{
 
 	private static String DEPONENT = "DEPONENT";
 	private static String DECLARED = "DECLARED";
+	private static String ASSET = "ASSET";
 
 	private Deponent deponent;
+	private boolean hasAssets = false;
 	
-	public MOD347(Deponent deponent, MOD347Format format,String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public MOD347(Deponent deponent, MOD347Format format,PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		if (deponent == null)  {
 			throw new IllegalArgumentException("Deponent can not be null!");
 		}
@@ -38,6 +44,12 @@ public class MOD347  extends AbstractFileFiller{
 
 		input = MOD347.class.getResourceAsStream(format.getDeclaredMetadataResource());
 		DiskRegisterLoader.load(input, manager);
+			
+		if (StringUtils.isNotBlank( format.getAssetMetadataResource())) {
+			input = MOD347.class.getResourceAsStream(format.getAssetMetadataResource());
+			DiskRegisterLoader.load(input, manager);
+			hasAssets = true;
+		}
 
 	}
 
@@ -66,6 +78,22 @@ public class MOD347  extends AbstractFileFiller{
 					else {
 						Fd0Exception e = new Fd0Exception( ex.getMessage(),declared.toString());
 						exceptions.add (e);
+					}
+				}
+			}
+			if (hasAssets) {
+				for (Asset asset: deponent.getAssets()){
+					properties.put(MOD347.ASSET, asset);
+					try{
+						createLine("Asset",properties);
+					} catch (Exception ex) {
+						if ( ex instanceof Fd0Exception ) {
+							exceptions.add (ex);
+						} 
+						else {
+							Fd0Exception e = new Fd0Exception( ex.getMessage(),asset.toString());
+							exceptions.add (e);
+						}
 					}
 				}
 			}

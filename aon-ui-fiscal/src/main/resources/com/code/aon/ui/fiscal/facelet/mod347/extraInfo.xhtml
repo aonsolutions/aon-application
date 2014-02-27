@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:div id="extraInfoContainer">
+		<c:if test="#{mod347Detail.extraInfoPanelVisible}">
+			<rich:modalPanel id="finalizePanel" minHeight="400" minWidth="700"
+				showWhenRendered="#{mod347Detail.extraInfoPanelVisible}" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.fiscal_model_347_extra_info}" />
+					</aon:div>
+				</f:facet>
+				
+				<f:facet name="controls">
+					<aon:form id="finalizePanelCloseForm">
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{mod347Detail.onHideExtraInfoPanel}"
+							immediate="true">
+							<aon:actionHotKey key="esc" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:form id="extraInfoForm">
+						<aon:div style="width:99%">
+							<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="saveExtraInfo"
+										value="#{bundle.aon_save}"
+										reRender="mod347DetailData,extraInfoContainer"
+										actionListener="#{mod347Detail.onAcceptExtraInfoPanel}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"/>
+									<aon:commandButton id="cancelExtraInfo"
+										value="#{bundle.aon_cancel}"
+										reRender="mod347DetailData,extraInfoContainer"
+										actionListener="#{mod347Detail.onCancelExtraInfoPanel}"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"/>
+							</aon:div>
+						</aon:div>
+						<aon:div style="font-size: 1.2em; font-weight: bold; text-align: center; padding-bottom: 5px;">
+							<aon:outputText value="#{mod347Detail.to.document} - #{mod347Detail.to.name}"/>
+						</aon:div>
+						
+						<aon:panelGrid columns="2" dir="true" width="100%">
+						
+							<aon:outputText value="&#160;"/>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="mod347_insurance_operation"
+									value="#{mod347Detail.to.insuranceOperation}"/>
+								<aon:outputLabel for="mod347_insurance_operation"
+									value="#{bundle.fiscal_model_347_insurance_operation}" />
+							</aon:div>
+							
+							<aon:outputText value="&#160;"/>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="mod347_business_premise_rental"
+									value="#{mod347Detail.to.businessPremiseRental}"/>
+								<aon:outputLabel for="mod347_business_premise_rental"
+									value="#{bundle.fiscal_model_347_business_premise_rental}" />
+							</aon:div>
+
+							
+							
+							
+							<aon:div style="text-align: right;">
+								<aon:outputText value="#{bundle.fiscal_model_347_asset_amount}."/>
+								<aon:outputText value="&#160;"/>	
+								<aon:outputLabel for="mod347_asset_first_quarter"
+									value="#{bundle.fiscal_model_347_asset_first_quarter}" />
+							</aon:div>
+							<aon:inputText id="mod347_asset_first_quarter" 
+								value="#{mod347Detail.to.assetFirstQuarterAmount}"
+								size="12" required="true"/>
+
+							<aon:div style="text-align: right;">
+								<aon:outputLabel for="mod347_asset_second_quarter"
+									value="#{bundle.fiscal_model_347_asset_second_quarter}" />
+							</aon:div>
+ 							<aon:inputText id="mod347_asset_second_quarter" 
+								value="#{mod347Detail.to.assetSecondQuarterAmount}"
+								size="12" required="true"/>
+
+							<aon:div style="text-align: right;">
+								<aon:outputLabel for="mod347_asset_third_quarter"
+									value="#{bundle.fiscal_model_347_asset_third_quarter}" />
+							</aon:div>
+ 							<aon:inputText id="mod347_asset_third_quarter" 
+								value="#{mod347Detail.to.assetThirdQuarterAmount}"
+								size="12" required="true"/>
+
+							<aon:div style="text-align: right;">
+								<aon:outputLabel for="mod347_asset_fourth_quarter"
+									value="#{bundle.fiscal_model_347_asset_fourth_quarter}" />
+							</aon:div>
+ 							<aon:inputText id="mod347_asset_fourth_quarter" 
+								value="#{mod347Detail.to.assetFourthQuarterAmount}"
+								size="12" required="true"/>
+
+							<aon:div style="text-align: right;">
+								<aon:outputLabel for="mod347_asset_amount"
+									value="#{bundle.fiscal_model_347_asset_year}" />
+							</aon:div>
+							<aon:inputText id="mod347_asset_amount" 
+								value="#{mod347Detail.to.assetAmount}"
+								size="12" required="true"/>
+
+							<aon:outputLabel for="mod347_cash_amount"
+								value="#{bundle.fiscal_model_347_cash_amount}" />
+							<aon:inputText id="mod347_cash_amount" 
+								value="#{mod347Detail.to.cashAmount}"
+								size="12" required="true"/>
+
+							<aon:outputLabel for="mod347_cash_year"
+								value="#{bundle.fiscal_model_347_cash_year}" />
+							<aon:inputText id="mod347_cash_year" 
+								value="#{mod347Detail.to.cashYear}"
+								size="5"/>
+
+						</aon:panelGrid>
+					</aon:form>
+				</aon:div>
+			</rich:modalPanel>
+		</c:if>
+	</aon:div>
+</ui:composition>

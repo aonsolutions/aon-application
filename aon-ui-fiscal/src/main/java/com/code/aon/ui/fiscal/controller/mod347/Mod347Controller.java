@@ -3,6 +3,7 @@ package com.code.aon.ui.fiscal.controller.mod347;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,10 +20,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.Company;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.enumeration.Mod347Status;
 import com.code.aon.fiscal.mod347.Mod347Parameters;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.file.MOD347Writer;
 import com.code.aon.ui.form.BasicController;
@@ -86,12 +90,14 @@ public class Mod347Controller extends BasicController {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			Mod347 mod347 = (Mod347) getTo();
-			String fileName = "MOD347_" + mod347.getYear();
+			String fileName = getAutomaticFileName();
+			response.setCharacterEncoding("ISO-8859-1");
 			response.setContentType(MimeType.MIME_TXT.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
 			ServletOutputStream output = response.getOutputStream();
-			InputStream input = new FileInputStream(getFileOutput().getFile());
+			InputStream input = getFileOutput().getFile() != null ? 
+						new FileInputStream(getFileOutput().getFile()) : 
+						new ByteArrayInputStream(getFileOutput().getContent());
 			int size = IOUtils.copy(input, output);
 			if (size > 0) {
 				response.setHeader("Content-Length", String.valueOf(size));
@@ -106,6 +112,26 @@ public class Mod347Controller extends BasicController {
 		}
 	}
 
+	private String getAutomaticFileName() {
+		Mod347 mod347 = (Mod347) getTo();
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		Company company = companyController.obtainCompany();		
+		String s = company.getName();
+	    StringBuilder sb = new StringBuilder();
+	    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
+	        sb.append("_");
+	    }
+	    for (char c : s.toCharArray()) {
+	        if(Character.isJavaIdentifierPart(c)) {
+	            sb.append(c);
+	        }
+	    }		
+		
+		return  "Mod347_" + mod347.getYear() 
+				+ "_" + sb.toString();
+	}
+
+	
 	public void onFinish(ActionEvent event){
 		Mod347 mod347 = (Mod347) getTo();
 		mod347.setStatus(Mod347Status.FINISHED);
@@ -150,4 +176,6 @@ public class Mod347Controller extends BasicController {
 	public int getYear() {
 		return ((Mod347) getTo()).getYear();
 	}
+	
+	
 }

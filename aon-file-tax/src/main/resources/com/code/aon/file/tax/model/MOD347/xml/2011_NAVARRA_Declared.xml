@@ -17,16 +17,16 @@
  <field name="importe" value="bean" bean="DECLARED" property="quantity" format="Numeric" pattern="S9(13)V99" />
  <field name="seguro" value="bean" bean="DECLARED" property="insurance" format="Alphabetic" pattern="X(1)" />
  <field name="arrendamiento" value="bean" bean="DECLARED" property="renting" format="Alphabetic" pattern="X(1)" /> 
- <field name="importeMetalico" value="0" format="Numeric" pattern="9(13)V99" />
- <field name="importeInmueblesIVA" value="0" format="Numeric" pattern="S9(13)V99" />
- <field name="free2" value="0" format="Numeric" pattern="9(4)" />
+ <field name="importeMetalico" value="bean" bean="DECLARED" property="cashAmount" format="Numeric" pattern="9(13)V99" />
+ <field name="importeInmueblesIVA" value="bean" bean="DECLARED" property="assetAmount" format="Numeric" pattern="S9(13)V99" />
+ <field name="ejer_metalico" value="bean" bean="DECLARED" property="cashYear" format="Numeric" pattern="9(4)" />
  <field name="importeTrimestre1" value="bean" bean="DECLARED" property="quantityQuarter1" format="Numeric" pattern="S9(13)V99" />
- <field name="importeInmueblesIVATrimestre1" value="0" format="Numeric" pattern="S9(13)V99" />
+ <field name="importeInmueblesIVATrimestre1" value="bean" bean="DECLARED" property="assetFirstQuarterAmount" format="Numeric" pattern="S9(13)V99" />
  <field name="importeTrimestre2" value="bean" bean="DECLARED" property="quantityQuarter2" format="Numeric" pattern="S9(13)V99" />
- <field name="importeInmueblesIVATrimestre2" value="0" format="Numeric" pattern="S9(13)V99" />
+ <field name="importeInmueblesIVATrimestre2" value="bean" bean="DECLARED" property="assetSecondQuarterAmount" format="Numeric" pattern="S9(13)V99" />
  <field name="importeTrimestre3" value="bean" bean="DECLARED" property="quantityQuarter3" format="Numeric" pattern="S9(13)V99" />
- <field name="importeInmueblesIVATrimestre3" value="0" format="Numeric" pattern="S9(13)V99" />
+ <field name="importeInmueblesIVATrimestre3" value="bean" bean="DECLARED" property="assetThirdQuarterAmount" format="Numeric" pattern="S9(13)V99" />
  <field name="importeTrimestre4" value="bean" bean="DECLARED" property="quantityQuarter4" format="Numeric" pattern="S9(13)V99" />
- <field name="importeInmueblesIVATrimestre4" value="0" format="Numeric" pattern="S9(13)V99" />
+ <field name="importeInmueblesIVATrimestre4" value="bean" bean="DECLARED" property="assetFourthQuarterAmount" format="Numeric" pattern="S9(13)V99" />
  <field name="free3" value=" " format="Alphabetic" pattern="X(237)" />
 </register>

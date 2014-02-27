@@ -311,8 +311,6 @@ public class SepeAppParamsController{
 
 	public void onAccept(ActionEvent event) throws ManagerBeanException{
 		accept();
-//		loadParameters();
-		AonUtil.addInfoMessage("Los parámetros se guardaron correctamente.");		
 	}
 	
 	public void accept() throws ManagerBeanException{

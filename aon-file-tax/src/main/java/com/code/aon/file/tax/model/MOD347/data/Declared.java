@@ -12,7 +12,16 @@ public class Declared {
 	private Double quantityQuarter1;	
 	private Double quantityQuarter2;	
 	private Double quantityQuarter3;	
-	private Double quantityQuarter4;	
+	private Double quantityQuarter4;
+	
+	private double assetAmount;
+	private double assetFirstQuarterAmount;
+	private double assetSecondQuarterAmount;
+	private double assetThirdQuarterAmount;
+	private double assetFourthQuarterAmount;
+	private double cashAmount;
+	private Integer cashYear;
+	
 	private boolean insurance = false;
 	private boolean renting = false;
 	
@@ -106,7 +115,49 @@ public class Declared {
 	public void setQuantityQuarter4(Double quantityQuarter4) {
 		this.quantityQuarter4 = quantityQuarter4;
 	}
-
+	
+	public double getAssetAmount() {
+		return assetAmount;
+	}
+	public void setAssetAmount(double assetAmount) {
+		this.assetAmount = assetAmount;
+	}
+	public double getAssetFirstQuarterAmount() {
+		return assetFirstQuarterAmount;
+	}
+	public void setAssetFirstQuarterAmount(double assetFirstQuarterAmount) {
+		this.assetFirstQuarterAmount = assetFirstQuarterAmount;
+	}
+	public double getAssetSecondQuarterAmount() {
+		return assetSecondQuarterAmount;
+	}
+	public void setAssetSecondQuarterAmount(double assetSecondQuarterAmount) {
+		this.assetSecondQuarterAmount = assetSecondQuarterAmount;
+	}
+	public double getAssetThirdQuarterAmount() {
+		return assetThirdQuarterAmount;
+	}
+	public void setAssetThirdQuarterAmount(double assetThirdQuarterAmount) {
+		this.assetThirdQuarterAmount = assetThirdQuarterAmount;
+	}
+	public double getAssetFourthQuarterAmount() {
+		return assetFourthQuarterAmount;
+	}
+	public void setAssetFourthQuarterAmount(double assetFourthQuarterAmount) {
+		this.assetFourthQuarterAmount = assetFourthQuarterAmount;
+	}
+	public double getCashAmount() {
+		return cashAmount;
+	}
+	public void setCashAmount(double cashAmount) {
+		this.cashAmount = cashAmount;
+	}
+	public Integer getCashYear() {
+		return cashYear;
+	}
+	public void setCashYear(Integer cashYear) {
+		this.cashYear = cashYear;
+	}
 	public String toString(){
 		String description = "Reg. Declarado ";
 		description += code == null?"NULL ":"'"+code+"''";

@@ -18,6 +18,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
@@ -106,7 +107,7 @@ public class FANWriter {
 
 	public FileOutput createFAN(boolean testFile, List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
 		try {
-			ETI eti = createETIRecord( true, list, liquidationType, year, startMonth, endMonth );
+			ETI eti = createETIRecord( isFanTestEnvironmentActive(), list, liquidationType, year, startMonth, endMonth );
 			File file = File.createTempFile("temp", ".FAN");
 			FileFiller fan = new FAN(eti, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
@@ -2611,6 +2612,31 @@ public class FANWriter {
 		return mpg;
 	}
 	
+	
+	private boolean isFanTestEnvironmentActive() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT value FROM app_param";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain();
+			select += " AND name = '" + PayrollAppParamsController.FAN_TEST_ENVIRONMENT_ACTIVE + "';";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getBoolean(1);
+			}
+		} catch (AonConnectionException e) {
+			// return null
+		} catch (SQLException e) {
+			// return null
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return false;
+	}
 	private RegistryBank obtainBank(EnterpriseCCC ccc) {
 		Connection conn = null;
 		PreparedStatement ps = null;

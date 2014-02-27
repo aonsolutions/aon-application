@@ -14,8 +14,22 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 				<ui:param name="controller" value="#{mod347Detail}" />
+				<!-- 
 				<ui:param name="skipLineEdition" value="#{mod347.to.finished}" />
+				 -->
+				 <ui:param name="skipLineEdition" value="true" />
 				<ui:param name="skipResetButton" value="#{mod347.to.finished}" />
+				
+				
+				<ui:define name="beginFormListContent">
+					<aon:commandButton id="detail-select"
+						immediate="true" value="&#160;"
+						rendered="#{!mod347.to.finished}"
+						styleClass="aon-icon-commandButton aon-icon-rowSelector"
+						style="padding:0px;margin:0px;padding-left:10px;"
+						actionListener="#{mod347Detail.onSelect}">
+					</aon:commandButton>					
+				</ui:define>
 
 				<ui:define name="columns">
 
@@ -47,6 +61,23 @@
 						<f:facet name="footer">
 							<aon:inputText id="mod347_detail_document-NEW" value="#{controller.to.document}"
 								rendered="#{formNew}" size="9" required="true"/>
+						</f:facet>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandButton id="#{dataTableId}-extraInfo" 
+							title="#{bundle.fiscal_model_347_extra_info}"
+							actionListener="#{mod347Detail.onShowExtraInfoPanel}"
+							limitToList="true"
+							reRender="extraInfoContainer"
+							rendered="#{!mod347.to.finished}"
+							styleClass="aon-editDataTable-button aon-icon-info"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<f:facet name="footer">
+							<aon:outputText value="&#160;" />
 						</f:facet>
 					</aon:column>
 
@@ -113,10 +144,10 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:inputText id="mod347_detail_amount" value="#{controller.to.amount}"
-							rendered="#{formEdit}" size="12" required="true"/>
+							rendered="#{formEdit}" size="8" required="true"/>
 						<f:facet name="footer">
 							<aon:inputText id="mod347_detail_amount-NEW" value="#{controller.to.amount}"
-								rendered="#{formNew}" size="12" required="true"/>
+								rendered="#{formNew}" size="8" required="true"/>
 						</f:facet>
 					</aon:column>
 
@@ -130,10 +161,10 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:inputText id="mod347_detail_firstQuarterAmount" value="#{controller.to.firstQuarterAmount}"
-							rendered="#{formEdit}" size="12" required="true"/>
+							rendered="#{formEdit}" size="8" required="true"/>
 						<f:facet name="footer">
 							<aon:inputText id="mod347_detail_firstQuarterAmount-NEW" value="#{controller.to.firstQuarterAmount}"
-								rendered="#{formNew}" size="12" required="true"/>
+								rendered="#{formNew}" size="8" required="true"/>
 						</f:facet>
 					</aon:column>
 					
@@ -147,10 +178,10 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:inputText id="mod347_detail_secondQuarterAmount" value="#{controller.to.secondQuarterAmount}"
-							rendered="#{formEdit}" size="12" required="true"/>
+							rendered="#{formEdit}" size="8" required="true"/>
 						<f:facet name="footer">
 							<aon:inputText id="mod347_detail_secondQuarterAmount-NEW" value="#{controller.to.secondQuarterAmount}"
-								rendered="#{formNew}" size="12" required="true"/>
+								rendered="#{formNew}" size="8" required="true"/>
 						</f:facet>
 					</aon:column>
 					<aon:column	alias="Mod347Detail.thirdQuarterAmount"
@@ -163,10 +194,10 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:inputText id="mod347_detail_thirdQuarterAmount" value="#{controller.to.thirdQuarterAmount}"
-							rendered="#{formEdit}" size="12" required="true"/>
+							rendered="#{formEdit}" size="8" required="true"/>
 						<f:facet name="footer">
 							<aon:inputText id="mod347_detail_thirdQuarterAmount-NEW" value="#{controller.to.thirdQuarterAmount}"
-								rendered="#{formNew}" size="12" required="true"/>
+								rendered="#{formNew}" size="8" required="true"/>
 						</f:facet>
 					</aon:column>
 					
@@ -180,10 +211,10 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:inputText id="mod347_detail_fourthQuarterAmount" value="#{controller.to.fourthQuarterAmount}"
-							rendered="#{formEdit}" size="12" required="true"/>
+							rendered="#{formEdit}" size="8" required="true"/>
 						<f:facet name="footer">
 							<aon:inputText id="mod347_detail_fourthQuarterAmount-NEW" value="#{controller.to.fourthQuarterAmount}"
-								rendered="#{formNew}" size="12" required="true"/>
+								rendered="#{formNew}" size="8" required="true"/>
 						</f:facet>
 					</aon:column>
 

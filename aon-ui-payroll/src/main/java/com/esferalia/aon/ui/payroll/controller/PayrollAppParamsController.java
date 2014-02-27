@@ -35,20 +35,42 @@ public class PayrollAppParamsController{
 	public final static String SS_MUTUAL_KEY				= "PAY_ss_mutual_PAY";
 
 	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
+	public final static String FAN_TEST_ENVIRONMENT_ACTIVE	= "PAY_fan_test_env_PAY";
 
 	private TrainingCenter defaultTrainingCenter;
-
 	private RegistryBank ssPaymentBankAccount;
-	
 	private List<ContractCode> availableNewContracts;
+	private Boolean fanTestEnvironment;
 	
 	private Map<String, ApplicationParameter> parameters;
-
 	private Map<String, String> defaultParameters;
 	
 	private boolean skipPayrollData;
 	
 
+	public Boolean getFanTestEnvironment() {
+		if(fanTestEnvironment==null){
+			initFanTestEnvironment();
+		}
+		return fanTestEnvironment;
+	}
+	
+	public void setFanTestEnvironment(Boolean fanTestEnvironment) {
+		this.fanTestEnvironment = fanTestEnvironment;
+	}
+	
+	private void initFanTestEnvironment() {
+		try {
+			if(getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
+				setFanTestEnvironment(new Boolean(getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			} else {
+				setFanTestEnvironment(true);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
 	public List<ContractCode> getAvailableNewContracts() {
 		if(availableNewContracts==null){
 			initAvailableNewContracts();
@@ -261,6 +283,7 @@ public class PayrollAppParamsController{
 		} else {
 			getParameter(SS_MUTUAL_KEY).setValue(null);
 		}
+		getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).setValue(getFanTestEnvironment().toString());
 		
 	}
 
