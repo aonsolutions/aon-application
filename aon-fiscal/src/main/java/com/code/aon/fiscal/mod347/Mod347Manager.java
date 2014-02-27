@@ -102,12 +102,17 @@ public class Mod347Manager {
 				} else {
 					province = Province.NO_RESIDENTE;
 				}
+				detail.setSheet("D");
 				detail.setProvince( province );				
-				detail.setAmount(CommonUtil.round(rs.getDouble(AMOUNT_ALIAS)));
 				detail.setFirstQuarterAmount(CommonUtil.round(rs.getDouble(FIRST_QUARTER_ALIAS)));
 				detail.setSecondQuarterAmount(CommonUtil.round(rs.getDouble(SECOND_QUARTER_ALIAS)));
 				detail.setThirdQuarterAmount(CommonUtil.round(rs.getDouble(THIRD_QUARTER_ALIAS)));
 				detail.setFourthQuarterAmount(CommonUtil.round(rs.getDouble(FOURTH_QUARTER_ALIAS)));
+				detail.setAmount(CommonUtil.round(
+							detail.getFirstQuarterAmount()
+							+ detail.getSecondQuarterAmount()
+							+detail.getThirdQuarterAmount()
+							+detail.getFourthQuarterAmount()));
 				bean.insert(detail);
 			}
 			return mod347;

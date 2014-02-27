@@ -249,11 +249,23 @@
 				</c:if>
 				
 				<c:if test="#{!mod347.new}">
-					<ui:include src="/com/code/aon/ui/fiscal/facelet/mod347/detail.xhtml" />
+
+					<aon:panelTabSet selectedTab="#{vatTax.selectedTab}">
+						<aon:panelTab id="detailTab" label="Declarados">
+							<ui:include src="/com/code/aon/ui/fiscal/facelet/mod347/detail.xhtml" />
+						</aon:panelTab>
+
+						<aon:panelTab id="assetTab" label="Inmuebles">
+							<ui:include src="/com/code/aon/ui/fiscal/facelet/mod347/asset.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
 				</c:if>
 				
 			</aon:div>
 		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/fiscal/facelet/mod347/extraInfo.xhtml" />		
+		
 	</ui:define>
 
 </ui:composition>

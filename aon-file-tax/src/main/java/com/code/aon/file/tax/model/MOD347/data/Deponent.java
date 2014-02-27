@@ -17,6 +17,7 @@ public class Deponent {
 	private boolean replacement = false;
 	private Long replacedNumber;
 	private List<Declared> declareds;
+	private List<Asset> assets;
 
 	public int getC001() {
 		return getDeclareds().size();
@@ -63,11 +64,17 @@ public class Deponent {
 	}
 
 	public double getC003() {
-		return 0.0;
+		return  getAssets().size();
 	}
+	
 	public double getC004() {
-		return 0.0;
+		double c004 = 0;
+		for (Asset a: getAssets()) {
+			c004 += a.getQuantity();
+		}
+		return c004;
 	}
+	
 	public double getC005() {
 		return 0.0;
 	}
@@ -173,4 +180,13 @@ public class Deponent {
 		this.declareds = declareds;
 	}
 
+	public List<Asset> getAssets() {
+		if (this.assets == null) {
+			this.assets = new LinkedList<Asset>();
+		}
+		return this.assets;
+	}
+	public void setAssets(List<Asset> assets) {
+		this.assets = assets;
+	}
 }

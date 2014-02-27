@@ -1,8 +1,13 @@
 package com.code.aon.ui.fiscal.file;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -13,8 +18,10 @@ import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.file.tax.FileTaxUtil;
 import com.code.aon.file.tax.model.MOD347.MOD347;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
+import com.code.aon.file.tax.model.MOD347.data.Asset;
 import com.code.aon.file.tax.model.MOD347.data.Declared;
 import com.code.aon.file.tax.model.MOD347.data.Deponent;
 import com.code.aon.fiscal.Mod347;
@@ -53,11 +60,19 @@ public class MOD347Writer implements IFinanceConstants{
 						mod347.getAdministration());	
 			}
 			Deponent deponent = getDeponent(mod347,format);
-			File file = File.createTempFile("MOD347_", ".txt");
-			FileFiller mod347Filler = new MOD347(deponent, format, file.getAbsolutePath());
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			OutputStreamWriter wr = null;
+			try {
+				wr = new OutputStreamWriter(out,"ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				wr = new OutputStreamWriter(out);
+			}
+			PrintWriter writer = new PrintWriter(wr);
+			FileFiller mod347Filler = new MOD347(deponent, format, writer);
+			
 			FileOutput output = new FileOutput();
-			output.setFile(file);
 			output.setErrors(mod347Filler.create());
+			output.setContent(out.toByteArray());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -120,35 +135,101 @@ public class MOD347Writer implements IFinanceConstants{
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MOD347DETAIL_MOD347_ID), mod347.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
-			Mod347Detail detail = (Mod347Detail) to;	
-			Declared dec = new Declared();
-			dec.setCode(detail.getDocument()==null?null:detail.getDocument());
-			dec.setManagerCode(null);
-			dec.setName(detail.getName());
-			dec.setKey(detail.getType().getValue());
-			dec.setInsurance(false);
-			if (detail.getProvince() == null) {
-				throw new ManagerBeanException("El registro " + dec.getCode() + " - " + dec.getName() + " no tiene una provincia válida");
-			} 
-			int prov = detail.getProvince().ordinal();
-			if (prov == 0) {
-				prov = 99;
-			}
-			dec.setProvince(prov);
-			dec.setCountry(detail.getCountry()==null?null:detail.getCountry().getValue());
-			if (Country.ES == detail.getCountry()) {
-				dec.setCountry("  ");		
+			Mod347Detail detail = (Mod347Detail) to;
+			if ("I".equals(detail.getSheet())) {
+				Asset asset = new Asset();
+				asset.setCode(detail.getDocument()==null?null:detail.getDocument());
+				asset.setManagerCode(null);
+				String name = detail.getName();
+				name = FileTaxUtil.changeInvalidCharacters(name);
+				asset.setName(name);
+				asset.setQuantity(detail.getAmount());
+				asset.setAssetLocation(detail.getAssetLocation());
+				asset.setCadasdralReference(detail.getCadasdralReference());
+				asset.setAssetStreetType(detail.getAssetStreetType());
+				asset.setAssetStreet(detail.getAssetStreet());
+				asset.setAssetStreetNumberType(detail.getAssetStreetNumberType());
+				int i = 0;
+				if (StringUtils.isNotBlank(detail.getAssetStreetNumber()) 
+				 && StringUtils.isNumeric(detail.getAssetStreetNumber())) {
+					i = Integer.parseInt(detail.getAssetStreetNumber());		
+				}
+				asset.setAssetStreetNumber(i);
+				asset.setAssetStreetNumberSuffix(detail.getAssetStreetNumberSuffix());
+				asset.setAssetStreetBlock(detail.getAssetStreetBlock());
+				asset.setAssetStreetHall(detail.getAssetStreetHall());
+				asset.setAssetStreetStair(detail.getAssetStreetStair());
+				asset.setAssetStreetFloor(detail.getAssetStreetFloor());
+				asset.setAssetStreetDoor(detail.getAssetStreetDoor());
+				asset.setAssetStreetComplement(detail.getAssetStreetComplement());
+				asset.setAssetStreetCity(detail.getAssetStreetCity());
+				asset.setAssetStreetTown(detail.getAssetStreetTown());
+				
+				if (StringUtils.isNotBlank(detail.getAssetStreetTownCode()) 
+				 && StringUtils.isNumeric(detail.getAssetStreetTownCode())) {
+					i = Integer.parseInt(detail.getAssetStreetTownCode());		
+				} else {
+					i=0;	
+				}
+				asset.setAssetStreetTownCode(i);
+				
+				if (StringUtils.isNotBlank(detail.getAssetStreetProvince()) 
+				 && StringUtils.isNumeric(detail.getAssetStreetProvince())) {
+					i = Integer.parseInt(detail.getAssetStreetProvince());		
+				} else {
+					i=0;	
+				}
+				asset.setAssetStreetProvince(i);
+				
+				if (StringUtils.isNotBlank(detail.getAssetStreetZip()) 
+				 && StringUtils.isNumeric(detail.getAssetStreetZip())) {
+					i = Integer.parseInt(detail.getAssetStreetZip());		
+				} else {
+					i=0;	
+				}
+				asset.setAssetStreetZip(i);
+				
+				deponent.getAssets().add(asset);
 			} else {
-				dec.setProvince(99);		
+				Declared dec = new Declared();
+				dec.setCode(detail.getDocument()==null?null:detail.getDocument());
+				dec.setManagerCode(null);
+				String name = detail.getName();
+				name = FileTaxUtil.changeInvalidCharacters(name);
+				dec.setName(name);
+				dec.setKey(detail.getType().getValue());
+				dec.setInsurance(false);
+				if (detail.getProvince() == null) {
+					throw new ManagerBeanException("El registro " + dec.getCode() + " - " + dec.getName() + " no tiene una provincia válida");
+				} 
+				int prov = detail.getProvince().ordinal();
+				if (prov == 0) {
+					prov = 99;
+				}
+				dec.setProvince(prov);
+				dec.setCountry(detail.getCountry()==null?null:detail.getCountry().getValue());
+				if (Country.ES == detail.getCountry()) {
+					dec.setCountry("  ");		
+				} else {
+					dec.setProvince(99);		
+				}
+				dec.setQuantity(detail.getAmount());
+				dec.setQuantityQuarter1(detail.getFirstQuarterAmount());
+				dec.setQuantityQuarter2(detail.getSecondQuarterAmount());
+				dec.setQuantityQuarter3(detail.getThirdQuarterAmount());
+				dec.setQuantityQuarter4(detail.getFourthQuarterAmount());
+				dec.setRenting( detail.isBusinessPremiseRental() );
+				dec.setInsurance( detail.isInsuranceOperation() );
+				dec.setAssetAmount( detail.getAssetAmount() );
+				dec.setAssetFirstQuarterAmount( detail.getAssetFirstQuarterAmount() );
+				dec.setAssetSecondQuarterAmount( detail.getAssetSecondQuarterAmount() );
+				dec.setAssetThirdQuarterAmount( detail.getAssetThirdQuarterAmount() );
+				dec.setAssetFourthQuarterAmount( detail.getAssetFourthQuarterAmount() );
+				dec.setCashAmount( detail.getCashAmount() );
+				dec.setCashYear( detail.getCashYear() );
+				deponent.getDeclareds().add(dec);
 			}
-			dec.setQuantity(detail.getAmount());
-			dec.setQuantityQuarter1(detail.getFirstQuarterAmount());
-			dec.setQuantityQuarter2(detail.getSecondQuarterAmount());
-			dec.setQuantityQuarter3(detail.getThirdQuarterAmount());
-			dec.setQuantityQuarter4(detail.getFourthQuarterAmount());
-			dec.setRenting(false);
-			deponent.getDeclareds().add(dec);
 		}
 	}
-
+	
 }
