@@ -94,7 +94,7 @@
 		<module>aon-pms</module>
 		<module>aon-academy</module>
 
-		<!-- UI MODULES -->
+		<!-- UI MODULES 
 		<module>aon-ui-academy</module>
 		<module>aon-ui-audabridge</module>
 		<module>aon-ui-carrier</module>
@@ -129,6 +129,7 @@
 		<module>aon-ui-tas</module>
 		<module>aon-ui-pms</module>
 		<module>aon-ui-sepe</module>
+		-->
 
 		<!-- GWT MODULES 
 		<module>aon-gwt-payroll</module>
