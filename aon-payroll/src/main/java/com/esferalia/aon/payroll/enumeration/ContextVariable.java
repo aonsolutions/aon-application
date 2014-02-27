@@ -107,6 +107,9 @@ public enum ContextVariable implements IResourceable{
 	IMS_RATE("TARIFA_IMS", VariableType.DOUBLE, false),
 	SHORT_CONTRACT("CONTRATO_CORTA_DURACION", VariableType.BOOLEAN, false),
 	SENIORITY("AÑOS_ANTIGUEDAD", VariableType.DOUBLE, false),
+	QUOTE_PECULIARITY_COLLECTIVE("COLECT_PECULIAR_COTIZACION", VariableType.INTEGER, false),
+	CONTRACT_END_CODE("COD_FIN_CONTRATO", VariableType.INTEGER, false),
+	CONTRACT_END_DESC("DESC_FIN_CONTRATO", VariableType.STRING, false),
 	
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),

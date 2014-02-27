@@ -1036,9 +1036,9 @@ public class FANWriter {
 		return false;
 	}
 	
-	private Integer getParticularGroup(Contract contract) {
-		// TODO getParticularGroup
-		return null;
+	private String getParticularGroup(Contract contract) {
+		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName());
+		return o!=null && !o.isEmpty()?o.replaceAll("\"", ""):null;
 	}
 	private Integer getEmploymentRelation(Contract contract) {
 		// TODO getEmploymentRelation
@@ -2005,7 +2005,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD28")?tra.getDat().get(0).getEdlSegment("CD28").getImporte():0;
+				amount += dat.getEdl().containsKey("CD28")?dat.getEdlSegment("CD28").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2031,7 +2031,7 @@ public class FANWriter {
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					amount += dat.getEdl().containsKey("CD25")?tra.getDat().get(0).getEdlSegment("CD25").getImporte():0;
+					amount += dat.getEdl().containsKey("CD25")?dat.getEdlSegment("CD25").getImporte():0;
 				}
 			}
 			if(amount != 0){
@@ -2052,7 +2052,7 @@ public class FANWriter {
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					amount += dat.getEdl().containsKey("CD24")?tra.getDat().get(0).getEdlSegment("CD24").getImporte():0;
+					amount += dat.getEdl().containsKey("CD24")?dat.getEdlSegment("CD24").getImporte():0;
 				}
 			}
 			if(amount != 0){
@@ -2072,7 +2072,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD23")?tra.getDat().get(0).getEdlSegment("CD23").getImporte():0;
+				amount += dat.getEdl().containsKey("CD23")?dat.getEdlSegment("CD23").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2090,7 +2090,7 @@ public class FANWriter {
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					amount += dat.getEdl().containsKey("CD22")?tra.getDat().get(0).getEdlSegment("CD22").getImporte():0;
+					amount += dat.getEdl().containsKey("CD22")?dat.getEdlSegment("CD22").getImporte():0;
 				}
 			}
 			if(amount != 0){
@@ -2110,7 +2110,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD21")?tra.getDat().get(0).getEdlSegment("CD21").getImporte():0;
+				amount += dat.getEdl().containsKey("CD21")?dat.getEdlSegment("CD21").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2129,7 +2129,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD20")?tra.getDat().get(0).getEdlSegment("CD20").getImporte():0;
+				amount += dat.getEdl().containsKey("CD20")?dat.getEdlSegment("CD20").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2153,7 +2153,7 @@ public class FANWriter {
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					amount += dat.getEdl().containsKey("CD17")?tra.getDat().get(0).getEdlSegment("CD17").getImporte():0;
+					amount += dat.getEdl().containsKey("CD17")?dat.getEdlSegment("CD17").getImporte():0;
 				}
 			}
 			if(amount != 0){
@@ -2173,7 +2173,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD16")?tra.getDat().get(0).getEdlSegment("CD16").getImporte():0;
+				amount += dat.getEdl().containsKey("CD16")?dat.getEdlSegment("CD16").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2192,7 +2192,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD13")?tra.getDat().get(0).getEdlSegment("CD13").getImporte():0;
+				amount += dat.getEdl().containsKey("CD13")?dat.getEdlSegment("CD13").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2214,7 +2214,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD11")?tra.getDat().get(0).getEdlSegment("CD11").getImporte():0;
+				amount += dat.getEdl().containsKey("CD11")?dat.getEdlSegment("CD11").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2233,7 +2233,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD10")?tra.getDat().get(0).getEdlSegment("CD10").getImporte():0;
+				amount += dat.getEdl().containsKey("CD10")?dat.getEdlSegment("CD10").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2252,7 +2252,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD07")?tra.getDat().get(0).getEdlSegment("CD07").getImporte():0;
+				amount += dat.getEdl().containsKey("CD07")?dat.getEdlSegment("CD07").getImporte():0;
 			}
 		}
 		if(amount != 0){
@@ -2272,7 +2272,7 @@ public class FANWriter {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				amount += dat.getEdl().containsKey("CD06")?tra.getDat().get(0).getEdlSegment("CD06").getImporte():0;
+				amount += dat.getEdl().containsKey("CD06")?dat.getEdlSegment("CD06").getImporte():0;
 			}
 		}	
 		if(amount != 0){
@@ -2296,7 +2296,7 @@ public class FANWriter {
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					amount += dat.getEdl().containsKey("CD03")?tra.getDat().get(0).getEdlSegment("CD03").getImporte():0;
+					amount += dat.getEdl().containsKey("CD03")?dat.getEdlSegment("CD03").getImporte():0;
 				}
 			}	
 			if(amount != 0){
@@ -2318,7 +2318,7 @@ public class FANWriter {
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					amount += dat.getEdl().containsKey("CD01")?tra.getDat().get(0).getEdlSegment("CD01").getImporte():0;
+					amount += dat.getEdl().containsKey("CD01")?dat.getEdlSegment("CD01").getImporte():0;
 				}
 			}	
 			if(amount != 0){
@@ -2342,7 +2342,7 @@ public class FANWriter {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				base += dat.getEdl().containsKey("BA42")?tra.getDat().get(0).getEdlSegment("BA42").getImporte():0;
+				base += dat.getEdl().containsKey("BA42")?dat.getEdlSegment("BA42").getImporte():0;
 			}
 		}	
 		if(base != 0){
@@ -2400,8 +2400,8 @@ public class FANWriter {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				base += dat.getEdl().containsKey("BA20")?tra.getDat().get(0).getEdlSegment("BA20").getImporte():0;
-				base += dat.getEdl().containsKey("BA22")?tra.getDat().get(0).getEdlSegment("BA22").getImporte():0;
+				base += dat.getEdl().containsKey("BA20")?dat.getEdlSegment("BA20").getImporte():0;
+				base += dat.getEdl().containsKey("BA22")?dat.getEdlSegment("BA22").getImporte():0;
 			}
 		}	
 		if(base != 0){
@@ -2422,8 +2422,8 @@ public class FANWriter {
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					base += dat.getEdl().containsKey("BA20")?tra.getDat().get(0).getEdlSegment("BA20").getImporte():0;
-					base += dat.getEdl().containsKey("BA21")?tra.getDat().get(0).getEdlSegment("BA21").getImporte():0;
+					base += dat.getEdl().containsKey("BA20")?dat.getEdlSegment("BA20").getImporte():0;
+					base += dat.getEdl().containsKey("BA21")?dat.getEdlSegment("BA21").getImporte():0;
 				}
 			}	
 			if(base != 0){
@@ -2444,7 +2444,7 @@ public class FANWriter {
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					base += dat.getEdl().containsKey("BA11")?tra.getDat().get(0).getEdlSegment("BA11").getImporte():0;
+					base += dat.getEdl().containsKey("BA11")?dat.getEdlSegment("BA11").getImporte():0;
 				}
 			}	
 			if(base != 0){
@@ -2470,7 +2470,7 @@ public class FANWriter {
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					base += dat.getEdl().containsKey("BA10")?tra.getDat().get(0).getEdlSegment("BA10").getImporte():0;
+					base += dat.getEdl().containsKey("BA10")?dat.getEdlSegment("BA10").getImporte():0;
 				}
 			}	
 			if(base != 0){
@@ -2492,7 +2492,7 @@ public class FANWriter {
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
 				for(DAT dat: tra.getDat()){
-					base += dat.getEdl().containsKey("BA09")?tra.getDat().get(0).getEdlSegment("BA09").getImporte():0;
+					base += dat.getEdl().containsKey("BA09")?dat.getEdlSegment("BA09").getImporte():0;
 				}
 			}	
 			if(base != 0){
@@ -2524,8 +2524,8 @@ public class FANWriter {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				base += dat.getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
-				base += dat.getEdl().containsKey("BA02")?tra.getDat().get(0).getEdlSegment("BA02").getImporte():0;
+				base += dat.getEdl().containsKey("BA00")?dat.getEdlSegment("BA00").getImporte():0;
+				base += dat.getEdl().containsKey("BA02")?dat.getEdlSegment("BA02").getImporte():0;
 			}
 		}
 		if(base != 0){
@@ -2550,8 +2550,8 @@ public class FANWriter {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
 			for(DAT dat: tra.getDat()){
-				base += dat.getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
-				base += dat.getEdl().containsKey("BA01")?tra.getDat().get(0).getEdlSegment("BA01").getImporte():0;
+				base += dat.getEdl().containsKey("BA00")?dat.getEdlSegment("BA00").getImporte():0;
+				base += dat.getEdl().containsKey("BA01")?dat.getEdlSegment("BA01").getImporte():0;
 			}
 		}
 		if(base != 0){

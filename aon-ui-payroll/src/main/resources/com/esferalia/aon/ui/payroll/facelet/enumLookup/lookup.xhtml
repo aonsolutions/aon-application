@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<aon:set var="#{ssEnumLookup.enumName}" value="#{enumName}" />
+	<aon:set var="#{ssEnumLookup.ssEnum}" value="#{lookupTo}" />
+	
+	<aon:div id="#{enumName}enumLookup#{lookupSuffix}" styleClass="aon-lookup" >
+		<aon:inputText value="#{ssEnumLookup.code}" size="5">
+			<a4j:support event="onchange" reRender="#{enumName}enumLookup"
+				actionListener="#{ssEnumLookup.loadEnumByCode}" />
+			<a4j:support event="onblur" reRender="#{enumName}enumLookup"
+				actionListener="#{ssEnumLookup.loadEnumByCode}" />
+		</aon:inputText>
+		
+		<aon:commandButton id="#{enumName}_SearchButton#{lookupSuffix}"
+			rendered="#{lookupTo==null}"
+			reRender="#{enumName}enumLookup, showEnumLookupWindow"
+			actionListener="#{ssEnumLookup.onSearch}"
+			styleClass="aon-lookupButton" />
+			
+		<aon:commandButton id="#{enumName}_ClearButton#{lookupSuffix}"
+			rendered="#{lookupTo!=null}"
+			reRender="#{enumName}enumLookup"
+			focus="#{enumName}_id"
+			styleClass="aon-lookupButton-clear" >
+			<f:setPropertyActionListener
+				target="#{lookupTo}" value="#{null}" />
+		</aon:commandButton>
+		
+		<aon:div style="display: inline;">
+			<aon:outputText value="#{lookupTo.description}" >
+				<aon:abbreviateConverter maxWidth="80" />
+			</aon:outputText>
+			<c:if test="#{fn:length(tookupTo.description) > 80}">
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<aon:outputText value="#{lookupTo.description}" />
+				</rich:toolTip>
+			</c:if>
+		</aon:div>
+		
+	</aon:div>
+
+</ui:composition>

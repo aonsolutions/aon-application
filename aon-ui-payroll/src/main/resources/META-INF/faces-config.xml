@@ -2260,6 +2260,12 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>ssEnumLookup</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.SSEnumLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>bullShit</managed-bean-name>
 		<managed-bean-class>
 			com.esferalia.aon.ui.payroll.utils.BullShitBean</managed-bean-class>
