@@ -35,28 +35,28 @@
 		<module>aon.entity.alias</module>
 		<module>aon-db-manager</module>
 		<module>aon-dbutils</module>
-		<module>aon-ui-dbutils</module>
-		<module>aon-ui-db-manager</module>
+		<!--module>aon-ui-dbutils</module>
+		<module>aon-ui-db-manager</module-->
 		<module>aon-sql-payroll</module>
 
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>
 		<module>aon-audit</module>
-		<module>aon-ui-audit</module>
+		<!--module>aon-ui-audit</module-->
 		<module>aon-jaas</module>
 		<module>aon-common</module>
 		<module>aon-report</module>
 		<module>aon-ql</module>
 		<module>aon-rich-components</module>
-		<module>aon-ui-common</module>
+		<!--module>aon-ui-common</module>
 		<module>aon-ui-form</module>
 		<module>aon-ui-report</module>
-		<module>aon-ui-resources</module>
+		<module>aon-ui-resources</module-->
 		<module>aon-webmail</module>
-		<module>aon-ui-webmail</module>
+		<!--module>aon-ui-webmail</module-->
 		<module>aon-jsf-bridge</module>
 		<module>aon-admin</module>
-		<module>aon-ui-admin</module>
+		<!--module>aon-ui-admin</module-->
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
@@ -91,7 +91,7 @@
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
-		<module>aon-pms</module>
+		<!--module>aon-pms</module-->
 		<module>aon-academy</module>
 
 		<!-- UI MODULES 
