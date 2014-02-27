@@ -416,16 +416,17 @@ public class BasicController extends AbstractPojoController implements IControll
 			accept();
 			if (updateModel) {
 				resetBackProccess();
-				if (isQueryOnStartUP() || this instanceof LinesController) {
-					setModel(null);
-				} else {
-					if (!onlySearchNewValues) {
-						searchNewValuesIndex = getManagerBean().getId(getTo());
-						onlySearchNewValues = true;
+				if (updateModel) {
+					resetBackProccess();
+					if (!isQueryOnStartUP() && !(this instanceof LinesController)) {
+						if (!onlySearchNewValues) {
+							searchNewValuesIndex = getManagerBean().getId(getTo());
+							onlySearchNewValues = true;
+						}
+						clearCriteria();
+						Criteria criteria = getCriteria();
+						criteria.addGreaterThanOrEqualExpression(getIdAlias(), searchNewValuesIndex);
 					}
-					clearCriteria();
-					Criteria criteria = getCriteria();
-					criteria.addGreaterThanOrEqualExpression(getIdAlias(), searchNewValuesIndex);
 					initializeModel();
 					synchronizeAddedPojo();
 				}
