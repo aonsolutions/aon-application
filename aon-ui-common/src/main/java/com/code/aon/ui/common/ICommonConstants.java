@@ -6,6 +6,8 @@ package com.code.aon.ui.common;
  *
  */
 public interface ICommonConstants {
+	
+	String MUNICIPALITIES_BUNDLE_NAME = "com.code.aon.common.i18n.municipalities";
 
 	// ************************************************************
 	// BEAN

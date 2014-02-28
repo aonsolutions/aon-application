@@ -26,7 +26,7 @@
 					<ui:define name="columns">
 
 						<aon:column alias="FanBatch.id"
-							styleClass="aon-editDataTable-numberColumn">
+							styleClass="aon-editDataTable-numberColumn aon-width-50">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
@@ -34,7 +34,7 @@
 						</aon:column>
 						
 						<aon:column alias="FanBatch.date"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-numberColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.fanBatch_liquidation_period}" />
 							</f:facet>
@@ -45,19 +45,37 @@
 						</aon:column>
 						
 						<aon:column alias="FanBatch.liquidationType"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.fanBatch_liquidation_type}" />
 							</f:facet>
 							<aon:outputText value="#{to.liquidationType}" />
 						</aon:column>
 						
+						<aon:column alias="FanBatch.outcomeFileDate"
+							styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_creation_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.outcomeFileDate}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
 						<aon:column alias="FanBatch.status"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}"/>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
 						</aon:column>
 	
 					</ui:define>

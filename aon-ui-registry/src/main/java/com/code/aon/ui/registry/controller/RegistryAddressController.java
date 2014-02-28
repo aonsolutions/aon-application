@@ -11,12 +11,13 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.LinesController;
 
 public class RegistryAddressController extends LinesController {
 
 	public List<SelectItem> getMunicipalities(){
-		ResourceBundle bundle = ResourceBundle.getBundle(IRegistryConstants.MUNICIPALITIES_BUNDLE_NAME);
+		ResourceBundle bundle = ResourceBundle.getBundle(ICommonConstants.MUNICIPALITIES_BUNDLE_NAME);
 		List<SelectItem> municipalities = new LinkedList<SelectItem>();
 		if(this.getTo()!=null){
 			RegistryAddress address = (RegistryAddress) this.getTo();

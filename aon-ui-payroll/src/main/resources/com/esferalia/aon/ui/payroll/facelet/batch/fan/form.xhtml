@@ -5,7 +5,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
 	
 	<c:if test="#{fanBatch.new}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/fan/form_new.xhtml" />
@@ -20,6 +21,7 @@
 			
 			<ui:define name="moreToolbarContent" >
 				<aon:htmlCommandLink id="fan-excel-report"
+					rendered="#{fanBatch.recorded}"
 					value="#{bundle.aon_listing}"
 					target="_blank" action="#{fanBatch.onExcelReport}"
 					styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -27,8 +29,11 @@
 			</ui:define>
 			
 			<ui:define name="batchContent" >
-				<aon:panelGrid id="dataTable" columns="4" style="width: 30%;">
-	
+				<aon:panelGrid id="info-panel" columns="4" styleClass="aon-width-all"
+					columnClasses="
+					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-150,
+					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto
+					" >
 					<aon:outputLabel value="#{bundle.fanBatch_liquidation_period}" />
 					<aon:div>
 						<h:panelGrid columns="2" rendered="#{!fanBatch.recorded}">
@@ -43,7 +48,7 @@
 							<f:convertDateTime pattern="MMMMM yyyy"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-					</aon:div>	
+					</aon:div>
 					
 					<aon:outputLabel value="#{bundle.fanBatch_liquidation_type}" />
 					<aon:div>
@@ -52,16 +57,58 @@
 							rendered="#{!fanBatch.recorded}" >
 							<f:selectItems value="#{payrollCollections.liquidationTypes}"  />
 						</aon:selectOneMenu>
+						<aon:outputText value="#{fanBatch.to.liquidationType.value} - "
+							rendered="#{fanBatch.recorded}" />
 						<aon:outputText value="#{fanBatch.to.liquidationType}"
 							rendered="#{fanBatch.recorded}" />
 					</aon:div>
-					
-					<aon:outputLabel value="#{bundle.aon_status}" />
-					<aon:outputText value="#{fanBatch.to.status}" />
+				</aon:panelGrid>
+			
+				<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
+					columnClasses="
+					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
+					" >
+					<aon:outputText value="#{bundle.finance_disk} FAN" />
+					<aon:div>
+						<aon:commandButton id="fan-create-button" value="#{bundle.payroll_create_disk}"
+							rendered="#{fanBatch.new or (!fanBatch.recorded and fanBatchDetail.model.rowCount > 0)}"
+							reRender="batchForm"
+							styleClass="aon-icon-commandButton aon-icon-accept"
+							actionListener="#{fanBatch.onCreateDisk}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
 
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
-					
+						<aon:outputText value="Generado el "
+							rendered="#{fanBatch.recorded}"
+							styleClass="aon-bold" />
+						<aon:outputText value="#{fanBatch.to.outcomeFileDate}"
+							rendered="#{fanBatch.recorded}"
+							styleClass="aon-bold aon-margin-right" >
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:htmlCommandLink id="fan-download" target="_blank"
+							value="&#160;" title="#{bundle.aon_fileupload_download}"
+							rendered="#{fanBatch.recorded}"
+							actionListener="#{fanBatch.onDownloadFile}"
+							styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" >
+						</aon:htmlCommandLink>
+						<aon:commandButton id="fan-remove" 
+							value="&#160;" title="#{bundle.aon_remove}" 
+							rendered="#{fanBatch.recorded}"
+							actionListener="#{fanBatch.onRemoveFile}"
+							styleClass="aon-icon-commandButton aon-icon-delete aon-margin-left" />
+						<c:if test="#{aonRole.sysAdmin}">
+							<aon:fileUpload id="attach_file" listWidth="100"
+								fileUploadListener="#{fanBatch.fanFileUploaded}" >
+								<f:facet name="label">
+									<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+								</f:facet>
+								<a4j:support event="onuploadcomplete" reRender="dataTable" />
+							</aon:fileUpload>
+						</c:if>
+					</aon:div>
 				</aon:panelGrid>
 			</ui:define>
 			

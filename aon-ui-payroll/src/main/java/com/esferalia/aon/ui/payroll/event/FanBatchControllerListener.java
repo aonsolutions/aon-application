@@ -11,6 +11,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.FanBatch;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.batch.FanBatchController;
 import com.esferalia.aon.ui.payroll.controller.batch.FanListController;
@@ -25,9 +26,9 @@ public class FanBatchControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		FanBatchController controller = (FanBatchController) this.getController();
-		controller.setRecorded(false);
 		FanBatch batch = (FanBatch) controller.getTo();
 		batch.setStatus(FileStatus.PENDING);
+		batch.setLiquidationType(LiquidationType.L00);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.add(Calendar.MONTH, -1);

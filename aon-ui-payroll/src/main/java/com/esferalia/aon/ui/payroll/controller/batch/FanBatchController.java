@@ -1,10 +1,15 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -22,6 +27,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -31,20 +38,18 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatch;
-import com.esferalia.aon.payroll.FanBatchAttachment;
 import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
-import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANReportWriter;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
@@ -53,8 +58,6 @@ import com.esferalia.aon.ui.payroll.file.FANWriter;
 public class FanBatchController extends BasicController {
 	
 	private FANWriter fanWriter;
-	private FileOutput fileOutput;
-	private boolean recorded;
 	private FanBatchNewWizard newBatchWizard;
 
 	private FANWriter getFANWriter() {
@@ -75,20 +78,8 @@ public class FanBatchController extends BasicController {
 		this.newBatchWizard = newBatchWizard;
 	}
 	
-	public FileOutput getFileOutput() {
-		return fileOutput;
-	}
-
-	public void setFileOutput(FileOutput fileOutput) {
-		this.fileOutput = fileOutput;
-	}
-	
 	public boolean isRecorded() {
-		return recorded;
-	}
-
-	public void setRecorded(boolean recorded) {
-		this.recorded = recorded;
+		return this.getTo()!=null && ((FanBatch)this.getTo()).getOutcomeFile()!=null;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -135,80 +126,91 @@ public class FanBatchController extends BasicController {
 		list.onEditSearch(event);
 	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		onInit(event);
-	}
-	
 	public void onInit(ActionEvent event) {
 		try {
 			onSearchCCCs(event);
-			checkDiskCreated();
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("error on onInit ["+e.getMessage()+"]");
 		}
 	}
 	
-	@Override
-	public void onReset(ActionEvent event) {
-		setRecorded(false);
-		super.onReset(event);
-		FanBatch b = (FanBatch) getTo();
-		b.setStatus(FileStatus.PENDING);
-		b.setLiquidationType(LiquidationType.L00);
-	}
-
 	public void onCreateDisk(ActionEvent event) {
 		try {
+			if(this.isNew()){
+				getNewBatchWizard().accept(event);
+			}
 			FanBatch batch = (FanBatch) getTo();
 			File file = getFANWriter().createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
-			IManagerBean bean = BeanManager.getManagerBean(FanBatchAttachment.class);
 			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				FanBatchAttachment attach;
-				attach = new FanBatchAttachment();
-				attach.setFanBatch( (FanBatch) getTo());
-				attach.setMimeType(null);
-				attach.setDescription(getFANWriter().getEti().getFichero()+".FAN");
-				attach.setSize(null);
-				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
-				attach.setScope(null);
-				attach.setData(data);
-				attach.setAttachDate(new Date());
-				bean.insertOrUpdate(attach);
-				setRecorded(true);
-				changeBatchStatus(FileStatus.GENERATED);
-				FanBatchAttachController controller = (FanBatchAttachController) FormUtil.getController("fanBatchAttach");
-				controller.initializeModel();
+				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
+				batch.setOutcomeFileDate(new Date());
+				batch.setStatus(FileStatus.GENERATED);
+				super.accept(null);
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("error on generateFanFile ["+e.getMessage()+"]");
+			AonUtil.addErrorMessage("Error generating FAN file");
+			AonUtil.addErrorMessage(e.getMessage());
 		} catch (FileNotFoundException e) {
-			AonUtil.addErrorMessage("error on generateFanFile ["+e.getMessage()+"]");
+			AonUtil.addErrorMessage("Error generating FAN file");
+			AonUtil.addErrorMessage(e.getMessage());
 		} catch (IOException e) {
-			AonUtil.addErrorMessage("error on generateFanFile ["+e.getMessage()+"]");
+			AonUtil.addErrorMessage("Error generating FAN file");
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
 	
-	public void changeBatchStatus(FileStatus status) {
-		FanBatch b = (FanBatch) getTo();
-		if(b != null){
-			b.setStatus(status);
-			super.accept(null);
+	public void onDownloadFile( ActionEvent event ) {
+		FanBatch batch = (FanBatch) getTo();
+		HttpServletResponse response = null;
+		OutputStream out = null;
+        try {
+        	Date date = batch.getDate();
+        	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmmss");
+    		String name = formatter.format(date);
+        	int size = batch.getOutcomeFile().length;
+			response = DownloadUtil.getResponse();
+    		out = DownloadUtil.initDownload(response, name+".FAN", null, size);
+        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(batch.getOutcomeFile()) );
+        	IOUtils.copy( fileIn, out );
+        	IOUtils.closeQuietly(fileIn);
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
 		}
 	}
-
-	private void checkDiskCreated() throws ManagerBeanException {
-		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.FAN_BATCH_ATTACH_CONTROLLER_NAME);
-		if(controller.getRowCount()>0){
-			setRecorded(true);
-		} else {
-			setRecorded(false);
+	
+	public void onRemoveFile( ActionEvent event ) throws ManagerBeanException {
+		FanBatch batch = (FanBatch) this.getTo();
+		if(batch!=null){
+			batch.setOutcomeFile(null);
+			batch.setOutcomeFileDate(null);
+			batch.setStatus(FileStatus.PENDING);
+			this.getManagerBean().update(batch);
+		}
+		onSearchCCCs(event);
+	}
+	
+	public void fanFileUploaded(UploadEvent event) throws ManagerBeanException {
+		FanBatch batch = (FanBatch) this.getTo();
+		try {
+			if(batch!=null){
+				UploadItem item = event.getUploadItem();
+				File file = item.getFile();
+				if (file != null) {
+					FileInputStream in = new FileInputStream(file);
+					byte[] data = IOUtils.toByteArray(in);
+					batch.setOutcomeFile(data);
+					batch.setOutcomeFileDate(new Date());
+					this.getManagerBean().update(batch);
+				}
+			}
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
 		}
 	}
-
+	
 	private List<EnterpriseCCC> getEnterpriseCCCList() {
 		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
 		List<EnterpriseCCC> list = new LinkedList<EnterpriseCCC>();
@@ -261,11 +263,15 @@ public class FanBatchController extends BasicController {
 	 */
 	public class FanBatchNewWizard {
 
-		private List<FanBatchDetail> selectedList;
+		private List<ITransferObject> selectedList;
 		
 		private ArrayList<Object> checks = new ArrayList<Object>();
 		
 		private DataModel selectedModel;
+		
+		public boolean isNew(){
+			return true;
+		}
 		
 		public DataModel getSelectedModel() {
 			return selectedModel;
@@ -273,6 +279,10 @@ public class FanBatchController extends BasicController {
 
 		public void setSelectedModel(DataModel selectedModel) {
 			this.selectedModel = selectedModel;
+		}
+
+		public List<ITransferObject> getSelectedList() {
+			return selectedList;
 		}
 
 		public void init() {
@@ -286,7 +296,7 @@ public class FanBatchController extends BasicController {
 			listController.init();
 			listController.setModel(null);
 			
-			selectedList = new LinkedList<FanBatchDetail>();
+			selectedList = new LinkedList<ITransferObject>();
 			setSelectedModel(null);
 		}
 		
@@ -305,9 +315,9 @@ public class FanBatchController extends BasicController {
 				HibernateUtil.beginTransaction(sessionName);
 				
 				IManagerBean detailBean = BeanManager.getManagerBean(FanBatchDetail.class);
-				for(FanBatchDetail detail: selectedList){
+				for(ITransferObject to: selectedList){
+					FanBatchDetail detail = (FanBatchDetail) to;
 					detail.setFanBatch(batch);
-					detail.setDomain(batch.getDomain());
 					detailBean.insert(detail);
 				}
 				
@@ -329,10 +339,12 @@ public class FanBatchController extends BasicController {
 			}
 		}
 
-		public void accept(ActionEvent event){
+		public void accept(ActionEvent event) throws ManagerBeanException{
+			onBatchSelected(event);
 			if(selectedList==null || selectedList.size()<=0){
-				AonUtil.addErrorMessage("Seleccione los ccc para continuar");
-				throw new AbortProcessingException("Seleccione los ccc para continuar");
+				String msg = "No se ha seleccionado ninguna cuenta de cotización.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
 			}
 			saveData();
 			loadDetails();
@@ -349,6 +361,7 @@ public class FanBatchController extends BasicController {
 			}
 	        listController.getCheckHandler().clearCheckedList();
 	        setSelectedModel(new ListDataModel(selectedList));
+	        onSearchCCCs(event);
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -403,7 +416,7 @@ public class FanBatchController extends BasicController {
 		}
 
 		public void checkAll(ActionEvent event) throws ManagerBeanException {
-			Iterator<FanBatchDetail> iterator = selectedList.iterator();
+			Iterator<ITransferObject> iterator = selectedList.iterator();
 			while (iterator.hasNext()) {
 				Object o = iterator.next();
 				if (!checks.contains(o)) {

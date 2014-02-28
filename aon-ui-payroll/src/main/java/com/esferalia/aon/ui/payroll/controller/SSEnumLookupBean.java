@@ -15,6 +15,7 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 public class SSEnumLookupBean {
 	
 	private String code;
+	private String description;
 	private ISSEnum ssEnum;
 	private String enumName;
 	private boolean showEnumLookupWindow;
@@ -89,13 +90,12 @@ public class SSEnumLookupBean {
 	
 	public void loadEnumByCode(ActionEvent event) {
 		ContractController controller = (ContractController) FormUtil.getController("contract");
-		// Complete with all ss enums
 		try {
 			Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase());
 			for (Object obj : clazz.getEnumConstants()) {
 				ISSEnum enumeration = (ISSEnum) obj;
 				if(enumeration.getCode().equals(code)){
-					// Complete with all ss enums
+					// Add here the required S.S. enums
 					if(enumeration.getClass()==T54.class){
 						controller.getParams().setCollectivePeculiarityQuote((T54) enumeration);
 					}
@@ -110,7 +110,8 @@ public class SSEnumLookupBean {
 		setSsEnum((ISSEnum) handler.getCodesModel().getRowData());
 		
 		ContractController controller = (ContractController) FormUtil.getController("contract");
-		// Complete with all ss enums
+		
+		// Add here the required S.S. enums
 		if(getSsEnum().getClass()==T54.class){
 			controller.getParams().setCollectivePeculiarityQuote((T54) getSsEnum());
 		}

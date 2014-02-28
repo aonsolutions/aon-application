@@ -23,11 +23,11 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 public class RegistryFormListener extends ControllerAdapter {
 	
@@ -214,7 +214,7 @@ public class RegistryFormListener extends ControllerAdapter {
 	}
 	
 	public List<SelectItem> getMunicipalities(){
-		ResourceBundle bundle = ResourceBundle.getBundle(IRegistryConstants.MUNICIPALITIES_BUNDLE_NAME);
+		ResourceBundle bundle = ResourceBundle.getBundle(ICommonConstants.MUNICIPALITIES_BUNDLE_NAME);
 		List<SelectItem> municipalities = new LinkedList<SelectItem>();
 		if(this.getMainAddress()!=null){
 			RegistryAddress address = (RegistryAddress) this.getMainAddress();

@@ -25,7 +25,7 @@
 					<ui:define name="columns">
 
 						<aon:column alias="LeaveBatch.id"
-							styleClass="aon-editDataTable-numberColumn">
+							styleClass="aon-editDataTable-numberColumn aon-width-50">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
@@ -33,9 +33,9 @@
 						</aon:column>
 						
 						<aon:column alias="LeaveBatch.date"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
+								<aon:outputText value="#{bundle.aon_date} #{bundle.aon_finance_batch}" />
 							</f:facet>
 							<aon:outputText value="#{to.date}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -43,12 +43,30 @@
 							</aon:outputText>
 						</aon:column>
 						
+						<aon:column alias="LeaveBatch.outcomeFileDate"
+							styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date} #{bundle.finance_disk}" />
+							</f:facet>
+							<aon:outputText value="#{to.outcomeFileDate}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
 						<aon:column alias="LeaveBatch.status"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}"/>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
 						</aon:column>
 	
 					</ui:define>

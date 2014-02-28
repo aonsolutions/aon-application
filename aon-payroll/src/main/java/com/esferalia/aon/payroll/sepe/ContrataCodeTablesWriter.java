@@ -34,7 +34,7 @@ public class ContrataCodeTablesWriter {
 	
 	final static String JAVA_FILE_EXTENSION = ".java";
 	
-	final static String MUNICIPALITIES_PROPERTIES_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/municipalities.properties";
+	final static String MUNICIPALITIES_PROPERTIES_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-common/src/main/resources/com/code/aon/common/i18n/municipalities.properties";
 	final static String QUALIFICATIONS_PROPERTIES_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/qualifications.properties";
 	final static String ZIP_PROPERTIES_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/zip.properties";
 	
@@ -82,10 +82,12 @@ public class ContrataCodeTablesWriter {
 				File[] filesList = codeDir.listFiles();
 				tablesCount = filesList.length;
 				
+				SimpleDateFormat dateFormatter = new SimpleDateFormat();
+				dateFormatter.applyPattern("dd/MM/yyyy HH:mm:ss");
 				System.out.println("*****************************************");
 				System.out.println("*** SEPE - TABLAS DE CODIGOS DE CONTRATA ");
 				System.out.println("*****************************************");
-				System.out.println("*** Iniciando proceso. " + new Date());
+				System.out.println("*** Iniciando proceso. " + dateFormatter.format(new Date()));
 				for(File file: filesList){
 					if(getFileNameWithoutExtension(file).equals(MUNICIPALITIES_FILE_NAME)){
 						File newFile = new File(MUNICIPALITIES_PROPERTIES_PATHNAME);

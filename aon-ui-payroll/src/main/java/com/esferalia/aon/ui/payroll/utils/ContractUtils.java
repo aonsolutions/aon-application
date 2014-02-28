@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -755,6 +754,7 @@ public class ContractUtils {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_START_DATE));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE));
 			List<ITransferObject> list = bean.getList(criteria);
 			params.setBonuses( list ); 
 			params.setBonusModel(null);

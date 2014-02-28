@@ -12,68 +12,71 @@
 	<ui:define name="content"> 
 		<aon:form id="batchForm">
 
-			<aon:methodParam name="saveActionListener" value="#{contractBatch.newBatchWizard.accept}" type="actionListener" />
+			<aon:methodParam name="saveActionListener" value="#{fdiBatch.newBatchWizard.accept}" type="actionListener" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.payroll_contractBatchWizard_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_leaveBatchWizard_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
-				<ui:param name="controller" value="#{contractBatch}" />
+				<ui:param name="controller" value="#{leaveBatch}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
+			
 				<aon:panelGrid id="info-panel" columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
-	
-					<aon:outputLabel for="ContractBatch_date" value="#{bundle.aon_date} #{bundle.aon_finance_batch}" />
+					
+					<aon:outputLabel for="LeaveBatch_date" value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:selectInputDate id="ContractBatch_date" rendered="#{!contractBatch.recorded}"
-							value="#{contractBatch.to.date}" required="true"
+						<aon:selectInputDate id="LeaveBatch_date" rendered="#{!leaveBatch.recorded}"
+							value="#{leaveBatch.to.date}" required="true"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputText value="#{contractBatch.to.date}" rendered="#{contractBatch.recorded}" >
+						<aon:outputText value="#{leaveBatch.to.date}" rendered="#{leaveBatch.recorded}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-					</aon:div>	
-	
-					<aon:outputText value="#{bundle.finance_disk} AFI" />
-					<aon:commandButton id="fan-create-button" value="#{bundle.payroll_create_disk}"
-						reRender="batchForm"
-						styleClass="aon-icon-commandButton aon-icon-accept"
-						actionListener="#{contractBatch.onCreateDisk}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					</aon:div>
 					
+					<aon:outputText value="#{bundle.finance_disk} FDI" />
+					<aon:div>
+						<aon:commandButton id="fdi-create-button" value="#{bundle.payroll_create_disk}"
+							rendered="#{leaveBatch.new or (!leaveBatch.recorded and leaveBatchDetail.model.rowCount > 0)}"
+							reRender="batchForm"
+							styleClass="aon-icon-commandButton aon-icon-accept"
+							actionListener="#{leaveBatch.onCreateDisk}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				     </aon:div>
 				</aon:panelGrid>
 				
 				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.new}">
-					<c:if test="#{contractBatch.newBatchWizard.selectedModel.rowCount > 0}" >
+					<c:if test="#{leaveBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 						<aon:panelTab id="batchedTab" label="#{bundle.finance_checked}">
 							<aon:div id="detailDataDiv">
 								<aon:div id="detailToolBarDiv" styleClass="aon-toolbar" >
 									<aon:commandButton title="#{bundle.aon_check_all}"
 										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 										value="#{bundle.aon_check_all}"
-										actionListener="#{contractBatch.newBatchWizard.checkAll}" reRender="detailDataDiv"
+										actionListener="#{leaveBatch.newBatchWizard.checkAll}" reRender="detailDataDiv"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 									<aon:commandButton title="#{bundle.aon_uncheck_all}"
 										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 										value="#{bundle.aon_uncheck_all}"
-										actionListener="#{contractBatch.newBatchWizard.checkNone}" reRender="detailDataDiv"
+										actionListener="#{leaveBatch.newBatchWizard.checkNone}" reRender="detailDataDiv"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 									<aon:commandButton title="#{bundle.payroll_remove_batch}"
 										styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 										value="#{bundle.payroll_remove_batch}"
-										rendered="#{contractBatch.newBatchWizard.checkedCount > 0}"
-										actionListener="#{contractBatch.newBatchWizard.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
+										rendered="#{leaveBatch.newBatchWizard.checkedCount > 0}"
+										actionListener="#{fanBatch.newBatchWizard.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 								</aon:div>
 							
-								<aon:dataTable id="batchDetailData" value="#{contractBatch.newBatchWizard.selectedModel}"
-									var="to" rows="20" rendered="#{contractBatch.newBatchWizard.selectedModel.rowCount > 0}" >
+								<aon:dataTable id="batchDetailData" value="#{leaveBatch.newBatchWizard.selectedModel}"
+									var="to" rows="20" rendered="#{leaveBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 									
 									<aon:rowSelector id="batchDetail-select" toggleOnClick="#{false}"/>
 									
@@ -84,13 +87,13 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:selectBooleanCheckbox id="Included_Row_checked"
-											value="#{contractBatch.newBatchWizard.rowChecked}"
-											valueChangeListener="#{contractBatch.newBatchWizard.rowSelected}" >
+											value="#{leaveBatch.newBatchWizard.rowChecked}"
+											valueChangeListener="#{leaveBatch.newBatchWizard.rowSelected}" >
 											<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
 										</aon:selectBooleanCheckbox>
 									</aon:column>
 									
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/contractColumns.xhtml" />
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/leaveColumns.xhtml" />
 									
 								</aon:dataTable>
 								<aon:dataScroller2 for="batchDetailData" showNote="true" />
@@ -99,9 +102,9 @@
 						</aon:panelTab>
 					</c:if>
 					<aon:panelTab id="noBatchedTab" label="#{bundle.aon_pending}">
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/formNoBatched.xhtml" >
-							<ui:param name="controller" value="#{contractBatch.newBatchWizard}" />
-							<ui:param name="rowCheckDisabled" value="#{contractBatch.newBatchWizard.rowDisabled}" />
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/formNoBatched.xhtml" >
+							<ui:param name="controller" value="#{leaveBatch.newBatchWizard}" />
+							<ui:param name="rowCheckDisabled" value="#{leaveBatch.newBatchWizard.rowDisabled}" />
 						</ui:include>
 					</aon:panelTab>
 				</aon:panelTabSet>
@@ -111,7 +114,6 @@
 		</aon:form>
 
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 	</ui:define>

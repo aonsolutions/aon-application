@@ -40,6 +40,7 @@
 			size="32" maxlength="16"
 			value="#{registryAddress.zip}" 
 			reRender="#{pojoName}_address_geozone, #{pojoName}_address_municipality"
+			focus="#{pojoName}#{showMunicipality?'_address_municipality':'_address_city'}"
 			actionListener="#{controller.onLoadGeozone}" />
 		<aon:outputLabel for="#{pojoName}_address_geozone" styleClass="aon-margin-left  aon-margin-right aon-italic" 
 			value="#{bundle.aon_state}" />

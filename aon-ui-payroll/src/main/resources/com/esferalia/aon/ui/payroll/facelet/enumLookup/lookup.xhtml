@@ -35,10 +35,10 @@
 		</aon:commandButton>
 		
 		<aon:div style="display: inline;">
-			<aon:outputText value="#{lookupTo.description}" >
-				<aon:abbreviateConverter maxWidth="80" />
-			</aon:outputText>
-			<c:if test="#{fn:length(tookupTo.description) > 80}">
+			<aon:inputText value="#{lookupTo.description}" disabled="#{true}" size="64">
+				<aon:abbreviateConverter maxWidth="64" />
+			</aon:inputText>
+			<c:if test="#{fn:length(lookupTo.description) > 64}">
 				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
 					<aon:outputText value="#{lookupTo.description}" />
 				</rich:toolTip>
