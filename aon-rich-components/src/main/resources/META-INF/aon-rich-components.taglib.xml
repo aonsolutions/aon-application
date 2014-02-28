@@ -378,6 +378,12 @@
 		</handler-class>
 	</tag>
 	<tag>
+		<tag-name>dataScroller2</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler
+		</handler-class>
+	</tag>
+	<tag>
 		<tag-name>spin</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.spin.SpinHandler

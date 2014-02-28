@@ -216,6 +216,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	}
 	
 	public void setModel(DataModel model) {
+		setPage(1);
 		this.model = model;
 	}
 	
