@@ -47,6 +47,7 @@
 				<aon:inputText id="RegistryAddress_zip#{sufix}"	required="true" styleClass="aon-margin-left aon-form-input-text"
 					reRender="RegistryAddress_geozone#{sufix}, RegistryAddress_municipality#{sufix}"
 					actionListener="#{controller.onLoadGeozone}"
+					focus="#{showMunicipality?'RegistryAddress_municipality':'RegistryAddress_city'}#{sufix}"
 					value="#{controller.to.zip}" size="8" maxlength="16" />
 				<aon:outputLabel for="RegistryAddress_geozone" value="#{bundle.aon_state}" styleClass="aon-italic aon-margin-left"/>
 				<aon:selectOneMenu id="RegistryAddress_geozone#{sufix}"	styleClass="aon-margin-left aon-form-input-text"

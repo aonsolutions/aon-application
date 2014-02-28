@@ -15,7 +15,13 @@ public enum SSCodeTables implements ISSEnum {
 	T_T06( "T06", "Clase de liquidación",null),
 	T_T07( "T07", "Acción",null),
 	T_T10( "T10", "Clave de entidad de AT y EP",null),
+	T_T18( "T18", "Grupo de cotización",null),
+	T_T21( "T21", "Situación",null),
+	T_T37( "T37", "Condición de desempleado",null),
+	T_T41( "T41", "Tipos de inactividad",null),
 	T_T54( "T54", "Colectivo de peculiaridad de cotización",null),
+	T_T61( "T61", "Colectivo de trabajador",null),
+	T_T83( "T83", "Exclusión social/Víctimas",null),
 	;
 	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	private String code;

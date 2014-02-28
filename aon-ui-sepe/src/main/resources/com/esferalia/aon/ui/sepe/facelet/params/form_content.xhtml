@@ -10,7 +10,7 @@
 
 	
 	<c:if test="#{aonRole.sysAdmin}">
-		<aon:panel style="width: 500px; padding:1em 0 1em 0;">
+		<aon:panel style="width: 700px; padding:1em 0 1em 0;">
 			<aon:selectBooleanCheckbox id="developmentMode"
 				value="#{sepeAppParams.developmentMode}" />
 			<aon:outputLabel for="developmentMode"
@@ -19,22 +19,16 @@
 		</aon:panel>
 	</c:if>
 	
-	<aon:div styleClass="aon-group" style="width: 500px;">
+	<aon:div styleClass="aon-group" style="width: 700px;">
 		<aon:div styleClass="aon-group-title">
 			<aon:outputText value="#{bundle.sepe_contrata_loginData}"/>
 		</aon:div>
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
 			
-				<aon:div style="margin-bottom:1em;">
-					<aon:selectBooleanCheckbox id="test_enviroment"
-						value="#{sepeAppParams.contrataTestEnviroment}" />
-					<aon:outputLabel for="test_enviroment"
-						style="#{(sepeAppParams.contrataTestEnviroment)?('color: red; font-weight:bold;'):('text-decoration: line-through;')}"
-						value="#{bundle.sepe_test_environment_active}" />
-				</aon:div>
-				<aon:div style="margin-bottom:1em;">
+				<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
 					<aon:selectBooleanCheckbox id="ssl_enviroment"
+						styleClass="aon-margin-left"
 						disabled="#{!aonRole.sysAdmin}"
 						value="#{sepeAppParams.contrataSSLEnviroment}" />
 					<aon:outputLabel for="ssl_enviroment"
@@ -53,7 +47,14 @@
 							value="#{bundle.aon_login_passwd}" />
 						<aon:inputSecret id="contrata_passwd" redisplay="#{true}" style="width: 100%;"
 							value="#{sepeAppParams.contrataPassword}" />
-
+							
+						<aon:outputLabel for="contrata-test-environment"
+							value="#{bundle.marketing_communications}" />
+						<aon:selectOneMenu id="contrata-test-environment"
+							value="#{sepeAppParams.contrataTestEnviroment}">
+							<f:selectItem itemLabel="Estado de pruebas" itemValue="#{true}" />
+							<f:selectItem itemLabel="Entorno de producción REAL" itemValue="#{false}" />
+						</aon:selectOneMenu>
 					</aon:panelGrid>
 			
 					<aon:div id="contrata-login-confirm-result" style="margin-left:1em; text-align: center;">
@@ -88,22 +89,16 @@
 	</aon:div>
 	
 	<c:if test="#{actionDenied.moduleEnabled['payroll']}">
-		<aon:div styleClass="aon-group" style="width: 500px;">
+		<aon:div styleClass="aon-group" style="width: 700px;">
 			<aon:div styleClass="aon-group-title">
 				<aon:outputText value="#{bundle.sepe_certifica2_loginData}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">
 				
-					<aon:div style="margin-bottom:1em;">
-						<aon:selectBooleanCheckbox id="test_enviroment-certifica2"
-							value="#{sepeAppParams.certifica2TestEnviroment}" />
-						<aon:outputLabel for="test_enviroment-certifica2"
-							style="#{(sepeAppParams.certifica2TestEnviroment)?('color: red; font-weight:bold;'):('text-decoration: line-through;')}"
-							value="#{bundle.sepe_test_environment_active}" />
-					</aon:div>
-					<aon:div style="margin-bottom:1em;">
+					<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
 						<aon:selectBooleanCheckbox id="ssl_enviroment-certifica2"
+							styleClass="aon-margin-left"
 							disabled="#{!aonRole.sysAdmin}"
 							value="#{sepeAppParams.certifica2SSLEnviroment}" />
 						<aon:outputLabel for="ssl_enviroment-certifica2"
@@ -122,7 +117,14 @@
 								value="#{bundle.aon_login_passwd}" />
 							<aon:inputSecret id="certifica2_passwd" redisplay="#{true}" style="width: 100%;"
 								value="#{sepeAppParams.certifica2Password}" />
-	
+							
+							<aon:outputLabel for="certifica2-test-environment"
+								value="#{bundle.marketing_communications}" />
+							<aon:selectOneMenu id="certifica2-test-environment"
+								value="#{sepeAppParams.certifica2TestEnviroment}">
+								<f:selectItem itemLabel="Estado de pruebas" itemValue="#{true}" />
+								<f:selectItem itemLabel="Entorno de producción REAL" itemValue="#{false}" />
+							</aon:selectOneMenu>
 						</aon:panelGrid>
 				
 						<aon:div id="certificados-login-confirm-result" style="margin-left:1em; text-align: center;">

@@ -962,9 +962,15 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{leaveBatchDetailChildListener}</value>
+				<value>#{leaveBatchControllerListener}</value>
 				<value>#{leaveBatchAttachChildListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>leaveBatchControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.LeaveBatchControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>leaveBatchDetailChildListener</managed-bean-name>
@@ -1185,7 +1191,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>FanBatchDetail_id</value>
+			<value>FanBatchDetail_ccc_activity_enterprise_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1627,7 +1633,7 @@
 	<!-- **** TRAINING CENTER ADDRESS **** -->
 	<managed-bean>
 		<managed-bean-name>trainingCenterAddress</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryAddressLinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>

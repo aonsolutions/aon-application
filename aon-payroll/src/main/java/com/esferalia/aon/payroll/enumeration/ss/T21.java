@@ -1,0 +1,109 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T21 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T21.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T21 implements ISSEnum {
+
+	T21_1( "1", "Alta", null, null ),
+	T21_51( "51", "Baja voluntaria/Dimisión - Dimisión del trabajado", " cese voluntario del trabajador durante el período de prueba", " rescisión de la relación laboral por voluntad del trabajador por motivos no incluidos en otra clave específica, incluidos los del artículo" ),
+	T21_50( "50", "ET.", null, null ),
+	T21_53( "53", "Baja despido disciplinario individual - Baja por extinción del contrato por despido individual disciplinario regulado en le artículo 54 ET (basado en le incumplimiento grave y culpable del trabajador).", null, null ),
+	T21_54( "54", "Baja no voluntaria por otras causas Fin de contrato en situación de IT del trabajador", " cierre legal de la empresa", " despidos derivados de la muerte o jubilación del empresario" ),
+	T21_55( "55", "Baja por fusión - absorción empresa - Baja como consecuencia de fusiones, absorciones, segregaciones de empresas que implequen cambio de CCC.", null, null ),
+	T21_56( "56", "Baja por fallecimiento", null, null ),
+	T21_58( "58", "Baja por pase a la situación de pensionista - Jubilación e invalidez permanente", null, null ),
+	T21_63( "63", "Baja por excedencia voluntaria/forzosa - Cualquier excedencia independientemente de la causa que la origine. (excepto excedencia maternal)", null, null ),
+	T21_65( "65", "Baja por agotamiento I.T.", null, null ),
+	T21_67( "67", "Baja por paro estacional - Sólo Régimen especial de trabajadores del mar", null, null ),
+	T21_68( "68", "Baja por excedencia maternal/cuidado de hijos", null, null ),
+	T21_69( "69", "Baja por suspensión temporal ERE - Suspensión de la relación laboral sin prestación o subsidio de desempleo y sin que exista acuerdo en ERE por el cual la empresa adquiera la obligación de mantenimiento de alta y cotización por el trabajador", null, null ),
+	T21_73( "73", "Baja por cuidado de familiares", null, null ),
+	T21_74( "74", "Baja por otras causas de suspensión - Mutuo acuerdo de las partes, causas de suspensión consignadas válidamente en el contrato, pase a ejercicio de cargo público representativo, privación de libertad del trabajador mientras no existe sentencia condenatoria, suspensión de empleo y sueldo.", null, null ),
+	T21_76( "76", "Baja por excedencia violencia de género - Sólo funcionarios", null, null ),
+	T21_77( "77", "Baja por despido colectivo - Despidos colectivos que se rigen por el rtículo 51 del ET", " extinciones de contrato por causas económicas, técnicas, organizativas o deproducción, así como las extinciones derivadas de fuerza mayor del artículo 51.7 ET", " despidos colectivos llevados a cabo durante un proceso de concurso de acreedores que se rigen por el artículo 64 de la Ley Concursal." ),
+	T21_80( "80", "Suspensión por violencia de género - Artículo 45.1.n del ET", null, null ),
+	T21_85( "85", "Baja por no superar el período de prueba - Baja por no superar el período de prueba del contrato en los términos establecidos en el artículo 14 ET con desistimiento del empresario.", null, null ),
+	T21_91( "91", "Baja por despido por causas objetivas empresa - Extinción del contrato de uno o más trabajadores, por causas ecónomicas, técnicas, organizativas o de producción, sin alcanzar los umbrales del artículo 51 ET para los que se utilizará la Clave 77. (Artículo 52 letra c) ET).", null, null ),
+	T21_92( "92", "Baja por despido por causas objetivas trabajador - Extinciónes de contratos por ineptitud del trabajador (artículo 52 letra a) ET), por falta deadaptación a las modificaciones del puesto de trabajo (artículo 52 letra b) ET), o por faltas deasistencia (artículo 52 letra d) ET).", null, null ),
+	T21_93( "93", "Baja por fin contrato temporal o de duración determinada - Bajas por finalización de contrato en las que no se ha producido un despido. Se incluirán los siguientes supuestos: fin de contrato de obra y servicio", " fin de contrato eventual por circustancias de la producción", " fin de contrato de interinidad" ),
+	T21_94( "94", "Baja por pase a inactividad fijos discontinuos - Bajas derivadas del cese de la actividad de los trabajadores fijos discontinuos al finalizar el período por el que fueron llamados para ejercer la actividad. La baja debe de comunicarse tantas veces como finalicen los llamamientos realizados por el empresario dentro de la relación laboral establecida.", null, null ),
+	T21_99( "99", "Otras causas de baja - Sólo utilizable para situaciones de guarda legal y cambio de puesto de trabajo.", null, null ),
+	T21___( "__", "Existen otras situaciones, pero aquí sólo se recogen las que se pueden gestionar por RED", null, null ),
+	;
+	public static final String TABLE_NAME = "T21";
+	public static final String TABLE_DESCRIPTION = "T21.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T21( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T21 getEnumByValue(String expression) {
+		for( T21 o : T21.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

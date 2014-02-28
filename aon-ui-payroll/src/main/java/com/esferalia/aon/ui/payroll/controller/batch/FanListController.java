@@ -1,5 +1,12 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -8,14 +15,20 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.FanBatch;
+import com.esferalia.aon.payroll.FanBatchDetail;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class FanListController extends BasicController {
@@ -103,22 +116,58 @@ public class FanListController extends BasicController {
 				getCriteria().addInExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_DOMAIN), utils.getCurrentChildDomainIds());
 			}
 			
-			// ******************************
-			// FIXME: this code is temporary, while the contract fan detail ccc status is not defined
-//			LinesController controller = (LinesController) AonUtil.getRegisteredBean(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
-//			for(ITransferObject to: (List<ITransferObject>)controller.getWrappedList()){
-//				FanBatchDetail d = (FanBatchDetail) to;
-//				getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_ID), d.getCcc().getId());
-//			}
 			
-			getCriteria().addOrder("EnterpriseCCC.activity.enterprise.registry.name");
-			
+			FanBatchController batchController = (FanBatchController) AonUtil.getRegisteredBean(IPayrollConstants.FAN_BATCH_CONTROLLER_NAME);
+			if(batchController.isNew()){
+				List<ITransferObject> list = batchController.getNewBatchWizard().getSelectedList();
+				if(list!=null){
+					for(ITransferObject to: list){
+						FanBatchDetail d = (FanBatchDetail) to;
+						getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_ID), d.getCcc().getId());
+					}
+					getCriteria().addOrder("EnterpriseCCC.activity.enterprise.registry.name");
+				}
+			} else {
+				List<Integer> list = getDetailCCCIds((FanBatch)batchController.getTo());
+				if(list!=null){
+					for(Integer id: list){
+						getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_ID), id);
+					}
+					getCriteria().addOrder("EnterpriseCCC.activity.enterprise.registry.name");
+				}
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		super.onSearch(event);
+	}
+	
+	private List<Integer> getDetailCCCIds(FanBatch fanBatch){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT enterprise_ccc FROM fan_batch_detail WHERE fan_batch = " + fanBatch.getId() + ";";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			List<Integer> list = new LinkedList<Integer>();
+			while(rs.next()){
+				list.add(rs.getInt(1));
+			}
+			return list;
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
 	}
 
 }

@@ -62,7 +62,6 @@ import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -324,7 +323,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 	
 	public List<SelectItem> getMunicipalities(){
-		ResourceBundle bundle = ResourceBundle.getBundle(IRegistryConstants.MUNICIPALITIES_BUNDLE_NAME);
+		ResourceBundle bundle = ResourceBundle.getBundle(ICommonConstants.MUNICIPALITIES_BUNDLE_NAME);
 		List<SelectItem> municipalities = new LinkedList<SelectItem>();
 		if(this.getTo()!=null){
 			RegistryAddress address = getMainAddress();

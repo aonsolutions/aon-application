@@ -2,8 +2,6 @@ package com.code.aon.ui.registry.controller;
 
 public interface IRegistryConstants {
 	
-	String MUNICIPALITIES_BUNDLE_NAME = "com.code.aon.ui.registry.i18n.municipalities";
-	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

@@ -10,15 +10,6 @@
 	<aon:panelGrid columns="2" id="peculiar_quote_collective_panel" style="width:920px;"
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 		
-		<!--  
-		<aon:outputLabel for="collectivePeculiarityQuote" value="#{bundle.payroll_collective_peculiarity_quote}" />
-		<aon:selectOneMenu id="collectivePeculiarityQuote"
-			value="#{contract.params.collectivePeculiarityQuote}" >
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{ssCollections.t54CodeList}" />
-		</aon:selectOneMenu>
-		-->
-		
 		<aon:outputText value="#{bundle.payroll_collective_peculiarity_quote}" />
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{contract.params.collectivePeculiarityQuote}" />

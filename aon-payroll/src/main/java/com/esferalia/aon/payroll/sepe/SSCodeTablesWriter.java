@@ -46,7 +46,15 @@ public class SSCodeTablesWriter {
 	final static String T06_TABLE_DESCRIPTION = "Clase de liquidación";
 	final static String T07_TABLE_DESCRIPTION = "Acción";
 	final static String T10_TABLE_DESCRIPTION = "Clave de entidad de AT y EP";
+	final static String T18_TABLE_DESCRIPTION = "Grupo de cotización";
+	final static String T21_TABLE_DESCRIPTION = "Situación";
+	final static String T37_TABLE_DESCRIPTION = "Condición de desempleado";
+	final static String T41_TABLE_DESCRIPTION = "Tipos de inactividad";
 	final static String T54_TABLE_DESCRIPTION = "Colectivo de peculiaridad de cotización";
+	final static String T58_TABLE_DESCRIPTION = "Ocupación";
+	final static String T61_TABLE_DESCRIPTION = "Colectivo de trabajador";
+	final static String T68_TABLE_DESCRIPTION = "Indicativo pérdida de beneficios (trabajador)";
+	final static String T83_TABLE_DESCRIPTION = "Exclusión social/Víctimas";
 	
 	
 	private static int tablesCount;
@@ -537,24 +545,39 @@ public class SSCodeTablesWriter {
 			    	String enumName = enumFile.getName().replaceAll(JAVA_FILE_EXTENSION, "");
 			    	String enumDescription = null;
 			    	
-			    		
-		    		if(getFileNameWithoutExtension(enumFile).equals("T01")){
-		    			enumDescription = T01_TABLE_DESCRIPTION;
-		    		} else if(getFileNameWithoutExtension(enumFile).equals("T05")){
-		    			enumDescription = T05_TABLE_DESCRIPTION;
-		    		} else if(getFileNameWithoutExtension(enumFile).equals("T06")){
-		    			enumDescription = T06_TABLE_DESCRIPTION;
-		    		} else if(getFileNameWithoutExtension(enumFile).equals("T07")){
-		    			enumDescription = T07_TABLE_DESCRIPTION;
-		    		} else if(getFileNameWithoutExtension(enumFile).equals("T10")){
-		    			enumDescription = T10_TABLE_DESCRIPTION;
-		    		} else if(getFileNameWithoutExtension(enumFile).equals("T54")){
-		    			enumDescription = T54_TABLE_DESCRIPTION;
-		    		}
-		    		
-		    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", \"" + enumDescription + "\",null)," );
-
-		    		out.newLine();
+			    	if( !enumName.equals(TABLES_ENUM_NAME) ){
+			    		if(getFileNameWithoutExtension(enumFile).equals("T01")){
+			    			enumDescription = T01_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T05")){
+			    			enumDescription = T05_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T06")){
+			    			enumDescription = T06_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T07")){
+			    			enumDescription = T07_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T10")){
+			    			enumDescription = T10_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T18")){
+			    			enumDescription = T18_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T21")){
+			    			enumDescription = T21_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T37")){
+			    			enumDescription = T37_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T41")){
+			    			enumDescription = T41_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T54")){
+			    			enumDescription = T54_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T58")){
+			    			enumDescription = T58_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T61")){
+			    			enumDescription = T61_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T83")){
+			    			enumDescription = T68_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T68")){
+			    			enumDescription = T83_TABLE_DESCRIPTION;
+			    		}
+			    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", \"" + enumDescription + "\",null)," );
+			    		out.newLine();
+			    	}
 			    	
 			    }
 			}
