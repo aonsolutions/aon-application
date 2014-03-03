@@ -425,7 +425,7 @@
 								<textField>
 									<reportElement uuid="d313479b-c910-4840-9a03-df1f3c4e3cd3" style="text_TD" x="4" y="0" width="88" height="12"/>
 									<textElement/>
-									<textFieldExpression><![CDATA[$F{type} == PaymentType.SALARY_IN_KIND ? "Especie" : "Dineraria"]]></textFieldExpression>
+									<textFieldExpression><![CDATA[PaymentType.isSalaryInKind($F{type}) ? "Especie" : "Dineraria"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

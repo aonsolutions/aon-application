@@ -490,7 +490,7 @@
 								<textField>
 									<reportElement uuid="3af26b64-1896-460e-8d67-cd73344558b6" style="text_TD" x="2" y="0" width="20" height="12"/>
 									<textElement textAlignment="Center"/>
-									<textFieldExpression><![CDATA[$F{type} == PaymentType.SALARY_IN_KIND ? "E" : "D"]]></textFieldExpression>
+									<textFieldExpression><![CDATA[PaymentType.isSalaryInKind($F{type}) ? "E" : "D"]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
