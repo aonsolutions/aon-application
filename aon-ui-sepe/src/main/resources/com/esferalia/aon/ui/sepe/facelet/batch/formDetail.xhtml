@@ -34,6 +34,7 @@
 		</c:if>
 	
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="isRecorded" value="#{controller.recorded}" />
 			<ui:param name="controller" value="#{controllerDetail}" />
 			<ui:param name="skipSelectButton" value="true" />
 			<ui:param name="rowSelectorToggleOnClick" value="false" />
@@ -42,7 +43,7 @@
 			
 				<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
 				
-				<c:if test="#{!controller.recorded}" >
+				<c:if test="#{!isRecorded}" >
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
