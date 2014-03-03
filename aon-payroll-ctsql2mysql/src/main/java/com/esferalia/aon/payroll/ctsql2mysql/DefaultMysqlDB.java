@@ -530,14 +530,14 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 
 		if ("E".equalsIgnoreCase(dinEsp)) {
-			return PaymentType.SALARY_IN_KIND;
+			return PaymentType.CRA_0013;
 		}
 
 		if (description == null) {
-			return PaymentType.SALARY_SUPPLEMENTS;
+			return PaymentType.CRA_0001;
 		}
 		if (baseSalaryPattern.matcher(description).find()) {
-			return PaymentType.BASE_SALARY;
+			return PaymentType.CRA_0001;
 		} else if (overtimePattern.matcher(description).find()) {
 			return PaymentType.NON_STRUCTURAL_HOURS;
 		} else if (noticePattern.matcher(description).find()) {
@@ -547,9 +547,9 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		} else if (dismissalPattern.matcher(description).find()) {
 			return PaymentType.MOVING_COMPENSATION;
 		} else if (compensationPattern.matcher(description).find()) {
-			return PaymentType.COMPENSATION_OR_PREPAID_EXPENSES;
+			return PaymentType.CRA_0001;
 		}
-		return PaymentType.SALARY_SUPPLEMENTS;
+		return PaymentType.CRA_0001;
 
 	}
 

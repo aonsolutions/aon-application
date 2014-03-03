@@ -616,7 +616,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (vacImporte > 0) {
 			mysqlDB.insertSalary_payment(salaryId,
-					MysqlDB.enum2short(PaymentType.BASE_SALARY), "FIVAC",
+					MysqlDB.enum2short(PaymentType.CRA_0001), "FIVAC",
 					"Vacaciones no disfrutadas", null, vacImporte);
 		}
 
@@ -704,7 +704,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		double importe = toDouble(finindem.getImporte());
 
 		mysqlDB.insertSalary_payment(this.salaryId,
-				enum2short(PaymentType.COMPENSATION_OR_PREPAID_EXPENSES),
+				enum2short(PaymentType.CRA_0001),
 				"INDEM", description, null, importe);
 
 		String irpf = finindem.getIrpf();
