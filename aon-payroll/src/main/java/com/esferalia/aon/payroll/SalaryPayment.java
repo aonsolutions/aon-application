@@ -113,5 +113,6 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 			return ((SalaryData) list.get(0)).getExpression();
 		}
 	}
+	
 
 }

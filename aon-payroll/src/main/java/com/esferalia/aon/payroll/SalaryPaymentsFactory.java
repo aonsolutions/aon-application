@@ -60,26 +60,48 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 	}
 
 	private void managePayment(Payments payments, SalaryPayment sp) {
-		if (sp.getType() == PaymentType.BASE_SALARY) {
-			payments.addBaseSalary(sp);
-		} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
+		
+		PaymentType type = sp.getType();
+		if ( type == null ) { 
 			payments.addSalarySupplements(sp);
-		} else if (sp.getType() == PaymentType.STRUCTURAL_HOURS) {
+			return;
+		}
+		
+		if (sp.getType() == PaymentType.STRUCTURAL_HOURS) {
+			payments.addOvertimeHours(sp);
+			return;
 		} else if (sp.getType() == PaymentType.NON_STRUCTURAL_HOURS) {
 			payments.addOvertimeHours(sp);
-		} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
-			payments.addSpecialBonuses(sp);
-		} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
-			payments.addSalaryInKind(sp);
-		} else if (sp.getType() == PaymentType.COMPENSATION_OR_PREPAID_EXPENSES) {
-			payments.addCompensationOrPrepaidExpenses(sp);
-		} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
-			payments.addSpecialSecurityBenefits(sp);
+			return;
 		} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
 			payments.addMovingCompensation(sp);
-		} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
+			return;
+		} 
+		
+		int value = type.ordinal(); 
+		
+		
+		
+		if ( value >= 1 && value <= 1 ) {
+			payments.addBaseSalary(sp);
+			return;
+		}if ( value >= 13 && value <= 26 ) {
+			payments.addSalaryInKind(sp);
+			return;
+		}else if ( value >= 4 && value <= 5 ) {
+			payments.addSalaryInKind(sp);
+			return;
+		}else if ( value >= 27 && value <= 41 ) {
 			payments.addOtherNonWages(sp);
+			return;
+		}else if ( value >= 51 && value <= 54 ) {
+			payments.addCompensationOrPrepaidExpenses(sp);
+			return;
 		}
+
+		payments.addSalarySupplements(sp);
+		
+		
 	}
 
 }

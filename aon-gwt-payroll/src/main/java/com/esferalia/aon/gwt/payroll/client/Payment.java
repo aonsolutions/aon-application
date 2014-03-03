@@ -293,14 +293,19 @@ public class Payment extends ResizeComposite {
 	}
 
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {
-		typeListBox.setSelectedIndex(type == null ? 0 : type.ordinal() + 1);
+
+		for (int i = 0; i < typeListBox.getItemCount(); i++)
+			if (Integer.valueOf(typeListBox.getValue(i)) == type.getCode())
+				typeListBox.setSelectedIndex(i);
+
 		showOrHideResetTypeButton();
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Payment.Type getType() {
 		int index = typeListBox.getSelectedIndex();
-		return index == 0 ? null
-				: com.esferalia.aon.gwt.payroll.shared.Payment.Type.values()[index - 1];
+		int code = Integer.valueOf(typeListBox.getValue(index));
+		return com.esferalia.aon.gwt.payroll.shared.Payment.Type
+				.getByCode(code);
 	}
 
 	public void setReceiptType(
@@ -344,14 +349,13 @@ public class Payment extends ResizeComposite {
 		loadExpressionSuggestOracle();
 	}
 
-	public String getName(){
+	public String getName() {
 		return conceptSuggestBox.getText();
 	}
 
 	public void setName(String name) {
 		conceptSuggestBox.setText(name);
 	}
-	
 
 	public void showMonth(boolean show) {
 		Element el = mainGrid.getRowFormatter().getElement(
@@ -529,10 +533,12 @@ public class Payment extends ResizeComposite {
 	}
 
 	private void initTypeListBox() {
-		typeListBox.addItem("-");
+		// typeListBox.addItem("-");
 		for (com.esferalia.aon.gwt.payroll.shared.Payment.Type type : com.esferalia.aon.gwt.payroll.shared.Payment.Type
 				.values())
-			typeListBox.addItem(type.getDescription());
+			if (!StringUtils.isBlank(type.getDescription()))
+				typeListBox.addItem(type.getDescription(),
+						Integer.toString(type.getCode()));
 	}
 
 	private void initReceiptListBox() {

@@ -62,6 +62,7 @@ public enum SalaryType implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+		
     }
 	
 }

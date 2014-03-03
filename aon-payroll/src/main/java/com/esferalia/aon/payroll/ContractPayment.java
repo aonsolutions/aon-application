@@ -59,6 +59,7 @@ public class ContractPayment extends ContractPaymentDB implements IContractPayme
 		return false;
 	}
 	
+	
 	// TODO 
 	private PaymentType paymentType;
 	
@@ -73,5 +74,6 @@ public class ContractPayment extends ContractPaymentDB implements IContractPayme
 		this.paymentType = paymentType;
 		this.setType(paymentType);
 	}
+	
 	
 }

@@ -184,7 +184,7 @@ public abstract class QuoteCalculator {
 			paymentType.accept(new PaymentTypeVisitor() {
 
 				@Override
-				public void visitBaseSalary(PaymentType type) {
+				public void visitOther(PaymentType type) {
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -199,37 +199,7 @@ public abstract class QuoteCalculator {
 				}
 
 				@Override
-				public void visitSpecialBonos(PaymentType paymentType) {
-					GeneralQuote.this.rawCgcBase += quote;
-				}
-
-				@Override
-				public void visitSocialSecurityBenefits(PaymentType paymentType) {
-					GeneralQuote.this.rawCgcBase += quote;
-				}
-
-				@Override
-				public void visitSalarySupplement(PaymentType paymentType) {
-					GeneralQuote.this.rawCgcBase += quote;
-				}
-
-				@Override
 				public void visitSalaryInKind(PaymentType paymentType) {
-					GeneralQuote.this.rawCgcBase += quote;
-				}
-
-				@Override
-				public void visitOtherNonWage(PaymentType paymentType) {
-					GeneralQuote.this.rawCgcBase += quote;
-				}
-
-				@Override
-				public void visitMovingCompensation(PaymentType paymentType) {
-					GeneralQuote.this.rawCgcBase += quote;
-				}
-
-				@Override
-				public void visitCompensationExpense(PaymentType paymentType) {
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 

@@ -91,26 +91,15 @@ public abstract class TaxCalculator {
 			PaymentType paymentType = contractPayment.getType();
 			paymentType.accept(new PaymentTypeVisitor() {
 				
+				
+				@Override
+				public void visitOther(PaymentType type) {
+					DefaultTaxCalculator.this.totalPayment += amount;
+					DefaultTaxCalculator.this.irpfBase += tax;
+				}
+
 				@Override
 				public void visitStructuralHours(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
-				public void visitSpecialBonos(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
-				public void visitSocialSecurityBenefits(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
-				public void visitSalarySupplement(PaymentType paymentType) {
 					DefaultTaxCalculator.this.totalPayment += amount;
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}
@@ -121,31 +110,7 @@ public abstract class TaxCalculator {
 				}
 				
 				@Override
-				public void visitOtherNonWage(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
 				public void visitNonStructuralHours(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
-				public void visitMovingCompensation(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
-				public void visitCompensationExpense(PaymentType paymentType) {
-					DefaultTaxCalculator.this.totalPayment += amount;
-					DefaultTaxCalculator.this.irpfBase += tax;
-				}
-				
-				@Override
-				public void visitBaseSalary(PaymentType type) {
 					DefaultTaxCalculator.this.totalPayment += amount;
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}

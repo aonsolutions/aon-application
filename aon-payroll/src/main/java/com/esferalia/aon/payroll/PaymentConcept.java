@@ -9,6 +9,7 @@ import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.PaymentConceptDB;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 
 @Entity
 @Table(name="payment_concept")

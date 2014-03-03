@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 
 
@@ -111,11 +113,26 @@ public class StringUtils {
 		return s2.equalsIgnoreCase(s1);
 	}
 	
+	public static String repeat(char ch, int times){
+		StringBuffer buffer = new StringBuffer();
+		for ( int i= 0; i < times ; i++ )
+			buffer.append(ch);
+		return buffer.toString();
+	}
+
 	public static String repeat(String str, int times){
 		StringBuffer buffer = new StringBuffer();
 		for ( int i= 0; i < times ; i++ )
 			buffer.append(str);
 		return buffer.toString();
+	}
+
+	public static String reduce(String sep, String ...strs) {
+		return reduce(Arrays.asList(strs), sep);
+	}
+
+	public static String reduce(String strs [], String sep) {
+		return reduce(Arrays.asList(strs), sep);
 	}
 
 	public static String reduce(Collection<String> collection, String sep) {
@@ -131,9 +148,20 @@ public class StringUtils {
 		return buffer.toString();
 	}		
 	
-	public static void main(String[] args) {
-		System.out.println("           SISTEMA    ".matches("\\s*SISTEMA\\s*"));
-		System.out.println("           SISTEMA ( \"HOLA'  )   ".matches("\\s*SISTEMA\\s*\\(\\s*('HOLA'|\"HOLA\")\\s*\\)\\s*"));
-	}
+    public static String leftPad(int n, int size, char padChar) {
+    	return leftPad(Integer.toString(n), size, padChar);
+    }
+
+    public static String leftPad(String str, int size, char padChar) {
+        if (str == null) {
+            return null;
+        }
+        int pads = size - str.length();
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        return repeat(padChar, pads).concat(str);
+    }
+
 	
 }

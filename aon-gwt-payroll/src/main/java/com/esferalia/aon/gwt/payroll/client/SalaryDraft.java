@@ -141,7 +141,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 
-	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO", "BRUTO",
+	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO", "BRUTO","GTZDO",
 			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF };
 
 	static class VisibilityImpl implements HasVisibility {
@@ -754,7 +754,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			} else {
 				draftPayment.setIrpfExpression("_P");
 				draftPayment.setQuoteExpression("_P");
-				draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
+				draftPayment.setType(Payment.Type.DEFAULT);
 				draftPayment.setDescription(descriptionBox.getText());
 			}
 			draftPayment.setScope(Scope.SALARY);
@@ -1220,7 +1220,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		draftPayment.setName("NETO");
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
-		draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
+		draftPayment.setType(Payment.Type.DEFAULT);
 		if (totalLiquidPayment != null) {
 			draftPayment.setId(totalLiquidPayment.getId());
 			draftPayment.setDescription(totalLiquidPayment.getDescription());
@@ -1277,7 +1277,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		draftPayment.setName("BRUTO");
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
-		draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
+		draftPayment.setType(Payment.Type.DEFAULT);
 		if (totalPayments != null) {
 			draftPayment.setId(totalPayments.getId());
 			draftPayment.setDescription(totalPayments.getDescription());
