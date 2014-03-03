@@ -127,9 +127,9 @@ public class Statistics extends ResizeComposite {
 				gridLinePieChart.setWidget(0, 0, line);				
 			}
 		};
-		// Load the visualization api, passing the onLoadCallback to be called
-		// when loading is done.
 		
+		// Load the visualization api, passing the onLoadCallback to be called
+		// when loading is done.		
 		VisualizationUtils.loadVisualizationApi(onLoadCallback,
 				ColumnChart.PACKAGE);
 		
@@ -196,10 +196,8 @@ public class Statistics extends ResizeComposite {
 	
 	private Options createOptions() {
 		Options options = Options.create();
-		// 400 y 240
+		
 		options.setFontSize(11);
-		//options.setWidth(3*this.getOffsetWidth()/4);
-		//options.setHeight(3*this.getOffsetHeight()/8);
 		
 		options.setWidth((8*this.getOffsetWidth())/9);
 		options.setHeight(3*this.getOffsetHeight()/8);
@@ -276,9 +274,7 @@ public class Statistics extends ResizeComposite {
 	private Options createLineOptions(
 			com.esferalia.aon.gwt.payroll.shared.Statistics pStat) {
 		Options options = Options.create();
-		options.setFontSize(11);
-		//options.setWidth(3*this.getOffsetWidth()/4);
-		//options.setHeight(3*this.getOffsetHeight()/8);
+		options.setFontSize(11);		
 	
 		options.setWidth(this.getOffsetWidth()/2);
 		options.setHeight(3*this.getOffsetHeight()/8);
@@ -302,8 +298,6 @@ public class Statistics extends ResizeComposite {
 		data.addColumn(ColumnType.NUMBER, "SS Empresa");
 		data.addColumn(ColumnType.NUMBER, "Devengos");		
 		data.addColumn(ColumnType.NUMBER, "Totales");
-
-
 		
 		com.google.gwt.visualization.client.formatters.NumberFormat.Options options =
 				com.google.gwt.visualization.client.formatters.NumberFormat.Options.create();
@@ -376,24 +370,43 @@ public class Statistics extends ResizeComposite {
 					com.google.gwt.visualization.client.formatters.NumberFormat.Options.create();
 			options.setSuffix("\u20AC");
 			
-			NumberFormat f = NumberFormat.getCurrencyFormat();		
+			NumberFormat f = NumberFormat.getCurrencyFormat();
+			
+			double liquid = pStat.getStatisticYears().get(yearIndex)
+					.getTotalLiquid();
+			double irpf = pStat.getStatisticYears().get(yearIndex)
+					.getTotalIRPF();
+			double ssEmployee = pStat.getStatisticYears().get(yearIndex)
+					.getTotalSSEmployee();
+			double ssEnterprise = pStat.getStatisticYears().get(yearIndex)
+					.getTotalSSEnterprise();
+			
+			if(liquid < 0) {
+				liquid = 0;
+			}
+			if(irpf < 0) {
+				irpf = 0;
+			}
+			if(ssEmployee < 0) {
+				ssEmployee = 0;
+			}
+			if(ssEnterprise < 0) {
+				ssEnterprise = 0;
+			}
 			
 			//4 filas. NETO-IRPF-SSEMPLEADO-SSEMPRESA			
 			data.addRows(4);
 			
 			data.setValue(0, 0, "Neto");
-			data.setValue(0, 1, pStat.getStatisticYears().get(yearIndex)
-					.getTotalLiquid());
+			data.setValue(0, 1, liquid);
 			data.setFormattedValue(0, 1, f.format(data.getValueDouble(0, 1)));
 			
 			data.setValue(1, 0, "IRPF");
-			data.setValue(1, 1, pStat.getStatisticYears().get(yearIndex)
-					.getTotalIRPF());
+			data.setValue(1, 1, irpf);
 			data.setFormattedValue(1, 1, f.format(data.getValueDouble(1, 1)));
 			
 			data.setValue(2, 0, "SS Empleado");
-			data.setValue(2, 1, pStat.getStatisticYears().get(yearIndex)
-					.getTotalSSEmployee());
+			data.setValue(2, 1, ssEmployee);
 			data.setFormattedValue(2, 1, f.format(data.getValueDouble(2, 1)));
 			
 			//Valor muy despreciable. 			
@@ -403,8 +416,7 @@ public class Statistics extends ResizeComposite {
 			data.setFormattedValue(3, 1, f.format(data.getValueDouble(3, 1)));*/
 			
 			data.setValue(3, 0, "SS Empresa");
-			data.setValue(3, 1, pStat.getStatisticYears().get(yearIndex)
-					.getTotalSSEnterprise());
+			data.setValue(3, 1, ssEnterprise);
 			data.setFormattedValue(3, 1, f.format(data.getValueDouble(3, 1)));		
 			
 			
