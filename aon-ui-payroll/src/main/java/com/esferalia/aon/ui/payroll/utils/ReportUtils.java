@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.JRRenderable;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.util.ComparableComparator;
 
 import com.code.aon.common.BeanManager;
@@ -43,8 +44,12 @@ public class ReportUtils {
 		
 		public static final Comparator INSTANCE = new ComparableComparator();
 
+		
 	}
-
+	
+	public static String capitalize(String str) {
+		return StringUtils.capitalize(StringUtils.lowerCase(str));
+	}
 	
 	public static final <T> List<T> sort(Collection<T> collection,
 			String property) {
