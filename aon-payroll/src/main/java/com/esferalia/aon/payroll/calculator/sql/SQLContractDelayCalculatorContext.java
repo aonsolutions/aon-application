@@ -484,7 +484,8 @@ public class SQLContractDelayCalculatorContext extends
 			int ordinal = paymentDecorator.getOrdinal(payment);
 			paymentConcept.setCode("__" + RN.roman(ordinal));
 			
-			paymentConcept.setType(PaymentType.SALARY_SUPPLEMENTS);
+			// TODO: Generic Delays ? 
+			paymentConcept.setType(PaymentType.CRA_0008 );
 			// we use Locale.US to avoid ',' instead of '.' like decimals
 			// separator.
 			// Be care that MVEL like any other expression language don't
@@ -583,7 +584,8 @@ public class SQLContractDelayCalculatorContext extends
 			payment.setStartDate(chargeDate);
 			payment.setEndDate(chargeDate);
 			payment.setSalaryType(SalaryType.DELAY);
-			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
+			// TODO: Generic Delays ? 
+			payment.setType(PaymentType.CRA_0008);
 
 			payment.setExpression(String.format(Locale.US, "%.3f", amount));
 			payment.setIrpfExpression(String.format(Locale.US, "%.3f", irpf));

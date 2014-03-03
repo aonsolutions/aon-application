@@ -3,45 +3,166 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-
-
 public class Payment extends Item<Payment.Type> {
 
+	
 	String irpfExpression;
 	String quoteExpression;
 
 	public static enum Type implements HasDescription {
-		BASE_SALARY, SALARY_SUPPLEMENTS, STRUCTURAL_HOURS, NON_STRUCTURAL_HOURS, SPECIAL_BONUSES, SALARY_IN_KIND, COMPENSATION_OR_PREPAID_EXPENSES, SOCIAL_SECURITY_BENEFITS, MOVING_COMPENSATION, OTHER_NON_WAGE;
-		
-		
-		public String getDescription(){
-			return DESCRIPTIONS.get(this);
+		//@formatter:off
+		@Deprecated
+		CRA_0000,
+		CRA_0001,
+		CRA_0002,
+		CRA_0003,
+		CRA_0004,
+		CRA_0005,
+		CRA_0006,
+		CRA_0007,
+		CRA_0008,
+		CRA_0009,
+		CRA_0010,
+		CRA_0011,
+		CRA_0012,
+		CRA_0013,
+		CRA_0014,
+		CRA_0015,
+		CRA_0016,
+		CRA_0017,
+		CRA_0018,
+		CRA_0019,
+		CRA_0020,
+		CRA_0021,
+		CRA_0022,
+		CRA_0023,
+		CRA_0024,
+		CRA_0025,
+		CRA_0026,
+		CRA_0027,
+		CRA_0028,
+		CRA_0029,
+		CRA_0030,
+		CRA_0031,
+		CRA_0032,
+		CRA_0033,
+		CRA_0034,
+		CRA_0035,
+		CRA_0036,
+		CRA_0037,
+		CRA_0038,
+		CRA_0039,
+		CRA_0040,
+		CRA_0041,
+		CRA_0042,
+		CRA_0043,
+		CRA_0044,
+		CRA_0045,
+		CRA_0046,
+		CRA_0047,
+		CRA_0048,
+		CRA_0049,
+		CRA_0050,
+		CRA_0051,
+		CRA_0052,
+		CRA_0053,
+		CRA_0054,
+		CRA_0055,
+		CRA_0056;
+		//@formatter:on
+
+		public String getDescription() {
+			String description = DESCRIPTIONS.get(this);
+			return description != null ? StringUtils.leftPad(getCode() , 4, '0') + " " + description : null;
 		}
 
-		static Map<Type, String> DESCRIPTIONS = 
-				new HashMap<Type, String>() {
+		public int getCode() {
+			return this.ordinal();
+		}
+		
+		@Override
+		public String toString() {
+			return getDescription();
+		}
+
+		//@formatter:off
+		static Map<Type, String> DESCRIPTIONS = new HashMap<Type, String>() {
 			{
-				put(BASE_SALARY,"Salario base");
-				put(SALARY_SUPPLEMENTS,"Complementos Salariales");
-				put(STRUCTURAL_HOURS,"Horas Extraordinarias");
-				put(NON_STRUCTURAL_HOURS,"Horas Extraordinarias ( No extructurales )");
-				put(SPECIAL_BONUSES,"Gratificciones extraordinarias");
-				put(SALARY_IN_KIND,"Salario en Especie");
-				put(COMPENSATION_OR_PREPAID_EXPENSES,"Indemnizaciones o suplidos");
-				put(SOCIAL_SECURITY_BENEFITS,"Prestaciones e indemnizaciones a la Seguridad Social");
-				put(MOVING_COMPENSATION,"Compensaci\u00f3n por movilidad geogr\u00e1fica");
-				put(OTHER_NON_WAGE,"Otras precepciones no salariales");
+				put(CRA_0001, "RETRIBUCION NO INCLUIDA OTROS APARTADOS");
+				put(CRA_0002, "HORAS EXTRAORDINARIAS NO ESTRUCTURALES");
+				put(CRA_0003, "HORAS EXTR. ESTRUCTURALES O FUERZA MAYOR");
+				put(CRA_0004, "PAGAS EXTRAORDINARIAS.PRORRATEO");
+				put(CRA_0005, "RETR\u2260PAGA.EXTR.VENCIM.SUP.MES.PRORRATEO");
+				put(CRA_0006, "VACACIONES RETRIBUIDAS NO DISFRUTADAS");
+				put(CRA_0007, "SALARIOS DE TRAMITACI\u00D3N");
+				put(CRA_0008, "RETR.POR ATRASOS NO INCLUIDA OTROS APART");
+				put(CRA_0009, "RETRIBUCI\u00D3N POR ATRASOS.CONV.COLECTIVO");
+				put(CRA_0010, "RETRIBUCI\u00D3N POR ATRASOS.SENTENCIA JUD.");
+				put(CRA_0011, "RETRIBUCI\u00D3N POR ATRASOS.NORMATIVA");
+				put(CRA_0012, "RETRIBUCI\u00D3N POR ATRASOS.ACTA CONCILIAC");
+				put(CRA_0013, "R.ESPECIE NO INCLUIDA EN OTROS APARTADOS");
+				put(CRA_0014, "R.ESP.VIVIENDA.PROP.PAGAD.C/VALOR.CATAST.");
+				put(CRA_0015, "R.ESP.VIVIENDA.PROP.PAGAD.PTE.VALOR.CAT.");
+				put(CRA_0016, "R.ESP.VIVIENDA.NO PROPIEDAD PAGADOR");
+				put(CRA_0017, "R.ESP.VEH\u00CDCULO.ENTREGA AL TRABAJADOR");
+				put(CRA_0018, "R.ESP.VEH\u00CDCULO.USO.PROPIEDAD PAGADOR");
+				put(CRA_0019, "R.ESP.VEH\u00CDCULO USO.NO PROPIEDAD PAGADOR");
+				put(CRA_0020, "R.ESP.VEH\u00CDCULO USO Y POSTERIOR ENTREGA");
+				put(CRA_0021, "R.ESP.PR\u00C9STAMO.TIPO INTER\u00C9S < LEGAL");
+				put(CRA_0022, "R.ESP. MANUTENCI\u00D3N Y SIMILARES");
+				put(CRA_0023, "R.ESP. HOSPEDAJE Y SIMILARES");
+				put(CRA_0024, "R.ESP. VIAJES Y SIMILARES");
+				put(CRA_0025, "R.ESP.GASTOS DE ESTUDIOS Y MANUTENCI\u00D3N");
+				put(CRA_0026, "R.ESP.DERECHOS FUNDADORES DE SOCIEDADES");
+				put(CRA_0027, "QUEBRANTO DE MONEDA");
+				put(CRA_0028, "DESGASTE \u00DATILES Y HERRAMIENTAS");
+				put(CRA_0029, "ADQUISICI\u00D3N Y MANTENIMIENTO ROPA TRABAJO");
+				put(CRA_0030, "PERCEPCIONES POR MATRIMONIO");
+				put(CRA_0031, "DONACIONES PROMOCIONALES");
+				put(CRA_0032, "PLUSES DE TRANSPORTE Y DE DISTANCIA");
+				put(CRA_0033, "PLANES PENSIONES Y SIST. ALTERNATIVOS");
+				put(CRA_0034, "ACCIONES O PARTICIPACIONES EMPRESA");
+				put(CRA_0035, "GASTOS ESTUDIO ACT. CAPACIT. O RECICLAJE");
+				put(CRA_0036, "PRODUCTOS.PREC.REB.-CANTIN.COMED.ECONOM.");
+				put(CRA_0037, "BIENES DESTINADOS A SERV. SOC. Y CULT.");
+				put(CRA_0038, "PRIMAS SEGURO AT O RESPONS. CIVIL TRAB.");
+				put(CRA_0039, "PRIMAS SEGURO ENFERMEDAD COM\u00DAN TRABAJ.");
+				put(CRA_0040, "PRIMAS SEGURO ENFERMEDAD COM\u00DAN FAMILIAR.");
+				put(CRA_0041, "PREST. EDUC. POR CENTR.AUT. A HIJ. TRAB.");
+				put(CRA_0042, "GASTOS DE ESTANCIA");
+				put(CRA_0043, "GASTOS MANUTENCI\u00D3N PERNOCTA ESPA\u00D1A");
+				put(CRA_0044, "GASTOS MANUTENCI\u00D3N PERNOCTA EXTRANJERO");
+				put(CRA_0045, "GASTOS MANUTENCI\u00D3N SIN PERNOCTA ESPA\u00D1A");
+				put(CRA_0046, "GASTOS MANUTENCI\u00D3N SIN PERNOCTA EXTRANJERO");
+				put(CRA_0047, "GASTOS MANUTENCI\u00D3N PERSONAL VUELO ESPA\u00D1A");
+				put(CRA_0048, "GASTOS MANUTENCI\u00D3N PERSONAL VUELO EXTR.");
+				put(CRA_0049, "GASTOS DE LOCOMOCI\u00D3N TRANSPORTE P\u00DABLICO");
+				put(CRA_0050, "GASTOS LOCOMOCI\u00D3N SIN JUSTIFIC. IMPORTE");
+				put(CRA_0051, "INDEMNIZACIONES POR FALLECIMIENTO");
+				put(CRA_0052, "INDEMNIZACIONES POR TRASLADOS");
+				put(CRA_0053, "INDEMNIZACIONES POR SUSPENSIONES");
+				put(CRA_0054, "INDEMNIZACIONES POR DESPIDO O CESE");
+				put(CRA_0055, "MEJORAS PREST.SS.INCAPACIDAD TEMPORAL");
+				put(CRA_0056, "MEJORAS PREST.SS.\u2260INCAPACIDAD TEMPORAL");
 			}
 		};
+		//@formatter:on
 
+		public static Type DEFAULT = CRA_0001;
+
+
+		public static Type getByCode(int code) {
+			for (Type type : values())
+				if ( type.getCode() == code )
+					return type;
+			return null;
+		}
 	}
-
 
 	public String getIrpfExpression() {
 		return irpfExpression;
 	}
-	
+
 	public void setIrpfExpression(String irpfExpression) {
 		this.irpfExpression = irpfExpression;
 	}
@@ -49,7 +170,7 @@ public class Payment extends Item<Payment.Type> {
 	public String getQuoteExpression() {
 		return quoteExpression;
 	}
-	
+
 	public void setQuoteExpression(String quoteExpression) {
 		this.quoteExpression = quoteExpression;
 	}

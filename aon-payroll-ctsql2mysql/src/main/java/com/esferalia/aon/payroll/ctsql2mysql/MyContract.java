@@ -1370,7 +1370,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			List<ContractPorCot> datas = 
 				getContractData(startDate, endDate);
 			
-			PaymentType type = PaymentType.SALARY_SUPPLEMENTS;
+			PaymentType type = PaymentType.CRA_0001;
 			if ( concept.type == type ) {
 				type = null;
 			}

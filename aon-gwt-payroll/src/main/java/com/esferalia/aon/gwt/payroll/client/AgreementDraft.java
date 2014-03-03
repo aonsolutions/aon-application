@@ -39,6 +39,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.OptionElement;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -71,6 +74,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -115,49 +119,46 @@ public class AgreementDraft extends ResizeComposite implements
 
 		public TypeListBox(Class<T> type) {
 			this(type, 20);
+			
 
 		}
 
 		public TypeListBox(Class<T> type, int size) {
 			this.type = type;
-			loadTypeItems(size);
+			loadTypeItems();
+			getElement().getStyle().setWidth(size, Unit.EM);
 		}
 
-		public TypeListBox(Class<T> type, String nullItem) {
-			this(type, nullItem, 20);
-
-		}
-
-		public TypeListBox(Class<T> type, String nullItem, int size) {
-			this.type = type;
-			addItem(nullItem);
-			loadTypeItems(size);
-		}
 
 		public T getSelected() {
-			T types[] = type.getEnumConstants();
-			int ordinal = getSelectedIndex() - (getItemCount() - types.length);
-			return ordinal < 0 ? null : types[ordinal];
+			int ordinal = getOrdinal(getSelectedIndex());
+			for (T t : type.getEnumConstants())
+				if ( ordinal == t.ordinal() )
+					return t;
+			return null;
 		}
 
 		public void setSelected(T t) {
-			T types[] = type.getEnumConstants();
-			int index = (t == null ? -1 : t.ordinal())
-					+ (getItemCount() - types.length);
-			setSelectedIndex(index);
+			int ordinal = t == null ? -1 : t.ordinal();
+			for( int i = 0; i < getItemCount(); i++)
+				if ( ordinal == getOrdinal(i) )
+					setSelectedIndex(i);
 		}
 
-		private void loadTypeItems(int size) {
+		private void loadTypeItems() {
+			
 			for (T t : type.getEnumConstants()) {
 				String description = t.getDescription();
-
-				if (description.length() > size)
-					description = description.substring(0, size - 3) + "...";
-
-				addItem(description, t.name());
+				if ( description != null ) {
+					addItem(description, Integer.toString(t.ordinal()));
+				}
 			}
 		}
-
+		
+		private int getOrdinal(int index ) {
+			return Integer.valueOf(getValue(index));
+		}
+		
 	}
 
 	private static abstract class SuccessCalculateCallback implements
@@ -1763,7 +1764,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 0, editButton);
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(
-				Payment.Type.class, "-", 15);
+				Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(payment.getType());
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
@@ -1781,7 +1782,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 3, expressionBox);
 
 		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(
-				Salary.Type.class, 13);
+				Salary.Type.class, 8);
 		salaryTypeListBox.setSelected(payment.getSalaryType());
 		paymentsTable.setWidget(row, 4, salaryTypeListBox);
 
@@ -1872,8 +1873,8 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 0, newButton);
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(
-				Payment.Type.class, "-", 15);
-		paymentTypeListBox.setSelected(null);
+				Payment.Type.class, 10);
+		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
@@ -1891,7 +1892,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 3, expressionBox);
 
 		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(
-				Salary.Type.class, 13);
+				Salary.Type.class, 8);
 		salaryTypeListBox.setSelected(Salary.Type.SALARY);
 		paymentsTable.setWidget(row, 4, salaryTypeListBox);
 
