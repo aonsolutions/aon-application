@@ -187,4 +187,32 @@ public enum PaymentType implements IResourceable{
     @Deprecated
 	public static PaymentType MOVING_COMPENSATION = CRA_0052;
     
+    public static boolean isSalaryInKind(PaymentType type) {
+    	class SalaryInKind implements PaymentTypeVisitor{
+    		
+    		private boolean isSalaryInKind = false;
+    		
+			@Override
+			public void visitOther(PaymentType paymentType) {
+			}
+
+			@Override
+			public void visitSalaryInKind(PaymentType paymentType) {
+				isSalaryInKind = true;
+			}
+
+			@Override
+			public void visitNonStructuralHours(PaymentType paymentType) {
+			}
+
+			@Override
+			public void visitStructuralHours(PaymentType paymentType) {
+			}
+    		
+    	}
+    	SalaryInKind salaryInKind = new SalaryInKind();
+    	type.accept(salaryInKind);
+    	return salaryInKind.isSalaryInKind;
+    }
+    
 }
