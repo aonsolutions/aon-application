@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
@@ -11,6 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -23,50 +25,57 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 	@Override
 	public boolean accept(IPaymentsFactoryContext ctx) {
 		ISalaryProxy proxy = ctx.getSalaryProxy();
-		return (proxy instanceof Salary); 
+		return (proxy instanceof Salary);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Payments getPayments(IPaymentsFactoryContext ctx) throws SalaryException{
+	public Payments getPayments(IPaymentsFactoryContext ctx)
+			throws SalaryException {
 		try {
 			Payments payments = new Payments();
 			Collection<SalaryPayment> salaryPayments;
 			Salary salary = (Salary) ctx.getSalaryProxy().getSalary();
-			String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
 			Session session = HibernateUtil.getSession(sessionName);
-			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
-			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+			// Si el Salary está conectado a la session de Hibernate utilizamos
+			// la potencia
+			// que nos da la obtención de colecciones tipo LAZY. En caso
+			// contrario vamos por
 			// el FrameWork.
-			if (  session.contains(salary)  || salary.getId() == null) {
+			if (session.contains(salary) || salary.getId() == null) {
 				salaryPayments = salary.getSalaryPayments();
-				for(SalaryPayment sp: salaryPayments){
-					managePayment(payments,sp);
+				for (SalaryPayment sp : salaryPayments) {
+					managePayment(payments, sp);
 				}
 			} else {
-				IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryPayment.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+				c.addEqualExpression(bean
+						.getFieldName(IEntityAlias.SALARY_PAYMENT_SALARY_ID),
+						salary.getId());
 				List<?> list = bean.getList(c);
 				salaryPayments = (Collection<SalaryPayment>) list;
-				for(SalaryPayment sp: salaryPayments){
-					managePayment(payments,sp);
+				for (SalaryPayment sp : salaryPayments) {
+					managePayment(payments, sp);
 				}
 			}
 			return payments;
-		} catch (ManagerBeanException  e) {
-			throw new SalaryException(e.getMessage(),e);
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
 		}
 	}
 
 	private void managePayment(Payments payments, SalaryPayment sp) {
-		
+
 		PaymentType type = sp.getType();
-		if ( type == null ) { 
+		if (type == null) {
 			payments.addSalarySupplements(sp);
 			return;
 		}
-		
+
 		if (sp.getType() == PaymentType.STRUCTURAL_HOURS) {
 			payments.addOvertimeHours(sp);
 			return;
@@ -76,32 +85,31 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 		} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
 			payments.addMovingCompensation(sp);
 			return;
-		} 
-		
-		int value = type.ordinal(); 
-		
-		
-		
-		if ( value >= 1 && value <= 1 ) {
-			payments.addBaseSalary(sp);
-			return;
-		}if ( value >= 13 && value <= 26 ) {
+		}
+
+		int value = type.ordinal();
+
+		if (value >= 13 && value <= 26) {
 			payments.addSalaryInKind(sp);
 			return;
-		}else if ( value >= 4 && value <= 5 ) {
+		} else if (value >= 4 && value <= 5) {
 			payments.addSalaryInKind(sp);
 			return;
-		}else if ( value >= 27 && value <= 41 ) {
+		} else if (value >= 27 && value <= 41) {
 			payments.addOtherNonWages(sp);
 			return;
-		}else if ( value >= 51 && value <= 54 ) {
+		} else if (value >= 51 && value <= 54) {
 			payments.addCompensationOrPrepaidExpenses(sp);
+			return;
+		} else if (value == 1
+				&& StringUtils.equals(sp.getName(),
+						ContextVariable.BASE_SALARY.getName())) {
+			payments.addBaseSalary(sp);
 			return;
 		}
 
 		payments.addSalarySupplements(sp);
-		
-		
+
 	}
 
 }
