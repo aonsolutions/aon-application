@@ -8,15 +8,14 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:form id="globalConfigPayrollWorkPlacesForm">
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="toolbarTitle" value="#{bundle.company_workplaces}" />
+		<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	</ui:include>
 	
-		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-			<ui:param name="toolbarTitle" value="#{bundle.company_workplaces}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-		</ui:include>
-	
-		<aon:div styleClass="aon-scroll-area">	
+	<aon:div styleClass="aon-scroll-area">	
 
+		<aon:form id="globalConfigPayrollWorkPlacesForm">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.company_workplaces}" />
@@ -27,9 +26,11 @@
 					<ui:param name="showPayrollData" value="#{true}" />
 				</ui:include>
 			</aon:panel>
-	
-			<aon:div style="margin-top:2em;" />
-	
+		</aon:form>
+
+		<aon:div style="margin-top:2em;" />
+
+		<aon:form id="globalConfigPayrollActivitiesForm">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_activities}" />
@@ -39,9 +40,8 @@
 					<ui:param name="controller" value="#{enterpriseActivity}" />
 				</ui:include>
 			</aon:panel>	
-	
-		</aon:div>
-	</aon:form>
+		</aon:form>
+	</aon:div>
 	<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 	<aon:lookupButtonPopup lookup="#{calendarLookup}" />
 	<aon:lookupButtonPopup lookup="#{cnae2009Lookup}" />	

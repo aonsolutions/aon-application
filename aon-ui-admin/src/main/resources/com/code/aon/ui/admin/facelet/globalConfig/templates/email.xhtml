@@ -8,14 +8,14 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:form id="globalConfigEmailForm">
-		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-			<ui:param name="toolbarTitle" value="#{bundle.aon_email}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-		</ui:include>
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="toolbarTitle" value="#{bundle.aon_email}" />
+		<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+	</ui:include>
+
+	<aon:div styleClass="aon-scroll-area">	
 	
-		<aon:div styleClass="aon-scroll-area">	
-	
+		<aon:form id="globalConfigMailAccountForm">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.webmail_mailAccount}" />
@@ -24,7 +24,9 @@
 					<ui:param name="controller" value="#{mailConfig.mailAccount}" />
 				</ui:include>						
 			</aon:panel>
-			<aon:div style="margin-top:2em;" />
+		</aon:form>
+		<aon:div style="margin-top:2em;" />
+		<aon:form id="globalConfigSignatureForm">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.webmail_signature}" />
@@ -33,8 +35,7 @@
 					<ui:param name="controller" value="#{mailConfig.signature}" />
 				</ui:include>						
 			</aon:panel>
-	
-		</aon:div>
-	</aon:form>
+		</aon:form>
+	</aon:div>
 
 </ui:composition>
