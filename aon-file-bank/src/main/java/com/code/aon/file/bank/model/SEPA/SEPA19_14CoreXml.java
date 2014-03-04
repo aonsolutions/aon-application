@@ -1,7 +1,6 @@
 package com.code.aon.file.bank.model.SEPA;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,7 +53,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 	
 	private void addGroupHeader( Element customerDirectDebitInitiation ) {
 		Element groupHeader = createGroupHeader(customerDirectDebitInitiation,
-				lot.getId(), lot.getPresenter().getMakeDate(),
+				lot.getId(), anteriorFechaHabil(lot.getPresenter().getMakeDate()),
 				lot.getOrderer().getNumIndividuals(), lot.getAmount());
 		
 		addInitiatingParty(groupHeader);
@@ -114,8 +113,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addPaymentTypeInformation(paymentInformation, LOCAL_INSTRUMENT_CODE_CORE_VALUE, SEQUENCE_TYPE_RCUR_VALUE);
 		
 		Element requestedCollectionDate = createElement(REQUEST_COLLECTION_DATE);
-		Date date = fechaHabil(new Date(), 5);
-		addISODate(requestedCollectionDate, date);
+		addISODate(requestedCollectionDate, lot.getPresenter().getMakeDate());
 		paymentInformation.appendChild(requestedCollectionDate);				
 		
 		addCreditor(paymentInformation, lot.getOrderer());

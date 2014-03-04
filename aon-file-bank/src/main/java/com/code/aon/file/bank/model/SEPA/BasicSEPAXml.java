@@ -103,14 +103,11 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
         }
     }	
 	
-	protected Date fechaHabil(Date date, int days) {
-    	Date result = date;
-    	for (int i = 0; i < days; i++) {
-    		result = DateUtils.addDays(result, 1);
-    		while (!esHabil(result)) {
-    			result = DateUtils.addDays(result, 1);
-    		}
-    	}
+	protected Date anteriorFechaHabil(Date date) {
+    	Date result = DateUtils.addDays(date, -1);
+   		while (!esHabil(result)) {
+   			result = DateUtils.addDays(result, -1);
+   		}
     	return result;
     }
     
