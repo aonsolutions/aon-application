@@ -2596,20 +2596,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					draft.getDraftPayments(), dbPayments);
 
 			Set<String> variables = new HashSet<String>();
+			Set<String> paymentsNames = new HashSet<String>();
 
 			Set<Payment> allPayments = new HashSet<Payment>();
 			for (Payment payment : payments) {
 
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
-
-				variables.addAll(ExpressionContext.getVariableSet(
+				
+				try {
+					variables.addAll(ExpressionContext.getVariableSet(
 						payment.getExpression(), payment.getIrpfExpression(),
 						payment.getQuoteExpression()));
-				variables.remove(payment.getName());
+				} catch ( Exception e ){
+					// TODO: 
+					
+				}
+				
+				paymentsNames.add(payment.getName());
 
 				allPayments.add(payment);
 			}
+			
+			variables.removeAll(paymentsNames);
+			
 
 			// Filter ContextVariable
 			List<String> contextVariables = new LinkedList<String>();
