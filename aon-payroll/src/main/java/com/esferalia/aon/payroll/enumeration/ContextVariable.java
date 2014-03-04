@@ -179,9 +179,8 @@ public enum ContextVariable implements IResourceable{
 	PROFESSION("PROFESION", VariableType.STRING),
 	ENTERPRISE_SITE_DATE("VISIONADOE", VariableType.DATE),
 	
-	PAYMENT("_P", VariableType.DOUBLE),
+	PAYMENT("_P", VariableType.DOUBLE)
 	
-	BASE_SALARY("SALARIO_BASE", VariableType.DOUBLE )
 	;
 	
 	public static final String ALL = "_P";
@@ -204,7 +203,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String ISDEF = "DEFINIDA";
 	public static final String CHECK_VAR = "CHECK_VAR";
 	
-	
+	public static final String BASE_SALARY = "SALARIO_BASE";
 	
 	private final String name;
 	private VariableType type;
