@@ -68,9 +68,11 @@ public class SQLStopSales implements ISQLConstants {
 		ReservationUtils reservationUtils = new ReservationUtils();
 		Tariff tariff = null;
 		try {
-			reservationUtils.obtainTariff(reqRoom.getTariffCode());
-			if (tariff == null) {
-				tariff = reservationUtils.obtainDefaultTariff();
+			if (StringUtils.isNotBlank(reqRoom.getTariffCode())) {
+				tariff = reservationUtils.obtainTariff(reqRoom.getTariffCode());
+				if (tariff == null) {
+					tariff = reservationUtils.obtainDefaultTariff();
+				}
 			}
 		} catch (Throwable e) {
 			throw new AonSQLException(e.getMessage());
@@ -84,7 +86,7 @@ public class SQLStopSales implements ISQLConstants {
 		PreparedStatement stopSalesStmt = null;
 		ResultSet stopSalesRs = null;
 		try {
-			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(null, item.getId().toString(), tariff.getId().toString()));
+			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(null, item, tariff));
 			SQLUtils.setInt(stopSalesStmt, 1, DomainManager.getCurrentDomain());
 			SQLUtils.setInt(stopSalesStmt, 2, hotel.getId());
 			SQLUtils.setDate(stopSalesStmt, 3, fromDate);
@@ -121,6 +123,12 @@ public class SQLStopSales implements ISQLConstants {
 			SQLUtils.closeQuietly(stopSalesStmt);
 			SQLUtils.closeQuietly(stopSalesRs);
 		}
+	}
+
+	private static String obtainWhereClause(Integer id, Item item, Tariff tariff) {
+		String items = (item != null && item.getId() != null) ? item.getId().toString() : null;
+		String tariffs = (tariff != null && tariff.getId() != null) ? tariff.getId().toString() : null;
+		return obtainWhereClause(id, items, tariffs);
 	}
 
 	private static String obtainWhereClause(Integer id, String items, String tariffs) {

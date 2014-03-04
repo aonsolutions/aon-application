@@ -84,7 +84,7 @@ public class SQLAllotment implements ISQLConstants {
 		PreparedStatement allotmentBookingStmt = null;
 		ResultSet allotmentBookingRs = null;
 		try {
-			String selectAllotment = SELECT_BASIC_ALLOTMENT + obtainWhereClause(null, agency, null, item.getId().toString(), tariff.getId().toString());
+			String selectAllotment = SELECT_BASIC_ALLOTMENT + obtainWhereClause(null, agency, null, item, tariff);
 			allotmentStmt = connection.prepareStatement(selectAllotment);
 			SQLUtils.setInt(allotmentStmt, 1, DomainManager.getCurrentDomain());
 			SQLUtils.setInt(allotmentStmt, 2, hotel.getId());
@@ -131,6 +131,12 @@ public class SQLAllotment implements ISQLConstants {
 			SQLUtils.closeQuietly(allotmentStmt);
 			SQLUtils.closeQuietly(allotmentRs);
 		}
+	}
+
+	private static String obtainWhereClause(Integer id, Customer agency, InvoicingGroup agencyGroup, Item item, Tariff tariff) {
+		String items = (item != null && item.getId() != null) ? item.getId().toString() : null;
+		String tariffs = (tariff != null && tariff.getId() != null) ? tariff.getId().toString() : null;
+		return obtainWhereClause(id, agency, agencyGroup, items, tariffs);
 	}
 
 	private static String obtainWhereClause(Integer id, Customer agency, InvoicingGroup agencyGroup, String items, String tariffs) {
