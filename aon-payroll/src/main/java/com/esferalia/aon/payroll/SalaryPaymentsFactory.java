@@ -103,7 +103,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			return;
 		} else if (value == 1
 				&& StringUtils.equals(sp.getName(),
-						ContextVariable.BASE_SALARY.getName())) {
+						ContextVariable.BASE_SALARY)) {
 			payments.addBaseSalary(sp);
 			return;
 		}
