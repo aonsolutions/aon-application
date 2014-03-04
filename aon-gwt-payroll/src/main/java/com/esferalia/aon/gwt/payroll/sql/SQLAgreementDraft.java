@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +42,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.salary.expression.Period;
-
 
 public class SQLAgreementDraft {
 
@@ -429,7 +429,7 @@ public class SQLAgreementDraft {
 
 	public static void save(Connection conn, AgreementDraft draft,
 			Integer domain, Integer parentDomain) throws SQLException {
-		
+
 		if (draft.getId() < 0)
 			insert(conn, draft, domain, parentDomain);
 		else
@@ -444,7 +444,7 @@ public class SQLAgreementDraft {
 
 		SalaryTable salaryTable = draft.getDraftSalaryTable();
 
-		for (Variable variable : salaryTable.getVariables(0)){
+		for (Variable variable : salaryTable.getVariables(0)) {
 			insertData(conn, domainId, draft.getId(), variable);
 		}
 
@@ -461,11 +461,14 @@ public class SQLAgreementDraft {
 			updateCategories(conn, domainId, levelId, categories);
 		}
 
-		
 		for (Payment payment : draft.getDraftPayments()) {
-			if (!isRemove(payment))
+			if (!isRemove(payment)) {
 				// Warning, we update payment id, it's a potential risk.
-				payment.setId(insertPayment(conn, domainId, draft.getId(), payment));
+				int paymentId = insertPayment(conn, domainId, draft.getId(),
+						payment);
+				syncExtra(draft.getDraftExtras(), payment.getId(), paymentId);
+				payment.setId(paymentId);
+			}
 		}
 
 		for (Extra extra : draft.getDraftExtras()) {
@@ -503,13 +506,13 @@ public class SQLAgreementDraft {
 				updateLevelData(conn, domainId, dbId, variable);
 			}
 
-			if (categoriesMap.containsKey(draftId)){
+			if (categoriesMap.containsKey(draftId)) {
 				updateCategories(conn, domainId, dbId,
 						categoriesMap.get(draftId));
 			}
 		}
 
-		for (Variable variable : salaryTable.getVariables(0)){
+		for (Variable variable : salaryTable.getVariables(0)) {
 			updateData(conn, domainId, draft.getId(), variable);
 		}
 
@@ -534,11 +537,16 @@ public class SQLAgreementDraft {
 
 		for (Payment payment : draft.getDraftPayments()) {
 			if (payment.getId() < 0) {
-				if (!isRemove(payment))
+				if (!isRemove(payment)) {
 					// Warning, we update payment id, it's a potential risk.
-					payment.setId(insertPayment(conn, domainId, draft.getId(), payment));
+					int paymentId = insertPayment(conn, domainId,
+							draft.getId(), payment);
+					syncExtra(draft.getDraftExtras(), payment.getId(),
+							paymentId);
+					payment.setId(paymentId);
+				}
 			} else {
-				if (!isRemove(payment)){
+				if (!isRemove(payment)) {
 					updatePayment(conn, domainId, draft.getId(), payment);
 				} else {
 					removePayment(conn, domainId, draft.getId(), payment);
@@ -560,6 +568,16 @@ public class SQLAgreementDraft {
 				}
 			}
 
+		}
+	}
+
+	private static void syncExtra(Collection<Extra> extras, int oldPaymentId,
+			int newPaymentId) {
+		for (Extra extra : extras) {
+			if (extra.getPaymentId() == oldPaymentId) {
+				extra.setPaymentId(newPaymentId);
+				return;
+			}
 		}
 	}
 
@@ -852,7 +870,7 @@ public class SQLAgreementDraft {
 
 		}
 		// Inserts if not empty (""), not null and not whitespace only
-		if ( StringUtils.isNotBlank(variable.getExpression())){
+		if (StringUtils.isNotBlank(variable.getExpression())) {
 			insertData(conn, domainId, agreementId, variable);
 		}
 
@@ -890,13 +908,14 @@ public class SQLAgreementDraft {
 
 		}
 		// Inserts if not empty (""), not null and not whitespace only
-		if (StringUtils.isNotBlank((variable.getExpression()))){
+		if (StringUtils.isNotBlank((variable.getExpression()))) {
 			insertLevelData(conn, domainId, levelId, variable);
 		}
 
 	}
 
-	private static void updateLevel(Connection conn, Level level) throws SQLException {
+	private static void updateLevel(Connection conn, Level level)
+			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			//@formatter:off
