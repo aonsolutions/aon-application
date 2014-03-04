@@ -26,7 +26,7 @@ public enum ContextVariable implements IResourceable{
 	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
 	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false),
 	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
-	CONTRACT_DAYS("DIAS_CONTRATO", VariableType.INTEGER, false),
+	CONTRACT_DAYS("DIAS_CANONTRATO", VariableType.INTEGER, false),
 	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER, false),
 	PAY_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
 	EXTRA_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
@@ -170,9 +170,7 @@ public enum ContextVariable implements IResourceable{
 	SEVEN("SEPTENIO", VariableType.UNKNOWN ),
 	
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE ),
-	OLDD("ANTIGUEDAD", VariableType.DOUBLE ),
 	EXCESS("EXCESO", VariableType.DOUBLE ),
-	ASSURED_IT("GARANTIZADO_IT", VariableType.DOUBLE ),
 	
 	IT_START("INICIO_IT", VariableType.DATE),
 
@@ -203,7 +201,9 @@ public enum ContextVariable implements IResourceable{
 	public static final String ISDEF = "DEFINIDA";
 	public static final String CHECK_VAR = "CHECK_VAR";
 	
+	public static final String OLDD = "ANTIGUEDAD";
 	public static final String BASE_SALARY = "SALARIO_BASE";
+	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
 	
 	private final String name;
 	private VariableType type;
