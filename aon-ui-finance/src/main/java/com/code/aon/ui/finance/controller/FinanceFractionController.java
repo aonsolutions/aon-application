@@ -24,7 +24,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -47,10 +46,6 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 	public void setFractionModel(DataModel fractionModel) {
 		setModel(fractionModel);
 	}
-
-	public int getPageLimit() {
-		return PageDataModel.LIMIT;
-	}	
 
 	public Finance getTo() {
 		return currentFinance;

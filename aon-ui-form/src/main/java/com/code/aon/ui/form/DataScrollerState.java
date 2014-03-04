@@ -29,14 +29,14 @@ public class DataScrollerState implements ITemplateController {
 	}	
 	
 	@Override
-	public int getPageLimit() {
+	public Integer getPageLimit() {
 		if ( pageLimit == null ) {
 			return AonUtil.getConfigurationController().getPageLimit();
 		}
 		return pageLimit;
 	}
 	
-	public void setPageLimit(int pageLimit) {
+	public void setPageLimit(Integer pageLimit) {
 		this.pageLimit = pageLimit;
 	}	
 

@@ -36,6 +36,6 @@ public interface IDataModelDataProvider {
 	 * 
 	 * @return the page limit
 	 */
-	int getPageLimit();
+	Integer getPageLimit();
     
 }

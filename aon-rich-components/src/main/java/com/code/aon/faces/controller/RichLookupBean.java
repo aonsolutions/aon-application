@@ -236,7 +236,7 @@ public class RichLookupBean implements ITemplateController {
 	 * 
 	 * @return int
 	 */
-	public int getPageLimit() {
+	public Integer getPageLimit() {
 		return getController().getPageLimit();
 	}	
 	
@@ -246,7 +246,7 @@ public class RichLookupBean implements ITemplateController {
 	 * @param pageLimit
 	 *            the page limit
 	 */
-	public void setPageLimit(int pageLimit) {
+	public void setPageLimit(Integer pageLimit) {
 		getController().setPageLimit(pageLimit);
 	}
 

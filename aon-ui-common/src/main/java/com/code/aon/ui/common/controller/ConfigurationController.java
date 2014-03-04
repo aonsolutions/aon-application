@@ -41,6 +41,10 @@ public class ConfigurationController implements Serializable {
 	
 	private static final DateFormat FORMATTER = new SimpleDateFormat("EEEE, dd MMMM yyyy");
 	
+	private static final LocaleElement[] LOCALES = new LocaleElement[] {
+			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
+		};
+	
     public static final int DEFAULT_PAGE_LIMIT = 20;	
 
     public static final int DEFAULT_LINES_PAGE_LIMIT = 10;
@@ -55,17 +59,13 @@ public class ConfigurationController implements Serializable {
 	
 	private String currentAction = "home";
 	
-	private String application;
-	
-	private LocaleElement[] locales;
-	
-	private List<SelectItem> localeList;
+	private transient List<SelectItem> localeList;
 	
 	private AuthPrincipal principal;
 	
-	private int pageLimit = DEFAULT_PAGE_LIMIT;
+	private Integer pageLimit = DEFAULT_PAGE_LIMIT;
 	
-	private int linesPageLimit = DEFAULT_LINES_PAGE_LIMIT;
+	private Integer linesPageLimit = DEFAULT_LINES_PAGE_LIMIT;
 	
 	/**
 	 * The Constructor.
@@ -73,12 +73,6 @@ public class ConfigurationController implements Serializable {
 	public ConfigurationController() {
 		this.properties = new HashMap<String, Object>();
 		this.styleSheets = new ArrayList<String>();
-		BeanConfiguration beanConfig = (BeanConfiguration) AonUtil.getRegisteredBean(BEAN_CONFIG_CONTROLLER_NAME); 
-		this.bean = beanConfig.getBeanCopy();		
-		initApplication();
-		this.locales = new LocaleElement[] {
-			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
-		};
 		this.principal = resolvePrincipal();
 	}
 	
@@ -92,19 +86,19 @@ public class ConfigurationController implements Serializable {
 		return PrincipalUtil.getAuthPrincipal();
 	}
 
-	public int getPageLimit() {
+	public Integer getPageLimit() {
 		return pageLimit;
 	}
 
-	public void setPageLimit(int pageLimit) {
+	public void setPageLimit(Integer pageLimit) {
 		this.pageLimit = pageLimit;
 	}
 
-	public int getLinesPageLimit() {
+	public Integer getLinesPageLimit() {
 		return linesPageLimit;
 	}
 
-	public void setLinesPageLimit(int linesPageLimit) {
+	public void setLinesPageLimit(Integer linesPageLimit) {
 		this.linesPageLimit = linesPageLimit;
 	}
 
@@ -170,15 +164,6 @@ public class ConfigurationController implements Serializable {
 		this.styleSheets = styleSheets;
 	}
 
-	/**
-	 * Calculate application version.
-	 * 
-	 */
-	private void initApplication() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		this.application = StringUtils.stripStart(ec.getRequestContextPath(), "/" );
-	}
-	
     /**
      * Gets the current date.
      * 
@@ -226,6 +211,10 @@ public class ConfigurationController implements Serializable {
 	 * @return the bean
 	 */
 	public Map<String, Map<String, Object>> getBean() {
+		if ( bean == null ) {
+			BeanConfiguration beanConfig = (BeanConfiguration) AonUtil.getRegisteredBean(BEAN_CONFIG_CONTROLLER_NAME); 
+			this.bean = beanConfig.getBeanCopy();					
+		}
 		return bean;
 	}
 	
@@ -247,9 +236,11 @@ public class ConfigurationController implements Serializable {
 		this.currentAction = currentAction;
 	}
 
-	private String getURL( String application, String action ) {
+	private String getURL( String action ) {
 		StringBuffer url = new StringBuffer();
 		url.append("http://help.aonsolutions.es/ayuda/resumen.php?application=");
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		String application = StringUtils.stripStart(ec.getRequestContextPath(), "/" );		
 		url.append( application );
 		if ( action != null ) {
 			url.append("&action_id=").append(action);
@@ -263,11 +254,11 @@ public class ConfigurationController implements Serializable {
 	 * @return the help url
 	 */
 	public String getHelpURL() {
-		return getURL(this.application, this.currentAction);
+		return getURL(this.currentAction);
 	}
 	
 	public LocaleElement[] getLocales() {
-		return locales;
+		return LOCALES;
 	}
 
 	public List<SelectItem> getLocaleList() {

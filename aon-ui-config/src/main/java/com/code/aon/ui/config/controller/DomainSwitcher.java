@@ -48,7 +48,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 	private String modelFilter;
 	private String domainURL;
 	private int page;
-	private int pageLimit;
+	private Integer pageLimit;
 	private boolean showInactive;
 	private String beanName;
 	
@@ -317,11 +317,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		return (DomainType) query.uniqueResult();
 	}
 
-	public int getPageLimit() {
+	@Override
+	public Integer getPageLimit() {
 		return pageLimit;
 	}
 
-	public void setPageLimit(int pageLimit) {
+	public void setPageLimit(Integer pageLimit) {
 		this.pageLimit = pageLimit;
 	}
 

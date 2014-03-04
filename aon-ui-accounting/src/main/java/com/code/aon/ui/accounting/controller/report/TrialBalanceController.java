@@ -323,7 +323,7 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 	}
 
 	@Override
-	public int getPageLimit() {
+	public Integer getPageLimit() {
 		return getParameters().getRowsPerPage();
 	}
 	

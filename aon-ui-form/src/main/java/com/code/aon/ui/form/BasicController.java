@@ -147,7 +147,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @return int
 	 */
-	public int getPageLimit() {
+	public Integer getPageLimit() {
 		if ( pageLimit == null ) {
 			return getDefaultPageLimit();
 		}
@@ -163,7 +163,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @param pageLimit
 	 */
-	public void setPageLimit(int pageLimit) {
+	public void setPageLimit(Integer pageLimit) {
 		this.pageLimit = pageLimit;
 	}
 	
