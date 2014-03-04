@@ -28,7 +28,7 @@ public class StopSalesSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ALLOTMENT_HOTEL_ID), getHotel().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.STOP_SALES_HOTEL_ID), getHotel().getId());			
 		}
 	}
 
