@@ -105,7 +105,7 @@
 			<aon:commandButton id="reservationInvoice-rectify"
 				styleClass="aon-icon-removed aon-noborder"
 				value="&#160;" title="#{bundle.pms_to_return_label}"
-				rendered="#{to.noRectification and (!to.advance or !reservation.to.invoiced) and (aonRole.financeOperator or (to.service and to.allCommercialProducts))}"
+				rendered="#{reservation.invoiceRectificable}"
 				actionListener="#{controller.onRectifyInvoiceShow}"
 				reRender="showRectificationWindow">
 				<f:setPropertyActionListener target="#{controller.showRectificationWindow}"

@@ -798,6 +798,42 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	public boolean isInvoiceRectificable() {
+		try {
+			if (getInvoiceModel().isRowAvailable()) {
+				Invoice invoice = (Invoice)getInvoiceModel().getRowData();
+				if (invoice.isNoRectification()) {
+					boolean financeOperator = AonUtil.getRoleManager().isFinanceOperator();
+					if (invoice.isService()) {
+						return financeOperator || invoice.isAllCommercialProducts();
+					} else {
+						if (invoice.isAdvance()) {
+							return financeOperator && !((ProjectReservation)this.getTo()).isInvoiced();
+						} else {
+							return financeOperator && isLastReservationInvoice(invoice);
+						}
+					}
+				}
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+		return false;
+	}
+
+	private boolean isLastReservationInvoice(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addGreaterThanExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), invoice.getProject().getId());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), invoice.getType());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), Boolean.FALSE);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), Boolean.FALSE);
+		return invoiceBean.getCount(criteria) == 0;
+	}
+
 	public void onRectifyInvoiceShow(ActionEvent event) {
 		if (!getInvoiceModel().isRowAvailable()) {
 			setShowRectificationWindow(false);
