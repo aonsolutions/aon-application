@@ -131,7 +131,7 @@ public enum ContextVariable implements IResourceable{
 	SALARY("NOMINA", VariableType.BOOLEAN),
 	DELAY("ATRASOS", VariableType.BOOLEAN),
 	SETTLE("FINIQUITO", VariableType.BOOLEAN),
-	EXTRA_PAY("PAGA_EXTRA", VariableType.BOOLEAN),
+	EXTRA_PAY("EXTRA", VariableType.BOOLEAN),
 	
 	
 	// Resultados
