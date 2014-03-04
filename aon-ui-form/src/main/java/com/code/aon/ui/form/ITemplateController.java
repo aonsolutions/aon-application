@@ -8,7 +8,7 @@ public interface ITemplateController {
 	
     DataModel getModel() throws ManagerBeanException;
 
-	int getPageLimit();
+	Integer getPageLimit();
     
 	int getPage();
 	
