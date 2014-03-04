@@ -286,11 +286,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
 				} catch (UndefinedContextVariablesException e) {
+					paymentsVars.remove(undefPayment.getName());
 				} catch (UndefinedVariablesException e) {
-					if (undefPayment.willBeDefined(paymentsVars))
+					if (undefPayment.willBeDefined(paymentsVars)){
 						undefPayments.add(undefPayment);
-					else
+					}
+					else {
 						undefPayment.onUndefinedData(this);
+						paymentsVars.remove(undefPayment.getName());
+					}
 				}
 			}
 			

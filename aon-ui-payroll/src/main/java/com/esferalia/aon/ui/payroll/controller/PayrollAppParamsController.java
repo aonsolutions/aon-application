@@ -147,6 +147,9 @@ public class PayrollAppParamsController{
 	}
 	
 	public RegistryBank getSsPaymentBankAccount() {
+		if(ssPaymentBankAccount==null){
+			initSsPaymentBankAccount();
+		}
 		return ssPaymentBankAccount;
 	}
 	
