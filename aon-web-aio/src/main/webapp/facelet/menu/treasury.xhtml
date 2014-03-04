@@ -166,7 +166,7 @@
 											action="financeChecking_form"
 											value="#{bundle.finance_invoice_checking_module}" />
 									</aon:div>
-									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
+									<c:if test="#{actionDenied.moduleEnabled['hotel']}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="pos_finance_bath" 
 												action="posFinance_search"

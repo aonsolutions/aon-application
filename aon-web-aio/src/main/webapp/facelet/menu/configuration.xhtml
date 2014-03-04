@@ -70,7 +70,7 @@
 											value="#{bundle.admin_backup}" />
 									</aon:div>
 								</c:if>									
-								<c:if test="#{domainSwitcher.type == 'HOTEL' and aonRole.purchaseOperator}">
+								<c:if test="#{actionDenied.moduleEnabled['hotel'] and aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="hotel" 
 											action="hotel_list" 

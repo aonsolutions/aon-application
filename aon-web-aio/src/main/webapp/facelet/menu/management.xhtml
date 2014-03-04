@@ -27,7 +27,7 @@
 									<aon:outputText value="#{bundle.aon_sales}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
+									<c:if test="#{actionDenied.moduleEnabled['hotel']}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="advanceInvoice" 
 												action="advanceInvoice_search"
@@ -256,7 +256,7 @@
 											value="#{bundle.purchase_module2}" />
 									</aon:div>									
 									<c:if test="#{aonRole.warehouseOperator}">
-										<c:if test="#{(domainSwitcher.type == 'HOTEL')}">
+										<c:if test="#{actionDenied.moduleEnabled['hotel']}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="proposal"
 													action="proposal_search"
