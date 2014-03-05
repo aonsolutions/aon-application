@@ -24,7 +24,7 @@
 					<f:param value="#{rowCount}" />
 					<f:param value="#{rowCount}" />
 				</aon:outputFormat>		    	
-				<aon:dataPaginator rendered="#{rowCount > pageSize}"
+				<aon:dataPaginator
 					for="#{dataTable}" id="#{dataTable}PaginatorInfo" page="#{page}"
 					rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
 					styleClass="aon-dataScroller-text">
