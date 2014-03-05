@@ -261,9 +261,9 @@ public class CertificadosWriter {
 		String name = batchDetail.getContract().getPerson().getName();
 		String surname1 = batchDetail.getContract().getPerson().getFirstSurname();
 		String surname2 = batchDetail.getContract().getPerson().getSecondSurname();
-		String quoteGroup = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
-		String tc2 = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
-		String occupation = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.CNO.getName());
+		String quoteGroup = utils.getContractDataMap(batchDetail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
+		String tc2 = utils.getContractDataMap(batchDetail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
+		String occupation = utils.getContractDataMap(batchDetail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.CNO.getName());
 
 		TRABAJADORTYPE o = new TRABAJADORTYPE();
 		
@@ -1056,7 +1056,7 @@ public class CertificadosWriter {
 	
 	private boolean isFulltimeContract(Certifica2BatchDetail detail) {
 		SEPEUtils utils = SEPEUtils.getInstance();
-		String tc2 = utils.getContractDataMap(detail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
+		String tc2 = utils.getContractDataMap(detail.getContract(), Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
 		if(tc2.startsWith("1") || tc2.startsWith("4")){ 
 			return true;
 		}
