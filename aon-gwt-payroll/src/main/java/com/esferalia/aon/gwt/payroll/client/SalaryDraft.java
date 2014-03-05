@@ -1881,14 +1881,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
-			if (!displayNow(payment))
-				continue;
+			
+			//if (!displayNow(payment))
+			//	continue;
 
 			if (payment.getAmount() != null) {
+			
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 						payment);
-				dumpItem(payment, row++, getIconRowStyle(payment), handler);
+				dumpPayment(payment, row++, getIconRowStyle(payment), handler);
+				
 				handlers.add(handler);
+			
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
 				dumpDbItem(payment, row++, styles[0], styles[1],
@@ -2037,15 +2041,33 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	private <I extends Item> void dumpItem(I item, int row,
-			String iconStyleName, ItemChangeHandler<TextBox, I> handler) {
-		dumpItem(item, row, iconStyleName, handler, false);
+	private <P extends Payment> void dumpPayment(P payment, int row,
+			String iconStyleName, ItemChangeHandler<TextBox, P> handler) {
+		
+		Widget labelWidget = null;
+
+		double amount = payment.getAmount();
+		double quote = payment.getQuote();
+		
+		if ( amount!= quote ) {
+			labelWidget = newPercentLabel(format(quote));
+			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
+		}
+		
+		dumpItem(payment, row, iconStyleName, handler, false, labelWidget);
 	}
 
 	private <I extends Item> void dumpItem(I item, int row,
 			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
+		dumpItem(item, row, iconStyleName, handler, isDeduction, null);
+		
+	}
+	private <I extends Item> void dumpItem(I item, int row,
+			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
+			boolean isDeduction, Widget labelWidget) {
 
+		
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
 		editButton.setTabIndex(Short.MAX_VALUE);
@@ -2057,7 +2079,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// We don't like it here.
 		paymentsTable.setWidget(row, 0, editButton);
 
-		paymentsTable.setHTML(row, 1, "&nbsp;");
+		if ( labelWidget == null ) 
+			paymentsTable.setHTML(row, 1, "&nbsp;");
+		else
+			paymentsTable.setWidget(row, 1, labelWidget);
 
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setText(item.getDescription());
@@ -2761,7 +2786,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.insertRow(idx);
 		PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 				payment);
-		dumpItem(payment, idx, iconStyleName, handler);
+		dumpPayment(payment, idx, iconStyleName, handler);
 		paymentChangeHandlers.add(handler);
 
 
@@ -2804,14 +2829,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	// TODO : ???
 	private boolean displayNow(Payment payment) {
+		return true;
+		/*
 		Short month = payment.getMonth();
 		if (month == null)
-			return true;
+			return true;       
 		Date start = salaryDraftObject.getStartDate();
 		if (month < start.getMonth())
 			return false;
 		Date end = salaryDraftObject.getEndDate();
 		return (month <= end.getMonth());
+		*/
 	}
 
 	private boolean displayNow(UndefinedPaymentVariable var) {
@@ -2832,6 +2860,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private String getIconRowStyle(Item item) {
+
 		switch (item.getScope()) {
 		case SALARY:
 			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
@@ -3061,15 +3090,19 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return buffer.toString();
 	}
 
-	private static Widget newPercentLabel(Deduction deduction, Double percent) {
+	private static Widget newPercentLabel(String str) {
 		InlineLabel percentageLabel = new InlineLabel();
-		if (NumberUtils.isNotValid(percent))
-			percentageLabel.setText(deduction.getDescription());
-		else
-			percentageLabel.setText(formatPercent(percent));
+		percentageLabel.setText(str);
 		// padding-left : 5px, to align vertically with IRPF Widget.
 		percentageLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		return percentageLabel;
+	}
+
+	private static Widget newPercentLabel(Item<?> item, Double percent) {
+		if (NumberUtils.isNotValid(percent))
+			return newPercentLabel(item.getDescription());
+		else
+			return newPercentLabel(formatPercent(percent));
 	}
 
 	private static Double getDbPercent(Deduction deduction,
