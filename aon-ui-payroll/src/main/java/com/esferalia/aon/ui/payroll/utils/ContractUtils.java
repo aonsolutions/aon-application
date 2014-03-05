@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -596,6 +598,9 @@ public class ContractUtils {
 		}
 		try {
 			ContractData contractEndCode = obtainContractData(contract, ContextVariable.CONTRACT_END_CODE.getName());
+			ContractData advanceNoticeDays = obtainContractData(contract, ContextVariable.ADVANCE_NOTICE_DAYS.getName());
+			ContractData noHolidays = obtainContractData(contract, ContextVariable.NO_HOLIDAYS.getName());
+			ContractData compensationDays = obtainContractData(contract, ContextVariable.COMPENSATION_DAYS.getName());
 			if(params.getSuspensionCause()!=null){
 				data = contractEndCode!=null?contractEndCode:new ContractData();
 				data.setContract(contract);
@@ -604,9 +609,45 @@ public class ContractUtils {
 				data.setName( ContextVariable.CONTRACT_END_CODE.getName() );
 				data.setExpression("\"" + params.getSuspensionCause().getCode() + "\"");
 				bean.insertOrUpdate(data);
+				if(params.getSettleAdvanceNoticeDays() != null){
+					data = advanceNoticeDays!=null?advanceNoticeDays:new ContractData();
+					data.setContract(contract);
+					data.setStartDate(contract.getStartDate());
+					data.setEndDate(contract.getEndDate());
+					data.setName( ContextVariable.ADVANCE_NOTICE_DAYS.getName() );
+					data.setExpression(params.getSettleAdvanceNoticeDays().toString());
+					bean.insertOrUpdate(data);
+				}
+				if(params.getSettleNonEnjoyedVacations() != null){
+					data = noHolidays!=null?noHolidays:new ContractData();
+					data.setContract(contract);
+					data.setStartDate(contract.getStartDate());
+					data.setEndDate(contract.getEndDate());
+					data.setName( ContextVariable.NO_HOLIDAYS.getName() );
+					data.setExpression(params.getSettleNonEnjoyedVacations().toString());
+					bean.insertOrUpdate(data);
+				}
+				if(params.getSettleCompensationDays() != null){
+					data = compensationDays!=null?compensationDays:new ContractData();
+					data.setContract(contract);
+					data.setStartDate(contract.getStartDate());
+					data.setEndDate(contract.getEndDate());
+					data.setName( ContextVariable.COMPENSATION_DAYS.getName() );
+					data.setExpression(params.getSettleCompensationDays().toString());
+					bean.insertOrUpdate(data);
+				}
 			} else {
 				if(contractEndCode != null){
 					bean.remove(contractEndCode);
+				}
+				if(advanceNoticeDays != null){
+					bean.remove(advanceNoticeDays);
+				}
+				if(noHolidays != null){
+					bean.remove(noHolidays);
+				}
+				if(compensationDays != null){
+					bean.remove(compensationDays);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -717,6 +758,20 @@ public class ContractUtils {
 		}
 		if(map.get(ContextVariable.CONTRACT_END_CODE.getName())!=null){
 			params.setSuspensionCause(TLDCAUSS.getEnumByValue(map.get(ContextVariable.CONTRACT_END_CODE.getName())));
+		}
+		
+		if(map.get(ContextVariable.ADVANCE_NOTICE_DAYS.getName())!=null && NumberUtils.isDigits(map.get(ContextVariable.ADVANCE_NOTICE_DAYS.getName()))){
+			Integer days = Integer.parseInt(map.get(ContextVariable.ADVANCE_NOTICE_DAYS.getName()));
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(contract.getEndDate());
+			cal.add(Calendar.DAY_OF_MONTH, -days);
+			params.setSettleAdvanceNoticeDate(cal.getTime());	
+		}
+		if(map.get(ContextVariable.NO_HOLIDAYS.getName())!=null && NumberUtils.isDigits(map.get(ContextVariable.NO_HOLIDAYS.getName()))){
+			params.setSettleNonEnjoyedVacations(Integer.parseInt(map.get(ContextVariable.NO_HOLIDAYS.getName())));
+		}
+		if(map.get(ContextVariable.COMPENSATION_DAYS.getName())!=null && NumberUtils.isDigits(map.get(ContextVariable.COMPENSATION_DAYS.getName()))){
+			params.setSettleCompensationDays(Integer.parseInt(map.get(ContextVariable.COMPENSATION_DAYS.getName())));
 		}
 		
 	}

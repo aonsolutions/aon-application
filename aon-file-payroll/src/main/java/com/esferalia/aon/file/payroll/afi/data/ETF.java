@@ -3,13 +3,21 @@ package com.esferalia.aon.file.payroll.afi.data;
 
 public class ETF {
 
+	private String identificador;
 	private Integer clave;
 	private Integer fecha;
 	private Integer hora;
 	private String fichero;
-	private Integer contador;
-	private Integer contadorTotal;
+	private String prueba;
+	private Integer contadorEmpresas;
+	private Integer contadorSegmentos;
 
+	public String getIdentificador() {
+		return identificador;
+	}
+	public void setIdentificador(String identificador) {
+		this.identificador = identificador;
+	}
 	public Integer getClave() {
 		return clave;
 	}
@@ -38,16 +46,23 @@ public class ETF {
 		this.fichero = fichero;
 	}
 
-	public Integer getContador() {
-		return contador;
+	public String getPrueba() {
+		return prueba;
 	}
-	public void setContador(Integer contador) {
-		this.contador = contador;
+	public void setPrueba(String prueba) {
+		this.prueba = prueba;
 	}
-	public Integer getContadorTotal() {
-		return contadorTotal;
+	public Integer getContadorEmpresas() {
+		return contadorEmpresas;
 	}
-	public void setContadorTotal(Integer contadorTotal) {
-		this.contadorTotal = contadorTotal;
+	public void setContadorEmpresas(Integer contadorEmpresas) {
+		this.contadorEmpresas = contadorEmpresas;
 	}
+	public Integer getContadorSegmentos() {
+		return contadorSegmentos;
+	}
+	public void setContadorSegmentos(Integer contadorSegmentos) {
+		this.contadorSegmentos = contadorSegmentos;
+	}
+	
 }

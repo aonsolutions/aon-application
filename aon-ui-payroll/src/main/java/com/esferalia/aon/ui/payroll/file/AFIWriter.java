@@ -3,26 +3,55 @@ package com.esferalia.aon.ui.payroll.file;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.person.enumeration.Gender;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.DocumentType;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.afi.AFI;
 import com.esferalia.aon.file.payroll.afi.data.EMP;
+import com.esferalia.aon.file.payroll.afi.data.ETF;
 import com.esferalia.aon.file.payroll.afi.data.ETI;
 import com.esferalia.aon.file.payroll.afi.data.FAB;
 import com.esferalia.aon.file.payroll.afi.data.RZS;
 import com.esferalia.aon.file.payroll.afi.data.TRA;
+import com.esferalia.aon.file.payroll.afi.data.AYN;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.ui.payroll.controller.batch.ContractBatchController.AFIAction;
+import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.ss.T07;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class AFIWriter {
+	
+	private final String AFI 				= "AFI";
+	private final String WINSUITE_VERSION 	= "71WSxxx";
+	private final String TESTING_CHECK		= "P";
+	/* Clave proporcionada por la seguridad social */
+	private final Integer SS_KEY			= 12345678;
+	
+	private final String WHITESPACE_1  = " ";
+	private final String WHITESPACE_2  = "  ";
+	private final String WHITESPACE_3  = "   ";
+	private final String WHITESPACE_15 = "               ";
+	private final String WHITESPACE_20 = "                    ";
+
 	
 	private ETI eti;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
@@ -36,7 +65,7 @@ public class AFIWriter {
 
 	public FileOutput createAFI(List<Contract> contractList ) throws ManagerBeanException {
 		try {
-			ETI eti = createETIRecord( contractList );
+			ETI eti = createETIRecord( true, contractList );
 			File file = File.createTempFile("temp", ".AFI");
 			FileFiller afi = new AFI(eti, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
@@ -48,61 +77,82 @@ public class AFIWriter {
 		}
 	}
 
-	private ETI createETIRecord( List<Contract> contractList ) throws ManagerBeanException {
+	private ETI createETIRecord( boolean testFile, List<Contract> contractList ) throws ManagerBeanException {
 		ETI eti = new ETI();
-		/*
-		 Clave proporcionada por la seguridad social
-		 */
-		Integer clave = 12345678;
-		eti.setClave(clave);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		Date date = new Date();
+		String f =  formatter.format(date);
+		eti.setFecha(Integer.parseInt(f));
+		formatter = new SimpleDateFormat("HHmm");
+		String t =  formatter.format(date);
+		eti.setHora(Integer.parseInt(t));
+		formatter = new SimpleDateFormat("ddHHmmss");
+		eti.setFichero(formatter.format(date));
+		
+		eti.setIdentificador(AFI+WINSUITE_VERSION);
+		eti.setClave(SS_KEY);
+		eti.setPrueba( testFile?TESTING_CHECK:WHITESPACE_1 );
 		for (Enterprise e: getEnterprises(contractList)) {
 			EMP emp = createEMPrecord(e, contractList);
 			eti.getEmpresas().add(emp);
 		}
 		setEti( eti );
+		createETFRecord( eti );
 		return getEti();
+	}
+
+	private void createETFRecord( ETI eti ) throws ManagerBeanException {
+		ETF etf = new ETF();
+		etf.setIdentificador(eti.getIdentificador());
+		etf.setClave(eti.getClave());
+		etf.setPrueba(eti.getPrueba());
+		etf.setFichero(eti.getFichero());
+		etf.setFecha(eti.getFecha());
+		etf.setHora(eti.getHora());
+		eti.setEtf(etf);
 	}
 	
 	private EMP createEMPrecord(Enterprise enterprise, List<Contract> contractList) throws  ManagerBeanException {
 		EMP emp = new EMP();
-//		EnterpriseController ent = (EnterpriseController)FormUtil.getController("enterprise");
-//		ent.getCriteria().addEqualExpression(ent.getFieldName(ICompanyAlias.ENTERPRISE_ID), enterprise.getId());
-//		ent.onSearch(null);
-//		ent.onSelectFirst(null);
-		// TODO se ha movido el ccc y activity de company a payroll
-//		ent.initMainActiviy();
-//		String ccc = ent.getCcc().getCcc();
-//		emp.setCodigoCuentaCotizacionSeguridadSocial(ccc);
+		emp.setCodigoCuentaCotizacionSeguridadSocial(obtainMainCCC(enterprise));
 		
-		/*
-		T-3. Tipo de identificación de empresario
-		1 D.N.I., N.I.F.
-		2 Pasaporte
-		6 Número de Identificación de Extranjero
-		9 Código de Identificación Fiscal
-		  Documento identificativo de un país comunitario Clave por asignar+
-		*/
-		String tipo = null;
-		if(enterprise.getRegistry().getType()==null){
-			tipo = "9";
-		} else if(enterprise.getRegistry().getType() == RegistryType.NATURAL){
-			tipo = "1";
-		} else if(enterprise.getRegistry().getType() == RegistryType.LEGAL){
-			tipo = "9";
-		} 
-		emp.setTipo(tipo);
+		DocumentType docType = enterprise.getRegistry().getDocumentType();
+    	if(docType==DocumentType.NIF){
+    		emp.setTipoDocumento("1");
+    	} else if(docType==DocumentType.PASSPORT){
+    		emp.setTipoDocumento("2");
+    	} else if(docType==DocumentType.NIE){
+    		emp.setTipoDocumento("6");
+    	} else if(docType==DocumentType.CIF){
+    		emp.setTipoDocumento("9");
+    	} else {
+    		emp.setTipoDocumento("9");
+    	}
+		
 		String pais = null;
 		try {
-			pais = enterprise.getRegistry().getDefaultAddress().getGeozone().getName();
+			pais = String.valueOf(enterprise.getRegistry().getDocumentCountry().getIsoNum());
 		} catch (NullPointerException e) {
 		}			
 		if (StringUtils.isBlank(pais)) {
-			pais = "   ";
+			pais = WHITESPACE_3;
 		}
 		emp.setPais(pais);
-		emp.setNumero(enterprise.getRegistry().getDocument());
-		emp.setCalificador("  ");
-//		emp.setCodigoCuentaCotizacionPrincipal(obtainMainCCC(ccc).getFullCcc());
+		emp.setNumeroIdentificacion(autoComplete(enterprise.getRegistry().getDocument(), 14, "0", true));
+		emp.setCalificador(WHITESPACE_2);
+		emp.setCodigoCuentaCotizacionPrincipal(obtainMainCCC(enterprise));
+
+		emp.setRzs(createRZSrecord(enterprise));
+		emp.setAccion(WHITESPACE_3);
+		for(Contract c: getContracts(enterprise, contractList)){
+			TRA tra = createTRARecord(c);
+			emp.getTrabajadores().add(tra);
+		}
+		return emp;
+	}
+	
+	private RZS createRZSrecord(Enterprise enterprise) {
 		RZS rzs = new RZS();
 		rzs.setIndicador("0");
 		/*
@@ -113,60 +163,102 @@ public class AFIWriter {
 		4 Entidad u Organismo de las Admones.Públicas
 		*/
 		rzs.setTipoAlfabeticoEmpresario("1");
-		rzs.setRazonSocial(enterprise.getRegistry().getFullName());
-		emp.setRzs(rzs);
-		for(Contract c: getContracts(enterprise, contractList)){
-			TRA tra = createTRARecord(c);
-			emp.getTrabajadores().add(tra);
-		}
-		return emp;
+		rzs.setRazonSocial(enterprise.getRegistry().getName());
+		return rzs;
 	}
 	
 	private TRA createTRARecord(Contract contract) throws ManagerBeanException {
 		TRA tra = new TRA();
-		tra.setNumeroAfiliacion( contract.getPerson().getSocialSecurityNumber() );
-		String tipo = String.valueOf(contract.getPerson().getRegistry().getType()); 
-		String pais = contract.getPerson().getRegistry().getDefaultAddress().getGeozone().getName();
-		String doc = contract.getPerson().getRegistry().getDocument();
+		tra.setNumeroAfiliacion( contract.getPerson().getSocialSecurityNumber() ); 
+		String tipo;
+		if(contract.getPerson().getRegistry().getDocumentType()== DocumentType.NIF){
+			tipo = "1";
+		} else if(contract.getPerson().getRegistry().getDocumentType()== DocumentType.PASSPORT){
+			tipo = "2";
+		} else if(contract.getPerson().getRegistry().getDocumentType()== DocumentType.NIE){
+			tipo = "6";
+		} else {
+			tipo = "1";
+		}
+		String pais = String.valueOf(contract.getPerson().getRegistry().getDocumentCountry().getIsoNum());
+		String doc = autoComplete(contract.getPerson().getRegistry().getDocument(), 14, "0", true);
 		String ipf = StringUtils.isBlank(tipo)?"9":tipo;
 		ipf += StringUtils.isBlank(pais)?"   ":pais; 
 		ipf += doc;
 		tra.setIpf(ipf);
 		FAB fab = createFABRecord(contract);
+		tra.setAyn(createAYNRecord(contract));
 		tra.setFab(fab);
 		return tra;
+	}
+	
+	private AYN createAYNRecord(Contract contract) {
+		AYN ayn = new AYN();
+		String ap1 = contract.getPerson().getFirstSurname();
+		String ap2 = contract.getPerson().getSecondSurname();
+		String n = contract.getPerson().getName();
+		ayn.setApellido1(ap1!=null?ap1:WHITESPACE_20);
+		ayn.setApellido2(ap2!=null?ap2:WHITESPACE_20);
+		ayn.setNombre(n!=null?n:WHITESPACE_15);
+		return ayn;
 	}
 
 	private FAB createFABRecord(Contract contract) throws  ManagerBeanException{
 		FAB fab = new FAB();
-//		AFIAction.MA.toString();
-//		fab.setAccion("MA ");
-		fab.setAccion(AFIAction.MA.toString()+" ");
+		
+		// TODO Actions  
+		fab.setAccion(autoComplete(T07.T07_MA.getCode(), 3, "0", false));
+		
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(contract.getStartDate())));
 		
-		// TODO: 
-		fab.setSituacion(null);
-		fab.setGrupoCotizacion(null);
-		fab.setClaveContratoTrabajo(null);
-		fab.setCondicionDesempleado(null);
-		fab.setMujerSubrepresentada(null);
-		fab.setCoeficienteTiempoParcial(null);
-		fab.setColectivoTrabajador(null);
-		fab.setIndicadorImpresion(null);
-		fab.setCategoriaProfesional(null);
-		fab.setFechaNacimiento(null);
-		fab.setSexo(null);
-		fab.setTipoInactividad(null);
-		fab.setExclusionDesempleo(null);
-		fab.setCoeficienteActividadHuelgaParcial(null);
-		fab.setMujerReincorporada(null);
-		fab.setIncapacitadoReadmitido(null);
-		fab.setAutonomo(null);
-		fab.setGradoMinusvalia(null);
-		fab.setFechaControl(null);
-		fab.setExclusionSocialViolenciaDomestica(null);
-		fab.setRentaActivaInsercion(null);
-		fab.setCostratadasPostAlumbramiento(null);
+		/*
+		 * Clave obligatoria para altas y bajas que indica el motivo de alta o baja. Ver capítulo Tablas.
+		 */
+		fab.setSituacion(null);	// TODO
+		Integer quoteGroup = getQuoteGroup(contract);
+		if(quoteGroup!=null){
+			fab.setGrupoCotizacion(quoteGroup);
+		}
+		fab.setClaveContrato(Integer.parseInt(getContractCode(contract).getValue()));
+		fab.setCondicionDesempleado(null);	// TODO
+		fab.setMujerSubrepresentada(null);	// TODO
+		if(fab.getClaveContrato().toString().startsWith("2") || fab.getClaveContrato().toString().startsWith("5")){
+			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+			if(weekHours!=null){
+				Double hoursPercent = Double.parseDouble(weekHours)*2.5;
+				fab.setCoeficienteTiempoParcial((int)CommonUtil.ceil(hoursPercent, 0));
+			}
+		}
+		fab.setColectivoTrabajador(null);	// TODO
+		/*
+		IndicadorImpresion. Sus posibles valores son: 
+		Espacio=no impresión 
+		S= Impresión resolución
+		C= Impresión resolución + IDC 
+		I=IDC
+		*/
+		fab.setIndicadorImpresion(WHITESPACE_1);
+		if(contract.getEnterpriseCCC().getActivity().getQuoteRegimeCode().equals("0911")
+				|| contract.getEnterpriseCCC().getActivity().getType()==SSRegimeType.SEA_WORKERS){
+			fab.setCategoriaProfesional(null);	// TODO
+		}
+		fab.setFechaNacimiento(dateFormatter.format(contract.getPerson().getBirthDate()));
+		if(contract.getPerson().getGender()==Gender.MALE){
+			fab.setSexo(1);
+		} else if(contract.getPerson().getGender()==Gender.FEMALE){
+			fab.setSexo(2);
+		}
+		fab.setTipoInactividad(null);	// TODO
+		fab.setExclusionDesempleo(null);	// TODO
+		fab.setCoeficienteActividadHuelgaParcial(null);	// TODO
+		fab.setMujerReincorporada(null);	// TODO
+		fab.setIncapacitadoReadmitido(null);	// TODO
+		fab.setTrabajadorDeAutonomo(null);	// TODO
+		fab.setSemamaSegunConvenio5jr(null);	// TODO
+		fab.setIndNumTrabajadoresEmpresa(null);	// TODO
+		fab.setExclusionSocial(null);	// TODO
+		fab.setRentaActivaInsercion(null);	// TODO
+		fab.setCostratadasPostAlumbramiento(null);	// TODO
 		
 		return fab;
 	}
@@ -191,6 +283,38 @@ public class AFIWriter {
 		return list;
 	}
 
+	private String autoComplete(String value, int lenght, String completeValue, boolean leftSide) {
+		while( value.length() < lenght ){
+			value = leftSide ? (completeValue + value) : (value + completeValue);
+		}
+		return value;
+	}
 	
+	private String obtainMainCCC(Enterprise enterprise) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId() );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL );
+			List<ITransferObject> cccList = bean.getList(criteria);
+			if ( !cccList.isEmpty() ) {
+				EnterpriseCCC ccc = (EnterpriseCCC) cccList.get(0);	
+				return ccc.getFullCcc();	
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return null;
+	}
+
+	private Integer getQuoteGroup(Contract contract) {
+		String q = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_GROUP.getName());
+		return q!=null && !q.isEmpty()?Integer.parseInt(q):null;
+	}
+	private ContractCode getContractCode(Contract contract) {
+		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
+		return ContractCode.getContractCodeByValue(tc2);
+	}
 	
 }

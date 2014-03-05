@@ -1,10 +1,17 @@
 package com.esferalia.aon.file.payroll.contract.pdf;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.ObjectUtils;
 
 import com.lowagie.text.pdf.AcroFields;
 
-public class ContractPdfField {
+public class ContractPdfField implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private static final double FACTOR_1X = 1.2;
 	private static final double FACTOR_2X = 1.4;

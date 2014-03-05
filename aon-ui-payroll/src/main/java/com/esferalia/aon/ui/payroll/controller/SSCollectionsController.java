@@ -270,6 +270,29 @@ public class SSCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T58.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T58CodeList;
+
+	public List<SelectItem> getT58CodeList() {
+		if (T58CodeList == null) {
+			T58CodeList = new LinkedList<SelectItem>();
+			T58[] el = T58.values();
+			for (T58 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T58CodeList.add(item);
+				}
+			}
+		}
+		return T58CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T61.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -293,6 +316,29 @@ public class SSCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T68.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T68CodeList;
+
+	public List<SelectItem> getT68CodeList() {
+		if (T68CodeList == null) {
+			T68CodeList = new LinkedList<SelectItem>();
+			T68[] el = T68.values();
+			for (T68 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T68CodeList.add(item);
+				}
+			}
+		}
+		return T68CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T83.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -311,6 +357,29 @@ public class SSCollectionsController {
 			}
 		}
 		return T83CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T84.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T84CodeList;
+
+	public List<SelectItem> getT84CodeList() {
+		if (T84CodeList == null) {
+			T84CodeList = new LinkedList<SelectItem>();
+			T84[] el = T84.values();
+			for (T84 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T84CodeList.add(item);
+				}
+			}
+		}
+		return T84CodeList;
 	}
 
 }

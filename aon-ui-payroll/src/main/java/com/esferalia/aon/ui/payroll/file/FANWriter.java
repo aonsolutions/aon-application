@@ -66,19 +66,21 @@ import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class FANWriter {
 	
-	private ETI eti;
-	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+	private final String TESTING_CHECK		= "P";
+	/* Clave proporcionada por la seguridad social */
+	private final Integer SS_KEY			= 12345678;
 	
 	private final String  VIRGULILLA = "~";
 	
-	private final String  BLANK_1 = " ";
-	private final String  BLANK_2 = "  ";
-	private final String  BLANK_3 = "   ";
-	private final String  BLANK_7 = "       ";
-	private final String BLANK_14 = "              ";
-	private final String BLANK_15 = "               ";
-	private final String BLANK_20 = "                    ";
+	private final String WHITESPACE_1  = " ";
+	private final String WHITESPACE_2  = "  ";
+	private final String WHITESPACE_3  = "   ";
+	private final String WHITESPACE_15 = "               ";
+	private final String WHITESPACE_20 = "                    ";
 	
+	private ETI eti;
+	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+
 	private Integer year;
 	private Month startMonth; 
 	private Month endMonth; 
@@ -126,10 +128,9 @@ public class FANWriter {
 		this.endMonth= endMonth ; 
 		this.liquidationType = liquidationType;
 		this.totalContractSum = 0;
-		// TODO Clave proporcionada por la seguridad social
-		Integer clave = 12345678;
-		eti.setClave(clave);
-		eti.setPrueba(testFile?"P":" ");
+		
+		eti.setClave(SS_KEY);
+		eti.setPrueba(testFile?TESTING_CHECK:WHITESPACE_1);
 		for (EnterpriseCCC ccc: list) {
 			EMP emp = createEMPrecord(ccc);
 			if(emp!=null){
@@ -156,13 +157,13 @@ public class FANWriter {
     	} else {
     		emp.setTipoDocumento("9");
     	}
-    	emp.setPais(BLANK_3);
+    	emp.setPais(WHITESPACE_3);
     	emp.setNumeroIdentificacion(autoComplete(ccc.getActivity().getEnterprise().getRegistry().getDocument(), 14, "0", true));
     	
     	
     	
     	
-    	emp.setCalificador(BLANK_2);
+    	emp.setCalificador(WHITESPACE_2);
 		emp.setCodigoCuentaCotizacionPrincipal(obtainMainCCC(ccc).getFullCcc());
 		emp.setAnio(year);
 		emp.setDesdeMes(startMonth.ordinal()+1);
@@ -185,7 +186,7 @@ public class FANWriter {
 				}
 			}
 			emp.getTcTotales().add(createTCTRecord(ccc));
-			createEDTRecords(ccc, emp);
+			createEDTRecords(ccc, emp, list);
 		
 			emp.setMpg(createMPGRecord(ccc));
 			return emp;
@@ -275,10 +276,10 @@ public class FANWriter {
 			tipo = "1";
 		}
 //		String pais = contract.getPerson().getRegistry().getDocumentCountry().getIso3();
-		String pais = BLANK_3;
+		String pais = WHITESPACE_3;
 		String doc = autoComplete(contract.getPerson().getRegistry().getDocument(), 14, "0", true);
 		String ipf = StringUtils.isBlank(tipo)?"9":tipo;
-		ipf += StringUtils.isBlank(pais)?BLANK_3:pais; 
+		ipf += StringUtils.isBlank(pais)?WHITESPACE_3:pais; 
 		ipf += doc;
 		tra.setIpf(ipf);
 		tra.setAyn(createAYNRecord(contract));
@@ -298,9 +299,9 @@ public class FANWriter {
 		String ap1 = contract.getPerson().getFirstSurname();
 		String ap2 = contract.getPerson().getSecondSurname();
 		String n = contract.getPerson().getName();
-		ayn.setPrimerApellido(ap1!=null?ap1:BLANK_20);
-		ayn.setSegundoApellido(ap2!=null?ap2:BLANK_20);
-		ayn.setNombre(n!=null?n:BLANK_15);
+		ayn.setPrimerApellido(ap1!=null?ap1:WHITESPACE_20);
+		ayn.setSegundoApellido(ap2!=null?ap2:WHITESPACE_20);
+		ayn.setNombre(n!=null?n:WHITESPACE_15);
 		String abbrv = "";
 		abbrv += (ap1!=null&&ap1.length()>0)?ap1.charAt(0):" ";
 		abbrv += (ap1!=null&&ap1.length()>1)?ap1.charAt(1):" ";
@@ -1114,7 +1115,7 @@ public class FANWriter {
 	private String getVacationIndicator(Contract contract) {
 		// TODO 
 		String v = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
-		return v!=null && !v.isEmpty()?"V":BLANK_1;
+		return v!=null && !v.isEmpty()?"V":WHITESPACE_1;
 	}
 	
 	/**
@@ -1374,8 +1375,8 @@ public class FANWriter {
 		return tct;
 	}
 	
-	private void createEDTRecords(EnterpriseCCC ccc, EMP emp) throws ManagerBeanException {
-		for(ITransferObject to: obtainContracts(ccc, getStartDate(), getEndDate())){
+	private void createEDTRecords(EnterpriseCCC ccc, EMP emp,List<ITransferObject> contractList) throws ManagerBeanException {
+		for(ITransferObject to: contractList){
 			Contract c = (Contract) to;
 		
 			if(getSalary(c)!=null){

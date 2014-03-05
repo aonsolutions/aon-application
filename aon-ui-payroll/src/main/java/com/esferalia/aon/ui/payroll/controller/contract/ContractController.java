@@ -37,6 +37,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -50,6 +51,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -91,6 +93,7 @@ import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.ui.sepe.controller.CertificadosCollectionsController;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -977,6 +980,120 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public List<SelectItem> getTLDCAUSSCodeList() {
+		CertificadosCollectionsController controller = new CertificadosCollectionsController();
+		for(SelectItem item: controller.getTLDCAUSSCodeList()){
+			TLDCAUSS e = (TLDCAUSS) item.getValue();
+			item.setLabel(e.getCode() + " - " + item.getLabel());
+		}
+		return controller.getTLDCAUSSCodeList();
+	}
+	
+	public void onSuspensionCauseChanged(ValueChangeEvent event){
+		if(event.getNewValue()!=null){
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(((Contract)this.getTo()).getEndDate());
+			cal.add(Calendar.DAY_OF_MONTH, -15);
+			getParams().setSettleAdvanceNoticeDate(cal.getTime());
+			getParams().setSettleNonEnjoyedVacations(0);
+			Contract contract = (Contract) this.getTo();
+			getParams().setSettleCompensationDays(calculateCompensationDays(contract, (TLDCAUSS) event.getNewValue()));
+		} else {
+			getParams().setSettleAdvanceNoticeDate(null);
+			getParams().setSettleNonEnjoyedVacations(null);
+			getParams().setSettleCompensationDays(null);
+		}
+	}
+	
+	private Integer calculateCompensationDays(Contract contract, TLDCAUSS cause) {
+		////////////////////////////////////////
+		// DESPIDOS SIN INDEMNIZACION
+		////////////////////////////////////////
+		// Despedidos disciplinarios o causas objetiva
+		// Contratos de Formación, Prácticas, Interinidad... según TC2
+		if( (getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C410.getValue())
+			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C418.getValue())
+			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C420.getValue())
+			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C421.getValue())
+			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C510.getValue())
+			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C518.getValue())
+			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C520.getValue()))
+			){
+			return 0;
+		} 
+		////////////////////////////////////////
+		// INDEMNIZACION POR FINALIZACION DE CONTRATO
+		////////////////////////////////////////
+		// Fin de obra/finalización contrato de duración determinada
+		// Con posterioridad al 1/1/2011: 8
+		// Con posterioridad al 1/1/2012: 9
+		// Con posterioridad al 1/1/2013: 10
+		// Con posterioridad al 1/1/2014: 11
+		// Con posterioridad al 1/1/2015: 12
+		// Excepción:
+		// 	a) 12 días por año para contratos de empresas de trabajo temporal.
+		else if( (getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).startsWith("4")
+				|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).startsWith("5")
+				) && (cause == TLDCAUSS.TLDCAUSS_11)
+				){
+			if(contract.getStartDate().after(CommonUtil.getDate(2015, Calendar.JANUARY, 1))){
+				return 12;
+			} else if(contract.getStartDate().after(CommonUtil.getDate(2014, Calendar.JANUARY, 1))){
+				return 11;
+			} else if(contract.getStartDate().after(CommonUtil.getDate(2013, Calendar.JANUARY, 1))){
+				return 10;
+			} else if(contract.getStartDate().after(CommonUtil.getDate(2012, Calendar.JANUARY, 1))){
+				return 9;
+			} else if(contract.getStartDate().after(CommonUtil.getDate(2011, Calendar.JANUARY, 1))){
+				return 8;
+			}
+		} 
+		else {
+			////////////////////////////////////////
+			// INDEMNIZACIÓN POR DESPIDO
+			////////////////////////////////////////
+			// - Despedido de forma procedente por CAUSAS OBJETIVAS.
+			//		- Importe: 20 días por año trabajado
+			//		- Límite:    12 mensualidades
+			//		Excepción:
+			//			a) Límite de 9 mensualidades por "14. Resolución del trabajador por traslado o modificación sustancial de las condiciones de trabajo"
+			if(cause == TLDCAUSS.TLDCAUSS_02 || cause == TLDCAUSS.TLDCAUSS_21 || cause == TLDCAUSS.TLDCAUSS_30){
+				return 20;
+			} 
+			// - Despedido de forma improcedente (Contrato anterior al 13/02/2013).
+			//		- Importe: 45 días por año trabajado
+			//		- Límite:    42 mensualidades
+			//		Excepción:
+			//			a) Se calculará el importe de la indemnización con 45 días por año trabajado a 13/02/2013 
+			//				si a esa fecha iguala o excede las 24 mensualidades de indemnización, se fija ese importe como  indemnización.
+			//			b) Si a 13/02/2013 no alcanza las 24 mensualidades de indemnización, se seguirá calculando la indemnización 
+			//				a razón de 33 días por año trabajado con un límite total acumulado entre ambos tramos de 24 mensualidades.
+			else if(contract.getStartDate().before(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13))
+					&& cause == TLDCAUSS.TLDCAUSS_01
+					){
+			}
+			// - Despedido de forma improcedente (Contrato posterior al 13/02/2013).
+			//		- Importe: 33 días por año trabajado
+			//		- Límite:    24 mensualidades
+			else if( contract.getStartDate().after(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13))
+					&& cause == TLDCAUSS.TLDCAUSS_01 
+					){
+				return 33;
+			}
+		}		
+		return 0;
+	}
+	
+	public void onAdvanceNoticeDateChanged(ActionEvent event){
+		Contract contract = (Contract) this.getTo();
+		if(contract.getEndDate()!=null && getParams().getSettleAdvanceNoticeDate().after(contract.getEndDate())){
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(((Contract)this.getTo()).getEndDate());
+			cal.add(Calendar.DAY_OF_MONTH, -15);
+			getParams().setSettleAdvanceNoticeDate(cal.getTime());
+			AonUtil.addErrorMessage("La fecha de preaviso no puede ser posterior a la fecha fin de contrato");
+		}
+	}
 	
 	/*
 	 * INNER CLASES
@@ -1382,6 +1499,9 @@ public class ContractController extends BasicController {
 		private TLDCAUSS suspensionCause;
 		private String contractEndCode;
 		private String contractEndDescription;
+		private Date settleAdvanceNoticeDate;
+		private Integer settleCompensationDays;
+		private Integer settleNonEnjoyedVacations;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -1557,6 +1677,32 @@ public class ContractController extends BasicController {
 		public void setSuspensionCause(TLDCAUSS suspensionCause) {
 			this.suspensionCause = suspensionCause;
 		}
+		public Date getSettleAdvanceNoticeDate() {
+			return settleAdvanceNoticeDate;
+		}
+		public void setSettleAdvanceNoticeDate(Date settleAdvanceNoticeDate) {
+			this.settleAdvanceNoticeDate = settleAdvanceNoticeDate;
+		}
+		public Long getSettleAdvanceNoticeDays() {
+			Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
+			if(contract.getEndDate()!=null && getSettleAdvanceNoticeDate()!=null){
+				return CommonUtil.getDaysBetweenDates(getSettleAdvanceNoticeDate(), contract.getEndDate(), false);
+			}
+			return null;
+		}
+		public Integer getSettleCompensationDays() {
+			return settleCompensationDays;
+		}
+		public void setSettleCompensationDays(Integer settleCompensationDays) {
+			this.settleCompensationDays = settleCompensationDays;
+		}
+		public Integer getSettleNonEnjoyedVacations() {
+			return settleNonEnjoyedVacations;
+		}
+		public void setSettleNonEnjoyedVacations(Integer settleNonEnjoyedVacations) {
+			this.settleNonEnjoyedVacations = settleNonEnjoyedVacations;
+		}
+		
 		
 		
 	}

@@ -328,17 +328,26 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+		ContractAttachmentType generatedType = null;
+		ContractAttachmentType communicationIdType = null;
+		ContractAttachmentType responseType = null;
 		if(isContratoFile()){
 			setHandler( new ContrataContratosHandler() );
+			generatedType = ContractAttachmentType.SEPE_CONTRACT_FILE;
+			communicationIdType = ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID;
+			responseType = ContractAttachmentType.SEPE_CONTRACT_RESPONSE;
 		} else if(isProrrogaFile()){
 			setHandler( new ContrataProrrogasHandler() );
+			generatedType = ContractAttachmentType.SEPE_EXTENSION_FILE;
+			communicationIdType = ContractAttachmentType.SEPE_EXTENSION_COMMUNICATION_ID;
+			responseType = ContractAttachmentType.SEPE_EXTENSION_RESPONSE;
 		} else if(isTransformacionFile()){
 			setHandler( new ContrataTransformacionesHandler() );
 		}
 		getHandler().initialize(contract);
-		setGeneratedFile(obtainContrataAttach(ContractAttachmentType.SEPE_CONTRACT_FILE));
-		setCommunicationIdFile(obtainContrataAttach(ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID));
-		setResponseFile(obtainContrataAttach(ContractAttachmentType.SEPE_CONTRACT_RESPONSE));
+		setGeneratedFile(obtainContrataAttach(generatedType));
+		setCommunicationIdFile(obtainContrataAttach(communicationIdType));
+		setResponseFile(obtainContrataAttach(responseType));
 	}
 	
 	public void onContrataDataShow(ActionEvent event) {

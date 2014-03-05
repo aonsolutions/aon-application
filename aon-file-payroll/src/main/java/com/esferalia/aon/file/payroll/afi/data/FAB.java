@@ -4,32 +4,31 @@ package com.esferalia.aon.file.payroll.afi.data;
  * fechas de alta baja
  */
 public class FAB {
-	
+
 	private String accion;
 	private String situacion;
 	private Integer fechaReal;
-	private String grupoCotizacion;
-	private String claveContratoTrabajo;
+	private Integer grupoCotizacion;
+	private Integer claveContrato;
 	private String condicionDesempleado;
 	private String mujerSubrepresentada;
-	private String coeficienteTiempoParcial;
-	private String colectivoTrabajador;
+	private Integer coeficienteTiempoParcial;
+	private Integer colectivoTrabajador;
 	private String indicadorImpresion;
-	private String categoriaProfesional;
+	private Integer categoriaProfesional;
 	private String fechaNacimiento;
-	private String sexo;
+	private Integer sexo;
 	private String tipoInactividad;
-	private String exclusionDesempleo;
-	private String coeficienteActividadHuelgaParcial;
+	private Integer exclusionDesempleo;
+	private Integer coeficienteActividadHuelgaParcial;
 	private String mujerReincorporada;
 	private String incapacitadoReadmitido;
-	private String autonomo;
-	private String gradoMinusvalia;
-	private String fechaControl;
-	private String exclusionSocialViolenciaDomestica;
+	private String trabajadorDeAutonomo;
+	private String semamaSegunConvenio5jr;
+	private String indNumTrabajadoresEmpresa;
+	private Integer exclusionSocial;
 	private String rentaActivaInsercion;
 	private String costratadasPostAlumbramiento;
-
 	public String getAccion() {
 		return accion;
 	}
@@ -48,17 +47,17 @@ public class FAB {
 	public void setFechaReal(Integer fechaReal) {
 		this.fechaReal = fechaReal;
 	}
-	public String getGrupoCotizacion() {
+	public Integer getGrupoCotizacion() {
 		return grupoCotizacion;
 	}
-	public void setGrupoCotizacion(String grupoCotizacion) {
+	public void setGrupoCotizacion(Integer grupoCotizacion) {
 		this.grupoCotizacion = grupoCotizacion;
 	}
-	public String getClaveContratoTrabajo() {
-		return claveContratoTrabajo;
+	public Integer getClaveContrato() {
+		return claveContrato;
 	}
-	public void setClaveContratoTrabajo(String claveContratoTrabajo) {
-		this.claveContratoTrabajo = claveContratoTrabajo;
+	public void setClaveContrato(Integer claveContrato) {
+		this.claveContrato = claveContrato;
 	}
 	public String getCondicionDesempleado() {
 		return condicionDesempleado;
@@ -72,16 +71,16 @@ public class FAB {
 	public void setMujerSubrepresentada(String mujerSubrepresentada) {
 		this.mujerSubrepresentada = mujerSubrepresentada;
 	}
-	public String getCoeficienteTiempoParcial() {
+	public Integer getCoeficienteTiempoParcial() {
 		return coeficienteTiempoParcial;
 	}
-	public void setCoeficienteTiempoParcial(String coeficienteTiempoParcial) {
+	public void setCoeficienteTiempoParcial(Integer coeficienteTiempoParcial) {
 		this.coeficienteTiempoParcial = coeficienteTiempoParcial;
 	}
-	public String getColectivoTrabajador() {
+	public Integer getColectivoTrabajador() {
 		return colectivoTrabajador;
 	}
-	public void setColectivoTrabajador(String colectivoTrabajador) {
+	public void setColectivoTrabajador(Integer colectivoTrabajador) {
 		this.colectivoTrabajador = colectivoTrabajador;
 	}
 	public String getIndicadorImpresion() {
@@ -90,10 +89,10 @@ public class FAB {
 	public void setIndicadorImpresion(String indicadorImpresion) {
 		this.indicadorImpresion = indicadorImpresion;
 	}
-	public String getCategoriaProfesional() {
+	public Integer getCategoriaProfesional() {
 		return categoriaProfesional;
 	}
-	public void setCategoriaProfesional(String categoriaProfesional) {
+	public void setCategoriaProfesional(Integer categoriaProfesional) {
 		this.categoriaProfesional = categoriaProfesional;
 	}
 	public String getFechaNacimiento() {
@@ -102,10 +101,10 @@ public class FAB {
 	public void setFechaNacimiento(String fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
 	}
-	public String getSexo() {
+	public Integer getSexo() {
 		return sexo;
 	}
-	public void setSexo(String sexo) {
+	public void setSexo(Integer sexo) {
 		this.sexo = sexo;
 	}
 	public String getTipoInactividad() {
@@ -114,17 +113,17 @@ public class FAB {
 	public void setTipoInactividad(String tipoInactividad) {
 		this.tipoInactividad = tipoInactividad;
 	}
-	public String getExclusionDesempleo() {
+	public Integer getExclusionDesempleo() {
 		return exclusionDesempleo;
 	}
-	public void setExclusionDesempleo(String exclusionDesempleo) {
+	public void setExclusionDesempleo(Integer exclusionDesempleo) {
 		this.exclusionDesempleo = exclusionDesempleo;
 	}
-	public String getCoeficienteActividadHuelgaParcial() {
+	public Integer getCoeficienteActividadHuelgaParcial() {
 		return coeficienteActividadHuelgaParcial;
 	}
 	public void setCoeficienteActividadHuelgaParcial(
-			String coeficienteActividadHuelgaParcial) {
+			Integer coeficienteActividadHuelgaParcial) {
 		this.coeficienteActividadHuelgaParcial = coeficienteActividadHuelgaParcial;
 	}
 	public String getMujerReincorporada() {
@@ -139,30 +138,29 @@ public class FAB {
 	public void setIncapacitadoReadmitido(String incapacitadoReadmitido) {
 		this.incapacitadoReadmitido = incapacitadoReadmitido;
 	}
-	public String getAutonomo() {
-		return autonomo;
+	public String getTrabajadorDeAutonomo() {
+		return trabajadorDeAutonomo;
 	}
-	public void setAutonomo(String autonomo) {
-		this.autonomo = autonomo;
+	public void setTrabajadorDeAutonomo(String trabajadorDeAutonomo) {
+		this.trabajadorDeAutonomo = trabajadorDeAutonomo;
 	}
-	public String getGradoMinusvalia() {
-		return gradoMinusvalia;
+	public String getSemamaSegunConvenio5jr() {
+		return semamaSegunConvenio5jr;
 	}
-	public void setGradoMinusvalia(String gradoMinusvalia) {
-		this.gradoMinusvalia = gradoMinusvalia;
+	public void setSemamaSegunConvenio5jr(String semamaSegunConvenio5jr) {
+		this.semamaSegunConvenio5jr = semamaSegunConvenio5jr;
 	}
-	public String getFechaControl() {
-		return fechaControl;
+	public String getIndNumTrabajadoresEmpresa() {
+		return indNumTrabajadoresEmpresa;
 	}
-	public void setFechaControl(String fechaControl) {
-		this.fechaControl = fechaControl;
+	public void setIndNumTrabajadoresEmpresa(String indNumTrabajadoresEmpresa) {
+		this.indNumTrabajadoresEmpresa = indNumTrabajadoresEmpresa;
 	}
-	public String getExclusionSocialViolenciaDomestica() {
-		return exclusionSocialViolenciaDomestica;
+	public Integer getExclusionSocial() {
+		return exclusionSocial;
 	}
-	public void setExclusionSocialViolenciaDomestica(
-			String exclusionSocialViolenciaDomestica) {
-		this.exclusionSocialViolenciaDomestica = exclusionSocialViolenciaDomestica;
+	public void setExclusionSocial(Integer exclusionSocial) {
+		this.exclusionSocial = exclusionSocial;
 	}
 	public String getRentaActivaInsercion() {
 		return rentaActivaInsercion;
@@ -176,5 +174,6 @@ public class FAB {
 	public void setCostratadasPostAlumbramiento(String costratadasPostAlumbramiento) {
 		this.costratadasPostAlumbramiento = costratadasPostAlumbramiento;
 	}
+	
 	
 }

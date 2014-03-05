@@ -9,11 +9,12 @@ import java.util.List;
  */
 public class EMP {
 	private String codigoCuentaCotizacionSeguridadSocial;
-	private String tipo;
+	private String tipoDocumento;
 	private String pais;
-	private String numero;
+	private String numeroIdentificacion;
 	private String calificador;
 	private String codigoCuentaCotizacionPrincipal;
+	private String accion;
 
 	private RZS rzs;
 	private EXC exc;
@@ -26,11 +27,11 @@ public class EMP {
 	public void setCodigoCuentaCotizacionSeguridadSocial(String codigoCuentaCotizacionSeguridadSocial) {
 		this.codigoCuentaCotizacionSeguridadSocial = codigoCuentaCotizacionSeguridadSocial;
 	}
-	public String getTipo() {
-		return tipo;
+	public String getTipoDocumento() {
+		return tipoDocumento;
 	}
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
 	}
 	public String getPais() {
 		return pais;
@@ -38,11 +39,11 @@ public class EMP {
 	public void setPais(String pais) {
 		this.pais = pais;
 	}
-	public String getNumero() {
-		return numero;
+	public String getNumeroIdentificacion() {
+		return numeroIdentificacion;
 	}
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setNumeroIdentificacion(String numeroIdentificacion) {
+		this.numeroIdentificacion = numeroIdentificacion;
 	}
 	public String getCalificador() {
 		return calificador;
@@ -55,6 +56,12 @@ public class EMP {
 	}
 	public void setCodigoCuentaCotizacionPrincipal(String codigoCuentaCotizacionPrincipal) {
 		this.codigoCuentaCotizacionPrincipal = codigoCuentaCotizacionPrincipal;
+	}
+	public String getAccion() {
+		return accion;
+	}
+	public void setAccion(String accion) {
+		this.accion = accion;
 	}
 	public RZS getRzs() {
 		return rzs;

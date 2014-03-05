@@ -54,7 +54,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			setPdfFieldValue(BasicCopyField.ENTERPRISE_ADDRESS.getValue(),address.getFullAddress());
 			try {
 				// TODO: Must include enterprise municipality name in the contract basic copy?
-//				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+//				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
 //				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_NAME,bundle.getString(address.getMunicipalityCode()));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));

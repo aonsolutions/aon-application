@@ -1,0 +1,98 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T58 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T58.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T58 implements ISSEnum {
+
+	T58_A( "a", "Personal en trabajos exclusivos de oficina", null, null ),
+	T58_B( "b", "Tipo de cotización para todos los trabajadores que deban desplazarse habitualmente durante su jornada laboral, siempre por razón de la ocupación o la actividad económina no corresponda un tipo superior. Representantes Comercio. - Solo para liquidaciones complementarias anteriores al 2010.", null, null ),
+	T58_C( "c", "Trabajadores en periodo de baja por incapacidad temporal y otras situaciones con suspensión de la relación laboral con obligación decotizar. - Solo para liquidaciones complementarias anteriores al 2010", null, null ),
+	T58_D( "d", "Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcción en general.", null, null ),
+	T58_E( "e", "Conductores de vehículo automóvil de transporte de pasajeros en general (taxis, automóviles, autobuses, etc) y de transporte de mercancías que tengan una capacidad de carga útil no superior a 3,5 Tm. - Solo para liquidaciones complementarias anteriores al 2013", null, null ),
+	T58_F( "f", "Conductores de vehículo automóvil de transporte de mercancías que tengan una capacidad de carga útil superior a 3,5 Tm.", null, null ),
+	T58_G( "g", "Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles.", null, null ),
+	T58_H( "h", "Vigilantes, guardas, guardas jurados y personal de seguridad.", null, null ),
+	T58_I( "i", "Personal de vuelo. - Solo para liquidaciones complementarias anteriores al 2008.", null, null ),
+	T58_V( "v", "Grupo segundo de cotización al Régimen Especial del Mar.", null, null ),
+	T58_W( "w", "Grupo tercero de cotización al Régimen Especial del Mar.", null, null ),
+	T58_X( "x", "Carga y descarga", " estiba y desestiba.", null ),
+	T58_Y( "y", "Trabajos habituales en interior de minas.", null, null ),
+	T58_Z( "z", "Dependientes. Cajeros. - Solo para liquidaciones complementarias anteriores al 2010.", null, null ),
+	;
+	public static final String TABLE_NAME = "T58";
+	public static final String TABLE_DESCRIPTION = "T58.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T58( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T58 getEnumByValue(String expression) {
+		for( T58 o : T58.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}
