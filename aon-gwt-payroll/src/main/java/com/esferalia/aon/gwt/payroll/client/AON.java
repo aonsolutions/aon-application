@@ -54,7 +54,9 @@ public class AON {
 	public static final String AON_DATA_TABLE_CELL_HIGHLIGHT = "aon-dataTable-cell-highlight";
 	public static final String AON_DATA_TABLE_CELL_HIGHLIGHT_TOP = "aon-dataTable-cell-highlight-top";
 	public static final String AON_BOLD = "aon-bold";
+	public static final String AON_BLACK = "aon-black";
 	public static final String AON_WIDTH_ALL = "aon-width-all";
+	public static final String AON_WIDTH_HALF = "aon-width-half";
 	public static final String AON_TEXT_RIGHT = "aon-text-right";
 	public static final String AON_TEXT_CENTER = "aon-text-center";
 	public static final String AON_ICON_RESET = "aon-icon-reset";
@@ -77,6 +79,7 @@ public class AON {
 	public static final String AON_ICON_WARN = "aon-icon-warn";
 	public static final String AON_ICON_ERRORWARNING = "aon-icon-errorwarning";
 	public static final String GWT_HORIZONTAL_PANEL = "gwt-HorizontalPanel";
+	public static final String AON_ICON = "aon-icon";
 	public static final String AON_ICON_TASK_START = "aon-icon-task-start";
 	public static final String AON_ICON_CMD_BUTTON = "aon-icon-commandButton";
 	public static final String AON_ICON_TIME = "aon-icon-time";
@@ -85,11 +88,15 @@ public class AON {
 	public static final String AON_ICON_PAYMENT = "aon-icon-payment";
 	public static final String AON_ICON_DEDUCTION = "aon-icon-deduction";
 	public static final String AON_ICON_BONUS = "aon-icon-segsocial";
+	public static final String AON_ICON_BONUS_SMALL = "aon-icon-segsocial-small";
 	public static final String AON_ICON_CONFIG = "aon-icon-config";
 	public static final String AON_ICON_CLEAN = "aon-lookupButton-clear";
 	public static final String AON_NO_MARGIN = "aon-no-margin";
 	public static final String AON_INPUT_REQUIRED = "aon-input-required";
 	public static final String AON_PADDING_LEFT = "aon-padding-left";
+	public static final String AON_LABEL_ERROR = "aon-label-error";
+	public static final String AON_LABEL_WARN = "aon-label-warn";
+	public static final String AON_ICON_OK = "aon-icon-predetermine";
 	
 	public static final String RICH_CALENDAR_BUTTON = "rich-calendar-button";
 
@@ -97,6 +104,8 @@ public class AON {
 			.getFormat("#,##0.00");
 	public static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
+	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat
+			.getFormat("dd/MM/yyyy");
 	static final String AON_NOWRAP = "aon-nowrap";
 
 

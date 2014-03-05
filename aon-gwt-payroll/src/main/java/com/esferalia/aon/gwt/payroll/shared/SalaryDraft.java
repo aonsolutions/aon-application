@@ -157,6 +157,7 @@ public class SalaryDraft extends SalaryPreview {
 	
 	public void addPayment(Payment payment) {
 		payments.add(payment);
+		System.out.println(payment.getId() + "-." + payment.getName() + "=" + payment.getExpression() + "( " + payment.getDescription() + ")");
 	}
 
 	

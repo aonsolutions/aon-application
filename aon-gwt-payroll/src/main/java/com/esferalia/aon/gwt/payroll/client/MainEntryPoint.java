@@ -93,6 +93,8 @@ public class MainEntryPoint implements EntryPoint {
 
 		ImageResource segsocial();
 		
+		ImageResource segsocial_small();
+
 		ImageResource aon_icon_row_s(); // TODO: change this name?
 
 		ImageResource aon_icon_row_c(); // TODO: change this name?
