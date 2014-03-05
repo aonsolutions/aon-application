@@ -55,7 +55,9 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	private InvoicingGroup agencyGroup;
 	private Date fromDate;
 	private Date toDate;
+	private Integer breakdownType;
 	private String[] agencies;
+	private Map<String, AgencyBreakdown> agencyBreakdownMap;
 
 	private List<DayBooking> bookingList;
 
@@ -94,11 +96,25 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		this.toDate = toDate;
 	}
 
+	public Integer getBreakdownType() {
+		return breakdownType;
+	}
+	public void setBreakdownType(Integer breakdownType) {
+		this.breakdownType = breakdownType;
+	}
+
 	public String[] getAgencies() {
 		return agencies;
 	}
 	public void setAgencies(String[] agencies) {
 		this.agencies = agencies;
+	}
+
+	public Map<String, AgencyBreakdown> getAgencyBreakdownMap() {
+		return agencyBreakdownMap;
+	}
+	public void setAgencyBreakdownMap(Map<String, AgencyBreakdown> agencyBreakdownMap) {
+		this.agencyBreakdownMap = agencyBreakdownMap;
 	}
 
 	public List<DayBooking> getBookingList() {
@@ -118,6 +134,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		if (getToDate() == null) {
 			setToDate(DateUtils.addWeeks(new Date(), 2));
 		}
+		setBreakdownType(null);
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -202,6 +219,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 
 				if (!ArrayUtils.contains(agencies, agency) && isRequestedAgency(agency)) {
 					agencies = (String[])ArrayUtils.add(agencies, agency);
+					agencyBreakdownMap.put(agency, new AgencyBreakdown());
 				}
 			}
 
@@ -217,6 +235,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 				int allotment = agencyBookingRs.getInt(ALLOTMENT);
 				Date stayDate = agencyBookingRs.getDate(STAY_DATE);
 				int rooms = agencyBookingRs.getInt(ROOMS);
+				String breakdown = (isRoomTypeBreakdown() || isTariffBreakdown()) ? agencyBookingRs.getString(BREAKDOWN) : null;
 
 				DayBooking dayBooking = new DayBooking();
 				dayBooking.setHotel(hotel);
@@ -233,7 +252,20 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 						}
 						dayAgencyBooking.setRoomBusy(dayAgencyBooking.getRoomBusy() + rooms);
 						dayAgencyBooking.setRoomAvailable(dayAgencyBooking.getRoomAvailable() - ((allotment > rooms) ? rooms : allotment));
+						if (breakdown != null) {
+							Integer occupationBreakdown = 0;
+							if (dayAgencyBooking.getOccupationBreakdownMap().containsKey(breakdown)) {
+								occupationBreakdown = dayAgencyBooking.getOccupationBreakdownMap().get(breakdown);
+							}
+							dayAgencyBooking.getOccupationBreakdownMap().put(breakdown, occupationBreakdown + rooms);
+						}
 						dayBooking.getAgencyBookingMap().put(agency, dayAgencyBooking);
+					}
+				}
+
+				if (breakdown != null && getAgencyBreakdownMap().containsKey(agency)) {
+					if (!getAgencyBreakdownMap().get(agency).getBreakdowns().contains(breakdown)) {
+						getAgencyBreakdownMap().get(agency).getBreakdowns().add(breakdown);
 					}
 				}
 			}
@@ -262,6 +294,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	
 	private void initializeAgencyList() throws AonSQLException {
 		agencies = ArrayUtils.EMPTY_STRING_ARRAY;
+		agencyBreakdownMap = new HashMap<String, AgencyBreakdown>();
 	}
 
 	private void initializeBookingList() throws AonSQLException {
@@ -366,7 +399,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	private String getAgencyBookingSQL() throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT IFNULL(IFNULL(R.alias, R.name), IG.description) AS " + AGENCY + ", W.description AS " + HOTEL);
-		stmt.append(", A.quantity AS " + ALLOTMENT + ", B.stay_date AS " + STAY_DATE + ", COUNT(DISTINCT B.id) AS " + ROOMS);
+		stmt.append(", A.quantity AS " + ALLOTMENT + ", B.stay_date AS " + STAY_DATE);
+		stmt.append(", COUNT(DISTINCT B.id) AS " + ROOMS);
+		stmt.append(isRoomTypeBreakdown() ? ", P.code AS " + BREAKDOWN : "");
+		stmt.append(isTariffBreakdown() ? ", T.code AS " + BREAKDOWN : "");
 		stmt.append(" FROM allotment AS A");
 		stmt.append(" LEFT JOIN hotel AS H ON A.hotel = H.id AND H.active = 1");
 		stmt.append(" LEFT JOIN workplace AS W ON H.workplace = W.id");
@@ -382,6 +418,9 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		stmt.append("        OR B.item IN (SELECT item FROM allotment_item WHERE allotment = A.id))");
 		stmt.append("    AND (0 = (SELECT COUNT(*) FROM allotment_tariff WHERE allotment = A.id)");
 		stmt.append("        OR B.tariff IN (SELECT tariff FROM allotment_tariff WHERE allotment = A.id))");
+		stmt.append(isRoomTypeBreakdown() ? " LEFT JOIN item AS I ON B.item = I.id" : "");
+		stmt.append(isRoomTypeBreakdown() ? " LEFT JOIN product AS P ON I.product = P.id" : "");
+		stmt.append(isTariffBreakdown() ? " LEFT JOIN tariff AS T ON B.tariff = T.id" : "");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("A.domain"));
 		stmt.append(" AND A.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND A.end_date >= ?");
@@ -389,7 +428,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		stmt.append(" AND A.active = 1");
 		stmt.append(" AND B.stay_date IS NOT NULL");
 		stmt.append(" GROUP BY A.id, B.stay_date");
+		stmt.append(isRoomTypeBreakdown() ? ", P.code" : "");
+		stmt.append(isTariffBreakdown() ? ", T.code" : "");
 		stmt.append(" ORDER BY " + AGENCY + ", " + HOTEL + ", " + STAY_DATE);
+		stmt.append(isRoomTypeBreakdown() || isTariffBreakdown() ? ", " + BREAKDOWN : "");
 
 		return stmt.toString();
 	}
@@ -416,6 +458,14 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 			}
 		}
 		return true;
+	}
+
+	private boolean isRoomTypeBreakdown() {
+		return getBreakdownType() != null && getBreakdownType().intValue() == 0;
+	}
+
+	private boolean isTariffBreakdown() {
+		return getBreakdownType() != null && getBreakdownType().intValue() == 1;
 	}
 
 	public String onExcelReport() {
@@ -454,6 +504,15 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 					if (agencyBooking != null && agencyBooking.getRoomBusy() >= agencyBooking.getRoomAllotment()) {
 						paintCell(report, busyCell, HSSFColor.GREEN.index);
 					}
+
+					if (agencyBooking != null) {
+						for (String breakdown : agencyBreakdownMap.get(agency).getBreakdowns()) {
+							Integer rooms = agencyBooking.getOccupationBreakdownMap().get(breakdown);
+							HSSFCell breakdownCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(11), (rooms != null) ? rooms : null);
+							paintCell(report, breakdownCell, HSSFColor.CORNFLOWER_BLUE.index);
+						}
+					}
+
 					HSSFCell availCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(12), (agencyBooking != null) ? agencyBooking.getRoomAvailable() : null);
 					if (agencyBooking != null && dayBooking.getRoomFreePotential() < 0 && agencyBooking.getRoomAvailable() > 0) {
 						paintCell(report, availCell, HSSFColor.RED.index);
@@ -499,11 +558,18 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 		cellFont.setColor(HSSFColor.BLUE.index);
 	    cellStyleBlue.setFont(cellFont);
-		for (int i=0; i<agencies.length; i++) {
+		for (int i=0, from=10, to=10; i<agencies.length; i++, from=to) {
 			report.addHeaderCell(agencies[i], 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
-			report.addMergedRegion(0, 0, 10+(i*3), 12+(i*3));
+			to = to + 3;
+			if (agencyBreakdownMap.containsKey(agencies[i])) {
+				for (int j=0; j<agencyBreakdownMap.get(agencies[i]).getBreakdowns().size(); j++) {
+					report.addHeaderCell("", 0, cellStyleBlue);
+					to++;
+				}
+			}
+			report.addMergedRegion(0, 0, from, to-1);
 		}
 
 		ReportMetadata metadata = new ReportMetadata();
@@ -520,6 +586,12 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		for (int i=0; i<agencies.length; i++) {
 			metadata.getColumns().add(new ReportColumnMetadata("agencyAllotment", Types.INTEGER, "CUPO", 30));
 			metadata.getColumns().add(new ReportColumnMetadata("agencyBusy", Types.INTEGER, "OCUP.", 30));
+			if (agencyBreakdownMap.containsKey(agencies[i])) {
+				for (int j=0; j<agencyBreakdownMap.get(agencies[i]).getBreakdowns().size(); j++) {
+					String breakdown = agencyBreakdownMap.get(agencies[i]).getBreakdowns().get(j);
+					metadata.getColumns().add(new ReportColumnMetadata("agencyBusy_" + breakdown, Types.INTEGER, breakdown, 30));
+				}
+			}
 			metadata.getColumns().add(new ReportColumnMetadata("agencyAvailable", Types.INTEGER, "DISP.", 30));
 		}
 		return metadata;
@@ -529,7 +601,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		HSSFCellStyle cellStyle = report.createCellStyle();
 	    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
 	    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THICK);
 	    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
 	    cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
 	    return cellStyle;
@@ -617,6 +689,13 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 			this.roomAllotmentBusy = roomAllotmentBusy;
 		}
 
+		public Map<String, DayAgencyBooking> getAgencyBookingMap() {
+			return agencyBookingMap;
+		}
+		public void setAgencyBookingMap(Map<String, DayAgencyBooking> agencyBookingMap) {
+			this.agencyBookingMap = agencyBookingMap;
+		}
+
 		public Integer getRoomFree() {
 			return roomTotal - roomBusy - roomBlocked;
 		}
@@ -631,14 +710,6 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 
 		public Integer getRoomFreePotential() {
 			return getRoomFree() - getRoomAvailable();
-		}
-
-		public Map<String, DayAgencyBooking> getAgencyBookingMap() {
-			return agencyBookingMap;
-		}
-
-		public void setAgencyBookingMap(Map<String, DayAgencyBooking> agencyBookingMap) {
-			this.agencyBookingMap = agencyBookingMap;
 		}
 
 		@Override
@@ -656,11 +727,13 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		private Integer roomAllotment;
 		private Integer roomBusy;
 		private Integer roomAvailable;
+		private Map<String, Integer> occupationBreakdownMap;
 
 		public DayAgencyBooking() {
 			roomAllotment = 0;
 			roomBusy = 0;
 			roomAvailable = 0;
+			occupationBreakdownMap = new HashMap<String, Integer>();
 		}
 
 		public Integer getRoomAllotment() {
@@ -680,9 +753,38 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		public Integer getRoomAvailable() {
 			return roomAvailable;
 		}
-
 		public void setRoomAvailable(Integer roomAvailable) {
 			this.roomAvailable = roomAvailable;
+		}
+
+		public Map<String, Integer> getOccupationBreakdownMap() {
+			return occupationBreakdownMap;
+		}
+		public void setOccupationBreakdownMap(Map<String, Integer> occupationBreakdownMap) {
+			this.occupationBreakdownMap = occupationBreakdownMap;
+		}
+
+	}
+
+	/***************** AGENCY BREAKDOWN *********************************/
+
+	public class AgencyBreakdown {
+		private List<String> breakdowns;
+		private int agencySize = 3;
+
+		public AgencyBreakdown() {
+			breakdowns = new LinkedList<String>();
+		}
+
+		public List<String> getBreakdowns() {
+			return breakdowns;
+		}
+		public void setBreakdowns(List<String> breakdowns) {
+			this.breakdowns = breakdowns;
+		}
+
+		public int getBreakdownsSize() {
+			return agencySize + getBreakdowns().size();
 		}
 
 	}

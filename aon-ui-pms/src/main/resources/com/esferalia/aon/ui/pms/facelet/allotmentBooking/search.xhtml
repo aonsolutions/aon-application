@@ -73,6 +73,14 @@
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
 							</aon:div>
 
+							<aon:outputLabel for="AllotmentBooking_breakdownType" 
+								value="#{bundle.finance_tobreakdown}" />
+							<aon:selectOneRadio id="AllotmentBooking_breakdownType" 
+								value="#{allotmentBooking.breakdownType}">
+								<f:selectItem itemLabel="#{bundle.report_rooms}" itemValue="0" />		
+								<f:selectItem itemLabel="#{bundle.product_tariff_module2}" itemValue="1" />		
+							</aon:selectOneRadio>
+
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="search" ignoreDupResponses="true"
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"

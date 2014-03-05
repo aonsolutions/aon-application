@@ -37,5 +37,6 @@ public interface ISQLConstants {
 	String MEAL_PLAN = "mealPlan";
 	String ALLOTMENT = "allotment";
 	String QUANTITY = "quantity";
+	String BREAKDOWN = "breakdown";
 
 }

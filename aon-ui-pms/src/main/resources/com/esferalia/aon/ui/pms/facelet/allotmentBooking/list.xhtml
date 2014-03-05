@@ -68,7 +68,7 @@
 								</rich:column>
 
 								<c:forEach items="#{allotmentBooking.agencies}" var="agency">
-									<rich:column colspan="3">
+									<rich:column colspan="#{allotmentBooking.agencyBreakdownMap[agency].breakdownsSize}">
 										<aon:outputText style="color:blue; font-size:0.8em;"
 											value="#{agency}">
 											<aon:abbreviateConverter maxWidth="25" />
@@ -167,9 +167,22 @@
 									<aon:outputText value="Ocup." />
 								</f:facet>
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomBusy}"
-									style="#{(to.agencyBookingMap[agency].roomAllotment > to.agencyBookingMap[agency].roomBusy) ? ('') : ('color:forestgreen;')}"
-									 />
+									style="#{(to.agencyBookingMap[agency].roomAllotment > to.agencyBookingMap[agency].roomBusy) ? ('') : ('color:forestgreen;')}" />
 							</aon:column>				
+
+							<c:if test="#{allotmentBooking.breakdownType != null}">
+								<c:forEach items="#{allotmentBooking.agencyBreakdownMap[agency].breakdowns}" var="agencyBreakdown" begin="0" step="1">
+									<aon:column styleClass="aon-editDataTable-numberColumn aon-width-10"
+										style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
+										<f:facet name="header">
+											<aon:outputText style="color:slateblue; font-size:0.9em;"
+												value="#{agencyBreakdown}" />
+										</f:facet>
+										<aon:outputText style="color:slateblue; font-size:0.9em;"
+											value="#{to.agencyBookingMap[agency].occupationBreakdownMap[agencyBreakdown]}" />
+									</aon:column>
+								</c:forEach>
+							</c:if>
 
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
@@ -179,6 +192,7 @@
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomAvailable}"
 									style="#{(to.roomFreePotential >= 0 or to.agencyBookingMap[agency].roomAvailable == 0) ? ('') : ('color:red;')}" />
 							</aon:column>				
+
 						</c:forEach>
 
 					</ui:define>
