@@ -65,7 +65,7 @@
 					<aon:outputLabel for="PosShift_initialAmount" value="#{bundle.finance_initial_amount}" />
 					<aon:div>
 						<aon:inputText id="PosShift_initialAmount"
-							value="#{posOpening.posShift.amount}"
+							value="#{posOpening.posShift.amount}" required="true"
 							size="8" maxlength="8" 
 							ajaxSingle="true">
 							<f:validateDoubleRange minimum="0.0" />

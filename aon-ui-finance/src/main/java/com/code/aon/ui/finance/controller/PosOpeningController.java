@@ -134,6 +134,7 @@ public class PosOpeningController {
 		}
 
 		try {
+			getPosShift().setInitialAmount(getPosShift().getAmount());
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Apertura de Caja.";

@@ -36,6 +36,7 @@ public class PosShift extends PosShiftDB {
 	
 	private Set<PosShiftCount> posShiftCount = new HashSet<PosShiftCount>();
 	private Map<PayMethod, double[]> totalShiftCountMap;
+	private Double amount;
 
 	@OneToMany(mappedBy = "posShift", cascade={CascadeType.REMOVE})
 	public Set<PosShiftCount> getPosShiftCount() {
@@ -106,13 +107,13 @@ public class PosShift extends PosShiftDB {
 	}
 
 	@Transient
-	public double getAmount() throws ManagerBeanException {
-		return getInitialAmount();
+	public Double getAmount() {
+		return amount;
 	}
 
 	@Transient
-	public void setAmount(double amount) throws ManagerBeanException {
-		setInitialAmount(amount);
+	public void setAmount(Double amount) {
+		this.amount = amount;
 	}
 
 	@Transient
