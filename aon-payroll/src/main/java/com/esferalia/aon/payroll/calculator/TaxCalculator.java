@@ -34,9 +34,16 @@ public abstract class TaxCalculator {
 	}
 		
 	
+	
 	public abstract double tax(IContractPayment payment, Date start, Date end, 
 			Date issueDate, double amount ) throws AonException;
 
+	
+	public static class NotNowException extends  AonException {
+		
+	}
+	
+	
 	private static class DefaultTaxCalculator extends TaxCalculator {
 		
 		private IContractSalaryCalculatorContext context;
@@ -74,13 +81,13 @@ public abstract class TaxCalculator {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != context.getSalaryType() ) {
-				return 0.00;
+				throw new NotNowException();
 			}
 			
 			Month salaryMonth =  getMonth(charge);
 			Month paymentMonth = contractPayment.getMonth();
 			if ( paymentMonth != null && paymentMonth != salaryMonth ) {
-				return 0.00;
+				throw new NotNowException();
 			}
 			
 			DefaultTaxCalculator.this.renumeration += amount;
@@ -115,19 +122,8 @@ public abstract class TaxCalculator {
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}
 			});
-//			Month month = contractPayment.getMonth();
-//			
-//			if ( contractPayment.getSalaryType() != SalaryType.SALARY
-//					|| (  month != null && month != issueMonth ) ) {
-//				continue;
-//			}
 			
-			
-//				
-			
-			
-			final double  payment = amount;
-			return payment;
+			return tax;
 		}
 	}
 	

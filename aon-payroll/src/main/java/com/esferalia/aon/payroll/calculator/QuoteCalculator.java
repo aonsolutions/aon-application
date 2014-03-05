@@ -73,7 +73,7 @@ public abstract class QuoteCalculator {
 
 	public abstract double getMaternityBase() throws AonException;
 
-	public abstract void quote(IContractPayment payment, Date start, Date end,
+	public abstract double quote(IContractPayment payment, Date start, Date end,
 			double amount) throws AonException;
 
 	public static class NonQuote extends QuoteCalculator {
@@ -81,9 +81,9 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public void quote(IContractPayment payment, Date start, Date end,
+		public double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
-			return; // No cotiza...
+			return 0.00 ; // No cotiza...
 		}
 
 		@Override
@@ -171,12 +171,12 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public void quote(IContractPayment payment, Date start, Date end,
+		public double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
 
 			final double quote = getQuote(payment, start, end, amount);
 			if (quote == 0) {
-				return;
+				return 0.00;
 			}
 
 			PaymentType paymentType = payment.getType();
@@ -243,6 +243,7 @@ public abstract class QuoteCalculator {
 				// name, quote, start, end, amount, payment.getDescription(),
 				// payment.getQuoteExpression() );
 			}
+			return quote;
 		}
 
 	}
@@ -333,18 +334,18 @@ public abstract class QuoteCalculator {
 		}
 
 		@Override
-		public void quote(IContractPayment payment, Date start, Date end,
+		public double quote(IContractPayment payment, Date start, Date end,
 				double amount) throws AonException {
-			System.out.println("Quote : " + payment.getId() + ", " + payment.getName() + "[" +start + "..." + end + "]: " + amount +", " + payment.getQuoteExpression() );
+			double quote = 0.00;
 			for (GeneralQuote calculator : calculators) {
 				Period intersect = CompositeGeneralQuote.intersect(calculator,
 						start, end);
 				if (intersect != null) {
-					calculator.quote(payment, intersect.getStart(),
+					quote += calculator.quote(payment, intersect.getStart(),
 							intersect.getEnd(), amount);
-					System.out.println("\tQuote : " + payment.getName() + "[" +intersect.getStart() + "..." + intersect.getEnd() + "]: " + calculator.getRawCgcBase() );
 				}
 			}
+			return quote;
 		}
 
 		private static Period intersect(GeneralQuote calculator, Date start,

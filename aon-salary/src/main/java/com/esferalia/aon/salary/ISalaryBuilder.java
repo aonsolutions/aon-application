@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -106,13 +105,13 @@ public interface ISalaryBuilder {
 
 	public void addCost(DeductionType type, String concept, Double amount, String description );
 
-	public void addPayment(PaymentType type, String concept, Double amount, String description , IPayment payment, Map<String, ITimedVariable<?>> context);
+	public void addPayment(Double amount, Double quote, Double tax, String description , IPayment payment, Map<String, ITimedVariable<?>> context);
 
-	public void addZeroPayment(PaymentType type, String concept, IPayment payment, Map<String, ITimedVariable<?>> context);
+	public void addZeroPayment(Double quote, Double tax, IPayment payment, Map<String, ITimedVariable<?>> context);
 
-	public void addDeduction(DeductionType type, String concept, Double amount, String description , IDeduction deduction, Map<String, ITimedVariable<?>> context);
+	public void addDeduction(Double amount, String description , IDeduction deduction, Map<String, ITimedVariable<?>> context);
 
-	public void addZeroDeduction(DeductionType type, String concept, IDeduction deduction, Map<String, ITimedVariable<?>> context);
+	public void addZeroDeduction(IDeduction deduction, Map<String, ITimedVariable<?>> context);
 
 	// ------------------------------------------------------------------------
 	// Listener  

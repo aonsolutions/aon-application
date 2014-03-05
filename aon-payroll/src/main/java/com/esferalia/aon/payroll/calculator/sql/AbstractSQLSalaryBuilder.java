@@ -9,7 +9,6 @@ import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -257,44 +256,43 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	}
 	
 	@Override
-	public void addPayment(PaymentType type, String concept, Double amount,
+	public void addPayment(Double amount, Double quote, Double tax,
 			String description, IPayment payment, Map<String, ITimedVariable<?>> context) {
+		// TODO : save quote and tax ???
 		AbstractSQL.SalaryPayment salaryPayment= 
 			new AbstractSQL.SalaryPayment();
-		salaryPayment.setType(type);
+		salaryPayment.setType(payment.getType());
 		salaryPayment.setAmount(amount);
 		salaryPayment.setExpression(payment.getExpression());
-		salaryPayment.setPaymentConcept(concept);
+		salaryPayment.setPaymentConcept(payment.getName());
 		salaryPayment.setDescription(description);
 
 		salaryPayments.add(salaryPayment);
 	}
 	
 	@Override
-	public void addZeroPayment(PaymentType type, String concept,
-			IPayment payment, Map<String, ITimedVariable<?>> context) {
+	public void addZeroPayment(Double quote, Double tax,IPayment payment, Map<String, ITimedVariable<?>> context) {
 		//TODO: No payment, so we're not going to save it. But at upcoming versions
 		// we store taxes and quotes, so we'll have much more info.
 	}
 
 	@Override
-	public void addDeduction(DeductionType type, String concept, Double amount,
+	public void addDeduction(Double amount,
 			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryDeduction salaryDeduction = 
 			new AbstractSQL.SalaryDeduction();
 		
-		salaryDeduction.setType(type);
+		salaryDeduction.setType(deduction.getType());
 		salaryDeduction.setAmount(amount);
 		salaryDeduction.setDescription(description);
-		salaryDeduction.setDeductionConcept(concept);
+		salaryDeduction.setDeductionConcept(deduction.getName());
 		salaryDeduction.setExpression(deduction.getExpression());
 		
 		salaryDeductions.add(salaryDeduction);
 	}
 	
 	@Override
-	public void addZeroDeduction(DeductionType type, String concept,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+	public void addZeroDeduction(IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 	}
 	

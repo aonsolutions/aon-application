@@ -6,8 +6,13 @@ import java.util.Map;
 public class Payment extends Item<Payment.Type> {
 
 	
+	Double irpf;
+	Double quote;
+
 	String irpfExpression;
 	String quoteExpression;
+	
+	
 
 	public static enum Type implements HasDescription {
 		//@formatter:off
@@ -158,6 +163,14 @@ public class Payment extends Item<Payment.Type> {
 			return null;
 		}
 	}
+	
+	public Double getIrpf() {
+		return irpf;
+	}
+	
+	public void setIrpf(Double irpf) {
+		this.irpf = irpf;
+	}
 
 	public String getIrpfExpression() {
 		return irpfExpression;
@@ -165,6 +178,14 @@ public class Payment extends Item<Payment.Type> {
 
 	public void setIrpfExpression(String irpfExpression) {
 		this.irpfExpression = irpfExpression;
+	}
+	
+	public Double getQuote() {
+		return quote;
+	}
+	
+	public void setQuote(Double quote) {
+		this.quote = quote;
 	}
 
 	public String getQuoteExpression() {
