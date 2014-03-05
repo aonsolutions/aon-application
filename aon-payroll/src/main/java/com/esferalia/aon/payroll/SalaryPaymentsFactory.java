@@ -93,7 +93,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			payments.addSalaryInKind(sp);
 			return;
 		} else if (value >= 4 && value <= 5) {
-			payments.addSalaryInKind(sp);
+			payments.addSpecialBonuses(sp);
 			return;
 		} else if (value >= 27 && value <= 41) {
 			payments.addOtherNonWages(sp);
