@@ -230,14 +230,14 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addCost(DeductionType type, String concept, Double amount,
-			String description) {
+	public void addCost(Double amount, String description,
+			IDeduction cost, Map<String, ITimedVariable<?>> context) {
 		SalaryCost salaryCost = new SalaryCost();
 
 		salaryCost.setSalary(salary);
-		salaryCost.setType(type);
+		salaryCost.setType(cost.getType());
 		salaryCost.setAmount(amount);
-		salaryCost.setCostConcept(concept);
+		salaryCost.setCostConcept(cost.getName());
 		salaryCost.setDescription(description);
 
 		this.salary.getSalaryCosts().add(salaryCost);

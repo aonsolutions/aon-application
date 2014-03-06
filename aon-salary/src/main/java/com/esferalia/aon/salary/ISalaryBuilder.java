@@ -103,7 +103,7 @@ public interface ISalaryBuilder {
 
 	public void addEmbargo(Integer embargo, Double amount, String description );
 
-	public void addCost(DeductionType type, String concept, Double amount, String description );
+	public void addCost(Double amount, String description , IDeduction cost, Map<String, ITimedVariable<?>> context);
 
 	public void addPayment(Double amount, Double quote, Double tax, String description , IPayment payment, Map<String, ITimedVariable<?>> context);
 

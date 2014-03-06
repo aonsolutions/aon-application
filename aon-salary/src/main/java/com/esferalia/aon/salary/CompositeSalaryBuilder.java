@@ -246,10 +246,10 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addCost(DeductionType type, String concept, Double amount,
-			String description) {
+	public void addCost(Double amount, String description,
+			IDeduction cost, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addCost(type, concept, amount, description);
+			builder.addCost(amount, description, cost, context);
 	}
 
 	@Override

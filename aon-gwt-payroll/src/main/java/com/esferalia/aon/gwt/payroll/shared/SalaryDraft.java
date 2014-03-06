@@ -114,6 +114,8 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Payment> payments;
 	private List<Deduction> deductions;
 
+	private List<Deduction> costs;
+
 	private List<Variable> draftContext;
 	private List<Payment> draftPayments;
 	private List<Deduction> draftDeductions;
@@ -123,10 +125,20 @@ public class SalaryDraft extends SalaryPreview {
 		events = new LinkedList<Event>();
 		payments = new LinkedList<Payment>();
 		deductions = new LinkedList<Deduction>();
+		costs = new LinkedList<Deduction>();
 
 		draftContext = new LinkedList<Variable>();
 		draftPayments = new LinkedList<Payment>();
 		draftDeductions = new LinkedList<Deduction>();
+	}
+
+	public void clear() {
+		clearDb();
+		clearCosts();
+		clearEvents();
+		clearContext();
+		clearPayments();
+		clearDeductions();
 	}
 
 	public void clearDb() {
@@ -157,7 +169,6 @@ public class SalaryDraft extends SalaryPreview {
 	
 	public void addPayment(Payment payment) {
 		payments.add(payment);
-		System.out.println(payment.getId() + "-." + payment.getName() + "=" + payment.getExpression() + "( " + payment.getDescription() + ")");
 	}
 
 	
@@ -320,6 +331,18 @@ public class SalaryDraft extends SalaryPreview {
 
 	public void clearEvents() {
 		events.clear();
+	}
+	
+	public void addCost(Deduction cost) {
+		costs.add(cost);
+	}
+	
+	public List<Deduction> getCosts() {
+		return costs;
+	}
+	
+	public void clearCosts() {
+		costs.clear();
 	}
 
 	public String getEmployeeSS() {

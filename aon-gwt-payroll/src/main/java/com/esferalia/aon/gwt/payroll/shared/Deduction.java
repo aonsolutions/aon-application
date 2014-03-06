@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.salary.enumeration.DeductionType;
+
 public class Deduction extends Item<Deduction.Type> {
 
 	public static enum Type {
@@ -17,7 +19,6 @@ public class Deduction extends Item<Deduction.Type> {
 		OTHER, 
 		FOGASA // TODO:
 		;
-
 		public String getDescription() {
 			return DESCRIPTIONS.get(this);
 		}
@@ -25,11 +26,11 @@ public class Deduction extends Item<Deduction.Type> {
 		static Map<Type, String> DESCRIPTIONS = new HashMap<Type, String>() {
 			{
 				put(COMMON_CONTINGENCY, "Contingencias Comunes");
-				put(PROFESSIONAL_CONTINGENCY, "Contingencias Profesionale");
+				put(PROFESSIONAL_CONTINGENCY, "Contingencias Profesionales");
 				put(UNEMPLOYMENT, "Desempleo");
-				put(JOB_TRAINING, "Formaci\u00f3n");
-				put(STRUCTURAL_OVERTIME, "Horas Extras Estructurales");
-				put(NON_STRUCTURAL_OVERTIME, "Horas Extras No Estructurales");
+				put(JOB_TRAINING, "Formaci\u00f3n Profesional");
+				put(STRUCTURAL_OVERTIME, "Horas Extraordinarias Fuerza Mayor");
+				put(NON_STRUCTURAL_OVERTIME, "Resto Horas Extraordinarias");
 				put(IRPF, "I.R.P.F");
 				put(ADVANCE_PAYMENT, "Anticipo");
 				put(IN_KIND, "Valor de productos en especie");
@@ -37,6 +38,8 @@ public class Deduction extends Item<Deduction.Type> {
 				put(FOGASA, "FOGASA");
 			}
 		};
+
+
 	}
 
 }

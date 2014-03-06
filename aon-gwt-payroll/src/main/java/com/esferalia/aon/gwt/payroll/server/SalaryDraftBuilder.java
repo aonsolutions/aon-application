@@ -368,9 +368,20 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	}
 
 	@Override
-	public void addCost(DeductionType type, String concept, Double amount,
-			String description) {
-		// TODO Auto-generated method stub
+	public void addCost(Double amount, String description,
+			IDeduction cost, Map<String, ITimedVariable<?>> context) {
+		
+		addContext(context);
+
+		Deduction myCost = new Deduction();
+		myCost.setAmount(amount);
+		myCost.setName(cost.getName());
+		myCost.setDescription(description);
+		myCost.setExpression(cost.getExpression());
+		myCost.setDescription(cost.getDescription());
+		myCost.setType(getDeductionType(cost.getType()));
+
+		salaryDraft.addCost(myCost);
 
 	}
 
@@ -611,11 +622,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	// -------------------------------------------------------------------------
 
 	private void clearSalaryDraft() {
-		salaryDraft.clearDb();
-		salaryDraft.clearContext();
-		salaryDraft.clearEvents();
-		salaryDraft.clearPayments();
-		salaryDraft.clearDeductions();
+		salaryDraft.clear();
+		
 	}
 
 	private void addContext(Map<String, ITimedVariable<?>> context) {

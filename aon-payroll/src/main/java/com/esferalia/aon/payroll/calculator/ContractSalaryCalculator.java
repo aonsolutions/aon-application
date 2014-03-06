@@ -678,7 +678,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 								Double.class);
 
 				double cost = 0.00;
-				for (ITimedObject<Double> amount : amounts) {
+				for (ITimedResult<Double> amount : amounts) {
 					Double value = amount.getValue();
 					if (value != null) {
 						String description = null;
@@ -690,8 +690,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 						} catch (Exception e) {
 							// TODO : Log ???
 						}
-						salaryBuilder.addCost(contractCost.getType(),
-								contractCost.getName(), value, description);
+						salaryBuilder.addCost(value, description, contractCost, amount.getContext());
 						cost += value;
 					}
 				}

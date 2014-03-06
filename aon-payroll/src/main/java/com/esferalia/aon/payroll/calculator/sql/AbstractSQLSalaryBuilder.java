@@ -231,13 +231,14 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	}
 	
 	@Override
-	public void addCost(DeductionType type, String concept, Double amount, String description) {
+	public void addCost(Double amount, String description,
+			IDeduction cost, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryCost salaryCost = 
 			new AbstractSQL.SalaryCost();
 		
-		salaryCost.setType(type);
+		salaryCost.setType(cost.getType());
 		salaryCost.setAmount(amount);
-		salaryCost.setCostConcept(concept);
+		salaryCost.setCostConcept(cost.getName());
 		salaryCost.setDescription(description);
 		
 		salaryCosts.add(salaryCost);
