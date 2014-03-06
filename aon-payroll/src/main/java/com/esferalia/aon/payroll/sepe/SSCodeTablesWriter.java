@@ -55,6 +55,7 @@ public class SSCodeTablesWriter {
 	final static String T61_TABLE_DESCRIPTION = "Colectivo de trabajador";
 	final static String T68_TABLE_DESCRIPTION = "Indicativo pérdida de beneficios (trabajador)";
 	final static String T83_TABLE_DESCRIPTION = "Exclusión social/Víctimas";
+	final static String T84_TABLE_DESCRIPTION = "Concepto retributivo";
 	
 	
 	private static int tablesCount;
@@ -570,10 +571,12 @@ public class SSCodeTablesWriter {
 			    			enumDescription = T58_TABLE_DESCRIPTION;
 			    		} else if(getFileNameWithoutExtension(enumFile).equals("T61")){
 			    			enumDescription = T61_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T83")){
-			    			enumDescription = T68_TABLE_DESCRIPTION;
 			    		} else if(getFileNameWithoutExtension(enumFile).equals("T68")){
+			    			enumDescription = T68_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T83")){
 			    			enumDescription = T83_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T84")){
+			    			enumDescription = T84_TABLE_DESCRIPTION;
 			    		}
 			    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", \"" + enumDescription + "\",null)," );
 			    		out.newLine();

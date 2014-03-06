@@ -276,8 +276,8 @@ public class PayrollAppParamsController{
 		}
 		
 		// SS PAYMENT BANK ACCOUNT
-		if(getSsPaymentBankAccount()!=null && getSsPaymentBankAccount().getId()!=null){
-			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(getSsPaymentBankAccount().getId().toString());
+		if(ssPaymentBankAccount!=null && ssPaymentBankAccount.getId()!=null){
+			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(ssPaymentBankAccount.getId().toString());
 		} else {
 			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(null);
 		}

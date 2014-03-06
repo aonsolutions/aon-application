@@ -124,15 +124,28 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	};
 
+	private static Map<String, String> COSTS_DESCRIPTIONS = new HashMap<String, String>() {
+		{
+			put("ECSS_E", "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS");
+			put("ATEP_E", "Accidentes de Trabajo y Enfermedades Profesionales");
+			put("IT_E", "Accidentes de Trabajo y Enfermedades Profesionales IT");
+			put("IMS_E", "Accidentes de Trabajo y Enfermedades Profesionales IMS");
+			put("FOGASA_E","Fondo de Garant\u00eda Salarial ( FOGASA )");
+			
+		}
+	};
+
 	private static Map<Deduction.Type, String> DEDUCTION_DESCRIPTIONS = new HashMap<Deduction.Type, String>() {
 		{
 			put(Deduction.Type.IRPF, "IRPF");
 			put(Deduction.Type.COMMON_CONTINGENCY, "Contingencias Comunes");
+			put(Deduction.Type.PROFESSIONAL_CONTINGENCY,
+					"Contingencias Profesionales");
 			put(Deduction.Type.UNEMPLOYMENT, "Desempleo");
 			put(Deduction.Type.JOB_TRAINING, "Formaci&oacute;n Profesional");
-			put(Deduction.Type.STRUCTURAL_OVERTIME, "Horas Extras");
+			put(Deduction.Type.STRUCTURAL_OVERTIME, "Horas Extraordinarias Fuerza Mayor");
 			put(Deduction.Type.NON_STRUCTURAL_OVERTIME,
-					"Horas Extras no autorizadas");
+					"Resto Horas Extraordinarias");
 		}
 	};
 
@@ -141,8 +154,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 
-	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO", "BRUTO","GTZDO",
-			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF };
+	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO",
+			"BRUTO", "GTZDO", "ANTICIPO_ATRASOS", PORCENTAJE_IRPF };
 
 	static class VisibilityImpl implements HasVisibility {
 
@@ -315,9 +328,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				@Override
 				public void onBlur(BlurEvent event) {
 					if (!StringUtils.equals(widget.getValue(),
-							item.getExpression())){
+							item.getExpression())) {
 						onExpressionChange(item, widget.getValue());
-					}else {
+					} else {
 						String text = format(item.getAmount());
 						widget.setValue(text != null ? text : item
 								.getExpression());
@@ -1117,6 +1130,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	ListBox datesListBox;
 
 	@UiField
+	CheckBox costsCheck;
+	@UiField
 	CheckBox dbSalaryCheck;
 
 	@UiField
@@ -1306,19 +1321,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			totalPaymentsLabel.setText(format(StringUtils.isBlank(value) ? 0
 					: Double.valueOf(value)));
 		} catch (Exception e) {
-			totalPaymentsLabel
-					.setText(format(salaryDraftObject.getTotalPayment()));
+			totalPaymentsLabel.setText(format(salaryDraftObject
+					.getTotalPayment()));
 		}
 	}
 
 	@UiHandler("totalPaymentsLabel")
 	void onPaymentsFocus(FocusEvent event) {
 		Double totalPayment = salaryDraftObject.getTotalPayment();
-		totalPaymentsLabel
-				.setText(String.valueOf(NumberUtils.isNotValid(totalPayment) ? 0.00
-						: round(totalPayment)));
+		totalPaymentsLabel.setText(String.valueOf(NumberUtils
+				.isNotValid(totalPayment) ? 0.00 : round(totalPayment)));
 	}
-	
+
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
 		dbCgpBaseLabel.setVisible(visible);
@@ -1544,6 +1558,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 		redoButton.setEnabled(salaryDraftObject.canRedo());
+		if ( costsCheck.getValue() )
+			showCosts(true);
 	}
 
 	private void initAvailablePayments() {
@@ -1747,6 +1763,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				myStyle.textWarn() });
 	}
 
+	// -------------------------------------------------------------------------
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		salaryDraftObject.undo();
@@ -1767,7 +1784,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			print();
 	}
 
+	@UiHandler("costsCheck")
+	void onCostsCheckChange(ValueChangeEvent<Boolean> event) {
+		showCosts();
+	}
+
 	// -------------------------------------------------------------------------
+	
+
 
 	private void initPrintPreview() {
 		printPreviewButton.addClickHandler(new ClickHandler() {
@@ -1881,14 +1905,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
-			if (!displayNow(payment))
-				continue;
+
+			// if (!displayNow(payment))
+			// continue;
 
 			if (payment.getAmount() != null) {
+
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 						payment);
-				dumpItem(payment, row++, getIconRowStyle(payment), handler);
+				dumpPayment(payment, row++, getIconRowStyle(payment), handler);
+
 				handlers.add(handler);
+
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
 				dumpDbItem(payment, row++, styles[0], styles[1],
@@ -2020,6 +2048,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					dumpDbSystemDeduction(deduction, dbPercent, description,
 							row++, styles[0], styles[1]);
 				}
+
 			} else {
 				if (deduction.getAmount() != null)
 					dumpItem(deduction, row++, getIconRowStyle(deduction),
@@ -2037,14 +2066,32 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	private <I extends Item> void dumpItem(I item, int row,
-			String iconStyleName, ItemChangeHandler<TextBox, I> handler) {
-		dumpItem(item, row, iconStyleName, handler, false);
+	private <P extends Payment> void dumpPayment(P payment, int row,
+			String iconStyleName, ItemChangeHandler<TextBox, P> handler) {
+
+		Widget labelWidget = null;
+
+		Double amount = payment.getAmount();
+		Double quote = payment.getQuote();
+
+		if (amount != null && !amount.equals(quote)) {
+			labelWidget = newPercentLabel(format(quote));
+			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
+		}
+
+		dumpItem(payment, row, iconStyleName, handler, false, labelWidget);
 	}
 
 	private <I extends Item> void dumpItem(I item, int row,
 			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
+		dumpItem(item, row, iconStyleName, handler, isDeduction, null);
+
+	}
+
+	private <I extends Item> void dumpItem(I item, int row,
+			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
+			boolean isDeduction, Widget labelWidget) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
@@ -2057,7 +2104,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// We don't like it here.
 		paymentsTable.setWidget(row, 0, editButton);
 
-		paymentsTable.setHTML(row, 1, "&nbsp;");
+		if (labelWidget == null)
+			paymentsTable.setHTML(row, 1, "&nbsp;");
+		else
+			paymentsTable.setWidget(row, 1, labelWidget);
 
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setText(item.getDescription());
@@ -2088,10 +2138,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				HorizontalAlignmentConstant.startOf(Direction.RTL));
 		VisibilityImpl dbWidget = new VisibilityImpl(dbAmountLabel.getElement()
 				.getParentElement());
-		
+
 		dbWidget.setVisible(salaryDraftObject.hasDbSalary()
 				&& dbSalaryCheck.getValue());
-		
+
 		addDbWidget(dbWidget);
 
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
@@ -2186,10 +2236,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private void dumpSystemDeduction(Deduction deduction, Double percent,
-			String description, int row) {
+			String description, int row, String... iconStyles) {
 		Widget percentWidget = newPercentWidget(deduction, percent);
 
-		dumpSystemDeduction(deduction, description, row, percentWidget);
+		dumpSystemDeduction(deduction, description, row, percentWidget, iconStyles);
 
 		Variable percentVariable = getPercentVariable(deduction.getType());
 		if (percentVariable == null)
@@ -2217,9 +2267,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private void dumpSystemDeduction(Deduction deduction, String description,
-			int row, Widget percentageWidget) {
-
-		paymentsTable.setHTML(row, 0, "&nbsp;");
+			int row, Widget percentageWidget, String... iconStyles) {
+		
+		InlineLabel iconLabel = new InlineLabel();
+		paymentsTable.setWidget(row, 0, iconLabel);
+		for (String iconStyle : iconStyles) {
+			iconLabel.addStyleName(iconStyle);
+		}
 
 		paymentsTable.setWidget(row, 1, percentageWidget);
 		/* paymentsTable.setText(row, 1, deduction.getDescription()); */
@@ -2236,7 +2290,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(deduction.getDbAmount()));
-		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
 		setDbStyleName(dbAmountLabel, amountLabel);
 		amountsPanel.add(amountLabel);
 		amountsPanel.add(dbAmountLabel);
@@ -2247,8 +2300,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				HorizontalAlignmentConstant.startOf(Direction.RTL));
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel,
 				HorizontalAlignmentConstant.startOf(Direction.RTL));
-		addDbWidget(new VisibilityImpl(dbAmountLabel.getElement()
-				.getParentElement()));
+		
+		VisibilityImpl visibilityImpl = new VisibilityImpl(dbAmountLabel.getElement()
+				.getParentElement());
+		addDbWidget(visibilityImpl);
+		visibilityImpl.setVisible(salaryDraftObject.hasDbSalary()
+				&& dbSalaryCheck.getValue());
 
 		paymentsTable.setWidget(row, 4, amountsPanel);
 
@@ -2311,7 +2368,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					continue;
 				}
 			}
-			
 
 			Widget variableWidget = getVariableWidget(variable, toScope, show);
 			int row = count / cols;
@@ -2674,7 +2730,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				} else {
 					removePayment(tr);
 					removePayment(hasPayment.getPayment());
-					removePaymentChangeHandlerFor(hasPayment.getPayment().getId());
+					removePaymentChangeHandlerFor(hasPayment.getPayment()
+							.getId());
 				}
 
 			}
@@ -2730,7 +2787,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				return;
 			}
 		}
-		
+
 	}
 
 	private void removeDeduction(Deduction deduction) {
@@ -2761,9 +2818,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.insertRow(idx);
 		PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 				payment);
-		dumpItem(payment, idx, iconStyleName, handler);
+		dumpPayment(payment, idx, iconStyleName, handler);
 		paymentChangeHandlers.add(handler);
-
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
@@ -2801,17 +2857,57 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		return paymentsTable.getRowFormatter().getElement(idx);
 	}
+	
+	private void showCosts(){
+		showCosts(costsCheck.getValue());
+	}
+
+	private void showCosts(boolean show){
+
+		int costsBeforeRow = paymentsTable.getRowCount()
+				- (2 /* blank lines */+ 1 /* new line */);
+
+		if (show)
+			showCosts(costsBeforeRow);
+		else
+			hideCosts(costsBeforeRow - salaryDraftObject.getCosts().size());		
+	}
+
+	private void showCosts(int beforeRow) {
+		List<Deduction> costs = salaryDraftObject.getCosts();
+		for (int i = 0; i < costs.size(); i++) {
+			Deduction cost = costs.get(i);
+			paymentsTable.insertRow(beforeRow + i);
+			Double percent = getPercent(cost, salaryDraftObject);
+			Deduction.Type type = cost.getType();
+			
+			String description  = COSTS_DESCRIPTIONS.get(cost.getName());
+			if ( description == null )
+				description = type != null ? type.getDescription() : cost
+						.getDescription();
+			
+			dumpSystemDeduction(cost, percent, description, beforeRow + i,
+					AON.AON_ICON_COMPANY, AON.AON_EDIT_DATA_TABLE_BUTTON);
+		}
+	}
+
+	private void hideCosts(int beforeRow) {
+		
+		int costs = salaryDraftObject.getCosts().size();
+		for (int i = 0; i < costs; i++)
+			paymentsTable.removeRow(beforeRow);
+
+	}
 
 	// TODO : ???
 	private boolean displayNow(Payment payment) {
-		Short month = payment.getMonth();
-		if (month == null)
-			return true;
-		Date start = salaryDraftObject.getStartDate();
-		if (month < start.getMonth())
-			return false;
-		Date end = salaryDraftObject.getEndDate();
-		return (month <= end.getMonth());
+		return true;
+		/*
+		 * Short month = payment.getMonth(); if (month == null) return true;
+		 * Date start = salaryDraftObject.getStartDate(); if (month <
+		 * start.getMonth()) return false; Date end =
+		 * salaryDraftObject.getEndDate(); return (month <= end.getMonth());
+		 */
 	}
 
 	private boolean displayNow(UndefinedPaymentVariable var) {
@@ -2832,6 +2928,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private String getIconRowStyle(Item item) {
+
 		switch (item.getScope()) {
 		case SALARY:
 			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
@@ -3015,7 +3112,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 		return null;
 	}
-	
+
 	private void removePaymentChangeHandlerFor(int id) {
 		for (ListIterator<PaymentChangeHandler<?>> iterator = paymentChangeHandlers
 				.listIterator(); iterator.hasNext();) {
@@ -3025,7 +3122,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				return;
 			}
 		}
-		
+
 	}
 
 	// ------------------------------------------------------- Static 'Library'
@@ -3061,48 +3158,57 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return buffer.toString();
 	}
 
-	private static Widget newPercentLabel(Deduction deduction, Double percent) {
+	private static Widget newPercentLabel(String str) {
 		InlineLabel percentageLabel = new InlineLabel();
-		if (NumberUtils.isNotValid(percent))
-			percentageLabel.setText(deduction.getDescription());
-		else
-			percentageLabel.setText(formatPercent(percent));
+		percentageLabel.setText(str);
 		// padding-left : 5px, to align vertically with IRPF Widget.
 		percentageLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		return percentageLabel;
+	}
+
+	private static Widget newPercentLabel(Item<?> item, Double percent) {
+		if (NumberUtils.isNotValid(percent))
+			return newPercentLabel(item.getDescription());
+		else
+			return newPercentLabel(formatPercent(percent));
 	}
 
 	private static Double getDbPercent(Deduction deduction,
 			SalaryDraftObject draftObject) {
 		return getPercent(deduction.getType(), deduction.getDbAmount(),
 				draftObject.getDbIrpfBase(), draftObject.getDbCgcBase(),
-				draftObject.getDbHExtraBase(), draftObject.getDbNonHExtraBase());
+				draftObject.getDbCgpBase(), draftObject.getDbHExtraBase(),
+				draftObject.getDbNonHExtraBase());
 	}
 
 	private static Double getPercent(Deduction deduction,
 			SalaryDraftObject draftObject) {
 		return getPercent(deduction.getType(), deduction.getAmount(),
 				draftObject.getIrpfBase(), draftObject.getCgcBase(),
-				draftObject.gethExtraBase(), draftObject.getNonHExtraBase());
+				draftObject.getCgpBase(), draftObject.gethExtraBase(),
+				draftObject.getNonHExtraBase());
 	}
 
 	private static Double getPercent(Deduction.Type type, Double amount,
-			Double irpfBase, Double cgcBase, Double hExtraBase,
+			Double irpfBase, Double cgcBase, Double cgpBase, Double hExtraBase,
 			Double nonHExtraBase) {
 
 		switch (type) {
 		case IRPF:
 			return amount / irpfBase * 100;
-		case JOB_TRAINING:
-		case UNEMPLOYMENT:
-		case COMMON_CONTINGENCY:
-			return amount / cgcBase * 100;
+		//case JOB_TRAINING:
+		//case UNEMPLOYMENT:
+		//case COMMON_CONTINGENCY:
+		//	return amount / cgcBase * 100;
+		case FOGASA:
+		case PROFESSIONAL_CONTINGENCY:
+			return amount / cgpBase * 100;
 		case STRUCTURAL_OVERTIME:
 			return amount / hExtraBase * 100;
 		case NON_STRUCTURAL_OVERTIME:
 			return amount / nonHExtraBase * 100;
 		default:
-			throw new IllegalArgumentException();
+			return amount / cgcBase * 100;
 		}
 	}
 
@@ -3137,7 +3243,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				+ name + "\")\\s*\\)\\s*");
 
 	}
-	
+
 	private static String getSystemExpression(Variable var) {
 		return "SISTEMA('" + var.getName() + "')";
 	}
@@ -3145,5 +3251,5 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private static String getAgreementExpression(Variable var) {
 		return "CONVENIO('" + var.getName() + "')";
 	}
-	
+
 }

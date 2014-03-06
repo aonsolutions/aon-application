@@ -157,12 +157,12 @@ public class AFI extends AbstractFileFiller{
 			int numTotal = 0;
 			String empresa = null;
 			for (EMP emp: eti.getEmpresas()) {
-				if (!ObjectUtils.equals(empresa, emp.getNumero())) {
+				if (!ObjectUtils.equals(empresa, emp.getNumeroIdentificacion())) {
 					++numEmp;
 					properties.put(EMP , emp);
 					createLine(EMP,properties);
 					++numTotal;
-					empresa = emp.getNumero();
+					empresa = emp.getNumeroIdentificacion();
 				}
 				if (emp.getRzs() != null) {
 					properties.put(RZS , emp.getRzs());
@@ -173,15 +173,22 @@ public class AFI extends AbstractFileFiller{
 					properties.put(TRA , tra);
 					createLine(TRA,properties);
 					++numTotal;
+					if (tra.getAyn() != null) {
+						properties.put(AYN,tra.getAyn());
+						createLine(AYN,properties);
+						++numTotal;
+					}
 					if (tra.getFab() != null) {
-						properties.put(FAB , tra.getFab());
-						createLine(FAB ,properties);
+						properties.put(FAB,tra.getFab());
+						createLine(FAB,properties);
 						++numTotal;
 					}
 				}
 			}
-			eti.getEtf().setContador(numEmp);
-			eti.getEtf().setContadorTotal(numTotal);
+			eti.getEtf().setContadorEmpresas(numEmp);
+			numTotal++; // segmento ETI 
+			numTotal++; // segmento ETF
+			eti.getEtf().setContadorSegmentos(numTotal);
 			properties.put(ETF, eti.getEtf());
 			createLine(ETF,properties);
 		} catch (Exception ex) {

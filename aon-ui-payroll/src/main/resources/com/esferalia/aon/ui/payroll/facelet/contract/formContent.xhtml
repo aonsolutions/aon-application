@@ -145,22 +145,63 @@
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="suspensionCauseContainer" ajaxSingle="true" />
-				<a4j:support event="onchanged" reRender="suspensionCauseContainer" ajaxSingle="true" />
+				<a4j:support event="oninputchange" reRender="suspensionCauseContainer, settleDataContainer" ajaxSingle="true" />
+				<a4j:support event="onchanged" reRender="suspensionCauseContainer, settleDataContainer" ajaxSingle="true" />
 			</aon:selectInputDate>
-			<aon:panelGroup id="suspensionCauseContainer">
+			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.new}">
 				<aon:div style="display:inline;"
 					rendered="#{contract.to.endDate!=null}">
 					<aon:outputLabel for="contract_suspensionCause" 
 						value="#{bundle.certifica2Batch_suspension_cause}"
 						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" />
 					<aon:selectOneMenu id="contract_suspensionCause"
+						valueChangeListener="#{contract.onSuspensionCauseChanged}"
 						value="#{contract.params.suspensionCause}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{certificadosCollections.TLDCAUSSCodeList}" />
+						<f:selectItems value="#{contract.TLDCAUSSCodeList}" />
+						<a4j:support event="onchange" reRender="settleDataContainer" ajaxSingle="true" />
 					</aon:selectOneMenu>
 				</aon:div>
 			</aon:panelGroup>
+			<aon:div id="settleDataContainer" rendered="#{!contract.new}">
+				<aon:panelCollapsible label="Datos fin de contrato" styleClass="aon-margin-top aon-margin-bottom"
+					rendered="#{contract.to.endDate!=null and contract.params.suspensionCause!=null}"
+					value="#{false}" >
+				
+					<aon:panelGrid columns="2" 
+						columnClasses="aon-noborder aon-text-left aon-width-170, aon-noborder aon-text-left">
+						<aon:outputText value="Fecha preaviso" />
+						<aon:div id="Contract_advanceNoticeDateContainer">
+							<aon:selectInputDate id="Contract_advanceNoticeDate" 
+								value="#{contract.params.settleAdvanceNoticeDate}"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+								<a4j:support event="oninputchange" reRender="Contract_advanceNoticeDateContainer"
+									actionListener="#{contract.onAdvanceNoticeDateChanged}" />
+								<a4j:support event="onchanged" reRender="Contract_advanceNoticeDateContainer"
+									actionListener="#{contract.onAdvanceNoticeDateChanged}" />
+							</aon:selectInputDate>
+							<aon:outputText value="(#{contract.params.settleAdvanceNoticeDays}"
+								styleClass="aon-margin-left"
+								rendered="#{not empty contract.params.settleAdvanceNoticeDate}" />
+							<aon:outputText value="&#160;dia#{contract.params.settleAdvanceNoticeDays!=1?'s':''})"
+								rendered="#{not empty contract.params.settleAdvanceNoticeDate}" />
+						</aon:div>
+						
+						<aon:outputText value="Dias indemnizacion" />
+						<aon:inputText id="compensation_days"
+							size="2" maxlength="5"
+							value="#{contract.params.settleCompensationDays}" />
+	
+						<aon:outputText value="Vacaciones no disfrutadas" />
+						<aon:inputText id="nonEnjoyedVacations"
+							size="2" maxlength="5"
+							value="#{contract.params.settleNonEnjoyedVacations}" />
+					</aon:panelGrid>
+					
+				</aon:panelCollapsible>
+			</aon:div>
 		</aon:div>
 		
 		<c:if test="#{actionDenied.moduleEnabled['payroll']}">

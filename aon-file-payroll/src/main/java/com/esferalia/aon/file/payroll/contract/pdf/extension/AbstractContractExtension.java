@@ -368,7 +368,7 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		
 		try {
 			RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
-			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+			ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
 			setPdfFieldValue(ENTERPRISE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
 			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
 			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
@@ -430,7 +430,7 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 			
 		try {
 			RegistryAddress address = contract.getWorkPlace().getAddress();
-			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+			ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
 			setPdfFieldValue(WORKPLACE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
 			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
 			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
@@ -469,7 +469,7 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		}
 		try {
 			RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
-			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+			ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
 			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
 			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
 			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));

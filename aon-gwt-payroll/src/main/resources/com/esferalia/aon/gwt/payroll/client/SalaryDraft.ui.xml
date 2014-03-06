@@ -231,6 +231,9 @@
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 									<g:item value="{CUSTOM}">Personalizado...</g:item>
 								</g:ListBox>
+								<g:CheckBox ui:field='costsCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="COSTOS" checked="false" />
 								<g:CheckBox ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="DIFERENCIAS" checked="false" />

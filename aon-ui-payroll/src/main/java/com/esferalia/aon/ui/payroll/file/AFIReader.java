@@ -62,11 +62,11 @@ public class AFIReader {
 					emp = new EMP();
 					emp.setTrabajadores(new LinkedList<TRA>());
 					emp.setCodigoCuentaCotizacionSeguridadSocial(currentLine.substring(3, 18));
-					emp.setTipo(currentLine.substring(18, 19));
+					emp.setTipoDocumento(currentLine.substring(18, 19));
 					emp.setPais(currentLine.substring(19, 22));
-					emp.setNumero(currentLine.substring(22, 36));
+					emp.setNumeroIdentificacion(currentLine.substring(22, 36));
 					// se ajusta el nif a 9 caracteres
-					emp.setNumero(emp.getNumero().substring(emp.getNumero().length()-9, emp.getNumero().length()));
+					emp.setNumeroIdentificacion(emp.getNumeroIdentificacion().substring(emp.getNumeroIdentificacion().length()-9, emp.getNumeroIdentificacion().length()));
 					emp.setCalificador(currentLine.substring(36, 38));
 					emp.setCodigoCuentaCotizacionPrincipal(currentLine.substring(38, 53));
 					eti.getEmpresas().add(emp);
@@ -122,27 +122,28 @@ public class AFIReader {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					fab.setGrupoCotizacion(currentLine.substring(16, 18));
-					fab.setClaveContratoTrabajo(currentLine.substring(21, 24));
+					fab.setGrupoCotizacion(Integer.parseInt(currentLine.substring(16, 18)));
+					fab.setClaveContrato(Integer.parseInt(currentLine.substring(21, 24)));
 					fab.setCondicionDesempleado(currentLine.substring(24, 25));
 					fab.setMujerSubrepresentada(currentLine.substring(25, 26));
-					fab.setCoeficienteTiempoParcial(currentLine.substring(26, 29));
-					fab.setColectivoTrabajador(currentLine.substring(29, 32));
+					fab.setCoeficienteTiempoParcial(Integer.parseInt(currentLine.substring(26, 29)));
+					fab.setColectivoTrabajador(Integer.parseInt(currentLine.substring(29, 32)));
 					fab.setIndicadorImpresion(currentLine.substring(32, 33));
-					fab.setCategoriaProfesional(currentLine.substring(33, 40));
+					fab.setCategoriaProfesional(Integer.parseInt(currentLine.substring(33, 40)));
 					fab.setFechaNacimiento(currentLine.substring(40, 48));
-					fab.setSexo(currentLine.substring(48, 49));
+					fab.setSexo(Integer.parseInt(currentLine.substring(48, 49)));
 					fab.setTipoInactividad(currentLine.substring(49, 50));
-					fab.setExclusionDesempleo(currentLine.substring(50, 51));
-					fab.setCoeficienteActividadHuelgaParcial(currentLine.substring(51, 54));
+					fab.setExclusionDesempleo(Integer.parseInt(currentLine.substring(50, 51)));
+					fab.setCoeficienteActividadHuelgaParcial(Integer.parseInt(currentLine.substring(51, 54)));
 					fab.setMujerReincorporada(currentLine.substring(54, 55));
 					fab.setIncapacitadoReadmitido(currentLine.substring(55, 56));
-					fab.setAutonomo(currentLine.substring(56, 57));
-					fab.setGradoMinusvalia(currentLine.substring(57, 59));
-					fab.setFechaControl(currentLine.substring(59, 67));
-					fab.setExclusionSocialViolenciaDomestica(currentLine.substring(67, 68));
+					fab.setTrabajadorDeAutonomo(currentLine.substring(56, 57));
+					fab.setSemamaSegunConvenio5jr(currentLine.substring(57, 58));
+					fab.setIndNumTrabajadoresEmpresa(currentLine.substring(58, 59));
+					fab.setExclusionSocial(Integer.parseInt(currentLine.substring(67, 68)));
 					fab.setRentaActivaInsercion(currentLine.substring(68, 69));
 					fab.setCostratadasPostAlumbramiento(currentLine.substring(69, 70));
+					
 					tra.setFab(fab);
 				} 
 				if(currentLine.startsWith(ETF)) {

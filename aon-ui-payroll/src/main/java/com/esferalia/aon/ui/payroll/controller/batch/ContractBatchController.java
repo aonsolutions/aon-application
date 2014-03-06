@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -34,7 +32,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -394,134 +391,6 @@ public class ContractBatchController extends BasicController {
 
 		public void checkNone(ActionEvent event) {
 			clearCheckedList();
-		}
-		
-	}
-	
-	public enum AFIAction implements IResourceable {
-		
-		/**
-		 * Acciones a nivel de Empresa - Se cumplimentan en el segmento EMP
-		 */
-//		CU Consulta de trabajadores con movimientos previos en un CCC
-		CU,
-//		CS Situación de la empresa
-		CS,
-//		CT Relación de trabajadores en alta en un CCC
-		CT,
-//		CTA Informe de Trabajadores en alta por Autorización
-		CTA,
-//		CTP Informe de Trabajadores en alta por CCC Principal
-		CTP,
-//		CL Vida laboral de un CCC
-		CL,
-//		CC Certificado de Cotización normal sin detalle de deuda - Futuro uso.
-		CC,
-//		CC1 Certificado de Cotización normal con detalle de deuda - Futuro uso.
-		CC1,
-//		CC2 Certificado de Cotización Contrato del Estado - Futuro uso.
-		CC2,
-//		CC3 Certificado de Cotización. Artículo 42 - Futuro uso.
-		CC3,
-//		NMT Número Medio de Trabajadores
-		NMT,
-//		PMT Plantilla Media de Trabajadores en alta
-		PMT,
-//		AAC Alta Autorización Certificado artículo 42 Estatuto de los Trabajadores
-		AAC,
-//		MAC Modificación Autorización Certificado artículo 42 Estatuto de los Trabajadores
-		MAC,
-//		PLC Informe de datos para la cotización por Período de Liquidación - CCC 
-		PLC, 
-		
-		/**
-		 * Acciones a nivel de Trabajador - Se cumplimentan en el segmento FAB
-		 */
-//		MA Alta sucesiva
-		MA,
-//		MB Baja
-		MB,
-//		MG Cambio de grupo de cotización
-		MG,
-//		ME Eliminación de movimientos previos
-		ME,
-//		MC Cambio de contrato (tipo/coeficiente)
-		MC,
-//		MT Cambio de ocupación
-		MT,
-//		MD Eliminación de altas consolidadas.
-		MD,
-//		MR Eliminación de bajas consolidadas
-		MR,
-//		CP Consulta de movimientos previos de un afiliado
-		CP,
-//		CH Consulta de situación del afiliado en la empresa
-		CH,
-//		CE Informe de Situación I.T. por Contingencias Comunes
-		CE,
-//		CD Duplicados de TA2.
-		CD,
-//		CA Corrección del alta, régimen 0132
-		CA,
-//		CB Corrección de la baja, régimen 0132
-		CB,
-//		CCP Cambio de Categoría Profesional
-		CCP,
-//		CCJ Cambio de Coeficiente Reductor de la Edad Jubilación
-		CCJ,
-//		MJR Mecanización de Jornadas Reales (régimen 0163)
-		MJR,
-//		MFR Modificación Fecha Real del Alta (régimen 0163)
-		MFR,
-//		ASA Anotación de periodos de situaciones adicionales de afiliación
-		ASA,
-//		MSA Modificación de periodos de situaciones adicionales de afiliación
-		MSA,
-//		ESA Eliminación de periodos de situaciones adicionales de afiliación
-		ESA,
-//		CJR Informe de Jornadas Reales
-		CJR,
-//		ASC Alta de Subcontratación o Cesión
-		ASC,
-//		MSC Modificación de Subcontratación o Cesión
-		MSC,
-//		ESC Eliminación de Subcontratación o Cesión
-		ESC,
-//		ACT Anotación Convenio Colectivo de trabajador
-		ACT,
-//		ADT Anotación de Días Trabajados
-		ADT,
-//		EDT Eliminación de Días Trabajados
-		EDT,
-//		AMC Anotación Modalidad de cotización
-		AMC,
-//		AIT Anotación de Períodos de Incapacidad Temporal
-		AIT,
-//		CIT Cierre de Períodos de Incapacidad Temporal
-		CIT,
-//		EIT Eliminación de Períodos de Incapacidad Temporal
-		EIT,
-//		IDC Informe de Datos para la Cotización
-		IDC,
-//		CTO Consulta de alta de Tr abajadores en Otra empresa
-		CTO,
-//		MTE Modificación del indicativo numero Trabajadores Empresa
-		MTE,
-//		MHU Mecanización de HUelga
-		MHU,
-//		PLT Informe de datos para la cotización por Periodo de Liquidación - Trabajador
-		PLT,
-//		RLT Informe de datos para la cotización por Relación Laboral - Trabajador 
-		RLT, 
-		;
-		
-		/** Message key prefix. */
-	    private static final String MSG_KEY_PREFIX = "aon_enum_afi_action_";
-	    
-		@Override
-		public String getName(Locale locale) {
-	        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-			return bundle.getString(MSG_KEY_PREFIX + toString());
 		}
 		
 	}

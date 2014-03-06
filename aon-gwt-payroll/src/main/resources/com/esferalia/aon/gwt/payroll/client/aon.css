@@ -12,6 +12,10 @@
 	color: black;
 }
 
+.aon-label-warn {
+	color: orange;
+}
+
 .aon-padding-left {
 	padding-left:16px;	
 }
@@ -76,6 +80,12 @@
 
 @sprite .aon-icon-segsocial {
 	gwt-image: "segsocial" ; 
+}
+
+@sprite .aon-icon-segsocial-small {
+	gwt-image: "segsocial_small" ; 
+	padding-right: 14px;	
+	background-position: right center;
 }
 
 @sprite .aon-icon-clipboard {

@@ -51,18 +51,19 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
 public class SalaryDraftBuilder implements ISalaryBuilder,
-		ContractSalaryCalculator.IListener, IContractSalaryCalculatorContext.IListener {
+		ContractSalaryCalculator.IListener,
+		IContractSalaryCalculatorContext.IListener {
 
 	private SalaryDraft salaryDraft;
-	
-	private Map<String, boolean [] > defined; 
+
+	private Map<String, boolean[]> defined;
 
 	public SalaryDraftBuilder(SalaryDraft salaryDraft) {
 		this.salaryDraft = salaryDraft;
 		clearSalaryDraft();
 	}
-	
-	public void setDefined(Map<String, boolean [] > defined) {
+
+	public void setDefined(Map<String, boolean[]> defined) {
 		this.defined = defined;
 	}
 
@@ -87,8 +88,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		List<IPayment> dbPayments;
 		dbPayments = new ArrayList<IPayment>(dbSalary.getPaymentS());
 		for (Payment payment : salaryDraft.getPayments()) {
-			List<IPayment> dbCounterParts = getDbItemCounterParts(
-					dbPayments, payment);
+			List<IPayment> dbCounterParts = getDbItemCounterParts(dbPayments,
+					payment);
 			if (dbCounterParts.size() == 0)
 				continue;
 			// Found almost one counterpart. Gets first of them.
@@ -99,8 +100,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		}
 
 		for (Payment draftPayment : salaryDraft.getDraftPayments()) {
-			List<IPayment> dbCounterParts = getDbItemCounterParts(
-					dbPayments, draftPayment);
+			List<IPayment> dbCounterParts = getDbItemCounterParts(dbPayments,
+					draftPayment);
 			if (dbCounterParts.size() == 0)
 				continue;
 			// Found almost one counterpart. Gets first of them.
@@ -121,7 +122,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			payment.setSalaryType(draftPayment.getSalaryType());
 			payment.setIrpfExpression(draftPayment.getIrpfExpression());
 			payment.setQuoteExpression(draftPayment.getQuoteExpression());
-			
+
 			salaryDraft.addPayment(payment);
 			// Remove it from the list to avoid processing later.
 			dbPayments.remove(dbPayment);
@@ -134,15 +135,14 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			payment.setDbAmount(dbPayment.getAmount());
 			payment.setExpression(dbPayment.getExpression());
 			payment.setDescription(dbPayment.getDescription());
-			
+
 			salaryDraft.addPayment(payment);
 		}
 
 		// match up draft deductions & db deductions
 		//
 		List<IDeduction> dbDeductions;
-		dbDeductions = new ArrayList<IDeduction>(dbSalary.getDeductionS()
-				);
+		dbDeductions = new ArrayList<IDeduction>(dbSalary.getDeductionS());
 		for (Deduction deduction : salaryDraft.getDeductions()) {
 			List<IDeduction> dbCounterParts = getDbItemCounterParts(
 					dbDeductions, deduction);
@@ -167,9 +167,10 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public ISalary getSalary() {
-		Collections.sort(salaryDraft.getPayments(), new ItemComparator<Payment.Type>());
-		Collections
-				.sort(salaryDraft.getDeductions(), new ItemComparator<Deduction.Type>());
+		Collections.sort(salaryDraft.getPayments(),
+				new ItemComparator<Payment.Type>());
+		Collections.sort(salaryDraft.getDeductions(),
+				new ItemComparator<Deduction.Type>());
 		Collections.sort(salaryDraft.getContext(), new VariableComparator());
 		return null;
 	}
@@ -338,9 +339,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	@Override
 	public void setTotalIrpf(Double totalIrpf) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void setSocialSecurityContributions(
 			Double socialSecurityContributions) {
@@ -367,14 +368,25 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	}
 
 	@Override
-	public void addCost(DeductionType type, String concept, Double amount,
-			String description) {
-		// TODO Auto-generated method stub
+	public void addCost(Double amount, String description,
+			IDeduction cost, Map<String, ITimedVariable<?>> context) {
+		
+		addContext(context);
+
+		Deduction myCost = new Deduction();
+		myCost.setAmount(amount);
+		myCost.setName(cost.getName());
+		myCost.setDescription(description);
+		myCost.setExpression(cost.getExpression());
+		myCost.setDescription(cost.getDescription());
+		myCost.setType(getDeductionType(cost.getType()));
+
+		salaryDraft.addCost(myCost);
 
 	}
 
 	@Override
-	public void addPayment(PaymentType type, String concept, Double amount,
+	public void addPayment(Double amount, Double quote, Double tax,
 			String description, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 
@@ -382,44 +394,45 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		Payment draftPayment = newPayment((IContractPayment) payment);
 		// override calculated ...
-		draftPayment.setName(concept);
+		draftPayment.setName(payment.getName());
 		draftPayment.setAmount(amount);
+		draftPayment.setIrpf(tax);
+		draftPayment.setQuote(quote);
 		draftPayment.setDescription(description);
-		draftPayment.setType(getPaymentType(type));
-		
+		draftPayment.setType(getPaymentType(payment.getType()));
+
 		salaryDraft.addPayment(draftPayment);
 
 	}
-	
+
 	@Override
-	public void addZeroPayment(PaymentType type, String concept, 
-			IPayment payment, Map<String, ITimedVariable<?>> context) {
-		addPayment(type, concept, 0.00, payment.getDescription(), payment, context);
+	public void addZeroPayment(Double quote, Double tax, IPayment payment,
+			Map<String, ITimedVariable<?>> context) {
+		addPayment(0.00, quote, tax, payment.getDescription(), payment, context);
 	}
 
 	@Override
-	public void addDeduction(DeductionType type, String concept, Double amount,
-			String description, IDeduction ideduction,
-			Map<String, ITimedVariable<?>> context) {
+	public void addDeduction(Double amount, String description,
+			IDeduction ideduction, Map<String, ITimedVariable<?>> context) {
 		addContext(context);
 
 		IContractDeduction contractDeduction = (IContractDeduction) ideduction;
 
 		Deduction deduction = newDeduction(contractDeduction);
 		// override by calculated...
-		deduction.setName(concept);
+		deduction.setName(ideduction.getName());
 		deduction.setAmount(amount);
 		deduction.setDescription(description);
-		deduction.setType(getDeductionType(type));
+		deduction.setType(getDeductionType(ideduction.getType()));
 
 		salaryDraft.addDeduction(deduction);
 
 	}
-	
+
 	@Override
-	public void addZeroDeduction(DeductionType type, String concept,
-			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
-		addDeduction(type, concept, 0.00, deduction.getDescription(), deduction, context);
+	public void addZeroDeduction(IDeduction deduction,
+			Map<String, ITimedVariable<?>> context) {
+		addDeduction(0.00, deduction.getDescription(), deduction, context);
 	}
 
 	@Override
@@ -583,15 +596,14 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
-	
-	
+
 	// -------------------------------------------------------------------------
-	
+
 	@Override
 	public void onIrpf(IrpfOutcome irpfOutcome) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void onUndefinedData(IExpression expression, String variableName,
 			String message, Date start, Date end) {
@@ -602,21 +614,16 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		undefVar.setStartDate(end);
 		undefVar.setImplicit(isImplicit(variableName));
 		undefVar.setScope(getScope(expression.getScope()));
-		
+
 		salaryDraft.addUndefinedVariable(undefVar);
-		
+
 	}
-	
-	
-	
+
 	// -------------------------------------------------------------------------
-	
-	private void clearSalaryDraft(){
-		salaryDraft.clearDb();
-		salaryDraft.clearContext();
-		salaryDraft.clearEvents();
-		salaryDraft.clearPayments();
-		salaryDraft.clearDeductions();
+
+	private void clearSalaryDraft() {
+		salaryDraft.clear();
+		
 	}
 
 	private void addContext(Map<String, ITimedVariable<?>> context) {
@@ -636,10 +643,10 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 				String name = entry.getKey();
 				salaryDraft.addVariable(entry.getKey(), var.getValue(var
 						.getPeriod()), var.getPeriod().getStart(), var
-						.getPeriod().getEnd(), scope, expr.getExpression(), defined.get(name));
+						.getPeriod().getEnd(), scope, expr.getExpression(),
+						defined.get(name));
 				addContext(exprVar.getContext());
 			} else {
-				String name = entry.getKey();
 				salaryDraft.addVariable(entry.getKey(), var.getValue(var
 						.getPeriod()), var.getPeriod().getStart(), var
 						.getPeriod().getEnd());
@@ -666,7 +673,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	private Payment newPayment(IContractPayment contractPayment) {
 
 		Payment payment = new Payment();
-		
+
 		payment.setId(contractPayment.getId());
 		payment.setConceptId(contractPayment.getConceptId());
 		payment.setType(getPaymentType(contractPayment.getType()));
@@ -683,7 +690,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		return payment;
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 	private Short getMonth(Month month) {
@@ -707,14 +714,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		return type != null ? Salary.Type.values()[type.ordinal()] : null;
 	}
 
-
 	private static <T extends ISalaryItem<?>> List<T> getDbItemCounterParts(
-			Collection<T> dbItems, Item item) {
+			Collection<T> dbItems, Item<?> item) {
 
-		List<T> nameMatchDbItems = 
-				new LinkedList<T>();
-		List<T> fullMatchDbItems = 
-				new LinkedList<T>();
+		List<T> nameMatchDbItems = new LinkedList<T>();
+		List<T> fullMatchDbItems = new LinkedList<T>();
 
 		String name = item.getName();
 		Enum<?> type = item.getType();
@@ -723,7 +727,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			if (!StringUtils.equals(name, dbPayment.getName())) {
 				continue;
 			}
-			if ( StringUtils.isBlank(name) &&  !equals(type, dbPayment.getType() )){
+			if (StringUtils.isBlank(name) && !equals(type, dbPayment.getType())) {
 				continue;
 			}
 			nameMatchDbItems.add(dbPayment);
@@ -733,27 +737,30 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			fullMatchDbItems.add(dbPayment);
 		}
 
-		return fullMatchDbItems.size()> 0 ? fullMatchDbItems : nameMatchDbItems;
+		return fullMatchDbItems.size() > 0 ? fullMatchDbItems
+				: nameMatchDbItems;
 	}
-	
-	private static boolean equals(Enum<?> type1, Enum<?> type2 ){
-		if ( type1 == type2)
+
+	private static boolean equals(Enum<?> type1, Enum<?> type2) {
+		if (type1 == type2)
 			return true;
-		if ( type1 == null )
+		if (type1 == null)
 			return false;
-		if ( type2 == null )
+		if (type2 == null)
 			return false;
-		
-		return  type1.ordinal() == type2.ordinal() ;
+
+		return type1.ordinal() == type2.ordinal();
 	}
-	
-	private static boolean isImplicit(String name){
+
+	private static boolean isImplicit(String name) {
 		ContextVariable var = ContextVariable.getVariableByName(name);
-		if( var != null )
+		if (var != null)
 			return true;
 		// TODO : Very, very ugly...
-		return name.matches(String.format("%s_\\d+_\\d+", ContextVariable.COMMON_DISEASE_DAYS)) ||
-				name.matches(String.format("%s_\\d+_\\d+", ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
+		return name.matches(String.format("%s_\\d+_\\d+",
+				ContextVariable.COMMON_DISEASE_DAYS))
+				|| name.matches(String.format("%s_\\d+_\\d+",
+						ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
 	}
 
 }

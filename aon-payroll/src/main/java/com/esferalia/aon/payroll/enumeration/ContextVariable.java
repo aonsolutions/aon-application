@@ -41,6 +41,9 @@ public enum ContextVariable implements IResourceable{
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER, false),
 	PAYMENTS("NUM_PAGAS", VariableType.INTEGER, false),
 
+	ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
+	COMPENSATION_DAYS("DIAS_INDEMNIZACION", VariableType.INTEGER, false),
+
 	SALARY_MONTHS("MESES_NOMINA", VariableType.INTEGER, false),
 	PAY_MONTHS("MESES_PAGA", VariableType.INTEGER, false),
 	WORKED_WEEKS("SEMANAS_TRABAJADAS", VariableType.INTEGER, false),

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -20,8 +19,11 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public ISalary getSalary() {
-		for (ISalaryBuilder builder : builders)
-			builder.getSalary();
+		for (ISalaryBuilder builder : builders) {
+			ISalary salary = builder.getSalary();
+			if (salary != null)
+				return salary;
+		}
 		return null;
 	}
 
@@ -216,7 +218,7 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 		for (ISalaryBuilder builder : builders)
 			builder.setTotalIrpf(totalIrpf);
 	}
-	
+
 	@Override
 	public void setSocialSecurityContributions(
 			Double socialSecurityContributions) {
@@ -244,42 +246,38 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addCost(DeductionType type, String concept, Double amount,
-			String description) {
+	public void addCost(Double amount, String description,
+			IDeduction cost, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addCost(type, concept, amount, description);
+			builder.addCost(amount, description, cost, context);
 	}
 
 	@Override
-	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, IPayment payment,
+	public void addPayment(Double amount, Double quote, Double tax, String description, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addPayment(type, concept, amount, description, payment,
-					context);
+			builder.addPayment(amount, quote, tax, description, payment, context);
 	}
-	
+
 	@Override
-	public void addZeroPayment(PaymentType type, String concept,
-			IPayment payment, Map<String, ITimedVariable<?>> context) {
-		for (ISalaryBuilder builder : builders)
-			builder.addZeroPayment(type, concept, payment, context);
-	}
-	
-	@Override
-	public void addDeduction(DeductionType type, String concept, Double amount,
-			String description, IDeduction deduction,
+	public void addZeroPayment(Double quote, Double tax, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addDeduction(type, concept, amount, description, deduction,
-					context);
+			builder.addZeroPayment(quote, tax, payment, context);
 	}
-	
+
 	@Override
-	public void addZeroDeduction(DeductionType type, String concept,
+	public void addDeduction(Double amount, String description,
 			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addZeroDeduction(type, concept, deduction, context);
+			builder.addDeduction(amount, description, deduction, context);
+	}
+
+	@Override
+	public void addZeroDeduction(IDeduction deduction,
+			Map<String, ITimedVariable<?>> context) {
+		for (ISalaryBuilder builder : builders)
+			builder.addZeroDeduction(deduction, context);
 	}
 
 	@Override

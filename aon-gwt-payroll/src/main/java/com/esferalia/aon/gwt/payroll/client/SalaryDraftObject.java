@@ -306,6 +306,10 @@ public class SalaryDraftObject implements IContextProvider{
 		return salaryDraft.getEmployee();
 	}
 
+	public List<Deduction> getCosts() {
+		return salaryDraft.getCosts();
+	}
+
 	public List<Payment> getPayments() {
 		return salaryDraft.getPayments();
 	}
@@ -591,11 +595,7 @@ public class SalaryDraftObject implements IContextProvider{
 
 
 	private static void removeSalaryPart(SalaryDraft salaryDraft) {
-		salaryDraft.clearDb();
-		salaryDraft.clearEvents();
-		salaryDraft.clearContext();
-		salaryDraft.clearPayments();
-		salaryDraft.clearDeductions();
+		salaryDraft.clear();
 	}
 
 	private static boolean isDraftPeriodSet(Date draftStartDate,

@@ -12,6 +12,8 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public interface IContractPdfDocument {
 	
+	String MUNICIPALITIES_BUNDLE_BASE_NAME = "com.code.aon.common.i18n.municipalities";
+	
 	public byte[] buildPdf(boolean readOnly);
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft);

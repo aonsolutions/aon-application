@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.AonException;
@@ -159,7 +158,7 @@ public class ContractAfiLoader implements IContractLoader{
 			
 			for(EMP emp: eti.getEmpresas()){
 				
-				Enterprise enterprise = obtainEnterprise(emp.getNumero());
+				Enterprise enterprise = obtainEnterprise(emp.getNumeroIdentificacion());
 				if(enterprise==null){
 					logError("La empresa " + emp.getRzs().getRazonSocial() + " no esta dada de alta. Se omiten los contratos incluidos en esta empresa.");
 					errors++;
@@ -306,11 +305,11 @@ public class ContractAfiLoader implements IContractLoader{
 									logError("Error de formato al obtener la fecha de nacimiento del trabajador " + person.getFullName());
 									errors++;
 								}
-								if(StringUtils.isBlank(tra.getFab().getSexo())){
+								if(tra.getFab().getSexo()==null){
 									person.setGender(Gender.UNKNOWN);
-								} else if(tra.getFab().getSexo().equals("1")){
+								} else if(tra.getFab().getSexo().equals(1)){
 									person.setGender(Gender.MALE);
-								} else if(tra.getFab().getSexo().equals("2")){
+								} else if(tra.getFab().getSexo().equals(2)){
 									person.setGender(Gender.FEMALE);
 								} else {
 									person.setGender(Gender.UNKNOWN);
@@ -346,7 +345,7 @@ public class ContractAfiLoader implements IContractLoader{
 								contract.setWorkPlace(pwp.getWorkPlace());
 								contract.setActivity(pwp.getEnterpriseActivity());
 								contract.setAgreementLevelCategory(null);
-								contract.setCategoryDescription(tra.getFab().getCategoriaProfesional());
+//								contract.setCategoryDescription(tra.getFab().getCategoriaProfesional());
 								contract.setCalendar(null);
 								contract.setDescription(null);
 								contract.setRegistration(null);
@@ -364,7 +363,7 @@ public class ContractAfiLoader implements IContractLoader{
 								IManagerBean contractDataBean = BeanManager.getManagerBean(ContractData.class);
 								ContractData data = new ContractData();
 								
-								ContractCode code = ContractCode.getContractCodeByValue(tra.getFab().getClaveContratoTrabajo());
+								ContractCode code = ContractCode.getContractCodeByValue(tra.getFab().getClaveContrato().toString());
 								if(code!=null){
 									data.setContract(contract);
 									data.setStartDate(contract.getStartDate());
@@ -378,7 +377,7 @@ public class ContractAfiLoader implements IContractLoader{
 									errors++;
 								}
 								
-								QuoteGroup quoteGroup = QuoteGroup.getQuoteGroupByValue(tra.getFab().getGrupoCotizacion());
+								QuoteGroup quoteGroup = QuoteGroup.getQuoteGroupByValue(tra.getFab().getGrupoCotizacion().toString());
 								if(quoteGroup!=null){
 									data = new ContractData();
 									data.setContract(contract);
