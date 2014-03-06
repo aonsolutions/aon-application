@@ -43,7 +43,8 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panel rendered="#{posFinance.model.rowCount > 0}">
+				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom"
+					rendered="#{posFinance.model.rowCount > 0}">
 					<aon:outputText value="#{bundle.purchase_workplace}:" />
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 						value="#{posFinanceSearch.workPlace.description}" />
