@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.util.AonUtil;
 
 public class WebMapController implements IAuditConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ApplicationOptionController getOptionController() {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);

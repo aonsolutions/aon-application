@@ -1,10 +1,12 @@
 package com.code.aon.ui.admin;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,8 +23,10 @@ import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class UserApplicationInfo {
+public class UserApplicationInfo implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private boolean checked;
 	
 	private DomainApplication domainApplication;

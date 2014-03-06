@@ -24,6 +24,7 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 	private static final String COURSE_EVALUATION_CONTROLLER_NAME = "courseEvaluation";
 	private static final String COURSE_OBSERVATION_CONTROLLER_NAME = "courseObservation";
 
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportCourseEvaluation> reportCourseEvaluationList = new LinkedList<ReportCourseEvaluation>();
 		CourseController courseController = (CourseController)FormUtil.getController(COURSE_CONTROLLER_NAME);
@@ -36,7 +37,7 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		return reportCourseEvaluationList;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}

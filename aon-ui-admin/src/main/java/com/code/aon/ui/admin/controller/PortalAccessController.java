@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,7 +34,9 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PortalAccessController implements IAdminConstants {
+public class PortalAccessController implements IAdminConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(PortalAccessController.class);
 	

@@ -20,6 +20,7 @@ import org.hibernate.impl.CriteriaImpl.OrderEntry;
 import org.hibernate.metadata.ClassMetadata;
 
 import com.code.aon.common.AbstractFieldMapper;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.DAOConstants;
@@ -38,10 +39,12 @@ import com.code.aon.ql.ProjectionList;
  * @since 1.0
  *  
  */
-public class HibernateDAO extends AbstractFieldMapper implements IDAO {
+public class HibernateDAO extends AbstractFieldMapper implements IDAO, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private DAOConstantsEntry entry;
-	private ClassMetadata classMetaData;
+	private transient DAOConstantsEntry entry;
+	private transient ClassMetadata classMetaData;
 	private Class<? extends ITransferObject> POJOClass;
 	private ISessionManager sessionManager;
 
@@ -53,11 +56,23 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 */
 	public HibernateDAO(Class<? extends ITransferObject> POJOClass, ISessionManager sessionManager) {
 		this.POJOClass = POJOClass;
-		this.entry = DAOConstants.getDAOConstant(this.POJOClass);
 		this.sessionManager = sessionManager;
-		this.classMetaData = sessionManager.getSessionFactory().getClassMetadata(POJOClass);
+	}
+	
+	private ClassMetadata getClassMetadata() {
+		if ( this.classMetaData == null ) {
+			this.classMetaData = sessionManager.getSessionFactory().getClassMetadata(POJOClass);
+		}
+		return this.classMetaData;
 	}
 
+	private DAOConstantsEntry getEntry() {
+		if ( this.entry == null ) {
+			this.entry = DAOConstants.getDAOConstant(this.POJOClass);
+		}
+		return this.entry;
+	}
+	
 	@Override
 	public ITransferObject newTo() throws DAOException {
 		ITransferObject to = null;
@@ -100,28 +115,28 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * @see com.code.aon.common.AbstractFieldMapper#getFieldMap()
 	 */
 	protected Map<String,String> getFieldMap() {
-		return this.entry.getHibernateMap();
+		return getEntry().getHibernateMap();
 	}
 
 	@Override
 	public Serializable getId(ITransferObject to) {
-		return this.classMetaData.getIdentifier(to,EntityMode.POJO);
+		return getClassMetadata().getIdentifier(to,EntityMode.POJO);
 		
 	}
 
 	@Override
 	public void setId(ITransferObject to, Serializable id) {
-		this.classMetaData.setIdentifier( to, id, EntityMode.POJO );
+		getClassMetadata().setIdentifier( to, id, EntityMode.POJO );
 	}
 
 	@Override
 	public void setProperty(ITransferObject to, String propertyName, Object value) {
-		this.classMetaData.setPropertyValue(to, propertyName, value, EntityMode.POJO);
+		getClassMetadata().setPropertyValue(to, propertyName, value, EntityMode.POJO);
 	}
 
 	@Override
     public ITransferObject get(Serializable pk) throws DAOException {
-    	return get( this.entry.getPojo(), pk );
+    	return get( this.POJOClass.getName(), pk );
     }
     
     private boolean isDistinctProblem( org.hibernate.Criteria criteria, int count ) {
@@ -147,8 +162,8 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
     	}
 
     	if (! idlist.isEmpty()) {
-    		org.hibernate.Criteria entityCriteria = session.createCriteria(this.entry.getPojo());
-    		ClassMetadata cm = session.getSessionFactory().getClassMetadata(this.entry.getPojo());
+    		org.hibernate.Criteria entityCriteria = session.createCriteria(this.POJOClass.getName());
+    		ClassMetadata cm = session.getSessionFactory().getClassMetadata(this.POJOClass.getName());
     		String id = cm.getIdentifierPropertyName();
     		entityCriteria.add(Expression.in(id, idlist));
     		return entityCriteria.list();
@@ -169,7 +184,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			}
 
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
-					.toHibernateCriteria(criteria, session, this.entry.getPojo());
+					.toHibernateCriteria(criteria, session, this.POJOClass.getName());
 			if (offset != -1) {
 				hibernateCriteria.setFirstResult(offset);
 			}
@@ -218,7 +233,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			if (sessionManager.mustBeginTransaction()) {
 				session.beginTransaction();	
 			}
-			Object to = session.get(this.entry.getPojo(), pk);
+			Object to = session.get(this.POJOClass.getName(), pk);
 			if (to != null) {
 				session.delete(to);
 				removed = true;
@@ -394,7 +409,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
         Session session = sessionManager.getSession();
 		try {
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
-					.toHibernateCriteria(criteria, projectionList, session, this.entry.getPojo());
+					.toHibernateCriteria(criteria, projectionList, session, this.POJOClass.getName());
 			return hibernateCriteria.uniqueResult();
 		} catch (HibernateException he) {
 			if (he.getCause() != null) {
@@ -413,7 +428,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
         Session session = sessionManager.getSession();
 		try {
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
-					.toHibernateCriteria(criteria, projectionList, session, this.entry.getPojo());
+					.toHibernateCriteria(criteria, projectionList, session, this.POJOClass.getName());
 			return hibernateCriteria.list();
 		} catch (HibernateException he) {
 			if (he.getCause() != null) {

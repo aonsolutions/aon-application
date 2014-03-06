@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.CONTACT_USED;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -14,6 +15,8 @@ import com.code.aon.webmail.IContact;
 
 public class ContactControllerListener extends ControllerAdapter implements IWebMailConstants {
 
+	public static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {

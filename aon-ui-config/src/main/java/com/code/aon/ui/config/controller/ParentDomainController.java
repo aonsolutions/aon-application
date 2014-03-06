@@ -4,6 +4,7 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
@@ -13,12 +14,15 @@ import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.lob.SerializableBlob;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.Domain;
 import com.code.aon.ui.util.AonUtil;
 
-public class ParentDomainController {
+public class ParentDomainController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean resolved = false;
 	private Integer domain;

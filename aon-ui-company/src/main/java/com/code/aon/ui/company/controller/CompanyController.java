@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 
@@ -18,6 +19,8 @@ import com.code.aon.common.util.AonFile;
  * Controller used in the company maintenance.
  */
 public class CompanyController extends CompanyParentController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The uploaded logo file. */
 	private AonFile logoFile;

@@ -1,12 +1,18 @@
 package com.code.aon.common.dao.hibernate;
 
+import java.io.Serializable;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+
+import com.code.aon.common.AonVersion;
 
 /**
  * The Class DefaultSessionManager.
  */
-public class DefaultSessionManager implements ISessionManager {
+public class DefaultSessionManager implements ISessionManager, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String sessionFactoryName;
 

@@ -11,6 +11,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_S_INVOICE_FOOTE
 import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.enumeration.ReportPrintOption;
@@ -22,6 +23,8 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class CompanyAppParamControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {

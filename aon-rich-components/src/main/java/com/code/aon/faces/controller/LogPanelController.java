@@ -1,5 +1,6 @@
 package com.code.aon.faces.controller;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,10 +9,13 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ILogger;
 import com.code.aon.ui.util.AonUtil;
 
-public class LogPanelController implements ILogger {
+public class LogPanelController implements ILogger, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final DateFormat TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.MEDIUM); 
 

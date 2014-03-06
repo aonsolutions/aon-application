@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import com.code.aon.asset.AssetActivity;
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.LinesController;
 
 /**
@@ -13,6 +14,8 @@ import com.code.aon.ui.form.LinesController;
  * @author Consulting & Development.
  */
 public class ActivityLinesController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Date fromDateFilter;
 	private Date toDateFilter;

@@ -18,6 +18,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.audit.ActionEntry;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
@@ -26,6 +27,8 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ActionEntryController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String[] MANAGED_BEAN_SUFFIXES = new String[]{
 		IController.FORM_SUFFIX, IController.LIST_SUFFIX, IController.SEARCH_SUFFIX

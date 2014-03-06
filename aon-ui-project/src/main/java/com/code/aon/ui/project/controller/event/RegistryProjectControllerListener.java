@@ -3,6 +3,7 @@ package com.code.aon.ui.project.controller.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Project;
 import com.code.aon.ui.form.BasicController;
@@ -14,6 +15,8 @@ import com.code.aon.ui.project.controller.IProjectConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryProjectControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryProjectControllerListener.class);
 	

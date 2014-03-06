@@ -1,5 +1,7 @@
 package com.code.aon.common.dao.sql;
 
+import com.code.aon.common.AonVersion;
+
 /**
  * The class <code>DAOException</code> indicates conditions created by 
  * a <code>IDAO</code> that a reasonable AON application might want to catch.
@@ -10,7 +12,7 @@ package com.code.aon.common.dao.sql;
  */
 public class DAOException extends Exception {
 
-	private static final long serialVersionUID = 388058449916834996L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

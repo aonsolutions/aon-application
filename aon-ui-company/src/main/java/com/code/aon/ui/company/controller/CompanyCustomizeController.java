@@ -27,6 +27,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
@@ -34,6 +35,8 @@ import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.registry.controller.RegistryAttachController;
 
 public class CompanyCustomizeController extends RegistryAttachController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String title;
 	

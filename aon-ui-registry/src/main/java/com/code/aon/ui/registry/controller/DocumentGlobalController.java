@@ -5,6 +5,7 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUM
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -17,6 +18,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class DocumentGlobalController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void clearCriteria() throws ManagerBeanException {

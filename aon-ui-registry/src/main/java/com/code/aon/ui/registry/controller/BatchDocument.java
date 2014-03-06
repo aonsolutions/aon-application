@@ -19,11 +19,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -31,6 +31,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -39,6 +40,8 @@ import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
 public class BatchDocument extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BatchDocument.class);
 	
@@ -49,7 +52,7 @@ public class BatchDocument extends DataScrollerState {
 
 	public BatchDocument() {
 		this.documents = new HashSet<IAttachment>();
-		setModel(new ListDataModel());
+		setModel(new SerializableListDataModel());
 		this.checkList = new HashSet<IAttachment>();
 	}
 	
@@ -94,7 +97,7 @@ public class BatchDocument extends DataScrollerState {
 	
 	public void onClear(ActionEvent event) {
 		this.documents.clear();
-		setModel(new ListDataModel());
+		setModel(new SerializableListDataModel());
 	}
 	
 	public boolean isInBatch( IAttachment attachment ) {

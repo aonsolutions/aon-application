@@ -8,6 +8,7 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.MODULES_ENABLED;
 import static com.code.aon.ui.audit.controller.IAuditConstants.PROFILE_DENIED_ACTIONS_ENABLED;
 import static com.code.aon.ui.common.ICommonMessages.MENU;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,7 @@ import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.IAction;
 import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -65,8 +67,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 /**
  * The Class FavoriteOptionController.
  */
-public class ActionDeniedController {
+public class ActionDeniedController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
 	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY};
@@ -77,7 +81,7 @@ public class ActionDeniedController {
 	
 	private User user;
 	
-	private  Map<String,IAction> deniedActions;
+	private Map<String,IAction> deniedActions;
 	
 	private List<ApplicationOption> options;
 	
@@ -93,6 +97,7 @@ public class ActionDeniedController {
 	
 	public ActionDeniedController() {
 		this.moduleEnabled = new ModuleEnabledMap();
+		this.skipManagedBean = new SkipManagedBeanMap();
 		init();
 	}
 	
@@ -560,7 +565,6 @@ public class ActionDeniedController {
 	}
 	
 	public void initEnabledManagedBeans() {
-		this.skipManagedBean = new SkipManagedBeanMap();
 		this.enabledManagedBeans = new HashMap<String, ApplicationOption>();
 		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(true) );	
 		for( ApplicationOption option : options ) {
@@ -642,7 +646,9 @@ public class ActionDeniedController {
 		return list;		
 	}
 	
-	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> {
+	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
 		
 		@Override
 		public Boolean get(Object key) {
@@ -661,7 +667,9 @@ public class ActionDeniedController {
 		
 	}
 
-	public class ModuleEnabledMap extends AbstractMap<String,Boolean> {
+	public class ModuleEnabledMap extends AbstractMap<String,Boolean> implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 		
 		@Override
 		public Boolean get(Object key) {

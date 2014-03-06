@@ -9,11 +9,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.util.AonUtil;
 
 public class BasicOption implements Serializable, IOption {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The id. */
 	private String id;

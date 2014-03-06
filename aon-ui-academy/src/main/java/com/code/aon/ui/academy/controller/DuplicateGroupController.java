@@ -20,6 +20,7 @@ import com.code.aon.academy.CourseInstructor;
 import com.code.aon.academy.CourseSchedule;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,6 +31,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DuplicateGroupController extends GroupSelectionController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DuplicateGroupController.class);
 	
 	private AcademicYear academicYear;

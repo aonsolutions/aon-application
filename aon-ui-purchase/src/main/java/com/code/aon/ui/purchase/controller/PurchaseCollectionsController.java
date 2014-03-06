@@ -19,9 +19,10 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
  * @author Consulting & Development. Joseba Urkiri - 21-dic-2005
  */
 public class PurchaseCollectionsController {
-	List<SelectItem> purchaseStatuses;
-	List<SelectItem> documentTypes;
-	List<SelectItem> proposalStatuses;
+	
+	private List<SelectItem> purchaseStatuses;
+	private List<SelectItem> documentTypes;
+	private List<SelectItem> proposalStatuses;
 
 	public List<SelectItem> getPurchaseStatuses() {
 		if (purchaseStatuses == null) {

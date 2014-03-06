@@ -1,11 +1,16 @@
 package com.code.aon.ui.form;
 
+import java.io.Serializable;
+
 import javax.faces.model.DataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 
-public class DataScrollerState implements ITemplateController {
+public class DataScrollerState implements ITemplateController, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String beanName;
 	

@@ -1,5 +1,7 @@
 package com.code.aon.common.jndi;
 
+import com.code.aon.common.AonVersion;
+
 /**
  * The class <code>ServiceLocatorException</code> indicates conditions created by 
  * a <code>ServiceLocator</code> that a reasonable AON application might want to catch.
@@ -12,7 +14,7 @@ package com.code.aon.common.jndi;
 
 public class ServiceLocatorException extends Exception {
 
-	private static final long serialVersionUID = -2571471878289053647L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

@@ -14,6 +14,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,7 +29,7 @@ import com.esferalia.aon.entity.master.ProductDB;
 @Heritable
 public class Product extends ProductDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<Item> items = new HashSet<Item>();
 	private Set<ProductTag> tags = new HashSet<ProductTag>();

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.LocaleElement;
@@ -35,7 +36,7 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class ConfigurationController implements Serializable {
 	
-	private static final long serialVersionUID = -1159615075844874762L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Locale SPANISH = new Locale("es");
 	

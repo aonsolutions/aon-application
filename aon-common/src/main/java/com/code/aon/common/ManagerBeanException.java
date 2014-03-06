@@ -12,7 +12,7 @@ package com.code.aon.common;
 
 public class ManagerBeanException extends AonException {
 
-	private static final long serialVersionUID = 3318774380387885954L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

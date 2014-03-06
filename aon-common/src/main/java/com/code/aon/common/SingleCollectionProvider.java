@@ -18,7 +18,7 @@ public class SingleCollectionProvider implements ICollectionProvider {
 		this.to = to;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		try {
 			return getCollection(false);
@@ -28,7 +28,7 @@ public class SingleCollectionProvider implements ICollectionProvider {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")	
+	@SuppressWarnings("rawtypes")	
 	public Collection getCollection(boolean forceRefresh)
 			throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean( to.getClass() );

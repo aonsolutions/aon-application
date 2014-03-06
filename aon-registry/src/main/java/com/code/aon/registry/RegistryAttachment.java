@@ -17,6 +17,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -34,7 +35,7 @@ import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 @Heritable(force=true)
 public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment,IScopable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<RegistryAttachmentTag> tags = new HashSet<RegistryAttachmentTag>();
 	

@@ -3,6 +3,7 @@ package com.code.aon.groupware.event;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +18,8 @@ import com.code.aon.groupware.enumeration.Priority;
 
 public class ProcessTaskBeanListener extends ManagerBeanListenerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		ProcessTask to = (ProcessTask) evt.getTo();

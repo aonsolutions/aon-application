@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.IAccount;
+import com.code.aon.common.AonVersion;
 import com.code.aon.config.IBankAccountContainer;
 import com.esferalia.aon.entity.master.RegistryBankDB;
 
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.RegistryBankDB;
 @Table(name="rbank")
 public class RegistryBank extends RegistryBankDB implements IBankAccountContainer, IAccount {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public RegistryBank(){
 		setActive(true);

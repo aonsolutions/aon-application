@@ -8,10 +8,12 @@ import java.io.Serializable;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
+import com.code.aon.common.AonVersion;
+
 
 public class JoinProperty implements Serializable { 
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String alias;
 	

@@ -1,7 +1,13 @@
 package com.code.aon.stat;
 
+import java.io.Serializable;
 
-public class Stat {
+import com.code.aon.common.AonVersion;
+
+
+public class Stat implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer key;
 	private String name;

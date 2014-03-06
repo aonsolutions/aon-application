@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonVersion;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IContact;
 
 public class MultiSelectionEmailBean extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectionEmail> emails; 
 
@@ -33,7 +36,7 @@ public class MultiSelectionEmailBean extends DataScrollerState {
 		            emails.add(se);
 	            }					
 			}
-	    	setModel(new ListDataModel(emails));
+	    	setModel(new SerializableListDataModel(emails));
 		} else {
 			for( SelectionEmail email : emails ) {
 				email.setSelected( false );

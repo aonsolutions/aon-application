@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -49,7 +50,7 @@ import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.IMailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CompanyEmailUtil {
+public class CompanyEmailUtil implements Serializable {
 
 	private final static String PDF_EXTENSION = "." + MimeType.MIME_PDF.getExtension();
 	

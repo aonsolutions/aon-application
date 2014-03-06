@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -23,6 +24,8 @@ import com.code.aon.ui.config.event.ScopeSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentitySearchListener extends ScopeSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Category EMPTY_CATEGORY = new Category();
 	

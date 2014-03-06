@@ -45,7 +45,7 @@ public class EnumLocaleConverter implements Converter {
 	 * @param comp
 	 * @return Class
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected Class getEnumClass(FacesContext ctx, UIComponent comp) {
 		ValueExpression vb = comp.getValueExpression("value");
 		Class enumType = vb == null ? null : vb.getType(ctx.getELContext());

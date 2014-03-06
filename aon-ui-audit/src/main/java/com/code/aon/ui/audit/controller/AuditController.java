@@ -1,9 +1,12 @@
 package com.code.aon.ui.audit.controller;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
 import com.code.aon.ui.audit.AuditManager;
@@ -13,7 +16,9 @@ import com.code.aon.ui.util.AonUtil;
  * @author atellitu
  *
  */
-public class AuditController {
+public class AuditController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuditController.class);
 

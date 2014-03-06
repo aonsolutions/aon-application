@@ -26,7 +26,7 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 
 	protected static final String COURSE_CONTROLLER_NAME = "course";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<AbsenceReportTo> list = new ArrayList<AbsenceReportTo>();
 		CourseController courseController = (CourseController) FormUtil.getController(COURSE_CONTROLLER_NAME);
@@ -46,12 +46,12 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected List obtainCourseAlumnList(Course course)throws ManagerBeanException {
 		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
 		Criteria criteria = new Criteria();

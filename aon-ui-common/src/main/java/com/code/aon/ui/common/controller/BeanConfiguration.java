@@ -34,12 +34,13 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
 
 public class BeanConfiguration implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BeanConfiguration.class);
 	

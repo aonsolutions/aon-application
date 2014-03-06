@@ -1,14 +1,15 @@
 package com.code.aon.ui.stat.controller;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -22,10 +23,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProductStatEngineController {
+public class ProductStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Item  item;
 	private Double pendingSaleQuantity;
@@ -112,7 +116,7 @@ public class ProductStatEngineController {
 
 	public DataModel getLatestEntriesModel() {
 		if (latestEntriesModel == null) {
-			latestEntriesModel = new ListDataModel(getLatestEntriesList());
+			latestEntriesModel = new SerializableListDataModel(getLatestEntriesList());
 		}
 		return latestEntriesModel;
 	}
@@ -123,7 +127,7 @@ public class ProductStatEngineController {
 
 	public DataModel getLatestShipmentsModel() {
 		if (latestShipmentsModel == null) {
-			latestShipmentsModel = new ListDataModel(getLatestShipmentsList());
+			latestShipmentsModel = new SerializableListDataModel(getLatestShipmentsList());
 		}
 		return latestShipmentsModel;
 	}

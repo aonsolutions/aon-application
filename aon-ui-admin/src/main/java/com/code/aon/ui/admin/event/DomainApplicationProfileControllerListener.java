@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.ui.admin.controller.ApplicationProfileController;
@@ -22,6 +23,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class DomainApplicationProfileControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationProfileControllerListener.class);
 

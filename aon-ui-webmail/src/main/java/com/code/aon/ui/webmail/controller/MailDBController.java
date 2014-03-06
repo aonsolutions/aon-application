@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
@@ -20,9 +21,11 @@ import com.code.aon.ui.form.BasicController;
 
 public abstract class MailDBController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(MailDBController.class);
 	
-	private Converter converter;
+	private transient Converter converter;
 	
 	private User user;
 	

@@ -3,6 +3,7 @@ package com.code.aon.ui.webmail.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +15,8 @@ import com.code.aon.webmail.db.ContactData;
 
 public class ContactDBControllerListener extends ContactControllerListener {
 
+	public static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContactDBControllerListener.class);
 	
 	private ContactData data;

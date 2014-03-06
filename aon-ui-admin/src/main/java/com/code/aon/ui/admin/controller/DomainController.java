@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -92,6 +93,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
 	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;	

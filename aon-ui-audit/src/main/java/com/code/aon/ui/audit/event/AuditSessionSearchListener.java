@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.Session;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,6 +28,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditSessionSearchListener extends ControllerSearchListenerEx {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Integer applicationId;
 	

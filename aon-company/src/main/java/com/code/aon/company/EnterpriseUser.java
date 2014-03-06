@@ -5,6 +5,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.master.UserDB;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.UserDB;
 @Table(name="user")
 public class EnterpriseUser extends UserDB implements IRegistry{
 	
-	private static final long serialVersionUID = -151638379810317997L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Enterprise enterprise; 	
     private Registry registry; 	

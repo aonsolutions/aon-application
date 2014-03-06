@@ -6,6 +6,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
@@ -16,6 +17,8 @@ import com.code.aon.ui.util.DownloadUtil;
  * The Class AttachmentController.
  */
 public class AttachmentController extends LinesController implements IAttachmentController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The uploaded file. */
 	private AonFile aonFile;

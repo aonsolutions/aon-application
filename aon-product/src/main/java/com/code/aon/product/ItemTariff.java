@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
@@ -16,7 +17,7 @@ import com.esferalia.aon.entity.master.ItemTariffDB;
 @Heritable
 public class ItemTariff extends ItemTariffDB implements IPriceable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void setProfitPercent(double profitPercent) {
 		super.setProfitPercent( CommonUtil.round(profitPercent, 3));

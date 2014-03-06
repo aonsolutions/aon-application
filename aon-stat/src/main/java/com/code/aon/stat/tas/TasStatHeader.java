@@ -1,7 +1,13 @@
 package com.code.aon.stat.tas;
 
+import java.io.Serializable;
 
-public class TasStatHeader {
+import com.code.aon.common.AonVersion;
+
+
+public class TasStatHeader implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private String document;

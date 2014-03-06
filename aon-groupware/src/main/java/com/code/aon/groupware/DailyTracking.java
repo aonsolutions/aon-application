@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.DailyTrackingDB;
 
@@ -11,7 +12,8 @@ import com.esferalia.aon.entity.master.DailyTrackingDB;
 @Table(name="daily_tracking")
 public class DailyTracking extends DailyTrackingDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private int hours;
 	private int minutes;
 

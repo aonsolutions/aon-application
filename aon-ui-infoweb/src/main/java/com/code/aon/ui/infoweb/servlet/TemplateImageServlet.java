@@ -15,11 +15,12 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.infoweb.util.PathUtil;
 
 public class TemplateImageServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 481356189045635775L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateImageServlet.class.getName());
 	

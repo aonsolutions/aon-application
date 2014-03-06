@@ -1,5 +1,6 @@
 package com.code.aon.ui.purchase.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.ItemComposition;
@@ -11,6 +12,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.purchase.controller.PurchaseDetailController;
 
 public class PurchaseDetailCompositeListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {

@@ -7,11 +7,11 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -57,7 +57,7 @@ public class EnterpriseListController {
 	
 	public DataModel getModel() {
 		if(model==null){
-			model = new ListDataModel(getList());
+			model = new SerializableListDataModel(getList());
 		}
 		return model;
 	}

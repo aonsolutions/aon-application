@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +19,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -40,6 +40,7 @@ import com.code.aon.purchase.enumeration.ProposalTransferStatus;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.DataScrollerState;
@@ -52,6 +53,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class PurchaseOrderController extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderController.class.getName());
 	
@@ -184,7 +187,7 @@ public class PurchaseOrderController extends DataScrollerState {
 			ig.setTotalItem(((Long) ob[2]));
 			itemGroupList.add(ig);
 		}
-		setModel(new ListDataModel(itemGroupList));
+		setModel(new SerializableListDataModel(itemGroupList));
 		setProductIndex(-1);
 	}
 	
@@ -197,7 +200,7 @@ public class PurchaseOrderController extends DataScrollerState {
 	}
 	
 	private void buildGroupDetail() throws ManagerBeanException{
-		detailModel = new ListDataModel(obtainGroupDetail());
+		detailModel = new SerializableListDataModel(obtainGroupDetail());
 		setDetailIndex(-1);
 	}
 
@@ -584,7 +587,8 @@ public class PurchaseOrderController extends DataScrollerState {
 		}
 	}
 	
-	public class OrderParams{
+	public class OrderParams {
+		
 		private Date startDate;
 		private Date endDate;
 		private WorkPlace workPlace;

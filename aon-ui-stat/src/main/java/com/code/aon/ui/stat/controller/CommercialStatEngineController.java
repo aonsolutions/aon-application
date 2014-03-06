@@ -19,6 +19,7 @@ import static com.code.aon.ui.common.ICommonMessages.TARGET;
 import static com.code.aon.ui.stat.controller.IStatConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +33,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -46,6 +46,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -68,13 +69,16 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CommercialStatEngineController {
+public class CommercialStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String COMMERCIAL_TRACKING_TARGET_ID = "CommercialTracking.project.target.id";
 
@@ -138,9 +142,6 @@ public class CommercialStatEngineController {
 	private String offerBackAction;
 	private IPriceStrategy priceStrategy;
 
-	
-	
-	
 	public String getSellerName() {
 		return sellerName;
 	}
@@ -206,7 +207,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getOffersModel() {
 		if (offersModel == null) {
-			offersModel = new ListDataModel(getOfferList());
+			offersModel = new SerializableListDataModel(getOfferList());
 		}
 		return offersModel;
 	}
@@ -345,7 +346,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getSummaryModel() {
 		if (summaryModel == null) {
-			summaryModel = new ListDataModel(getSummary());
+			summaryModel = new SerializableListDataModel(getSummary());
 		}
 		return summaryModel;
 
@@ -357,7 +358,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getActivityModel() {
 		if (activityModel == null) {
-			activityModel = new ListDataModel(getActivitySummary());
+			activityModel = new SerializableListDataModel(getActivitySummary());
 		}
 		return activityModel;
 	}
@@ -424,7 +425,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getPendingVisitsModel() {
 		if (pendingVisitsModel == null) {
-			pendingVisitsModel = new ListDataModel(getPendingVisitsList());
+			pendingVisitsModel = new SerializableListDataModel(getPendingVisitsList());
 		}
 		return pendingVisitsModel;
 	}
@@ -435,7 +436,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getDoneOffersModel() {
 		if (doneOffersModel == null) {
-			doneOffersModel = new ListDataModel(getDoneOffersList());
+			doneOffersModel = new SerializableListDataModel(getDoneOffersList());
 		}
 		return doneOffersModel;
 	}
@@ -446,7 +447,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getClosedOffersModel() {
 		if (closedOffersModel == null) {
-			closedOffersModel = new ListDataModel(getClosedOffersList());
+			closedOffersModel = new SerializableListDataModel(getClosedOffersList());
 		}
 		return closedOffersModel;
 	}
@@ -457,7 +458,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getLostOffersModel() {
 		if (lostOffersModel == null) {
-			lostOffersModel = new ListDataModel(getLostOffersList());
+			lostOffersModel = new SerializableListDataModel(getLostOffersList());
 		}
 		return lostOffersModel;
 	}
@@ -468,7 +469,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getVisitsModel() {
 		if (visitsModel == null) {
-			visitsModel = new ListDataModel(getVisitsList());
+			visitsModel = new SerializableListDataModel(getVisitsList());
 		}
 		return visitsModel;
 	}
@@ -479,7 +480,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getPendingOffersModel() {
 		if (pendingOffersModel == null) {
-			pendingOffersModel = new ListDataModel(getPendingOffersList());
+			pendingOffersModel = new SerializableListDataModel(getPendingOffersList());
 		}
 		return pendingOffersModel;
 	}
@@ -546,7 +547,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getProductStatModel() {
 		if (productStatModel == null) {
-			productStatModel = new ListDataModel(getProductStats());
+			productStatModel = new SerializableListDataModel(getProductStats());
 		}
 		return productStatModel;
 	}
@@ -613,7 +614,7 @@ public class CommercialStatEngineController {
 
 	public DataModel getYearStatModel() {
 		if (yearStatModel == null) {
-			yearStatModel = new ListDataModel(getYearStats());
+			yearStatModel = new SerializableListDataModel(getYearStats());
 		}
 		return yearStatModel;
 	}
@@ -1315,7 +1316,7 @@ public class CommercialStatEngineController {
 
 			activitiesList.add(cmt);
 		}
-		setVisitsModel(new ListDataModel(getActivitiesList()));
+		setVisitsModel(new SerializableListDataModel(getActivitiesList()));
 
 		setReportName(AonUtil.getMessage(REPORT_ACTIVITIES_VIEW));
 	}
@@ -1527,7 +1528,7 @@ public class CommercialStatEngineController {
 			CommercialTracking cmt = (CommercialTracking) to;
 			activitiesList.add(cmt);
 		}
-		setVisitsModel(new ListDataModel(getActivitiesList()));
+		setVisitsModel(new SerializableListDataModel(getActivitiesList()));
 
 		setReportName(AonUtil.getMessage(REPORT_ACTIVITIES_VIEW));
 	}

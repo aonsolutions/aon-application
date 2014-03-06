@@ -3,6 +3,8 @@ package com.code.aon.common.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
+
 /**
  * This is a utility class that can be used by <code>IManagerBean</code> classes
  * that support CRUD vetoable operations.  
@@ -14,6 +16,8 @@ import java.util.List;
  */
 
 public class ManagerBeanVetoListenerSupport implements IManagerBeanVetoListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     // listener list.
 	private List<IManagerBeanVetoListener> listeners;

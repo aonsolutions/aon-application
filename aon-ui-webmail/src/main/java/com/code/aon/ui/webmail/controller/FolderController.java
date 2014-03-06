@@ -20,6 +20,7 @@ import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
@@ -32,6 +33,8 @@ import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
 public class FolderController extends DataScrollerState implements IMessageContainer, IWebMailConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
 	

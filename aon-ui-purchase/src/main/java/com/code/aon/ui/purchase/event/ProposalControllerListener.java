@@ -2,6 +2,7 @@ package com.code.aon.ui.purchase.event;
 
 import java.util.Date;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.purchase.Proposal;
@@ -17,6 +18,8 @@ import com.code.aon.ui.purchase.controller.ProposalController.ProposalType;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProposalControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

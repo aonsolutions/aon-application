@@ -139,7 +139,8 @@ public class BeanConfigManager {
 			} else {
 				dao = getPojoDAO( config.getPojoClass(), sessionFactoryName );
 			}
-			BasicManagerBean bean = new BasicManagerBean(dao);
+			BasicManagerBean bean = new BasicManagerBean();
+			bean.setDao(dao);
 			addBeanListeners(bean, config);
 
 			for (Object interfaz : ClassUtils.getAllInterfaces(config.getPojoClass())) {

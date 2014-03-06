@@ -1,6 +1,7 @@
 package com.code.aon.common.event;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 
 /**
  * The class <code>ManagerBeanVetoListenerException</code> indicates conditions created by 
@@ -15,7 +16,7 @@ import com.code.aon.common.AonException;
 
 public class ManagerBeanVetoListenerException extends AonException {
 
-	private static final long serialVersionUID = 591316645954253752L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

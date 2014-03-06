@@ -1,15 +1,19 @@
 package com.code.aon.ui.stat.controller;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.common.AonVersion;
 import com.code.aon.tas.TasItem;
 import com.code.aon.ui.util.AonUtil;
 
-public class TasStatParams {
+public class TasStatParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static String PERCENT = "%";
 	

@@ -12,7 +12,7 @@ package com.code.aon.common;
  */
 public class AonException extends Exception {
 
-	private static final long serialVersionUID = -5386401441718903779L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

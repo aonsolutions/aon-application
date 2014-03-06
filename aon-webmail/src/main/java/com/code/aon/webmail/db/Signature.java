@@ -4,6 +4,7 @@ package com.code.aon.webmail.db;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.webmail.ISignature;
 import com.esferalia.aon.entity.master.SignatureDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.SignatureDB;
 @Table(name="signature")
 public class Signature extends SignatureDB implements ISignature {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	
 }

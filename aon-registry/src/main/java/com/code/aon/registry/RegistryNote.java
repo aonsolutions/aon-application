@@ -5,13 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.RegistryNoteDB;
 
 @Entity
 @Table(name="rnote")
 public class RegistryNote extends RegistryNoteDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
     private int SHORT_DESC_LENGTH = 45; 
 
 	@Transient

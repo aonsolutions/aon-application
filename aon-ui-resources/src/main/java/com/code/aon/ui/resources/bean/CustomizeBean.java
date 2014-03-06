@@ -3,6 +3,7 @@ package com.code.aon.ui.resources.bean;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -19,12 +20,15 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 
-public class CustomizeBean {
+public class CustomizeBean implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomizeBean.class.getName());
 	
@@ -76,8 +80,6 @@ public class CustomizeBean {
 	
 	private Integer companyId;
 	
-	private ResourceBundle bundle;	
-	
 	public CustomizeBean() {
 		this.fontStyle = getColorStyle(FONT_STYLE_DEFAULT);
 	}
@@ -91,12 +93,13 @@ public class CustomizeBean {
 		this.favicon = resolver.getResolve().get(FAVICON_DEFAULT);
 	}
 
-	public void initMessages( Locale locale ) {
-		bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, locale);
+	public ResourceBundle initMessages( Locale locale ) {
+		ResourceBundle bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, locale);
 		this.applicationTitle = bundle.getString( ICommonMessages.APPLICATION_TITLE );
 		this.supportTelephone = bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER) +
 				" · " + bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER2);
 		this.supportEmail = bundle.getString(ICommonMessages.SUPPORT_SEND_EMAIL);
+		return bundle;
 	}	
 	
 	/**
@@ -135,10 +138,6 @@ public class CustomizeBean {
 			DatabaseUtil.closeQuietly(connection);
 		}
 	}
-	
-	public ResourceBundle getBundle() {
-		return bundle;
-	}	
 	
 	private Integer getCompanyId( Connection connection ) {
 		QueryRunner run = new QueryRunner();

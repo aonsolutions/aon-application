@@ -12,13 +12,13 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -38,6 +38,7 @@ import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
@@ -45,7 +46,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProcessLauncherWizard implements Serializable {
 
-	private static final long serialVersionUID = 8114094812276365212L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessLauncherWizard.class);
 	private static final String[] STEPS = { "process_wizard_step0","process_wizard_step1", "process_wizard_step2","process_wizard_step3" };
 
@@ -220,7 +222,7 @@ public class ProcessLauncherWizard implements Serializable {
 
 	public DataModel getProjectsModel() {
 		if (projectsModel == null) {
-			projectsModel = new ListDataModel(getProjects());
+			projectsModel = new SerializableListDataModel(getProjects());
 		}
 		return projectsModel;
 	}

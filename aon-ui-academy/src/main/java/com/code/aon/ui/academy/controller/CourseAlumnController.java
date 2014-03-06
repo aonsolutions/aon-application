@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -31,6 +32,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CourseAlumnController extends LinesController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CourseAlumnController.class);
 	
 	private IControllerListener customerFilter;

@@ -1,17 +1,18 @@
 package com.code.aon.ui.project.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -20,12 +21,15 @@ import com.code.aon.project.Project;
 import com.code.aon.project.ProjectActivity;
 import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ImportActivitiesController {
+public class ImportActivitiesController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ImportActivitiesController.class);
 	
@@ -51,7 +55,7 @@ public class ImportActivitiesController {
 
 	public DataModel getModel() {
 		if (model == null) {
-			setModel(new ListDataModel());
+			setModel(new SerializableListDataModel());
 		}
 		return model;
 	}
@@ -147,7 +151,7 @@ public class ImportActivitiesController {
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error loading dossiers", e);
 		}
-		setModel(new ListDataModel(list));
+		setModel(new SerializableListDataModel(list));
 	}
 
 	

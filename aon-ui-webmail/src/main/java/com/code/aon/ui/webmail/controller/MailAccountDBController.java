@@ -13,6 +13,7 @@ import javax.faces.model.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -30,6 +31,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class MailAccountDBController extends MailDBController implements IMailAccountController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountDBController.class);
 	
 	@Override

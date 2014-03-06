@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -28,6 +27,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -44,12 +44,15 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyWebInfoStyleController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyWebInfoStyleController.class.getName());
 
@@ -161,7 +164,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 				vars.add(wis);
 			}
 			sortVariables(vars);
-			model = new ListDataModel(vars);
+			model = new SerializableListDataModel(vars);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
@@ -406,7 +409,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 	}
 
 	public void onLoad( ActionEvent event ) {
-		if (this.model == null) this.model = new ListDataModel();
+		if (this.model == null) this.model = new SerializableListDataModel();
 		getTemplate();
 	}
 

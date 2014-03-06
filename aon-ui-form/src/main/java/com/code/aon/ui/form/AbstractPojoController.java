@@ -1,11 +1,14 @@
 package com.code.aon.ui.form;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,7 +22,9 @@ import com.code.aon.ui.util.AonUtil;
  * 
  * @author Consulting & Development.
  */
-public class AbstractPojoController {
+public class AbstractPojoController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPojoController.class);
 

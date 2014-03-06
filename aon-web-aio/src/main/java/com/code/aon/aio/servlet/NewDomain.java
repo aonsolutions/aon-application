@@ -12,8 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
+
 public class NewDomain extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public NewDomain() {
 		super();

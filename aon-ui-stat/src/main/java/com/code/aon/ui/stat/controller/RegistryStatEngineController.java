@@ -4,18 +4,19 @@ import static com.code.aon.ui.stat.controller.IStatConstants.DELIVERY_CONTROLLER
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.SALES_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,13 +33,16 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class RegistryStatEngineController {
+public class RegistryStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Registry registry;
 	private DataModel pendingInvoiceModel;
@@ -92,7 +96,7 @@ public class RegistryStatEngineController {
 
 	public DataModel getPendingInvoiceModel() {
 		if (pendingInvoiceModel == null) {
-			pendingInvoiceModel = new ListDataModel(getPendingInvoiceList());
+			pendingInvoiceModel = new SerializableListDataModel(getPendingInvoiceList());
 		}
 		return pendingInvoiceModel;
 	}
@@ -103,7 +107,7 @@ public class RegistryStatEngineController {
 
 	public DataModel getUnpayedFinanceModel() {
 		if (unpayedFinanceModel == null) {
-			unpayedFinanceModel = new ListDataModel(getPendingFinanceList());
+			unpayedFinanceModel = new SerializableListDataModel(getPendingFinanceList());
 		}
 		return unpayedFinanceModel;
 	}
@@ -114,7 +118,7 @@ public class RegistryStatEngineController {
 
 	public DataModel getBoughtProductModel() {
 		if (boughtProductModel == null) {
-			boughtProductModel = new ListDataModel(getBoughtProductList());
+			boughtProductModel = new SerializableListDataModel(getBoughtProductList());
 		}
 		return boughtProductModel;
 	}
@@ -125,7 +129,7 @@ public class RegistryStatEngineController {
 
 	public DataModel getPendingDeliveryModel() {
 		if (pendingDeliveryModel == null) {
-			pendingDeliveryModel = new ListDataModel(getPendingDeliveryList());
+			pendingDeliveryModel = new SerializableListDataModel(getPendingDeliveryList());
 		}
 		return pendingDeliveryModel;
 	}
@@ -136,7 +140,7 @@ public class RegistryStatEngineController {
 
 	public DataModel getPendingSalesModel() {
 		if (pendingSalesModel == null) {
-			pendingSalesModel = new ListDataModel(getPendingSalesList());
+			pendingSalesModel = new SerializableListDataModel(getPendingSalesList());
 		}
 		return pendingSalesModel;
 	}
@@ -147,7 +151,7 @@ public class RegistryStatEngineController {
 
 	public DataModel getPendingOfferModel() {
 		if (pendingOfferModel == null) {
-			pendingOfferModel = new ListDataModel(getPendingOfferList());
+			pendingOfferModel = new SerializableListDataModel(getPendingOfferList());
 		}
 		return pendingOfferModel;
 	}

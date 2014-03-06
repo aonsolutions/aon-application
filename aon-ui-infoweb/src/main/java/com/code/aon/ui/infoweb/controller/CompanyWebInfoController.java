@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +20,8 @@ import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyWebInfoController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public void onLoadWebInfo(ActionEvent event) throws ManagerBeanException{
 		IController companyController = (IController) FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);

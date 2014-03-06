@@ -6,10 +6,13 @@ import org.hibernate.event.PreInsertEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
+
 public class DomainEntityListener implements PreInsertEventListener {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomainEntityListener.class);
-	private static final long serialVersionUID = 4075158916830326002L;
 
 	@Override
 	public boolean onPreInsert(PreInsertEvent event) {

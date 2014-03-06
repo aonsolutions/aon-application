@@ -1,10 +1,11 @@
 package com.code.aon.ui.registry.controller;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 
 public class RegistryReport implements ITransferObject {
 
-	private static final long serialVersionUID = -2726021028034361397L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Integer id;
 	private String document;

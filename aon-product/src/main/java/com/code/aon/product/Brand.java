@@ -3,6 +3,7 @@ package com.code.aon.product;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.BrandDB;
 
@@ -11,6 +12,6 @@ import com.esferalia.aon.entity.master.BrandDB;
 @Heritable
 public class Brand extends BrandDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 }

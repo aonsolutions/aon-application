@@ -1,5 +1,6 @@
 package com.code.aon.ui.groupware.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Task;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -9,6 +10,8 @@ import com.code.aon.ui.groupware.controller.TaskController;
 import com.code.aon.ui.util.AonUtil;
 
 public class TaskControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {

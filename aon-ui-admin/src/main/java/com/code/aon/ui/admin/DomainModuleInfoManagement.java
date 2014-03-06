@@ -1,11 +1,14 @@
 package com.code.aon.ui.admin;
 
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.DomainApplication;
 
 
 public class DomainModuleInfoManagement extends DomainModuleInfo {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DomainModuleInfo management;
 	

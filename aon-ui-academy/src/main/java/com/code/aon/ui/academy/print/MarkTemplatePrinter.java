@@ -32,7 +32,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportTemplateMark> reportTemplateMarkList = new LinkedList<ReportTemplateMark>();
 		try{
@@ -52,7 +52,6 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return reportTemplateMarkList;
 	}
 
-	@SuppressWarnings("unchecked")
 	private TaskHolder obtainCourseInstructor(Course course) throws ManagerBeanException {
 		IManagerBean courseInstructorBean = BeanManager.getManagerBean(CourseInstructor.class);
 		Criteria criteria = new Criteria();
@@ -65,12 +64,11 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void obtainDetails(ReportTemplateMark reportTemplateMark, Course course){
 		List<CourseAlumn> courseAlumns = obtainAlumns(course);
 		Iterator<CourseAlumn> courseAlumnsIter = courseAlumns.iterator(); 
@@ -84,7 +82,6 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<CourseAlumn> obtainAlumns(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -93,7 +90,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 			criteria.addOrder(bean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 			List<CourseAlumn> lst = new ArrayList<CourseAlumn>();
-			Iterator iter = bean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){
 				lst.add((CourseAlumn)iter.next());
 			}
@@ -104,14 +101,13 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<CourseAcademicSkill> obtainSkills(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId());
 			List<CourseAcademicSkill> lst = new ArrayList<CourseAcademicSkill>();
-			Iterator iter = bean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){
 				lst.add((CourseAcademicSkill)iter.next());
 			}

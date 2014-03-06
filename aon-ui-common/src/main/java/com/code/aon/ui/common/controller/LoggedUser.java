@@ -1,9 +1,12 @@
 package com.code.aon.ui.common.controller;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
@@ -11,8 +14,10 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * The Class LoggedUser.
  */
-public class LoggedUser {
+public class LoggedUser implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	/** The logged. */
 	private boolean logged;
 	

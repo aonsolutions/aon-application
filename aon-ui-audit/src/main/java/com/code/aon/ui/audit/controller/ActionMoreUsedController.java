@@ -1,12 +1,12 @@
 package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -17,14 +17,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.ActionEntry;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
-public class ActionMoreUsedController extends DataScrollerState implements IAuditConstants {
+public class ActionMoreUsedController extends DataScrollerState implements IAuditConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionMoreUsedController.class);
 	
@@ -32,7 +36,7 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 	
 	public void onSearch( ActionEvent event ) {
 		List<ActionMoreUsed> list = getMoreUsed(-1);
-		setModel(new ListDataModel(list));
+		setModel(new SerializableListDataModel(list));
 	}
 
 	private ApplicationOptionController getOptionController() {

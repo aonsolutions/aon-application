@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.Session;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -16,12 +16,15 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditSessionMoreUsedController extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@SuppressWarnings("unchecked")
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
@@ -54,7 +57,7 @@ public class AuditSessionMoreUsedController extends DataScrollerState {
 	        	}
 			}
 		}
-		setModel(new ListDataModel( list ));
+		setModel(new SerializableListDataModel( list ));
 	}
 
 	public String getCurrentDescription() throws ManagerBeanException {

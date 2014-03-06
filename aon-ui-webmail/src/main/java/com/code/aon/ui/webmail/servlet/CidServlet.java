@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.util.ServleJSFtUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -24,7 +25,7 @@ import com.code.aon.webmail.bean.AonMessage;
 
 public class CidServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -2679137324617541495L;
+	public static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(CidServlet.class);
 	

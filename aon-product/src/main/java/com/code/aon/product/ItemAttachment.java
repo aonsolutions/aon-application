@@ -5,6 +5,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.ItemAttachmentDB;
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.ItemAttachmentDB;
 @Heritable
 public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Integer size;
 

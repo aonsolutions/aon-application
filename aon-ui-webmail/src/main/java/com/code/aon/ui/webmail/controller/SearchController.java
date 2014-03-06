@@ -8,6 +8,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.Ordering;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
@@ -17,6 +18,8 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonSearcher;
 
 public class SearchController extends DataScrollerState implements IMessageContainer, IWebMailConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Ordering[] sortOrders;
 	

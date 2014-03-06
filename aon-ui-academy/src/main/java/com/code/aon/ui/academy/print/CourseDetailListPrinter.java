@@ -33,7 +33,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportCourseAlumn> reportCourseAlumnList = new LinkedList<ReportCourseAlumn>();
 		try {
@@ -58,12 +58,11 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return reportCourseAlumnList;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private String obtainPreviousCourse(CourseAlumn courseAlumn) {
 		try {
 			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -73,7 +72,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ACADEMIC_YEAR_ID), courseAlumn.getCourse().getAcademicYear().getId()));
 			criteria.addExpression(ExpressionUtilities.getLessThanExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_START_DATE), courseAlumn.getCourse().getStartDate()));
 			criteria.addOrder(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_START_DATE),false);
-			Iterator iter = courseAlumnBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = courseAlumnBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				CourseAlumn previousCourseAlumn = (CourseAlumn)iter.next();
 				return previousCourseAlumn.getCourse().getAcademicYear().getDescription() + " " + previousCourseAlumn.getCourse().getCode();
@@ -84,7 +83,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private List obtainCourseAlumnList() throws ManagerBeanException, ExpressionException {
 		CourseController courseController = (CourseController)FormUtil.getController(COURSE_CONTROLLER_NAME);
 		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class.getName());
@@ -102,13 +101,12 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return courseAlumnBean.getList(criteria);
 	}
 
-	@SuppressWarnings("unchecked")
 	private Date obtainBirthDate(Registry registry) {
 		try {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_ID), registry.getId());
-			Iterator iter = personBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = personBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return ((Person)iter.next()).getBirthDate();
 			}
@@ -118,14 +116,13 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private String obtainPhone(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.FIXED_PHONE);
-			Iterator iter = registryMediaBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = registryMediaBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return ((RegistryMedia)iter.next()).getValue();
 			}
@@ -135,14 +132,13 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private String obtainCellular(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
-			Iterator iter = registryMediaBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = registryMediaBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return ((RegistryMedia)iter.next()).getValue();
 			}

@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -8,13 +9,16 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainModuleInfo {
+public class DomainModuleInfo implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainModuleInfo.class);
 	

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -14,7 +15,7 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class OptionGroup implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/** The id. */
 	private String id;

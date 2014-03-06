@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -9,11 +10,14 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonVersion;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainInfo {
+public class DomainInfo implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String name;
 	

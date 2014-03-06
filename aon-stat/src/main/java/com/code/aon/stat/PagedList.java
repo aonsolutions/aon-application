@@ -1,10 +1,14 @@
 package com.code.aon.stat;
 
+import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
-public class PagedList<E> {
+public class PagedList<E> implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<E> list;
 	

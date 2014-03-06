@@ -1,5 +1,7 @@
 package com.code.aon.common.event;
 
+import java.io.Serializable;
+
 import com.code.aon.common.ManagerBeanException;
 
 /**
@@ -11,7 +13,7 @@ import com.code.aon.common.ManagerBeanException;
  *
  */
 
-public interface IManagerBeanListener {
+public interface IManagerBeanListener extends Serializable {
 
 	/**
      * This method gets called when a bean is inserted.

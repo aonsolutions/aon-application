@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller.event;
 
 import java.util.Iterator;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -19,6 +20,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {

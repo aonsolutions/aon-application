@@ -25,6 +25,7 @@ import static com.code.aon.ui.common.ICommonMessages.SUPPLIER;
 import static com.code.aon.ui.common.ICommonMessages.YEAR;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,12 +39,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -61,13 +62,16 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class StatEngineController {
+public class StatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<Stat> yearStats;
 	private List<Stat> monthStats;
@@ -124,7 +128,7 @@ public class StatEngineController {
 	public DataModel getProductModel() {
 		setProductModel(null);
 		if (productModel == null) {
-			productModel  = new ListDataModel(getProductStats());
+			productModel  = new SerializableListDataModel(getProductStats());
 		}
 		return productModel ;
 	}
@@ -286,7 +290,7 @@ public class StatEngineController {
 
 	public DataModel getYearStatModel() {
 		if (yearStatModel == null) {
-			yearStatModel = new ListDataModel(getYearStats());
+			yearStatModel = new SerializableListDataModel(getYearStats());
 		}
 		return yearStatModel;
 	}
@@ -297,7 +301,7 @@ public class StatEngineController {
 
 	public DataModel getMonthStatModel() {
 		if (monthStatModel == null) {
-			monthStatModel = new ListDataModel(getMonthStats());
+			monthStatModel = new SerializableListDataModel(getMonthStats());
 		}
 		return monthStatModel;
 	}
@@ -308,7 +312,7 @@ public class StatEngineController {
 
 	public DataModel getDayStatModel() {
 		if (dayStatModel == null) {
-			dayStatModel = new ListDataModel(getDayStats());
+			dayStatModel = new SerializableListDataModel(getDayStats());
 		}
 		return dayStatModel;
 	}
@@ -319,7 +323,7 @@ public class StatEngineController {
 
 	public DataModel getCustomerStatModel() {
 		if (customerStatModel == null) {
-			customerStatModel = new ListDataModel(getCustomerStats());
+			customerStatModel = new SerializableListDataModel(getCustomerStats());
 		}
 		return customerStatModel;
 	}
@@ -330,7 +334,7 @@ public class StatEngineController {
 
 	public DataModel getAbcStatModel() {
 		if (abcStatModel == null) {
-			abcStatModel = new ListDataModel(getAbcStats());
+			abcStatModel = new SerializableListDataModel(getAbcStats());
 		}
 		return abcStatModel;
 	}
@@ -341,7 +345,7 @@ public class StatEngineController {
 
 	public DataModel getInvoicesModel() {
 		if (invoicesModel == null) {
-			invoicesModel = new ListDataModel(getInvoices());
+			invoicesModel = new SerializableListDataModel(getInvoices());
 		}
 		return invoicesModel;
 	}

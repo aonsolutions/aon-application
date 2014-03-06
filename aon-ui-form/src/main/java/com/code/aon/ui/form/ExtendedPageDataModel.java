@@ -22,6 +22,7 @@ import org.richfaces.model.SortField2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -35,7 +36,7 @@ import com.code.aon.common.ManagerBeanException;
  */
 public class ExtendedPageDataModel extends ExtendedDataModel implements Serializable, Modifiable {
 
-	private static final long serialVersionUID = 5496498615778179844L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** Obtains a suitable Logger. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedPageDataModel.class);

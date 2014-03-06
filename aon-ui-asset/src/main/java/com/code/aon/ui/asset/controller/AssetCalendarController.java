@@ -11,7 +11,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
@@ -19,15 +18,19 @@ import com.code.aon.asset.AssetType;
 import com.code.aon.asset.Feature;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.asset.enumeration.ViewerType;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AssetCalendarController extends BasicController{
+public class AssetCalendarController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Date calendarDay;
 	private Criteria criteria;
@@ -170,7 +173,7 @@ public class AssetCalendarController extends BasicController{
 			ActivityDialogController adc = (ActivityDialogController)AonUtil.getRegisteredBean("activityDialog");
 			adc.onInitializeRequest(null);
 		}
-		dayAssetModel = new ListDataModel(getDayAssetList());
+		dayAssetModel = new SerializableListDataModel(getDayAssetList());
 		return dayAssetModel;
 	}
 	public void setDayAssetModel(DataModel dayAssetModel) {

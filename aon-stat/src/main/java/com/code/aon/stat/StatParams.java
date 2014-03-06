@@ -1,12 +1,16 @@
 package com.code.aon.stat;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.company.WorkPlace;
 
-public class StatParams {
+public class StatParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Date fromDate;
 	private Date toDate;

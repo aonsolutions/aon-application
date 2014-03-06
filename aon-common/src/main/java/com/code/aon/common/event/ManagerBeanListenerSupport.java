@@ -3,6 +3,7 @@ package com.code.aon.common.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 
 /**
@@ -15,6 +16,8 @@ import com.code.aon.common.ManagerBeanException;
  *
  */
 public class ManagerBeanListenerSupport implements IManagerBeanListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     // listener list.
 	private List<IManagerBeanListener> listeners;

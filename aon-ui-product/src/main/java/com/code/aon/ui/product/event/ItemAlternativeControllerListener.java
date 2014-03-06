@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +15,8 @@ import com.code.aon.ui.product.controller.ItemAlternativeController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemAlternativeControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -7,6 +8,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class ExpenseItemControllerListener extends ItemControllerListener {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	super.afterBeanCreated(event);

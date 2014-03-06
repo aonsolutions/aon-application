@@ -1,5 +1,7 @@
 package com.code.aon.common.dao;
 
+import com.code.aon.common.AonVersion;
+
 /**
  * The class <code>DAOSysException</code> indicates conditions created by 
  * a <code>IDAO</code> that a reasonable AON application might want to catch.
@@ -12,7 +14,7 @@ package com.code.aon.common.dao;
 
 public class DAOSysException extends RuntimeException {
 
-	private static final long serialVersionUID = 6906588225314153492L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.
