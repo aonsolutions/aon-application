@@ -288,7 +288,9 @@
 											</aon:outputText>
 
 											<aon:outputLabel value="#{cashCalculator.footerLabel}" />
-											<aon:outputText value="#{cashCalculator.total - cashCalculator.initialAmount}">
+											<aon:outputText value="#{(cashCalculator.total - cashCalculator.initialAmount > 0) ? 
+																		cashCalculator.total - cashCalculator.initialAmount : 
+																		0}">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 
