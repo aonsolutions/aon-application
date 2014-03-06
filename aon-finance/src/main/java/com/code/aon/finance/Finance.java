@@ -40,11 +40,11 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	}
     
 	public void setAmount(double amount) {
-		super.setAmount(CommonUtil.round(amount, 2));
+		super.setAmount(CommonUtil.round(amount));
 	}
 	
 	public void setExpenses(double expenses) {
-		super.setExpenses(CommonUtil.round(expenses, 2));
+		super.setExpenses(CommonUtil.round(expenses));
 	}
 	
 	@Transient
@@ -136,7 +136,7 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 
 	@Transient
 	public double getTotalAmount(){
-		return getAmount() + getExpenses();
+		return CommonUtil.round(getAmount() + getExpenses());
 	}
 	
 	@Transient
