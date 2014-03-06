@@ -16,6 +16,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -38,6 +39,14 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 		setDueDate(new Date());
 	}
     
+	public void setAmount(double amount) {
+		super.setAmount(CommonUtil.round(amount, 2));
+	}
+	
+	public void setExpenses(double expenses) {
+		super.setExpenses(CommonUtil.round(expenses, 2));
+	}
+	
 	@Transient
 	public RegistryDocument getRegistryFullDocument() {
 		if (registryFullDocument == null) {
