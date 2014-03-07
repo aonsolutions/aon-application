@@ -31,7 +31,7 @@ public class DateUtils {
 	}
 
 	public static Date addYears2Date(Date date, int years) {
-		CalendarUtil.addMonthsToDate(date, years * 12);
+		CalendarUtil.addMonthsToDate(date, years * 12);		
 		return date;
 	}
 
@@ -187,6 +187,22 @@ public class DateUtils {
 		return new Date(Date.UTC(date.getYear(), date.getMonth(),
 				date.getDate(), 0, 0, 0));
 	}
+	
+	/**
+	   * Resets the date to have no time modifiers. Note that the hour might not be zero if the time
+	   * hits a DST transition date.
+	   *
+	   * @param date the date
+	   */
+	  @SuppressWarnings("deprecation") // GWT requires Date
+	  public static void resetTime(Date date) {
+	    long msec = date.getTime();
+	    msec = (msec / 1000) * 1000;
+	    date.setTime(msec);
+	    date.setHours(0);
+	    date.setMinutes(0);
+	    date.setSeconds(0);
+	  }
 
 	
 
