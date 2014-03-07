@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.event;
 
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -36,6 +37,17 @@ public class StatementDetailListener extends ControllerAdapter {
 			if (params.getSecurityLevel() != null) {
 				criteria.addEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), params.getSecurityLevel());
 			}
+			
+			if (params.getPeriod() != null && params.getPeriod().getId() != null) {
+				if (params.isExcludeOperatingEntry()) {
+					criteria.addNotEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPERATING);
+				}
+				if (params.isExcludeClosingEntry()) {
+					criteria.addNotEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING);
+				}
+			}
+			
+			
 //			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));	
 //			if (params.isExcludeClosingEntry()) {
 //				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));	

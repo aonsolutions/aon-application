@@ -7,6 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<aon:div id="statementSearchContainer">
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 		<ui:define name="searchContent">
@@ -25,7 +26,7 @@
 				value="#{trialBalance.parameters.period}">
 				<a4j:support event="onchange"
 					actionListener="#{trialBalance.onPeriodChanged}" 
-					reRender="entryDate-From,entryDate-To,statement-search,SearchWarning"
+					reRender="statementSearchContainer"
 					ajaxSingle="true" />
 				<f:selectItem itemLabel="-" itemValue="" />
 				<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
@@ -130,6 +131,22 @@
 				</aon:selectOneRadio>
 			</c:if>
 
+			<aon:outputText value="&#160;" rendered="#{trialBalance.parameters.period != null and trialBalance.parameters.period.id != null}" />
+			<aon:div rendered="#{trialBalance.parameters.period != null and trialBalance.parameters.period.id != null}">
+				<aon:selectBooleanCheckbox id="Account_exclude_operating"
+					value="#{trialBalance.parameters.excludeOperatingEntry}" />
+				<aon:outputLabel for="Account_exclude_operating"
+					value="#{bundle.accounting_exclude_operating_entry}" />
+			</aon:div>
+		
+			<aon:outputText value="&#160;" rendered="#{trialBalance.parameters.period != null and trialBalance.parameters.period.id != null}"/>
+			<aon:div rendered="#{trialBalance.parameters.period != null and trialBalance.parameters.period.id != null}">
+				<aon:selectBooleanCheckbox id="Account_exclude_closing"
+					value="#{trialBalance.parameters.excludeClosingEntry}" />
+				<aon:outputLabel for="Account_exclude_closing"
+					value="#{bundle.accounting_exclude_closing_entry}" />
+			</aon:div>
+
 			<aon:outputLabel for="Account_level"
 				value="#{bundle.accounting_level}" />
 			<aon:div>
@@ -175,4 +192,5 @@
 
 		</ui:define>
 	</ui:decorate>
+	</aon:div>
 </ui:composition>

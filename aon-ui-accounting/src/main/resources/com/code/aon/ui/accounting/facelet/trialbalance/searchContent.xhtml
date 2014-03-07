@@ -21,7 +21,7 @@
 		value="#{controller.parameters.period}">
 		<a4j:support event="onchange"
 			actionListener="#{controller.onPeriodChanged}" 
-			reRender="AccountEntryDetail_accountEntry_entryDate-From,AccountEntryDetail_accountEntry_entryDate-To,balance-search,SearchWarning"
+			reRender="AccountEntryDetail_accountEntry_entryDate-From,AccountEntryDetail_accountEntry_entryDate-To,balance-search,SearchWarning,excludeOptions"
 			ajaxSingle="true" />
 		
 		<f:selectItem itemLabel="-" itemValue="" />
@@ -135,19 +135,19 @@
 	</c:if>
 
 	<aon:outputText value="&#160;" />
-	<aon:div>
-		<aon:selectBooleanCheckbox id="Account_exclude_operating"
-			value="#{controller.parameters.excludeOperatingEntry}" />
-		<aon:outputLabel for="Account_exclude_operating"
-			value="#{bundle.accounting_exclude_operating_entry}" />
-	</aon:div>
-
-	<aon:outputText value="&#160;" />
-	<aon:div>
-		<aon:selectBooleanCheckbox id="Account_exclude_closing"
-			value="#{controller.parameters.excludeClosingEntry}" />
-		<aon:outputLabel for="Account_exclude_closing"
-			value="#{bundle.accounting_exclude_closing_entry}" />
+	<aon:div id="excludeOptions">
+		<aon:div rendered="#{controller.parameters.period != null and controller.parameters.period.id != null}">
+			<aon:selectBooleanCheckbox id="Account_exclude_operating"
+				value="#{controller.parameters.excludeOperatingEntry}" />
+			<aon:outputLabel for="Account_exclude_operating"
+				value="#{bundle.accounting_exclude_operating_entry}" />
+		</aon:div>
+		<aon:div rendered="#{controller.parameters.period != null and controller.parameters.period.id != null}">
+			<aon:selectBooleanCheckbox id="Account_exclude_closing"
+				value="#{controller.parameters.excludeClosingEntry}" />
+			<aon:outputLabel for="Account_exclude_closing"
+				value="#{bundle.accounting_exclude_closing_entry}" />
+		</aon:div>
 	</aon:div>
 
 	<c:if test="#{!isOfficialBalance}">
