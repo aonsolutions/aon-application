@@ -22,6 +22,7 @@ import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 
@@ -35,7 +36,7 @@ public class StatementController extends BasicController {
 	private Balance periodBalance;
 
 	private List<Balance> detail;
-	private DataModel detailModel;
+	private DataScrollerState detailState;
 	
 	private SummaryProviderParameters params;
 
@@ -102,11 +103,19 @@ public class StatementController extends BasicController {
 	}
 
 	public DataModel getDetailModel() {
-		return detailModel;
+		return getDetailState().getDirectModel();
 	}
 
 	public void setDetailModel(DataModel detailModel) {
-		this.detailModel = detailModel;
+		setDetailState(new DataScrollerState(detailModel, "statementDetail"));
+	}
+	
+	public DataScrollerState getDetailState() {
+		return detailState;
+	}
+
+	public void setDetailState(DataScrollerState detailState) {
+		this.detailState = detailState;
 	}
 
 	private void transformDetailModel() throws ManagerBeanException {

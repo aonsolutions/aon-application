@@ -6,9 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-		<ui:param name="dataTableId" value="offersPending" />
-		<ui:param name="dataModel" value="#{commercialStat.pendingOffersModel}" />
-		<ui:param name="rows" value="10" />
+		<ui:param name="controller" value="#{commercialStat.pendingOffersState}" />
 		<ui:param name="skipSelectButton" value="true" />
 		<ui:param name="rowSelectorToggleOnClick" value="false" />
 

@@ -103,7 +103,7 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 			p.setExcludeOperatingEntry(excludeOperating);
 			p.setExcludeOpeningEntry(true);
 			p.setExcludeBalancedAccounts(false);
-			p.setRowsPerPage(20);
+			p.setRowsPerPage(AonUtil.getConfigurationController().getPageLimit());
 			p.setAccountLevel(5);
 			p.setPageCounter(0);
 			p.setCounterVisible(false);
@@ -325,6 +325,11 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 	@Override
 	public Integer getPageLimit() {
 		return getParameters().getRowsPerPage();
+	}
+
+	@Override
+	public void setPageLimit(Integer pageLimit) {
+		getParameters().setRowsPerPage(pageLimit);
 	}
 	
 }

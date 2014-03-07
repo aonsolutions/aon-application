@@ -73,9 +73,7 @@
 
 				<aon:div styleClass="aon-scroll-area">
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="dataTableId" value="activityView" />
-						<ui:param name="dataModel" value="#{commercialStat.activityModel}" />
-						<ui:param name="rows" value="20" />
+						<ui:param name="dataModel" value="#{commercialStat.activityState}" />
 						<ui:param name="skipSelectButton" value="true" />
 						<ui:param name="rowSelectorToggleOnClick" value="false" />
 				

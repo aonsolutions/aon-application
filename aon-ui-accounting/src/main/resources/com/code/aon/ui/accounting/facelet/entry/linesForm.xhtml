@@ -370,7 +370,7 @@
 
 			<aon:div id="entryDetailTableDataScroller" rendered="#{!accountEntryDetail.new}">
 				<aon:dataScroller for="entryDetailTable" showNote="true" page="#{accountEntryDetail.page}"
-					rowCount="#{accountEntryDetail.model.rowCount}" pageSize="20" />
+					rowCount="#{accountEntryDetail.model.rowCount}" pageSize="#{accountEntryDetail.pageLimit}" />
 			</aon:div>
 
 		</aon:div>

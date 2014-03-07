@@ -69,9 +69,7 @@
 				<br />
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="dataTableId" value="offers" />
-					<ui:param name="dataModel" value="#{commercialStat.offersModel}" />
-					<ui:param name="rows" value="20" />
+					<ui:param name="controller" value="#{commercialStat.offersState}" />
 					<ui:param name="skipSelectButton" value="true" />
 					<ui:param name="rowSelectorToggleOnClick" value="false" />
 			

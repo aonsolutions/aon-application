@@ -24,6 +24,7 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.retention.Retention;
 import com.code.aon.fiscal.retention.RetentionCollection;
 import com.code.aon.fiscal.retention.RetentionCollectionParameters;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
 public class RetentionReportController implements ICollectionProvider {
@@ -35,7 +36,7 @@ public class RetentionReportController implements ICollectionProvider {
 
 	private List<Retention> summary;
 	private DataModel model;
-	private DataModel detailModel;
+	private DataScrollerState detailState;
 	private DataModel groupedModel;
 	private String title;
 
@@ -58,12 +59,12 @@ public class RetentionReportController implements ICollectionProvider {
 		this.model = model;
 	}
 
-	public DataModel getDetailModel() {
-		return detailModel;
+	public DataScrollerState getDetailState() {
+		return detailState;
 	}
 
-	public void setDetailModel(DataModel detailModel) {
-		this.detailModel = detailModel;
+	public void setDetailState(DataScrollerState detailState) {
+		this.detailState = detailState;
 	}
 
 	public DataModel getGroupedModel() {
@@ -168,7 +169,7 @@ public class RetentionReportController implements ICollectionProvider {
 		if (reportKey != null && reportKey.equals("retentionBookGrouped")) {
 			return (Collection) getGroupedModel().getWrappedData();	
 		}
-		return (Collection) getDetailModel().getWrappedData();
+		return (Collection) getDetailState().getModel().getWrappedData();
 	}
 
 	@Override
@@ -252,7 +253,7 @@ public class RetentionReportController implements ICollectionProvider {
 			setTitle(getParams());
 			RetentionCollection vc = new RetentionCollection();
 			List<Retention> list = vc.getRetentionDetailList(getParams(),getOrder());
-			setDetailModel(new ListDataModel(list));
+			setDetailState(new DataScrollerState(new ListDataModel(list), "retentionReportDetail"));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
