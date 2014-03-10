@@ -88,4 +88,20 @@ public abstract class Variable implements HasStartAndEndDate, Serializable {
 		return ((name == var.name) || ((name != null) && name.equals(var.name)));
 	}
 
+	public static boolean isAgreementVariable(Variable var) {
+		if (var.getScope() == Scope.AGREEMENT)
+			return true;
+	
+		String expression = var.getExpression();
+	
+		if (StringUtils.isBlank(expression))
+			return false;
+	
+		String name = var.getName();
+	
+		return expression.matches("\\s*CONVENIO\\s*\\(\\s*('" + name + "'|\""
+				+ name + "\")\\s*\\)\\s*");
+	
+	}
+
 }

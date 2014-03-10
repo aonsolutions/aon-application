@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -42,6 +43,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
@@ -90,27 +92,25 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		}
 	}
 
-	private static class DraftCompositePayments extends CompositePayments implements
-			Predicate {
+	private static class DraftCompositePayments extends CompositePayments
+			implements Predicate {
 
 		public DraftCompositePayments(Collection<IContractPayment>... payments) {
 			super(payments);
 		}
 
 		private Set<Integer> ids = new HashSet<Integer>();
-		
-		
-		
+
 		// --------------------------------------------------------- Collection
-		
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public Iterator<IContractPayment> iterator() {
 			return new FilterIterator(super.iterator(), this);
 		}
-		
+
 		// ---------------------------------------------------------- Predicate
-		
+
 		@Override
 		public boolean evaluate(Object obj) {
 			IContractPayment payment = (IContractPayment) obj;
@@ -182,35 +182,35 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 	protected void loadDraftContext(ExpressionContext exprCtx)
 			throws ExpressionException {
-		
-		//Date startDate = resetTime(draft.getStartDate());
-		//Date endDate = resetTime(draft.getEndDate());
-		
+
+		// Date startDate = resetTime(draft.getStartDate());
+		// Date endDate = resetTime(draft.getEndDate());
+
 		Date ctxStartDate = resetTime(ctx.getStartDate());
-		Date ctxEndDate =  resetTime(ctx.getEndDate());
+		Date ctxEndDate = resetTime(ctx.getEndDate());
 
 		List<Variable> draftData = draft.getDraftContext();
 		for (Variable variable : draftData) {
 			String name = variable.getName();
-			ExpressionImpl expr = new ExpressionImpl();
-			expr.setName(name);
-			expr.setScope(ExpressionScope.SALARY);
-			expr.setExpression(variable.getExpression());
-			
+
+			//ExpressionImpl expr = newExpressionImpl(variable);
+
 			Date varStartDate = resetTime(variable.getStartDate());
 			Date varEndDate = resetTime(variable.getEndDate());
-			
+
 			Date startDate = Period.max(ctxStartDate, varStartDate);
 			Date endDate = Period.min(ctxEndDate, varEndDate);
 			
-			exprCtx.addLazyExpression(expr, startDate, endDate);
+			addVariable(variable, startDate, endDate, exprCtx );
+
+			//exprCtx.addLazyExpression(expr, startDate, endDate);
+
 			/*
-			try {
-				exprCtx.addExpression(expr, startDate, endDate);
-			} catch (UndefinedVariablesException e) {
-				exprCtx.addVariable(name, new DraftDeferredExpressionVariable(
-						exprCtx, expr, startDate, endDate));
-			}*/
+			 * try { exprCtx.addExpression(expr, startDate, endDate); } catch
+			 * (UndefinedVariablesException e) { exprCtx.addVariable(name, new
+			 * DraftDeferredExpressionVariable( exprCtx, expr, startDate,
+			 * endDate)); }
+			 */
 		}
 
 	}
@@ -225,8 +225,8 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 	@Override
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
-			return new DraftCompositePayments(getDraftPayments(),
-									super.getContractPayments());
+		return new DraftCompositePayments(getDraftPayments(),
+				super.getContractPayments());
 	}
 
 	protected SalaryDraft getDraft() {
@@ -249,27 +249,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 	private Collection<IContractPayment> getDraftPayments() {
 		Collection<IContractPayment> draftPayments = new LinkedList<IContractPayment>();
 		for (Payment payment : draft.getDraftPayments()) {
-
-			DraftPayment draftPayment = new DraftPayment();
-
-			draftPayment.setId(payment.getId());
-			draftPayment.setName(payment.getName());
-			draftPayment.setType(getPaymentType(payment.getType()));
-			draftPayment.setSalaryType(getSalaryType(payment.getSalaryType()));
-
-			draftPayment.setStartDate(resetTime(payment.getStartDate()));
-			draftPayment.setEndDate(resetTime(payment.getEndDate()));
-			Short month = payment.getMonth();
-			if (month != null) {
-				draftPayment.setMonth(Month.getMonthByValue(month));
-			}
-			draftPayment.setDescription(payment.getDescription());
-
-			draftPayment.setExpression(payment.getExpression());
-			draftPayment.setIrpfExpression(payment.getIrpfExpression());
-			draftPayment.setQuoteExpression(payment.getQuoteExpression());
-
-			draftPayments.add(draftPayment);
+			draftPayments.add(getDraftPayment(payment));
 		}
 		return draftPayments;
 	}
@@ -296,6 +276,34 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		return deductions;
 	}
 
+	private IContractPayment getDraftPayment(Payment payment) {
+		if (StringUtils.equals("CONVENIO()", payment.getExpression()))
+			for (IContractPayment agreementPayment : getAgreementPayments())
+				if (StringUtils.equals(agreementPayment.getName(),
+						payment.getName()))
+					return agreementPayment;
+
+		return newDraftPayment(payment);
+	}
+
+	private void addVariable(Variable var, Date start, Date end,
+			ExpressionContext ctx) throws ExpressionException {
+		
+		if (Variable.isAgreementVariable(var)) {
+			ExpressionContext agreementCtx = getAgreementExpressionContext();
+			ITimedVariable<?> agreementVar = agreementCtx.getVariable(var.getName(), start, end);
+			if ( agreementVar != null ) {
+				ctx.addVariable(var.getName(), agreementVar );
+				return;
+			}
+		} 
+
+		ExpressionImpl expr = newExpressionImpl(var);
+		ctx.addLazyExpression(expr, start, end);
+	}
+
+	// ------------------------------------------------------------------------
+
 	private static Date resetTime(Date date) {
 		if (date == null)
 			return null;
@@ -315,6 +323,37 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 	private static Month getMonth(Short month) {
 		return month != null ? Month.getMonthByValue(month) : null;
+	}
+
+	private static ExpressionImpl newExpressionImpl(Variable var) {
+		ExpressionImpl expr = new ExpressionImpl();
+		expr.setName(var.getName());
+		expr.setScope(ExpressionScope.SALARY);
+		expr.setExpression(var.getExpression());
+		return expr;
+	}
+
+	private static DraftPayment newDraftPayment(Payment payment) {
+		DraftPayment draftPayment = new DraftPayment();
+
+		draftPayment.setId(payment.getId());
+		draftPayment.setName(payment.getName());
+		draftPayment.setType(getPaymentType(payment.getType()));
+		draftPayment.setSalaryType(getSalaryType(payment.getSalaryType()));
+
+		draftPayment.setStartDate(resetTime(payment.getStartDate()));
+		draftPayment.setEndDate(resetTime(payment.getEndDate()));
+		Short month = payment.getMonth();
+		if (month != null) {
+			draftPayment.setMonth(Month.getMonthByValue(month));
+		}
+		draftPayment.setDescription(payment.getDescription());
+
+		draftPayment.setExpression(payment.getExpression());
+		draftPayment.setIrpfExpression(payment.getIrpfExpression());
+		draftPayment.setQuoteExpression(payment.getQuoteExpression());
+
+		return draftPayment;
 	}
 
 	private static SalaryType getSalaryType(Salary.Type type) {

@@ -232,6 +232,11 @@ public class SQLExtraSalaryCalculatorContext implements
 	public Date getSeniorityDate() {
 		return ctx.getSeniorityDate();
 	}
+	
+	@Override
+	public Collection<IContractPayment> getAgreementPayments() {
+		return ctx.getAgreementPayments();
+	}
 
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
@@ -276,6 +281,11 @@ public class SQLExtraSalaryCalculatorContext implements
 	@Override
 	public Date getDate(String table, String column) {
 		return ctx.getDate(table, column);
+	}
+	
+	@Override
+	public String getString(String table, String column) {
+		return ctx.getString(table, column);
 	}
 	
 	@Override

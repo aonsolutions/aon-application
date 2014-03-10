@@ -118,6 +118,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -2789,6 +2790,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			defined[Scope.AGREEMENT.ordinal()] = true;
 		}
+		
+		for( IContractPayment p : ctx.getAgreementPayments() ){
+			if ( StringUtils.isBlank(p.getName()))
+					continue;
+			
+			boolean defined[] = new boolean[Scope.NUM_VALUES];
+			defined[Scope.AGREEMENT.ordinal()] = true;
+			definedMap.put(p.getName(), defined);
+			
+		}
+		
 
 		ExpressionContext implicitCtx = ctx.getImplicitExpressionContext();
 		for (String name : ctx.getImplicitExpressionContext().variablesSet()) {

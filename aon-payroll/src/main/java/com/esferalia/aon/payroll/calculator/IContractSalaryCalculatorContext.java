@@ -57,6 +57,8 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 
 	public ExpressionContext getAgreementExpressionContext();
 
+	public Collection<IContractPayment> getAgreementPayments() ;
+
 	public Collection<IContractPayment> getContractPayments() throws AonException;
 
 	public Collection<IContractCost> getContractCosts() throws AonException;
