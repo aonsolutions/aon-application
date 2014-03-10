@@ -118,6 +118,7 @@ public class RetentionReportController implements ICollectionProvider {
 		getParams().setToNumber(null);
 		getParams().setSecurityLevel(null);
 		getParams().setToCustomer(false);
+		getParams().setByPercent(false);
 		onResetModel(event);
 	}
 	
@@ -218,24 +219,27 @@ public class RetentionReportController implements ICollectionProvider {
 		total.setTotal(true);
 		total.setGrandTotal(false);
 		for (Retention ret: getSummary()) {
-			if (ret.getWithholdingType() == pre ) {
-				ret.setWithholdingHidden(true);	
-			} else {
-				if (pre != null) {
-					total.setWithholdingType(pre);
-					decorated.add(total);
-					total = new Retention();
-					total.setWithholdingHidden(false);
-					total.setTotal(true);
-					total.setGrandTotal(false);
+			if (getParams().isByPercent()) {
+				if (ret.getWithholdingType() == pre ) {
+					ret.setWithholdingHidden(true);	
+				} else {
+					if (pre != null) {
+						total.setWithholdingType(pre);
+						decorated.add(total);
+						total = new Retention();
+						total.setWithholdingHidden(false);
+						total.setTotal(true);
+						total.setGrandTotal(false);
+					}
 				}
+				total.setCount(total.getCount() + ret.getCount());
+				total.setBase(CommonUtil.round(total.getBase() + ret.getBase()) );
+				total.setQuota(CommonUtil.round(total.getQuota() + ret.getQuota()) );
+				pre = ret.getWithholdingType();
 			}
-			total.setBase(CommonUtil.round(total.getBase() + ret.getBase()) );
-			total.setQuota(CommonUtil.round(total.getQuota() + ret.getQuota()) );
 			granTotal.setBase(CommonUtil.round(granTotal.getBase() + ret.getBase()) );
 			granTotal.setQuota(CommonUtil.round(granTotal.getQuota() + ret.getQuota()) );
 			decorated.add(ret);
-			pre = ret.getWithholdingType();
 		}
 		if (pre != null) {
 			total.setWithholdingType(pre);
@@ -269,5 +273,11 @@ public class RetentionReportController implements ICollectionProvider {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+	
+	public void onSwitchPercent(ActionEvent event) {
+		params.setByPercent(!params.isByPercent());
+		setModel(null);
+		onSearch(event);
 	}
 }

@@ -20,7 +20,12 @@ import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.pool.AonConnectionException;
 
 public class RetentionCollection {
-
+	private static final String WITHHOLDING_TYPE = "withholding_type";
+	private static final String PERCENTAGE = "percentage";
+	private static final String DOCUMENT = "document";
+	private static final String BASE = "base";
+	private static final String QUOTA = "quota";
+	
 	public List<Retention> getRetentionList(RetentionCollectionParameters params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -29,8 +34,13 @@ public class RetentionCollection {
 			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT it.withholding_type,it.percentage,SUM(it.base)");
-			stmt.append(" ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) RET ");
+			stmt.append("SELECT it.withholding_type " + WITHHOLDING_TYPE);
+			if (params.isByPercent()) {
+				stmt.append(",it.percentage " + PERCENTAGE);
+			}
+			stmt.append(",COUNT(DISTINCT i.rdocument) " + DOCUMENT);
+			stmt.append(",SUM(it.base) " + BASE);
+			stmt.append(",SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) " + QUOTA);
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
@@ -62,8 +72,11 @@ public class RetentionCollection {
 			if (params.getSecurityLevel() != null) {
 				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 			}
-			stmt.append(" GROUP BY it.withholding_type,it.percentage");
-			stmt.append(" ORDER BY it.withholding_type,it.percentage");
+			stmt.append(" GROUP BY it.withholding_type");
+			if (params.isByPercent()) {
+				stmt.append(",it.percentage");
+			}
+			
 			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromInvoiceDate() != null) {
@@ -91,10 +104,13 @@ public class RetentionCollection {
 			List<Retention> retentions = new LinkedList<Retention>();
 			while (rs.next()) {
 				Retention ret = new Retention();
-				ret.setWithholdingType(WithholdingType.values()[rs.getInt(1)]);
-				ret.setPercent(rs.getDouble(2));
-				ret.setBase(rs.getDouble(3));
-				ret.setQuota(rs.getDouble(4));
+				ret.setWithholdingType(WithholdingType.values()[rs.getInt(WITHHOLDING_TYPE)]);
+				if (params.isByPercent()) {
+					ret.setPercent(rs.getDouble(PERCENTAGE));
+				}
+				ret.setCount(rs.getInt(DOCUMENT));
+				ret.setBase(rs.getDouble(BASE));
+				ret.setQuota(rs.getDouble(QUOTA));
 				retentions.add(ret);
 			}
 			return retentions;
