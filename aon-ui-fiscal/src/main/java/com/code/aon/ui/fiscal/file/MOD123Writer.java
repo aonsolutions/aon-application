@@ -64,7 +64,6 @@ public class MOD123Writer implements IFinanceConstants{
 			wr = new OutputStreamWriter(output);
 		}
 		PrintWriter writer = new PrintWriter(wr);
-//		PrintWriter writer = new PrintWriter(output);
 		MOD123 mod123 = new MOD123();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod123.create(declarations, format, writer));
@@ -76,8 +75,7 @@ public class MOD123Writer implements IFinanceConstants{
 		SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 		Declaration declaration = new  Declaration();
 		Company company = getCompany(fiscalModel.getDomain());
-		declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
-				|| company.getDocumentType() != DocumentType.CIF);
+		declaration.setPerson((fiscalModel.getDocument().matches("[0-9|K|L|M|X|Y|Z].*")));
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
 		int year = fiscalModel.getYear();
@@ -95,10 +93,24 @@ public class MOD123Writer implements IFinanceConstants{
 		declaration.setStartPeriod(Integer.parseInt( startDate));
 		String endDate = formatter.format(fiscalModel.getPeriod().getDueDate(year));
 		declaration.setEndPeriod(Integer.parseInt( endDate));
+
+		if (fiscalModel.getPeriod().isQuarterPeriod()) {
+			declaration.setNavarraModel("716");
+			declaration.setQuarter(fiscalModel.getPeriod().ordinal() - 11);
+			declaration.setMonth((fiscalModel.getPeriod().ordinal() - 11) * 3);
+		} else {
+			declaration.setNavarraModel("746");
+			declaration.setQuarter((fiscalModel.getPeriod().ordinal() + 1) % 3);
+			declaration.setMonth(fiscalModel.getPeriod().ordinal() + 1);
+		}
 		
 		declaration.setDocument(fiscalModel.getDocument());
 		declaration.setName(fiscalModel.getName());
 		declaration.setSurname(fiscalModel.getSurname());
+		if (!declaration.isPerson() && fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
+			declaration.setSurname(fiscalModel.getName());
+			declaration.setName(null);
+		}
 		declaration.setPhone( fiscalModel.getPhone() );
 		declaration.setStreetInitial(fiscalModel.getStreetInitial());
 		declaration.setStreetName( fiscalModel.getStreetName() );
@@ -134,6 +146,7 @@ public class MOD123Writer implements IFinanceConstants{
 		}
 		
 		double d = declaration.getBoxes().get(Mod123Key.C13.getValue()); 
+		declaration.setPayMethod("0");
 		declaration.setPayment("0");
 		if (d <= 0) {
 			declaration.setDeclarationType("N");
@@ -147,6 +160,7 @@ public class MOD123Writer implements IFinanceConstants{
 						if (finance.getBankAccount() == null) {
 							throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
 						}
+						declaration.setPayMethod("1");
 						declaration.setPayment("3");
 						declaration.setCcc(finance.getBankAccount().getBban());
 						declaration.setDeclarationType("U");
@@ -160,4 +174,25 @@ public class MOD123Writer implements IFinanceConstants{
 		return declaration;
 	}
 
+	
+	public static void main(String[] args) {
+		System.out.println( "A0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "10165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "20165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "30165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "40165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "50165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "60165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "70165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "80165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "90165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "K0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "L0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "M165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "X0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "Y0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "Z0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		System.out.println( "B0165465465".matches("[0-9|K|L|M|X|Y|Z].*") );
+		
+	} 
 }

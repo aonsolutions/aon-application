@@ -29,8 +29,8 @@ public class Mod123Manager extends FiscalModelManager {
 
 	private static String SELECT = "SELECT " 
 			+"i.type,it.percentage,i.rdocument,i.rname,"
-			+" SUM( id.taxable_base),"
-			+" SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET "
+			+" SUM( it.base),"
+			+" SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) RET "
 			+" FROM invoice_tax it "
 			+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 			+" INNER JOIN invoice i ON (id.invoice = i.id)"

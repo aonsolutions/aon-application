@@ -1,7 +1,10 @@
 package com.code.aon.fiscal.mod123;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.FiscalModelDetail;
+import com.code.aon.fiscal.enumeration.Mod123Key;
 import com.code.aon.fiscal.model.FiscalModelDetailCalculator;
 
 public class Navarra2011Mod123Calculator extends FiscalModelDetailCalculator implements IMod123Calculator {
@@ -17,10 +20,13 @@ public class Navarra2011Mod123Calculator extends FiscalModelDetailCalculator imp
 	@Override
 	public void calculate(Mod123 mod123) throws AonException {
 		calculateDetails(mod123.getDetails());
+		double c03 = mod123.getDetail( Mod123Key.C03 ).getAmount();
+		FiscalModelDetail detail = mod123.getDetail( Mod123Key.C13 );
+		detail.setAmount( CommonUtil.round(c03) );
 	}
 
 	@Override
 	public double getResult(Mod123 mod123) {
-		return 0;
+		return mod123.getDetail( Mod123Key.C13 ).getAmount();
 	}
 }
