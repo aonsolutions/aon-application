@@ -73,9 +73,7 @@
 			</aon:panel>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-				<ui:param name="dataTableId" value="statsDataTable" />
-				<ui:param name="dataModel" value="#{statModel}" />
-				<ui:param name="rows" value="20" />
+				<ui:param name="controller" value="#{statModel}" />
 				<ui:param name="skipSelectButton" value="true" />
 				<ui:param name="rowSelectorToggleOnClick" value="false" />
 		

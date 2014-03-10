@@ -35,6 +35,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -43,7 +44,7 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 
 	private boolean longDescription;
 	private IPriceStrategy priceStrategy;
-	private DataModel noFeeCustomersModel;
+	private DataScrollerState noFeeCustomersState;
 	private List<Customer> noFeeCustomersList;
 	
 	public boolean isLongDescription() {
@@ -62,14 +63,26 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 	}
 
 	public DataModel getNoFeeCustomersModel() {
-		if (noFeeCustomersModel == null) {
-			noFeeCustomersModel = new ListDataModel(getNoFeeCustomersList());
-		}
-		return noFeeCustomersModel;
+		return getNoFeeCustomersState().getDirectModel();
 	}
 
 	public void setNoFeeCustomersModel(DataModel noFeeCustomersModel) {
-		this.noFeeCustomersModel = noFeeCustomersModel;
+		if ( noFeeCustomersModel == null ) {
+			setNoFeeCustomersState(null);
+		} else {
+			getNoFeeCustomersState().setModel(noFeeCustomersModel);
+		}					
+	}
+	
+	public DataScrollerState getNoFeeCustomersState() {
+		if (noFeeCustomersState == null) {
+			noFeeCustomersState = new DataScrollerState(new ListDataModel(getNoFeeCustomersList()), "yearsStats");
+		}				
+		return noFeeCustomersState;
+	}
+
+	public void setNoFeeCustomersState(DataScrollerState noFeeCustomersState) {
+		this.noFeeCustomersState = noFeeCustomersState;
 	}
 
 	public List<Customer> getNoFeeCustomersList() {

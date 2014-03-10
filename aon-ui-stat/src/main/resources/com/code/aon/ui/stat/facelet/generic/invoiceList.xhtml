@@ -54,9 +54,7 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="dataTableId" value="invoices" />
-					<ui:param name="dataModel" value="#{stat.invoicesModel}" />
-					<ui:param name="rows" value="20" />
+					<ui:param name="controller" value="#{stat.invoicesState}" />
 					<ui:param name="skipSelectButton" value="true" />
 					<ui:param name="rowSelectorToggleOnClick" value="false" />
 			

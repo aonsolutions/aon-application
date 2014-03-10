@@ -63,6 +63,7 @@ import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -88,13 +89,13 @@ public class StatEngineController {
 	private Integer numInvoices;
 	private Integer numProducts;
 	private Double promAmount;
-	private DataModel yearStatModel;
-	private DataModel monthStatModel;
-	private DataModel dayStatModel;
-	private DataModel customerStatModel;
-	private DataModel abcStatModel;
-	private DataModel invoicesModel;
-	private DataModel productModel;
+	private DataScrollerState yearStatState;
+	private DataScrollerState monthStatState;
+	private DataScrollerState dayStatState;
+	private DataScrollerState customerStatState;
+	private DataScrollerState abcStatState;
+	private DataScrollerState invoicesState;
+	private DataScrollerState productState;
 	private StatParams params;
 	private String reportName;
 	private String itemTitle;
@@ -120,17 +121,28 @@ public class StatEngineController {
 		return statEngine;
 	}
 	
-	
 	public DataModel getProductModel() {
 		setProductModel(null);
-		if (productModel == null) {
-			productModel  = new ListDataModel(getProductStats());
-		}
-		return productModel ;
+		return getProductState().getDirectModel();
 	}
 
 	public void setProductModel(DataModel productModel) {
-		this.productModel = productModel;
+		if ( productModel == null ) {
+			setProductState(null);
+		} else {
+			getProductState().setModel(productModel);
+		}				
+	}
+	
+	public DataScrollerState getProductState() {
+		if (productState == null) {
+			productState = new DataScrollerState(new ListDataModel(getProductStats()), "statsDataTable");
+		}		
+		return productState;
+	}
+
+	public void setProductState(DataScrollerState productState) {
+		this.productState = productState;
 	}
 
 	public List<Stat> getProductStats() {
@@ -285,69 +297,142 @@ public class StatEngineController {
 	}
 
 	public DataModel getYearStatModel() {
-		if (yearStatModel == null) {
-			yearStatModel = new ListDataModel(getYearStats());
-		}
-		return yearStatModel;
+		return yearStatState.getDirectModel();
 	}
 
 	public void setYearStatModel(DataModel yearStatModel) {
-		this.yearStatModel = yearStatModel;
+		if ( yearStatModel == null ) {
+			setYearStatState(null);
+		} else {
+			getYearStatState().setModel(yearStatModel);
+		}		
+	}
+	
+	public DataScrollerState getYearStatState() {
+		if (yearStatState == null) {
+			yearStatState = new DataScrollerState(new ListDataModel(getYearStats()), "statsDataTable");
+		}		
+		return yearStatState;
+	}
+
+	public void setYearStatState(DataScrollerState yearStatState) {
+		this.yearStatState = yearStatState;
 	}
 
 	public DataModel getMonthStatModel() {
-		if (monthStatModel == null) {
-			monthStatModel = new ListDataModel(getMonthStats());
-		}
-		return monthStatModel;
+		return monthStatState.getDirectModel();
 	}
 
 	public void setMonthStatModel(DataModel monthStatModel) {
-		this.monthStatModel = monthStatModel;
+		if ( monthStatModel == null ) {
+			setMonthStatState(null);
+		} else {
+			getMonthStatState().setModel(monthStatModel);
+		}				
 	}
 
+	public DataScrollerState getMonthStatState() {
+		if (monthStatState == null) {
+			monthStatState = new DataScrollerState(new ListDataModel(getMonthStats()), "statsDataTable");
+		}				
+		return monthStatState;
+	}
+
+	public void setMonthStatState(DataScrollerState monthStatState) {
+		this.monthStatState = monthStatState;
+	}
+
+
 	public DataModel getDayStatModel() {
-		if (dayStatModel == null) {
-			dayStatModel = new ListDataModel(getDayStats());
-		}
-		return dayStatModel;
+		return getDayStatState().getDirectModel();
 	}
 
 	public void setDayStatModel(DataModel dayStatModel) {
-		this.dayStatModel = dayStatModel;
+		if ( dayStatModel == null ) {
+			setDayStatState(null);
+		} else {
+			getDayStatState().setModel(dayStatModel);
+		}			
+	}
+	
+	public DataScrollerState getDayStatState() {
+		if (dayStatState == null) {
+			dayStatState = new DataScrollerState(new ListDataModel(getDayStats()), "statsDataTable");
+		}						
+		return dayStatState;
+	}
+
+	public void setDayStatState(DataScrollerState dayStatState) {
+		this.dayStatState = dayStatState;
 	}
 
 	public DataModel getCustomerStatModel() {
-		if (customerStatModel == null) {
-			customerStatModel = new ListDataModel(getCustomerStats());
-		}
-		return customerStatModel;
+		return getCustomerStatState().getDirectModel();
 	}
 
 	public void setCustomerStatModel(DataModel clientStatModel) {
-		this.customerStatModel = clientStatModel;
+		if ( clientStatModel == null ) {
+			setCustomerStatState(null);
+		} else {
+			getCustomerStatState().setModel(clientStatModel);
+		}			
+	}
+	
+	public DataScrollerState getCustomerStatState() {
+		if (customerStatState == null) {
+			customerStatState = new DataScrollerState(new ListDataModel(getCustomerStats()), "statsDataTable");
+		}						
+		return customerStatState;
+	}
+
+	public void setCustomerStatState(DataScrollerState customerStatState) {
+		this.customerStatState = customerStatState;
 	}
 
 	public DataModel getAbcStatModel() {
-		if (abcStatModel == null) {
-			abcStatModel = new ListDataModel(getAbcStats());
-		}
-		return abcStatModel;
+		return getAbcStatState().getDirectModel();
 	}
 
 	public void setAbcStatModel(DataModel abcStatModel) {
-		this.abcStatModel = abcStatModel;
+		if ( abcStatModel == null ) {
+			setAbcStatState(null);
+		} else {
+			getAbcStatState().setModel(abcStatModel);
+		}					
+	}
+	
+	public DataScrollerState getAbcStatState() {
+		if (abcStatState == null) {
+			abcStatState = new DataScrollerState(new ListDataModel(getAbcStats()), "statsDataTable");
+		}								
+		return abcStatState;
+	}
+
+	public void setAbcStatState(DataScrollerState abcStatState) {
+		this.abcStatState = abcStatState;
 	}
 
 	public DataModel getInvoicesModel() {
-		if (invoicesModel == null) {
-			invoicesModel = new ListDataModel(getInvoices());
-		}
-		return invoicesModel;
+		return getInvoicesState().getDirectModel();
 	}
 
 	public void setInvoicesModel(DataModel invoicesModel) {
-		this.invoicesModel = invoicesModel;
+		if ( invoicesModel == null ) {
+			setInvoicesState(null);
+		} else {
+			getInvoicesState().setModel(invoicesModel);
+		}					
+	}
+
+	public DataScrollerState getInvoicesState() {
+		if (invoicesState == null) {
+			invoicesState = new DataScrollerState(new ListDataModel(getInvoices()), "invoices");
+		}								
+		return invoicesState;
+	}
+
+	public void setInvoicesState(DataScrollerState invoicesState) {
+		this.invoicesState = invoicesState;
 	}
 
 	public Integer getSegmentId() {
@@ -532,7 +617,7 @@ public class StatEngineController {
 				setReportName(AonUtil.getMessage(STAT_MENU_EXPENSE));
 				setItemTitle(AonUtil.getMessage(YEAR));
 			}
-			yearStatModel = null;
+			setYearStatModel(null);
 			setBackAction("customer_stat_list_year");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -583,7 +668,7 @@ public class StatEngineController {
 				setItemTitle(AonUtil.getMessage(MONTH));
 			}
 	
-			monthStatModel = null;
+			setMonthStatModel(null);
 		}
 		if (init.get(Calendar.YEAR) != currentYear.intValue()
 				&& fin.get(Calendar.YEAR) != currentYear.intValue()) {
@@ -604,7 +689,7 @@ public class StatEngineController {
 						.getMessage(STAT_MENU_ACUMULADO2));
 				setItemTitle(AonUtil.getMessage(MONTH));
 			}
-			monthStatModel = null;
+			setMonthStatModel(null);
 		}
 
 	}
@@ -648,7 +733,7 @@ public class StatEngineController {
 				setReportName(AonUtil.getMessage(STAT_MENU_EXPENSE));
 				setItemTitle(AonUtil.getMessage(DAY));
 			}
-			dayStatModel = null;
+			setDayStatModel(null);
 			setDaysYear(currentYear);
 			setDayMonth(currentMonth);
 		} catch (ManagerBeanException e) {
@@ -696,7 +781,7 @@ public class StatEngineController {
 				setReportName(AonUtil.getMessage(STAT_MENU_ACUMULADO_CREDITOR));
 				setItemTitle(AonUtil.getMessage(CREDITOR));
 			}			
-			customerStatModel = null;
+			setCustomerStatModel(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -868,7 +953,7 @@ public class StatEngineController {
 	}
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
-		Invoice invoice = (Invoice) this.invoicesModel.getRowData();
+		Invoice invoice = (Invoice) getInvoicesModel().getRowData();
 		// TODO: si se muestra con iva, que se muestre siempre en todas las pantallas 
 //		return getPriceStrategy().getTotalPrice(invoice, invoice);
 		return invoice.getTaxableBase();
@@ -883,8 +968,7 @@ public class StatEngineController {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
-			yearStatModel = null;
-			
+			setYearStatModel(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -920,10 +1004,10 @@ public class StatEngineController {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(ICommonMessages.CUSTOMER));
-			customerStatModel = null;
+			setCustomerStatModel(null);
 			setBackAction("category_stats_year");
 			setCheckLevel(0);
-			invoicesModel=null;
+			setInvoicesModel(null);
 		}
 
 		catch (ManagerBeanException e) {
@@ -946,10 +1030,10 @@ public class StatEngineController {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(ICommonMessages.CUSTOMER));
-			customerStatModel = null;
+			setCustomerStatModel(null);
 			setBackAction("category_product_stats");
 			setCheckLevel(1);
-			invoicesModel=null;
+			setInvoicesModel(null);
 		}
 
 		catch (ManagerBeanException e) {
@@ -980,7 +1064,7 @@ public class StatEngineController {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_SUMMARY));
 			setItemTitle(AonUtil.getMessage(MONTH));
-			monthStatModel = null;
+			setMonthStatModel(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -1007,7 +1091,7 @@ public class StatEngineController {
 				setReportName(AonUtil.getMessage(STAT_ABC_CREDITOR));
 				setItemTitle(AonUtil.getMessage(CREDITOR));
 			}	
-			abcStatModel = null;
+			setAbcStatModel(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -1035,7 +1119,7 @@ public class StatEngineController {
 				setItemTitle(AonUtil.getMessage(EXPENSE));
 			}	
 			
-			abcStatModel = null;
+			setAbcStatModel(null);
 			setCheckLevel(1);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1053,7 +1137,7 @@ public class StatEngineController {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_ABC_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
-			abcStatModel = null;
+			setAbcStatModel(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -1116,7 +1200,7 @@ public class StatEngineController {
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(STAT_REPORT_ABC_PRODUCT));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
-		productModel = null;
+		setProductModel(null);
 	}
 
 	
@@ -1129,7 +1213,7 @@ public class StatEngineController {
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(STAT_REPORT_ABC_CATEGORY));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
-		abcStatModel = null;
+		setAbcStatModel(null);
 	}
 
 	private void getCategoryProductStatistics() throws ManagerBeanException {
@@ -1152,7 +1236,7 @@ public class StatEngineController {
 			setItemTitle(AonUtil.getMessage(ICommonMessages.EXPENSE));
 		}	
 		
-		monthStatModel = null;
+		setMonthStatModel(null);
 	}
 
 	public void calculateTotals(List<Stat> list) {
@@ -1249,7 +1333,7 @@ public class StatEngineController {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
-			yearStatModel = null;
+			setYearStatModel(null);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -1265,7 +1349,7 @@ public class StatEngineController {
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(STAT_MENU_ACUMULADO));
 		setItemTitle(AonUtil.getMessage(YEAR));
-		yearStatModel = null;
+		setYearStatModel(null);
 		setBackAction("customer_stat_list_year");
 		setCurrentMonth(null);
 

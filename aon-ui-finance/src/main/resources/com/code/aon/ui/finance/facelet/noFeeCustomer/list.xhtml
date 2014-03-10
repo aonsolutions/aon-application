@@ -35,9 +35,7 @@
 			</ui:decorate> 
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
-					<ui:param name="dataTableId" value="yearsStats" />
-					<ui:param name="dataModel" value="#{customerFee.noFeeCustomersModel}" />
-					<ui:param name="rows" value="20" />
+					<ui:param name="controller" value="#{customerFee.noFeeCustomersState}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 					<ui:define name="columns">

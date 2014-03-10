@@ -10,7 +10,7 @@
         
 	<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 		<ui:param name="statController" value="#{stat}" />
-		<ui:param name="statModel" value="#{stat.abcStatModel}" />
+		<ui:param name="statModel" value="#{stat.abcStatState}" />
 		<ui:param name="clickable" value="#{true}" />
 		<aon:methodParam name="backAction" value="abc_stats_searchProduct"/>
 		<aon:methodParam name="backMethod" value="#{stat.onReset}" type="actionListener" />
