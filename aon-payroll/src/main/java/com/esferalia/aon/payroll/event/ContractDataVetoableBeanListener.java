@@ -23,10 +23,6 @@ public class ContractDataVetoableBeanListener extends ManagerBeanVetoListenerAda
 		if (StringUtils.isEmpty( ce.getName())) {
 			throw new ManagerBeanVetoListenerException("El nombre de la variable es obligatorio.");
 		}
-	    String regex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
-	    if (!ce.getName().matches(regex)) {
-	    	throw new ManagerBeanVetoListenerException("El nombre de la variable no es un nombre válido.");
-	    }
 	    // TODO chequear las palabras reservadas del script engine que se utilice.
 		if (StringUtils.isEmpty( ce.getExpression())) {
 			throw new ManagerBeanVetoListenerException("El valor de la variable es obligatorio.");
