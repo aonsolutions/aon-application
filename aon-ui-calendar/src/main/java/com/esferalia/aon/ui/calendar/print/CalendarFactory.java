@@ -5,6 +5,9 @@ import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALEND
 import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
 import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME;
 
+
+
+import java.io.Serializable;
 //import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -15,6 +18,7 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
@@ -29,7 +33,9 @@ import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 
-public class CalendarFactory {
+public class CalendarFactory implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarFactory.class.getName());
 	

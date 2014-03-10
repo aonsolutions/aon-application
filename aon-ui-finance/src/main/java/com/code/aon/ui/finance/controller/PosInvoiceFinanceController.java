@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
@@ -18,6 +19,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class PosInvoiceFinanceController extends InvoiceFinanceController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private double pendingAmount;
 	private List<Finance> finances;
 

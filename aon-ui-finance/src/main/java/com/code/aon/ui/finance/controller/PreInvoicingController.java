@@ -1,11 +1,13 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Series;
@@ -20,7 +22,9 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ui.config.util.UserUtils;
 
-public class PreInvoicingController implements ICollectionProvider {
+public class PreInvoicingController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private InvoicingParameters invoicingParams;
 

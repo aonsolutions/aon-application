@@ -2,6 +2,7 @@ package com.code.aon.ui.sales.util;
 
 import static com.code.aon.ui.common.ICommonMessages.SALES_TO_PURCHASE;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,12 +11,12 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -39,6 +40,7 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
@@ -51,6 +53,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  *
  */
 public class PurchaseGeneratorManager extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
@@ -110,7 +114,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 		this.sales = sales;
 		try {
 			buildTempList(obtainSalesDetail(sales));
-			setModel(new ListDataModel(getTempPurchaseDetail()));
+			setModel(new SerializableListDataModel(getTempPurchaseDetail()));
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido obtener el detalle del pedido.";
 			AonUtil.addErrorMessage(msg);
@@ -236,7 +240,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 			}
 			// end process 
 			HibernateUtil.commitTransaction(sessionName);
-			setModel(new ListDataModel(purchaseList));
+			setModel(new SerializableListDataModel(purchaseList));
 		} catch (Exception e) {
 			String msg = "Error al crear los pedidos de compra. ";
 			AonUtil.addErrorMessage(msg  + e.getMessage());
@@ -443,7 +447,10 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
-	public class TempPurchaseDetail {
+	public static class TempPurchaseDetail implements Serializable  {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private SalesDetail detail;
 		private Supplier supplier;
 		private boolean readOnly;

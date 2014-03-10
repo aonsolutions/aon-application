@@ -14,12 +14,15 @@ import java.util.Map;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.strategy.TaxBreakDown;
 
 public class LogicWinWriter extends BasicExporter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String CONSTANT_0_00 = "0,00";
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
@@ -16,7 +17,7 @@ import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 
 public class CalendarPrintController implements Serializable, ICollectionProvider {
 	
-	private static final long serialVersionUID = 4417895326456828498L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<PrintableCalendar> list;
 	private PrintableCalendar printableCalendar;

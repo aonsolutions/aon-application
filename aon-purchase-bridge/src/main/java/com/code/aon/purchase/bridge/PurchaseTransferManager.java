@@ -8,7 +8,6 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -20,6 +19,7 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseTransferManager {
@@ -66,7 +66,7 @@ public class PurchaseTransferManager {
 
 	public DataModel getPurchaseModel() {
 		if (purchaseModel == null) {
-			purchaseModel = new ListDataModel(purchaseList);
+			purchaseModel = new SerializableListDataModel(purchaseList);
 		}
 		return purchaseModel;
 	}
@@ -77,7 +77,7 @@ public class PurchaseTransferManager {
 
 	public DataModel getDetailModel() {
 		if (detailModel == null) {
-			detailModel = new ListDataModel(detailList);
+			detailModel = new SerializableListDataModel(detailList);
 		}
 		return detailModel;
 	}

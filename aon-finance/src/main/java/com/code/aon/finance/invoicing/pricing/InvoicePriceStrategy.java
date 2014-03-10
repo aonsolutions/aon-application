@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
@@ -16,6 +17,8 @@ import com.code.aon.product.strategy.TaxKey;
 import com.code.aon.registry.ITaxInfo;
 
 public class InvoicePriceStrategy extends BasicPriceStrategy {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public double getTaxableBase(ICalculableContainer icc) {

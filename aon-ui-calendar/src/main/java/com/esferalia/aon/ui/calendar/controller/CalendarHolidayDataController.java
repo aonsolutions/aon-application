@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
@@ -49,7 +49,7 @@ public class CalendarHolidayDataController {
 		for(String key: holidays.keySet()){
 			HolidayData data = new HolidayData();
 			data.setDescription(key);
-			data.setModel(new ListDataModel(holidays.get(key)));
+			data.setModel(new SerializableListDataModel(holidays.get(key)));
 			list.add(data);
 		}
 		return list;

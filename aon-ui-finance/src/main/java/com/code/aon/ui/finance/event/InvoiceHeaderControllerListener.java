@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
@@ -12,6 +13,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * 
  */
 public class InvoiceHeaderControllerListener extends HeaderControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/**
 	 * Obtains the series and the next number to use

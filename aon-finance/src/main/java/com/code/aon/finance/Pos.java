@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.finance.enumeration.PosDisplayMode;
 import com.esferalia.aon.entity.master.PosDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.PosDB;
 @Table(name="pos")
 public class Pos extends PosDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public Pos() {
 		setActive(true);

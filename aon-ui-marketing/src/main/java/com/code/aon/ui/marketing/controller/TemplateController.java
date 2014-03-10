@@ -13,6 +13,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.CSSUnit;
 import com.code.aon.marketing.Template;
@@ -28,6 +29,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used in the offer maintenance.
  */
 public class TemplateController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Double width;
 	

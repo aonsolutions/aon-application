@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Tax;
@@ -17,6 +18,8 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.TaxBreakDown;
 
 public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountInvoicePriceStrategy.class.getName());
 

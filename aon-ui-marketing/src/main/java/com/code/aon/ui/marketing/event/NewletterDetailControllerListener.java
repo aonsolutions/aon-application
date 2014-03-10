@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.NewsletterDetail;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -8,6 +9,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.marketing.controller.NewsletterDetailController;
 
 public class NewletterDetailControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

@@ -1,5 +1,6 @@
 package com.code.aon.finance.invoicing.finance;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,7 +27,9 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FinanceGenerator {
+public class FinanceGenerator implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public Finance initializeFinanceData(Finance finance, double initialAmount) throws ManagerBeanException {
 		if (finance.getInvoice() == null) {

@@ -30,6 +30,7 @@ import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -78,6 +79,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceController extends BasicController implements ISignatureController, IFinanceConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceController.class.getName());
 	
 	private String invoiceAddressControllerName;

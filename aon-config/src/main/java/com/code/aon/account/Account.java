@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.AccountDB;
 
@@ -12,7 +13,7 @@ import com.esferalia.aon.entity.master.AccountDB;
 @Heritable
 public class Account extends AccountDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public Account() {
 		setActive(true);

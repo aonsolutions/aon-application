@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,6 +14,7 @@ import javax.faces.event.ActionEvent;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -29,8 +31,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FinanceCheckingController {
+public class FinanceCheckingController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String reportName;
 	private Date fromDate;
 	private Date toDate;

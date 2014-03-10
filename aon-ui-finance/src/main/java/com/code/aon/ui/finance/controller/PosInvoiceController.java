@@ -14,10 +14,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -45,6 +45,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.finance.util.print.TicketPrinter;
 import com.code.aon.ui.form.FormUtil;
@@ -53,6 +54,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosInvoiceController extends SaleInvoiceController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private PosShift posShift;
 	private Customer defaultCustomer;
@@ -406,7 +409,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public DataModel getTicketModel() {
 		List<Invoice> ticketList = new LinkedList<Invoice>();
 		ticketList.add(getInvoice());
-		return new ListDataModel(ticketList);
+		return new SerializableListDataModel(ticketList);
 	}
 
 	public void onNewTicket(ActionEvent event) {

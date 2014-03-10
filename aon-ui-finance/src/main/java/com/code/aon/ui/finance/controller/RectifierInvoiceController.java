@@ -15,7 +15,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -33,6 +32,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -194,7 +194,7 @@ public class RectifierInvoiceController implements IFinanceConstants {
 				InvoiceWrapper iw = new InvoiceWrapper(invoice, invoiceTotal, pending);
 				getInvoiceList().add(iw);
 			}
-			setModel(new ListDataModel(getInvoiceList()));
+			setModel(new SerializableListDataModel(getInvoiceList()));
 
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Throwable e) {

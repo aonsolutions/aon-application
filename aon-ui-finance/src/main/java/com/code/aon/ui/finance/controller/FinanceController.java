@@ -23,6 +23,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -70,6 +71,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class FinanceController extends FinanceListController implements IFinanceController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Company company;
 	private boolean payment;

@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -15,6 +16,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class CalendarHolidayControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarHolidayControllerListener.class.getName());
 	

@@ -12,6 +12,7 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -26,6 +27,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.calendar.controller.HolidayController;
 
 public class HolidayDetailControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HolidayDetailControllerListener.class.getName());
 	

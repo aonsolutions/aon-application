@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.calendar.controller;
 
-//import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,11 +7,11 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,6 +20,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -34,6 +34,8 @@ import com.esferalia.aon.calendar.CalendarPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CalendarController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarController.class.getName());
 	
@@ -127,7 +129,7 @@ public class CalendarController extends BasicController {
 	}
 	
 	public DataModel getInheritHolidaysModel(){
-		return new ListDataModel(getInheritHolidays());
+		return new SerializableListDataModel(getInheritHolidays());
 	}
 	
 	public List<ITransferObject> getInheritHolidays(){
@@ -163,7 +165,7 @@ public class CalendarController extends BasicController {
 	}
 	
 	public DataModel getInheritPeriodsModel(){
-		return new ListDataModel(getInheritPeriods());
+		return new SerializableListDataModel(getInheritPeriods());
 	}
 	
 	public List<ITransferObject> getInheritPeriods(){

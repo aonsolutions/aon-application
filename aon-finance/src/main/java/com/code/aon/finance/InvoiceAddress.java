@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.registry.IAddress;
 import com.esferalia.aon.entity.master.InvoiceAddressDB;
 
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.InvoiceAddressDB;
 @Table(name="invoice_address")
 public class InvoiceAddress extends InvoiceAddressDB implements IAddress {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public String getAddress3() {

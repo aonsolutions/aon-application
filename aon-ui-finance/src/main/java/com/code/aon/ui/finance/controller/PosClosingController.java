@@ -1,10 +1,12 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -16,7 +18,9 @@ import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class PosClosingController implements IFinanceConstants {
+public class PosClosingController implements IFinanceConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private PosShift posShift;
 	private CashCalculator calculator;

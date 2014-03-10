@@ -1,5 +1,6 @@
 package com.code.aon.warehouse.bridge;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,8 +9,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,11 +18,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DeliveryTransferManager {
+public class DeliveryTransferManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private Integer selectedDeliveryId;
@@ -65,7 +69,7 @@ public class DeliveryTransferManager {
 
 	public DataModel getDeliveryModel() {
 		if (deliveryModel == null) {
-			deliveryModel = new ListDataModel(deliveryList);
+			deliveryModel = new SerializableListDataModel(deliveryList);
 		}
 		return deliveryModel;
 	}
@@ -76,7 +80,7 @@ public class DeliveryTransferManager {
 
 	public DataModel getDetailModel() {
 		if (detailModel == null) {
-			detailModel = new ListDataModel(detailList);
+			detailModel = new SerializableListDataModel(detailList);
 		}
 		return detailModel;
 	}
@@ -169,9 +173,8 @@ public class DeliveryTransferManager {
 		deliveryChecks = new ArrayList<Delivery>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void checkAllDeliveries(ActionEvent event) {
-		Iterator iterator = deliveryList.iterator();
+		Iterator<ITransferObject> iterator = deliveryList.iterator();
 		while (iterator.hasNext()) {
 			Delivery delivery = (Delivery)iterator.next();
 			if (!deliveryChecks.contains(delivery)) {

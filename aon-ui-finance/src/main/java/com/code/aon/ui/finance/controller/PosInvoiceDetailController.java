@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 
 public class PosInvoiceDetailController extends SaleInvoiceDetailController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ArrayList<InvoiceDetail> checks = new ArrayList<InvoiceDetail>();
 

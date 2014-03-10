@@ -1,5 +1,6 @@
 package com.code.aon.warehouse.bridge;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,8 +9,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,11 +18,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class IncomeTransferManager {
+public class IncomeTransferManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private Integer selectedIncomeId;
@@ -65,7 +69,7 @@ public class IncomeTransferManager {
 
 	public DataModel getIncomeModel() {
 		if (incomeModel == null) {
-			incomeModel = new ListDataModel(incomeList);
+			incomeModel = new SerializableListDataModel(incomeList);
 		}
 		return incomeModel;
 	}
@@ -76,7 +80,7 @@ public class IncomeTransferManager {
 
 	public DataModel getDetailModel() {
 		if (detailModel == null) {
-			detailModel = new ListDataModel(detailList);
+			detailModel = new SerializableListDataModel(detailList);
 		}
 		return detailModel;
 	}
@@ -169,9 +173,8 @@ public class IncomeTransferManager {
 		incomeChecks = new ArrayList<Income>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void checkAllIncomes(ActionEvent event) {
-		Iterator iterator = incomeList.iterator();
+		Iterator<ITransferObject> iterator = incomeList.iterator();
 		while (iterator.hasNext()) {
 			Income income = (Income)iterator.next();
 			if (!incomeChecks.contains(income)) {

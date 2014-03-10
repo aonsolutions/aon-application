@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.ui.form.LinesController;
 
 public class FBatchDetailListController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ArrayList<FinanceBatchDetail> checks = new ArrayList<FinanceBatchDetail>();
 

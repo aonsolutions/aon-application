@@ -1,8 +1,13 @@
 package com.esferalia.aon.ui.calendar.print;
 
+import java.io.Serializable;
+
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.calendar.Calendar;
 
-public class PrintableCalendar {
+public class PrintableCalendar implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String enterprise;
 	private String workPlace;

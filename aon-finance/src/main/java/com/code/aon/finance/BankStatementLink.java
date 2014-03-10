@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.account.Account;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,7 +19,7 @@ import com.esferalia.aon.entity.master.BankStatementLinkDB;
 @Table(name="bank_statement_link")
 public class BankStatementLink extends BankStatementLinkDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private ITransferObject sourceTo;
 

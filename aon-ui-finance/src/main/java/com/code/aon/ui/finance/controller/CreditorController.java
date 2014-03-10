@@ -7,6 +7,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Creditor;
@@ -14,6 +15,8 @@ import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CreditorController extends RegistryController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Creditor)getTo());

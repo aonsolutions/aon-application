@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.SurveyQuestion;
@@ -14,6 +15,8 @@ import com.code.aon.ui.marketing.controller.IMarketingConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class SurveyQuestionControllerListener extends ControllerAdapter implements IMarketingConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)

@@ -18,7 +18,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.io.FileUtils;
@@ -38,6 +37,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ZipUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -199,7 +199,7 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 		for( File file : list ) {
 			fws.add( new FileWrapper(file) );
 		}
-		setModel(new ListDataModel(fws));
+		setModel(new SerializableListDataModel(fws));
 	}
 
 	public void onInit( ActionEvent event ) {

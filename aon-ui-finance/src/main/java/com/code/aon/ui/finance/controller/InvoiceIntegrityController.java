@@ -13,20 +13,23 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceIntegrityController extends DataScrollerState {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Date startDate;
 	private Date endDate;
 	private DataModel breakDownModel;
@@ -120,7 +123,7 @@ public class InvoiceIntegrityController extends DataScrollerState {
 				p.setName(rs.getString("rn"));
 				list.add(p);
 			}
-			setModel(new ListDataModel(list));
+			setModel(new SerializableListDataModel(list));
 			if (list.size() == 0) {
 				AonUtil.addWarningMessageFromBundle(FINANCE_INVOICE_INTEGRITY_NO_RESULT );
 			}
@@ -209,7 +212,7 @@ public class InvoiceIntegrityController extends DataScrollerState {
 				b.setInvoiceName(rs.getString("irn"));
 				list.add(b);
 			}
-			setBreakDownModel(new ListDataModel(list));
+			setBreakDownModel(new SerializableListDataModel(list));
 		} catch (SQLException e) {
 			String msg = "No se pudo generar la lista de facturas.";
 			AonUtil.addErrorMessage(msg);

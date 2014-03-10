@@ -18,6 +18,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
@@ -27,6 +28,8 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.StreetType;
 
 public class GeyceWriter extends BasicExporter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String[] ACCOUNT_CODES = new String[] {
 		"100", "1030", "1040", "110", "1110", "1140", "120", "130", "1340", "1370", "140", 

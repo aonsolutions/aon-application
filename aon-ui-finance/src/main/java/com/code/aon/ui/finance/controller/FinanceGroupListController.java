@@ -7,14 +7,17 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 
 public class FinanceGroupListController extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ArrayList<Finance> checks = new ArrayList<Finance>();
 	private List<Finance> groupList;
@@ -32,7 +35,7 @@ public class FinanceGroupListController extends DataScrollerState {
 
 	public DataModel getModel() {
 		if (getDirectModel()==null) {
-			setModel(new ListDataModel(getGroupList()));
+			setModel(new SerializableListDataModel(getGroupList()));
 		}
 		return getDirectModel();
 	}

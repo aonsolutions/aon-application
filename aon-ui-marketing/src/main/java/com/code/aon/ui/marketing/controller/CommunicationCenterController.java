@@ -12,7 +12,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -27,6 +26,7 @@ import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.ProjectSource;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -64,6 +64,7 @@ import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.ProjectCommercialController;
 import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.DataScrollerState;
@@ -84,6 +85,8 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommunicationCenterController extends DataScrollerState implements IMarketingConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationCenterController.class.getName());
 	
@@ -710,7 +713,7 @@ public class CommunicationCenterController extends DataScrollerState implements 
 	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
         List<Integer> targets = getActionTargets(true);
         List<MailData> data = MailingManager.generateMailingList(targets);
-        setModel( new ListDataModel(data) );
+        setModel( new SerializableListDataModel(data) );
         List<Integer> actionTargets = getActionTargets(false);
         CampaignActionTargetController.resetStatuses(actionTargets, ActionTargetStatus.FINISHED);
 	}		

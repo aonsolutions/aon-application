@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,7 +32,8 @@ import com.esferalia.aon.entity.master.PosShiftDB;
 @Table(name="pos_shift")
 public class PosShift extends PosShiftDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Finance.class.getName());
 	
 	private Set<PosShiftCount> posShiftCount = new HashSet<PosShiftCount>();

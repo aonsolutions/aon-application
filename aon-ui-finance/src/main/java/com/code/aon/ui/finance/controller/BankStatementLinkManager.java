@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_SETTLED;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -13,12 +14,12 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -43,11 +44,14 @@ import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class BankStatementLinkManager implements IFinanceConstants {
+public class BankStatementLinkManager implements IFinanceConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final String STATEMENT_LINK_TAB = "statementLinkTab";
 	private final String FINANCE_LINK_TAB = "financeLinkTab";
@@ -130,7 +134,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 	public DataModel getEntryDetailModel() {
 		if (entryDetailModel == null) {
-			entryDetailModel = new ListDataModel(entryDetailList);
+			entryDetailModel = new SerializableListDataModel(entryDetailList);
 		}
 		return entryDetailModel;
 	}
@@ -147,7 +151,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 	public DataModel getLinkTransferModel() {
 		if (linkTransferModel == null) {
-			linkTransferModel = new ListDataModel(linkTransferList);
+			linkTransferModel = new SerializableListDataModel(linkTransferList);
 		}
 		return linkTransferModel;
 	}

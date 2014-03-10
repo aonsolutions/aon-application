@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -65,6 +66,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchController.class.getName());
 
 	private Company company;

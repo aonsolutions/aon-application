@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.account.Account;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.BankStatement;
@@ -14,6 +15,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankStatementControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {

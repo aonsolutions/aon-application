@@ -2,6 +2,7 @@ package com.code.aon.ui.marketing.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.Category;
@@ -9,6 +10,8 @@ import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.ui.form.BasicController;
 
 public class ChannelController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void onReset(ActionEvent event) {

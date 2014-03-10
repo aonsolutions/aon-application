@@ -3,6 +3,7 @@ package com.code.aon.accounting;
 import java.util.Date;
 
 import com.code.aon.account.Account;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -11,7 +12,7 @@ import com.code.aon.registry.RegistryBank;
 
 public class SocialInsuranceEntry implements ITransferObject{
 
-	private static final long serialVersionUID = 9083596439112054168L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private Date date;

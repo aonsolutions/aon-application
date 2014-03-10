@@ -1,13 +1,14 @@
 package com.code.aon.accounting;
 
 import com.code.aon.account.Account;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 
 public class InvoiceEntryDetail implements ITransferObject {
 
-	private static final long serialVersionUID = -2335488721813209995L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private double taxableBase;
