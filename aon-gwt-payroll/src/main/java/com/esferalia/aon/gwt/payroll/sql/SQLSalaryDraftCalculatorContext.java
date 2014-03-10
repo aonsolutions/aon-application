@@ -37,7 +37,12 @@ public class SQLSalaryDraftCalculatorContext extends
 	public void close() throws SQLException {
 		ctx.close();
 	}
-
+	
+	@Override
+	public String getString(String table, String column) {
+		return ctx.getString(table, column);
+	}
+	
 	@Override
 	public Date getDate(String table, String column) {
 		return ctx.getDate(table, column);

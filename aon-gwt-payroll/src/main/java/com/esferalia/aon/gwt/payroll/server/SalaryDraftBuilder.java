@@ -687,7 +687,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		payment.setDescription(contractPayment.getDescription());
 		payment.setIrpfExpression(contractPayment.getIrpfExpression());
 		payment.setQuoteExpression(contractPayment.getQuoteExpression());
-
+		
+		if ( !StringUtils.isBlank(contractPayment.getName()) && 
+				defined.containsKey(contractPayment.getName()) )
+			payment.setDefined(defined.get(contractPayment.getName()));
+		
+		
 		return payment;
 	}
 

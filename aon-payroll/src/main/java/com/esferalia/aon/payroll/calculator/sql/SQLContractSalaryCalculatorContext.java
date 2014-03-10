@@ -780,6 +780,12 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 
 	@Override
+	public Collection<IContractPayment> getAgreementPayments(){
+		Integer agreementId = getAgreement();
+		return agreementPayments.get(agreementId);
+	}
+
+	@Override
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
 		try {
@@ -1164,12 +1170,6 @@ public class SQLContractSalaryCalculatorContext implements
 		AgreementContextKey agreementAndLevel = new AgreementContextKey(
 				agreementId, agreementLevelId);
 		return agreementExpressionContexts.get(agreementAndLevel);
-	}
-
-	private Collection<IContractPayment> getAgreementPayments()
-			throws SQLException, ExpressionException {
-		Integer agreementId = getAgreement();
-		return agreementPayments.get(agreementId);
 	}
 
 	/*

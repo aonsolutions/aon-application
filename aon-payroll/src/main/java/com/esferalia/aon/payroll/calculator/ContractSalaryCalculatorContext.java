@@ -29,78 +29,80 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-public class ContractSalaryCalculatorContext 
-	implements IContractSalaryCalculatorContext, ISalaryProxy {
+public class ContractSalaryCalculatorContext implements
+		IContractSalaryCalculatorContext, ISalaryProxy {
 
 	private ISQLContractSalaryCalculatorContext ctx;
 	private Contract contract;
-	
+
 	@Deprecated
-	public ContractSalaryCalculatorContext(Contract contract, int year, Month month, SalaryType salaryType) throws SalaryException {
+	public ContractSalaryCalculatorContext(Contract contract, int year,
+			Month month, SalaryType salaryType) throws SalaryException {
 		try {
 			this.contract = contract;
 			try {
-				ContextBuilder builder = 
-					new ContextBuilder( year, month, this.contract );
+				ContextBuilder builder = new ContextBuilder(year, month,
+						this.contract);
 				this.ctx = salaryType.accept(builder);
-			} catch ( RuntimeException e) {
+			} catch (RuntimeException e) {
 				throw new SalaryException(e.getCause());
 			}
-			
-			if (this.ctx == null ) {
-				throw new SalaryException("¿?");	
+
+			if (this.ctx == null) {
+				throw new SalaryException("¿?");
 			}
-			
-			if ( !this.ctx.next() ) {
+
+			if (!this.ctx.next()) {
 				throw new OutOfDateException();
 			}
 		} catch (ExpressionException e) {
-			throw new SalaryException(e.getMessage(),e);
+			throw new SalaryException(e.getMessage(), e);
 		} catch (SQLException e) {
-			throw new SalaryException(e.getMessage(),e);
-		} 
+			throw new SalaryException(e.getMessage(), e);
+		}
 	}
-	
-	public ContractSalaryCalculatorContext(Contract contract, Date startDate, Date endDate, SalaryType salaryType) throws SalaryException {
+
+	public ContractSalaryCalculatorContext(Contract contract, Date startDate,
+			Date endDate, SalaryType salaryType) throws SalaryException {
 		try {
 			this.contract = contract;
 			try {
-				ContextBuilder builder = 
-					new ContextBuilder( startDate, endDate, this.contract );
+				ContextBuilder builder = new ContextBuilder(startDate, endDate,
+						this.contract);
 				this.ctx = salaryType.accept(builder);
-			} catch ( RuntimeException e) {
+			} catch (RuntimeException e) {
 				throw new SalaryException(e.getCause());
 			}
-			
-			if (this.ctx == null ) {
-				throw new SalaryException("¿?");	
+
+			if (this.ctx == null) {
+				throw new SalaryException("¿?");
 			}
-			
-			if ( !this.ctx.next() ) {
+
+			if (!this.ctx.next()) {
 				throw new OutOfDateException();
 			}
 		} catch (ExpressionException e) {
-			throw new SalaryException(e.getMessage(),e);
+			throw new SalaryException(e.getMessage(), e);
 		} catch (SQLException e) {
-			throw new SalaryException(e.getMessage(),e);
-		} 
+			throw new SalaryException(e.getMessage(), e);
+		}
 	}
 
 	public Contract getContract() {
 		return contract;
 	}
-	
+
 	// ------------------------------------------
 	// ISalaryProxy
 	// ------------------------------------------
 	@Override
 	public ISalary getSalary() throws SalaryException {
-		ISalaryCalculator sc = 
-			new ContractSalaryCalculator();
+		ISalaryCalculator sc = new ContractSalaryCalculator();
 		sc.setSalaryBuilder(new SalaryBuilder());
-		ISalary salary = sc.calculate( this.ctx );
+		ISalary salary = sc.calculate(this.ctx);
 		return salary;
 	}
+
 	// ------------------------------------------
 	// IContractSalaryCalculatorContext
 	// ------------------------------------------
@@ -108,17 +110,17 @@ public class ContractSalaryCalculatorContext
 	public SalaryType getSalaryType() {
 		return ctx.getSalaryType();
 	}
-	
+
 	@Override
 	public Date getIrpfDate() {
 		return ctx.getChargeDate();
 	}
-	
+
 	@Override
 	public Date getChargeDate() {
 		return ctx.getChargeDate();
 	}
-	
+
 	@Override
 	public Date getIssueDate() {
 		return ctx.getIssueDate();
@@ -173,12 +175,12 @@ public class ContractSalaryCalculatorContext
 	public String getCategory() {
 		return ctx.getCategory();
 	}
-	
+
 	@Override
 	public String getQuoteGroup() {
 		return ctx.getQuoteGroup();
 	}
-	
+
 	@Override
 	public String getEmployeeName() {
 		return ctx.getEmployeeName();
@@ -203,32 +205,40 @@ public class ContractSalaryCalculatorContext
 	public Date getSeniorityDate() {
 		return ctx.getSeniorityDate();
 	}
-	
+
 	@Override
-	public Collection<IContractPayment> getContractPayments() throws AonException {
+	public Collection<IContractPayment> getAgreementPayments() {
+		return ctx.getAgreementPayments();
+	}
+
+	@Override
+	public Collection<IContractPayment> getContractPayments()
+			throws AonException {
 		return ctx.getContractPayments();
 	}
 
 	@Override
-	public Collection<IContractDeduction> getContractDeductions() throws AonException {
+	public Collection<IContractDeduction> getContractDeductions()
+			throws AonException {
 		return ctx.getContractDeductions();
 	}
-	
+
 	@Override
-	public Collection<IContractEmbargo> getContractEmbargos()throws AonException {
+	public Collection<IContractEmbargo> getContractEmbargos()
+			throws AonException {
 		return ctx.getContractEmbargos();
 	}
-	
+
 	@Override
 	public Collection<IContractCost> getContractCosts() throws AonException {
 		return ctx.getContractCosts();
 	}
-	
+
 	@Override
 	public Collection<IContractBonus> getContractBonus() throws AonException {
 		return ctx.getContractBonus();
 	}
-	
+
 	public ExpressionContext getSystemExpressionContext() {
 		return ctx.getSystemExpressionContext();
 	}
@@ -241,74 +251,71 @@ public class ContractSalaryCalculatorContext
 		return ctx.getAgreementExpressionContext();
 	}
 
-	private static  class ContextBuilder 
-		implements SalaryTypeVisitor<ISQLContractSalaryCalculatorContext>
-	{
+	private static class ContextBuilder implements
+			SalaryTypeVisitor<ISQLContractSalaryCalculatorContext> {
 		private Date endDate;
 		private Date startDate;
 		private Contract contract;
-		
+
 		@Deprecated
-		public ContextBuilder(int year , Month month, Contract contract) {
+		public ContextBuilder(int year, Month month, Contract contract) {
 			this.contract = contract;
 			this.startDate = getStartDate(year, month);
 			this.endDate = getEndDate(year, month);
 		}
-		
-		public ContextBuilder(Date startDate , Date endDate, Contract contract) {
+
+		public ContextBuilder(Date startDate, Date endDate, Contract contract) {
 			this.contract = contract;
 			this.startDate = startDate;
 			this.endDate = endDate;
 		}
 
 		private Connection getConnection() {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Contract.class.getName());
+			String sessionFactoryName = HibernateUtil
+					.getSessionFactoryName(Contract.class.getName());
 			return HibernateUtil.getSession(sessionFactoryName).connection();
 		}
-		
+
 		private Criteria getCriteria() {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression("contract.id", contract.getId());
 			return criteria;
 		}
-		
-		private Date getStartDate(int year , Month month) {
+
+		private Date getStartDate(int year, Month month) {
 			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.YEAR , year);
-			calendar.set(Calendar.MONTH , month.getValue());
-			calendar.set(Calendar.DAY_OF_MONTH , 1);
+			calendar.set(Calendar.YEAR, year);
+			calendar.set(Calendar.MONTH, month.getValue());
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			return calendar.getTime();
 		}
-		
-		private Date getEndDate(int year , Month month) {
+
+		private Date getEndDate(int year, Month month) {
 			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.DAY_OF_MONTH , 1);
-			calendar.set(Calendar.YEAR , year);
-			calendar.set(Calendar.MONTH , month.getValue());
-			calendar.set(Calendar.DAY_OF_MONTH , 
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.YEAR, year);
+			calendar.set(Calendar.MONTH, month.getValue());
+			calendar.set(Calendar.DAY_OF_MONTH,
 					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			return calendar.getTime();
 		}
-		
+
 		@Override
 		public ISQLContractSalaryCalculatorContext visitSalary(
 				SalaryType salaryType) {
-			Date issueDate = endDate; // By default isuue date is equal to end date
+			Date issueDate = endDate; // By default isuue date is equal to end
+										// date
 			Connection connection = getConnection();
 			Criteria criteria = getCriteria();
 			ISQLContractSalaryCalculatorContext sqlCtx = null;
 			try {
-				sqlCtx = new SQLContractSalaryCalculatorContext(
-						connection, 
-						startDate, 
-						endDate, 
-						issueDate, 
-						criteria);
-			}catch (SQLException e) {
+				sqlCtx = new SQLContractSalaryCalculatorContext(connection,
+						startDate, endDate, issueDate, criteria);
+			} catch (SQLException e) {
 				throw new RuntimeException(e);
-			}catch (ExpressionException e) {
+			} catch (ExpressionException e) {
 				throw new RuntimeException(e);
-			} 
+			}
 			return sqlCtx;
 		}
 
@@ -317,80 +324,75 @@ public class ContractSalaryCalculatorContext
 				SalaryType salaryType) {
 			Connection connection = getConnection();
 			Criteria criteria = getCriteria();
-			Date issueDate = endDate; // By default isuue date is equal to end date
-			
+			Date issueDate = endDate; // By default isuue date is equal to end
+										// date
+
 			ISQLContractSalaryCalculatorContext sqlCtx = null;
-			
+
 			int year = CommonUtil.getYear(issueDate);
 			Month month = Month.getMonthByValue(CommonUtil.getMonth(issueDate));
-			
+
 			try {
-				sqlCtx = new SQLExtraSalaryCalculatorContext(
-							connection, 
-							year, 
-							month, 
-							issueDate, 
-							null, 
-							criteria);
-			}catch (SQLException e) {
+				sqlCtx = new SQLExtraSalaryCalculatorContext(connection, year,
+						month, issueDate, null, criteria);
+			} catch (SQLException e) {
 				throw new RuntimeException(e);
-			} 
+			}
 			return sqlCtx;
 		}
 
 		@Override
 		public ISQLContractSalaryCalculatorContext visitSettle(
 				SalaryType salaryType) {
-			Date issueDate = endDate; // By default isuue date is equal to end date
+			Date issueDate = endDate; // By default isuue date is equal to end
+										// date
 			Connection connection = getConnection();
 			Criteria criteria = getCriteria();
 			ISQLContractSalaryCalculatorContext sqlCtx = null;
 			try {
-				sqlCtx = new SQLContractSettleCalculatorContext(
-						connection, 
-						startDate, 
-						endDate, 
-						issueDate, 
-						criteria);
-			}catch (SQLException e) {
+				sqlCtx = new SQLContractSettleCalculatorContext(connection,
+						startDate, endDate, issueDate, criteria);
+			} catch (SQLException e) {
 				throw new RuntimeException(e);
-			}catch (ExpressionException e) {
+			} catch (ExpressionException e) {
 				throw new RuntimeException(e);
-			} 
+			}
 			return sqlCtx;
 		}
 
 		@Override
 		public ISQLContractSalaryCalculatorContext visitDelay(
 				SalaryType salaryType) {
-			
-			Date issueDate = endDate; // By default isuue date is equal to end date
+
+			Date issueDate = endDate; // By default isuue date is equal to end
+										// date
 			Connection connection = getConnection();
 			Criteria criteria = getCriteria();
 			ISQLContractSalaryCalculatorContext sqlCtx = null;
 			try {
-				sqlCtx = new SQLContractDelayCalculatorContext(
-						connection, 
-						startDate, 
-						endDate, 
-						issueDate, 
-						criteria) {
+				sqlCtx = new SQLContractDelayCalculatorContext(connection,
+						startDate, endDate, issueDate, criteria) {
 					@Override
 					protected String getDescriptionForSalaryDelay(
 							IContractPayment payment, int ordinal) {
-						return String.format("NOMINA DEL  %1$td/%1$tm/%1$tY  AL  %2$td/%2$tm/%2$tY", payment.getStartDate(), payment.getEndDate());
+						return String
+								.format("NOMINA DEL  %1$td/%1$tm/%1$tY  AL  %2$td/%2$tm/%2$tY",
+										payment.getStartDate(),
+										payment.getEndDate());
 					}
+
 					@Override
 					protected String getDescriptionForExtraDelay(
 							IContractPayment payment, int ordinal) {
-						return String.format("PAGA EXTRA     %1$tm/%1$tY", payment.getEndDate());
+						return String.format("PAGA EXTRA     %1$tm/%1$tY",
+								payment.getEndDate());
 					}
 				};
-			}catch (SQLException e) {
+			} catch (SQLException e) {
 				throw new RuntimeException(e);
-			}catch (ExpressionException e) {
+			} catch (ExpressionException e) {
 				throw new RuntimeException(e);
-			} 
+			}
 			return sqlCtx;
 		}
 
@@ -400,14 +402,14 @@ public class ContractSalaryCalculatorContext
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
 	}
-	
+
 	@Override
 	public IListener getListener() {
 		return ctx.getListener();
 	}
-	
+
 	@Override
 	public void setListener(IListener listener) {
 		ctx.setListener(listener);
