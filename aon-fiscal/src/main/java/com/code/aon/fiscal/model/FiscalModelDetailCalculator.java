@@ -9,7 +9,11 @@ public class FiscalModelDetailCalculator {
 
 	protected void calculateDetails(Collection<FiscalModelDetail> details) {
 		for (FiscalModelDetail detail : details) {
-			detail.setResultAmount(CommonUtil.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));
+			if (detail.getKey().isDifEnabled() ) {
+				detail.setResultAmount(CommonUtil.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
+			} else {
+				detail.setResultAmount(CommonUtil.round(detail.getAccumulatedAmount()));
+			}
 			detail.setAmount(CommonUtil.round(detail.getResultAmount() + detail.getAdjustAmount()));
 		}
 	}

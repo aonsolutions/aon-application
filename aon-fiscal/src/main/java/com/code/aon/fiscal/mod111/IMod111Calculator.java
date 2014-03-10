@@ -25,6 +25,11 @@ public interface IMod111Calculator {
 	Mod111Key getKeyForInvoiceInKindPerception();
 	Mod111Key getKeyForInvoiceInKindWitholding();
 
+	Mod111Key getKeyForFarmerReceivers();
+	Mod111Key getKeyForFarmerPerception();
+	Mod111Key getKeyForFarmerWitholding();
+	
 	double getResult(Mod111 mod111);
+	
 
 }

@@ -99,6 +99,21 @@ public class Alava2011Mod111Calculator extends FiscalModelDetailCalculator imple
 	}
 	
 	@Override
+	public Mod111Key getKeyForFarmerReceivers() {
+		return Mod111Key.AR_C19;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerPerception() {
+		return Mod111Key.AR_C20;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerWitholding() {
+		return Mod111Key.AR_C21;
+	}
+
+	@Override
 	public double getResult(Mod111 mod111) {
 		return mod111.getDetail( Mod111Key.AR_C31 ).getAmount();
 	}

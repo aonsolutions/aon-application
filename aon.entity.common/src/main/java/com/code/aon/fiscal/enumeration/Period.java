@@ -108,5 +108,10 @@ public enum Period implements IResourceable {
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		return c.getTime();
 	}
-	
+	public boolean isQuarterPeriod() {
+		return (this == T1 || this == T2 || this == T3 || this == T4);
+	}
+	public boolean isMonthPeriod() {
+		return (this.ordinal() < 12);
+	}
 }

@@ -93,6 +93,21 @@ public class Gipuzkoa2011Mod111Calculator extends FiscalModelDetailCalculator im
 	}
 
 	@Override
+	public Mod111Key getKeyForFarmerReceivers() {
+		return Mod111Key.GP_C07;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerPerception() {
+		return Mod111Key.GP_C08;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerWitholding() {
+		return Mod111Key.GP_C09;
+	}
+
+	@Override
 	public double getResult(Mod111 mod111) {
 		return mod111.getDetail( Mod111Key.GP_C25 ).getAmount();
 	}

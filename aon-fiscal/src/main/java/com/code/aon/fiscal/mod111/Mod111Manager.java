@@ -5,7 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.AonException;
@@ -15,12 +19,15 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.fiscal.enumeration.Mod111Key;
 import com.code.aon.fiscal.model.FiscalModelManager;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.pool.AonConnectionException;
@@ -29,8 +36,14 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod111Manager extends FiscalModelManager {
 	private static final String DOCUMENT = "document";
+	private static final String WITHHOLDING_TYPE = "withholding_type";
 	private static final String TAXABLE_BASE = "taxable_base";
 	private static final String QUOTA = "quota";
+	private static String EMPLOYEE_DOCUMENT = "employee_document";
+	private static String IRPF_BASE = "irpf_base";
+	private static String MONEY_IRPF_BASE = "money_irpf_base";
+	private static String INKIND_IRPF_BASE = "inkind_irpf_base";
+	private static String TOTAL_IRPF = "total_irpf";
 	
 	//  Se deben tener en cuenta las retenciones PROFESSIONAL, que van a una casilla
 	//	y luego las de FARMER y TRANSPORT_OPERATOR, que van a otra juntas.
@@ -40,8 +53,8 @@ public class Mod111Manager extends FiscalModelManager {
 	//			2 --> MOVABLE_CAPITAL
 	//			3 --> FARMER
 	//			4 --> TRANSPORT_OPERATOR
-	private static String SELECT = "SELECT " 
-		+" i.rdocument " + DOCUMENT
+	private static String SELECT = "SELECT it.withholding_type " + WITHHOLDING_TYPE 
+		+" ,i.rdocument " + DOCUMENT
 		+" ,SUM( it.base )" + TAXABLE_BASE
 		+" ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) " + QUOTA
 		+" FROM invoice_tax it "
@@ -53,7 +66,7 @@ public class Mod111Manager extends FiscalModelManager {
 		+" AND it.withholding_type IN (0,3,4)" // IRPF de profesionales,agricultura y transporte.  
 		+" AND i.tax_date >= ?"
 		+" AND i.tax_date <= ?"
-		+" GROUP BY " + DOCUMENT;
+		+" GROUP BY " + WITHHOLDING_TYPE + "," + DOCUMENT;
 	
 	private static String SELECT_ACCOUNT = "SELECT " 
 			+" aed.account,aed.debit,aed.credit "
@@ -65,6 +78,17 @@ public class Mod111Manager extends FiscalModelManager {
 			+" AND ae.entry_date <= ?"
 			+" ORDER BY ae.id";	
 	
+	private static String PAYROLL_SELECT = "SELECT " 
+			+"  s.employee_document " + EMPLOYEE_DOCUMENT
+			+" ,s.irpf_base " + IRPF_BASE
+			+" ,s.money_irpf_base " + MONEY_IRPF_BASE
+			+" ,s.inkind_irpf_base " + INKIND_IRPF_BASE
+			+" ,s.total_irpf " + TOTAL_IRPF
+			+" FROM salary s"
+			+" WHERE s.domain =? "
+			+" AND s.issue_date>=?"
+			+" AND s.issue_date<=?";
+
 	private String domainName;
 	
 	public Mod111Manager(String domainName) {
@@ -102,6 +126,8 @@ public class Mod111Manager extends FiscalModelManager {
 			searchInvoices(conn, mod111,calculator);
 			if (fiscalModel.isReadRetentionFromAccount()) {
 				searchAccountEntries(conn, mod111,calculator);
+			} else {
+				searchSalaries(conn, mod111,calculator);
 			}
 			super.fillDeclaredData(mod111);
 			mod111.calculate();
@@ -127,12 +153,24 @@ public class Mod111Manager extends FiscalModelManager {
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
+			Map<Mod111Key,Map<String,Integer>> receivers = new HashMap<Mod111Key, Map<String,Integer>>(); 
 			while (rs.next()) {
-				double rentingAmount = rs.getDouble( TAXABLE_BASE );
+				WithholdingType type = WithholdingType.values()[rs.getInt(WITHHOLDING_TYPE)];
+				double base = rs.getDouble( TAXABLE_BASE );
 				double retention = rs.getDouble( QUOTA );
-				mod111.ensureDetail(calculator.getKeyForInvoiceReceivers()).addAccumulatedAmount(1);
-				mod111.ensureDetail(calculator.getKeyForInvoicePerception()).addAccumulatedAmount(rentingAmount);
-				mod111.ensureDetail(calculator.getKeyForInvoiceWitholding()).addAccumulatedAmount(retention);
+				String doc = rs.getString( DOCUMENT );
+				if (type == WithholdingType.FARMER ) {
+					addReceiver(receivers,calculator.getKeyForFarmerReceivers(),doc);
+					addAccumulatedAmont(mod111,calculator.getKeyForFarmerPerception(), base);
+					addAccumulatedAmont(mod111,calculator.getKeyForFarmerWitholding(), retention);
+				} else {
+					addReceiver(receivers,calculator.getKeyForInvoiceReceivers(),doc);
+					addAccumulatedAmont(mod111,calculator.getKeyForInvoicePerception(), base);
+					addAccumulatedAmont(mod111,calculator.getKeyForInvoiceWitholding(), retention);
+				}
+			}
+			for (Mod111Key key : receivers.keySet() ) {
+				mod111.ensureDetail(key).addAccumulatedAmount(receivers.get(key).size());
 			}
 		} catch (NumberFormatException e) {
 			//Nothing
@@ -150,6 +188,24 @@ public class Mod111Manager extends FiscalModelManager {
 					ps.close();
 				} catch (SQLException e) {
 				}
+			}
+		}
+	}
+
+	private void addAccumulatedAmont(Mod111 mod111, Mod111Key key, double amount) {
+		if (key != null && amount != 0) {
+			mod111.ensureDetail(key).addAccumulatedAmount(amount);	
+		}
+	}
+
+	private void addReceiver(Map<Mod111Key, Map<String,Integer>> receivers, Mod111Key key, String document) {
+		if (key != null) {
+			if (!receivers.containsKey(key)) {
+				receivers.put(key, new HashMap<String, Integer>());
+			}
+			Map<String, Integer> map = receivers.get(key);
+			if (!receivers.containsKey(document)) {
+				map.put(document, 0);
 			}
 		}
 	}
@@ -179,15 +235,15 @@ public class Mod111Manager extends FiscalModelManager {
 						double cre = rs.getDouble(3);
 						if (acc == retentionAccount) {
 							found = true;
-							mod111.ensureDetail(calculator.getKeyForWorkWitholding()).addAccumulatedAmount(cre);
+							addAccumulatedAmont(mod111, calculator.getKeyForWorkWitholding(), cre);
 						}
 						if (acc == salaryAccount) {
 							found = true;
-							mod111.ensureDetail(calculator.getKeyForWorkPerception()).addAccumulatedAmount(deb);
+							addAccumulatedAmont(mod111, calculator.getKeyForWorkPerception(), deb);
 						}
 					}
 					if (found) {
-						mod111.ensureDetail(calculator.getKeyForWorkReceivers()).addAccumulatedAmount( fiscalModel.getReceiverCount());
+						addAccumulatedAmont(mod111, calculator.getKeyForWorkReceivers(), fiscalModel.getReceiverCount());
 					}
 				}
 			}
@@ -225,59 +281,63 @@ public class Mod111Manager extends FiscalModelManager {
 		return mod111;
 	}
 	
-/*	
-	private static String PAYROLL_SELECT = "SELECT " 
-			+" s.employee_document doc"
-			+" ,SUM(s.money_irpf_base) base"
-			+" ,SUM(s.inkind_irpf_base) inKindBase"
-			+" ,SUM(s.total_irpf) quota"
-			+" FROM salary s"
-			+" INNER JOIN contract c ON s.contract = c.id"
-			+" INNER JOIN workplace w ON c.workplace = w.id"
-			+" WHERE " + DomainManager.getStaticSQLWhereClause("s.domain")
-			+" AND w.enterprise = ?"
-			+" AND s.issue_date>=?"
-			+" AND s.issue_date<=?"
-			+" GROUP BY s.employee_document";
 
+	private void searchSalaries(Connection conn, Mod111 mod111, IMod111Calculator calculator) throws ManagerBeanException {
+		FiscalModel fiscalModel = mod111.getHeader();
+		Date dateFrom = getInitialDate(fiscalModel);	
+		Date dateTo = getDueDate(fiscalModel);
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
-			Integer enterpriseId = null;
-			IManagerBean bean = BeanManager.getManagerBean(Company.class);
-			List<ITransferObject> list = bean.getList(null);
-			for (ITransferObject to : list) {
-				Company company = (Company) to;
-				IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-				Enterprise enterprise = (Enterprise) enterpriseBean.get(company.getId());
-				if (enterprise != null) {
-					enterpriseId = enterprise.getId();
-				}
-			}
-			if (enterpriseId == null) {
-				throw new AonException("No existe ninguna empresa (enterprise) definida en el dominio activo."); 
-			}
 			ps = conn.prepareStatement(PAYROLL_SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
-			int filled = DomainManager.fillHostVariables(ps, 1);
-			i = i + filled;
-			ps.setInt(++i, enterpriseId);
+			ps.setInt(++i,fiscalModel.getDomain());
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
+			int receivers = 0;
+			int inKindReceivers = 0;
+			double moneyBaseAccum = 0;
+			double moneyQuotaAccum = 0;
+			double inKindBaseAccum = 0;
+			double inKindQuotaAccum = 0;
+			Set<String> documents = new HashSet<String>();
 			while (rs.next()) {
-				double base = rs.getDouble(2);
-				double inKindBase = rs.getDouble(3);
-				double quota = rs.getDouble(4);
-				String document = rs.getString(1);
-				System.out.println("1.- "+ document  +mod111.getDetail(calculator.getKeyForReceivers()).getAccumulatedAmount());
-				if (!receiverDocuments.contains(document) ) {
-					receiverDocuments.add(document);
-					mod111.ensureDetail(calculator.getKeyForReceivers()).addAccumulatedAmount(1);
+				String doc = rs.getString(EMPLOYEE_DOCUMENT);
+				
+				double base = rs.getDouble(IRPF_BASE);
+				double quota = rs.getDouble(TOTAL_IRPF);
+				 
+				double moneyBase = base;
+				double moneyQuota = quota;
+				double inKindBase = rs.getDouble(INKIND_IRPF_BASE);
+				double inKindQuota = 0;
+				if (inKindBase != 0) {
+					moneyBase = rs.getDouble(MONEY_IRPF_BASE);
+					moneyQuota = CommonUtil.round( moneyBase * quota  / base ); 	
+					inKindQuota = CommonUtil.round( quota - moneyQuota);
+				} else {
+					moneyBase = base;
+					moneyQuota = quota;
 				}
-				mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(base);
-				mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(quota);
-				mod111.ensureDetail(calculator.getKeyForInKindPerception()).addAccumulatedAmount(inKindBase);
-				System.out.println("2.- "+ document +mod111.getDetail(calculator.getKeyForReceivers()).getAccumulatedAmount());
+				if (!documents.contains(doc)) {
+					documents.add(doc);
+					receivers = receivers + (moneyQuota !=0 || moneyBase!=0?1:0);
+					inKindReceivers = inKindReceivers + (inKindQuota !=0 || inKindBase!=0?1:0);
+				}
+				moneyBaseAccum = moneyBaseAccum + moneyBase;
+				moneyQuotaAccum = moneyQuotaAccum + moneyQuota;
+				inKindBaseAccum = inKindBaseAccum + inKindBase;
+				inKindQuotaAccum = inKindQuotaAccum + inKindQuota;
+
 			}
+			addAccumulatedAmont(mod111, calculator.getKeyForWorkReceivers(), receivers);	
+			addAccumulatedAmont(mod111, calculator.getKeyForWorkPerception(), moneyBaseAccum);
+			addAccumulatedAmont(mod111, calculator.getKeyForWorkWitholding(), moneyQuotaAccum);
+			addAccumulatedAmont(mod111, calculator.getKeyForWorkInKindReceivers(), inKindReceivers);	
+			addAccumulatedAmont(mod111, calculator.getKeyForWorkInKindPerception(), inKindBaseAccum);
+			addAccumulatedAmont(mod111, calculator.getKeyForWorkInKindWitholding(), inKindQuotaAccum);
+			
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
@@ -294,8 +354,6 @@ public class Mod111Manager extends FiscalModelManager {
 				}
 			}
 		}
+	}
 
-
-
-*/
 }
