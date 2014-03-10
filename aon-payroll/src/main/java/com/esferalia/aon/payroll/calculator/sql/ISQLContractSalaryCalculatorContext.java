@@ -21,6 +21,8 @@ public interface ISQLContractSalaryCalculatorContext extends
 
 	Date getDate(String table, String column);
 
+	String getString(String table, String column);
+
 	Integer getInt(String table, String column);
 
 	boolean next() throws SQLException, ExpressionException;
