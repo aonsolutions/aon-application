@@ -66,7 +66,6 @@ public class MOD115Writer implements IFinanceConstants{
 			wr = new OutputStreamWriter(output);
 		}
 		PrintWriter writer = new PrintWriter(wr);
-//		PrintWriter writer = new PrintWriter(output);
 		MOD115 mod115 = new MOD115();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod115.create(declarations, format, writer));
@@ -83,7 +82,7 @@ public class MOD115Writer implements IFinanceConstants{
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
 		int year = fiscalModel.getYear();
-		declaration.setYear(year); 
+		declaration.setYear(year);
 		Administration admon = fiscalModel.getAdministration();
 		declaration.setPeriod(fiscalModel.getPeriod().getName(admon)); 
 		Date date = new Date();
@@ -97,6 +96,16 @@ public class MOD115Writer implements IFinanceConstants{
 		declaration.setStartPeriod(Integer.parseInt( startDate));
 		String endDate = formatter.format(fiscalModel.getPeriod().getDueDate(year));
 		declaration.setEndPeriod(Integer.parseInt( endDate));
+
+		if (fiscalModel.getPeriod().isQuarterPeriod()) {
+			declaration.setNavarraModel("759");
+			declaration.setQuarter(fiscalModel.getPeriod().ordinal() - 11);
+			declaration.setMonth((fiscalModel.getPeriod().ordinal() - 11) * 3);
+		} else {
+			declaration.setNavarraModel("760");
+			declaration.setQuarter((fiscalModel.getPeriod().ordinal() + 1) % 3);
+			declaration.setMonth(fiscalModel.getPeriod().ordinal() + 1);
+		}
 
 		declaration.setDocument(fiscalModel.getDocument());
 		declaration.setName(fiscalModel.getName());
@@ -150,6 +159,7 @@ public class MOD115Writer implements IFinanceConstants{
 			declaration.setPayInCash("X");
 			declaration.setPayInAccount(" ");
 			declaration.setCcc("");
+			declaration.setPayMethod("0");
 			Finance finance = fiscalModel.getFinance();
 			if (finance != null) {
 				if (finance.getPayMethod() != null) {
@@ -158,6 +168,7 @@ public class MOD115Writer implements IFinanceConstants{
 						if (finance.getBankAccount() == null) {
 							throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
 						}
+						declaration.setPayMethod("1");
 						declaration.setPayInCash(" ");
 						declaration.setPayInAccount("D");
 						declaration.setCcc(finance.getBankAccount().getBban());
@@ -170,12 +181,4 @@ public class MOD115Writer implements IFinanceConstants{
 		return declaration;
 	}
 
-	
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-		File a = new File("/home/ecastellano/TRABAJO/BD/ut8.txt");
-		PrintWriter pw = new PrintWriter(a, "ISO-8859-1");
-		pw.write("Ò—");
-		pw.flush();
-		pw.close();
-	}
 }

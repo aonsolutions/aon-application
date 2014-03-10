@@ -11,6 +11,8 @@ public class Declaration {
 	private String declarationType;
 	private String administrationCode;
 	private Integer year;
+	private Integer quarter;
+	private Integer month;
 	private String period;
 	private Integer currentDay;
 	private Integer currentMonth;
@@ -18,6 +20,7 @@ public class Declaration {
 	private Integer currentYear;
 	private boolean replacement;
 	private boolean complementary;
+	private String navarraModel;
 	
 	private String complementaryCode;
 	private String replacedNumber;
@@ -49,6 +52,7 @@ public class Declaration {
 	private String payInCash;
 	private String payInAccount;
 	private String ccc;
+	private String payMethod;
 	
 	private Map<String,Double> boxes = new HashMap<String, Double>();
 
@@ -63,6 +67,18 @@ public class Declaration {
 	}
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+	public Integer getQuarter() {
+		return quarter;
+	}
+	public void setQuarter(Integer quarter) {
+		this.quarter = quarter;
+	}
+	public Integer getMonth() {
+		return month;
+	}
+	public void setMonth(Integer month) {
+		this.month = month;
 	}
 	public String getPeriod() {
 		return period;
@@ -100,6 +116,12 @@ public class Declaration {
 	public void setReplacement(boolean replacement) {
 		this.replacement = replacement;
 	}
+	public String getNavarraModel() {
+		return navarraModel;
+	}
+	public void setNavarraModel(String navarraModel) {
+		this.navarraModel = navarraModel;
+	}
 	public boolean isComplementary() {
 		return complementary;
 	}
@@ -111,6 +133,11 @@ public class Declaration {
 	}
 	public void setComplementaryCode(String complementaryCode) {
 		this.complementaryCode = complementaryCode;
+	}
+	public String getNavarraDeclType() {
+		if (isReplacement()) return "S";
+		if (isComplementary()) return "C";
+		return " ";
 	}
 	public String getReplacedNumber() {
 		return replacedNumber;
@@ -267,6 +294,12 @@ public class Declaration {
 	}
 	public void setPayInAccount(String payInAccount) {
 		this.payInAccount = payInAccount;
+	}
+	public String getPayMethod() {
+		return payMethod;
+	}
+	public void setPayMethod(String payMethod) {
+		this.payMethod = payMethod;
 	}
 	public String getCcc() {
 		return ccc;

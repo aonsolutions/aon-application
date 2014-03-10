@@ -11,36 +11,26 @@ import com.code.aon.config.enumeration.Administration;
 
 public enum Mod115Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 
-	// Rendimientos Dinerarios.
-	CT1("115-CT1",true ,0,false,false,null),
-	// Rendimientos Dinerarios. Número de perceptores
-	C01("115-01" ,false,1,false,false,null),
-	// Rendimientos Dinearios. Base de las retencioines e ingresos a cuenta.
-	C02("115-02" ,false,1,true ,false,null),
-	// Rendimientos Dinerarios. Retenciones e ingresos a cuenta.
-	C03("115-03" ,false,1,true ,false,null),
-	// Rendimientos Especie.
-	CT2("115-CT2",true ,0,false,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
-	// Rendimientos Especie. Número de perceptores
-	C04("115-04" ,false,1,false,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
-	// Rendimientos Especie. Base de las retencioines e ingresos a cuenta.
-	C05("115-05" ,false,1,true ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
-	// Rendimientos Especie. Retenciones e ingresos a cuenta.
-	C06("115-06" ,false,1,true ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
-	// Sep.
-	SEP("115-SEP",true ,0,false,false,null),
-	// A Deducir. Declaraciones Complementarias.
-	C07("115-07" ,false,1,false,false,new Administration[]{Administration.COMMON_TERRITORY}),
-	// A Ingresar.
-	C08("115-08" ,false,0,false,true ,null),
-	// Recargo de prorroga
-	C09("115-09" ,false,0,false,false,new Administration[]{Administration.ALAVA}),
-	// Intereses de demora
-	C10("115-10" ,false,0,false,false,new Administration[]{Administration.ALAVA}),
-	// Total Deuda Tributaria.
-	C11("115-11" ,false,0,false,true ,new Administration[]{Administration.ALAVA});
+	//  value    ,title  ,level,difEnabled,total,Administration[] administrations
+	
+	CT1("115-CT1",true   ,0    ,false     ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA,Administration.COMMON_TERRITORY}),
+	C01("115-01" ,false  ,1    ,false     ,false,null),
+	C02("115-02" ,false  ,1    ,true      ,false,null),
+	C03("115-03" ,false  ,1    ,true      ,false,null),
+	CT2("115-CT2",true   ,0    ,false     ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
+	C04("115-04" ,false  ,1    ,false     ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
+	C05("115-05" ,false  ,1    ,true      ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
+	C06("115-06" ,false  ,1    ,true      ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA}),
+	SEP("115-SEP",true   ,0    ,false     ,false,new Administration[]{Administration.ALAVA,Administration.BIZKAIA,Administration.GIPUZKOA,Administration.COMMON_TERRITORY}),
+	C07("115-07" ,false  ,1    ,false     ,false,new Administration[]{Administration.COMMON_TERRITORY}),
+	C08("115-08" ,false  ,0    ,false     ,true ,null),
+	C09("115-09" ,false  ,0    ,false     ,false,new Administration[]{Administration.ALAVA}),
+	C10("115-10" ,false  ,0    ,false     ,false,new Administration[]{Administration.ALAVA}),
+	C11("115-11" ,false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA});
+	
+	
 
-    private static final String MSG_KEY_PREFIX = "aon_enum_mod";
+	private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod115Key getKeyWithValue( String value ) {
     	for (Mod115Key key : Mod115Key.values() ) {
@@ -97,7 +87,7 @@ public enum Mod115Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	public String getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public boolean accept(Administration administration) {
 		if (administrations == null) {
