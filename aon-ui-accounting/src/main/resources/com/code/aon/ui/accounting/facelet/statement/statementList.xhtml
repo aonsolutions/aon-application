@@ -80,43 +80,110 @@
 				</aon:panel>
 
 				<aon:div id="linesContainer" style="width: 99%;">
-					<aon:dataTable id="statementDetailData" var="to"
-						value="#{statement.detailModel}" rows="20">
+				
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{statement.detailState}" />
+						<ui:param name="skipSelectButton" value="true" />
+						<ui:param name="rowSelectorToggleOnClick" value="false" />
 
-						<f:facet name="header">
-							<rich:columnGroup>
-								<c:if test="#{statement.previousBalancePresent}">
+						<ui:define name="columns">
+							<f:facet name="header">
+								<rich:columnGroup>
+									<c:if test="#{statement.previousBalancePresent}">
+										<aon:column breakBefore="true" colspan="3"
+											styleClass="aon-text-right"
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText
+												value="#{bundle.account_balance_at} " />
+											<aon:outputText value="#{statement.previousBalance.toDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:column>
+										<aon:column styleClass="aon-text-right"
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText value="&#160;" />
+										</aon:column>
+										<aon:column styleClass="aon-text-right"
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText value="&#160;" />
+										</aon:column>
+										<aon:column styleClass="aon-text-right"
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText
+												value="#{statement.previousBalance.unpaidBalance}"
+												rendered="#{statement.previousBalance.unpaidBalance != 0}">
+												<f:convertNumber pattern="#,##0.00" />
+											</aon:outputText>
+										</aon:column>
+										<aon:column styleClass="aon-text-right"
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText
+												value="#{statement.previousBalance.creditBalance}"
+												rendered="#{statement.previousBalance.creditBalance != 0}">
+												<f:convertNumber pattern="#,##0.00" />
+											</aon:outputText>
+										</aon:column>
+										<aon:column
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText value="&#160;" />
+										</aon:column>
+										<aon:column
+											style="font-size: 1em;background: #FFF;font-weight: normal;">
+											<aon:outputText value="&#160;" />
+										</aon:column>
+									</c:if>							
+	
 									<aon:column breakBefore="true" colspan="3"
 										styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
 										<aon:outputText
-											value="#{bundle.account_balance_at} " />
-										<aon:outputText value="#{statement.previousBalance.toDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
+											value="#{bundle.accounting_accumulated_amounts} " />
+										<aon:panelGroup
+											rendered="#{statement.periodBalance.fromDate != null or statement.periodBalance.toDate != null}">
+											<aon:outputText value=" (" />
+											<aon:outputText value="#{bundle.aon_date_from} "
+												rendered="#{statement.periodBalance.fromDate != null}" />
+											<aon:outputText value="#{statement.periodBalance.fromDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+											<aon:outputText value=" #{bundle.aon_date_to} "
+												rendered="#{statement.periodBalance.toDate != null}" />
+											<aon:outputText value="#{statement.periodBalance.toDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+											<aon:outputText value=")" />
+										</aon:panelGroup>
 									</aon:column>
 									<aon:column styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="&#160;" />
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="&#160;" />
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText
-											value="#{statement.previousBalance.unpaidBalance}"
-											rendered="#{statement.previousBalance.unpaidBalance != 0}">
+										<aon:outputText value="#{statement.periodBalance.debit}"
+											rendered="#{statement.periodBalance.debit != 0}">
 											<f:convertNumber pattern="#,##0.00" />
 										</aon:outputText>
 									</aon:column>
 									<aon:column styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
+										<aon:outputText value="#{statement.periodBalance.credit}"
+											rendered="#{statement.periodBalance.credit != 0}">
+											<f:convertNumber pattern="#,##0.00" />
+										</aon:outputText>
+									</aon:column>
+									<aon:column styleClass="aon-text-right"
+										style="font-size: 1em;background: #FFF;font-weight: bold;">
 										<aon:outputText
-											value="#{statement.previousBalance.creditBalance}"
-											rendered="#{statement.previousBalance.creditBalance != 0}">
+											value="#{statement.periodBalance.unpaidBalance}"
+											rendered="#{statement.periodBalance.unpaidBalance != 0}">
+											<f:convertNumber pattern="#,##0.00" />
+										</aon:outputText>
+									</aon:column>
+									<aon:column styleClass="aon-text-right"
+										style="font-size: 1em;background: #FFF;font-weight: bold;">
+										<aon:outputText
+											value="#{statement.periodBalance.creditBalance}"
+											rendered="#{statement.periodBalance.creditBalance != 0}">
 											<f:convertNumber pattern="#,##0.00" />
 										</aon:outputText>
 									</aon:column>
@@ -128,171 +195,106 @@
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
 										<aon:outputText value="&#160;" />
 									</aon:column>
-								</c:if>							
-
-								<aon:column breakBefore="true" colspan="3"
-									styleClass="aon-text-right"
-									style="font-size: 1em;background: #FFF;font-weight: normal;">
+								</rich:columnGroup>
+							</f:facet>
+	
+							<aon:column styleClass="aon-width-60">
+								<f:facet name="header">
 									<aon:outputText
-										value="#{bundle.accounting_accumulated_amounts} " />
-									<aon:panelGroup
-										rendered="#{statement.periodBalance.fromDate != null or statement.periodBalance.toDate != null}">
-										<aon:outputText value=" (" />
-										<aon:outputText value="#{bundle.aon_date_from} "
-											rendered="#{statement.periodBalance.fromDate != null}" />
-										<aon:outputText value="#{statement.periodBalance.fromDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value=" #{bundle.aon_date_to} "
-											rendered="#{statement.periodBalance.toDate != null}" />
-										<aon:outputText value="#{statement.periodBalance.toDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value=")" />
-									</aon:panelGroup>
-								</aon:column>
-								<aon:column styleClass="aon-text-right"
-									style="font-size: 1em;background: #FFF;font-weight: normal;">
-									<aon:outputText value="#{statement.periodBalance.debit}"
-										rendered="#{statement.periodBalance.debit != 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:column>
-								<aon:column styleClass="aon-text-right"
-									style="font-size: 1em;background: #FFF;font-weight: normal;">
-									<aon:outputText value="#{statement.periodBalance.credit}"
-										rendered="#{statement.periodBalance.credit != 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:column>
-								<aon:column styleClass="aon-text-right"
-									style="font-size: 1em;background: #FFF;font-weight: bold;">
+										value="#{bundle.account_account_entry}" />
+								</f:facet>
+								<aon:commandLink id="accountEntry-search" 
+									immediate="true" 
+									styleClass="aon-dataTable-link"
+									title="#{bundle.accounting_lookup_account_entry}"
+									actionListener="#{trialBalance.onAccountEntry}"
+									action="accountEntry_form">
+									<aon:outputText value="#{to.accountEntry}" />
+								</aon:commandLink>
+							</aon:column>
+	
+							<aon:column styleClass="aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.fromDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column styleClass="aon-width-auto">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_concept}" />
+								</f:facet>
+								<aon:outputText value="#{to.concept}" style="font-size: 0.9em;"/>
+							</aon:column>
+	
+							<aon:column
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.account_debit}" />
+								</f:facet>
+								<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.account_credit}" />
+								</f:facet>
+								<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
 									<aon:outputText
-										value="#{statement.periodBalance.unpaidBalance}"
-										rendered="#{statement.periodBalance.unpaidBalance != 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:column>
-								<aon:column styleClass="aon-text-right"
-									style="font-size: 1em;background: #FFF;font-weight: bold;">
+										value="#{bundle.account_debit_balance}" />
+								</f:facet>
+								<aon:outputText value="#{to.unpaidBalance}"
+									rendered="#{to.unpaidBalance != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column
+								styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
 									<aon:outputText
-										value="#{statement.periodBalance.creditBalance}"
-										rendered="#{statement.periodBalance.creditBalance != 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:column>
-								<aon:column
-									style="font-size: 1em;background: #FFF;font-weight: normal;">
-									<aon:outputText value="&#160;" />
-								</aon:column>
-								<aon:column
-									style="font-size: 1em;background: #FFF;font-weight: normal;">
-									<aon:outputText value="&#160;" />
-								</aon:column>
-							</rich:columnGroup>
-						</f:facet>
-
-						<aon:column styleClass="aon-width-60">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.account_account_entry}" />
-							</f:facet>
-							<aon:commandLink id="accountEntry-search" 
-								immediate="true" 
-								styleClass="aon-dataTable-link"
-								title="#{bundle.accounting_lookup_account_entry}"
-								actionListener="#{trialBalance.onAccountEntry}"
-								action="accountEntry_form">
-								<aon:outputText value="#{to.accountEntry}" />
-							</aon:commandLink>
-						</aon:column>
-
-						<aon:column styleClass="aon-width-80">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.fromDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-width-auto">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_concept}" />
-							</f:facet>
-							<aon:outputText value="#{to.concept}" style="font-size: 0.9em;"/>
-						</aon:column>
-
-						<aon:column
-							styleClass="aon-editDataTable-numberColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.account_debit}" />
-							</f:facet>
-							<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column
-							styleClass="aon-editDataTable-numberColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.account_credit}" />
-							</f:facet>
-							<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column
-							styleClass="aon-editDataTable-numberColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.account_debit_balance}" />
-							</f:facet>
-							<aon:outputText value="#{to.unpaidBalance}"
-								rendered="#{to.unpaidBalance != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column
-							styleClass="aon-editDataTable-numberColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.account_credit_balance}" />
-							</f:facet>
-							<aon:outputText value="#{to.creditBalance}"
-								rendered="#{to.creditBalance != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-width-100">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.finance_balancing_account}" />
-							</f:facet>
-							<aon:outputText id="balancingAccount"
-								value="#{to.balancingAccount}">
-								<rich:toolTip value="#{to.balancingAccountDescription}"
-									hideEvent="onmouseout" showDelay="200">
-								</rich:toolTip>
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-width-100">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.account_document_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.documentNumber}" />
-						</aon:column>
-
-					</aon:dataTable>
-
-					<aon:dataScroller for="statementDetailData" showNote="true" />
+										value="#{bundle.account_credit_balance}" />
+								</f:facet>
+								<aon:outputText value="#{to.creditBalance}"
+									rendered="#{to.creditBalance != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column styleClass="aon-width-100">
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.finance_balancing_account}" />
+								</f:facet>
+								<aon:outputText id="balancingAccount"
+									value="#{to.balancingAccount}">
+									<rich:toolTip value="#{to.balancingAccountDescription}"
+										hideEvent="onmouseout" showDelay="200">
+									</rich:toolTip>
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column styleClass="aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.account_document_number}" />
+								</f:facet>
+								<aon:outputText value="#{to.documentNumber}" />
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
 				</aon:div>
 			</aon:div>
 		</aon:form>

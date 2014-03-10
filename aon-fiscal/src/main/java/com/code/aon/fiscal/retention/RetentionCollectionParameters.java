@@ -8,6 +8,7 @@ import com.code.aon.config.enumeration.WithholdingType;
 public class RetentionCollectionParameters {
 
 	private boolean toCustomer;
+	private boolean byPercent;
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private String fromSeries;
@@ -38,12 +39,19 @@ public class RetentionCollectionParameters {
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
+
 	public boolean isToCustomer() {
 		return toCustomer;
 	}
-
 	public void setToCustomer(boolean toCustomer) {
 		this.toCustomer = toCustomer;
+	}
+	
+	public boolean isByPercent() {
+		return byPercent;
+	}
+	public void setByPercent(boolean byPercent) {
+		this.byPercent = byPercent;
 	}
 
 	public WithholdingType getWithholdingType() {

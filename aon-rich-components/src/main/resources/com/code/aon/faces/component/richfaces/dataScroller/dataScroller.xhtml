@@ -18,7 +18,7 @@
 	    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
 	    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
 			<aon:panelGroup>
-				<aon:outputFormat rendered="#{(rowCount &lt;= pageSize) or (pageSize==0)}"
+				<aon:outputFormat rendered="#{(rowCount &lt;= pageSize) or (pageSize &lt; 1)}"
 					value="#{bundle.aon_scroll}">
 					<f:param value="#{1}" />
 					<f:param value="#{rowCount}" />
@@ -40,7 +40,7 @@
 	    	<aon:panelGroup>
 				<aon:dataPaginator for="#{dataTable}"  
 					fastStep="5" paginator="true" action="#{action}"
-					paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
+					paginatorMaxPages="5" rendered="#{(pageSize > 0) and (rowCount > pageSize)}"
 					ajaxSingle="true" oncomplete="#{oncomplete}" page="#{page}"
 					fastControls="#{((rowCount > 0) and ((rowCount/pageSize) >= 10))?'show':'hide'}"
 					styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo"/>

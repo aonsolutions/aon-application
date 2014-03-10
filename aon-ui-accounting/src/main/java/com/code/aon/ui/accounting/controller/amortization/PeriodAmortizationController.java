@@ -31,7 +31,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PeriodAmortizationController extends BasicController {
-
+	
 	private Period period;
 	private Date fromDate;
 	private Date toDate;
@@ -122,7 +122,6 @@ public class PeriodAmortizationController extends BasicController {
 			getCriteria().addGreaterThanOrEqualExpression(alias, fromDate);
 			getCriteria().addLessThanOrEqualExpression(alias, toDate);
 			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.AMORTIZATION_DETAIL_STATUS), AmortizationDetailStatus.BLOCKED);
-			System.out.println(getCriteria());
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

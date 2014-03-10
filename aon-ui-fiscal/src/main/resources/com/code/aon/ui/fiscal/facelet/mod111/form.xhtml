@@ -18,7 +18,7 @@
 					<c:if test="#{mod111.new}">
 						<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
 							<aon:div styleClass="aon-panelGrid-search-info">
-								<aon:outputText value="#{bundle.fiscal_mod347_import_info}" 
+								<aon:outputText value="#{bundle.fiscal_mod111_import_info}" 
 										styleClass="aon-panelGrid-search-info-internal"/>
 							</aon:div>
 							
@@ -26,17 +26,20 @@
 								
 								<aon:outputText value="&#160;" />
 								<aon:div>
-									<aon:selectBooleanCheckbox id="mod111_readAccount" 
-										value="#{mod111.to.readRetentionFromAccount}" />
-									<aon:outputLabel for="mod111_readAccount" value="#{bundle.fiscal_model111_read_account}" />
-								</aon:div>
-								
-								<aon:outputText value="&#160;" />
-								<aon:div>
-									<aon:outputLabel for="mod111_input_imports"
-										styleClass="aon-margin-left" 
-										value="#{bundle.fiscal_model111_receiver_count}" />
-									<aon:inputText id="mod111_input_imports" value="#{mod111.to.receiverCount}" size="5" />
+									<aon:selectOneRadio id="mod111_readAccount" layout="pageDirection"
+										ajaxSingle="true" reRender="receiverCountContainer"
+										value="#{mod111.to.readRetentionFromAccount}">
+										<f:selectItem itemValue="false" itemLabel="#{bundle.fiscal_mod111_import_salary}" />
+										<f:selectItem itemValue="true" itemLabel="#{bundle.fiscal_mod111_import_entry}" />
+									</aon:selectOneRadio>
+									<aon:div id="receiverCountContainer" style="margin-left: 25px;">									
+										<aon:outputLabel for="mod111_input_imports"
+											styleClass="aon-margin-left" 
+											value="#{bundle.fiscal_model111_receiver_count}" />
+										<aon:inputText id="mod111_input_imports"
+											disabled="#{!mod111.to.readRetentionFromAccount}" 
+											value="#{mod111.to.receiverCount}" size="5" />
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:div>

@@ -12,6 +12,7 @@ import com.code.aon.fiscal.enumeration.VatReportType;
 
 public class Retention {
 	private InvoiceType invoiceType;
+	private int count;
 	private Double percent;
 	private double base;
 	private double quota;
@@ -40,7 +41,13 @@ public class Retention {
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
 	}
-	
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
+
 	public WithholdingType getWithholdingType() {
 		return withholdingType;
 	}

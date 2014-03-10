@@ -24,6 +24,12 @@ public class DataScrollerState implements ITemplateController, Serializable {
 		setPage(1);
 	}
 
+	public DataScrollerState( DataModel model, String beanName ) {
+		this();
+		setModel(model);
+		setBeanName(beanName);
+	}
+	
 	@Override
 	public String getBeanName() {
 		return beanName;

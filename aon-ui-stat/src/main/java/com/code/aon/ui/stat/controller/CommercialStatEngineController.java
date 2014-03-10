@@ -72,6 +72,7 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -94,15 +95,15 @@ public class CommercialStatEngineController implements Serializable {
 	private Double promAmount;
 	private Seller seller;
 	private Integer category;
-	private DataModel doneOffersModel;
-	private DataModel closedOffersModel;
-	private DataModel lostOffersModel;
-	private DataModel pendingOffersModel;
-	private DataModel visitsModel;
-	private DataModel pendingVisitsModel;
-	private DataModel summaryModel;
-	private DataModel activityModel;
-	private DataModel offersModel;
+	private DataScrollerState doneOffersState;
+	private DataScrollerState closedOffersState;
+	private DataScrollerState lostOffersState;
+	private DataScrollerState pendingOffersState;
+	private DataScrollerState visitsState;
+	private DataScrollerState pendingVisitsState;
+	private DataScrollerState summaryState;
+	private DataScrollerState activityState;
+	private DataScrollerState offersState;
 	private List<OfferDetail> doneOffersList;
 	private List<OfferDetail> closedOffersList;
 	private List<OfferDetail> lostOffersList;
@@ -206,14 +207,26 @@ public class CommercialStatEngineController implements Serializable {
 	}
 
 	public DataModel getOffersModel() {
-		if (offersModel == null) {
-			offersModel = new SerializableListDataModel(getOfferList());
-		}
-		return offersModel;
+		return getOffersState().getDirectModel();
 	}
 
 	public void setOffersModel(DataModel offersModel) {
-		this.offersModel = offersModel;
+		if ( offersModel == null ) {
+			setOffersState(null);
+		} else {
+			getOffersState().setModel(offersModel);
+		}
+	}
+	
+	public DataScrollerState getOffersState() {
+		if (offersState == null) {
+			offersState = new DataScrollerState(new SerializableListDataModel(getOfferList()), "offers");
+		}		
+		return offersState;
+	}
+
+	public void setOffersState(DataScrollerState offersState) {
+		this.offersState = offersState;
 	}
 
 	public List<Offer> getOfferList() {
@@ -345,26 +358,49 @@ public class CommercialStatEngineController implements Serializable {
 	}
 
 	public DataModel getSummaryModel() {
-		if (summaryModel == null) {
-			summaryModel = new SerializableListDataModel(getSummary());
-		}
-		return summaryModel;
-
+		return getSummaryState().getDirectModel();
 	}
 
 	public void setSummaryModel(DataModel summaryModel) {
-		this.summaryModel = summaryModel;
+		if ( summaryModel == null ) {
+			setSummaryState(null);
+		} else {
+			getSummaryState().setModel(summaryModel);
+		}
+	}
+	
+	public DataScrollerState getSummaryState() {
+		if (summaryState == null) {
+			summaryState = new DataScrollerState(new SerializableListDataModel(getSummary()), "sellerView");
+		}
+		return summaryState;
+	}
+
+	public void setSummaryState(DataScrollerState summaryState) {
+		this.summaryState = summaryState;
 	}
 
 	public DataModel getActivityModel() {
-		if (activityModel == null) {
-			activityModel = new SerializableListDataModel(getActivitySummary());
+		return getActivityState().getDirectModel();
+	}	
+	
+	public void setActivityModel(DataModel activityModel) {
+		if ( activityModel == null ) {
+			setActivityState(null);
+		} else {
+			getActivityState().setModel(activityModel);
 		}
-		return activityModel;
+	}
+	
+	public DataScrollerState getActivityState() {
+		if (activityState == null) {
+			activityState = new DataScrollerState(new SerializableListDataModel(getActivitySummary()), "activityView");
+		}
+		return activityState;
 	}
 
-	public void setActivityModel(DataModel activityModel) {
-		this.activityModel = activityModel;
+	public void setActivityState(DataScrollerState activityState) {
+		this.activityState = activityState;
 	}
 
 	public List<ControlSummary> getSummary() {
@@ -424,69 +460,141 @@ public class CommercialStatEngineController implements Serializable {
 	}
 
 	public DataModel getPendingVisitsModel() {
-		if (pendingVisitsModel == null) {
-			pendingVisitsModel = new SerializableListDataModel(getPendingVisitsList());
-		}
-		return pendingVisitsModel;
+		return getPendingVisitsState().getDirectModel();
 	}
 
 	public void setPendingVisitsModel(DataModel pendingVisitsModel) {
-		this.pendingVisitsModel = pendingVisitsModel;
+		if ( pendingVisitsModel == null ) {
+			setPendingVisitsState(null);
+		} else {
+			getPendingVisitsState().setModel(pendingVisitsModel);
+		}
+	}
+	
+	public DataScrollerState getPendingVisitsState() {
+		if (pendingVisitsState == null) {
+			pendingVisitsState = new DataScrollerState(new SerializableListDataModel(getPendingVisitsList()), "pendingVisits");
+		}		
+		return pendingVisitsState;
+	}
+
+	public void setPendingVisitsState(DataScrollerState pendingVisitsState) {
+		this.pendingVisitsState = pendingVisitsState;
 	}
 
 	public DataModel getDoneOffersModel() {
-		if (doneOffersModel == null) {
-			doneOffersModel = new SerializableListDataModel(getDoneOffersList());
-		}
-		return doneOffersModel;
+		return getDoneOffersState().getDirectModel();
 	}
 
 	public void setDoneOffersModel(DataModel doneOffersModel) {
-		this.doneOffersModel = doneOffersModel;
+		if ( doneOffersModel == null ) {
+			setDoneOffersState(null);
+		} else {
+			getDoneOffersState().setModel(doneOffersModel);
+		}
+	}
+	
+	public DataScrollerState getDoneOffersState() {
+		if (doneOffersState == null) {
+			doneOffersState = new DataScrollerState(new SerializableListDataModel(getDoneOffersList()), "doneOffers");
+		}				
+		return doneOffersState;
+	}
+
+	public void setDoneOffersState(DataScrollerState doneOffersState) {
+		this.doneOffersState = doneOffersState;
 	}
 
 	public DataModel getClosedOffersModel() {
-		if (closedOffersModel == null) {
-			closedOffersModel = new SerializableListDataModel(getClosedOffersList());
-		}
-		return closedOffersModel;
+		return getClosedOffersState().getDirectModel();
 	}
 
 	public void setClosedOffersModel(DataModel closedOffersModel) {
-		this.closedOffersModel = closedOffersModel;
+		if ( closedOffersModel == null ) {
+			setClosedOffersState(null);
+		} else {
+			getClosedOffersState().setModel(closedOffersModel);
+		}
+	}
+
+	public DataScrollerState getClosedOffersState() {
+		if (closedOffersState == null) {
+			closedOffersState = new DataScrollerState(new SerializableListDataModel(getClosedOffersList()), "closedOffers");
+		}				
+		return closedOffersState;
+	}
+
+	public void setClosedOffersState(DataScrollerState closedOffersState) {
+		this.closedOffersState = closedOffersState;
 	}
 
 	public DataModel getLostOffersModel() {
-		if (lostOffersModel == null) {
-			lostOffersModel = new SerializableListDataModel(getLostOffersList());
-		}
-		return lostOffersModel;
+		return getLostOffersState().getDirectModel();
 	}
 
 	public void setLostOffersModel(DataModel lostOffersModel) {
-		this.lostOffersModel = lostOffersModel;
+		if ( lostOffersModel == null ) {
+			setLostOffersState(null);
+		} else {
+			getLostOffersState().setModel(lostOffersModel);
+		}
+	}
+
+	public DataScrollerState getLostOffersState() {
+		if (lostOffersState == null) {
+			lostOffersState = new DataScrollerState(new SerializableListDataModel(getLostOffersList()), "offersLost");
+		}						
+		return lostOffersState;
+	}
+
+	public void setLostOffersState(DataScrollerState lostOffersState) {
+		this.lostOffersState = lostOffersState;
 	}
 
 	public DataModel getVisitsModel() {
-		if (visitsModel == null) {
-			visitsModel = new SerializableListDataModel(getVisitsList());
-		}
-		return visitsModel;
-	}
+		return visitsState.getDirectModel();
+	}	
 
 	public void setVisitsModel(DataModel visitsModel) {
-		this.visitsModel = visitsModel;
+		if ( visitsModel == null ) {
+			setVisitsState(null);
+		} else {
+			getVisitsState().setModel(visitsModel);
+		}
+	}
+	
+	public DataScrollerState getVisitsState() {
+		if (visitsState == null) {
+			visitsState = new DataScrollerState(new SerializableListDataModel(getVisitsList()), "visits");
+		}
+		return visitsState;
+	}
+
+	public void setVisitsState(DataScrollerState visitsState) {
+		this.visitsState = visitsState;
 	}
 
 	public DataModel getPendingOffersModel() {
-		if (pendingOffersModel == null) {
-			pendingOffersModel = new SerializableListDataModel(getPendingOffersList());
-		}
-		return pendingOffersModel;
+		return getPendingOffersState().getDirectModel();
 	}
 
 	public void setPendingOffersModel(DataModel pendingOffersModel) {
-		this.pendingOffersModel = pendingOffersModel;
+		if ( pendingOffersModel == null ) {
+			setPendingOffersState(null);
+		} else {
+			getPendingOffersState().setModel(pendingOffersModel);
+		}
+	}
+
+	public DataScrollerState getPendingOffersState() {
+		if (pendingOffersState == null) {
+			pendingOffersState = new DataScrollerState(new SerializableListDataModel(getPendingOffersList()), "pendingOffers");
+		}		
+		return pendingOffersState;
+	}
+
+	public void setPendingOffersState(DataScrollerState pendingOffersState) {
+		this.pendingOffersState = pendingOffersState;
 	}
 
 	public List<OfferDetail> getPendingOffersList() {

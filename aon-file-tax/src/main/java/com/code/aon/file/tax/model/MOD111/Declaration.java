@@ -8,9 +8,12 @@ import org.apache.commons.lang.StringUtils;
 
 public class Declaration {
 	
+
 	private String declarationType;
 	private String administrationCode;
 	private Integer year;
+	private Integer quarter;
+	private Integer month;
 	private String period;
 	private Integer currentDay;
 	private Integer currentMonth;
@@ -18,7 +21,8 @@ public class Declaration {
 	private Integer currentYear;
 	private boolean replacement;
 	private boolean complementary;
-	
+	private String navarraModel;
+	private String number;
 	private String complementaryCode;
 	private String replacedNumber;
 	
@@ -49,7 +53,8 @@ public class Declaration {
 	private String payInCash;
 	private String payInAccount;
 	private String ccc;
-
+	private String payMethod;
+	
 	private Map<String,Double> boxes = new HashMap<String, Double>();
 
 	public String getAdministrationCode() {
@@ -63,6 +68,18 @@ public class Declaration {
 	}
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+	public Integer getQuarter() {
+		return quarter;
+	}
+	public void setQuarter(Integer quarter) {
+		this.quarter = quarter;
+	}
+	public Integer getMonth() {
+		return month;
+	}
+	public void setMonth(Integer month) {
+		this.month = month;
 	}
 	public String getPeriod() {
 		return period;
@@ -94,6 +111,12 @@ public class Declaration {
 	public void setCurrentYear(Integer currentYear) {
 		this.currentYear = currentYear;
 	}
+	public String getNumber() {
+		return number;
+	}
+	public void setNumber(String number) {
+		this.number = number;
+	}
 	public boolean isReplacement() {
 		return replacement;
 	}
@@ -102,6 +125,11 @@ public class Declaration {
 	}
 	public boolean isComplementary() {
 		return complementary;
+	}
+	public String getNavarraDeclType() {
+		if (isReplacement()) return "S";
+		if (isComplementary()) return "C";
+		return " ";
 	}
 	public void setComplementary(boolean complementary) {
 		this.complementary = complementary;
@@ -117,6 +145,12 @@ public class Declaration {
 	}
 	public void setReplacedNumber(String replacedNumber) {
 		this.replacedNumber = replacedNumber;
+	}
+	public String getNavarraModel() {
+		return navarraModel;
+	}
+	public void setNavarraModel(String navarraModel) {
+		this.navarraModel = navarraModel;
 	}
 	public boolean isPerson() {
 		return person;
@@ -272,6 +306,12 @@ public class Declaration {
 	}
 	public void setCcc(String ccc) {
 		this.ccc = ccc;
+	}
+	public String getPayMethod() {
+		return payMethod;
+	}
+	public void setPayMethod(String payMethod) {
+		this.payMethod = payMethod;
 	}
 	public Map<String, Double> getBoxes() {
 		return boxes;

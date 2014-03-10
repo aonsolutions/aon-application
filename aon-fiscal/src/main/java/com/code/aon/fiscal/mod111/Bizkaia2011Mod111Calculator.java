@@ -97,6 +97,21 @@ public class Bizkaia2011Mod111Calculator extends FiscalModelDetailCalculator imp
 	}
 	
 	@Override
+	public Mod111Key getKeyForFarmerReceivers() {
+		return Mod111Key.BZ_C25;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerPerception() {
+		return Mod111Key.BZ_C26;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerWitholding() {
+		return Mod111Key.BZ_C27;
+	}
+
+	@Override
 	public double getResult(Mod111 mod111) {
 		return mod111.getDetail( Mod111Key.BZ_C37 ).getAmount();
 	}

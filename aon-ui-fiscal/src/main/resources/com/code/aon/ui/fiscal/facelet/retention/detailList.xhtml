@@ -52,9 +52,7 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="dataTableId" value="retentionReportList" />
-					<ui:param name="dataModel" value="#{retentionReport.detailModel}" />
-					<ui:param name="rows" value="20" />
+					<ui:param name="controller" value="#{retentionReport.detailState}" />
 					<ui:param name="skipSelectButton" value="true" />
 					<ui:param name="rowSelectorToggleOnClick" value="false" />
 			

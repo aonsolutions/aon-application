@@ -77,17 +77,19 @@ public class Mod111Controller extends FiscalModelController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), IFiscalConstants.FS_MOD111_RECEIVER_COUNT);
 		List<ITransferObject> list = bean.getList(criteria);
-		to.setReadRetentionFromAccount(true);
+		to.setReadRetentionFromAccount(false);
 		int i = 1;
 		if (list != null && list.size() > 0 ) {
 			ApplicationParameter appParam = (ApplicationParameter) list.get(0);
 			try {
-				i = Integer.parseInt( appParam.getValue() );	
+				i = Integer.parseInt( appParam.getValue() );
+				to.setReadRetentionFromAccount(true);
+				to.setReceiverCount(i);
 			} catch (NumberFormatException e) {
 				// Nothing;
 			}
 		}
-		to.setReceiverCount(i);
+		
 	}
 	
 }

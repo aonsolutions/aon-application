@@ -20,81 +20,86 @@ public class Navarra2011Mod111Calculator extends FiscalModelDetailCalculator imp
 		calculateDetails(mod111.getDetails());
 	}
 
-
 	@Override
 	public double getResult(Mod111 mod111) {
-		return 0;
+		return mod111.getDetail( Mod111Key.NF_A1 ).getAmount();
 	}
+	
 
 	@Override
 	public Mod111Key getKeyForWorkReceivers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForWorkPerception() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForWorkWitholding() {
-		// TODO Auto-generated method stub
-		return null;
+		return Mod111Key.NF_A1;
 	}
 
 	@Override
 	public Mod111Key getKeyForWorkInKindReceivers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForWorkInKindPerception() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForWorkInKindWitholding() {
-		// TODO Auto-generated method stub
-		return null;
+		return Mod111Key.NF_A1;
 	}
 
 	@Override
 	public Mod111Key getKeyForInvoiceReceivers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForInvoicePerception() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForInvoiceWitholding() {
-		// TODO Auto-generated method stub
-		return null;
+		return Mod111Key.NF_A1;
 	}
 
 	@Override
 	public Mod111Key getKeyForInvoiceInKindReceivers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForInvoiceInKindPerception() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Mod111Key getKeyForInvoiceInKindWitholding() {
-		// TODO Auto-generated method stub
+		return Mod111Key.NF_A1;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerReceivers() {
 		return null;
 	}
+
+	@Override
+	public Mod111Key getKeyForFarmerPerception() {
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForFarmerWitholding() {
+		return Mod111Key.NF_A1;
+
+	}
+	
 }

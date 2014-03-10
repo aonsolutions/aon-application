@@ -81,6 +81,17 @@ public class MOD111Writer implements IFinanceConstants{
 		declaration.setStartPeriod(0);
 		declaration.setEndPeriod(0);
 		Administration admon = fiscalModel.getAdministration();
+		
+		if (fiscalModel.getPeriod().isQuarterPeriod()) {
+			declaration.setNavarraModel("715");
+			declaration.setQuarter(fiscalModel.getPeriod().ordinal() - 11);
+			declaration.setMonth((fiscalModel.getPeriod().ordinal() - 11) * 3);
+		} else {
+			declaration.setNavarraModel("745");
+			declaration.setQuarter((fiscalModel.getPeriod().ordinal() + 1) % 3);
+			declaration.setMonth(fiscalModel.getPeriod().ordinal() + 1);
+		}
+
 		int year = fiscalModel.getYear();
 		declaration.setYear(year); 
 		declaration.setPeriod(fiscalModel.getPeriod().getName(admon)); 
@@ -112,6 +123,7 @@ public class MOD111Writer implements IFinanceConstants{
 		declaration.setPayInCash("X");
 		declaration.setPayInAccount(" ");
 		declaration.setCcc("");
+		declaration.setPayMethod("0");
 		Finance finance = fiscalModel.getFinance();
 		if (finance != null) {
 			if (finance.getPayMethod() != null) {
@@ -156,15 +168,19 @@ public class MOD111Writer implements IFinanceConstants{
 			d = declaration.getBoxes().get(Mod111Key.BZ_C37.getValue());
 		} else if (fiscalModel.getAdministration() == Administration.GIPUZKOA) {
 			d = declaration.getBoxes().get(Mod111Key.GP_C25.getValue());
+		} else if (fiscalModel.getAdministration() == Administration.NAVARRA) {
+			d = declaration.getBoxes().get(Mod111Key.NF_A1.getValue());
 		} else {
 			d = declaration.getBoxes().get(Mod111Key.CT_C30.getValue());
 		}
 		declaration.setDeclarationType("I");
 		if (d <= 0) {
+			declaration.setPayMethod("0");
 			declaration.setDeclarationType("N");
 		} else {
 			if (StringUtils.isNotBlank(declaration.getCcc())) {
 				declaration.setDeclarationType("U");
+				declaration.setPayMethod("1");
 			} 
 		}
 		declaration.setResult(d);

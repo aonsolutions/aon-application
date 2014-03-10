@@ -83,10 +83,8 @@
 				<aon:div styleClass="aon-scroll-area">
 				
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="dataTableId" value="commercialTrackingData" />
-						<ui:param name="dataModel" value="#{commercialStat.visitsModel}" />
+						<ui:param name="controller" value="#{commercialStat.visitsState}" />
 						<ui:param name="showDataTable" value="#{commercialTracking.model.rowCount > 0}" />
-						<ui:param name="rows" value="20" />
 						<ui:param name="skipSelectButton" value="true" />
 						<ui:param name="rowSelectorToggleOnClick" value="false" />
 				

@@ -187,9 +187,12 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	GP_C22 ("111-GP-22"  ,false,2,false,false,new Administration[]{Administration.GIPUZKOA}),
 	GP_C23 ("111-GP-23"  ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
 	GP_C24 ("111-GP-24"  ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
-	GP_C25 ("111-GP-25"  ,false,1,true ,false,new Administration[]{Administration.GIPUZKOA});
+	GP_C25 ("111-GP-25"  ,false,1,true ,false,new Administration[]{Administration.GIPUZKOA}),
 
-    private static final String MSG_KEY_PREFIX = "aon_enum_mod";
+	// NAFARROA
+	NF_A1  ("111-NF-A1"  ,false,2,false,true,new Administration[]{Administration.NAVARRA});
+
+	private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod111Key getKeyWithValue( String value ) {
     	for (Mod111Key key : Mod111Key.values() ) {
