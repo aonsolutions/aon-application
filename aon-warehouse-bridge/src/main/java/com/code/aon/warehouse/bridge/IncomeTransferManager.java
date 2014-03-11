@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.BeanManager;
@@ -17,20 +16,25 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class IncomeTransferManager {
+public class IncomeTransferManager extends DataScrollerState {
 
 	private IPriceStrategy priceStrategy;
 	private Integer selectedIncomeId;
 	private List<ITransferObject> incomeList;
 	private List<ITransferObject> detailList;
-	private DataModel incomeModel;
-	private DataModel detailModel;
+	private DataScrollerState detailState;
 	private List<ITransferObject> invoicedIncomeList;
 	private ArrayList<Income> incomeChecks= new ArrayList<Income>();
+
+	public IncomeTransferManager() {
+		setBeanName("incomeTransfer");
+		setPageLimit(10);
+	}
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -53,6 +57,7 @@ public class IncomeTransferManager {
 	
 	public void setIncomeList(List<ITransferObject> incomeList) {
 		this.incomeList = incomeList;
+		setModel(incomeList != null ? new ListDataModel(incomeList) : null);
 	}
 	
     public List<ITransferObject> getDetailList() {
@@ -63,26 +68,16 @@ public class IncomeTransferManager {
 		this.detailList = detailList;
 	}
 
-	public DataModel getIncomeModel() {
-		if (incomeModel == null) {
-			incomeModel = new ListDataModel(incomeList);
+	public DataScrollerState getDetailState() {
+		if (detailState == null) {
+			detailState = new DataScrollerState(new ListDataModel(detailList), "incomeDetailTransfer");
+			detailState.setPageLimit(-1);
 		}
-		return incomeModel;
+		return detailState;
 	}
 
-	public void setIncomeModel(DataModel model) {
-		this.incomeModel = model;
-	}
-
-	public DataModel getDetailModel() {
-		if (detailModel == null) {
-			detailModel = new ListDataModel(detailList);
-		}
-		return detailModel;
-	}
-
-	public void setDetailModel(DataModel model) {
-		this.detailModel = model;
+	public void setDetailState(DataScrollerState detailState) {
+		this.detailState = detailState;
 	}
 
 	public List<ITransferObject> getInvoicedIncomeList() {
@@ -93,17 +88,17 @@ public class IncomeTransferManager {
 		this.invoicedIncomeList = invoicedIncomeList;
 	}
 	
-	public double getIncomeTotalPrice() throws ManagerBeanException {
-		Income income = (Income)incomeModel.getRowData();
+	public double getIncomeTotalPrice() {
+		Income income = (Income)getDirectModel().getRowData();
 		return getPriceStrategy().getTotalPrice(income, income.getSupplier());
 	}
 
 	public void onSelectIncome(ActionEvent event) {
-		if (incomeModel.isRowAvailable()) {
-			Income income = (Income)incomeModel.getRowData();
+		if (getDirectModel().isRowAvailable()) {
+			Income income = (Income)getDirectModel().getRowData();
 			setSelectedIncomeId(income.getId());
 			setDetailList(obtainIncomeDetailList(income));
-			setDetailModel(null);
+			setDetailState(null);
 		}
 	}
 
@@ -135,14 +130,14 @@ public class IncomeTransferManager {
 	}
 
 	private void selectIncomeRow(boolean rowChecked) {
-		if (incomeModel.isRowAvailable()) {
-			Income income = (Income)incomeModel.getRowData();
+		if (getDirectModel().isRowAvailable()) {
+			Income income = (Income)getDirectModel().getRowData();
 			setIncomeRowChecked(income, rowChecked);
 		}
 	}
 
 	public boolean getIncomeRowChecked() {
-		Income income = (Income)incomeModel.getRowData();
+		Income income = (Income)getDirectModel().getRowData();
 		return incomeChecks.contains(income);
 	}
 	
@@ -169,11 +164,9 @@ public class IncomeTransferManager {
 		incomeChecks = new ArrayList<Income>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void checkAllIncomes(ActionEvent event) {
-		Iterator iterator = incomeList.iterator();
-		while (iterator.hasNext()) {
-			Income income = (Income)iterator.next();
+		for (ITransferObject ito : incomeList) {
+			Income income = (Income)ito;
 			if (!incomeChecks.contains(income)) {
 				incomeChecks.add(income);
 			}
