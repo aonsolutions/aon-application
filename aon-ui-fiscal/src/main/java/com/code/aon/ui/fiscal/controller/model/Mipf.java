@@ -163,7 +163,7 @@ public class Mipf  {
 			} else {
 				if (errorFile.exists()) {
 					fisError = new FileInputStream(errorFile);
-					List<?> list = IOUtils.readLines(fisError,"UTF-8");
+					List<?> list = IOUtils.readLines(fisError,"ISO-8859-1");
 					AonUtil.addErrorMessage("Se han producido errores al generar el fichero:");
 					fisError.close();
 					for (Object o : list) {
@@ -251,7 +251,7 @@ public class Mipf  {
 			}
 			if (resultFile.exists()) {
 				fisError = new FileInputStream(resultFile);
-				List<?> list = IOUtils.readLines(fisError,"UTF-8");
+				List<?> list = IOUtils.readLines(fisError,"ISO-8859-1");
 				fisError.close();
 				for (Object o : list) {
 					AonUtil.addInfoMessage(o.toString());;
@@ -259,7 +259,7 @@ public class Mipf  {
 			} else {
 				if (errorFile.canRead()) {
 					fisError = new FileInputStream(errorFile);
-					List<?> list = IOUtils.readLines(fisError,"UTF-8");
+					List<?> list = IOUtils.readLines(fisError,"ISO-8859-1");
 					fisError.close();
 					AonUtil.addErrorMessage("Se han producido errores al generar el fichero:");
 					for (Object o : list) {
