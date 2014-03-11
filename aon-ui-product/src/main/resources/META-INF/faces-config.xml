@@ -203,7 +203,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
