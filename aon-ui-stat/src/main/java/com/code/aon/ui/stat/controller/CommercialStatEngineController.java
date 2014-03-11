@@ -37,6 +37,8 @@ import javax.faces.model.DataModel;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTracking;
@@ -81,13 +83,15 @@ public class CommercialStatEngineController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CommercialStatEngineController.class);
+	
 	private static final String COMMERCIAL_TRACKING_TARGET_ID = "CommercialTracking.project.target.id";
 
 	private StatParams params;
 	private List<Stat> yearStats;
 	private List<Stat> productStats;
-	private DataModel yearStatModel;
-	private DataModel productStatModel;
+	private DataScrollerState yearStatState;
+	private DataScrollerState productStatState;
 	private String reportName;
 	private String itemTitle;
 	private Double totalAmount;
@@ -654,14 +658,26 @@ public class CommercialStatEngineController implements Serializable {
 	}
 
 	public DataModel getProductStatModel() {
-		if (productStatModel == null) {
-			productStatModel = new SerializableListDataModel(getProductStats());
-		}
-		return productStatModel;
+		return getProductStatState().getDirectModel();
 	}
 
 	public void setProductStatModel(DataModel productStatModel) {
-		this.productStatModel = productStatModel;
+		if ( productStatModel == null ) {
+			setYearStatState(null);
+		} else {
+			getYearStatState().setModel(productStatModel);
+		}		
+	}
+
+	public DataScrollerState getProductStatState() {
+		if (productStatState == null) {
+			productStatState = new DataScrollerState(new SerializableListDataModel(getProductStats()), "yearsStats");
+		}								
+		return productStatState;
+	}
+
+	public void setProductStatState(DataScrollerState productStatState) {
+		this.productStatState = productStatState;
 	}
 
 	public List<Stat> getProductStats() {
@@ -721,14 +737,26 @@ public class CommercialStatEngineController implements Serializable {
 	}
 
 	public DataModel getYearStatModel() {
-		if (yearStatModel == null) {
-			yearStatModel = new SerializableListDataModel(getYearStats());
-		}
-		return yearStatModel;
+		return getYearStatState().getDirectModel();
 	}
 
 	public void setYearStatModel(DataModel yearStatModel) {
-		this.yearStatModel = yearStatModel;
+		if ( yearStatModel == null ) {
+			setYearStatState(null);
+		} else {
+			getYearStatState().setModel(yearStatModel);
+		}
+	}
+	
+	public DataScrollerState getYearStatState() {
+		if (yearStatState == null) {
+			yearStatState = new DataScrollerState(new SerializableListDataModel(getYearStats()), "yearsStats");
+		}						
+		return yearStatState;
+	}
+
+	public void setYearStatState(DataScrollerState yearStatState) {
+		this.yearStatState = yearStatState;
 	}
 
 	public List<Stat> getYearStats() {
@@ -857,8 +885,7 @@ public class CommercialStatEngineController implements Serializable {
 			getPendingVisitModel();
 
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);
 		}
 	}
 
@@ -893,8 +920,7 @@ public class CommercialStatEngineController implements Serializable {
 			getPendingVisitModel();
 
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);			
 		}
 	}
 
@@ -929,8 +955,7 @@ public class CommercialStatEngineController implements Serializable {
 			getTargetPendingVisitModel();
 
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);			
 		}
 	}
 
@@ -963,8 +988,7 @@ public class CommercialStatEngineController implements Serializable {
 			getProductDoneOffers();
 
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);			
 		}
 	}
 	
@@ -997,8 +1021,7 @@ public class CommercialStatEngineController implements Serializable {
 			getCategoryDoneOffers();
 
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);			
 		}
 	}
 
@@ -1641,7 +1664,7 @@ public class CommercialStatEngineController implements Serializable {
 		setReportName(AonUtil.getMessage(REPORT_ACTIVITIES_VIEW));
 	}
 
-	public class ControlSummary {
+	public static class ControlSummary {
 
 		private Integer id;
 		private String name;
@@ -1727,7 +1750,7 @@ public class CommercialStatEngineController implements Serializable {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_COMMERCIAL_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
-			yearStatModel = null;
+			setYearStatModel(null);
 
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1761,18 +1784,18 @@ public class CommercialStatEngineController implements Serializable {
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(STAT_REPORT_COMMERCIAL_PRODUCT));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
-		productStatModel = null;
+		setProductStatModel(null);
 	}
 
 	public void onCommercialCategoryOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
 		setControlType(3);
-		setCategoryName(((Stat)  yearStatModel.getRowData()).getName());
+		setCategoryName(((Stat)  getYearStatModel().getRowData()).getName());
 
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) getYearStatModel().getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
 						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
@@ -1810,10 +1833,10 @@ public class CommercialStatEngineController implements Serializable {
 			throws ManagerBeanException {
 		setOffersModel(null);
 		setControlType(2);
-		setProductName(((Stat) productStatModel.getRowData()).getName());
+		setProductName(((Stat) getProductStatModel().getRowData()).getName());
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID),((Stat) productStatModel.getRowData()).getKey());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID),((Stat) getProductStatModel().getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
 						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
@@ -1833,11 +1856,11 @@ public class CommercialStatEngineController implements Serializable {
 	public void onCommercialGeozoneOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
-		setZoneName(((Stat)  yearStatModel.getRowData()).getName());
+		setZoneName(((Stat)  getYearStatModel().getRowData()).getName());
 		
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ADDRESS_GEOZONE_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ADDRESS_GEOZONE_ID),((Stat) getYearStatModel().getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
 						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
@@ -1857,11 +1880,11 @@ public class CommercialStatEngineController implements Serializable {
 	public void onCommercialSellerOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
-		setSellerName(((Stat)  yearStatModel.getRowData()).getName());
+		setSellerName(((Stat)  getYearStatModel().getRowData()).getName());
 		
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_SELLER_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_SELLER_ID),((Stat) getYearStatModel().getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
 						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
@@ -1881,10 +1904,10 @@ public class CommercialStatEngineController implements Serializable {
 	public void onCommercialTargetOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
-		setTargetName(((Stat)  yearStatModel.getRowData()).getName());
+		setTargetName(((Stat)  getYearStatModel().getRowData()).getName());
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_TARGET_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_TARGET_ID),((Stat) getYearStatModel().getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
 						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
@@ -1911,7 +1934,7 @@ public class CommercialStatEngineController implements Serializable {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_COMMERCIAL_PRODUCT));
 			setItemTitle(AonUtil.getMessage(PRODUCT));
-			productStatModel = null;
+			setProductStatModel(null);
 
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1929,7 +1952,7 @@ public class CommercialStatEngineController implements Serializable {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_COMMERCIAL_SELLER));
 			setItemTitle(AonUtil.getMessage(SELLER));
-			yearStatModel = null;
+			setYearStatModel(null);
 
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1947,7 +1970,7 @@ public class CommercialStatEngineController implements Serializable {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_COMMERCIAL_TARGET));
 			setItemTitle(AonUtil.getMessage(TARGET));
-			yearStatModel = null;
+			setYearStatModel(null);
 
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1965,7 +1988,7 @@ public class CommercialStatEngineController implements Serializable {
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_REPORT_COMMERCIAL_GEOZONE));
 			setItemTitle(AonUtil.getMessage(STAT_GEOZONE));
-			yearStatModel = null;
+			setYearStatModel(null);
 
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();

@@ -102,7 +102,12 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 	public Date getSeniorityDate() {
 		return ctx.getSeniorityDate();
 	}
-
+	
+	@Override
+	public Collection<IContractPayment> getAgreementPayments() {
+		return ctx.getAgreementPayments();
+	}
+	
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
 		return ctx.getContractPayments();

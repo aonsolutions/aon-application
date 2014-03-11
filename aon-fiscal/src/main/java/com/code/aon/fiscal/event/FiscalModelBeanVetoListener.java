@@ -73,13 +73,6 @@ public class FiscalModelBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 			}
 		}
 
-		// El modelo 111, 115 y 123 no están soportados para Navarra.
-		if ( (fiscalModel.getModel() == FiscalModelType.M115
-			|| fiscalModel.getModel() == FiscalModelType.M123)
-			&& fiscalModel.getAdministration() == Administration.NAVARRA) {
-			throw new ManagerBeanVetoListenerException("No existe soporte para las declaraciones de Navarra.");
-		}
-		
 		if (fiscalModel.isComplementary() && fiscalModel.isReplacement()) {
 			throw new ManagerBeanVetoListenerException("La declaración no puede ser Complementaria y Sustitutiva.");
 		}

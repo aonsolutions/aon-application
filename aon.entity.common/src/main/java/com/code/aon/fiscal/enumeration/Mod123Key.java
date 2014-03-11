@@ -23,7 +23,7 @@ public enum Mod123Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C06("123-06",false,1,false,true ,new Administration[]{Administration.GIPUZKOA}),
 	
 	H3 ("123-H3",true ,0,false,true ,new Administration[]{Administration.GIPUZKOA}),
-	C07("123-07",false,1,false,true ,null),
+	C07("123-07",false,1,false,true ,new Administration[]{Administration.ALAVA,Administration.GIPUZKOA,Administration.BIZKAIA,Administration.COMMON_TERRITORY}),
 	C08("123-08",false,1,false,true ,null),
 	
 	C09("123-09",false,0,true ,false,new Administration[]{Administration.ALAVA,Administration.COMMON_TERRITORY}),

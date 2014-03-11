@@ -53,6 +53,11 @@ public class SQLSalaryDraft {
 		for (Payment payment : draft.getDraftPayments()) {
 			makeRoom(conn, payment, contract);
 			String expression = payment.getExpression();
+			
+			if ("CONVENIO()".equals(expression)){
+				continue;
+			}
+			
 			if (!"REMOVE()".equals(expression)
 					|| inAgreement(conn, payment, contract)
 					|| inSystem(conn, payment, domain, parentDomain)) {
@@ -387,7 +392,8 @@ public class SQLSalaryDraft {
 			java.sql.Date endDate = SQLUtils.date2sql(payment.getEndDate());
 			java.sql.Date startDate = SQLUtils.date2sql(payment.getStartDate());
 
-			String sql = "SELECT * " + " FROM " + SQLConstants.CONTRACT_PAYMENT
+			String sql = "SELECT * " 
+					+ " FROM " + SQLConstants.CONTRACT_PAYMENT
 					+ " WHERE " + ContractPaymentColumns.ID + " = ? ";
 
 			queryStmt = conn.prepareStatement(sql);

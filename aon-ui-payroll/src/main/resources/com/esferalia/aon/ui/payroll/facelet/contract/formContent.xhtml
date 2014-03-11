@@ -138,15 +138,17 @@
 		</aon:div>
 		
 		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
-		<aon:div>
+		<aon:div id="endDataContainer">
 			<aon:selectInputDate id="Contract_endDate" 
 				required="#{false}"
 				value="#{contract.to.endDate}"
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="suspensionCauseContainer, settleDataContainer" ajaxSingle="true" />
-				<a4j:support event="onchanged" reRender="suspensionCauseContainer, settleDataContainer" ajaxSingle="true" />
+				<a4j:support event="oninputchange" reRender="endDataContainer" 
+					actionListener="#{contract.onChangeEndDate}" />
+				<a4j:support event="onchanged" reRender="endDataContainer"
+					actionListener="#{contract.onChangeEndDate}" />
 			</aon:selectInputDate>
 			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.new}">
 				<aon:div style="display:inline;"
@@ -166,11 +168,11 @@
 			<aon:div id="settleDataContainer" rendered="#{!contract.new}">
 				<aon:panelCollapsible label="Datos fin de contrato" styleClass="aon-margin-top aon-margin-bottom"
 					rendered="#{contract.to.endDate!=null and contract.params.suspensionCause!=null}"
-					value="#{false}" >
+					value="#{true}" >
 				
 					<aon:panelGrid columns="2" 
 						columnClasses="aon-noborder aon-text-left aon-width-170, aon-noborder aon-text-left">
-						<aon:outputText value="Fecha preaviso" />
+						<aon:outputText value="Preaviso" />
 						<aon:div id="Contract_advanceNoticeDateContainer">
 							<aon:selectInputDate id="Contract_advanceNoticeDate" 
 								value="#{contract.params.settleAdvanceNoticeDate}"
@@ -189,15 +191,50 @@
 								rendered="#{not empty contract.params.settleAdvanceNoticeDate}" />
 						</aon:div>
 						
-						<aon:outputText value="Dias indemnizacion" />
-						<aon:inputText id="compensation_days"
-							size="2" maxlength="5"
-							value="#{contract.params.settleCompensationDays}" />
+						<aon:outputText value="Indemnización" />
+						<aon:div>
+							<!--  
+							<aon:inputText id="compensation_days"
+								size="2" maxlength="5"
+								value="#{contract.params.settleCompensationDaysBefore13022013}" />
+							<aon:outputText value="&#160;días por año (antes del 13/02/2013), "/>
+							-->
+							<aon:inputText id="compensation_days"
+								size="2" maxlength="5"
+								value="#{contract.params.settleCompensationDays}" />
+							<aon:outputText value="días por año trabajado"
+								styleClass="aon-margin-left"/>
+						</aon:div>
+
+						<aon:outputText value="Periodo trabajado" />
+						<aon:div id="workedYearsContainer">
+							<aon:inputText id="worked_years"
+								size="2" maxlength="5"
+								reRender="workedYearsContainer"
+								value="#{contract.params.settleWorkedYears}" />
+							<aon:outputText value="años"
+								styleClass="aon-margin-left aon-margin-right"/>
+							<aon:inputText id="worked_months"
+								size="2" maxlength="5"
+								reRender="workedYearsContainer"
+								value="#{contract.params.settleWorkedMonths}">
+								<f:validateDoubleRange minimum="0" maximum="12" />
+							</aon:inputText>
+							<aon:outputText value="meses"
+								styleClass="aon-margin-left"/>
+							<aon:outputText value="(#{contract.params.settleTotalWorkedYears}"
+								styleClass="aon-margin-left" />
+							<aon:outputText value="&#160;años)" />
+						</aon:div>
 	
 						<aon:outputText value="Vacaciones no disfrutadas" />
-						<aon:inputText id="nonEnjoyedVacations"
-							size="2" maxlength="5"
-							value="#{contract.params.settleNonEnjoyedVacations}" />
+						<aon:div>
+							<aon:inputText id="nonEnjoyedVacations"
+								size="2" maxlength="5"
+								value="#{contract.params.settleNonEnjoyedVacations}" />
+							<aon:outputText value="día#{contract.params.settleNonEnjoyedVacations!=1?'s':''}"
+								styleClass="aon-margin-left"/>
+						</aon:div>
 					</aon:panelGrid>
 					
 				</aon:panelCollapsible>

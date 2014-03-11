@@ -21,10 +21,10 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	Salary.Type salaryType;
 	Double dbAmount;
 	Integer conceptId;
-	
-	
+
 	Integer domainId;
 	
+	boolean[] defined;
 	
 
 	public Integer getId() {
@@ -139,6 +139,14 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 		this.conceptId = conceptId;
 	}
 	
+	public boolean isDefinedAt(Scope scope) {
+		return defined != null ? defined[scope.ordinal()] : false;
+	}
+
+	public void setDefined(boolean defined[]) {
+		this.defined = defined;
+	}
+
 	@Override
 	public int hashCode() {
 		return id != null ? id : 0;

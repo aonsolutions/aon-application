@@ -23,7 +23,7 @@ public class Alava2011MOD123Factory implements IMOD123Factory {
 	private static final String ROOT = "AFADFA";
 	private static final String DECLARACION = "DECLARACION";
 	
-	private static final String MODEL = "115";
+	private static final String MODEL = "123";
 	private static final String EMPTY = "";
 	private static final String TRUE = "true";
 
@@ -161,7 +161,7 @@ public class Alava2011MOD123Factory implements IMOD123Factory {
 		if ( declaration.isReplacement() || declaration.isComplementary()) {
 			mod.addElement(CLAVE).addAttribute(NUMERO,"901").addAttribute(VALOR, TRUE );
 		}
-		addClave(mod, 1,declaration.getBoxes().get(Mod123Key.C01.getValue()));	
+		addClave(mod, 1,declaration.getBoxes().get(Mod123Key.C01.getValue()),true);	
 		addClave(mod, 2,declaration.getBoxes().get(Mod123Key.C02.getValue()));
 		addClave(mod, 3,declaration.getBoxes().get(Mod123Key.C03.getValue()));
 		addClave(mod, 4,declaration.getBoxes().get(Mod123Key.C07.getValue()));
@@ -173,8 +173,17 @@ public class Alava2011MOD123Factory implements IMOD123Factory {
 	}
 
 	private void addClave(Element mod, int clave, double value) {
+		addClave(mod, clave, value, false);
+	}
+	
+	private void addClave(Element mod, int clave, double value, boolean integer) {
 		if (value != 0.0) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,Integer.toString(clave)).addAttribute(VALOR, formatNumber(value) );	
+			if (integer) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,Integer.toString(clave)).addAttribute(VALOR, Integer.toString( (int) value) );				
+			} else {
+				mod.addElement(CLAVE).addAttribute(NUMERO,Integer.toString(clave)).addAttribute(VALOR, formatNumber(value) );	
+			}
+				
 		}
 	}
 

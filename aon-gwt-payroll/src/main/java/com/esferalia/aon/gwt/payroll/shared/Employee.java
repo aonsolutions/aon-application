@@ -9,7 +9,29 @@ public class Employee implements Serializable, HasId<Integer> {
 	 * 
 	 */
 	private static final long serialVersionUID = -2517702556287850026L;
+	
+	
+	public static enum Occupation implements HasDescription{
+		
+		a("Personal en trabajos exclusivos de oficina"),
+		b("Representantes Comercio"),
+		d("Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci\u00F3n en general"),
+		f("Conductores de veh\u00EDculo autom\u00F3vil de transporte de mercanc\u00EDas que tenga una capacidad de carga \u00FAtil superior a 3,5 Tm"),
+		g("Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles"),
+		h("Vigilantes, guardas, guardas jurados y personal de seguridad")
+		;
+		
+		private String description;
 
+		private Occupation(String desscription) {
+			this.description = desscription;
+		}
+		
+		
+		public String getDescription() {
+			return description;
+		};
+	}
 	private int id;
 
 	private int person;

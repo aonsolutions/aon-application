@@ -8,6 +8,8 @@ import javax.faces.model.DataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -30,6 +32,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class ProductStatEngineController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CommercialStatEngineController.class);
 
 	private Item  item;
 	private Double pendingSaleQuantity;
@@ -93,8 +97,7 @@ public class ProductStatEngineController implements Serializable {
 			getTotalStocks();
 			getAveragePurchasesPrice();			
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);
 		}
 	}
 	
@@ -109,8 +112,7 @@ public class ProductStatEngineController implements Serializable {
 			getTotalStocks();
 			getAveragePurchasesPrice();
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);			
 		}
 	}
 

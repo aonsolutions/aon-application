@@ -12,12 +12,15 @@ public class Declaration {
 	private String administrationCode;
 	private Integer year;
 	private String period;
+	private Integer quarter;
+	private Integer month;
 	private Integer currentDay;
 	private Integer currentMonth;
 	private String currentLetterMonth;
 	private Integer currentYear;
 	private boolean replacement;
 	private boolean complementary;
+	private String navarraModel;
 	
 	private String complementaryCode;
 	private String replacedNumber;
@@ -48,6 +51,7 @@ public class Declaration {
 	
 	private String payment;
 	private String ccc;
+	private String payMethod;
 	
 	private Map<String,Double> boxes = new HashMap<String, Double>();
 
@@ -68,6 +72,18 @@ public class Declaration {
 	}
 	public void setPeriod(String period) {
 		this.period = period;
+	}
+	public Integer getQuarter() {
+		return quarter;
+	}
+	public void setQuarter(Integer quarter) {
+		this.quarter = quarter;
+	}
+	public Integer getMonth() {
+		return month;
+	}
+	public void setMonth(Integer month) {
+		this.month = month;
 	}
 	public Integer getCurrentDay() {
 		return currentDay;
@@ -99,6 +115,12 @@ public class Declaration {
 	public void setReplacement(boolean replacement) {
 		this.replacement = replacement;
 	}
+	public String getNavarraModel() {
+		return navarraModel;
+	}
+	public void setNavarraModel(String navarraModel) {
+		this.navarraModel = navarraModel;
+	}
 	public boolean isComplementary() {
 		return complementary;
 	}
@@ -110,6 +132,11 @@ public class Declaration {
 	}
 	public void setComplementaryCode(String complementaryCode) {
 		this.complementaryCode = complementaryCode;
+	}
+	public String getNavarraDeclType() {
+		if (isReplacement()) return "S";
+		if (isComplementary()) return "C";
+		return " ";
 	}
 	public String getReplacedNumber() {
 		return replacedNumber;
@@ -164,7 +191,7 @@ public class Declaration {
 		this.surname = surname;
 	}
 	public String getSurnameStart() {
-		return StringUtils.substring(getSurname(), 0, 4);
+		return isPerson()?StringUtils.substring(getSurname(), 0, 4):"";
 	}
 	public String getFullName() {
 		return getSurname() + (StringUtils.isEmpty(getSurname())?"":' ') + getName();
@@ -259,6 +286,12 @@ public class Declaration {
 	}
 	public void setPayment(String payment) {
 		this.payment = payment;
+	}
+	public String getPayMethod() {
+		return payMethod;
+	}
+	public void setPayMethod(String payMethod) {
+		this.payMethod = payMethod;
 	}
 	public String getCcc() {
 		return ccc;

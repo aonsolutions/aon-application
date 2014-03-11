@@ -128,7 +128,6 @@
 							actionListener="#{accountEntry.onPDFJournal}">
 						</aon:htmlCommandLink>
 						
-						
 						<aon:spin id="accountEntrySpin"
 							controller="#{accountEntry}" action="accountEntry_form" 
 							rendered="#{!accountEntry.new}" 
@@ -244,6 +243,9 @@
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText styleClass="aon-panelGrid-search-info-internal"
 								value="#{bundle.account_entry_accelerator}"/>
+							<aon:div style="padding-left: 20px;">
+								<aon:outputText value="#{bundle.account_entry_accelerator_exp}"/>
+							</aon:div>
 						</aon:div>
 						
 						<aon:panelGrid id="searchContentID" columns="2">
@@ -280,6 +282,7 @@
 							<aon:inputText id="AccountEntry_numdoc"
 								value="#{accountEntry.numDocument}"
 								size="32" maxlength="32"/>
+
 						</aon:panelGrid>
 					</aon:div>
 				</c:if>

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -989,20 +990,54 @@ public class ContractController extends BasicController {
 		return controller.getTLDCAUSSCodeList();
 	}
 	
+	public void onChangeEndDate(ActionEvent event){
+		Date endDate = ((Contract)this.getTo()).getEndDate();
+		if(endDate==null){
+			getParams().setSettleAdvanceNoticeDate(null);
+			getParams().setSettleNonEnjoyedVacations(null);
+			getParams().setSettleCompensationDays(null);
+			getParams().setSuspensionCause(null);
+		} else if(endDate.before(((Contract)this.getTo()).getStartDate())){
+			((Contract)this.getTo()).setEndDate(null);
+			getParams().setSettleAdvanceNoticeDate(null);
+			getParams().setSettleNonEnjoyedVacations(null);
+			getParams().setSettleCompensationDays(null);
+			getParams().setSuspensionCause(null);
+			AonUtil.addErrorMessage("La fecha fin no puede ser anterior a la fecha inicio.");
+		} else {
+			getParams().setSettleAdvanceNoticeDate( obtainAdvanceNoticeDate(endDate) );
+			getParams().setSettleWorkedYears( calculateWorkedYears((Contract) this.getTo()) );
+			getParams().setSettleWorkedMonths( calculateWorkedMonths((Contract) this.getTo()) );
+		}
+	}
+	
 	public void onSuspensionCauseChanged(ValueChangeEvent event){
 		if(event.getNewValue()!=null){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(((Contract)this.getTo()).getEndDate());
-			cal.add(Calendar.DAY_OF_MONTH, -15);
-			getParams().setSettleAdvanceNoticeDate(cal.getTime());
 			getParams().setSettleNonEnjoyedVacations(0);
 			Contract contract = (Contract) this.getTo();
 			getParams().setSettleCompensationDays(calculateCompensationDays(contract, (TLDCAUSS) event.getNewValue()));
 		} else {
-			getParams().setSettleAdvanceNoticeDate(null);
-			getParams().setSettleNonEnjoyedVacations(null);
 			getParams().setSettleCompensationDays(null);
 		}
+	}
+	
+	private Integer calculateWorkedMonths(Contract contract) {
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(contract.getStartDate());
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(contract.getEndDate());
+		int diffMonth = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+		diffMonth += (endCalendar.get(Calendar.DAY_OF_MONTH) > startCalendar.get(Calendar.DAY_OF_MONTH))?1:0;
+		return diffMonth;
+	}
+
+	private Integer calculateWorkedYears(Contract contract) {
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(contract.getStartDate());
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(contract.getEndDate());
+		int diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+		return diffYear;
 	}
 	
 	private Integer calculateCompensationDays(Contract contract, TLDCAUSS cause) {
@@ -1047,8 +1082,7 @@ public class ContractController extends BasicController {
 			} else if(contract.getStartDate().after(CommonUtil.getDate(2011, Calendar.JANUARY, 1))){
 				return 8;
 			}
-		} 
-		else {
+		} else {
 			////////////////////////////////////////
 			// INDEMNIZACIÓN POR DESPIDO
 			////////////////////////////////////////
@@ -1068,14 +1102,16 @@ public class ContractController extends BasicController {
 			//				si a esa fecha iguala o excede las 24 mensualidades de indemnización, se fija ese importe como  indemnización.
 			//			b) Si a 13/02/2013 no alcanza las 24 mensualidades de indemnización, se seguirá calculando la indemnización 
 			//				a razón de 33 días por año trabajado con un límite total acumulado entre ambos tramos de 24 mensualidades.
-			else if(contract.getStartDate().before(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13))
+			else if(( DateUtils.truncate(contract.getStartDate(), Calendar.DAY_OF_MONTH).before(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13)) 
+					|| DateUtils.truncate(contract.getStartDate(), Calendar.DAY_OF_MONTH).equals(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13)) )
 					&& cause == TLDCAUSS.TLDCAUSS_01
 					){
+				return 45;
 			}
 			// - Despedido de forma improcedente (Contrato posterior al 13/02/2013).
 			//		- Importe: 33 días por año trabajado
 			//		- Límite:    24 mensualidades
-			else if( contract.getStartDate().after(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13))
+			else if( DateUtils.truncate(contract.getStartDate(), Calendar.DAY_OF_MONTH).after(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13))
 					&& cause == TLDCAUSS.TLDCAUSS_01 
 					){
 				return 33;
@@ -1087,12 +1123,18 @@ public class ContractController extends BasicController {
 	public void onAdvanceNoticeDateChanged(ActionEvent event){
 		Contract contract = (Contract) this.getTo();
 		if(contract.getEndDate()!=null && getParams().getSettleAdvanceNoticeDate().after(contract.getEndDate())){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(((Contract)this.getTo()).getEndDate());
-			cal.add(Calendar.DAY_OF_MONTH, -15);
-			getParams().setSettleAdvanceNoticeDate(cal.getTime());
+			getParams().setSettleAdvanceNoticeDate(obtainAdvanceNoticeDate(((Contract)this.getTo()).getEndDate()));
 			AonUtil.addErrorMessage("La fecha de preaviso no puede ser posterior a la fecha fin de contrato");
 		}
+	}
+
+	private Date obtainAdvanceNoticeDate(Date sourceDate){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sourceDate);
+		cal.add(Calendar.DAY_OF_MONTH, -15);
+		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) cal.add(Calendar.DAY_OF_MONTH, -1);
+		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY) cal.add(Calendar.DAY_OF_MONTH, -1);
+		return cal.getTime();
 	}
 	
 	/*
@@ -1502,6 +1544,8 @@ public class ContractController extends BasicController {
 		private Date settleAdvanceNoticeDate;
 		private Integer settleCompensationDays;
 		private Integer settleNonEnjoyedVacations;
+		private Integer settleWorkedYears;
+		private Integer settleWorkedMonths;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -1702,7 +1746,21 @@ public class ContractController extends BasicController {
 		public void setSettleNonEnjoyedVacations(Integer settleNonEnjoyedVacations) {
 			this.settleNonEnjoyedVacations = settleNonEnjoyedVacations;
 		}
-		
+		public Integer getSettleWorkedYears() {
+			return settleWorkedYears;
+		}
+		public void setSettleWorkedYears(Integer settleWorkedYears) {
+			this.settleWorkedYears = settleWorkedYears;
+		}
+		public Integer getSettleWorkedMonths() {
+			return settleWorkedMonths;
+		}
+		public void setSettleWorkedMonths(Integer settleWorkedMonths) {
+			this.settleWorkedMonths = settleWorkedMonths;
+		}
+		public Double getSettleTotalWorkedYears() {
+			return CommonUtil.round(settleWorkedYears.doubleValue() + (settleWorkedMonths.doubleValue()/12), 2);
+		}
 		
 		
 	}

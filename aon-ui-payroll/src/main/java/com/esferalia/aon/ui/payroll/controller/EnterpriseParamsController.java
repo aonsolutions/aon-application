@@ -154,13 +154,15 @@ public class EnterpriseParamsController {
 	}
 
 	private void acceptAgreement() throws ManagerBeanException{
-		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		getAgreementData().setEnterprise((Enterprise) controller.getTo());
-		getAgreementData().setName(AGREEMENT);
-		String id = (getAgreement()!=null && getAgreement().getId()!=null)?getAgreement().getId().toString():"";
-		getAgreementData().setExpression(id);
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
-		bean.insertOrUpdate(getAgreementData());
+		if(getAgreementData()!=null && getAgreement()!=null && getAgreement().getId()!=null){
+			IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+			getAgreementData().setEnterprise((Enterprise) controller.getTo());
+			getAgreementData().setName(AGREEMENT);
+			String id = (getAgreement()!=null && getAgreement().getId()!=null)?getAgreement().getId().toString():"";
+			getAgreementData().setExpression(id);
+			IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
+			bean.insertOrUpdate(getAgreementData());
+		}
 	}
 
 	private void loadAgreementData() throws ManagerBeanException {

@@ -1,6 +1,5 @@
 package com.code.aon.warehouse.bridge;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,7 +7,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 
 import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -19,11 +17,12 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DeliveryTransferManager implements Serializable {
+public class DeliveryTransferManager extends DataScrollerState {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -31,12 +30,16 @@ public class DeliveryTransferManager implements Serializable {
 	private Integer selectedDeliveryId;
 	private List<ITransferObject> deliveryList;
 	private List<ITransferObject> detailList;
-	private DataModel deliveryModel;
-	private DataModel detailModel;
+	private DataScrollerState detailState;
 	private List<ITransferObject> invoicedDeliveryList;
 	private ArrayList<Delivery> deliveryChecks= new ArrayList<Delivery>();
 
-	public IPriceStrategy getPriceStrategy(){
+	public DeliveryTransferManager() {
+		setBeanName("deliveryTransfer");
+		setPageLimit(10);
+	}
+
+	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
@@ -57,6 +60,7 @@ public class DeliveryTransferManager implements Serializable {
 	
 	public void setDeliveryList(List<ITransferObject> deliveryList) {
 		this.deliveryList = deliveryList;
+		setModel(deliveryList != null ? new SerializableListDataModel(deliveryList) : null);
 	}
 	
     public List<ITransferObject> getDetailList() {
@@ -67,26 +71,16 @@ public class DeliveryTransferManager implements Serializable {
 		this.detailList = detailList;
 	}
 
-	public DataModel getDeliveryModel() {
-		if (deliveryModel == null) {
-			deliveryModel = new SerializableListDataModel(deliveryList);
+	public DataScrollerState getDetailState() {
+		if (detailState == null) {
+			detailState = new DataScrollerState(new SerializableListDataModel(detailList), "deliveryDetailTransfer");
+			detailState.setPageLimit(-1);
 		}
-		return deliveryModel;
+		return detailState;
 	}
 
-	public void setDeliveryModel(DataModel model) {
-		this.deliveryModel = model;
-	}
-
-	public DataModel getDetailModel() {
-		if (detailModel == null) {
-			detailModel = new SerializableListDataModel(detailList);
-		}
-		return detailModel;
-	}
-
-	public void setDetailModel(DataModel model) {
-		this.detailModel = model;
+	public void setDetailState(DataScrollerState detailState) {
+		this.detailState = detailState;
 	}
 
 	public List<ITransferObject> getInvoicedDeliveryList() {
@@ -97,17 +91,17 @@ public class DeliveryTransferManager implements Serializable {
 		this.invoicedDeliveryList = invoicedDeliveryList;
 	}
 	
-	public double getDeliveryTotalPrice() throws ManagerBeanException {
-		Delivery delivery = (Delivery)deliveryModel.getRowData();
+	public double getDeliveryTotalPrice() {
+		Delivery delivery = (Delivery)getDirectModel().getRowData();
 		return getPriceStrategy().getTotalPrice(delivery, delivery.getCustomer());
 	}
 
 	public void onSelectDelivery(ActionEvent event) {
-		if (deliveryModel.isRowAvailable()) {
-			Delivery delivery = (Delivery)deliveryModel.getRowData();
+		if (getDirectModel().isRowAvailable()) {
+			Delivery delivery = (Delivery)getDirectModel().getRowData();
 			setSelectedDeliveryId(delivery.getId());
 			setDetailList(obtainDeliveryDetailList(delivery));
-			setDetailModel(null);
+			setDetailState(null);
 		}
 	}
 
@@ -139,14 +133,14 @@ public class DeliveryTransferManager implements Serializable {
 	}
 
 	private void selectDeliveryRow(boolean rowChecked) {
-		if (deliveryModel.isRowAvailable()) {
-			Delivery delivery = (Delivery)deliveryModel.getRowData();
+		if (getDirectModel().isRowAvailable()) {
+			Delivery delivery = (Delivery)getDirectModel().getRowData();
 			setDeliveryRowChecked(delivery, rowChecked);
 		}
 	}
 
 	public boolean getDeliveryRowChecked() {
-		Delivery delivery = (Delivery)deliveryModel.getRowData();
+		Delivery delivery = (Delivery)getDirectModel().getRowData();
 		return deliveryChecks.contains(delivery);
 	}
 	
@@ -174,9 +168,8 @@ public class DeliveryTransferManager implements Serializable {
 	}
 	
 	public void checkAllDeliveries(ActionEvent event) {
-		Iterator<ITransferObject> iterator = deliveryList.iterator();
-		while (iterator.hasNext()) {
-			Delivery delivery = (Delivery)iterator.next();
+		for (ITransferObject ito : deliveryList) {
+			Delivery delivery = (Delivery)ito;
 			if (!deliveryChecks.contains(delivery)) {
 				deliveryChecks.add(delivery);
 			}

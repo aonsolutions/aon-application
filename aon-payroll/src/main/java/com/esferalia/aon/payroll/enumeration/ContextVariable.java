@@ -43,6 +43,7 @@ public enum ContextVariable implements IResourceable{
 
 	ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
 	COMPENSATION_DAYS("DIAS_INDEMNIZACION", VariableType.INTEGER, false),
+	WORKED_YEARS("AÑOS_TRABAJADOS", VariableType.INTEGER, false),
 
 	SALARY_MONTHS("MESES_NOMINA", VariableType.INTEGER, false),
 	PAY_MONTHS("MESES_PAGA", VariableType.INTEGER, false),

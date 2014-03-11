@@ -14,6 +14,15 @@
 		<ui:param name="showMoreMenu" value="#{!contract.new}" />
 		
 		<ui:define name="beforeSpinToolbarContent">
+		
+			<aon:htmlCommandLink id="contractSuspensionNotice_letter"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+				rendered="#{contract.to.endDate!=null and contract.params.settleAdvanceNoticeDate!=null}"
+				value="Carta aviso fin contrato"
+				action="#{report.onExecute}">
+				<f:param name="reportKey" value="contractSuspensionNotice" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:htmlCommandLink>	
 			
 		</ui:define>
 <!--  
@@ -142,7 +151,7 @@
 			
 			<aon:menuItem id="contrata-communication-log"
 				value="#{bundle.aon_module_contrata}"
-				disabled="#{contractContrata.new or !contractContrata.communicationAvailable}"
+				disabled="#{contractContrata.new}"
 				rendered="#{true}" ajaxSingle="true"
 				reRender="showContrataCommunicationWindow"
 				actionListener="#{contractContrata.onContrataDataShow}"

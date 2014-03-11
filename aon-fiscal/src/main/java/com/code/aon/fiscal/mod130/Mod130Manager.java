@@ -87,7 +87,7 @@ public class Mod130Manager extends FiscalModelManager {
 	
 
 	private static String SELECT_06 = "SELECT " 
-			+" SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET "
+			+" SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) RET "
 			+" FROM invoice_tax it "
 			+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 			+" INNER JOIN invoice i ON (id.invoice = i.id)"
@@ -153,10 +153,10 @@ public class Mod130Manager extends FiscalModelManager {
 			Date dateFrom = getInitialDate(fiscalModel);	
 			Date dateTo = getDueDate(fiscalModel);
 			
-	//		 Casilla 01. Consigne la totalidad de los ingresos √≠ntegros fiscalmente 
-	//		 computables procedentes de las actividades econ√≥micas a las que se 
-	//		 refiere este apartado y que correspondan al per√≠odo comprendido entre 
-	//		 el primer d√≠a del a√±o y el √∫ltimo d√≠a del trimestre.
+	//		 Casilla 01. Consigne la totalidad de los ingresos Ì≠ntegros fiscalmente 
+	//		 computables procedentes de las actividades econÛmicas a las que se 
+	//		 refiere este apartado y que correspondan al perÌ≠odo comprendido entre 
+	//		 el primer dÌ≠a del aÒo y el ˙ltimo dÌ≠a del trimestre.
 			SummaryProvider sp = new SummaryProvider();
 			SummaryProviderParameters params = new SummaryProviderParameters(getDomainName());
 			params.setAccountExpression( "7*" );
@@ -164,36 +164,41 @@ public class Mod130Manager extends FiscalModelManager {
 			params.setFromDate(dateFrom);
 			params.setToDate(dateTo);
 			SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
-//			double c01 = sc.getCreditBalance( );
 			double c01 = CommonUtil.round(sc.getOpeningCredit() + sc.getCredit() - sc.getOpeningDebit() - sc.getDebit());
 			mod130.ensureDetail(Mod130Key.C01).addAccumulatedAmount(c01);
-	//		 ------------------------------------------------------------------------
 			
 	//		 Casilla 02. Haga constar el importe de los gastos que, teniendo la 
-	//		 consideraci√≥n de fiscalmente deducibles, resulten imputables a las 
-	//		 actividades econ√≥micas a las que se refiere este apartado y correspondan 
-	//		 al per√≠odo temporal indicado anteriormente. Se incluir√° en esta casilla 
+	//		 consideraciÛn de fiscalmente deducibles, resulten imputables a las 
+	//		 actividades econÛmicas a las que se refiere este apartado y correspondan 
+	//		 al perÌ≠odo temporal indicado anteriormente. Se incluir· en esta casilla 
 	//		 el importe de las amortizaciones fiscalmente deducibles correspondientes 
-	//		 a la depreciaci√≥n experimentada por el inmovilizado afecto a las actividades 
-	//		 desarrolladas en el per√≠odo comprendido entre el primer d√≠a del a√±o y el 
-	//		 √∫ltimo d√≠a del trimestre, as√≠ como, en su caso, el importe de las provisiones 
-	//		 que, correspondiendo al citado per√≠odo temporal, tengan, asimismo, la 
-	//		 consideraci√≥n de fiscalmente deducibles. Trat√°ndose de actividades a las 
-	//		 que resulte aplicable la modalidad simplificada del m√©todo de estimaci√≥n 
-	//		 directa, se incluir√°n en esta casilla los importes de las amortizaciones, 
-	//		 de las provisiones deducibles y de los gastos de dif√≠cil justificaci√≥n 
-	//		 correspondientes al per√≠odo comprendido entre el primer d√≠a del a√±o y el 
-	//		 √∫ltimo d√≠a del trimestre, determinados conforme a las especialidades 
-	//		 establecidas en el art√≠culo 30 del Reglamento del Impuesto.
+	//		 a la depreciaciÛn experimentada por el inmovilizado afecto a las actividades 
+	//		 desarrolladas en el perÌ≠odo comprendido entre el primer dÌ≠a del aÒo y el 
+	//		 ˙ltimo dÌ≠a del trimestre, asÌ≠ como, en su caso, el importe de las provisiones 
+	//		 que, correspondiendo al citado perÌ≠odo temporal, tengan, asimismo, la 
+	//		 consideraciÛn de fiscalmente deducibles. Trat·ndose de actividades a las 
+	//		 que resulte aplicable la modalidad simplificada del mÈtodo de estimaciÛn 
+	//		 directa, se incluir·n en esta casilla los importes de las amortizaciones, 
+	//		 de las provisiones deducibles y de los gastos de difÌ≠cil justificaciÛn 
+	//		 correspondientes al perÌ≠odo comprendido entre el primer dÌ≠a del aÒo y el 
+	//		 ˙ltimo dÌ≠a del trimestre, determinados conforme a las especialidades 
+	//		 establecidas en el artÌ≠culo 30 del Reglamento del Impuesto.
 			params = new SummaryProviderParameters(getDomainName());
 			params.setAccountExpression( "6*" );
 			params.setAccountLevel(5);
 			params.setFromDate(dateFrom);
 			params.setToDate(dateTo);
 			sc = sp.getSummaryCollection(conn,params,false);
-			//double c02 = sc.getUnpaidBalance();
 			double c02 = CommonUtil.round(sc.getOpeningDebit() + sc.getDebit() - sc.getOpeningCredit() - sc.getCredit());
 			
+
+	// 		ArtÌ≠culo 30. DeterminaciÛn del rendimiento neto en el mÈtodo de estimaciÛn 
+	// 		directa simplificada.
+	// 		El conjunto de las provisiones deducibles y los gastos de difÌ≠cil justificaciÛn 
+	// 		se cuantificar· aplicando el porcentaje del 5 por ciento sobre el rendimiento 
+	// 		neto, excluido este concepto. No obstante, no resultar· de aplicaciÛn dicho 
+	// 		porcentaje de deducciÛn cuando el contribuyente opte por la aplicaciÛn de la 
+	// 		reducciÛn prevista en el artÌ≠culo 26 de este Reglamento.
 			double c03 = CommonUtil.round(c01 - c02);
 			TaxRegime taxRegime = searchTaxRegime(conn);
 			mod130.setTaxRegime(taxRegime);
@@ -201,77 +206,82 @@ public class Mod130Manager extends FiscalModelManager {
 				c02 = CommonUtil.round(c02 + (c03 * 5 / 100));
 			}
 			mod130.ensureDetail(Mod130Key.C02).addAccumulatedAmount(c02);
-	
 			
-			// Art√≠culo 30. Determinaci√≥n del rendimiento neto en el m√©todo de estimaci√≥n 
-			// directa simplificada.
-			// El conjunto de las provisiones deducibles y los gastos de dif√≠cil justificaci√≥n 
-			// se cuantificar√° aplicando el porcentaje del 5 por ciento sobre el rendimiento 
-			// neto, excluido este concepto. No obstante, no resultar√° de aplicaci√≥n dicho 
-			// porcentaje de deducci√≥n cuando el contribuyente opte por la aplicaci√≥n de la 
-			// reducci√≥n prevista en el art√≠culo 26 de este Reglamento.
+	// 		Casilla 03. Consigne el resultado de efectuar la operaciÛn indicada en el impreso. 
+	// 		De resultar una cantidad negativa, consÌgnela con signo menos (-). No obstante, 
+	// 		los rendimientos netos en los que concurra alguna de las circunstancias contempladas 
+	// 		en el artÌculo 32.1 de la Ley del Impuesto, se computar·n a efectos del pago 
+	// 		fraccionado previa aplicaciÛn de la reducciÛn establecida en el citado artÌculo.
 			c03 = CommonUtil.round(c01 - c02);
 			mod130.ensureDetail(Mod130Key.C03).setAccumulatedAmount(c03);
 			
-	//		 ------------------------------------------------------------------------
 	
 	//		 Casilla 05. Haga constar en esta casilla la suma de las cantidades positivas 
 	//		 consignadas en la casilla 07 de las declaraciones, modelo 130, correspondientes 
 	//		 a los trimestres anteriores del mismo ejercicio, minorada en el importe de la 
 	//		 suma de las cantidades consignadas en la casilla 16 de las citadas declaraciones. 
-	//		 No se computar√°n las cantidades negativas consignadas en la casilla 07 de las 
+	//		 No se computar·n las cantidades negativas consignadas en la casilla 07 de las 
 	//		 declaraciones correspondientes a los trimestres anteriores.
 			double previousC07 = getPreviousAmount(conn,SELECT_05_1,fiscalModel,Mod130Key.C07);
 			double previousC16 = getPreviousAmount(conn,SELECT_05_2,fiscalModel,Mod130Key.C16);
 			double c05 = CommonUtil.round(previousC07 - previousC16);
 			mod130.ensureDetail(Mod130Key.C05).addAccumulatedAmount(c05);
-	//		 ------------------------------------------------------------------------
 	
-	//		 Casilla 06. Se har√° constar en esta casilla la suma de las retenciones e 
+	//		 Casilla 06. Se har· constar en esta casilla la suma de las retenciones e 
 	//		 ingresos a cuenta soportados sobre los rendimientos procedentes de las 
-	//		 actividades econ√≥micas a que se refiere este apartado, correspondientes 
-	//		 al per√≠odo comprendido entre el primer d√≠a del a√±o y el √∫ltimo d√≠a del 
+	//		 actividades econÛmicas a que se refiere este apartado, correspondientes 
+	//		 al perÌ≠odo comprendido entre el primer dÌ≠a del aÒo y el ˙ltimo dÌ≠a del 
 	//		 trimestre a que se refiere el pago fraccionado.
 			mod130.ensureDetail(Mod130Key.C06).addAccumulatedAmount(getC06(conn,dateFrom,dateTo));
 	//		 ------------------------------------------------------------------------
 			
-	//		Casilla 13. Podr√°n cumplimentar esta casilla √∫nicamente los contribuyentes que 
-	//		tengan derecho a la deducci√≥n por obtenci√≥n de rendimientos de actividades 
-	//		econ√≥micas a efectos del pago fraccionado por cumplir el siguiente requisito:
+	//		Casilla 13. Podr·n cumplimentar esta casilla ˙nicamente los contribuyentes que 
+	//		tengan derecho a la deducciÛn por obtenciÛn de rendimientos de actividades 
+	//		econÛmicas a efectos del pago fraccionado por cumplir el siguiente requisito:
 	//		Que, en el primer trimestre del ejercicio o en el primer trimestre de inicio de 
-	//		actividades, la suma del resultado de elevar al a√±o el importe de la casilla 03 
-	//		y/o, en su caso, el resultado de elevar al a√±o el 25 por 100 de la casilla 08, 
+	//		actividades, la suma del resultado de elevar al aÒo el importe de la casilla 03 
+	//		y/o, en su caso, el resultado de elevar al aÒo el 25 por 100 de la casilla 08, 
 	//		sea igual o inferior a 12.000 euros. En los supuestos de inicio de la actividad 
-	//		a lo largo del ejercicio en la elevaci√≥n al a√±o se tendr√°n en consideraci√≥n los 
-	//		d√≠as que resten hasta el final del a√±o. Adem√°s, si el contribuyente tambi√©n est√° 
-	//		obligado a presentar el modelo 131 para declarar el pago fraccionado correspondiente 
-	//		a las actividades econ√≥micas en estimaci√≥n objetiva que realice, como sucede, 
-	//		entre otros, en el supuesto a que se refiere el segundo p√°rrafo del art√≠culo 35 del 
-	//		Reglamento del Impuesto, deber√° adicionar a las magnitudes anteriores el importe 
-	//		de la casilla 01 o, en su caso, el resultado de elevar al a√±o el 25 por 100 de la 
-	//		casilla 03 y/o 05 del primer trimestre del ejercicio o del primer trimestre de 
-	//		inicio de actividades del modelo 131. Si la suma total de estas magnitudes no 
-	//		excede de 12.000 euros, se consignar√° en esta casilla 13 el importe obtenido de 
-	//		dividir entre cuatro la cuant√≠a de la deducci√≥n por obtenci√≥n de rendimientos de 
-	//		actividades econ√≥micas, prevista en el apartado 1 del art√≠culo 80 bis de la Ley del 
-	//		Impuesto, que corresponda a efectos de los pagos fraccionados. 
-	//		Para calcular la cuant√≠a de esta deducci√≥n, deber√° tenerse en cuenta que:
+	//		a lo largo del ejercicio en la elevaciÛn al aÒo se tendr·n en consideraciÛn los 
+	//		dÌ≠as que resten hasta el final del aÒo.
+	// 
+	//		Adem·s, si el contribuyente tambiÈn est· obligado a presentar el modelo 131 para 
+	//		declarar el pago fraccionado correspondiente a las actividades econÛmicas en   
+	//		estimaciÛn objetiva que realice, como sucede, entre otros, en el supuesto a que 
+	//		se refiere el segundo p·rrafo del artÌ≠culo 35 del Reglamento del Impuesto,
+	//		deber· adicionar a las magnitudes anteriores el importe de la casilla 01 o, 
+	//		en su caso, el resultado de elevar al aÒo el 25 por 100 de la casilla 03 y/o 05 
+	//		del primer trimestre del ejercicio o del primer trimestre de inicio de actividades  
+	//		del modelo 131. Si la suma total de estas magnitudes no excede de 12.000 euros, se  
+	//		consignar· en esta casilla 13 el importe obtenido de dividir entre cuatro la cuantÌ≠a   
+	//		de la deducciÛn por obtenciÛn de rendimientos de actividades econÛmicas, prevista  
+	//		en el apartado 1 del artÌ≠culo 80 bis de la Ley del Impuesto, que corresponda a   
+	//		efectos de los pagos fraccionados. 
+	//
+	//		Para calcular la cuantÌ≠a de esta deducciÛn, deber· tenerse en cuenta que:
 	//		- Cuando la suma de las magnitudes anteriormente indicadas (incluidas, en su caso, 
 	//			las referidas al modelo 131) sea igual o inferior a 8.000 euros anuales, esta 
-	//			deducci√≥n asciende a 400 euros.
-	//		- Cuando dicha suma est√© comprendida entre 8.000,01 y 12.000 euros anuales, la 
-	//			cuant√≠a de la deducci√≥n vendr√° determinada por la siguiente operaci√≥n: 
+	//			deducciÛn asciende a 400 euros.
+	//		- Cuando dicha suma estÈ comprendida entre 8.000,01 y 12.000 euros anuales, la 
+	//			cuantÌ≠a de la deducciÛn vendr· determinada por la siguiente operaciÛn: 
 	//			(400 euros menos el producto de multiplicar por 0,1 la diferencia entre la 
 	//			suma de las magnitudes indicadas y 8.000 euros anuales).
 	//			
-	//		Advi√©rtase que, en el supuesto de que el contribuyente tambi√©n est√© obligado a presentar 
-	//		el modelo 131, el importe correspondiente a la minoraci√≥n del pago fraccionado por la 
-	//		deducci√≥n del art√≠culo 80 bis de la Ley del Impuesto, calculada conforme se ha se√±alado 
-	//		en los p√°rrafos anteriores, puede distribuirse, si as√≠ lo decide, entre ambos modelos 
+	//		AdviÈrtase que, en el supuesto de que el contribuyente tambiÈn estÈ obligado a presentar 
+	//		el modelo 131, el importe correspondiente a la minoraciÛn del pago fraccionado por la 
+	//		deducciÛn del artÌ≠culo 80 bis de la Ley del Impuesto, calculada conforme se ha seÒalado 
+	//		en los p·rrafos anteriores, puede distribuirse, si asÌ≠ lo decide, entre ambos modelos 
 	//		130 y 131 siempre que los importes consignados en las casillas 13 del modelo 130 y 09 
-	//		del modelo 131 no superen en su conjunto, para cada trimestre, el importe de la minoraci√≥n.
-			double previousC03 = getC13_03(conn,SELECT_13_03,fiscalModel,Mod130Key.C03);
-			double previousC08 = getC13_08(conn,SELECT_13_08,fiscalModel,Mod130Key.C08);
+	//		del modelo 131 no superen en su conjunto, para cada trimestre, el importe de la minoraciÛn.
+			double previousC03 = 0;
+			double previousC08 = 0;
+			if (fiscalModel.getPeriod() == Period.T1) {
+				previousC03 = c03;
+			} else {
+				previousC03 = getC13_03(conn,SELECT_13_03,fiscalModel,Mod130Key.C03, c03);
+				previousC08 = getC13_08(conn,SELECT_13_08,fiscalModel,Mod130Key.C08);
+			}
+			
 			double c13 = 0;
 			if ( CommonUtil.round(previousC03 + previousC08) <= 12000 ) {
 				if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
@@ -284,10 +294,10 @@ public class Mod130Manager extends FiscalModelManager {
 	
 	//		 ------------------------------------------------------------------------
 	//		Casilla 15. Si en la casilla 14 anterior se hubiera obtenido una cantidad positiva, 
-	//		se har√° constar en la casilla 15 el importe de los resultados negativos que, en su 
+	//		se har· constar en la casilla 15 el importe de los resultados negativos que, en su 
 	//		caso, se hubieran obtenido en la casilla 19 de cualquiera de las declaraciones 
 	//		anteriores, modelo 130, del mismo ejercicio y que no hubieran sido deducidos 
-	//		anteriormente, teniendo en cuenta que en ning√∫n caso podr√° figurar en la casilla 15 
+	//		anteriormente, teniendo en cuenta que en ning˙n caso podr· figurar en la casilla 15 
 	//		un importe superior a la cantidad positiva consignada en la casilla 14.
 			mod130.calculate();
 			double c14 = mod130.getDetail( Mod130Key.C14 ).getAmount();
@@ -302,26 +312,26 @@ public class Mod130Manager extends FiscalModelManager {
 			mod130.ensureDetail(Mod130Key.C15).addAccumulatedAmount(c15);
 	//		 ------------------------------------------------------------------------
 	//		Casilla 16. Si en la casilla 14 se hubiera obtenido una cantidad positiva y el 
-	//		contribuyente est√° realizando pagos por pr√©stamos destinados a la adquisici√≥n o 
-	//		rehabilitaci√≥n de su vivienda habitual, se har√° constar, en su caso, en la casilla 
-	//		16 el importe de la deducci√≥n a que se refiere el art√≠culo 110.3.d) del Reglamento 
+	//		contribuyente est· realizando pagos por prÈstamos destinados a la adquisiciÛn o 
+	//		rehabilitaciÛn de su vivienda habitual, se har· constar, en su caso, en la casilla 
+	//		16 el importe de la deducciÛn a que se refiere el artÌ≠culo 110.3.d) del Reglamento 
 	//		del Impuesto. 
-	//		Si √∫nicamente se hubiese cumplimentado el apartado I de este modelo, 
-	//		dicha deducci√≥n est√° constituida por el importe resultante de aplicar el porcentaje 
-	//		del 2 por 100 sobre la cantidad consignada en la casilla 03, con el l√≠mite m√°ximo 
+	//		Si ˙nicamente se hubiese cumplimentado el apartado I de este modelo, 
+	//		dicha deducciÛn est· constituida por el importe resultante de aplicar el porcentaje 
+	//		del 2 por 100 sobre la cantidad consignada en la casilla 03, con el lÌ≠mite m·ximo 
 	//		de 660,14 euros para cada trimestre. 
-	//		Si solamente se hubiese cumplimentado el apartado II, la deducci√≥n est√° constituida 
+	//		Si solamente se hubiese cumplimentado el apartado II, la deducciÛn est· constituida 
 	//		por el importe resultante de aplicar el porcentaje del 2 por 100 sobre la cantidad 
-	//		consignada en la casilla 08. En este caso, el l√≠mite m√°ximo de deducci√≥n por este 
-	//		concepto ser√° de 660,14 euros anuales.
-	//		En cualquier caso, deber√° tenerse en cuenta que el importe consignado en la casilla 16 
-	//		no podr√° ser superior a la diferencia positiva entre las casillas 14 y 15 anteriores.
+	//		consignada en la casilla 08. En este caso, el lÌ≠mite m·ximo de deducciÛn por este 
+	//		concepto ser· de 660,14 euros anuales.
+	//		En cualquier caso, deber· tenerse en cuenta que el importe consignado en la casilla 16 
+	//		no podr· ser superior a la diferencia positiva entre las casillas 14 y 15 anteriores.
 			if (mod130.isPermanentAddressChanges() && CommonUtil.round(c14 - c15) > 0 ) {
 				double c16 = 0.0;
 				mod130.calculate();
 				double c08 = mod130.getDetail( Mod130Key.C08 ).getAmount();
-				if (c03 > 0 && c08 > 0 ) { // no resultar√° aplicable cuando el contribuyente realice simult√°neamente   
-										   // actividades agr√≠colas y actividades distintas de √©stas.
+				if (c03 == 0 || c08 == 0 ) { // no resultar· aplicable cuando el contribuyente realice simult·neamente   
+										   // actividades agrÌ≠colas y actividades distintas de Èstas.
 					if (c03 > 0 ) {
 						c16 = CommonUtil.round(c03 * 2 / 100);
 						c16 = c16>660.14?660.14:c16;
@@ -489,7 +499,7 @@ public class Mod130Manager extends FiscalModelManager {
 	}
 	
 
-	private double getC13_03(Connection c, String select,FiscalModel fiscalModel, Mod130Key key) throws AonException {
+	private double getC13_03(Connection c, String select,FiscalModel fiscalModel, Mod130Key key, double current03) throws AonException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		double c03 = 0;
@@ -512,10 +522,14 @@ public class Mod130Manager extends FiscalModelManager {
 				if ( DateUtils.isSameDay(firstPeriodDay, firstYearDay) ) {
 					product = 4.0;
 				} else {
-					long days = CommonUtil.getDaysBetweenDates(period.getDueDate(fiscalModel.getYear()), CommonUtil.getYearLastDay(fiscalModel.getYear()));
+					long days = CommonUtil.getDaysBetweenDates(
+						period.getDueDate(fiscalModel.getYear())
+						, CommonUtil.getYearLastDay(fiscalModel.getYear()));
 					product = CommonUtil.round(365/days);
 				}
 				c03 = CommonUtil.round(c03 * product);
+			} else {
+				c03 = current03;
 			}
 			rs.close();
 			ps.close();
