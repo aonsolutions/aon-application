@@ -8,6 +8,8 @@ import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,6 +28,8 @@ import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductStatEngineController {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CommercialStatEngineController.class);
 
 	private Item  item;
 	private Double pendingSaleQuantity;
@@ -89,8 +93,7 @@ public class ProductStatEngineController {
 			getTotalStocks();
 			getAveragePurchasesPrice();			
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);
 		}
 	}
 	
@@ -105,8 +108,7 @@ public class ProductStatEngineController {
 			getTotalStocks();
 			getAveragePurchasesPrice();
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error(e1.getMessage(), e1);			
 		}
 	}
 
