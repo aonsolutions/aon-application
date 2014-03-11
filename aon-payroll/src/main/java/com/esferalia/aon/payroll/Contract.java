@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
@@ -21,6 +23,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ContractDB;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -121,6 +124,31 @@ public class Contract extends ContractDB {
 		if ( list == null || list.size() == 0)
 			return null;
 		return ((ContractData) list.get(0)).getExpression();
+	}
+
+	@Transient 
+	public Date getAdvanceNoticeDate() throws ManagerBeanException{
+		IManagerBean bean = BeanManager
+				.getManagerBean(ContractData.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(
+				bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID),
+				this.getId());
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.ADVANCE_NOTICE_DAYS.getName());
+		List<?> list = bean.getList(c);
+		if ( list == null || list.size() == 0)
+			return null;
+		try {
+			String days = ((ContractData) list.get(0)).getExpression();
+			if(StringUtils.isNotBlank(days)){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(this.getEndDate());
+				cal.add(Calendar.DAY_OF_MONTH, -Integer.parseInt(days));
+				return cal.getTime();
+			}
+		} catch(Exception e){
+		}
+		return null;
 	}
 
 }
