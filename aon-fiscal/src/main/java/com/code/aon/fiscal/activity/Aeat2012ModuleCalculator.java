@@ -408,9 +408,17 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		//		"personal asalariado". La cantidad anterior se minora del rendimiento neto previo.
 
 		FiscalActivity fa = getFAC().getFiscalActivity();
-		FiscalActivityInfo persoAsal = getIrpfModulesKey(FiscalActivityInfoKey.M01);
-		double m01 = persoAsal==null?0.0:persoAsal.getDoubleValue();
-		double as = m01;
+		
+		FiscalActivityInfoKey[] persoKeys = {FiscalActivityInfoKey.M01,FiscalActivityInfoKey.M15,FiscalActivityInfoKey.M16};
+		double personalAsalariado = 0;
+		for (FiscalActivityInfoKey key : persoKeys ){
+			FiscalActivityInfo persoAsal = getIrpfModulesKey(key);
+			if (persoAsal != null) {
+				personalAsalariado = personalAsalariado + persoAsal.getDoubleValue();
+			}
+		}
+		
+		double as = personalAsalariado;		
 		double coef = 0.0; 
 		if (CommonUtil.round(as) > 0.0) {
 			coef = 0.10; 
@@ -431,9 +439,19 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		if (CommonUtil.round(as) > 0.0) {
 			coef = coef + (0.30 * as);
 		}
-		double i02 = CommonUtil.round(coef * persoAsal.getFactor()); 
-		getIrpfInfoKey(FiscalActivityInfoKey.I02).setDoubleValue(i02);
 		
+		double i02 = 0;
+		for (FiscalActivityInfoKey key : persoKeys ){
+			FiscalActivityInfo persoAsal = getIrpfModulesKey(key);
+			if (persoAsal != null) {
+				double m01 = persoAsal.getDoubleValue();
+				double ratioPersonalAsalariado = m01 / personalAsalariado; 
+				i02 = CommonUtil.round(i02 + (coef * ratioPersonalAsalariado * persoAsal.getFactor())); 
+			}
+				
+		}
+		getIrpfInfoKey(FiscalActivityInfoKey.I02).setDoubleValue(i02);		
+	
 		// Comunidad, Sociedad Civil o Similar. Porcentaje de participación.
 		FiscalActivityInfo info = getActivityInfoKey(FiscalActivityInfoKey.A02);
 		double a02 = info!=null?info.getDoubleValue():0.0;
@@ -600,10 +618,10 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 						} else if (CommonUtil.round(a09) >= 3.0) {
 							i07 = 0.80;
 						}
-						if (m01 > 0.0 && m01 <= 2.0) {
+						if (personalAsalariado > 0.0 && personalAsalariado <= 2.0) {
 							i07 = 0.90;
 						}
-						if (m01 > 2) {
+						if (personalAsalariado > 2) {
 							i07 = 0.0;
 						}
 					}
@@ -764,8 +782,8 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		// Resultado. Pago Trimestral.
 		// *****************************************************************
 		double i14 = 4.0;
-		if (CommonUtil.round(m01) <= 1.0) i14 = 3.0; 
-		if (CommonUtil.round(m01) == 0.0) i14 = 2.0;
+		if (CommonUtil.round(personalAsalariado) <= 1.0) i14 = 3.0; 
+		if (CommonUtil.round(personalAsalariado) == 0.0) i14 = 2.0;
 		double i15 = CommonUtil.round(i13 *  i14 / 100 );
 		getIrpfInfoKey(FiscalActivityInfoKey.I14).setDoubleValue(i14);
 		getIrpfInfoKey(FiscalActivityInfoKey.I15).setDoubleValue(i15);
