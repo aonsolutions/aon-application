@@ -37,10 +37,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -272,6 +275,14 @@ public class SaleInvoiceController extends InvoiceController {
 		String name = type.getName(AonUtil.getCurrentLocale());
 		invoiceAttachmentTypes.add( new SelectItem(type, name) );
 		return invoiceAttachmentTypes;
+	}
+
+	@Override
+	public SignerController getSignerController() {
+		SignerController signer = super.getSignerController();
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		signer.setReportKey(companyController.getSaleInvoiceTemplateValue());
+		return signer;
 	}
 	
 }
