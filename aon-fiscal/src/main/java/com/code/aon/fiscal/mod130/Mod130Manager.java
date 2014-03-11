@@ -330,7 +330,7 @@ public class Mod130Manager extends FiscalModelManager {
 				double c16 = 0.0;
 				mod130.calculate();
 				double c08 = mod130.getDetail( Mod130Key.C08 ).getAmount();
-				if (c03 > 0 && c08 > 0 ) { // no resultará aplicable cuando el contribuyente realice simultáneamente   
+				if (c03 == 0 || c08 == 0 ) { // no resultará aplicable cuando el contribuyente realice simultáneamente   
 										   // actividades agrí­colas y actividades distintas de éstas.
 					if (c03 > 0 ) {
 						c16 = CommonUtil.round(c03 * 2 / 100);
