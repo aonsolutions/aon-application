@@ -1,25 +1,29 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 
 public class HotelGuestController extends DataScrollerState implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Hotel hotel;
 	private Date date;
@@ -70,14 +74,17 @@ public class HotelGuestController extends DataScrollerState implements ICollecti
 			list.add(guest);
 		}
 		setHotelGuestList(list);
-		setModel(new ListDataModel(getHotelGuestList()));
+		setModel(new SerializableListDataModel(getHotelGuestList()));
 	}
 	
 	
 	/**************************************************/
 	/**************************************************/
 	
-	public class HotelGuest {
+	public static class HotelGuest implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String hotelName;
 		private String roomNumber; 
 		private String guestName;  

@@ -5,6 +5,7 @@ import java.util.List;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -23,6 +24,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  */
 public class CommercialTrackingListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private boolean closed;
 	
 	@Override

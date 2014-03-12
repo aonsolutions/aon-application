@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
@@ -23,6 +24,8 @@ import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Hotel hotel;
 	private Date creationDateFrom;
 	private Date creationDateTo;

@@ -3,10 +3,12 @@ package com.esferalia.aon.pms;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
 
-@SuppressWarnings("serial")
 public class Booking implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private int domain;

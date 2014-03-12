@@ -3,6 +3,7 @@ package com.code.aon.commercial.event;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +15,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class TargetFromCustomerBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beanInserted(ManagerBeanEvent event) throws ManagerBeanException {

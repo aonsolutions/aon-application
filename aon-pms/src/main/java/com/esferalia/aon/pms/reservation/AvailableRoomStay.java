@@ -1,6 +1,12 @@
 package com.esferalia.aon.pms.reservation;
 
-public class AvailableRoomStay implements IReservationConstants {
+import java.io.Serializable;
+
+import com.code.aon.common.AonVersion;
+
+public class AvailableRoomStay implements IReservationConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int index;
 	private String reservationId;

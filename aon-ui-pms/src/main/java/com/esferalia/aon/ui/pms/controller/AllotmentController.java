@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
@@ -20,6 +21,8 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class AllotmentController extends BasicController implements IPmsConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showAuditInfoWindow;
 	private boolean group;

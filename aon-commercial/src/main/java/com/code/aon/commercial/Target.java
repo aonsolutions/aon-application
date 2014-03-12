@@ -13,6 +13,7 @@ import org.hibernate.annotations.Formula;
 
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
@@ -27,7 +28,7 @@ import com.esferalia.aon.entity.master.TargetDB;
 @Table(name="target")
 public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean customer;
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();

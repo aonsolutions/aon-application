@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -33,6 +34,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferDetailController extends LinesController implements ICommercialConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private boolean longDescription;
 
 	private IPriceStrategy priceStrategy;

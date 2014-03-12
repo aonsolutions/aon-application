@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.entity.master.ProjectReservationRoomDetailDB;
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.ProjectReservationRoomDetailDB;
 @Table(name="project_reservation_room_detail")
 public class ProjectReservationRoomDetail extends ProjectReservationRoomDetailDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     @Transient
     public Room getRoom() throws ManagerBeanException {

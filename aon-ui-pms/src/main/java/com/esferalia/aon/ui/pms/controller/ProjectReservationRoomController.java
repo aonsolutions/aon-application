@@ -13,6 +13,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,6 +35,8 @@ import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationRoomController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showRoomDetailWindow;
 	private Integer[] linkedServices;

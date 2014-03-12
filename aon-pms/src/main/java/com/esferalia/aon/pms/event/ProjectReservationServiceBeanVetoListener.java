@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
@@ -15,6 +16,8 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationService;
 
 public class ProjectReservationServiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {

@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,6 +35,8 @@ import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationServiceController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private ItemPricesManager pricesManager;

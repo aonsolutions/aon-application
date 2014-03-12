@@ -18,6 +18,7 @@ import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -44,6 +45,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used in the offer maintenance.
  */
 public class CommercialTrackingController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommercialTrackingController.class);
 	

@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,6 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
@@ -41,6 +42,7 @@ import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -49,6 +51,8 @@ import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class AllotmentBookingController extends DataScrollerState implements ISQLConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Hotel hotel;
 	private Customer agency;
@@ -143,7 +147,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		setModel(new ListDataModel(getBookingList()));
+		setModel(new SerializableListDataModel(getBookingList()));
 	}
 	
 	private void buildBookingList() throws AonSQLException {
@@ -768,7 +772,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 
 	/***************** AGENCY BREAKDOWN *********************************/
 
-	public class AgencyBreakdown {
+	public static class AgencyBreakdown implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private List<String> breakdowns;
 		private int agencySize = 3;
 

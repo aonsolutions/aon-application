@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,7 +20,7 @@ import com.esferalia.aon.entity.master.AllotmentDB;
 @Table(name="allotment")
 public class Allotment extends AllotmentDB implements IAuditable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public Allotment() {
 		setActive(true);

@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.audit.IAuditable;
 import com.esferalia.aon.entity.master.ReservationRequestGuestDB;
 
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.ReservationRequestGuestDB;
 @Table(name="reservation_request_guest")
 public class ReservationRequestGuest extends ReservationRequestGuestDB implements IAuditable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public String getFullName() {

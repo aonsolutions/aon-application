@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -15,6 +16,8 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     @Override
     public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {

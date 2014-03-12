@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.controller;
 import static com.code.aon.ui.common.ICommonMessages.PMS_EARLY_CHECK_OUT;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
@@ -20,6 +21,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -54,7 +56,9 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
-public class EarlyCheckOutController implements IPmsConstants {
+public class EarlyCheckOutController implements IPmsConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ProjectReservation reservation;
 	private ReservationInvoiceTo reservationInvoiceTo;

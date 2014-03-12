@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.asset.Asset;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -28,6 +30,8 @@ import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
 
 public class RoomAvailabilityController extends BasicController implements IPmsConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private FilterParams filterParams;
 	private List<Room> availableRoomList;
@@ -159,7 +163,10 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 	}
 
 
-	public class FilterParams {
+	public static class FilterParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Hotel hotel;
 		private Item item;
 		private String name;

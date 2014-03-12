@@ -11,13 +11,14 @@ import javax.persistence.Table;
 
 import com.code.aon.asset.AssetFeature;
 import com.code.aon.asset.IAsset;
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.RoomDB;
 
 @Entity
 @Table(name="room")
 public class Room extends RoomDB implements IAsset{
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<AssetFeature> features = new HashSet<AssetFeature>();
 

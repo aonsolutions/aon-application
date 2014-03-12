@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -9,6 +10,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 
 public class StopSalesSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Hotel hotel;
 

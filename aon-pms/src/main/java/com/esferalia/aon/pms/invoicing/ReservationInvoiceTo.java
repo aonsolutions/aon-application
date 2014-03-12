@@ -1,9 +1,11 @@
 package com.esferalia.aon.pms.invoicing;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
@@ -21,7 +23,9 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
-public class ReservationInvoiceTo implements IReservationConstants {
+public class ReservationInvoiceTo implements IReservationConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean service;
 	private Date issueDate;
@@ -236,6 +240,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	}
 
 	public class HotelService implements ICalculable {
+		
 		private Date fromDate;
 		private Date toDate;
 		private Item item;

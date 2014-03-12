@@ -16,6 +16,7 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,6 +29,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Room;
 
 public class RoomController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Room lastRoomAdded;
 	private boolean showRoomBlockWindow;

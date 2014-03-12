@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +15,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +42,7 @@ import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.finance.controller.FinanceListController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
@@ -51,7 +53,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 
-public class PaymentCardSettleController {
+public class PaymentCardSettleController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(PaymentCardSettleController.class);
 	
@@ -202,7 +206,7 @@ public class PaymentCardSettleController {
 	
 	public DataModel getFinanceModel() {
 		if(financeModel == null){
-			financeModel = new ListDataModel(getFinanceList());
+			financeModel = new SerializableListDataModel(getFinanceList());
 		}
 		return financeModel;
 	}
@@ -727,7 +731,10 @@ public class PaymentCardSettleController {
 		invoiceController.onLoad(event, finance.getInvoice().getId(), IPmsConstants.PAYMENT_CARD_SETTLE_LIST_NAME, null);
 	}
 	
-	public class AgencyFinance{
+	public static class AgencyFinance implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Finance finance;
 		private Double amount;
 		public Finance getFinance() {

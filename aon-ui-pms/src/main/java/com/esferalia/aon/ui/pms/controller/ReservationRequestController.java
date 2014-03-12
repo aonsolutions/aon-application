@@ -12,6 +12,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -28,6 +29,8 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestController extends BasicController implements IPmsConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String selectedTab;
 	private int nights;

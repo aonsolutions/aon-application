@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -37,6 +39,8 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class DivertReceptionController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean showRoomDetailWindow;
 	private Room availableRoom;
@@ -285,7 +289,10 @@ public class DivertReceptionController extends BasicController {
 		return false;
 	}
 	
-	public class RoomReallocation {
+	public static class RoomReallocation implements Serializable  {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private ProjectReservationRoom reservationRoom;
 		private Room room;
 	

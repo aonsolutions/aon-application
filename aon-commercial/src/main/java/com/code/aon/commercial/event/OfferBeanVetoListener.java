@@ -5,6 +5,7 @@ import java.util.Date;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -13,6 +14,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.util.DiscountExpression;
 
 public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {

@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.Target;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -33,6 +34,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommercialEmailUtil extends CompanyEmailUtil {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void initMessageController( MessageController messageController, Offer offer ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = null;

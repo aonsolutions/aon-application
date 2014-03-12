@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -8,7 +9,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -17,6 +17,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -26,6 +27,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -33,6 +35,8 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class BoardListController extends DataScrollerState implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoardListController.class.getName());
 	
@@ -88,7 +92,7 @@ public class BoardListController extends DataScrollerState implements ICollectio
 		getParams().setBoardItemFilter(null);
 		setBoardsTotalList(null);
 		setBoardList(null);
-		setModel(new ListDataModel(getBoardList()));
+		setModel(new SerializableListDataModel(getBoardList()));
 	}
 	
 	private List<ITransferObject> boardItems() {
@@ -144,7 +148,7 @@ public class BoardListController extends DataScrollerState implements ICollectio
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		setModel(new ListDataModel(getBoardList()));
+		setModel(new SerializableListDataModel(getBoardList()));
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -240,7 +244,10 @@ public class BoardListController extends DataScrollerState implements ICollectio
 		
 	}
 	
-	public class DayBoard {
+	public static class DayBoard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String boardName;
 		private String room;
 		private Integer quantity;
