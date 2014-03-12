@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.event.AttachmentControllerListener;
 import com.code.aon.ql.ast.Expression;
@@ -12,6 +13,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ReportAttachmentControllerListener extends AttachmentControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

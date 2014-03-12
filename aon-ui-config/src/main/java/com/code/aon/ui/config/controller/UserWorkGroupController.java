@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -15,6 +16,8 @@ import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class UserWorkGroupController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public void onEmployeeChanged(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){

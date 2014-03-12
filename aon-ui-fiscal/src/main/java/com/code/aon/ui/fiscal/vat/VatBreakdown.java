@@ -1,11 +1,16 @@
 package com.code.aon.ui.fiscal.vat;
 
+import java.io.Serializable;
 
-public class VatBreakdown  {
+import com.code.aon.common.AonVersion;
 
-	double base;
-	double percent;
-	double quota;
+public class VatBreakdown implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+
+	private double base;
+	private double percent;
+	private double quota;
 	
 	public double getBase() {
 		return base;

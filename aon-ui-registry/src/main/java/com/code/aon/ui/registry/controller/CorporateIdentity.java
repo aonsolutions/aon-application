@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +20,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -43,7 +45,9 @@ import com.esferalia.aon.entity.IEntityAlias;
  * @author igayarre
  *
  */
-public class CorporateIdentity implements ICollectionProvider{
+public class CorporateIdentity implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** Obtiene un logger apropiado. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(CorporateIdentity.class);

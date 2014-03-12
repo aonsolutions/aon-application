@@ -3,6 +3,7 @@ package com.code.aon.ui.fiscal.controller;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,6 +31,7 @@ import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -55,7 +57,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class VatTaxSummaryReport {
+public class VatTaxSummaryReport implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer year;
 	private VatTaxStatus status;
@@ -337,8 +341,10 @@ public class VatTaxSummaryReport {
 		}
 	}
 
-	public class KeyCustomExpression implements CustomExpression {
-		private static final long serialVersionUID = 7368651157413691588L;
+	public static class KeyCustomExpression implements CustomExpression {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Locale locale;
 		
 		public KeyCustomExpression(Locale locale) {

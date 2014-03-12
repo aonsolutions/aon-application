@@ -3,6 +3,7 @@ package com.code.aon.ui.fiscal.event;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.FiscalBatch;
 import com.code.aon.ui.fiscal.controller.batch.Batchable;
@@ -13,6 +14,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class FiscalBatchControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		FiscalBatchController c = (FiscalBatchController) event.getController();

@@ -9,10 +9,10 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.activity.Aeat2012ModuleCalculator;
@@ -25,11 +25,13 @@ import com.code.aon.fiscal.activity.Sector;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKeyEntry;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoType;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class FiscalActivityController extends BasicController implements IFiscalActivityContainer {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String PERCENT = "%";
 	private static DecimalFormat MODULE_KEY_FORMATTER = new DecimalFormat("00");
@@ -100,7 +102,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public DataModel getInfo() {
 		if (info == null) {
-			setInfo( new ListDataModel( getActivityInfoList() ) );
+			setInfo( new SerializableListDataModel( getActivityInfoList() ) );
 		}
 		return info;
 	}
@@ -121,7 +123,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public DataModel getVatModules() {
 		if (vatModules == null) {
-			setVatModules( new ListDataModel( getVatModulesList() ) );
+			setVatModules( new SerializableListDataModel( getVatModulesList() ) );
 		}
 		return vatModules;
 	}
@@ -143,7 +145,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public DataModel getM311Model() {
 		if (m311Model == null) {
-			setM311Model( new ListDataModel( getM311List()) );
+			setM311Model( new SerializableListDataModel( getM311List()) );
 		}
 		return m311Model;
 	}
@@ -199,7 +201,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public DataModel getIrpfModules() {
 		if (irpfModules == null) {
-			setIrpfModules( new ListDataModel( getIrpfModulesList() ) );
+			setIrpfModules( new SerializableListDataModel( getIrpfModulesList() ) );
 		}
 		return irpfModules;
 	}
@@ -221,7 +223,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public DataModel getVatInfo() {
 		if (vatInfo== null) {
-			setVatInfo( new ListDataModel( getVatInfoList() ) );
+			setVatInfo( new SerializableListDataModel( getVatInfoList() ) );
 		}
 		return vatInfo;
 	}
@@ -243,7 +245,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public DataModel getIrpfInfo() {
 		if (irpfInfo == null) {
-			setIrpfInfo( new ListDataModel( getIrpfInfoList() ) );
+			setIrpfInfo( new SerializableListDataModel( getIrpfInfoList() ) );
 		}
 		return irpfInfo;
 	}
@@ -280,10 +282,10 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		if (sectors == null) {
 			
 			try {
-				setSectors( new ListDataModel( getModules().getSectors( getFiscalActivity().isFarmer() ) ));
+				setSectors( new SerializableListDataModel( getModules().getSectors( getFiscalActivity().isFarmer() ) ));
 			} catch (AonException e) {
 				AonUtil.addErrorMessage("Imposible recuperar los sectores de los epígrafes");
-				setSectors( new ListDataModel( ));
+				setSectors( new SerializableListDataModel( ));
 			} 
 		}
 		return sectors; 
@@ -315,10 +317,10 @@ public class FiscalActivityController extends BasicController implements IFiscal
 //				if ( list != null && list.size() == 1) {
 //					selectEpigrafe(list.get(0));					
 //				} else {
-					setEpigraphs( new ListDataModel( list ) );
+					setEpigraphs( new SerializableListDataModel( list ) );
 //				}
 			} else {
-				setEpigraphs( new ListDataModel() );	
+				setEpigraphs( new SerializableListDataModel() );	
 			}
 		} catch (AonException e) {
 			String msg =  "Imposible recuperar epígrafes";
@@ -666,7 +668,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	private void showDetailPanel(FiscalActivityInfoKey key) {
 		setDetailPanelVisible(true);
 		List<FiscalActivityInfo> list = getModulesDetailMap().get(key);
-		setModulesDetailModel(new ListDataModel( list ));
+		setModulesDetailModel(new SerializableListDataModel( list ));
 	}
 	
 }

@@ -7,9 +7,9 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.accounting.Period;
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.accounting.check.modules.account.AccountEnabledCheck;
 import com.code.aon.ui.accounting.check.modules.account.ParentEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryCheck;
@@ -17,12 +17,15 @@ import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountE
 import com.code.aon.ui.accounting.check.modules.account.invoice.DuplicatedInvoicesCheck;
 import com.code.aon.ui.accounting.check.modules.account.invoice.NoRecordedInvoiceCheck;
 import com.code.aon.ui.accounting.check.modules.balance.BalanceCheck;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
 
 public class CheckController extends DataScrollerState {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private CheckParams params;
 
 	private List<ICheckModule> accountChecks;
@@ -70,7 +73,7 @@ public class CheckController extends DataScrollerState {
 	@Override
 	public DataModel getModel() {
 		if (getDirectModel() == null) {
-			setModel(new ListDataModel(getCheckEntryList()));	
+			setModel(new SerializableListDataModel(getCheckEntryList()));	
 		}
 		return getDirectModel();
 	}

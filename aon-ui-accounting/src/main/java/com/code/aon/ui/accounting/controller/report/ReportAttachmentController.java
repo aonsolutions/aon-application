@@ -9,6 +9,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -23,6 +24,8 @@ import com.code.aon.ui.util.DownloadUtil;
 
 public class ReportAttachmentController extends BasicController implements IAttachmentController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private AonFile aonFile;
 	private long maximumSize;
 	private Company company;

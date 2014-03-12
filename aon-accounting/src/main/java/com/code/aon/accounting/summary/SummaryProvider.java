@@ -1,5 +1,6 @@
 package com.code.aon.accounting.summary;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,7 +33,9 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SummaryProvider {
+public class SummaryProvider implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public Summary getUniqueSummary(SummaryProviderParameters params) throws ManagerBeanException {
 		SummaryCollection sc = getSummaryCollection(params, true);

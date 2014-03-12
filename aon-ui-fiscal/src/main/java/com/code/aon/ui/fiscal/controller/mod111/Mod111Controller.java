@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,6 +28,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod111Controller extends FiscalModelController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	protected FiscalModelType getModelType() {
 		return 	FiscalModelType.M111;

@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.Administration;
@@ -16,7 +17,7 @@ import com.esferalia.aon.entity.master.FiscalModelDB;
 @Table(name="fs_model")
 public class FiscalModel extends FiscalModelDB implements IAuditable {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean readRetentionFromAccount;
 	private int receiverCount;

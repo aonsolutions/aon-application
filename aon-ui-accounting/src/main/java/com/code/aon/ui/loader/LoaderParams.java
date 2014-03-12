@@ -1,17 +1,21 @@
 package com.code.aon.ui.loader;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 
 import com.code.aon.accounting.Period;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
 import com.code.aon.product.ProductCategory;
 
-public class LoaderParams {
+public class LoaderParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Scope scope;
 	private SecurityLevel securityLevel;

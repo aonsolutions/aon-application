@@ -7,13 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.SessionDB;
 
 @Entity
 @Table(name = "session")
 public class Session extends SessionDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<ActionEntry> actionEntries;
 

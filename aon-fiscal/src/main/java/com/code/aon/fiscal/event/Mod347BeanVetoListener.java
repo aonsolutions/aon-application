@@ -3,6 +3,7 @@ package com.code.aon.fiscal.event;
 
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,6 +18,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod347BeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {

@@ -5,6 +5,7 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.RelationalType;
@@ -15,6 +16,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 
 public class FiltrableBasicController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String suggestAlias;
 	private String filter;

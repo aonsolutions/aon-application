@@ -1,6 +1,12 @@
 package com.code.aon.aio.controller;
 
-public class DashboardStaff {
+import java.io.Serializable;
+
+import com.code.aon.common.AonVersion;
+
+public class DashboardStaff implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	String month;
 	int altas;

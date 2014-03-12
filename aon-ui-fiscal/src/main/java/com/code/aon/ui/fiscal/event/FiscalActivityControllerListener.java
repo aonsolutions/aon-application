@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,6 +27,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class FiscalActivityControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		FiscalActivityController c = (FiscalActivityController) event.getController();

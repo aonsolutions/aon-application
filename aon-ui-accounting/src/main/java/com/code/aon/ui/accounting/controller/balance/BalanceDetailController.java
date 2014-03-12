@@ -5,11 +5,14 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.accounting.BalanceDetail;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
 
 @Deprecated
 public class BalanceDetailController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException {
     	moveMenuOption( (BalanceDetail) getSelectedTO(), -1);

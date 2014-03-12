@@ -18,11 +18,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -36,6 +36,7 @@ import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.vat.Vat;
 import com.code.aon.fiscal.vat.VatCollection;
 import com.code.aon.fiscal.vat.VatCollectionParameters;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.fiscal.vat.VatReportTypeBreakdown;
 import com.code.aon.ui.fiscal.vat.VatTypeBreakdown;
@@ -45,6 +46,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class VatReportController extends DataScrollerState implements ICollectionProvider {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Double GENERAL_PERCENT = new Double(16);
 	private static final Double REDUCED_PERCENT = new Double(7);
 	private static final Double SUPERREDUCED_PERCENT = new Double(4);
@@ -545,7 +548,7 @@ public class VatReportController extends DataScrollerState implements ICollectio
 			setTitle(vcp);
 			VatCollection vc = new VatCollection();
 			List<Vat> list = vc.getVatDetailList(vcp,getOrder());
-			setModel(new ListDataModel(list));
+			setModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -559,7 +562,7 @@ public class VatReportController extends DataScrollerState implements ICollectio
 			setTitle(vcp);
 			VatCollection vc = new VatCollection();
 			List<Vat> list = vc.getVatDetailList(vcp,getOrder());
-			setModel(new ListDataModel(list));
+			setModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);

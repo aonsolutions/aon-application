@@ -3,6 +3,7 @@ package com.code.aon.ui.fiscal.event;
 
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.VatTax;
@@ -14,6 +15,9 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class VatTaxDeclarationControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();

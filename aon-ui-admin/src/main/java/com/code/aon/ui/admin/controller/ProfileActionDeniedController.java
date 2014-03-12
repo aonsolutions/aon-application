@@ -4,6 +4,7 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CON
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import com.code.aon.admin.Profile;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -36,13 +38,15 @@ import com.esferalia.aon.entity.IEntityAlias;
 /**
  * The Class FavoriteOptionController.
  */
-public class ProfileActionDeniedController {
+public class ProfileActionDeniedController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProfileActionDeniedController.class);
 	
 	private Profile profile;
 	
-	private  List<ProfileActionDenied> deniedActions;
+	private List<ProfileActionDenied> deniedActions;
 	
 	private List<ApplicationOption> options;
 	

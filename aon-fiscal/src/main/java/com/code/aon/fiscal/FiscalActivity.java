@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.fiscal.activity.Sector;
 import com.esferalia.aon.entity.master.FiscalActivityDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.FiscalActivityDB;
 @Table(name="fs_activity")
 public class FiscalActivity extends FiscalActivityDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	private Sector sector;

@@ -1,10 +1,14 @@
 package com.code.aon.accounting.util;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.code.aon.accounting.Period;
+import com.code.aon.common.AonVersion;
 
-public class PeriodEntriesParams {
+public class PeriodEntriesParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private boolean confidentialEntryPresent;

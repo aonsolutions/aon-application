@@ -1,6 +1,12 @@
 package com.code.aon.ui.fiscal.controller.batch;
 
-public class Batchable {
+import java.io.Serializable;
+
+import com.code.aon.common.AonVersion;
+
+public class Batchable implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private Integer domain;

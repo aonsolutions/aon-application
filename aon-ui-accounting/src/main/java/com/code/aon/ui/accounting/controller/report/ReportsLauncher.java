@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.annualReport.AnnualReportManager;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -45,7 +47,10 @@ import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.lowagie.text.DocumentException;
 
-public class ReportsLauncher {
+public class ReportsLauncher implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static  String ENCODING = "iso-8859-1";	
 	private static  String DEFAULT_REPORT = "memoria.html";
 	private AonFile aonFile;

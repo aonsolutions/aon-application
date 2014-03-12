@@ -1,8 +1,13 @@
 package com.code.aon.aio.controller;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class DashboardEntry {
+import com.code.aon.common.AonVersion;
+
+public class DashboardEntry implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String name;
 	private double value;

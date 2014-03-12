@@ -8,6 +8,7 @@ import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_NUL
 import static com.code.aon.ui.common.ICommonMessages.FISCAL_RESULT;
 import static com.code.aon.ui.common.ICommonMessages.PROFIT;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -18,12 +19,15 @@ import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryMonthly;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ProfitAndLossMonthlyReportController implements ICollectionProvider {
+public class ProfitAndLossMonthlyReportController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public Collection<?> getCollection() {

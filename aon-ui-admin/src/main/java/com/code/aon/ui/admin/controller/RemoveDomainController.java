@@ -2,6 +2,7 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
+import java.io.Serializable;
 import java.sql.Connection;
 
 import javax.faces.event.AbortProcessingException;
@@ -29,7 +30,7 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class RemoveDomainController {
+public class RemoveDomainController implements Serializable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

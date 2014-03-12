@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import javax.faces.context.ExternalContext;
@@ -20,6 +21,7 @@ import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
@@ -30,7 +32,9 @@ import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.util.AonUtil;
 
-public class AonLoaderController {
+public class AonLoaderController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonLoaderController.class.getName());
 

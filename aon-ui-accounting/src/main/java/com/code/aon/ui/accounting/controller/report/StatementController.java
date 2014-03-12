@@ -8,7 +8,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -19,8 +18,10 @@ import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
@@ -28,6 +29,8 @@ import com.code.aon.ui.form.IController;
 
 public class StatementController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String STATEMENT_DETAIL_CONTROLLER_NAME = "statementDetail";
 
 	private SummaryProvider sp = new SummaryProvider();
@@ -150,7 +153,7 @@ public class StatementController extends BasicController {
 			detail.add(balance);
 			previous = balance;
 		}
-		setDetailModel(new ListDataModel(getDetail()));
+		setDetailModel(new SerializableListDataModel(getDetail()));
 	}
 
 	private void initializeAmounts() throws ManagerBeanException {

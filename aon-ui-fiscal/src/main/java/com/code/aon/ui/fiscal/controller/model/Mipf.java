@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -16,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.FiscalModel;
@@ -25,7 +27,9 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class Mipf  {
+public class Mipf implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static String AEAT_PRINT_MODULE_SCRIPT_FOLDER = "/usr/share/java/aon.mipf";
 	private static String AEAT_PRINT_MODULE_SCRIPT_PATH_2013 = AEAT_PRINT_MODULE_SCRIPT_FOLDER + "/mipf13pdf.sh";

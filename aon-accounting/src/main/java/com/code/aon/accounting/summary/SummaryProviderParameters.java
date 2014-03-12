@@ -1,5 +1,6 @@
 package com.code.aon.accounting.summary;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.Quarter;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,7 +26,9 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SummaryProviderParameters implements Cloneable{
+public class SummaryProviderParameters implements Cloneable, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String PERCENT = "%";
 	private static final String ASTERISK = "*";

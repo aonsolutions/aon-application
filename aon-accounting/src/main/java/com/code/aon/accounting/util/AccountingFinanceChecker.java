@@ -1,5 +1,6 @@
 package com.code.aon.accounting.util;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,10 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 
-public class AccountingFinanceChecker {
+public class AccountingFinanceChecker implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String UNION =  " UNION ";
 	
 	private static final String COMMON_SELECT_1 = 

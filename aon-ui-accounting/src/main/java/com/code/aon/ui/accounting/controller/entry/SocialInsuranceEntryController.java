@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.entry;
 
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -9,7 +10,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +23,7 @@ import com.code.aon.accounting.SocialInsuranceEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -37,11 +38,14 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SocialInsuranceEntryController {
+public class SocialInsuranceEntryController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SocialInsuranceEntryController.class.getName());
 
@@ -314,7 +318,7 @@ public class SocialInsuranceEntryController {
 					socialInsuranceDetail.add(ex);
 				}
 				setSocialInsuranceBalance(balance);
-				setSocialInsuranceDetailModel(new ListDataModel(getSocialInsuranceDetail()));
+				setSocialInsuranceDetailModel(new SerializableListDataModel(getSocialInsuranceDetail()));
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible obtener el saldo de la cuenta.";
@@ -359,7 +363,10 @@ public class SocialInsuranceEntryController {
 		
 	}
 	
-	public class AccountEntryDetailExtended {
+	public static class AccountEntryDetailExtended implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private AccountEntryDetail detail;
 		private boolean disabled;
 		

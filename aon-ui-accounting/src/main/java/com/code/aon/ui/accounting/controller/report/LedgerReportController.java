@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
@@ -22,6 +23,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class LedgerReportController extends BasicController implements IAccountingBookItem{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private Date fromDate;

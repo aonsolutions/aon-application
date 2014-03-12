@@ -11,7 +11,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -21,6 +20,7 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.amortization.AmortizationManager;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,6 +30,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
@@ -37,6 +38,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DataModel investmentInvoices;
 	private List<Invoice> checkedInvestmentInvoices;
@@ -384,7 +387,7 @@ public class AmortizationController extends BasicController {
 						invoices.add(i);
 					}
 				}
-				setInvestmentInvoices(new ListDataModel(invoices));
+				setInvestmentInvoices(new SerializableListDataModel(invoices));
 			}
 			return investmentInvoices;
 		} catch (ManagerBeanException e) {

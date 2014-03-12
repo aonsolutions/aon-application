@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
@@ -8,13 +9,16 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountHelperManager;
 import com.code.aon.accounting.util.AccountJournalManager;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckController;
 import com.code.aon.ui.util.AonUtil;
 
-public class AccountRegeneratorController {
+public class AccountRegeneratorController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private SecurityLevel securityLevel;

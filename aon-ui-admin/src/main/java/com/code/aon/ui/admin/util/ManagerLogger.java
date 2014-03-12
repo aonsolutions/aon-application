@@ -2,6 +2,7 @@ package com.code.aon.ui.admin.util;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.mail.Address;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
@@ -20,7 +22,9 @@ import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.IMailAccount;
 
-public class ManagerLogger {
+public class ManagerLogger implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerLogger.class);
 	

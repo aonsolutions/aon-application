@@ -1,10 +1,11 @@
 package com.code.aon.ui.accounting.check;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 
 public class AonCheckException extends AonException {
 
-	private static final long serialVersionUID = -3307890710641195387L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public AonCheckException() {
 		super();

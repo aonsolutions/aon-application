@@ -1,8 +1,10 @@
 package com.code.aon.accounting.mvel;
 
+import com.code.aon.common.AonVersion;
+
 public class BalanceException extends Exception {
 	
-	private static final long serialVersionUID = -8652509831054907089L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public BalanceException() {
         super();

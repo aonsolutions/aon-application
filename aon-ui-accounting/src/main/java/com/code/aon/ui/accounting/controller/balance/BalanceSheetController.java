@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.balance;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +21,7 @@ import com.code.aon.accounting.balance.BalanceManager;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -28,10 +29,13 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.report.TrialBalanceController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 
 @Deprecated
-public class BalanceSheetController implements ICollectionProvider {
+public class BalanceSheetController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DataModel balanceModel;
 	private SummaryProviderParameters parameters;
@@ -113,7 +117,7 @@ public class BalanceSheetController implements ICollectionProvider {
 
 	public DataModel getBalanceModel() {
 		if (balanceModel == null) {
-			balanceModel = new ListDataModel(list);
+			balanceModel = new SerializableListDataModel(list);
 		}
 		return balanceModel;
 	}

@@ -11,13 +11,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -25,11 +25,14 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.fiscal.FiscalBatch;
 import com.code.aon.fiscal.FiscalBatchDetail;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class FiscalBatchController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private List<Batchable> pendingChecked;
 	private List<Batchable> detailsChecked;
 	private DataModel pending;
@@ -94,9 +97,9 @@ public class FiscalBatchController extends BasicController {
 		try {
 			FiscalBatch fiscalBatch = (FiscalBatch) getTo();			
 			List<Batchable> list = getBatchModel().getPendingList(fiscalBatch);
-			setPending(new ListDataModel(list));
+			setPending(new SerializableListDataModel(list));
 		} catch (AonException e) {
-			setPending(new ListDataModel());
+			setPending(new SerializableListDataModel());
 			String message = "Error mientras se recuperaban las declaraciones. (" + e.getMessage()+")";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message,e);
@@ -116,9 +119,9 @@ public class FiscalBatchController extends BasicController {
 			FiscalBatch fiscalBatch = (FiscalBatch) getTo();
 			IFiscalBatchModel batchModel = factory.getFiscalBatchModel( fiscalBatch.getType() );
 			List<Batchable> list = batchModel.getDetailsList(fiscalBatch);
-			setDetails(new ListDataModel(list));
+			setDetails(new SerializableListDataModel(list));
 		} catch (AonException e) {
-			setDetails(new ListDataModel());
+			setDetails(new SerializableListDataModel());
 			String message = "Error mientras se recuperaban las declaraciones. (" + e.getMessage()+")";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message,e);

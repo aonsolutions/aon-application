@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.book;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -19,7 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +32,7 @@ import com.code.aon.accounting.annualReport.AnnualReportContext;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -45,13 +46,16 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountingBookController implements ICollectionProvider{
+public class AccountingBookController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String DEFAULT_SUBTITLE = "PLAN GENERAL DE CONTABILIDAD DE PEQUEÑAS Y MEDIANAS EMPRESAS";
 	private static final String DEFAULT_TITLE = "CUENTAS ANUALES";
@@ -172,7 +176,7 @@ public class AccountingBookController implements ICollectionProvider{
 			books.add( new AccountingBook( 2,10, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
 			books.add( new AccountingBook( 2,11, 1,MimeType.MIME_PDF,BookType.BALANCES	,true ));
 		}
-		setModel( new ListDataModel(books));
+		setModel( new SerializableListDataModel(books));
 	}
 	
 	public void onReset(ActionEvent event) {
@@ -607,7 +611,7 @@ public class AccountingBookController implements ICollectionProvider{
 		}
 		book.setOrder(newPosition);
 		Collections.sort(getBookList());
-		setModel(new ListDataModel( getBookList()));
+		setModel(new SerializableListDataModel( getBookList()));
     }
     
     public boolean isMaxOrder() {
@@ -639,7 +643,7 @@ public class AccountingBookController implements ICollectionProvider{
 		}
 		book.setMergeOrder(newPosition);
 		Collections.sort(getBookList());
-		setModel(new ListDataModel( getBookList()));
+		setModel(new SerializableListDataModel( getBookList()));
     }
 
     public boolean isMaxMergeOrder() {
@@ -676,7 +680,7 @@ public class AccountingBookController implements ICollectionProvider{
     	book.setOrder(order);
     	book.setMergeOrder(mergeOrder);
 		Collections.sort(getBookList());
-		setModel(new ListDataModel( getBookList()));
+		setModel(new SerializableListDataModel( getBookList()));
     }
     
 }

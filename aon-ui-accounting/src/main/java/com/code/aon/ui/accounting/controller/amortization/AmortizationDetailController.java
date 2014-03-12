@@ -7,7 +7,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -16,18 +15,22 @@ import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationDetailController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DataModel summaryModel;
 	private AmortizationDetail annualSummary;
@@ -87,7 +90,7 @@ public class AmortizationDetailController extends LinesController {
 				detail.setFiscalPending(fiscalPending);
 			}
 		}
-		return new ListDataModel( list );
+		return new SerializableListDataModel( list );
 	}
 	
 	public void setSummaryModel(DataModel summaryModel) {

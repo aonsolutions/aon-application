@@ -9,6 +9,7 @@ import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_NUL
 import static com.code.aon.ui.common.ICommonMessages.FISCAL_RESULT;
 import static com.code.aon.ui.common.ICommonMessages.PROFIT;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -42,7 +44,9 @@ import com.code.aon.ui.account.controller.AccountCollectionsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ProfitAndLossReportController implements ICollectionProvider {
+public class ProfitAndLossReportController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProfitAndLossReportController.class);
 	

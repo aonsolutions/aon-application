@@ -3,6 +3,7 @@ package com.code.aon.ui.config.event;
 import static com.code.aon.ui.common.ICommonMessages.CONFIG_DATE_OVERLAP;
 import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_END_DATE;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -16,6 +17,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaxDetailControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {

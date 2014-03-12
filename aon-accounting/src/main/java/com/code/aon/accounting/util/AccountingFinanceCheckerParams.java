@@ -1,8 +1,13 @@
 package com.code.aon.accounting.util;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class AccountingFinanceCheckerParams {
+import com.code.aon.common.AonVersion;
+
+public class AccountingFinanceCheckerParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int domain;
 	private Date deadline;

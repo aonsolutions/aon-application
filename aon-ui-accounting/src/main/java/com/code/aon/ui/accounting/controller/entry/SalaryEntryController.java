@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
@@ -14,6 +15,7 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.SalaryEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -28,7 +30,9 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SalaryEntryController {
+public class SalaryEntryController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryEntryController.class.getName());
 
