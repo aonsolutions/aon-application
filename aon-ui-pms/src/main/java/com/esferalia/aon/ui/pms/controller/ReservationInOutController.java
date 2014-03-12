@@ -207,7 +207,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		return hotelIds;
 	}
 
-	private String getCheckStatusIds() throws ManagerBeanException {
+	private String getCheckStatusIds() {
 		Integer[] statusIds = ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY;
 		for (ReservationCheckStatus status : getCheckStatuses()) {
 			statusIds = (Integer[])ArrayUtils.add(statusIds, status.ordinal());

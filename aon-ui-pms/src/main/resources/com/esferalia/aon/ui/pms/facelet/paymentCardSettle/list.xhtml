@@ -13,13 +13,14 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.pms_paymentCardSettle_module}" />
-				
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="paymentCardSettle-search"
-						title="#{bundle.aon_key_search_accelerator}"
+					<aon:commandButton id="search" ignoreDupResponses="true"
+						styleClass="aon-finding-toolbar-item aon-icon-search" 
 						value="#{bundle.aon_search}" 
-						action="paymentCardSettle_search" actionListener="#{paymentCardSettle.onEditSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-search"
+						action="paymentCardSettle_search" 
+						actionListener="#{paymentCardSettle.onInit}"
 						accesskey="#{bundle.aon_key_search}" />
 				</ui:define>
 				
@@ -27,98 +28,88 @@
  
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:panel>
-					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-bold"/>
-					<a4j:repeat value="#{paymentCardSettle.agencies}" rowKeyVar="index" var="agency">
-						<aon:outputText styleClass="aon-margin-left"
+				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-italic"/>
+					<a4j:repeat value="#{paymentCardSettle.agencies}" var="agency" rowKeyVar="agencyIdx">
+						<aon:outputText styleClass="aon-margin-left aon-bold"
 							value="#{agency.registry.fullName}"/>
-						<aon:outputText 
-							rendered="#{paymentCardSettle.agenciesSize-1 > index}"
-							value=","/>
+						<aon:outputText value=","
+							rendered="#{paymentCardSettle.agenciesSize-1 > agencyIdx}" />
 					</a4j:repeat>
 
+					<aon:outputText styleClass="aon-margin-left aon-italic"
+						value="#{bundle.aon_module_hotel}:"
+						rendered="#{paymentCardSettle.hotel != null}" />
 					<aon:outputText styleClass="aon-margin-left aon-bold"
-						rendered="#{paymentCardSettle.hotel!=null}"
-						value="#{bundle.aon_module_hotel}:" />
-					<aon:outputText styleClass="aon-margin-left "
-						rendered="#{paymentCardSettle.hotel!=null}"
-						value="#{paymentCardSettle.hotel.workPlace.description}"/>
-					
-					<aon:outputText styleClass="aon-margin-left aon-bold"
-						rendered="#{paymentCardSettle.payMethodsSize > 0 and not empty paymentCardSettle.payMethods[0].name}"
-						value="#{bundle.finance_payMethod}:" />
-					<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
-						<aon:outputText styleClass="aon-margin-left "
-							rendered="#{paymentCardSettle.payMethodsSize > 0}"
-							value="#{payMth.name}"/>
-						<aon:outputText 
-							rendered="#{paymentCardSettle.payMethodsSize-1 > index}"
-							value=","/>
+						value="#{paymentCardSettle.hotel.workPlace.description}"
+						rendered="#{paymentCardSettle.hotel != null}" />
+
+					<aon:outputText styleClass="aon-margin-left aon-italic"
+						value="#{bundle.finance_payMethod}:"
+						rendered="#{paymentCardSettle.payMethodsSize > 0 and not empty paymentCardSettle.payMethods[0].name}" />
+					<a4j:repeat value="#{paymentCardSettle.payMethods}" var="payMth" rowKeyVar="payMthIdx">
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="#{payMth.name}"
+							rendered="#{paymentCardSettle.payMethodsSize > 0}" />
+						<aon:outputText value=","
+							rendered="#{paymentCardSettle.payMethodsSize-1 > payMthIdx}" />
 					</a4j:repeat>
 
-					<aon:outputText styleClass="aon-margin-left aon-bold" 
-						rendered="#{not empty paymentCardSettle.reservationId}"
-						value="#{bundle.aon_reservation}:" />
-					<aon:outputText styleClass="aon-margin-left "
-						rendered="#{not empty paymentCardSettle.reservationId}"
-						value="#{paymentCardSettle.reservationId}"/>
+					<aon:outputText styleClass="aon-margin-left aon-italic" 
+						value="#{bundle.aon_reservation}:"
+						rendered="#{not empty paymentCardSettle.reservationId}" />
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{paymentCardSettle.reservationId}"
+						rendered="#{not empty paymentCardSettle.reservationId}" />
 
-					<aon:outputText styleClass="aon-margin-left aon-bold" 
-						rendered="#{not empty paymentCardSettle.reservationCode}"
-						value="#{bundle.report_reservation_code}:" />
-					<aon:outputText styleClass="aon-margin-left "
-						rendered="#{not empty paymentCardSettle.reservationCode}"
-						value="#{paymentCardSettle.reservationCode}"/>
+					<aon:outputText styleClass="aon-margin-left aon-italic" 
+						value="#{bundle.report_reservation_code}:"
+						rendered="#{not empty paymentCardSettle.reservationCode}" />
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{paymentCardSettle.reservationCode}"
+						rendered="#{not empty paymentCardSettle.reservationCode}" />
 
-					<aon:outputText styleClass="aon-margin-left aon-bold" 
-						rendered="#{not empty paymentCardSettle.guestName or not empty paymentCardSettle.guestSurname}"
-						value="#{bundle.report_guest}:" />
+					<aon:outputText styleClass="aon-margin-left aon-italic" 
+						value="#{bundle.report_guest}:"
+						rendered="#{not empty paymentCardSettle.guestName or not empty paymentCardSettle.guestSurname}" />
 					<aon:div style="display:inline;">
-						<aon:outputText styleClass="aon-margin-left "
-							rendered="#{not empty paymentCardSettle.guestName}"
-							value="#{paymentCardSettle.guestName}"/>
-						<aon:outputText styleClass="aon-margin-left "
-							rendered="#{not empty paymentCardSettle.guestSurname}"
-							value="#{paymentCardSettle.guestSurname}"/>
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="#{paymentCardSettle.guestName}"
+							rendered="#{not empty paymentCardSettle.guestName}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="#{paymentCardSettle.guestSurname}"
+							rendered="#{not empty paymentCardSettle.guestSurname}" />
 					</aon:div>
-				
 				</aon:panel>
-			
+
 				<aon:panelTabSet selectedTab="#{paymentCardSettle.selectedTab}">
-	
-					<aon:panelTab id="#{paymentCardSettle.includedFinancesTabName}" label="#{bundle.pms_finances_in_card}" 
-						reRender="paymentCardSettleList">
-						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listSelected.xhtml" />
+					<aon:panelTab id="#{paymentCardSettle.paymentCardFinancesTabName}" label="#{bundle.pms_finances_in_card}">
+						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listCardFinance.xhtml" />
 					</aon:panelTab>
-					
-					<aon:panelTab id="#{paymentCardSettle.pendingFinancesTabName}" label="#{bundle.pms_pending_finances}" 
-						reRender="paymentCardSettleList">
-						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
+
+					<aon:panelTab id="#{paymentCardSettle.pendingFinancesTabName}" label="#{bundle.pms_pending_finances}">
+						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listFinance.xhtml" />
 					</aon:panelTab>
-	
 				</aon:panelTabSet>
 			</aon:div>
-			
-			
+
 		</aon:form>
-		
+
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/modalSearch.xhtml">
-			<ui:param name="masterController" value="#{paymentCardSettle}" />
-			<ui:param name="controller" value="#{financeList}" />
-			<ui:param name="showType" value="false" />
-			<ui:param name="payMethodSearchList" value="#{configCollections.payMethods}" />
+			<ui:param name="controller" value="#{paymentCardSettle}" />
 			<ui:param name="searchReRender" value="paymentCardSettleList" />
 		</ui:include>
-		
+
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/modalFraction.xhtml" >
+			<ui:param name="controller" value="#{paymentCardSettle}" />
 			<ui:param name="fractionReRender" value="paymentCardSettleList" />
 		</ui:include>
-		
+
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/modalBatch.xhtml">
 			<ui:param name="controller" value="#{paymentCardSettle}" />
 		</ui:include>
-		
+
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		
+
 	</ui:define>
 </ui:composition>

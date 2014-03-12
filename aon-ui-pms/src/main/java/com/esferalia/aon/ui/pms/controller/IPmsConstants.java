@@ -27,6 +27,7 @@ public interface IPmsConstants {
 	String ROOM_CONTROLLER_NAME = "room";
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	String SELECTED_INVOICE_CONTROLLER_NAME = "selectedInvoice";
+	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
 
 	// ************************************************************
 	// NAVIGATION
@@ -37,7 +38,7 @@ public interface IPmsConstants {
 	String RESERVATION_LIST_NAME = "reservation_list";
 	String RESERVATION_FORM_NAME = "reservation_form";
 	String RESERVATION_REQUEST_FORM_NAME = "reservationRequest_form";
-	
+
 	// ************************************************************
 	// OTHER
 	// ************************************************************

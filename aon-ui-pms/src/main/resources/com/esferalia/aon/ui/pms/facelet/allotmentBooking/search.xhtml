@@ -22,82 +22,83 @@
 					<aon:div styleClass="aon-panelGrid-search-info">
 						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
 					</aon:div>	
-						<aon:panelGrid columns="2"  style="width:100%;"
-							columnClasses="aon-panelGrid-odd aon-width-50, 
-							aon-panelGrid-even aon-width-auto">
 
-							<aon:outputLabel for="AllotmentBooking_hotel_id"
-								value="#{bundle.aon_module_hotel}" />
-							<aon:selectOneMenu id="AllotmentBooking_hotel_id"
-								value="#{allotmentBooking.hotel}" >
-								<f:selectItem itemLabel="-" itemValue="null" />
-								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							</aon:selectOneMenu>
+					<aon:panelGrid columns="2"  style="width:100%;"
+						columnClasses="aon-panelGrid-odd aon-width-50, 
+						aon-panelGrid-even aon-width-auto">
 
-							<aon:outputLabel for="AllotmentBooking_agency" 
-								value="#{bundle.report_agency}" />
-							<aon:selectOneMenu id="AllotmentBooking_agency" 
-								value="#{allotmentBooking.agency}"
+						<aon:outputLabel for="AllotmentBooking_hotel_id"
+							value="#{bundle.aon_module_hotel}" />
+						<aon:selectOneMenu id="AllotmentBooking_hotel_id"
+							value="#{allotmentBooking.hotel}" >
+							<f:selectItem itemLabel="-" itemValue="null" />
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="AllotmentBooking_agency" 
+							value="#{bundle.report_agency}" />
+						<aon:selectOneMenu id="AllotmentBooking_agency" 
+							value="#{allotmentBooking.agency}"
+							styleClass="aon-width-350">
+							<f:selectItem itemLabel="-" value="#{null}" />		
+							<f:selectItems value="#{pmsCollections.allotmentAgencies}" />
+						</aon:selectOneMenu>
+
+						<c:if test="#{pmsCollections.allotmentAgencyGroupsCount > 0}">
+							<aon:outputLabel for="AllotmentBooking_agencyGroup" 
+								value="#{bundle.aon_group}" />
+							<aon:selectOneMenu id="AllotmentBooking_agencyGroup" 
+								value="#{allotmentBooking.agencyGroup}"
 								styleClass="aon-width-350">
 								<f:selectItem itemLabel="-" value="#{null}" />		
-								<f:selectItems value="#{pmsCollections.allotmentAgencies}" />
+								<f:selectItems value="#{pmsCollections.allotmentAgencyGroups}" />
 							</aon:selectOneMenu>
+						</c:if>
 
-							<c:if test="#{pmsCollections.allotmentAgencyGroupsCount > 0}">
-								<aon:outputLabel for="AllotmentBooking_agencyGroup" 
-									value="#{bundle.aon_group}" />
-								<aon:selectOneMenu id="AllotmentBooking_agencyGroup" 
-									value="#{allotmentBooking.agencyGroup}"
-									styleClass="aon-width-350">
-									<f:selectItem itemLabel="-" value="#{null}" />		
-									<f:selectItems value="#{pmsCollections.allotmentAgencyGroups}" />
-								</aon:selectOneMenu>
-							</c:if>
+						<aon:outputText value="#{bundle.aon_date}" />
+						<aon:div>
+							<aon:outputLabel for="AllotmentBooking_startDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_from}" />
+							<aon:selectInputDate id="AllotmentBooking_startDate"
+								value="#{allotmentBooking.fromDate}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-							<aon:outputText value="#{bundle.aon_date}" />
-							<aon:div>
-								<aon:outputLabel for="AllotmentBooking_startDate"
-									styleClass="aon-italic aon-margin-right" 
-									value="#{bundle.aon_date_from}" />
-								<aon:selectInputDate id="AllotmentBooking_startDate"
-									value="#{allotmentBooking.fromDate}" required="true"
-									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<aon:outputLabel for="AllotmentBooking_endDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_to}" />
+							<aon:selectInputDate id="AllotmentBooking_endDate"
+								value="#{allotmentBooking.toDate}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+						</aon:div>
 
-								<aon:outputLabel for="AllotmentBooking_endDate"
-									styleClass="aon-italic aon-margin-right" 
-									value="#{bundle.aon_date_to}" />
-								<aon:selectInputDate id="AllotmentBooking_endDate"
-									value="#{allotmentBooking.toDate}" required="true"
-									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
-							</aon:div>
+						<aon:outputLabel for="AllotmentBooking_breakdownType" 
+							value="#{bundle.finance_tobreakdown}" />
+						<aon:selectOneRadio id="AllotmentBooking_breakdownType" 
+							value="#{allotmentBooking.breakdownType}">
+							<f:selectItem itemLabel="#{bundle.report_rooms}" itemValue="0" />		
+							<f:selectItem itemLabel="#{bundle.product_tariff_module2}" itemValue="1" />		
+						</aon:selectOneRadio>
 
-							<aon:outputLabel for="AllotmentBooking_breakdownType" 
-								value="#{bundle.finance_tobreakdown}" />
-							<aon:selectOneRadio id="AllotmentBooking_breakdownType" 
-								value="#{allotmentBooking.breakdownType}">
-								<f:selectItem itemLabel="#{bundle.report_rooms}" itemValue="0" />		
-								<f:selectItem itemLabel="#{bundle.product_tariff_module2}" itemValue="1" />		
-							</aon:selectOneRadio>
+						<aon:outputText value="&#160;" />
+						<aon:commandButton id="search" ignoreDupResponses="true"
+							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+							action="allotmentBooking_list"
+							actionListener="#{allotmentBooking.onSearch}"
+							accesskey="#{bundle.aon_key_search}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
-							<aon:outputText value="&#160;" />
-							<aon:commandButton id="search" ignoreDupResponses="true"
-								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
-								action="allotmentBooking_list"
-								actionListener="#{allotmentBooking.onSearch}"
-								accesskey="#{bundle.aon_key_search}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-								
-						</aon:panelGrid>
-					
+					</aon:panelGrid>
+
 				</aon:div>
 			</aon:div>
 			
 		</aon:form>
 		
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		
+
 	</ui:define>
 </ui:composition>

@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFinanceFractionWindow">
-		<c:if test="#{paymentCardSettle.showFinanceFractionWindow}">
+		<c:if test="#{controller.showFinanceFractionWindow}">
 			<rich:modalPanel id="financeFractionModalPanel" minHeight="150"
-				minWidth="400" rendered="#{paymentCardSettle.showFinanceFractionWindow}"
+				minWidth="400" rendered="#{controller.showFinanceFractionWindow}"
 				showWhenRendered="true" zindex="100">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -25,7 +25,7 @@
 							reRender="showFinanceSearchWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{paymentCardSettle.showFinanceFractionWindow}"
+								target="#{controller.showFinanceFractionWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -39,12 +39,12 @@
 										<aon:commandButton id="financeFraction-accept"
 											value="#{bundle.aon_accept}"
 											reRender="showFinanceSearchWindow,#{fractionReRender}"
-											actionListener="#{paymentCardSettle.onAcceptFraction}"
+											actionListener="#{controller.onFractionDifferences}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 											<rich:componentControl for="financeFractionModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
-												target="#{paymentCardSettle.showFinanceFractionWindow}"
+												target="#{controller.showFinanceFractionWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 										<aon:commandButton id="financeFraction-cancel"
@@ -53,21 +53,21 @@
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 											<f:setPropertyActionListener
-												target="#{paymentCardSettle.showFinanceFractionWindow}"
+												target="#{controller.showFinanceFractionWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:div>
 									<aon:div style="margin-top: 2em;">
 										<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
-										
-											<aon:outputLabel for="Finance_payMethod"
+
+											<aon:outputLabel for="PaymentCardFinance_fractionPayMethod"
 												value="#{bundle.finance_payMethod}" />
-											<aon:selectOneMenu id="Finance_payMethod" required="#{true}" 
-												value="#{paymentCardSettle.fractionPayMethod}">
+											<aon:selectOneMenu id="PaymentCardFinance_fractionPayMethod" 
+												value="#{controller.fractionPayMethod}" required="#{true}">
 												<f:selectItem itemLabel=" - " itemValue="#{null}" />
 												<f:selectItems value="#{configCollections.payMethods}" />
 											</aon:selectOneMenu>
-	
+
 										</aon:panelGrid>
 									</aon:div>
 								</aon:div>

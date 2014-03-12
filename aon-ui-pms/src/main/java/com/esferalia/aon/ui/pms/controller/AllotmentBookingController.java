@@ -292,7 +292,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		}
 	}
 	
-	private void initializeAgencyList() throws AonSQLException {
+	private void initializeAgencyList() {
 		agencies = ArrayUtils.EMPTY_STRING_ARRAY;
 		agencyBreakdownMap = new HashMap<String, AgencyBreakdown>();
 	}
