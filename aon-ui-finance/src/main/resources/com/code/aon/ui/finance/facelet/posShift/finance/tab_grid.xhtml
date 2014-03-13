@@ -19,6 +19,7 @@
 	<aon:commandButton id="invoiceBind" immediate="true"
 		styleClass="aon-finding-toolbar-item aon-icon-reset" style="border: #808080 1px solid; margin-top: 0.7em;"
 		value="#{bundle.finance_pos_shift_bind_invoice}"
+		rendered="#{!readOnly}"
 		actionListener="#{posShift.onBindInvoiceShow}"
 		reRender="showBindInvoiceWindow">
 		<f:setPropertyActionListener target="#{posShift.showBindInvoiceWindow}"
