@@ -149,6 +149,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 			return model;
 		} else {
 			if (!StringUtils.equals(modelFilter, filter) || filteredModel == null) {
+				setPage(1);
 				List<Domain> filteredList = new LinkedList<Domain>();
 				@SuppressWarnings("unchecked")
 				List<Domain> list = (List<Domain>) model.getWrappedData();
