@@ -172,9 +172,6 @@
 							<rich:jQuery name="hideFileUploadProgress" timing="onJScall"
 								selector="#attach_file#{messageSuffix} .rich-fileupload-list-overflow" query="height(0);" />
 							<aon:div id="attachDataTable#{messageSuffix}">
-								<aon:outputText rendered="#{webmailMessage.errorMessage != null}"
-									styleClass="aon-message-error" 
-									value="#{webmailMessage.errorMessage}" />
 								<aon:dataTable value="#{webmailMessage.files}" rowKeyVar="row"
 									var="attachment" styleClass="aon-panelGrid-formatting">
 									<aon:column>

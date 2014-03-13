@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -7,6 +8,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,7 +26,9 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProductCollectionsController {
+public class ProductCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> mimeTypes;
 	private List<SelectItem> productTypes;

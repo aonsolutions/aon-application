@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Creditor;
@@ -13,6 +14,8 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class CreditorValidationManager extends RegistryValidationManager {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public boolean isBlocked(ITransferObject to) {
 		if (to instanceof Creditor) {

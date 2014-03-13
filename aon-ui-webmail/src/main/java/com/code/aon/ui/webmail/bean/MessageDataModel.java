@@ -1,13 +1,18 @@
 package com.code.aon.ui.webmail.bean;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.SequenceDataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.webmail.bean.AonMessage;
 
-public class MessageDataModel extends ModifiableModel {
+public class MessageDataModel extends ModifiableModel implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private int rowCount;
 	
 	public MessageDataModel(AonMessage[] messageList) {

@@ -1,5 +1,6 @@
 package com.code.aon.sales.bridge;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,7 +24,9 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SalesTransferManager {
+public class SalesTransferManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private Integer selectedSalesId;

@@ -2,6 +2,7 @@ package com.code.aon.ui.customer.event;
 
 import static com.code.aon.ui.customer.controller.ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.customer.Customer;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -10,6 +11,8 @@ import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CustomerObservationListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

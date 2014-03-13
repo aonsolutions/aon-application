@@ -3,11 +3,14 @@ package com.code.aon.ui.supplier.controller;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.util.AonUtil;
 
 public class SupplierAccountCheckerController extends SupplierController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public boolean isAccountSynchronizable() {

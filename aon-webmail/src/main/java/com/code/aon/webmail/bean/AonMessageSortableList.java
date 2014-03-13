@@ -9,7 +9,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
+
 public class AonMessageSortableList extends AonSortableList {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessageSortableList.class);
 
@@ -25,23 +29,35 @@ public class AonMessageSortableList extends AonSortableList {
     
     private AonMessage[] messageList;
 
-	protected Folder folder;
+	private AonServer server;
+    
+	private transient Folder folder;
+	
+	private String fullName;
 	
 	private boolean sortable;
 	
-	public AonMessageSortableList(String column, Folder folder, boolean sortable) {
+	public AonMessageSortableList(String column, AonServer server, Folder folder, boolean sortable) {
 		super(column);
 		this.sortable = sortable;
+		this.server = server;
 		this.folder = folder;
+		this.fullName = folder.getFullName();
 	}
 
 	/**
 	 * @return the folder
 	 */
 	public Folder getFolder() {
+		if ( folder == null ) {
+			folder = server.getFolder(fullName);
+		}
 		return folder;
 	}
 
+	public AonServer getServer() {
+		return server;
+	}	
 
 	/**
 	 * @return the messageList

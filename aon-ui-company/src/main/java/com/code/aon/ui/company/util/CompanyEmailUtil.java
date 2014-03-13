@@ -24,6 +24,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
@@ -51,6 +52,8 @@ import com.code.aon.webmail.IMailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyEmailUtil implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static String PDF_EXTENSION = "." + MimeType.MIME_PDF.getExtension();
 	

@@ -103,8 +103,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 
 	private AonMessage parentMessage;
 	
-	private AonMessage sentMessage;
-	
 	private String messageContent;
 	
 	private Long draftMessageUID;
@@ -150,6 +148,8 @@ public class MessageController implements IWebMailConstants, Serializable {
     private Integer template;
     
     private boolean showTemplates;
+    
+    private List<Address> sentAddressList;
     
 	/**
 	 * @return the message
@@ -380,16 +380,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 	//*********** ATTACH ********************************************
 	//***************************************************************
 
-    private String errorMessage;
-    
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
 	public void fileUploaded(UploadEvent event) {
 		UploadItem item = event.getUploadItem();
     	AonFile f = new AonFile();
@@ -397,10 +387,7 @@ public class MessageController implements IWebMailConstants, Serializable {
     	f.setFileName(item.getFileName());
     	f.setMimeType(f.resolveMimeType());
     	LOGGER.info( "Uploaded file: {}", f );
-    	errorMessage = getWebMailController().isValidFile(f); 
-    	if ( errorMessage == null ) {
-        	addAttachment( f );	
-    	}
+       	addAttachment( f );	
 	}	
 	
 	public void addAttachment( AonFile aonFile ) {
@@ -443,10 +430,16 @@ public class MessageController implements IWebMailConstants, Serializable {
 		}
     }
     
-    public void send(AonServer server) throws WebmailException {
+    public List<Address> getSentAddressList() {
+		return sentAddressList;
+	}
+
+	public void send(AonServer server) throws WebmailException {
+    	AonMessage sentMessage = null;
     	try {
 	    	sentMessage = compoundMessage(server);
     		server.sendMessage(sentMessage);
+    		this.sentAddressList = sentMessage.getAllRecipients();
 		} catch (Throwable th) {
 			if ( sentMessage != null ) {
 	    		storeMessage(server, sentMessage, true);
@@ -486,7 +479,6 @@ public class MessageController implements IWebMailConstants, Serializable {
     }
 
     public void onSaveDraft(ActionEvent event) {
-    	setErrorMessage(null);
     	try {
 	    	AonServer server = getWebMailController().getServer();    		
 	    	AonMessage aonMessage = compoundMessage( server );    		
@@ -595,13 +587,12 @@ public class MessageController implements IWebMailConstants, Serializable {
 		updateContent(senderMailAccount);
     	newMsgFileList = new ArrayList<AonFile>();
 		draftMessageUID = null;
-		sentMessage = null;
+		sentAddressList = null;
 		parentMessage = null;
 		messageContent = null;
 		loadContacts = true;
 		template = null;
 		showTemplates = true;
-		setErrorMessage(null);
 	}
 
 	/**
@@ -694,7 +685,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 	}
 	
 	public void openEmailsPanelPopup(ActionEvent event){
-		setErrorMessage(null);
 		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
 		multiSelectionEmailBean.init(loadContacts);
 		loadContacts = false;
@@ -703,19 +693,16 @@ public class MessageController implements IWebMailConstants, Serializable {
 
 	
 	public void openEmailsToPanelPopup(ActionEvent event){
-		setErrorMessage(null);
 		this.selectedDestinyContainer = CONTAINER_TO;
 		openEmailsPanelPopup(event);
 	}
 
 	public void openEmailsCcPanelPopup(ActionEvent event){
-		setErrorMessage(null);
 		this.selectedDestinyContainer = CONTAINER_CC;
 		openEmailsPanelPopup(event);
 	}
 
 	public void openEmailsBccPanelPopup(ActionEvent event){
-		setErrorMessage(null);
 		this.selectedDestinyContainer = CONTAINER_BCC;
 		openEmailsPanelPopup(event);
 	}
@@ -1120,7 +1107,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 		if ( value != null ) {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
-				setErrorMessage(null);
 				return getMailConfig().getContact().suggestionEmails(text);
 			}
 		}
@@ -1152,7 +1138,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 	}
 	
 	public void onRemoveAttachment( ActionEvent event ) {
-		setErrorMessage(null);
 		AonFile af = getFiles().remove(this.attachRemoveIndex);
 		FileUtils.deleteQuietly( af.getFile() );
 	}
@@ -1179,10 +1164,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 
 	public void setAppendSignature(boolean appendSignature) {
 		this.appendSignature = appendSignature;
-	}
-
-	public AonMessage getSentMessage() {
-		return sentMessage;
 	}
 
 	public void onSendEmail(ActionEvent event) {

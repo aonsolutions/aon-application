@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.accounting.enumeration.Quarter;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -37,7 +39,9 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountingCollectionsController {
+public class AccountingCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private LinkedList<SelectItem> accountLevels;
 	private LinkedList<SelectItem> balanceTypes;

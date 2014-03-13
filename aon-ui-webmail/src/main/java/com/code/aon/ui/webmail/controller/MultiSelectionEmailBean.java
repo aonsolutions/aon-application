@@ -2,6 +2,7 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,9 @@ public class MultiSelectionEmailBean extends DataScrollerState {
 		return selectedRows;
 	}
     
-	public class SelectionEmail{
+	public static class SelectionEmail implements Serializable {
+
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private boolean selected;
 		

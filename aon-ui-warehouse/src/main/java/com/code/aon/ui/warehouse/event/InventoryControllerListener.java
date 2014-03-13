@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -9,6 +10,7 @@ import com.code.aon.ui.warehouse.controller.InventoryDetailController;
 
 public class InventoryControllerListener extends ControllerAdapter {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeBeanSelected(ControllerEvent event)

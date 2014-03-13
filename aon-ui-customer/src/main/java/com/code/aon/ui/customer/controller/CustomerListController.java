@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ui.registry.controller.RegistryController;
 
 public class CustomerListController extends RegistryController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ArrayList<Customer> checks = new ArrayList<Customer>();
 

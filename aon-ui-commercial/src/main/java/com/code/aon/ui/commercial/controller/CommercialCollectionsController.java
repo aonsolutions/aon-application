@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.commercial.enumeration.ProjectSource;
 import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,8 +33,10 @@ import com.esferalia.aon.entity.IEntityAlias;
  * 
  * @author Consulting & Development. Joseba Urkiri - 6-sept-2006
  */
-public class CommercialCollectionsController {
+public class CommercialCollectionsController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private List<SelectItem> offerStatuses;
 	
 	private List<SelectItem> offerTypes;

@@ -1,5 +1,6 @@
 package com.code.aon.ui.sales.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -7,13 +8,16 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
 
-public class SalesCollectionsController {
+public class SalesCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	List<SelectItem> salesStatuses;
-	List<SelectItem> documentTypes;
+	private List<SelectItem> salesStatuses;
+	private List<SelectItem> documentTypes;
 
 	public List<SelectItem> getSalesStatuses() {
 		if (salesStatuses == null) {

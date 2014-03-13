@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
@@ -15,7 +17,9 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class EnterpriseListController {
+public class EnterpriseListController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<Enterprise> list;
 	

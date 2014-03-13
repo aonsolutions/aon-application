@@ -3,6 +3,8 @@ package com.code.aon.faces.controller;
 import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_ATTRIBUTE;
 import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_CONTROLLER_NAME;
 
+import java.io.Serializable;
+
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
@@ -16,9 +18,12 @@ import javax.faces.event.MethodExpressionActionListener;
 import org.ajax4jsf.component.html.HtmlAjaxCommandLink;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.faces.component.util.FaceletUtil;
 
-public class SelectedMenuController {
+public class SelectedMenuController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String SELECTED_CLASS = "aon-top-menu-item-select";
 	

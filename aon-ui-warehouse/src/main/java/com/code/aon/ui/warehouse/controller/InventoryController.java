@@ -8,6 +8,7 @@ import javax.faces.event.ActionEvent;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -31,6 +32,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  *
  */
 public class InventoryController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Warehouse warehouse; 
 

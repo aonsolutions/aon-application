@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,8 +28,10 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
 import com.code.aon.warehouse.enumeration.PriceType;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class WarehouseCollectionsController {
+public class WarehouseCollectionsController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private List<SelectItem> warehouses;
 	private List<SelectItem> deliveryStatuses;
 	private List<SelectItem> incomeStatuses;

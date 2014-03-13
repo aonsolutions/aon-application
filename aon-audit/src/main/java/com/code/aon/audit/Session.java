@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.SessionDB;
 
@@ -25,6 +27,19 @@ public class Session extends SessionDB {
 	
 	public void setActionEntries( Set<ActionEntry> actionEntries ) {
 		this.actionEntries = actionEntries;
+	}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("application", getApplication().getId())
+			.append("domain", getDomain())
+			.append("endDate", getEndDate())
+			.append("remoteAddress", getRemoteAddress())
+			.append("remoteHost", getRemoteHost())
+			.append("sessionId", getSessionId())
+			.append("startDate", getStartDate())
+			.toString();
 	}
 	
 }

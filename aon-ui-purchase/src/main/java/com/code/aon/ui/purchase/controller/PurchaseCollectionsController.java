@@ -1,5 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -7,6 +8,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
@@ -18,7 +20,9 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
  * 
  * @author Consulting & Development. Joseba Urkiri - 21-dic-2005
  */
-public class PurchaseCollectionsController {
+public class PurchaseCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> purchaseStatuses;
 	private List<SelectItem> documentTypes;

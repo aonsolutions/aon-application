@@ -80,8 +80,6 @@ import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommunicationCenterController extends DataScrollerState implements IMarketingConstants {
@@ -838,9 +836,8 @@ public class CommunicationCenterController extends DataScrollerState implements 
 	public void onSendEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onSend(event);
-		AonMessage message = controller.getSentMessage();
 		try {
-			List<Address> addressList = message.getAllRecipients();
+			List<Address> addressList = controller.getSentAddressList();
 			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());
 			if (! ArrayUtils.isEmpty(emails) ) {
 				for( String email : emails ) {
@@ -869,8 +866,6 @@ public class CommunicationCenterController extends DataScrollerState implements 
 					bean.insert(rm);
 				}				
 			}
-		} catch (WebmailException e) {
-			LOGGER.error( "Error getting all recipient addresses", e );
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error getting target addresses", e );
 		}

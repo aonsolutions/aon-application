@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
@@ -16,6 +17,8 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class CustomerValidationManager extends RegistryValidationManager {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(CustomerValidationManager.class);
 	

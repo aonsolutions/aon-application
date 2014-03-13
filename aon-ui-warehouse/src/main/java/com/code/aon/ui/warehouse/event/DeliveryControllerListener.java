@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.event;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -22,6 +23,8 @@ import com.esferalia.aon.carrier.Carrier;
 
 public class DeliveryControllerListener extends ControllerAdapter implements IWarehouseConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {

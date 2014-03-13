@@ -1,21 +1,16 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.util.Collections;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.AonFile;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.resources.bean.ResourceResolver;
@@ -33,10 +28,6 @@ public class WebMailController implements IWebMailConstants {
 	private String initErrorMessage;
 	
 	private FolderController folderController;
-	
-	private List<String> rejectedExtensions;
-	
-	private int maxAttachmentSize;
 	
 	private boolean enableDragAndDrop;
 	
@@ -153,21 +144,7 @@ public class WebMailController implements IWebMailConstants {
 	}
 	
 	private void initConfig() {
-		this.maxAttachmentSize = -1;
-		this.rejectedExtensions = Collections.emptyList();
 		setEnableDragAndDrop(!AonUtil.isChrome());
-	}
-
-	public String isValidFile( AonFile file ) {
-		String extension = StringUtils.lowerCase( FilenameUtils.getExtension(file.getFileName()) );
-		if ( ! StringUtils.isEmpty(extension) && this.rejectedExtensions.contains(extension) ) {
-			return "La extension del fichero " + file.getFileName() + " no esta permitida";
-		}
-		int size = (int) file.getFile().length();
-		if ( maxAttachmentSize!=-1 && size>maxAttachmentSize ) {
-			return "El fichero " + file.getFileName() + " supera el tamaño maximo permitido ("+ (maxAttachmentSize / 1024) +" Kb)";
-		}
-		return null;
 	}
 	
 	public void poll( ActionEvent event ) {

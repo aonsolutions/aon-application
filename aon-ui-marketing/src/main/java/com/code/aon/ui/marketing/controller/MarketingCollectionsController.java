@@ -1,11 +1,13 @@
 package com.code.aon.ui.marketing.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,7 +24,9 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class MarketingCollectionsController {
+public class MarketingCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> actionMediaTypes;
 	

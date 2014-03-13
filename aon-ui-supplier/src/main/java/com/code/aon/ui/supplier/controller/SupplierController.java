@@ -8,6 +8,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.supplier.Supplier;
@@ -15,6 +16,8 @@ import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class SupplierController extends RegistryController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onWithholdingChanged(ValueChangeEvent event) {
 		Boolean value = (Boolean)event.getNewValue();
