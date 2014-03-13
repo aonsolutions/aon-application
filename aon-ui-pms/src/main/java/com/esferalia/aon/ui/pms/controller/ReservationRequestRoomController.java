@@ -13,6 +13,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.AonVersion;
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -57,13 +59,11 @@ public class ReservationRequestRoomController extends LinesController implements
 		return PmsUtils.getHotelRoomItems(((ReservationRequest)getMasterController().getTo()).getHotel());
 	}
 
-	private boolean mustStopSale(ReservationRequestRoom requestRoom) {
-   		Connection connection = null;
+	private boolean isStopSalesDefined(ReservationRequest request) {
+		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(requestRoom.getReservationRequest().getDomain()));
-			if (SQLStopSales.mustStopSale(connection, requestRoom)) {
-				return true;
-	    	}
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(request.getDomain()));
+			return SQLStopSales.isStopSalesDefined(connection, null, request.getHotel(), request.getStartDate(), request.getEndDate(), null, null);
 		} catch (Throwable e) {
 			try {
 				connection.rollback();
@@ -73,6 +73,30 @@ public class ReservationRequestRoomController extends LinesController implements
 			SQLUtils.closeQuietly(connection);
 		}
 		return false;
+	}
+
+	private boolean mustStopSale(ReservationRequestRoom requestRoom, String itemCode, String tariffCode) {
+   		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(requestRoom.getReservationRequest().getDomain()));
+			if (StringUtils.isNotBlank(itemCode) || StringUtils.isNotBlank(tariffCode)) {
+				return SQLStopSales.mustStopSale(connection, requestRoom, itemCode, tariffCode);
+			} else {
+				return SQLStopSales.mustStopSale(connection, requestRoom);
+			}
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+		} finally {
+			SQLUtils.closeQuietly(connection);
+		}
+		return false;
+	}
+
+	private boolean mustStopSale(ReservationRequestRoom requestRoom) {
+		return mustStopSale(requestRoom, null, null);
 	}
 
 	public void sendAvailabilityQuery(ActionEvent event) throws ManagerBeanException {
@@ -89,9 +113,30 @@ public class ReservationRequestRoomController extends LinesController implements
 
 				ReservationRequestManager manager = new ReservationRequestManager();
 				getAvailableRoomStayMap().put(requestRoom.getId(), manager.processAvailabilityQuery(requestRoom));
+				if (isStopSalesDefined(request)) {
+					fillTariffStopSales(requestRoom, getAvailableRoomStayMap().get(requestRoom.getId()));
+				}
 			} else {
 				AonUtil.addErrorMessage("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");
 			}
+		}
+	}
+
+	private void fillTariffStopSales(ReservationRequestRoom requestRoom, List<AvailableRoomStay> availableRoomStays) {
+		Map<String, Boolean> tariffStopSalesMap = new HashMap<String, Boolean>();
+		for (AvailableRoomStay availableRoomStay : availableRoomStays) {
+			String tariff = availableRoomStay.getTariffCode();
+			String item = (!requestRoom.getItem().getProduct().getCode().equals(availableRoomStay.getRoomCode())) ? availableRoomStay.getRoomCode() : null;
+			String key = tariff + ((item != null) ? "|" + item : "");
+
+			boolean mustStopSale = false;
+			if (tariffStopSalesMap.containsKey(key)) {
+				mustStopSale = tariffStopSalesMap.get(key);
+			} else {
+				mustStopSale = mustStopSale(requestRoom, item, tariff);
+				tariffStopSalesMap.put(key, mustStopSale);
+			}
+			availableRoomStay.setTariffStopSales(mustStopSale);
 		}
 	}
 

@@ -39,4 +39,15 @@ public interface ISQLConstants {
 	String QUANTITY = "quantity";
 	String BREAKDOWN = "breakdown";
 
+	String FINANCE = "finance";
+	String DUE_DATE = "dueDate";
+	String PAY_METHOD = "payMethod";
+	String AMOUNT = "amount";
+	String EXPENSES = "expenses";
+	String INVOICE = "invoice";
+	String ISSUE_DATE = "issueDate";
+	String REFERENCE_CODE = "referenceCode";
+	String RECTIFICATION_TYPE = "rectificationType";
+	String RECTIFICATION_INVOICE = "rectificationInvoice";
+
 }

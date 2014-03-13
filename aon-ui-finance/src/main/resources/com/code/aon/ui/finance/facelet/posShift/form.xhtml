@@ -220,12 +220,14 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!posShift.new}">
+				<c:if test="#{!posShift.new and (!readOnly or posShift.financeModel.rowCount > 0)}">
 					<aon:panel>
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.aon_invoices}" />
 						</f:facet>
-						<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml" />
+						<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml">
+							<ui:param name="readOnly" value="#{readOnly}" />
+						</ui:include>
 					</aon:panel>
 				</c:if>
 			</aon:div>

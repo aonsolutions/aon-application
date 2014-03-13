@@ -75,7 +75,7 @@ public enum FiscalActivityInfoKey implements IResourceable, IStringEnum {
 		}),
 		
 	// Número de empleados al inicio de ejercicio (o al inicio de la actividad).
-//	A10 ("A10",FiscalActivityInfoType.INFO,2012,9999,false,Integer.class,true,false,false,"0",null),
+	A10 ("A10",FiscalActivityInfoType.INFO,2014,9999,false,Integer.class,true,false,false,"0",null,null),
 	
 	// Indique si la actividad se realiza con tractocamiones y el titular carece de semirremolques.
 	C10 ("C10",FiscalActivityInfoType.INFO,2012,9999,false,Integer.class,false,false,false,"0",null

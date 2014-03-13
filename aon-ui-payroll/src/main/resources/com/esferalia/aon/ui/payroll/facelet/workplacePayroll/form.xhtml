@@ -52,6 +52,12 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{configCollections.administrations}" />
 				</aon:selectOneMenu>	
+					
+				<aon:outputLabel for="WorkPlace_scope" value="#{bundle.aon_scope}" />
+				<aon:selectOneMenu id="WorkPlace_scope" 
+					value="#{controller.to.workPlace.scope}">
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
+				</aon:selectOneMenu>
 			
 				<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
 				<aon:selectBooleanCheckbox id="WorkPlace_active" styleClass="aon-margin-left"

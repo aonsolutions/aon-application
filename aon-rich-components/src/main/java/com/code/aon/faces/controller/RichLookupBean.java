@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -78,8 +79,6 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	/** The value binding of foreign Pojo. */
 	private ValueExpression sourcePojoBinding;
 
-	private ILookupComponent component;
-	
 	/** The map of join value bindings. */
 	// private Map<String,ValueBinding> joinBindingsMap;
 	/** The show window. */
@@ -108,6 +107,14 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	private ITransferObject suggestedTo;
 	
 	private String[] suggestAliases;
+	
+	private MethodExpression lookupAction;
+	
+	private String lookupProperty;
+	
+	private MethodExpression lookupChangeListener;
+	
+	private String selectReRender;
 
 	/**
 	 * The Constructor.
@@ -179,7 +186,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * 
 	 * @return the join properties list
 	 */
-	public List<JoinProperty> getJoinBindingsMap(UIComponent component) {
+	public List<JoinProperty> getJoinBindingsMap(ILookupComponent component) {
 		List<JoinProperty> joinProperties = Collections.emptyList();
 		if (component instanceof HtmlLookupInputText) {
 			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) component;
@@ -528,7 +535,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	}
 	
 	private void fireLookupChangeListener(UIComponent component, boolean resolved) {
-		if ( getComponent().getLookupChangeListener() != null ) {
+		if ( this.lookupChangeListener != null ) {
 			LookupChangeEvent event = null;
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			Object newValue = null;
@@ -545,7 +552,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 			}
 			event = new LookupChangeEvent(component, newValue );
 			try {
-				getComponent().getLookupChangeListener().invoke(ctx.getELContext(), new Object[]{event});
+				this.lookupChangeListener.invoke(ctx.getELContext(), new Object[]{event});
 			} catch (Throwable e) {
 				LOGGER.error(">>>> fireLookupChangeListener ",e);
 				AonUtil.addErrorMessage(e.getMessage());
@@ -556,9 +563,9 @@ public class RichLookupBean implements ITemplateController, Serializable {
 
 	private Object getLookupValue() {
 		Object value = getController().getTo();
-		if (! StringUtils.isEmpty(getComponent().getLookupProperty()) ) {		
+		if (! StringUtils.isEmpty(this.lookupProperty) ) {		
 			try {
-				value = PropertyUtils.getProperty( value, getComponent().getLookupProperty() );
+				value = PropertyUtils.getProperty( value, this.lookupProperty );
 			} catch (Throwable e) {
 				LOGGER.error( e.getMessage(), e );
 				value = null;
@@ -580,39 +587,43 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * @throws ManagerBeanException
 	 */
 	public void lookupChanged(ActionEvent event) throws ManagerBeanException {
-		UIComponent component = event.getComponent().getParent();
-		setBindings( component );
-		onEditSearch(event);
-		List<JoinProperty> joinProperties = getJoinBindingsMap(component);
-		updateCriteria(joinProperties);
-		onSearch(event);
-		int count = getModel().getRowCount();
-		if (count == 1) {
-			getController().getModel().setRowIndex(0);
-			onSelect(event);
-		} else {
-			onReset(event);
-			if ( count > 1) {
-				showListWindow(event, false);	
+		ILookupComponent component = (ILookupComponent) event.getComponent().getParent();
+		if ( component != null ) {
+			setBindings( component );
+			onEditSearch(event);
+			List<JoinProperty> joinProperties = getJoinBindingsMap(component);
+			updateCriteria(joinProperties);
+			onSearch(event);
+			int count = getModel().getRowCount();
+			if (count == 1) {
+				getController().getModel().setRowIndex(0);
+				onSelect(event);
+			} else {
+				onReset(event);
+				if ( count > 1) {
+					showListWindow(event, false);	
+				}
 			}
-		}
-		fireLookupChangeListener(component, count==1);
-		updateSourcePojo();
-		removeControllerListener();
-		if (count==0) {
-			String message = AonUtil.addErrorMessageFromBundle(SEARCH_NO_RESULTS);
-			throw new AbortProcessingException(message);
+			fireLookupChangeListener((UIComponent)component, count==1);
+			updateSourcePojo();
+			removeControllerListener();
+			if (count==0) {
+				String message = AonUtil.addErrorMessageFromBundle(SEARCH_NO_RESULTS);
+				throw new AbortProcessingException(message);
+			}
 		}
 	}	
 
-	private void setBindings(UIComponent component) {
-		if (component instanceof ILookupComponent) {
-			this.component = (ILookupComponent) component;
-			this.sourcePojoBinding = this.component.getProperty();
-			this.controllerListener = this.component.getControllerListener();
-			if ( this.controllerListener != null ) {
-				addControllerListener( this.controllerListener );
-			}
+	private void setBindings(ILookupComponent component) {
+		this.sourcePojoBinding = component.getProperty();
+		this.lookupProperty = component.getLookupProperty();
+		this.lookupChangeListener = component.getLookupChangeListener();
+		this.controllerListener = component.getControllerListener();
+		if ( this.controllerListener != null ) {
+			addControllerListener( this.controllerListener );
+		}
+		if ( component instanceof HtmlLookupButton ) {
+			this.lookupAction = ((HtmlLookupButton)component).getLookupAction();
 		}
 	}
 
@@ -628,15 +639,18 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	}
 
 	private void showListWindow(ActionEvent event, boolean search) throws ManagerBeanException {
-		setBindings(event.getComponent());
-		updateWindowProperties();
-		setShowWindow(true);
-		setSelectedPanel(LIST_ID);
-		if ( search ) {
-			getController().clearCriteria();
-			onSearch(null);			
+		ILookupComponent component = (ILookupComponent) event.getComponent();
+		if ( component != null ) {
+			setBindings(component);
+			updateWindowProperties(component);
+			setShowWindow(true);
+			setSelectedPanel(LIST_ID);
+			if ( search ) {
+				getController().clearCriteria();
+				onSearch(null);			
+			}
+			this.showSearchButtons = false;			
 		}
-		this.showSearchButtons = false;
 	}
 	
 	
@@ -647,12 +661,15 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 *            the event
 	 */
 	public void onShowSearchWindow(ActionEvent event) {
-		setBindings(event.getComponent());
-		updateWindowProperties();
-		setShowWindow(true);
-		setSelectedPanel(SEARCH_ID);
-		onEditSearch(event);
-		this.showSearchButtons = true;
+		ILookupComponent component = (ILookupComponent) event.getComponent();
+		if ( component != null ) {
+			setBindings(component);
+			updateWindowProperties(component);
+			setShowWindow(true);
+			setSelectedPanel(SEARCH_ID);
+			onEditSearch(event);
+			this.showSearchButtons = true;
+		}
 	}
 
 	/**
@@ -662,11 +679,14 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 *            the event
 	 */
 	public void onShowNewWindow(ActionEvent event) {
-		setBindings(event.getComponent());
-		updateWindowProperties();
-		setShowWindow(true);
-		setSelectedPanel(NEW_ID);
-		onReset(event);
+		ILookupComponent component = (ILookupComponent) event.getComponent();
+		if ( component != null ) {
+			setBindings(component);
+			updateWindowProperties(component);
+			setShowWindow(true);
+			setSelectedPanel(NEW_ID);
+			onReset(event);
+		}
 	}
 
 	/**
@@ -759,10 +779,6 @@ public class RichLookupBean implements ITemplateController, Serializable {
 		getController().setModel(null);
 	}
 
-	public ILookupComponent getComponent() {
-		return component;
-	}
-
 	public String getWindowTitle() {
 		return windowTitle;
 	}
@@ -778,14 +794,19 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	public String getWindowCloseFocus() {
 		return windowCloseFocus;
 	}
+	
+	public String getSelectReRender() {
+		return selectReRender;
+	}
 
-	private void updateWindowProperties() {
-		if ( (this.component != null) && (this.component instanceof ILookupWindowComponent) ) {
-			ILookupWindowComponent lwComponent = (ILookupWindowComponent) this.component;
+	private void updateWindowProperties( ILookupComponent component ) {
+		if ( component instanceof ILookupWindowComponent ) {
+			ILookupWindowComponent lwComponent = (ILookupWindowComponent) component;
 			this.windowTitle = lwComponent.getWindowTitle();
 			this.windowCloseFocus = lwComponent.getWindowCloseFocus();
 			this.minWidth = lwComponent.getMinWidth();
 			this.minHeight = lwComponent.getMinHeight();
+			this.selectReRender = lwComponent.getSelectReRender();
 		}
 		if ( StringUtils.isEmpty(this.windowTitle) ) {
 			this.windowTitle = DEFAULT_WINDOW_TITLE;	
@@ -825,11 +846,14 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	}
 	
 	public void onClear( ActionEvent event ) {
-		setBindings(event.getComponent());
-		onReset(null);
-		fireLookupChangeListener(event.getComponent(), false);
-		updateSourcePojo();
-		removeControllerListener();
+		ILookupComponent component = (ILookupComponent) event.getComponent();
+		if ( component != null ) {
+			setBindings(component);
+			onReset(null);
+			fireLookupChangeListener(event.getComponent(), false);
+			updateSourcePojo();
+			removeControllerListener();
+		}
 	}
 
 	public String[] getSuggestAliases() {
@@ -908,33 +932,32 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	}
 
 	public void onSuggestSelect( ActionEvent event ) {
-		UIComponent component = event.getComponent().getParent().getParent();
-		setBindings( component );
-		try {
-			getController().select(event, this.suggestedTo);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSuggestSelect ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);			
+		ILookupComponent component = (ILookupComponent) event.getComponent().getParent().getParent();
+		if ( component != null ) {
+			setBindings(component);
+			try {
+				getController().select(event, this.suggestedTo);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(">>>> onSuggestSelect ",e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);			
+			}
+			fireLookupChangeListener((UIComponent) component, true);
+			updateSourcePojo();
+			removeControllerListener();
 		}
-		fireLookupChangeListener(component, true);
-		updateSourcePojo();
-		removeControllerListener();
 	}
 		
 	public String lookupAction() {
 		String action = "";
-		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
-			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
-			if ( lookupButton.getLookupAction() != null ) {
-				try {
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					action = (String) lookupButton.getLookupAction().invoke(ctx.getELContext(), new Object[]{});
-				} catch (Throwable e) {
-					LOGGER.error(">>>> lookupAction ",e);
-					throw new AbortProcessingException(e.getMessage(), e);			
-				}							
-			}
+		if ( this.lookupAction != null ) {
+			try {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				action = (String) this.lookupAction.invoke(ctx.getELContext(), new Object[]{});
+			} catch (Throwable e) {
+				LOGGER.error(">>>> lookupAction ",e);
+				throw new AbortProcessingException(e.getMessage(), e);			
+			}							
 		}
 		return action;
 	}

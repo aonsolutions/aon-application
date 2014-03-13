@@ -631,29 +631,37 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Item obtainRoomItem(ProjectReservation reservation, RoomTypeType roomType) throws ManagerBeanException, ReservationException {
-		ItemAddInfo itemAddInfo = obtainItemAddInfo(null, ROOM_ALIAS, roomType.getRoomTypeCode());
-		if (itemAddInfo != null) {
-			return itemAddInfo.getItem();
+		Item item = obtainRoomItem(roomType.getRoomTypeCode());
+		if (item != null) {
+			return item;
 		} else {
-			Item item = obtainItem(roomType.getRoomTypeCode());
+			item = obtainDefaultRoomItem();
 			if (item != null) {
+				reservation.setRemarks("TIPO HABITACION DESCONOCIDO [" + roomType.getRoomTypeCode() + "]\n" + reservation.getRemarks());
+				reservation.setStatus(ReservationStatus.BLOCKED);
+
 				return item;
-			} else {
-				IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_ROOM_ITEM);
-				for (ITransferObject ito : appParamBean.getList(criteria)) {
-					item = obtainItem(((ApplicationParameter)ito).getValue());
-					if (item != null) {
-						reservation.setRemarks("TIPO HABITACION DESCONOCIDO [" + roomType.getRoomTypeCode() + "]\n" + reservation.getRemarks());
-						reservation.setStatus(ReservationStatus.BLOCKED);
-	
-						return item;
-					}
-				}
 			}
 		}
 		throw new ReservationException("Invalid Room Type: " + roomType.getRoomTypeCode(), 131);
+	}
+
+	public Item obtainRoomItem(String roomCode) throws ManagerBeanException {
+		ItemAddInfo itemAddInfo = obtainItemAddInfo(null, ROOM_ALIAS, roomCode);
+		if (itemAddInfo != null) {
+			return itemAddInfo.getItem();
+		}
+		return obtainItem(roomCode);
+	}
+
+	public Item obtainDefaultRoomItem() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_ROOM_ITEM);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return obtainRoomItem(((ApplicationParameter)ito).getValue());
+		}
+		return null;
 	}
 
 	public Item obtainServiceItem(ProjectReservation reservation, Service service) throws ManagerBeanException, ReservationException {
@@ -661,18 +669,13 @@ public class ReservationUtils implements IReservationConstants {
 		if (item != null) {
 			return item;
 		} else {
-			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_SERVICE_ITEM);
-			for (ITransferObject ito : appParamBean.getList(criteria)) {
-				item = obtainItem(((ApplicationParameter)ito).getValue());
-				if (item != null) {
-					String serviceName = obtainServiceName(service);
-					reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + " - " + serviceName + "]\n" + reservation.getRemarks());
-					reservation.setStatus(ReservationStatus.BLOCKED);
+			item = obtainDefaultServiceItem();
+			if (item != null) {
+				String serviceName = obtainServiceName(service);
+				reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + " - " + serviceName + "]\n" + reservation.getRemarks());
+				reservation.setStatus(ReservationStatus.BLOCKED);
 
-					return item;
-				}
+				return item;
 			}
 		}
 		throw new ReservationException("Invalid Service: " + service.getServiceInventoryCode(), 146);
@@ -701,6 +704,16 @@ public class ReservationUtils implements IReservationConstants {
 			return itemAddInfo.getItem();
 		}
 		return obtainItem(serviceCode);
+	}
+
+	public Item obtainDefaultServiceItem() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_SERVICE_ITEM);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return obtainServiceItem(((ApplicationParameter)ito).getValue());
+		}
+		return null;
 	}
 
 	private Item obtainItem(String itemCode) throws ManagerBeanException {

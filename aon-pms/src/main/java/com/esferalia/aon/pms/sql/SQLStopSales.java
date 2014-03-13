@@ -40,14 +40,19 @@ public class SQLStopSales implements ISQLConstants {
 
 
 	public static boolean isStopSalesDefined(Connection connection, StopSales stopSales, String items, String tariffs) throws AonSQLException {
+		return isStopSalesDefined(connection, stopSales.getId(), stopSales.getHotel(), stopSales.getStartDate(), stopSales.getEndDate(), items, tariffs);
+	}
+
+	public static boolean isStopSalesDefined(Connection connection, Integer id, Hotel hotel, Date startDate, Date endDate, String items, String tariffs) 
+			throws AonSQLException {
 		PreparedStatement stopSalesStmt = null;
 		ResultSet stopSalesRs = null;
 		try {
-			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(stopSales.getId(), items, tariffs));
+			stopSalesStmt = connection.prepareStatement(SELECT_BASIC_STOP_SALES + obtainWhereClause(id, items, tariffs));
 			SQLUtils.setInt(stopSalesStmt, 1, DomainManager.getCurrentDomain());
-			SQLUtils.setInt(stopSalesStmt, 2, stopSales.getHotel().getId());
-			SQLUtils.setDate(stopSalesStmt, 3, stopSales.getStartDate());
-			SQLUtils.setDate(stopSalesStmt, 4, stopSales.getEndDate());
+			SQLUtils.setInt(stopSalesStmt, 2, hotel.getId());
+			SQLUtils.setDate(stopSalesStmt, 3, startDate);
+			SQLUtils.setDate(stopSalesStmt, 4, endDate);
 			stopSalesRs = stopSalesStmt.executeQuery();
 			return stopSalesRs.next();
 		} catch (Throwable e) {
@@ -64,12 +69,22 @@ public class SQLStopSales implements ISQLConstants {
 	}
 
 	public static boolean mustStopSale(Connection connection, ReservationRequestRoom reqRoom) throws AonSQLException {
+		return mustStopSale(connection, reqRoom, null, null);
+	}
+
+	public static boolean mustStopSale(Connection connection, ReservationRequestRoom reqRoom, String itemCode, String tariffCode) throws AonSQLException {
 		ReservationRequest req = reqRoom.getReservationRequest();
 		ReservationUtils reservationUtils = new ReservationUtils();
+		Item item = reqRoom.getItem();
 		Tariff tariff = null;
 		try {
-			if (StringUtils.isNotBlank(reqRoom.getTariffCode())) {
-				tariff = reservationUtils.obtainTariff(reqRoom.getTariffCode());
+			if (StringUtils.isNotBlank(itemCode)) {
+				item = reservationUtils.obtainRoomItem(itemCode);
+			}
+
+			tariffCode = StringUtils.isNotBlank(tariffCode) ? tariffCode : reqRoom.getTariffCode();
+			if (StringUtils.isNotBlank(tariffCode)) {
+				tariff = reservationUtils.obtainTariff(tariffCode);
 				if (tariff == null) {
 					tariff = reservationUtils.obtainDefaultTariff();
 				}
@@ -77,7 +92,7 @@ public class SQLStopSales implements ISQLConstants {
 		} catch (Throwable e) {
 			throw new AonSQLException(e.getMessage());
 		} 
-		return mustStopSale(connection, req.getHotel(), req.getStartDate(), req.getEndDate(), req.getAgency(), reqRoom.getItem(), tariff, reqRoom.getUnits());
+		return mustStopSale(connection, req.getHotel(), req.getStartDate(), req.getEndDate(), req.getAgency(), item, tariff, reqRoom.getUnits());
 	}
 
 	public static boolean mustStopSale(Connection connection, Hotel hotel, Date fromDate, Date toDate, Customer agency, Item item, Tariff tariff, int rooms) 

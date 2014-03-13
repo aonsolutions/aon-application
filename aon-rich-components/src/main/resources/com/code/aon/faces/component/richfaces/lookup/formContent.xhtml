@@ -25,7 +25,7 @@
 			actionListener="#{lookup.onFormSelect}" rendered="#{!lookup.new}"
 			focus="#{lookup.windowCloseFocus}" immediate="true"
 			action="#{lookup.lookupAction}"
-			reRender="#{lookup.component.selectReRender}"
+			reRender="#{lookup.selectReRender}"
 			styleClass="aon-finding-toolbar-item aon-icon-cancel"
 			accesskey="#{bundle.aon_key_close}" >
 			<rich:componentControl for="#{lookupId}" event="onclick"

@@ -83,7 +83,7 @@
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area">
 									<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
-										<ui:param name="controller" value="#{purchaseInvoice.deliveryTransferManager}" />
+										<ui:param name="controller" value="#{saleInvoice.deliveryTransferManager}" />
 										<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 										<ui:param name="skipSelectButton" value="#{true}" />
 										<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
@@ -153,7 +153,7 @@
 
 									<aon:div id="detailDataContainer">
 										<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
-											<ui:param name="controller" value="#{purchaseInvoice.deliveryTransferManager.detailState}" />
+											<ui:param name="controller" value="#{saleInvoice.deliveryTransferManager.detailState}" />
 											<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 											<ui:param name="skipSelectButton" value="#{true}" />
 											<ui:param name="showDataScroller" value="#{false}" />

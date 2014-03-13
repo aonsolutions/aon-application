@@ -484,7 +484,7 @@ public class VatCollection {
 		stmt.append("," + SURCHARGE_PERCENT);
 		stmt.append("," + VAT_TYPE);
 		if (order == null) {
-			stmt.append(" ORDER BY vatType,i.transaction,i.tax_date,i.reference_code");
+			stmt.append(" ORDER BY vat_type,i.transaction,i.tax_date,i.reference_code");
 		} else if (order == InvoiceReportOrder.INVOICE_DATE) {
 			stmt.append(" ORDER BY i.issue_date,i.series,i.number");
 		} else if (order == InvoiceReportOrder.TAX_DATE) {
@@ -492,7 +492,7 @@ public class VatCollection {
 		} else if (order == InvoiceReportOrder.INVOICE_REFERENCE) {
 			stmt.append(" ORDER BY i.reference_code");
 		} else if (order == InvoiceReportOrder.INVOICE_ORDER_NUMBER) {
-			stmt.append(" ORDER BY vatType,i.series,i.number");
+			stmt.append(" ORDER BY vat_type,i.series,i.number");
 		} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_DOCUMENT) {
 			stmt.append(" ORDER BY i.rdocument,i.series,i.number");
 		} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_NAME) {
@@ -596,7 +596,7 @@ public class VatCollection {
 		stmt.append("," + SURCHARGE_PERCENT);
 		stmt.append("," + VAT_TYPE);
 		if (order == null) {
-			stmt.append(" ORDER BY vatType,i.transaction,i.tax_date,i.reference_code");
+			stmt.append(" ORDER BY vat_type,i.transaction,i.tax_date,i.reference_code");
 		} else if (order == InvoiceReportOrder.INVOICE_DATE) {
 			stmt.append(" ORDER BY i.issue_date,i.series,i.number");
 		} else if (order == InvoiceReportOrder.TAX_DATE) {
@@ -604,7 +604,7 @@ public class VatCollection {
 		} else if (order == InvoiceReportOrder.INVOICE_REFERENCE) {
 			stmt.append(" ORDER BY i.reference_code");
 		} else if (order == InvoiceReportOrder.INVOICE_ORDER_NUMBER) {
-			stmt.append(" ORDER BY vatType,i.series,i.number");
+			stmt.append(" ORDER BY vat_type,i.series,i.number");
 		} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_DOCUMENT) {
 			stmt.append(" ORDER BY i.rdocument,i.series,i.number");
 		} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_NAME) {
