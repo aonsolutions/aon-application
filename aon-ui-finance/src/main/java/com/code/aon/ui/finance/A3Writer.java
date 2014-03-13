@@ -160,7 +160,7 @@ public class A3Writer extends BasicExporter {
 			}
 		}
 		// Numero de Factura o Documento
-		setStringRightPad( getMainId().toString(), 58, 10);
+		setStringRightPad( getReferenceCode(), 58, 10);
 		// Linea de apunte (I,M,U)
 		if ( first ) {
 			setString( "I", 68, 1);	
@@ -168,7 +168,7 @@ public class A3Writer extends BasicExporter {
 			setString( getDetails().isEmpty() ? "U" : "M", 68, 1);					
 		}
 		// Descripcion del apunte
-		setStringRightPad( getReferenceCode(), 69, 30);
+		setStringRightPad( aed.getConcept(), 69, 30);
 		// Importe
 		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
 		setNumber( amount, 99, 14);
@@ -337,7 +337,9 @@ public class A3Writer extends BasicExporter {
 		// Numero de Factura o Documento
 		setStringLeftPad( getMainId().toString(), 58, 10);
 		// Linea de apunte (M o U)
-		setString( last ? "U" : "M", 68, 1);		
+		setString( last ? "U" : "M", 68, 1);
+		// Descripcion del apunte
+		setStringRightPad( aed.getConcept(), 69, 30);		
 		// Subtipo de factura (01 a 07)
 		setString( getSubtipoDeFactura(VatDeductionType.WITH_RIGHT), 99, 2);	
 		// Base imponible
