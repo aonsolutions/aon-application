@@ -6,6 +6,7 @@ public class AvailableRoomStay implements IReservationConstants {
 	private String reservationId;
 	private String tariffCode;
 	private String tariffDescription;
+	private boolean tariffStopSales;
 	private String inventoryCode;
 	private String roomCode;
 	private String roomDescription;
@@ -47,6 +48,14 @@ public class AvailableRoomStay implements IReservationConstants {
 
 	public void setTariffDescription(String tariffDescription) {
 		this.tariffDescription = tariffDescription;
+	}
+
+	public boolean getTariffStopSales() {
+		return tariffStopSales;
+	}
+
+	public void setTariffStopSales(boolean tariffStopSales) {
+		this.tariffStopSales = tariffStopSales;
 	}
 
 	public String getInventoryCode() {

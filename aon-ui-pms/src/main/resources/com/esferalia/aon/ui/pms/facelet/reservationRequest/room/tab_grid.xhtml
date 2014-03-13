@@ -180,24 +180,28 @@
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.pms_regime}" />
 					</f:facet>
-					<aon:outputText value="#{availableRoomStay.mealPlan}" rendered="#{!availableRoomStay.error}"
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
-					<aon:outputText value="ERROR" rendered="#{availableRoomStay.error}" style="color: red;" />
+					<aon:outputText value="#{availableRoomStay.mealPlan}" 
+						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
+						 rendered="#{!availableRoomStay.error}" />
+					<aon:outputText value="ERROR" style="color: red;"
+						rendered="#{availableRoomStay.error}" />
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.pms_room_type}" />
 					</f:facet>
-					<aon:outputText value="#{availableRoomStay.roomCode} - #{availableRoomStay.roomDescription}" rendered="#{!availableRoomStay.error}"
-						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
+					<aon:outputText value="#{availableRoomStay.roomCode} - #{availableRoomStay.roomDescription}" 
+						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
+						 rendered="#{!availableRoomStay.error}" />
 					<aon:outputText value="&#160;" styleClass="aon-icon-info aon-noborder aon-margin-left aon-padding-left"
 						rendered="#{!availableRoomStay.error and !empty availableRoomStay.cancelPenalty}" />
 					<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto"
 						rendered="#{!availableRoomStay.error and !empty availableRoomStay.cancelPenalty}">
 						<aon:outputText value="#{availableRoomStay.cancelPenalty}" />
 					</rich:toolTip>
-					<aon:outputText value="#{availableRoomStay.errorMessage}" rendered="#{availableRoomStay.error}" style="color: red;" />
+					<aon:outputText value="#{availableRoomStay.errorMessage}" style="color: red;"
+						rendered="#{availableRoomStay.error}" />
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-bold aon-subTable-column">
@@ -232,14 +236,17 @@
 					<aon:commandLink id="requestRoom-bookingButton"
 						value="#{bundle.pms_to_book}" 
 						styleClass="aon-italic" style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
-						rendered="#{!availableRoomStay.error and availableRoomStay.availability >= to.units}"
+						rendered="#{!availableRoomStay.error and !availableRoomStay.tariffStopSales and availableRoomStay.availability >= to.units}"
 						actionListener="#{controller.sendBookingQuery}"
 						reRender="aonContent"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')">
 						<f:param name="availableRoomStayIndex" value="#{availableRoomStay.index}"/>
 					</aon:commandLink>
-					<aon:outputText value="No disp." rendered="#{!availableRoomStay.error and to.units > availableRoomStay.availability}" style="color: red;" />
+					<aon:outputText value="#{bundle.pms_no_availability_abbrv}" style="color: red;"
+						rendered="#{!availableRoomStay.error and !availableRoomStay.tariffStopSales and to.units > availableRoomStay.availability}" />
+					<aon:outputText value="#{bundle.pms_stop_sales_abbrv}" style="color: red;"
+						rendered="#{!availableRoomStay.error and availableRoomStay.tariffStopSales}" />
 				</aon:column>
 
 			</rich:subTable>
