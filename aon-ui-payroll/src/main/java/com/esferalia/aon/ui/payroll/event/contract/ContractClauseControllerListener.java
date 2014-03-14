@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -14,6 +15,8 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController
 import com.esferalia.aon.ui.payroll.controller.contract.EnterpriseClauseController;
 
 public class ContractClauseControllerListener extends ControllerAdapter{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)

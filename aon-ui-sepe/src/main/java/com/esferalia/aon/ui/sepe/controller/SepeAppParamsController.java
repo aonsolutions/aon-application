@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.sepe.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import java.util.TreeMap;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,7 +23,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider;
 
-public class SepeAppParamsController{
+public class SepeAppParamsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String DEVELOPMENT_MODE = "PAY_dev_mode_PAY";
 	

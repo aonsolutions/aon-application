@@ -16,11 +16,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.IOUtils;
 import org.xml.sax.SAXException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -33,6 +33,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -53,6 +54,8 @@ import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2BatchController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private CertificadosWriter certificadosWriter;
 	private FileOutput fileOutput;
@@ -368,7 +371,7 @@ public class Certifica2BatchController extends BasicController {
 	 * INNER CLASSES
 	 */
 	public class Certifica2BatchNewWizard {
-
+		
 		private List<Certifica2BatchDetail> selectedList;
 		
 		private ArrayList<Object> checks = new ArrayList<Object>();
@@ -487,7 +490,7 @@ public class Certifica2BatchController extends BasicController {
 			}
 			
 	        listController.getCheckHandler().clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -499,7 +502,7 @@ public class Certifica2BatchController extends BasicController {
 	        	}
 	        }
 	        clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 	        loadDetails();
 	        onSearchContracts(event);
 		}

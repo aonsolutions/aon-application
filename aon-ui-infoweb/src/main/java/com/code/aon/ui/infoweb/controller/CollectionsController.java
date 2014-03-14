@@ -1,17 +1,21 @@
 package com.code.aon.ui.infoweb.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.enumeration.WebInfoLayoutType;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.ui.util.AonUtil;
 
-public class CollectionsController {
+public class CollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> pageTypes;
 	

@@ -2,12 +2,14 @@ package com.esferalia.aon.ui.payroll.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.model.FileFiller;
@@ -28,7 +30,9 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 
 
-public class FDIWriter {
+public class FDIWriter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ETI eti;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");

@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.config.IScopable;
 import com.esferalia.aon.entity.master.SepeBatchAttachmentDB;
@@ -25,7 +26,7 @@ import com.esferalia.aon.payroll.enumeration.SepeBatchType;
 @DiscriminatorValue(value="true")
 public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttachment, IScopable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private SepeBatchType sourceType;
 	

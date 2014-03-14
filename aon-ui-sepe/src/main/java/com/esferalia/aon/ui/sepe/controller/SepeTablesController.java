@@ -1,21 +1,25 @@
 package com.esferalia.aon.ui.sepe.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.payroll.enumeration.certificados.CertificadosCodeTables;
 import com.esferalia.aon.payroll.enumeration.contrata.ContrataCodeTables;
 import com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter;
 import com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter;
 import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
 
-public class SepeTablesController {
+public class SepeTablesController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	final static String CONTRATA_ENUMERATIONS_PACKAGE_NAME 		= ContrataCodeTablesWriter.ENUMERATION_CLASS_PACKAGE_NAME;
 	
@@ -171,7 +175,7 @@ public class SepeTablesController {
 				list.add(obj);
 			}
 		}
-		setContrataTablesModel(new ListDataModel(list));
+		setContrataTablesModel(new SerializableListDataModel(list));
 	}
 	
 	private void initCertificadosTablesModel(){
@@ -183,7 +187,7 @@ public class SepeTablesController {
 				list.add(obj);
 			}
 		}
-		setCertificadosTablesModel(new ListDataModel(list));
+		setCertificadosTablesModel(new SerializableListDataModel(list));
 	}
 	
 	private void initContrataCodesModel(){
@@ -216,7 +220,7 @@ public class SepeTablesController {
 				}
 			}
 		}
-		setCodesModel(new ListDataModel(list));
+		setCodesModel(new SerializableListDataModel(list));
 	}
 	
 }

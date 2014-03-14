@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,6 +25,7 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveController;
 
 public class ContractLeaveControllerListener extends ControllerAdapter{
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;	
 	
 	@Override
 	public void beforeBeanCreated(ControllerEvent event)

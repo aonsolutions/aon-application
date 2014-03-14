@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -33,7 +34,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 @Table(name="contract")
 public class Contract extends ContractDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Set<ContractPayment> contractPayments = new HashSet<ContractPayment>();
 	private Set<ContractDeduction> contractDeductions = new HashSet<ContractDeduction>();

@@ -13,8 +13,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +25,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -42,6 +43,8 @@ import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 
 public class ContrataBatchController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private FileOutput fileOutput;
 	private boolean recorded;
@@ -325,7 +328,7 @@ public class ContrataBatchController extends BasicController {
 				selectedList.add(detail);
 			}
 	        listController.getCheckHandler().clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -337,7 +340,7 @@ public class ContrataBatchController extends BasicController {
 	        	}
 	        }
 	        clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 	        loadDetails();
 	        onSearchContracts(event);
 		}

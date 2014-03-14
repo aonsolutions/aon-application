@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
@@ -16,6 +17,9 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 // en el momento en el que eso cambie, la forma de obtener el contexto básico se debe 
 // externalizar y aplicar los cambios a ambos controladores.
 public class BonusConceptController extends AbstractConceptController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Throwable expressionException;
 
 	// -------------------------------------------------------------------------

@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -17,7 +18,7 @@ import com.esferalia.aon.entity.master.ContractAttachmentDB;
 @Table(name="contract_attach")
 public class ContractAttachment extends ContractAttachmentDB implements IAttachment, IScopable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Integer size;
 

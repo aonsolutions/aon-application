@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.event;
 
 import java.util.List;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,6 +17,8 @@ import com.esferalia.aon.payroll.AgreementLevelCategory;
 
 public class AgreementLevelVetoableBeanListener extends ManagerBeanVetoListenerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		AgreementLevel al = (AgreementLevel) evt.getTo();

@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.SystemDeductionDB;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -15,7 +16,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 @Heritable
 public class SystemDeduction extends SystemDeductionDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public String getFullDescription() {

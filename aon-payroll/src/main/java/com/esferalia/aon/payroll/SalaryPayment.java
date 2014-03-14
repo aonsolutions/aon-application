@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -30,7 +31,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 		IExpression {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	
 	@Override

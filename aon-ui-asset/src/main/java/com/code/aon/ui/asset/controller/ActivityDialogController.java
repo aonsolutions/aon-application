@@ -15,6 +15,7 @@ import static com.code.aon.ui.common.ICommonMessages.HOLDER;
 import static com.code.aon.ui.common.ICommonMessages.REMARK;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -52,7 +54,9 @@ import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.IMailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ActivityDialogController extends EmailParentController{
+public class ActivityDialogController extends EmailParentController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Asset asset;
 	private Date fromDate;

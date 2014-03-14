@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +43,8 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
 public class ContractInfoController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractInfoController.class);
 
@@ -243,7 +247,10 @@ public class ContractInfoController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class ContractField {
+	public static class ContractField implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private final String MESSAGE_PREFIX = "payroll_contract_document_";
 		private ContractInfo contractInfo;
 		private IContractFieldName fieldName;

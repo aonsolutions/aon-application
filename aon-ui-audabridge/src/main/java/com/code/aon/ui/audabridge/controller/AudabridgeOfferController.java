@@ -5,6 +5,7 @@ package com.code.aon.ui.audabridge.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 
 import javax.faces.context.FacesContext;
@@ -20,6 +21,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -42,7 +44,9 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class AudabridgeOfferController {
+public class AudabridgeOfferController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private AudabridgeParametersController paramsController;
 	private CalculationDataResponse calculationData;

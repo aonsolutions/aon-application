@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -10,9 +11,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -23,13 +24,16 @@ import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
 import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
 
 
-public class GeozoneIrpfController {
+public class GeozoneIrpfController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Integer ARABA_ID = 1;
 	private final static Integer BIZKAIA_ID = 48;
@@ -152,7 +156,7 @@ public class GeozoneIrpfController {
 					list.add(g);
 				}
 			}
-			setIrpfModel(new ListDataModel(list));
+			setIrpfModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("error on initializeIrpfModel");
 		}
@@ -186,7 +190,7 @@ public class GeozoneIrpfController {
 			d.getDescendants().add(descendants);
 		}
 		
-		setDescendantModel(new ListDataModel(list));
+		setDescendantModel(new SerializableListDataModel(list));
 	}
 	private void initializeHandicapModel() throws ManagerBeanException {
 		GeoIrpf irpf = getSelectedIrpf();
@@ -216,7 +220,7 @@ public class GeozoneIrpfController {
 			handicap.setPercent(g.getPercent());
 			h.getHandicap().add(handicap);
 		}
-		setHandicapModel(new ListDataModel(list));
+		setHandicapModel(new SerializableListDataModel(list));
 	}
 	
 	private Object getPeriodEndDate(Integer year) {

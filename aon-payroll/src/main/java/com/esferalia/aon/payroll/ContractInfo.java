@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.enumeration.IStringEnum;
 import com.esferalia.aon.entity.master.ContractInfoDB;
@@ -14,7 +15,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 @Table(name="contract_info")
 public class ContractInfo extends ContractInfoDB implements IExpression, IAuditable {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	@Transient

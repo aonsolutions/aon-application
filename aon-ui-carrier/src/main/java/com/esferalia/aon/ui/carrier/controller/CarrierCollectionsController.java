@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.carrier.controller;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,7 +19,9 @@ import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.carrier.enumeration.ShipmentStatus;
 
-public class CarrierCollectionsController {
+public class CarrierCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> shipmentPeriods;
 	private List<SelectItem> shipmentStatuses;

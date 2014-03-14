@@ -14,6 +14,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -31,6 +32,8 @@ import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 
 public class ContractAttachController extends AttachmentController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ArrayList<IAttachment> checks = new ArrayList<IAttachment>();
 	

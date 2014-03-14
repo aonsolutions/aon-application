@@ -8,12 +8,15 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.ui.payroll.utils.NumberValidation;
 
 public class ContractLeaveDetailController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public Boolean getValidCollegeNumber() {
 		return checkCollegeNumber((ContractLeaveDetail) this.getTo());

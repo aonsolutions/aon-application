@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.ContractPaymentDB;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -16,7 +17,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 @Table(name="contract_payment")
 public class ContractPayment extends ContractPaymentDB implements IContractPayment {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	@Transient

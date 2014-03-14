@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.EnterpriseActivityDB;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
@@ -17,7 +18,7 @@ import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 @Table(name="enterprise_activity")
 public class EnterpriseActivity extends EnterpriseActivityDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
 	

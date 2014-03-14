@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.sepe.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
@@ -11,6 +12,8 @@ import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2BatchSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Enterprise enterprise;
 	private FileStatus fileStatus;

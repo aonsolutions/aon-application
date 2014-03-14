@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.SalaryBonusDB;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.BonusType;
@@ -12,7 +13,7 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 @Table(name="salary_bonus")
 public class SalaryBonus extends SalaryBonusDB implements ISalaryItem<BonusType>{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	@Transient

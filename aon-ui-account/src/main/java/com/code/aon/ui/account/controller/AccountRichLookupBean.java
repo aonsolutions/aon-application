@@ -9,11 +9,14 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.ql.util.ExpressionException;
 
 public class AccountRichLookupBean extends RichLookupBean {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AccountRichLookupBean.class);	
 	

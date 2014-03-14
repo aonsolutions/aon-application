@@ -1,6 +1,7 @@
 package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.util.AonUtil;
 
-public class WebMapController implements IAuditConstants {
+public class WebMapController implements IAuditConstants, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

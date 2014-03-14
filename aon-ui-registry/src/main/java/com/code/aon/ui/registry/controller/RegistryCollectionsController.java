@@ -1,5 +1,6 @@
 package com.code.aon.ui.registry.controller;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -47,7 +49,9 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used to get Collections related with clasess in <code>com.code.aon.registry</code>.
  * 
  */
-public class RegistryCollectionsController {
+public class RegistryCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> addressTypes;
 	private List<SelectItem> streetTypes;

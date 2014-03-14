@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -38,7 +40,9 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T07;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
-public class AFIWriter {
+public class AFIWriter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final String AFI 				= "AFI";
 	private final String WINSUITE_VERSION 	= "71WSxxx";

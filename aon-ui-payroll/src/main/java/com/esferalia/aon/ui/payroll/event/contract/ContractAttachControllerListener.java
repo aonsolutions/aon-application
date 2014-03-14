@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.event.contract;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.event.AttachmentControllerListener;
@@ -17,6 +18,8 @@ import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 
 public class ContractAttachControllerListener extends AttachmentControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

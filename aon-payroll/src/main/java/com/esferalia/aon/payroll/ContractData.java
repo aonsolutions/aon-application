@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.ContractDataDB;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -12,7 +13,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 @Table(name="contract_data")
 public class ContractData extends ContractDataDB implements IExpression {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static final String COD_INT = "COD_INT";
 

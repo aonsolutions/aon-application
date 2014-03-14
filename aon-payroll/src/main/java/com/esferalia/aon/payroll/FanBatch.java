@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.FanBatchDB;
@@ -15,7 +16,7 @@ import com.esferalia.aon.entity.master.FanBatchDB;
 @Table(name="fan_batch")
 public class FanBatch extends FanBatchDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	public Integer getYear() {

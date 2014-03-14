@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.ContractEmbargoDB;
 import com.esferalia.aon.payroll.enumeration.EmbargableType;
 
@@ -16,7 +17,7 @@ import com.esferalia.aon.payroll.enumeration.EmbargableType;
 @Table(name="contract_embargo")
 public class ContractEmbargo extends ContractEmbargoDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String EXPRESSION_PATTERN = "{0}?((PENDIENTE>EMBARGABLE)?EMBARGABLE:PENDIENTE):0.00";
 	private static String SALARY = "NOMINA";

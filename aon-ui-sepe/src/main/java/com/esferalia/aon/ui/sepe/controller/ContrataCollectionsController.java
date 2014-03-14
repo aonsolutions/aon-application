@@ -1,8 +1,12 @@
 package com.esferalia.aon.ui.sepe.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.faces.model.SelectItem;
+
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.payroll.enumeration.contrata.*;
 
 /** 
@@ -12,8 +16,10 @@ import com.esferalia.aon.payroll.enumeration.contrata.*;
  * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
 */ 
 
-public class ContrataCollectionsController {
+public class ContrataCollectionsController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.

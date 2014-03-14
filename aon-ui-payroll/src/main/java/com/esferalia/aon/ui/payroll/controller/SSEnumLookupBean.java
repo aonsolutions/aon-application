@@ -1,10 +1,13 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
+
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.payroll.enumeration.ss.SSCodeTables;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
@@ -12,7 +15,9 @@ import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
 
-public class SSEnumLookupBean {
+public class SSEnumLookupBean implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String code;
 	private String description;

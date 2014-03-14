@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -56,7 +58,9 @@ import com.esferalia.aon.ui.sepe.utils.ContrataCommunicator;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
 
-public class ContrataController implements IContrataHandler, ISepeHandler{
+public class ContrataController implements IContrataHandler, ISepeHandler, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataController.class.getName());
 	

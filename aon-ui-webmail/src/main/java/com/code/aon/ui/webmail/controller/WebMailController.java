@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 import javax.faces.context.FacesContext;
@@ -10,6 +11,7 @@ import javax.mail.Quota;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonMessages;
@@ -19,7 +21,9 @@ import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.bean.AonServer;
 
-public class WebMailController implements IWebMailConstants {
+public class WebMailController implements IWebMailConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(WebMailController.class);
 	

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,6 +23,8 @@ import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 
 public class Certifica2BatchListCheckHandler extends BatchListCheckHandler {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public Certifica2BatchListCheckHandler(IController controller) {
 		super(controller);

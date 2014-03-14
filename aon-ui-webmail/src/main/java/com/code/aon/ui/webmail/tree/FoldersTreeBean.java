@@ -3,6 +3,7 @@ package com.code.aon.ui.webmail.tree;
 import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
 import static com.code.aon.webmail.bean.IMailConstants.OTHER_FOLDER_NAME;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.faces.FacesException;
@@ -16,6 +17,7 @@ import org.richfaces.model.TreeNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.FolderController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -25,7 +27,9 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
 
-public class FoldersTreeBean implements IWebMailConstants {
+public class FoldersTreeBean implements IWebMailConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FoldersTreeBean.class);
 	

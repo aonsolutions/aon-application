@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.entity.master.AgreementExtraDB;
@@ -22,7 +23,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContex
 @Heritable
 public class AgreementExtra extends AgreementExtraDB  {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Pattern AGREEMENT_DATE_PATTERN = 
 		Pattern.compile("(\\d+)/(\\d+)\\s*\\+?([-]?\\d+)?");

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import javax.faces.event.AbortProcessingException;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
@@ -31,7 +33,9 @@ import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
 import com.esferalia.aon.ui.payroll.file.IContractLoader;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
-public class ContractLoaderController {
+public class ContractLoaderController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractLoaderController.class.getName());
 

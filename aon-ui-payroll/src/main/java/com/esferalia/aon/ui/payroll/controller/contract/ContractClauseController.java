@@ -3,13 +3,14 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
@@ -17,6 +18,8 @@ import com.esferalia.aon.payroll.ContractClause;
 
 
 public class ContractClauseController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean longDescription;
 
@@ -76,7 +79,7 @@ public class ContractClauseController extends LinesController {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), false);
 		criteria.addNullExpression("ContractClause.contract");
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_LINE));
-		setAvailableClausesModel(new ListDataModel(bean.getList(criteria)));
+		setAvailableClausesModel(new SerializableListDataModel(bean.getList(criteria)));
 	}
 
 	public Integer calculateNextLine(boolean general) throws ManagerBeanException {

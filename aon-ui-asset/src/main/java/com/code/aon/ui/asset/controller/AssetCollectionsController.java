@@ -1,5 +1,6 @@
 package com.code.aon.ui.asset.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -10,6 +11,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.asset.Feature;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.asset.enumeration.ViewerType;
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,7 +19,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AssetCollectionsController {
+public class AssetCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> activityStatuses;
 	private List<SelectItem> viewerTypes;

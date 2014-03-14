@@ -1,5 +1,6 @@
 package com.code.aon.ui.geozone.controller;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -20,7 +22,9 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used to get Collections related with clasess in <code>com.code.aon.geozone</code>.
  * 
  */
-public class GeozoneCollectionsController {
+public class GeozoneCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The geoZones list. */
 	private List<SelectItem> geoZones;

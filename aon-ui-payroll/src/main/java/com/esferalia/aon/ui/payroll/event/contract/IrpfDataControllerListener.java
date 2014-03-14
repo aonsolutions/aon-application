@@ -10,6 +10,7 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -25,6 +26,8 @@ import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
 
 public class IrpfDataControllerListener extends ControllerAdapter{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IrpfDataControllerListener.class.getName());
 	

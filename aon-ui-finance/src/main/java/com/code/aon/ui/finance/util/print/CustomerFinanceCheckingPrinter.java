@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.util.print;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -17,7 +19,9 @@ import com.code.aon.finance.print.CheckingTo;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
-public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFinanceConstants {
+public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFinanceConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	@SuppressWarnings("unchecked")

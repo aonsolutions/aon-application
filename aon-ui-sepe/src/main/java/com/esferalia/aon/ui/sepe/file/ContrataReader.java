@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
@@ -29,7 +28,6 @@ import com.code.aon.person.Person;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.payroll.CNO;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.contrata.TBONVFOR;
 import com.esferalia.aon.payroll.enumeration.contrata.TEIINTER;
@@ -104,7 +102,6 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
-import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
 public class ContrataReader {

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -16,12 +17,16 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.xml.sax.SAXException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
-public class AccountImporter {
+public class AccountImporter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String RULES_FILE = "account_import_digester.xml";
 	private static Digester DIGESTER;
 	private AonFile aonFile;

@@ -24,13 +24,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -44,6 +44,7 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -88,6 +89,8 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryItems;
 
 public class SalaryDraftController extends BasicController implements ContractSalaryCalculator.IListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftController.class.getName());
 	
@@ -698,7 +701,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			for (IContractPayment payment: payments) {
 				list.add(payment);
 			}
-			paymentsModel = new ListDataModel(list);
+			paymentsModel = new SerializableListDataModel(list);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible inicializar lar percepciones";
 			AonUtil.addErrorMessage(msg);

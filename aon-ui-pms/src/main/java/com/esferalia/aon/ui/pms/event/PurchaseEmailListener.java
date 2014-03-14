@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.event;
 
+import java.io.Serializable;
+
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +21,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 
 
-public class PurchaseEmailListener implements IEmailControllerListener {
+public class PurchaseEmailListener implements IEmailControllerListener, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLReader;
@@ -166,7 +167,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 
 	public static class UnExpectedValue extends Error{
 		
-		private static final long serialVersionUID = -3256215858427420045L;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		public UnExpectedValue(String message) {
 			super(message);

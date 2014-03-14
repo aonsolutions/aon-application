@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_CUSTOMER_REQUIRED_ERROR;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -38,7 +40,9 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class RectifierInvoiceController implements IFinanceConstants {
+public class RectifierInvoiceController implements IFinanceConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showRectificationWindow;
 	private String rectificationSeries;

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -15,6 +16,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Contract;
 
 public class PayrollEmailUtil extends CompanyEmailUtil {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void initMessageController( MessageController messageController, Contract contract, List<IAttachment> attachList, boolean facturae ) throws ManagerBeanException, IOException{
 		String[] emails = getEmails(contract.getWorkPlace().getEnterprise().getRegistry());

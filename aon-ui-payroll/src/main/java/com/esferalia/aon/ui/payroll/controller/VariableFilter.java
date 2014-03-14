@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -11,11 +12,14 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 
 
-public class VariableFilter {
+public class VariableFilter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean searchCurrentVariables;
 

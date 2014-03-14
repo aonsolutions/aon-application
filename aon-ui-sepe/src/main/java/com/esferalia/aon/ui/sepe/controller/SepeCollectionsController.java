@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.sepe.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -9,13 +10,16 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 
 
-public class SepeCollectionsController {
+public class SepeCollectionsController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private List<SelectItem> contrataFileTypeList;
 	private List<SelectItem> sepeBatchAttachTypes;
 	private List<SelectItem> suspensionCauses;

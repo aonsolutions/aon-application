@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -32,7 +31,6 @@ import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSGENERALESPRORROGATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSUSOLIBREEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.ObjectFactory;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGATIPOTYPE;
-import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContrataProrrogasWriter implements IContrataWriter {
 	

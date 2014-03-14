@@ -7,6 +7,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class SystemDataController extends BasicController implements IVariableFilter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private VariableFilter variableFilter;
 	

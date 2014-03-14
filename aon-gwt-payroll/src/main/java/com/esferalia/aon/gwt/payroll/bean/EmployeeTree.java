@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.payroll.bean;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ui.company.controller.EnterpriseController;
@@ -13,8 +15,10 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
-public class EmployeeTree {
+public class EmployeeTree implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static enum Selection {
 		EMPLOYEE, ACTIVITY, WORKPLACE, ENTERPRISE, PAYMENT_CONCEPTS, DEDUCTION_CONCEPTS, BONUS_CONCEPTS
 	}

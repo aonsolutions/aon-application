@@ -6,13 +6,14 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.EnterpriseCCCDB;
 
 @Entity
 @Table(name="enterprise_ccc")
 public class EnterpriseCCC extends EnterpriseCCCDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	public String getFullCcc(){

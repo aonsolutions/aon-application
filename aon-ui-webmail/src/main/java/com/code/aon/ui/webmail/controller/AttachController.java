@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.util.ExpressionException;
@@ -35,7 +37,9 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonAttachment;
 import com.code.aon.webmail.bean.AonMessage;
 
-public class AttachController {
+public class AttachController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String ATTACHMENTS_FILE_NAME = "attachments";
 

@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -12,7 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 @DiscriminatorValue(value="0")
 public class LeaveBatchAttachment extends PayrollBatchAttachment {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public LeaveBatch getLeaveBatch() {

@@ -1,9 +1,12 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.ui.form.LinesController;
 
 
 public class BatchDetailController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private BatchListCheckHandler checkHandler;
 	

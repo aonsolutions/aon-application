@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.common.AonVersion;
 import com.esferalia.aon.entity.master.SalaryCostDB;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -12,7 +13,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 @Table(name="salary_cost")
 public class SalaryCost extends SalaryCostDB implements ISalaryItem<DeductionType>{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	@Transient
