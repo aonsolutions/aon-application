@@ -7,6 +7,10 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
+import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractBonus extends SQLCollection<IContractBonus> implements IContractBonus{
@@ -29,6 +33,12 @@ public class SQLContractBonus extends SQLCollection<IContractBonus> implements I
 	public String getName() {
 		return null;
 	}
+
+	@Override
+	public double getAmount() {
+		throw new UnsupportedOperationException();
+	}
+
 
 	@Override
 	public ExpressionScope getScope() {
@@ -64,7 +74,11 @@ public class SQLContractBonus extends SQLCollection<IContractBonus> implements I
 		return super.getString(deductionLabel, SQLConstants.BONUS_CONCEPT +"."+ conceptColumn );
 	}
 	
-
+	@Override
+	public BonusType getType() {
+		Integer ordinal = getInt(BonusConceptColumns.TYPE);
+		return ordinal != null ? BonusType.values()[ordinal] : null ;
+	}
 	
 	
 }

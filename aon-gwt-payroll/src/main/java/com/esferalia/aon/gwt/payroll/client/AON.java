@@ -87,6 +87,8 @@ public class AON {
 	public static final String AON_ICON_EXCEL = "aon-icon-excel";
 	public static final String AON_ICON_AGREEMENT = "aon-icon-agreement";
 	public static final String AON_ICON_PAYMENT = "aon-icon-payment";
+	public static final String AON_ICON_CHARGE = "aon-icon-charge";
+	public static final String AON_ICON_PAYNNENT = "aon-icon-paynnent";
 	public static final String AON_ICON_DEDUCTION = "aon-icon-deduction";
 	public static final String AON_ICON_BONUS = "aon-icon-segsocial";
 	public static final String AON_ICON_BONUS_SMALL = "aon-icon-segsocial-small";

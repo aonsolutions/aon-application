@@ -1,6 +1,9 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.YEAR_DAYS;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,12 +14,13 @@ import java.util.Date;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.OrderByList;
+import com.esferalia.aon.payroll.calculator.AonConstants;
+import com.esferalia.aon.payroll.calculator.AonFunctions;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.DeferredTimedVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -121,12 +125,11 @@ public class SQLAgreementContextFactory implements
 		}
 	};
 
-
 	public ExpressionContext getSystemExpressionContext() {
 		return systemExpressionContext;
 	}
-	
-	public ExpressionContext getAgreementDataContext(int agreementId){
+
+	public ExpressionContext getAgreementDataContext(int agreementId) {
 		return agreementDataCache.get(agreementId);
 	}
 
@@ -165,7 +168,6 @@ public class SQLAgreementContextFactory implements
 		}
 	}
 
-
 	private void initAgreementStmt(Connection connection, Date startDate,
 			Date endDate, OrderByList orderByList) throws SQLException {
 		dataStmts = new PreparedStatement[2];
@@ -191,6 +193,9 @@ public class SQLAgreementContextFactory implements
 	private void initSystemCtx(Connection connection, Date startDate,
 			Date endDate) throws SQLException, ExpressionException {
 		this.systemExpressionContext = new ExpressionContext();
+
+		AonConstants.load(systemExpressionContext, startDate, endDate);
+		AonFunctions.load(systemExpressionContext, startDate, endDate);
 
 		Long yearDays = getYearDays(startDate, endDate);
 		systemExpressionContext.addVariable(YEAR_DAYS, yearDays, startDate,
@@ -265,7 +270,9 @@ public class SQLAgreementContextFactory implements
 				try {
 					expressionCtx.addExpression(expr, start, end);
 				} catch (Exception e) {
-					// TODO: ¿ Mejor reportarlas ?
+					DeferredExpressionVariable<Object> variable = new DeferredExpressionVariable<Object>(
+							start, end, expr);
+					expressionCtx.addVariable(expr.getName(), variable);
 				}
 			}
 		} finally {

@@ -220,7 +220,6 @@ public class SQLAgreementSalaryCalculatorContext extends
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		while ( ctx.next() ) {
 			ISalary salary = calculator.calculate(ctx);
-			System.out.println(salary.getTotalPayment());
 		}
 		ctx.close();
 	}

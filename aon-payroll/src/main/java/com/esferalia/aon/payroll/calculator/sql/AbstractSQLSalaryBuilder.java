@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.ISalaryBuilder;
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -217,17 +218,17 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 		salary.setTotalEnterprise(totalEnterprise);
 	}
 	
-	
 	@Override
-	public void addBonus(String concept, Double amount, String description) {
+	public void addBonus(Double amount, String description, IBonus bonus,
+			Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryBonus salaryBonus = 
-			new AbstractSQL.SalaryBonus();
-		
-		salaryBonus.setAmount(amount);
-		salaryBonus.setBonusConcept(concept);
-		salaryBonus.setDescription(description);
-		
-		salaryBonuses.add(salaryBonus);
+				new AbstractSQL.SalaryBonus();
+			
+			salaryBonus.setAmount(amount);
+			salaryBonus.setDescription(description);
+			salaryBonus.setBonusConcept(bonus.getName());
+			
+			salaryBonuses.add(salaryBonus);
 	}
 	
 	@Override

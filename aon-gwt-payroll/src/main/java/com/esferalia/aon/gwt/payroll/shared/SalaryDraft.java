@@ -114,6 +114,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Payment> payments;
 	private List<Deduction> deductions;
 
+	private List<Bonus> bonuses;
 	private List<Deduction> costs;
 
 	private List<Variable> draftContext;
@@ -126,6 +127,7 @@ public class SalaryDraft extends SalaryPreview {
 		payments = new LinkedList<Payment>();
 		deductions = new LinkedList<Deduction>();
 		costs = new LinkedList<Deduction>();
+		bonuses = new LinkedList<Bonus>();
 
 		draftContext = new LinkedList<Variable>();
 		draftPayments = new LinkedList<Payment>();
@@ -343,6 +345,18 @@ public class SalaryDraft extends SalaryPreview {
 	
 	public void clearCosts() {
 		costs.clear();
+	}
+
+	public void addBonus(Bonus bonus) {
+		bonuses.add(bonus);
+	}
+	
+	public List<Bonus> getBonuses() {
+		return bonuses;
+	}
+	
+	public void clearBonuses() {
+		bonuses.clear();
 	}
 
 	public String getEmployeeSS() {

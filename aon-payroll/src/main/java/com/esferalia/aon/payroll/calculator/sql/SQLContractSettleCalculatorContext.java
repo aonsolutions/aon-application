@@ -49,4 +49,7 @@ public class SQLContractSettleCalculatorContext
 		return SalaryType.SETTLE;
 	}
 	
+	
+	// ------------------------------------------------------------------------
+	
 }
