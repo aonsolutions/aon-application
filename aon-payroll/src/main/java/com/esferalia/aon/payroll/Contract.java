@@ -128,26 +128,27 @@ public class Contract extends ContractDB {
 
 	@Transient 
 	public Date getAdvanceNoticeDate() throws ManagerBeanException{
-		IManagerBean bean = BeanManager
-				.getManagerBean(ContractData.class);
-		Criteria c = new Criteria();
-		c.addEqualExpression(
-				bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID),
-				this.getId());
-		c.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.ADVANCE_NOTICE_DAYS.getName());
-		List<?> list = bean.getList(c);
-		if ( list == null || list.size() == 0)
-			return null;
-		try {
-			String days = ((ContractData) list.get(0)).getExpression();
-			if(StringUtils.isNotBlank(days)){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(this.getEndDate());
-				cal.add(Calendar.DAY_OF_MONTH, -Integer.parseInt(days));
-				return cal.getTime();
-			}
-		} catch(Exception e){
-		}
+		// TODO : not valid at now (advance notice days are needed)
+//		IManagerBean bean = BeanManager
+//				.getManagerBean(ContractData.class);
+//		Criteria c = new Criteria();
+//		c.addEqualExpression(
+//				bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID),
+//				this.getId());
+//		c.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.ADVANCE_NOTICE_DAYS.getName());
+//		List<?> list = bean.getList(c);
+//		if ( list == null || list.size() == 0)
+//			return null;
+//		try {
+//			String days = ((ContractData) list.get(0)).getExpression();
+//			if(StringUtils.isNotBlank(days)){
+//				Calendar cal = Calendar.getInstance();
+//				cal.setTime(this.getEndDate());
+//				cal.add(Calendar.DAY_OF_MONTH, -Integer.parseInt(days));
+//				return cal.getTime();
+//			}
+//		} catch(Exception e){
+//		}
 		return null;
 	}
 
