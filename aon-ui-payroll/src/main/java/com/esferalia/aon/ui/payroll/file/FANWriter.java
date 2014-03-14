@@ -708,7 +708,15 @@ public class FANWriter {
 	private void createEDLCd22Segment(SalaryBonus bonus, DAT dat) {
 		if(bonus.getSalary().getContract().getRegimeType()!=SSRegimeType.ARTIST){
 			EDL edl = dat.getEdlSegment("CD22");
-			createEDLRecord(edl, "CD", 22, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+			Date bonusStart = bonus.getSalary().getStartDate();
+			Date bonusEnd = bonus.getSalary().getEndDate();
+			int bonusDays = 30;
+			if(bonusStart.after(getStartDate()) || (bonusEnd!=null && bonusEnd.before(getEndDate())) ){
+				bonusStart = bonusStart.before(getStartDate())?getStartDate():bonusStart;
+				bonusEnd = (bonusEnd!=null && bonusEnd.after(getEndDate()))?getEndDate():bonusEnd;
+				bonusDays = differenceBetweenDates(bonusStart, bonusEnd);
+			}
+			createEDLRecord(edl, "CD", 22, bonusDays,new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
 		}
 	}
 	private void createEDLCd21Segment(Salary salary, DAT dat) {
@@ -1114,8 +1122,9 @@ public class FANWriter {
 	}
 	private String getVacationIndicator(Contract contract) {
 		// TODO 
-		String v = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
-		return v!=null && !v.isEmpty()?"V":WHITESPACE_1;
+//		String v = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
+//		return v!=null && !v.isEmpty()?"V":WHITESPACE_1;
+		return null;
 	}
 	
 	/**
@@ -1315,8 +1324,11 @@ public class FANWriter {
 	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount) {
 		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
 	}
+	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount) {
+		createEDLRecord(edl, type, key, element, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
+	}
 	private void createEDLRecord(EDL edl, String type, Integer key, Integer amount, String sign) {
-		createEDLRecord(edl, type, key, 0, amount, sign, 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
+		createEDLRecord(edl, type, key, 0, amount, " ", 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
 	}
 	private void createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount, String sign) {
 		createEDLRecord(edl, type, key, element, amount, sign, 0, autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), autoComplete("0", 8, "0", true), " ");
