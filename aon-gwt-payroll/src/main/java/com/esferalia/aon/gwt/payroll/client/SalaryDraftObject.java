@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -308,6 +309,10 @@ public class SalaryDraftObject implements IContextProvider{
 
 	public List<Deduction> getCosts() {
 		return salaryDraft.getCosts();
+	}
+
+	public List<Bonus> getBonuses() {
+		return salaryDraft.getBonuses();
 	}
 
 	public List<Payment> getPayments() {

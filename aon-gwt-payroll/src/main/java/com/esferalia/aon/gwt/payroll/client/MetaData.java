@@ -332,7 +332,7 @@ public class MetaData extends ResizeComposite {
 		MenuBar menuBar = new MenuBar(true);
 
 		MenuItem newPaymentConceptMenuItem = new MenuItem(
-				Resources.TEMPLATES.menuItem(AON.AON_ICON_PAYMENT, "Devengo"),
+				Resources.TEMPLATES.menuItem(AON.AON_ICON_PAYNNENT, "Devengo"),
 				new Command() {
 					@Override
 					public void execute() {

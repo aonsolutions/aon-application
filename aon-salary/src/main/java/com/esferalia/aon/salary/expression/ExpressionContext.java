@@ -1,5 +1,9 @@
 package com.esferalia.aon.salary.expression;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Collection;
@@ -27,18 +31,20 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 public class ExpressionContext {
 
+	public static class UnknownUndefVarException extends
+			UndefinedVariablesException {
+	}
+
 	public abstract static class MacroException extends ExpressionException {
 		public abstract String doMacro(String expr);
 	}
 
 	public abstract static class DeferredException extends ExpressionException {
 
-		public abstract void eval(ExpressionContext context) throws ExpressionException;
+		public abstract void eval(ExpressionContext context)
+				throws ExpressionException;
 
 	}
-
-	public static final String REMOVE_VARIABLE = "REMOVE_VARIABLE()";
-	private static final String REMOVE_VARIABLE_STUB = "REMOVE_VARIABLE";
 
 	private static final Pattern VARIABLE_PATTERN = Pattern
 			.compile("[A-Za-z_][A-Za-z0-9_]*");
@@ -49,8 +55,29 @@ public class ExpressionContext {
 		}
 	};
 
+	static enum VariableName {
+		THIS;
+	}
+
+	private static enum MethodName {
+		GET_VARIABLE, REMOVE_VARIABLE;
+	}
+
+	@Target(value = ElementType.METHOD)
+	@Retention(value = RetentionPolicy.RUNTIME)
+	private static @interface ContextMethod {
+		MethodName name();
+	}
+
+	@ContextMethod(name = MethodName.REMOVE_VARIABLE)
 	public static void removeVariable() throws RemoveVariableException {
 		throw new RemoveVariableException();
+	}
+
+	@ContextMethod(name = MethodName.GET_VARIABLE)
+	public static Object getVariable(ExpressionContext ctx, String variable,
+			Date date) throws RemoveVariableException {
+		return ctx.variables.get(variable, new Period(date, date));
 	}
 
 	private static class RemoveVariableException extends ExpressionException {
@@ -247,7 +274,7 @@ public class ExpressionContext {
 	}
 
 	private static String getUndefinedProperty(PropertyAccessException e,
-			PeriodMap bindings) {
+			PeriodMap bindings) throws UnknownUndefVarException {
 
 		String property = getUndefinedProperty(e);
 		if (property != null)
@@ -256,7 +283,9 @@ public class ExpressionContext {
 		char expr[] = e.getExpr();
 		int end = e.getCursor();
 		do {
-			while (end-- >= 0)
+			if (end < 0)
+				throw new UnknownUndefVarException();
+			while (end-- > 0)
 				if (Character.isJavaIdentifierPart(expr[end]))
 					break;
 			int start = end;
@@ -269,9 +298,7 @@ public class ExpressionContext {
 			int offset = start + 1;
 			int len = end - offset + 1;
 			property = new String(expr, offset, len);
-			end = start ;
-			if ( end < 0  )
-				break;
+			end = start;
 		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
 
 		return property;
@@ -365,9 +392,10 @@ public class ExpressionContext {
 		}
 	}
 
-	public void addLazyExpression(IExpression expression,
-			Date start, Date end) throws ExpressionException {
-		addVariable(expression.getName(), new LazyExpressionVariable(this, expression, start, end));
+	public void addLazyExpression(IExpression expression, Date start, Date end)
+			throws ExpressionException {
+		addVariable(expression.getName(), new LazyExpressionVariable(this,
+				expression, start, end));
 	}
 
 	public List<ITimedResult<Object>> eval(String script, Date start, Date end)
@@ -390,6 +418,8 @@ public class ExpressionContext {
 		} catch (DeferredException e) {
 			e.eval(this);
 			return eval(script, start, end, toType);
+		} catch (UnknownUndefVarException e) {
+			return evalUnknowUndefVariable(script, inputs, start, end, toType);
 		}
 	}
 
@@ -469,24 +499,47 @@ public class ExpressionContext {
 		return values;
 	}
 
-	private void initImplicitVariables() {
-		try {
-			if (!isDef(REMOVE_VARIABLE_STUB)) {
+	private <T> List<ITimedResult<T>> evalUnknowUndefVariable(String script,
+			Collection<String> inputs, Date start, Date end, Class<T> toType)
+			throws ExpressionException {
 
-				Method removeVariable = ExpressionContext.class
-						.getDeclaredMethod("removeVariable");
-				MethodStub removeVariableStub = new MethodStub(removeVariable);
-
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTimeInMillis(0); // EPOCH
-				Date startDate = calendar.getTime();
-
-				addVariable(REMOVE_VARIABLE_STUB, removeVariableStub,
-						startDate, null);
+		Set<String> vars = new HashSet<String>();
+		for (String input : inputs) {
+			String regex = String.format("%s\\((.+)\\)", input);
+			Matcher matcher = Pattern.compile(regex).matcher(script);
+			
+			if (!matcher.find()) {
+				vars.add(input);
+				continue;
 			}
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			String repl = String.format("%s(%s, '%s', $1)",
+					MethodName.GET_VARIABLE, VariableName.THIS, input);
+			StringBuffer sb = new StringBuffer();
+			do {
+				matcher.appendReplacement(sb, repl);
+			} while (matcher.find());
+			matcher.appendTail(sb);
+
+			script = sb.toString();
+		}
+
+		List<PeriodMap> bindingsList = variables.getBindings(vars, start, end);
+
+		return eval(script, bindingsList, toType);
+
+	}
+
+	private void initImplicitVariables() {
+
+		Date epoch = new Date(0); // January 1, 1970, 00:00:00
+
+		addVariable(VariableName.THIS, this, epoch, null);
+
+		for (Method method : ExpressionContext.class.getDeclaredMethods()) {
+			ContextMethod implicit = method.getAnnotation(ContextMethod.class);
+			if (implicit != null)
+				addVariable(implicit.name(), method, epoch, null);
 		}
 	}
 

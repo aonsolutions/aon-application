@@ -3,6 +3,7 @@ package com.esferalia.aon.salary;
 import java.util.Date;
 import java.util.Map;
 
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -176,10 +177,10 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addBonus(String concept, Double amount, String description) {
-
+	public void addBonus(Double amount, String description, IBonus bonus,
+			Map<String, ITimedVariable<?>> context) {
 	}
-
+	
 	@Override
 	public void addEmbargo(Integer embargo, Double amount, String description) {
 

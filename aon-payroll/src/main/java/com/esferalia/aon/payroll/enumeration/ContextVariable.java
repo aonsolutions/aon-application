@@ -1,7 +1,13 @@
 package com.esferalia.aon.payroll.enumeration;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.IResourceable;
 
@@ -12,6 +18,8 @@ public enum ContextVariable implements IResourceable{
 	END("FECHA_FINAL", VariableType.DATE),
 	SALARY_START("INICIO_NOMINA", VariableType.DATE),
 	SALARY_END("FIN_NOMINA", VariableType.DATE),
+	CONTRACT_START("INICIO_CONTRATO", VariableType.DATE),
+	CONTRACT_END("FIN_CONTRATO", VariableType.DATE),
 	
 	// Datos de la persona
 	AGE("EDAD", VariableType.INTEGER, false),
@@ -23,7 +31,7 @@ public enum ContextVariable implements IResourceable{
 	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER, false),
 	MONTH_DAYS("DIAS_MES", VariableType.INTEGER, false),
 	HOLIDAYS("DIAS_VACACIONES", VariableType.INTEGER, false),
-	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
+	//NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
 	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false),
 	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
 	CONTRACT_DAYS("DIAS_CANONTRATO", VariableType.INTEGER, false),
@@ -36,13 +44,18 @@ public enum ContextVariable implements IResourceable{
 	LEAVE_DAYS("DIAS_IT", VariableType.INTEGER, false),
 	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER, false),
 	SPECIAL_DAYS("DIAS_ESPECIALES", VariableType.INTEGER, false),
+	PATERNITY_DAYS("DIAS_PATERNIDAD", VariableType.INTEGER, false),
 	MATERNITY_DAYS("DIAS_MATERNIDAD", VariableType.INTEGER, false),
 	COMMON_DISEASE_DAYS("DIAS_ENFERMEDAD_COMUN", VariableType.INTEGER, false),
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER, false),
 	PAYMENTS("NUM_PAGAS", VariableType.INTEGER, false),
 
-	ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
+	//ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
+	//ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
+	
 	COMPENSATION_DAYS("DIAS_INDEMNIZACION", VariableType.INTEGER, false),
+	COMPENSATION_CAUSE("CAUSA_INDEMNIZACION", VariableType.INTEGER, false),
+	WORKED_YEARS("AÑOS_TRABAJADOS", VariableType.INTEGER, false),
 
 	SALARY_MONTHS("MESES_NOMINA", VariableType.INTEGER, false),
 	PAY_MONTHS("MESES_PAGA", VariableType.INTEGER, false),
@@ -164,6 +177,8 @@ public enum ContextVariable implements IResourceable{
 	DAYS("DIAS", VariableType.INTEGER ),
 
 	// AON's
+	MIN("MIN", VariableType.UNKNOWN ),
+	MAX("MAX", VariableType.UNKNOWN ),
 	YEAR("AÑO", VariableType.UNKNOWN ),
 	TWO("BIENIO", VariableType.UNKNOWN ),
 	THREE("TRIENIO", VariableType.UNKNOWN ),
@@ -180,8 +195,14 @@ public enum ContextVariable implements IResourceable{
 	PROFESSION("PROFESION", VariableType.STRING),
 	ENTERPRISE_SITE_DATE("VISIONADOE", VariableType.DATE),
 	
-	PAYMENT("_P", VariableType.DOUBLE)
+	PAYMENT("_P", VariableType.DOUBLE),
 	
+	NULL("NADA", VariableType.UNKNOWN),
+	UNFAIR("IMPROCEDENTE", VariableType.UNKNOWN),
+	OBJECTIVE("PROCEDENTE", VariableType.UNKNOWN),
+	CONTRACT_COMPLETE("FIN", VariableType.UNKNOWN),
+
+
 	;
 	
 	public static final String ALL = "_P";
@@ -208,9 +229,15 @@ public enum ContextVariable implements IResourceable{
 	public static final String BASE_SALARY = "SALARIO_BASE";
 	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
 	
+	
+	public static final  DateFormat DATE_FORMAT =  new SimpleDateFormat("dd/MM/yyyy");
+	
 	private final String name;
 	private VariableType type;
 	private final boolean internal;
+	
+	
+	
 	
 	private ContextVariable(String name, VariableType type){
 		this(name, type, true);
@@ -269,6 +296,10 @@ public enum ContextVariable implements IResourceable{
     		}
     	}
     	return null;
+    }
+    
+    public static Date parse(String str) throws ParseException {
+    	return  StringUtils.isBlank(str) ? null : DATE_FORMAT.parse(str);
     }
 	
 

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
@@ -38,7 +39,9 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -354,11 +357,22 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	@Override
-	public void addBonus(String concept, Double amount, String description) {
-		// TODO Auto-generated method stub
+	public void addBonus(Double amount, String description, IBonus bonus,
+			Map<String, ITimedVariable<?>> context) {
+		addContext(context);
 
+		Bonus myBonus = new Bonus();
+		myBonus.setAmount(amount);
+		myBonus.setName(bonus.getName());
+		myBonus.setDescription(description);
+		myBonus.setExpression(bonus.getExpression());
+		myBonus.setDescription(bonus.getDescription());
+		myBonus.setType(getBonusType(bonus.getType()));
+
+		salaryDraft.addBonus(myBonus);
+		
 	}
 
 	@Override
@@ -700,6 +714,10 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	private Short getMonth(Month month) {
 		return month == null ? null : (short) month.getValue();
+	}
+
+	private Bonus.Type getBonusType(BonusType type) {
+		return type == null ? null : Bonus.Type.values()[type.ordinal()];
 	}
 
 	private Deduction.Type getDeductionType(DeductionType type) {
