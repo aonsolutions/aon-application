@@ -552,7 +552,7 @@ public class CertificadosWriter {
 		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
 			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
-			String noHolidays = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get(ContextVariable.NO_HOLIDAYS.getName());
+			String noHolidays = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get(ContextVariable.HOLIDAYS.getName());
 			for(ISalary settle: settleList){
 				if(settle!=null && noHolidays!=null && noHolidays!="0"){
 					o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
