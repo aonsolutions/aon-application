@@ -31,7 +31,7 @@ public enum ContextVariable implements IResourceable{
 	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER, false),
 	MONTH_DAYS("DIAS_MES", VariableType.INTEGER, false),
 	HOLIDAYS("DIAS_VACACIONES", VariableType.INTEGER, false),
-	//NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
+	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
 	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false),
 	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
 	CONTRACT_DAYS("DIAS_CANONTRATO", VariableType.INTEGER, false),
