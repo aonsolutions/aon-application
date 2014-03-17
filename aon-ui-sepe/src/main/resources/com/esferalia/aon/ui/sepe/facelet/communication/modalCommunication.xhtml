@@ -8,9 +8,9 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showContrataCommunicationWindow">
+	<aon:panelGroup id="showContrataCommunicationWindow-#{controller.contrataModelName}">
 		<c:if test="#{controller.showCommunicationWindow}">
-			<rich:modalPanel id="contrataCommunicationModalPanel" minHeight="500"
+			<rich:modalPanel id="contrataCommunicationModalPanel-#{controller.contrataModelName}" minHeight="500"
 				minWidth="800" rendered="#{controller.showCommunicationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -23,7 +23,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showContrataCommunicationWindow" immediate="true">
+							reRender="showContrataCommunicationWindow-#{controller.contrataModelName}" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{controller.showCommunicationWindow}"
@@ -31,21 +31,26 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="sepeContrataCommunicationForm">
+				<aon:form id="sepeContrataCommunicationForm-#{controller.contrataModelName}">
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 
-								<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalToolbar.xhtml" />
-								
-								<aon:div style="width:99%">
-									
-									<aon:div rendered="#{controller.communicationIdReceived or controller.communicationResponseReceived}">
-										<aon:outputText escape="#{false}" 
-											value="#{controller.communicationLogContent}" />
+								<c:if test="#{contractContrata.communicationAvailable}">
+									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalToolbar.xhtml" />
+									<aon:div style="width:99%">
+										<aon:div rendered="#{controller.communicationIdReceived or controller.communicationResponseReceived}">
+											<aon:outputText escape="#{false}" 
+												value="#{controller.communicationLogContent}" />
+										</aon:div>
 									</aon:div>
-									
-								</aon:div>
+								</c:if>
+								
+								<c:if test="#{!contractContrata.communicationAvailable}">
+									<aon:outputText style="color:red;padding-left:18px;" styleClass="aon-icon-wrong"
+										value="Tipo de contrato sin implementación para comunicaciones con Contrat@." />
+								</c:if>
+								
 							</aon:div>
 						</aon:div>
 					</aon:div>

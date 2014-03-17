@@ -52,13 +52,18 @@ import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO980TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO990TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.ENVIOTYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.FICHEROPRORROGAS;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.RESPUESTAPRORROGATYPE;
 
 public class ContrataResponseReader {
 	
 	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
+	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
 	
 	
 	public FICHEROCONTRATOS ficheroContratos;
+	public FICHEROPRORROGAS ficheroProrrogas;
 	
 	public FICHEROCONTRATOS getFicheroContratos() {
 		return ficheroContratos;
@@ -68,8 +73,15 @@ public class ContrataResponseReader {
 		this.ficheroContratos = ficheroContratos;
 	}
 
-	public void readFile(InputStream input) throws IOException, JAXBException, SAXException, ParserConfigurationException{
-		
+	public FICHEROPRORROGAS getFicheroProrrogas() {
+		return ficheroProrrogas;
+	}
+
+	public void setFicheroProrrogas(FICHEROPRORROGAS ficheroProrrogas) {
+		this.ficheroProrrogas = ficheroProrrogas;
+	}
+
+	public void readContratoFile(InputStream input) throws IOException, JAXBException, SAXException, ParserConfigurationException{
 		try {
 			input.reset();
 				
@@ -83,6 +95,25 @@ public class ContrataResponseReader {
 			
 			ficheroContratos = (FICHEROCONTRATOS) unmarshaller.unmarshal(source);
 				
+		} finally {
+			input.close();
+		}
+	}
+
+	public void readProrrogaFile(InputStream input) throws IOException, JAXBException, SAXException, ParserConfigurationException{
+		try {
+			input.reset();
+			
+			JAXBContext jc = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			XMLReader reader = factory.newSAXParser().getXMLReader();
+			XMLFilterImpl xmlFilter = new XMLNamespaceFilter(reader);
+			reader.setContentHandler(unmarshaller.getUnmarshallerHandler());
+			SAXSource source = new SAXSource(xmlFilter, new InputSource(input));
+			
+			ficheroProrrogas = (FICHEROPRORROGAS) unmarshaller.unmarshal(source);
+			
 		} finally {
 			input.close();
 		}
@@ -217,6 +248,14 @@ public class ContrataResponseReader {
 		}
 		return null;
 	}
+	
+	public RESPUESTAPRORROGATYPE getRepuestaProrroga(Object envioType){
+		if(envioType instanceof ENVIOTYPE){
+			return ((ENVIOTYPE) envioType).getRESPUESTAPRORROGA();
+		}
+		return null;
+	}
+	
 	
 	///////////////////////////////////////////////////
 	// AUXILIARES 

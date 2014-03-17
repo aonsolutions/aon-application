@@ -12,7 +12,7 @@ public class FanBatchSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria)
 			throws ManagerBeanException, ExpressionException {
-		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, "Certifica2Batch.domain", false);
+		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, "FanBatch.domain", false);
 	}
 
 }

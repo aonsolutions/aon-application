@@ -2,9 +2,12 @@ package com.esferalia.aon.ui.sepe.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -14,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -22,6 +26,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.CIFNIFTYPE;
@@ -32,7 +38,6 @@ import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSGENERALESPRORROGATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSUSOLIBREEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.ObjectFactory;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGATIPOTYPE;
-import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContrataProrrogasWriter implements IContrataWriter {
 	
@@ -148,8 +153,20 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	 */
 	private DATOSCONTRATOTYPE createDatosContrato(ContrataProrrogaParams params) {
 		DATOSCONTRATOTYPE datos = factory.createDATOSCONTRATOTYPE();
-		// TODO: save and obtain SEPE assigned contract_id
-		datos.setCLAVECONTRATO(null);
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), getContract().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), ContractVariable.SEPE_CONTRACT_ID.getValue());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE));
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				ContractInfo info = (ContractInfo) list.get(0);
+				datos.setCLAVECONTRATO(info.getExpression().replaceAll("\"", ""));
+			}
+		} catch (ManagerBeanException e) {
+			// nada
+		}
 		if(datos.getCLAVECONTRATO()==null){
 			Person person = getContract().getPerson();
 			if(StringUtils.isEmpty(person.getRegistry().getDocument())){

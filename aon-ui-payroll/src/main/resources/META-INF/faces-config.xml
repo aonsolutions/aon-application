@@ -2093,13 +2093,6 @@
 			<property-name>newPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/form.xhtml</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{paymentConceptControllerListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
 
 	<managed-bean>

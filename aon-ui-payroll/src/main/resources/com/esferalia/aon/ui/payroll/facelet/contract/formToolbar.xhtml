@@ -149,16 +149,36 @@
 			<rich:menuSeparator id="actionsSeparator"
 				rendered="#{contract.extensibleContract or contract.transformableContract}" />
 			
-			<aon:menuItem id="contrata-communication-log"
+			<aon:menuItem id="contractContrata-communication-log"
 				value="#{bundle.aon_module_contrata}"
 				disabled="#{contractContrata.new}"
-				rendered="#{true}" ajaxSingle="true"
-				reRender="showContrataCommunicationWindow"
+				rendered="#{!contract.extendedContract and !contract.transformedContract}" ajaxSingle="true"
+				reRender="showContrataCommunicationWindow-#{contractContrata.contrataModelName}"
 				actionListener="#{contractContrata.onContrataDataShow}"
 				iconClass="aon-icon-sepe-contrata" >
 				<f:setPropertyActionListener
 					target="#{contractContrata.showCommunicationWindow}" value="#{true}" />
-			</aon:menuItem>                
+			</aon:menuItem>
+			
+			<aon:menuItem id="extensionContrata-communication-log"
+				value="#{bundle.aon_module_contrata} (P)"
+				rendered="#{contract.extendedContract and !contract.transformedContract}" ajaxSingle="true"
+				reRender="showContrataCommunicationWindow-#{extensionContrata.contrataModelName}"
+				actionListener="#{contract.onExtensionCommunicationShow}"
+				iconClass="aon-icon-sepe-contrata" >
+				<f:setPropertyActionListener
+					target="#{extensionContrata.showCommunicationWindow}" value="#{true}" />
+			</aon:menuItem>
+			
+			<aon:menuItem id="transforContrata-communication-log"
+				value="#{bundle.aon_module_contrata} (T)"
+				rendered="#{contract.transformedContract}" ajaxSingle="true"
+				reRender="showContrataCommunicationWindow-#{transformContrata.contrataModelName}"
+				actionListener="#{transformContrata.onContrataDataShow}"
+				iconClass="aon-icon-sepe-contrata" >
+				<f:setPropertyActionListener
+					target="#{transformContrata.showCommunicationWindow}" value="#{true}" />
+			</aon:menuItem>
 
 			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<aon:menuItem id="certificados-communication-log"

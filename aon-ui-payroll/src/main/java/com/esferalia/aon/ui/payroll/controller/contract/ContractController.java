@@ -68,6 +68,8 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
+import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -314,6 +316,32 @@ public class ContractController extends BasicController {
 		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
 
+	public boolean isExtendedContract(){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN ('" + ContractVariable.SEPE_EXTENSION.getValue() + "') " +
+					" ORDER BY start_date;";
+			ps = conn.prepareStatement(sepeIdSelect);
+			rs = ps.executeQuery();
+			if (rs.next()) return true;
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return false;
+	}
+	
 	public boolean isTransformedContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
@@ -345,21 +373,21 @@ public class ContractController extends BasicController {
 		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
 	}
 	
-	public String getSsStatus(){
+	public ContractSsStatus getSsStatus(){
 		Connection conn = null;
 		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			Contract contract = (Contract) this.getTo();
-			String ssIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SS_CONTRACT_ID.getValue()+"'";
-			ps = conn.prepareStatement(ssIdSelect);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) return "Alta en S.S. ("+rs.getString(1)+")";
-			String afiSelect = "SELECT count(*) FROM contract_batch_detail WHERE contract = " + contract.getId();
-			ps = conn.prepareStatement(afiSelect);
+			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN ('" + ContractVariable.SEPE_CONTRACT.getValue() + "', " +
+					" '" + ContractVariable.SS_MA.getValue() + "', " +
+					" '" + ContractVariable.SS_MB.getValue() + "') " +
+					" ORDER BY start_date;";
+			ps = conn.prepareStatement(sepeIdSelect);
 			rs = ps.executeQuery();
-			rs.next();
-			if (rs.getInt(1)>0) return "Incluido en mensaje AFI";
+			if (rs.next()) return ContractSsStatus.valueOf(rs.getString(1));
 		} catch (SQLException e) {
 			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
@@ -373,21 +401,25 @@ public class ContractController extends BasicController {
 		return null;
 	}
 	
-	public String getSepeStatus(){
+	public ContractSepeStatus getSepeStatus(){
 		Connection conn = null;
 		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			Contract contract = (Contract) this.getTo();
-			String sepeIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SEPE_CONTRACT_ID.getValue()+"'";
+			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN ('" + ContractVariable.SEPE_CONTRACT.getValue() + "', " +
+					" '" + ContractVariable.SEPE_EXTENSION.getValue() + "', " +
+					" '" + ContractVariable.SEPE_TRANSFORM.getValue() + "', " +
+					" '" + ContractVariable.SEPE_CERTIFICADOS.getValue() + "') " +
+//					" '" + ContractVariable.SEPE_CONTRACT_ID.getValue() + "', " +
+//					" '" + ContractVariable.SEPE_EXTENSION_ID.getValue() + "', " +
+//					" '" + ContractVariable.SEPE_TRANSFORM_ID.getValue() + "') " +
+					" ORDER BY start_date;";
 			ps = conn.prepareStatement(sepeIdSelect);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) return "Alta en SEPE ("+rs.getString(1)+")";
-			String contrataSelect = "SELECT count(*) FROM contrata_batch_detail WHERE contract = " + contract.getId();
-			ps = conn.prepareStatement(contrataSelect);
 			rs = ps.executeQuery();
-			rs.next();
-			if (rs.getInt(1)>0) return "Incluido en notificacion Contrat@";
+			if (rs.next()) return ContractSepeStatus.valueOf(rs.getString(1));
 		} catch (SQLException e) {
 			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
@@ -842,7 +874,18 @@ public class ContractController extends BasicController {
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		ContrataProrrogaParams params = (ContrataProrrogaParams) contrataController.getParams();
-		params.setFechaInicio(((Contract) this.getTo()).getEndDate());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(((Contract) this.getTo()).getEndDate());
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		params.setFechaInicio(cal.getTime());
+		cal.setTime(((Contract) this.getTo()).getEndDate());
+		cal.add(Calendar.YEAR, 1);
+		params.setFechaFin(cal.getTime());
+		contrataController.onContrataDataShow(event);
+	}
+	public void onExtensionCommunicationShow(ActionEvent event){
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
 	}
 
@@ -1759,7 +1802,10 @@ public class ContractController extends BasicController {
 			this.settleWorkedMonths = settleWorkedMonths;
 		}
 		public Double getSettleTotalWorkedYears() {
-			return CommonUtil.round(settleWorkedYears.doubleValue() + (settleWorkedMonths.doubleValue()/12), 2);
+			if(settleWorkedYears!=null && settleWorkedMonths!=null){
+				return CommonUtil.round(settleWorkedYears.doubleValue() + (settleWorkedMonths.doubleValue()/12), 2);
+			}
+			return null;
 		}
 		
 		

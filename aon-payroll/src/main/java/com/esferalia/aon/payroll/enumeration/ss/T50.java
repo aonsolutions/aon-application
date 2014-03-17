@@ -1,0 +1,145 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T50 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T50.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T50 implements ISSEnum {
+
+	T50_01( "01", "Cuota empresarial por AT y EP, Cuotas de recaudación conjunta", null, null ),
+	T50_02( "02", "Cuota empresarial por Desempleo", null, null ),
+	T50_03( "03", "Cuota empresarial por Contingencias Comunes", null, null ),
+	T50_04( "04", "Cuota total Desempleo", null, null ),
+	T50_05( "05", "Cuota trabajador por Desempleo", null, null ),
+	T50_06( "06", "Cuota total Desempleo, Formación Profesional y FOGASA", null, null ),
+	T50_07( "07", "Cuota empresarial Contingencias Comunes, Desempleo, Formación Profesional y FOGASA", null, null ),
+	T50_08( "08", "Cuota trabajador totalidad", null, null ),
+	T50_09( "09", "Cuota empresarial Contingencias Comunes, excepto IT", null, null ),
+	T50_10( "10", "Cuota total Contingencias Comunes excepto IT, Desempleo, Formación Profesional y FOGASA", null, null ),
+	T50_11( "11", "Protección familiar y FOGASA cuota total", null, null ),
+	T50_12( "12", "Desempleo y FOGASA cuota total", null, null ),
+	T50_13( "13", "FOGASA cuota total", null, null ),
+	T50_14( "14", "Cuota total Contingencias Comunes y Otras Cotizaciones", null, null ),
+	T50_15( "15", "Cuota Total IT Contingencias Comunes, Asistencia Sanitaria, Prestación farmaceútica, Desempleo, FOGASA", null, null ),
+	T50_16( "16", "Cuota Total IT Contingencias Comunes, Asistencia Sanitaria, Prestación farmaceútica, FOGASA.", null, null ),
+	T50_17( "17", "Cuota obrera Contingencias Comunes. Cuota Total AT y EP y Otras Cotizaciones", null, null ),
+	T50_18( "18", "Cuota obrera Contingencias Comunes. Cuota Total AT y EP y Otras Cotizaciones", null, null ),
+	T50_19( "19", "Cuota Total AT y EP y Otras Cotizaciones", null, null ),
+	T50_20( "20", "Cuota Total Asistencia Sanitaria y Prestación Farmaceútica.", null, null ),
+	T50_21( "21", "Cuota Total Contingencias Comunes, Asistencia Sanitaria y Prestación Farmaceútica.", null, null ),
+	T50_22( "22", "Cuota Total Jubilación", null, null ),
+	T50_23( "23", "Cuota Total IT Contingencias Comunes, Maternidad, Protección a la Familia, Asistencia Sanitaria, Prestación farmaceútica, Otras Cotizaciones", null, null ),
+	T50_24( "24", "Cuota Total IT Contingencias Comunes.", null, null ),
+	T50_25( "25", "Cuota Total IT, Protección a la Familia, Asistencia Sanitaria, Prestación farmaceútica, Desempleo, Formación Profesional.", null, null ),
+	T50_26( "26", "Cuota Total Prestación Farmaceútica.", null, null ),
+	T50_27( "27", "Cuota Total IT de AT, Desempleo, FOGASA.", null, null ),
+	T50_28( "28", "Cuota Total IT de AT, FOGASA.", null, null ),
+	T50_29( "29", "Cuota Total IT, Maternidad, AT y EP, Prestación a la familia, Otras Cotizaciones.", null, null ),
+	T50_30( "30", "Cuota Total IT, Maternidad, AT y EP, Otras Cotizaciones.", null, null ),
+	T50_31( "31", "Cuota Total IT, Incapacidad Permanente, Muerte y Supervivencia, Maternidad, Otras Cotizaciones.", null, null ),
+	T50_32( "32", "Cuota Total Jubilación, IT, Incapacidad Permanente, Muerte y Supervivencia, Maternidad, Prestación a la Familia, Asistencia Sanitaria, Prestación Farmaceútica, Otras Cotizaciones.", null, null ),
+	T50_33( "33", "Cuota Total Jubilación, IT, Incapacidad Permanente, Muerte y Supervivencia, Maternidad, Otras Cotizaciones.", null, null ),
+	T50_34( "34", "Cuota Total Jubilación, IT, Incapacidad Permanente, Muerte y Supervivencia, Maternidad, Prestación a la Familia, Asistencia Sanitaria, Prestación Farmaceútica, Otras Cotizaciones.", null, null ),
+	T50_35( "35", "Cuota Total IT Contingencias Comunes, Prestación a la Familia, Desempleo.", null, null ),
+	T50_36( "36", "Cuota Total Prestación a la Familia, Desempleo.", null, null ),
+	T50_37( "37", "Cuota Total Jubilación, Incapacidad Permanente Contingencias Comunes, Muerte y Supervivencia Contingencias Comunes, IT Contingencias Comunes, Maternidad, Prestación a la Familia, Desempleo, Formación Profesional.", null, null ),
+	T50_38( "38", "Cuota Total IT, AT y EP.", null, null ),
+	T50_39( "39", "Cuota Total IT.", null, null ),
+	T50_40( "40", "Cuota Total Contingencias Comunes, Desempelo.", null, null ),
+	T50_41( "41", "Cuota Total AT y EP.", null, null ),
+	T50_42( "42", "Sistema Especial del Tomate Fresco", null, null ),
+	T50_43( "43", "Cuota Total Contingencias Comunes", null, null ),
+	T50_44( "44", "Cuota Total IT Contingencias Comunes, Desempleo y FOGASA", null, null ),
+	T50_45( "45", "Cuota Total IT Contingencias Comunes y FOGASA", null, null ),
+	T50_46( "46", "Contingencias comunes IT", null, null ),
+	T50_51( "51", "Cuota Empresarial - Horas extras", null, null ),
+	T50_52( "52", "Contingencias obligatorias/Base mínima", null, null ),
+	T50_53( "53", "P.F. Desempleo, FOGASA, Formación Profesional - Cuota toal", null, null ),
+	T50_54( "54", "Contingencias comunes - Cuota trabajador", null, null ),
+	T50_55( "55", "Contingencias comunes - Cuota obrera, AT y EP, OC - Cuota total base mínima", null, null ),
+	T50_56( "56", "Contingencias comunes - Cuota empresarial diferencias base mínima", null, null ),
+	T50_57( "57", "Cuota total", null, null ),
+	T50_58( "58", "Contingencia común - Cuota empresarial ERE", null, null ),
+	T50_59( "59", "CONTR.FORM.SIN EXCLU", null, null ),
+	T50_60( "60", "AS,PF,IT,MA,DE,FGS", null, null ),
+	T50_61( "61", "C.EMP. - JUB+IMS/CC", null, null ),
+	T50_62( "62", "FOGASA - FP/CUOT.TOTAL", null, null ),
+	T50_63( "63", "SEA.PREST.CORTA DUR", null, null ),
+	T50_64( "64", "CC,IT - AT,OTR.CT - C.T.", null, null ),
+	T50_65( "65", "DES.FOG. - C TOT", null, null ),
+	;
+	public static final String TABLE_NAME = "T50";
+	public static final String TABLE_DESCRIPTION = "T50.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T50( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T50 getEnumByValue(String expression) {
+		for( T50 o : T50.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

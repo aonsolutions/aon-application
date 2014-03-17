@@ -76,7 +76,7 @@ public class ContrataContratosHandler implements IContrataHandler{
 			attach = new ContractAttachment();
 		} else {
 			ContrataReader reader = new ContrataReader();
-			this.params = reader.readFile( new ByteArrayInputStream(attach.getData()) );
+			this.params = (ContrataContratoParams) reader.readFile( new ByteArrayInputStream(attach.getData()) );
 		}
 		afterDataLoading();
 	}

@@ -33,7 +33,7 @@ public class Clauses extends AbstractContractClauses {
 			getPdfFieldsMap().get(CLAUSES_ENTERPRISE_NAME).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
 			getPdfFieldsMap().get(CLAUSES_EMPLOYEE_NAME).setValue(contract.getPerson().getFullName());
 			getPdfFieldsMap().get(CLAUSES_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
-			SimpleDateFormat dateFormatter = new SimpleDateFormat();
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", getLocale());
 			dateFormatter.applyPattern("dd");
 			getPdfFieldsMap().get(CLAUSES_SIGN_DAY).setValue(dateFormatter.format(contract.getStartDate()));
 			dateFormatter.applyPattern("MMMM");

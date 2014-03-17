@@ -5,7 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
@@ -28,8 +29,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.person.Person;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.CNO;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.contrata.TBONVFOR;
 import com.esferalia.aon.payroll.enumeration.contrata.TEIINTER;
@@ -102,17 +105,23 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSPROGEMPLEOPUBLICOTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONFORMACIONTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSADICIONALESPRORROGATYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSCONTRATOTYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSEMPRESATYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSGENERALESPRORROGATYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGAS;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGATIPOTYPE;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
-import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
 public class ContrataReader {
 	
 	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
 	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
+	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
 	
-	private ContrataContratoParams params;
+	private IContrataParams params;
 	
 	private boolean isContratoFile = false;
 	private boolean isTransformacionFile = false;
@@ -120,6 +129,7 @@ public class ContrataReader {
 
 	private CONTRATOS contratos;
 	private TRANSFORMACIONES transformaciones;
+	private PRORROGAS prorrogas;
 	
 	public CONTRATOS getContratos() {
 		return contratos;
@@ -137,12 +147,20 @@ public class ContrataReader {
 		this.transformaciones = transformaciones;
 	}
 
+	public PRORROGAS getProrrogas() {
+		return prorrogas;
+	}
+
+	public void setProrrogas(PRORROGAS prorrogas) {
+		this.prorrogas = prorrogas;
+	}
+
 	public ContrataContratoParams readFile(ContractAttachment attach) throws ManagerBeanException, IOException{
 		return null;
 	}
 	
 
-	public ContrataContratoParams readFile(InputStream input) throws ManagerBeanException, IOException{
+	public IContrataParams readFile(InputStream input) throws ManagerBeanException, IOException{
 		
 		processContractDocumentType(input);
 		
@@ -150,14 +168,15 @@ public class ContrataReader {
 			input.reset();
 			setContratos(null);
 			setTransformaciones(null);
-			this.params = new ContrataContratoParams();
+			setProrrogas(null);
 			if( isContratoFile ){
 				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				contratos = (CONTRATOS) unmarshaller.unmarshal(input);
 				IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
-				completeContratosParams(contratoType, params);
+				this.params = new ContrataContratoParams();
+				completeContratosParams(contratoType, (ContrataContratoParams) params);
 			} else if( isTransformacionFile ) {
 				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -165,20 +184,29 @@ public class ContrataReader {
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
 				ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
-				completeTransformacionesParams(transformacionType, params);
+				this.params = new ContrataTransformacionesParams();
+				completeTransformacionesParams(transformacionType, (ContrataTransformacionesParams) params);
 			} else if( isProrrogaFile ) {
-				// TODO
+				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
+				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+//				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
+				unmarshaller.setEventHandler(new ContractValidationEventHandler());
+				prorrogas = (PRORROGAS) unmarshaller.unmarshal(input);
+				PRORROGATIPOTYPE prorrogaType = (PRORROGATIPOTYPE) prorrogas.getPRORROGATIPO().get(0);
+				this.params = new ContrataProrrogaParams();
+				completeProrrogasParams(prorrogaType, (ContrataProrrogaParams) params);
 			} 
 			
 			return params;
 		} catch (JAXBException e) {
-			String msg = "Error al obtener los datos del documento xml de contrata";
+			String msg = "Error al obtener los datos de Contrat@";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.toString());
-			throw new AbortProcessingException(msg, e);
+//			throw new AbortProcessingException(msg, e);
 		} finally {
 			input.close();
 		}
+		return null;
 	}
 	
 	private void processContractDocumentType(InputStream input) {
@@ -194,7 +222,7 @@ public class ContrataReader {
 				line = reader.readLine();
 				String contratoFile = "<CONTRATOS>";
 				String transformacionFile = "<TRANSFORMACION>";
-				String prorrogaFile = "<PRORROGA>";
+				String prorrogaFile = "<PRORROGAS>";
 				if(line.equals(contratoFile)){
 					isContratoFile = true;
 				} else if(line.equals(transformacionFile)){
@@ -202,9 +230,9 @@ public class ContrataReader {
 				} else if(line.equals(prorrogaFile)){
 					isProrrogaFile = true;
 				} else {
-					String msg = "Código no válido, no se reconoce el tipo de documento.";
+					String msg = "No se reconoce la estructura de datos de Contrat@.";
 					AonUtil.addErrorMessage(msg);
-					throw new AbortProcessingException(msg);
+//					throw new AbortProcessingException(msg);
 				}
 			}
 			reader.close();
@@ -225,104 +253,70 @@ public class ContrataReader {
 	public void completeContratosParams(IContratoType o, ContrataContratoParams params) throws JAXBException, IOException {
 		
 		if (o instanceof CONTRATO100TYPE) {
-			readContract100((CONTRATO100TYPE)o);
+			readContract100((CONTRATO100TYPE)o, params);
 		} else if (o instanceof CONTRATO130TYPE) {
-			readContract130((CONTRATO130TYPE)o);
+			readContract130((CONTRATO130TYPE)o, params);
 		} else if (o instanceof CONTRATO150TYPE) {
-			readContract150((CONTRATO150TYPE)o);
+			readContract150((CONTRATO150TYPE)o, params);
 		} else if (o instanceof CONTRATO200TYPE) {
-			readContract200((CONTRATO200TYPE)o);
+			readContract200((CONTRATO200TYPE)o, params);
 		} else if (o instanceof CONTRATO230TYPE) {
-			readContract230((CONTRATO230TYPE)o);
+			readContract230((CONTRATO230TYPE)o, params);
 		} else if (o instanceof CONTRATO250TYPE) {
-			readContract250((CONTRATO250TYPE)o);
+			readContract250((CONTRATO250TYPE)o, params);
 		} else if (o instanceof CONTRATO300TYPE) {
-			readContract300((CONTRATO300TYPE)o);
+			readContract300((CONTRATO300TYPE)o, params);
 		} else if (o instanceof CONTRATO330TYPE) {
-			readContract330((CONTRATO330TYPE)o);
+			readContract330((CONTRATO330TYPE)o, params);
 		} else if (o instanceof CONTRATO350TYPE) {
-			readContract350((CONTRATO350TYPE)o);
+			readContract350((CONTRATO350TYPE)o, params);
 		} else if (o instanceof CONTRATO401TYPE) {
-			readContract401((CONTRATO401TYPE)o);
+			readContract401((CONTRATO401TYPE)o, params);
 		} else if (o instanceof CONTRATO402TYPE) {
-			readContract402((CONTRATO402TYPE)o);
+			readContract402((CONTRATO402TYPE)o, params);
 		} else if (o instanceof CONTRATO403TYPE) {
-			readContract403((CONTRATO403TYPE)o);
+			readContract403((CONTRATO403TYPE)o, params);
 		} else if (o instanceof CONTRATO410TYPE) {
-			readContract410((CONTRATO410TYPE)o);
+			readContract410((CONTRATO410TYPE)o, params);
 		} else if (o instanceof CONTRATO420TYPE) {
-			readContract420((CONTRATO420TYPE)o);
+			readContract420((CONTRATO420TYPE)o, params);
 		} else if (o instanceof CONTRATO421TYPE) {
-			readContract421((CONTRATO421TYPE)o);
+			readContract421((CONTRATO421TYPE)o, params);
 		} else if (o instanceof CONTRATO430TYPE) {
-			readContract430((CONTRATO430TYPE)o);
+			readContract430((CONTRATO430TYPE)o, params);
 		} else if (o instanceof CONTRATO441TYPE) {
-			readContract441((CONTRATO441TYPE)o);
+			readContract441((CONTRATO441TYPE)o, params);
 		} else if (o instanceof CONTRATO450TYPE) {
-			readContract450((CONTRATO450TYPE)o);
+			readContract450((CONTRATO450TYPE)o, params);
 		} else if (o instanceof CONTRATO452TYPE) {
-			readContract452((CONTRATO452TYPE)o);
+			readContract452((CONTRATO452TYPE)o, params);
 		} else if (o instanceof CONTRATO501TYPE) {
-			readContract501((CONTRATO501TYPE)o);
+			readContract501((CONTRATO501TYPE)o, params);
 		} else if (o instanceof CONTRATO502TYPE) {
-			readContract502((CONTRATO502TYPE)o);
+			readContract502((CONTRATO502TYPE)o, params);
 		} else if (o instanceof CONTRATO503TYPE) {
-			readContract503((CONTRATO503TYPE)o);
+			readContract503((CONTRATO503TYPE)o, params);
 		} else if (o instanceof CONTRATO510TYPE) {
-			readContract510((CONTRATO510TYPE)o);
+			readContract510((CONTRATO510TYPE)o, params);
 		} else if (o instanceof CONTRATO520TYPE) {
-			readContract520((CONTRATO520TYPE)o);
+			readContract520((CONTRATO520TYPE)o, params);
 		} else if (o instanceof CONTRATO530TYPE) {
-			readContract530((CONTRATO530TYPE)o);
+			readContract530((CONTRATO530TYPE)o, params);
 		} else if (o instanceof CONTRATO540TYPE) {
-			readContract540((CONTRATO540TYPE)o);
+			readContract540((CONTRATO540TYPE)o, params);
 		} else if (o instanceof CONTRATO541TYPE) {
-			readContract541((CONTRATO541TYPE)o);
+			readContract541((CONTRATO541TYPE)o, params);
 		} else if (o instanceof CONTRATO550TYPE) {
-			readContract550((CONTRATO550TYPE)o);
+			readContract550((CONTRATO550TYPE)o, params);
 		} else if (o instanceof CONTRATO552TYPE) {
-			readContract552((CONTRATO552TYPE)o);
+			readContract552((CONTRATO552TYPE)o, params);
 		} else if (o instanceof CONTRATO970TYPE) {
-			readContract970((CONTRATO970TYPE)o);
+			readContract970((CONTRATO970TYPE)o, params);
 		} else if (o instanceof CONTRATO980TYPE) {
-			readContract980((CONTRATO980TYPE)o);
+			readContract980((CONTRATO980TYPE)o, params);
 		} else if (o instanceof CONTRATO990TYPE) {
-			readContract990((CONTRATO990TYPE)o);
+			readContract990((CONTRATO990TYPE)o, params);
 		}
-	}
-	
-	public void completeTransformacionesParams(ITransformacionType transformacionType, ContrataContratoParams params) throws JAXBException, IOException {
-		
-//		if (transformacionType instanceof TRANSFORMACION109TYPE) {
-//			readTransformacion109((TRANSFORMACION109TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
-//			readTransformacion139((TRANSFORMACION139TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
-//			readTransformacion189((TRANSFORMACION189TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
-//			readTransformacion209((TRANSFORMACION209TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
-//			readTransformacion239((TRANSFORMACION239TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
-//			readTransformacion289((TRANSFORMACION289TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
-//			readTransformacion309((TRANSFORMACION309TYPE)transformacionType);
-////	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
-////		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
-////			readTransformacion339((TRANSFORMACION339TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
-//			readTransformacion389((TRANSFORMACION389TYPE)transformacionType);
-//		}
-		
-		
-	}
-			
-	public void completeProrrogasParams(IProrrogaType prorrogaType, ContrataContratoParams params) throws JAXBException, IOException {
-		// TODO
-//	} else if (code.equals(ContractCode.C408.getValue())
-//			|| code.equals(ContractCode.C418.getValue())
-//			|| code.equals(ContractCode.C508.getValue())
-//			|| code.equals(ContractCode.C518.getValue()) ){	
 	}
 	
 	
@@ -336,346 +330,346 @@ public class ContrataReader {
 		return null;
 	}
 	
-	private void readContract100(CONTRATO100TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract100(CONTRATO100TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract130(CONTRATO130TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-	    completeDatosBonificacion(o.getDATOSBONIFICACION());
-	    completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-	    completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-	    completeDatosEtCote(o.getDATOSETCOTE());
-	    completeDatosEtt(o.getDATOSETT()); 
-	    completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-	    completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract130(CONTRATO130TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+	    completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+	    completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+	    completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+	    completeDatosEtCote(o.getDATOSETCOTE(), params);
+	    completeDatosEtt(o.getDATOSETT(), params); 
+	    completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+	    completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract150(CONTRATO150TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract150(CONTRATO150TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract200(CONTRATO200TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
+	private void readContract200(CONTRATO200TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
 	}
-	private void readContract230(CONTRATO230TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract230(CONTRATO230TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract250(CONTRATO250TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract250(CONTRATO250TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract300(CONTRATO300TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-	    completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-	    completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-	    completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-	    completeDatosEtCote(o.getDATOSETCOTE());
-	    completeDatosEtt(o.getDATOSETT()); 
-	    completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-	    completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-    	completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract300(CONTRATO300TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+	    completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+	    completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+	    completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+	    completeDatosEtCote(o.getDATOSETCOTE(), params);
+	    completeDatosEtt(o.getDATOSETT(), params); 
+	    completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+	    completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+    	completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract330(CONTRATO330TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract330(CONTRATO330TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract350(CONTRATO350TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract350(CONTRATO350TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosMedidasFomento(o.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract401(CONTRATO401TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract401(CONTRATO401TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract402(CONTRATO402TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract402(CONTRATO402TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract403(CONTRATO403TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosContratoInsercion(o.getDATOSCONTRATOINSERCION());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract403(CONTRATO403TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosContratoInsercion(o.getDATOSCONTRATOINSERCION(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract410(CONTRATO410TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract410(CONTRATO410TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract420(CONTRATO420TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract420(CONTRATO420TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract421(CONTRATO421TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosReduccionFormacion(o.getDATOSREDUCCIONFORMACION()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract421(CONTRATO421TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosReduccionFormacion(o.getDATOSREDUCCIONFORMACION(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract430(CONTRATO430TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract430(CONTRATO430TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract441(CONTRATO441TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract441(CONTRATO441TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract450(CONTRATO450TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosExclusionSocial(o.getDATOSEXCLUSIONSOCIAL());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract450(CONTRATO450TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosExclusionSocial(o.getDATOSEXCLUSIONSOCIAL(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract452(CONTRATO452TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract452(CONTRATO452TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract501(CONTRATO501TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract501(CONTRATO501TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract502(CONTRATO502TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract502(CONTRATO502TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosContratoExtranjero(o.getDATOSCONTRATOEXTRANJERO(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract503(CONTRATO503TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosContratoInsercion(o.getDATOSCONTRATOINSERCION());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract503(CONTRATO503TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosContratoInsercion(o.getDATOSCONTRATOINSERCION(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract510(CONTRATO510TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract510(CONTRATO510TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract520(CONTRATO520TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract520(CONTRATO520TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosContratoInvestigacion(o.getDATOSCONTRATOINVESTIGACION(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract530(CONTRATO530TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract530(CONTRATO530TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract540(CONTRATO540TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract540(CONTRATO540TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract541(CONTRATO541TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract541(CONTRATO541TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosAnexoContratoRelevo(o.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract550(CONTRATO550TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosExclusionSocial(o.getDATOSEXCLUSIONSOCIAL());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT()); 
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract550(CONTRATO550TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosExclusionSocial(o.getDATOSEXCLUSIONSOCIAL(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosContratoPracticas(o.getDATOSCONTRATOPRACTICAS(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosContratoInterinidad(o.getDATOSCONTRATOINTERINIDAD(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params); 
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosReduccionRdl2011(o.getDATOSREDUCCIONRDL12011(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract552(CONTRATO552TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosBonificacion(o.getDATOSBONIFICACION());
-		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract552(CONTRATO552TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosBonificacion(o.getDATOSBONIFICACION(), params);
+		completeDatosContratoTiempoParcial(o.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosEmpresaInsercion(o.getDATOSEMPRESAINSERCION(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract970(CONTRATO970TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract970(CONTRATO970TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract980(CONTRATO980TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract980(CONTRATO980TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
-	private void readContract990(CONTRATO990TYPE o) {
-		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO());
-		completeDatosEtCote(o.getDATOSETCOTE());
-		completeDatosCopiaBasica(o.getDATOSCOPIABASICA());
-		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO());
-		completeDatosEtt(o.getDATOSETT());
-		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA());
-		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA());
+	private void readContract990(CONTRATO990TYPE o, ContrataContratoParams params) {
+		completeDatosGeneralesContrato(o.getDATOSGENERALESCONTRATO(), params);
+		completeDatosEtCote(o.getDATOSETCOTE(), params);
+		completeDatosCopiaBasica(o.getDATOSCOPIABASICA(), params);
+		completeDatosProgramaEmpleoPublico(o.getPROGEMPLEOPUBLICO(), params);
+		completeDatosEtt(o.getDATOSETT(), params);
+		completeDatosComunicacionCopiaBasica(o.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(o.getDATOSUSOLIBREEMPRESA(), params);
 	}
 	
-	private void completeDatosGeneralesContrato(DATOSGENERALESCONTRATOTYPE datos) {
+	private void completeDatosGeneralesContrato(DATOSGENERALESCONTRATOTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			if(datos.getINDCONVENIOCOLECTIVO()!=null){
 				params.setCollectiveAgreement(datos.getINDCONVENIOCOLECTIVO().equals("S")?true:false);
@@ -710,7 +704,7 @@ public class ContrataReader {
 			}
 		}
 	}
-	private void completeDatosMedidasFomento(DATOSMEDIDASFOMENTOTYPE datos) {
+	private void completeDatosMedidasFomento(DATOSMEDIDASFOMENTOTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setMedidasFomentoData(true);
 			params.setIndCosteDespido(datos.getINDCOSTEDESPIDO().equals("1")?true:false);
@@ -719,7 +713,7 @@ public class ContrataReader {
 			}
 		}
 	}
-	private void completeDatosAnexoContratoRelevo(DATOSANEXOCONTRATORELEVOTYPE datos) {
+	private void completeDatosAnexoContratoRelevo(DATOSANEXOCONTRATORELEVOTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setReliefData(true);
 			if(datos.getTIPOTRABAJADOR()!=null){
@@ -732,13 +726,13 @@ public class ContrataReader {
 			params.setReliefPerson(person);
 		}
 	}
-	private void completeDatosEtCote(DATOSETCOTYPE datos) {
+	private void completeDatosEtCote(DATOSETCOTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setSchoolWorkshopData(true);
 			params.setCodigoEtCoTe(TESCETCO.getEnumByValue(datos.getCODIGOETCOTE()));
 		}
 	}
-	private void completeDatosEtt(DATOSETTTYPE datos) {
+	private void completeDatosEtt(DATOSETTTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setEttData(true);
 			params.setEttCif(datos.getCIFNIFEMPRESAUSUARIA().getCIFNIF());
@@ -747,34 +741,34 @@ public class ContrataReader {
 			params.setEttForeignEnterprise(!StringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
 		}
 	}
-	private void completeDatosReduccionFormacion(DATOSREDUCCIONFORMACIONTYPE datos) {
+	private void completeDatosReduccionFormacion(DATOSREDUCCIONFORMACIONTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setReductionData(true);
 			params.setCodigoColectivoReduccion(TQOCOLRE.getEnumByValue(datos.getCODIGOCOLECTIVOREDUCCIONFORMACION()));
 			params.setPorcentajeReduccion(datos.getPORCENTAJEREDUCCIONFORMACION());
 		}
 	}
-	private void completeDatosContratoExtranjero(DATOSCONTRATOEXTRANJEROTYPE datos) {
+	private void completeDatosContratoExtranjero(DATOSCONTRATOEXTRANJEROTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setAnnexData(true);
 			params.setAnexEmploymentYear(datos.getAÑOCONTINGENTE());
 			params.setEmploymentCharacter(datos.getINDCARACTEROFERTA());
 		}
 	}
-	private void completeDatosComunicacionCopiaBasica(DATOSCOMUNICACOPIABASICATYPE datos) {
+	private void completeDatosComunicacionCopiaBasica(DATOSCOMUNICACOPIABASICATYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setTextoCopiaBasica(datos.getTEXTOCOPIABASICA());
 			params.setTipoFirmaCopiaBasica(TERFIRCB.getEnumByValue(datos.getTIPOFIRMA()));
 		}
 	}
 
-	private void completeDatosUsoLibreEmpresa(DATOSUSOLIBREEMPRESATYPE datos) {
+	private void completeDatosUsoLibreEmpresa(DATOSUSOLIBREEMPRESATYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setUsoLibreEmpresa(datos.getUSOLIBREEMPRESA());
 		}
 	}
 	
-	private void completeDatosContratoTiempoParcial(DATOSCONTRATOTIEMPOPARCIALTYPE datos) {
+	private void completeDatosContratoTiempoParcial(DATOSCONTRATOTIEMPOPARCIALTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setActividadSinFechaCierta(datos.getACTIVIDADSINFECHACIERTA());
 			params.setColectivoEdad(THPCOLFO.getEnumByValue(datos.getCOLECTIVOEDAD()));
@@ -800,10 +794,10 @@ public class ContrataReader {
 	private String getMinutos(String duracion){
 		return StringUtils.isBlank(duracion)?null:duracion.substring(4,6);
 	}
-	private void completeDatosReduccionRdl2011(DATOSREDUCCIONRDL12011TYPE datos) {
+	private void completeDatosReduccionRdl2011(DATOSREDUCCIONRDL12011TYPE datos, ContrataContratoParams params) {
 		// TODO
 	}
-	private void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos) {
+	private void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			IContratoType c = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 			params.setDisabilityData(true);
@@ -821,13 +815,13 @@ public class ContrataReader {
 			}
 		}
 	}
-	private void completeDatosEmpresaInsercion(DATOSEMPRESAINSERCIONTYPE dato) {
+	private void completeDatosEmpresaInsercion(DATOSEMPRESAINSERCIONTYPE dato, ContrataContratoParams params) {
 		// TODO
 	}
-	private void completeDatosCopiaBasica(DATOSCOPIABASICATYPE datos) {
+	private void completeDatosCopiaBasica(DATOSCOPIABASICATYPE datos, ContrataContratoParams params) {
 		// TODO
 	}
-	private void completeDatosProgramaEmpleoPublico(DATOSPROGEMPLEOPUBLICOTYPE datos) {
+	private void completeDatosProgramaEmpleoPublico(DATOSPROGEMPLEOPUBLICOTYPE datos, ContrataContratoParams params) {
 		// TODO
 		if(datos != null){
 			params.setEmploymentProgramData(true);
@@ -837,7 +831,7 @@ public class ContrataReader {
 //			datos.setGRUPOCOTIZACIONCORPORACIONLOCAL("");
 		}
 	}
-	private void completeDatosContratoInvestigacion(DATOSCONTRATOINVESTIGACIONTYPE datos) {
+	private void completeDatosContratoInvestigacion(DATOSCONTRATOINVESTIGACIONTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setResearchData(true);
 			params.setIndEmpleador(TEWEINVE.getEnumByValue(datos.getINDEMPLEADOR()));
@@ -845,16 +839,16 @@ public class ContrataReader {
 			params.setIndRd632006(datos.getINDRD632006()!=null && datos.getINDRD632006().equals("S"));
 		}
 	}
-	private void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos) {
+	private void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos, ContrataContratoParams params) {
 		// TODO
 	}
-	private void completeDatosContratoInterinidad(DATOSCONTRATOINTERINIDADTYPE datos) {
+	private void completeDatosContratoInterinidad(DATOSCONTRATOINTERINIDADTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setInterimData(true);
 			params.setCausaInterinidad(TEIINTER.getEnumByValue(datos.getCAUSAINTERINIDAD()));
 		}
 	}
-	private void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos) {
+	private void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos, ContrataContratoParams params) {
 		if(datos != null){
 			params.setTitulacionAcademica(datos.getTITULACIONACADEMICA());
 			if(!StringUtils.isEmpty(datos.getINDCERTIFPROFESIONALIDAD())){
@@ -862,8 +856,65 @@ public class ContrataReader {
 			}
 		}
 	}
-	private void completeDatosExclusionSocial(DATOSEXCLUSIONSOCIALTYPE datos) {
+	private void completeDatosExclusionSocial(DATOSEXCLUSIONSOCIALTYPE datos, ContrataContratoParams params) {
 		// TODO
+	}
+	
+	/*
+	 * 
+	 * PRORROGAS
+	 * 
+	 */
+	public void completeProrrogasParams(PRORROGATIPOTYPE prorrogaType, ContrataProrrogaParams params) throws JAXBException, IOException {
+		PRORROGATIPOTYPE prorroga = (PRORROGATIPOTYPE) prorrogaType;
+		completeDATOSADICIONALESPRORROGA(prorroga.getDATOSADICIONALESPRORROGA(), params);
+		completeDATOSCONTRATO(prorroga.getDATOSCONTRATO(), params);
+		completeDATOSEMPRESA(prorroga.getDATOSEMPRESA(), params);
+		completeDATOSGENERALESPRORROGA(prorroga.getDATOSGENERALESPRORROGA(), params);
+		completeDATOSUSOLIBREEMPRESA(prorroga.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	
+	private void completeDATOSCONTRATO(DATOSCONTRATOTYPE datos, ContrataProrrogaParams params){
+		datos.getCLAVECONTRATO();
+		datos.getFECHAINICIOCTO();
+		datos.getIDENTIFICADORPFISICA();
+	}
+	private void completeDATOSEMPRESA(DATOSEMPRESATYPE datos, ContrataProrrogaParams params){
+		datos.getCIFNIFEMPRESA();
+		datos.getCCC();
+	}
+	private void completeDATOSGENERALESPRORROGA(DATOSGENERALESPRORROGATYPE datos, ContrataProrrogaParams params){
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		try {
+			params.setFechaInicio(formatter.parse(datos.getFECHAINICIO()));
+			params.setFechaFin(formatter.parse(datos.getFECHAFIN()));
+		} catch (ParseException e) {
+			// nada
+		}
+		if(StringUtils.isNotBlank(datos.getINDICADORCONVCOL())){
+			params.setIndicadorConvCol(datos.getINDICADORCONVCOL().equals("S"));
+		}
+		if(StringUtils.isNotBlank(datos.getINDICADORDISCONTINUIDAD())){
+			params.setIndicadorDiscontinuidad(datos.getINDICADORDISCONTINUIDAD().equals("I"));
+		}
+		if(StringUtils.isNotBlank(datos.getINDEMPRESAAAPPUNIVERSIDAD())){
+			params.setIndEmpresaAappUniversidad(datos.getINDEMPRESAAAPPUNIVERSIDAD().equals("S"));
+		}
+		if(StringUtils.isNotBlank(datos.getINDPERIODOAUTORIZADURACION())){
+			params.setIndPeriodoAutorizaDuracion(datos.getINDPERIODOAUTORIZADURACION().equals("S"));
+		}
+	}
+	private void completeDATOSADICIONALESPRORROGA(DATOSADICIONALESPRORROGATYPE datos, ContrataProrrogaParams params){
+		if(StringUtils.isNotBlank(datos.getHORASFORMACION()) && datos.getHORASFORMACION().length()==6){
+			params.setHorasFormacion(datos.getHORASFORMACION().substring(0, 4));
+			params.setMinutosFormacion(datos.getHORASFORMACION().substring(3, 5));
+		}
+		if(StringUtils.isNotBlank(datos.getINDDURACINFERIOR())){
+			params.setIndDuracInferior(datos.getINDDURACINFERIOR().equals("S"));
+		}
+	}
+	private void completeDATOSUSOLIBREEMPRESA(com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSUSOLIBREEMPRESATYPE datos, ContrataProrrogaParams params){
+		params.setUsoLibreEmpresa(datos.getUSOLIBREEMPRESA());
 	}
 	
 	
@@ -872,6 +923,32 @@ public class ContrataReader {
 	 * TRANSFORMACIONES
 	 * 
 	 */
+	public void completeTransformacionesParams(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws JAXBException, IOException {
+		
+//		if (transformacionType instanceof TRANSFORMACION109TYPE) {
+//			readTransformacion109((TRANSFORMACION109TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
+//			readTransformacion139((TRANSFORMACION139TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
+//			readTransformacion189((TRANSFORMACION189TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
+//			readTransformacion209((TRANSFORMACION209TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
+//			readTransformacion239((TRANSFORMACION239TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
+//			readTransformacion289((TRANSFORMACION289TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
+//			readTransformacion309((TRANSFORMACION309TYPE)transformacionType);
+////	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
+////		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
+////			readTransformacion339((TRANSFORMACION339TYPE)transformacionType);
+//		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
+//			readTransformacion389((TRANSFORMACION389TYPE)transformacionType);
+//		}
+		
+		
+	}
+	
 //	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType){
 //		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
 //		completeDatosContrato(transformacionType.getDATOSCONTRATO());

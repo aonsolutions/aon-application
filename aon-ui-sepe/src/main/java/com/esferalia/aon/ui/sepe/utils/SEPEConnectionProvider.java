@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.certificados.Terrores;
 import com.esferalia.aon.payroll.enumeration.contrata.TERRORES;
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatos;
@@ -87,15 +88,22 @@ public final class SEPEConnectionProvider {
 	 * @return
 	 */
 	public static String processContrataCommunication(boolean isSslEnv, boolean isTestEnv, byte[] data, String connectedUser, String mainUser, String passwd){
-		return processContrataCommunication(isSslEnv, isTestEnv, new String(data), connectedUser, mainUser, passwd);
+		return processContrataCommunication(isSslEnv, isTestEnv, new String(data), connectedUser, mainUser, passwd, ContrataFileType.CONTRACT);
 	}
 	
-	public static String processContrataCommunication(boolean isSslEnv, boolean isTestEnv, String data, String connectedUser, String mainUser, String passwd){
+	public static String processContrataCommunication(boolean isSslEnv, boolean isTestEnv, String data, String connectedUser, String mainUser, String passwd, ContrataFileType fileType){
 		assignSslSystemProperies();
 		try {
 			SWComunicacionDatosService service = new SWComunicacionDatosService(new URL((isSslEnv?URL_SCHEME_SSL:URL_SCHEME_NO_SSL) + (isTestEnv ? CONTRATA_COMMUNICATION_TEST_ENVIRONMENT : CONTRATA_COMMUNICATION_PRODUCTION_ENVIRONMENT)));
 			SWComunicacionDatos datos = service.getSWComunicacionDatos();
-			String result = datos.servicioContratos(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			String result = null;
+			if(fileType==ContrataFileType.CONTRACT){
+				result = datos.servicioContratos(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			} else if(fileType==ContrataFileType.EXTENSION){
+				result = datos.servicioProrrogas(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			} else if(fileType==ContrataFileType.TRANSFORMATION){
+				result = datos.servicioTransformacionIndefinido(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			}
 			LOGGER.info("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
 			return result;
 		} catch (MalformedURLException e) {
@@ -250,7 +258,7 @@ public final class SEPEConnectionProvider {
 	// ******************************
 	
 	public static boolean validateContrataLogin(boolean ssl, boolean test, String contrataUser, String mainUser, String contrataPassword) {
-		String result = processContrataCommunication(ssl, test, "<?xml>", contrataUser, mainUser, contrataPassword);
+		String result = processContrataCommunication(ssl, test, "<?xml>", contrataUser, mainUser, contrataPassword, ContrataFileType.CONTRACT);
 		result = result.replaceAll("\n", "");
 		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
 		return TERRORES.getEnumByValue(result)!=null;

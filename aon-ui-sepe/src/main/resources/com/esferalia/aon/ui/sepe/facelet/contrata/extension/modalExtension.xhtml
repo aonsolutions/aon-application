@@ -37,7 +37,7 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="extensionContrataSave"
 											value="#{bundle.aon_accept}"
-											reRender="showExtensionContrataWindow"
+											reRender="showExtensionContrataWindow, #{reRender}"
 											actionListener="#{extensionContrata.onContrataAccept}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 											<f:setPropertyActionListener
