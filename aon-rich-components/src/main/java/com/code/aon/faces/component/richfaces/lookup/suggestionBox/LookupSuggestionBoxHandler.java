@@ -39,7 +39,7 @@ public class LookupSuggestionBoxHandler extends SuggestionBoxTagHandler {
 		if ( me != null ) {
 			TagAttribute ta = getAttribute(SUGGESTION_ACTION);
 			MethodExpression newME = ta.getMethodExpression(ctx, null, SIGNATURE);
-			Object[] properties = new Object[2];
+			Object[] properties = new Object[3];
 			TagAttribute suggestAlias = getAttribute(ILookupConstants.SUGGEST_ALIAS);
 			if (suggestAlias != null) {
 				properties[0] =  suggestAlias.getObject(ctx, String.class);
@@ -50,6 +50,10 @@ public class LookupSuggestionBoxHandler extends SuggestionBoxTagHandler {
 				matchBeginOnly =  (Boolean) matchBeginOnlyTag.getObject(ctx, Boolean.class);
 			}			
 			properties[1] = matchBeginOnly != null ? matchBeginOnly : Boolean.FALSE;
+			TagAttribute controllerListener = getAttribute(ILookupConstants.CONTROLLER_LISTENER);
+			if (controllerListener != null) {
+				properties[2] = controllerListener.getValueExpression(ctx, Object.class);
+			}
 			MethodExpressionAdapter mea = new MethodExpressionAdapter(me, newME, properties);
 			sb.setSuggestionAction(mea);
 		}

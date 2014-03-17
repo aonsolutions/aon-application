@@ -94,6 +94,11 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 					String.class, FaceletUtil.ACTION_SIG);
 		}		
 		mapper.setVariable(PREFFIX + LOOKUP_ACTION, action);
+		TagAttribute controllerListener = getAttribute(CONTROLLER_LISTENER);
+		if (controllerListener != null) {
+			ValueExpression ve = controllerListener.getValueExpression(ctx, Object.class);
+			mapper.setVariable(PREFFIX + CONTROLLER_LISTENER, ve);
+		}				
 	}
 	
 	@Override

@@ -13,6 +13,7 @@
 		width="#{aon_lst_width}" height="#{aon_lst_height}" 
 		frequency="#{aon_lst_frequency}" minChars="#{aon_lst_minChars}"
 		nothingLabel="#{bundle.aon_search_no_results}" fetchValue=""
+		controllerListener="#{aon_lst_controllerListener}"
 		var="lto" suggestionAction="#{lookup.autocomplete}" >		
 		<h:column>
 			<aon:outputText value="#{aon_lst_columnExpression}" />
