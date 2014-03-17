@@ -283,7 +283,7 @@ public class ExpressionContext {
 		char expr[] = e.getExpr();
 		int end = e.getCursor();
 		do {
-			if (end < 0)
+			if (end <= 0)
 				throw new UnknownUndefVarException();
 			while (end-- > 0)
 				if (Character.isJavaIdentifierPart(expr[end]))

@@ -1184,24 +1184,27 @@ public class FANWriter {
 				cal.setTime(getStartDate());
 				return cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
 			}
-			return 30;
+			if( contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()) ){
+				return (int) getAvailableDays(getStartDate(), contract.getEndDate());
+			} else {
+				return 30;
+			}
 		} else if(code.startsWith("2") || code.startsWith("5")){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			Double dayHours = (Double.parseDouble(weekHours)/5);
+			Double dayHours = (Double.parseDouble(weekHours)/7);
 			
 			Calendar startCal = Calendar.getInstance();
 			startCal.setTime(getStartDate());
 			Calendar endCal = Calendar.getInstance();
 			endCal.setTime(getEndDate());
 			
-			int totalDays = 0;
-			while(startCal.before(endCal)){
-				if(startCal.get(Calendar.DAY_OF_WEEK)!=6
-					&& startCal.get(Calendar.DAY_OF_WEEK)!=7){
-					totalDays++; 
-				}
-				startCal.add(Calendar.DAY_OF_MONTH, 1);
+			long totalDays = 0;
+			if( contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()) ){
+				totalDays =  getAvailableDays(getStartDate(), contract.getEndDate());
+			} else {
+				totalDays =  getAvailableDays(getStartDate(), getEndDate());
 			}
+			
 			if(itDays!=null && itDays>0){
 				return Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
 			}
@@ -1209,6 +1212,20 @@ public class FANWriter {
 		}
 		return null;
 		
+	}
+	
+	private long getAvailableDays(Date start, Date end) {
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(start);
+		startCal.set(Calendar.HOUR_OF_DAY, 0);
+		startCal.set(Calendar.MINUTE, 0);
+		startCal.set(Calendar.SECOND, 0);
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(end);
+		endCal.set(Calendar.HOUR_OF_DAY, 23);
+		endCal.set(Calendar.MINUTE, 59);
+		endCal.set(Calendar.SECOND, 59);
+		return CommonUtil.getDaysBetweenDates(startCal.getTime(), endCal.getTime());
 	}
 	
 	/**

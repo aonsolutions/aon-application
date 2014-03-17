@@ -1936,8 +1936,10 @@ public class SQLContractSalaryCalculatorContext implements
 		this.implicitExpressionContext.addVariable(CONTRACT_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE),
 				startDate, endDate);
-		this.implicitExpressionContext.addVariable(CONTRACT_END,
-				getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE),
+		this.implicitExpressionContext.addVariable(
+				CONTRACT_END,
+				salaryType == SalaryType.SETTLE ? contractEndDate : getDate(
+						SQLConstants.CONTRACT, ContractColumns.END_DATE),
 				startDate, endDate);
 
 		this.implicitExpressionContext.addVariable(IRPF_PERCENT, irpf);
