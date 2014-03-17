@@ -1191,7 +1191,7 @@ public class FANWriter {
 			}
 		} else if(code.startsWith("2") || code.startsWith("5")){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			Double dayHours = (Double.parseDouble(weekHours)/5);
+			Double dayHours = (Double.parseDouble(weekHours)/7);
 			
 			Calendar startCal = Calendar.getInstance();
 			startCal.setTime(getStartDate());
