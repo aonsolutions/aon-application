@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller.event;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -13,6 +14,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.registry.controller.RecordDataController;
 
 public class RecordDataAttachControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)

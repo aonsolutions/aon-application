@@ -1,5 +1,6 @@
 package com.code.aon.ui.registry.controller.event;
 
+import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.registry.RegistryAddress;
@@ -10,6 +11,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 public class RegistryAddressControllerListener extends ControllerAdapter implements IRegistryConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private CompanyUtil companyUtil;
 

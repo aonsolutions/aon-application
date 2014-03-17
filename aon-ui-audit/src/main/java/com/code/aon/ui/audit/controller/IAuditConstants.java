@@ -9,6 +9,7 @@ public interface IAuditConstants {
 	String AUDIT_CONTROLLER_NAME = "audit";
 	String ACTION_MORE_USED_CONTROLLER_NAME = "actionMoreUsed";
 	String SESSION_CONTROLLER_NAME = "auditSession";
+	String ACTION_FAVORITE_CONTROLLER_NAME = "actionFavorite";
 
 	// Properties
 	String MODULES_ENABLED = "modulesEnabled";
