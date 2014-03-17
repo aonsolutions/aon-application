@@ -18,73 +18,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************ APPLICATION ************** -->
-	<managed-bean>
-		<managed-bean-name>auditApplication</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.Application</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>auditApplication</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Application_name</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{applicationActionListener}</value>
-			</list-entries>
-		</managed-property>			
-	</managed-bean>
-			
-	<managed-bean>
-		<managed-bean-name>applicationActionListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>applicationAction</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Action_application_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>applicationChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.ChildControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>masterBean</property-name>
-			<value>auditApplication</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterPropertyName</property-name>
-			<value>application</value>
-		</managed-property>
-	</managed-bean>	
-
 	<!-- ************ SESSION ************** -->
 	<managed-bean>
 		<managed-bean-name>auditSession</managed-bean-name>
@@ -195,36 +128,6 @@
 			</map-entries>
 		</managed-property>
 												
-	</managed-bean>
-
-	<!-- ************ ACTION ************** -->
-	<managed-bean>
-		<managed-bean-name>applicationAction</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.Action</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>applicationAction</value> 
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Action_name</value>
-		</managed-property>						
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{applicationChildListener}</value>
-			</list-entries>
-		</managed-property>		
 	</managed-bean>
 
 	<!-- ************ APPLICATION OPTION CONTROLLER **************** -->
@@ -366,23 +269,6 @@
 			<from-outcome>auditSession_moreUsed</from-outcome>
 			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/moreUsed.xhtml</to-view-id>
 		</navigation-case>		
-	</navigation-rule>		
-	
-	
-	<!-- =================== Application ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>auditApplication_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>auditApplication_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>auditApplication_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/search.xhtml</to-view-id>
-		</navigation-case>
 	</navigation-rule>		
 	
 </faces-config>

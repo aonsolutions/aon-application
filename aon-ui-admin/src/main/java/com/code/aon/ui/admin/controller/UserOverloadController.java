@@ -38,19 +38,6 @@ public class UserOverloadController extends BasicController {
 	
 	private DomainApplication domainApplication;
 	
-	public UserOverloadController() {
-		List<Expression> list = new LinkedList<Expression>();
-		Expression expr = ExpressionUtilities.getEqualExpression("ApplicationUser.user.domain", getParentDomain().getId());
-		list.add(expr);
-		setInitExpressions(list);
-		try {
-			clearCriteria();
-			this.domainApplication = loadDomainApplication();
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
-	
 	private Domain getParentDomain() {
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		return dc.getParentDomain();		
@@ -64,17 +51,21 @@ public class UserOverloadController extends BasicController {
 		this.userProfiles = userProfiles;
 	}	
 	
-	private DomainApplication loadDomainApplication() throws ManagerBeanException {
+	private DomainApplication loadDomainApplication() {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		Integer id = AdminUtil.getDomainApplication(DomainManager.getCurrentDomain(), principal.getApplicationId());
 		if ( id != null ) {
-			return (DomainApplication) BeanManager.getManagerBean(DomainApplication.class).get(id);	
+			try {
+				return (DomainApplication) BeanManager.getManagerBean(DomainApplication.class).get(id);	
+			} catch ( ManagerBeanException e ) {
+				LOGGER.error(e.getMessage(), e);
+			}
 		}
 		return null;
 	}
 	
 	private void updateUserProfiles() throws ManagerBeanException {
-		this.userProfiles = DomainApplicationUserController.loadUserProfiles( domainApplication, (ApplicationUser) getTo() );
+		this.userProfiles = DomainApplicationUserController.loadUserProfiles( getDomainApplication(), (ApplicationUser) getTo() );
 	}	
 
 	public String getProfileList() throws ManagerBeanException {
@@ -89,7 +80,7 @@ public class UserOverloadController extends BasicController {
 	}
 	
 	private void updateAvailableUsers( Integer domain ) throws ManagerBeanException {
-		availableUsers = DomainApplicationController.loadAvailableUsers(domain, domainApplication);
+		availableUsers = DomainApplicationController.loadAvailableUsers(domain, getDomainApplication());
 	}
 
 	@Override
@@ -133,7 +124,7 @@ public class UserOverloadController extends BasicController {
 	public void accept(ActionEvent event) {
 		ApplicationUser appUser = (ApplicationUser) getTo();
 		if ( isNew() ) {
-			appUser.setDomainApplication(domainApplication);
+			appUser.setDomainApplication(getDomainApplication());
 		}
 		super.accept(event);
 		try {
@@ -144,7 +135,19 @@ public class UserOverloadController extends BasicController {
 	}
 
 	public DomainApplication getDomainApplication() {
+		if ( domainApplication == null ) {
+			this.domainApplication = loadDomainApplication();
+		}
 		return domainApplication;
 	}		
+	
+	public void onInit( ActionEvent event ) {
+		List<Expression> list = new LinkedList<Expression>();
+		Expression expr = ExpressionUtilities.getEqualExpression("ApplicationUser.user.domain", getParentDomain().getId());
+		list.add(expr);
+		setInitExpressions(list);
+		onEditSearch(event);
+		onSearch(event);
+	}
 	
 }
