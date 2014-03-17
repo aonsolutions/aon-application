@@ -242,6 +242,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			for (IContractPayment contractPayment : contractPayments) {
 				try {
+					System.out.println(contractPayment.getName() + "--. " + contractPayment.getExpression() );
+
 					resolvePayment(contractPayment, start, end, chargeDate,
 							expressionContext, taxCalculator, quoteCalculator);
 				} catch (UndefinedTotalPaymentException e) {
@@ -381,7 +383,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		}
 
 		try {
-
 			List<ITimedResult<Double>> results = expressionContext
 					.addExpression(contractPayment, paymentStart, paymentEnd,
 							Double.class);
@@ -737,7 +738,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 									bonusEnd, Double.class);
 
 					double bonus = 0.00;
-					for (ITimedObject<Double> amount : amounts) {
+					for (ITimedResult<Double> amount : amounts) {
 						Double value = amount.getValue();
 						if (value != null) {
 							String description = null;
@@ -746,8 +747,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 								description = expressionContext.evalTemplate(
 										contractBonus.getDescription(),
 										period.getStart(), period.getEnd());
-								salaryBuilder.addBonus(contractBonus.getName(),
-										value, description);
+								salaryBuilder.addBonus(
+										value, description, contractBonus, amount.getContext());
 							} catch (Exception e) {
 								// TODO : Log ???
 							}

@@ -253,6 +253,52 @@ public class SSCollectionsController implements Serializable {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T49.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T49CodeList;
+
+	public List<SelectItem> getT49CodeList() {
+		if (T49CodeList == null) {
+			T49CodeList = new LinkedList<SelectItem>();
+			T49[] el = T49.values();
+			for (T49 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T49CodeList.add(item);
+				}
+			}
+		}
+		return T49CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T50.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T50CodeList;
+
+	public List<SelectItem> getT50CodeList() {
+		if (T50CodeList == null) {
+			T50CodeList = new LinkedList<SelectItem>();
+			T50[] el = T50.values();
+			for (T50 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T50CodeList.add(item);
+				}
+			}
+		}
+		return T50CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T54.java
 	 *  ------------------------------------------------------------------------
 	 */ 

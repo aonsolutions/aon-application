@@ -556,7 +556,8 @@ public class CertificadosWriter implements Serializable {
 		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
 			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
-			String noHolidays = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get(ContextVariable.NO_HOLIDAYS.getName());
+// TODO: search holidays using an appropiate ContextVariable field  
+			String noHolidays = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get("DIAS_VACACIONES_NO_DISFRUTADOS");
 			for(ISalary settle: settleList){
 				if(settle!=null && noHolidays!=null && noHolidays!="0"){
 					o = new TRABAJADORTYPE.DatosVacacionesCotizadas();

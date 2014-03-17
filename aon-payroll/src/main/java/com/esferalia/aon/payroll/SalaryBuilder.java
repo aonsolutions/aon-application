@@ -6,6 +6,7 @@ import java.util.Map;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -216,15 +217,16 @@ public class SalaryBuilder implements ISalaryBuilder {
 	public void setTotalEnterprise(Double totalEnterprise) {
 		this.salary.setTotalEnterprise(totalEnterprise);
 	}
-
+	
 	@Override
-	public void addBonus(String concept, Double amount, String description) {
+	public void addBonus(Double amount, String description, IBonus bonus,
+			Map<String, ITimedVariable<?>> context) {
 		SalaryBonus salaryBonus = new SalaryBonus();
 
 		salaryBonus.setSalary(salary);
-		salaryBonus.setBonusConcept(concept);
 		salaryBonus.setAmount(amount);
 		salaryBonus.setDescription(description);
+		salaryBonus.setBonusConcept(bonus.getName());
 
 		this.salary.getSalaryBonus().add(salaryBonus);
 	}

@@ -24,9 +24,11 @@ import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractClause;
+import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
+import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
-import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -54,8 +56,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			contract.setEnterpriseCCC(null);
 			contract.setActivity(null);
 		} else {
-			contract.setSepeStatus(ContractStatus.PENDING);
-			contract.setSsStatus(ContractStatus.PENDING);
+//			contract.setSepeStatus(ContractStatus.PENDING);
+//			contract.setSsStatus(ContractStatus.PENDING);
 			contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
 		}
 	}
@@ -151,12 +153,21 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractController controller = (ContractController) this.getController();
 		ContractUtils utils = ContractUtils.getInstance();
 		utils.insertContractInfo((Contract) controller.getTo(), controller.getParams());
-		if(!controller.getParams().isRetaQuote()){
-			utils.insertContractData((Contract) controller.getTo(), controller.getParams());
-			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize((Contract) controller.getTo());
-			contrataController.onContrataDataShow(null);
-			importContractClauses((Contract)controller.getTo());
+		try {
+			if(!controller.getParams().isRetaQuote()){
+				utils.insertContractData((Contract) controller.getTo(), controller.getParams());
+				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+				contrataController.initialize((Contract) controller.getTo());
+				contrataController.onContrataDataShow(null);
+				importContractClauses((Contract)controller.getTo());
+				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.PENDING.getValue());
+				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.PENDING.getValue());
+			} else {
+				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.MANUAL.getValue());
+				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.MANUAL.getValue());
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Error saving contract status");
 		}
 	}
 	

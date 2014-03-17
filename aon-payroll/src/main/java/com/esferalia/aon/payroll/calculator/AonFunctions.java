@@ -11,7 +11,17 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class AonFunctions {
 	
-
+	@Variable(ContextVariable.MIN)
+	public static final Double min(Double a, Double b) {
+		return Math.min(a, b);
+	}
+	
+	@Variable(ContextVariable.MAX)
+	public static final Double max(Double a, Double b) {
+		return Math.max(a, b);
+	}
+	
+	
 	// ------------------------------------------------------------------------
 	// 
 	// ------------------------------------------------------------------------

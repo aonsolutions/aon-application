@@ -168,7 +168,7 @@ public class FanBatchController extends BasicController {
 		OutputStream out = null;
         try {
         	Date date = batch.getDate();
-        	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmmss");
+        	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
     		String name = formatter.format(date);
         	int size = batch.getOutcomeFile().length;
 			response = DownloadUtil.getResponse();

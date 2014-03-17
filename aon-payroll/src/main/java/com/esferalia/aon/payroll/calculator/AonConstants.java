@@ -1,0 +1,48 @@
+package com.esferalia.aon.payroll.calculator;
+
+import java.lang.reflect.Field;
+import java.util.Date;
+import java.util.List;
+
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.DismissalType;
+import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
+import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
+
+
+public class AonConstants {
+	
+	@Variable(ContextVariable.NULL)
+	public static DismissalType NULL = null;
+	@Variable(ContextVariable.UNFAIR)
+	public static DismissalType UNFAIR = DismissalType.UNFAIR;
+	@Variable(ContextVariable.OBJECTIVE)
+	public static DismissalType OBJECTIVE = DismissalType.OBJECTIVE;
+	@Variable(ContextVariable.CONTRACT_COMPLETE)
+	public static DismissalType WORK_END = DismissalType.WORK_END;
+	
+	
+	// ------------------------------------------------------------------------
+	// 
+	// ------------------------------------------------------------------------
+	public static void load(ExpressionContext context, Date startDate, Date endDate){
+		for (Field field: AonConstants.class.getDeclaredFields()) {
+			Variable variable = field.getAnnotation(Variable.class);
+			if ( variable != null ) {
+				ContextVariable contextVariable = variable.value();
+				try {
+					context.addVariable(contextVariable, field.get(null), startDate, endDate);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+}

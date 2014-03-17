@@ -37,6 +37,7 @@ import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.ContrataBatchAttachment;
@@ -120,6 +121,16 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	}
 	public void setProrrogaFile(boolean prorrogaFile) {
 		this.prorrogaFile = prorrogaFile;
+	}
+	public ContrataFileType getContrataFileType(){
+		if(isContratoFile()){
+			return ContrataFileType.CONTRACT;
+		} else if(isProrrogaFile()){
+			return ContrataFileType.EXTENSION;
+		} else if(isTransformacionFile()){
+			return ContrataFileType.TRANSFORMATION;
+		}
+		return null;
 	}
 	public void setEnabledContrataEdition(boolean enabledContrataEdition) {
 		this.enabledContrataEdition = enabledContrataEdition;
@@ -227,6 +238,17 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	@Override
 	public boolean isNewBatch() {
 		return newBatch;
+	}
+	
+	public String getContrataModelName(){
+		if(isContratoFile()){
+			return "contract";
+		} else if(isProrrogaFile()){
+			return "extension";
+		} else if(isTransformacionFile()){
+			return "transform";
+		}
+		return null;
 	}
 	
 	@Override
@@ -347,6 +369,9 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 			responseType = ContractAttachmentType.SEPE_EXTENSION_RESPONSE;
 		} else if(isTransformacionFile()){
 			setHandler( new ContrataTransformacionesHandler() );
+//			generatedType = ContractAttachmentType.SEPE_TRANSFORM_FILE;
+//			communicationIdType = ContractAttachmentType.SEPE_TRANSFORM_COMMUNICATION_ID;
+//			responseType = ContractAttachmentType.SEPE_TRANSFORM_RESPONSE;
 		}
 		getHandler().initialize(contract);
 		setGeneratedFile(obtainContrataAttach(generatedType));
@@ -426,6 +451,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 //				attach.setAttachmentType(ContractAttachmentType.SEPE_TRANSFORM_FILE);
 			}
 			bean.insertOrUpdate(attach);
+			afterContrataAccept();
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido guardar los datos de Contrat@";
 			LOGGER.error(msg, e);
@@ -435,6 +461,31 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		}
 	}
 	
+	private void afterContrataAccept() throws ManagerBeanException {
+		
+		IManagerBean bean;
+		try {
+			bean = BeanManager.getManagerBean(ContractInfo.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		ContractInfo info;
+		info = new ContractInfo();
+		info.setContract( getContract() );
+		info.setStartDate( getContract().getStartDate() );
+		info.setEndDate( getContract().getEndDate() );
+		if(isContratoFile()){
+			info.setName( ContractVariable.SEPE_CONTRACT.getValue() );
+		} else if(isProrrogaFile()){
+			info.setName( ContractVariable.SEPE_EXTENSION.getValue() );
+		} else if(isTransformacionFile()){
+			info.setName( ContractVariable.SEPE_TRANSFORM.getValue() );
+		}
+		info.setExpression( ContractSepeStatus.PENDING.getValue() );
+		bean.insert(info);
+		
+	}
 	public boolean validateContrataData() {
 		InputStream is = new ByteArrayInputStream(getGeneratedFile().getData());
 		String contractCode = getHandler().getContractCode().getValue();
@@ -602,12 +653,19 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 			if( getCommunicator().isLoginRequired() ){
 				setShowLoginWindow(true);
 			} else {
+				getCommunicator().setContrataFileType(getContrataFileType());
 				getCommunicator().setDocument(new String(getGeneratedFile().getData()));
 				String result = getCommunicator().communicate();
 				if(isBatchView()){
 					saveSepeResponseFile(SepeBatchAttachmentType.COMMUNICATION_ID, result);
 				} else if(!isBatchView()){
-					saveSepeResponseFile(ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID, result);
+					if(isContratoFile()){
+						saveSepeResponseFile(ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID, result);
+					} else if(isProrrogaFile()){
+						saveSepeResponseFile(ContractAttachmentType.SEPE_EXTENSION_COMMUNICATION_ID, result);
+					} else if(isTransformacionFile()){
+						
+					}
 				} else {
 					String msg = "No se ha podido guardar la respuesta obtenida del SEPE";
 					AonUtil.addErrorMessage(msg);
@@ -633,12 +691,19 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		if( getCommunicator().isLoginRequired() ){
 			setShowLoginWindow(true);
 		} else {
+			getCommunicator().setContrataFileType(getContrataFileType());
 			getCommunicator().setDocument(document);
 			String result = getCommunicator().communicate();
 			if(isBatchView()){
 				saveSepeResponseFile(SepeBatchAttachmentType.RESPONSE_FILE, result);
 			} else if(!isBatchView()){
-				saveSepeResponseFile(ContractAttachmentType.SEPE_CONTRACT_RESPONSE, result);
+				if(isContratoFile()){
+					saveSepeResponseFile(ContractAttachmentType.SEPE_CONTRACT_RESPONSE, result);
+				} else if(isProrrogaFile()){
+					saveSepeResponseFile(ContractAttachmentType.SEPE_EXTENSION_RESPONSE, result);
+				} else if(isTransformacionFile()){
+					
+				}
 			} else {
 				String msg = "No se ha podido guardar la respuesta obtenida del SEPE";
 				AonUtil.addErrorMessage(msg);
@@ -682,6 +747,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		
 		if(result!=null && (result.contains(ACCEPTED) || result.contains(ACCEPTED_WITH_ERRORS)) && !result.contains(REJECTED)){
 			try {
+				getCommunicator().setContrataFileType(getContrataFileType());
 				FICHEROCONTRATOS contratos = getCommunicator().obtainFicheroContratos(result.getBytes());
 				for(Object o: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
 					RESPUESTACONTRATOTYPE respuestaContratos = getCommunicator().obtainRespuestaContrato(o);
@@ -721,6 +787,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	
 	@Override
 	public String getCommunicationLogContent() {
+		getCommunicator().setContrataFileType(getContrataFileType());
 		String communicationLogContent = "<div>";
 		if( isCommunicationIdReceived() ){
 			communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
@@ -788,12 +855,16 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		if(resultAttach==null){
 			resultAttach = new ContractAttachment();
 			if(type == ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID){
-				resultAttach.setDescription("ID comunicacion Contrat@");
+				resultAttach.setDescription("ID comunicacion Contrat@ (contrato)");
 			} else if(type == ContractAttachmentType.SEPE_CONTRACT_RESPONSE){
-				resultAttach.setDescription("Respuesta Contrat@");
+				resultAttach.setDescription("Respuesta Contrat@ (contrato)");
+			} else if(type == ContractAttachmentType.SEPE_EXTENSION_COMMUNICATION_ID){
+				resultAttach.setDescription("ID comunicacion Contrat@ (prorroga)");
+			} else if(type == ContractAttachmentType.SEPE_EXTENSION_RESPONSE){
+				resultAttach.setDescription("Respuesta Contrat@ (prorroga)");
 			}
-			resultAttach.setContract(getHandler().getContract());
 			resultAttach.setAttachmentType(type);
+			resultAttach.setContract(getHandler().getContract());
 			resultAttach.setMimeType(MimeType.MIME_XML);
 		}
 		try {
@@ -814,9 +885,11 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			resultAttach.setAttachDate(new Date());
 			ContractAttachment attach = (ContractAttachment) bean.insertOrUpdate(resultAttach);
-			if(type == ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID){
+			if(type == ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID
+					|| type == ContractAttachmentType.SEPE_EXTENSION_COMMUNICATION_ID){
 				setCommunicationIdFile(attach);
-			} else if(type == ContractAttachmentType.SEPE_CONTRACT_RESPONSE){
+			} else if(type == ContractAttachmentType.SEPE_CONTRACT_RESPONSE
+					|| type == ContractAttachmentType.SEPE_EXTENSION_RESPONSE){
 				setResponseFile(attach);
 			}
 		} catch (ManagerBeanException e) {

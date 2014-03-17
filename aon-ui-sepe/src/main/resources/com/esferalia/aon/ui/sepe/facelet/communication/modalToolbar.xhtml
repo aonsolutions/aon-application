@@ -16,6 +16,7 @@
 		
 		<ui:define name="toolbarContent">
 
+			
 			<c:if test="#{!skipBatchButton}">
 				<aon:commandButton id="batch-file"
 					value="#{bundle.sepe_contrata_batch}"
@@ -29,7 +30,7 @@
 			<aon:commandButton id="sepe-communication"
 				value="#{bundle.sepe_communicate}"
 				disabled="#{controller.communicationAccepted}"
-				reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+				reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
 				actionListener="#{controller.onSendSepeFile}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
  				oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -38,7 +39,7 @@
 			<aon:commandButton id="sepe-dataQuery"
 				value="#{bundle.sepe_status_check}"
 				disabled="#{!controller.communicationAccepted}"
-				reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+				reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
 				actionListener="#{controller.onSepeDataQuery}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
  				oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -58,14 +59,14 @@
 						value="Reiniciar proceso"
 						rendered="#{(controller.communicationIdReceived and not controller.communicationAccepted) or (controller.communicationResponseReceived and not controller.communicationFinished)}"
 						actionListener="#{controller.onRemoveSepeFiles}"
-						reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+						reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
 						iconClass="aon-icon-refresh" 
 						/>
 					<aon:menuItem id="sepe-result-process"
 						value="Procesar resultado"
 						rendered="#{controller.communicationResponseReceived}"
 						actionListener="#{controller.onProcessSepeResult}"
-						reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+						reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
 						iconClass="aon-icon-refresh" 
 						/>
 					<aon:menuItem iconClass="aon-icon-mail-save">

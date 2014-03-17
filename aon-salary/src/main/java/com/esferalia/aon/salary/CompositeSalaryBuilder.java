@@ -3,6 +3,7 @@ package com.esferalia.aon.salary;
 import java.util.Date;
 import java.util.Map;
 
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -233,10 +234,12 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 			builder.setTotalEnterprise(totalEnterprise);
 	}
 
+	
 	@Override
-	public void addBonus(String concept, Double amount, String description) {
+	public void addBonus(Double amount, String description, IBonus bonus,
+			Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addBonus(concept, amount, description);
+			builder.addBonus(amount, description, bonus, context);
 	}
 
 	@Override

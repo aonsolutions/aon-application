@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.sepe.controller.handler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -60,14 +62,13 @@ public class ContrataProrrogasHandler implements IContrataHandler {
 	
 	@Override
 	public void loadContrataData(IAttachment attach) throws ManagerBeanException, IOException{
-		// TODO make ContrataReader return correct params type
 		if(attach==null){
 			attach = new ContractAttachment();
 		} 
-//		else {
-//			ContrataReader reader = new ContrataReader();
-//			this.params = reader.readFile( new ByteArrayInputStream(contrataAttach.getData()) );
-//		}
+		else {
+			ContrataReader reader = new ContrataReader();
+			this.params = (ContrataProrrogaParams) reader.readFile( new ByteArrayInputStream(attach.getData()) );
+		}
 	}
 
 	/**

@@ -70,8 +70,8 @@ public class SEPEFileUtils {
 				Schema schema = sf.newSchema(schemaFile);
 				validateXmlPattern(xmlStream, schema);
 			} else {
-				AonUtil.addErrorMessage("No se ha podido validar el fichero.");
-				AonUtil.addErrorMessage("Imposible obtener el esquema (XSD) de validación.");
+				AonUtil.addInfoMessage("No se ha podido validar el fichero.");
+				AonUtil.addInfoMessage("Imposible obtener el esquema (XSD) de validación.");
 			}
 		} finally {
 			FileUtils.deleteQuietly(schemaFile);

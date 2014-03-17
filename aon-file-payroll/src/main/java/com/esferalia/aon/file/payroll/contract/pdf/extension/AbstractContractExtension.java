@@ -27,7 +27,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
-import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -216,8 +216,7 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 				}
 			}
 			
-//    		stamp.setFormFlattening(true);
-			stamp.setFormFlattening(false);
+			stamp.setFormFlattening(readOnly);
 			stamp.close();
 			reader.close();
 			return baos.toByteArray();
@@ -329,7 +328,7 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 	
 	public void loadPdfCommonFields(Contract contract, IContrataParams contrataParams) throws ManagerBeanException{
 		
-		ContrataContratoParams params = (ContrataContratoParams) contrataParams;
+		ContrataProrrogaParams params = (ContrataProrrogaParams) contrataParams;
 		
 		/* 
 		 * Contract enterprise fields
@@ -452,11 +451,12 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 			setPdfFieldValue(EMPLOYEE_BIRTH_DATE,formatter.format(contract.getPerson().getBirthDate()));
 		}
 		setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
-		if(params!=null && params.getNivelFormativo()!=null){
-			setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,params.getNivelFormativo().getDescription());
-			setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,params.getNivelFormativo().getCode().substring(0, 1));
-			setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,params.getNivelFormativo().getCode().substring(1, 2));
-		}
+		// TODO contrataContatoParams is required for this
+//		if(params!=null && params.getNivelFormativo()!=null){
+//			setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,params.getNivelFormativo().getDescription());
+//			setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,params.getNivelFormativo().getCode().substring(0, 1));
+//			setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,params.getNivelFormativo().getCode().substring(1, 2));
+//		}
 		try {
 			setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
 			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE1,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));

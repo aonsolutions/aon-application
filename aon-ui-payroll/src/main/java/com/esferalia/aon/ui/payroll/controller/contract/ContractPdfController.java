@@ -324,7 +324,17 @@ public class ContractPdfController implements Serializable {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		ContrataController contrata = (ContrataController) AonUtil.getRegisteredBean("contractContrata");
+		
+		ContrataController contrata = null;
+		if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
+			contrata = (ContrataController) AonUtil.getRegisteredBean("extensionContrata");
+			contrata.initialize(getContract());
+//		} else if(getDocumentType()==ContractAttachmentType.TRANSFORM_DOC_DRAFT){
+//			contrata = (ContrataController) AonUtil.getRegisteredBean("transformContrata");
+		} else {
+			contrata = (ContrataController) AonUtil.getRegisteredBean("contractContrata");
+		}
+		
 		contrata.onContrataDataShow(null);
 		if(contrata.getGeneratedFile()!=null && contrata.getGeneratedFile().getData()!=null){
 			setContrataParams(contrata.getHandler().getParams());
@@ -552,6 +562,8 @@ public class ContractPdfController implements Serializable {
 				item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
 			}
+			item = new SelectItem(ContractAttachmentType.EXTENSION_DOC_DRAFT, ContractAttachmentType.EXTENSION_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
+			availableDocumentList.add(item);
 		}
 		return availableDocumentList;
 	}
@@ -678,6 +690,27 @@ public class ContractPdfController implements Serializable {
 			}
 		}
 		
+		// Documento de la prorroga
+		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.EXTENSION_DOC_DRAFT)){
+			try {
+				setDocumentType(ContractAttachmentType.EXTENSION_DOC_DRAFT);
+				loadDocument(true);
+				generatedDocumentMap.put(ContractAttachmentType.EXTENSION_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar la prorroga");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar la prorroga");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (Exception e){
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar la prorroga");
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+		}
+		
 	}
 	
 	private List<IAttachment> getGeneratedAttach(){
@@ -688,6 +721,7 @@ public class ContractPdfController implements Serializable {
 		types.add(ContractAttachmentType.BASIC_COPY_DRAFT);
 		types.add(ContractAttachmentType.TRAINING_ANNEX_II);
 		types.add(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
+		types.add(ContractAttachmentType.EXTENSION_DOC_DRAFT);
 		for(ContractAttachmentType type: types){
 			if(generatedDocumentMap.containsKey(type)){
 				ContractAttachment attach = new ContractAttachment();

@@ -39,14 +39,16 @@
 						
 						<aon:outputText value="#{bundle.aon_status}" />
 						<aon:div>
-							<aon:outputText rendered="#{contract.ssStatus!=null}"
-								value="&#160;"
-								title="#{contract.ssStatus}"
-								styleClass="aon-icon-winsuite aon-padding-left aon-padding-right aon-margin-right" />
-							<aon:outputText rendered="#{contract.sepeStatus!=null}"
-								value="&#160;"
-								title="#{contract.sepeStatus}"
-								styleClass="aon-icon-sepe aon-padding-left aon-padding-right aon-margin-right" />
+							<aon:commandButton rendered="#{contract.ssStatus!=null}"
+								styleClass="aon-icon-commandButton" >
+								<aon:outputText value="#{contract.ssStatus}" 
+									styleClass="aon-icon-commandButton aon-icon-winsuite aon-padding-left aon-margin-right" />
+							</aon:commandButton>
+							<aon:commandButton rendered="#{contract.sepeStatus!=null}"
+								styleClass="aon-icon-commandButton" >
+								<aon:outputText value="#{contract.sepeStatus}"
+									styleClass="aon-icon-commandButton aon-icon-sepe aon-padding-left aon-padding-right aon-margin-right" />
+							</aon:commandButton>
 						</aon:div>
 							
 					</aon:panelGrid>
@@ -138,12 +140,17 @@
 			<ui:param name="saveReRender" value="additionalClausesData" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/modalGeneration.xhtml" />
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" >
+			<ui:param name="reRender" value="contractForm" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/modalTransform.xhtml" >
 			<ui:param name="reRender" value="contractForm" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{contractContrata}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
+			<ui:param name="controller" value="#{extensionContrata}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{contractCertificados}" />

@@ -206,8 +206,7 @@
 									action="userOverload_list"
 									actionListener="#{globalConfig.onInitDomain}"
 									value="#{bundle.admin_overload_users}" >
-									<aon:actionListener method="#{userOverload.onEditSearch}" />
-									<aon:actionListener method="#{userOverload.onSearch}" />
+									<aon:actionListener method="#{userOverload.onInit}" />
 								</aon:commandLink>						
 							</aon:div>
 						</c:if>					

@@ -16,10 +16,13 @@ import org.xml.sax.SAXException;
 import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.contrata.TERRORES;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.FICHEROPRORROGAS;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.RESPUESTAPRORROGATYPE;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 import com.esferalia.aon.ui.sepe.file.ContrataResponseReader;
@@ -39,6 +42,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	private boolean testEnv;
 	private boolean sslEnv;
 	private boolean passwdVisible;
+	private ContrataFileType contrataFileType;
 	
 	private String xmlResult;
 	
@@ -46,6 +50,14 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	private boolean dataQuery;
 	
 	
+	public ContrataFileType getContrataFileType() {
+		return contrataFileType;
+	}
+
+	public void setContrataFileType(ContrataFileType contrataFileType) {
+		this.contrataFileType = contrataFileType;
+	}
+
 	public boolean isDataCommunication() {
 		return dataCommunication;
 	}
@@ -221,6 +233,15 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	
 	@Override
 	public String obtainCommunicationStatus(byte[] data) {
+		if(getContrataFileType()==ContrataFileType.CONTRACT){
+			return obtainContractCommunicationStatus(data);
+		} else if(getContrataFileType()==ContrataFileType.EXTENSION){
+			return obtainExtensionCommunicationStatus(data);
+		}
+		return null;
+	}
+	
+	public String obtainContractCommunicationStatus(byte[] data) {
 		String status = "";
 		status += "<br /> ";
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
@@ -260,7 +281,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 					}
 					
 					status += "<br /> ";
-					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'><b>";
+					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'>";
 					status += contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1) + " - ";
 					status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
 					if(StringUtils.isNotBlank(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
@@ -269,51 +290,45 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 					}
 					status += ", ";
 					status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE();
-					status += "</b></div>";
+					if(!StringUtils.equals(respuestaContratos.getRESULTADO(),"RECHAZADO")){
+						status += " - <b>CONTRATO ACEPTADO</b>";
+						status += " (" + respuestaContratos.getIDCONTRATO() + ")";
+					} else {
+						status += " - <b>CONTRATO RECHAZADO</b>";
+					}
+					status += "</div>";
 					
-					
-					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
-					status += "<br /> ";
-					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
-					status += "<br /> ";
-					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
-					status += "<br /> ";
-					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
-					status += "<br /> ";
-					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
-					status += "<br /> ";
-					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
-					status += "<br /> ";
-					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
-					status += "<br /> ";
-					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
-					status += "<br /> ";
-					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
-					status += "<br /> ";
-					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
-					status += "<br /> ";
-					
-//			System.out.println("ESTADO FICHERO:    " + contratos.getESTADOFICHERO());
-//			System.out.println("NUMERO PROCESADOS: " + contratos.getNUMEROPROCESADOS());
-//			System.out.println("VERSION:           " + contratos.getVersion());
-//			System.out.println("FECHA ALTA:         " + respuestaContratos.getFECHAALTA());
-//			System.out.println("FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION());
-//			System.out.println("ID CONTRATO:        " + respuestaContratos.getIDCONTRATO());
-//			System.out.println("LEY BONIF:          " + respuestaContratos.getLEYBONIF());
-//			System.out.println("LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION());
-//			System.out.println("LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO());
-//			System.out.println("LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION());
-//			System.out.println("OBLIG B:            " + respuestaContratos.getOBLIGCB());
-//			System.out.println("RESULTADO:          " + respuestaContratos.getRESULTADO());
-//			System.out.println("USUARIO:            " + respuestaContratos.getUSUARIO());
-					
-					List<String> errores = respuestaContratos.getERRORES().getERROR();
-					if(!errores.isEmpty()){
-						status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b></div>";
-						for(String error: respuestaContratos.getERRORES().getERROR()){
-							status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
-							status += "<br /> ";
-//					System.out.println("ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription());
+//					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
+//					status += "<br /> ";
+//					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
+//					status += "<br /> ";
+//					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
+//					status += "<br /> ";
+//					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
+//					status += "<br /> ";
+//					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
+//					status += "<br /> ";
+//					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
+//					status += "<br /> ";
+//					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
+//					status += "<br /> ";
+//					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
+//					status += "<br /> ";
+//					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
+//					status += "<br /> ";
+//					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
+//					status += "<br /> ";
+						
+
+					if(!StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
+						List<String> errores = respuestaContratos.getERRORES().getERROR();
+						if(!errores.isEmpty()){
+							status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b> (";
+							status += respuestaContratos.getERRORES().getERROR().size()+")</div>";
+							for(String error: respuestaContratos.getERRORES().getERROR()){
+								status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
+								status += "<br /> ";
+							}
 						}
 					}
 				}
@@ -321,10 +336,117 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
 				status += msg;
 				status += "<br /> ";
+				status += e.getMessage();
 			} catch (Throwable th) {
 				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
 				status += msg;
 				status += "<br /> ";
+				status += th.getMessage();
+			}
+		}
+		return status;
+	}
+	public String obtainExtensionCommunicationStatus(byte[] data) {
+		String status = "";
+		status += "<br /> ";
+		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
+		if(data!=null){
+			String errorMsg = new String(data);
+//			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
+			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
+				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
+				errorMsg = StringUtils.removeEnd(errorMsg, "</COMUNICACION>");
+				errorMsg = StringUtils.removeStart(errorMsg, "<ERROR>");
+				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
+				return status + errorMsg;
+			}
+//			fichero si procesado: si se obtiene el fichero con los datos procesados
+			try {
+				FICHEROPRORROGAS prorroga = obtainFicheroProrrogas(data);
+				status += "ESTADO FICHERO:      " + prorroga.getESTADOFICHERO();
+				status += "<br /> ";
+				status += "NUMERO PROCESADOS:    " + prorroga.getNUMEROPROCESADOS();
+				status += "<br /> ";
+				
+				for(Object o: prorroga.getPRORROGASPROCESADAS().getENVIO()){
+//					IContratoType contrato = obtainContratoType(o);
+					RESPUESTAPRORROGATYPE respuestaProrroga = obtainRespuestaProrroga(o);
+					
+					String bgColor = null;
+					
+					if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO")){
+						bgColor = "#E0F8E0";
+					} else if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO CON ERRORES")){
+						bgColor = "#F6E3CE";
+					} else if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"RECHAZADO")){
+						bgColor = "#F8E0E0";
+					} else {
+						bgColor = "#E4E4E4";
+					}
+					
+					status += "<br /> ";
+					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'>";
+//					status += prorroga.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1) + " - ";
+//					status += prorroga.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
+//					if(StringUtils.isNotBlank(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
+//						status += " ";
+//						status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO();
+//					}
+//					status += ", ";
+//					status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE();
+					if(!StringUtils.equals(respuestaProrroga.getRESULTADO(),"RECHAZADO")){
+						status += " - <b>PRORROGA ACEPTADA</b>";
+						status += " (" + respuestaProrroga.getNUMEROPRORROGA() + ")";
+					} else {
+						status += " - <b>PRORROGA RECHAZADA</b>";
+					}
+					status += "</div>";
+					
+//					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
+//					status += "<br /> ";
+//					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
+//					status += "<br /> ";
+//					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
+//					status += "<br /> ";
+//					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
+//					status += "<br /> ";
+//					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
+//					status += "<br /> ";
+//					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
+//					status += "<br /> ";
+//					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
+//					status += "<br /> ";
+//					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
+//					status += "<br /> ";
+//					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
+//					status += "<br /> ";
+//					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
+//					status += "<br /> ";
+					
+					
+					if(!StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO")){
+						List<String> errores = respuestaProrroga.getERRORES().getERROR();
+						if(!errores.isEmpty()){
+							status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b> (";
+							status += respuestaProrroga.getERRORES().getERROR().size()+")</div>";
+							for(String error: respuestaProrroga.getERRORES().getERROR()){
+								status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
+								status += "<br /> ";
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				status += msg;
+				status += "<br /> ";
+				status += e.getMessage();
+			} catch (Throwable th) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				status += msg;
+				status += "<br /> ";
+				status += th.getMessage();
 			}
 		}
 		return status;
@@ -332,7 +454,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 
 	public FICHEROCONTRATOS obtainFicheroContratos(byte[] data) throws IOException, JAXBException, SAXException, ParserConfigurationException {
 		ContrataResponseReader reader = new ContrataResponseReader();
-		reader.readFile(new ByteArrayInputStream(data));
+		reader.readContratoFile(new ByteArrayInputStream(data));
 		return reader.getFicheroContratos();
 	}
 
@@ -344,6 +466,17 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	public IContratoType obtainContratoType(Object object) {
 		ContrataResponseReader reader = new ContrataResponseReader();
 		return reader.getContratoType(object);
+	}
+	
+	public FICHEROPRORROGAS obtainFicheroProrrogas(byte[] data) throws IOException, JAXBException, SAXException, ParserConfigurationException {
+		ContrataResponseReader reader = new ContrataResponseReader();
+		reader.readProrrogaFile(new ByteArrayInputStream(data));
+		return reader.getFicheroProrrogas();
+	}
+	
+	public RESPUESTAPRORROGATYPE obtainRespuestaProrroga(Object object) {
+		ContrataResponseReader reader = new ContrataResponseReader();
+		return reader.getRepuestaProrroga(object);
 	}
 	
 	
@@ -377,7 +510,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	}
 	
 	private String sendContrataFile(){
-		xmlResult = SEPEConnectionProvider.processContrataCommunication(sslEnv, testEnv, document, user, user, passwd);
+		xmlResult = SEPEConnectionProvider.processContrataCommunication(sslEnv, testEnv, document, user, user, passwd, contrataFileType);
 		afterCommunication();
 		return xmlResult;
 	}

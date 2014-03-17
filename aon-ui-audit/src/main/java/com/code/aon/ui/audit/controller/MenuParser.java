@@ -63,6 +63,8 @@ public class MenuParser {
 	private static final String F_FACET = "f:facet";
 	
 	private static final String VALUE_ATTRIBUTE = "value";
+	
+	private static final String TITLE_ATTRIBUTE = "title";
 
 	private static final String ACTION_ATTRIBUTE = "action";
 		
@@ -363,13 +365,17 @@ public class MenuParser {
 			}
 			initOption(option, element);
 			option.setGroup( getOptionGroup(element) );
-			option.setDescription( element.attributeValue(VALUE_ATTRIBUTE) );
+			String description = element.attributeValue(VALUE_ATTRIBUTE);
+			if (StringUtils.isBlank(description)) {
+				description = element.attributeValue(TITLE_ATTRIBUTE);	
+			}
+			option.setDescription( description );
+			if ( StringUtils.isEmpty(description) ) {
+				LOGGER.error( "Null description for {}", option );
+			}
 			element.addAttribute(ID_ATTRIBUTE, IOption.ID_PATTERN);
 			element.addAttribute(VALUE_ATTRIBUTE, IOption.VALUE_PATTERN);
 			option.setXml( element.asXML() );
-			if ( StringUtils.isEmpty(option.getDescription()) ) {
-				LOGGER.error( "Null description for {}", option );
-			}
 		} else {
 			LOGGER.error( "Null action in {} for {} ", category, element );
 		}

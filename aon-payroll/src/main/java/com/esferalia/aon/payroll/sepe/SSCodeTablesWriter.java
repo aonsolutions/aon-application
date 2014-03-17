@@ -50,6 +50,8 @@ public class SSCodeTablesWriter {
 	final static String T21_TABLE_DESCRIPTION = "Situación";
 	final static String T37_TABLE_DESCRIPTION = "Condición de desempleado";
 	final static String T41_TABLE_DESCRIPTION = "Tipos de inactividad";
+	final static String T49_TABLE_DESCRIPTION = "Tipo de peculiaridad de cotización";
+	final static String T50_TABLE_DESCRIPTION = "Fracción-Cuota";
 	final static String T54_TABLE_DESCRIPTION = "Colectivo de peculiaridad de cotización";
 	final static String T58_TABLE_DESCRIPTION = "Ocupación";
 	final static String T61_TABLE_DESCRIPTION = "Colectivo de trabajador";
@@ -565,6 +567,10 @@ public class SSCodeTablesWriter {
 			    			enumDescription = T37_TABLE_DESCRIPTION;
 			    		} else if(getFileNameWithoutExtension(enumFile).equals("T41")){
 			    			enumDescription = T41_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T49")){
+			    			enumDescription = T49_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("T50")){
+			    			enumDescription = T50_TABLE_DESCRIPTION;
 			    		} else if(getFileNameWithoutExtension(enumFile).equals("T54")){
 			    			enumDescription = T54_TABLE_DESCRIPTION;
 			    		} else if(getFileNameWithoutExtension(enumFile).equals("T58")){
