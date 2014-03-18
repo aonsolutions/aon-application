@@ -10,13 +10,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.ProjectDB;
 
 @Entity
 @Table(name="project")
 public class Project extends ProjectDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Set<ProjectActivity> activities = new HashSet<ProjectActivity>();
 	private Set<ProjectAttachment> attachments = new HashSet<ProjectAttachment>();

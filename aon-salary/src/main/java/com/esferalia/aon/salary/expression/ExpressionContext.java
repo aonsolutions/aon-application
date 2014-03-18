@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -24,8 +23,8 @@ import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 import org.mvel2.templates.TemplateRuntime;
-import org.mvel2.util.MethodStub;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
@@ -33,6 +32,9 @@ public class ExpressionContext {
 
 	public static class UnknownUndefVarException extends
 			UndefinedVariablesException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 	}
 
 	public abstract static class MacroException extends ExpressionException {

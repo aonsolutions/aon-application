@@ -1,5 +1,7 @@
 package com.code.aon.messaging.sms;
 
+import com.code.aon.AonVersion;
+
 /**
  * The class <code>SMSException</code> and its subclasses are a form of 
  * <code>Throwable</code> that indicates conditions that a reasonable 
@@ -12,7 +14,7 @@ package com.code.aon.messaging.sms;
  */
 public class SMSException extends Exception {
 
-	private static final long serialVersionUID = -3468394608624163825L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

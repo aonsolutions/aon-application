@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.esferalia.aon.entity.master.ProjectAttachmentDB;
@@ -15,7 +16,7 @@ import com.esferalia.aon.entity.master.ProjectAttachmentDB;
 @Table(name="project_attach")
 public class ProjectAttachment extends ProjectAttachmentDB implements IAttachment {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer size;
 

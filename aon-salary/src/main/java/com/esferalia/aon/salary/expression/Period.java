@@ -1,6 +1,5 @@
 package com.esferalia.aon.salary.expression;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;

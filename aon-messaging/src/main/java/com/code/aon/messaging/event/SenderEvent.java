@@ -2,9 +2,11 @@ package com.code.aon.messaging.event;
 
 import java.util.EventObject;
 
+import com.code.aon.AonVersion;
+
 public class SenderEvent extends EventObject {
 
-	private static final long serialVersionUID = -9202820079838282073L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int errorCode;
 
