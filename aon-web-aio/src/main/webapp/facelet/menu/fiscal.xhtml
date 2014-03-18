@@ -81,9 +81,10 @@
 												<aon:commandLink id="mod310" 
 													action="mod310_search"
 													actionListener="#{mod310.onEditSearch}"
+													disabled="true"
 													title="#{bundle.fiscal_model_310_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="303" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module} (Disponible antes de 01/04/2014)" />
 												</aon:commandLink>
 	
 												<aon:commandLink id="mod347_report" 
@@ -94,14 +95,14 @@
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_347_module}" />
 												</aon:commandLink>
 	
-												<aon:commandLink id="mod311" 
-													action="mod311_search"
-													actionListener="#{mod311.onEditSearch}"
-													title="#{bundle.fiscal_model_311_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="303" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_311_module}" />
+												<aon:commandLink id="mod111-fiscal" 
+													action="mod111_search-fiscal"
+													actionListener="#{mod111.onEditSearch}"
+													title="#{bundle.fiscal_model_111_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="111" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_111_module}" />
 												</aon:commandLink>
-	
+
 												<aon:commandLink id="mod349_report" 
 													action="mod349_list"
 													actionListener="#{mod349.onEditSearch}" 
@@ -110,12 +111,12 @@
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_349_module}" />
 												</aon:commandLink>
 	
-												<aon:commandLink id="mod111-fiscal" 
-													action="mod111_search-fiscal"
-													actionListener="#{mod111.onEditSearch}"
-													title="#{bundle.fiscal_model_111_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="111" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_111_module}" />
+												<aon:commandLink id="mod115" 
+													action="mod115_search"
+													actionListener="#{mod115.onEditSearch}"
+													title="#{bundle.fiscal_model_115_module}" >
+													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
 												</aon:commandLink>
 											</c:if>
 											
@@ -127,12 +128,12 @@
 											</aon:commandLink>
 
 											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod115" 
-													action="mod115_search"
-													actionListener="#{mod115.onEditSearch}"
-													title="#{bundle.fiscal_model_115_module}" >
-													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
+												<aon:commandLink id="mod123" 
+													action="mod123_search"
+													actionListener="#{mod123.onEditSearch}"
+													title="#{bundle.fiscal_model_123_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="123" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_123_module}" />
 												</aon:commandLink>
 											</c:if>
 
@@ -148,12 +149,12 @@
 											</c:if>
 
 											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod123" 
-													action="mod123_search"
-													actionListener="#{mod123.onEditSearch}"
-													title="#{bundle.fiscal_model_123_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="123" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_123_module}" />
+												<aon:commandLink id="mod130" 
+													action="mod130_search"
+													actionListener="#{mod130.onEditSearch}"
+													title="#{bundle.fiscal_model_130_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="130" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_130_module}" />
 												</aon:commandLink>
 											</c:if>
 
@@ -165,21 +166,8 @@
 												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_190_module}" />
 											</aon:commandLink>
 
-											<c:if test="#{domainSwitcher.domainManagementAvailable}">
-												<aon:outputText value="&#160;"/>
-											</c:if>
-											
 											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-												<aon:commandLink id="mod130" 
-													action="mod130_search"
-													actionListener="#{mod130.onEditSearch}"
-													title="#{bundle.fiscal_model_130_module}">
-													<aon:outputText styleClass="aon-fiscal-link-box" value="130" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_130_module}" />
-												</aon:commandLink>
 											
-												<aon:outputText value="&#160;"/>
-
 												<aon:commandLink id="mod131" 
 													action="mod131_search"
 													actionListener="#{mod131.onEditSearch}"
@@ -189,6 +177,26 @@
 												</aon:commandLink>
 												
 												<aon:outputText value="&#160;"/>
+												
+												<aon:commandLink id="mod310-OLD" 
+													action="mod310_search-OLD"
+													actionListener="#{mod310.onEditSearch}"
+													title="#{bundle.fiscal_model_310_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="310" style="text-decoration: line-through;"/>
+													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_310_module}"/>
+												</aon:commandLink>
+												<aon:outputText value="&#160;"/>
+												
+												<aon:commandLink id="mod311" 
+													action="mod311_search"
+													actionListener="#{mod311.onEditSearch}"
+													style="text-decoration: line-through;"
+													title="#{bundle.fiscal_model_311_module}">
+													<aon:outputText styleClass="aon-fiscal-link-box" value="311" style="text-decoration: line-through;"/>
+													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_311_module}"/>
+												</aon:commandLink>
+												<aon:outputText value="&#160;"/>
+												
 											</c:if>
 							    </h:panelGrid>
 							     

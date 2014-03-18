@@ -516,7 +516,7 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		} else if ("721.1".equals(fa.getEpigraph()) || "721.3".equals(fa.getEpigraph())) {
 			// Actividad de transporte urbano colectivo y de viajeros por carretera:
 			// Se aplicará el índice 0,80 cuando el titular disponga de un único vehículo.
-			if (CommonUtil.round(a09) == 1.0) {
+			if (CommonUtil.round(a07) == 1.0) {
 				i06 = 0.80;
 				indiceEmpresasPequeñaDimensionAplicable = false;	
 			}
@@ -548,7 +548,7 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 			// y el titular carezca de semirremolques. Cuando la actividad se desarrolle con 
 			// un único tractocamión y sin semirremolques, se aplicará, exclusivamente, el índice 0,75.
 
-			if (CommonUtil.round(a09) == 1.0) {
+			if (CommonUtil.round(a07) == 1.0) {
 				i06 = 0.80;
 				indiceEmpresasPequeñaDimensionAplicable = false;
 			}
