@@ -7,13 +7,14 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.WebInfoStyleDB;
 
 @Entity
 @Table(name="web_info_style")
 public class WebInfoStyle extends WebInfoStyleDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
     @Transient
 	public String getName() {

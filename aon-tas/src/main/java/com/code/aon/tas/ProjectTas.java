@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -24,7 +25,7 @@ import com.esferalia.aon.entity.master.ProjectTasDB;
 @Table(name="project_tas")
 public class ProjectTas extends ProjectTasDB implements IHeaderObject, IProject {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public ProjectTas() {
 		setStatus( ProjectStatus.PENDING);

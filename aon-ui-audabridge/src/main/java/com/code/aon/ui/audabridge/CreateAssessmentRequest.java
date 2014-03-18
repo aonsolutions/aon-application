@@ -1,6 +1,7 @@
 package com.code.aon.ui.audabridge;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.DecimalFormat;
@@ -15,7 +16,11 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-public class CreateAssessmentRequest {
+import com.code.aon.AonVersion;
+
+public class CreateAssessmentRequest implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String ENCODING = "ISO-8859-1";
 	private static final String MESSAGE = "Message";

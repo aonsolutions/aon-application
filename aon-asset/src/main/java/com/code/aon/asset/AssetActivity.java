@@ -4,13 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.AssetActivityDB;
 
 @Entity
 @Table(name="asset_activity")
 public class AssetActivity extends AssetActivityDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean check;
 

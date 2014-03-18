@@ -1,8 +1,13 @@
 package com.code.aon.stat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Offer {
+import com.code.aon.AonVersion;
+
+public class Offer implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private Date issueDate;

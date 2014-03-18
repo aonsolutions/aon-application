@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.InventoryDetailDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.InventoryDetailDB;
 @Table(name="inventory_detail")
 public class InventoryDetail extends InventoryDetailDB {
 	
-	private static final long serialVersionUID = -8584837639559704341L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public double getCostAmount() {

@@ -44,11 +44,11 @@ public class AssetStatController implements Serializable {
 	private Date toDate;
 	private String statType;
 	private String dateRange;
-	List<AssetStat> stats;
+	private List<AssetStat> stats;
 	private String beanName;
 	private IManagerBean assetActivityBean;
-	Criteria criteria;
-	Locale locale = AonUtil.getCurrentLocale();
+	private Criteria criteria;
+	private Locale locale = AonUtil.getCurrentLocale();
 	private static final Logger LOGGER = LoggerFactory.getLogger(AssetStatController.class.getName());
 	
 	/**

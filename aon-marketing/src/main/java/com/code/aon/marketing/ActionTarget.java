@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.ActionTargetDB;
 @Table(name="mk_action_target")
 public class ActionTarget extends ActionTargetDB implements IRegistry {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     public ActionTarget() {
     	setStatus( ActionTargetStatus.PENDING );

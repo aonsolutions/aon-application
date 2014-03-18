@@ -1,5 +1,6 @@
 package com.code.aon.ui.asset.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -262,8 +263,10 @@ public class AssetCalendarController extends BasicController {
 	/* CLASES WRAPPED */
 	/* ****************/
 	
-	public class DayAssetList {
+	public static class DayAssetList implements Serializable {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Asset asset;
 		private List<Fraction> fractions;
 

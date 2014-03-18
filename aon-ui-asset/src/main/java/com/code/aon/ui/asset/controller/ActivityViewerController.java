@@ -49,7 +49,7 @@ public class ActivityViewerController implements Serializable {
 	private AssetActivity selectedAssetActivity;
 	private DataModel assetModel;
 	private List<DayAssetList> dayAssetList;
-	private Integer[] featureFilter ;
+	private Integer[] featureFilter;
 	private List<AssetDayList> assetDayList = new ArrayList<AssetDayList>();
 	
 	
@@ -426,7 +426,9 @@ public class ActivityViewerController implements Serializable {
 		}
 	}
 	
-	public class AssetDayList {
+	public static class AssetDayList implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Asset asset;
 		private List<Fraction> fractions;
@@ -447,7 +449,9 @@ public class ActivityViewerController implements Serializable {
 	}
 	
 	
-	public class DayAssetList {
+	public static class DayAssetList implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Asset asset;
 		private List<Fraction> fractions;
@@ -468,7 +472,10 @@ public class ActivityViewerController implements Serializable {
 		}
 	}
 
-	public class Fraction {
+	public static class Fraction implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private AssetActivity activity;
 		private boolean reserved;
 		private boolean first;

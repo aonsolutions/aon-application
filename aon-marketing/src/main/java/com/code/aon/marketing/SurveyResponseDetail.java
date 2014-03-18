@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.registry.IValueHolder;
 import com.code.aon.registry.enumeration.QuestionType;
 import com.esferalia.aon.entity.master.SurveyResponseDetailDB;
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.SurveyResponseDetailDB;
 @Table(name="survey_response_detail")
 public class SurveyResponseDetail extends SurveyResponseDetailDB implements IValueHolder{
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	private Boolean getBooleanValue() {

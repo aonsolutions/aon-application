@@ -1,10 +1,12 @@
 package com.esferalia.aon.ui.pms;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.config.util.UserUtils;
@@ -15,7 +17,9 @@ import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
-public class ProjectReservationPermission {
+public class ProjectReservationPermission implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ProjectReservation reservation;
 	private ProjectReservationRoom reservationRoom;

@@ -2,6 +2,7 @@ package com.code.aon.report;
 
 import java.io.Serializable;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 
 /**
@@ -12,7 +13,7 @@ import com.code.aon.common.enumeration.MimeType;
  */
 public class OutputFormat implements Serializable, Comparable<OutputFormat> {
 
-	private static final long serialVersionUID = -474109916036902842L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * Array to store all types.

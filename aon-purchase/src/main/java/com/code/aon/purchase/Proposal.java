@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.esferalia.aon.entity.master.ProposalDB;
 
@@ -16,7 +17,7 @@ import com.esferalia.aon.entity.master.ProposalDB;
 @Table(name="proposal")
 public class Proposal extends ProposalDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Set<ProposalDetail> lines = new HashSet<ProposalDetail>();
 	

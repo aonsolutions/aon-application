@@ -1,10 +1,12 @@
 
 package com.code.aon.ui.marketing.print;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
@@ -12,7 +14,9 @@ import com.code.aon.registry.Question;
 import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.ui.util.AonUtil;
 
-public class QuestionValueReport {
+public class QuestionValueReport implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private SurveyResponseDetail to;
 	

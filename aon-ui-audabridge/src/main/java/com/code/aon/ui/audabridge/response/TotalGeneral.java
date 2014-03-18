@@ -1,6 +1,13 @@
 package com.code.aon.ui.audabridge.response;
 
-public class TotalGeneral {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class TotalGeneral implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String nombreFabricante; 
 	private String nombreModelo;
 	private String nombreVariante; 

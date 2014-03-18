@@ -2,6 +2,7 @@ package com.code.aon.purchase.event;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -14,6 +15,8 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
 
 public class PurchaseBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Purchase purchase = (Purchase) evt.getTo();

@@ -1,5 +1,6 @@
 package com.code.aon.ui.form;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.Ordering;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -17,7 +19,9 @@ import com.code.aon.ql.Order;
 /**
  * The Class SortOrderMap.
  */
-public class SortOrderMap extends AbstractMap<String,Ordering> {
+public class SortOrderMap extends AbstractMap<String,Ordering> implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ICriteriaProvider provider;
 	

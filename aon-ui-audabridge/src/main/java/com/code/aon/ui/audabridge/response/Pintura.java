@@ -1,6 +1,13 @@
 package com.code.aon.ui.audabridge.response;
 
-public class Pintura {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class Pintura implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String simbolo;
 	private String posicion;
 	private String numeroOperacion;

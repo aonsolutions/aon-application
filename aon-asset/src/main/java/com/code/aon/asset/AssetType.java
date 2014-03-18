@@ -15,6 +15,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
@@ -28,7 +29,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 @Table(name = "asset_type")
 public class AssetType implements ITransferObject {
 
-	private static final long serialVersionUID = 4255086576556291647L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 

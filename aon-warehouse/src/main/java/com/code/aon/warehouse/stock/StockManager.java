@@ -1,15 +1,21 @@
 package com.code.aon.warehouse.stock;
 
+import java.io.Serializable;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.enumeration.PriceType;
 
-public class StockManager {
+public class StockManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String incomeStmt = " SELECT invDet.price "
 	+ " FROM income_detail incDet "
 	+ " INNER JOIN invoice_detail invDet ON incDet.id = invDet.source_id AND invDet.source = 4 "

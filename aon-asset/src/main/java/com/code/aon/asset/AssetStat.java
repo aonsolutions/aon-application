@@ -1,7 +1,10 @@
 package com.code.aon.asset;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+
+import com.code.aon.AonVersion;
 
 /**
  * Class for representing an asset statistic.
@@ -9,7 +12,9 @@ import java.util.Date;
  * @author Consulting & Development. eagirrezabal - 04/02/2009
  * 
  */
-public class AssetStat {
+public class AssetStat implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * Tipo de estadistica
