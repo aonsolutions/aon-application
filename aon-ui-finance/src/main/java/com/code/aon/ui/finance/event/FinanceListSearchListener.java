@@ -2,7 +2,7 @@ package com.code.aon.ui.finance.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;

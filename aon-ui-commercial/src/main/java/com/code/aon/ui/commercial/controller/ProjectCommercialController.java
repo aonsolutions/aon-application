@@ -3,7 +3,7 @@ package com.code.aon.ui.commercial.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.ProjectCommercial;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.ProjectStatEngineController;
 import com.code.aon.ui.util.AonUtil;

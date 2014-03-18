@@ -32,7 +32,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.annualReport.AnnualReportManager;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

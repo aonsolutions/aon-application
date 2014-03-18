@@ -13,7 +13,7 @@ import org.hibernate.annotations.Formula;
 
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;

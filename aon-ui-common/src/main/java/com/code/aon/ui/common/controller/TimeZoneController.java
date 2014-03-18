@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 /**
  * TimeZoneController handles the timeZone where the program is running.

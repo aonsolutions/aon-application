@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.account.IAccount;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.CreditorStatus;

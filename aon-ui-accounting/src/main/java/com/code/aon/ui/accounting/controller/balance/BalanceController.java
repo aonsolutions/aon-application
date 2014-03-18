@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.balance.BalanceDefaults;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;

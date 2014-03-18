@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 /**
  * The Class DefaultSessionManager.

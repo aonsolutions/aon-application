@@ -1,6 +1,6 @@
 package com.code.aon.webmail;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class WebmailException extends Exception {
 

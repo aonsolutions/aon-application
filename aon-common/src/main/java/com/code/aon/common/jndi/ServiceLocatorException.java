@@ -1,6 +1,6 @@
 package com.code.aon.common.jndi;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 /**
  * The class <code>ServiceLocatorException</code> indicates conditions created by 

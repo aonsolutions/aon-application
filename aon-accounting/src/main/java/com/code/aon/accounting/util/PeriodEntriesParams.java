@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.code.aon.accounting.Period;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class PeriodEntriesParams implements Serializable {
 	

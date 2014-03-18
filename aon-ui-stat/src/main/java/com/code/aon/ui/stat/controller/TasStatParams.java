@@ -7,7 +7,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.tas.TasItem;
 import com.code.aon.ui.util.AonUtil;
 

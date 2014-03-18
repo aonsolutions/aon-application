@@ -3,7 +3,7 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerAdapter;

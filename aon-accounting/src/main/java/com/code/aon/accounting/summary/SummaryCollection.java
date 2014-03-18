@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 public class SummaryCollection implements Serializable {

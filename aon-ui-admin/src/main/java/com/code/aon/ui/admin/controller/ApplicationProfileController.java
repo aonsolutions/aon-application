@@ -20,7 +20,7 @@ import com.code.aon.admin.ProfileRole;
 import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.ProfileModuleDenied;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

@@ -2,7 +2,7 @@ package com.esferalia.aon.ui.calendar.print;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.calendar.Calendar;
 
 public class PrintableCalendar implements Serializable {

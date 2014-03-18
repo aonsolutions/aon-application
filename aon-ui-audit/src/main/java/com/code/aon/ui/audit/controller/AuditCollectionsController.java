@@ -8,9 +8,9 @@ import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

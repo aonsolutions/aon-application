@@ -9,7 +9,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountHelperManager;
 import com.code.aon.accounting.util.AccountJournalManager;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.accounting.check.AonCheckException;

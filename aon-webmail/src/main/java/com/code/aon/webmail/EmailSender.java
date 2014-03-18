@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.webmail.bean.AonFolder;

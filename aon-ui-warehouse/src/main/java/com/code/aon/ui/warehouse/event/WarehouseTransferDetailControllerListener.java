@@ -1,6 +1,6 @@
 package com.code.aon.ui.warehouse.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;

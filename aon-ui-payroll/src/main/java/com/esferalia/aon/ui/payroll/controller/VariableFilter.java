@@ -12,7 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 

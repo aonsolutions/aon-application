@@ -3,6 +3,7 @@ package com.code.aon.ql;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Criterion;
 import com.code.aon.ql.ast.CriterionVisitor;
 
@@ -15,7 +16,7 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class ProjectionList implements Criterion {
 
-	private static final long serialVersionUID = 9043236236680871406L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<Projection> projections;
 	

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.util.AonUtil;
 
 public class SpecialEntryControllerManager implements Serializable {

@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.config.util.FTPUtil;
 
 public class PublishProperties implements Serializable {

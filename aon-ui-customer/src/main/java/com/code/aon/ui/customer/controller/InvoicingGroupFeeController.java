@@ -2,7 +2,7 @@ package com.code.aon.ui.customer.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.ui.form.LinesController;

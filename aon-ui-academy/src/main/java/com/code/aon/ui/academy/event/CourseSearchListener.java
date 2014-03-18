@@ -3,7 +3,7 @@ package com.code.aon.ui.academy.event;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.academy.enumeration.CourseStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;

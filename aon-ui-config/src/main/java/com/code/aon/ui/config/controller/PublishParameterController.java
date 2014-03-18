@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.config.PublishProperties;

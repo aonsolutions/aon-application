@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.payroll.bean;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class GWT implements Serializable {
 	

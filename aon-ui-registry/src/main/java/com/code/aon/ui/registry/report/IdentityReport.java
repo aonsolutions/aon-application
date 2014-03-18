@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;

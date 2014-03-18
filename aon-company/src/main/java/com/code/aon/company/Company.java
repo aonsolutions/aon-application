@@ -14,7 +14,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.domain.IDomain;
 import com.code.aon.config.enumeration.InvoiceTransactionType;

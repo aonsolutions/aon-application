@@ -1,6 +1,6 @@
 package com.code.aon.ui.registry.controller.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RegistryRelationship;
 import com.code.aon.ui.form.IController;

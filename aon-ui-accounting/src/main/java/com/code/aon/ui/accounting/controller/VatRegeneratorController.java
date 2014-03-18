@@ -7,7 +7,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.accounting.util.VatManager;
 import com.code.aon.accounting.util.VatManagerParams;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.util.AonUtil;

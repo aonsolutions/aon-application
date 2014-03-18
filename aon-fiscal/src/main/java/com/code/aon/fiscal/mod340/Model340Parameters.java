@@ -4,7 +4,7 @@ package com.code.aon.fiscal.mod340;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Period;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.account.Account;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 
 public class TaxRecordingTo implements ITransferObject {

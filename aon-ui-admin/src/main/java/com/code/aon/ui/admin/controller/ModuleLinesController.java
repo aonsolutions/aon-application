@@ -12,7 +12,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.audit.IModule;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;

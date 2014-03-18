@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class SerializableListDataModel extends ListDataModel implements Serializable {
 

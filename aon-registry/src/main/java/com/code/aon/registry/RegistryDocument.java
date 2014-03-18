@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.enumeration.DocumentType;
 

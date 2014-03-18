@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 import org.hibernate.Session;
 import org.hibernate.annotations.Formula;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

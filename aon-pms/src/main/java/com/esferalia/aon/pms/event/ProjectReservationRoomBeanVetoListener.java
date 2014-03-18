@@ -7,7 +7,7 @@ import java.util.List;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;

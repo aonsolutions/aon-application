@@ -9,7 +9,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;

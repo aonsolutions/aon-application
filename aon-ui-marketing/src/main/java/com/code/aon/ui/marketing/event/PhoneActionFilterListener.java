@@ -3,7 +3,7 @@ package com.code.aon.ui.marketing.event;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_CONTROLLER_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.SHOW_PHONE_ACTION_MEDIA_TYPE;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.ql.ast.Expression;

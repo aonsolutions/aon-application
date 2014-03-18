@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.master.VersionManager;

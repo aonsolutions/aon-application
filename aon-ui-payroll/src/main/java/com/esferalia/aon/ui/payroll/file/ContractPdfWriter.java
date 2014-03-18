@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import javax.faces.context.FacesContext;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;

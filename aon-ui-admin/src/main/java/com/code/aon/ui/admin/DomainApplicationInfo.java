@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

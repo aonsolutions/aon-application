@@ -2,7 +2,7 @@ package com.code.aon.aio.controller;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class DashboardMessage implements Serializable {
 	

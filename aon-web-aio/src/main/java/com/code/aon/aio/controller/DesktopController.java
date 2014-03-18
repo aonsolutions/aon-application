@@ -16,11 +16,11 @@ import javax.faces.model.DataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.aio.DesktopState;
 import com.code.aon.aio.NoticeInfo;
 import com.code.aon.aio.TaskInfo;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.RegistryNoteDB;
 
 @Entity

@@ -2,7 +2,7 @@ package com.code.aon.ui.accounting.event;
 
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.amortization.AmortizationController;

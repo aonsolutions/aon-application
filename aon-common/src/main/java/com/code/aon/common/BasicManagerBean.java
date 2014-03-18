@@ -13,6 +13,7 @@ import org.hibernate.annotations.Cascade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;

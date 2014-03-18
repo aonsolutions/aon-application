@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.company.WorkPlace;
 
 public class StatParams implements Serializable {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 public class Balance implements Serializable {

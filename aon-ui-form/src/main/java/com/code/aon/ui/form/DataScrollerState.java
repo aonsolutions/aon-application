@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.faces.model.DataModel;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 

@@ -2,7 +2,7 @@ package com.code.aon.stat.tas;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 
 public class TasStatHeader implements Serializable {

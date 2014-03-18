@@ -10,8 +10,8 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.Session;
-import com.code.aon.common.AonVersion;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.jaas.auth.AuthPrincipal;

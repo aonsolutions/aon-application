@@ -2,7 +2,7 @@ package com.code.aon.ui.customer.event;
 
 import static com.code.aon.ui.customer.controller.ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.customer.Customer;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

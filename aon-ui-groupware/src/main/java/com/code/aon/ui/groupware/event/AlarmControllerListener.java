@@ -1,6 +1,6 @@
 package com.code.aon.ui.groupware.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmStatus;

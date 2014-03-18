@@ -14,7 +14,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;

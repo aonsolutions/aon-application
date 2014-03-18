@@ -2,7 +2,7 @@ package com.code.aon.webmail.bean;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public abstract class AonSortableList implements Serializable {
 	

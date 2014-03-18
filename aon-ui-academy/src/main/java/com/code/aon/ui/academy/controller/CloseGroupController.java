@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.academy.Course;
 import com.code.aon.academy.enumeration.CourseStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

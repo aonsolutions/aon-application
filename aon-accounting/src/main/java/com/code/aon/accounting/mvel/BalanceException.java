@@ -1,6 +1,6 @@
 package com.code.aon.accounting.mvel;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class BalanceException extends Exception {
 	

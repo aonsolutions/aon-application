@@ -1,6 +1,6 @@
 package com.code.aon.ui.product.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ui.form.event.ControllerEvent;

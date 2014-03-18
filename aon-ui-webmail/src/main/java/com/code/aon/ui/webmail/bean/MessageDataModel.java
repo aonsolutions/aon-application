@@ -6,7 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.SequenceDataModel;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.webmail.bean.AonMessage;
 
 public class MessageDataModel extends ModifiableModel implements Serializable {

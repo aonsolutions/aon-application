@@ -1,5 +1,7 @@
 package com.code.aon.ql.util;
 
+import com.code.aon.AonVersion;
+
 /**
  * 
  * @author Consulting & Development. Eugenio Castellano - 31-mar-2005
@@ -9,7 +11,7 @@ package com.code.aon.ql.util;
  */
 public class ExpressionException extends Exception {
 
-	private static final long serialVersionUID = 840796588610856591L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructs a new exception with <code>null</code> as its detail message.

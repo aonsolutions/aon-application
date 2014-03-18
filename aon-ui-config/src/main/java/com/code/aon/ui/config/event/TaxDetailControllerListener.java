@@ -3,7 +3,7 @@ package com.code.aon.ui.config.event;
 import static com.code.aon.ui.common.ICommonMessages.CONFIG_DATE_OVERLAP;
 import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_END_DATE;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

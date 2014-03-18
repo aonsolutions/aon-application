@@ -7,7 +7,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 
 import com.code.aon.accounting.Period;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;

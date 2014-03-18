@@ -1,6 +1,6 @@
 package com.code.aon.ui.purchase.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.ui.form.event.ControllerAdapter;

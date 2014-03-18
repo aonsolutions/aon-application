@@ -1,6 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.Application;
 import com.code.aon.ui.form.BasicController;
 

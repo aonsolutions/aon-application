@@ -30,7 +30,7 @@ import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;

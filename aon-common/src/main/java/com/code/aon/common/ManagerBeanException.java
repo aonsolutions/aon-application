@@ -1,5 +1,7 @@
 package com.code.aon.common;
 
+import com.code.aon.AonVersion;
+
 /**
  * The class <code>ManagerBeanException</code> indicates conditions created by 
  * a <code>IManagerBean</code> that a reasonable AON application might want to catch.

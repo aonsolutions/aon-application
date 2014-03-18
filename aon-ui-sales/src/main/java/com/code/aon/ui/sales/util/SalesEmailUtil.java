@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;

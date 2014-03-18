@@ -2,7 +2,7 @@ package com.code.aon.ui.audabridge.event;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.audabridge.IAudaBridgeConstants;
 import com.code.aon.ui.audabridge.controller.AudabridgeOfferController;
 import com.code.aon.ui.form.event.ControllerAdapter;

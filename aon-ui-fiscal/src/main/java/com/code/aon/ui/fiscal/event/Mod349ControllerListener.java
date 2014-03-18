@@ -1,6 +1,6 @@
 package com.code.aon.ui.fiscal.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.Mod349;

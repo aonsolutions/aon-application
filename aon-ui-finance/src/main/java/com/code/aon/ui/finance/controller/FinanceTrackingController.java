@@ -12,7 +12,7 @@ import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

@@ -4,7 +4,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.ui.form.BasicController;

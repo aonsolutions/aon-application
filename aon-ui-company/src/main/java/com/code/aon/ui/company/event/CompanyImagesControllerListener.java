@@ -1,6 +1,6 @@
 package com.code.aon.ui.company.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryAttachment;

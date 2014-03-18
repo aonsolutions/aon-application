@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.IdentExpression;
 
@@ -12,7 +13,7 @@ import com.code.aon.ql.ast.IdentExpression;
  */
 public class IdentExpressionImpl implements IdentExpression {
 
-	private static final long serialVersionUID = -1923369214010672968L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/**
      * The identifier.

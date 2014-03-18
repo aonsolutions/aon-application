@@ -1,6 +1,6 @@
 package com.code.aon.ui.accounting.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

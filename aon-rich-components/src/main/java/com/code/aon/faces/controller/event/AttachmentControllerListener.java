@@ -1,6 +1,6 @@
 package com.code.aon.faces.controller.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
 import com.code.aon.ui.form.event.ControllerAdapter;

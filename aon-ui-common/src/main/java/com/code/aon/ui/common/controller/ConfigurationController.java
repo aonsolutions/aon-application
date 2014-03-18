@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.LocaleElement;

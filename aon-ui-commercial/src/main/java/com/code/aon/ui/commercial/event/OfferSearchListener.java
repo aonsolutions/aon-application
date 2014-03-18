@@ -5,7 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Project;

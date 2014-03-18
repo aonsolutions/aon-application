@@ -16,7 +16,7 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;

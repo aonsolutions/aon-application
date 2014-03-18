@@ -8,7 +8,7 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

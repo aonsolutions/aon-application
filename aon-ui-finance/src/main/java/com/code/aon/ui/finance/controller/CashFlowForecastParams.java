@@ -3,7 +3,7 @@ package com.code.aon.ui.finance.controller;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.registry.RegistryBank;
 
 public class CashFlowForecastParams implements Serializable {

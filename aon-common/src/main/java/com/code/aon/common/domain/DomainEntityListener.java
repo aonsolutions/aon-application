@@ -6,7 +6,7 @@ import org.hibernate.event.PreInsertEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class DomainEntityListener implements PreInsertEventListener {
 	

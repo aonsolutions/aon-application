@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.Quarter;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

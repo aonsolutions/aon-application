@@ -2,7 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.Catalogue;
 import com.code.aon.finance.PosCatalogue;
 import com.code.aon.ui.form.LinesController;

@@ -4,7 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.PRODUCT_CATALOGUE_DATES_ERR
 
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

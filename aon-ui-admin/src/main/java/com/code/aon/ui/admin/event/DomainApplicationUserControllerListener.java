@@ -5,7 +5,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationController;

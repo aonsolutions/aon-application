@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.commercial.enumeration.ProjectStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.project.IProject;
 import com.esferalia.aon.entity.master.ProjectCommercialDB;
 

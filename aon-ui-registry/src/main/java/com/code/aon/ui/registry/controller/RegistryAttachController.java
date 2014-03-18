@@ -2,7 +2,7 @@ package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.AttachmentController;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;

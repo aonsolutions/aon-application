@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.account.Account;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.NotNullExpression;
@@ -13,7 +14,7 @@ import com.code.aon.ql.ast.NotNullExpression;
  */
 public class NotNullExpressionImpl implements NotNullExpression {
 
-	private static final long serialVersionUID = -8277166566312336943L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/**
      * The expression.

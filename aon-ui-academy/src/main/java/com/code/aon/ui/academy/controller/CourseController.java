@@ -1,6 +1,6 @@
 package com.code.aon.ui.academy.controller;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class CourseController extends CourseListController {
 	

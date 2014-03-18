@@ -1,6 +1,6 @@
 package com.code.aon.common.dao;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 /**
  * The class <code>DAOSysException</code> indicates conditions created by 

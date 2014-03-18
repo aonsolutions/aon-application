@@ -2,7 +2,7 @@ package com.esferalia.aon.pms.reservation;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class AvailableRoomStay implements IReservationConstants, Serializable {
 	

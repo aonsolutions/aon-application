@@ -5,7 +5,7 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUM
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;

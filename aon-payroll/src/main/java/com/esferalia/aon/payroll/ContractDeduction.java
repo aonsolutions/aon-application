@@ -7,7 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.ContractDeductionDB;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;

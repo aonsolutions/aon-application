@@ -5,7 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_START_DATE;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

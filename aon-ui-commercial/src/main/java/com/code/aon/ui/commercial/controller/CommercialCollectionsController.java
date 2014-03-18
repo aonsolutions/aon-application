@@ -19,7 +19,7 @@ import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.commercial.enumeration.ProjectSource;
 import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

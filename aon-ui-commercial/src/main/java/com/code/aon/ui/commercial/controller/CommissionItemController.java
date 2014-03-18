@@ -1,7 +1,7 @@
 package com.code.aon.ui.commercial.controller;
 
 import com.code.aon.commercial.CommissionItem;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;

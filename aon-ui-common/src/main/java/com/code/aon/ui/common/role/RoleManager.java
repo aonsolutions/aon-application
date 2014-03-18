@@ -3,7 +3,7 @@ package com.code.aon.ui.common.role;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.

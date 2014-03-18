@@ -3,7 +3,7 @@ package com.esferalia.aon.pms.event;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;

@@ -5,7 +5,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.master.UserDB;

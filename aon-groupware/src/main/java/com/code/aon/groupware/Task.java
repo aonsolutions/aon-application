@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.groupware.enumeration.TaskPeriod;
 import com.code.aon.groupware.enumeration.TaskSource;

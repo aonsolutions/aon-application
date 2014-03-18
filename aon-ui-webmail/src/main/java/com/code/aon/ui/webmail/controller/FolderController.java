@@ -20,7 +20,7 @@ import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;

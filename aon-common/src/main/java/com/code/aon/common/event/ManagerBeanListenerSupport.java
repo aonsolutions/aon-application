@@ -3,7 +3,7 @@ package com.code.aon.common.event;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 
 /**

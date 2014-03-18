@@ -18,7 +18,7 @@ import javax.faces.event.MethodExpressionActionListener;
 import org.ajax4jsf.component.html.HtmlAjaxCommandLink;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.faces.component.util.FaceletUtil;
 
 public class SelectedMenuController implements Serializable {

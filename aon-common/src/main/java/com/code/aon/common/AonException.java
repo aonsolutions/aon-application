@@ -1,5 +1,7 @@
 package com.code.aon.common;
 
+import com.code.aon.AonVersion;
+
 /**
  * The class <code>AonException</code> and its subclasses are a form of 
  * <code>Throwable</code> that indicates conditions that a reasonable 

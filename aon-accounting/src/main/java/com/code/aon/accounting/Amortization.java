@@ -8,7 +8,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.esferalia.aon.entity.master.AmortizationDB;

@@ -1,4 +1,4 @@
-package com.code.aon.common;
+package com.code.aon;
 
 import java.io.InputStream;
 import java.util.Properties;

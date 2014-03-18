@@ -2,7 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.finance.CashFlowForecast;

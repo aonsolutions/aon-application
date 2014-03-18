@@ -3,6 +3,7 @@ package com.code.aon.common;
 import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.FinderBeanEvent;

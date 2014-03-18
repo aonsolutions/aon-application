@@ -2,7 +2,7 @@ package com.code.aon.ui.academy.model;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class AlumnMarkHeader implements Serializable {
 	

@@ -5,7 +5,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Formula;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.esferalia.aon.entity.master.InvoiceAttachmentDB;
 

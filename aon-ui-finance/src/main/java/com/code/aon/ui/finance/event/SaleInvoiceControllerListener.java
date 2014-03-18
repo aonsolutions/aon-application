@@ -1,6 +1,6 @@
 package com.code.aon.ui.finance.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ui.form.event.ControllerEvent;

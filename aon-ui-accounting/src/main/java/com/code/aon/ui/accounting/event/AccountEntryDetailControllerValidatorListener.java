@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;

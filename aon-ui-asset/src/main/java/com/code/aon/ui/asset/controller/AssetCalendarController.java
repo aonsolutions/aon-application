@@ -18,7 +18,7 @@ import com.code.aon.asset.AssetType;
 import com.code.aon.asset.Feature;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.asset.enumeration.ViewerType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;

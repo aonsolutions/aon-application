@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.util.AonUtil;

@@ -20,7 +20,7 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.amortization.AmortizationManager;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

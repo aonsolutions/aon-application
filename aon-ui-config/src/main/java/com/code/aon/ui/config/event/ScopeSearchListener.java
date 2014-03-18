@@ -10,7 +10,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;

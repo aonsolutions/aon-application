@@ -32,7 +32,7 @@ import com.code.aon.accounting.annualReport.AnnualReportContext;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;

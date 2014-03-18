@@ -3,7 +3,7 @@ package com.code.aon.stat;
 import java.io.Serializable;
 import java.util.List;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 public class PagedList<E> implements Serializable {

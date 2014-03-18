@@ -3,7 +3,7 @@ package com.code.aon.accounting.util;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class AccountingFinanceCheckerParams implements Serializable {
 	

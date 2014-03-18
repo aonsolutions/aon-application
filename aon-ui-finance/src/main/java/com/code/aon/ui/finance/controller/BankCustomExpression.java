@@ -5,7 +5,7 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.Map;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 import ar.com.fdvs.dj.domain.CustomExpression;
 

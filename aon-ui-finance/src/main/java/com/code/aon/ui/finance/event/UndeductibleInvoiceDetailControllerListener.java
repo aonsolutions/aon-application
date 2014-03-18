@@ -2,7 +2,7 @@ package com.code.aon.ui.finance.event;
 
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;

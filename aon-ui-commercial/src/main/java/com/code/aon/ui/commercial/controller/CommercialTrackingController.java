@@ -18,7 +18,7 @@ import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

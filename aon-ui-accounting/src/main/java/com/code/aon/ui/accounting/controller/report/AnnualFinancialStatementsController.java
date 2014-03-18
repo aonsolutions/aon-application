@@ -18,7 +18,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.balance.BalanceManager;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;

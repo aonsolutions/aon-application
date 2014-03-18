@@ -5,7 +5,7 @@ import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.academy.CourseSchedule;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.LinesController;
 
 public class CourseScheduleController extends LinesController {

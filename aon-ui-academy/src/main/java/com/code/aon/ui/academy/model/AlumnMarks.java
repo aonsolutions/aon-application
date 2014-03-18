@@ -3,7 +3,7 @@ package com.code.aon.ui.academy.model;
 import java.io.Serializable;
 
 import com.code.aon.academy.Mark;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.customer.Customer;
 
 public class AlumnMarks implements Serializable {

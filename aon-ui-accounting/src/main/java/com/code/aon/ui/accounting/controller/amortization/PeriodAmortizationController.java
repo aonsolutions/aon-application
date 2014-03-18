@@ -15,7 +15,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

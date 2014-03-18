@@ -2,7 +2,7 @@ package com.code.aon.fiscal.mod349;
 
 import java.io.Serializable;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.Mod349;
 
 public class Mod349Parameters implements Serializable {

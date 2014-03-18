@@ -2,7 +2,7 @@ package com.code.aon.ui.academy.event;
 
 import static com.code.aon.ui.academy.controller.IAcademyConstants.COURSE_MARK_CONTROLLER_NAME;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.academy.controller.CourseMarkController;
 import com.code.aon.ui.form.event.ControllerAdapter;

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;

@@ -12,7 +12,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.activity.Aeat2012ModuleCalculator;

@@ -2,7 +2,7 @@ package com.esferalia.aon.ui.sepe.event;
 
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;

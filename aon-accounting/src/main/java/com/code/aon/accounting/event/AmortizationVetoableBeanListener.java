@@ -4,7 +4,7 @@ import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

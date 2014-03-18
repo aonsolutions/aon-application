@@ -1,7 +1,7 @@
 package com.code.aon.ui.accounting.controller.book;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class AccountingBookException extends AonException {
 

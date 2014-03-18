@@ -11,7 +11,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.config.IScopable;
 import com.esferalia.aon.entity.master.PayrollBatchAttachmentDB;

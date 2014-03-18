@@ -8,7 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.person.enumeration.Gender;

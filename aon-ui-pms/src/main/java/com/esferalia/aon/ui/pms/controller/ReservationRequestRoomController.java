@@ -12,7 +12,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;

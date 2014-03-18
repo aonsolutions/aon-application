@@ -27,7 +27,7 @@ import org.richfaces.model.TreeNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;

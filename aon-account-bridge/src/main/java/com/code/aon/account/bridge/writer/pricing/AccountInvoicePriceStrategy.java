@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Tax;

@@ -10,7 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.LinesController;

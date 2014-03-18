@@ -10,7 +10,7 @@ import org.hibernate.Session;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.util.AccountHelperManager;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

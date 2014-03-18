@@ -19,7 +19,7 @@ import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.PeriodEntriesManager;
 import com.code.aon.accounting.util.PeriodEntriesParams;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

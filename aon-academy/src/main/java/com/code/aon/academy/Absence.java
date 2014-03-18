@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.AbsenceDB;
 
 /**
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.AbsenceDB;
 @Table(name="absence")
 public class Absence extends AbsenceDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
     public Absence() {
     	setEvaluation(1);

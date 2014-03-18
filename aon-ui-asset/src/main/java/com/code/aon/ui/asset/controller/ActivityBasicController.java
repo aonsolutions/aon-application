@@ -14,7 +14,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;

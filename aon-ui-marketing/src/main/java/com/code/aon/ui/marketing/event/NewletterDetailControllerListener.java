@@ -1,6 +1,6 @@
 package com.code.aon.ui.marketing.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.NewsletterDetail;
 import com.code.aon.ui.form.event.ControllerAdapter;

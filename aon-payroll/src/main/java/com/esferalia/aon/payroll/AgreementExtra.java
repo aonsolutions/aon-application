@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.entity.master.AgreementExtraDB;

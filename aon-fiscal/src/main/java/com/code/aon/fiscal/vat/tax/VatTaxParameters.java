@@ -3,7 +3,7 @@ package com.code.aon.fiscal.vat.tax;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.fiscal.VatTax;

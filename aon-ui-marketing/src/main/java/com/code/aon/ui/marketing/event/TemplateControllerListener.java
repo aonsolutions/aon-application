@@ -3,7 +3,7 @@ package com.code.aon.ui.marketing.event;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.CSSUnit;
 import com.code.aon.marketing.Template;
 import com.code.aon.ui.form.event.ControllerAdapter;

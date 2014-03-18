@@ -3,7 +3,7 @@ package com.code.aon.accounting.event;
 import java.util.List;
 
 import com.code.aon.accounting.BalanceDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

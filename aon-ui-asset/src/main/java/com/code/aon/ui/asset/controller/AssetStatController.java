@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetStat;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

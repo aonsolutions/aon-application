@@ -5,7 +5,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.accounting.BalanceDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
 

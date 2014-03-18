@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
 
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;

@@ -3,7 +3,7 @@ package com.code.aon.commercial.event;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

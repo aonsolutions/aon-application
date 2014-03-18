@@ -15,7 +15,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;

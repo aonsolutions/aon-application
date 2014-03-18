@@ -3,7 +3,7 @@ package com.code.aon.ui.commercial.event;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferTerm;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

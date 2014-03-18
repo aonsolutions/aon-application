@@ -9,7 +9,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Target;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;

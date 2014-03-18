@@ -14,7 +14,7 @@ import javax.faces.event.ActionEvent;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

@@ -20,7 +20,7 @@ import javax.faces.model.DataModel;
 import org.apache.commons.io.IOUtils;
 import org.xml.sax.SAXException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

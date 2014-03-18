@@ -2,7 +2,7 @@ package com.code.aon.ui.config.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.Tag;
 import com.code.aon.config.enumeration.TagType;
 import com.code.aon.ui.form.BasicController;

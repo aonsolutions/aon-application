@@ -4,7 +4,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemComposition;
 import com.code.aon.ui.common.components.LookupChangeEvent;

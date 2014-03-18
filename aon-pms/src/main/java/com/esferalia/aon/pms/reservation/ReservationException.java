@@ -1,7 +1,7 @@
 package com.esferalia.aon.pms.reservation;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class ReservationException extends AonException {
 

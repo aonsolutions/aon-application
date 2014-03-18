@@ -22,7 +22,7 @@ import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.accounting.enumeration.Quarter;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

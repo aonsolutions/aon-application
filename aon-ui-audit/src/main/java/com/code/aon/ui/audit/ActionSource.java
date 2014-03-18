@@ -8,7 +8,7 @@ import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.util.AonUtil;
 
 public class ActionSource implements Serializable {

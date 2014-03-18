@@ -5,7 +5,7 @@ import javax.faces.event.AbortProcessingException;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController;

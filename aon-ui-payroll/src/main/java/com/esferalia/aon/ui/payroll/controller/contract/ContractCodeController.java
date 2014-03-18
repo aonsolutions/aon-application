@@ -7,7 +7,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 

@@ -5,7 +5,7 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.RelationalType;

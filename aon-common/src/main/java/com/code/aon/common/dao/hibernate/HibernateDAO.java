@@ -19,8 +19,8 @@ import org.hibernate.impl.CriteriaImpl;
 import org.hibernate.impl.CriteriaImpl.OrderEntry;
 import org.hibernate.metadata.ClassMetadata;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AbstractFieldMapper;
-import com.code.aon.common.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.DAOConstants;

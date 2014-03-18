@@ -8,7 +8,7 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.payroll.enumeration.ss.SSCodeTables;
 import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter;

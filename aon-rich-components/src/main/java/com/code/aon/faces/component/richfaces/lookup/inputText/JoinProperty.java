@@ -8,7 +8,7 @@ import java.io.Serializable;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 
 public class JoinProperty implements Serializable { 

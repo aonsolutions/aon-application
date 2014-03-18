@@ -1,6 +1,6 @@
 package com.code.aon.common.dao.sql;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 /**
  * The class <code>DAOException</code> indicates conditions created by 

@@ -31,8 +31,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
 import com.code.aon.common.util.AdminUtil;
 
 public class UpdateDomain extends HttpServlet {

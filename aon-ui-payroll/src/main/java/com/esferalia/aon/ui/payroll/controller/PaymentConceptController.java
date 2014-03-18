@@ -5,7 +5,7 @@ import javax.faces.event.ActionEvent;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;

@@ -1,7 +1,7 @@
 package com.code.aon.ui.fiscal.controller.model;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.ui.form.event.ControllerAdapter;

@@ -2,7 +2,7 @@ package com.code.aon.ui.accounting.event;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;

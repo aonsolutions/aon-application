@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.CriterionVisitor;
@@ -15,7 +16,7 @@ import com.code.aon.ql.ast.SubQueryExpression;
  */
 public class SubQueryExpressionImpl implements SubQueryExpression {
 
-	private static final long serialVersionUID = -2739459347992478584L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String pojo;
 

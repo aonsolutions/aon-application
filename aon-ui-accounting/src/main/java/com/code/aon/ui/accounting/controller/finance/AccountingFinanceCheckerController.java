@@ -23,7 +23,7 @@ import com.code.aon.accounting.util.AccountingFinanceChecker;
 import com.code.aon.accounting.util.AccountingFinanceCheckerParams;
 import com.code.aon.accounting.util.StrippedStatement;
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

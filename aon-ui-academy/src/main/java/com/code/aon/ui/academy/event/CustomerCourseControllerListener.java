@@ -6,7 +6,7 @@ import static com.code.aon.ui.common.ICommonMessages.COURSE_ALUMN_LIMIT;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.academy.CourseAlumn;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.academy.controller.CourseAlumnController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

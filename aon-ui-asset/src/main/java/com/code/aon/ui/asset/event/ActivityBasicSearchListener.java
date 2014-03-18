@@ -6,7 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.enumeration.ActivityStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;

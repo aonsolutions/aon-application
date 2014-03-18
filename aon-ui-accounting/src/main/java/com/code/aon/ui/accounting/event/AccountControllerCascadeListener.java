@@ -3,7 +3,7 @@ package com.code.aon.ui.accounting.event;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;

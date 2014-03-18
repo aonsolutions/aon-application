@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

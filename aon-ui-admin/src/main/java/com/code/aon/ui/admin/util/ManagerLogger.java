@@ -12,7 +12,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;

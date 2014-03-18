@@ -3,7 +3,7 @@ package com.code.aon.accounting.util;
 import java.io.Serializable;
 
 import com.code.aon.accounting.Period;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 

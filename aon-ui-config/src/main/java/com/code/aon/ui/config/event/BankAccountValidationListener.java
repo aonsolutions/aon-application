@@ -6,7 +6,7 @@ import static com.code.aon.ui.common.ICommonMessages.CONFIG_INCORRECT_IBAN_LENGT
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

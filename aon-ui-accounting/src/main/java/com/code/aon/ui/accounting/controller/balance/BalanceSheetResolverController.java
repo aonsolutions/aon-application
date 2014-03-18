@@ -35,7 +35,7 @@ import com.code.aon.accounting.mvel.BalanceSheet;
 import com.code.aon.accounting.mvel.BalanceTransformer;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;

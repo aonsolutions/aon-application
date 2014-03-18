@@ -16,8 +16,8 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.ActionEntry;
-import com.code.aon.common.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;

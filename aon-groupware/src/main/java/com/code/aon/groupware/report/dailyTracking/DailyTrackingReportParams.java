@@ -3,7 +3,7 @@ package com.code.aon.groupware.report.dailyTracking;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.TaskHolder;

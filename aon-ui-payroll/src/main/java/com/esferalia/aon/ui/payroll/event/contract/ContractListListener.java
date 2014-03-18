@@ -2,7 +2,7 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.ast.Expression;

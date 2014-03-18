@@ -2,7 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.components.LookupChangeEvent;

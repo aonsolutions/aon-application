@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.Advertising;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.MimeType;

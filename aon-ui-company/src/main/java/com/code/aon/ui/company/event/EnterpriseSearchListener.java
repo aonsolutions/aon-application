@@ -7,7 +7,7 @@ import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

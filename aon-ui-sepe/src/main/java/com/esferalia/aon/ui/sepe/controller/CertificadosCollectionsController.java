@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.enumeration.certificados.*;
 
 /** 

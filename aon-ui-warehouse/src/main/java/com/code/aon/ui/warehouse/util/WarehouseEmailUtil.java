@@ -5,7 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SU
 
 import java.io.IOException;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;

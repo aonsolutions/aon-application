@@ -19,7 +19,7 @@ import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryMonthly;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;

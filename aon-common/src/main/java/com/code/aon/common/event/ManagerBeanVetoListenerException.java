@@ -1,7 +1,7 @@
 package com.code.aon.common.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.code.aon.common.AonVersion;
 
 /**
  * The class <code>ManagerBeanVetoListenerException</code> indicates conditions created by 

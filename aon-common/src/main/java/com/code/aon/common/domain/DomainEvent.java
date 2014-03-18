@@ -2,7 +2,7 @@ package com.code.aon.common.domain;
 
 import java.util.EventObject;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class DomainEvent extends EventObject {
 	

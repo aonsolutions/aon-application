@@ -6,7 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.SystemPaymentDB;
 import com.esferalia.aon.payroll.calculator.IContractPayment;

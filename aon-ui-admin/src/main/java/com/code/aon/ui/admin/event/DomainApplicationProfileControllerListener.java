@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.ui.admin.controller.ApplicationProfileController;

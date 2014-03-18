@@ -6,7 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.entity.master.ProjectReservationRoomDetailDB;

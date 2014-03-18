@@ -1,7 +1,7 @@
 package com.code.aon.accounting.event;
 
 import com.code.aon.accounting.AmortizationType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;

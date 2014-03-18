@@ -2,7 +2,7 @@ package com.code.aon.ui.product.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.product.ItemTariff;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.pricing.ItemPricesManager;

@@ -3,7 +3,7 @@ package com.esferalia.aon.pms;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
 
 public class Booking implements Serializable {

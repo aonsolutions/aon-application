@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.NullExpression;
@@ -13,7 +14,7 @@ import com.code.aon.ql.ast.NullExpression;
  */
 public class NullExpressionImpl implements NullExpression {
 	
-	private static final long serialVersionUID = 7146386156582127736L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * The expression.

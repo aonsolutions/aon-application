@@ -8,7 +8,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Project;
 import com.code.aon.ui.form.LinesController;

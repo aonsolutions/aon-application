@@ -2,7 +2,7 @@ package com.code.aon.ui.commercial.event;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferType;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.form.event.ControllerAdapter;

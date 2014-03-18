@@ -3,7 +3,7 @@ package com.code.aon.ui.tas.event;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.TaskHolder;

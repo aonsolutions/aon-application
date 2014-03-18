@@ -10,7 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;

@@ -3,7 +3,7 @@ package com.esferalia.aon.ui.payroll.event;
 import java.util.Iterator;
 import java.util.List;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

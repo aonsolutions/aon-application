@@ -9,7 +9,7 @@ import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.payroll.enumeration.certificados.CertificadosCodeTables;
 import com.esferalia.aon.payroll.enumeration.contrata.ContrataCodeTables;

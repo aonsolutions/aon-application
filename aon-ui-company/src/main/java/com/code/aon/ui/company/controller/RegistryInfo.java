@@ -3,7 +3,7 @@ package com.code.aon.ui.company.controller;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

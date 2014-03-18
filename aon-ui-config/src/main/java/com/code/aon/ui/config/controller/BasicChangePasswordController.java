@@ -10,7 +10,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.config.util.UserUtils;

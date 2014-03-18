@@ -17,7 +17,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferDetailCommissionStatus;
 import com.code.aon.commercial.strategy.BasicCommissionStrategy;
 import com.code.aon.commercial.strategy.ICommissionStrategy;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

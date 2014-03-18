@@ -1,6 +1,6 @@
 package com.code.aon.ui.finance.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.finance.PosShift;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.controller.PosShiftController;

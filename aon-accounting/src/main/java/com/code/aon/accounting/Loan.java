@@ -5,7 +5,7 @@ import javax.persistence.Table;
 
 import com.code.aon.account.IAccount;
 import com.code.aon.accounting.enumeration.LoanStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.esferalia.aon.entity.master.LoanDB;
 

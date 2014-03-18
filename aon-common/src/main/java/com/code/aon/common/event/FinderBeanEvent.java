@@ -2,7 +2,7 @@ package com.code.aon.common.event;
 
 import java.util.EventObject;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.ql.Criteria;
 

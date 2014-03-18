@@ -1,6 +1,6 @@
 package com.code.aon.accounting.summary;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 public class SummaryMonthly extends Summary {

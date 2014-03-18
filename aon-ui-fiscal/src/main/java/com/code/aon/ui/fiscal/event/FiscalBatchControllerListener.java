@@ -3,7 +3,7 @@ package com.code.aon.ui.fiscal.event;
 import java.util.Date;
 import java.util.List;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.FiscalBatch;
 import com.code.aon.ui.fiscal.controller.batch.Batchable;

@@ -1,6 +1,6 @@
 package com.code.aon.ui.config.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;

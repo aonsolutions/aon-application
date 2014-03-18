@@ -3,7 +3,7 @@ package com.code.aon.aio.controller;
 import java.io.Serializable;
 import java.util.List;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class DashboardEntry implements Serializable {
 	

@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.account.Account;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;

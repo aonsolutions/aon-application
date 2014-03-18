@@ -2,7 +2,7 @@ package com.code.aon.ui.marketing.event;
 
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

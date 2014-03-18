@@ -1,7 +1,7 @@
 package com.code.aon.accounting;
 
 import com.code.aon.account.Account;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;

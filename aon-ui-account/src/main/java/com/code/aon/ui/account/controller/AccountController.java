@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;

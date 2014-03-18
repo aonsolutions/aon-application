@@ -8,7 +8,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ui.form.BasicController;
 

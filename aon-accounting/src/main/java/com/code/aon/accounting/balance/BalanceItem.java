@@ -8,7 +8,7 @@ import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.BalanceDetail;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 @Deprecated

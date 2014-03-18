@@ -1,6 +1,6 @@
 package com.code.aon.ui.infoweb.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.ui.form.event.ControllerAdapter;

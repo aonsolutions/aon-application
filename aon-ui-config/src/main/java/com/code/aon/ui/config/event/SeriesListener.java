@@ -1,6 +1,6 @@
 package com.code.aon.ui.config.event;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.ui.form.event.ControllerAdapter;

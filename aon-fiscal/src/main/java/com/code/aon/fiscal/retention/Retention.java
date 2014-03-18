@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;

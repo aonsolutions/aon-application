@@ -6,7 +6,7 @@ import javax.el.MethodInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 
 public class MethodExpressionAdapter extends MethodExpression {
 

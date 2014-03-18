@@ -1,5 +1,6 @@
 package com.code.aon.ql;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Criterion;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.IdentExpression;
@@ -13,7 +14,7 @@ import com.code.aon.ql.ast.IdentExpression;
  */
 public class Order implements Criterion {
 
-	private static final long serialVersionUID = 3072972067229394951L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IdentExpression expression;
 	

@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.util.AonUtil;

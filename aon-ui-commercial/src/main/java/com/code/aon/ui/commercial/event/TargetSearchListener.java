@@ -4,7 +4,7 @@ package com.code.aon.ui.commercial.event;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.commercial.enumeration.TargetStatus;
-import com.code.aon.common.AonVersion;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
