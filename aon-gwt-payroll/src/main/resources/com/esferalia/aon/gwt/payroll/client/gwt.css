@@ -16,13 +16,18 @@ a, a:hover, a:visited {
 	display: none;
 }
 
-.gwt-DialogBox {
+.gwt-Selector{
+	margin: 0px;
+	color: #4B4B4B;
+	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+}
+.gwt-Selector .gwt-DialogBox {
 	background-color: white;
 	border: 1px solid #666;
 	z-index: 2;
 }
 
-.gwt-DialogBox .Caption {
+.gwt-Selector .gwt-DialogBox .Caption {
 	background: #d3d6dd url(gradient_bg_th.png) repeat-x bottom left;
 	font-weight: bold;
 	text-shadow: #fff 0 2px 2px;
@@ -32,26 +37,26 @@ a, a:hover, a:visited {
 	text-align: left;
 }
 
-.gwt-DialogBox .dialogContent {
+.gwt-Selector .gwt-DialogBox .dialogContent {
 	
 }
 
-.gwt-DialogBox .gwt-Button {
+.gwt-Selector .gwt-DialogBox .gwt-Button {
 	margin: 10px;
 }
 
-.gwt-PopupPanelGlass {
+.gwt-Selector .gwt-PopupPanelGlass {
 	background-color: #000;
 	opacity: 0.3;
 	filter: literal("alpha(opacity=30)");
 }
 
 /* GWT Tree */
-.gwt-Tree {
+.gwt-Selector .gwt-Tree {
 	
 }
 
-.gwt-Tree .gwt-TreeItem {
+.gwt-Selector .gwt-Tree .gwt-TreeItem {
 	padding: 0;
 	cursor: hand;
 	cursor: pointer;
@@ -60,12 +65,12 @@ a, a:hover, a:visited {
 	border: 1px solid #FFFFFF;
 }
 
-.gwt-Tree .gwt-TreeItem-selected {
+.gwt-Selector .gwt-Tree .gwt-TreeItem-selected {
 	background: #FFFADC;
     border: 1px solid #D3C061;
 }
 
-.gwt-Tree .gwt-TreeItem-highlight {
+.gwt-Selector .gwt-Tree .gwt-TreeItem-highlight {
 	color : #000000;
 	font-size: 1.1em;
 	font-weight: bolder;
@@ -73,26 +78,26 @@ a, a:hover, a:visited {
 }
 
 /* Splitters */
-.gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
+.gwt-Selector .gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
 	background-color: white;
 }
 
-.gwt-SplitLayoutPanel-HDragger {
+.gwt-Selector .gwt-SplitLayoutPanel-HDragger {
 	cursor: col-resize;
 }
 
-.gwt-SplitLayoutPanel-VDragger {
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
 	cursor: row-resize;
 }
 
 
 /* MenuBar */
 
-@sprite .gwt-MenuBar-horizontal {
+@sprite .gwt-Selector .gwt-MenuBar-horizontal {
 	gwt-image: "menuBar"; 
 } 
 
-.gwt-MenuBar-horizontal {
+.gwt-Selector .gwt-MenuBar-horizontal {
 	background-repeat: repeat-x;
 	border-bottom: 1px solid #717E88;
     border-top: 1px solid #FFFFFF;
@@ -100,7 +105,7 @@ a, a:hover, a:visited {
     width:100%;	
 }
 
-.gwt-MenuBar-horizontal .gwt-MenuItem {
+.gwt-Selector .gwt-MenuBar-horizontal .gwt-MenuItem {
     background-position: center !important;
     background-color:transparent;
     border: 1px solid transparent;
@@ -113,33 +118,33 @@ a, a:hover, a:visited {
     text-transform: uppercase;
 }
 
-.gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
+.gwt-Selector .gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
 	height: 1px;
 	margin: 0px 4px;
 }
 
-.gwt-MenuBar-vertical .gwt-MenuItem {
+.gwt-Selector .gwt-MenuBar-vertical .gwt-MenuItem {
 	min-width :125px;
 	padding: 4px 40px 4px 20px;
 }
 
-.gwt-MenuBar .gwt-MenuItem:hover,
-.gwt-MenuBar .gwt-MenuItem-selected,
-.gwt-MenuBar-vertical .gwt-MenuItem-selected,
-.gwt-MenuBar-vertical .subMenuIcon-selected	{
+.gwt-Selector .gwt-MenuBar .gwt-MenuItem:hover,
+.gwt-Selector .gwt-MenuBar .gwt-MenuItem-selected,
+.gwt-Selector .gwt-MenuBar-vertical .gwt-MenuItem-selected,
+.gwt-Selector .gwt-MenuBar-vertical .subMenuIcon-selected	{
 	border: none;
 	background-color: #EBEBEF;
 
 }
 
-.gwt-MenuBar-horizontal .gwt-MenuItem:hover,
-.gwt-MenuBar-horizontal .gwt-MenuItem-selected {
+.gwt-Selector .gwt-MenuBar-horizontal .gwt-MenuItem:hover,
+.gwt-Selector .gwt-MenuBar-horizontal .gwt-MenuItem-selected {
 	background-color: #FFFFFF;
 	border: 1px solid #FFFFFF;
 	box-shadow: 2px 2px 5px 1px #BBBBBB;
 }
 
-.gwt-MenuBarPopup {
+.gwt-Selector .gwt-MenuBarPopup {
 	margin : 0px;
 	background: white;
 	border-right: 1px solid #EBEBEF;
@@ -150,20 +155,20 @@ a, a:hover, a:visited {
 
 }
 
-.gwt-MenuBarPopup .menuPopupTopLeft,
-.gwt-MenuBarPopup .menuPopupTopCenter,
-.gwt-MenuBarPopup .menuPopupTopRight,
-.gwt-MenuBarPopup .menuPopupMiddleLeft,
-.gwt-MenuBarPopup .menuPopupMiddleRight,
-.gwt-MenuBarPopup .menuPopupBottomLeft,
-.gwt-MenuBarPopup .menuPopupBottomCenter,
-.gwt-MenuBarPopup .menuPopupBottomRight
+.gwt-Selector .gwt-MenuBarPopup .menuPopupTopLeft,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupTopCenter,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupTopRight,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupMiddleLeft,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupMiddleRight,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupBottomLeft,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupBottomCenter,
+.gwt-Selector .gwt-MenuBarPopup .menuPopupBottomRight
 	{
 	display: none;
 }
 
 
-.gwt-SuggestBoxPopup {
+.gwt-Selector .gwt-SuggestBoxPopup {
 	margin : 0px;
 	padding: 4px 0px;
 	background: #F1EEE9;
@@ -172,67 +177,67 @@ a, a:hover, a:visited {
 
 }
 
-.gwt-SuggestBoxPopup .suggestPopupTopLeft,
-.gwt-SuggestBoxPopup .suggestPopupTopCenter,
-.gwt-SuggestBoxPopup .suggestPopupTopRight,
-.gwt-SuggestBoxPopup .suggestPopupMiddleLeft,
-.gwt-SuggestBoxPopup .suggestPopupMiddleRight,
-.gwt-SuggestBoxPopup .suggestPopupBottomLeft,
-.gwt-SuggestBoxPopup .suggestPopupBottomCenter,
-.gwt-SuggestBoxPopup .suggestPopupBottomRight
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupTopLeft,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupTopCenter,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupTopRight,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupMiddleLeft,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupMiddleRight,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupBottomLeft,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupBottomCenter,
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupBottomRight
 	{
 	display: none;
 }
 
-.gwt-SuggestBoxPopup .item {
+.gwt-Selector .gwt-SuggestBoxPopup .item {
     font-size: 1em;
 }
-.gwt-SuggestBoxPopup .item-selected {
+.gwt-Selector .gwt-SuggestBoxPopup .item-selected {
     background: none repeat scroll 0 0 #E3DFD9;
 }
 
-.gwt-SuggestBoxPopup .suggestPopupContent {
+.gwt-Selector .gwt-SuggestBoxPopup .suggestPopupContent {
     background: inherit;
 }
 
-.gwt-SuggestBoxPopup .item .concept,
-.gwt-SuggestBoxPopup .item .employee,
-.gwt-SuggestBoxPopup .item .enterprise,
-.gwt-SuggestBoxPopup .item .payment_concept,
-.gwt-SuggestBoxPopup .item .employee_payment,
-.gwt-SuggestBoxPopup .item .enterprise_payment{
+.gwt-Selector .gwt-SuggestBoxPopup .item .concept,
+.gwt-Selector .gwt-SuggestBoxPopup .item .employee,
+.gwt-Selector .gwt-SuggestBoxPopup .item .enterprise,
+.gwt-Selector .gwt-SuggestBoxPopup .item .payment_concept,
+.gwt-Selector .gwt-SuggestBoxPopup .item .employee_payment,
+.gwt-Selector .gwt-SuggestBoxPopup .item .enterprise_payment{
     padding-left: 15px;
 }
 
-@sprite .gwt-SuggestBoxPopup .item .concept{
+@sprite .gwt-Selector .gwt-SuggestBoxPopup .item .concept{
 	gwt-image: "publiC"; 
 }
 
-@sprite .gwt-SuggestBoxPopup .item .employee{
+@sprite .gwt-Selector .gwt-SuggestBoxPopup .item .employee{
 	gwt-image: "privatE"; 
 }
 
-@sprite .gwt-SuggestBoxPopup .item .enterprise{
+@sprite .gwt-Selector .gwt-SuggestBoxPopup .item .enterprise{
 	gwt-image: "protecteD"; 
 }
 
-@sprite .gwt-SuggestBoxPopup .item .payment_concept{
+@sprite .gwt-Selector .gwt-SuggestBoxPopup .item .payment_concept{
 	gwt-image: "publiC"; 
 }
 
-@sprite .gwt-SuggestBoxPopup .item .employee_payment{
+@sprite .gwt-Selector .gwt-SuggestBoxPopup .item .employee_payment{
 	gwt-image: "privatE"; 
 }
 
-@sprite .gwt-SuggestBoxPopup .item .enterprise_payment{
+@sprite .gwt-Selector .gwt-SuggestBoxPopup .item .enterprise_payment{
 	gwt-image: "protecteD"; 
 }
 
-@sprite .aon-MenuItemCheckYes {
+@sprite .gwt-Selector .aon-MenuItemCheckYes {
 	gwt-image: "checkYes"; 
 }
 
-@sprite .aon-MenuItemCheckYes:hover {
+@sprite .gwt-Selector .aon-MenuItemCheckYes:hover {
 	gwt-image: "checkYes" !important; 
 }
 
@@ -259,18 +264,18 @@ a, a:hover, a:visited {
 	background: none;
 }
 
-.gwt-PopupPanelGlass {
+.gwt-Selector .gwt-PopupPanelGlass {
     background-color: #D0D0D0;
     opacity: 0.5;
 }
 
-.gwt-PopupPanel {
+.gwt-Selector .gwt-PopupPanel {
     padding: 1px;
 	border: 1px solid  #C4C0B9;
     box-shadow: 4px 4px 0px 0px #D0D0D0;
 }
 
-.gwt-Button{
+.gwt-Selector .gwt-Button{
 	margin: 0px;
 	border : none;
 	color: #000000;
@@ -279,7 +284,7 @@ a, a:hover, a:visited {
 	
 }
 
-@sprite .gwt-Button{
+@sprite .gwt-Selector .gwt-Button{
 	gwt-image : 'button';
 	background-repeat: no-repeat;
 	background-attachment:scroll;
@@ -289,13 +294,13 @@ a, a:hover, a:visited {
 	font-weight: bold;
 }
 
-.gwt-DateBox{
+.gwt-Selector .gwt-DateBox{
 	padding: 2px;	
 }
 
 /* DatePicker */
 
-.gwt-DatePicker {
+.gwt-Selector .gwt-DatePicker {
 	border: 1px solid #D4CFC7;
 }
 
@@ -369,21 +374,21 @@ td.datePickerMonth,
 }
 
 
-.gwt-TextBox,
-.gwt-SuggestBox {
+.gwt-Selector .gwt-TextBox,
+.gwt-Selector .gwt-SuggestBox {
 	padding: 2px;
 	font-size: 1em;
 }
 
-.gwt-TextBox:focus,
-.gwt-TextArea:focus,
-.gwt-DateBox:focus {
+.gwt-Selector .gwt-TextBox:focus,
+.gwt-Selector .gwt-TextArea:focus,
+.gwt-Selector .gwt-DateBox:focus {
 	background-color: #FBEDB6
 	
 }
 
 
-.gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
+.gwt-Selector .gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader {
 	border: none;
 	cursor: pointer;
 	font-size: 10px;
@@ -394,28 +399,29 @@ td.datePickerMonth,
 }
 
 
-.gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
+.gwt-Selector .gwt-StackLayoutPanel .gwt-StackLayoutPanelContent {
   border: none;
   vertical-align: middle;
   border-right: 1px solid #bbbbbb;
 }
-.gwt-HorizontalPanel,
- .gwt-HorizontalPanel tr{
+
+.gwt-Selector .gwt-HorizontalPanel,
+.gwt-Selector .gwt-HorizontalPanel tr{
 	border: none;
 }
 
-.gwt-HorizontalPanel td {
+.gwt-Selector .gwt-HorizontalPanel td {
 	border: none;
 	vertical-align : middle !important;
 }
 
-.gwt-HorizontalPanel td {
+.gwt-Selector .gwt-HorizontalPanel td {
 	border: none;
 	padding: 1px 1px !important;
 	vertical-align : middle !important;
 }
 
-.gwt-Error {
+.gwt-Selector .gwt-Error {
 	width: auto; 
 	height: auto;
 	color: red;
@@ -423,18 +429,18 @@ td.datePickerMonth,
 }
 
 
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
 	background:none;
 }
 
 
-@sprite .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+@sprite .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
 	gwt-image: "tabBar";
 	width: auto;
 	height:auto; 
 	background-repeat: repeat-x;
 } 
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
     border: none;
 }
 
@@ -449,7 +455,7 @@ td.datePickerMonth,
 
 
 
-@sprite .gwt-Warn {
+@sprite .gwt-Selector .gwt-Warn {
 	width: auto; 
 	height: auto;
 	color: orange;

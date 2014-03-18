@@ -22,6 +22,7 @@ public class RootLayoutPanel extends LayoutPanel {
 	private RootLayoutPanel() {
 		Window.addResizeHandler(new ResizeHandler() {
 			public void onResize(ResizeEvent event) {
+				fillParent();
 				RootLayoutPanel.this.onResize();
 			}
 		});
