@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -261,7 +262,10 @@ public class BoardBookingController extends DataScrollerState implements ICollec
 		}
 	}
 	
-	public class Booking {
+	public static class Booking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer hotelId;
 		private String hotelName;
 		private Date date;

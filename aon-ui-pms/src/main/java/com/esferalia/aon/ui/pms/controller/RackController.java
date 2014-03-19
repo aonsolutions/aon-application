@@ -243,10 +243,18 @@ public class RackController extends BasicController implements IPmsConstants {
 	}
 
 
-	public class FilterParams {
+	public static class FilterParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private RackController controller;
 		
 		private Date viewerStartDate;
 		private Integer startDateIncrease;
+		
+		public FilterParams(RackController controller) {
+			this.controller = controller;
+		}
 
 		public FilterParams() {
 			viewerStartDate = new Date();
@@ -262,7 +270,7 @@ public class RackController extends BasicController implements IPmsConstants {
 			return DateUtils.addMonths(viewerStartDate, 1);
 		}
 		public int getViewerDays() {
-			return (int)CommonUtil.getDaysBetweenDates(getFilterParams().getViewerStartDate(), getFilterParams().getViewerEndDate()) + 1;
+			return (int)CommonUtil.getDaysBetweenDates(controller.getFilterParams().getViewerStartDate(), controller.getFilterParams().getViewerEndDate()) + 1;
 		}
 
 		public Integer getStartDateIncrease() {

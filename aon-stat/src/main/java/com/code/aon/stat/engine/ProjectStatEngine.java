@@ -1,5 +1,6 @@
 package com.code.aon.stat.engine;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +9,7 @@ import java.util.LinkedList;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
@@ -18,7 +20,9 @@ import com.code.aon.stat.Offer;
 import com.code.aon.stat.PagedList;
 
 
-public class ProjectStatEngine {
+public class ProjectStatEngine implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public double getTotalSales(Connection c, ProjectStatParams params) throws ManagerBeanException {
 		double totalSales = 0d;

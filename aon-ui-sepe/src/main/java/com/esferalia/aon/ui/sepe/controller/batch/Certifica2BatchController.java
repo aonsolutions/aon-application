@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,7 +94,7 @@ public class Certifica2BatchController extends BasicController {
 	
 	public Certifica2BatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new Certifica2BatchNewWizard();
+			newBatchWizard = new Certifica2BatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -370,7 +371,11 @@ public class Certifica2BatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class Certifica2BatchNewWizard {
+	public static class Certifica2BatchNewWizard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private Certifica2BatchController controller;
 		
 		private List<Certifica2BatchDetail> selectedList;
 		
@@ -378,6 +383,10 @@ public class Certifica2BatchController extends BasicController {
 		
 		private DataModel selectedModel;
 		
+		public Certifica2BatchNewWizard(Certifica2BatchController controller) {
+			this.controller = controller;
+		}
+
 		public DataModel getSelectedModel() {
 			return selectedModel;
 		}
@@ -456,7 +465,7 @@ public class Certifica2BatchController extends BasicController {
 				throw new AbortProcessingException("Seleccione los contratos para continuar");
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -503,8 +512,8 @@ public class Certifica2BatchController extends BasicController {
 	        }
 	        clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        loadDetails();
-	        onSearchContracts(event);
+	        controller.loadDetails();
+	        controller.onSearchContracts(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

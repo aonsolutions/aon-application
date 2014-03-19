@@ -1,9 +1,14 @@
 package com.code.aon.fiscal.invoice;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 
-public class InvoiceReportParamsDetail {
+public class InvoiceReportParamsDetail implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private InvoiceTransactionType transaction;
     private Boolean investment;

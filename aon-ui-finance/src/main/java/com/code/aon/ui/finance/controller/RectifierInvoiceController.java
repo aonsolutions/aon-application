@@ -319,7 +319,9 @@ public class RectifierInvoiceController implements IFinanceConstants, Serializab
 		return SALE_INVOICE_LIST_NAME;
 	}
 
-	public class InvoiceWrapper {
+	public static class InvoiceWrapper implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Invoice invoice;
 		private boolean enabled;

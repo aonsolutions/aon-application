@@ -265,7 +265,10 @@ public class GeozoneIrpfController implements Serializable {
 	}
 	
 
-	public class GeoIrpf {
+	public static class GeoIrpf implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String geozoneCode;
 		private Integer year;
 		

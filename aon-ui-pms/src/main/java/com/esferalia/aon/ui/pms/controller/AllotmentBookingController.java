@@ -625,7 +625,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 
 	/***************** DAY BOOKING *********************************/
 
-	public class DayBooking {
+	public static class DayBooking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String hotel;
 		private Date date;
 		private Integer roomBusy;
@@ -727,7 +730,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 
 	/***************** DAY AGENCY BOOKING *********************************/
 
-	public class DayAgencyBooking {
+	public static class DayAgencyBooking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer roomAllotment;
 		private Integer roomBusy;
 		private Integer roomAvailable;

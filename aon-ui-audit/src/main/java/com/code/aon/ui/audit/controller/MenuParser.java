@@ -2,7 +2,9 @@ package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +106,7 @@ public class MenuParser {
 		this.resolver = new DefaultResourceResolver();
 	}
 	
-	private Document getDocument( URL url ) {
+	public static Document getDocument( URL url ) {
 	    SAXReader reader = new SAXReader();
         Document document = null;
 		try {
@@ -178,7 +180,14 @@ public class MenuParser {
 		if ( document != null ) {
 			parseMenu( document );
 		}		
-		parseFacesConfigs();
+		List<URL> list = getFacesConfigURLs();
+		parseFacesConfigs(list);
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String value = ctx.getExternalContext().getInitParameter(IAuditConstants.CHECK_SERIALIZATION);
+		if ( StringUtils.equals(Boolean.TRUE.toString(), value) ) {
+			SerializationChecker checker = new SerializationChecker();
+			checker.check(list);			
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -457,8 +466,36 @@ public class MenuParser {
         return viewIdMap;
 	}
 	
-	private void parseFacesConfigs() {
-       	Map<String,String> viewIdMap = getViewIdMap();
+	private List<URL> getFacesConfigURLs() {
+		List<URL> list = new LinkedList<URL>();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try {
+	        URL[] urls = Classpath.search(cl, "META-INF/", FACES_CONFIG_FILE);
+	        if (! ArrayUtils.isEmpty(urls) ) {
+	        	list.addAll(Arrays.asList(urls));
+	        }
+	    	FacesContext ctx = FacesContext.getCurrentInstance();
+	        URL url = ctx.getExternalContext().getResource("/WEB-INF/"+ FACES_CONFIG_FILE);
+	        if ( url != null ) {
+	        	list.add(url);      	
+	        }
+		} catch (IOException e) {
+        	LOGGER.error("Error searching report config files", e);
+        }		
+        return list;
+	}
+	
+	
+	private Map<String,String> getViewIdMap( List<URL> list ) {
+       	Map<String,String> viewIdMap = new HashMap<String, String>();
+		for( URL url : list ) {
+			parseFacesConfig(url, viewIdMap);
+		}       	
+        return viewIdMap;
+	}
+	
+	private void parseFacesConfigs( List<URL> list ) {
+       	Map<String,String> viewIdMap = getViewIdMap(list);
         for( ApplicationOption option : controller.getOptionMap().values() ) {
 			String name = StringUtils.substringBefore(option.getAction(), "-");
 			String viewId = viewIdMap.get(name);

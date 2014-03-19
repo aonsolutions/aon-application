@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class LeaveBatchController extends BasicController {
 	
 	public LeaveBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new LeaveBatchNewWizard();
+			newBatchWizard = new LeaveBatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -226,14 +227,22 @@ public class LeaveBatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class LeaveBatchNewWizard {
+	public static class LeaveBatchNewWizard implements Serializable {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private LeaveBatchController controller;
+		
 		private List<ITransferObject> selectedList;
 		
 		private ArrayList<Object> checks = new ArrayList<Object>();
 		
 		private DataModel selectedModel;
 		
+		public LeaveBatchNewWizard(LeaveBatchController controller) {
+			this.controller = controller;
+		}
+
 		public boolean isNew(){
 			return true;
 		}
@@ -312,7 +321,7 @@ public class LeaveBatchController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -326,7 +335,7 @@ public class LeaveBatchController extends BasicController {
 			}
 	        listController.getCheckHandler().clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        onSearchLeaves(event);
+	        controller.onSearchLeaves(event);
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -339,8 +348,8 @@ public class LeaveBatchController extends BasicController {
 	        }
 	        clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        loadDetails();
-	        onSearchLeaves(event);
+	        controller.loadDetails();
+	        controller.onSearchLeaves(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

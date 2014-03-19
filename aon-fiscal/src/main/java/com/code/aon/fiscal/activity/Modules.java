@@ -1,5 +1,6 @@
 package com.code.aon.fiscal.activity;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,9 +12,12 @@ import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 
-public class Modules {
+public class Modules implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String AEAT_DATABASE = "aeat/Modulos";
 	private static String AEAT_DATABASE_URL = "jdbc:derby:classpath:"+AEAT_DATABASE;

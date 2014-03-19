@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class FanBatchController extends BasicController {
 	
 	public FanBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new FanBatchNewWizard();
+			newBatchWizard = new FanBatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -264,7 +265,11 @@ public class FanBatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class FanBatchNewWizard {
+	public static class FanBatchNewWizard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private FanBatchController controller;
 
 		private List<ITransferObject> selectedList;
 		
@@ -272,6 +277,10 @@ public class FanBatchController extends BasicController {
 		
 		private DataModel selectedModel;
 		
+		public FanBatchNewWizard(FanBatchController controller) {
+			this.controller = controller;
+		}
+
 		public boolean isNew(){
 			return true;
 		}
@@ -350,7 +359,7 @@ public class FanBatchController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -364,7 +373,7 @@ public class FanBatchController extends BasicController {
 			}
 	        listController.getCheckHandler().clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        onSearchCCCs(event);
+	        controller.onSearchCCCs(event);
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -377,8 +386,8 @@ public class FanBatchController extends BasicController {
 	        }
 	        clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        loadDetails();
-	        onSearchCCCs(event);
+	        controller.loadDetails();
+	        controller.onSearchCCCs(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

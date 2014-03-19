@@ -212,7 +212,7 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 	}
 
 	public HotelService getNewService() {
-		return new HotelService();
+		return new HotelService(this);
 	}
 
 	public int getServicesCount() {
@@ -239,7 +239,11 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 		return getFinances().get(getFinancesCount()-1);
 	}
 
-	public class HotelService implements ICalculable {
+	public static class HotelService implements ICalculable, Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private ReservationInvoiceTo to;
 		
 		private Date fromDate;
 		private Date toDate;
@@ -247,6 +251,10 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 		private double quantity;
 		private double price;
 		private double taxableBase;
+		
+		public HotelService(ReservationInvoiceTo to) {
+			this.to = to;
+		}
 
 		public Date getFromDate() {
 			return fromDate;
@@ -292,7 +300,7 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 
 		public double getTotal() throws ManagerBeanException {
 			ReservationUtils reservationUtils = new ReservationUtils();
-			return CommonUtil.round(taxableBase * (1 + (reservationUtils.getTaxPercentage(item.getProduct().getVat(), getIssueDate()) / 100)));
+			return CommonUtil.round(taxableBase * (1 + (reservationUtils.getTaxPercentage(item.getProduct().getVat(), to.getIssueDate()) / 100)));
 		}
 
 

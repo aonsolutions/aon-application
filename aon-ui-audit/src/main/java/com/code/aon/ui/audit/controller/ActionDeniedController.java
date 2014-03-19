@@ -96,8 +96,8 @@ public class ActionDeniedController implements Serializable {
 	private Map<String,ApplicationOption> enabledManagedBeans;
 	
 	public ActionDeniedController() {
-		this.moduleEnabled = new ModuleEnabledMap();
-		this.skipManagedBean = new SkipManagedBeanMap();
+		this.moduleEnabled = new ModuleEnabledMap(this);
+		this.skipManagedBean = new SkipManagedBeanMap(this);
 		init();
 	}
 	
@@ -646,14 +646,24 @@ public class ActionDeniedController implements Serializable {
 		return list;		
 	}
 	
-	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> implements Serializable {
+	private Map<String, ApplicationOption> getEnabledManagedBeans() {
+		return enabledManagedBeans;
+	}
+
+	public static class SkipManagedBeanMap extends AbstractMap<String,Boolean> implements Serializable {
 		
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private ActionDeniedController controller;
+		
+		public SkipManagedBeanMap(ActionDeniedController controller) {
+			this.controller = controller;
+		}
 		
 		@Override
 		public Boolean get(Object key) {
 			boolean skip = true;
-			ApplicationOption option = enabledManagedBeans.get(key);
+			ApplicationOption option = controller.getEnabledManagedBeans().get(key);
 			if ( option != null ) {
 				skip = ! option.isRendered();
 			}
@@ -667,13 +677,19 @@ public class ActionDeniedController implements Serializable {
 		
 	}
 
-	public class ModuleEnabledMap extends AbstractMap<String,Boolean> implements Serializable {
+	public static class ModuleEnabledMap extends AbstractMap<String,Boolean> implements Serializable {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
+		private ActionDeniedController controller;
+		
+		public ModuleEnabledMap(ActionDeniedController controller) {
+			this.controller = controller;
+		}
+
 		@Override
 		public Boolean get(Object key) {
-			return ! deniedModulesMap.containsKey(key);
+			return ! controller.isDeniedModule(key.toString());
 		}
 
 		@Override

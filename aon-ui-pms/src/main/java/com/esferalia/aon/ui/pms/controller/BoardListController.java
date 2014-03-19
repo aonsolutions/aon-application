@@ -211,7 +211,10 @@ public class BoardListController extends DataScrollerState implements ICollectio
 	/**************************************************/
 	/**************************************************/
 	
-	public class BoardParams {
+	public static class BoardParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Hotel hotel;
 		private Date date;
 		private boolean boardPageBreak;
@@ -293,7 +296,10 @@ public class BoardListController extends DataScrollerState implements ICollectio
 		}
 	}
 	
-	public class BoardTotal {
+	public static class BoardTotal implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String boardName;
 		private Integer count;
 		public Integer getCount() {

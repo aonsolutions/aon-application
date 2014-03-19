@@ -1664,8 +1664,10 @@ public class CommercialStatEngineController implements Serializable {
 		setReportName(AonUtil.getMessage(REPORT_ACTIVITIES_VIEW));
 	}
 
-	public static class ControlSummary {
+	public static class ControlSummary implements Serializable {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer id;
 		private String name;
 		private Integer numVisits;

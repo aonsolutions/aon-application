@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,7 +64,7 @@ public class ContractBatchController extends BasicController {
 	
 	public ContractBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new ContractBatchNewWizard();
+			newBatchWizard = new ContractBatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -227,7 +228,11 @@ public class ContractBatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class ContractBatchNewWizard {
+	public static class ContractBatchNewWizard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private ContractBatchController controller;
 
 		private List<ITransferObject> selectedList;
 		
@@ -235,6 +240,10 @@ public class ContractBatchController extends BasicController {
 		
 		private DataModel selectedModel;
 		
+		public ContractBatchNewWizard(ContractBatchController controller) {
+			this.controller = controller;
+		}
+
 		public boolean isNew(){
 			return true;
 		}
@@ -314,7 +323,7 @@ public class ContractBatchController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -328,7 +337,7 @@ public class ContractBatchController extends BasicController {
 			}
 	        listController.getCheckHandler().clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        onSearchContracts(event);
+	        controller.onSearchContracts(event);
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -341,8 +350,8 @@ public class ContractBatchController extends BasicController {
 	        }
 	        clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));
-	        loadDetails();
-	        onSearchContracts(event);
+	        controller.loadDetails();
+	        controller.onSearchContracts(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

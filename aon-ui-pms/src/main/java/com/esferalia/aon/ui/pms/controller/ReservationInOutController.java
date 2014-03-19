@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -125,7 +126,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 			SQLUtils.setInt(reservationIOStmt, 3, isCheckin() ? 0 : 1);
 			reservationIORs = reservationIOStmt.executeQuery();
 			while (reservationIORs.next()) {
-				ReservationIO reservationIO = new ReservationIO();
+				ReservationIO reservationIO = new ReservationIO(this);
 				reservationIO.setReservation(reservationIORs.getInt(RESERVATION));
 				reservationIO.setCode(reservationIORs.getString(CODE));
 				reservationIO.setCheckInDate(reservationIORs.getDate(START_DATE));
@@ -254,7 +255,12 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 
 	/***************** RESERVATION IO *********************************/
 
-	public class ReservationIO {
+	public static class ReservationIO implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private ReservationInOutController controller;
+		
 		private Integer reservation;
 		private String code;
 		private Date checkInDate;
@@ -273,7 +279,11 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private String roomType;
 		private String roomNumber;
 		private String mealPlan;
-
+		
+		public ReservationIO(ReservationInOutController controller) {
+			this.controller = controller;
+		}
+		
 		public Integer getReservation() {
 			return reservation;
 		}
@@ -407,7 +417,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 			return getCheckStatus() == ReservationCheckStatus.CHECK_OUT;
 		}
 		public boolean isWrongCheck() {
-			return checkin ? getCheckInDate().compareTo(getStayDate()) != 0 : getCheckOutDate().compareTo(getStayDate()) != 0;
+			return controller.isCheckin() ? getCheckInDate().compareTo(getStayDate()) != 0 : getCheckOutDate().compareTo(getStayDate()) != 0;
 		}
 
 		public boolean isBlocked() {

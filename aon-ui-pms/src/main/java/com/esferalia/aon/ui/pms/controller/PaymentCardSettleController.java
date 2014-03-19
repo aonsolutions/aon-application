@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -777,7 +778,10 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 	}
 
 
-	public class PaymentCardFinance {
+	public static class PaymentCardFinance implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer financeId;
 		private Date financeDate;
 		private String agency;

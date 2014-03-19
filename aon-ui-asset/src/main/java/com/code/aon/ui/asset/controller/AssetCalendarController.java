@@ -286,7 +286,10 @@ public class AssetCalendarController extends BasicController {
 		}
 	}
 
-	public class Fraction {
+	public static class Fraction implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private AssetActivity activity;
 		private boolean reserved;
 		private boolean first;

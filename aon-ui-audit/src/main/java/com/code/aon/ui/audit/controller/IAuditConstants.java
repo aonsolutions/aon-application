@@ -14,6 +14,7 @@ public interface IAuditConstants {
 	// Properties
 	String MODULES_ENABLED = "modulesEnabled";
 	String PROFILE_DENIED_ACTIONS_ENABLED = "profileDeniedActionsEnabled";
+	String CHECK_SERIALIZATION = "com.code.aon.checkSerialization";
 	
 	// Velocity Templates
 	String OPTIONS_TEMPLATE = "options.xhtml.vm";

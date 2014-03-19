@@ -1,10 +1,14 @@
 package com.code.aon.stat;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.finance.enumeration.InvoiceType;
 
-public class Invoice {
+public class Invoice implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private Integer type;
