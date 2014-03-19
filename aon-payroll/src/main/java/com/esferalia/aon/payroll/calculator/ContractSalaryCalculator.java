@@ -242,8 +242,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			for (IContractPayment contractPayment : contractPayments) {
 				try {
-					System.out.println(contractPayment.getName() + "--. " + contractPayment.getExpression() );
-
 					resolvePayment(contractPayment, start, end, chargeDate,
 							expressionContext, taxCalculator, quoteCalculator);
 				} catch (UndefinedTotalPaymentException e) {
@@ -398,8 +396,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				expressionContext.addVariable(ALL, value, amountStart,
 						amountEnd);
 
-				Double quote = quoteCalculator.quote(contractPayment, paymentStart,
-						paymentEnd, value);
+				Double quote = quoteCalculator.quote(contractPayment, amountStart,
+						amountEnd, value);
 
 				try {
 					Double tax = taxCalculator.tax(contractPayment,
