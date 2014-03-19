@@ -25,6 +25,8 @@
 						<aon:methodParam name="rowSelectorAction" value="" />
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 							<ui:param name="controller" value="#{companyImages}" />
+							<ui:param name="showDataTable" value="#{true}" />
+							<ui:param name="showNote" value="#{false}" />
 							<ui:param name="rowSelectorReRender" value="image_form" />
 							<ui:param name="skipSelectButton" value="true" />
 							<ui:define name="columns">
@@ -139,14 +141,14 @@
 											</h:panelGrid>
 										</a4j:region>
 
-										<c:if test="#{companyImages.image != null}">
+										<c:if test="#{companyImages.dimensionEditable}">
 											<aon:outputLabel for="ratio" value="#{bundle.aon_image_ratio}"/>
 											<aon:selectBooleanCheckbox id="ratio" value="#{companyImages.ratio}" />
 	
 											<aon:outputLabel for="width" value="#{bundle.aon_width}" />
 											<rich:inputNumberSlider id="width" 
 												value="#{companyImages.width}" width="500"
-												minValue="1" maxValue="#{companyImages.maxWidth}">
+												minValue="1" maxValue="#{companyImages.originalWidth}">
 												<a4j:support event="onchange"
 													requestDelay="1500" reRender="imagePanelGrid"
 													actionListener="#{companyImages.onChangeWidth}" />
@@ -155,7 +157,7 @@
 											<aon:outputLabel for="height" value="#{bundle.aon_height}" />
 											<rich:inputNumberSlider id="height" 
 												value="#{companyImages.height}" width="500" 
-												minValue="1" maxValue="#{companyImages.maxHeight}">
+												minValue="1" maxValue="#{companyImages.originalHeight}">
 												<a4j:support event="onchange" 
 													requestDelay="1500" reRender="imagePanelGrid"
 													actionListener="#{companyImages.onChangeHeight}" />

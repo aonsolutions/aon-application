@@ -79,8 +79,6 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private static final FileFilter WEB_INFO_FILTER = new WebinfoFilter();
 	
-	private VelocityUtil vu;
-	
 	private boolean generated;
 	
 	private boolean published;
@@ -153,7 +151,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 			
 			HibernateUtil.setCloseSession(false);
-			vu = new VelocityUtil();
+			VelocityUtil vu = new VelocityUtil();
 			vu.put("esc", new EscapeTool());
 			//Añadimos al contexto todo lo necesario para las paginas
 			
@@ -189,18 +187,18 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if (company != null) {
 				vu.put(COMPANY_KEY, company);
 	
-				addCompanyLogo( company, imagesPreviewDirectory );
-				addWebInfoAttributes( company );
-				addCompanyImages( company, imagesPreviewDirectory );
+				addCompanyLogo( vu, company, imagesPreviewDirectory );
+				addWebInfoAttributes( vu, company );
+				addCompanyImages( vu, company, imagesPreviewDirectory );
 
-				addContactData( company );
-				addAddresses( company );
+				addContactData( vu, company );
+				addAddresses( vu, company );
 			}
 
 			this.homepage = getHomepage();
 			LOGGER.info( "Homepage: {}", homepage );
 			
-			generateMenu();
+			generateMenu(vu);
 
 			//Generar pagina principal
 			vu.put(CONTENT_KEY, HOME_TEMPLATE);
@@ -215,8 +213,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.put(CONTENT_KEY, MAIL_TEMPLATE);
 			vu.generate(MAIL_PHP);
 
-			generatePages();
-			generateCss(previewDirectory, cssPreviewDirectory);
+			generatePages(vu);
+			generateCss(vu, previewDirectory, cssPreviewDirectory);
 			
 			copyDirectoryToDirectory(new File(templateDirectory, "js"), previewDirectory );
 			File currentTemplateCssDirectory = new File(templateDirectory, CSS_PATH);
@@ -292,7 +290,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 
-	private void generateGenericPage(WebInfoPage wip) throws ManagerBeanException {
+	private void generateGenericPage(VelocityUtil vu, WebInfoPage wip) throws ManagerBeanException {
 		LOGGER.debug( "Generating gallery: {}", wip );
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
@@ -343,14 +341,14 @@ public class GeneratorController extends BasicController implements VelocityCons
 			images.add(ih);
 		}
 		vu.put(IMAGES_KEY, images);
-		generatePage(template, wip);
+		generatePage(vu, template, wip);
 		vu.remove(TITLE_KEY);
 		vu.remove(TEXT_KEY);
 		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove(COORDS_KEY);
 		vu.remove(IMAGES_KEY);
 	}
 
-	private void generateGalleryPage(WebInfoPage wip) throws ManagerBeanException {
+	private void generateGalleryPage(VelocityUtil vu, WebInfoPage wip) throws ManagerBeanException {
 		LOGGER.debug( "Generating gallery: {}", wip);
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
@@ -380,7 +378,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if (!primera) vu.put(PREVIOUS_KEY, previous_link);
 			if (!ultima) vu.put(NEXT_KEY, next_link);
 			vu.put(RETURN_KEY, getPageName(wip.getName()));
-			generateImagePage(IMAGE_VIEW_TEMPLATE, wipr.getRattach().getDescription());
+			generateImagePage(vu, IMAGE_VIEW_TEMPLATE, wipr.getRattach().getDescription());
 			vu.remove(IMAGE_KEY);
 			if (!primera) vu.remove(PREVIOUS_KEY);
 			if (!ultima) vu.remove(NEXT_KEY);
@@ -390,20 +388,20 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 		vu.put(GALLERY_KEY, images);
 		
-		generatePage(GALLERY_TEMPLATE, wip);
+		generatePage(vu, GALLERY_TEMPLATE, wip);
 		if (wip.getType() == WebInfoPageType.LOCATION) {
 			vu.remove(COORDS_KEY);
 		}
 		vu.remove(GALLERY_KEY);
 	}
 
-	private void generateImagePage(String template, String name) {
+	private void generateImagePage(VelocityUtil vu, String template, String name) {
 		vu.put(PAGENAME_KEY, name);
 		vu.put(CONTENT_KEY, template);
 		vu.generate( getImagePageName(name) );
 	}
 	
-	private void generatePage(String template, WebInfoPage wip) {
+	private void generatePage(VelocityUtil vu, String template, WebInfoPage wip) {
 		vu.put(PAGENAME_KEY, wip.getEscapedName());
 		vu.put(CONTENT_KEY, template);
 		String fileName = (wip.getId() != homepage) ? getPageName(wip.getName()) : INDEX_HTML;
@@ -517,7 +515,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return preffix + "." + mimeType.getExtension();
 	}
 
-	private void addCompanyLogo( Company company, File imagesDirectory ) throws ManagerBeanException {
+	private void addCompanyLogo( VelocityUtil vu, Company company, File imagesDirectory ) throws ManagerBeanException {
 		LOGGER.info( "Writing company logo" );
 		IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria attachCriteria = new Criteria();
@@ -537,7 +535,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 	
-	private void addWebInfoAttributes( Company company ) throws ManagerBeanException {
+	private void addWebInfoAttributes( VelocityUtil vu, Company company ) throws ManagerBeanException {
 		/*
 		 * 		$content = home.vm {
 		 *			$description - Descripcion comercial de la empresa (obligatorio - WARNING)
@@ -571,7 +569,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 
-	private void addCompanyImages( Company company, File imagesDirectory ) throws ManagerBeanException {
+	private void addCompanyImages( VelocityUtil vu, Company company, File imagesDirectory ) throws ManagerBeanException {
 		LOGGER.info( "Writing company images" );
 		IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		List<ImageHandler> all_images = new LinkedList<ImageHandler>();
@@ -596,7 +594,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		vu.put(ALL_IMAGES_KEY, all_images);	
 	}
 	
-	private void addContactData( Company company ) {
+	private void addContactData( VelocityUtil vu, Company company ) {
 		/*
 		 * 		Sacar datos de contacto {
 		 * 			$email - Email para el formulario de envio, si no existe no hay opcion de menu. 
@@ -624,7 +622,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 	
-	private void addAddresses( Company company ) throws ManagerBeanException {
+	private void addAddresses( VelocityUtil vu, Company company ) throws ManagerBeanException {
 		/*
 		 * 		$content = address.vm {
 		 *			$company - Datos de empresa
@@ -650,7 +648,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 	}
 
-	private void generateCss( File temporalDirectory, File cssTemporalDirectory) throws ManagerBeanException {
+	private void generateCss( VelocityUtil vu, File temporalDirectory, File cssTemporalDirectory) throws ManagerBeanException {
 		//Parseamos los estilos
 		LOGGER.info( "Writting the css" );
 		IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
@@ -674,7 +672,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		vu.generateCSS();		
 	}
 	
-	private void generatePages() throws ManagerBeanException {
+	private void generatePages(VelocityUtil vu) throws ManagerBeanException {
 		//Generar paginas segun menu.
 		LOGGER.info( "Generating the pages" );
 		IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
@@ -686,16 +684,16 @@ public class GeneratorController extends BasicController implements VelocityCons
 			WebInfoPage wip = (WebInfoPage)wipList.get(i);
 			switch (wip.getType()) {
 				case CONTACT:
-					generatePage(CONTACT_TEMPLATE, wip );
+					generatePage(vu, CONTACT_TEMPLATE, wip );
 					break;
 				case GENERIC:
-					generateGenericPage(wip);
+					generateGenericPage(vu, wip);
 					break;
 				case LOCATION:
-					generateGenericPage(wip);
+					generateGenericPage(vu, wip);
 					break;
 				case GALLERY:
-					generateGalleryPage(wip);
+					generateGalleryPage(vu, wip);
 					break;
 			}
 		}		
@@ -711,7 +709,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	 * Sacamos el menu de las paginas y cada una de las pagina.
 	 * @throws ManagerBeanException 
 	 */
-	private void generateMenu() throws ManagerBeanException {
+	private void generateMenu( VelocityUtil vu ) throws ManagerBeanException {
 		LOGGER.info( "Generating the menu for the context" );
 		ArrayList<MenuOptionHandler> menu = new ArrayList<MenuOptionHandler>();
 		IManagerBean wimBean = BeanManager.getManagerBean(WebInfoPage.class);
