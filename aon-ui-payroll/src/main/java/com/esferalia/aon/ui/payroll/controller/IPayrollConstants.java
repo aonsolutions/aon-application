@@ -32,6 +32,9 @@ public interface IPayrollConstants {
 	String CONTRACT_GENERATION_WIZARD_CONTROLLER = "contractGenerationWizard";
 	String CONTRACT_LEAVE_CONTROLLER_NAME = "contractLeave";
 	String CONTRACT_SEARCH_LISTENER_NAME = "contractSearch";
+	String CRA_BATCH_CONTROLLER_NAME = "craBatch";
+	String CRA_BATCH_DETAIL_CONTROLLER_NAME = "craBatchDetail";
+	String CRA_LIST_CONTROLLER_NAME = "craList";
 	String ENTERPRISE_CONTROLLER="enterprise";
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="CRE">
+	<field name="cabecera" value="CRE" format="AlphaNumeric" pattern="X(3)" />
+	<field name="concepto" value="bean" bean="CRE" property="concepto" format="AlphaNumeric" pattern="X(4)" />
+	<field name="indicativo_concepto" value="bean" bean="CRE" property="indicativoConcepto" format="AlphaNumeric" pattern="X(1)" />
+	<field name="importe" value="bean" bean="CRE" property="importe" format="Numeric" pattern="9(7)" />
+	<field name="indicativo_tipo_actuacion" value="bean" bean="CRE" property="indicativoTipoActuacion" format="AlphaNumeric" pattern="X(1)" />
+	<field name="reservado" value=" " format="AlphaNumeric" pattern="X(54)" />		
+</register>

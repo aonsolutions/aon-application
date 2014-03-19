@@ -100,6 +100,12 @@
 										value="#{bundle.payroll_fanBatchWizard_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="craBatch-payroll"
+										action="craBatch_search-payroll"
+										actionListener="#{craBatch.onEditSearch}"
+										value="#{bundle.payroll_craBatch_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="leaveBatch-payroll"
 										action="leaveBatch_search-payroll"
 										actionListener="#{leaveBatch.onEditSearch}"

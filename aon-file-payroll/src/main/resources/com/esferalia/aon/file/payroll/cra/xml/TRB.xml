@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="TRB">
+	<field name="cabecera" value="TRB" format="AlphaNumeric" pattern="X(3)" />
+	<field name="naf" value="bean" bean="TRB" property="naf" format="Numeric" pattern="9(12)" />
+	<field name="reservado" value=" " format="AlphaNumeric" pattern="X(55)" />
+</register>
