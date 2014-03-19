@@ -1,13 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.awt.BorderLayout;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JFrame;
 
 import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options;
 import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.BarLabelStyle;
@@ -16,10 +13,7 @@ import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
-import com.google.gwt.ajaxloader.client.Properties;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -96,9 +90,7 @@ public class ITEditor<E> extends ResizeComposite {
 		itData = pITData;
 		timeline.clearCell(0, 0);
 		timeline.setCellPadding(0);
-		timeline.setCellSpacing(0);
-		BorderLayout border = new BorderLayout(0,0);		
-		timeline.setLayoutData(border);
+		timeline.setCellSpacing(0);		
 		// Create a callback to be called when the visualization API
 		// has been loaded.
 		Runnable onLoadCallback = new Runnable() {
