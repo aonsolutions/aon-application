@@ -327,7 +327,7 @@ public class FANWriter {
 		if(StringUtils.isNotBlank(getJournalReduction(contract))){
 			Integer itDays = getItDays(contract);
 			String code = getContractCode(contract).getValue();
-			if(code.startsWith("2") || code.startsWith("5")){
+			if(!code.startsWith("1") && !code.startsWith("4")){
 				String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 				Double dayHours = (Double.parseDouble(weekHours)/5);
 				itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
@@ -361,14 +361,6 @@ public class FANWriter {
 		DAT dat = new DAT();
 		dat.setMes(endMonth.ordinal()+1);
 		dat.setIndicadoresPerfil(indicadosPerfil);
-//		dat.setIndicadoresPerfil((isPartialStrike(contract)?"H":BLANK_1)
-//				+(isMoonlighting(contract)?"P":BLANK_1)
-//				+(getJournalReduction(contract)!=null?getJournalReduction(contract):BLANK_1)
-//				+(isMonthSalary(contract)?"M":BLANK_1)
-//				+(isNoRetributionDischarge(contract)?"A":BLANK_1)
-//				+(getOthers(contract))
-//				+(isLessThan7DaysContract(contract)?"C":BLANK_1));
-//		dat.setDiasHoras(getContractDaysOrHours(contract));
 		dat.setDiasHoras(diasHoras);
 		dat.setDiasAlta(getContractDischargeDays(contract));
 		dat.setIndicadorCotizacion(getQuoteIndicator(contract));
@@ -716,6 +708,7 @@ public class FANWriter {
 				bonusEnd = (bonusEnd!=null && bonusEnd.after(getEndDate()))?getEndDate():bonusEnd;
 				bonusDays = differenceBetweenDates(bonusStart, bonusEnd);
 			}
+			dat.setDiasAlta(bonusDays);
 			createEDLRecord(edl, "CD", 22, bonusDays,new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
 		}
 	}
@@ -1743,6 +1736,7 @@ public class FANWriter {
 			select += " WHERE type in (" + DeductionType.UNEMPLOYMENT.ordinal() + ", " + DeductionType.JOB_TRAINING.ordinal() + ")";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
+					+ " AND ccc = '" + ccc.getCcc() + "'"
 					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
@@ -1796,6 +1790,7 @@ public class FANWriter {
 			select += " WHERE cost_concept in ('IMS_E')";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
+					+ " AND ccc = '" + ccc.getCcc() + "'"
 					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
@@ -1844,12 +1839,10 @@ public class FANWriter {
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT sum(amount) FROM salary_cost";
-			select += " WHERE cost_concept in ('" + ContextVariable.IT_ENTERPRISE.getName()  
-//					+ "', '" + ContextVariable.UNEMPLOY_ENTERPRISE.getName() + "', '" + ContextVariable.FOGASA_ENTERPRISE.getName() 
-					+ "')";
-					
+			select += " WHERE cost_concept in ('" + ContextVariable.IT_ENTERPRISE.getName() + "')";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
+					+ " AND ccc = '" + ccc.getCcc() + "'" 
 					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
@@ -1980,6 +1973,7 @@ public class FANWriter {
 			select += " WHERE type in (" + DeductionType.COMMON_CONTINGENCY.ordinal() + ")";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
+					+ " AND ccc = '" + ccc.getCcc() + "'"
 					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
@@ -2003,6 +1997,7 @@ public class FANWriter {
 			select += " WHERE type in (" + DeductionType.COMMON_CONTINGENCY.ordinal() + ")";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
+					+ " AND ccc = '" + ccc.getCcc() + "'"
 					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
