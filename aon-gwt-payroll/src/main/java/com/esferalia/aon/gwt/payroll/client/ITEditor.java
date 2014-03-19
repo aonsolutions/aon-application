@@ -278,91 +278,18 @@ public class ITEditor<E> extends ResizeComposite {
 
 		public void addRow(String pName, String pEstado, Date pStartDate,
 				Date pEndDate) {
-			data.addRow();
+			data.addRow();			
 			
-			Properties prop = Properties.create();			
-			
-			data.setCell(row, 0, pName, null, null);
-			data.setCell(row, 1, pEstado, null, null);
-			data.setCell(row, 2, pStartDate, null, null);
-			data.setCell(row, 3, pEndDate, null, null);
-			this.row++;
-			
-			/*
 			data.setValue(row, 0, pName);
 			data.setValue(row, 1, pEstado);
 			data.setValue(row, 2, pStartDate);
 			data.setValue(row, 3, pEndDate);			
-			setColor(pEstado);
+			
 			this.row++;
-			 */
 		}
 
 		public AbstractDataTable getDataTable() {
 			return data;
-		}
-
-		private void setColor(String pEstado) {
-
-			if (typeColors.containsKey(pEstado) == false) {
-				switch (pEstado) {
-				case "Activo":
-					typeColors.put("Activo", "#FFFFFF");
-					listColors.add("#FFFFFF");
-					break;
-
-				case "Maternidad":
-					typeColors.put("Maternidad", "#FF99FF");
-					listColors.add("#FF99FF");
-					break;
-
-				case "Enfermedad Común":
-					typeColors.put("EnfermedadComun", "#99FF99");
-					listColors.add("#99FF99");
-					break;
-
-				case "Enfermedad Profesional":
-					typeColors.put("EnfermedadProfesional", "#FF6600");
-					listColors.add("#FF6600");
-					break;
-
-				case "Paternidad":
-					typeColors.put("Paternidad", "#DAC679");
-					listColors.add("#DAC679");
-					break;
-
-				case "Riesgo Durante Embarazo":
-					typeColors.put("RiesgoDuranteEmbarazo", "#D65C33");
-					listColors.add("#D65C33");
-					break;
-
-				case "Lactancia Materna":
-					typeColors.put("LactanciaMaterna", "#CC7A52");
-					listColors.add("#CC7A52");
-					break;
-
-				case "EnfermedadNoProfesional":
-					typeColors.put("EnfermedadNoProfesional", "#66CCFF");
-					listColors.add("#66CCFF");
-					break;
-
-				default:
-					break;
-				}
-			}
-		}
-		
-		public void addColors(Options options) {
-			JsArrayString colores = JavaScriptObject.createArray().cast();
-			colors = new String[listColors.size()];
-			for(int x=0; x<listColors.size(); x++) {				
-				colores.push(listColors.get(x));				
-			}
-			
-			//options.setColors(colores);
-		}
-		public String[] getColors() {
-			return colors;
 		}
 
 	}
