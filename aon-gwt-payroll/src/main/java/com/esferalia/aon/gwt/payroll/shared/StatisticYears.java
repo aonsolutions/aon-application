@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-
 public class StatisticYears implements Serializable {
 
 	/**

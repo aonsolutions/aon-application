@@ -13,7 +13,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -91,6 +90,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Cost cost;
 	private Salary salary;
 	private Statistics stats;
+	private ITEditor it;
 	private Documents documents;
 	
 	
@@ -119,6 +119,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		cost = new Cost();
 		salary = new Salary();
 		stats = new Statistics();
+		it = new ITEditor();
 		salary.hideDeleteButton();
 		documents = new Documents();
 		employees.addListener(this);
@@ -159,6 +160,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		detailPanel.setWidget(stats);
 		stats.setStatistics(statistics);
+	}	
+
+	@Override
+	public void onITDataSelected(com.esferalia.aon.gwt.payroll.shared.ITData itData) {
+		detailPanel.setWidget(it);
+		it.setITEditor(itData);		
 	}
 	
 	@Override
@@ -223,4 +230,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 }

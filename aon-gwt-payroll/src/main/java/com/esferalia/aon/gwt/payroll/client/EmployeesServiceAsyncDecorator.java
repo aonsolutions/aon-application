@@ -17,13 +17,14 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
-import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -91,13 +92,27 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getEnterpriseStats(enterpriseId, new AsyncCallbackWrapper<Statistics>(callback));
 	}
 	
+	@Override
+	public void getWorkplaceITData(int workplaceId,
+			AsyncCallback<ITData> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getWorkplaceITData(workplaceId, new AsyncCallbackWrapper<ITData>(callback));
+	}
+
+	@Override
+	public void getEnterpriseITData(int enterpriseId,
+			AsyncCallback<ITData> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEnterpriseITData(enterpriseId, new AsyncCallbackWrapper<ITData>(callback));		
+	}
+	
 	public void getSalaries(Employee employee,
 			AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getSalaries(employee,
 				new AsyncCallbackWrapper<List<Salary>>(callback));
-	}
+	}	
 
 	@Override
 	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
@@ -331,4 +346,7 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getChanges(agreement,
 				new AsyncCallbackWrapper<SortedSet<Date>>(callback));
 	}
+
+	
+	
 }
