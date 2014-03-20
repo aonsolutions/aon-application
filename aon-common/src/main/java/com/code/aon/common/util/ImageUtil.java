@@ -239,12 +239,22 @@ public class ImageUtil {
 	 * @return the proportional width
 	 */
 	public static int getProportionalWidth( BufferedImage image, int height ) {
-		int image_width = image.getWidth();
-		int image_height = image.getHeight();
-		double scale = (double)image_height / (double)height;
-		return (int)((double)image_width / scale);
+		return getProportionalWidth(image.getWidth(), image.getHeight(), height);
 	}
 
+	/**
+	 * Gets the proportional width.
+	 * 
+	 * @param originalWidth the image original width
+	 * @param originalHeight the image original height
+	 * @param height the height
+	 * @return the proportional width
+	 */
+	public static int getProportionalWidth( int originalWidth, int originalHeight, int height ) {
+		double scale = (double)originalHeight / (double)height;
+		return (int)((double)originalWidth / scale);
+	}
+	
 	/**
 	 * Gets the proportional height.
 	 * 
@@ -253,10 +263,20 @@ public class ImageUtil {
 	 * @return the proportional height
 	 */
 	public static int getProportionalHeight( BufferedImage image, int width ) {
-		int image_width = image.getWidth();
-		int image_height = image.getHeight();
-		double scale = (double)image_width / (double)width;
-		return (int)((double)image_height / scale);
+		return getProportionalHeight(image.getWidth(), image.getHeight(), width);
+	}	
+
+	/**
+	 * Gets the proportional height.
+	 * 
+	 * @param originalWidth the image original width
+	 * @param originalHeight the image original height
+	 * @param width the width
+	 * @return the proportional height
+	 */
+	public static int getProportionalHeight( int originalWidth, int originalHeight, int width ) {
+		double scale = (double)originalWidth / (double)width;
+		return (int)((double)originalHeight / scale);
 	}	
 	
 	/**

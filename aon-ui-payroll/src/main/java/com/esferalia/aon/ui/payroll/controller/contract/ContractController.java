@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,7 +300,7 @@ public class ContractController extends BasicController {
 		if(this.getParams().getContractCode()!=null){
 			contractCode = this.getParams().getContractCode().getValue();
 		}
-		return StringUtils.startsWith(contractCode, "2") || StringUtils.startsWith(contractCode, "5");
+		return !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4");
 	}
 	
 	public boolean isExtensibleContract(){
@@ -1040,148 +1039,12 @@ public class ContractController extends BasicController {
 	public void onChangeEndDate(ActionEvent event){
 		Date endDate = ((Contract)this.getTo()).getEndDate();
 		if(endDate==null){
-			getParams().setSettleAdvanceNoticeDate(null);
-			getParams().setSettleNonEnjoyedVacations(null);
-			getParams().setSettleCompensationDays(null);
 			getParams().setSuspensionCause(null);
 		} else if(endDate.before(((Contract)this.getTo()).getStartDate())){
 			((Contract)this.getTo()).setEndDate(null);
-			getParams().setSettleAdvanceNoticeDate(null);
-			getParams().setSettleNonEnjoyedVacations(null);
-			getParams().setSettleCompensationDays(null);
 			getParams().setSuspensionCause(null);
 			AonUtil.addErrorMessage("La fecha fin no puede ser anterior a la fecha inicio.");
-		} else {
-			getParams().setSettleAdvanceNoticeDate( obtainAdvanceNoticeDate(endDate) );
-			getParams().setSettleWorkedYears( calculateWorkedYears((Contract) this.getTo()) );
-			getParams().setSettleWorkedMonths( calculateWorkedMonths((Contract) this.getTo()) );
 		}
-	}
-	
-	public void onSuspensionCauseChanged(ValueChangeEvent event){
-		if(event.getNewValue()!=null){
-			getParams().setSettleNonEnjoyedVacations(0);
-			Contract contract = (Contract) this.getTo();
-			getParams().setSettleCompensationDays(calculateCompensationDays(contract, (TLDCAUSS) event.getNewValue()));
-		} else {
-			getParams().setSettleCompensationDays(null);
-		}
-	}
-	
-	private Integer calculateWorkedMonths(Contract contract) {
-		Calendar startCalendar = Calendar.getInstance();
-		startCalendar.setTime(contract.getStartDate());
-		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(contract.getEndDate());
-		int diffMonth = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
-		diffMonth += (endCalendar.get(Calendar.DAY_OF_MONTH) > startCalendar.get(Calendar.DAY_OF_MONTH))?1:0;
-		return diffMonth;
-	}
-
-	private Integer calculateWorkedYears(Contract contract) {
-		Calendar startCalendar = Calendar.getInstance();
-		startCalendar.setTime(contract.getStartDate());
-		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(contract.getEndDate());
-		int diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
-		return diffYear;
-	}
-	
-	private Integer calculateCompensationDays(Contract contract, TLDCAUSS cause) {
-		////////////////////////////////////////
-		// DESPIDOS SIN INDEMNIZACION
-		////////////////////////////////////////
-		// Despedidos disciplinarios o causas objetiva
-		// Contratos de Formación, Prácticas, Interinidad... según TC2
-		if( (getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C410.getValue())
-			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C418.getValue())
-			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C420.getValue())
-			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C421.getValue())
-			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C510.getValue())
-			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C518.getValue())
-			|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).equals(ContractCode.C520.getValue()))
-			){
-			return 0;
-		} 
-		////////////////////////////////////////
-		// INDEMNIZACION POR FINALIZACION DE CONTRATO
-		////////////////////////////////////////
-		// Fin de obra/finalización contrato de duración determinada
-		// Con posterioridad al 1/1/2011: 8
-		// Con posterioridad al 1/1/2012: 9
-		// Con posterioridad al 1/1/2013: 10
-		// Con posterioridad al 1/1/2014: 11
-		// Con posterioridad al 1/1/2015: 12
-		// Excepción:
-		// 	a) 12 días por año para contratos de empresas de trabajo temporal.
-		else if( (getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).startsWith("4")
-				|| getContractUtils().getContractDataMap(contract).get(ContextVariable.TC2.getName()).startsWith("5")
-				) && (cause == TLDCAUSS.TLDCAUSS_11)
-				){
-			if(contract.getStartDate().after(CommonUtil.getDate(2015, Calendar.JANUARY, 1))){
-				return 12;
-			} else if(contract.getStartDate().after(CommonUtil.getDate(2014, Calendar.JANUARY, 1))){
-				return 11;
-			} else if(contract.getStartDate().after(CommonUtil.getDate(2013, Calendar.JANUARY, 1))){
-				return 10;
-			} else if(contract.getStartDate().after(CommonUtil.getDate(2012, Calendar.JANUARY, 1))){
-				return 9;
-			} else if(contract.getStartDate().after(CommonUtil.getDate(2011, Calendar.JANUARY, 1))){
-				return 8;
-			}
-		} else {
-			////////////////////////////////////////
-			// INDEMNIZACIÓN POR DESPIDO
-			////////////////////////////////////////
-			// - Despedido de forma procedente por CAUSAS OBJETIVAS.
-			//		- Importe: 20 días por año trabajado
-			//		- Límite:    12 mensualidades
-			//		Excepción:
-			//			a) Límite de 9 mensualidades por "14. Resolución del trabajador por traslado o modificación sustancial de las condiciones de trabajo"
-			if(cause == TLDCAUSS.TLDCAUSS_02 || cause == TLDCAUSS.TLDCAUSS_21 || cause == TLDCAUSS.TLDCAUSS_30){
-				return 20;
-			} 
-			// - Despedido de forma improcedente (Contrato anterior al 13/02/2013).
-			//		- Importe: 45 días por año trabajado
-			//		- Límite:    42 mensualidades
-			//		Excepción:
-			//			a) Se calculará el importe de la indemnización con 45 días por año trabajado a 13/02/2013 
-			//				si a esa fecha iguala o excede las 24 mensualidades de indemnización, se fija ese importe como  indemnización.
-			//			b) Si a 13/02/2013 no alcanza las 24 mensualidades de indemnización, se seguirá calculando la indemnización 
-			//				a razón de 33 días por año trabajado con un límite total acumulado entre ambos tramos de 24 mensualidades.
-			else if(( DateUtils.truncate(contract.getStartDate(), Calendar.DAY_OF_MONTH).before(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13)) 
-					|| DateUtils.truncate(contract.getStartDate(), Calendar.DAY_OF_MONTH).equals(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13)) )
-					&& cause == TLDCAUSS.TLDCAUSS_01
-					){
-				return 45;
-			}
-			// - Despedido de forma improcedente (Contrato posterior al 13/02/2013).
-			//		- Importe: 33 días por año trabajado
-			//		- Límite:    24 mensualidades
-			else if( DateUtils.truncate(contract.getStartDate(), Calendar.DAY_OF_MONTH).after(CommonUtil.getDate(2013, Calendar.FEBRUARY, 13))
-					&& cause == TLDCAUSS.TLDCAUSS_01 
-					){
-				return 33;
-			}
-		}		
-		return 0;
-	}
-	
-	public void onAdvanceNoticeDateChanged(ActionEvent event){
-		Contract contract = (Contract) this.getTo();
-		if(contract.getEndDate()!=null && getParams().getSettleAdvanceNoticeDate().after(contract.getEndDate())){
-			getParams().setSettleAdvanceNoticeDate(obtainAdvanceNoticeDate(((Contract)this.getTo()).getEndDate()));
-			AonUtil.addErrorMessage("La fecha de preaviso no puede ser posterior a la fecha fin de contrato");
-		}
-	}
-
-	private Date obtainAdvanceNoticeDate(Date sourceDate){
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(sourceDate);
-		cal.add(Calendar.DAY_OF_MONTH, -15);
-		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) cal.add(Calendar.DAY_OF_MONTH, -1);
-		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY) cal.add(Calendar.DAY_OF_MONTH, -1);
-		return cal.getTime();
 	}
 	
 	/*

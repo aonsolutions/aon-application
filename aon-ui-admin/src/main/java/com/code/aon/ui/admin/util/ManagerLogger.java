@@ -16,7 +16,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.EmailSender;
@@ -30,14 +29,14 @@ public class ManagerLogger implements Serializable {
 	
 	private EmailSender sender;
 	
-	private AuthPrincipal loggedUser;
+	private String loggedUser;
 	
 	private Address[] to;
 	
 	private boolean configured;
 	
 	public ManagerLogger( String toEmails ) {
-		loggedUser = AonUtil.getAuthPrincipal();
+		loggedUser = AonUtil.getAuthPrincipal().getName();
 		try {
 			to = InternetAddress.parse(toEmails);
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);

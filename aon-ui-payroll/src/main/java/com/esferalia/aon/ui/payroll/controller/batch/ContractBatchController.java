@@ -51,16 +51,8 @@ import com.esferalia.aon.ui.payroll.file.AFIWriter;
 public class ContractBatchController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private AFIWriter afiWriter;
+
 	private ContractBatchNewWizard newBatchWizard;
-	
-	private AFIWriter getAFIWriter() {
-		if (afiWriter == null) {
-			afiWriter = new AFIWriter();
-		}
-		return afiWriter;
-	}
 	
 	public ContractBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -144,7 +136,8 @@ public class ContractBatchController extends BasicController {
 				getNewBatchWizard().accept(event);
 			}
 			ContractBatch batch = (ContractBatch) getTo();
-			File file = getAFIWriter().createAFI(getContractList()).getFile();
+			AFIWriter afiWriter = new AFIWriter();
+			File file = afiWriter.createAFI(getContractList()).getFile();
 			if (file != null) {
 				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
 				batch.setOutcomeFileDate(new Date());

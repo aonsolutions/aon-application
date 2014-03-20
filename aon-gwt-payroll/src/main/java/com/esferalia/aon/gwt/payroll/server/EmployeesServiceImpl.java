@@ -76,6 +76,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
+import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -93,8 +94,8 @@ import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
-import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
@@ -104,11 +105,13 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
+import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
@@ -187,7 +190,7 @@ import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
  */
 @SuppressWarnings("serial")
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
-		EmployeesService {
+		EmployeesService, StatisticsService {
 
 	public static final String REMOVE = "REMOVE()";
 
@@ -1136,8 +1139,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	// Statistics
-	
 	@Override
 	public Statistics getEnterpriseStats(int enterpriseId)
 			throws IllegalArgumentException {
@@ -1147,7 +1148,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn = getConnection();
 
 			return SQLStatistics.getEnterpriseStats(conn, enterpriseId);
-
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1162,8 +1162,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
-	
+
 	@Override
 	public Statistics getWorkplaceStats(int workplaceId)
 			throws IllegalArgumentException {
@@ -1171,7 +1170,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			
+
 			return SQLStatistics.getWorkplaceStats(conn, workplaceId);
 
 		} catch (SQLException e) {
@@ -1187,8 +1186,55 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
-	
+
+	@Override
+	public ITData getEnterpriseITData(int enterpriseId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+
+			return SQLITData.getEnterpriseITData(conn, enterpriseId);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public ITData getWorkplaceITData(int workplaceId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+
+			return SQLITData.getWorplaceItTData(conn, workplaceId);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
 	@Override
 	public SortedSet<Date> getChanges(Agreement agreement)
 			throws IllegalArgumentException {
@@ -1923,21 +1969,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			//@formatter:off
-			String sql = "SELECT * " 
-					+ " FROM " + CONTRACT
-					+ " INNER JOIN " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
-						+ " ON (" + CONTRACT + "." + ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = " 
-						+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.ID + ")" 
-					+ " INNER JOIN " + SQLConstants.AGREEMENT_LEVEL
-						+ " ON (" + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL+ " = " 
-						+ SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + ")" 
-					+ " INNER JOIN " + SQLConstants.AGREEMENT_EXTRA
-						+ " ON (" + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT + " = " 
-						+ SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT + ")"
-					+ " WHERE " + CONTRACT + "." + ContractColumns.ID + " = ? "
-						;
-			//@formatter:on
+			// @formatter:off
+			String sql = "SELECT * " + " FROM " + CONTRACT + " INNER JOIN "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " ON ("
+					+ CONTRACT + "." + ContractColumns.AGREEMENT_LEVEL_CATEGORY
+					+ " = " + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
+					+ AgreementLevelCategoryColumns.ID + ")" + " INNER JOIN "
+					+ SQLConstants.AGREEMENT_LEVEL + " ON ("
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = "
+					+ SQLConstants.AGREEMENT_LEVEL + "."
+					+ AgreementLevelColumns.ID + ")" + " INNER JOIN "
+					+ SQLConstants.AGREEMENT_EXTRA + " ON ("
+					+ SQLConstants.AGREEMENT_LEVEL + "."
+					+ AgreementLevelColumns.AGREEMENT + " = "
+					+ SQLConstants.AGREEMENT_EXTRA + "."
+					+ AgreementExtraColumns.AGREEMENT + ")" + " WHERE "
+					+ CONTRACT + "." + ContractColumns.ID + " = ? ";
+			// @formatter:on
 
 			stmt = connection.prepareStatement(sql);
 
@@ -2096,30 +2145,36 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			//@formatter:off
-			String sql = "SELECT" 
-						+ " MONTH("+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol
-					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
-					+ ", COUNT(*) AS " + allCol 
-					+ ",(COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE(),1,NULL))"
-					+" +  COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " IS NULL,1,NULL))) AS " + showCol
-					+ ",(SELECT COUNT(*)"
-						+ " FROM " + CONTRACT 
-						+ " WHERE " + ContractColumns.DOMAIN + " = " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN 
-						+ " AND " + CONTRACT + "." + ContractColumns.START_DATE + " <= LAST_DAY(CHARGE_DATE) "
-						+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
-						+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >=  DATE_FORMAT(CHARGE_DATE, '%Y-%m-01') )) AS " + contractsCol
+			// @formatter:off
+			String sql = "SELECT" + " MONTH(" + SALARY + "."
+					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ ", COUNT(*) AS " + allCol + ",(COUNT( IF("
+					+ SQLConstants.SALARY_DATA + "."
+					+ SalaryDataColumns.EXPRESSION + " <= UTC_DATE(),1,NULL))"
+					+ " +  COUNT( IF(" + SQLConstants.SALARY_DATA + "."
+					+ SalaryDataColumns.ID + " IS NULL,1,NULL))) AS " + showCol
+					+ ",(SELECT COUNT(*)" + " FROM " + CONTRACT + " WHERE "
+					+ ContractColumns.DOMAIN + " = " + ENTERPRISE + "."
+					+ EnterpriseColumns.DOMAIN + " AND " + CONTRACT + "."
+					+ ContractColumns.START_DATE + " <= LAST_DAY(CHARGE_DATE) "
+					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE
+					+ " IS NULL" + " OR " + CONTRACT + "."
+					+ ContractColumns.END_DATE
+					+ " >=  DATE_FORMAT(CHARGE_DATE, '%Y-%m-01') )) AS "
+					+ contractsCol
 
-					+ " FROM " + ENTERPRISE + ", " + SALARY 
-					+ " LEFT JOIN " + SQLConstants.SALARY_DATA 
-						+ " ON ( " + SQLConstants.SALARY + "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.SALARY 
-						+ " AND " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME + " =  ? " + ")" 
-					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
-					+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ? " 
-					+ " GROUP BY 1, 2"
-					+ " HAVING " +showCol +" >= 1" 
-					+ " ORDER BY 2 , 1 ASC ";
-			//@formatter:on
+					+ " FROM " + ENTERPRISE + ", " + SALARY + " LEFT JOIN "
+					+ SQLConstants.SALARY_DATA + " ON ( " + SQLConstants.SALARY
+					+ "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA
+					+ "." + SalaryDataColumns.SALARY + " AND "
+					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME
+					+ " =  ? " + ")" + " WHERE " + ENTERPRISE + "."
+					+ EnterpriseColumns.DOMAIN + " = " + SALARY + "."
+					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "."
+					+ EnterpriseColumns.REGISTRY + " = ? " + " GROUP BY 1, 2"
+					+ " HAVING " + showCol + " >= 1" + " ORDER BY 2 , 1 ASC ";
+			// @formatter:on
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
@@ -2211,7 +2266,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
-			//@formatter:off
+			// @formatter:off
 			String sql = "SELECT" + " MONTH("
 					+ SALARY
 					+ "."
@@ -2278,9 +2333,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
 					+ " GROUP BY 1, 2"
 
-					+ " HAVING VISIBLES >= 1"
-					+ " ORDER BY 2 , 1 ASC ";
-			//@formatter:on
+					+ " HAVING VISIBLES >= 1" + " ORDER BY 2 , 1 ASC ";
+			// @formatter:on
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
@@ -3161,7 +3215,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			draftCtx.setListener(listener);
 			ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-			calculator.setSalaryBuilder(new AbstractSalaryBuilder() {});
+			calculator.setSalaryBuilder(new AbstractSalaryBuilder() {
+			});
 			calculator.calculate(draftCtx);
 
 			return listener.irpfOutcome;
@@ -3464,9 +3519,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
-					
-					sqlDraftSalaryCalculatorCtx.setListener(SalaryCalculatorContextImpl.this.getListener());
-					
+
+					sqlDraftSalaryCalculatorCtx
+							.setListener(SalaryCalculatorContextImpl.this
+									.getListener());
+
 					sqlDraftSalaryCalculatorCtx.next();
 					return sqlDraftSalaryCalculatorCtx;
 
@@ -3477,26 +3534,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							new ExpressionException(e));
 				}
 			}
+
 			@Override
 			protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
-					Connection conn, Date startDate, Date endDate, Date issueDate,
-					Criteria criteria) {
-				
+					Connection conn, Date startDate, Date endDate,
+					Date issueDate, Criteria criteria) {
+
 				ISQLContractSalaryCalculatorContext draftCtx;
 				try {
-					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(conn, startDate,
-							endDate, issueDate, criteria);
-					draftCtx = new SQLSalaryDraftCalculatorContext(draft, sqlCtx);
+					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+							conn, startDate, endDate, issueDate, criteria);
+					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
+							sqlCtx);
 					draftCtx.next();
 					return draftCtx;
 				} catch (ExpressionException e) {
 					throw new ExpressionExceptionWrapper(e);
 				} catch (SQLException e) {
-					throw new ExpressionExceptionWrapper(new ExpressionException(e));
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
 				}
 
 			}
-			
 
 		}
 

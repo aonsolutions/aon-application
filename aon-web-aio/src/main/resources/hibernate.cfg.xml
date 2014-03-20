@@ -251,6 +251,8 @@
 		<mapping class="com.esferalia.aon.payroll.ContrataBatch"/>
 		<mapping class="com.esferalia.aon.payroll.ContrataBatchAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.ContrataBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.CraBatch"/>
+		<mapping class="com.esferalia.aon.payroll.CraBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>

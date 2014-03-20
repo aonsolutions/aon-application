@@ -49,15 +49,6 @@ public class CheckDeponent extends Check {
 		if (deponent.getPeriod()==null){
 			exceptions.add( new Fd0Exception( getMessage("ERROR_DEPONENT_9") ,deponent.toString()) );
 			status = false;
-		}else{
-			if (!deponent.getPeriod().equals("1T") &&
-					!deponent.getPeriod().equals("2T") &&
-					!deponent.getPeriod().equals("3T") &&
-					!deponent.getPeriod().equals("4T") &&
-					!deponent.getPeriod().equals("0A")){
-				exceptions.add( new Fd0Exception( getMessage("ERROR_DEPONENT_10") ,deponent.toString()) );
-				status = false;
-			}			
 		}
 		return status;
 	}

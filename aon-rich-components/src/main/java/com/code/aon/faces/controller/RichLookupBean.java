@@ -310,7 +310,10 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * @param listener
 	 */
 	public void addControllerListener(IControllerListener listener) {
-		getController().addControllerListener(listener);
+		if ( listener != null ) {
+			this.controllerListener = listener;
+			getController().addControllerListener(this.controllerListener);	
+		}
 	}
 
 	/**
@@ -618,10 +621,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 		this.sourcePojoBinding = component.getProperty();
 		this.lookupProperty = component.getLookupProperty();
 		this.lookupChangeListener = component.getLookupChangeListener();
-		this.controllerListener = component.getControllerListener();
-		if ( this.controllerListener != null ) {
-			addControllerListener( this.controllerListener );
-		}
+		addControllerListener(component.getControllerListener());
 		if ( component instanceof HtmlLookupButton ) {
 			this.lookupAction = ((HtmlLookupButton)component).getLookupAction();
 		}
@@ -895,6 +895,11 @@ public class RichLookupBean implements ITemplateController, Serializable {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				try {
+					ValueExpression ve = (ValueExpression) properties[2];
+					if ( ve != null ) {
+						FacesContext ctx = FacesContext.getCurrentInstance();
+						 addControllerListener((IControllerListener) ve.getValue(ctx.getELContext()));
+					}
 					getController().onEditSearch(null);
 					String[] aliases = getSuggestAliases((String) properties[0]);
 					if (! ArrayUtils.isEmpty(aliases) ) {

@@ -256,7 +256,6 @@ public class SQLStatistics {
 	public static Statistics getWorkplaceStats(Connection conn, int workplaceId) {
 
 		Statistics statistics = new Statistics();
-		
 
 		try {
 
@@ -370,6 +369,7 @@ public class SQLStatistics {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
+		
 
 		try {
 

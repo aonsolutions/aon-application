@@ -425,6 +425,16 @@
 	<table name="course_schedule">
 		<column name="day_of_week" type="com.code.aon.common.enumeration.WeekDay" />
 	</table>
+	
+	<table name="cra_batch">
+		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+	</table>
+
+	<table name="cra_batch_detail">
+		<foreign-key constraint-name="FK_CRA_BATCH_DETAIL_ENTERPRISE_CCC">
+			<many-to-one property="ccc"/>
+		</foreign-key>
+	</table>
 
 	<table name="creditor">
 		<primary-key>

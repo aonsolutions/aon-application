@@ -68,9 +68,7 @@ public class CertificateController implements Serializable {
 	
 	private List<SelectItem> digitalCertificates;
 	
-	private SignStoreIFace signStore;
-	
-	private Certificado certificado;		
+	private String mainPassword;
 	
 	private boolean showCertificatePassword;
 
@@ -111,19 +109,22 @@ public class CertificateController implements Serializable {
 	}
 
 	public SignStoreIFace getSignStore() {
-		return signStore;
-	}
-
-	public void setSignStore(SignStoreIFace signStore) {
-		this.signStore = signStore;
+		ByteArrayInputStream in = new ByteArrayInputStream( keystore.getData() );
+		try {
+			return SignStoreFactory.buildSingStorePKSC12( in, password );
+		} catch (SinaduraCoreException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
 	}
 
 	public Certificado getCertificado() {
-		return certificado;
+		return new Certificado(getAlias(), getMainPassword());
 	}
 
 	public void setCertificado(Certificado certificado) {
-		this.certificado = certificado;
+		setAlias(certificado.getAlias());
+		setMainPassword(certificado.getPassword());		
 	}
 	
 	public String getAlias() {
@@ -132,6 +133,14 @@ public class CertificateController implements Serializable {
 
 	public void setAlias(String alias) {
 		this.alias = alias;
+	}
+	
+	private String getMainPassword() {
+		return mainPassword;
+	}
+
+	private void setMainPassword(String mainPassword) {
+		this.mainPassword = mainPassword;
 	}
 
 	public List<SelectItem> getCertificates() {
@@ -239,9 +248,8 @@ public class CertificateController implements Serializable {
 		setShowSignWindow(true);
 		setShowCertificatePassword(false);
 		setPassword(null);
-		setSignStore(null);
-		setCertificado(null);
 		setAlias(null);
+		setMainPassword(null);
 		setCertificates(null);
 		loadDigitalCertificates();
 		if ( getDigitalCertificates().isEmpty() ) {
@@ -300,7 +308,7 @@ public class CertificateController implements Serializable {
 		InputStream imageIS = SignerController.class.getResourceAsStream(SIGN_IMAGE_PATH);
 		byte[] imageData = IOUtils.toByteArray( imageIS );
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		document.firmar( signStore, certificado, out, visible, 
+		document.firmar( getSignStore(), getCertificado(), out, visible, 
 				companyController.obtainCompany().getAlias(), companyController.getMainAddress().getCity(), imageData,
 				305, 745, 405, 795 );		
 		return out.toByteArray();		
@@ -321,14 +329,13 @@ public class CertificateController implements Serializable {
 		}
 		boolean resolved = false;
 		try {
-			if ( this.signStore == null ) {
-				ByteArrayInputStream in = new ByteArrayInputStream( keystore.getData() );
-				this.signStore = SignStoreFactory.buildSingStorePKSC12( in, password );
+			SignStoreIFace signStore = getSignStore();
+			if ( certificates == null ) {
 				List<Certificado> certificados = signStore.getCertificados();
 				if ( certificados.size() == 1 ) {
-					certificado = certificados.get(0);
-					certificado.setPassword( password );
-					resolved = signStore.verifyAliasPassword(certificado);
+					setCertificado(certificados.get(0));
+					this.mainPassword = password;
+					resolved = signStore.verifyAliasPassword(getCertificado());
 					this.showCertificatePassword = resolved;
 				} else {
 					certificates = new LinkedList<SelectItem>();
@@ -338,13 +345,13 @@ public class CertificateController implements Serializable {
 					}
 				}				
 			} else {
-				this.certificado = this.signStore.getCertificado(alias);
+				setCertificado(signStore.getCertificado(getAlias()));
 				if (! StringUtils.isEmpty(certificatePassword) ) {
-					certificado.setPassword( certificatePassword );
+					this.mainPassword = certificatePassword;
 				} else {
-					certificado.setPassword( password );
+					this.mainPassword = password;
 				}
-				resolved = signStore.verifyAliasPassword(certificado);
+				resolved = signStore.verifyAliasPassword(getCertificado());
 				this.showCertificatePassword = resolved;
 			}
 		} catch ( SinaduraCoreException e ) {		

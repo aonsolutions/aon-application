@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -74,6 +75,8 @@ public class Employees extends ResizeComposite implements
 		void onIrpfsSelected(IrpfDocuments docs);
 
 		void onStatisticsSelected(Statistics stats);
+		
+		void onITDataSelected(ITData itData);
 
 		void onSalariesSelected(SalaryDocuments docs);
 
@@ -106,9 +109,11 @@ public class Employees extends ResizeComposite implements
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
 	private static final int ENTERPRISE_SALARIES_INDEX = 1;
 	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
+	private static final int ENTERPRISE_PARTSIT_INDEX = 3;
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_SALARIES_INDEX = 1;
 	private static final int WORKPLACE_STATISTICS_INDEX = 2;
+	private static final int WORKPLACE_PARTSIT_INDEX = 3;
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not
 																// statci ???
@@ -223,7 +228,7 @@ public class Employees extends ResizeComposite implements
 
 		addImageItem(enterpriseItem, "Costes", images.costs());
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
-		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
+		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());		
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -249,6 +254,8 @@ public class Employees extends ResizeComposite implements
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
+			addImageItem(workplaceItem, "Partes IT",
+					images.itDatas());
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -421,6 +428,8 @@ public class Employees extends ResizeComposite implements
 			onCostsSelected((CostDocuments) userObject);
 		} else if (userObject instanceof Statistics) {
 			onStatisticsSelected((Statistics) userObject);
+		} else if (userObject instanceof ITData) {
+			onITDataSelected((ITData) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
 			onSalariesSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
@@ -585,6 +594,27 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
+		
+		final TreeItem partsItItem = enterpriseItem
+				.getChild(ENTERPRISE_PARTSIT_INDEX);
+
+		if (null == partsItItem.getUserObject()) {
+
+			employeesService.getEnterpriseITData(enterprise.getId(),
+					new AsyncCallback<ITData>() {
+
+						@Override
+						public void onSuccess(ITData partsIt) {
+							partsItItem.setUserObject(partsIt);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Apéndice de método generado automáticamente
+							Window.alert(caught.getLocalizedMessage());
+						}
+					});
+		}
 
 	}
 
@@ -625,7 +655,7 @@ public class Employees extends ResizeComposite implements
 		} // end-if: Costs of this workplace haven't been loaded yet.
 		
 		final TreeItem statisticsItem = workplaceItem
-				.getChild(ENTERPRISE_STATISTICS_INDEX);
+				.getChild(WORKPLACE_STATISTICS_INDEX);
 
 		if (null == statisticsItem.getUserObject()) {
 
@@ -635,6 +665,27 @@ public class Employees extends ResizeComposite implements
 						@Override
 						public void onSuccess(Statistics stats) {
 							statisticsItem.setUserObject(stats);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Apéndice de método generado automáticamente
+							Window.alert(caught.getLocalizedMessage());
+						}
+					});
+		}
+		
+		final TreeItem partsItItem = workplaceItem
+				.getChild(WORKPLACE_PARTSIT_INDEX);
+
+		if (null == partsItItem.getUserObject()) {
+
+			employeesService.getWorkplaceITData(workplace.getId(),
+					new AsyncCallback<ITData>() {
+
+						@Override
+						public void onSuccess(ITData partsIt) {							
+							partsItItem.setUserObject(partsIt);
 						}
 
 						@Override
@@ -750,6 +801,12 @@ public class Employees extends ResizeComposite implements
 	private void onStatisticsSelected(Statistics stats) {
 		for (Listener listener : listeners) {
 			listener.onStatisticsSelected(stats);
+		}
+	}
+	
+	private void onITDataSelected(ITData itData) {
+		for (Listener listener : listeners) {
+			listener.onITDataSelected(itData);
 		}
 	}
 
@@ -1129,7 +1186,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return extended ? 5 : 3;
+		return extended ? 6 : 4;
 	}
 
 	/**

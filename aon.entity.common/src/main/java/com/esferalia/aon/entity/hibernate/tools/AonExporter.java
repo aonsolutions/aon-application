@@ -407,6 +407,8 @@ public class AonExporter extends GenericExporter{
 		map.put("ContractPayment","com.esferalia.aon.payroll.ContractPayment");
 		map.put("ContrataBatch","com.esferalia.aon.payroll.ContrataBatch");
 		map.put("ContrataBatchDetail","com.esferalia.aon.payroll.ContrataBatchDetail");
+		map.put("CraBatch","com.esferalia.aon.payroll.CraBatch");
+		map.put("CraBatchDetail","com.esferalia.aon.payroll.CraBatchDetail");
 		map.put("DeductionConcept","com.esferalia.aon.payroll.DeductionConcept");
 		map.put("EnterpriseActivity","com.esferalia.aon.payroll.EnterpriseActivity");
 		map.put("EnterpriseCCC","com.esferalia.aon.payroll.EnterpriseCCC");

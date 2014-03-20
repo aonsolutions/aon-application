@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.payroll.shared.Constants;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
@@ -15,63 +17,64 @@ public class MainEntryPoint implements EntryPoint {
 		@NotStrict
 		@Source("gwt.css")
 		CssResource css();
-	
+
 		@Source("warn.png")
 		ImageResource warn();
-	
+
 		@Source("aon-menuBar.png")
 		ImageResource menuBar();
-	
+
 		@Source("aon-tabBar.png")
 		ImageResource tabBar();
-	
+
 		@Source("checkyes.png")
 		ImageResource checkYes();
-	
+
 		@Source("button.png")
 		ImageResource button();
-	
+
 		@Source("public.png")
 		ImageResource publiC();
-	
+
 		@Source("private.png")
 		ImageResource privatE();
-	
+
 		@Source("protected.png")
 		ImageResource protecteD();
-	
+
 	}
 
 	interface AonResources extends ClientBundle {
 		@NotStrict
 		@Source("aon.css")
 		CssResource css();
-	
+
 		@Source("draft.png")
 		ImageResource draft();
-	
+
 		@Source("salaries.png")
 		ImageResource salaries();
 
 		ImageResource aet();
-	
+
 		@Source("ine.png")
 		ImageResource ine();
-	
+
 		@Source("workplace.png")
 		ImageResource workplace();
-		
-		//*** CHART-ICONS *****		
+
+		// *** CHART-ICONS *****
 		@Source("columnchart.png")
 		ImageResource columnchart();
-		
+
 		@Source("linechart.png")
 		ImageResource linechart();
-		//********************
-	
+
+		// ********************
+
 		@Source("employee.png")
 		ImageResource employee();
-	
+
 		@Source("agreement.png")
 		ImageResource agreement();
 
@@ -92,7 +95,7 @@ public class MainEntryPoint implements EntryPoint {
 		ImageResource deduction();
 
 		ImageResource segsocial();
-		
+
 		ImageResource segsocial_small();
 
 		ImageResource aon_icon_row_s(); // TODO: change this name?
@@ -100,36 +103,38 @@ public class MainEntryPoint implements EntryPoint {
 		ImageResource aon_icon_row_c(); // TODO: change this name?
 
 		ImageResource aon_icon_row_changed(); // TODO: change this name?
-		
+
 		@Source("rich-calendar-button.png")
 		ImageResource rich_calendar_button(); // TODO: change this name?
-		
+
 	}
 
 	@Override
 	public void onModuleLoad() {
-
-		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
-
+		ensureGwtSelector();
 		
-		if ( entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
+		String entryPoint = getParameter(GWT.getModuleName(),
+				Constants.ENTRY_POINT_PARAM);
+
+		if (entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
 			EnterpriseSite enterpriseSite = new EnterpriseSite();
 			enterpriseSite.onModuleLoad();
 		}
-		
-		else if ( entryPoint.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
+
+		else if (entryPoint
+				.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
 			EmployeeTree employeeTree = new EmployeeTree();
 			employeeTree.onModuleLoad();
-		}
-		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_SYSTEM_ENTRY_POINT)) {
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_SYSTEM_ENTRY_POINT)) {
 			MainSystem mainSystem = new MainSystem();
 			mainSystem.onModuleLoad();
-		}
-		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
 			MainCalculator mainCalculator = new MainCalculator();
 			mainCalculator.onModuleLoad();
-		}
-		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
 			MainAgreement mainAgreement = new MainAgreement();
 			mainAgreement.onModuleLoad();
 		}
@@ -150,10 +155,10 @@ public class MainEntryPoint implements EntryPoint {
 			String parameterName) /*-{
 		var search = "/" + moduleName + ".nocache.js";
 		var scripts = $doc.getElementsByTagName("script");
-		for ( var i = 0; i < scripts.length; ++i) {
+		for (var i = 0; i < scripts.length; ++i) {
 			if (scripts[i].src != null && scripts[i].src.indexOf(search) != -1) {
 				var params = scripts[i].src.match(/\w+=\w+/g);
-				for ( var j = 0; j < params.length; ++j) {
+				for (var j = 0; j < params.length; ++j) {
 					var keyvalue = params[j].split("=");
 					if (keyvalue.length == 2 && keyvalue[0] == parameterName) {
 						return unescape(keyvalue[1]);
@@ -163,5 +168,14 @@ public class MainEntryPoint implements EntryPoint {
 		}
 		return null;
 	}-*/;
+
+	public static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (StringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
 
 }

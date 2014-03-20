@@ -36,60 +36,50 @@ public class CompanyImagesController extends RegistryAttachController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyImagesController.class.getName());
 	
-	private BufferedImage image;
-	
 	private boolean ratio;
 	
-	private int width;
+	private Integer width;
 	
-	private int height;
+	private Integer height;
 	
-	private int maxWidth;
+	private Integer originalWidth;
 	
-	private int maxHeight;	
+	private Integer originalHeight;	
 	
 	public CompanyImagesController() {
 		setRatio(true);
 	}
-	
-	public BufferedImage getImage() {
-		return image;
-	}
 
-	public void setImage(BufferedImage image) {
-		this.image = image;
-	}
-
-	public int getWidth() {
+	public Integer getWidth() {
 		return width;
 	}
 
-	public void setWidth(int width) {
+	public void setWidth(Integer width) {
 		this.width = width;
 	}
 
-	public int getHeight() {
+	public Integer getHeight() {
 		return height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight(Integer height) {
 		this.height = height;
 	}
-	
-	public int getMaxWidth() {
-		return maxWidth;
+
+	public Integer getOriginalWidth() {
+		return originalWidth;
 	}
 
-	public void setMaxWidth(int maxWidth) {
-		this.maxWidth = maxWidth;
+	public void setOriginalWidth(Integer originalWidth) {
+		this.originalWidth = originalWidth;
 	}
 
-	public int getMaxHeight() {
-		return maxHeight;
+	public Integer getOriginalHeight() {
+		return originalHeight;
 	}
 
-	public void setMaxHeight(int maxHeight) {
-		this.maxHeight = maxHeight;
+	public void setOriginalHeight(Integer originalHeight) {
+		this.originalHeight = originalHeight;
 	}
 
 	public boolean isRatio() {
@@ -99,17 +89,27 @@ public class CompanyImagesController extends RegistryAttachController {
 	public void setRatio(boolean ratio) {
 		this.ratio = ratio;
 	}
+
+	public boolean isDimensionEditable() {
+		return (getOriginalWidth() != null) && (getOriginalHeight() != null);
+	}
+	
+	public void reset() {
+		setWidth(null);
+		setOriginalWidth(null);
+		setHeight(null);
+		setOriginalHeight(null);
+	}
 	
 	public void init( byte[] data ) {
-		setImage(null);
+		reset();
 		if (! ArrayUtils.isEmpty(data) ) {
 			BufferedImage bImage = ImageUtil.getBufferedImage( data );
 			if ( bImage != null ) {
-				setImage(bImage);
 				setWidth(bImage.getWidth());
-				setMaxWidth(bImage.getWidth());
+				setOriginalWidth(bImage.getWidth());
 				setHeight(bImage.getHeight());
-				setMaxHeight(bImage.getHeight());
+				setOriginalHeight(bImage.getHeight());
 			}			
 		}				
 	}
@@ -122,8 +122,9 @@ public class CompanyImagesController extends RegistryAttachController {
 	
 	public void update(RegistryAttachment attachment ) {
 		byte[] data = getAonFile().getData();
-		if ( image != null ) {
-			if ( (width != image.getWidth()) || (height != image.getHeight()) ) {
+		if ( isDimensionEditable() ) {
+			if ( (width != getOriginalWidth()) || (height != getOriginalHeight()) ) {
+				BufferedImage image = ImageUtil.getBufferedImage( data );
 				BufferedImage newImage = ImageUtil.scale(image, width, height);
 				String format = (getAonFile().getMimeType() != null) ? getAonFile().getMimeType().getExtension() : null;
 				data = ImageUtil.getImage(newImage, format);
@@ -170,13 +171,13 @@ public class CompanyImagesController extends RegistryAttachController {
 	
 	public void onChangeWidth(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			setHeight( ImageUtil.getProportionalHeight(image, width));
+			setHeight( ImageUtil.getProportionalHeight(getOriginalWidth(), getOriginalHeight(), width));
 		}
 	}
 
 	public void onChangeHeight(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			setWidth( ImageUtil.getProportionalWidth(image, height));
+			setWidth( ImageUtil.getProportionalWidth(getOriginalWidth(), getOriginalHeight(), height));
 		}
 	}	
 

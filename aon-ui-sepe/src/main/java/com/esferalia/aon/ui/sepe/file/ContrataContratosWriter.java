@@ -1672,10 +1672,22 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * @return
 	 */
 	private DATOSCOPIABASICATYPE createDatosCopiaBasica(ContrataContratoParams params) {
-		// TODO
-		DATOSCOPIABASICATYPE datos = new DATOSCOPIABASICATYPE();
-		datos.setINDCONTRATOALTADIRECCION("");
-		datos.setINDCONTRATOESCRITO("");
+		// TODO: consultar en pantalla si el contrato es escrito
+		DATOSCOPIABASICATYPE datos = null;
+		SEPEUtils utils = SEPEUtils.getInstance();
+		String tc2 = utils.getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		if( tc2.equals("402") || tc2.equals("990") ){
+			if( tc2.equals("990") ){
+				datos = datos==null?new DATOSCOPIABASICATYPE():datos;
+				datos.setINDCONTRATOALTADIRECCION("S");
+			}
+			Date start = utils.getDateWithResettedHours(contract.getStartDate(),true);
+			Date end = utils.getDateWithResettedHours(contract.getEndDate(), false);
+			if( tc2.equals("402") && end!=null && CommonUtil.getDaysBetweenDates(start, end) <= 28){
+				datos = datos==null?new DATOSCOPIABASICATYPE():datos;
+				datos.setINDCONTRATOESCRITO("S");
+			}
+		}
 		return datos;
 	}
 	/**

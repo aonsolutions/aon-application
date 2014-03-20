@@ -53,7 +53,7 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 			throws ControllerListenerException {
 		super.afterBeanCreated(event);
 		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
-		imagesController.setImage(null);
+		imagesController.reset();
 		imagesController.setAonFile(new AonFile());
 	}	
 	

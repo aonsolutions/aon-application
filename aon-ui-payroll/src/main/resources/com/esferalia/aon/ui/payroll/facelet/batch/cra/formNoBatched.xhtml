@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	
+	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/formNoBatched.xhtml">
+		<ui:param name="controllerList" value="#{craList}" />
+		
+		<ui:define name="searchContent" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/cra/search_content.xhtml" >
+				<ui:param name="controller" value="#{craList}" />
+				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+			</ui:include>
+		</ui:define>
+		
+		<ui:define name="listDataColumns" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/cra/listColumns.xhtml" />
+		</ui:define>
+		
+	</ui:decorate>
+	
+</ui:composition>

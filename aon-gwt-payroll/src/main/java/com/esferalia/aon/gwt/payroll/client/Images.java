@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.user.client.ui.Tree;
 
 /**
@@ -74,4 +73,7 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	@Source("aon-icon-statistics.png")
 	ImageResource statistics();
+	
+	@Source("aon-icon-it.png")
+	ImageResource itDatas();
 }

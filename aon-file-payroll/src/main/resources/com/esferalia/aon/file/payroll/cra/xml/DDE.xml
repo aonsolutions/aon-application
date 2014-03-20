@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="DDE">
+	<field name="cabecera" value="DDE" format="AlphaNumeric" pattern="X(3)" />
+	<field name="ccc" value="bean" bean="DDE" property="codigoCuentaCotizacionSeguridadSocial" format="AlphaNumeric" pattern="9(15)" />
+	<field name="anio" value="bean" bean="DDE" property="anio" format="Numeric" pattern="9(4)" />
+	<field name="mes" value="bean" bean="DDE" property="mes" format="Numeric" pattern="9(2)" />
+	<field name="reservado" value=" " format="AlphaNumeric" pattern="X(46)" />
+</register>

@@ -687,6 +687,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Irpf irpf;
 	private Salary salary;
 	private Statistics stats;
+	private ITEditor it;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
@@ -734,6 +735,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		irpf = new Irpf();
 		salary = new Salary();
 		stats = new Statistics();
+		it = new ITEditor();
 		documents = new Documents();
 		eventsDraft = new EventsDraft();
 		salaryDraft = new SalaryDraft();
@@ -811,6 +813,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 		employeeDetail.setWidget(stats);
 		stats.setStatistics(statistics);
+	}
+	
+	@Override
+	public void onITDataSelected(
+			com.esferalia.aon.gwt.payroll.shared.ITData itData) {
+		
+		employeeDetail.setWidget(it);		
+		it.setITEditor(itData);
+		
+		
 	}
 
 	@Override

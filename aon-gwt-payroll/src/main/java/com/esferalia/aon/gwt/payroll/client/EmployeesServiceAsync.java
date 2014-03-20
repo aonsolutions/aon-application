@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +20,12 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
-import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * The async counterpart of <code>EmployeesService</code>.
  */
-public interface EmployeesServiceAsync {
+public interface EmployeesServiceAsync extends StatisticsServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 
@@ -44,14 +42,6 @@ public interface EmployeesServiceAsync {
 	void getEnterpriseCosts(int enterpriseId, AsyncCallback<List<Cost>> callback)
 			throws IllegalArgumentException;
 
-	//************************* STATISTICS ***********************
-	void getWorkplaceStats(int workplaceId, AsyncCallback<Statistics> callback)
-			throws IllegalArgumentException;
-
-	void getEnterpriseStats(int enterpriseId, AsyncCallback<Statistics> callback)
-			throws IllegalArgumentException;
-	//***********************************************************
-	
 	void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
 
