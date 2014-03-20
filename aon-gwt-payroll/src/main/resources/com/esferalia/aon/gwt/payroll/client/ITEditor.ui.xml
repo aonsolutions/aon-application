@@ -3,8 +3,6 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<ui:style>
-		.editor {
-		}
 		.pos {
 		align: center;
 		text-align: center;
@@ -16,25 +14,52 @@
 		margin-right: auto;
 		margin-bottom: 15px;
 		}
-		.toolBar-checkBox input {
-		vertical-align: middle;
+
+
+		.legend-icon {
+			width: 13px;
+			height: 13px;
+		}
+		
+		.legend-caption {
+			margin-top : 10px;
+			margin-left : 6px;
+			margin-right : 16px;
+			margin-bottom : 10px;
+		}
+
+		@eval activeBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(null);
+		.active {
+			background-color: activeBackground ;
+		}
+
+		@eval commonBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type.COMMON_DISEASE);
+		.common {
+			background-color: commonBackground;
+		}
+
+		@eval maternityBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type.MATERNITY);
+		.maternity {
+			background-color: maternityBackground;
+		}
+		
+		@eval paternityBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type.PATERNITY);
+		.paternity {
+			background-color: paternityBackground;
+		}
+
+		@eval professionalBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type.OCCUPATIONAL_DISEASE);
+		.professional {
+			background-color: professionalBackground;
 		}
 
 	</ui:style>
-	<ui:import field="com.esferalia.aon.gwt.payroll.shared.Salary.Type.*" />
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
 
 			<g:FlowPanel>
 
 				<g:MenuBar>
-					<!-- <g:MenuItem text="Archivo"> <g:MenuBar vertical="true"> <g:MenuItem 
-						ui:field="downloadMenuItem" text="Descargar" /> <g:MenuItem styleName="gwt-MenuItemSeparator"> 
-						<div class="menuSeparatorInner"></div> </g:MenuItem> <g:MenuItem ui:field="printMenuItem" 
-						text="Imprimir..." /> </g:MenuBar> </g:MenuItem> <g:MenuItem ui:field="viewMenuItem" 
-						text="Ver"> <g:MenuBar vertical="true"> <g:MenuItem ui:field="reduceMenuItem" 
-						text="Reducir" /> <g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" /> 
-						</g:MenuBar> </g:MenuItem> -->
 				</g:MenuBar>
 
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
@@ -53,16 +78,7 @@
 
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-
-
-								<!-- <g:Button ui:field='printButton' styleName='aon-finding-toolbar-item 
-									aon-icon-pdf' text="Exportar" /> -->
-
 								<g:ListBox ui:field='dateListBox' styleName='' />
-
-								<!-- <g:ListBox ui:field='chartListBox' styleName='' /> -->
-
-
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 
@@ -74,16 +90,31 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">
-				    <g:Grid ui:field='timeline'>
-				        <g:row>
-				            <g:cell>
-				                
-				            </g:cell>
-				        </g:row>
-				    </g:Grid>
-				</g:VerticalPanel>
+			<g:ScrollPanel ui:field="scrollPanel">
+				<g:VerticalPanel styleName="{style.document}"  >
+					
+					<g:HorizontalPanel ui:field="legendPanel" >
+
+						<g:HTML  styleName="{style.legend-icon} {style.active}"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Activo</g:InlineLabel>		
+
+						<g:HTML  styleName="{style.legend-icon} {style.common}"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Com&uacute;n</g:InlineLabel>		
+
+						<g:HTML  styleName="{style.legend-icon} {style.professional}"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Profesional</g:InlineLabel>		
+
+						<g:HTML  styleName="{style.legend-icon} {style.maternity}"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Maternidad, Lactancia, Riesgo Durante el Embarazo</g:InlineLabel>		
+
+						<g:HTML  styleName="{style.legend-icon} {style.paternity}"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Paternidad</g:InlineLabel>		
+					
+					</g:HorizontalPanel>				
+					
+					<g:SimplePanel ui:field='timelinePanel' />
+				
+				</g:VerticalPanel>				
 			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

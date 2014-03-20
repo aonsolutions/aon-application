@@ -2,25 +2,21 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 
 
 public class ITData implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8223289513867055037L;
 		
+	
 	/**
 	 * key: contractId
 	 */
@@ -31,34 +27,16 @@ public class ITData implements Serializable {
 	 */
 	private Map<Integer, LinkedList<ITDataPerson>> its;
 	
-	/**
-	 * contract leave types.
-	 */
-	private String[] leaveType;
 	
 	private List<Integer> contracts;	
 	
+
 	public ITData() {		
 		employees = new LinkedHashMap<Integer, Employee>();
 		its = new TreeMap<Integer, LinkedList<ITDataPerson>>();		
 		contracts = new ArrayList<Integer>();		
-		addTypes();
 	}
 	
-	private void addTypes() {
-		leaveType = new String[7];
-		leaveType[0] = "Enfermedad Común";
-		leaveType[1] = "Enfermedad Profesional";
-		leaveType[2] = "Maternidad";
-		leaveType[3] = "Paternidad";
-		leaveType[4] = "Riesgo Durante Embarazo";
-		leaveType[5] = "Lactancia Materna";
-		leaveType[6] = "Enfermedad No Profesional";
-	}
-	
-	public String getLeaveTypePosition(int pIndex) {
-		return leaveType[pIndex].toString();
-	}
 	
 	public void setEmployee(int pKey, Employee pEmployee) {
 		employees.put(pKey, pEmployee);		

@@ -149,7 +149,7 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options> {
 		}-*/;
 
 		public final native void setColors(JsArrayString col0rs) /*-{
-			this.colors = [ '#cbb69d', '#603913' ];
+			this.colors = col0rs;
 		}-*/;
 
 		public final void setColors(String... colors) {
