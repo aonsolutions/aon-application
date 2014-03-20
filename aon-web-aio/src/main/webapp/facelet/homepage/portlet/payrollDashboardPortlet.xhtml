@@ -10,10 +10,7 @@
 	<aon:div styleClass="aon-portlet">
 		<script type="text/javascript"
 			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
-		<script type="text/javascript">
-			Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv}; 
-		</script>
-		
+
 		<aon:div styleClass="aon-portlet-title">
 			<aon:div styleClass="aon-portlet-title-buttons">
 			</aon:div>
@@ -39,47 +36,40 @@
 						</aon:selectOneMenu>
 					</aon:div>
 					<aon:div id="payroll_chart_div" style="width: 100%; height: 180px;" />
-					 
+
 					<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 					<script type="text/javascript"> 
 							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart", "timeline"], 'language': 'en'});
 							function drawCharts(){
-								 var whatever = Array.prototype.reduce;
-								try {
-									Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv};					
-									var data = new google.visualization.DataTable();
-									data.addColumn('string', 'Mes');
-									data.addColumn('number', 'Nominas');
-									data.addColumn('number', 'Extras');
-									data.addColumn('number', 'Finiquitos');
-									data.addColumn('number', 'Atrasos');
-									data.addColumn('number', 'Vacaciones');
-									
-
-									<c:forEach var="entry" items="#{dashboard.periodPayrollCount}">		
-										
-										data.addRow(['#{entry.Mes}',
-										             #{entry.Nominas},
-										             #{entry.Extras}, 
-										             #{entry.Finiquitos}, 
-										             #{entry.Atrasos}, 
-										             #{entry.Vacaciones} ]);											
-									</c:forEach>
-									
-									var options = {
-											chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},									       
-									        legend: { position: 'top', maxLines: 12 },
-									        tooltip: {isHtml: true},
-										bar: { groupWidth: '75%' },
-									        isStacked: true,
-									      };
-									var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:payroll_chart_div'));
-									chart.draw(data, options);
-								} finally {
-									Array.prototype.reduce = whatever;			
-								}
+								var data = new google.visualization.DataTable();
+								data.addColumn('string', 'Mes');
+								data.addColumn('number', 'Nominas');
+								data.addColumn('number', 'Extras');
+								data.addColumn('number', 'Finiquitos');
+								data.addColumn('number', 'Atrasos');
+								data.addColumn('number', 'Vacaciones');
 								
+
+								<c:forEach var="entry" items="#{dashboard.periodPayrollCount}">		
+									
+									data.addRow(['#{entry.Mes}',
+									             #{entry.Nominas},
+									             #{entry.Extras}, 
+									             #{entry.Finiquitos}, 
+									             #{entry.Atrasos}, 
+									             #{entry.Vacaciones} ]);											
+								</c:forEach>
+								
+								var options = {
+										chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},									       
+								        legend: { position: 'top', maxLines: 12 },
+								        tooltip: {isHtml: true},
+									bar: { groupWidth: '75%' },
+								        isStacked: true,
+								      };
+								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:payroll_chart_div'));
+								chart.draw(data, options);
 							}
 					   </script>
 				</aon:div>
@@ -101,42 +91,35 @@
 					</aon:div>
 					<aon:div id="contract_chart_div"
 						style="width: 100%; height: 180px;" />
-					
+
 					<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 					<script type="text/javascript"> 
 							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart","timeline"], 'language': 'en'});
 							function drawCharts(){
-								 var whatever = Array.prototype.reduce;
-								try {
-									Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv};
-						
-									//---------------------------------
-									var data = new google.visualization.DataTable();
-									data.addColumn('string', 'Mes');
-									data.addColumn('number', 'Altas');
-									data.addColumn('number', 'Bajas');							
+					
+								var data = new google.visualization.DataTable();
+								data.addColumn('string', 'Mes');
+								data.addColumn('number', 'Altas');
+								data.addColumn('number', 'Bajas');							
+								
+								<c:forEach var="staff" items="#{dashboard.periodContractCount}">
+								
+									data.addRow(['#{staff.month}',
+									             #{staff.altas},
+									             #{staff.bajas} ]);	
 									
-									<c:forEach var="staff" items="#{dashboard.periodContractCount}">
-									
-										data.addRow(['#{staff.month}',
-										             #{staff.altas},
-										             #{staff.bajas} ]);	
-										
-									</c:forEach>
-									
-									var options = {
-											chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},									       
-									        legend: { position: 'top', maxLines: 12 },
-									        tooltip: {isHtml: true},
-										bar: { groupWidth: '75%' },
-									        isStacked: true,
-									      };
-									var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:contract_chart_div'));
-									chart.draw(data, options);
-								} finally {
-									Array.prototype.reduce = whatever;		
-								}
+								</c:forEach>
+								
+								var options = {
+										chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},									       
+								        legend: { position: 'top', maxLines: 12 },
+								        tooltip: {isHtml: true},
+									bar: { groupWidth: '75%' },
+								        isStacked: true,
+								      };
+								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:contract_chart_div'));
+								chart.draw(data, options);
 							}
 					   </script>
 				</aon:div>
