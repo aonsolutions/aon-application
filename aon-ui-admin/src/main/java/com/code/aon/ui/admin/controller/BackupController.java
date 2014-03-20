@@ -55,7 +55,6 @@ public class BackupController implements IDumpListener {
 	private Domain domain;
 	private boolean includeParentDomain;
 	private File backupFile;
-	private DumpThread dumpThread;
 	private int progressValue;
 	private int maxProgressValue;
 	private String progressMessage;
@@ -113,14 +112,13 @@ public class BackupController implements IDumpListener {
 		this.maxProgressValue = 0;
 		setProgressMessage(null);
 		this.enabledProgressBar = false;
-		this.dumpThread = null;
 	}
 	
 	public void onPrepareBackup( ActionEvent event ) {
 		resetProgress();
 		setProgressMessage(AonUtil.getMessage(ICommonMessages.BACKUP_START));
-		this.dumpThread = new DumpThread(this, AonUtil.getDomainName());
-		this.dumpThread .start();
+		DumpThread dumpThread = new DumpThread(this, AonUtil.getDomainName());
+		dumpThread .start();
 		this.enabledProgressBar = true;
 	}
 	

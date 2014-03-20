@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -12,13 +13,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class FeePrintController extends BasicController {
 	
-	private List<?> orderedList;
+	private List<ITransferObject> orderedList;
 	
-	public List<?> getOrderedList() {
+	public List<ITransferObject> getOrderedList() {
 		return orderedList;
 	}
 
-	public void setOrderedList(List<?> orderedList) {
+	public void setOrderedList(List<ITransferObject> orderedList) {
 		this.orderedList = orderedList;
 	}
 	

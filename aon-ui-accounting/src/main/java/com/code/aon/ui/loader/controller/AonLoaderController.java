@@ -4,8 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -28,7 +26,6 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
-import com.code.aon.ui.util.AonUtil;
 
 public class AonLoaderController {
 	
@@ -36,8 +33,6 @@ public class AonLoaderController {
 
 	private LoaderParams params;
 	private AonFile aonFile;
-	private StringWriter logString;
-	private PrintWriter log;
 
 	private boolean progressionPanelVisible;
 	private boolean loadPressed;
@@ -67,16 +62,6 @@ public class AonLoaderController {
 		this.params = params;
 	}
 	
-	public PrintWriter getLog() {
-		return log;
-	}
-	public void setLog(PrintWriter log) {
-		this.log = log;
-	}
-	public String getLogString() {
-		return logString==null?null:logString.toString();
-	}
-	
 	public void fileUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -90,7 +75,6 @@ public class AonLoaderController {
 			f.setFileName( item.getFileName() );
 			f.setMimeType( MimeType.get(item.getContentType()) );
 			setAonFile(f);
-			logString = null;
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
@@ -99,8 +83,6 @@ public class AonLoaderController {
 	public void onStart(ActionEvent event ) {
 		setAonFile(null);
 		setParams(new LoaderParams());
-		setLog( null );
-		logString = null;
 		
 		setLoadPressed(false);
 		setProgressionPanelVisible(false);
@@ -112,8 +94,6 @@ public class AonLoaderController {
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Session session = HibernateUtil.getSession(sessionName);
-		logString = new StringWriter( );
-		setLog( new PrintWriter( logString ) );
 		Loader loader = new Loader(params);
 		try {
 			HibernateUtil.setBeginTransaction(false);
@@ -127,24 +107,16 @@ public class AonLoaderController {
 			loader.load(input,session);
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
-			logger.finish();
-			AonUtil.addErrorMessage(e.getMessage());
+			String msg = "Error durante la carga de datos. ";
+			logger.error(msg  + e.getMessage());
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
-				getLog().println("<br/>");
-				getLog().println("Se deshacen las inserciones realizadas.");
-				getLog().println("<br/>");
-				getLog().println("<br/>");
+				logger.info("Se deshacen las inserciones realizadas.");
 			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
+				LOGGER.error("Unable to rollback transaction!", e);
 			}
-			String msg = "Error durante la carga de datos. ";
 			LOGGER.error(msg, e);
-			getLog().println(msg);
-			getLog().println("<br/>");
-			getLog().println(e.getMessage());
-			throw new AbortProcessingException(msg  + e.getMessage());
+			logger.finish();			
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);

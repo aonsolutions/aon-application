@@ -57,15 +57,7 @@ import com.esferalia.aon.ui.payroll.file.FANWriter;
 
 public class FanBatchController extends BasicController {
 	
-	private FANWriter fanWriter;
 	private FanBatchNewWizard newBatchWizard;
-
-	private FANWriter getFANWriter() {
-		if (fanWriter == null) {
-			fanWriter = new FANWriter();
-		}
-		return fanWriter;
-	}
 	
 	public FanBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -140,7 +132,8 @@ public class FanBatchController extends BasicController {
 				getNewBatchWizard().accept(event);
 			}
 			FanBatch batch = (FanBatch) getTo();
-			File file = getFANWriter().createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
+			FANWriter fanWriter = new FANWriter();
+			File file = fanWriter.createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
 			if (file != null) {
 				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
 				batch.setOutcomeFileDate(new Date());

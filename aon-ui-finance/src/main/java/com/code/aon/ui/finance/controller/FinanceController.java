@@ -100,7 +100,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	private boolean showFinancePayrollWindow;
 	private Month payrollMonth;
 	private int payrollYear;
-	private List<?> orderedList;
+	private List<ITransferObject> orderedList;
 	
 	public Company getCompany() {
 		if (company == null) {
@@ -663,7 +663,7 @@ public class FinanceController extends FinanceListController implements IFinance
 		return orderedList;
 	}
 
-	public void setOrderedList(List<?> orderedList) {
+	public void setOrderedList(List<ITransferObject> orderedList) {
 		this.orderedList = orderedList;
 	}
 	

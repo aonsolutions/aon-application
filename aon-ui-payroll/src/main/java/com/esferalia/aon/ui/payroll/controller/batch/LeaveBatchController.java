@@ -49,15 +49,7 @@ import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
 public class LeaveBatchController extends BasicController {
 	
-	private FDIWriter fdiWriter;
 	private LeaveBatchNewWizard newBatchWizard;
-	
-	private FDIWriter getFDIWriter() {
-		if (fdiWriter == null) {
-			fdiWriter = new FDIWriter();
-		}
-		return fdiWriter;
-	}
 	
 	public LeaveBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -142,7 +134,8 @@ public class LeaveBatchController extends BasicController {
 			String loggedUser = AonUtil.getRemoteUser();
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 			LeaveBatch batch = (LeaveBatch) getTo();
-			File file = getFDIWriter().createFDI(getLeaveDetailList(), loggedUser).getFile();
+			FDIWriter fdiWriter = new FDIWriter();
+			File file = fdiWriter.createFDI(getLeaveDetailList(), loggedUser).getFile();
 			if (file != null) {
 				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
 				batch.setOutcomeFileDate(new Date());

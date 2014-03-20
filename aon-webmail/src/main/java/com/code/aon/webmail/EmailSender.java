@@ -25,8 +25,6 @@ public class EmailSender {
 	
 	private Address from;
 	
-	private SecurityInfo securityInfo;
-	
 	public EmailSender( Address from, IMailAccount mailAccount ) {
 		setFrom( from );
 		setMailAccount( mailAccount );
@@ -47,14 +45,6 @@ public class EmailSender {
 
 	public void setFrom(Address from) {
 		this.from = from;
-	}
-	
-	public SecurityInfo getSecurityInfo() {
-		return securityInfo;
-	}
-
-	public void setSecurityInfo(SecurityInfo securityInfo) {
-		this.securityInfo = securityInfo;
 	}
 
 	public AonMessage sendMessage( Address[] to, String subject, String content ) throws WebmailException {
@@ -94,9 +84,6 @@ public class EmailSender {
 						multipart.addBodyPart(bodyPart);						
 					}
 				}
-		       	if ( securityInfo != null ) {
-		       		multipart = EmailSecurity.sign( multipart, securityInfo );
-		       	}				
 			}
 			aonMessage.setContent(multipart);
        	} catch ( MessagingException e ) {
