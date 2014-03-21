@@ -21,7 +21,6 @@ import com.google.gwt.ajaxloader.client.Properties;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDrawOptions;
 import com.google.gwt.visualization.client.events.Handler;
@@ -228,9 +227,5 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options> {
 	@Override
 	protected void onLoad() {		
 		super.onLoad();
-		/*Window.alert("Altura1 " + getElement().getClientHeight());
-		Window.alert("Altura2 " + getElement().getScrollHeight());
-		Window.alert("Altura3 " + getElement().getFirstChildElement().getOffsetHeight());
-		Window.alert("Altura4 " + getElement().getFirstChildElement().getScrollHeight());*/
 	}
 }
