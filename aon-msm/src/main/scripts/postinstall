@@ -1,0 +1,53 @@
+#!/bin/bash
+
+CTX=/usr/share/tomcat6/webapps/aon-aio/META-INF/context.xml
+
+if grep MemcachedBackupSessionManager $CTX &>/dev/null; then
+  exit;
+fi
+
+mv $CTX $CTX.rpm.saved
+
+xsltproc - $CTX.rpm.saved > $CTX  <<EOF
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+  <xsl:output method="xml" indent="yes" />
+  <xsl:preserve-space elements="*"/>
+
+  <xsl:template match="/Context">
+    <xsl:copy><xsl:copy-of select="@*"/><xsl:apply-templates/>
+
+
+    <xsl:text disable-output-escaping="yes">&lt;!--</xsl:text>
+      Example for sticky sessions + kryo
+
+      <Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
+        memcachedNodes="n1:host1.yourdomain.com:11211"
+        requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$"
+        transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory"
+      />
+
+    <xsl:text disable-output-escaping="yes">--&gt;</xsl:text>
+
+    <xsl:text disable-output-escaping="yes">&lt;!--</xsl:text>
+      Example for non sticky sessions + kryo
+
+      <Manager className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
+        memcachedNodes="n1:host1.yourdomain.com:11211,n2:host2.yourdomain.com:11211"
+        sticky="false"
+        sessionBackupAsync="false"
+        lockingMode="uriPattern:/path1|/path2"
+        requestUriIgnorePattern=".*\.(ico|png|gif|jpg|css|js)$"
+        transcoderFactoryClass="de.javakaffee.web.msm.serializer.kryo.KryoTranscoderFactory"
+    />
+    <xsl:text disable-output-escaping="yes">--&gt;</xsl:text>
+
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- copy all elements and their attributes-->
+  <xsl:template match="* | @*">
+    <xsl:copy><xsl:copy-of select="@*"/><xsl:apply-templates/></xsl:copy>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
