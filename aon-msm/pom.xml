@@ -133,8 +133,9 @@
               <mappings>
                 <mapping>
                   <filemode>755</filemode>
-                  <username>root</username>
-                  <groupname>root</groupname>
+                  <username>tomcat</username>
+                  <groupname>tomcat</groupname>
+                  <directoryIncluded>false</directoryIncluded>
                   <directory>/usr/share/tomcat6/lib</directory>
                   <dependency>
                     <includes>
@@ -146,8 +147,9 @@
                 </mapping>
                 <mapping>
                   <filemode>755</filemode>
-                  <username>root</username>
-                  <groupname>root</groupname>
+                  <username>tomcat</username>
+                  <groupname>tomcat</groupname>
+                  <directoryIncluded>false</directoryIncluded>
                   <directory>/usr/share/tomcat6/webapps/aon-aio/WEB-INF/lib</directory>
                   <dependency>
                     <includes>
