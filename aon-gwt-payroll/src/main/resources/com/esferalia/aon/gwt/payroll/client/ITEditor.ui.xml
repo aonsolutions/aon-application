@@ -95,19 +95,24 @@
 					
 					<g:HorizontalPanel ui:field="legendPanel" >
 
-						<g:HTML  styleName="{style.legend-icon} {style.active}"/>		
+						<g:HTML  styleName="{style.legend-icon} {style.active}"
+						    title="Periodo Activo del Empleado"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Activo</g:InlineLabel>		
 
-						<g:HTML  styleName="{style.legend-icon} {style.common}"/>		
+						<g:HTML  styleName="{style.legend-icon} {style.common}" 
+						    title="Enfermedad Com&uacute;n, de Accidente no Laboral"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Com&uacute;n</g:InlineLabel>		
 
-						<g:HTML  styleName="{style.legend-icon} {style.professional}"/>		
+						<g:HTML  styleName="{style.legend-icon} {style.professional}" 
+						    title="Enfermedad Profesional, Accidente Laboral"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Profesional</g:InlineLabel>		
 
-						<g:HTML  styleName="{style.legend-icon} {style.maternity}"/>		
-						<g:InlineLabel styleName="{style.legend-caption}" >Maternidad, Lactancia, Riesgo Durante el Embarazo</g:InlineLabel>		
+						<g:HTML  styleName="{style.legend-icon} {style.maternity}"
+						    title="Maternidad, Lactancia, Riesgo Durante el Embarazo"/>		
+						<g:InlineLabel styleName="{style.legend-caption}" >Maternidad</g:InlineLabel>		
 
-						<g:HTML  styleName="{style.legend-icon} {style.paternity}"/>		
+						<g:HTML  styleName="{style.legend-icon} {style.paternity}" 
+						    title="Baja por Paternidad"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Paternidad</g:InlineLabel>		
 					
 					</g:HorizontalPanel>				
