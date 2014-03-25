@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.29-SNAPSHOT</version>
+		<version>7.32-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.master.jooq</artifactId>
-	<name>AON MASTER SQL</name>
-	<description>AON MASTER SQL</description>
+	<name>AON MASTER JOOQ</name>
+	<description>AON MASTER JOOQ</description>
 
 	<build>
 		<plugins>
