@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -25,7 +23,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.LogPanelController;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.payroll.file.ContractAfiLoader;
 import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
 import com.esferalia.aon.ui.payroll.file.IContractLoader;
@@ -36,8 +33,6 @@ public class ContractLoaderController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractLoaderController.class.getName());
 
 	private AonFile aonFile;
-	private StringWriter logString;
-	private PrintWriter log;
 
 	private boolean progressionPanelVisible;
 	private boolean loadPressed;
@@ -70,16 +65,6 @@ public class ContractLoaderController {
 		this.aonFile = aonFile;
 	}
 	
-	public PrintWriter getLog() {
-		return log;
-	}
-	public void setLog(PrintWriter log) {
-		this.log = log;
-	}
-	public String getLogString() {
-		return logString==null?null:logString.toString();
-	}
-	
 	public void fileUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -93,7 +78,6 @@ public class ContractLoaderController {
 			f.setFileName( item.getFileName() );
 			f.setMimeType( MimeType.get(item.getContentType()) );
 			setAonFile(f);
-			logString = null;
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
@@ -109,8 +93,6 @@ public class ContractLoaderController {
 	public void onStart(ActionEvent event ) {
 		setAonFile(null);
 		setLoader(null);
-		setLog( null );
-		logString = null;
 		
 		setLoadPressed(false);
 		setProgressionPanelVisible(false);
@@ -122,8 +104,6 @@ public class ContractLoaderController {
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionName);
-		logString = new StringWriter( );
-		setLog( new PrintWriter( logString ) );
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
@@ -135,24 +115,16 @@ public class ContractLoaderController {
 			input.close();
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
-			logger.finish();
-			AonUtil.addErrorMessage(e.getMessage());
+			String msg = "Error durante la carga de datos. ";
+			logger.error(msg  + e.getMessage());
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
-				getLog().println("<br/>");
-				getLog().println("Se deshacen las inserciones realizadas.");
-				getLog().println("<br/>");
-				getLog().println("<br/>");
+				logger.info("Se deshacen las inserciones realizadas.");
 			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
+				LOGGER.error("Unable to rollback transaction!", e);
 			}
-			String msg = "Error durante la carga de datos. ";
 			LOGGER.error(msg, e);
-			getLog().println(msg);
-			getLog().println("<br/>");
-			getLog().println(e.getMessage());
-			throw new AbortProcessingException(msg  + e.getMessage());
+			logger.finish();
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);

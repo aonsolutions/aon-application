@@ -47,15 +47,7 @@ import com.esferalia.aon.ui.payroll.file.CRAWriter;
 
 public class CraBatchController extends BasicController {
 	
-	private CRAWriter craWriter;
 	private CraBatchNewWizard newBatchWizard;
-
-	private CRAWriter getCRAWriter() {
-		if (craWriter == null) {
-			craWriter = new CRAWriter();
-		}
-		return craWriter;
-	}
 	
 	public CraBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -130,7 +122,8 @@ public class CraBatchController extends BasicController {
 				getNewBatchWizard().accept(event);
 			}
 			CraBatch batch = (CraBatch) getTo();
-			File file = getCRAWriter().createCRA(getEnterpriseCCCList(), batch.getYear(), batch.getMonth()).getFile();
+			CRAWriter craWriter = new CRAWriter();
+			File file = craWriter.createCRA(getEnterpriseCCCList(), batch.getYear(), batch.getMonth()).getFile();
 			if (file != null) {
 				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
 				batch.setOutcomeFileDate(new Date());
