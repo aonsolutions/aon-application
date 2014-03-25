@@ -1,8 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_DUPLICATED;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,10 +55,7 @@ public class MailAccountDBController extends MailDBController implements IMailAc
     		Criteria criteria = new Criteria();
     		User user = UserUtils.getInstance().getLoggedUser();
 			Expression userExp = ExpressionUtilities.getEqualExpression("MailAccount.user<id", user.getId());
-			if ( AonUtil.isBeanValue(BEAN_WEBMAIL, SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY) ) {
-				Expression exp = getExpression(null);
-				userExp = ExpressionUtilities.getOrExpression(userExp, exp); 					
-			}
+			userExp = ExpressionUtilities.getOrExpression(userExp, getExpression(null)); 					
 			criteria.addExpression(userExp);
 			if ( DomainManager.isParentDomainUserInChildDomain() ) {
 	    		criteria.setSkipDomainFilter(true);

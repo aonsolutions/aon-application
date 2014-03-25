@@ -69,37 +69,11 @@
 						</aon:div>
 					</aon:column>
 				</c:if>
-						
-				<c:if test="#{mailConfig.connectable}">
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:div onmouseover="disableRowSelector();"
-							onmouseup="disableRowSelector();"
-							onmouseout="enableRowSelector();" >
-							<aon:outputText
-								value="#{bundle.webmail_signature_active}"
-								rendered="#{mailConfig.activeMailAccount}" />
-							<aon:commandButton id="mailAccountChange"
-								rendered="#{!mailConfig.activeMailAccount}"
-								title="#{bundle.webmail_mailAccountChange}"
-								actionListener="#{mailConfig.onChangeServer}"
-								value="#{bundle.webmail_mailAccountChange}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								styleClass="aon-icon-commandButton aon-icon-predetermine">
-							</aon:commandButton>
-						</aon:div>
-					</aon:column>
-				</c:if>
+
 			</ui:define>
 				
 		</ui:decorate>
 
 	</aon:div>
-	
-	<c:if test="#{mailConfig.connectable}">
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-	</c:if>
 
 </ui:composition>

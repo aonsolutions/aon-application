@@ -6,7 +6,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.IMailAccount;
 
 public class MailAccountControllerListener extends ControllerAdapter {
@@ -35,13 +34,6 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		getMailConfig().setMailAccounts(null);
-		if ( getMailConfig().isConnectable() ) {
-			IMailAccount mailAccount = (IMailAccount) event.getController().getTo();
-			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-			if ( wmc.getServer()!=null && mailAccount.equals(wmc.getServer().getAccount()) ) {
-				wmc.getServer().setAccount(mailAccount);
-			}
-		}
 		updateFolderTree(event);
 	}
 	
