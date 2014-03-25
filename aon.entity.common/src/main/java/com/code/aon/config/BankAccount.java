@@ -5,12 +5,13 @@ import java.math.BigInteger;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.enumeration.BankConfig;
 
 public class BankAccount implements Serializable {
 
-	private static final long serialVersionUID = -3424507856145743377L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final int[] DIGITS = new int[] { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 };
 	private Country country;
 	private String check;

@@ -9,6 +9,8 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
+
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
  * 
@@ -16,6 +18,8 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 public abstract class BasicRoleManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back", "cancel", "report"};
 	

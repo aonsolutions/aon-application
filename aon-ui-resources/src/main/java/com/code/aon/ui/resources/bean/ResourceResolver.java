@@ -38,9 +38,9 @@ public class ResourceResolver implements Serializable {
 	 * Instantiates a new resource resolver.
 	 */
 	public ResourceResolver() {
-		this.resolve = new FakeMap(ResourceLocation.EXTERNAL_CONTEXT);
-		this.resolveLocal = new FakeMap(ResourceLocation.WEB_APPLICATION);
-		this.resolveCommon = new FakeMap(ResourceLocation.COMMON_RESOURCES);
+		this.resolve = new FakeMap(this, ResourceLocation.EXTERNAL_CONTEXT);
+		this.resolveLocal = new FakeMap(this, ResourceLocation.WEB_APPLICATION);
+		this.resolveCommon = new FakeMap(this, ResourceLocation.COMMON_RESOURCES);
 	}
 	
 	/**
@@ -90,19 +90,22 @@ public class ResourceResolver implements Serializable {
 	/**
 	 * The Class FakeMap.
 	 */
-	public class FakeMap extends AbstractMap<String,String> implements Serializable {
+	public static class FakeMap extends AbstractMap<String,String> implements Serializable {
 		
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		/** The location. */
 		private ResourceLocation location;
+		
+		private ResourceResolver resolver;
 		
 		/**
 		 * Instantiates a new fake map.
 		 * 
 		 * @param location the location
 		 */
-		public FakeMap(ResourceLocation location) {
+		public FakeMap(ResourceResolver resolver, ResourceLocation location) {
+			this.resolver = resolver;
 			this.location = location;
 		}
 
@@ -116,13 +119,13 @@ public class ResourceResolver implements Serializable {
 			String result = null;
 			switch ( location ) {
 				case WEB_APPLICATION:
-					result = StringUtils.join( new Object[] {getResourceURIPreffix(), key} );
+					result = StringUtils.join( new Object[] {resolver.getResourceURIPreffix(), key} );
 					break;
 				case EXTERNAL_CONTEXT:
-					result = StringUtils.join( new Object[] {getResourceURIPreffix(), key} );
+					result = StringUtils.join( new Object[] {resolver.getResourceURIPreffix(), key} );
 					break;
 				case COMMON_RESOURCES:
-					result = StringUtils.join( new Object[] {getResourceURIPreffix(), "/", ResourceURI.COMMON_RESOURCE_PREFFIX, key} );
+					result = StringUtils.join( new Object[] {resolver.getResourceURIPreffix(), "/", ResourceURI.COMMON_RESOURCE_PREFFIX, key} );
 					break;
 			}
 			return StringUtils.removeStart( result, "/");

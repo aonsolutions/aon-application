@@ -1,6 +1,12 @@
 package com.code.aon.fiscal.activity;
 
-public class Sector {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class Sector implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private Integer period;

@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.type.StringType;
 
+import com.code.aon.AonVersion;
+
 public class DiscountExpressionUserType extends StringType {
 
-	private static final long serialVersionUID = -5938379210156728641L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	@SuppressWarnings("unchecked")

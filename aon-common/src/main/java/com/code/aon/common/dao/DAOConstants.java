@@ -7,10 +7,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 /**
  * This class manages bean metadata such as alias names.
@@ -59,18 +60,25 @@ public class DAOConstants {
 		return DAO_CONSTANTS.get( pojo ); 
 				 
 	}
+	
+	private static SessionFactory getSessionFactory( String pojo ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(pojo);
+		return HibernateUtil.getSessionFactory(sessionFactoryName);
+	}
 
 	public static DAOConstantsEntry getDAOConstantFromAlias( String pojo ) {
-		DAOConstantsEntry entry = DAO_CONSTANTS.get( pojo ); 
-		if (entry == null) {
-			entry = new DAOConstantsEntry(pojo, null);
-			String[] mockBeanNames = new String[100];
-			Arrays.fill(mockBeanNames,EMPTY);
-			entry.setBeanAliasNames(mockBeanNames);
-			LOGGER.warn(pojo + " is not in the classpath, mock alias provided!" );
+		DAOConstantsEntry entry = null;
+		if ( getSessionFactory(pojo) != null ) {
+			entry = DAO_CONSTANTS.get( pojo ); 
+			if (entry == null) {
+				entry = new DAOConstantsEntry(pojo, null);
+				String[] mockBeanNames = new String[100];
+				Arrays.fill(mockBeanNames,EMPTY);
+				entry.setBeanAliasNames(mockBeanNames);
+				LOGGER.warn(pojo + " is not in the classpath, mock alias provided!" );
+			}	
 		}
-		return entry; 
-				 
+		return entry;				 
 	}
 
 	/**

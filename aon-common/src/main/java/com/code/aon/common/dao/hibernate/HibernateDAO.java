@@ -68,7 +68,9 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO, Serializa
 
 	private DAOConstantsEntry getEntry() {
 		if ( this.entry == null ) {
-			this.entry = DAOConstants.getDAOConstant(this.POJOClass);
+			if ( sessionManager.getSessionFactory() != null ) {
+				this.entry = DAOConstants.getDAOConstant(this.POJOClass);	
+			}
 		}
 		return this.entry;
 	}

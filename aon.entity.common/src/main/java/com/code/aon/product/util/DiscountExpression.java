@@ -3,6 +3,8 @@ package com.code.aon.product.util;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
+import com.code.aon.AonVersion;
+
 /**
  * Class that manages aritmetic expressions of discounts. 
  * 
@@ -12,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class DiscountExpression implements Serializable, Comparable<DiscountExpression> {
 	
-	private static final long serialVersionUID = 399393675072081550L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Aritmetic expression for discounts.

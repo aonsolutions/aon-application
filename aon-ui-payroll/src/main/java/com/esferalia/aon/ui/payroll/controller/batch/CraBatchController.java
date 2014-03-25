@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -47,6 +49,8 @@ import com.esferalia.aon.ui.payroll.file.CRAWriter;
 
 public class CraBatchController extends BasicController {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private CRAWriter craWriter;
 	private CraBatchNewWizard newBatchWizard;
 
@@ -59,7 +63,7 @@ public class CraBatchController extends BasicController {
 	
 	public CraBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new CraBatchNewWizard();
+			newBatchWizard = new CraBatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -214,7 +218,9 @@ public class CraBatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class CraBatchNewWizard {
+	public static class CraBatchNewWizard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private List<ITransferObject> selectedList;
 		
@@ -222,6 +228,12 @@ public class CraBatchController extends BasicController {
 		
 		private DataModel selectedModel;
 		
+		private CraBatchController controller;
+		
+		public CraBatchNewWizard(CraBatchController controller) {
+			this.controller = controller;
+		}
+
 		public boolean isNew(){
 			return true;
 		}
@@ -300,7 +312,7 @@ public class CraBatchController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -314,7 +326,7 @@ public class CraBatchController extends BasicController {
 			}
 	        listController.getCheckHandler().clearCheckedList();
 	        setSelectedModel(new ListDataModel(selectedList));
-	        onSearchCCCs(event);
+	        controller.onSearchCCCs(event);
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -327,8 +339,8 @@ public class CraBatchController extends BasicController {
 	        }
 	        clearCheckedList();
 	        setSelectedModel(new ListDataModel(selectedList));
-	        loadDetails();
-	        onSearchCCCs(event);
+	        controller.loadDetails();
+	        controller.onSearchCCCs(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
@@ -21,6 +22,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * It updates the parent object reference of the child object in a Master-Detail relation. 
  */
 public class ChildControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The master bean. */
 	private String masterBean;

@@ -159,7 +159,7 @@ public class SerializationChecker {
 	
 	private List<Class<?>> addClass( List<Class<?>> list, Class<?> _class ) {
 		List<Class<?>> result = list;
-		if ( isTesteableClass(_class) && ! this.checkedClasses.contains(_class) ) {
+		if ( isTesteableClass(_class, true) && ! this.checkedClasses.contains(_class) ) {
 			if ( result.isEmpty() ) {
 				result = new LinkedList<Class<?>>();
 			}
@@ -186,11 +186,11 @@ public class SerializationChecker {
 		return list;
 	}
 	
-	private boolean isTesteableClass( Class<?> _class ) {
+	private boolean isTesteableClass( Class<?> _class, boolean testAbstract ) {
 		if ( _class.isPrimitive() || _class.isEnum() || _class.isInterface() ) {
 			return false;
 		}
-		if ( Modifier.isAbstract(_class.getModifiers()) ) {
+		if ( testAbstract && Modifier.isAbstract(_class.getModifiers()) ) {
 			return false;
 		}
 		if ( ArrayUtils.contains(COMMON_CLASSES, _class) ) {
@@ -262,7 +262,11 @@ public class SerializationChecker {
 				long uid = getSerialVersionUID(_class);
 				if ( AonVersion.SERIAL_VERSION_UID != uid ) {
 					LOGGER.error( "WRONG serialVersionUID in {}", _class );
-				}				
+				}			
+				Class<?> superClass = _class.getSuperclass();
+				if ( isTesteableClass(superClass, false) && isAonClass(superClass) ) {
+					testClass(superClass);
+				}
 			}					
 		} else {
 			LOGGER.error( "NOT SERIALIZABLE {}", _class );
