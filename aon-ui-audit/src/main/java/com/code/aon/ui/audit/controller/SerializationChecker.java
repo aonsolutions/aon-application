@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
 public class SerializationChecker {
@@ -77,19 +80,26 @@ public class SerializationChecker {
         }				
 	}
 
-	private void checkSessionManagedBean(String beanName, String beanClass) {
-		LOGGER.info( "Checking managed bean {} - {}", beanName, beanClass );
+	private Class<?> getClass( String name ) {
 		Class<?> _class = null;
 		try {
-			_class = Class.forName(beanClass);
+			_class = Class.forName(name);
 		} catch ( Throwable th ) {
-			LOGGER.error( "Error loading class {}-{}", beanName, beanClass );
+			LOGGER.error( "Error loading class {}", name );
 		}		
+		return _class;
+	}
+	
+	private void checkSessionManagedBean(String beanName, String beanClass) {
+		LOGGER.info( "Checking managed bean {} - {}", beanName, beanClass );
+		Class<?> _class = getClass(beanClass);
 		if (_class != null ) {
 			testClass(_class);
 			if ( isAonClass(_class) && !ArrayUtils.contains(SKIP_MANAGED_BEAN_SERIALIZATION,beanName) ) {
 				testSerialization(beanName, _class);	
 			}
+		} else {
+			LOGGER.error( "Error loading class {}-{}", beanName, beanClass );
 		}
 	}
 
@@ -116,6 +126,9 @@ public class SerializationChecker {
 			LOGGER.error( "Error creating object of " + beanClass, e);
 		}
 		if ( object != null ) {
+			if ( object instanceof BasicController ) {
+				testBasicController( beanName, (BasicController) object );
+			}
 			byte[] data = null;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
@@ -270,6 +283,23 @@ public class SerializationChecker {
 			}					
 		} else {
 			LOGGER.error( "NOT SERIALIZABLE {}", _class );
+		}
+	}
+	
+	private void testBasicController(String beanName, BasicController controller) {
+		String pojo = controller.getPojo();
+		if (! StringUtils.isEmpty(pojo) ) {
+			Class<?> _class = getClass(pojo);
+			if ( _class != null ) {
+				testClass(_class);	
+			}	
+		} else {
+			LOGGER.error("ERROR Basic Controller {} without pojo, {} ", beanName, controller.getClass());
+		}
+		if ( controller.getListeners() != null ) {
+			for( IControllerListener listener : controller.getListeners() ) {
+				testClass(listener.getClass());
+			}
 		}
 	}
 	

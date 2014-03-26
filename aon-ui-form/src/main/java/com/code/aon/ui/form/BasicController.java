@@ -1048,6 +1048,10 @@ public class BasicController extends AbstractPojoController implements IControll
 			}
 		}
 	}
+	
+	public List<IControllerListener> getListeners() {
+		return controllerListenerSupport.getListeners();
+	}	
 
 	/**
 	 * Get a collection that contains current <code>ITransferObject</code>

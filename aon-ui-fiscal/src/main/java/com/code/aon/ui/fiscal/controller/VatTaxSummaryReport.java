@@ -364,8 +364,8 @@ public class VatTaxSummaryReport implements Serializable {
 		}
 	}	
 
-	public class ColumnCustomExpression implements CustomExpression {
-		private static final long serialVersionUID = 7368651157413691588L;
+	public static class ColumnCustomExpression implements CustomExpression {
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		private Period period;
 		private TaxColumn type;
 		private boolean taxableBase;

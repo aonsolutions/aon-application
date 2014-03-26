@@ -11,9 +11,6 @@ import static com.code.aon.ui.common.ICommonMessages.TOOLBAR_LIST;
 import static com.code.aon.ui.common.ICommonMessages.TOOLBAR_SEARCH;
 import static com.code.aon.ui.common.ICommonMessages.WEB_MAP;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -33,17 +30,6 @@ public class ActionEntryController extends LinesController {
 	private static final String[] MANAGED_BEAN_SUFFIXES = new String[]{
 		IController.FORM_SUFFIX, IController.LIST_SUFFIX, IController.SEARCH_SUFFIX
 	};
-	
-	private static final Map<String,String> ACTION_LABEL_MAP;
-	
-	static {
-		ACTION_LABEL_MAP = new HashMap<String, String>();
-		ACTION_LABEL_MAP.put("start", AonUtil.getMessage(DOMAIN_CHANGE));
-		ACTION_LABEL_MAP.put("home", AonUtil.getMessage(HOME));
-		ACTION_LABEL_MAP.put("advancedMode", AonUtil.getMessage(ADMIN_ADVANCED_MODE));
-		ACTION_LABEL_MAP.put("actionFavorite", AonUtil.getMessage(FAVORITES_MANAGEMENT));
-		ACTION_LABEL_MAP.put("webMap", AonUtil.getMessage(WEB_MAP));
-	}
 	
 	private static String getMode( String suffix ) {
 		String mode = null;
@@ -92,6 +78,21 @@ public class ActionEntryController extends LinesController {
 		}
 		return null;
 	}
+	
+	private static String getActionLabel( String action ) {
+		if ( "start".equals(action) ) {
+			return AonUtil.getMessage(DOMAIN_CHANGE);
+		} else if ( "home".equals(action) ) {
+			return AonUtil.getMessage(HOME);
+		} else if ( "advancedMode".equals(action) ) {			
+			return AonUtil.getMessage(ADMIN_ADVANCED_MODE);
+		} else if ( "actionFavorite".equals(action) ) {			
+			return AonUtil.getMessage(FAVORITES_MANAGEMENT);
+		} else if ( "webMap".equals(action) ) {			
+			return AonUtil.getMessage(WEB_MAP);
+		}
+		return null;
+	}
 
 	public static String getOptionDescription( String action ) {
 		String description = action;
@@ -102,7 +103,7 @@ public class ActionEntryController extends LinesController {
 		} else {
 			String option = getOption(aoc, action);
 			if ( option == null ) {
-				option = ACTION_LABEL_MAP.get(action);
+				option = getActionLabel(action);
 			}
 			if ( option != null ) {			
 				description = option;

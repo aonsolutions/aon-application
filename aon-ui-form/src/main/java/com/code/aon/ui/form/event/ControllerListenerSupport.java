@@ -39,6 +39,10 @@ public class ControllerListenerSupport implements Serializable {
 	public void removeControllerListener(IControllerListener l) {
 		listeners.remove(l);
 	}
+	
+	public List<IControllerListener> getListeners() {
+		return listeners;
+	}
 
 	/**
 	 * Propaga un <code>ControllerEvent</code> a todos los subscriptores

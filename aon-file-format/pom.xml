@@ -11,6 +11,12 @@
 	<name>AON FILE FORMAT</name>
 	<dependencies>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>	
+		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.7.0</version>

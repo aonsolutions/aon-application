@@ -50,12 +50,6 @@ public class BackupController implements IDumpListener, Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BackupController.class);
 	
-	private final static String BACKUP_INFO = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);
-	private final static String BACKUP_TABLE_START = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
-	private final static String BACKUP_TABLE_PROGRESS = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
-	private final static String BACKUP_TABLE_FINISH = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
-	private final static String BACKUP_ERROR = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
-	
 	private Domain domain;
 	private boolean includeParentDomain;
 	private File backupFile;
@@ -146,7 +140,8 @@ public class BackupController implements IDumpListener, Serializable {
         } catch (Throwable e) {
 			LOGGER.error(">>>> onDump: ", e);
 			this.progressValue = this.maxProgressValue + 1;
-			setProgressMessage( format(BACKUP_ERROR, e.getMessage()) );
+			String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
+			setProgressMessage( format(message, e.getMessage()) );
 		} finally {
 			IOUtils.closeQuietly(zipOut);
 			DbUtils.closeQuietly(connection);
@@ -211,25 +206,29 @@ public class BackupController implements IDumpListener, Serializable {
 	public synchronized void initDump(String databaseName, String version, int numberOfTables) {
 		this.progressValue = 0;
 		this.maxProgressValue = numberOfTables;
-		setProgressMessage( format(BACKUP_INFO, databaseName, version) );
+		String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);
+		setProgressMessage( format(message, databaseName, version) );
 	}
 
 	@Override
 	public synchronized void startDumpTable(String table) {
 		this.progressValue++;
-		setProgressMessage( format(BACKUP_TABLE_START, table) );
+		String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
+		setProgressMessage( format(message, table) );
 	}
 	
 	@Override
 	public synchronized void dumpTable(String table, int rowCount) {
 		if ( rowCount%100 == 0 ) {
-			setProgressMessage( format(BACKUP_TABLE_PROGRESS, table, rowCount) );	
+			String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
+			setProgressMessage( format(message, table, rowCount) );	
 		}
 	}
 
 	@Override
 	public synchronized void endDumpTable(String table, int rowCount) {
-		setProgressMessage( format(BACKUP_TABLE_FINISH, table, rowCount) );
+		String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
+		setProgressMessage( format(message, table, rowCount) );
 	}
 
 	@Override

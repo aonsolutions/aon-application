@@ -18,6 +18,7 @@ import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import ar.com.fdvs.dj.domain.entities.conditionalStyle.ConditionalStyle;
 import ar.com.fdvs.dj.domain.entities.conditionalStyle.StatusLightCondition;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.report.ReportException;
 
@@ -281,9 +282,9 @@ public class DynaElements {
 		}
 	}
 
-	public class BooleanCustomExpression implements CustomExpression {
+	public static class BooleanCustomExpression implements CustomExpression {
 
-		private static final long serialVersionUID = 5532097656804800650L;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private String property;
 		private String valueIfTrue;

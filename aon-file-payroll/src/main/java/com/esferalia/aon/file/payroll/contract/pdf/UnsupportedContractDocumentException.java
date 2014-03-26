@@ -1,10 +1,11 @@
 package com.esferalia.aon.file.payroll.contract.pdf;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 
 public class UnsupportedContractDocumentException extends AonException {
 
-	private static final long serialVersionUID = 2658939739517432990L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public UnsupportedContractDocumentException() {
 		super();

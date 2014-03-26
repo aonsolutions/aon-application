@@ -2,11 +2,12 @@ package com.code.aon.finance.print;
 
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 
 public class CheckingTo implements ITransferObject {
 
-	private static final long serialVersionUID = -5191768278622546432L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<ITransferObject> noPaymethodList;
 	

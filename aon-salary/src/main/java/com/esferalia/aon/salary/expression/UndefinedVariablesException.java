@@ -1,8 +1,10 @@
 package com.esferalia.aon.salary.expression;
 
+import com.code.aon.AonVersion;
+
 public class UndefinedVariablesException extends ExpressionException {
 
-	private static final long serialVersionUID = 5805991372724286694L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String variableNames [];
 	

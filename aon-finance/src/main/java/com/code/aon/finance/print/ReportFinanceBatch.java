@@ -1,11 +1,12 @@
 package com.code.aon.finance.print;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.FinanceBatch;
 
 public class ReportFinanceBatch implements ITransferObject {
 
-	private static final long serialVersionUID = -929901176929210472L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private FinanceBatch financeBatch;
 	
