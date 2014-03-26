@@ -24,7 +24,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
@@ -123,18 +122,14 @@ public class ContractAttachController extends AttachmentController {
 	}
 	
 	public void onSendSelectedByEmail(ActionEvent event) throws ManagerBeanException, IOException {
-		sendSelectedByEmail(null, true);
-	}
-	private void sendSelectedByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
 		PayrollEmailUtil emailController = new PayrollEmailUtil();
 		
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 			messageController.initNewMessage();
-			emailController.initMessageController(messageController, (Contract)this.getMasterController().getTo(), checks, facturae);
+			emailController.initMessageController(messageController, (Contract)this.getMasterController().getTo(), checks, true);
 			messageController.setShowNewMessageWindow(true);
-			messageController.setSecurityInfo(securyInfo);
 		} else {
 			AonUtil.addErrorMessageFromBundle(NOT_MAIL_ACCOUNTS);
 		}

@@ -37,6 +37,7 @@
 		<module>aon-ui-dbutils</module>
 		<module>aon-ui-db-manager</module>
 		<module>aon-sql-payroll</module>
+		<module>aon-master-jooq</module>
 
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>

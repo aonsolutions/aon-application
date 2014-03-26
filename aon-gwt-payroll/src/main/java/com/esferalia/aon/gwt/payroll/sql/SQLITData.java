@@ -100,10 +100,10 @@ public class SQLITData implements Serializable {
 				
 				if(type != -1) {
 					ITDataPerson dataPerson = new ITDataPerson();
+					dataPerson.setContractId(contractId);
 					dataPerson.setLeaveStartDate(startContractLeave);
 					dataPerson.setLeaveEndDate(endContractLeave);
-					dataPerson.setType(type);
-					dataPerson.setContractId(contractId);
+					dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, type));
 					
 					itData.setITDataPerson(contractId, dataPerson);
 								
@@ -122,6 +122,21 @@ public class SQLITData implements Serializable {
 			DatabaseUtil.closeQuietly(stmt);
 		}
 		return itData;		
+	}
+	
+	// ------------------------------------------------------------------------
+	// TODO: To EnumUtils ???
+	public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass, Integer ordinal) {
+		if ( ordinal == null )
+			return null;
+		if ( ordinal < 0 )
+			return null;
+		
+		T constants [] = enumClass.getEnumConstants();
+		if ( ordinal >= constants.length )
+			return null;
+		
+		return constants[ordinal];
 	}
 	
  

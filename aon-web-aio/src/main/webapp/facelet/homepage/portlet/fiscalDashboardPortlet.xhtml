@@ -155,27 +155,20 @@
 						<script type="text/javascript"> 
 							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
 							function drawCharts(){
-								 var whatever = Array.prototype.reduce;
-								try {
-									Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv};
-									//---------------------------------
-									var data = new google.visualization.DataTable();
-									data.addColumn('string', 'Mes');
-									data.addColumn('number', 'Apuntes');
-									<c:forEach var="entry" items="#{dashboard.periodEntriesCount}">
-										data.addRow(['#{entry.name}', #{entry.value}]);
-									</c:forEach>
-									var options = {
-										chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},
-										legend: {position: 'none'},
-										tooltip: {isHtml: true},
-										series: [{color: 'SteelBlue'}],
-									};
-									var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:bar_chart_div'));
-									chart.draw(data, options);
-								} finally {
-									Array.prototype.reduce = whatever;			
-								}
+								var data = new google.visualization.DataTable();
+								data.addColumn('string', 'Mes');
+								data.addColumn('number', 'Apuntes');
+								<c:forEach var="entry" items="#{dashboard.periodEntriesCount}">
+									data.addRow(['#{entry.name}', #{entry.value}]);
+								</c:forEach>
+								var options = {
+									chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},
+									legend: {position: 'none'},
+									tooltip: {isHtml: true},
+									series: [{color: 'SteelBlue'}],
+								};
+								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:bar_chart_div'));
+								chart.draw(data, options);
 							}
 					   </script>
 					</aon:div>

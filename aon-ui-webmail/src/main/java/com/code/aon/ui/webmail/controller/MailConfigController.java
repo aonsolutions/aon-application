@@ -1,9 +1,5 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_PROPERTY;
-
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +10,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 
@@ -32,7 +27,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
@@ -72,6 +66,8 @@ public class MailConfigController implements Serializable {
 	private String signatureTitle;
 	
 	private boolean skipDefaultAccountColumn;
+	
+	private boolean showFolderWindow;
 	
 	public MailConfigController() {
 		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE_DB);
@@ -129,27 +125,10 @@ public class MailConfigController implements Serializable {
 		return null;
 	}
 	
-	public boolean isActiveMailAccount() throws ManagerBeanException {
-		IMailAccount account = getSelectMailAccount();
-		if ( account != null ) {
-			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			if ( webmail.getServer() != null ) {
-				return ObjectUtils.equals(webmail.getServer().getAccount(), account);	
-			}			
-		}
-		return false;
-	}
-	
 	public boolean isMailAccountRemovable() {
 		IMailAccount account = (IMailAccount) getMailAccount().getTo();
 		if ( account.isEnterpriseAccount() ) {
 			return true;
-		}
-		if ( isConnectable() ) {
-			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			if ( webmail.isLogged() ) {
-				return ! ObjectUtils.equals(webmail.getServer().getAccount(), account);
-			}
 		}
 		return true;
 	}	
@@ -168,54 +147,6 @@ public class MailConfigController implements Serializable {
 			LOGGER.error(">>>> onSetDefault exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);			
-		}
-	}
-
-	private void resetFolderController() {
-		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_FOLDER);
-		if (folderController.getFolder()!=null){
-			try {
-				folderController.getFolder().getFolder().expunge();
-				folderController.getFolder().getFolder().close(false);
-				folderController.setFolder(null);
-			} catch (MessagingException e) {
-				LOGGER.error( e.getMessage(), e);
-			}
-		}		
-	}
-	
-	public void onChangeServer(ActionEvent event) {
-		resetFolderController();
-		try {
-			changeMailAccount( getSelectMailAccount() );
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e);
-		}
-	}
-
-	private void changeMailAccount( IMailAccount account ) {
-		IMailAccount previousAccount = null;
-		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		if ( webmail.isLogged() ) {
-			webmail.getServer().disconnect();
-			previousAccount = webmail.getServer().getAccount();			
-		}
-		try{
-			webmail.init( account );
-		} catch (Throwable e) {
-			try {
-				if ( previousAccount != null ) {
-					webmail.init( previousAccount );	
-				}
-			} catch (MessagingException e1) {
-				LOGGER.error( e.getMessage(), e);
-			}
-			AonUtil.addErrorMessage( e.getMessage() );
-		} finally {
-			if ( webmail.isLogged() ) {
-		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_TREE);
-		    	treeBean.initTree( webmail.getServer() );		
-			}
 		}
 	}
 
@@ -294,19 +225,6 @@ public class MailConfigController implements Serializable {
 	public void setShowMailAccountList(boolean showMailAccountList) {
 		this.showMailAccountList = showMailAccountList;
 	}
-	
-	public void onSelectMailAccount(ActionEvent event) {
-		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		this.currentAccount = webmail.getServer().getAccount();			
-		setShowMailAccountList(true);
-	}
-	
-	public void onChangeMailAccount( ValueChangeEvent event ) {
-		resetFolderController();
-		IMailAccount newAccount = (IMailAccount) event.getNewValue();
-		changeMailAccount(newAccount);
-		setShowMailAccountList(false);
-	}
 
 	public List<SelectItem> getMailAccounts() {
 		return mailAccounts;
@@ -343,7 +261,7 @@ public class MailConfigController implements Serializable {
 	}
 	
 	public IMailAccount getDefaultMailAccount( boolean skipConnectCheck ) {
-		boolean connectDomainAccounts = skipConnectCheck || AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY);
+		boolean connectDomainAccounts = skipConnectCheck;
 		updateMailAccountList();
 		IMailAccount defaultAccount = null;
 		List<IMailAccount> list = new LinkedList<IMailAccount>();
@@ -432,8 +350,12 @@ public class MailConfigController implements Serializable {
 		this.skipDefaultAccountColumn = skipDefaultAccountColumn;
 	}	
 
-	public boolean isConnectable() {
-		return AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_PROPERTY);
+	public boolean isShowFolderWindow() {
+		return showFolderWindow;
+	}
+
+	public void setShowFolderWindow(boolean showFolderWindow) {
+		this.showFolderWindow = showFolderWindow;
 	}	
 	
 }

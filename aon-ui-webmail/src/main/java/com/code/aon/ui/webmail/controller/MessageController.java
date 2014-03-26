@@ -3,23 +3,11 @@ package com.code.aon.ui.webmail.controller;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,61 +17,38 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.mail.Address;
 import javax.mail.BodyPart;
-import javax.mail.Flags;
 import javax.mail.Flags.Flag;
 import javax.mail.Folder;
-import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.velocity.TemplateHelper;
-import com.code.aon.common.velocity.VelocityHelper;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonMessageTracer;
-import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
-import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.AonAttachment;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
-import com.code.aon.webmail.dao.IWebMailAlias;
-import com.code.aon.webmail.db.Contact;
-import com.sun.mail.imap.AppendUID;
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements IWebMailConstants, Serializable {
 	
@@ -91,22 +56,8 @@ public class MessageController implements IWebMailConstants, Serializable {
 
 	private static final String MESSAGE_WINDOW_INCLUDED = "com.code.aon.ui.webmail.MessageWindow";
 
-	private static final int MAX_LENGTH_STRING = 120;
-
-	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/webmail/";
-	
-	private static final String PRINT_TEMPLATE = "print.html.vm";
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
 	
-	private AonMessage message;
-
-	private AonMessage parentMessage;
-	
-	private String messageContent;
-	
-	private Long draftMessageUID;
-
 	private String recipientsTo;
 	
 	private String recipientsCc;
@@ -118,28 +69,16 @@ public class MessageController implements IWebMailConstants, Serializable {
 	private String content;
 
     private List<AonFile> newMsgFileList;
-
-    private String returnAction = NAVIGATION_FOLDER;
     
     private IMailAccount senderMailAccount;
     
     private String messageBody;
-    
-    private VelocityHelper velocityHelper;
-       
-    private boolean shortMessageTo;
-    
-    private boolean shortMessageCc;
     
     private int attachRemoveIndex;
     
     private boolean showNewMessageWindow;
     
     private boolean loadContacts;
-    
-    private SecurityInfo securityInfo;
-    
-    private WebMailController webMailController;
     
     private boolean appendSignature;
     
@@ -151,148 +90,13 @@ public class MessageController implements IWebMailConstants, Serializable {
     
     private List<Address> sentAddressList;
     
-	/**
-	 * @return the message
-	 */
-	public AonMessage getMessage() {
-		return message;
-	}
-
-	private WebMailController getWebMailController() {
-		if ( webMailController == null ) {
-	    	webMailController = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		}
-		return webMailController;
-	}
-
 	private MailConfigController getMailConfig() {
 		return (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
-	}
-	
-	/**
-	 * @param message the message to set
-	 */
-	public void setMessage(AonMessage message) {
-		this.message = message;
-		this.messageContent = null;
-		afterSetMessage();
-		AttachController attachController = (AttachController) AonUtil.getRegisteredBean(BEAN_ATTACH);
-		attachController.update(this.message);
-	}
-
-
-	private void afterSetMessage(){
-		initShortMessageToCcBcc();
-		initContactName();
-	}
-	
-	
-	/**
-	 * @return the returnAction
-	 */
-	public String getReturnAction() {
-		return returnAction;
-	}
-
-	/**
-	 * @param returnAction the returnAction to set
-	 */
-	public void setReturnAction(String returnAction) {
-		this.returnAction = returnAction;
 	}
 
 	public void onNewMessage(ActionEvent event){
 		initNewMessage();
     }
-
-	public void editDraftMessage(AonMessage message, long uid) {
-		initNewMessage();
-		this.parentMessage = message;
-		this.draftMessageUID = uid;
-		try {
-			copyAttachmentsToFileList( message );			
-			recipientsTo = toString(message.getRecipientsToAddress());
-			recipientsCc = toString(message.getRecipientsCcAddress());
-			recipientsBcc = toString(message.getRecipientsBccAddress());
-	       	subject = message.getSubject();
-	       	content = getMessageContent( message );
-		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		}
-	}	
-	
-	public void onReplyMessage(ActionEvent event) {
-		initNewMessage();
-		parentMessage = message;
-		try {
-			recipientsTo = getReplyToRecipients(message, true); 
-	       	subject = "Reply: "+message.getSubject();
-	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), ICommonMessages.REPLIED_MESSAGE);
-	       	content += messageBody;
-		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		}
-	}
-	
-	private String getReplyToRecipients( AonMessage message, boolean onlySender ) throws WebmailException {
-		List<Address> addresses = new LinkedList<Address>();
-		addresses.add(message.getSenderAddress());
-		if (! onlySender ) {
-			Address[] to = message.getRecipientsToAddress();
-			if (! ArrayUtils.isEmpty(to) ) {
-				addresses.addAll(Arrays.asList(to));
-			}
-			Address[] cc = message.getRecipientsCcAddress();
-			if (! ArrayUtils.isEmpty(cc) ) {
-				addresses.addAll(Arrays.asList(cc));
-			}
-			for( int i = addresses.size()-1; i >= 0; i-- ) {
-				String email = AonMessage.getDisplayEmail(addresses.get(i));
-				if ( StringUtils.equalsIgnoreCase(senderMailAccount.getEmail(), email) ) {
-					addresses.remove(i);
-				}
-			}
-		}
-		return toString( addresses.toArray(new Address[addresses.size()]) );
-	}
-
-	private String toString( Address[] addresses ) throws WebmailException {
-		StringBuffer recipients = new StringBuffer();
-		if (! ArrayUtils.isEmpty(addresses) ) {
-			for ( Address address : addresses ) {
-				String email = AonMessage.getEditAddress(address);
-				recipients.append(email).append(AonMessageUtils.EMAIL_SEPARATOR);
-			}
-		}
-		return recipients.toString();		
-	}
-	
-	
-	public void onReplyAllMessage(ActionEvent event) {
-		initNewMessage();
-		parentMessage = message;
-		try{
-			recipientsTo = getReplyToRecipients(message, false);
-	       	subject = "ReplyALL: "+message.getSubject();
-	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), ICommonMessages.REPLIED_MESSAGE);
-	       	content += messageBody;
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-	
-	private void refreshDraftFolder() {
-		if ( getMailConfig().isConnectable() ) {
-	    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
-	    	if ( folderController.getFolder().isDraftFolder() ) {
-	    		folderController.getFolder().close(false);
-	    		folderController.refresh(null);
-	    	}			
-		}
-	}
 	
 	public void finishMessage() {
     	setShowNewMessageWindow(false);
@@ -305,71 +109,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 			}
 	    	newMsgFileList = null;
 		}
-	}
-
-	private void copyAttachmentsToFileList( AonMessage message ) throws WebmailException {
-       	for( AonAttachment attach : message.getAttachements() ) {
-       		InputStream in = null;
-       		OutputStream out = null;
-       		try {
-       			String fullName = attach.getFileName();
-       			String name = "webmail-" + FilenameUtils.getBaseName(fullName);
-       			String extension = FilenameUtils.getExtension(fullName);
-       			File file = File.createTempFile( name, "." + extension );
-       			AonFile af = new AonFile();
-    			af.setFile(file);
-    			af.setFileName( fullName );
-       			in = attach.getPart().getInputStream(); 
-       			out = new BufferedOutputStream(new FileOutputStream(file));
-       			IOUtils.copy( in, out );
-    			MimeType mimeType = attach.getMimeType();
-    			if ( mimeType == null ) {
-        			af.setMimeType(af.resolveMimeType());	
-    			}
-       			newMsgFileList.add(af);
-			} catch (Throwable e) {
-				AonUtil.addErrorMessage(e.getMessage());
-			} finally {
-				IOUtils.closeQuietly(in);
-				IOUtils.closeQuietly(out);
-			}
-       	}		
-	}
-	
-	public void onForwardMessage(ActionEvent event) {
-		initNewMessage();
-		parentMessage = message;
-		try {
-			copyAttachmentsToFileList( message );
-	       	subject = "Fwd: "+message.getSubject();
-	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), ICommonMessages.FORWARDED_MESSAGE);
-	       	content += messageBody;
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-
-    public void deleteSelectedMessage(ActionEvent event){
-    	AonMessage[] messagesLst = new AonMessage[] { this.message };
-    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
-    	try {
-    		folderController.deleteMessages(messagesLst, false);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}    	
-	}
-
-    public void purgeSelectedMessage(ActionEvent event){
-    	AonMessage[] messagesLst = new AonMessage[] { this.message };
-    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
-    	try {
-    		folderController.deleteMessages(messagesLst, true);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}    	
 	}
     
     public List<AonFile> getFiles(){
@@ -387,7 +126,6 @@ public class MessageController implements IWebMailConstants, Serializable {
     	f.setFileName(item.getFileName());
     	f.setMimeType(f.resolveMimeType());
     	LOGGER.info( "Uploaded file: {}", f );
-       	addAttachment( f );	
 	}	
 	
 	public void addAttachment( AonFile aonFile ) {
@@ -429,10 +167,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 	    	finishMessage();
 		}
     }
-    
-    public List<Address> getSentAddressList() {
-		return sentAddressList;
-	}
 
 	public void send(AonServer server) throws WebmailException {
     	AonMessage sentMessage = null;
@@ -442,18 +176,12 @@ public class MessageController implements IWebMailConstants, Serializable {
     		this.sentAddressList = sentMessage.getAllRecipients();
 		} catch (Throwable th) {
 			if ( sentMessage != null ) {
-	    		storeMessage(server, sentMessage, true);
-				refreshDraftFolder();	    		
+	    		storeMessage(server, sentMessage, true);  		
 			}
 			throw new WebmailException(th);
 		}
     	try {	
    			storeMessage(server, sentMessage, false);
-			if (parentMessage!=null){
-		    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
-		    	parentMessage.getParent().getFolder().expunge();
-	    	}
-	    	deleteDraftMessage( server );
 		} catch (Throwable th) {
 			throw new WebmailException(th);
 		}
@@ -461,45 +189,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 
     public void onCancelSend(ActionEvent event) {
     	finishMessage();
-    }
-    
-    private void deleteDraftMessage( AonServer server ) throws MessagingException {
-    	if ( this.draftMessageUID!=null && server.isIMAP() ) {
-    		AonFolder folder = server.getAonFolder(server.getDraftFolderName());
-    		IMAPFolder imapFolder = (IMAPFolder) folder.getFolder();
-    		imapFolder.open(Folder.READ_WRITE);
-    		Message message = imapFolder.getMessageByUID(this.draftMessageUID);
-    		if ( message != null ) {
-	    		message.setFlag(Flags.Flag.DELETED, true);	    			
-    		}
-    		imapFolder.close(true);
-    		this.draftMessageUID = null;
-    		refreshDraftFolder();
-    	}    	
-    }
-
-    public void onSaveDraft(ActionEvent event) {
-    	try {
-	    	AonServer server = getWebMailController().getServer();    		
-	    	AonMessage aonMessage = compoundMessage( server );    		
-	    	AonFolder dest = server.getAonFolder(server.getDraftFolderName());
-	    	Message[] messages = new Message[1];
-    		messages[0] = aonMessage.getMessage();
-    		messages[0].setFlag(Flag.DRAFT, true);
-	    	dest.open(Folder.READ_WRITE);
-	    	deleteDraftMessage( server );
-	    	IMAPFolder desfFolder = (IMAPFolder) dest.getFolder();
-	    	AppendUID[] uids = desfFolder.appendUIDMessages(messages);
-	    	if (! ArrayUtils.isEmpty(uids) ) {
-		    	this.draftMessageUID = uids[0].uid;	
-	    	}
-	    	desfFolder.expunge();
-	    	dest.close(false);
-	    	refreshDraftFolder();
-		} catch (Throwable th) {
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th);
-		}
     }
     
     //*******************************************************************************************
@@ -548,37 +237,19 @@ public class MessageController implements IWebMailConstants, Serializable {
        	String text = AonMessageUtils.unparse_cid(content);
        	part.setContent( text, MimeType.MIME_HTML.getName() );
        	mainPart.addBodyPart(part);
-       	if ( this.parentMessage != null ) {
-	       	for( BodyPart related : parentMessage.getInlines() ) {
-				mainPart.addBodyPart( (BodyPart) related );	       		
-	       	}
-       	}
 		for ( AonFile file : newMsgFileList ) {
 			BodyPart bodyPart = WebmailUtil.getBodyPart(file);
 			mainPart.addBodyPart(bodyPart);
 		}       	
-       	if ( securityInfo != null ) {
-       		mainPart = EmailSecurity.sign( mainPart, securityInfo );
-       	}		
 		newMessage.setContent(mainPart);
 		newMessage.setSentDate( new Date() );
 		return newMessage; 
 	}
 	
-	private IMailAccount resolveMailAccount() {
-		IMailAccount mailAccount = null;
-		if ( getMailConfig().isConnectable() ) {
-			mailAccount = getWebMailController().getServer().getAccount();
-		} else {
-			mailAccount = getMailConfig().getDefaultMailAccount(true);
-		}
-		return mailAccount;
-	}
-	
 	public void initNewMessage(){
 		saveSent = true;
 		appendSignature = true;
-		senderMailAccount = resolveMailAccount();
+		senderMailAccount = getMailConfig().getDefaultMailAccount(true);
 		recipientsTo = null;
 		recipientsCc = null;
 		recipientsBcc = null;
@@ -586,10 +257,7 @@ public class MessageController implements IWebMailConstants, Serializable {
 		messageBody = null;
 		updateContent(senderMailAccount);
     	newMsgFileList = new ArrayList<AonFile>();
-		draftMessageUID = null;
-		sentAddressList = null;
-		parentMessage = null;
-		messageContent = null;
+    	sentAddressList = null;
 		loadContacts = true;
 		template = null;
 		showTemplates = true;
@@ -749,210 +417,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 	}
 	
 	//********************************************************************************************
-	// SAVE MESSAGE
-	//********************************************************************************************
-
-	public void save(HttpServletResponse response) {
-		try{
-			Date date;
-			String fecha = "";
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmm");
-			Folder folder = message.getParent().getFolder();
-			Message msg = folder.getMessage(message.getMessage().getMessageNumber());
-			if ((date = msg.getSentDate()) != null) {
-				fecha = df.format(date);
-			}	else if ((date = msg.getReceivedDate()) != null) {
-				fecha = df.format(date);
-			}
-			String from = message.getSender();
-			int index = from.indexOf("&lt;");
-			if (index > 0) {
-				from = from.substring(0, index).trim();
-			}
-			String fileName = msg.getSubject() + ".eml";
-			fileName = fecha + "-[" + from + "]-" + fileName;
-			fileName = fileName.replace('\\','_');
-			fileName = fileName.replace('/','_');
-			fileName = fileName.replace(':','_');
-			fileName = fileName.replace('*','_');
-			fileName = fileName.replace('?','_');
-			fileName = fileName.replace('\"','_');
-			fileName = fileName.replace('<','_');
-			fileName = fileName.replace('>','_');
-			fileName = fileName.replace('|','_');
-
-			response.setHeader("content-disposition", "attachment;filename=\""
-					+ fileName + "\"");
-			
-			OutputStream out = response.getOutputStream();
-			InputStream in = msg.getInputStream();
-
-			System.out.println("");
-	        Enumeration<?> enumeration = msg.getAllHeaders();
-	        LineOutputStream lineoutputstream = new LineOutputStream(out);
-	        while(enumeration.hasMoreElements()){
-	        	try{
-	        		Header header = (Header)enumeration.nextElement();
-	        		String line = header.getName();
-	        		line += ": ";
-	        		line += header.getValue();
-	        		lineoutputstream.writeln(line);
-	        	}catch (Exception e){
-	        		LOGGER.error(e.getMessage(), e);
-	        	}
-	        }
-	        lineoutputstream.writeln();
-
-			byte[] block = new byte[1024];
-			int len = 0;
-			while ((len = in.read(block)) > -1) {
-			    out.write(block, 0, len);
-			}
-			int read = 0;
-			while ((read = in.read(block)) > -1) {
-			    out.write(block, 0, read);
-			}
-			in.close();
-			response.flushBuffer();
-			lineoutputstream.close();
-			out.close();
-		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e);
-		} catch (MessagingException e) {
-			LOGGER.error( e.getMessage(), e);
-		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e);
-		}
-	}
-	
-	// ****************************************************************
-	// NEXT - PREVIOUS
-	// ****************************************************************
-
-	public IMessageContainer getMessageContainer(){
-		if (NAVIGATION_SEARCH.equals(returnAction)) {
-			return (IMessageContainer) AonUtil.getRegisteredBean(BEAN_SEARCH);
-		}
-		return (IMessageContainer) AonUtil.getRegisteredBean(BEAN_FOLDER);
-	}
-	
-	public boolean isPreviousMessage(){
-		int index = getMessageContainer().getCurrentIndex();
-		return index > 0;
-	}
-
-	public boolean isNextMessage() throws ManagerBeanException{
-		IMessageContainer mc = getMessageContainer();
-		int index = mc.getCurrentIndex();
-		return (index+1) < mc.getModel().getRowCount();
-	}
-	
-	private AonMessage getMessage( int offset ) throws ManagerBeanException {
-		IMessageContainer mc = getMessageContainer();
-		int index = mc.getCurrentIndex()+offset;
-		mc.getModel().setRowIndex(index);
-		mc.setCurrentIndex(index);
-		return (AonMessage) mc.getModel().getRowData();		
-	}
-	
-	public void onPreviousMessage(ActionEvent event) throws ManagerBeanException {
-		setMessage(getMessage(-1));
-	}
-
-	public void onNextMessage(ActionEvent event) throws ManagerBeanException {
-		setMessage(getMessage(1));
-	}
-
-	//********************************************************************************************
-	// DESTINY FOLDER SELECTION POPUP
-	//********************************************************************************************
-    
-    public void moveSelectedMessage(AonFolder dest){
-    	AonMessage[] lst = new AonMessage[] { this.message };
-		try{
-	    	message.getParent().moveMessages(lst, dest);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-	}
-
-	//********************************************************************************************
-	// TO, CC, BCC LONG/SHORT
-	//********************************************************************************************
-
-    private void initShortMessageToCcBcc(){
-        this.shortMessageTo = false;
-        this.shortMessageCc = false;
-    }
-    
-    public boolean isShortMessageTo() {
-    	return shortMessageTo;
-	}
-
-	public void onChangeShortMessageTo(ActionEvent event){
-    	shortMessageTo = !shortMessageTo;
-    }
-
-	private boolean isShortMessageToControl(){
-    	try {
-			if (message.getRecipientsTo().length()>MAX_LENGTH_STRING) {
-				return true;
-			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return false;
-	}
-	
-	public boolean isShortMessageToControlUp(){
-		if (isShortMessageToControl()) {
-			return shortMessageTo;
-		}
-		return false;
-	}
-	
-	public boolean isShortMessageToControlDown(){
-		if (isShortMessageToControl()) {
-			return !shortMessageTo;
-		}
-		return false;
-	}
-	
-    public boolean isShortMessageCc() {
-    	return shortMessageCc;
-	}
-
-	public void onChangeShortMessageCc(ActionEvent event){
-    	shortMessageCc = !shortMessageCc;
-    }
-	
-    private boolean isShortMessageCcControl() {
-    	try {
-			if (message.getRecipientsCc().length()>MAX_LENGTH_STRING) {
-				return true;	
-			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return false;
-	}
-
-	public boolean isShortMessageCcControlUp(){
-		if (isShortMessageCcControl()) {
-			return shortMessageCc;
-		}
-		return false;
-	}
-	
-	public boolean isShortMessageCcControlDown(){
-		if (isShortMessageCcControl()) {
-			return !shortMessageCc;
-		}
-		return false;
-	}
-	
-	//********************************************************************************************
 	// TO ADDED TO CONTACTS
 	//********************************************************************************************
 
@@ -965,49 +429,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 	public void setContactName(String contactName) {
 		this.contactName = contactName;
 	}
-
-	private void initContactName() {
-		this.contactName = "";
-		try {
-			if ( this.message != null ) {
-				String sender = message.getSenderSummary();
-				String email = message.getSenderEmail();
-				if ( StringUtils.equals(sender, email) ) {
-					int pos = email.indexOf('@');
-					this.contactName = (pos != -1) ? email.substring(0, pos) : email;
-				} else {
-					this.contactName = sender;
-				}
-			}
-		} catch (WebmailException e) {
-			LOGGER.error( "Error setting contactName", e );
-		}
-    }
-
-	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
-		String email = message.getSenderEmail();
-		IController contactController = FormUtil.getController(BEAN_CONTACT_DB);
-		IManagerBean contactsBean = contactController.getManagerBean();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(contactsBean.getFieldName(IWebMailAlias.CONTACT_EMAIL), email);
-		List<ITransferObject> list = contactsBean.getList(criteria);
-		if (list.size()==0){
-			Contact contact = new Contact();
-			contact.setEmail(email);
-			contact.setDisplayName(contactName);
-			int pos = contactName.indexOf(' ');
-			if ( pos != -1 ) {
-				contact.setDisplayName(contactName.substring(0, pos));
-				String surname = StringUtils.trimToNull( StringUtils.substring(contactName, pos+1) );
-				contact.setSurname(surname);
-			} else {
-				contact.setDisplayName(contactName);
-			}
-
-			contactsBean.insert(contact);		
-			contactController.onSearch(null);
-		}
-    }
 	
 	public IMailAccount getSenderMailAccount() {
 		return senderMailAccount;
@@ -1038,70 +459,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 			content = StringUtils.defaultString(messageBody);	
 		}		
 	}
-	
-	private VelocityHelper getVelocityHelper() {
-		if ( this.velocityHelper == null ) {
-			this.velocityHelper = new VelocityHelper();
-			try {
-				this.velocityHelper.init( VM_PATH_DEFAULT );
-			} catch (Exception e) {
-				LOGGER.error( "Velocity engine could not be initialized", e );
-			}
-		}
-		return this.velocityHelper;
-	}
-	
-	
-	private void printMessage( HttpServletResponse response, AonMessage message ) {
-		try {
-			response.setContentType(MimeType.MIME_HTML.getName());
-			Writer out = new OutputStreamWriter( response.getOutputStream() );
-			TemplateHelper th = getVelocityHelper().getTemplateHelper();
-			FacesContext context = FacesContext.getCurrentInstance();
-			th.putInContext("contextPath", context.getExternalContext().getRequestContextPath());
-			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-			th.putInContext("username", loggedUser.getLoggedUserName());
-			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
-			th.putInContext("nowDate", df.format(new Date()));
-			th.putInContext("fromLiteral", AonUtil.getMessage(ICommonMessages.FROM_MESSAGE));
-			th.putInContext("sender", message.getSender());
-			th.putInContext("toLiteral", AonUtil.getMessage(ICommonMessages.TO_MESSAGE));
-			th.putInContext("recipientsTo", message.getRecipientsTo());
-			String cc = message.getRecipientsCc();
-			if (! StringUtils.isEmpty(cc) ) {
-				th.putInContext("ccLiteral", AonUtil.getMessage(ICommonMessages.CC_MESSAGE));
-				th.putInContext("recipientsCc", cc );				
-			}
-			th.putInContext("dateLiteral", AonUtil.getMessage(ICommonMessages.DATE));
-			th.putInContext("sentDateString", message.getSentDateString());
-			th.putInContext("subjectLiteral", AonUtil.getMessage(ICommonMessages.SUBJECT));
-			th.putInContext("subject", message.getSubject());
-			th.putInContext("messageContent", getMessageContent());
-			th.processTemplate(PRINT_TEMPLATE, out);
-			response.flushBuffer();
-			out.close();
-		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e);
-		} catch (AonException e) {
-			LOGGER.error( e.getMessage(), e);
-		} catch (WebmailException e) {
-			LOGGER.error( e.getMessage(), e);			
-		}		
-	}
-	
-    public void print( ActionEvent event ) throws MessagingException, WebmailException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        printMessage(response, this.message);
-        context.responseComplete();    	
-    }
-
-    public void save( ActionEvent event ) throws MessagingException, WebmailException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        save(response);
-        context.responseComplete();    	
-    }
     
 	public List<IContact> suggestionEmails( Object value ) {
 		if ( value != null ) {
@@ -1112,22 +469,6 @@ public class MessageController implements IWebMailConstants, Serializable {
 		}
     	return Collections.emptyList();
     }
-	
-	public String getMessageContent() {
-		return getMessageContent(message);
-	}
-
-	public String getMessageContent( AonMessage message ) {
-		if ( messageContent == null ) {
-			AonMessageTracer amt = new AonMessageTracer(message.getMessage());
-			try {
-				this.messageContent = amt.getBodyHTML();
-			} catch (Throwable e) {
-				this.messageContent = AonMessageUtils.HTML_LINE_BREAK;
-			}		
-		}
-		return this.messageContent;
-	}	
 	
 	public int getAttachRemoveIndex() {
 		return attachRemoveIndex;
@@ -1150,20 +491,16 @@ public class MessageController implements IWebMailConstants, Serializable {
 		this.showNewMessageWindow = showNewMessageWindow;
 	}
 
-	public SecurityInfo getSecurityInfo() {
-		return securityInfo;
-	}
-
-	public void setSecurityInfo(SecurityInfo securityInfo) {
-		this.securityInfo = securityInfo;
-	}
-
 	public boolean isAppendSignature() {
 		return appendSignature;
 	}
 
 	public void setAppendSignature(boolean appendSignature) {
 		this.appendSignature = appendSignature;
+	}
+    
+    public List<Address> getSentAddressList() {
+		return sentAddressList;
 	}
 
 	public void onSendEmail(ActionEvent event) {

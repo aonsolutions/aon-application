@@ -335,6 +335,10 @@
 			<value>com.code.aon.accounting.AccountEntryDetail</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>

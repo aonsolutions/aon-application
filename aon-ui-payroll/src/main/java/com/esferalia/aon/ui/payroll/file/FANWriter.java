@@ -181,11 +181,17 @@ public class FANWriter implements Serializable {
 		
 		List<ITransferObject> list = obtainContracts(ccc, getStartDate(), getEndDate());
 		if(!list.isEmpty()){
+			Integer previousPerson = null;
+			TRA tra = null;
 			for(ITransferObject to: list){
 				Contract contract = (Contract) to;
 				if(getSalary(contract)!=null && contract.getRegimeType()!=SSRegimeType.SELF_EMPLOYED){
-					TRA tra = createTRARecord(contract, emp);
-					emp.getTrabajadores().add(tra);
+					if(previousPerson==null || !previousPerson.equals(contract.getPerson().getId())){
+						tra = createTRARecord(contract, emp);
+						previousPerson = contract.getPerson().getId();
+						emp.getTrabajadores().add(tra);
+					}
+					tra.getDat().addAll(createDATRecords(contract));
 					++totalContractSum;
 				}
 			}
@@ -287,7 +293,7 @@ public class FANWriter implements Serializable {
 		ipf += doc;
 		tra.setIpf(ipf);
 		tra.setAyn(createAYNRecord(contract));
-		tra.setDat(createDATRecords(contract));
+//		tra.setDat(createDATRecords(contract));
 		return tra;
 	}
 	
@@ -319,15 +325,21 @@ public class FANWriter implements Serializable {
 	private List<DAT> createDATRecords(Contract contract) throws ManagerBeanException {
 		List<DAT> datList = new LinkedList<DAT>();
 		
-		datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
+		if(isLessThan7DaysContract(contract)){
+			datList.add(createDATRecord(contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract)));
+		} else {
+			datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
+		}
 		
 		// TODO comprobar que situaciones implican un nuevo segmento de tipo DAT
-		if(isPartialStrike(contract)){
-			datList.add(createDATRecord(contract, autoComplete("H", 1, " ", true), getContractDaysOrHours(contract)));
-		}
-		if(isMoonlighting(contract)){
-			datList.add(createDATRecord(contract, autoComplete("P", 2, " ", true), getContractDaysOrHours(contract)));
-		}
+		// TODO
+//		if(isPartialStrike(contract)){
+//			datList.add(createDATRecord(contract, autoComplete("H", 1, " ", true), getContractDaysOrHours(contract)));
+//		}
+		// TODO
+//		if(isMoonlighting(contract)){
+//			datList.add(createDATRecord(contract, autoComplete("P", 2, " ", true), getContractDaysOrHours(contract)));
+//		}
 		if(StringUtils.isNotBlank(getJournalReduction(contract))){
 			Integer itDays = getItDays(contract);
 			String code = getContractCode(contract).getValue();
@@ -338,18 +350,18 @@ public class FANWriter implements Serializable {
 			}
 			datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays));
 		}
-		if(isMonthSalary(contract)){
-			datList.add(createDATRecord(contract, autoComplete("M", 4, " ", true), getContractDaysOrHours(contract)));
-		}
-		if(isNoRetributionDischarge(contract)){
-			datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
-		}
-		if(StringUtils.isNotBlank(getOthers(contract))){
-			datList.add(createDATRecord(contract, autoComplete(getOthers(contract), 6, " ", true), getContractDaysOrHours(contract)));
-		}
-		if(isLessThan7DaysContract(contract)){
-			datList.add(createDATRecord(contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract)));
-		}
+		// TODO
+//		if(isMonthSalary(contract)){
+//			datList.add(createDATRecord(contract, autoComplete("M", 4, " ", true), getContractDaysOrHours(contract)));
+//		}
+		// TODO
+//		if(isNoRetributionDischarge(contract)){
+//			datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
+//		}
+		// TODO
+//		if(StringUtils.isNotBlank(getOthers(contract))){
+//			datList.add(createDATRecord(contract, autoComplete(getOthers(contract), 6, " ", true), getContractDaysOrHours(contract)));
+//		}
 		
 		return datList;
 	}
@@ -1181,8 +1193,11 @@ public class FANWriter implements Serializable {
 				cal.setTime(getStartDate());
 				return cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays; 
 			}
-			if( contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()) ){
-				return (int) getAvailableDays(getStartDate(), contract.getEndDate());
+			if( getStartDate().before(contract.getStartDate()) 
+					|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
+				Date start = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate();
+				Date end = (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
+				return (int) getAvailableDays(start, end);
 			} else {
 				return 30;
 			}
@@ -1196,8 +1211,11 @@ public class FANWriter implements Serializable {
 			endCal.setTime(getEndDate());
 			
 			long totalDays = 0;
-			if( contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()) ){
-				totalDays =  getAvailableDays(getStartDate(), contract.getEndDate());
+			if( getStartDate().before(contract.getStartDate()) 
+					|| (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate())) ){
+				Date start = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate();
+				Date end = (contract.getEndDate()!=null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
+				totalDays =  getAvailableDays(start, end);
 			} else {
 				totalDays =  getAvailableDays(getStartDate(), getEndDate());
 			}
@@ -1205,7 +1223,8 @@ public class FANWriter implements Serializable {
 			if(itDays!=null && itDays>0){
 				return Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
 			}
-			return Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
+			
+			return (totalDays * dayHours)<1?1:Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
 		}
 		return null;
 		

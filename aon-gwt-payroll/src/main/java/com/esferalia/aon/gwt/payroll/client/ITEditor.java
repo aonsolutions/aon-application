@@ -1,10 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options;
 import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.BarLabelStyle;
@@ -13,18 +11,19 @@ import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
@@ -33,37 +32,27 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 
 public class ITEditor<E> extends ResizeComposite {
 
-	private static final int ZOOM_STEP = 20;
-	private static final int MIN_ZOOM = 25;
-	private static final int MAX_ZOOM = 500;
-
-	private static final int DEFAULT_ZOOM = 135;
-
-	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.YEAR_MONTH);
+	private static final String ACTIVE = "Activo";
 
 	interface Binder extends UiBinder<Widget, ITEditor> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
-
-	
-	private int selectedYear; // Año seleccionado	
-
 	@UiField
-	ListBox dateListBox;
+	ScrollPanel scrollPanel;
+	@UiField
+	SimplePanel timelinePanel;
 
 	@UiField
 	Label titleLabel;
 
 	@UiField
-	Grid timeline;
+	ListBox dateListBox;
 
-	private int zoom = DEFAULT_ZOOM;
-	private com.esferalia.aon.gwt.payroll.shared.ITData itData;
+	private int selectedYear;
 	private Options options;
+	private com.esferalia.aon.gwt.payroll.shared.ITData itData;
 
 	public ITEditor() {
 		initWidget(binder.createAndBindUi(this));
@@ -87,24 +76,25 @@ public class ITEditor<E> extends ResizeComposite {
 
 	private void printTimelineChart(
 			final com.esferalia.aon.gwt.payroll.shared.ITData pITData) {
+
 		itData = pITData;
-		timeline.clearCell(0, 0);
-		timeline.setCellPadding(0);
-		timeline.setCellSpacing(0);		
+
 		// Create a callback to be called when the visualization API
 		// has been loaded.
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				try {
 					// Create a pie chart visualization.
-					TimeLineChart timeLine = new TimeLineChart(createTable(),
-							createOptions());
+					AbstractDataTable dataTable = createTable();
+					Options options = createOptions(dataTable);
+					TimeLineChart timeLine = new TimeLineChart(dataTable,
+							options);
 
 					if (itData.getEmployees().isEmpty()) {
 						Window.alert("No hay datos");
 					} else {
-						timeline.setWidget(0, 0, timeLine);	
-						
+						timelinePanel.setWidget(timeLine);
+
 					}
 
 				} catch (Throwable ex) {
@@ -113,6 +103,7 @@ public class ITEditor<E> extends ResizeComposite {
 
 			}
 		};
+
 		// Load the visualization api, passing the onLoadCallback to be called
 		// when loading is done.
 
@@ -121,13 +112,12 @@ public class ITEditor<E> extends ResizeComposite {
 
 	}
 
-	private Options createOptions() {
+	private Options createOptions(AbstractDataTable dataTable) {
 
 		options = Options.create();
 
-		options.setWidth((8 * this.getOffsetWidth()) / 9);
-		options.setHeight((5*this.getOffsetHeight())/6);		
-		
+		options.setWidth((8 * scrollPanel.getOffsetWidth()) / 9);
+		options.setHeight((8 * scrollPanel.getOffsetHeight()) / 9);
 
 		Timeline timeline = Timeline.create();
 		options.setAvoidOverlappingGridLines(false);
@@ -135,29 +125,42 @@ public class ITEditor<E> extends ResizeComposite {
 		timeline.setShowBarLabels(false);
 
 		BarLabelStyle barLabelStyle = BarLabelStyle.create();
-		barLabelStyle.setFontName("Helvetica");
+		barLabelStyle.setFontName("Arial");
 		barLabelStyle.setFontSize("10");
+		barLabelStyle.setColor("#4b4b4b");
 
 		RowLabelStyle rowStyle = RowLabelStyle.create();
 		rowStyle.setFontName("Arial");
-		rowStyle.setFontSize("9");
+		rowStyle.setFontSize("10");
+		rowStyle.setColor("#4b4b4b");
 
 		timeline.setRowLabelStyle(rowStyle);
 		timeline.setBarLabelStyle(barLabelStyle);
 
 		options.setTimeline(timeline);
+
+		List<String> statusList = new LinkedList<String>();
+		for (int row = 0; row < dataTable.getNumberOfRows(); row++){
+			String status = dataTable.getValueString(row, 1);
+			if ( !statusList.contains(status))
+				statusList.add( status ); 
+
+		}
 		
-		//No funciona
-		//options.setColors("#FF99FF","#D65C33");
-		//data.addColors(options);
-		//options.setColors(data.getColors());
-		
+		int i = 0;
+		String colors [] = new String[statusList.size()] ;
+		for (String status : statusList)
+			colors[i++]=getColor(status);
+
+		options.setColors(colors);
 
 		return options;
 	}
 
 	private final AbstractDataTable createTable() {
+
 		DataTableWrapper data = new DataTableWrapper();
+
 		Date startYear = DateUtils.getFirstDayOfYear(DateUtils.getDate(0,
 				selectedYear));
 		Date endYear = DateUtils.getLastDayOfYear(DateUtils.getDate(11,
@@ -172,15 +175,15 @@ public class ITEditor<E> extends ResizeComposite {
 					&& (DateUtils.compare(end, startYear) >= 0)) {
 
 				int contractId = employee.getId();
-				
+
 				start = DateUtils.after(start, startYear);
 				end = DateUtils.before(end, endYear);
 
 				if (itData.getITDataPerson(contractId).size() > 0) {
-					
+
 					Date leaveStart = null;
 					Date leaveEnd = null;
-					
+
 					for (ITDataPerson itDataPerson : itData
 							.getITDataPerson(contractId)) {
 
@@ -190,25 +193,28 @@ public class ITEditor<E> extends ResizeComposite {
 										itDataPerson.getLeaveEndDate(),
 										startYear) < 0))
 							continue;
-						
-						int type = itDataPerson.getType();
-						String baja = itData.getLeaveTypePosition(type);
+
+						Type type = itDataPerson.getType();
 
 						leaveStart = DateUtils.after(
 								itDataPerson.getLeaveStartDate(), startYear);
 						leaveEnd = DateUtils.before(
 								itDataPerson.getLeaveEndDate(), endYear);
-						data.addRow(employee.getFullname(), "Activo", start, leaveStart);
-						data.addRow(employee.getFullname(), baja, leaveStart,
-								leaveEnd);
-						start = leaveEnd;				
+
+						data.addRow(employee.getFullname(), ACTIVE, start,
+								leaveStart);
+
+						data.addRow(employee.getFullname(),
+								type.getDescription(), leaveStart, leaveEnd);
+
+						start = leaveEnd;
 
 					}
-					
-					data.addRow(employee.getFullname(), "Activo", start, end);
-					
+
+					data.addRow(employee.getFullname(), ACTIVE, start, end);
+
 				} else {
-					data.addRow(employee.getFullname(), "Activo", start, end);
+					data.addRow(employee.getFullname(), ACTIVE, start, end);
 				}
 			}
 		}
@@ -222,7 +228,7 @@ public class ITEditor<E> extends ResizeComposite {
 	@UiHandler("dateListBox")
 	void onYearChanged(ChangeEvent event) {
 		selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox
-				.getSelectedIndex()));		
+				.getSelectedIndex()));
 
 		printTimelineChart(itData);
 	}
@@ -239,23 +245,16 @@ public class ITEditor<E> extends ResizeComposite {
 				.getSelectedIndex()));
 	}
 
-	// -------------------------------------------------------------
+	// ---------------------------------------------------------------- Library
 
 	private static class DataTableWrapper {
 
-		private DataTable data;
 		private int row;
-		private List<String> listColors;
-		private String[] colors;
-		private Map<String, String> typeColors;
-		
+		private DataTable data;
 
 		public DataTableWrapper() {
-			data = DataTable.create();
 			row = 0;
-			typeColors = new LinkedHashMap<String, String>();
-			listColors = new LinkedList<String>();
-
+			data = DataTable.create();
 			initColumns();
 		}
 
@@ -263,20 +262,21 @@ public class ITEditor<E> extends ResizeComposite {
 
 			data.addColumn(ColumnType.STRING, "Nombre");
 			data.addColumn(ColumnType.STRING, "Estado");
-			data.addColumn(ColumnType.DATE, "Start");
+			data.addColumn(ColumnType.DATE, "Inicio");
 			data.addColumn(ColumnType.DATE, "Fin");
 
 		}
 
-		public void addRow(String pName, String pEstado, Date pStartDate,
+		public void addRow(String pName, String pStatus, Date pStartDate,
 				Date pEndDate) {
-			data.addRow();			
+			data.addRow();
 			
 			data.setValue(row, 0, pName);
-			data.setValue(row, 1, pEstado);
-			data.setValue(row, 2, pStartDate);
-			data.setValue(row, 3, pEndDate);			
 			
+			data.setValue(row, 1, pStatus);
+			data.setValue(row, 2, pStartDate);
+			data.setValue(row, 3, pEndDate);
+
 			this.row++;
 		}
 
@@ -284,6 +284,38 @@ public class ITEditor<E> extends ResizeComposite {
 			return data;
 		}
 
+	}
+
+	public static String getColor(Type type) {
+		if ( type == null )
+			return "#A0C3FF";
+		
+		switch (type) {
+		case MATERNITY:
+		case PREGNANCY_RISK:
+		case BREASTFEEDING_RISK:
+			return "#FF66CC";
+		case PATERNITY:
+			return "#36C";
+		case OCCUPATIONAL_DISEASE:
+			return "#AA0033";
+		
+		default:
+			return "#FFA500";
+		}
+
+	}
+
+	private static String getColor(String status) {
+		return  getColor(getType(status));
+
+	}
+
+	private static ITDataPerson.Type getType(String description) {
+		for (ITDataPerson.Type type : Type.values())
+			if (StringUtils.equals(type.getDescription(), description))
+				return type;
+		return null;
 	}
 
 }

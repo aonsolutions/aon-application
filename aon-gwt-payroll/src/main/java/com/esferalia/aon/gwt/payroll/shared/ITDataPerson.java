@@ -5,13 +5,35 @@ import java.util.Date;
 
 public class ITDataPerson implements Serializable {
 
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1519604556575978934L;
 	
+	public static enum Type implements HasDescription{
+		COMMON_DISEASE("Enfermedad Com\u00FAn"),
+		OCCUPATIONAL_DISEASE("Enfermedad Profesional"),
+		MATERNITY("Maternidad"),
+		PATERNITY("Paternidad"),
+		PREGNANCY_RISK("Riesgo Durante Embarazo"),
+		BREASTFEEDING_RISK("Lactancia Materna"),
+		NON_OCCUPATIONAL_DISEASE("Enfermedad No Profesional");
+		
+		private String description;
+		
+		private Type(String description) {
+			this.description = description;
+		}
+		
+		public String getDescription() {
+			return this.description;
+		};
+	}
+	
+
 	private int contractId;
-	private int type;	
+	private Type type;	
 	
 	private Date leaveStartDate;
 	private Date leaveEndDate;	
@@ -44,11 +66,11 @@ public class ITDataPerson implements Serializable {
 		this.leaveEndDate = end_date;
 	}
 
-	public int getType() {
+	public Type getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 	

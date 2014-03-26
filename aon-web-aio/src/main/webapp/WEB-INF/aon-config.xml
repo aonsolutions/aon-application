@@ -210,14 +210,6 @@
 		/>
 	</warehouse:config>
 
-	<webmail:config version="1.3" xmlns:webmail="http://www.esferalia.com/webmail" >
-		<webmail:webmail
-			connect="false"
-			showDomainMailAccounts="true"
-			connectDomainMailAccounts="false"			
-		/>
-	</webmail:config>	
-
 	<audit:config version="1.0" xmlns:audit="http://www.esferalia.com/audit">
 		<audit:actionDenied
 			modulesEnabled="true" 
