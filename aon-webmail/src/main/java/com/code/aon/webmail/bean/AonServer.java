@@ -233,6 +233,16 @@ public class AonServer implements IMailConstants {
             return null;
         }
     }
+
+    public Folder getFolder(String folderName) {
+        try {
+        	ensureConnection();
+            return store.getFolder(folderName);
+        } catch (MessagingException e) {
+        	LOGGER.error("getAonFolder failed " , e);
+            return null;
+        }
+    }
     
 	public AonFolder createAonFolder(AonFolder parent, String folderName, int type) {
 		try {

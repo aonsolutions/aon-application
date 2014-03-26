@@ -57,7 +57,6 @@ import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.PublishParameterController;
 import com.code.aon.ui.config.util.FTPUtil;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.util.VelocityUtil;
 import com.code.aon.ui.infoweb.velocity.ImageHandler;
@@ -67,7 +66,7 @@ import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class GeneratorController extends BasicController implements VelocityConstants  {
+public class GeneratorController implements VelocityConstants  {
 
 	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION = "WebInfoPageResource.rattach.description";
 
