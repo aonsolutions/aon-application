@@ -74,7 +74,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private ITransferObject to;
 
 	/** Represent the model of data that we are going to interact with */
-	protected transient DataModel model;
+	protected DataModel model;
 
 	private boolean isNew;
 

@@ -1,8 +1,6 @@
 package com.code.aon.ui.form;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -253,16 +251,6 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	public SortOrderMap getSortOrder() {
 		return sortOrder;
 	}	
-	
-	private void writeObject(ObjectOutputStream oos) throws IOException {
-		oos.writeObject( getWrappedData() );
-		oos.writeInt( getRowIndex() );
-	}
-
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
-		this.setWrappedData( ois.readObject() );
-		this.setRowIndex( ois.readInt() );
-	}
 
 	@Override
 	public Object getRowKey() {

@@ -50,9 +50,9 @@ public class TestServlet extends HttpServlet {
 			LOGGER.error(e.getMessage(),e);
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
-			DatabaseUtil.closeQuietly(c);
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(c);
 			LOGGER.info("TestServlet: ("+domainId+") response time : " + (new Date().getTime() - start.getTime()) + "Ms.");
 		}
 		
