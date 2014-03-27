@@ -78,7 +78,8 @@ public class DataScrollerHandler extends TagHandler {
 		if ( table != null ) {
 			rowsVE = table.getValueExpression(IRichFacesTags.ROWS);
 			if ( rowsVE == null ) {
-				rowsVE = FaceletUtil.getValueExpression(ctx, "#{0}", Integer.class);	
+				int rows = Math.max(table.getRows(), 0);
+				rowsVE = FaceletUtil.getValueExpression(ctx, "#{"+rows+"}", Integer.class);	
 			}
 		}
 		return rowsVE;

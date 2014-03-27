@@ -59,6 +59,10 @@ public class AonMessageSortableList extends AonSortableList {
 		return server;
 	}	
 
+	public String getName() {
+    	return folder.getName();
+    }	
+
 	/**
 	 * @return the messageList
 	 */

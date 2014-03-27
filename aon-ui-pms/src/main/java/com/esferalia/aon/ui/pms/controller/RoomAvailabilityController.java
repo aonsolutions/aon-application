@@ -22,14 +22,13 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
 
-public class RoomAvailabilityController extends BasicController implements IPmsConstants {
+public class RoomAvailabilityController implements IPmsConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

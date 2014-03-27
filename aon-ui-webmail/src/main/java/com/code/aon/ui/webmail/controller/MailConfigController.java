@@ -11,6 +11,7 @@ import javax.faces.convert.Converter;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.mail.Folder;
 import javax.mail.MessagingException;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -28,9 +29,8 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.webmail.bean.EmailFolder;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 public class MailConfigController implements Serializable {
@@ -49,7 +49,7 @@ public class MailConfigController implements Serializable {
 	
 	private boolean showMailAccountList;
 
-	private TreeNode<AonFolder> rootNode;
+	private TreeNode<EmailFolder> rootNode;
 	
 	private String selectedFolder;
 	
@@ -160,7 +160,7 @@ public class MailConfigController implements Serializable {
 	
 	public void selectFolder(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
-		AonFolder folder = (AonFolder) tree.getRowData();
+		EmailFolder folder = (EmailFolder) tree.getRowData();
 		try {
 			BeanUtils.setProperty( getMailAccount().getTo(), selectedFolder, folder.getFullName() );
 		} catch (Throwable e) {
@@ -183,29 +183,31 @@ public class MailConfigController implements Serializable {
 	}
 
 	private void loadTree( AonServer server ) {
-		AonFolder folder = new AonFolder(server.getRoot(), server);
-		rootNode = new TreeNodeImpl<AonFolder>();
+		Folder rootFolder = server.getRoot();
+		EmailFolder folder = new EmailFolder(rootFolder, server);
+		rootNode = new TreeNodeImpl<EmailFolder>();
 		rootNode.setData(folder);
-		addNodes(rootNode);
+		addNodes(rootFolder, rootNode);
 	}
 	
-	private void addNodes(TreeNode<AonFolder> parent) {
-		AonFolder folder = parent.getData();
+	private void addNodes(Folder folder, TreeNode<EmailFolder> parent) {
+		AonServer server = parent.getData().getServer();
 		try {
-			for( AonFolder aonFolder : folder.getFolderList() ) {
-				TreeNode<AonFolder> node = new TreeNodeImpl<AonFolder>();
-				node.setData(aonFolder);
-				parent.addChild(aonFolder.getName(), node);
-				if ( aonFolder.isHoldFolders() ) {
-					addNodes( node );
+			for( Folder childFolder : folder.list() ) {
+				TreeNode<EmailFolder> node = new TreeNodeImpl<EmailFolder>();
+				EmailFolder emailFoder = new EmailFolder(childFolder, server);
+				node.setData(emailFoder);
+				parent.addChild(emailFoder.getName(), node);
+				if ( EmailFolder.isHoldFolders(childFolder) ) {
+					addNodes(childFolder, node );
 				}
 			}
-		} catch (WebmailException e) {
+		} catch (MessagingException e) {
 			throw new FacesException(e.getMessage(), e);
 		}
 	}	
 	
-	public TreeNode<AonFolder> getTreeNode() {
+	public TreeNode<EmailFolder> getTreeNode() {
 		return rootNode;
 	}
 
