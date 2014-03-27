@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.31.1
+# Version: 7.32.0
 # Created by: girazu
-# Creation Date: 18/03/2014 18:35
+# Creation Date: 27/03/2014 17:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -7081,6 +7081,8 @@ CREATE TABLE `salary_payment` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
+  `irpf` double(15,3) default '0.000' COMMENT 'Importe I.R.P.F',
+  `quote` double(15,3) default '0.000' COMMENT 'Importe Cotizable',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_PAYMENT_SALARY` (`salary`),
   KEY `IDX_SALARY_PAYMENT_DOMAIN` (`domain`),
@@ -7664,7 +7666,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.31.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.32.0');
 
 COMMIT;
 
