@@ -50,6 +50,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
@@ -73,8 +74,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private PayMethodTypeDetail payMethodTypeDetail;
 	private SecurityLevel securityLevel;
 	private String concept;
-	private DataModel lines;
-	private DataModel finances;
+	private DataScrollerState linesState;
+	private DataScrollerState financesState;
 	private List<Finance> lineChecks;
 	private List<Finance> financeChecks;
 	private String onGenerateKey;
@@ -192,27 +193,53 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 
 	public DataModel getLines() {
-		if (lines == null) {
-			lines = new ListDataModel(new LinkedList<Finance>());
-		}
-		return lines;
+		return getLinesState().getDirectModel();
 	}
 
 	public void setLines(DataModel lines) {
-		this.lines = lines;
+		if ( lines == null ) {
+			setLinesState(null);
+		} else {
+			getLinesState().setModel(lines);
+		}
+	}
+	
+	public DataScrollerState getLinesState() {
+		if (linesState == null) {
+			DataModel model = new ListDataModel(new LinkedList<Finance>());
+			setLinesState( new DataScrollerState(model, "lines"));
+		}		
+		return linesState;
+	}
+
+	public void setLinesState(DataScrollerState linesState) {
+		this.linesState = linesState;
 	}
 
 	public DataModel getFinances() {
-		if (finances == null) {
-			finances = new ListDataModel(new LinkedList<Finance>());
-		}
-		return finances;
+		return getFinancesState().getDirectModel();
 	}
 
 	public void setFinances(DataModel finances) {
-		this.finances = finances;
+		if ( finances == null ) {
+			setFinancesState(null);
+		} else {
+			getFinancesState().setModel(finances);
+		}
 	}
 	
+	public DataScrollerState getFinancesState() {
+		if (financesState == null) {
+			DataModel model = new ListDataModel(new LinkedList<Finance>());
+			setFinancesState( new DataScrollerState(model, "finances"));
+		}		
+		return financesState;
+	}
+
+	public void setFinancesState(DataScrollerState financesState) {
+		this.financesState = financesState;
+	}
+
 	public void onReset(ActionEvent event) {
 		try {
 			reset();
@@ -259,7 +286,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	@SuppressWarnings("unchecked")
 	public double getTotal() {
 		double total = 0.0;
-		Iterator<Finance> iterator = ((List<Finance>)lines.getWrappedData()).iterator();
+		Iterator<Finance> iterator = ((List<Finance>)getLines().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = iterator.next();
 			total += finance.getTotalAmount();
@@ -298,7 +325,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
             criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
             criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_CONCEPT));
             resetOrder();
-            this.finances = new ListDataModel(financeBean.getList(criteria));
+            setFinances(new ListDataModel(financeBean.getList(criteria)));
         } catch (ManagerBeanException e) {
             LOGGER.error("Error loading Finance model", e);
         }
@@ -306,7 +333,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private Expression obtainExistingLinesIds(IManagerBean bean) throws ManagerBeanException {
 		Expression expression = null;
-		Iterator<?> iterator = ((List<?>)lines.getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)getLines().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			Expression idExpression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_ID), finance.getId());
@@ -325,8 +352,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
         Iterator<?> iterator = getCheckedFinances().iterator();
         while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			((List)lines.getWrappedData()).add(finance);
-			((List)finances.getWrappedData()).remove(finance);
+			((List)getLines().getWrappedData()).add(finance);
+			((List)getFinances().getWrappedData()).remove(finance);
         }
         clearCheckedLines();
         clearCheckedFinances();
@@ -337,8 +364,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
         Iterator<?> iterator = getCheckedLines().iterator();
         while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			((List)lines.getWrappedData()).remove(finance);
-			((List)finances.getWrappedData()).add(finance);
+			((List)getLines().getWrappedData()).remove(finance);
+			((List)getFinances().getWrappedData()).add(finance);
         }
         clearCheckedLines();
         clearCheckedFinances();
@@ -368,11 +395,11 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			recordingTo.setPaymentAccount(obtainPaymentAccount());
 			recordingTo.setBalancingConcept(getConcept());
 			recordingTo.setSecurityLevel(getSecurityLevel());
-			recordingTo.setFinanceList((List<Finance>)lines.getWrappedData());
+			recordingTo.setFinanceList((List<Finance>)getLines().getWrappedData());
 			accountEntry = getWriter().recordFinances(recordingTo, accountEntry);
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Iterator<Finance> iterator = ((List<Finance>)lines.getWrappedData()).iterator();
+			Iterator<Finance> iterator = ((List<Finance>)getLines().getWrappedData()).iterator();
 			while (iterator.hasNext()) {
 				Finance finance = iterator.next();
 				finance = (Finance)HibernateUtil.getSession(sessionName).merge(finance);
@@ -520,8 +547,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 
 	public boolean isLastTracking() throws ManagerBeanException {
-		if (lines.isRowAvailable()) {
-			Finance finance = (Finance)lines.getRowData();
+		if (getLines().isRowAvailable()) {
+			Finance finance = (Finance)getLines().getRowData();
 			return isLastTracking(finance);
 		}
 		return true;
@@ -577,18 +604,18 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 	
 	public boolean getRowCheckedFinances() {
-		Finance to = (Finance) finances.getRowData();
+		Finance to = (Finance) getFinances().getRowData();
 		return financeChecks.contains(to);
 	}
 	
 	public void setRowCheckedFinances(boolean rowChecked) {
 		if (rowChecked) {
-			Finance to = (Finance) finances.getRowData();
+			Finance to = (Finance) getFinances().getRowData();
 			if (!financeChecks.contains(to)) {
 				financeChecks.add(to);
 			}
 		} else {
-			Finance to = (Finance) finances.getRowData();
+			Finance to = (Finance) getFinances().getRowData();
 			if (financeChecks.contains(to)) {
 				financeChecks.remove(to);
 			}
@@ -604,7 +631,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 
 	public void checkAllFinances(ActionEvent event) {
-		Iterator<?> iterator = ((List<?>)finances.getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)getFinances().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			if (!financeChecks.contains(finance)) {
@@ -628,18 +655,18 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 	
 	public boolean getRowCheckedLines() {
-		Finance to = (Finance) lines.getRowData();
+		Finance to = (Finance) getLines().getRowData();
 		return lineChecks.contains(to);
 	}
 	
 	public void setRowCheckedLines(boolean rowChecked) {
 		if (rowChecked) {
-			Finance to = (Finance) lines.getRowData();
+			Finance to = (Finance) getLines().getRowData();
 			if (!lineChecks.contains(to)) {
 				lineChecks.add(to);
 			}
 		} else {
-			Finance to = (Finance) lines.getRowData();
+			Finance to = (Finance) getLines().getRowData();
 			if (lineChecks.contains(to)) {
 				lineChecks.remove(to);
 			}
@@ -655,7 +682,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	}
 
 	public void checkAllLines(ActionEvent event) throws ManagerBeanException {
-		Iterator<?> iterator = ((List<?>)lines.getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)getLines().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			if (!lineChecks.contains(finance) && isLastTracking(finance)) {

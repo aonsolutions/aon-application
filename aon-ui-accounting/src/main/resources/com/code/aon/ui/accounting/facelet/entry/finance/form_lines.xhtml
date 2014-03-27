@@ -31,100 +31,101 @@
 	</aon:div>
 
 	<aon:div id="lineDataDiv">
-		<aon:dataTable id="lineData" value="#{financeEntry.lines}" sortMode="multi"
-			var="to" rows="20" rendered="#{financeEntry.lines.rowCount > 0}"
-			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:selectBooleanCheckbox id="Checked_Lines"
-					value="#{financeEntry.rowCheckedLines}"
-					valueChangeListener="#{financeEntry.rowSelectedLines}"
-					rendered="#{financeEntry.lastTracking}" />	
-				<aon:div style="display:inline;cursor:pointer;">
-					<aon:outputText value="&#160;"
-						styleClass="aon-icon-errorwarning" style="padding-left:20px"
-						rendered="#{!financeEntry.lastTracking}" />
-					<rich:toolTip value="#{bundle.accounting_finance_payment_returned_info}" />
-				</aon:div>
-			</aon:column>
-
-			<aon:column sortBy="#{to.dueDate}"
-				sortOrder="#{financeEntry.order['Finance_dueDate']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_finance_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.dueDate}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-			</aon:column>
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+			<ui:param name="controller" value="#{financeEntry.linesState}" />
+			<ui:param name="skipSelectButton" value="true" />
+			<ui:param name="rowSelectorToggleOnClick" value="false" />		
+			<ui:param name="showNote" value="false" />
 	
-			<aon:column sortBy="#{to.invoice.referenceCode}"
-				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_invoice}" />
-				</f:facet>
-				<aon:outputText value="#{to.invoice.referenceCode}" />
-			</aon:column>
-			
-			<aon:column sortBy="#{to.concept}"
-				sortOrder="#{financeEntry.order['Finance_concept']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_document_number}" />
-				</f:facet>
-				<h:outputText value="#{to.concept}" />
-			</aon:column>
-
-			<aon:column sortBy="#{to.registryName}"
-				sortOrder="#{financeEntry.order['Finance_registryName']}">
-				<f:facet name="header">
-					<aon:outputText value="#{(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
-				</f:facet>
-				<aon:outputText value="#{to.registryName}" />
-			</aon:column>
+			<ui:define name="columns">
 	
-			<aon:column sortBy="#{to.financeStatus}"
-				sortOrder="#{financeEntry.order['Finance_financeStatus']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
-				</f:facet>
-				<aon:outputText value="#{to.financeStatus}"/>
-			</aon:column>
+				<aon:column styleClass="aon-editDataTable-iconColumn" >
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:selectBooleanCheckbox id="Checked_Lines"
+						value="#{financeEntry.rowCheckedLines}"
+						valueChangeListener="#{financeEntry.rowSelectedLines}"
+						rendered="#{financeEntry.lastTracking}" />	
+					<aon:div style="display:inline;cursor:pointer;">
+						<aon:outputText value="&#160;"
+							styleClass="aon-icon-errorwarning" style="padding-left:20px"
+							rendered="#{!financeEntry.lastTracking}" />
+						<rich:toolTip value="#{bundle.accounting_finance_payment_returned_info}" />
+					</aon:div>
+				</aon:column>
 	
-			<aon:column sortBy="#{to.payMethod.name}"
-				sortOrder="#{financeEntry.order['Finance_payMethod_name']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_payMethod}" />
-				</f:facet>
-				<aon:outputText value="#{to.payMethod.name}" />
-			</aon:column>
-	
-			<aon:column sortBy="#{to.bankAccount}"
-				sortOrder="#{financeEntry.order['Finance_bankAccount']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_bank_account}" />
-				</f:facet>
-				<aon:outputText value="#{to.bankAccount}"/>
-			</aon:column>
-	
-			<aon:column sortBy="#{to.totalAmount}"
-				sortOrder="#{financeEntry.order['Finance_totalAmount']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_amount}" />
-				</f:facet>
-				<aon:outputText value="#{to.totalAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:column>
-			
-		</aon:dataTable>
+				<aon:column sortBy="#{to.dueDate}" styleClass="aon-editDataTable-textColumn" 
+					sortOrder="#{financeEntry.order['Finance_dueDate']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_finance_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.dueDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
 		
-		<aon:dataScroller for="lineData" showNote="false" />
+				<aon:column sortBy="#{to.invoice.referenceCode}" styleClass="aon-editDataTable-textColumn"
+					sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_invoice}" />
+					</f:facet>
+					<aon:outputText value="#{to.invoice.referenceCode}" />
+				</aon:column>
+				
+				<aon:column sortBy="#{to.concept}" styleClass="aon-editDataTable-textColumn"
+					sortOrder="#{financeEntry.order['Finance_concept']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_document_number}" />
+					</f:facet>
+					<h:outputText value="#{to.concept}" />
+				</aon:column>
+	
+				<aon:column sortBy="#{to.registryName}" styleClass="aon-editDataTable-textColumn"
+					sortOrder="#{financeEntry.order['Finance_registryName']}">
+					<f:facet name="header">
+						<aon:outputText value="#{(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
+					</f:facet>
+					<aon:outputText value="#{to.registryName}" />
+				</aon:column>
+		
+				<aon:column sortBy="#{to.financeStatus}" styleClass="aon-editDataTable-textColumn"
+					sortOrder="#{financeEntry.order['Finance_financeStatus']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_status}" />
+					</f:facet>
+					<aon:outputText value="#{to.financeStatus}"/>
+				</aon:column>
+		
+				<aon:column sortBy="#{to.payMethod.name}" styleClass="aon-editDataTable-textColumn"
+					sortOrder="#{financeEntry.order['Finance_payMethod_name']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_payMethod}" />
+					</f:facet>
+					<aon:outputText value="#{to.payMethod.name}" />
+				</aon:column>
+		
+				<aon:column sortBy="#{to.bankAccount}" styleClass="aon-editDataTable-textColumn"
+					sortOrder="#{financeEntry.order['Finance_bankAccount']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_bank_account}" />
+					</f:facet>
+					<aon:outputText value="#{to.bankAccount}"/>
+				</aon:column>
+		
+				<aon:column sortBy="#{to.totalAmount}" styleClass="aon-editDataTable-numberColumn"
+					sortOrder="#{financeEntry.order['Finance_totalAmount']}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_amount}" />
+					</f:facet>
+					<aon:outputText value="#{to.totalAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:column>
+			</ui:define>
+		</ui:decorate>			
+
 	</aon:div>
 	
 </ui:composition>
