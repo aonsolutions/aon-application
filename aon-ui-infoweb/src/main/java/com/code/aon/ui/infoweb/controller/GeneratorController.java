@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -67,7 +68,7 @@ import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class GeneratorController implements VelocityConstants  {
+public class GeneratorController implements VelocityConstants, Serializable  {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

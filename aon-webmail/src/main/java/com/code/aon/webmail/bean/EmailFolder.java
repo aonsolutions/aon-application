@@ -1,12 +1,18 @@
 package com.code.aon.webmail.bean;
 
+import java.io.Serializable;
+
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmailFolder {
+import com.code.aon.AonVersion;
+
+public class EmailFolder implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmailFolder.class);
 	

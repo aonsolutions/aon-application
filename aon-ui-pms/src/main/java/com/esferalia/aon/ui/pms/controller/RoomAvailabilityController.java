@@ -28,7 +28,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
 
-public class RoomAvailabilityController implements IPmsConstants {
+public class RoomAvailabilityController implements IPmsConstants, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
