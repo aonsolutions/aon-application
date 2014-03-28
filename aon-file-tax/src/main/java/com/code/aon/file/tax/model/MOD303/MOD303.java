@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
 public class MOD303 {
 
@@ -19,8 +18,7 @@ public class MOD303 {
 		}
 		List<Exception> exceptions = new LinkedList<Exception>();
 		try{
-			MOD303FactoryManager factoryManger = MOD303FactoryManager.getInstance();
-			IMOD303Factory factory = factoryManger.getFactory(format);
+			IMOD303Factory factory = format.getFactory().newInstance();
 			if (factory == null) {
 				throw new IllegalArgumentException("No se encontró un formateador válido para " + format);
 			}

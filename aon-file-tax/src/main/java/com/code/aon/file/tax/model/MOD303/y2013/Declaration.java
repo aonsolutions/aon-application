@@ -1,4 +1,4 @@
-package com.code.aon.file.tax.model.MOD303.data;
+package com.code.aon.file.tax.model.MOD303.y2013;
 
 import java.util.Date;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.CommonUtil;
 
-
+@Deprecated
 public class Declaration {
 
 	private Integer year;

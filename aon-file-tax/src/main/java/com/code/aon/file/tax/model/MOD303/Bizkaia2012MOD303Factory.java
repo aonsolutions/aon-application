@@ -18,8 +18,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD303.data.Breakdown;
-import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
 public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 	@Override
@@ -88,17 +86,19 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 			Map<String,Object> properties = new HashMap<String,Object>();
 			try {
 				for (Declaration declaration : declarations) {
-					properties.put(DECLARATION, declaration);
-					createLine(HEADER,properties);
-					if (StringUtils.isNotBlank(declaration.getCcc())) {
-						createLine(BANK_DATA,properties);	
-					}
-					createLine(DEPONENT,properties);
-					List<Entry> entries = getEntries(declaration);
-					for (Entry entry: entries) {
-						String id = ENTRY + entry.getType().toString();
-						properties.put("Entries", entry);
-						createLine(id,properties);
+					if (declaration.getGeneralRegime() != null) {
+						properties.put(DECLARATION, declaration);
+						createLine(HEADER,properties);
+						if (StringUtils.isNotBlank(declaration.getCcc())) {
+							createLine(BANK_DATA,properties);	
+						}
+						createLine(DEPONENT,properties);
+						List<Entry> entries = getEntries(declaration);
+						for (Entry entry: entries) {
+							String id = ENTRY + entry.getType().toString();
+							properties.put("Entries", entry);
+							createLine(id,properties);
+						}
 					}
 				}
 				getOutput().flush();
@@ -116,6 +116,7 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 		}
 
 		private List<Entry> getEntries(Declaration d) {
+			GeneralRegime gr = d.getGeneralRegime();
 			List<Entry> entries = new LinkedList<Entry>();
 			String c = (d.isComplementary()?"X":" "); 
 			entries.add( new Entry().setCode(01).setType(EntryType.MR).setMark(c).setText(c) );
@@ -128,7 +129,7 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 			String[] percents = new String[]{"4.0","8.0","18.0"};
 			int[] keys = new int[]{3,5,7};
 			for (int i = 0; i < percents.length; i++ ) {
-				Breakdown bd = d.getOutputVat().get(percents[i]);
+				Breakdown bd = gr.getOutputVat().get(percents[i]);
 				if (bd != null) {
 					int key = keys[i];  
 					entries.add( new Entry().setCode(key).setType(EntryType.IM).setAmountD( bd.getTaxableBase() ));
@@ -139,7 +140,7 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 			percents = new String[]{"0.5","1.0","4.0","1.75"};
 			keys = new int[]{9,11,13,15};
 			for (int i = 0; i < percents.length; i++ ) {
-				Breakdown bd = d.getSurcharge().get(percents[i]);
+				Breakdown bd = gr.getSurcharge().get(percents[i]);
 				if (bd != null) {
 					int key = keys[i];  
 					entries.add( new Entry().setCode(key).setType(EntryType.IM).setAmountD( bd.getTaxableBase() ));
@@ -147,27 +148,27 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 				}
 			}
 			
-			entries.add( new Entry().setCode(17).setType(EntryType.IM).setAmountD( d.getBaseIntracommunitary() ));
-			entries.add( new Entry().setCode(18).setType(EntryType.IM).setAmountD( d.getQuotaIntracommunitary() ));
+			entries.add( new Entry().setCode(17).setType(EntryType.IM).setAmountD( gr.getBaseIntracommunitary() ));
+			entries.add( new Entry().setCode(18).setType(EntryType.IM).setAmountD( gr.getQuotaIntracommunitary() ));
 
-			entries.add( new Entry().setCode(19).setType(EntryType.IM).setAmountD( d.getBaseInvPasive() ));
-			entries.add( new Entry().setCode(20).setType(EntryType.IM).setAmountD( d.getQuotaInvPasive() ));
+			entries.add( new Entry().setCode(19).setType(EntryType.IM).setAmountD( gr.getBaseInvPasive() ));
+			entries.add( new Entry().setCode(20).setType(EntryType.IM).setAmountD( gr.getQuotaInvPasive() ));
 			
-			entries.add( new Entry().setCode(21).setType(EntryType.IM).setAmountD( d.getBaseModifications() ));
-			entries.add( new Entry().setCode(22).setType(EntryType.IM).setAmountD( d.getQuotaModifications() ));
+			entries.add( new Entry().setCode(21).setType(EntryType.IM).setAmountD( gr.getBaseModifications() ));
+			entries.add( new Entry().setCode(22).setType(EntryType.IM).setAmountD( gr.getQuotaModifications() ));
 			
-			entries.add( new Entry().setCode(23).setType(EntryType.IM).setAmountD( d.getOutputTotal() ));
+			entries.add( new Entry().setCode(23).setType(EntryType.IM).setAmountD( gr.getOutputTotal() ));
 			
 			// *************
 			// IVA DEDUCIBLE
 			// *************
-			entries.add( new Entry().setCode(24).setType(EntryType.IM).setAmountD( d.getInnerOperationsTotalQuota() ));
-			entries.add( new Entry().setCode(25).setType(EntryType.IM).setAmountD( d.getImportedOperationsTotalQuota() ));
-			entries.add( new Entry().setCode(26).setType(EntryType.IM).setAmountD( d.getIntracommunitaryOperationsTotalQuota() ));
-			entries.add( new Entry().setCode(27).setType(EntryType.IM).setAmountD( d.getAgriculturalRegimeCompensation() ));
-			entries.add( new Entry().setCode(28).setType(EntryType.IM).setAmountD( d.getInvestmentNormalization() ));
-			entries.add( new Entry().setCode(29).setType(EntryType.IM).setAmountD( d.getProrataNormalization() ));
-			entries.add( new Entry().setCode(30).setType(EntryType.IM).setAmountD( d.getDeductTotal() ));
+			entries.add( new Entry().setCode(24).setType(EntryType.IM).setAmountD( gr.getInnerOperationsTotalQuota() ));
+			entries.add( new Entry().setCode(25).setType(EntryType.IM).setAmountD( gr.getImportedOperationsTotalQuota() ));
+			entries.add( new Entry().setCode(26).setType(EntryType.IM).setAmountD( gr.getIntracommunitaryOperationsTotalQuota() ));
+			entries.add( new Entry().setCode(27).setType(EntryType.IM).setAmountD( gr.getAgriculturalRegimeCompensation() ));
+			entries.add( new Entry().setCode(28).setType(EntryType.IM).setAmountD( gr.getInvestmentNormalization() ));
+			entries.add( new Entry().setCode(29).setType(EntryType.IM).setAmountD( gr.getProrataNormalization() ));
+			entries.add( new Entry().setCode(30).setType(EntryType.IM).setAmountD( gr.getDeductTotal() ));
 			entries.add( new Entry().setCode(31).setType(EntryType.IM).setAmountD( d.getDifference() ));
 			
 			// ***********
@@ -195,7 +196,7 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 			percents = new String[]{"4.0","8.0","18.0","?"};
 			keys = new int[]{50,53,56,59};
 			for (int i = 0; i < percents.length; i++ ) {
-				Breakdown bd = d.getInnerAssetPurchases().get(percents[i]);
+				Breakdown bd = gr.getInnerAssetPurchases().get(percents[i]);
 				if (bd != null) {
 					int key = keys[i];  
 					entries.add( new Entry().setCode(key).setType(EntryType.IM).setAmountD( bd.getTaxableBase() ));
@@ -203,14 +204,14 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 					entries.add( new Entry().setCode(++key).setType(EntryType.IM).setAmountD( bd.getDeductibleQuota() ));
 				}
 			}
-			entries.add( new Entry().setCode(65).setType(EntryType.IM).setAmountD( d.getBaseInnerAssetPurchases() ));			
-			entries.add( new Entry().setCode(66).setType(EntryType.IM).setAmountD( d.getQuotaInnerAssetPurchases() ));			
-			entries.add( new Entry().setCode(67).setType(EntryType.IM).setAmountD( d.getDeductibleQuotaInnerAssetPurchases() ));
+			entries.add( new Entry().setCode(65).setType(EntryType.IM).setAmountD( gr.getBaseInnerAssetPurchases() ));			
+			entries.add( new Entry().setCode(66).setType(EntryType.IM).setAmountD( gr.getQuotaInnerAssetPurchases() ));			
+			entries.add( new Entry().setCode(67).setType(EntryType.IM).setAmountD( gr.getDeductibleQuotaInnerAssetPurchases() ));
 			
 			percents = new String[]{"4.0","8.0","18.0","?"};
 			keys = new int[]{68,71,74,77};
 			for (int i = 0; i < percents.length; i++ ) {
-				Breakdown bd = d.getExpenses().get(percents[i]);
+				Breakdown bd = gr.getExpenses().get(percents[i]);
 				if (bd != null) {
 					int key = keys[i];  
 					entries.add( new Entry().setCode(key).setType(EntryType.IM).setAmountD( bd.getTaxableBase() ));
@@ -218,14 +219,14 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 					entries.add( new Entry().setCode(++key).setType(EntryType.IM).setAmountD( bd.getDeductibleQuota() ));
 				}
 			}
-			entries.add( new Entry().setCode(80).setType(EntryType.IM).setAmountD( d.getBaseExpenses() ));			
-			entries.add( new Entry().setCode(81).setType(EntryType.IM).setAmountD( d.getQuotaExpenses() ));			
-			entries.add( new Entry().setCode(82).setType(EntryType.IM).setAmountD( d.getDeductibleQuotaExpenses() ));
+			entries.add( new Entry().setCode(80).setType(EntryType.IM).setAmountD( gr.getBaseExpenses() ));			
+			entries.add( new Entry().setCode(81).setType(EntryType.IM).setAmountD( gr.getQuotaExpenses() ));			
+			entries.add( new Entry().setCode(82).setType(EntryType.IM).setAmountD( gr.getDeductibleQuotaExpenses() ));
 			
 			percents = new String[]{"4.0","8.0","18.0","?"};
 			keys = new int[]{83,86,89,92};
 			for (int i = 0; i < percents.length; i++ ) {
-				Breakdown bd = d.getInvestmentAsset().get(percents[i]);
+				Breakdown bd = gr.getInvestmentAsset().get(percents[i]);
 				if (bd != null) {
 					int key = keys[i];  
 					entries.add( new Entry().setCode(key).setType(EntryType.IM).setAmountD( bd.getTaxableBase() ));
@@ -233,13 +234,13 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 					entries.add( new Entry().setCode(++key).setType(EntryType.IM).setAmountD( bd.getDeductibleQuota() ));
 				}
 			}
-			entries.add( new Entry().setCode(95).setType(EntryType.IM).setAmountD( d.getBaseInvestmentAsset()));			
-			entries.add( new Entry().setCode(96).setType(EntryType.IM).setAmountD( d.getQuotaInvestmentAsset() ));			
-			entries.add( new Entry().setCode(97).setType(EntryType.IM).setAmountD( d.getDeductibleQuotaInvestmentAsset() ));
+			entries.add( new Entry().setCode(95).setType(EntryType.IM).setAmountD( gr.getBaseInvestmentAsset()));			
+			entries.add( new Entry().setCode(96).setType(EntryType.IM).setAmountD( gr.getQuotaInvestmentAsset() ));			
+			entries.add( new Entry().setCode(97).setType(EntryType.IM).setAmountD( gr.getDeductibleQuotaInvestmentAsset() ));
 
-			entries.add( new Entry().setCode(98).setType(EntryType.IM).setAmountD( d.getBaseTotalAddInfo()));			
-			entries.add( new Entry().setCode(99).setType(EntryType.IM).setAmountD( d.getQuotaTotalAddInfo() ));			
-			entries.add( new Entry().setCode(100).setType(EntryType.IM).setAmountD( d.getDeductibleQuotaTotalAddInfo() ));
+			entries.add( new Entry().setCode(98).setType(EntryType.IM).setAmountD( gr.getBaseTotalAddInfo()));			
+			entries.add( new Entry().setCode(99).setType(EntryType.IM).setAmountD( gr.getQuotaTotalAddInfo() ));			
+			entries.add( new Entry().setCode(100).setType(EntryType.IM).setAmountD( gr.getDeductibleQuotaTotalAddInfo() ));
 			
 			c = (d.isGeneralProrataApplied()?"X":" ");
 			entries.add( new Entry().setCode(101).setType(EntryType.MR).setMark(c).setText(c) );

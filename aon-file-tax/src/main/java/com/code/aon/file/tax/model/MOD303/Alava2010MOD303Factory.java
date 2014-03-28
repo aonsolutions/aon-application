@@ -15,9 +15,6 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import com.code.aon.file.tax.model.MOD303.data.Breakdown;
-import com.code.aon.file.tax.model.MOD303.data.Declaration;
-
 public class Alava2010MOD303Factory implements IMOD303Factory {
 	private static final String ENCODING = "ISO-8859-15";
 	private static final String ROOT = "AFADFA";
@@ -109,7 +106,9 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		Element dec = root.addElement(DECLARACION);
 		addDatosDec(dec,declaration);
 		addDeclarante(dec,declaration);
-		addModelo(dec,declaration);
+		if (declaration.getGeneralRegime() != null) {
+			addModelo(dec,declaration);
+		}
 	}
 
 	private void addDatosDec(Element dec, Declaration declaration) {
@@ -158,6 +157,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 
 
 	private void addModelo(Element dec, Declaration declaration) {
+		GeneralRegime gr = declaration.getGeneralRegime();
 		Element mod = dec.addElement(MODELO);
 		if ( declaration.isWithoutActivity()) {
 			mod.addElement(CLAVE).addAttribute(NUMERO,"90").addAttribute(VALOR, TRUE );	
@@ -171,7 +171,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		String[] percents = new String[]{"4.0","10.0","21.0","8.0","18.0","7.0","16.0"};
 		int[] keys = new int[]{1,204,207,104,107,4,7};
 		for (int i = 0; i < percents.length; ++i ) {
-			Breakdown bd = declaration.getOutputVat().get(percents[i]);
+			Breakdown bd = gr.getOutputVat().get(percents[i]);
 			if (bd != null) {
 				int k = keys[i];
 				addClave(mod,k,bd.getTaxableBase());
@@ -183,7 +183,7 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		percents = new String[]{"0.5","1.4","5.2","1.0","4.0"};
 		keys = new int[]{10,213,216,13,16};
 		for (int i = 0; i < percents.length; ++i ) {
-			Breakdown bd = declaration.getSurcharge().get(percents[i]);
+			Breakdown bd = gr.getSurcharge().get(percents[i]);
 			if (bd != null) {
 				int k = keys[i];
 				addClave(mod,k,bd.getTaxableBase());
@@ -195,14 +195,14 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		percents = new String[]{"4.0","10.0","21.0","8.0","18.0","7.0","16.0"};
 		keys = new int[]{19,222,225,122,125,22,25};
 		for (int i = 0; i < percents.length; ++i ) {
-			Breakdown bd = declaration.getIntracommunitary().get(percents[i]);
+			Breakdown bd = gr.getIntracommunitary().get(percents[i]);
 			if (bd != null) {
 				int k = keys[i];
 				addClave(mod,k,bd.getTaxableBase());
 				addClave(mod,++k,bd.getPercent());
 				addClave(mod,++k,bd.getQuota());
 			}
-			bd = declaration.getInvPasive().get(percents[i]);
+			bd = gr.getInvPasive().get(percents[i]);
 			if (bd != null) {
 				int k = keys[i];
 				addClave(mod,k,bd.getTaxableBase());
@@ -212,17 +212,17 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 			
 		}
 		
-		addClave(mod,28,declaration.getOutputTotal());
+		addClave(mod,28,gr.getOutputTotal());
 		
-		addClave(mod,30,declaration.getInnerCommonOperationsQuota() + declaration.getInnerExpensesOperationsQuota() );
-		addClave(mod,31,declaration.getInnerInvestmentOperationsQuota());
-		addClave(mod,32,declaration.getImportedCommonOperationsQuota());
-		addClave(mod,33,declaration.getImportedInvestmentOperationsQuota());
-		addClave(mod,34,declaration.getIntracommunitaryCommonOperationsQuota());
-		addClave(mod,35,declaration.getIntracommunitaryInvestmentOperationsQuota());
-		addClave(mod,36,declaration.getAgriculturalRegimeCompensation());
-		addClave(mod,37,declaration.getInvestmentNormalization());
-		addClave(mod,38,declaration.getDeductTotal());
+		addClave(mod,30,gr.getInnerCommonOperationsQuota() + gr.getInnerExpensesOperationsQuota() );
+		addClave(mod,31,gr.getInnerInvestmentOperationsQuota());
+		addClave(mod,32,gr.getImportedCommonOperationsQuota());
+		addClave(mod,33,gr.getImportedInvestmentOperationsQuota());
+		addClave(mod,34,gr.getIntracommunitaryCommonOperationsQuota());
+		addClave(mod,35,gr.getIntracommunitaryInvestmentOperationsQuota());
+		addClave(mod,36,gr.getAgriculturalRegimeCompensation());
+		addClave(mod,37,gr.getInvestmentNormalization());
+		addClave(mod,38,gr.getDeductTotal());
 		
 		addClave(mod,39,declaration.getDifference());
 		

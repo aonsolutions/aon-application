@@ -21,10 +21,6 @@ public enum MOD303Format {
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT
 			,Aeat2014MOD303Factory.class)
-	,AEAT_2010(2010
-			,Administration.COMMON_TERRITORY
-			,MimeType.MIME_TXT
-			,Aeat2010MOD303Factory.class)
 	;
 
 	private Integer year;
@@ -72,4 +68,21 @@ public enum MOD303Format {
 		}
 		return prefix + year + period +"."+getMimeType().getExtension();
 	}
+	
+	public synchronized static MOD303Format getFormat(Administration administration, int year) {
+		MOD303Format format = null;
+		for (MOD303Format f : MOD303Format.values()) {
+			if (f.getAdministration() == administration && year >= f.getYear()) {
+				format = f;
+				break;
+			}
+		}
+		if (format == null) {
+			String msg = "La generación de archivos para la administracion "
+					+ administration + " no está aún implementada.";
+			throw new IllegalArgumentException(msg);
+		}
+		return format;
+	}
+	
 }

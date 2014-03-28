@@ -50,7 +50,7 @@ public class Mod130 implements IFiscalDeclaration {
 		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		for (Mod130Key key : Mod130Key.values()) {
-			if (key.accept(admin)) {
+			if (key.accept(admin,fiscalModel.getPeriod())) {
 				ensureDetail(key);
 			}
 		}

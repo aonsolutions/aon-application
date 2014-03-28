@@ -17,6 +17,7 @@ import com.code.aon.fiscal.FiscalBatchDetail;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
+import com.code.aon.fiscal.mod303.IMod303Declaration;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.util.AonUtil;
@@ -109,7 +110,7 @@ public class Mod303BatchModel extends AbstractFiscalBatchModel {
 			AonUtil.addErrorMessage(msg);
 			throw new AonException(msg);
 		}
-		List<VatTaxDeclaration> declarations = new LinkedList<VatTaxDeclaration>();
+		List<IMod303Declaration> declarations = new LinkedList<IMod303Declaration>();
 		IManagerBean decBean = BeanManager
 				.getManagerBean(VatTaxDeclaration.class);
 		IManagerBean bean = BeanManager.getManagerBean(FiscalBatchDetail.class);
@@ -123,7 +124,7 @@ public class Mod303BatchModel extends AbstractFiscalBatchModel {
 			declarations.add((VatTaxDeclaration) decBean.get(detail
 					.getDetailId()));
 		}
-		FileOutput fileOutput = mod303Writer.createMOD303(declarations, format);
+		FileOutput fileOutput = mod303Writer.createMOD303(declarations,format);
 		if (fileOutput != null && fileOutput.getErrors().size() > 0) {
 			AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_DISK_ERROR);
 			AonUtil.addErrorMessage("");

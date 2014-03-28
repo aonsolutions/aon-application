@@ -266,8 +266,96 @@ public class Modules {
 		}
 	}
 	
-	public static void main(String[] args) {
-		
+	public double getFarmerQuota(int year, int activity) {
+		if (year == 2014) {
+			if (activity == 1) {
+				//01	Ganaderia intensiva porcino carne y avicultura carne.
+				return 0.10;
+			} else if (activity == 2) {
+			 	//02	Avicultura de huevos y ovino, caprino y bovino leche.
+				return 0.04;
+			} else if (activity == 3) {
+			 	//03	Ganaderia intensiva de bovino de carne y cunicultura.
+				return 0.10;
+			} else if (activity == 4) {
+				//04	Ganad. intensiva ganado porcino y bovino de cria y otras.
+				return 0.10;
+			} else if (activity == 5) {
+				//05	Ganaderia intensiva de ovino y caprino de carne.
+				return 0.10;
+			} else if (activity == 6) {
+				//06	Servicios de cria, guarda y engorde de aves.
+				return 0.06625;
+			} else if (activity == 7) {
+				//07	Apicultura
+				return 0.070;
+			} else if (activity == 8) {
+				//08	Trabajos y servicios accesorios excluidos R.E.A.G.P.
+				return 0.10;
+			} else if (activity == 9) {
+				//09	Act. accesorias no incluidas en el R.E.A.G.P.
+				return 0.21;
+			} else if (activity == 10) {
+				//10	Aparceria(Aprov.cedente) prod.agric.distintos a los ss.
+				return 0.04;
+			} else if (activity == 11) {
+				//11	Aparceria obtencion de forrajes:Aprov. cedente.
+				return 0.07625;
+			} else if (activity == 12) {
+				//12	Aparceria(Aprov.cedente) obt. plantas textiles y tabaco.
+				return  0.21;
+			} else if (activity == 13) {
+				//13	Aparceria (Aprovch. cedente) de act. forestales.
+				return 0.21;
+			} else if (activity == 14) {
+				//14	Procesos de transf. para obtencion de queso
+				return 0.070;
+			} else if (activity == 15) {
+				//15	Procesos de transf. para obtencion de vino mesa.
+				return 0.2675;
+			} else if (activity == 16) {
+				//16	Procesos de transf. para obtencion de vino con D.O.
+				return 0.2675;
+			} else if (activity == 17) {
+				//17	Procesos de transf. para obtencion de otros productos
+				return 0.19625;
+			}
+			throw new IllegalArgumentException("Actividad agrícola no soportada");
+		}
+		throw new IllegalArgumentException("Ejericio no soportado");
 	}
+	
+	public static void main(String[] args) throws AonException {
+		String[] epis = new String[] { "314", "315", "316.2", "316.3", "316.4",
+				"316.9", "419.1", "419.2", "419.3", "423.9", "453", "463",
+				"468", "474.1", "501.3", "504.1", "504.2", "504.3", "504.4",
+				"504.5", "504.6", "504.7", "504.8", "505.1", "505.2", "505.3",
+				"505.4", "505.5", "505.6", "505.7", "642.1", "642.2", "642.3",
+				"642.5", "644.1", "644.2", "644.3", "644.6", "647.1", "647.2",
+				"647.3", "652.2", "652.3", "653.2", "653.4", "653.5", "654.2",
+				"654.5", "654.6", "659.3", "659.4", "662.2", "663.1", "663.2",
+				"663.3", "663.4", "663.9", "671.4", "671.5", "672.1", "672.2",
+				"672.3", "673.1", "673.2", "675", "676", "681", "682", "683",
+				"691.1", "691.2", "691.9", "691.9", "692", "699", "721.1",
+				"721.3", "721.2", "722", "751.5", "757", "933.1", "933.9",
+				"967.2", "971.1", "972.1", "972.2", "973.3" };
+		Modules mod = new Modules(); 
+		for (Sector sector : mod.getSectors(false)) {
+			for (Epigrafe epi: mod.getEpigrafes(sector.getId())) {
+				boolean found = false;
+				for (String e : epis) {
+					if (e.equals(epi.getCode())) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					System.out.println( epi.getCode() + "("+sector.isModIva()+")"); 
+				}
+				
+			}
+		}
 
+	}
+	
 }

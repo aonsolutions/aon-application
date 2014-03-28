@@ -467,7 +467,7 @@ public abstract class FiscalModelController extends BasicController {
 		}
 	}
 
-	private String getAutomaticFileName() {
+	protected String getAutomaticFileName() {
 		FiscalModel fm = (FiscalModel) getTo();
 		
 		String s = fm.getName() + fm.getSurname();
@@ -505,6 +505,9 @@ public abstract class FiscalModelController extends BasicController {
 		}
 	}
 
+	public boolean isActivityButtonEnabled() {
+		return (getModelType() == FiscalModelType.M303 || getModelType() == FiscalModelType.M311); 
+	}
 	protected abstract FiscalModelType getModelType();
 
 	public abstract boolean isDifEnabled();
