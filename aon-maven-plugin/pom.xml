@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.32.0</version>
+		<version>7.33-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
@@ -13,8 +13,8 @@
 	<name>AON-MAVEN-PLUGIN</name>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.32.x/aon-maven-plugin</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.32.x/aon-maven-plugin</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-maven-plugin</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-maven-plugin</connection>
 	</scm>
 
 
