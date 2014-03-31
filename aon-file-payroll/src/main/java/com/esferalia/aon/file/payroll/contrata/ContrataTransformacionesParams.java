@@ -1,7 +1,9 @@
 package com.esferalia.aon.file.payroll.contrata;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.person.Person;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -9,12 +11,12 @@ import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
 import com.esferalia.aon.payroll.enumeration.contrata.TEOCOLDE;
 import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.contrata.TERFIRCB;
-import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 
 
-public class ContrataTransformacionesParams implements IContrataParams{
+public class ContrataTransformacionesParams implements IContrataParams, Serializable {
 	
-	private ITransformacionType transformContract;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private ContractCode transformCode;
 	private Date fechaInicio;
 	private Date fechaTerminoReal;
@@ -43,14 +45,6 @@ public class ContrataTransformacionesParams implements IContrataParams{
 
 	public void setFechaTerminoReal(Date fechaTerminoReal) {
 		this.fechaTerminoReal = fechaTerminoReal;
-	}
-
-	public ITransformacionType getTransformContract() {
-		return transformContract;
-	}
-
-	public void setTransformContract(ITransformacionType transformContract) {
-		this.transformContract = transformContract;
 	}
 
 	public ContractCode getTransformCode() {

@@ -1,7 +1,9 @@
 package com.esferalia.aon.file.payroll.contrata;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.person.Person;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.enumeration.contrata.TBONVFOR;
@@ -20,7 +22,9 @@ import com.esferalia.aon.payroll.enumeration.contrata.THPCOLFO;
 import com.esferalia.aon.payroll.enumeration.contrata.THYDISLE;
 import com.esferalia.aon.payroll.enumeration.contrata.TQOCOLRE;
 
-public class ContrataContratoParams implements IContrataParams{
+public class ContrataContratoParams implements IContrataParams, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/* 
 	 * generales de contrato 

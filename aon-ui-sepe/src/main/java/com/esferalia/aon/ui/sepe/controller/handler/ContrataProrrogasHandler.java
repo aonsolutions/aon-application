@@ -2,8 +2,10 @@ package com.esferalia.aon.ui.sepe.controller.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -16,7 +18,9 @@ import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
-public class ContrataProrrogasHandler implements IContrataHandler {
+public class ContrataProrrogasHandler implements IContrataHandler, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String AVAILABLE_CONTRACT_CODE_COMMUNICATION = "";
 	

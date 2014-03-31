@@ -1,10 +1,12 @@
 package com.esferalia.aon.ui.sepe.controller.handler;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -21,7 +23,9 @@ import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
-public class ContrataTransformacionesHandler implements IContrataHandler {
+public class ContrataTransformacionesHandler implements IContrataHandler, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Contract contract;
 	
