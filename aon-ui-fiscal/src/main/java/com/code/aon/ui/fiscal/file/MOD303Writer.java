@@ -419,7 +419,7 @@ public class MOD303Writer {
 		
 		double epi = mod303.getEnsuredAmount(Mod303Key.CAC1);
 		epi = ensureEpigraph(epi);
-		sr.setAct1epi( Integer.toString((int) epi));
+		sr.setAct1epi( epi == 0?"":Integer.toString((int) epi));
 		sr.setAct1Uni1(mod303.getEnsuredAmount(Mod303Key.CAC1_M1U));
 		sr.setAct1Imp1(mod303.getEnsuredAmount(Mod303Key.CAC1_M1I));
 		sr.setAct1Uni2(mod303.getEnsuredAmount(Mod303Key.CAC1_M2U));
@@ -460,7 +460,7 @@ public class MOD303Writer {
 
 		epi = mod303.getEnsuredAmount(Mod303Key.CAC2);
 		epi = ensureEpigraph(epi);
-		sr.setAct2epi( Integer.toString((int) epi));
+		sr.setAct2epi( epi == 0?"":Integer.toString((int) epi));
 		sr.setAct2Uni1(mod303.getEnsuredAmount(Mod303Key.CAC2_M1U));
 		sr.setAct2Imp1(mod303.getEnsuredAmount(Mod303Key.CAC2_M1I));
 		sr.setAct2Uni2(mod303.getEnsuredAmount(Mod303Key.CAC2_M2U));
