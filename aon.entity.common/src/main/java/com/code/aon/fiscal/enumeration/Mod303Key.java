@@ -179,7 +179,7 @@ public enum Mod303Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C69      ("303-69"   ,2014 ,false,false,true  ,true  ,1,null,null,null),
 	C70      ("303-70"   ,2014 ,false,false,true  ,false ,1,null,null,null),
 	C71      ("303-71"   ,2014 ,false,false,true  ,true  ,1,null,null,null),
-	PBK  	 ("303-PBK"  ,2014 ,false,false,false ,false ,0,null,null,null)
+	PBK  	 ("303-PBK"  ,2014 ,false,true,false ,true ,0,null,null,null)
 	;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";

@@ -409,7 +409,8 @@ public class MOD303Writer {
 		}
 		sr.setAgr1Code((int) mod303.getEnsuredAmount(Mod303Key.CAG1));
 		sr.setAgr1Ingreso(mod303.getEnsuredAmount(Mod303Key.CAG1_V1));
-		sr.setAgr1Indice(mod303.getEnsuredAmount(Mod303Key.CAG1_V2));
+		double agr1 = mod303.getEnsuredAmount(Mod303Key.CAG1_V2);
+		sr.setAgr1Indice(agr1);
 		sr.setAgr1Cuota(mod303.getEnsuredAmount(Mod303Key.CAG1_V3));
 		sr.setAgr1Porce(mod303.getEnsuredAmount(Mod303Key.CAG1_V4));
 		sr.setAgr1IngCta(mod303.getEnsuredAmount(Mod303Key.CAG1_V5));
@@ -447,41 +448,15 @@ public class MOD303Writer {
 		sr.setAct1CuoAnuDer4T(mod303.getEnsuredAmount(Mod303Key.CAC1_M));		
 		
 		sr.setAgr2Code( (int)  mod303.getEnsuredAmount(Mod303Key.CAG2) );
-		sr.setAgr2Ingreso( mod303.getEnsuredAmount(Mod303Key.CAG2_V1) );
+		sr.setAgr2Ingreso(mod303.getEnsuredAmount(Mod303Key.CAG2_V1));
+		double agr2 = mod303.getEnsuredAmount(Mod303Key.CAG2_V2); 
+		sr.setAgr2Indice(agr2);
 		sr.setAgr2Indice( mod303.getEnsuredAmount(Mod303Key.CAG2_V2) );
 		sr.setAgr2Cuota( mod303.getEnsuredAmount(Mod303Key.CAG2_V3) );
 		sr.setAgr2Porce( mod303.getEnsuredAmount(Mod303Key.CAG2_V4) );
 		sr.setAgr2IngCta( mod303.getEnsuredAmount(Mod303Key.CAG2_V5) );
 		sr.setAgr2CuotaSop4T( mod303.getEnsuredAmount(Mod303Key.CAG2_V6) );
 		sr.setAgr2CuotaDer4T( mod303.getEnsuredAmount(Mod303Key.CAG2_V7) );
-
-//		sr.setAct1epi(mod303.getEnsuredAmount(Mod303Key.CAC1));
-//		sr.setAct1Uni1(mod303.getEnsuredAmount(Mod303Key.CAC1_M1U));
-//		sr.setAct1Imp1(mod303.getEnsuredAmount(Mod303Key.CAC1_M1I));
-//		sr.setAct1Uni2(mod303.getEnsuredAmount(Mod303Key.CAC1_M2U));
-//		sr.setAct1Imp2(mod303.getEnsuredAmount(Mod303Key.CAC1_M2I));
-//		sr.setAct1Uni3(mod303.getEnsuredAmount(Mod303Key.CAC1_M3U));
-//		sr.setAct1Imp3(mod303.getEnsuredAmount(Mod303Key.CAC1_M3I));
-//		sr.setAct1Uni4(mod303.getEnsuredAmount(Mod303Key.CAC1_M4U));
-//		sr.setAct1Imp4(mod303.getEnsuredAmount(Mod303Key.CAC1_M4I));
-//		sr.setAct1Uni5(mod303.getEnsuredAmount(Mod303Key.CAC1_M5U));
-//		sr.setAct1Imp5(mod303.getEnsuredAmount(Mod303Key.CAC1_M5I));
-//		sr.setAct1Uni6(mod303.getEnsuredAmount(Mod303Key.CAC1_M6U));
-//		sr.setAct1Imp6(mod303.getEnsuredAmount(Mod303Key.CAC1_M6I));
-//		sr.setAct1Uni7(mod303.getEnsuredAmount(Mod303Key.CAC1_M7U));
-//		sr.setAct1Imp7(mod303.getEnsuredAmount(Mod303Key.CAC1_M7I));
-//		sr.setAct1Cuota(mod303.getEnsuredAmount(Mod303Key.CAC1_C));
-//		sr.setAct1Reduc(mod303.getEnsuredAmount(Mod303Key.CAC1_D));
-//		sr.setAct1IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC1_Z));
-//		sr.setAct1Porce(mod303.getEnsuredAmount(Mod303Key.CAC1_E));
-//		sr.setAct1IngCta(mod303.getEnsuredAmount(Mod303Key.CAC1_F));
-//		sr.setAct1CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC1_G));
-//		sr.setAct1IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC1_H));
-//		sr.setAct1Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC1_I));
-//		sr.setAct1PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_J));
-//		sr.setAct1DevCuoPai4T(mod303.getEnsuredAmount(Mod303Key.CAC1_K));
-//		sr.setAct1CuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_L));
-//		sr.setAct1CuoAnuDer4T(mod303.getEnsuredAmount(Mod303Key.CAC1_M));		
 
 		epi = mod303.getEnsuredAmount(Mod303Key.CAC2);
 		epi = ensureEpigraph(epi);
@@ -556,18 +531,19 @@ public class MOD303Writer {
 		declaration.setWithoutActivity(mod303.getHeader().isWithoutActivity());
 		
 		if (declaration.getResult() < 0) {
-			if (mod303.getEnsuredAmount(Mod303Key.PBK) > 0) {
+			if (mod303.getEnsuredAmount(Mod303Key.PBK) != 0) {
 				declaration.setCompensate(0.0);
 				declaration.setPayBack(CommonUtil.round(declaration.getResult() * -1));		
 			} else {
 				declaration.setPayBack(0.0);
-				declaration.setCompensate(CommonUtil.round(declaration.getResult() * -1));		
+				declaration.setCompensate(CommonUtil.round(declaration.getResult() * -1));
+				declaration.setBankAccount(null);
 			}
 		}
 		
-		
-		
-		if ( mod303.getBankAccountContainer() != null && mod303.getBankAccountContainer().getBankAccount() != null) {
+		if ( mod303.getBankAccountContainer() != null 
+			&& mod303.getBankAccountContainer().getBankAccount() != null
+			&& !StringUtils.isBlank(mod303.getBankAccountContainer().getBankAccount().getBban())) {
 			BankAccount bankAccount = mod303.getBankAccountContainer().getBankAccount();
 			declaration.setBankAccount(bankAccount.getIban());
 		}

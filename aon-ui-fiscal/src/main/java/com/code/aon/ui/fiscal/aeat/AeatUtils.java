@@ -147,8 +147,8 @@ public class AeatUtils {
 					+ "&EJF="+year
 					+ "&MOD=303"
 					+ "&PRG=EWLINKZU";
-			//String location= "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
-			String location= "https://www6.aeat.es/es13/l/zi21zilk0021";
+			String location= "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
+			//String location= "https://www6.aeat.es/es13/l/zi21zilk0021";
 
 			URL url = new URL(location);
 

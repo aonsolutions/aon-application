@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.tax.model.MOD303.MOD303Format;
 import com.code.aon.file.tax.model.MOD310.MOD310Format;
 import com.code.aon.fiscal.FiscalModel;
@@ -128,17 +129,38 @@ public class Mod303Controller extends FiscalModelController {
 	public void setPayBack(boolean payBack) {
 		this.payBack = payBack;
 	}
+
 	@Override
 	protected void accept() {
 		FiscalModelDetail detail = getDeclaration().getDetail(Mod303Key.PBK );
 		if (detail != null) {
 			detail.setAccumulatedAmount((isPayBack())?getDeclaration().getResult():0.0);
 		}
+		detail = getDeclaration().getDetail(Mod303Key.CAG1_V2);
+		if (detail != null) {
+			detail.setAccumulatedAmount(CommonUtil.round(detail.getAccumulatedAmount() * 10000));
+			detail.setAmount(CommonUtil.round(detail.getAmount() * 10000));
+		}
+		detail = getDeclaration().getDetail(Mod303Key.CAG2_V2);
+		if (detail != null) {
+			detail.setAccumulatedAmount(CommonUtil.round(detail.getAccumulatedAmount() * 10000));
+			detail.setAmount(CommonUtil.round(detail.getAmount() * 10000));
+		}
 		super.accept();
+		detail = getDeclaration().getDetail(Mod303Key.CAG1_V2);
+		if (detail != null) {
+			detail.setAccumulatedAmount(CommonUtil.round(detail.getAccumulatedAmount() / 10000, 5));
+			detail.setAmount(CommonUtil.round(detail.getAmount() / 10000,5));
+		}
+		detail = getDeclaration().getDetail(Mod303Key.CAG2_V2);
+		if (detail != null) {
+			detail.setAccumulatedAmount(CommonUtil.round(detail.getAccumulatedAmount() / 10000,5));
+			detail.setAmount(CommonUtil.round(detail.getAmount() / 10000,5));
+		}
 	}
 	
 	public void onShowFinalizePanel(ActionEvent event) {
-		setPayBack(true);
+		setPayBack(false);
 		super.onShowFinalizePanel(event);
 	}
 	
@@ -264,4 +286,14 @@ public class Mod303Controller extends FiscalModelController {
 		}
 		return null;
 	}
+	
+	public boolean isAeatOfficialReportEnabled() {
+		return super.isAeatOfficialReportEnabled();
+		//return false;
+	}
+	public boolean isAeatDraftReportEnabled() {
+		return super.isAeatDraftReportEnabled();
+		//return false;
+	}
+	
 }

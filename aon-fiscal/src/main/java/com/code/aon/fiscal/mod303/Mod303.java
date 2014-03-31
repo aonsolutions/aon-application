@@ -39,6 +39,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 
+	
 	private FiscalModel fiscalModel;
 	private Map<Mod303Key,FiscalModelDetail> map;
 	private List<Mod303Key> keysModel;
@@ -223,7 +224,7 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 		detail.setType(Mod303Key.FARMING_ACTIVITIES_PREFIX + ag + "V2");
 		Modules modules = new Modules();
 		double v2 = modules.getFarmerQuota(getHeader().getYear(), Integer.parseInt(fa.getEpigraph()));
-		detail.setAccumulatedAmount( v2 );
+		detail.setAccumulatedAmount( CommonUtil.round(v2 * 10000) );
 		addDetail(detail);
 		
 		detail = new FiscalModelDetail();
@@ -310,7 +311,9 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 						|| key == Mod303Key.CAG3_V7
 						|| key == Mod303Key.CAG4_V7)
 					) {
-					keysModel.add(key);	
+						keysModel.add(key);	
+//					if (key != Mod303Key.PBK) {
+//					}
 				}
 			}
 		}
@@ -409,7 +412,7 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 	}
 	@Override
 	public boolean isPaybackDeclarationAvailable() {
-		return true;
+		return isLastPeriod();
 	}
 
 	@Override
@@ -458,7 +461,13 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 	}
 	@Override
 	public boolean isTaxRefundRegistry() {
-		// TODO lookup fiscal parameters
+		//		Artículo 30 Devoluciones al término de cada período de liquidación
+		//		[ ... ]
+		//		3. Serán inscritos en el registro, previa solicitud, los sujetos pasivos 
+		//		   	en los que concurran los siguientes requisitos:
+		//		[ ... ]
+		//	    d) Que no realicen actividades que tributen en el régimen simplificado.
+		//		[ ... ]
 		return false;
 	}
 	@Override

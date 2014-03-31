@@ -91,6 +91,10 @@ public class Mod303Manager extends FiscalModelManager {
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			FiscalModelDetail detail = (FiscalModelDetail) to;
+			if (detail.getKey() == Mod303Key.CAG1_V2 || detail.getKey() == Mod303Key.CAG2_V2) {
+				detail.setAccumulatedAmount( CommonUtil.round(detail.getAccumulatedAmount() / 10000,5));
+				detail.setAmount( CommonUtil.round(detail.getAmount() / 10000,5));
+			}
 			mod303.addDetail(detail);
 		}
 		return mod303;

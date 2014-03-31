@@ -78,14 +78,15 @@
 									</aon:selectOneMenu>
 								</aon:panelGrid>
 							</c:if>
-							<c:if test="#{(controller.to.model311 or controller.to.model303) and controller.declaration.result &lt; 0}">
-							
-								<aon:selectBooleanCheckbox id="m311_payback"
-									value="#{controller.payBack}" ajaxSingle="true"
-									reRender="finalizeForm"/>
-								<aon:outputLabel for="m311_payback"
-									style="margin-left: 1em;" 
-									value="Marque si desea devoluci&#243;n, en caso contrario la declaraci&#243;n ser&#225; a compensar."/>
+							<c:if test="#{controller.to.model311 and controller.declaration.result &lt; 0}">
+								<aon:div>
+									<aon:selectBooleanCheckbox id="m311_payback"
+										value="#{controller.payBack}" ajaxSingle="true"
+										reRender="finalizeForm"/>
+									<aon:outputLabel for="m311_payback"
+										style="margin-left: 1em;" 
+										value="Marque si desea devoluci&#243;n, en caso contrario la declaraci&#243;n ser&#225; a compensar."/>
+								</aon:div>
 								
 								<c:if test="#{controller.payBack}">
 									<aon:panelGrid id="finalizeGrid2" columns="2" style="width: 100%;"
