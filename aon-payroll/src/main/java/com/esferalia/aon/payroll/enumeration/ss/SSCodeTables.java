@@ -17,6 +17,7 @@ public enum SSCodeTables implements ISSEnum {
 	T_T10( "T10", "Clave de entidad de AT y EP",null),
 	T_T18( "T18", "Grupo de cotización",null),
 	T_T21( "T21", "Situación",null),
+	T_T33( "T33", "Calificador de clave (para tipo CA y Clave 11)",null),
 	T_T37( "T37", "Condición de desempleado",null),
 	T_T41( "T41", "Tipos de inactividad",null),
 	T_T49( "T49", "Tipo de peculiaridad de cotización",null),

@@ -155,7 +155,7 @@ public class CRAWriter {
 //			Valores posibles: (IndicativoConcepto)
 //			E=concepto excluido de la base; 
 //			I=concepto incluido de la base.
-			cre.setIndicativoConcepto("I");
+			cre.setIndicativoConcepto((payment.getType().ordinal()==35 || payment.getType().ordinal()>=42 ) ? "E" : "I");
 			cre.setImporte(String.valueOf((int)(CommonUtil.round(payment.getAmount(), 2)*100)));
 			cre.setIndicativoTipoActuacion("");
 			return cre;
