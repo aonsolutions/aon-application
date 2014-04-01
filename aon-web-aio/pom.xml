@@ -825,9 +825,9 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.jzebra</groupId>
-			<artifactId>jzebra</artifactId>
-			<version>1.4.9.1</version>
+			<groupId>com.qzindustries</groupId>
+			<artifactId>qz-print</artifactId>
+			<version>1.8.0</version>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -927,7 +927,7 @@
 															<exclude>**/mchange-commons-java*.jar</exclude>
 															<exclude>**/commons-lang*.jar</exclude>
 															<exclude>**/commons-dbutils*.jar</exclude>
-															<exclude>**/jzebra*.jar</exclude>
+															<exclude>**/qz-print*.jar</exclude>
 														</excludes>
 													</source>
 												</sources>
@@ -1021,16 +1021,31 @@
 												<groupname>root</groupname>
 												<dependency>
 													<includes>
-														<include>com.google.code.jzebra:jzebra:1.4.9.1</include>
+														<include>com.qzindustries:qz-print:1.8.0</include>
 													</includes>
 												</dependency>
 												<sources>
 													<softlinkSource>
-														<location>/usr/share/java/jzebra-1.4.9.1.jar</location>
-														<destination>jzebra.jar</destination>
+														<location>/usr/share/java/qz-print-1.8.0.jar</location>
+														<destination>qz-print.jar</destination>
 													</softlinkSource>
 												</sources>
 											</mapping>
+											<mapping>
+												<directory>/usr/share/java/</directory>
+												<filemode>755</filemode>
+												<username>root</username>
+												<groupname>root</groupname>
+												<directoryIncluded>false</directoryIncluded>
+												<sources>
+													<source>
+														<includes>
+															<include>qz-print_jnlp.jnlp</include>
+														</includes>
+														<location>src/main/scripts/</location>
+													</source>
+												</sources>
+											</mapping>											
 										</mappings>
 
 										<postinstallScriptlet>
