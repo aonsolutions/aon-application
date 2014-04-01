@@ -6,12 +6,11 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 
-	<aon:form id="workplaceForm" style="#{ !edit ? 'display:none': ''}" >
+	<aon:form id="workplaceForm" style="#{ !edit ? 'display:none': ''}">
 		<c:if test="#{edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{bundle.purchase_workplace}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_workplace}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 
@@ -35,17 +34,43 @@
 
 
 			</ui:decorate>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="payrollToolbar" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_module_payroll}" />
+				<ui:param name="toolbarDescription"
+					value="#{bundle.payroll_salary_menu_group}" />
+
+
+				<ui:define name="toolbarContent">
+
+					<aon:commandButton id="Workplace-Calc" ajaxSingle="true"
+						reRender="workPlaceMainGrid"
+						value="#{bundle.menu_main_calculator}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-start"
+						onclick="workplaceCalc();">
+					</aon:commandButton>
+
+					<aon:commandButton id="View-Results" ajaxSingle="true"
+						reRender="workPlaceMainGrid" value="#{bundle.aon_results}"
+						styleClass="aon-finding-toolbar-item aon-icon-time"
+						onclick="viewResults();">
+					</aon:commandButton>
+
+				</ui:define>
+
+			</ui:decorate>
+
 		</c:if>
 		<c:if test="#{!edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{bundle.purchase_workplace}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_workplace}" />
 			</ui:decorate>
 		</c:if>
 
 		<aon:div
-			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
+			style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;">
 
 			<aon:div style="position: relative">
 
@@ -77,7 +102,8 @@
 												<f:selectItems value="#{enterprise.addresses}" />
 											</c:if>
 											<c:if test="#{!showEnterpriseData}">
-												<f:selectItems value="#{companyCollections.companyAddresses}" />
+												<f:selectItems
+													value="#{companyCollections.companyAddresses}" />
 											</c:if>
 										</aon:selectOneMenu>
 									</c:if>
@@ -108,13 +134,12 @@
 					<c:if test="#{edit}">
 						<aon:div styleClass="aon-group">
 							<aon:div styleClass="aon-group-title">
-								<aon:outputText
-									value="#{bundle.company_workplace_payroll_data}" />
+								<aon:outputText value="#{bundle.company_workplace_payroll_data}" />
 							</aon:div>
 							<aon:div styleClass="aon-group-body">
 								<aon:div styleClass="aon-group-body-internal">
 									<aon:panelGrid columns="2" styleClass="aon-width-all">
-	
+
 										<ui:include
 											src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml">
 											<ui:param name="lookupTo"
@@ -123,7 +148,7 @@
 											<ui:param name="lookupInputSuggestSize" value="40" />
 											<ui:param name="lookupSuffix" value="-PayrollWorkPlace" />
 										</ui:include>
-	
+
 										<ui:include
 											src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml">
 											<ui:param name="lookupTo"
@@ -132,7 +157,7 @@
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="lookupInputSuggestSize" value="40" />
 										</ui:include>
-	
+
 										<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity"
 											value="#{bundle.aon_activity}" />
 										<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
@@ -140,7 +165,7 @@
 											<f:selectItem itemLabel="-" value="#{null}" />
 											<f:selectItems value="#{enterprisePayroll.activities}" />
 										</aon:selectOneMenu>
-	
+
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>
@@ -165,15 +190,15 @@
 	<ui:include
 		src="/com/esferalia/aon/ui/payroll/facelet/contract/modalNewContract.xhtml">
 		<ui:param name="controller" value="#{contract}" />
-		<ui:param name="popupWindowTitle"
-			value="#{bundle.payroll_contract}" />
+		<ui:param name="popupWindowTitle" value="#{bundle.payroll_contract}" />
 		<ui:param name="lookupDisabled" value="true" />
 	</ui:include>
 
 	<c:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="workplaceForm" />
-			<ui:param name="hide" value="/WorkPlace_active|Calendar_id-PayrollWorkPlace|PayrollWorkPlace_enterpriseActivity/g" />
+			<ui:param name="hide"
+				value="/WorkPlace_active|Calendar_id-PayrollWorkPlace|PayrollWorkPlace_enterpriseActivity/g" />
 		</ui:include>
 	</c:if>
 

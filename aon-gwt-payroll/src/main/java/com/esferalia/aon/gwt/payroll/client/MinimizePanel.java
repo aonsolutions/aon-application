@@ -14,11 +14,12 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MinimizePanel extends ResizeComposite implements HasWidgets, AcceptsOneWidget {
+public class MinimizePanel extends ResizeComposite implements HasWidgets, AcceptsOneWidget, ProvidesResize {
 
 	public static interface HasMinimizeHandlers extends HasHandlers {
 		/**

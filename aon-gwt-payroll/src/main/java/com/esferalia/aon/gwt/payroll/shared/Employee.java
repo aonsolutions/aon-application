@@ -38,7 +38,7 @@ public class Employee implements Serializable, HasId<Integer> {
 		 WORK_END("Fin Contrato Fijo de Obra"),
 		 TEMP_END("Fin Contrato Temporal"),
 		 DEFINITE_END("Fin Contrato Duraci\u00F3n Determinada"),
-		 VOLUNTARY_END("Baja Voluntaria Modificaci\u00F3n Condiciones"),
+		 CONDITIONS_CHANGE("Baja Voluntaria Modificaci\u00F3n Condiciones"),
 		;
 
 		private String description;

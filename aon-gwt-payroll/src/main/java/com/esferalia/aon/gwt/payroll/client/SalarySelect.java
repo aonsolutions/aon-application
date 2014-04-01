@@ -22,7 +22,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -165,10 +164,9 @@ public class SalarySelect extends Composite {
 
 		typeListBox.addItem(Salary.Type.SETTLE.getDescription(),
 				Salary.Type.SETTLE.name());
-		/*
-		 * typeListBox.addItem(Salary.Type.NOT_ENJOYED_VACATIONS
-		 * .getDescription(), Salary.Type.NOT_ENJOYED_VACATIONS.name());
-		 */
+		
+		typeListBox.addItem(Salary.Type.NOT_ENJOYED_VACATIONS.getDescription(),
+				Salary.Type.NOT_ENJOYED_VACATIONS.name());
 
 	}
 
@@ -179,8 +177,8 @@ public class SalarySelect extends Composite {
 				typeListBox.removeItem(extraIndex);
 		} else {
 			if (extraIndex < 0)
-				typeListBox.addItem(Salary.Type.EXTRA.getDescription(),
-						Salary.Type.EXTRA.name());
+				typeListBox.insertItem(Salary.Type.EXTRA.getDescription(),
+						Salary.Type.EXTRA.name(),1);
 		}
 	}
 
@@ -391,8 +389,7 @@ public class SalarySelect extends Composite {
 
 			@Override
 			public Void visitNotEnjoyedVacations(Type type) {
-				// TODO Auto-generated method stub
-				return null;
+				return visitSettle(type);
 			}
 
 		});

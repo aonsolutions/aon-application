@@ -197,7 +197,9 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 
 		@Override
 		public Boolean getValue() {
-			return dataGrid.getVisibleItemCount() == selectionModel
+			
+			int visibleItemCount = dataGrid.getVisibleItemCount();
+			return visibleItemCount > 0 && visibleItemCount == selectionModel
 					.getSelectedSet().size();
 		}
 
@@ -211,6 +213,8 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 				selectionModel.setSelected(item, isChecked);
 			}
 		}
+		
+		// --------------------------------------------------------------------
 
 	}
 

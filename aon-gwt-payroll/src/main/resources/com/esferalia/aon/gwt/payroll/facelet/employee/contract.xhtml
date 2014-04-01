@@ -31,6 +31,32 @@
 				</ui:define>
 
 			</ui:decorate>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="payrollToolbar" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_module_payroll}" />
+				<ui:param name="toolbarDescription"
+					value="#{bundle.payroll_salary_menu_group}" />
+
+
+				<ui:define name="toolbarContent">
+
+					<aon:commandButton id="Contract-Calc" ajaxSingle="true"
+						reRender="contractMainGrid"
+						value="#{bundle.menu_main_calculator}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-start"
+						onclick="employeeCalc();">
+					</aon:commandButton>
+
+					<aon:commandButton id="View-Results" ajaxSingle="true"
+						reRender="contractMainGrid" value="#{bundle.aon_results}"
+						styleClass="aon-finding-toolbar-item aon-icon-time"
+						onclick="viewResults();">
+					</aon:commandButton>
+
+				</ui:define>
+
+			</ui:decorate>
 		</c:if>
 		<c:if test="#{!edit}">
 			<ui:decorate
@@ -41,7 +67,7 @@
 		</c:if>
 
 		<aon:div
-			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
+			style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;">
 
 			<aon:div style="position: relative">
 

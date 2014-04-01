@@ -1,6 +1,7 @@
 package com.esferalia.aon.salary;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.salary.bonus.IBonus;
@@ -10,11 +11,11 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class CompositeSalaryBuilder implements ISalaryBuilder {
+public class CompositeSalaryBuilder <T extends ISalaryBuilder> implements ISalaryBuilder {
 
-	private ISalaryBuilder builders[];
+	private T builders[];
 
-	public CompositeSalaryBuilder(ISalaryBuilder... builders) {
+	public CompositeSalaryBuilder(T... builders) {
 		this.builders = builders;
 	}
 
@@ -287,6 +288,12 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 	public void setListener(ISalaryBuilderListener listener) {
 		for (ISalaryBuilder builder : builders)
 			builder.setListener(listener);
+	}
+	
+	// -------------------------------------------------------------- Protected
+	
+	protected T [] getBuilders(){
+		return builders;
 	}
 
 }

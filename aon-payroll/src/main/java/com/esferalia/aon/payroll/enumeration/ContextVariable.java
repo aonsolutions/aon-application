@@ -201,6 +201,7 @@ public enum ContextVariable implements IResourceable{
 	UNFAIR("IMPROCEDENTE", VariableType.UNKNOWN),
 	OBJECTIVE("PROCEDENTE", VariableType.UNKNOWN),
 	CONTRACT_COMPLETE("FIN", VariableType.UNKNOWN),
+	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
 
 
 	;

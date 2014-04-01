@@ -21,7 +21,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmptyStringException;
@@ -55,6 +57,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -83,6 +86,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -550,7 +554,8 @@ public class AgreementDraft extends ResizeComposite implements
 				public void onFocus(FocusEvent event) {
 					expressionBox.setText(var.getExpression());
 					AgreementDraft.this.fxButton.setEnabled(true);
-
+					AgreementDraft.this.fxLevel = level.getId();
+					AgreementDraft.this.fxhasValue = expressionBox;
 					color = expressionBox.getElement().getStyle().getColor();
 					expressionBox.getElement().getStyle().clearColor();
 				}
@@ -638,7 +643,7 @@ public class AgreementDraft extends ResizeComposite implements
 					PaymentDialog dialog = new PaymentDialog();
 					dialog.setNumberFormat(AON.CURRENCY_FORMAT);
 					dialog.setConcept(PaymentEditor.this.getConcept());
-					dialog.setContextProvider(agreementDraftObject);
+					dialog.setContextProvider(AgreementDraft.this.contextProvider);
 					dialog.setMonth(payment.getMonth());
 					dialog.setType(payment.getType());
 					dialog.setReceiptType(payment.getSalaryType());
@@ -731,6 +736,8 @@ public class AgreementDraft extends ResizeComposite implements
 				@Override
 				public void onFocus(FocusEvent event) {
 					AgreementDraft.this.fxButton.setEnabled(true);
+					AgreementDraft.this.fxLevel = 0;
+					AgreementDraft.this.fxhasValue = expressionBox;
 				}
 			});
 
@@ -860,6 +867,21 @@ public class AgreementDraft extends ResizeComposite implements
 			return null;
 		}
 	}
+	
+	
+	private class ContextProvider implements IContextProvider{
+
+		@Override
+		public void getContext(AsyncCallback<ContextDescriptor> callback) {
+			AgreementDraft.this.agreementDraftObject.getContext(AgreementDraft.this.fxLevel, callback);
+		}
+
+		@Override
+		public void eval(String expression, AsyncCallback<Double> callback) {
+			AgreementDraft.this.agreementDraftObject.eval(expression, AgreementDraft.this.fxLevel, callback);
+		}
+		
+	}
 
 	@UiField
 	MyStyle style;
@@ -933,12 +955,17 @@ public class AgreementDraft extends ResizeComposite implements
 	MultiWordSuggestOracle paymentDescriptionOracle;
 	PaymentSuggestionDisplay paymentSuggestionDisplay;
 
+	private int fxLevel = 0;
+	private HasValue<String> fxhasValue;
+
 	private List<Integer> changedLevelsRows;
 	private List<Integer> changedVariablesCols;
 
 	private List<ExtraEditor> extraEditors;
 	private List<PaymentEditor> paymentEditors;
 	private List<IFocusableEditor> salaryTableEditors;
+	
+	private ContextProvider contextProvider ;
 
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -954,6 +981,8 @@ public class AgreementDraft extends ResizeComposite implements
 		extraEditors = new ArrayList<ExtraEditor>();
 		paymentEditors = new ArrayList<PaymentEditor>();
 		salaryTableEditors = new ArrayList<IFocusableEditor>();
+		
+		contextProvider = new ContextProvider();
 
 		showDraft();
 	}
@@ -1062,9 +1091,10 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	@UiHandler("fxButton")
-	void onFxClicked(ClickEvent event) {
-		FxDialog fxDialog = new FxDialog(agreementDraftObject);
-		fxDialog.setExpression("");
+	void onFxClicked(MouseDownEvent event) {
+		FxDialog fxDialog = new FxDialog( contextProvider );
+		fxDialog.setExpression(fxhasValue.getValue());
+		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
 		fxDialog.center();
 		fxDialog.show();
 	}
@@ -2651,10 +2681,6 @@ public class AgreementDraft extends ResizeComposite implements
 		Type type = getType();
 		int levelId = getLevelId();
 
-		Date month = previewMonthListBox.getSelected();
-
-		Date startDate = DateUtils.getFirstDayOfMonth();
-		Date agreementStartDate = agreementDraftObject.getStartDate();
 
 		agreementDraftObject.preview(levelId, type, zoom,
 				new AsyncCallback<String>() {

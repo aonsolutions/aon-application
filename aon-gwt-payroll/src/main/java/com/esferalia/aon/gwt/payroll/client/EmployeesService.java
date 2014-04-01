@@ -71,7 +71,13 @@ public interface EmployeesService extends RemoteService, StatisticsService  {
 	ContextDescriptor getContext(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
+	ContextDescriptor getContext(AgreementDraft agreementDraft, int levelId)
+			throws IllegalArgumentException;
+
 	Double eval(String expression, SalaryDraft salaryDraft)
+			throws IllegalArgumentException, EvalException;
+
+	Double eval(String expression, AgreementDraft agreementDraft, int levelId)
 			throws IllegalArgumentException, EvalException;
 
 	Double calculateIrpf(SalaryDraft salaryDraft)

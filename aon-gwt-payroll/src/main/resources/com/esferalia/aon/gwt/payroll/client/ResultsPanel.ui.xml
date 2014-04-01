@@ -1,54 +1,44 @@
-<ui:UiBinder
-  xmlns:ui='urn:ui:com.google.gwt.uibinder'
-  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
 	<ui:style>
-		.button-bar {
-			border: none !important;
-			background: none !important;
-		}
-		
-		@sprite .icon-view {
-			gwt-image: 'view';
-		}
-
-		.button-bar button {
-			float:right;
-			width: 16px;
-			height: 16px;
-			margin-left: 5px;
-			margin-right: 5px;
-		}
-		
-		.button-bar button:first-of-type {
-			margin-right: 15px;
-		}
-		
-		
+	.button-bar {
+		border: none !important;
+		background: none !important;
+	}
+	
+	@sprite .icon-view {
+		gwt-image: 'view';
+	}
+	
+	.button-bar button {
+		float: right;
+		width: 16px;
+		height: 16px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	
+	.button-bar button:first-of-type {
+		margin-right: 15px;
+	}
 	</ui:style>
-	
-	
+
+
 	<ui:image field='view' src='view.png' />
-	
-	<g:DockLayoutPanel>
+
+	<g:DockLayoutPanel ui:field="dockLayoutPanel">
 		<g:north size="26">
 			<g:FlowPanel styleName="{style.button-bar} gwt-MenuBar-horizontal">
 				<g:Button styleName="{style.icon-view} gwt-MenuItem"
 					ui:field=" viewResultsButton"></g:Button>
-				<g:Button styleName="aon-icon-time gwt-MenuItem"
-					ui:field="resultsButton"></g:Button>
+				<g:Button styleName="aon-icon-time gwt-MenuItem" ui:field="resultsButton"></g:Button>
 				<g:Button styleName="aon-icon-delete gwt-MenuItem"
 					ui:field="clearButton"></g:Button>
 				<g:Button styleName="aon-icon-task-stop gwt-MenuItem"
 					ui:field="stopButton"></g:Button>
 			</g:FlowPanel>
 		</g:north>
-		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel" alwaysShowScrollBars="true" >
-				<g:HTMLPanel ui:field="htmlPanel">
-				</g:HTMLPanel>
-			</g:ScrollPanel>
-		</g:center>
 	</g:DockLayoutPanel>
-	
+
 </ui:UiBinder>

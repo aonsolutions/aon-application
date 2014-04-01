@@ -30,7 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class AgreementDraftObject implements IContextProvider {
+public class AgreementDraftObject  {
 
 	public static Date NULL_DATE = new Date();
 
@@ -483,38 +483,18 @@ public class AgreementDraftObject implements IContextProvider {
 		return agreementDraft.hasLevelsWithoutCategories();
 	}
 
+	// -------------------------------------------------------------------------
+
+	public void getContext(int levelId, AsyncCallback<ContextDescriptor> callback) {
+		employeesServiceAsync.getContext(agreementDraft,levelId, callback);
+	}
+
+	public void eval(String expression, int levelId, AsyncCallback<Double> callback) {
+		
+		employeesServiceAsync.eval(expression, agreementDraft, levelId, callback);
+	}
+
 	// ------------------------------------------------------------------------
-	//
-	// ------------------------------------------------------------------------
-	private SalaryDraft newFakeSalaryDraft() {
-		SalaryDraft draft = new SalaryDraft();
-
-		draft.setStartDate(DateUtils.getFirstDayOfMonth());
-		draft.setEndDate(DateUtils.getLastDayOfMonth());
-		draft.setIssueDate(draft.getEndDate());
-		draft.setChargeDate(draft.getEndDate());
-		Employee employee = new Employee();
-		employee.setId(-1);
-		draft.setEmployee(employee);
-		draft.setType(Type.SALARY);
-
-		return draft;
-	}
-
-	@Override
-	public void getContext(AsyncCallback<ContextDescriptor> callback) {
-
-		employeesServiceAsync.getContext(newFakeSalaryDraft(), callback);
-	}
-
-	@Override
-	public void eval(String expression, AsyncCallback<Double> callback) {
-		employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
-	}
-
-	// ------------------------------------------
-	// Differences
-	// ------------------------------------------
 
 	Set<Level> getChangedLevels() {
 		if (oldAgreementDraft == null || oldAgreementDraft.getLevels() == null)

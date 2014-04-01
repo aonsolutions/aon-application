@@ -69,7 +69,7 @@ public class Salary implements Serializable {
 				put(EXTRA,"Extra");
 				put(SETTLE,"Finiquito");
 				put(DELAY,"Atrasos");
-				put(NOT_ENJOYED_VACATIONS,"Vacaciones no disfrutadas");
+				put(NOT_ENJOYED_VACATIONS,"Vacaciones");
 			}
 		};
 		
