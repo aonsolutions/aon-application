@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll.calculator.jooq;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
@@ -8,8 +7,6 @@ import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.ENTERPRISE_REGISTRY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CATEGORY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE;
@@ -35,13 +32,10 @@ import org.jooq.DSLContext;
 import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
-import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
@@ -52,11 +46,9 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
-import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
-import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -381,6 +373,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 				.set(SALARY_PAYMENT.DOMAIN, this.domainId)
 				.set(SALARY_PAYMENT.SALARY, salaryId)
 				.set(SALARY_PAYMENT.AMOUNT, amount)
+				.set(SALARY_PAYMENT.QUOTE, quote)
+				.set(SALARY_PAYMENT.IRPF, tax)
 				.set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName())
 				// .set(SALARY_PAYMENT.EXPRESSION, payment.getExpression())
 				.set(SALARY_PAYMENT.DESCRIPTION, description)
