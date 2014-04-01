@@ -242,6 +242,41 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					
+					<c:if test="#{domainSwitcher.domainManagementAvailable}">
+						<aon:panelGrid id="group_fiscal_accounting"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_accounting}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account-fiscal"
+										action="account_list-fiscal"
+										value="#{bundle.account_module}" />
+								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="autConcept-fiscal"
+											action="autConcept-fiscal"
+											value="#{bundle.accounting_aut_concept_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accounting_balance-fiscal" 
+											action="balance_list-fiscal"
+											value="#{bundle.accounting_balance_menu2}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType-fiscal"
+											action="amortizationType_list-fiscal"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+					</c:if>
+					
 
 					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>

@@ -200,7 +200,11 @@ public class SQLAgreementSalaryCalculatorContext extends
 				WORKPLACE, ENTERPRISE, E_REGISTRY, RADDRESS);
 	}
 
+	
+	
+	
 	// ------------------------------------------------------------------------
+
 	public static void main(String[] args) throws Exception {
 		Class.forName("org.gjt.mm.mysql.Driver");
 

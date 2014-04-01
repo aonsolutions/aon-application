@@ -601,7 +601,7 @@ public class RichLookupBean implements ITemplateController {
 			} else {
 				onReset(event);
 				if ( count > 1) {
-					showListWindow(event, false);	
+					showListWindow(event, component, false);	
 				}
 			}
 			fireLookupChangeListener((UIComponent)component, count==1);
@@ -632,11 +632,10 @@ public class RichLookupBean implements ITemplateController {
 	 * @throws ManagerBeanException
 	 */
 	public void onShowListWindow(ActionEvent event) throws ManagerBeanException {
-		showListWindow(event, true);
+		showListWindow(event, (ILookupComponent) event.getComponent(), true);
 	}
 
-	private void showListWindow(ActionEvent event, boolean search) throws ManagerBeanException {
-		ILookupComponent component = (ILookupComponent) event.getComponent();
+	private void showListWindow(ActionEvent event, ILookupComponent component, boolean search) throws ManagerBeanException {
 		if ( component != null ) {
 			setBindings(component);
 			updateWindowProperties(component);

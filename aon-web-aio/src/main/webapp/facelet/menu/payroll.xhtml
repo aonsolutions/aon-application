@@ -19,31 +19,32 @@
 
 					<!--
 						SALARIES 
-						 -->
-					<aon:panelGroup>
-						<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
-							columnClasses="aon-padding"
-							headerClass="aon-icon-general aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_salary_menu_group}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
-											value="#{bundle.menu_integral}" target="gwt">
-											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
-											<aon:actionListener method="#{enterprise.onEditSearch}" />
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contractLeave-payroll"
-											action="contractLeave_search-payroll"
-											actionListener="#{contractLeave.onEditSearch}"
-											value="#{bundle.payroll_contractLeave_module}" />
-									</aon:div>
-								</c:if>
-								<!--
+					-->
+					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:panelGroup>
+							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-icon-general aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.payroll_salary_menu_group}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
+												value="#{bundle.menu_integral}" target="gwt">
+												<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+												<aon:actionListener method="#{enterprise.onEditSearch}" />
+											</aon:commandLink>
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="contractLeave-payroll"
+												action="contractLeave_search-payroll"
+												actionListener="#{contractLeave.onEditSearch}"
+												value="#{bundle.payroll_contractLeave_module}" />
+										</aon:div>
+									</c:if>
+									<!--
 									<aon:div styleClass="aon-direct-access-list-element">
 										<a4j:commandLink ajaxSingle="true" immediate="true"
 											onclick="alert('#{bundle.aio_not_yet}');return false;"
@@ -51,6 +52,7 @@
 											style="color:red;text-decoration:line-through" />
 									</aon:div>
 									-->
+									<!-- 
 								<c:if test="#{domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_calculator"
@@ -60,15 +62,17 @@
 
 									</aon:div>
 								</c:if>
-							</aon:div>
+								-->
+								</aon:div>
 
-						</aon:panelGrid>
-					</aon:panelGroup>
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</c:if>
 
 
 					<!--
 						SS 
-						 -->
+					-->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_seguridad_social"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -258,8 +262,7 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="calendar-payroll"
-										action="calendar_search"
+									<aon:commandLink id="calendar-payroll" action="calendar_search"
 										actionListener="#{calendar.onEditSearch}"
 										value="#{bundle.calendar_menu_group}">
 										<aon:actionListener method="#{calendar.onInitialize}" />
@@ -267,8 +270,7 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="holiday-payroll"
-										action="holiday_search"
+									<aon:commandLink id="holiday-payroll" action="holiday_search"
 										actionListener="#{holiday.onEditSearch}"
 										value="#{bundle.calendar_holidays}" />
 								</aon:div>

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
+import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -75,7 +76,7 @@ public class Employees extends ResizeComposite implements
 		void onIrpfsSelected(IrpfDocuments docs);
 
 		void onStatisticsSelected(Statistics stats);
-		
+
 		void onITDataSelected(ITData itData);
 
 		void onSalariesSelected(SalaryDocuments docs);
@@ -228,7 +229,7 @@ public class Employees extends ResizeComposite implements
 
 		addImageItem(enterpriseItem, "Costes", images.costs());
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
-		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());		
+		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -254,8 +255,7 @@ public class Employees extends ResizeComposite implements
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
-			addImageItem(workplaceItem, "Partes IT",
-					images.itDatas());
+			addImageItem(workplaceItem, "Partes IT", images.itDatas());
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -341,7 +341,8 @@ public class Employees extends ResizeComposite implements
 						new AsyncCallback<SortedSet<Date>>() {
 							@Override
 							public void onFailure(Throwable caught) {
-								agreementItem.setUserObject(agreementDraftObject);
+								agreementItem
+										.setUserObject(agreementDraftObject);
 							}
 
 							public void onSuccess(SortedSet<Date> result) {
@@ -352,7 +353,8 @@ public class Employees extends ResizeComposite implements
 									agreementDraftObject.setEndDate(DateUtils
 											.getLastDayOfMonth(lastChange));
 								}
-								agreementItem.setUserObject(agreementDraftObject);
+								agreementItem
+										.setUserObject(agreementDraftObject);
 							};
 						});
 
@@ -458,26 +460,9 @@ public class Employees extends ResizeComposite implements
 				final int limit = getEmployeeLimit();
 
 				final TreeItem workplaceItem = employeeItem.getParentItem();
-				Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
-				int offset = workplaceItem.getChildCount()
-						- getEmployeesOffset();
+				loadEmployees(workplaceItem, limit);
 
-				employeesService.getEmployees(workplace.getId(), getFromDate(),
-						namePattern, offset, limit,
-						new AsyncCallback<List<Employee>>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-								Window.alert(caught.getLocalizedMessage());
-
-							}
-
-							@Override
-							public void onSuccess(List<Employee> employees) {
-								loadEmployess(workplaceItem, employees, limit);
-							}
-						});
 				employeeCentinels.remove(employeeItem);
 			}
 		}
@@ -533,12 +518,87 @@ public class Employees extends ResizeComposite implements
 		return null;
 	}
 
-	// ------------------------------------------
-	//
-	// ------------------------------------------
+	public void selectEmployee(int employeeId, boolean fireEvents) {
+
+		TreeItem treeItem = getEmployeeItem(employeeId);
+
+		tree.setSelectedItem(treeItem, fireEvents);
+	}
+
+	public void selectSalaryDraft(int employeeId, boolean fireEvents) {
+		TreeItem treeItem = getSalaryDraftItem(employeeId);
+		tree.setSelectedItem(treeItem, fireEvents);
+	}
+
+	public SalaryDraftObject getSalaryDraft(int employeeId) {
+		TreeItem treeItem = getSalaryDraftItem(employeeId);
+		return treeItem == null ? null : (SalaryDraftObject) treeItem
+				.getUserObject();
+	}
+
+	public void selectSalaryDraft(final int employeeId, int workplaceId,
+			boolean fireEvents) {
+
+		class SalaryDraftPredicate implements Predicate<TreeItem> {
+			public boolean test(TreeItem t) {
+				Object object = t.getUserObject();
+				return (object instanceof SalaryDraftObject)
+						&& (((SalaryDraftObject) object).getEmployee().getId() == employeeId);
+			}
+
+		}
+		Predicate<TreeItem> predicate = new SalaryDraftPredicate();
+		TreeItem workplaceItem = getWorkplacetItem(workplaceId);
+
+		TreeItem draftItem = getTreeItem(workplaceItem, predicate, 0);
+
+		if (draftItem != null) {
+			tree.setSelectedItem(draftItem, fireEvents);
+			tree.ensureSelectedItemVisible();
+			draftItem.getElement().scrollIntoView();
+		} else {
+			selectEmployeeItem(workplaceItem, workplaceItem.getChildCount(),
+					predicate, fireEvents);
+		}
+	}
+	// ------------------------------------------------------------------------
 
 	EmployeesServiceAsync getEmployeesService() {
 		return employeesService;
+	}
+
+	// ------------------------------------------------------------------------
+
+	private void loadEmployees(final TreeItem workplaceItem, final int limit) {
+		loadEmployees(workplaceItem, limit, null);
+	}
+
+	private void loadEmployees(final TreeItem workplaceItem, final int limit,
+			final AsyncCallback<List<Employee>> callback) {
+
+		Workplace workplace = (Workplace) workplaceItem.getUserObject();
+
+		int offset = workplaceItem.getChildCount() - getEmployeesOffset();
+
+		employeesService.getEmployees(workplace.getId(), getFromDate(),
+				namePattern, offset, limit,
+				new AsyncCallback<List<Employee>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+						if (callback != null)
+							callback.onFailure(caught);
+
+					}
+
+					@Override
+					public void onSuccess(List<Employee> employees) {
+						loadEmployess(workplaceItem, employees, limit);
+						if (callback != null)
+							callback.onSuccess(employees);
+					}
+				});
 	}
 
 	private void onEnterpriseOpen(TreeItem enterpriseItem) {
@@ -594,7 +654,7 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-		
+
 		final TreeItem partsItItem = enterpriseItem
 				.getChild(ENTERPRISE_PARTSIT_INDEX);
 
@@ -653,7 +713,7 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
-		
+
 		final TreeItem statisticsItem = workplaceItem
 				.getChild(WORKPLACE_STATISTICS_INDEX);
 
@@ -674,7 +734,7 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-		
+
 		final TreeItem partsItItem = workplaceItem
 				.getChild(WORKPLACE_PARTSIT_INDEX);
 
@@ -684,7 +744,7 @@ public class Employees extends ResizeComposite implements
 					new AsyncCallback<ITData>() {
 
 						@Override
-						public void onSuccess(ITData partsIt) {							
+						public void onSuccess(ITData partsIt) {
 							partsItItem.setUserObject(partsIt);
 						}
 
@@ -716,7 +776,6 @@ public class Employees extends ResizeComposite implements
 						loadEmployess(workplaceItem, employees, limit);
 					}
 				});
-
 
 	}
 
@@ -803,7 +862,7 @@ public class Employees extends ResizeComposite implements
 			listener.onStatisticsSelected(stats);
 		}
 	}
-	
+
 	private void onITDataSelected(ITData itData) {
 		for (Listener listener : listeners) {
 			listener.onITDataSelected(itData);
@@ -1008,7 +1067,7 @@ public class Employees extends ResizeComposite implements
 	 */
 	private SafeHtml imageItemHTML(ImageResource imageProto, String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml() );
+		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
 		builder.append(' ');
 		builder.appendEscaped(title);
 		return builder.toSafeHtml();
@@ -1233,6 +1292,95 @@ public class Employees extends ResizeComposite implements
 
 	private boolean setCurrentsVisible(boolean currents) {
 		return currents;
+	}
+
+	private TreeItem getSalaryDraftItem(final int employeeId) {
+		TreeItem treeItem = getTreeItem(tree, new Predicate<TreeItem>() {
+			@Override
+			public boolean test(TreeItem t) {
+				Object object = t.getUserObject();
+				return (object instanceof SalaryDraftObject)
+						&& (((SalaryDraftObject) object).getEmployee().getId() == employeeId);
+			}
+		});
+
+		return treeItem;
+	}
+
+
+	private void selectEmployeeItem(final TreeItem workplaceItem,
+			final int start, final Predicate<TreeItem> predicate,
+			final boolean fireEvents) {
+		loadEmployees(workplaceItem, getEmployeeLimit(),
+				new AsyncCallback<List<Employee>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(List<Employee> result) {
+						if (result.size() == 0)
+							return;
+
+						TreeItem draftItem = getTreeItem(workplaceItem,
+								predicate, start);
+						if (draftItem == null){
+							selectEmployeeItem(workplaceItem, start, predicate,
+									fireEvents);
+						}
+						else {
+							tree.setSelectedItem(draftItem, fireEvents);
+							tree.ensureSelectedItemVisible();
+							draftItem.getElement().scrollIntoView();
+						}
+
+					}
+				});
+
+	}
+
+	private TreeItem getWorkplacetItem(final int workplaceId) {
+		return getTreeItem(tree, new Predicate<TreeItem>() {
+			@Override
+			public boolean test(TreeItem t) {
+				Object object = t.getUserObject();
+				return (object instanceof Workplace)
+						&& (((Workplace) object).getId() == workplaceId);
+			}
+		});
+	}
+
+	private TreeItem getEmployeeItem(final int employeeId) {
+		return getTreeItem(tree, new Predicate<TreeItem>() {
+			@Override
+			public boolean test(TreeItem t) {
+				Object object = t.getUserObject();
+				return (object instanceof Employee)
+						&& (((Employee) object).getId() == employeeId);
+			}
+		});
+	}
+
+	private static TreeItem getTreeItem(Tree root, Predicate<TreeItem> predicate) {
+		TreeItem treeItem = null;
+
+		for (int i = 0; treeItem == null && i < root.getItemCount(); i++)
+			treeItem = getTreeItem(root.getItem(i), predicate, 0);
+
+		return treeItem;
+
+	}
+
+	private static TreeItem getTreeItem(TreeItem root,
+			Predicate<TreeItem> predicate, int start) {
+		if (predicate.test(root))
+			return root;
+		TreeItem treeItem = null;
+
+		for (int i = start; treeItem == null && i < root.getChildCount(); i++)
+			treeItem = getTreeItem(root.getChild(i), predicate, 0);
+
+		return treeItem;
 	}
 
 	private static boolean isActive(Employee employee) {

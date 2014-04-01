@@ -34,7 +34,7 @@ public enum DismissalType {
 			return visitor.visitDefiniteEnd(this);
 		}
 	 },
-	 VOLUNTARY_END{
+	 CONDITIONS_CHANGE{
 		 @Override
 		 public<T> T accept(Visitor<T> visitor) {
 			return visitor.visitVoluntaryEnd(this);

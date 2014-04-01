@@ -1,88 +1,123 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:cell="urn:import:com.google.gwt.user.cellview.client" >
-	
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+
 	<ui:Style>
-
-		.form {
-			padding: 10px; 		
-		}
-
-		.label {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.labeltop {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			vertical-align: top;			
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.field {
-			padding: 1px 0.5em;
-		}
+	.form {
+		padding: 10px;
+	}
+	
+	.label {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+	
+	.info {
 		
-		.buttons {
-			padding-top: 10px; 		
-			text-align: right;
-		}
-
-		.info {
-		}
-
-		.warn {
-		}
-
-		.error {
-		}
-
-		.messages {
-			padding-left: 0.5em;
-			padding-bottom: 10px; 		
-		}
-		.form textarea {
-			resize: none;
-		}
-
+	}
+	
+	.warn {
+		
+	}
+	
+	.error {
+		
+	}
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
+	
+	.form textarea {
+		resize: none;
+	}
+	
+	.monthListBox-item {
+		padding-left: 16px;
+	}
+	
+	.options-scroll-panel>div {
+		height: 99%;
+	}
 	</ui:Style>
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
-		
-		<div class="{style.messages}" >
-			<!--  g:Label styleName="{style.info}">Filtrar los empleados:</g:Label -->
+
+		<div class="{style.messages}">
+			<!-- g:Label styleName="{style.info}">Filtrar los empleados:</g:Label -->
 		</div>
-		<table class="aon-width-all {style.form} " >
+		
+		
+		<table class="aon-width-all {style.form} ">
 			<tr>
-				<td class="{style.label}"><g:Label text="Mes" /></td>
-				<td class="{style.field}"><aon:MonthListBox width="100%" ui:field="monthListBox"/></td>
-			</tr>
-			<tr>
-				<td class="{style.field}" colspan="2">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="{style.label}" colspan="2" ><g:Label text="Selecciona los empleados: " ui:field="selectLabel" /></td>
-			</tr>
-			<tr>
-				<td class="{style.field} aon-width-all" colspan="2"  >
-					<cell:DataGrid ui:field="selectDataGrid" />
+				<td class="{style.label}">
+					<g:Label text="Mes" />
+				</td>
+				<td class="{style.field}">
+					<aon:MonthListBox styleName="aon-selectOneMenu"
+						ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
+						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
 				</td>
 			</tr>
 			<tr>
 				<td class="{style.field}" colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
-				<td class="{style.field}" colspan="2"><g:CheckBox ui:field="saveCheckBox" >Guardar</g:CheckBox></td>
+				<td class="{style.label}" colspan="2">
+					<g:Label text="Selecciona los empleados: " ui:field="selectLabel" />
+				</td>
 			</tr>
 			<tr>
-				<td class="{style.field}" colspan="2"><g:CheckBox ui:field="compareCheckBox" enabled="false" >Comparar con n&oacute;minas guardadas</g:CheckBox></td>
+				<td class="{style.field} aon-width-all" colspan="2">
+					<cell:DataGrid ui:field="selectDataGrid" />
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.field}" colspan="2">&nbsp;</td>
+			</tr>
+
+			<tr>
+				<td class="{style.field} " colspan="2">
+					<div class="aon-group">
+						<div class="aon-group-title" >
+							<g:CheckBox ui:field="saveCheckBox" checked="false">Guardar</g:CheckBox>
+						</div>
+						<div>
+							<g:RadioButton name="saveRadioButton" ui:field="keepRadioButton"
+								checked="true" enabled="false">Conservar n&oacute;minas calculadas</g:RadioButton>
+						</div>
+						<div>
+							<g:RadioButton name="saveRadioButton" ui:field="overwriteRadioButton"
+								enabled="false">Eliminar n&oacute;minas calculadas</g:RadioButton>
+						</div>
+						<!-- div>
+							<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"
+								enabled="false"> Duplicar n&oacute;minas calculadas</g:RadioButton>
+						</div-->
+					</div>
+				</td>
 			</tr>
 			<tr>
 				<td class="{style.field}" colspan="2">&nbsp;</td>
@@ -90,10 +125,10 @@
 		</table>
 
 		<div class="{style.buttons} {style.form} ">
-			<g:Button ui:field="cancelButton" >Cancelar</g:Button>
+			<g:Button ui:field="cancelButton">Cancelar</g:Button>
 			<g:Button ui:field="acceptButton">Aceptar</g:Button>
 		</div>
-	
+
 	</g:HTMLPanel>
 
 

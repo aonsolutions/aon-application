@@ -173,6 +173,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	//@formatter:off
 	private static String[] SKIP_VARIABLES = { 
 		"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD",// functions 
+		"GET_VARIABLE", 										// functions 
 		
 		"ANTICIPO_ATRASOS", PORCENTAJE_IRPF,  					//  
 		
@@ -182,7 +183,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		"DIAS_ENFERMEDAD_COMUN_16_20", "DIAS_ENFERMEDAD_21",	// internals
 		"BASE_REGULADORA", "DIAS_PATERNIDAD",					// internals
 		
-		"CONTEXT", "SELF",										// context
+		"CONTEXT", "SELF",	"THIS",								// context
 		
 		"OCUPACION_IT", "OCUPACION_IMS", "PORCENTAJE_DESMPL", 	// constants 
 		"PORCENTAJE_DESMPL_E", "PORCENTAJE_IMS", "PORCENTAJE_IT"// constants 
@@ -341,6 +342,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			setValue(value);
 
 		}
+		
+		// --------------------------------------------------------------------
+		
 
 		private void selectValue(String value) {
 			for (int i = 0; i < getItemCount(); i++) {
@@ -482,7 +486,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				@Override
 				public String getValue() {
 					String name = getValue(getSelectedIndex());
-					if ( name == null)
+					if (name == null)
 						return "NADA";
 					Dismissal dismissal = Enum.valueOf(Dismissal.class, name);
 					switch (dismissal) {
@@ -491,8 +495,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					case DEFINITE_END:
 						return "FIN";
 					case OBJECTIVE:
-					case VOLUNTARY_END:
 						return "PROCEDENTE";
+					case CONDITIONS_CHANGE:
+						return "CAMBIO_CONDICIONES";
 					case UNFAIR:
 						return "IMPROCEDENTE";
 					}
@@ -504,6 +509,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			for (Dismissal e : Dismissal.values())
 				textListBox.addItem(e.getDescription(), e.name());
+
 			return textListBox;
 		}
 
@@ -624,7 +630,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public void onBlur(BlurEvent event) {
-			reset.schedule(600);
+			reset.schedule(300);
 			fxButton.setEnabled(false);
 
 		}
@@ -650,7 +656,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		private void setValue(Object value) {
-			editor.setValue(value == null ? null : String.valueOf(value));
+			if (value == null)
+				editor.setValue(null);
+			else if (value instanceof Double)
+				editor.setValue(SalaryDraft.format((Double) value));
+			else
+				editor.setValue(String.valueOf(value));
 		}
 
 		private CalculateCallback getNextVariableFocusCallback() {
@@ -1672,7 +1683,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Double liquid = salaryDraftObject.getTotalLiquid();
 		totalLiquidLabel
 				.setText(String.valueOf(NumberUtils.isNotValid(liquid) ? 0.00
-						: round(liquid)));
+						: AON.round(liquid)));
 	}
 
 	@UiHandler("totalPaymentsLabel")
@@ -1728,7 +1739,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	void onPaymentsFocus(FocusEvent event) {
 		Double totalPayment = salaryDraftObject.getTotalPayment();
 		totalPaymentsLabel.setText(String.valueOf(NumberUtils
-				.isNotValid(totalPayment) ? 0.00 : round(totalPayment)));
+				.isNotValid(totalPayment) ? 0.00 : AON.round(totalPayment)));
 	}
 
 	private void setDbVisible(boolean visible) {
@@ -3413,7 +3424,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
 		default:
-			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getType()));
+			return newPercentLabel(deduction, percent,
+					getPercentVariable(deduction.getType()));
 		}
 	}
 
@@ -3598,7 +3610,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				draftObject.getDbNonHExtraBase());
 	}
 
-	private  static Double getPercent(Deduction deduction,
+	private static Double getPercent(Deduction deduction,
 			SalaryDraftObject draftObject) {
 		return getPercent(deduction.getType(), deduction.getAmount(),
 				draftObject.getIrpfBase(), draftObject.getCgcBase(),
@@ -3629,14 +3641,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	}
 
-
-	private static double round(Double number) {
-		return (double) Math.round(number * 1000.00) / 1000.00;
-	}
-
-	private static String format(Double amount) {
+	public static String format(Double amount) {
 		return NumberUtils.isNotValid(amount) ? null : AON.CURRENCY_FORMAT
-				.format(round(amount));
+				.format(AON.round(amount));
 	}
 
 	private static Double parse(String str) {
@@ -3669,15 +3676,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return percentageLabel;
 	}
 
-	private static Widget newPercentLabel(Item<?> item, Double percent, Variable percentVar) {
+	private static Widget newPercentLabel(Item<?> item, Double percent,
+			Variable percentVar) {
 		if (NumberUtils.isNotValid(percent))
-			return  newPercentLabel( percentVar == null ? item.getDescription(): String.valueOf( percentVar.getValue()) );
+			return newPercentLabel(percentVar == null ? item.getDescription()
+					: String.valueOf(percentVar.getValue()));
 		else
 			return newPercentLabel(formatPercent(percent));
 	}
-
-	
-	
 
 	private static boolean isSystemVariable(Variable var) {
 		if (var.getScope() == Scope.SYSTEM)

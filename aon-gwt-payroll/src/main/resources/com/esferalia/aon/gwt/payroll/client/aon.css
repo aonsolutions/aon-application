@@ -147,3 +147,7 @@
 .aon-dataTable-row-highlight-top td {
 	border-bottom-color: #d3c061;
 }
+
+.aon-finding-toolbar-item {
+	height: 14px;	
+}

@@ -1,5 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.DUPLICATE;
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.END_DATE;
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.ISSUE_DATE;
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.OVERWRITE;
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.SAVE;
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.START_DATE;
+import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.client.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.payroll.client.ResultsPanel.ClearEvent;
+import com.esferalia.aon.gwt.payroll.client.ResultsPanel.ClearHandler;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -18,31 +28,42 @@ import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.gps.ReportConstants;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
@@ -52,6 +73,12 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
  */
 public class EmployeeTree implements EntryPoint, Employees.Listener,
 		MetaData.Listener {
+
+	static final byte SAVE_OPTION = 0x01;
+	static final byte OVERWRITE_OPTION = 0x02;
+	static final byte DUPLICATE_OPTION = 0x04;
+	
+	private static final int RESULTS_LIMIT = 100;
 
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
@@ -130,13 +157,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class CalcEnterpriseCommand implements ScheduledCommand, AcceptHandler,
-			ReadyStateChangeHandler, CalculateService {
+			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult>,
+			ClearHandler, Handler {
 
+		SalaryResultsGrid resultsGrid;
 		WorkPlaceCalcDialog calcDialog;
 
+		private HandlerRegistration registration;
+		private ListDataProvider<JsSalaryResult> resultsDataProvider;
+
 		public CalcEnterpriseCommand() {
+			resultsGrid = new SalaryResultsGrid();
 			calcDialog = new WorkPlaceCalcDialog();
 			calcDialog.addAcceptHandler(this);
+			calcDialog.setWidth(Window.getClientWidth() / 2 + "px");
+
+			resultsGrid.addSelectionHandler(this);
+			resultsGrid.addAttachHandler(this);
+			resultsGrid.setPageSize(RESULTS_LIMIT);
+			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
+			resultsDataProvider.addDataDisplay(resultsGrid);
+			
 		}
 
 		@Override
@@ -148,64 +189,105 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		public void setEnterprise(Enterprise enterprise) {
 			calcDialog.setData(enterprise.getWorkplaces());
-			// TODO : Start date is January 1, 1970, 00:00:00 GMT ?.
-			calcDialog.setMonth(new Date(0), null,
-					DateUtils.getFirstDayOfMonth());
 		}
 
-		// --------------------------------------
-		// AcceptHandler
-		// --------------------------------------
+		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
 			Date month = calcDialog.getMonth();
+			Date startDate = DateUtils.getFirstDayOfMonth(month);
+			Date endDate = DateUtils.getLastDayOfMonth(month);
 
-			StringBuffer requestDataBuffer = new StringBuffer();
-			requestDataBuffer.append(START_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getFirstDayOfMonth(month)));
-			requestDataBuffer.append("&" + END_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-			requestDataBuffer.append("&" + ISSUE_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
+			Set<Workplace> workplaces = calcDialog.getSelectedData();
 
-			for (Workplace workplace : calcDialog.getSelectedData())
-				requestDataBuffer.append("&" + WORKPLACES + "="
-						+ workplace.getId());
+			resultsPanel.setWidget(resultsGrid);
+
+			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
-				requestDataBuffer.append("&" + SAVE + "=true");
+				optionsBits |= SAVE_OPTION;
+			if (calcDialog.isOverwriteSelected())
+				optionsBits |= OVERWRITE_OPTION;
+			if (calcDialog.isDuplicateSelected())
+				optionsBits |= DUPLICATE_OPTION;
 
-			XMLHttpRequest xhr = XMLHttpRequest.create();
-			xhr.open("POST", CALC_URL);
-			xhr.setRequestHeader("Content-type",
-					"application/x-www-form-urlencoded");
-			xhr.setOnReadyStateChange(this);
-			xhr.send(requestDataBuffer.toString());
+			EmployeeTree.calculate(startDate, endDate, WORKPLACES, workplaces,
+					optionsBits, this);
+
+			clear();
 
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 		}
 
-		// --------------------------------------
-		// ReadyStateChangeHandler
-		// --------------------------------------
+		// --------------------------------------- AsyncCallback<JsSalaryResult>
 
 		@Override
-		public void onReadyStateChange(XMLHttpRequest xhr) {
-			int state = xhr.getReadyState();
-			if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
-				EmployeeTree.this.resultsPanel.setHTML(xhr.getResponseText());
-			}
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onSuccess(JsSalaryResult result) {
+			resultsDataProvider.getList().add(result);
+		}
+
+		// ----------------------------------------- SelectionHandler<TreeItem>
+		@Override
+		public void onSelection(SelectionEvent<JsSalaryResult> event) {
+			onSalaryResultSelected(event.getSelectedItem());
+		}
+
+		// ------------------------------------------------------------ Handler
+
+		@Override
+		public void onAttachOrDetach(AttachEvent event) {
+			if (event.isAttached())
+				registration = resultsPanel.addClearHandler(this);
+			else
+				registration.removeHandler();
+		}
+
+		// ------------------------------------------------------- ClearHandler
+
+		@Override
+		public void onClear(ClearEvent event) {
+			clear();
+		}
+
+		// ---------------------------------------------------- Private methods
+
+		private void clear() {
+			resultsDataProvider.getList().clear();
+		}
+
+		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
+			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(),
+					salaryResult.getWorkplaceId(), salaryResult.getStartDate(),
+					salaryResult.getEndDate());
 		}
 
 	}
 
 	class CalcEmployeeCommand implements ScheduledCommand, AcceptHandler,
-			CalculateService, ReadyStateChangeHandler {
+			CalculateService,SelectionHandler<JsSalaryResult>, ClearHandler, Handler,AsyncCallback<JsSalaryResult>  {
 
+		private SalaryResultsGrid resultsGrid;
 		private CalcDialog<Employee> calcDialog;
+
+		private HandlerRegistration registration;
+		private ListDataProvider<JsSalaryResult> resultsDataProvider;
 
 		public CalcEmployeeCommand() {
 			calcDialog = new EmployeeCalcDialog();
 			calcDialog.addAcceptHandler(this);
+			calcDialog.setWidth(Window.getClientWidth() / 2 + "px");
+
+			resultsGrid = new SalaryResultsGrid();
+			resultsGrid.addAttachHandler(this);
+			resultsGrid.setPageSize(RESULTS_LIMIT);
+			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
+			resultsDataProvider.addDataDisplay(resultsGrid);
+			resultsGrid.addSelectionHandler(this);
 		}
 
 		@Override
@@ -216,67 +298,117 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		public void setEmployee(Employee employee) {
 			calcDialog.setData(Collections.singletonList(employee));
-			Date actualDate = DateUtils.before(
-					DateUtils.after(new Date(), employee.getStartDate()),
-					employee.getEndDate());
-			calcDialog.setMonth(employee.getStartDate(), employee.getEndDate(),
-					actualDate);
+
+			Date actualDate = DateUtils.after(new Date(),
+					employee.getStartDate());
+			actualDate = DateUtils.before(actualDate, employee.getEndDate());
+
+			calcDialog.setStartMonth(employee.getStartDate());
+			calcDialog.setEndMonth(employee.getEndDate());
+			calcDialog.setMonth(actualDate);
 		}
 
-		// --------------------------------------
-		// AcceptHandler
-		// --------------------------------------
+		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
 			Date month = calcDialog.getMonth();
 
-			StringBuffer requestDataBuffer = new StringBuffer();
-			requestDataBuffer.append(START_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getFirstDayOfMonth(month)));
-			requestDataBuffer.append("&" + END_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-			requestDataBuffer.append("&" + ISSUE_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
+			Date startDate = DateUtils.getFirstDayOfMonth(month);
+			Date endDate = DateUtils.getLastDayOfMonth(month);
 
-			for (Employee employee : calcDialog.getSelectedData())
-				requestDataBuffer.append("&" + EMPLOYEES + "="
-						+ employee.getId());
+			Set<Employee> employees = calcDialog.getSelectedData();
 
+			resultsPanel.setWidget(resultsGrid);
+			
+
+			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
-				requestDataBuffer.append("&" + SAVE + "=true");
+				optionsBits |= SAVE_OPTION;
+			if (calcDialog.isOverwriteSelected())
+				optionsBits |= OVERWRITE_OPTION;
+			if (calcDialog.isDuplicateSelected())
+				optionsBits |= DUPLICATE_OPTION;
 
-			XMLHttpRequest xhr = XMLHttpRequest.create();
-			xhr.open("POST", CALC_URL);
-			xhr.setRequestHeader("Content-type",
-					"application/x-www-form-urlencoded");
-			xhr.setOnReadyStateChange(this);
-			xhr.send(requestDataBuffer.toString());
-
+			EmployeeTree.calculate(startDate, endDate, EMPLOYEES, employees,
+					optionsBits, this);
+			clear();
+			
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
-		}
 
-		// --------------------------------------
-		// ReadyStateChangeHandler
-		// --------------------------------------
+		}
+		// ------------------------------------------------------------ Handler
 
 		@Override
-		public void onReadyStateChange(XMLHttpRequest xhr) {
-			int state = xhr.getReadyState();
-			if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
-				EmployeeTree.this.resultsPanel.setHTML(xhr.getResponseText());
-			}
+		public void onAttachOrDetach(AttachEvent event) {
+			if (event.isAttached())
+				registration = resultsPanel.addClearHandler(this);
+			else
+				registration.removeHandler();
+		}
+		// ------------------------------------------------------- ClearHandler
+
+		@Override
+		public void onClear(ClearEvent event) {
+			clear();
 		}
 
+		// ----------------------------------------- SelectionHandler<TreeItem>
+		@Override
+		public void onSelection(SelectionEvent<JsSalaryResult> event) {
+			onSalaryResultSelected(event.getSelectedItem());
+		}
+
+
+		// --------------------------------------- AsyncCallback<JsSalaryResult>
+
+		@Override
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onSuccess(JsSalaryResult result) {
+			resultsDataProvider.getList().add(result);
+
+		}
+
+		// ---------------------------------------------------- Private methods
+
+		private void clear() {
+			resultsDataProvider.getList().clear();
+			resultsDataProvider.flush();
+		}
+
+		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
+			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(),
+					salaryResult.getWorkplaceId(), salaryResult.getStartDate(),
+					salaryResult.getEndDate());
+		}
 	}
 
 	class CalcWorkplaceCommand implements ScheduledCommand, AcceptHandler,
-			ReadyStateChangeHandler, CalculateService {
+			CalculateService, AsyncCallback<JsSalaryResult>,
+			SelectionHandler<JsSalaryResult>, ClearHandler, Handler {
 
+		private SalaryResultsGrid resultsGrid;
 		private CalcDialog<Employee> calcDialog;
+
+		private HandlerRegistration registration;
+		private ListDataProvider<JsSalaryResult> resultsDataProvider;
 
 		public CalcWorkplaceCommand() {
 			calcDialog = new EmployeeCalcDialog();
 			calcDialog.addAcceptHandler(this);
+			calcDialog.setWidth(Window.getClientWidth() / 2 + "px");
+
+			resultsGrid = new SalaryResultsGrid();
+			resultsGrid.addAttachHandler(this);
+			resultsGrid.setPageSize(RESULTS_LIMIT);
+			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
+			resultsDataProvider.addDataDisplay(resultsGrid);
+			resultsGrid.addSelectionHandler(this);
+
 		}
 
 		@Override
@@ -301,57 +433,82 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			};
 
-			// TODO : Start date is January 1, 1970, 00:00:00 GMT ?.
-			calcDialog.setMonth(new Date(0), null,
-					DateUtils.getFirstDayOfMonth());
-
 			calcDialog.setDataProvider(employeeProvider);
 		}
 
-		// --------------------------------------
-		// AcceptHandler
-		// --------------------------------------
+		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
 			Date month = calcDialog.getMonth();
+			Date startDate = DateUtils.getFirstDayOfMonth(month);
+			Date endDate = DateUtils.getLastDayOfMonth(month);
 
-			StringBuffer requestDataBuffer = new StringBuffer();
-			requestDataBuffer.append(START_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getFirstDayOfMonth(month)));
-			requestDataBuffer.append("&" + END_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-			requestDataBuffer.append("&" + ISSUE_DATE + "="
-					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
+			Set<Employee> employees = calcDialog.getSelectedData();
 
-			for (Employee employee : calcDialog.getSelectedData())
-				requestDataBuffer.append("&" + EMPLOYEES + "="
-						+ employee.getId());
+			resultsPanel.setWidget(resultsGrid);
 
+			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
-				requestDataBuffer.append("&" + SAVE + "=true");
+				optionsBits |= SAVE_OPTION;
+			if (calcDialog.isOverwriteSelected())
+				optionsBits |= OVERWRITE_OPTION;
+			if (calcDialog.isDuplicateSelected())
+				optionsBits |= DUPLICATE_OPTION;
 
-			XMLHttpRequest xhr = XMLHttpRequest.create();
-			xhr.open("POST", CALC_URL);
-			xhr.setRequestHeader("Content-type",
-					"application/x-www-form-urlencoded");
-			xhr.setOnReadyStateChange(this);
-			xhr.send(requestDataBuffer.toString());
-
+			EmployeeTree.calculate(startDate, endDate, EMPLOYEES, employees,
+					optionsBits, this);
+			clear();
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 		}
 
-		// --------------------------------------
-		// ReadyStateChangeHandler
-		// --------------------------------------
+		// ------------------------------------------------------------ Handler
 
 		@Override
-		public void onReadyStateChange(XMLHttpRequest xhr) {
-			int state = xhr.getReadyState();
-			if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
-				EmployeeTree.this.resultsPanel.setHTML(xhr.getResponseText());
-			}
+		public void onAttachOrDetach(AttachEvent event) {
+			if (event.isAttached())
+				registration = resultsPanel.addClearHandler(this);
+			else
+				registration.removeHandler();
 		}
 
+		// ------------------------------------------------------- ClearHandler
+
+		@Override
+		public void onClear(ClearEvent event) {
+			clear();
+		}
+
+		// ----------------------------------------- SelectionHandler<TreeItem>
+		@Override
+		public void onSelection(SelectionEvent<JsSalaryResult> event) {
+			onSalaryResultSelected(event.getSelectedItem());
+		}
+
+		// --------------------------------------- AsyncCallback<JsSalaryResult>
+
+		@Override
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onSuccess(JsSalaryResult result) {
+			resultsDataProvider.getList().add(result);
+
+		}
+
+		// ---------------------------------------------------- Private methods
+
+		private void clear() {
+			resultsDataProvider.getList().clear();
+		}
+
+		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
+			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(),
+					salaryResult.getWorkplaceId(), salaryResult.getStartDate(),
+					salaryResult.getEndDate());
+		}
 	}
 
 	static abstract class GPSReportEnterpriseCommand implements
@@ -543,9 +700,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class EnterpriseContextMenu extends ContextMenu {
 
 		CalcEnterpriseCommand calcCmd;
-		A3ReportEnterpriseCommand a3ReportCmd;
-		FTEReportEnterpriseCommand fteReportCmd;
-		CTRLReportEnterpriseCommand ctrlReportCmd;
+
+		// A3ReportEnterpriseCommand a3ReportCmd;
+		// FTEReportEnterpriseCommand fteReportCmd;
+		// CTRLReportEnterpriseCommand ctrlReportCmd;
 
 		public EnterpriseContextMenu() {
 
@@ -574,24 +732,26 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
-			addSeparator();
-			addItem("Informe FTE",
-					fteReportCmd = new FTEReportEnterpriseCommand(
-							"Informe FTE..."), AON.AON_ICON_EXCEL,
-					AON.AON_ICON_CMD_BUTTON);
-			addItem("Informe Control Festivos, Libres y Vacaciones",
-					ctrlReportCmd = new CTRLReportEnterpriseCommand(
-							"Informe Control Festivos, Libres y Vacaciones..."),
-					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
-			addItem("Informe A3", a3ReportCmd = new A3ReportEnterpriseCommand(
-					"Informe A3..."), AON.AON_ICON_EXCEL,
-					AON.AON_ICON_CMD_BUTTON);
+// @formatter:off
+//			addSeparator();
+//			addItem("Informe FTE",
+//					fteReportCmd = new FTEReportEnterpriseCommand(
+//							"Informe FTE..."), AON.AON_ICON_EXCEL,
+//					AON.AON_ICON_CMD_BUTTON);
+//			addItem("Informe Control Festivos, Libres y Vacaciones",
+//					ctrlReportCmd = new CTRLReportEnterpriseCommand(
+//							"Informe Control Festivos, Libres y Vacaciones..."),
+//					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
+//			addItem("Informe A3", a3ReportCmd = new A3ReportEnterpriseCommand(
+//					"Informe A3..."), AON.AON_ICON_EXCEL,
+//					AON.AON_ICON_CMD_BUTTON);
+// @formatter:on
 		}
 
 		void setEnterprise(Enterprise enterprise) {
 			calcCmd.setEnterprise(enterprise);
-			fteReportCmd.setEnterprise(enterprise);
-			ctrlReportCmd.setEnterprise(enterprise);
+			// fteReportCmd.setEnterprise(enterprise);
+			// ctrlReportCmd.setEnterprise(enterprise);
 		}
 
 	}
@@ -702,6 +862,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private WorkplaceContextMenu workplaceContextMenu;
 	private EnterpriseContextMenu enterpriseContextMenu;
 
+	private Employee employee;
+	private Workplace workplace;
 	private Enterprise enterprise;
 
 	/**
@@ -755,7 +917,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		workplaceContextMenu = new WorkplaceContextMenu();
 
 		singlenton = this;
-
+		
 		export2JS();
 
 	}
@@ -773,12 +935,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onWorkplaceSelected(Workplace workplace) {
 		employeeDetail.setWidget(jsf);
 		jsf.workplaceSelected(workplace.getId());
+		this.workplace = workplace;
 	}
 
 	@Override
 	public void onEmployeeSelected(Employee employee) {
 		employeeDetail.setWidget(jsf);
 		jsf.employeeSelected(employee.getId());
+		this.employee = employee;
 	}
 
 	@Override
@@ -810,19 +974,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onStatisticsSelected(
 			com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
-		
+
 		employeeDetail.setWidget(stats);
 		stats.setStatistics(statistics);
 	}
-	
+
 	@Override
 	public void onITDataSelected(
 			com.esferalia.aon.gwt.payroll.shared.ITData itData) {
-		
-		employeeDetail.setWidget(it);		
+
+		employeeDetail.setWidget(it);
 		it.setITEditor(itData);
-		
-		
+
 	}
 
 	@Override
@@ -946,63 +1109,145 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 	}
 
-	private static void showSalaryDraft(int employeeId, String startDateString,
-			String endDateString) {
+	// --------------------------------------------------------- Private methods
+
+	private static void showSalaryDraft(int employeeId, int workplaceId,
+			Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();
-		DateTimeFormat dateTimeFormat = DateTimeFormat
-				.getFormat(CalculateService.DATE_FORMAT_PATTERN);
+		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, true);
 
-		com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft = new com.esferalia.aon.gwt.payroll.shared.SalaryDraft();
-		Employee employee = new Employee();
-		employee.setId(employeeId);
-		salaryDraft.setEmployee(employee);
-		Date startDate = dateTimeFormat.parse(startDateString);
-		salaryDraft.setStartDate(startDate);
-		Date endDate = dateTimeFormat.parse(endDateString);
-		salaryDraft.setEndDate(endDate);
-		salaryDraft.setIssueDate(endDate);
-		salaryDraft.setType(Type.SALARY);
-
-		EmployeesServiceAsync employeesServiceAsync = employeeTree.employees
-				.getEmployeesService();
-		SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft,
-				employeesServiceAsync);
-
-		employeeTree.employeeDetail.setWidget(employeeTree.salaryDraft);
-		employeeTree.salaryDraft.setSalaryDraftObject(draftObject);
-	}
-
-	private static void showEmployee(int employeeId) {
-		EmployeeTree employeeTree = getEmployeeTree();
-		employeeTree.employeeDetail.setWidget(employeeTree.jsf);
-		employeeTree.jsf.employeeSelected(employeeId);
 	}
 
 	private static EmployeeTree getEmployeeTree() {
 		return singlenton;
 	}
 
-	private static void a3Report() {
-		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-		singlenton.enterpriseContextMenu.a3ReportCmd.execute();
+	// private static void a3Report() {
+	// singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+	// singlenton.enterpriseContextMenu.a3ReportCmd.execute();
+	// }
+	//
+	// private static void fteReport() {
+	// singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+	// singlenton.enterpriseContextMenu.fteReportCmd.execute();
+	// }
+	//
+	// private static void ctrlReport() {
+	// singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+	// singlenton.enterpriseContextMenu.ctrlReportCmd.execute();
+	// }
+
+	private static <T extends HasId<?>> void calculate(Date startDate,
+			Date endDate, String itemClass, Set<T> items, int optionsBits,
+			final AsyncCallback<JsSalaryResult> callback) {
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer.append("&" + START_DATE + "="
+				+ DATE_FORMAT.format(startDate));
+		requestDataBuffer.append("&" + END_DATE + "="
+				+ DATE_FORMAT.format(endDate));
+		requestDataBuffer.append("&" + ISSUE_DATE + "="
+				+ DATE_FORMAT.format(endDate));
+
+		for (T item : items)
+			requestDataBuffer.append("&" + itemClass + "=" + item.getId());
+
+		if ((optionsBits & SAVE_OPTION) > 0)
+			requestDataBuffer.append("&" + SAVE + "=" + Boolean.toString(true));
+		if ((optionsBits & OVERWRITE_OPTION) > 0)
+			requestDataBuffer.append("&" + OVERWRITE + "="
+					+ Boolean.toString(true));
+		else if ((optionsBits & DUPLICATE_OPTION) > 0)
+			requestDataBuffer.append("&" + DUPLICATE + "="
+					+ Boolean.toString(true));
+
+		// Send request to server and catch any errors.
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", CALC_URL);
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+
+			private int loaded = 0;
+
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+
+				if (state == XMLHttpRequest.LOADING
+						|| state == XMLHttpRequest.DONE) {
+
+					String text = xhr.getResponseText();
+					
+					
+					for (JsSalaryResult result = read(text); result != null; result = read(text))
+						callback.onSuccess(result);
+				}
+
+			}
+
+			private JsSalaryResult read(String text) {
+				int begin = loaded;
+				while (begin < text.length()) {
+					if (text.charAt(begin) == '{') {
+						try {
+							loaded = findEnd(text, begin + 1) + 1;
+						} catch (IndexOutOfBoundsException e) {
+							return null;
+						}
+						String json = text.substring(begin, loaded);
+						return JsonUtils.safeEval(json);
+					}
+					begin++;
+				}
+
+				return null;
+			}
+
+			private int findEnd(String text, int start) {
+				for (int end = start; end < text.length(); end++) {
+					switch (text.charAt(end)) {
+					case '}':
+						return end;
+					case '{':
+						end = findEnd(text, end + 1);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+
+		});
+
+		xhr.send(requestDataBuffer.toString());
 	}
 
-	private static void fteReport() {
-		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-		singlenton.enterpriseContextMenu.fteReportCmd.execute();
+	private static void viewResults() {
+		singlenton.showResultsPanel();
 	}
 
-	private static void ctrlReport() {
+	private static void enterpriseCalc() {
 		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-		singlenton.enterpriseContextMenu.ctrlReportCmd.execute();
+		singlenton.enterpriseContextMenu.calcCmd.execute();
+	}
+	
+	private static void workplaceCalc() {
+		singlenton.workplaceContextMenu.setWorkplace(singlenton.workplace);
+		singlenton.workplaceContextMenu.calcCmd.execute();
+	}
+
+	private static void employeeCalc() {
+		singlenton.employeeContextMenu.setEmployee(singlenton.employee);
+		singlenton.employeeContextMenu.calcCmd.execute();
 	}
 
 	private static native void export2JS() /*-{
-											$wnd.a3Report = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::a3Report());
-											$wnd.fteReport = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::fteReport());
-											$wnd.ctrlReport = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::ctrlReport());
-											$wnd.showEmployee = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::showEmployee(I));
-											$wnd.showSalaryDraft = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::showSalaryDraft(ILjava/lang/String;Ljava/lang/String;));
-											}-*/;
+	$wnd.viewResults = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::viewResults());
+	$wnd.employeeCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::employeeCalc());
+	$wnd.workplaceCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::workplaceCalc());
+	$wnd.enterpriseCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::enterpriseCalc());
+	}-*/;
+	
 
 }

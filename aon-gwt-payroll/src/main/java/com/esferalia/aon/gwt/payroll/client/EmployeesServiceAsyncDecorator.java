@@ -212,6 +212,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<Double>(callback));
 
 	}
+	
+	@Override
+	public void eval(String expression, AgreementDraft agreementDraft, int levelId,
+			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			EvalException {
+		AON.start();
+		employeesServiceAsync.eval(expression, agreementDraft,levelId,
+				new AsyncCallbackWrapper<Double>(callback));
+	}
 
 	@Override
 	public void getContext(SalaryDraft salaryDraft,
@@ -219,6 +228,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getContext(salaryDraft,
+				new AsyncCallbackWrapper<ContextDescriptor>(callback));
+	}
+
+	@Override
+	public void getContext(AgreementDraft agreementDraft, int levelId,
+			AsyncCallback<ContextDescriptor> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getContext(agreementDraft, levelId,
 				new AsyncCallbackWrapper<ContextDescriptor>(callback));
 	}
 

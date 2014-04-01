@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.32.0</version>
+		<version>7.32.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
@@ -22,9 +22,18 @@
 		</plugins>
 	</build>
 	<dependencies>
+		
+		<!-- We must remove this as soon as possible.-->  
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.sql.payroll</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.master.jooq</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

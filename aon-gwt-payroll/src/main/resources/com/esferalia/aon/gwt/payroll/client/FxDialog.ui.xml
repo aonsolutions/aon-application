@@ -2,8 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
-	<ui:Style  >
-	
+	<ui:Style>
 	.expression-TextArea {
 		padding: 0px;
 	}
@@ -13,46 +12,43 @@
 	}
 	
 	@sprite .function-ListBox option[value="VariableDescriptor"] {
-		width: auto; 
+		width: auto;
 		gwt-image: 'x';
 		background-position: left center;
 	}
 	
 	@sprite .function-ListBox option[value="FunctionDescriptor"] {
-		width: auto; 
+		width: auto;
 		gwt-image: 'fx';
 		font-weight: bold;
 		background-position: left center;
 	}
-
-
 	</ui:Style>
 
 	<ui:image field='x' src='x.png' />
 	<ui:image field='fx' src='fx.png' />
-	
+
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 
-		<table class="aon-width-all aon-height-all" >
+		<table class="aon-width-all aon-height-all">
 			<tr>
 
 				<td width="25%">
-					<g:VerticalPanel styleName="aon-width-all aon-height-all" >
+					<g:VerticalPanel styleName="aon-width-all aon-height-all">
 						<g:Label>Categor&iacute;a
 						</g:Label>
-						<g:ListBox ui:field="categoryListBox" styleName="aon-width-all"  />
-						<g:Label>&nbsp;
-						</g:Label>
+						<g:ListBox ui:field="categoryListBox" styleName="aon-width-all" />
+						<g:Label>&nbsp; </g:Label>
 						<g:Label>Funci&oacute;n
 						</g:Label>
 						<g:ListBox ui:field="functionListBox" visibleItemCount="20"
-							styleName="aon-width-all aon-height-all {style.function-ListBox}"  />
+							styleName="aon-width-all aon-height-all {style.function-ListBox}" />
 					</g:VerticalPanel>
 				</td>
 
 				<td>
-					<table class="aon-width-all aon-height-all" >
+					<table class="aon-width-all aon-height-all">
 						<tr>
 							<td colspan="3">
 								<g:Label ui:field="nameLabel" styleName="aon-bold"></g:Label>
@@ -60,8 +56,7 @@
 						</tr>
 						<tr>
 							<td colspan="3">
-								<g:Label>&nbsp;
-								</g:Label>
+								<g:Label>&nbsp; </g:Label>
 							</td>
 						</tr>
 						<tr>
@@ -71,8 +66,7 @@
 						</tr>
 						<tr>
 							<td colspan="3">
-								<g:Label>&nbsp;
-								</g:Label>
+								<g:Label>&nbsp; </g:Label>
 							</td>
 						</tr>
 						<tr>
@@ -83,8 +77,7 @@
 						</tr>
 						<tr>
 							<td colspan="3">
-								<g:Label>&nbsp;
-								</g:Label>
+								<g:Label>&nbsp; </g:Label>
 							</td>
 						</tr>
 						<tr>
@@ -94,19 +87,23 @@
 						</tr>
 						<tr>
 							<td colspan="3">
-								<g:Label>&nbsp;
-								</g:Label>
+								<g:Label>&nbsp; </g:Label>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="3">
-								<g:InlineHTML ui:field="errorLabel" >&nbsp;</g:InlineHTML>
+								<g:FlexTable ui:field="contextTable" styleName="aon-dataTable" />
+							</td>
+						</tr>
+
+						<tr>
+							<td colspan="3">
+								<g:InlineHTML ui:field="errorLabel">&nbsp;</g:InlineHTML>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="3">
-								<g:Label>&nbsp;
-								</g:Label>
+								<g:Label>&nbsp; </g:Label>
 							</td>
 						</tr>
 
@@ -120,15 +117,14 @@
 								</g:InlineLabel>
 							</td>
 							<td width="25%">
-								<g:HTML ui:field="resultLabel" stylePrimaryName="gwt-TextBox">&nbsp;
-								</g:HTML>
+								<g:HTML ui:field="resultLabel" stylePrimaryName="gwt-TextBox">&nbsp; </g:HTML>
 							</td>
 						</tr>
 
-						<tr class="aon-width-all aon-height-all" >
-							<td colspan="3" class="aon-width-all aon-height-all" >
+						<tr class="aon-width-all aon-height-all">
+							<td colspan="3" class="aon-width-all aon-height-all">
 								<g:TextArea ui:field="expressionTextArea"
-									styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}"  />
+									styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}" />
 							</td>
 						</tr>
 					</table>

@@ -40,16 +40,28 @@
 				</ui:define>
 
 			</ui:decorate>
-			<!--  
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarID" value="reportsToolbar" />
-				<ui:param name="toolbarTitle" value="Playasol" />
-				<ui:param name="toolbarDescription" value="Informes" />
+				<ui:param name="toolbarID" value="payrollToolbar" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_module_payroll}" />
+				<ui:param name="toolbarDescription" value="#{bundle.payroll_salary_menu_group}" />
 
 
 				<ui:define name="toolbarContent">
 
+					<aon:commandButton id="Enterprise-Calc" ajaxSingle="true"
+						reRender="enterpriseMainGrid" value="#{bundle.menu_main_calculator}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-start"
+						onclick="enterpriseCalc();">
+					</aon:commandButton>
+
+					<aon:commandButton id="View-Results" ajaxSingle="true"
+						reRender="enterpriseMainGrid" value="#{bundle.aon_results}"
+						styleClass="aon-finding-toolbar-item aon-icon-time"
+						onclick="viewResults();">
+					</aon:commandButton>
+
+					<!--  
 					<aon:commandButton id="Fte-report" ajaxSingle="true"
 						reRender="enterpriseMainGrid" value="Informe FTE"
 						styleClass="aon-finding-toolbar-item aon-icon-excel"
@@ -69,11 +81,11 @@
 						styleClass="aon-finding-toolbar-item aon-icon-excel"
 						onclick="a3Report();">
 					</aon:commandButton>
+					-->
 
 				</ui:define>
 
 			</ui:decorate>
-			-->
 
 		</c:if>
 		<c:if test="#{!edit}">

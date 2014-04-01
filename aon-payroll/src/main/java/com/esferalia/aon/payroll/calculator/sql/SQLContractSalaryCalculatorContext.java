@@ -131,7 +131,7 @@ public class SQLContractSalaryCalculatorContext implements
 			+ " AND enterprise.registry = enterprise_registry.id" // INNER JOIN: registry is NOT  NULL
 			+ " AND workplace.address = raddress.id" // INNER JOIN: address is NOT NULL
 			+ " AND contract.start_date <= ? "
-			+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )";
+			+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )" ;
 	//@formatter:on
 
 	private static final String PAYMENT_SQL = "SELECT * "
@@ -1402,6 +1402,10 @@ public class SQLContractSalaryCalculatorContext implements
 							public String getRetenedorApellidosNombre() {
 								return "LINUX FOUNDATION";
 							}
+							
+							public int getAñoNacimiento() {
+								return 1969;
+							};
 
 						};
 					} catch (SQLException e) {
@@ -1452,6 +1456,11 @@ public class SQLContractSalaryCalculatorContext implements
 				@Override
 				public String getApellidosNombre() {
 					return "TORVALDS BENEDICT LINUS";
+				}
+				
+				@Override
+				public int getAñoNacimiento() {
+					return 1969;
 				}
 
 				@Override
