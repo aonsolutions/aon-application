@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.jooq.conf.Settings;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
@@ -28,6 +29,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountingUtil {
+
+	private static Settings SETTINGS = null;
 
 	public static Account obtainDefaultAccount(AppParam param) throws ManagerBeanException {
 		Integer id = AppParamUtil.getValueAsInteger(param);
@@ -170,4 +173,13 @@ public class AccountingUtil {
 			throw new ManagerBeanException(e.getMessage(),e);
 		}
 	}
+
+	public static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
+	}
+
 }

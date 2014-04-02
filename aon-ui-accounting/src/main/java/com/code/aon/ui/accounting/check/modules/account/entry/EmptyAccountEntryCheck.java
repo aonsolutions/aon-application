@@ -1,18 +1,25 @@
 package com.code.aon.ui.accounting.check.modules.account.entry;
 
-import java.util.Iterator;
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
+import org.jooq.AggregateFunction;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;
@@ -32,34 +39,35 @@ public class EmptyAccountEntryCheck implements ICheckModule{
 	@Override
 	public void onExecute(CheckParams params) throws AonCheckException{
 		list = new LinkedList<ICheckEntry>();
+		Connection connection = null; 
 		try {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
-			String select = 
-				"SELECT ae.id id,count(DISTINCT aed.id) count"
-				+" FROM account_entry ae "
-				+" LEFT OUTER JOIN account_entry_detail aed ON aed.account_entry = ae.id" 
-				+" WHERE account_period = " + params.getPeriod().getId()
-				+" AND " + DomainManager.getSQLWhereClause("ae.domain")
-				+" GROUP BY ae.id"
-				+" HAVING COUNT(DISTINCT aed.id) = 0";
-			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
-			List<?> queryList = query
-					.addScalar("id", Hibernate.INTEGER)
-					.addScalar("count", Hibernate.INTEGER)
-					.list();
-			Iterator<?> iterator = queryList.iterator();
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			while (iterator.hasNext()) {
-				Object[] obj = (Object[]) iterator.next();
-				Integer id = (Integer) obj[0];
+
+			connection = DatabaseUtil.getConnection(params.getDomainName());
+			DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
+			
+			AggregateFunction<Integer> countFunc = DSL.countDistinct(ACCOUNT_ENTRY_DETAIL.ID);
+			Result<Record2<Integer,Integer>> record = ctx.select(ACCOUNT_ENTRY.ID,countFunc)
+					.from(ACCOUNT_ENTRY)
+					.leftOuterJoin(ACCOUNT_ENTRY_DETAIL).onKey()
+					.where(ACCOUNT_ENTRY.DOMAIN.equal(params.getDomainId()))
+					.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(params.getPeriod().getId()))
+					.groupBy(ACCOUNT_ENTRY.ID)
+					.having(countFunc.equal(0)).fetch();
+			for (Record2<Integer,Integer> step : record) {
+				Integer id = step.value1();
 				AccountEntry entry = (AccountEntry) entryBean.get(id);
-				EmptyAccountEntryCheckEntry e = new EmptyAccountEntryCheckEntry();
+				UnbalancedAccountEntryCheckEntry e = new UnbalancedAccountEntryCheckEntry();
 				e.setMessage( emptyAccountEntry );
 				e.setTo(entry);
 				list.add(e);
 			}
 		} catch (ManagerBeanException e) {
 			throw new AonCheckException(e.getMessage(),e);
+		} catch (AonConnectionException e) {
+			throw new AonCheckException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	
@@ -86,6 +94,12 @@ public class EmptyAccountEntryCheck implements ICheckModule{
 	@Override
 	public CheckCategory getCategory() {
 		return CheckCategory.ACCOUNTING;
+	}
+
+	@Override
+	public void mock() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

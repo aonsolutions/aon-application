@@ -1,21 +1,22 @@
 package com.code.aon.ui.accounting.check.modules.account;
 
-import java.util.Iterator;
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+
+import java.sql.Connection;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
+import org.jooq.DSLContext;
+import org.jooq.Record3;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 
-import com.code.aon.account.Account;
-import com.code.aon.accounting.AccountEntry;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
+import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;
@@ -27,56 +28,59 @@ public class ParentEntryCheck implements ICheckModule {
 	private String label = "Chequeo de cuentas contables sin niveles inferiores.";
 	private boolean enabled;
 	private List<ICheckEntry> list;
-	private String parentCheckEntryMsg = "Cuenta sin niveles inferiores.";
+	private String parentCheckEntryMsg = "Cuenta sin niveles inferiores [{0} - {1}].";
 	
-	Stack<String> stack; 
-
 	@Override
 	public void onExecute(CheckParams params) throws AonCheckException {
 		list = new LinkedList<ICheckEntry>();
+		Connection connection = null;
 		try {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
-			String select = 
-				"SELECT a.code,a.level,a.id"
-				+" FROM account a "
-				+" WHERE " + DomainManager.getSQLWhereClause("a.domain", Account.class)
-				+" ORDER BY a.code";
-			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
-			List<?> queryList = query
-					.addScalar("code", Hibernate.STRING)
-					.addScalar("level", Hibernate.INTEGER)
-					.addScalar("id", Hibernate.INTEGER)
-					.list();
-			Iterator<?> iterator = queryList.iterator();
-			IManagerBean bean = BeanManager.getManagerBean(Account.class);
-			while (iterator.hasNext()) {
-				Object[] obj = (Object[]) iterator.next();
-				String code = (String) obj[0];
-				Integer level = (Integer) obj[1];
-				Integer id = (Integer) obj[2];
+			Stack<String> stack = null;
+			connection = DatabaseUtil.getConnection(params.getDomainName());
+			DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
+			Result<Record3<String,Byte,String>> record = 
+				ctx.select(ACCOUNT.CODE,ACCOUNT.LEVEL,ACCOUNT.DESCRIPTION)
+					.from(ACCOUNT)
+					.where(ACCOUNT.DOMAIN.equal(params.getDomainId()))
+					.orderBy(ACCOUNT.CODE)
+					.fetch();
+			for (Record3<String,Byte,String> step : record) {
+				String code = step.getValue(ACCOUNT.CODE);
+				byte level = step.getValue(ACCOUNT.LEVEL);
 				if (level == 1) {
 					stack = new Stack<String>();
 					stack.push(code);
 				} else {
+					if (stack == null) {
+						// Por si falta el nivel 1, cosa casi imposible..
+						stack = new Stack<String>();	
+					}
 					String parent = stack.peek();
 					while (parent.length() >= code.length()) {
 						stack.pop();
 						parent = stack.peek();
 					}
 					if (!StringUtils.startsWith(code, parent)) {
-						Account account  = (Account) bean.get(id);
 						ParentCheckEntry e = new ParentCheckEntry();
-						e.setMessage( parentCheckEntryMsg );
-						e.setTo(account);
+						e.setMessage( MessageFormat.format(parentCheckEntryMsg,code,step.getValue(ACCOUNT.DESCRIPTION)));
 						list.add(e);
-					} 
+					} else {
+						if (( level - parent.length()) > 1) {
+							ParentCheckEntry e = new ParentCheckEntry();
+							e.setMessage( MessageFormat.format(parentCheckEntryMsg,code,step.getValue(ACCOUNT.DESCRIPTION)));
+							list.add(e);
+						}
+					}
 					if (level < 5 ) {
 						stack.push(code);		
 					}
 				}
 			}
-		} catch (ManagerBeanException e) {
+			stack = null;
+		} catch (AonConnectionException e) {
 			throw new AonCheckException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 
@@ -102,6 +106,12 @@ public class ParentEntryCheck implements ICheckModule {
 	@Override
 	public CheckCategory getCategory() {
 		return CheckCategory.ACCOUNT;
+	}
+
+	@Override
+	public void mock() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

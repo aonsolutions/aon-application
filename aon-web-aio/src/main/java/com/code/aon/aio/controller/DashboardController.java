@@ -315,7 +315,9 @@ public class DashboardController {
 			messages = new LinkedList<DashboardMessage>();
 			try {
 				if (getAccountingPeriod() != null) {
-					CheckParams params = new CheckParams();
+					String domainName = AonUtil.getDomainName();
+					int domainId = DomainManager.getCurrentDomain();
+					CheckParams params = new CheckParams(domainName,domainId);
 					params.setPeriod(getAccountingPeriod());
 
 					UnbalancedAccountEntryCheck uc = new UnbalancedAccountEntryCheck();

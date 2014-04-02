@@ -20,8 +20,13 @@ public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 	@Override
 	public void onFix(ActionEvent event) throws AonCheckException{
 		try {
-			Account account = (Account) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(Account.class);
+			Account account = null;
+			if (getTo() == null) {
+				account = (Account) bean.get(getId());
+			} else {
+				account = (Account) getTo();
+			}
 			account.setEntryEnabled(!account.isEntryEnabled());
 			bean.update(account);
 			fixed = true;
@@ -34,7 +39,7 @@ public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 
 	@Override
 	public boolean isFixAvailable() {
-		return true;
+		return getTo() != null || getId() != null;
 	}
 	@Override
 	public boolean isFixed() {
@@ -43,8 +48,9 @@ public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 
 	@Override
 	public String getMessage() {
-		Account account = (Account) getTo();
-		return super.getMessage() + "(" + account.getCode() + " " + account.getDescription() + ")";	
+		return super.getMessage();
+//		Account account = (Account) getTo();
+//		return super.getMessage() + "(" + account.getCode() + " " + account.getDescription() + ")";	
 	}
 
 	@Override

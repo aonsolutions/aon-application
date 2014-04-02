@@ -16,7 +16,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -112,7 +111,7 @@ public class BalanceCheck implements ICheckModule{
 								}
 								if (msg != null) {
 									BalanceCheckEntry e = new BalanceCheckEntry();
-									if (DomainManager.getCurrentDomain() != balance.getDomain()) {
+									if (params.getDomainId() != balance.getDomain()) {
 										msg += " Balance definido en entorno superior"; 
 									}
 									e.setMessage( msg );
@@ -157,6 +156,12 @@ public class BalanceCheck implements ICheckModule{
 	@Override
 	public CheckCategory getCategory() {
 		return CheckCategory.ACCOUNTING;
+	}
+
+	@Override
+	public void mock() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
