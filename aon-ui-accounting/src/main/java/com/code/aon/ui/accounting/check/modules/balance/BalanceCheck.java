@@ -26,10 +26,8 @@ import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.check.ICheckModule;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.util.AonUtil;
-
 import com.esferalia.aon.entity.IEntityAlias;
 
-@Deprecated
 public class BalanceCheck implements ICheckModule{
 
 	private String label = "Chequeo de cuentas ausentes o duplicadas en los balances oficiales.";
@@ -55,26 +53,27 @@ public class BalanceCheck implements ICheckModule{
 					Balance balance = (Balance) si.getValue();
 					if (balance.getType() != BalanceType.CUSTOM) {
 						if (balance.getLines() != null && balance.getLines().size() > 0) {
-							StringBuilder buf = new StringBuilder(","); 
+							StringBuilder buf = new StringBuilder(",");
+							StringBuilder dualAccounts = new StringBuilder(",");
 							for (BalanceDetail detail: balance.getLines() ) {
 								if (!detail.isInternalCalculation() && !StringUtils.isEmpty( detail.getAccounts())) {
-									if (buf.length() > 0) {
-										buf.append(",");
-									}
 									String accounts = detail.getAccounts();
 									if (StringUtils.isNotEmpty(accounts)) {
-										accounts = accounts.replace("(","");		
-										accounts = accounts.replace(")","");		
-										if (StringUtils.contains(accounts, "?")) {
-											accounts = accounts.replace("?","");
+										String[] accs = StringUtils.split(accounts, ',');
+										for (String a :accs) {
+											a = a.replace("(", "");
+											a = a.replace(")", "");
+											if (StringUtils.contains(a, "?")) {
+												a = a.replace("?","");
+												dualAccounts.append(a);
+												dualAccounts.append(",");
+											}
+											buf.append( a );
+											buf.append( "," );
 										}
-										buf.append( accounts );	
 									}
 									
 								}
-							}
-							if (buf.length() > 0) {
-								buf.append(",");
 							}
 							Criteria criteria = new Criteria();
 							criteria.addEqualExpression(entryAlias, true);
@@ -96,15 +95,26 @@ public class BalanceCheck implements ICheckModule{
 								int count2 = StringUtils.countMatches(buf.toString(), id2);
 								int count3 = StringUtils.countMatches(buf.toString(), id3);
 								int count4 = StringUtils.countMatches(buf.toString(), id4);
-								int sum = count1 + count2 + count3 + count4; 
+								int sum = count1 + count2 + count3 + count4;
+								String msg = null;
 								if ( sum > 1) {
-									BalanceCheckEntry e = new BalanceCheckEntry();
-									e.setMessage( "[" + account.getCode() + "] Cuenta definida dos veces en el balance '" + balance.getName() + "'.");
-									e.setTo(account);
-									list.add(e);
+									int dualCount1 = StringUtils.countMatches(dualAccounts.toString(), id1);
+									int dualCount2 = StringUtils.countMatches(dualAccounts.toString(), id2);
+									int dualCount3 = StringUtils.countMatches(dualAccounts.toString(), id3);
+									int dualCount4 = StringUtils.countMatches(dualAccounts.toString(), id4);
+									int dualSum = dualCount1 + dualCount2 + dualCount3 + dualCount4;
+									if ( dualSum == 0) {
+										msg = "[" + account.getCode() + "] Cuenta definida dos veces en el balance '" + balance.getName() + "'.";
+									}
 								} else if ( sum == 0) {
+									msg ="[" + account.getCode() + "] Cuenta no reflejada en el balance '" + balance.getName() + "'";
+								}
+								if (msg != null) {
 									BalanceCheckEntry e = new BalanceCheckEntry();
-									e.setMessage( "[" + account.getCode() + "] Cuenta no reflejada en el balance '" + balance.getName() + "'" );
+									if (params.getDomainId() != balance.getDomain()) {
+										msg += " Balance definido en entorno superior"; 
+									}
+									e.setMessage( msg );
 									e.setTo(account);
 									list.add(e);
 								}
