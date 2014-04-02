@@ -27,7 +27,6 @@
 			margin-right : 16px;
 			margin-bottom : 10px;
 		}
-
 		@eval activeBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(null);
 		.active {
 			background-color: activeBackground ;
@@ -74,14 +73,15 @@
 								<g:Label styleName="aon-outputText" text=" " />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-
-
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:ListBox ui:field='dateListBox' styleName='' />
+								<g:ListBox ui:field='dateListBox' styleName='' />																
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" >FILTRAR : </g:InlineLabel>
+							    <g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText"  />													
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
-
 
 					</g:HorizontalPanel>
 				</g:FlowPanel>
@@ -90,7 +90,7 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel">
+			<g:ScrollPanel ui:field="scrollPanelTimeline">
 				<g:VerticalPanel styleName="{style.document}"  >
 					
 					<g:HorizontalPanel ui:field="legendPanel" >
@@ -100,7 +100,7 @@
 						<g:InlineLabel styleName="{style.legend-caption}" >Activo</g:InlineLabel>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.common}" 
-						    title="Enfermedad Com&uacute;n, de Accidente no Laboral"/>		
+						    title="Enfermedad Com&uacute;n, Accidente no Laboral"/>		
 						<g:InlineLabel styleName="{style.legend-caption}" >Enfermedad Com&uacute;n</g:InlineLabel>		
 
 						<g:HTML  styleName="{style.legend-icon} {style.professional}" 
@@ -117,7 +117,9 @@
 					
 					</g:HorizontalPanel>				
 					
-					<g:SimplePanel ui:field='timelinePanel' />
+					<g:SimplePanel ui:field='timelinePanel'>
+					    
+					</g:SimplePanel>
 				
 				</g:VerticalPanel>				
 			</g:ScrollPanel>

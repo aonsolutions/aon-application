@@ -446,7 +446,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 					int incrementSize = rangeStart - newRangeStart;
 					ComboBox.this.setVisibleRange(newRangeStart, rangeLength
 							+ incrementSize);
-					Scheduler.get().scheduleFinally(this);
+					Scheduler.get().scheduleFinally(this);					
 
 				} else if (lastScrollPos >= maxScrollPos) {
 					visibleItem = getVisibleItem(getVisibleItemCount() - 1);
