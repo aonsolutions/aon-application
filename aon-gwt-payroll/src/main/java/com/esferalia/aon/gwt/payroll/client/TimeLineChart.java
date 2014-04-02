@@ -20,7 +20,16 @@ import com.google.gwt.ajaxloader.client.ArrayHelper;
 import com.google.gwt.ajaxloader.client.Properties;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.HasScrollHandlers;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDrawOptions;
 import com.google.gwt.visualization.client.events.Handler;
@@ -37,10 +46,14 @@ import com.google.gwt.visualization.client.visualizations.Visualization;
  *      href="http://code.google.com/apis/visualization/documentation/gallery/TimeLinechart.html"
  *      > TimeLine Chart Visualization Reference</a>
  */
-public class TimeLineChart extends Visualization<TimeLineChart.Options> {
+public class TimeLineChart extends Visualization<TimeLineChart.Options>
+		implements HasScrollHandlers {
 	/**
 	 * Options for drawing the chart.
 	 */
+
+	private Element scrollable;
+
 	public static class Options extends AbstractDrawOptions {
 		public static Options create() {
 			return JavaScriptObject.createObject().cast();
@@ -217,15 +230,56 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options> {
 		return null;
 	}-*/;
 
+	// ------------------------------------------------------ HasScrollHandlers
+	@Override
+	public HandlerRegistration addScrollHandler(ScrollHandler handler) {
+		return addHandler(handler, ScrollEvent.getType());
+	}
+
 	@Override
 	protected native JavaScriptObject createJso(Element parent) /*-{
 		return new $wnd.google.visualization.Timeline(parent);
 
 	}-*/;
 
-	
 	@Override
-	protected void onLoad() {		
+	protected void onLoad() {
 		super.onLoad();
+		initScrollHandler();
+	}
+
+	private void initScrollHandler() {
+
+			Element el = getElement();
+			while (DivElement.is(el)) {
+				el = el.getFirstChildElement();
+			}
+
+			if (el.getNextSibling() != null) {
+				el = el.getNextSiblingElement();
+				while (DivElement.is(el)) {
+					el = el.getFirstChildElement();
+				}
+			}
+
+			for (; el != getElement(); el = el.getParentElement()) {
+				Event.sinkEvents(el, Event.ONSCROLL);
+			}
+
+			DOM.setEventListener(getElement(), new EventListener() {
+
+				@Override
+				public void onBrowserEvent(Event event) {
+					ScrollEvent.fireNativeEvent(event, TimeLineChart.this);
+				}
+			});
+	}
+
+	public int getVerticalScrollPosition(Element el) {
+		return el.getScrollTop();
+	}
+
+	public int getMaximumVerticalScrollPosition(Element el) {
+		return el.getScrollHeight() - el.getClientHeight();
 	}
 }

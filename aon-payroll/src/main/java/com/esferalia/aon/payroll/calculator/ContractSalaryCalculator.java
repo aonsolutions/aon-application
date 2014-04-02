@@ -273,6 +273,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				paymentsVars.remove(undefPayment.getName());
 			}
 
+			int undefined = 0;
 			while (undefPayments.size() > 0) {
 				UndefPayment undefPayment = undefPayments.pop();
 				try {
@@ -285,12 +286,18 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				} catch (UndefinedVariablesException e) {
 					if (undefPayment.willBeDefined(paymentsVars)) {
 						undefPayments.add(undefPayment);
+						if ( ++undefined >= undefPayments.size())
+							break; //we've already eval all undef payments
 					} else {
 						undefPayment.onUndefinedData(this);
 						paymentsVars.remove(undefPayment.getName());
 					}
 				}
 			}
+			
+			for ( UndefPayment undefPayment: undefPayments )
+				undefPayment.onUndefinedData(this);
+			
 
 			double totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start,

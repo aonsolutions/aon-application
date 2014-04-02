@@ -89,7 +89,7 @@ public enum Mod123Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	}
 
 	@Override
-	public boolean accept(Administration administration) {
+	public boolean accept(Administration administration, Period period) {
 		if (administrations == null) {
 			return true;
 		}

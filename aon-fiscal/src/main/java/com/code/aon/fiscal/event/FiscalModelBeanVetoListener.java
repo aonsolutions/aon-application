@@ -69,6 +69,10 @@ public class FiscalModelBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 		if ( fiscalModel.getModel() == FiscalModelType.M130 && fiscalModel.getAdministration() != Administration.COMMON_TERRITORY) {
 			throw new ManagerBeanVetoListenerException("No existe soporte para la declaración del modelo 130 en esta administración.");
 		}
+		// El modelo 131 sólo está disponible para Territorio Común
+		if ( fiscalModel.getModel() == FiscalModelType.M131 && fiscalModel.getAdministration() != Administration.COMMON_TERRITORY) {
+			throw new ManagerBeanVetoListenerException("No existe soporte para la declaración del modelo 131 en esta administración.");
+		}
 
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			if (StringUtils.isEmpty(fiscalModel.getAdmonAeat())) {

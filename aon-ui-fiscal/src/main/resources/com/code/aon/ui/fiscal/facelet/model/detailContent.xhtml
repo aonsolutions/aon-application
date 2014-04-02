@@ -95,10 +95,14 @@
 				style="#{(key.total)?(key.level==0?'font-weight: bold':'font-style:italic'):''};">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+		</aon:div>
+	</aon:column>
+	
+	<c:if test="#{controller.activityButtonEnabled}">
+		<aon:column styleClass="aon-editDataTable-iconColumn" style="font-size: 0.9em;">
 			<aon:commandButton 
 				value="&#160;"
 				title="Cuota Derivada"
-				ajaxSingle="true"
 				rendered="#{controller.declaration.map[key].activity}"
 				reRender="activityContainer"
 				actionListener="#{controller.onShowActivities}"
@@ -108,7 +112,7 @@
 					name="key"
 					value="#{key}"/>
 			</aon:commandButton>
-		</aon:div>
-	</aon:column>
+		</aon:column>
+	</c:if>	
 
 </ui:composition>

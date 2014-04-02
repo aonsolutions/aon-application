@@ -78,13 +78,12 @@
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_340_module}" />
 												</aon:commandLink>
 												
-												<aon:commandLink id="mod310" 
-													action="mod310_search"
-													actionListener="#{mod310.onEditSearch}"
-													disabled="true"
+												<aon:commandLink id="mod303" 
+													action="mod303_search"
+													actionListener="#{mod303.onEditSearch}"
 													title="#{bundle.fiscal_model_310_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="303" />
-													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module} (Disponible antes de 01/04/2014)" />
+													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_310_module}" />
 												</aon:commandLink>
 	
 												<aon:commandLink id="mod347_report" 
@@ -243,6 +242,41 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					
+					<c:if test="#{domainSwitcher.domainManagementAvailable}">
+						<aon:panelGrid id="group_fiscal_accounting"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_accounting}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account-fiscal"
+										action="account_list-fiscal"
+										value="#{bundle.account_module}" />
+								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="autConcept-fiscal"
+											action="autConcept-fiscal"
+											value="#{bundle.accounting_aut_concept_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accounting_balance-fiscal" 
+											action="balance_list-fiscal"
+											value="#{bundle.accounting_balance_menu2}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType-fiscal"
+											action="amortizationType_list-fiscal"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+					</c:if>
+					
 
 					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
@@ -300,6 +334,7 @@
 						</aon:panelGroup>
 					</c:if>
 					
+<!-- 						
 					<aon:panelGroup>	
 						<c:if test="#{domainSwitcher.domainManagementAvailable}">
 							<aon:panelGrid id="group_fiscal_fiscal_batch"
@@ -349,8 +384,8 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-						
 					</aon:panelGroup>
+--> 						
 
 				</h:panelGrid>
 			</aon:div>

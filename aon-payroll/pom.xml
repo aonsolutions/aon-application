@@ -22,9 +22,18 @@
 		</plugins>
 	</build>
 	<dependencies>
+		
+		<!-- We must remove this as soon as possible.-->  
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.sql.payroll</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.master.jooq</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

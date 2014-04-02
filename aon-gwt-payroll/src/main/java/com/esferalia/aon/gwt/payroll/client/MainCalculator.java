@@ -28,6 +28,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -69,6 +70,9 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
+	
+	@UiField
+	RadioButton saveRadioButton;
 
 	@UiField
 	SelectDataGrid<Enterprise> enterpriseDataGrid;
@@ -112,7 +116,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	@UiHandler("calcButton")
 	void onCalcButtonClicked(ClickEvent click) {
-		resultsPanel.clear();
 		calculate();
 		if (!isResultsPanelVisible())
 			showResultsPanel();
@@ -138,8 +141,12 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 		for (int enterpriseId : getSelectedEnterprisesIds())
 			requestDataBuffer.append("&" + ENPERPRISES + "=" + enterpriseId);
+		
+		if ( saveRadioButton.getValue() ) {
+			requestDataBuffer.append("&" + SAVE );
+			requestDataBuffer.append("&" + OVERWRITE );
+		}
 
-		// requestDataBuffer.append("&" + SAVE );
 		// requestDataBuffer.append("&" + COMPARE );
 
 		XMLHttpRequest xhr = XMLHttpRequest.create();

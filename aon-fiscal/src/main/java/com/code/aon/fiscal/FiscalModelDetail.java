@@ -13,6 +13,7 @@ import com.code.aon.fiscal.enumeration.Mod115Key;
 import com.code.aon.fiscal.enumeration.Mod123Key;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Mod131Key;
+import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.enumeration.Mod310Key;
 import com.code.aon.fiscal.enumeration.Mod311Key;
 import com.esferalia.aon.entity.master.FiscalModelDetailDB;
@@ -41,16 +42,15 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 	@Transient
 	public boolean isActivity(){ 
 		if (getFiscalModel() != null && getFiscalModel().getModel() != null ) {
-			if (getFiscalModel().getModel() == FiscalModelType.M311) {
+			if (getFiscalModel().getModel() == FiscalModelType.M303) {
+				Mod303Key key = (Mod303Key) getKey(); 
+				return (key != null && ( key.getValue().startsWith(Mod303Key.ACTIVITIES_PREFIX)
+						|| key.getValue().startsWith(Mod303Key.FARMING_ACTIVITIES_PREFIX)));
+			} else if (getFiscalModel().getModel() == FiscalModelType.M311) {
 				Mod311Key key = (Mod311Key) getKey(); 
-				return (key != null &&
-						(
-						key.getValue().startsWith(Mod311Key.ACTIVITIES_PREFIX)
-						|| key.getValue().startsWith(Mod311Key.FARMING_ACTIVITIES_PREFIX)
-						)
-						);
+				return (key != null && (key.getValue().startsWith(Mod311Key.ACTIVITIES_PREFIX)
+						|| key.getValue().startsWith(Mod311Key.FARMING_ACTIVITIES_PREFIX)));
 			}
-			return false;
 		}
 		return false;
 	}
@@ -69,6 +69,8 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 				return Mod130Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M131) {
 				return Mod131Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M303) {
+				return Mod303Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M310) {
 				return Mod310Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M311) {

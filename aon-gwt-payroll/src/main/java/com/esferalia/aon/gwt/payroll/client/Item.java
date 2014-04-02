@@ -259,34 +259,6 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 		mainGrid.addStyleName(style);
 	}
 
-	// ------------------------------------------
-	// UiHandlers
-	// ------------------------------------------
-	/*
-	 * @UiHandler("descriptionSuggestBox") void
-	 * onDescriptionSuggestBoxChange(ValueChangeEvent<String> event) {
-	 * showOrHideResetDescriptionButton(); }
-	 * 
-	 * @UiHandler("resetDescriptionButton") void
-	 * onResetDescriptionButtonClick(ClickEvent event) {
-	 * setDescription(concept.getDescription()); }
-	 * 
-	 * @UiHandler("deductionTextBox") void onPaymentTextBoxChange(BlurEvent
-	 * event) { showOrHideResetPaymentButton(); }
-	 * 
-	 * @UiHandler("resetDeductionButton") void
-	 * onResetPaymentButtonClick(ClickEvent event) {
-	 * setDeductionExpression(concept.getExpression()); }
-	 * 
-	 * @UiHandler("typeListBox") void onTypeListBoxChange(ChangeEvent event) {
-	 * showOrHideResetTypeButton(); }
-	 * 
-	 * @UiHandler("resetTypeButton") void onResetTypeButtonClick(ClickEvent
-	 * event) { setType(concept.getType()); }
-	 * 
-	 * @UiHandler("fxDeductionButton") void onFxPaymentButtonClick(ClickEvent
-	 * event) { showFxDialog((ExpressionTextBox) deductionTextBox); }
-	 */
 	protected abstract void initTypeListBox();
 
 	protected void initUiHandlers() {

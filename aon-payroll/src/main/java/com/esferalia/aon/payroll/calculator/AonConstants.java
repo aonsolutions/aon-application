@@ -22,6 +22,8 @@ public class AonConstants {
 	public static DismissalType OBJECTIVE = DismissalType.OBJECTIVE;
 	@Variable(ContextVariable.CONTRACT_COMPLETE)
 	public static DismissalType WORK_END = DismissalType.WORK_END;
+	@Variable(ContextVariable.CONDITIONS_CHANGE)
+	public static DismissalType CONDITIONS_CHANGE = DismissalType.OBJECTIVE;
 	
 	
 	// ------------------------------------------------------------------------

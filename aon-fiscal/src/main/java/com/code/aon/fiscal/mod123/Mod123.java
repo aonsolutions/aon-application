@@ -33,7 +33,7 @@ public class Mod123 implements IFiscalDeclaration {
 		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		for (Mod123Key key : Mod123Key.values()) {
-			if (key.accept(admin)) {
+			if (key.accept(admin,fiscalModel.getPeriod())) {
 				ensureDetail(key);
 			}
 		}

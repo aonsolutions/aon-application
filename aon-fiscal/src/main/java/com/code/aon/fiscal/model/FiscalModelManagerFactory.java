@@ -10,6 +10,7 @@ import com.code.aon.fiscal.mod115.Mod115Manager;
 import com.code.aon.fiscal.mod123.Mod123Manager;
 import com.code.aon.fiscal.mod130.Mod130Manager;
 import com.code.aon.fiscal.mod131.Mod131Manager;
+import com.code.aon.fiscal.mod303.Mod303Manager;
 import com.code.aon.fiscal.mod310.Mod310Manager;
 import com.code.aon.fiscal.mod311.Mod311Manager;
 
@@ -27,6 +28,7 @@ public class FiscalModelManagerFactory {
 		managers.add(new Mod115Manager(domainName) );
 		managers.add(new Mod123Manager(domainName) );
 		managers.add(new Mod130Manager(domainName) );
+		managers.add(new Mod303Manager(domainName) );
 		managers.add(new Mod310Manager(domainName) );
 		managers.add(new Mod311Manager(domainName) );
 		managers.add(new Mod131Manager(domainName) );

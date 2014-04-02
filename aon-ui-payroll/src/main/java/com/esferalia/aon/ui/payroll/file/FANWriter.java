@@ -60,6 +60,7 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.ss.T33;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -373,10 +374,10 @@ public class FANWriter implements Serializable {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	private DAT createDATRecord(Contract contract, String indicadosPerfil, Integer diasHoras) {
+	private DAT createDATRecord(Contract contract, String indicadorPerfil, Integer diasHoras) {
 		DAT dat = new DAT();
 		dat.setMes(endMonth.ordinal()+1);
-		dat.setIndicadoresPerfil(indicadosPerfil);
+		dat.setIndicadoresPerfil(indicadorPerfil);
 		dat.setDiasHoras(diasHoras);
 		dat.setDiasAlta(getContractDischargeDays(contract));
 		dat.setIndicadorCotizacion(getQuoteIndicator(contract));
@@ -1478,7 +1479,7 @@ public class FANWriter implements Serializable {
 				createEDTCa01Segment(ccc, emp);
 				createEDTCa02Segment(emp);
 				createEDTCa03Segment(emp);
-				createEDTCa11Segment(emp);
+				createEDTCa11Segment(ccc, emp);
 				createEDTCa12Segment(emp);
 				createEDTCa20Segment(emp);
 				createEDTCa21Segment(emp);
@@ -1928,20 +1929,76 @@ public class FANWriter implements Serializable {
 		// TODO 12 Aportación a los servicios comunes 
 		// No es de aplicación en el Régimen General de Artistas (0112) y Régimen Especial Agrario (0613)
 	}
-	private void createEDTCa11Segment(EMP emp) {
-		// TODO 11 Otros conceptos
+	/**
+	 *  11 Otros conceptos
+		calificador de clave:
+		4 Asistencia sanitaria de Administraciones Públicas
+		8 Cotización adicional Ex.-MUNPAL
+		6 Contratación inferior a 7 días
+			Para contratos de duración efectiva inferior de 7 días, a los que es de aplicación 
+			el incremento del 36% de la cotización empresarial por contingencias comunes, establecido en la Ley 12/2001
+		14 Cotización adicional Ex-Munpal y contratación inferior a 7 días
+			Se utilizará cuando coincida la cotización adicional por clave 8 y por clave 6
+		15 Cotización adicional Bomberos al servicio de las Administraciones y Organismos Públicos
+	 * @param emp
+	 */
+	private void createEDTCa11Segment(EnterpriseCCC ccc, EMP emp) {
+		// TODO
 		
-//		calificador de clave
-//		4 Asistencia sanitaria de Administraciones Públicas
-//		8 Cotización adicional Ex.-MUNPAL
-//		6 Contratación inferior a 7 días
-//			Para contratos de duración efectiva inferior de 7 días, a los que es de aplicación 
-//			el incremento del 36% de la cotización empresarial por contingencias comunes, establecido en la Ley 12/2001
-//		14 Cotización adicional Ex-Munpal y contratación inferior a 7 días
-//		Se utilizará cuando coincida la cotización adicional por clave 8 y por clave 6
-//		15 Cotización adicional Bomberos al servicio de las Administraciones y Organismos Públicos
+		Double amount = 0.0;
+		try {
+			amount += obtainLessThanSevenDaysContractAmount(ccc);
+			amount = CommonUtil.round(amount, 2);
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
+		if(amount != 0){
+			Integer base = (int)(CommonUtil.round((amount / 0.36))*100);
+			
+			EDT edt = emp.getEdtSegment("EDTCA11");
+			edt.setTipoElemento("CA");
+			edt.setClave(11);
+			edt.setCalificadorClave(Integer.parseInt(T33.T33_6.getCode()));
+			edt.setBase(base);
+			edt.setIndicadorFactorTipo("T");
+			edt.setParteEnteraTipo(36);
+			edt.setParteDecimalFactorTipo(00000);
+			edt.setImporte((new Double(amount*100)).intValue());
+			edt.setSigno(" ");
+		}
 	}
+	
+	private Double obtainLessThanSevenDaysContractAmount(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT sum(amount) FROM salary_cost";
+			select += " WHERE type in (" + DeductionType.COMMON_CONTINGENCY.ordinal() + ")";
+			select += " AND cost_concept in ('CGC_E_TEMP')";
+			select += " AND salary in (";
+			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
+					+ " AND ccc = '" + ccc.getCcc() + "'"
+					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
+			select += " );";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDouble(1);
+			return 0.0;
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+	}
+		
 	private void createEDTCa03Segment(EMP emp) {
 		// 03 Cuota fija trabajador cuenta ajena extranjero (Baja a partir del 1 de enero de 2009) Es de aplicación solo para el Régimen Especial Agrario
 	}
@@ -1994,6 +2051,7 @@ public class FANWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT sum(amount) FROM salary_cost";
 			select += " WHERE type in (" + DeductionType.COMMON_CONTINGENCY.ordinal() + ")";
+			select += " AND cost_concept in ('CGC_E')";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'"

@@ -4,6 +4,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
+import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -66,8 +67,13 @@ public class FiscalModelControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		FiscalModelController c = getController(event);
 		FiscalModel fiscalModel = (FiscalModel) c.getTo();
-		if (c.getDeclaration().isWithoutActivityDeclarationAvailable() &&
-				fiscalModel.isWithoutActivity()) {
+		if ( (fiscalModel.getModel() == FiscalModelType.M310 || fiscalModel.getModel() == FiscalModelType.M311) 
+				&& fiscalModel.getYear() > 2013) {
+			throw new ControllerListenerException("El modelo " + fiscalModel.getModel().getValue() 
+				+ " no es válido para ejercicios posteriores al 2013. "
+				+ " Realice el modelo 303, en su versión de Regimen Simplificado." );
+		}
+		if (c.getDeclaration().isWithoutActivityDeclarationAvailable() && fiscalModel.isWithoutActivity()) {
 			fiscalModel.setStatus(FiscalModelStatus.FINISHED);
 		}
 	}

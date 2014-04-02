@@ -92,28 +92,34 @@ public class AonDataSource {
 	}
 
 	public Connection getConnection(String domain) throws AonConnectionException {
+	
 		String database = null;
 		if ( domainsMap.containsKey(domain) ) {
 			database = domainsMap.get(domain);
 		} else {
-			ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
-			database = ci.getDomainDatabase(domain);
-			if (database != null) {
-				domainsMap.put(domain, database);
+			synchronized (GET_CONNECTION_MONITOR) {
+				ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+				database = ci.getDomainDatabase(domain);
+				if (database != null) {
+					domainsMap.put(domain, database);
+				}
 			}
 		}
 		if (database == null) {
 			throw new AonConnectionException("No es posible encontrar el dominio: "+domain);	
 		}
 		try {
-			if ( !poolsMap.containsKey(database) ) {
+			synchronized (INIT_POOL_MONITOR) {
+				if ( !poolsMap.containsKey(database) ) {
 					initPool(database);
+				}
 			}
 			DataSource ds = poolsMap.get(database);
 			return ds.getConnection();
 		} catch (SQLException e) {
 			throw new AonConnectionException(e.getMessage(),e);
 		}
+		
 	}
 	
 	public void closePools() {

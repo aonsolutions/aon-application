@@ -89,7 +89,15 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync {
 			AsyncCallback<Double> callback) throws IllegalArgumentException,
 			EvalException;
 
+	void eval(String expression, AgreementDraft agreementDraft ,int levelId,
+			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			EvalException;
+
 	void getContext(SalaryDraft salaryDraft,
+			AsyncCallback<ContextDescriptor> callback)
+			throws IllegalArgumentException;
+
+	void getContext(AgreementDraft agreementDraft, int levelId,
 			AsyncCallback<ContextDescriptor> callback)
 			throws IllegalArgumentException;
 

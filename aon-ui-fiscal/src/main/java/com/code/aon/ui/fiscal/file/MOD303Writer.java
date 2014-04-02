@@ -22,14 +22,19 @@ import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.file.tax.model.MOD303.Breakdown;
+import com.code.aon.file.tax.model.MOD303.Declaration;
+import com.code.aon.file.tax.model.MOD303.GeneralRegime;
 import com.code.aon.file.tax.model.MOD303.MOD303;
 import com.code.aon.file.tax.model.MOD303.MOD303Format;
-import com.code.aon.file.tax.model.MOD303.data.Breakdown;
-import com.code.aon.file.tax.model.MOD303.data.Declaration;
+import com.code.aon.file.tax.model.MOD303.SimplifiedRegime;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
+import com.code.aon.fiscal.enumeration.Mod303Key;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
+import com.code.aon.fiscal.mod303.IMod303Declaration;
+import com.code.aon.fiscal.mod303.Mod303;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -49,14 +54,16 @@ public class MOD303Writer {
 		if (list != null && list.size() > 0 ){
 			return (Company) list.get(0);
 		}
-		throw new ManagerBeanException("No puedo encontrar 'Company' para el dominio " + domain);
+		throw new ManagerBeanException("No pudo encontrar 'Company' para el dominio " + domain);
 	}
 
-	public FileOutput createMOD303(List<VatTaxDeclaration> vatTaxDeclarations,MOD303Format format) throws ManagerBeanException {
+	public FileOutput createMOD303(List<IMod303Declaration> mod303s,MOD303Format format) throws ManagerBeanException {
 		List<Declaration> declarations = new LinkedList<Declaration>();
-		for (VatTaxDeclaration vatTaxDeclaration : vatTaxDeclarations) {
-			Declaration declaration = getDeclaration(vatTaxDeclaration);
-			declarations.add(declaration);
+		if (mod303s != null) {
+			for (IMod303Declaration generalRegimeDeclaration : mod303s) {
+				Declaration declaration = getDeclaration(generalRegimeDeclaration);
+				declarations.add(declaration);
+			}
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		OutputStreamWriter wr = null;
@@ -66,7 +73,6 @@ public class MOD303Writer {
 			wr = new OutputStreamWriter(output);
 		}
 		PrintWriter writer = new PrintWriter(wr);
-//		PrintWriter writer = new PrintWriter(output);
 		MOD303 mod303 = new MOD303();
 		FileOutput fileOutput = new FileOutput();
 		fileOutput.setErrors(mod303.create(declarations, format, writer));
@@ -74,34 +80,33 @@ public class MOD303Writer {
 		return fileOutput;
 	}
 
-	private Declaration getDeclaration(VatTaxDeclaration vatTaxDeclaration) throws ManagerBeanException {
+	private Declaration getDeclaration(IMod303Declaration mod303Declaration) throws ManagerBeanException {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 			Declaration declaration = new  Declaration();
-			declaration.setYear(vatTaxDeclaration.getVatTax().getYear());
-			Administration admon = vatTaxDeclaration.getAdministration();
-			declaration.setPeriod(vatTaxDeclaration.getVatTax().getPeriod().getName(admon));
-			if (vatTaxDeclaration.getRegistryBank() != null && vatTaxDeclaration.getRegistryBank().getBankAccount() != null) {
-				BankAccount ba = vatTaxDeclaration.getRegistryBank().getBankAccount();
+			int year = mod303Declaration.getYear();
+			declaration.setYear(year);
+			Administration admon = mod303Declaration.getAdministration();
+			declaration.setPeriod(mod303Declaration.getPeriod().getName(admon));
+			if (mod303Declaration.getBankAccountContainer() != null && mod303Declaration.getBankAccountContainer().getBankAccount() != null) {
+				BankAccount ba = mod303Declaration.getBankAccountContainer().getBankAccount();
 				declaration.setCcc(ba.getBban());
 				declaration.setBankAccount(ba.getIban());
-				declaration.setBankName(vatTaxDeclaration.getRegistryBank().getBankAlias());
+				declaration.setBankName(mod303Declaration.getBankAccountContainer().getBankAlias());
 			}
-			Company company = getCompany(vatTaxDeclaration.getDomain());
+			Company company = getCompany(mod303Declaration.getDomain());
 			declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
 					|| company.getDocumentType() != DocumentType.CIF);
 			declaration.setDocument(company.getDocument());
 			declaration.setStartPeriod(0);
 			declaration.setEndPeriod(0);
-			VatTax vatTax = vatTaxDeclaration.getVatTax(); 
-			int year = vatTax.getYear();
-			String startDate = formatter.format(vatTax.getPeriod().getStartDate(year));
+			String startDate = formatter.format(mod303Declaration.getPeriod().getStartDate(year));
 			declaration.setStartPeriod(Integer.parseInt( startDate));
-			String endDate = formatter.format(vatTax.getPeriod().getDueDate(year));
+			String endDate = formatter.format(mod303Declaration.getPeriod().getDueDate(year));
 			declaration.setEndPeriod(Integer.parseInt( endDate));
 			String name = company.getName();
 			declaration.setSurname(name);	
 			declaration.setName(null);
-			if (vatTaxDeclaration.getAdministration() == Administration.COMMON_TERRITORY) {
+			if (mod303Declaration.getAdministration() == Administration.COMMON_TERRITORY) {
 				if (declaration.isPerson()) {
 					if (StringUtils.contains(name, ',')) {
 						declaration.setName(StringUtils.trim(StringUtils.substringAfter(name, ",")));
@@ -148,20 +153,29 @@ public class MOD303Writer {
 			declaration.setTodayMonth( month.getName(AonUtil.getCurrentLocale()) );
 			declaration.setTodayYear( CommonUtil.getYear(today) );
 			
-			declaration.setReplacement( vatTax.isReplacement() );
-			declaration.setComplementary( vatTax.isComplementary() );
-			declaration.setTaxRefundRegistry( vatTax.isTaxRefundRegistry());
+			declaration.setReplacement( mod303Declaration.isReplacement() );
+			declaration.setComplementary( mod303Declaration.isComplementary() );
+			declaration.setTaxRefundRegistry( mod303Declaration.isTaxRefundRegistry());
 			
-			double prorata = vatTax.getProrata();
+			double prorata = mod303Declaration.getProrata();
 			if (prorata != 100.0) {
 				declaration.setProrata(prorata);
 				declaration.setGeneralProrataApplied(true);
 			}
 			declaration.setSpecialProrataApplied(false);
 			
-			populateDeclarationDetail(vatTax,declaration);
+			if (mod303Declaration.isGeneralRegime()) {
+				declaration.setSimplRegimeOnly(false);
+				VatTaxDeclaration vtd = (VatTaxDeclaration) mod303Declaration;
+				populateDeclarationDetail(vtd,declaration);
+				populateDeclaration(vtd,declaration);
+			} else {
+				declaration.setSimplRegimeOnly(true);
+				Mod303 mod303 =  (Mod303) mod303Declaration;
+				populateDeclarationDetail(mod303,declaration);
+				populateDeclaration(mod303,declaration);
+			} 
 			
-			populateDeclaration(vatTaxDeclaration,declaration);
 			declaration.setVatAccrualRegimeReceiver( declaration.getVatAccrualInputBase() != 0 || declaration.getVatAccrualInputQuota() != 0 );
 			declaration.setVatAccrualRegime( company.isVatAccrualPayment() );
 			declaration.setConcursoAuto(" ");
@@ -169,10 +183,10 @@ public class MOD303Writer {
 			return declaration;
 	}
 	
-	private void populateDeclarationDetail(VatTax vatTax, Declaration declaration) throws ManagerBeanException {
+	private void populateDeclarationDetail(VatTaxDeclaration vatTaxDeclaration, Declaration declaration) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTax.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTaxDeclaration.getVatTax().getId());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_KEY));
 		criteria.setSkipDomainFilter(true);
 		List<ITransferObject> list = bean.getList(criteria);
@@ -183,6 +197,11 @@ public class MOD303Writer {
 	}
 
 	private void fillDeclaration(VatTaxDetail detail, Declaration declaration) {
+		GeneralRegime gr = declaration.getGeneralRegime();
+		if (gr == null) {
+			gr = new GeneralRegime();
+			declaration.setGeneralRegime(gr);
+		}
 		VatTaxKey key = detail.getKey();
 		double percent = detail.getPercent();
 		String mapKey = new Double(percent).toString(); 
@@ -191,84 +210,85 @@ public class MOD303Writer {
 		double deductiblequota = detail.getDeductibleQuota()!=0.0?detail.getDeductibleQuota():detail.getQuota();
 		Breakdown bd = new Breakdown(percent,taxableBase,quota,deductiblequota);
 		if (key == VatTaxKey.A1 ) {
-			declaration.getOutputVat().put(mapKey, bd);
+			gr.getOutputVat().put(mapKey, bd);
 			
-			if (declaration.getOutputVatInvPasive().containsKey((mapKey))) {
-				Breakdown old = declaration.getOutputVatInvPasive().get(mapKey);
+			if (gr.getOutputVatInvPasive().containsKey((mapKey))) {
+				Breakdown old = gr.getOutputVatInvPasive().get(mapKey);
 				bd.setTaxableBase( CommonUtil.round(bd.getTaxableBase() + old.getTaxableBase()) ); 
 				bd.setQuota( CommonUtil.round(bd.getQuota() + old.getQuota()) ); 
 				bd.setDeductibleQuota( CommonUtil.round(bd.getDeductibleQuota() + old.getDeductibleQuota()) ); 
 			}
-			declaration.getOutputVatInvPasive().put(mapKey, bd);
+			gr.getOutputVatInvPasive().put(mapKey, bd);
 		} else if (key == VatTaxKey.A2 ) {
-			declaration.getSurcharge().put(mapKey, bd);
+			gr.getSurcharge().put(mapKey, bd);
 		} else if (key == VatTaxKey.A21) {
-			declaration.setBaseSurchrageModifications( taxableBase );
-			declaration.setQuotaSurchrageModifications( quota );
+			gr.setBaseSurchrageModifications( taxableBase );
+			gr.setQuotaSurchrageModifications( quota );
 		} else if (key == VatTaxKey.A3 ) {
-			declaration.getIntracommunitary().put(mapKey, bd);
-			declaration.setBaseIntracommunitary( CommonUtil.round(declaration.getBaseIntracommunitary() +taxableBase,2));
-			declaration.setQuotaIntracommunitary( CommonUtil.round(declaration.getQuotaIntracommunitary() +quota,2));
-			declaration.setBaseIntracommunitaryCT( CommonUtil.round(declaration.getBaseIntracommunitaryCT() +taxableBase,2));
-			declaration.setQuotaIntracommunitaryCT( CommonUtil.round(declaration.getQuotaIntracommunitaryCT() +quota,2));
+			gr.getIntracommunitary().put(mapKey, bd);
+			gr.setBaseIntracommunitary( CommonUtil.round(gr.getBaseIntracommunitary() +taxableBase,2));
+			gr.setQuotaIntracommunitary( CommonUtil.round(gr.getQuotaIntracommunitary() +quota,2));
+			gr.setBaseIntracommunitaryCT( CommonUtil.round(gr.getBaseIntracommunitaryCT() +taxableBase,2));
+			gr.setQuotaIntracommunitaryCT( CommonUtil.round(gr.getQuotaIntracommunitaryCT() +quota,2));
 		} else if (key == VatTaxKey.A31 ) {
-			declaration.setBaseIntracommunitaryCT( CommonUtil.round(declaration.getBaseIntracommunitaryCT() +taxableBase,2));
-			declaration.setQuotaIntracommunitaryCT( CommonUtil.round(declaration.getQuotaIntracommunitaryCT() +quota,2));
+			gr.setBaseIntracommunitaryCT( CommonUtil.round(gr.getBaseIntracommunitaryCT() +taxableBase,2));
+			gr.setQuotaIntracommunitaryCT( CommonUtil.round(gr.getQuotaIntracommunitaryCT() +quota,2));
 		} else if (key == VatTaxKey.A4) {
-			declaration.setBaseISPCT( CommonUtil.round(declaration.getBaseISPCT() +taxableBase,2));
-			declaration.setQuotaISPCT( CommonUtil.round(declaration.getQuotaISPCT() +quota,2));
+			gr.setBaseISPCT( CommonUtil.round(gr.getBaseISPCT() +taxableBase,2));
+			gr.setQuotaISPCT( CommonUtil.round(gr.getQuotaISPCT() +quota,2));
 
-			declaration.getInvPasive().put(mapKey, bd);
-			declaration.setBaseInvPasive( CommonUtil.round(declaration.getBaseInvPasive() +taxableBase,2) );
-			declaration.setQuotaInvPasive( CommonUtil.round(declaration.getQuotaInvPasive() +quota,2) );
-			if (declaration.getOutputVatInvPasive().containsKey((mapKey))) {
-				Breakdown old = declaration.getOutputVatInvPasive().get(mapKey);
+			gr.getInvPasive().put(mapKey, bd);
+			gr.setBaseInvPasive( CommonUtil.round(gr.getBaseInvPasive() +taxableBase,2) );
+			gr.setQuotaInvPasive( CommonUtil.round(gr.getQuotaInvPasive() +quota,2) );
+			if (gr.getOutputVatInvPasive().containsKey((mapKey))) {
+				Breakdown old = gr.getOutputVatInvPasive().get(mapKey);
 				bd.setTaxableBase( CommonUtil.round(bd.getTaxableBase() + old.getTaxableBase()) ); 
 				bd.setQuota( CommonUtil.round(bd.getQuota() + old.getQuota()) ); 
 				bd.setDeductibleQuota( CommonUtil.round(bd.getDeductibleQuota() + old.getDeductibleQuota()) ); 
 			}
-			declaration.getOutputVatInvPasive().put(mapKey, bd);
+			gr.getOutputVatInvPasive().put(mapKey, bd);
 			double d = declaration.getNonTaxableTotal();
 			declaration.setNonTaxableTotal( d + taxableBase );
 		} else if (key == VatTaxKey.A5) {
-			declaration.setBaseModifications( taxableBase );
-			declaration.setQuotaModifications( quota );
+			gr.setBaseModifications( taxableBase );
+			gr.setQuotaModifications( quota );
 		} else if (key == VatTaxKey.AT) {
-			declaration.setOutputTotal( quota );
+			gr.setOutputTotal( quota );
 		} else if (key == VatTaxKey.B1) {
-			declaration.setInnerCommonOperationsQuota( quota );
-			declaration.setInnerCommonOperationsBase( taxableBase );
+			gr.setInnerCommonOperationsQuota( quota );
+			gr.setInnerCommonOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.B2) {
-			declaration.setInnerInvestmentOperationsQuota( quota );
-			declaration.setInnerInvestmentOperationsBase( taxableBase );
+			gr.setInnerInvestmentOperationsQuota( quota );
+			gr.setInnerInvestmentOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.B3) {
-			declaration.setInnerExpensesOperationsQuota( quota );
-			declaration.setInnerExpensesOperationsBase( taxableBase );
+			gr.setInnerExpensesOperationsQuota( quota );
+			gr.setInnerExpensesOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.C1) {
-			declaration.setImportedCommonOperationsQuota( quota );
-			declaration.setImportedCommonOperationsBase( taxableBase );
+			gr.setImportedCommonOperationsQuota( quota );
+			gr.setImportedCommonOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.C2) {
-			declaration.setImportedInvestmentOperationsQuota( quota );
-			declaration.setImportedInvestmentOperationsBase( taxableBase );
+			gr.setImportedInvestmentOperationsQuota( quota );
+			gr.setImportedInvestmentOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.D1) {
-			declaration.setIntracommunitaryCommonOperationsQuota( CommonUtil.round(declaration.getIntracommunitaryCommonOperationsQuota() + quota ,2));
-			declaration.setIntracommunitaryCommonOperationsBase( CommonUtil.round(declaration.getIntracommunitaryCommonOperationsBase() + taxableBase  ,2));
+			gr.setIntracommunitaryCommonOperationsQuota( CommonUtil.round(gr.getIntracommunitaryCommonOperationsQuota() + quota ,2));
+			gr.setIntracommunitaryCommonOperationsBase( CommonUtil.round(gr.getIntracommunitaryCommonOperationsBase() + taxableBase  ,2));
 		} else if (key == VatTaxKey.D2) {
-			declaration.setIntracommunitaryInvestmentOperationsQuota( quota );
-			declaration.setIntracommunitaryInvestmentOperationsBase( taxableBase );
+			gr.setIntracommunitaryInvestmentOperationsQuota( quota );
+			gr.setIntracommunitaryInvestmentOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.D3) {
-			declaration.setIntracommunitaryExpensesOperationsQuota( quota );
-			declaration.setIntracommunitaryExpensesOperationsBase( taxableBase );
+			gr.setIntracommunitaryExpensesOperationsQuota( quota );
+			gr.setIntracommunitaryExpensesOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.ET) {
-			declaration.setAgriculturalRegimeCompensation( quota );
+			gr.setAgriculturalRegimeCompensation( quota );
 		} else if (key == VatTaxKey.RD) {
-			declaration.setDeductionRestificationBase( taxableBase );
-			declaration.setDeductionRestificationQuota( quota );
+			gr.setDeductionRestificationBase( taxableBase );
+			gr.setDeductionRestificationQuota( quota );
 		} else if (key == VatTaxKey.RI) {
-			declaration.setInvestmentNormalization( quota );
+			gr.setInvestmentNormalization( quota );
 		} else if (key == VatTaxKey.FT) {
-			declaration.setDeductTotal( quota );
+			gr.setDeductTotal( quota );
 		} else if (key == VatTaxKey.DF) {
+			gr.setResult( quota );
 			declaration.setDifference( quota );
 		} else if (key == VatTaxKey.XI) {
 			declaration.setVatAccrualInputBase( taxableBase );
@@ -299,35 +319,35 @@ public class MOD303Writer {
 			if (percent != 4 && percent != 10 && percent != 21) {
 				mapKey = "?";
 			}
-			declaration.getInnerAssetPurchases().put(mapKey, bd);
-			declaration.setBaseInnerAssetPurchases( CommonUtil.round(declaration.getBaseInnerAssetPurchases() +taxableBase,2));
-			declaration.setQuotaInnerAssetPurchases( CommonUtil.round(declaration.getQuotaInnerAssetPurchases() +quota,2));
-			declaration.setDeductibleQuotaInnerAssetPurchases( CommonUtil.round(declaration.getDeductibleQuotaInnerAssetPurchases() +deductiblequota,2));
-			declaration.setBaseTotalAddInfo( CommonUtil.round(declaration.getBaseTotalAddInfo() +taxableBase,2));
-			declaration.setQuotaTotalAddInfo( CommonUtil.round(declaration.getQuotaTotalAddInfo() +quota,2));
-			declaration.setDeductibleQuotaTotalAddInfo( CommonUtil.round(declaration.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
+			gr.getInnerAssetPurchases().put(mapKey, bd);
+			gr.setBaseInnerAssetPurchases( CommonUtil.round(gr.getBaseInnerAssetPurchases() +taxableBase,2));
+			gr.setQuotaInnerAssetPurchases( CommonUtil.round(gr.getQuotaInnerAssetPurchases() +quota,2));
+			gr.setDeductibleQuotaInnerAssetPurchases( CommonUtil.round(gr.getDeductibleQuotaInnerAssetPurchases() +deductiblequota,2));
+			gr.setBaseTotalAddInfo( CommonUtil.round(gr.getBaseTotalAddInfo() +taxableBase,2));
+			gr.setQuotaTotalAddInfo( CommonUtil.round(gr.getQuotaTotalAddInfo() +quota,2));
+			gr.setDeductibleQuotaTotalAddInfo( CommonUtil.round(gr.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
 		} else if (key == VatTaxKey.GT ) {
 			if (percent != 4 && percent != 10 && percent != 21) {
 				mapKey = "?";
 			}
-			declaration.getExpenses().put(mapKey, bd);
-			declaration.setBaseExpenses( CommonUtil.round(declaration.getBaseExpenses() +taxableBase,2));
-			declaration.setQuotaExpenses( CommonUtil.round(declaration.getQuotaExpenses() +quota,2));
-			declaration.setDeductibleQuotaExpenses( CommonUtil.round(declaration.getDeductibleQuotaExpenses() +deductiblequota,2));
-			declaration.setBaseTotalAddInfo( CommonUtil.round(declaration.getBaseTotalAddInfo() +taxableBase,2));
-			declaration.setQuotaTotalAddInfo( CommonUtil.round(declaration.getQuotaTotalAddInfo() +quota,2));
-			declaration.setDeductibleQuotaTotalAddInfo( CommonUtil.round(declaration.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
+			gr.getExpenses().put(mapKey, bd);
+			gr.setBaseExpenses( CommonUtil.round(gr.getBaseExpenses() +taxableBase,2));
+			gr.setQuotaExpenses( CommonUtil.round(gr.getQuotaExpenses() +quota,2));
+			gr.setDeductibleQuotaExpenses( CommonUtil.round(gr.getDeductibleQuotaExpenses() +deductiblequota,2));
+			gr.setBaseTotalAddInfo( CommonUtil.round(gr.getBaseTotalAddInfo() +taxableBase,2));
+			gr.setQuotaTotalAddInfo( CommonUtil.round(gr.getQuotaTotalAddInfo() +quota,2));
+			gr.setDeductibleQuotaTotalAddInfo( CommonUtil.round(gr.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
 		} else if (key == VatTaxKey.BI ) {
 			if (percent != 4 && percent != 10 && percent != 21) {
 				mapKey = "?";
 			}
-			declaration.getInvestmentAsset().put(mapKey, bd);
-			declaration.setBaseInvestmentAsset( CommonUtil.round(declaration.getBaseInvestmentAsset() +taxableBase,2));
-			declaration.setQuotaInvestmentAsset( CommonUtil.round(declaration.getQuotaInvestmentAsset() +quota,2));
-			declaration.setDeductibleQuotaInvestmentAsset( CommonUtil.round(declaration.getDeductibleQuotaInvestmentAsset() +deductiblequota,2));
-			declaration.setBaseTotalAddInfo( CommonUtil.round(declaration.getBaseTotalAddInfo() +taxableBase,2));
-			declaration.setQuotaTotalAddInfo( CommonUtil.round(declaration.getQuotaTotalAddInfo() +quota,2));
-			declaration.setDeductibleQuotaTotalAddInfo( CommonUtil.round(declaration.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
+			gr.getInvestmentAsset().put(mapKey, bd);
+			gr.setBaseInvestmentAsset( CommonUtil.round(gr.getBaseInvestmentAsset() +taxableBase,2));
+			gr.setQuotaInvestmentAsset( CommonUtil.round(gr.getQuotaInvestmentAsset() +quota,2));
+			gr.setDeductibleQuotaInvestmentAsset( CommonUtil.round(gr.getDeductibleQuotaInvestmentAsset() +deductiblequota,2));
+			gr.setBaseTotalAddInfo( CommonUtil.round(gr.getBaseTotalAddInfo() +taxableBase,2));
+			gr.setQuotaTotalAddInfo( CommonUtil.round(gr.getQuotaTotalAddInfo() +quota,2));
+			gr.setDeductibleQuotaTotalAddInfo( CommonUtil.round(gr.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
 		}
 	}
 
@@ -378,6 +398,155 @@ public class MOD303Writer {
 				declaration.setPayBackBankAccount(bankAccount.getBban());
 			}
 		}
-		
+
 	}
+	
+	private void populateDeclarationDetail(Mod303 mod303,Declaration declaration) {
+		SimplifiedRegime sr = declaration.getSimplifiedRegime();
+		if (sr == null) {
+			sr = new SimplifiedRegime();
+			declaration.setSimplifiedRegime(sr);
+		}
+		sr.setAgr1Code((int) mod303.getEnsuredAmount(Mod303Key.CAG1));
+		sr.setAgr1Ingreso(mod303.getEnsuredAmount(Mod303Key.CAG1_V1));
+		double agr1 = mod303.getEnsuredAmount(Mod303Key.CAG1_V2);
+		sr.setAgr1Indice(agr1);
+		sr.setAgr1Cuota(mod303.getEnsuredAmount(Mod303Key.CAG1_V3));
+		sr.setAgr1Porce(mod303.getEnsuredAmount(Mod303Key.CAG1_V4));
+		sr.setAgr1IngCta(mod303.getEnsuredAmount(Mod303Key.CAG1_V5));
+		sr.setAgr1CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAG1_V6));
+		sr.setAgr1CuotaDer4T(mod303.getEnsuredAmount(Mod303Key.CAG1_V7));
+		
+		double epi = mod303.getEnsuredAmount(Mod303Key.CAC1);
+		epi = ensureEpigraph(epi);
+		sr.setAct1epi( epi == 0?"":Integer.toString((int) epi));
+		sr.setAct1Uni1(mod303.getEnsuredAmount(Mod303Key.CAC1_M1U));
+		sr.setAct1Imp1(mod303.getEnsuredAmount(Mod303Key.CAC1_M1I));
+		sr.setAct1Uni2(mod303.getEnsuredAmount(Mod303Key.CAC1_M2U));
+		sr.setAct1Imp2(mod303.getEnsuredAmount(Mod303Key.CAC1_M2I));
+		sr.setAct1Uni3(mod303.getEnsuredAmount(Mod303Key.CAC1_M3U));
+		sr.setAct1Imp3(mod303.getEnsuredAmount(Mod303Key.CAC1_M3I));
+		sr.setAct1Uni4(mod303.getEnsuredAmount(Mod303Key.CAC1_M4U));
+		sr.setAct1Imp4(mod303.getEnsuredAmount(Mod303Key.CAC1_M4I));
+		sr.setAct1Uni5(mod303.getEnsuredAmount(Mod303Key.CAC1_M5U));
+		sr.setAct1Imp5(mod303.getEnsuredAmount(Mod303Key.CAC1_M5I));
+		sr.setAct1Uni6(mod303.getEnsuredAmount(Mod303Key.CAC1_M6U));
+		sr.setAct1Imp6(mod303.getEnsuredAmount(Mod303Key.CAC1_M6I));
+		sr.setAct1Uni7(mod303.getEnsuredAmount(Mod303Key.CAC1_M7U));
+		sr.setAct1Imp7(mod303.getEnsuredAmount(Mod303Key.CAC1_M7I));
+		sr.setAct1Cuota(mod303.getEnsuredAmount(Mod303Key.CAC1_C));
+		sr.setAct1Reduc(mod303.getEnsuredAmount(Mod303Key.CAC1_D));
+		sr.setAct1IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC1_Z));
+		sr.setAct1Porce(mod303.getEnsuredAmount(Mod303Key.CAC1_E));
+		sr.setAct1IngCta(mod303.getEnsuredAmount(Mod303Key.CAC1_F));
+		sr.setAct1CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC1_G));
+		sr.setAct1IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC1_H));
+		sr.setAct1Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC1_I));
+		sr.setAct1PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_J));
+		sr.setAct1DevCuoPai4T(mod303.getEnsuredAmount(Mod303Key.CAC1_K));
+		sr.setAct1CuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC1_L));
+		sr.setAct1CuoAnuDer4T(mod303.getEnsuredAmount(Mod303Key.CAC1_M));		
+		
+		sr.setAgr2Code( (int)  mod303.getEnsuredAmount(Mod303Key.CAG2) );
+		sr.setAgr2Ingreso(mod303.getEnsuredAmount(Mod303Key.CAG2_V1));
+		double agr2 = mod303.getEnsuredAmount(Mod303Key.CAG2_V2); 
+		sr.setAgr2Indice(agr2);
+		sr.setAgr2Indice( mod303.getEnsuredAmount(Mod303Key.CAG2_V2) );
+		sr.setAgr2Cuota( mod303.getEnsuredAmount(Mod303Key.CAG2_V3) );
+		sr.setAgr2Porce( mod303.getEnsuredAmount(Mod303Key.CAG2_V4) );
+		sr.setAgr2IngCta( mod303.getEnsuredAmount(Mod303Key.CAG2_V5) );
+		sr.setAgr2CuotaSop4T( mod303.getEnsuredAmount(Mod303Key.CAG2_V6) );
+		sr.setAgr2CuotaDer4T( mod303.getEnsuredAmount(Mod303Key.CAG2_V7) );
+
+		epi = mod303.getEnsuredAmount(Mod303Key.CAC2);
+		epi = ensureEpigraph(epi);
+		sr.setAct2epi( epi == 0?"":Integer.toString((int) epi));
+		sr.setAct2Uni1(mod303.getEnsuredAmount(Mod303Key.CAC2_M1U));
+		sr.setAct2Imp1(mod303.getEnsuredAmount(Mod303Key.CAC2_M1I));
+		sr.setAct2Uni2(mod303.getEnsuredAmount(Mod303Key.CAC2_M2U));
+		sr.setAct2Imp2(mod303.getEnsuredAmount(Mod303Key.CAC2_M2I));
+		sr.setAct2Uni3(mod303.getEnsuredAmount(Mod303Key.CAC2_M3U));
+		sr.setAct2Imp3(mod303.getEnsuredAmount(Mod303Key.CAC2_M3I));
+		sr.setAct2Uni4(mod303.getEnsuredAmount(Mod303Key.CAC2_M4U));
+		sr.setAct2Imp4(mod303.getEnsuredAmount(Mod303Key.CAC2_M4I));
+		sr.setAct2Uni5(mod303.getEnsuredAmount(Mod303Key.CAC2_M5U));
+		sr.setAct2Imp5(mod303.getEnsuredAmount(Mod303Key.CAC2_M5I));
+		sr.setAct2Uni6(mod303.getEnsuredAmount(Mod303Key.CAC2_M6U));
+		sr.setAct2Imp6(mod303.getEnsuredAmount(Mod303Key.CAC2_M6I));
+		sr.setAct2Uni7(mod303.getEnsuredAmount(Mod303Key.CAC2_M7U));
+		sr.setAct2Imp7(mod303.getEnsuredAmount(Mod303Key.CAC2_M7I));
+		sr.setAct2Cuota(mod303.getEnsuredAmount(Mod303Key.CAC2_C));
+		sr.setAct2Reduc(mod303.getEnsuredAmount(Mod303Key.CAC2_D));
+		sr.setAct2IndTemp(mod303.getEnsuredAmount(Mod303Key.CAC2_Z));
+		sr.setAct2Porce(mod303.getEnsuredAmount(Mod303Key.CAC2_E));
+		sr.setAct2IngCta(mod303.getEnsuredAmount(Mod303Key.CAC2_F));
+		sr.setAct2CuotaSop4T(mod303.getEnsuredAmount(Mod303Key.CAC2_G));
+		sr.setAct2IndTemp4T(mod303.getEnsuredAmount(Mod303Key.CAC2_H));
+		sr.setAct2Resultado4T(mod303.getEnsuredAmount(Mod303Key.CAC2_I));
+		sr.setAct2PorCuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC2_J));
+		sr.setAct2DevCuoPai4T(mod303.getEnsuredAmount(Mod303Key.CAC2_K));
+		sr.setAct2CuoMin4T(mod303.getEnsuredAmount(Mod303Key.CAC2_L));
+		sr.setAct2CuoAnuDer4T(mod303.getEnsuredAmount(Mod303Key.CAC2_M));
+		
+		sr.setSumIngCta(mod303.getEnsuredAmount(Mod303Key.C47));
+		sr.setSumCuoDer4T(mod303.getEnsuredAmount(Mod303Key.C48));
+		sr.setSumIngCta4T(mod303.getEnsuredAmount(Mod303Key.C49));
+		sr.setResult4T(mod303.getEnsuredAmount(Mod303Key.C50));
+		sr.setAdqIntrac(mod303.getEnsuredAmount(Mod303Key.C51));
+		sr.setEntrActFijo(mod303.getEnsuredAmount(Mod303Key.C52));
+		sr.setIvaISP(mod303.getEnsuredAmount(Mod303Key.C53));
+		sr.setTotalCuota(mod303.getEnsuredAmount(Mod303Key.C54));
+		sr.setAdqActFijo(mod303.getEnsuredAmount(Mod303Key.C55));
+		sr.setRegularizacion(mod303.getEnsuredAmount(Mod303Key.C56));
+		sr.setTotalDeducible(mod303.getEnsuredAmount(Mod303Key.C57));
+		sr.setResult(mod303.getEnsuredAmount(Mod303Key.C58));
+	}
+	
+	private double ensureEpigraph(double epi) {
+		if (epi == 3141 || epi == 3142) {
+			epi = 314.0;
+		} else if (epi == 3151 || epi == 3152) {
+			epi = 315.0;
+		}
+		return epi;
+	}
+
+	private void populateDeclaration(Mod303 mod303, Declaration declaration) {
+		declaration.setDifference(mod303.getEnsuredAmount(Mod303Key.C64));
+		declaration.setAlavaPercent(0.0); 
+		declaration.setGipuzkoaPercent(0.0); 
+		declaration.setBizkaiaPercent(0.0); 
+		declaration.setNavarraPercent(0.0); 
+		declaration.setCommonTerritoryPercent(mod303.getEnsuredAmount(Mod303Key.C65));
+		declaration.setQuota(mod303.getEnsuredAmount(Mod303Key.C66));
+		declaration.setPreviousYearCompensateQuota(mod303.getEnsuredAmount(Mod303Key.C67));
+		declaration.setRegularizationResult(mod303.getEnsuredAmount(Mod303Key.C68));
+		declaration.setResult(mod303.getEnsuredAmount(Mod303Key.C69));
+		declaration.setToDeduct(mod303.getEnsuredAmount(Mod303Key.C70));
+		declaration.setResult(mod303.getEnsuredAmount(Mod303Key.C71));
+		declaration.setExtraCharge(0.0);
+		declaration.setDelayInterest(0.0);
+		
+		declaration.setComplementary(mod303.getHeader().isComplementary());
+		declaration.setWithoutActivity(mod303.getHeader().isWithoutActivity());
+		
+		if (declaration.getResult() < 0) {
+			if (mod303.getEnsuredAmount(Mod303Key.PBK) != 0) {
+				declaration.setCompensate(0.0);
+				declaration.setPayBack(CommonUtil.round(declaration.getResult() * -1));		
+			} else {
+				declaration.setPayBack(0.0);
+				declaration.setCompensate(CommonUtil.round(declaration.getResult() * -1));
+				declaration.setBankAccount(null);
+			}
+		}
+		
+		if ( mod303.getBankAccountContainer() != null 
+			&& mod303.getBankAccountContainer().getBankAccount() != null
+			&& !StringUtils.isBlank(mod303.getBankAccountContainer().getBankAccount().getBban())) {
+			BankAccount bankAccount = mod303.getBankAccountContainer().getBankAccount();
+			declaration.setBankAccount(bankAccount.getIban());
+		}
+	}
+
 }

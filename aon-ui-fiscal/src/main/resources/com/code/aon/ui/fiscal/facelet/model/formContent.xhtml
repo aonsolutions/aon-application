@@ -58,7 +58,7 @@
 					</aon:htmlCommandLink>
 					
 					<aon:htmlCommandLink id="#{toolbarID}-reportDraftAeat"
-						value="AEAT BORRADOR"  
+						value="AEAT BORRADOR" target="_blank"
 						action="#{controller.aeatReport}"
 						rendered="#{controller.aeatDraftReportEnabled}"
 						styleClass="aon-finding-toolbar-item aon-icon-aeat"
@@ -188,7 +188,7 @@
 								value="#{controller.declaration.result}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>									
-	
+ 	
 							<aon:outputText styleClass="aon-margin-left"
 								value="#{controller.to.finance.payMethod.name}">
 							</aon:outputText>
@@ -200,6 +200,7 @@
 							<aon:outputText styleClass="aon-margin-left"
 								value="#{controller.to.finance.bankAccount}">
 							</aon:outputText>
+							
 						</aon:div>
 					</aon:div>
 					

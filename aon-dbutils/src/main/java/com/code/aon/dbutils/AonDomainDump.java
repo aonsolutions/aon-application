@@ -21,12 +21,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -168,6 +176,28 @@ public class AonDomainDump implements Constants {
 		}
 		return String.valueOf(id);
 	}
+
+	private static Integer getDomainId( Connection connection, String domainName ) throws SQLException {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();
+			return run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName); 
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;
+	}
+	
+	private static List<Integer> getDomainIds( Connection connection ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<List<Integer>> h = new ColumnListHandler<Integer>();
+			return run.query( connection, "SELECT id FROM domain", h );
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;	
+	}	
 	
 	private void dump(TableInfo t) throws AonSQLException, IOException {
 		TableDumpInfo dumpInfo = dumpInfos.get(t.getName());
@@ -379,57 +409,121 @@ public class AonDomainDump implements Constants {
 		return newValue;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] arguments) {
+		
+		Options options = new Options();
+		
+		Option userOption = OptionBuilder.withDescription( "user of database connection" )
+				.withArgName( "login" ).hasArg().create( "user");
+		userOption.setRequired(true);		
+		options.addOption(userOption);
+
+		Option passwordOption = OptionBuilder.withDescription( "password of database connection" )
+				.withArgName( "password" ).hasArg().create( "password");
+		passwordOption.setRequired(true);
+		options.addOption(passwordOption);
+
+		Option urlOption = OptionBuilder.withDescription( "url, example: jdbc:mysql://localhost:3306/pro-aonsolutions-net" )
+				.withArgName( "jdbcUrl" ).hasArg().create( "url");
+		urlOption.setRequired(true);
+		options.addOption(urlOption);
+
+		Option fileOption = OptionBuilder.withDescription( "output sql file in ISO-8859-1" )
+				.withArgName( "sqlFile" ).hasArg().create( "file");
+		fileOption.setRequired(true);
+		options.addOption(fileOption);
+		
+		Option domainOption = OptionBuilder.withDescription( "domain name to backup" )
+				.withArgName( "domainName" ).hasArg().create( "domain");
+		options.addOption(domainOption);
+		
+		BasicParser parser = new BasicParser();
+		
+		CommandLine line = null;
+		try {
+			line = parser.parse(options, arguments);
+		} catch (ParseException e) {
+			System.err.println( "Parsing failed. Reason: " + e.getMessage() );
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp( "AonDomainDump", options, true );
+			System.exit(-1);
+		}
+		
 		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
 		
-		Integer[] domains = new Integer[]{949};
-		
-		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
-		// String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
-		String user = "dbuser";
-		String password = "serubd2000";
-		
-		Connection connection  = null ;
+				
+		Connection connection  = null;
+		Writer writer = null;
 		try {
+			String url = line.getOptionValue(urlOption.getOpt());
+			String user = line.getOptionValue(userOption.getOpt());
+			String password = line.getOptionValue(passwordOption.getOpt());
 			connection = DriverManager.getConnection(url, user, password);
-			AonDomainDump dump = new AonDomainDump(connection);
-			dump.setListener(new IDumpListener() {
-				
-				@Override
-				public void startDumpTable(String table) {
-					LOGGER.info( "Start Table: {}", table );
+			
+			Integer[] domains = null;
+			if ( line.hasOption(domainOption.getOpt()) ) {
+				String domainName = line.getOptionValue(domainOption.getOpt());
+				Integer domainId = getDomainId(connection, domainName);
+				if ( domainId == null ) {
+					LOGGER.error("Domain {} not found", domainName);
+				} else {
+					domains = new Integer[]{domainId};	
 				}
-				
-				@Override
-				public void initDump(String databaseName, String version, int numberOfTables) {
-					LOGGER.info( "Init Dump: {} {}, {} tables", databaseName, version );
+			} else {
+				List<Integer> list = getDomainIds(connection);
+				if (! list.isEmpty() ) {
+					domains = list.toArray(new Integer[list.size()]);
 				}
-				
-				@Override
-				public void finishDump() {
-					LOGGER.info( "Finish Dump" );
-				}
-				
-				@Override
-				public void endDumpTable(String table, int rowCount) {
-					LOGGER.info( "End Table: {}, {} rows", table, rowCount );
-				}
-				
-				@Override
-				public void dumpTable(String table, int rowCount) {
-					if ( (rowCount % 500) == 0 ) {
-						LOGGER.info( "Table: {}, {} row", table, rowCount );	
+			}
+			
+			if (! ArrayUtils.isEmpty(domains) ) {
+				String file = line.getOptionValue(fileOption.getOpt());
+				writer = new OutputStreamWriter(new FileOutputStream(file), CharEncoding.ISO_8859_1);				
+				LOGGER.info( "Starting process..." );				
+				AonDomainDump dump = new AonDomainDump(connection);
+				dump.setListener(new IDumpListener() {
+					
+					@Override
+					public void startDumpTable(String table) {
+						LOGGER.info( "Start Table: {}", table );
 					}
-				}
-				
-			});
-			Writer writer = new OutputStreamWriter(new FileOutputStream("/tmp/dump.sql"), CharEncoding.ISO_8859_1);			
-			dump.execute(domains, writer);
-			writer.close();
+					
+					@Override
+					public void initDump(String databaseName, String version, int numberOfTables) {
+						LOGGER.info( "Init Dump: {} {}, {} tables", databaseName, version );
+					}
+					
+					@Override
+					public void finishDump() {
+						LOGGER.info( "Finish Dump" );
+					}
+					
+					@Override
+					public void endDumpTable(String table, int rowCount) {
+						LOGGER.info( "End Table: {}, {} rows", table, rowCount );
+					}
+					
+					@Override
+					public void dumpTable(String table, int rowCount) {
+						if ( (rowCount % 500) == 0 ) {
+							LOGGER.info( "Table: {}, {} row", table, rowCount );	
+						}
+					}
+					
+				});
+				dump.execute(domains, writer);				
+			}
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(connection);
+			if ( writer != null ) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
 		}
 	}
 	

@@ -155,6 +155,10 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 		this.notFoundHandler = notFoundHandler;
 	}
+	
+	public int size(){
+		return vars.size();
+	}
 
 	public Set<String> varsSet() {
 		return vars.keySet();
@@ -219,6 +223,11 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			}
 		}
 
+	}
+
+	public List<ITimedVariable<?>> getValues(String var) {
+
+		return vars.get(var);
 	}
 
 	public List<Period> getPeriods(String var) {

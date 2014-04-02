@@ -4,45 +4,31 @@ package com.code.aon.ui.fiscal.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD303.MOD303Format;
@@ -53,8 +39,11 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
+import com.code.aon.fiscal.mod303.IMod303Declaration;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.fiscal.aeat.AeatUtils;
+import com.code.aon.ui.fiscal.aeat.AeatUtils.Mod303Type;
 import com.code.aon.ui.fiscal.controller.model.Mipf;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
@@ -250,7 +239,7 @@ public class VatTaxDeclarationController extends LinesController {
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		MOD303Writer mod303Writer = new MOD303Writer();
 		VatTaxDeclaration vatTaxDeclaration = (VatTaxDeclaration) getTo();
-		List<VatTaxDeclaration> declarations = new LinkedList<VatTaxDeclaration>();
+		List<IMod303Declaration> declarations = new LinkedList<IMod303Declaration>();
 		declarations.add(vatTaxDeclaration);
 		setFileOutput( mod303Writer.createMOD303(declarations,getFormat(vatTaxDeclaration)) );
         if (getFileOutput() != null && getFileOutput().getErrors().size() > 0) {
@@ -264,6 +253,11 @@ public class VatTaxDeclarationController extends LinesController {
 	    if (isAeatValidable()) {
 	    	validateAeatFile();	
 	    }
+	}
+	
+	public boolean isAeatDraftReportEnabled() {
+		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
+		return ( !isNew() && to.isFromCommonTerritory() && to.getVatTax().getYear() > 2013);		
 	}
 	
 	public boolean isAeatValidable() {
@@ -306,14 +300,10 @@ public class VatTaxDeclarationController extends LinesController {
     		FacesContext faces = FacesContext.getCurrentInstance();
             HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
             VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
-	        
 	        MOD303Format format = getFormat(dec);
 	        response.setContentType(format.getMimeType().getName());
-	        String year = dec.getVatTax().getYear().toString();
-	        String period = dec.getVatTax().getPeriod().toString();
-	        String fileName = format.getFileName(year, period); 
+	        String fileName = getAutomaticFileName() + "." + format.getMimeType().getExtension(); 
 	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
-
 	        ServletOutputStream output = response.getOutputStream();
 	        InputStream input = getFileOutput().getFile() != null
 	        		?new FileInputStream(getFileOutput().getFile())
@@ -339,124 +329,118 @@ public class VatTaxDeclarationController extends LinesController {
 	
 	public String onAEATPrint() {
 		try {
+			if (getFileOutput() == null) {
+				onCreateDisk(null);
+			}
 			InputStream input = getFileOutput().getFile() != null
 					?new FileInputStream(getFileOutput().getFile())
 					:new ByteArrayInputStream(getFileOutput().getContent());
-			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");
-			byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
-			String fileString = new String(o);
-			fileString = fileString.replace("\n", "");
-			fileString = fileString.replace("\r", "");
-			
-			String type = "D";
-			String nif = "44971071E";
-			String urlParameters =
-					"HID=IE43030B" 
-					+ "&TIA="+URLEncoder.encode(type, "ISO-8859-1")
-					+ "&TIA="						
-					+ "&NDC="+URLEncoder.encode(nif, "ISO-8859-1")
-					+ "&NRC="
-					+ "&ING="
-					+ "&NRR="
-					+ "&ICO="
-					+ "&NR1="
-					+ "&IN1="
-					+ "&NR2="
-					+ "&IN2="
-					+ "&NR3="
-					+ "&IN3="
-					+ "&NR4="
-					+ "&IN4="
-					+ "&NR5="
-					+ "&IN5="
-					+ "&NR6="
-					+ "&IN6="
-					+ "&NR7="
-					+ "&IN7="
-					+ "&IDI=ES"
-					+ "&F01="+URLEncoder.encode(fileString, "ISO-8859-1")
-					+ "&TXT="
-					+ "&FIR="
-					+ "&FIN=F" 
-					+ "&EJF=2014"
-					+ "&MOD=303"
-					+ "&PRG=EWLINKZU";
-			
-			//String location= "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
-			String location= "https://www6.aeat.es/es13/l/zi21zilk0021";
-			
-    		FacesContext faces = FacesContext.getCurrentInstance();
+
+			FacesContext faces = FacesContext.getCurrentInstance();
             HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			
-			URL url = new URL(location);
-
-			SSLContext ctx = SSLContext.getInstance("TLS");
-			ctx.init(new KeyManager[0],
-					new TrustManager[] { new DefaultTrustManager() },
-					new SecureRandom());
-			SSLContext.setDefault(ctx);
-
-			HttpsURLConnection connection = (HttpsURLConnection) url
-					.openConnection();
-			connection.setHostnameVerifier(new HostnameVerifier() {
-
-				@Override
-				public boolean verify(String arg0, SSLSession arg1) {
-					return true;
-				}
-			});
-			connection.setDoOutput(true);
-			connection.setDoInput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-			connection.setRequestProperty("charset", "ISO-8859-1");
-			connection.setRequestProperty("Content-Length","" + Integer.toString(urlParameters.getBytes().length));
-			connection.setUseCaches(false);
-
-			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(urlParameters);
-			wr.flush();
-			wr.close();
-
-			DataInputStream in = new DataInputStream(connection.getInputStream());
-
-			// resp.setContentType(MimeType.MIME_PDF.getName()); //
-//			response.setHeader("Content-disposition", "attachment; filename=\""
-//					+ "Mod303" + ".pdf\";");
-			IOUtils.copy(in, response.getOutputStream());
-			response.flushBuffer();
-			connection.disconnect();
+            VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+            MOD303Format format = getFormat(dec);
+            String fileName = getAutomaticFileName();
+            response.setHeader("Content-disposition", "attachment; filename=\""+fileName+"\";");
+			AeatUtils.printMod303(dec.getVatTax().getYear(),
+					dec.getVatTax().getPeriod(),
+					input,response.getOutputStream());					
 	        response.flushBuffer();
 	        faces.responseComplete();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (AonException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
 		}
 		return null;
 	}
-	private static class DefaultTrustManager implements X509TrustManager {
+	
+	public String onAEATSend() {
+		try {
+			if (getFileOutput() == null) {
+				onCreateDisk(null);
+			}
+			InputStream input = getFileOutput().getFile() != null
+					?new FileInputStream(getFileOutput().getFile())
+					:new ByteArrayInputStream(getFileOutput().getContent());
 
-		@Override
-		public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-				throws CertificateException {
+			FacesContext faces = FacesContext.getCurrentInstance();
+            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+            VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+            AeatUtils.Mod303Type type = null;
+            if (dec.isPayBackEnabled()) {
+            	type = Mod303Type.D;
+            } else if (dec.isCompensateEnabled() ) {
+            	type = Mod303Type.C;
+            } else if (dec.getDeposit() == 0) {
+           		type = Mod303Type.N;	
+           	} else {
+           		type = Mod303Type.I;	
+            }
+            String document = ""; 
+			AeatUtils.sendMod303(dec.getVatTax().getYear(),
+					dec.getVatTax().getPeriod(),type,document,
+					input,response.getOutputStream());					
+	        response.flushBuffer();
+	        faces.responseComplete();
+		} catch (FileNotFoundException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (UnsupportedEncodingException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (IOException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		} catch (AonException e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
 		}
+		return null;
+	}
 
-		@Override
-		public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-				throws CertificateException {
+	private Company getCompany(int domain) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Company.class);
+		Criteria c  = new Criteria();
+		c.addEqualExpression("Company.domain", domain);
+		c.setSkipDomainFilter(true);
+		List<ITransferObject> list = bean.getList(c);
+		if (list != null && list.size() > 0 ){
+			return (Company) list.get(0);
 		}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return null;
+		throw new ManagerBeanException("No puedo encontrar 'Company' para el dominio " + domain);
+	}
+	
+	private String getAutomaticFileName() {
+		VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+		Company company;
+		try {
+			company = getCompany(dec.getDomain());
+			String s = company.getFullName();
+		    StringBuilder sb = new StringBuilder();
+		    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
+		        sb.append("_");
+		    }
+		    for (char c : s.toCharArray()) {
+		        if(Character.isJavaIdentifierPart(c)) {
+		            sb.append(c);
+		        }
+		    }		
+			return "M303_" + dec.getVatTax().getYear() 
+					+ "_" + dec.getVatTax().getPeriod()
+					+ "_" + sb.toString();
+		} catch (ManagerBeanException e) {
+			return "M303_" + dec.getVatTax().getYear() 
+					+ "_" + dec.getVatTax().getPeriod();
 		}
 	}
+
 }

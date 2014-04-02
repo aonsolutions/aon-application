@@ -1,4 +1,4 @@
-package com.code.aon.file.tax.model.MOD303.data;
+package com.code.aon.file.tax.model.MOD303;
 
 public class Breakdown {
 

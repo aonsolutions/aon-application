@@ -1,218 +1,413 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PERSON_REGISTRY;
+
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.IListener;
-import com.esferalia.aon.payroll.calculator.IContractBonus;
-import com.esferalia.aon.payroll.calculator.IContractDeduction;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
+import com.esferalia.aon.salary.AbstractSalary;
+import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
-import com.esferalia.aon.salary.ISalaryBuilderListener;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
 			DATE_FORMAT_PATTERN);
+	
+	
+	private static class SkipSalaryException extends SalaryException {
 
-	private static final DecimalFormatSymbols ES_DECIMAL_FOMAT_SYMBOLS = new DecimalFormatSymbols(
-			new Locale("es", "ES"));
-	private static final DecimalFormat SECONDS_FORMAT = new DecimalFormat(
-			"#,##0.000", ES_DECIMAL_FOMAT_SYMBOLS);
-	private static final DecimalFormat INTEGER_FORMAT = new DecimalFormat(
-			"#,###", ES_DECIMAL_FOMAT_SYMBOLS);
-	private static final DecimalFormat CURRENCY_FORMAT = new DecimalFormat(
-			"#,##0.00", ES_DECIMAL_FOMAT_SYMBOLS);
+	}
 
-	private static class SalaryBuilderListener implements
-			ISalaryBuilderListener, IListener {
+	private static class SalaryBBuilder {
 
-		private int row = 0;
-		private PrintWriter out;
+		public static interface ISalaryBuilderExtended extends ISalaryBuilder {
 
-		public SalaryBuilderListener(PrintWriter out) {
-			this.out = out;
+			public void start() throws SalaryException;
+
+			public void finish() throws SalaryException;
+
+			public void counterpart(ISalaryExtended salary)
+					throws SalaryException;
+
 		}
 
-		private String getRowStyle() {
-			return row++ % 2 == 0 ? "aon-dataTable-row-even"
-					: "aon-dataTable-row-odd";
+		static class CompositeSalaryBuilderExtended extends
+				CompositeSalaryBuilder<ISalaryBuilderExtended> implements
+				ISalaryBuilderExtended {
+			public CompositeSalaryBuilderExtended(
+					ISalaryBuilderExtended... builders) {
+				super(builders);
+			}
+
+			// ----------------------------------------------------------------
+
+			@Override
+			public void start() throws SalaryException {
+				for (ISalaryBuilderExtended builder : getBuilders())
+					builder.start();
+			}
+
+			@Override
+			public void finish() throws SalaryException {
+				for (ISalaryBuilderExtended builder : getBuilders())
+					builder.finish();
+			}
+
+			@Override
+			public void counterpart(ISalaryExtended salary)
+					throws SalaryException {
+				for (ISalaryBuilderExtended builder : getBuilders())
+					builder.counterpart(salary);
+			}
 		}
 
-		private void printMsg(String html, String styles) {
-			if (html != null)
-				out.printf("<div class='%s aon-iCon aon-bold %s'>%s</div>",
-						styles, getRowStyle(), html);
+		static class SalaryBuilderExtended extends SalaryBuilder implements
+				ISalaryBuilderExtended {
+
+			// ----------------------------------------------------------------
+			@Override
+			public void start() throws SalaryException {
+			}
+
+			@Override
+			public void finish() throws SalaryException {
+			}
+
+			@Override
+			public void counterpart(ISalaryExtended salary)
+					throws SalaryException {
+			}
+
 		}
 
-		// --------------------------------------
-		// ISalaryBuilderListener
-		// --------------------------------------
+		static class JooqSalarySaver extends JooqSalaryBuilder implements
+				ISalaryBuilderExtended {
+
+			private boolean autoCommit;
+			private Connection connection;
+
+			public JooqSalarySaver(Connection connection) {
+				super(connection);
+				this.connection = connection;
+			}
+
+			// ----------------------------------------------------------------
+			@Override
+			public void start() {
+				try {
+					autoCommit = connection.getAutoCommit();
+					connection.setAutoCommit(false);
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public void finish() {
+				try {
+					execute();
+					connection.commit();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						connection.setAutoCommit(autoCommit);
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
+					}
+					;
+				}
+			}
+
+			@Override
+			public void counterpart(ISalaryExtended salary)
+					throws SalaryException {
+				if (salary != null)
+					throw new SkipSalaryException();
+
+			}
+		}
+
+		static class JooqSalaryDuplicator extends JooqSalarySaver {
+
+			public JooqSalaryDuplicator(Connection connection) {
+				super(connection);
+			}
+
+			// ----------------------------------------------------------------
+
+			@Override
+			public void counterpart(ISalaryExtended salary)
+					throws SalaryException {
+				// NOOP
+			}
+		}
+
+		static class JooqSalaryOverwriter extends JooqSalaryDuplicator {
+
+			Collection<Integer> toRemove;
+
+			public JooqSalaryOverwriter(Connection connection) {
+				super(connection);
+				toRemove = new LinkedList<Integer>();
+			}
+
+			// ----------------------------------------------------------------
+
+			@Override
+			public int execute() {
+				delete();
+				return super.execute();
+			}
+
+			// ----------------------------------------------------------------
+			@Override
+			public void counterpart(ISalaryExtended salary)
+					throws SalaryException {
+				if (salary != null)
+					toRemove.add(salary.getSalaryId());
+			}
+
+			private void delete() {
+				getDSLContext().delete(SALARY_DATA)
+						.where(SALARY_DATA.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_COST)
+						.where(SALARY_COST.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_BONUS)
+						.where(SALARY_BONUS.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_PAYMENT)
+						.where(SALARY_PAYMENT.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_DEDUCTION).where(
+						SALARY_DEDUCTION.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY).where(SALARY.ID.in(toRemove))
+						.execute();
+			}
+		}
+
+		private boolean save;
+		private boolean duplicate;
+		private boolean overwrite;
+		private Connection connection;
+
+		public ISalaryBuilderExtended build() throws SQLException {
+			List<ISalaryBuilderExtended> builders = new ArrayList<ISalaryBuilderExtended>();
+
+			builders.add(new SalaryBuilderExtended());
+
+			if (overwrite) {
+				builders.add(new JooqSalaryOverwriter(connection));
+			} else if (duplicate) {
+				builders.add(new JooqSalaryDuplicator(connection));
+			} else if (save) {
+				builders.add(new JooqSalarySaver(connection));
+			}
+
+			return new CompositeSalaryBuilderExtended(
+					builders.toArray(new ISalaryBuilderExtended[builders.size()]));
+		}
+
+		public SalaryBBuilder setSave(boolean save) {
+			this.save = save;
+			return this;
+		}
+
+		public SalaryBBuilder setDuplicate(boolean duplicate) {
+			this.duplicate = duplicate;
+			return this;
+		}
+
+		public SalaryBBuilder setOverwrite(boolean overwrite) {
+			this.overwrite = overwrite;
+			return this;
+		}
+
+		public SalaryBBuilder setConnection(Connection connection) {
+			this.connection = connection;
+			return this;
+		}
+
+	}
+
+	static interface ISalaryExtended extends ISalary {
+		public int getSalaryId();
+	}
+
+	private static class Salaries extends AbstractSalary implements
+			Iterator<ISalaryExtended>, ISalaryExtended {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		private boolean didNext = false;
+		private boolean hasNext = false;
+
+		public Salaries(Connection connection, Date startDate, Date endDate,
+				Date issueDate, Criteria criteria) throws SQLException {
+
+			//@formatter:off
+			String sql = "SELECT * "
+					+ " FROM contract"
+					+ " INNER JOIN registry AS "+ PERSON_REGISTRY +" ON (contract.person = "+PERSON_REGISTRY+".id)" 
+					+ " INNER JOIN workplace ON (contract.workplace = workplace.id)" 
+					+ " INNER JOIN enterprise ON ( workplace.enterprise = enterprise.registry) "
+					+ " LEFT JOIN salary ON (salary.contract = contract.id"
+					+ " AND salary.start_date >= ? "
+					+ " AND salary.end_date <= ?"
+					+ " AND salary.type = ? )"
+					+ " WHERE contract.start_date <= ? "
+					+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )";
+			//@formatter:on
+
+			sql = CriteriaUtilities.toSQLString(criteria, sql);
+
+			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
+			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
+
+			stmt = connection.prepareStatement(sql);
+
+			stmt.setDate(1, sqlStartDate);
+			stmt.setDate(2, sqlEndDate);
+			stmt.setInt(3, SalaryType.SALARY.ordinal());
+			stmt.setDate(4, sqlEndDate);
+			stmt.setDate(5, sqlStartDate);
+
+			rs = stmt.executeQuery();
+
+		}
+
+		public void close() throws SQLException {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+		private boolean hasSalary() {
+			try {
+				return rs.getObject(SQLConstants.SALARY + "."
+						+ SalaryColumns.ID) != null;
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		// ----------------------------------------------------------------
 		@Override
-		public boolean isDebugEnabled() {
-			return true;
+		public int getSalaryId() {
+			try {
+				return rs.getInt(SQLConstants.SALARY + "." + SalaryColumns.ID);
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		// ----------------------------------------------------------------
+
+		@Override
+		public ISalaryExtended next() {
+			try {
+				if (!didNext)
+					hasNext = rs.next();
+				didNext = false;
+				return hasSalary() ? this : null;
+			} catch (SQLException e) {
+				throw new NoSuchElementException();
+			}
 		}
 
 		@Override
-		public void onError(String msg) {
-			printMsg(msg, "aon-icon-wrong");
+		public boolean hasNext() {
+			try {
+				if (!didNext) {
+					hasNext = rs.next();
+					didNext = true;
+				}
+				return hasNext;
+			} catch (SQLException e) {
+				return false;
+			}
 		}
 
 		@Override
-		public void onWarning(String msg) {
-			printMsg(msg, "aon-icon-errorwarning");
+		public void remove() {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void onInfo(String msg) {
-			printMsg(msg, "aon-icon-info");
+		public Double getTotalPayment() {
+			return getSalaryDouble(SalaryColumns.TOTAL_PAYMENT);
 		}
 
 		@Override
-		public void onDebug(String msg) {
-			out.printf("<div class='aon-iCon %s' >%s</div>", getRowStyle(), msg);
-		}
-
-		// --------------------------------------
-		// IListener
-		// --------------------------------------
-		@Override
-		public void onCheckError(String message) {
-			// TODO Auto-generated method stub
-
+		public Double getTotalDeduction() {
+			return getSalaryDouble(SalaryColumns.TOTAL_DEDUCTION);
 		}
 
 		@Override
-		public void onInvalidData(String variableName, String message) {
-			// TODO Auto-generated method stub
-
+		public Double getTotalLiquid() {
+			return getSalaryDouble(SalaryColumns.TOTAL_LIQUID);
 		}
 
-		@Override
-		public void onCompileError(String variableName, String message) {
-			// TODO Auto-generated method stub
+		private Double getSalaryDouble(String column) {
+			try {
+				BigDecimal bigDecimal = rs.getBigDecimal(SQLConstants.SALARY
+						+ "." + column);
+				return bigDecimal != null ? bigDecimal.doubleValue() : null;
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
 
 		}
-
-		@Override
-		public void onCheckError(IContractPayment payment, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onCompileError(IContractPayment payment, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onUndefinedData(IContractPayment payment,
-				RemovedExpressionVariable<?> var) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onInvalidData(IContractPayment payment,
-				String variableName, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onUndefinedData(IContractPayment payment,
-				String variableName, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onCheckError(IContractDeduction deduction, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onCompileError(IContractDeduction deduction, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onUndefinedData(IContractDeduction deduction,
-				RemovedExpressionVariable<?> var) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onInvalidData(IContractDeduction deduction,
-				String variableName, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onUndefinedData(IContractDeduction deduction,
-				String variableName, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onCheckError(IContractBonus bonus, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onCompileError(IContractBonus bonus, String message) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onInvalidData(IContractBonus bonus, String variableName,
-				String message) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 
 	@Override
@@ -224,126 +419,144 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		long salaries = 0;
-		long startTimeMillis = System.currentTimeMillis();
+		try {
+			doJson(req, resp);
+		} catch (SQLException e) {
+			throw new ServletException(e);
+		} catch (ParseException e) {
+			throw new ServletException(e);
+		}
 
-		PrintWriter writer = resp.getWriter();
-		SalaryBuilderListener listener = new SalaryBuilderListener(writer);
-		Connection connection = null;
+	}
+
+	private void doJson(HttpServletRequest req, HttpServletResponse resp)
+			throws ParseException, SQLException, IOException {
+		PrintStream os = null;
+		Connection conn = null;
+		Salaries salaries = null;
 		try {
 
-			boolean save = getSave(req);
+			resp.setContentType("application/json;charset=UTF-8");
 
-			Date startDate = getStartDate(req);
+			conn = AonServletUtils.getConnection();
+
+			SalaryBBuilder.ISalaryBuilderExtended salaryBuilder = new SalaryBBuilder()
+					.setSave(save(req)).setOverwrite(overwrite(req))
+					.setDuplicate(duplicate(req)).setConnection(conn).build();
+
+			os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+
 			Date endDate = getEndDate(req);
+			Date startDate = getStartDate(req);
 			Date issueDate = getIssueDate(req);
-			Date checkDate = getCheckDate(req);
-
-			listener.onInfo("Calculando n&oacute;minas para el periodo de liquidaci&oacute;n : <span class='aon-input-required'>"
-					+ DATE_FORMAT.format(startDate)
-					+ " - "
-					+ DATE_FORMAT.format(endDate) + "</span>.");
-
 			Criteria criteria = getCriteria(req);
+			
+			
 
-			ServletContext ctx = getServletContext();
-			AonServletUtils.initFacesContext(ctx, req, resp);
-			connection = AonServletUtils.getConnection();
+			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+					conn, startDate, endDate, issueDate, criteria);
 
-			SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorContext = new SQLContractSalaryCalculatorContext(
-					connection, startDate, endDate, issueDate, criteria);
+			salaries = new Salaries(conn, startDate, endDate, issueDate,
+					criteria);
 
-			ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+			doJson(ctx, salaries, salaryBuilder, os);
 
-			ISalaryBuilder salaryBuilder = null;
-			if (save) {
-				salaryBuilder = new SQLSalaryBuilder(connection);
-				((SQLSalaryBuilder) salaryBuilder).begin();
-			} else if (checkDate != null) {
-				salaryBuilder = new SQLSalaryBuilderTester(connection);
-				((SQLSalaryBuilderTester) salaryBuilder)
-						.setTestEndDate(new java.sql.Date(DateUtils
-								.getLastDayOfMonth(checkDate).getTime()));
-				((SQLSalaryBuilderTester) salaryBuilder)
-						.setTestStartDate(new java.sql.Date(DateUtils
-								.getFirstDayOfMonth(checkDate).getTime()));
-				((SQLSalaryBuilderTester) salaryBuilder)
-						.setTestTotalLiquid(true);
-			} else {
-				salaryBuilder = new SalaryBuilder();
-			}
-
-			salaryBuilder.setListener(listener);
-
-			calculator.setSalaryBuilder(salaryBuilder);
-			calculator.setListener(listener);
-			while (sqlContractSalaryCalculatorContext.next()) {
-				try {
-					ISalary salary = calculator
-							.calculate(sqlContractSalaryCalculatorContext);
-					int employeeId = sqlContractSalaryCalculatorContext.getId();
-					if (checkDate == null)
-						listener.onDebug(String
-								.format("Calculada n&oacute;mina de <a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>."
-										+ " L&iacute;quido total a percibir <a class='aon-icon-draft aon-iCon aon-link aon-input-required' onclick='showSalaryDraft(%d,\"%s\",\"%s\")' >&nbsp;%s</a>",
-										employeeId, escapeHtml(salary
-												.getEmployeeName()),
-										employeeId, DATE_FORMAT
-												.format(startDate), DATE_FORMAT
-												.format(endDate),
-										CURRENCY_FORMAT.format(salary
-												.getTotalLiquid())));
-					writer.flush();
-
-					salaries++;
-				} catch (Error e) {
-					listener.onError(String
-							.format("<a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>. %s",
-									sqlContractSalaryCalculatorContext.getId(),
-									escapeHtml(sqlContractSalaryCalculatorContext
-											.getEmployeeName()), e.getMessage()));
-				} catch (Exception e) {
-					listener.onError(e.getMessage());
-				}
-			}
-
-			if (save) {
-				((SQLSalaryBuilder) salaryBuilder).commit();
-			}
-
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-			listener.onError(exception.getMessage());
-		} catch (ParseException exception) {
-			listener.onError(exception.getMessage());
-		} catch (ExpressionException exception) {
-			listener.onError(exception.getMessage());
+		} catch (ExpressionException e) {
 		} finally {
-			AonServletUtils.releaseFacesContext();
-			long endTimeMillis = System.currentTimeMillis();
-			double elapsedTime = (endTimeMillis - startTimeMillis) / 1000.00;
-
-			listener.onInfo("N&oacute;minas procesadas <span class='aon-input-required' > "
-					+ INTEGER_FORMAT.format(salaries)
-					+ " </span>. Tiempo transcurrido: <span class='aon-input-required' >"
-					+ SECONDS_FORMAT.format(elapsedTime) + " segundos</span>.");
-
-			writer.flush();
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnore) {
-
-				}
-			}
+			if (os != null)
+				os.flush();
+			if (conn != null)
+				conn.close();
+			if (salaries != null)
+				salaries.close();
 
 		}
 
 	}
 
-	private static boolean getSave(HttpServletRequest request)
+	// ------------------------------------------------------------------------
+
+	private static void doJson(ISQLContractSalaryCalculatorContext sqlCtx,
+			Iterator<ISalaryExtended> others,
+			SalaryBBuilder.ISalaryBuilderExtended salaryBuilder, PrintStream os)
+			throws IOException {
+
+		try {
+
+			ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+
+			calculator.setSalaryBuilder(salaryBuilder);
+
+			salaryBuilder.start();
+
+			while (sqlCtx.next()) {
+
+				ISalaryExtended other = others.next();
+
+				try {
+					salaryBuilder.counterpart(other);
+				} catch (SkipSalaryException e) {
+					continue;
+				}
+
+				os.print('{');
+				os.printf("\"startDate\":\"%1$tY-%1$tm-%1$td\"",
+						sqlCtx.getStartDate());
+				os.printf(",\"endDate\":\"%1$tY-%1$tm-%1$td\"",
+						sqlCtx.getEndDate());
+				os.printf(",\"employeeId\":\"%d\"", sqlCtx.getInt(
+						SQLConstants.CONTRACT, ContractColumns.ID));
+				os.printf(",\"employeeName\":\"%s\"", sqlCtx.getEmployeeName());
+				os.printf(",\"enterpriseId\":\"%s\"", sqlCtx.getInt(
+						SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY));
+				os.printf(",\"enterpriseName\":\"%s\"",
+						sqlCtx.getEnterpriseName());
+				os.printf(",\"workplaceId\":\"%s\"", sqlCtx.getInt(
+						SQLConstants.WORKPLACE, WorkplaceColumns.ID));
+				os.printf(",\"workplaceName\":\"%s\"", sqlCtx.getString(
+						SQLConstants.WORKPLACE, WorkplaceColumns.DESCRIPTION));
+				
+				
+				try {
+
+					ISalary salary = calculator.calculate(sqlCtx);
+
+					os.printf(",\"totalLiquid\":\"%s\"",
+							Double.toString(salary.getTotalLiquid()));
+					os.printf(",\"totalPayment\":\"%s\"",
+							Double.toString(salary.getTotalPayment()));
+					os.printf(",\"totalDeduction\":\"%s\"",
+							Double.toString(salary.getTotalDeduction()));
+
+					if (other != null) {
+						os.printf(",\"counterTotalLiquid\":\"%s\"",
+								Double.toString(other.getTotalLiquid()));
+						os.printf(",\"counterTotalPayment\":\"%s\"",
+								Double.toString(other.getTotalPayment()));
+						os.printf(",\"counterTotalDeduction\":\"%s\"",
+								Double.toString(other.getTotalDeduction()));
+					}
+
+				} catch (Throwable e) {
+					e.printStackTrace();
+				} finally {
+					os.print('}');
+					os.flush();
+				}
+			}
+			salaryBuilder.finish();
+
+		} catch (SQLException exception) {
+		} catch (SalaryException exception) {
+		} catch (ExpressionException exception) {
+		} finally {
+		}
+
+	}
+
+	private static boolean save(HttpServletRequest request)
 			throws ParseException {
-		return request.getParameter(SAVE) != null;
+		return getBoolean(request, SAVE);
 	}
 
 	private static Date getEndDate(HttpServletRequest request)
@@ -373,6 +586,23 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	}
 
+	private static boolean getBoolean(HttpServletRequest request, String name)
+			throws ParseException {
+		String value = request.getParameter(name);
+		return StringUtils.isBlank(value) ? false : Boolean.parseBoolean(value);
+
+	}
+
+	private static boolean duplicate(HttpServletRequest request)
+			throws ParseException {
+		return getBoolean(request, DUPLICATE);
+	}
+
+	private static boolean overwrite(HttpServletRequest request)
+			throws ParseException {
+		return getBoolean(request, OVERWRITE);
+	}
+
 	private static Criteria getCriteria(HttpServletRequest req) {
 		RelationalExpression employeesExpr = getEmployeesExpression(req);
 		RelationalExpression workPlacesExpr = getWorkPlacesExpression(req);
@@ -385,7 +615,9 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			criteria.addExpression(workPlacesExpr);
 		if (enterprisesExpr != null)
 			criteria.addExpression(enterprisesExpr);
-
+		
+		criteria.addOrder(PERSON_REGISTRY+"."+ RegistryColumns.NAME);
+		
 		return criteria;
 	}
 

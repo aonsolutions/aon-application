@@ -20,6 +20,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;

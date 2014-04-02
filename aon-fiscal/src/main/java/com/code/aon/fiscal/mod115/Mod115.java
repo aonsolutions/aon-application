@@ -34,7 +34,7 @@ public class Mod115 implements IFiscalDeclaration {
 		clearMap();
 		Administration admin = fiscalModel.getAdministration();
 		for (Mod115Key key : Mod115Key.values()) {
-			if (key.accept(admin)) {
+			if (key.accept(admin,fiscalModel.getPeriod())) {
 				ensureDetail(key);
 			}
 		}

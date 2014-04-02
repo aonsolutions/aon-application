@@ -111,5 +111,9 @@ public class AON {
 			.getFormat("dd/MM/yyyy");
 	static final String AON_NOWRAP = "aon-nowrap";
 
+	public static double round(Double number) {
+		return (double) Math.round(number * 1000.00) / 1000.00;
+	}
+
 
 }

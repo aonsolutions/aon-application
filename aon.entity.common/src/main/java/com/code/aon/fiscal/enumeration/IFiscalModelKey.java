@@ -6,7 +6,7 @@ import com.code.aon.config.enumeration.Administration;
 
 public interface IFiscalModelKey {
 	
-	boolean accept(Administration administration);
+	boolean accept(Administration administration, Period period);
 	String getValue();
 	boolean isDifEnabled();
 	int getLevel();

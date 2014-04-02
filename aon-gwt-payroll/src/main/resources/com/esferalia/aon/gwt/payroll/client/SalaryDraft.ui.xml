@@ -233,7 +233,7 @@
 								</g:ListBox>
 								<g:CheckBox ui:field='costsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="COSTOS Y BENEFICIOS" checked="false" />
+									text="COSTES Y BONIFICACIONES" checked="false" />
 								<g:CheckBox ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="DIFERENCIAS" checked="false" />

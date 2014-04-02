@@ -311,7 +311,6 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 
 	@Override
 	public void setSelectedIndex(int index) {
-		Window.alert("setSelectedIndex ( " + index + ")" );
 		dropDownselectionModel.setSelected(getVisibleItem(index), true);
 	}
 
@@ -322,10 +321,14 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 
 	// ------------------------------------------------------- protected methods
 	
+	void onResizeDropDownList(int dropDownListWidth) {
+		setWidth(String.valueOf(dropDownListWidth) + "px");
+	}
+
 	AbstractFormatSafeHtmlRenderer<T> getFormatSafeHtmlRenderer(){
 		return ( AbstractFormatSafeHtmlRenderer<T> ) dropDowncell.getRenderer();
 	}
-
+	
 	// --------------------------------------------------------- private methods
 
 	private void showDropDownList() {
@@ -339,6 +342,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 
 		int listHeight = dropDownCellList.getOffsetHeight();
 		if (dropDownScrollPanel.getOffsetHeight() >= listHeight) {
+			
 			dropDownScrollPanel.setHeight(String.valueOf(listHeight) + "px");
 			int listWidth = dropDownCellList.getOffsetWidth();
 
@@ -348,7 +352,8 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 
 			int dropDownPopupWidth = listWidth + 2 * (listWidth - scrollWidth);
 
-			setWidth(String.valueOf(dropDownPopupWidth) + "px");
+			onResizeDropDownList(dropDownPopupWidth);
+			
 			dropDownScrollPanel.setWidth(String
 					.valueOf(dropDownPopupWidth - 2 /* TODO: Borders ? */)
 					+ "px");
@@ -441,7 +446,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 					int incrementSize = rangeStart - newRangeStart;
 					ComboBox.this.setVisibleRange(newRangeStart, rangeLength
 							+ incrementSize);
-					Scheduler.get().scheduleFinally(this);
+					Scheduler.get().scheduleFinally(this);					
 
 				} else if (lastScrollPos >= maxScrollPos) {
 					visibleItem = getVisibleItem(getVisibleItemCount() - 1);

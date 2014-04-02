@@ -23,12 +23,12 @@
 .dataGridHeader {
   border-bottom: 1px solid #6f7277;
   padding: 3px 15px;
-  text-align: left;
   overflow: hidden;
   white-space: nowrap;
 }
 
 .dataGridCell {
+  font-size: 12px;
   padding: 2px 15px;
   overflow: hidden;
 }

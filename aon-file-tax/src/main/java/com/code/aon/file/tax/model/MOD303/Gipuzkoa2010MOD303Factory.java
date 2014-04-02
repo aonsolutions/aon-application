@@ -15,8 +15,6 @@ import java.util.Map;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD303.data.Breakdown;
-import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
 public class Gipuzkoa2010MOD303Factory implements IMOD303Factory {
 
@@ -41,7 +39,7 @@ public class Gipuzkoa2010MOD303Factory implements IMOD303Factory {
 	
 	private class Gipuzkoa2010MOD303 extends AbstractFileFiller {
 		private static final String DECLARATION = "Declaration";
-		private static final String DECLARATION_METADATA = "/com/code/aon/file/tax/model/MOD303/xml/2010_GIPUZKOA_Declaration.xml";
+		private static final String DECLARATION_METADATA = "/com/code/aon/file/tax/model/MOD303/2010_GIPUZKOA_Declaration.xml";
 		
 		
 		private List<Declaration> declarations;
@@ -60,17 +58,20 @@ public class Gipuzkoa2010MOD303Factory implements IMOD303Factory {
 			Map<String,Object> properties = new HashMap<String,Object>();
 			try {
 				for (Declaration declaration : declarations) {
-					// Nos aseguramos de que vayan las claves de IVA que se requieren en la presentacion
-					String[] ensuredKeys = new String[]{"18.0","8.0","4.0","10.0","21.0"};
-					for (String ensureKey : ensuredKeys) {
-						if (!declaration.getOutputVat().containsKey(ensureKey)) {;
-							declaration.getOutputVat().put(ensureKey, new Breakdown());
+					if (declaration.getGeneralRegime() != null) {
+						GeneralRegime gr = declaration.getGeneralRegime();
+						// Nos aseguramos de que vayan las claves de IVA que se requieren en la presentacion
+						String[] ensuredKeys = new String[]{"18.0","8.0","4.0","10.0","21.0"};
+						for (String ensureKey : ensuredKeys) {
+							if (!gr.getOutputVat().containsKey(ensureKey)) {;
+							gr.getOutputVat().put(ensureKey, new Breakdown());
+							}
 						}
-					}
-					ensuredKeys = new String[]{"4.0","1.0","0.5","5.2","1.4"};
-					for (String ensureKey : ensuredKeys) {
-						if (!declaration.getSurcharge().containsKey(ensureKey)) {;
-							declaration.getSurcharge().put(ensureKey, new Breakdown());
+						ensuredKeys = new String[]{"4.0","1.0","0.5","5.2","1.4"};
+						for (String ensureKey : ensuredKeys) {
+							if (!gr.getSurcharge().containsKey(ensureKey)) {;
+								gr.getSurcharge().put(ensureKey, new Breakdown());
+							}
 						}
 					}
 					// ------------------

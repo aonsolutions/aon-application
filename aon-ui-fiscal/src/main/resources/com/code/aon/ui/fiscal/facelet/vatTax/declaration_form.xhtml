@@ -42,13 +42,29 @@
 					styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 					style="border-width: 0px 0px 0px 0px;margin-left: 10px;" reRender="VatTaxDeclarationGrid"
 					accesskey="#{bundle.aon_key_cancel}" />
-				<aon:htmlCommandLink target="_blank"
+				<aon:htmlCommandLink target="_blank" id="downloadFile303"
 					title="#{vatTaxDeclaration.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 					value="#{vatTaxDeclaration.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
-					style="border-width: 0px 0px 0px 0px;"
+					style="border-width: 0px 0px 0px 0px; font-weight: normal;"
 					actionListener="#{vatTaxDeclaration.downloadDisk}"
 					rendered="#{!vatTaxDeclaration.new and vatTaxDeclaration.fileOutput!=null}"
 					styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+				<aon:htmlCommandLink target="_blank" id="reportDraftAeat"
+					title="Imprimir via AEAT" 
+					value="Imprimir via AEAT"
+					style="border-width: 0px 0px 0px 0px; font-weight: normal;"
+					styleClass="aon-finding-toolbar-item aon-icon-aeat"
+					rendered="#{!vatTaxDeclaration.new and vatTaxDeclaration.fileOutput!=null and vatTaxDeclaration.aeatDraftReportEnabled}" 
+					action="#{vatTaxDeclaration.onAEATPrint}" />
+<!-- 					
+				<aon:htmlCommandLink id="sendAeat"
+					value="AEAT ENVIAR" target="_blank"
+					action="#{vatTaxDeclaration.onAEATSend}"
+					rendered="#{vatTaxDeclaration.aeatDraftReportEnabled}"
+					styleClass="aon-finding-toolbar-item aon-icon-aeat"
+					accesskey="#{bundle.aon_key_print}">
+				</aon:htmlCommandLink>
+ -->
 			</aon:div>			
 
 			<aon:outputLabel for="VatTaxDeclaration_administration"

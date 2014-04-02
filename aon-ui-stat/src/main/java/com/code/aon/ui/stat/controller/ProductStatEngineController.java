@@ -26,6 +26,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -40,8 +41,8 @@ public class ProductStatEngineController implements Serializable {
 	private Double pendingPurhaseQuantity;
 	private Double totalStock;
 	private Double averagePurchasePrice;
-	private DataModel latestEntriesModel;
-	private DataModel latestShipmentsModel;
+	private DataScrollerState latestEntriesState;
+	private DataScrollerState latestShipmentsState;
 	private List<InvoiceDetail> latestEntriesList;
 	private List<InvoiceDetail> latestShipmentsList;
 	
@@ -117,27 +118,51 @@ public class ProductStatEngineController implements Serializable {
 	}
 
 	public DataModel getLatestEntriesModel() {
-		if (latestEntriesModel == null) {
-			latestEntriesModel = new SerializableListDataModel(getLatestEntriesList());
-		}
-		return latestEntriesModel;
+		return getLatestEntriesState().getDirectModel();
 	}
 
 	public void setLatestEntriesModel(DataModel latestEntriesModel) {
-		this.latestEntriesModel = latestEntriesModel;
+		if ( latestEntriesModel == null ) {
+			setLatestEntriesState(null);
+		} else {
+			getLatestEntriesState().setModel(latestEntriesModel);
+		}						
+	}
+
+	public DataScrollerState getLatestEntriesState() {
+		if (latestEntriesState == null) {
+			latestEntriesState = new DataScrollerState(new SerializableListDataModel(getLatestEntriesList()), "latestEntries");
+		}								
+		return latestEntriesState;
+	}
+
+	public void setLatestEntriesState(DataScrollerState latestEntriesState) {
+		this.latestEntriesState = latestEntriesState;
 	}
 
 	public DataModel getLatestShipmentsModel() {
-		if (latestShipmentsModel == null) {
-			latestShipmentsModel = new SerializableListDataModel(getLatestShipmentsList());
-		}
-		return latestShipmentsModel;
+		return getLatestShipmentsState().getDirectModel();
 	}
 
 	public void setLatestShipmentsModel(DataModel latestShipmentsModel) {
-		this.latestShipmentsModel = latestShipmentsModel;
+		if ( latestShipmentsModel == null ) {
+			setLatestShipmentsState(null);
+		} else {
+			getLatestShipmentsState().setModel(latestShipmentsModel);
+		}								
 	}
 	
+	public DataScrollerState getLatestShipmentsState() {
+		if (latestShipmentsState == null) {
+			latestShipmentsState = new DataScrollerState(new SerializableListDataModel(getLatestShipmentsList()), "latestShipments");
+		}										
+		return latestShipmentsState;
+	}
+
+	public void setLatestShipmentsState(DataScrollerState latestShipmentsState) {
+		this.latestShipmentsState = latestShipmentsState;
+	}
+
 	public List<InvoiceDetail> getLatestEntriesList() {
 		return latestEntriesList;
 	}

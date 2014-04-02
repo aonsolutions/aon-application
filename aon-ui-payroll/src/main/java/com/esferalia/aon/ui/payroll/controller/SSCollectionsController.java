@@ -207,6 +207,29 @@ public class SSCollectionsController implements Serializable {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T33.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T33CodeList;
+
+	public List<SelectItem> getT33CodeList() {
+		if (T33CodeList == null) {
+			T33CodeList = new LinkedList<SelectItem>();
+			T33[] el = T33.values();
+			for (T33 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T33CodeList.add(item);
+				}
+			}
+		}
+		return T33CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T37.java
 	 *  ------------------------------------------------------------------------
 	 */ 
