@@ -139,16 +139,20 @@ public class AeatUtils {
 					+ "&IN6="
 					+ "&NR7="
 					+ "&IN7="
+					+ "&CMN="
+					+ "&LOT=0"
 					+ "&IDI=ES"
+					+ "&LEV=000000000000"
 					+ "&F01="+URLEncoder.encode(fileString, "ISO-8859-1")
+					+ "&PUN=00000000"
 					+ "&TXT="
 					+ "&FIR="
 					+ "&FIN=F"
 					+ "&EJF="+year
 					+ "&MOD=303"
 					+ "&PRG=EWLINKZU";
-			String location= "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
-			//String location= "https://www6.aeat.es/es13/l/zi21zilk0021";
+			//String location= "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
+			String location= "https://www6.aeat.es/es13/l/zi21zilk0021";
 
 			URL url = new URL(location);
 
