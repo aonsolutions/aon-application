@@ -436,6 +436,10 @@ public class AonDomainDump implements Constants {
 		Option domainOption = OptionBuilder.withDescription( "domain name to backup" )
 				.withArgName( "domainName" ).hasArg().create( "domain");
 		options.addOption(domainOption);
+
+		Option driverClassOption = OptionBuilder.withDescription( "jdbc driver class" )
+				.withArgName( "jdbcDriver" ).hasArg().create( "driverClass");
+		options.addOption(driverClassOption);
 		
 		BasicParser parser = new BasicParser();
 		
@@ -443,14 +447,20 @@ public class AonDomainDump implements Constants {
 		try {
 			line = parser.parse(options, arguments);
 		} catch (ParseException e) {
-			System.err.println( "Parsing failed. Reason: " + e.getMessage() );
+			LOGGER.error( "Parsing failed. Reason: " + e.getMessage() );
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( "AonDomainDump", options, true );
 			System.exit(-1);
 		}
-		
-		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
-		
+
+		String driver = "com.mysql.jdbc.Driver";
+		if ( line.hasOption(driverClassOption.getOpt()) ) {
+			driver = line.getOptionValue(driverClassOption.getOpt());
+		}
+		if (! DbUtils.loadDriver(driver) ) {
+			LOGGER.error( "Error loading driver: {}", driver );
+			System.exit(-1);
+		}
 				
 		Connection connection  = null;
 		Writer writer = null;

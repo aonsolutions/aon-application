@@ -101,7 +101,7 @@ public class AonDomainRemove implements Constants {
 	}
 	
 	public static void main(String[] args) {
-		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
+		DbUtils.loadDriver("com.mysql.jdbc.Driver");
 		
 		Integer domain = 7;
 		

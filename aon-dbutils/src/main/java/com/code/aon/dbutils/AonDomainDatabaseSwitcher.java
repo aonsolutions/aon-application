@@ -789,7 +789,7 @@ public class AonDomainDatabaseSwitcher {
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
 		/*
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/pro-aonsolutions-net","dbuser","serubd2000");
 		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.1.1/test-aonsolutions-net","dbuser","serubd2000");
 		String domainName = "2dzanga.aonsolutions.net";
@@ -800,7 +800,7 @@ public class AonDomainDatabaseSwitcher {
         target.close();
 		 */
         
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
         
 		
 		String targetURL = args[0];
