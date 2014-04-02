@@ -33,6 +33,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
@@ -41,12 +42,12 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class RegistryStatEngineController {
 
 	private Registry registry;
-	private DataModel pendingInvoiceModel;
-	private DataModel unpayedFinanceModel;
-	private DataModel boughtProductModel;
-	private DataModel pendingDeliveryModel;
-	private DataModel pendingSalesModel;
-	private DataModel pendingOfferModel;
+	private DataScrollerState pendingInvoiceState;
+	private DataScrollerState unpayedFinanceState;
+	private DataScrollerState boughtProductState;
+	private DataScrollerState pendingDeliveryState;
+	private DataScrollerState pendingSalesState;
+	private DataScrollerState pendingOfferState;
 	private List<Invoice> pendingInvoiceList;
 	private List<Finance> pendingFinanceList;
 	private List<InvoiceDetail> boughtProductList;
@@ -71,12 +72,12 @@ public class RegistryStatEngineController {
 	}
 
 	public double getPendingInvoicesTotalPrice() throws ManagerBeanException {
-		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
+		Invoice invoice = (Invoice) getPendingInvoiceModel().getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
 	public double getSalesTotalPrice() throws ManagerBeanException {
-		Sales sales = (Sales) this.pendingSalesModel.getRowData();
+		Sales sales = (Sales) getPendingSalesModel().getRowData();
 		return getPriceStrategy2().getTotalPrice(sales, sales.getCustomer());
 	}
 
@@ -86,74 +87,146 @@ public class RegistryStatEngineController {
 	}
 
 	public double getDeliveryTotalPrice() throws ManagerBeanException {
-		Delivery delivery = (Delivery) this.pendingDeliveryModel.getRowData();
+		Delivery delivery = (Delivery) getPendingDeliveryModel().getRowData();
 		return getPriceStrategy2().getTotalPrice(delivery, delivery.getCustomer());
 	}
 
 	public DataModel getPendingInvoiceModel() {
-		if (pendingInvoiceModel == null) {
-			pendingInvoiceModel = new ListDataModel(getPendingInvoiceList());
-		}
-		return pendingInvoiceModel;
+		return getPendingInvoiceState().getDirectModel();
 	}
 
 	public void setPendingInvoiceModel(DataModel pendingInvoiceModel) {
-		this.pendingInvoiceModel = pendingInvoiceModel;
+		if ( pendingInvoiceModel == null ) {
+			setPendingInvoiceState(null);
+		} else {
+			getPendingInvoiceState().setModel(pendingInvoiceModel);
+		}				
+	}
+	
+	public DataScrollerState getPendingInvoiceState() {
+		if (pendingInvoiceState == null) {
+			pendingInvoiceState = new DataScrollerState(new ListDataModel(getPendingInvoiceList()), "pending");
+		}								
+		return pendingInvoiceState;
+	}
+
+	public void setPendingInvoiceState(DataScrollerState pendingInvoiceState) {
+		this.pendingInvoiceState = pendingInvoiceState;
 	}
 
 	public DataModel getUnpayedFinanceModel() {
-		if (unpayedFinanceModel == null) {
-			unpayedFinanceModel = new ListDataModel(getPendingFinanceList());
-		}
-		return unpayedFinanceModel;
+		return getUnpayedFinanceState().getDirectModel();
 	}
 
 	public void setUnpayedFinanceModel(DataModel model) {
-		this.unpayedFinanceModel = model;
+		if ( model == null ) {
+			setUnpayedFinanceState(null);
+		} else {
+			getUnpayedFinanceState().setModel(model);
+		}				
+	}
+	
+	public DataScrollerState getUnpayedFinanceState() {
+		if (unpayedFinanceState == null) {
+			unpayedFinanceState = new DataScrollerState(new ListDataModel(getPendingFinanceList()), "scored");
+		}						
+		return unpayedFinanceState;
+	}
+
+	public void setUnpayedFinanceState(DataScrollerState unpayedFinanceState) {
+		this.unpayedFinanceState = unpayedFinanceState;
 	}
 
 	public DataModel getBoughtProductModel() {
-		if (boughtProductModel == null) {
-			boughtProductModel = new ListDataModel(getBoughtProductList());
-		}
-		return boughtProductModel;
+		return getBoughtProductState().getDirectModel();
 	}
 
 	public void setBoughtProductModel(DataModel boughtProductModel) {
-		this.boughtProductModel = boughtProductModel;
+		if ( boughtProductModel == null ) {
+			setBoughtProductState(null);
+		} else {
+			getBoughtProductState().setModel(boughtProductModel);
+		}				
+	}
+	
+	public DataScrollerState getBoughtProductState() {
+		if (boughtProductState == null) {
+			boughtProductState = new DataScrollerState(new ListDataModel(getBoughtProductList()), "products");
+		}				
+		return boughtProductState;
+	}
+
+	public void setBoughtProductState(DataScrollerState boughtProductState) {
+		this.boughtProductState = boughtProductState;
 	}
 
 	public DataModel getPendingDeliveryModel() {
-		if (pendingDeliveryModel == null) {
-			pendingDeliveryModel = new ListDataModel(getPendingDeliveryList());
-		}
-		return pendingDeliveryModel;
+		return getPendingDeliveryState().getDirectModel();
 	}
 
 	public void setPendingDeliveryModel(DataModel pendingDeliveryModel) {
-		this.pendingDeliveryModel = pendingDeliveryModel;
+		if ( pendingDeliveryModel == null ) {
+			setPendingDeliveryState(null);
+		} else {
+			getPendingDeliveryState().setModel(pendingDeliveryModel);
+		}				
+	}
+
+	public DataScrollerState getPendingDeliveryState() {
+		if (pendingDeliveryState == null) {
+			pendingDeliveryState = new DataScrollerState(new ListDataModel(getPendingDeliveryList()), "deliveries");
+		}						
+		return pendingDeliveryState;
+	}
+
+	public void setPendingDeliveryState(DataScrollerState pendingDeliveryState) {
+		this.pendingDeliveryState = pendingDeliveryState;
 	}
 
 	public DataModel getPendingSalesModel() {
-		if (pendingSalesModel == null) {
-			pendingSalesModel = new ListDataModel(getPendingSalesList());
-		}
-		return pendingSalesModel;
+		return getPendingSalesState().getDirectModel();
 	}
 
 	public void setPendingSalesModel(DataModel pendingSalesModel) {
-		this.pendingSalesModel = pendingSalesModel;
+		if ( pendingSalesModel == null ) {
+			setPendingSalesState(null);
+		} else {
+			getPendingSalesState().setModel(pendingSalesModel);
+		}						
+	}
+
+	public DataScrollerState getPendingSalesState() {
+		if (pendingSalesState == null) {
+			pendingSalesState = new DataScrollerState(new ListDataModel(getPendingSalesList()), "sales");
+		}						
+		return pendingSalesState;
+	}
+
+	public void setPendingSalesState(DataScrollerState pendingSalesState) {
+		this.pendingSalesState = pendingSalesState;
 	}
 
 	public DataModel getPendingOfferModel() {
-		if (pendingOfferModel == null) {
-			pendingOfferModel = new ListDataModel(getPendingOfferList());
-		}
-		return pendingOfferModel;
+		return getPendingOfferState().getDirectModel();
 	}
 
 	public void setPendingOfferModel(DataModel pendingOfferModel) {
-		this.pendingOfferModel = pendingOfferModel;
+		if ( pendingOfferModel == null ) {
+			setPendingOfferState(null);
+		} else {
+			getPendingOfferState().setModel(pendingOfferModel);
+		}						
+	}
+	
+	public DataScrollerState getPendingOfferState() {
+		if (pendingOfferState == null) {
+			pendingOfferState = new DataScrollerState(new ListDataModel(getPendingOfferList()), "offer");
+		}								
+		return pendingOfferState;
+	}
+
+	public void setPendingOfferState(DataScrollerState pendingOfferState) {
+		this.pendingOfferState = pendingOfferState;
 	}
 
 	public Registry getRegistry() {
@@ -365,7 +438,7 @@ public class RegistryStatEngineController {
 	}
 
 	public String getRowId() {
-		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
+		Invoice invoice = (Invoice) getPendingInvoiceModel().getRowData();
 		return invoice.getReferenceCode();
 	}
 	

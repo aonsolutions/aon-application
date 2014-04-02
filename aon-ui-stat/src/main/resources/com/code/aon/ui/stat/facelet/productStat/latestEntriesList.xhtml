@@ -6,9 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-		<ui:param name="dataTableId" value="products" />
-		<ui:param name="dataModel" value="#{productStat.latestEntriesModel}" />
-		<ui:param name="rows" value="20" />
+		<ui:param name="controller" value="#{productStat.latestEntriesState}" />
 		<ui:param name="skipSelectButton" value="true" />
 		<ui:param name="rowSelectorToggleOnClick" value="false" />
 
