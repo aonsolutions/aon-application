@@ -90,7 +90,7 @@ public class SerializationChecker {
 	}
 	
 	private void checkSessionManagedBean(String beanName, String beanClass) {
-		LOGGER.info( "Checking managed bean {} - {}", beanName, beanClass );
+		LOGGER.debug( "Checking managed bean {} - {}", beanName, beanClass );
 		Class<?> _class = getClass(beanClass);
 		if (_class != null ) {
 			testClass(_class);
@@ -265,7 +265,7 @@ public class SerializationChecker {
 		if ( isSerializable(_class) ) {
 			List<Field> fields = getFields(_class);
 			if (! fields.isEmpty() ) {
-				LOGGER.info("Class {}, {} fields", _class, fields.size());
+				LOGGER.debug("Class {}, {} fields", _class, fields.size());
 				for( Field field : fields ) {
 					testFieldSerialization(field);		
 				}			

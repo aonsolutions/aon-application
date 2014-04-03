@@ -468,6 +468,13 @@
 			com.code.aon.ui.common.domain.ServletContextDomainListener
 		</listener-class>
 	</listener>
+
+	<!-- HIBERNATE CONFIGURATION -->
+	<listener>
+		<listener-class>
+			com.code.aon.ui.common.hibernate.ServletContextHibernateListener
+		</listener-class>
+	</listener>
 	
 	<!-- Audit Filter -->
 	<filter>
