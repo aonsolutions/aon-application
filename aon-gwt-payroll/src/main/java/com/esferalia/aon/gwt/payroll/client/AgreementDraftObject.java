@@ -16,21 +16,21 @@ import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class AgreementDraftObject  {
+public class AgreementDraftObject {
 
 	public static Date NULL_DATE = new Date();
 
@@ -466,7 +466,8 @@ public class AgreementDraftObject  {
 	}
 
 	public void preview(int levelId,
-			com.esferalia.aon.gwt.payroll.shared.Salary.Type type, int zoom, AsyncCallback<String> callback) {
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type type, int zoom,
+			AsyncCallback<String> callback) {
 		employeesServiceAsync.getAgreementDraftReceiptHTML(agreementDraft,
 				levelId, type, zoom, callback);
 	}
@@ -485,13 +486,16 @@ public class AgreementDraftObject  {
 
 	// -------------------------------------------------------------------------
 
-	public void getContext(int levelId, AsyncCallback<ContextDescriptor> callback) {
-		employeesServiceAsync.getContext(agreementDraft,levelId, callback);
+	public void getContext(int levelId,
+			AsyncCallback<ContextDescriptor> callback) {
+		employeesServiceAsync.getContext(agreementDraft, levelId, callback);
 	}
 
-	public void eval(String expression, int levelId, AsyncCallback<Double> callback) {
-		
-		employeesServiceAsync.eval(expression, agreementDraft, levelId, callback);
+	public void eval(String expression, int levelId,
+			List<Variable> vars , AsyncCallback<List<Result>> callback) {
+
+		employeesServiceAsync.eval(expression, newAgreementDraft(agreementDraft, vars), levelId,
+				callback);
 	}
 
 	// ------------------------------------------------------------------------
@@ -520,6 +524,34 @@ public class AgreementDraftObject  {
 		Set<String> changed = new HashSet<String>(agreementDraft.getVariables());
 		changed.removeAll(oldAgreementDraft.getVariables());
 		return changed;
+	}
+
+	private AgreementDraft newAgreementDraft(AgreementDraft src,
+			List<Variable> vars) {
+		AgreementDraft draft = new AgreementDraft();
+
+		draft.setId(src.getId());
+
+		draft.setStartDate(src.getStartDate());
+		draft.setEndDate(src.getEndDate());
+
+		SalaryTable draftSalaryTable = src.getDraftSalaryTable();
+
+		for (int level : draftSalaryTable.getAllLevels())
+			for (Variable var : draftSalaryTable.getVariables(level))
+				draft.addDraftVariable(level, var);
+
+		for (Variable var : vars)
+			draft.addDraftVariable(0, var);
+		
+		return draft;
+	}
+
+	private static Variable getVariable(String name, List<Variable> list){
+		for (Variable var : list)
+			if ( name.equals(var.getName()))
+				return var;
+		return null;
 	}
 
 	private static <V extends HasId<K>, K> Map<K, V> toMap(Set<V> set) {

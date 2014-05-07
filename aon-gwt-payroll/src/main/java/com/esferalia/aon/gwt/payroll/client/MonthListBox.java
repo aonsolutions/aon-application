@@ -16,7 +16,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -26,6 +25,7 @@ public class MonthListBox extends ComboBox<Date> {
 	private static DateTimeFormat MONTH_DATE_TIME_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH);
 
+			
 	private static Format<Date> MONTH_FORMAT = new DateFormat(
 			MONTH_DATE_TIME_FORMAT);
 
@@ -60,7 +60,7 @@ public class MonthListBox extends ComboBox<Date> {
 	}
 
 	interface Template extends SafeHtmlTemplates {
-		@SafeHtmlTemplates.Template("<span class=\"{0}\">{1}</span>")
+		@SafeHtmlTemplates.Template("<span class=\"aon-nowrap {0}\" >{1}</span>")
 		SafeHtml span(String styles, SafeHtml str);
 	}
 
@@ -156,8 +156,13 @@ public class MonthListBox extends ComboBox<Date> {
 
 	protected List<Date> getMonths(int start, int length) {
 		List<Date> months = new ArrayList<Date>(length);
+
 		for (int i = 0; i < length; i++) {
-			months.add(getMonth(start + i));
+			Date month = getMonth(start + i);
+			if (DateUtils.compare(month, lastMonth) > 0) {
+				return months;
+			}
+			months.add(month);
 		}
 		return months;
 	}

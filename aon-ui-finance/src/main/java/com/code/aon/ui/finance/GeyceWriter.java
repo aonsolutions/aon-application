@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -49,13 +48,12 @@ public class GeyceWriter extends BasicExporter {
 	
 	private static final int GYCPLAN_SIZE = 141;
 	
-	private ByteArrayOutputStream outGycPlan;
+	private byte[] outGycPlan;
 	
 	private Set<String> exportedAccounts;
 	
 	public GeyceWriter(InvoiceExportConfiguration configuration) {
 		super(configuration);
-		this.outGycPlan = new ByteArrayOutputStream();
 		this.exportedAccounts = new HashSet<String>();
 	}
 	
@@ -291,10 +289,10 @@ public class GeyceWriter extends BasicExporter {
 			setStringRightPad(aed.getAccount().getDescription(), 20, 30);			
 		}
 
-		if ( this.outGycPlan.size() > 0 ) {
-			writeNewLine(this.outGycPlan);
+		if (! ArrayUtils.isEmpty(this.outGycPlan) ) {
+			this.outGycPlan = ArrayUtils.addAll(this.outGycPlan, NEW_LINE.getBytes());
 		}
-		this.outGycPlan.write(getLine());
+		this.outGycPlan = ArrayUtils.addAll(this.outGycPlan, getLine());
 	}
 	
 	private void writeRegistryDetail() throws IOException {
@@ -336,7 +334,7 @@ public class GeyceWriter extends BasicExporter {
 	public Map<String, byte[]> getDataMap() {
 		Map<String, byte[]> map = new HashMap<String, byte[]>();
 		map.put("gyccon.txt", getData());
-		map.put("gycplan.txt", this.outGycPlan.toByteArray());
+		map.put("gycplan.txt", this.outGycPlan);
 		return map;
 	}
 	

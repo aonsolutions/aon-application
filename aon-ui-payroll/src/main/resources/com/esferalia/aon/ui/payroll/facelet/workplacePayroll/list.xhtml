@@ -6,52 +6,43 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
-	<aon:methodParam name="resetAction" value="" />
-	
-	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">	
-		<ui:param name="showDescription" value="false" />		
-		<ui:param name="innerToolbar" value="true" />
-		<ui:param name="skipSearchButton" value="true" />
-		<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />		
-	</ui:include>
-
 	<aon:methodParam name="rowSelectorAction" value="" />
 	
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 		
 		<ui:param name="rowSelectorReRender" value="#{controller.beanName}Content" />
 		
 		<ui:define name="columns">
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.workPlace.description}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.workPlace.address.shortAddress}" />
 			</aon:column>			
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.config_administration}" />
 				</f:facet>
 				<aon:outputText value="#{to.workPlace.economicAgreement}" />
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_scope}" />
 				</f:facet>
 				<aon:outputText value="#{to.workPlace.scope.description}" />
 			</aon:column>		
 			
-			<aon:column styleClass="aon-width-100">
+			<aon:column styleClass="aon-width-100" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_active}" />
 				</f:facet>
@@ -60,39 +51,25 @@
 				</aon:div>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_calendar}" />
 				</f:facet>
 				<aon:outputText value="#{to.calendar.description}" />
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.payroll_agreement}" />
 				</f:facet>
 				<aon:outputText value="#{to.agreement.description}" />
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_activity}" />
 				</f:facet>
-				<!--  
 				<aon:outputText value="#{to.enterpriseActivity.cnae2009.code} - #{to.enterpriseActivity.description}" />
-				-->
-				
-				<aon:div>
-					<aon:outputText value="#{to.enterpriseActivity.cnae2009.code} - #{to.enterpriseActivity.description}" />
-					<aon:div style="display: inline;" rendered="#{not empty to.enterpriseActivity and !controller.existValidCCC}">
-						<aon:outputText value="&#160;"
-							styleClass="aon-margin-left aon-icon-commandButton aon-icon-exception" />
-						<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
-							<aon:outputText value="#{bundle.payroll_payrollWorkPlace_not_valid_enterpriseCCC}" />
-						</rich:toolTip>
-					</aon:div>
-				</aon:div>
-				
 			</aon:column>
 			
 		</ui:define>

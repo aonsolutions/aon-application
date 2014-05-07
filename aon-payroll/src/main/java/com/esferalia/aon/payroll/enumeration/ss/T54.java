@@ -256,6 +256,8 @@ public enum T54 implements ISSEnum {
 	T54_3141( "3141", "Mayores de 59 años y 4 años de antigüedad", null, null ),
 	T54_3191( "3191", "Fijo Discontinuo. Turismo-Hostelería", null, null ),
 	T54_3220( "3220", "Cambio puesto de trabajo Riesgo Embarazo/Enfermedad Profesional", null, null ),
+	T54_3262( "3262", "Reducciones RDL 3/2014 Tarifa plana (primeros dos años)", null, null ),
+	T54_3263( "3263", "Reducciones RDL 3/2014 Tarifa plana (Tercer año)", null, null ),
 	T54_4203( "4203", "Trabajador contrato formación sin desempleo", null, null ),
 	T54_4204( "4204", "Trabajador contrato formación con desempleo", null, null ),
 	T54_4208( "4208", "Contrato para la formación y aprendizaje", null, null ),

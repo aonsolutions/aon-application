@@ -595,6 +595,8 @@ public class FANWriter {
 								createEDLCd29Segment(bonus, dat);
 							} else if(bonusType==BonusType.REDUCTION_FARMER_UNEMPLOYMENT){
 								createEDLCd30Segment(bonus, dat);
+							} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+								createEDLCd31Segment(bonus, dat);
 							}
 						} else if(bonus!=null && bonusType==null) {
 							createEDLCd07Segment(bonus, dat);
@@ -647,6 +649,21 @@ public class FANWriter {
 	////////////////////////
 	// COMPENSACIONES - DEDUCCIONES
 	////////////////////////
+	/**
+	 * 31 Reducciones RDL-3/2014 
+	 * Sólo para Regimen General,Régimen Especial del Mar y Régimen Especial de la Minería del Carbón
+	 * 
+	 * @param bonus
+	 * @param emp
+	 */
+	private void createEDLCd31Segment(SalaryBonus bonus, DAT dat) {
+		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.GENERAL
+			|| bonus.getSalary().getContract().getRegimeType()==SSRegimeType.SEA_WORKERS
+			||  bonus.getSalary().getContract().getRegimeType()==SSRegimeType.COAL_MINING){
+			EDL edl = dat.getEdlSegment("CD31");
+			createEDLRecord(edl, "CD", 31, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+		}
+	}
 	/**
 	 *  30 Reducciones. SEA Desempleo
 	 * @param salary
@@ -1471,6 +1488,7 @@ public class FANWriter {
 				createEDTCd28Segment(emp);
 				createEDTCd29Segment(emp);
 				createEDTCd30Segment(emp);
+				createEDTCd31Segment(ccc, emp);
 				
 				createEDTCa01Segment(ccc, emp);
 				createEDTCa02Segment(emp);
@@ -1903,6 +1921,7 @@ public class FANWriter {
 		amount += emp.getEdt().containsKey("EDTCD01")?emp.getEdtSegment("EDTCD01").getImporte():0;
 		amount += emp.getEdt().containsKey("EDTCD06")?emp.getEdtSegment("EDTCD06").getImporte():0;
 		amount += emp.getEdt().containsKey("EDTCD17")?emp.getEdtSegment("EDTCD17").getImporte():0;
+		amount += emp.getEdt().containsKey("EDTCD31")?emp.getEdtSegment("EDTCD31").getImporte():0;
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCA30");
 			edt.setTipoElemento("CA");
@@ -2093,6 +2112,32 @@ public class FANWriter {
 	//////////////////////////////////////
 	// COMPENSACION - DEDUCCION TOTALES
 	//////////////////////////////////////
+	/**
+	 * 31 Reducciones RDL-3/2014 
+	 * Sólo para Regimen General,Régimen Especial del Mar y Régimen Especial de la Minería del Carbón
+	 * 
+	 * @param ccc
+	 * @param emp
+	 */
+	private void createEDTCd31Segment(EnterpriseCCC ccc, EMP emp) { 
+		if(ccc.getActivity().getType() == SSRegimeType.GENERAL
+			|| ccc.getActivity().getType() == SSRegimeType.SEA_WORKERS
+			|| ccc.getActivity().getType() == SSRegimeType.COAL_MINING){
+			Integer amount = 0;
+			for(TRA tra: emp.getTrabajadores()){
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD31")?dat.getEdlSegment("CD31").getImporte():0;
+				}
+			}
+			if(amount != 0){
+				EDT edt = emp.getEdtSegment("EDTCD31");
+				edt.setTipoElemento("CD");
+				edt.setClave(31);
+				edt.setImporte(amount);
+			}
+		}
+	}
+		
 	private void createEDTCd30Segment(EMP emp) { 
 		// TODO 30 Reducciones. SEA Desempleo Sistema Especial Agrario
 	}

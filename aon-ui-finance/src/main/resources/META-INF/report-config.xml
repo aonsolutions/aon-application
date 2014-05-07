@@ -613,6 +613,16 @@
 			<param id="PrintUtil" value="#{financePrintUtil.getInstance}" />
 		</params>
 	</report>
+	<report id="fPaymentListTemplate3" description="Finance Payment List Template 3">
+		<template path="/com/code/aon/ui/finance/report/fPaymentListTemplate3.jasper" />
+		<collection provider="#{fPaymentPrint}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PrintUtil" value="#{financePrintUtil.getInstance}" />
+		</params>
+	</report>
 	
 	<!--  *********  FinanceList  ********* -->
 	<report id="financeList" description="Finance List">

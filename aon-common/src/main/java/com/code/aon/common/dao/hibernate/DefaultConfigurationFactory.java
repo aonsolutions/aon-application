@@ -34,6 +34,14 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
      */
     protected void completeConfiguration( Configuration configuration ) {    	
     }
+
+    /**
+     * Update the Configuration after calling configure.
+     * 
+     * @param configuration the configuration
+     */
+    protected void updateConfiguration( Configuration configuration ) {    	
+    }
     
 	public Configuration getConfiguration( String sessionFactoryName ) {
 		synchronized (SINGLETON) {
@@ -46,6 +54,7 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
 				configuration.configure();
 			}
 	        configuration.setListener("pre-insert", new DomainEntityListener());
+	        updateConfiguration(configuration);
 			return configuration;
 		}
 	}

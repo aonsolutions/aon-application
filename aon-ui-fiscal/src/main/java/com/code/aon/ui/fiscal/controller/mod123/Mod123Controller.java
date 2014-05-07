@@ -60,5 +60,9 @@ public class Mod123Controller extends FiscalModelController {
 		MOD123Format format = MOD123Format.getFormat(fm.getAdministration(), fm.getYear());
 		return format.getMimeType();
 	}	
-	
+
+	@Override
+	protected String getFormPage() {
+		return "mod123_form";
+	}	
 }

@@ -100,6 +100,14 @@ public class AON {
 	public static final String AON_LABEL_ERROR = "aon-label-error";
 	public static final String AON_LABEL_WARN = "aon-label-warn";
 	public static final String AON_ICON_OK = "aon-icon-predetermine";
+	public static final String AON_ICON_X = "aon-icon-x";
+	public static final String AON_ICON_F = "aon-icon-f";
+	public static final String AON_ICON_FX = "aon-icon-fx";
+	public static final String AON_ICON_LAMP = "aon-icon-lamp";
+	public static final String AON_ICON_COLLAPSE = "aon-icon-collapse";
+	public static final String AON_ICON_EXPAND = "aon-icon-expand";
+	public static final String AON_TOOLTIP = "aon-tooltip";
+
 	
 	public static final String RICH_CALENDAR_BUTTON = "rich-calendar-button";
 

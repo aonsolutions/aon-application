@@ -49,6 +49,12 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 	}
 
 	// --------------------------------------------------------------- Handlers
+	
+	@Override
+	public void show() {
+		monthListBox.onResizeDropDownPopup();
+		super.show();
+	}
 
 	@UiHandler("saveCheckBox")
 	void onSaveClicked(ClickEvent event) {

@@ -36,6 +36,13 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
+								
+								
+								
+								
+<aon:panelTabSet >
+								
+	<aon:panelTab id="contractData" label="Contrato" >
 									
 <aon:panel styleClass="aon-panelGrid-search" id="filterPanel" style="padding:5px;">
 		<aon:panelGrid columns="5" 
@@ -454,6 +461,299 @@
 		</aon:column>
 	</aon:dataTable>
 </aon:panel>
+
+
+	</aon:panelTab>		
+	<aon:panelTab id="peculiarQuote" label="Peculiaridades de cotización" >
+		
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="innerToolbar" value="true" />
+			
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="peculiarQuote-accept"
+					value="#{bundle.aon_save}"
+					actionListener="#{contract.salaryInfoHandler.onAcceptPeculiarQuote}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept" />
+			</ui:define>
+		</ui:decorate>
+			
+		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder, aon-panelGrid-even aon-vertical-align-top aon-noborder">
+
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="Trabajador" />
+				</f:facet>
+				<aon:panelGrid columns="2">
+					
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC']}" >
+							<a4j:support event="onclick" reRender="percent_cgc-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_cgc" value="Contingencias comunes" />
+					</aon:div>
+					<aon:div id="percent_cgc-panel">
+						<aon:inputText id="percent_cgc" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CGC'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR']}" >
+							<a4j:support event="onclick" reRender="percent_extr-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_extr" value="Horas extraordinarias fuerza mayor" />
+					</aon:div>
+					<aon:div id="percent_extr-panel">
+						<aon:inputText id="percent_extr" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_EXTR'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR']}" >
+							<a4j:support event="onclick" reRender="percent_nextr-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_nextr" value="Resto horas extraordinarias" />
+					</aon:div>
+					<aon:div id="percent_nextr-panel">
+						<aon:inputText id="percent_nextr" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_NEXTR'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR']}" />
+					</aon:div>
+				
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL']}" >
+							<a4j:support event="onclick" reRender="percent_desmpl-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_desmpl" value="Desempleo" />
+					</aon:div>
+					<aon:div id="percent_desmpl-panel">
+						<aon:inputText id="percent_desmpl" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_DESMPL'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL']}" />
+					</aon:div>
+										
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP']}" >
+							<a4j:support event="onclick" reRender="percent_fp-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_fp" value="FP" />
+					</aon:div>
+					<aon:div id="percent_fp-panel">
+						<aon:inputText id="percent_fp" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_FP'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP']}" />
+					</aon:div>
+					
+				</aon:panelGrid>
+			</aon:panel>
+			
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="Empresa" />
+				</f:facet>
+				<aon:panelGrid columns="2">
+					
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC_E']}" >
+							<a4j:support event="onclick" reRender="percent_cgc_e-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_cgc_e" value="Contingencias comunes" />
+					</aon:div>
+					<aon:div id="percent_cgc_e-panel">
+						<aon:inputText id="percent_cgc_e" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC_E']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CGC_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC_E']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CGC_E']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR_E']}" >
+							<a4j:support event="onclick" reRender="percent_extr_e-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_extr_e" value="Horas extraordinarias fuerza mayor" />
+					</aon:div>
+					<aon:div id="percent_extr_e-panel">
+						<aon:inputText id="percent_extr_e" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR_E']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_EXTR_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR_E']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_EXTR_E']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR_E']}" >
+							<a4j:support event="onclick" reRender="percent_nextr_e-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_nextr_e" value="Resto horas extraordinarias" />
+					</aon:div>
+					<aon:div id="percent_nextr_e-panel">
+						<aon:inputText id="percent_nextr_e" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR_E']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_NEXTR_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR_E']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_NEXTR_E']}" />
+					</aon:div>
+					
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL_E']}" >
+							<a4j:support event="onclick" reRender="percent_desmpl_e-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_desmpl_e" value="Desempleo" />
+					</aon:div>
+					<aon:div id="percent_desmpl_e-panel">
+						<aon:inputText id="percent_desmpl_e" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL_E']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_DESMPL_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL_E']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_DESMPL_E']}" />
+					</aon:div>
+		
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FOGASA']}" >
+							<a4j:support event="onclick" reRender="percent_fogasa-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_fogasa" value="FOGASA" />
+					</aon:div>
+					<aon:div id="percent_fogasa-panel">
+						<aon:inputText id="percent_fogasa" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FOGASA']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_FOGASA'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FOGASA']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FOGASA']}" />
+					</aon:div>					
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP_E']}" >
+							<a4j:support event="onclick" reRender="percent_fp_e-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_fp_e" value="FP" />
+					</aon:div>
+					<aon:div id="percent_fp_e-panel"> 
+						<aon:inputText id="percent_fp_e" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP_E']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_FP_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP_E']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_FP_E']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CORTA_DURACION']}" >
+							<a4j:support event="onclick" reRender="percent_corta_duracion-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_corta_duracion" value="Contrato corta duración" />
+					</aon:div>
+					<aon:div id="percent_corta_duracion-panel" > 
+						<aon:inputText id="percent_corta_duracion" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CORTA_DURACION']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CORTA_DURACION'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CORTA_DURACION']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_CORTA_DURACION']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IT']}" >
+							<a4j:support event="onclick" reRender="percent_it-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_it" value="IT" />
+					</aon:div>
+					<aon:div id="percent_it-panel" > 
+						<aon:inputText id="percent_it" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IT']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_IT'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IT']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IT']}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IMS']}" >
+							<a4j:support event="onclick" reRender="percent_ims-panel"/>
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="percent_ims" value="IMS" />
+					</aon:div>
+					<aon:div id="percent_ims-panel" > 
+						<aon:inputText id="percent_ims" size="5" 
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IMS']}"
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_IMS'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%"
+							rendered="#{contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IMS']}" />
+						<aon:outputText value="valor de sistema"
+							rendered="#{not contract.salaryInfoHandler.checkedQuoteMap['PORCENTAJE_IMS']}" />
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:panel>
+			
+		</aon:panelGrid>
+		
+	</aon:panelTab>		
+</aon:panelTabSet>
+
 									
 								</aon:div>
 							</aon:div>

@@ -659,9 +659,13 @@ public class FacturaeWriter {
 			init( (Invoice) bean.get(invoice.getId()) );
 			Facturae facturae = getFacturae();  	
 			MarshallerUtil marshallerUtil32 = MarshallerUtil.getInstance(FacturaeVersion.FACTURAE_32);
-			marshallerUtil32.marshal( facturae, fileName );		
+			marshallerUtil32.marshal( facturae, fileName );
+			String realName = fileName + FACTURAE_EXTENSION;
 	    	if ( pmsUtil.isAddExtensions() ) {
-	    		pmsUtil.transform(fileName + FACTURAE_EXTENSION);
+	    		pmsUtil.transform(realName);
+	    	}
+	    	if ( DecimalUtil.isFixDecimals() ) {
+	    		new DecimalUtil().transform(facturae, realName);
 	    	}
 		} catch (Throwable t ) {
 		    try {

@@ -329,7 +329,11 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		ExpressionImpl expr = new ExpressionImpl();
 		expr.setName(var.getName());
 		expr.setScope(ExpressionScope.SALARY);
-		expr.setExpression(var.getExpression());
+		String expression = var.getExpression();
+		if ( StringUtils.isBlank(expression ))
+			expr.setExpression(String.valueOf(var.getValue()));
+		else
+			expr.setExpression(var.getExpression());
 		return expr;
 	}
 

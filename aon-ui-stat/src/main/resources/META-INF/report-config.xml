@@ -125,6 +125,19 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>
+
+    <report id="abcProductStatsList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/productStatTemplate.jasper" />
+		<collection provider="#{stat.abcStats}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{stat.getReportName}" />
+			<param id="itemTitle" value="#{stat.getItemTitle}" />
+			<param id="promedio" value="#{stat.getPromAmount}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
 	
 	<report id="abcStatsGraph" description="Statistics Report">
 		<template path="/com/code/aon/ui/stat/report/monthStatGraph.jasper" />

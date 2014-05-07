@@ -94,5 +94,8 @@
 			<ui:include src="#{userUtils.loggedUser.toolbar.template}" />
 		</aon:div>
 	</aon:div>
+	<c:if test="#{desktop.logEnabled}">
+		<a4j:log hotkey="Z" level="ALL" popup="true" />
+	</c:if>
 
 </ui:composition>

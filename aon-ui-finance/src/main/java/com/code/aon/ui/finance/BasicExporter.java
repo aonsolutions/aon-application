@@ -1,8 +1,6 @@
 package com.code.aon.ui.finance;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
@@ -54,7 +53,7 @@ public abstract class BasicExporter {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
-	private ByteArrayOutputStream out;
+	private byte[] data;
 	
 	private InvoiceExportConfiguration configuration;
 	
@@ -106,8 +105,11 @@ public abstract class BasicExporter {
 	
 	private double total;
 	
+	private boolean withholding;
+	
+	private boolean withholdingFarmer;	
+	
 	public BasicExporter( InvoiceExportConfiguration configuration ) {
-		this.out = new ByteArrayOutputStream();
 		this.configuration = configuration;
 	}
 
@@ -179,6 +181,8 @@ public abstract class BasicExporter {
 		this.investment = invoice.isInvestment();
 		this.rectificationType = invoice.getRectificationType();
 		this.total = getInvoiceTotalPrice(invoice);
+		this.withholding = invoice.isWithholding();
+		this.withholdingFarmer = invoice.isWithholdingFarmer();
 	}
 	
 	private void initBasic( Finance finance ) throws ManagerBeanException {
@@ -272,6 +276,14 @@ public abstract class BasicExporter {
 		return this.invoiceType == InvoiceType.SALES;
 	}
 	
+	public boolean isWithholding() {
+		return withholding;
+	}
+
+	public boolean isWithholdingFarmer() {
+		return withholdingFarmer;
+	}
+
 	public InvoiceType getInvoiceType() {
 		return this.invoiceType;
 	}
@@ -516,21 +528,12 @@ public abstract class BasicExporter {
 		this.line = line;
 	}
 	
-	protected OutputStream getOutputStream() {
-		return this.out;
-	}
-	
 	protected void writeLine() throws IOException {
-		out.write(this.line);
+		data = ArrayUtils.addAll(data, this.line);
 	}
 
 	protected void writeNewLine() throws IOException {
-		writeNewLine(this.out);
-	}
-	
-	
-	protected void writeNewLine( OutputStream out ) throws IOException {
-		out.write(NEW_LINE.getBytes());
+		data = ArrayUtils.addAll(data, NEW_LINE.getBytes());
 	}
 	
 	public InvoiceExportConfiguration getConfiguration() {
@@ -562,7 +565,7 @@ public abstract class BasicExporter {
 	}
 	
 	protected byte[] getData() {
-		return out.toByteArray();
+		return data;
 	}
 	
 	public String getFileName() {

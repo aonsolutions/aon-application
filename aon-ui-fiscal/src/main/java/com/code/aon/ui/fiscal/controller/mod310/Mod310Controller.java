@@ -20,6 +20,11 @@ import com.code.aon.ui.util.AonUtil;
 public class Mod310Controller extends FiscalModelController {
 	
 	@Override
+	protected String getFormPage() {
+		return "mod310_form";
+	}	
+
+	@Override
 	protected FiscalModelType getModelType() {
 		return 	FiscalModelType.M310;
 	}

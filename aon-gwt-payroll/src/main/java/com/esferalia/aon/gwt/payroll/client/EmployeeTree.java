@@ -55,11 +55,13 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -77,7 +79,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	static final byte SAVE_OPTION = 0x01;
 	static final byte OVERWRITE_OPTION = 0x02;
 	static final byte DUPLICATE_OPTION = 0x04;
-	
+
 	private static final int RESULTS_LIMIT = 100;
 
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
@@ -177,7 +179,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			resultsGrid.setPageSize(RESULTS_LIMIT);
 			resultsDataProvider = new ListDataProvider<JsSalaryResult>();
 			resultsDataProvider.addDataDisplay(resultsGrid);
-			
+
 		}
 
 		@Override
@@ -269,7 +271,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class CalcEmployeeCommand implements ScheduledCommand, AcceptHandler,
-			CalculateService,SelectionHandler<JsSalaryResult>, ClearHandler, Handler,AsyncCallback<JsSalaryResult>  {
+			CalculateService, SelectionHandler<JsSalaryResult>, ClearHandler,
+			Handler, AsyncCallback<JsSalaryResult> {
 
 		private SalaryResultsGrid resultsGrid;
 		private CalcDialog<Employee> calcDialog;
@@ -319,7 +322,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			Set<Employee> employees = calcDialog.getSelectedData();
 
 			resultsPanel.setWidget(resultsGrid);
-			
 
 			int optionsBits = 0x00;
 			if (calcDialog.isSaveSelected())
@@ -332,10 +334,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			EmployeeTree.calculate(startDate, endDate, EMPLOYEES, employees,
 					optionsBits, this);
 			clear();
-			
+
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 
 		}
+
 		// ------------------------------------------------------------ Handler
 
 		@Override
@@ -345,6 +348,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			else
 				registration.removeHandler();
 		}
+
 		// ------------------------------------------------------- ClearHandler
 
 		@Override
@@ -357,7 +361,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void onSelection(SelectionEvent<JsSalaryResult> event) {
 			onSalaryResultSelected(event.getSelectedItem());
 		}
-
 
 		// --------------------------------------- AsyncCallback<JsSalaryResult>
 
@@ -701,9 +704,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		CalcEnterpriseCommand calcCmd;
 
-		// A3ReportEnterpriseCommand a3ReportCmd;
-		// FTEReportEnterpriseCommand fteReportCmd;
-		// CTRLReportEnterpriseCommand ctrlReportCmd;
+		// G.P.S Commands 
+		UIObject fteMenuItems [] ;
+		A3ReportEnterpriseCommand a3ReportCmd;
+		FTEReportEnterpriseCommand fteReportCmd;
+		CTRLReportEnterpriseCommand ctrlReportCmd;
+		
 
 		public EnterpriseContextMenu() {
 
@@ -732,26 +738,32 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
-// @formatter:off
-//			addSeparator();
-//			addItem("Informe FTE",
-//					fteReportCmd = new FTEReportEnterpriseCommand(
-//							"Informe FTE..."), AON.AON_ICON_EXCEL,
-//					AON.AON_ICON_CMD_BUTTON);
-//			addItem("Informe Control Festivos, Libres y Vacaciones",
-//					ctrlReportCmd = new CTRLReportEnterpriseCommand(
-//							"Informe Control Festivos, Libres y Vacaciones..."),
-//					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
-//			addItem("Informe A3", a3ReportCmd = new A3ReportEnterpriseCommand(
-//					"Informe A3..."), AON.AON_ICON_EXCEL,
-//					AON.AON_ICON_CMD_BUTTON);
-// @formatter:on
+			
+			fteMenuItems = new UIObject[4];
+			fteMenuItems[0] = addSeparator();
+			fteMenuItems[1] = addItem("Informe FTE",
+					fteReportCmd = new FTEReportEnterpriseCommand(
+							"Informe FTE..."), AON.AON_ICON_EXCEL,
+					AON.AON_ICON_CMD_BUTTON);
+			fteMenuItems[2] = addItem("Informe Control Festivos, Libres y Vacaciones",
+					ctrlReportCmd = new CTRLReportEnterpriseCommand(
+							"Informe Control Festivos, Libres y Vacaciones..."),
+					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
+			fteMenuItems[3] = addItem("Informe A3", a3ReportCmd = new A3ReportEnterpriseCommand(
+					"Informe A3..."), AON.AON_ICON_EXCEL,
+					AON.AON_ICON_CMD_BUTTON);
 		}
 
 		void setEnterprise(Enterprise enterprise) {
 			calcCmd.setEnterprise(enterprise);
-			// fteReportCmd.setEnterprise(enterprise);
-			// ctrlReportCmd.setEnterprise(enterprise);
+			
+			for ( UIObject item: fteMenuItems) 
+				item.setVisible(Enterprise.isGPS(enterprise));
+			
+			Enterprise.isGPS(enterprise);
+			fteReportCmd.setEnterprise(enterprise);
+			ctrlReportCmd.setEnterprise(enterprise);
+			a3ReportCmd.setEnterprise(enterprise);
 		}
 
 	}
@@ -917,7 +929,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		workplaceContextMenu = new WorkplaceContextMenu();
 
 		singlenton = this;
-		
+
 		export2JS();
 
 	}
@@ -1122,20 +1134,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return singlenton;
 	}
 
-	// private static void a3Report() {
-	// singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-	// singlenton.enterpriseContextMenu.a3ReportCmd.execute();
-	// }
-	//
-	// private static void fteReport() {
-	// singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-	// singlenton.enterpriseContextMenu.fteReportCmd.execute();
-	// }
-	//
-	// private static void ctrlReport() {
-	// singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
-	// singlenton.enterpriseContextMenu.ctrlReportCmd.execute();
-	// }
+	private static void a3Report() {
+		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+		singlenton.enterpriseContextMenu.a3ReportCmd.execute();
+	}
+
+	private static void fteReport() {
+		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+		singlenton.enterpriseContextMenu.fteReportCmd.execute();
+	}
+
+	private static void ctrlReport() {
+		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+		singlenton.enterpriseContextMenu.ctrlReportCmd.execute();
+	}
 
 	private static <T extends HasId<?>> void calculate(Date startDate,
 			Date endDate, String itemClass, Set<T> items, int optionsBits,
@@ -1180,8 +1192,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						|| state == XMLHttpRequest.DONE) {
 
 					String text = xhr.getResponseText();
-					
-					
+
 					for (JsSalaryResult result = read(text); result != null; result = read(text))
 						callback.onSuccess(result);
 				}
@@ -1231,7 +1242,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
 		singlenton.enterpriseContextMenu.calcCmd.execute();
 	}
-	
+
 	private static void workplaceCalc() {
 		singlenton.workplaceContextMenu.setWorkplace(singlenton.workplace);
 		singlenton.workplaceContextMenu.calcCmd.execute();
@@ -1243,11 +1254,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private static native void export2JS() /*-{
-	$wnd.viewResults = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::viewResults());
-	$wnd.employeeCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::employeeCalc());
-	$wnd.workplaceCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::workplaceCalc());
-	$wnd.enterpriseCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::enterpriseCalc());
+		$wnd.viewResults = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::viewResults());
+		$wnd.employeeCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::employeeCalc());
+		$wnd.workplaceCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::workplaceCalc());
+		$wnd.enterpriseCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::enterpriseCalc());
+		
+		$wnd.a3Report = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::a3Report());
+		$wnd.fteReport = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::fteReport());
+		$wnd.ctrlReport = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::ctrlReport());
 	}-*/;
-	
 
 }

@@ -1,4 +1,0 @@
-~;Envío en real
-P;Pruebas
-N;No sustitución - Sólo afecta a las liquidaciones complementarias del tipo L02, L03, L09 (del mes en curso no), L13, TP2 y A76. Cuando venga consignada esta marca, no se procederá a la sustitución automática de estas liquidaciones por otras presentadas en el mismo período y con idéntico CCC, período de liquida-ción y tipo de liquidación.
-

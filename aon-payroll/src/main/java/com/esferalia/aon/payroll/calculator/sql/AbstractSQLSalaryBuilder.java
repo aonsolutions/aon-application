@@ -259,7 +259,7 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	
 	@Override
 	public void addPayment(Double amount, Double quote, Double tax,
-			String description, IPayment payment, Map<String, ITimedVariable<?>> context) {
+			String description, Date startDate, Date endDate,  IPayment payment, Map<String, ITimedVariable<?>> context) {
 		// TODO : save quote and tax ???
 		AbstractSQL.SalaryPayment salaryPayment= 
 			new AbstractSQL.SalaryPayment();

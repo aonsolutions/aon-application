@@ -68,9 +68,10 @@
 				</aon:div>
 			
 				<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
-					<aon:methodParam name="rowSelectorAction" value="start" />
+					<aon:methodParam name="rowSelectorAction" value="home" />
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 						<ui:param name="controller" value="#{domains}" />
+						<ui:param name="rowSelectorReRender" value="aonHeader,aonContent" />
 						<ui:param name="skipFocusFirst" value="true" />
 						<ui:define name="columns">
 							<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"

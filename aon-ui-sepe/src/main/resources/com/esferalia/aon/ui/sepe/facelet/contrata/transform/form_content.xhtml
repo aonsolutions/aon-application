@@ -10,9 +10,10 @@
 
 	<aon:panelGrid id="transformDataTable" columns="2" style="width: 100%;">
 
-		<aon:outputLabel for="Contract_contractCode"
+		<!--  
+		<aon:outputLabel for="transformContrata_contractCode"
 			value="#{bundle.payroll_contract_contract_code}" />
-		<aon:selectOneMenu id="Contract_contractCode" required="true" 
+		<aon:selectOneMenu id="transformContrata" required="true" 
 			value="#{transformContrata.params.transformCode}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{payrollCollections.contractTransformCodes}" />
@@ -26,6 +27,7 @@
 			value="#{transformContrata.params.fechaInicio}" 
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		-->
 
 		<aon:outputLabel for="transformContrata_indicadorDiscontinuidad" 
 			value="INDICADOR_DISCONTINUIDAD" />

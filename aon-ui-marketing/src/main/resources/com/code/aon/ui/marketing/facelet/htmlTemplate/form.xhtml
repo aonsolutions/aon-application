@@ -42,7 +42,7 @@
 						value="#{bundle.aon_template}" />
 					<aon:inputRichText id="RegistryAttachment_data" required="true"
 						value="#{htmlTemplate.aonFile.data}"
-						converter="#{htmlTemplate.byteArrayConverter}"
+						converter="aon.ByteArrayConverter"
 						height="500" width="700"
 						configuration="tinyMCE" />	
 								

@@ -35,17 +35,16 @@
 								style="padding-right: 5px;padding-left: 18px"
 								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
 						</c:if>
-						<aon:commandLink styleClass="aon-menu-icon aon-icon-email"
+						<aon:commandLink id="showEmailWindow" 
+							styleClass="aon-menu-icon aon-icon-email"
 							title="#{bundle.webmail_send_email}" 
 							ajaxSingle="true" reRender="showNewMessageWindow"
 							rendered="#{mailConfig.mailAccountCount &gt; 0}"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>								
-						<ui:insert name="beforeRightMenuContent"/>					
-		                <aon:methodParam name="homeActionListener" default="" />					
-						<aon:commandLink action="home" 
+						<ui:insert name="beforeRightMenuContent"/>								
+						<aon:commandLink id="home" action="home"
 							rendered="#{!aonConfiguration.properties.hideMenuHome}"
-							actionListener="#{homeActionListener}" 
 							title="#{bundle.aon_home}"
 							styleClass="aon-menu-icon aon-icon-home"
 							value="&#160;" />
@@ -64,11 +63,11 @@
 			                <aon:menuGroup
 			                	rendered="#{!aonConfiguration.properties.hideMenuChooseLanguage}"
 			                	value="#{bundle.aon_chooseLocale}">
-		                		<aon:menuItem reRender="aonHeader,aonContent"
+		                		<aon:menuItem id="spanishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[0].displayName}"
 									iconClass="#{aonConfiguration.locales[0].iconClass}" 
 									actionListener="#{aonConfiguration.locales[0].onChangeLanguage}" />
-		                		<aon:menuItem reRender="aonHeader,aonContent"
+		                		<aon:menuItem id="englishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[1].displayName}"
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />

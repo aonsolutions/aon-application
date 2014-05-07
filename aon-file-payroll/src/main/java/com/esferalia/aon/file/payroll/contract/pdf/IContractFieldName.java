@@ -1,9 +1,15 @@
 package com.esferalia.aon.file.payroll.contract.pdf;
 
-import com.code.aon.common.enumeration.IStringEnum;
-
-public interface IContractFieldName extends IStringEnum{
+public interface IContractFieldName {
+	
 	public boolean isOverridable();
+	
 	public boolean isCheck();
+	
+	public boolean isCommonValue();
+	
+	public String getValue();
+	
 	public IContractFieldName[] getCompositeValues();
+	
 }

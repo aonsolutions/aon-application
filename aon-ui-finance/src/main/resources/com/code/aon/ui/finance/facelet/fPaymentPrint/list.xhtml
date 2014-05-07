@@ -18,7 +18,6 @@
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipResetButton" value="true" />
 				
-				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -32,14 +31,6 @@
 						actionListener="#{fPaymentPrint.checkNone}" reRender="fPaymentPrintList"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-				
-					<aon:selectOneMenu id="templatesList" 
-						value="#{fPaymentPrint.selectedTemplate}"
-						rendered="#{fPaymentPrint.checkedCount > 0}">
-						<f:selectItems value="#{fPaymentPrint.availableTemplates}" />
-						<a4j:support event="onchange" reRender="templatesList" />
-					</aon:selectOneMenu>
-					
 					<aon:htmlCommandLink id="fPaymentPrintList-report"
 						value="#{bundle.aon_listing}" target="_blank" action="#{fPaymentPrint.onExecuteReport}"
 						rendered="#{fPaymentPrint.checkedCount > 0}"

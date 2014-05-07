@@ -84,14 +84,12 @@ public class SQLContractDelayCalculatorContext extends
 
 	protected String getDescriptionForExtraDelay(IContractPayment payment, int ordinal) {
 		return String
-				.format("%3$s. Atrasos en la paga del %1$te de %1$tB al %2$te de %2$tB de %2$tY",
-						payment.getStartDate(), payment.getEndDate(), RN.roman(ordinal) );
+				.format("Atrasos en la Paga");
 	}
 
 	protected String getDescriptionForSalaryDelay(IContractPayment payment, int ordinal) {
 		return String.format(
-				"%3$s. Atrasos en la nómina del %1$te al %2$te de %2$tB de %2$tY",
-				payment.getStartDate(), payment.getEndDate(), RN.roman(ordinal));
+				"Atrasos en la Nómina");
 	}
 
 	private Collection<IContractPayment> getDifferencePayments()

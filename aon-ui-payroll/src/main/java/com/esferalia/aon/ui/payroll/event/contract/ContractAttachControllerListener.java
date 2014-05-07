@@ -30,7 +30,7 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 				criteria.addEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), controller.getType());
 			}
 			SepeAppParamsController paramsController = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
-			if(!paramsController.getDevelopmentMode()){
+			if(!paramsController.getDevelopmentMode() && !AonUtil.getRoleManager().isSysAdmin()){
 				String alias = attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE);
 				Expression expToAdd = null;
 				expToAdd = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.CONTRACT_DOC_DRAFT);				

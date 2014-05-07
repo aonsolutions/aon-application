@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
@@ -18,7 +19,7 @@
 				<ui:param name="controller" value="#{controller}" />
 	
 				<ui:define name="columns">
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_year}" />
 						</f:facet>
@@ -30,6 +31,15 @@
 							<aon:outputText value="#{bundle.aon_period}" />
 						</f:facet>
 						<aon:outputText value="#{to.period}" />
+					</aon:column>
+	
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="&#160;"
+							style="padding-left: 16px;"
+							styleClass="#{to.pending?'aon-icon-edit-add-simple':'aon-icon-accept'}"/>
 					</aon:column>
 	
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
@@ -48,20 +58,38 @@
 						</aon:div>
 					</aon:column>
 	
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
+							<aon:outputText value="C" />
 						</f:facet>
-						<aon:outputText value="#{to.status}" />
+						<aon:div style="display:inline;cursor:pointer;"
+							rendered="#{to.comments != null and to.comments != ''}">
+							<aon:outputText value="&#160;" 
+								style="padding-left:15px;" styleClass="aon-icon-comment"/>
+							<rich:toolTip value="#{to.comments}" 
+								showEvent="onmouseover"
+								style="width: 400px;">
+								<f:facet name="defaultContent">
+									<aon:outputText value="#{bundle.aon_in_progress}" />
+								</f:facet>
+							</rich:toolTip>
+						</aon:div>
 					</aon:column>
-					
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_document}" />
+						</f:facet>
+						<aon:outputText value="#{to.document}" />
+					</aon:column>
+
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_comment}" />
+							<aon:outputText value="#{bundle.aon_document}" />
 						</f:facet>
-						<aon:outputText value="#{to.comments}">
-							<aon:abbreviateConverter maxWidth="100" />
-						</aon:outputText>
+						<aon:outputText value="#{to.surname}" />
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{to.name}" />
 					</aon:column>
 					
 				</ui:define>

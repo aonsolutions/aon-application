@@ -221,53 +221,57 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 	}	
 	
 	protected void addOrganisationIdentification( Element parent, String id, String issuer ) {
-		Element identification = createElement(IDENTIFICATION);
-		parent.appendChild(identification);		
-
-		Element organisationIdentification = createElement(ORGANISATION_IDENTIFICATION);
-		identification.appendChild(organisationIdentification);
-		
-		Element other = createElement(OTHER);
-		organisationIdentification.appendChild(other);		
-
-		Element innerIdentification = createElement(IDENTIFICATION);
-		addValue(innerIdentification, id, 35);
-		other.appendChild(innerIdentification);
-
-		if ( issuer != null ) {
-			Element issuerElement = createElement(ISSUER);
-			addValue(issuerElement, issuer, 35);
-			other.appendChild(issuerElement);					
+		if (! StringUtils.isEmpty(id) ) {
+			Element identification = createElement(IDENTIFICATION);
+			parent.appendChild(identification);		
+	
+			Element organisationIdentification = createElement(ORGANISATION_IDENTIFICATION);
+			identification.appendChild(organisationIdentification);
+			
+			Element other = createElement(OTHER);
+			organisationIdentification.appendChild(other);		
+	
+			Element innerIdentification = createElement(IDENTIFICATION);
+			addValue(innerIdentification, id, 35);
+			other.appendChild(innerIdentification);
+	
+			if ( issuer != null ) {
+				Element issuerElement = createElement(ISSUER);
+				addValue(issuerElement, issuer, 35);
+				other.appendChild(issuerElement);					
+			}
 		}
 	}	
 	
 	protected void addPrivateIdentification( Element parent, String id, String propietary, String issuer ) {
-		Element identification = createElement(IDENTIFICATION);
-		parent.appendChild(identification);		
-
-		Element privateIdentification = createElement(PRIVATE_IDENTIFICATION);
-		identification.appendChild(privateIdentification);		
-
-		Element other = createElement(OTHER);
-		privateIdentification.appendChild(other);		
-
-		Element innerIdentification = createElement(IDENTIFICATION);
-		addValue(innerIdentification, id, 35);
-		other.appendChild(innerIdentification);
-		
-		if ( propietary != null ) {
-			Element schemeName = createElement(SCHEME_NAME);
-			other.appendChild(schemeName);		
+		if (! StringUtils.isEmpty(id) ) {
+			Element identification = createElement(IDENTIFICATION);
+			parent.appendChild(identification);		
+	
+			Element privateIdentification = createElement(PRIVATE_IDENTIFICATION);
+			identification.appendChild(privateIdentification);		
+	
+			Element other = createElement(OTHER);
+			privateIdentification.appendChild(other);		
+	
+			Element innerIdentification = createElement(IDENTIFICATION);
+			addValue(innerIdentification, id, 35);
+			other.appendChild(innerIdentification);
 			
-			Element propietaryElement = createElement(PROPRIETARY);
-			addValue(propietaryElement, propietary, 35);
-			schemeName.appendChild(propietaryElement);
-		}
-		
-		if ( issuer != null ) {
-			Element issuerElement = createElement(ISSUER);
-			addValue(issuerElement, issuer, 35);
-			other.appendChild(issuerElement);					
+			if ( propietary != null ) {
+				Element schemeName = createElement(SCHEME_NAME);
+				other.appendChild(schemeName);		
+				
+				Element propietaryElement = createElement(PROPRIETARY);
+				addValue(propietaryElement, propietary, 35);
+				schemeName.appendChild(propietaryElement);
+			}
+			
+			if ( issuer != null ) {
+				Element issuerElement = createElement(ISSUER);
+				addValue(issuerElement, issuer, 35);
+				other.appendChild(issuerElement);					
+			}
 		}
 	}	
 	

@@ -60,7 +60,7 @@
 						#{rich:element('jsfEnterpriseButton')}.click();	
 					}
             	//]]>
-			</script>
+			</script> 
 		</aon:form>
 
 		<aon:form style="display:none">
@@ -125,6 +125,7 @@
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.xhtml">
 					<ui:param name="edit" value="#{edit}" />
+					<ui:param name="gps" value="#{employeeTree.gps}" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{employeeTree.bonusConceptsSelected}">

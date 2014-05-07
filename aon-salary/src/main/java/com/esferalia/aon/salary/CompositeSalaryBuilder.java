@@ -11,7 +11,8 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
-public class CompositeSalaryBuilder <T extends ISalaryBuilder> implements ISalaryBuilder {
+public class CompositeSalaryBuilder<T extends ISalaryBuilder> implements
+		ISalaryBuilder {
 
 	private T builders[];
 
@@ -235,7 +236,6 @@ public class CompositeSalaryBuilder <T extends ISalaryBuilder> implements ISalar
 			builder.setTotalEnterprise(totalEnterprise);
 	}
 
-	
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
@@ -250,17 +250,19 @@ public class CompositeSalaryBuilder <T extends ISalaryBuilder> implements ISalar
 	}
 
 	@Override
-	public void addCost(Double amount, String description,
-			IDeduction cost, Map<String, ITimedVariable<?>> context) {
+	public void addCost(Double amount, String description, IDeduction cost,
+			Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
 			builder.addCost(amount, description, cost, context);
 	}
 
 	@Override
-	public void addPayment(Double amount, Double quote, Double tax, String description, IPayment payment,
+	public void addPayment(Double amount, Double quote, Double tax,
+			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addPayment(amount, quote, tax, description, payment, context);
+			builder.addPayment(amount, quote, tax, description, startDate,
+					endDate, payment, context);
 	}
 
 	@Override
@@ -289,10 +291,10 @@ public class CompositeSalaryBuilder <T extends ISalaryBuilder> implements ISalar
 		for (ISalaryBuilder builder : builders)
 			builder.setListener(listener);
 	}
-	
+
 	// -------------------------------------------------------------- Protected
-	
-	protected T [] getBuilders(){
+
+	protected T[] getBuilders() {
 		return builders;
 	}
 

@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.sepe.controller;
 
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 
 public interface ISepeConstants {
@@ -50,13 +51,11 @@ public interface ISepeConstants {
 	
 	public static final String[] AVAILABLE_TRANSFORM_CODE_COMMUNICATION = {
 		// INDEF. TC
-		"189",
-//		"109", "139", 
+		"109", "139", "189",
 		// INDEF. TP
-		"289",
-//		"209", "239", 
+		"209", "239", "289",
 		// FIJO DISCONT.
-//		"309", "339", "389",
+		"309", "339", "389",
 		};
 	
 	public static final ContrataFileType[] AVAILABLE_CONTRATA_FILE_TYPES = {
@@ -77,5 +76,51 @@ public interface ISepeConstants {
 //		ContrataFileType.CORRECTION_ADDITIONAL_HOURS,
 		};
 	
+	public static final ModelOption[] AVAILABLE_CONTRACT_MODEL_OPTIONS = {
+		ModelOption.INDEFINITE_OPT1,
+//		ModelOption.INDEFINITE_OPT2,
+//		ModelOption.INDEFINITE_OPT3,
+//		ModelOption.INDEFINITE_OPT4,
+		ModelOption.INDEFINITE_OPT5,
+		ModelOption.INDEFINITE_OPT6,
+		ModelOption.INDEFINITE_OPT7,
+//		ModelOption.INDEFINITE_OPT8,
+//		ModelOption.INDEFINITE_OPT9,
+//		ModelOption.INDEFINITE_OPT10,
+//		ModelOption.INDEFINITE_OPT11,
+//		ModelOption.INDEFINITE_OPT12,
+//		ModelOption.INDEFINITE_OPT13,
+//		ModelOption.INDEFINITE_OPT14,
+//		ModelOption.INDEFINITE_OPT15,
+//		ModelOption.INDEFINITE_OPT16,
+//		ModelOption.INDEFINITE_OPT17, // TRANSFORMATION CODES
+		ModelOption.LEARNING_OPT1,
+//		ModelOption.LEARNING_OPT2,
+//		ModelOption.LEARNING_OPT3,
+//		ModelOption.LEARNING_OPT4,
+//		ModelOption.PRACTICE_OPT1,
+//		ModelOption.PRACTICE_OPT2,
+//		ModelOption.PRACTICE_OPT3,
+//		ModelOption.PRACTICE_OPT4,
+//		ModelOption.PRACTICE_OPT5,
+		ModelOption.TEMPORARY_OPT1,
+		ModelOption.TEMPORARY_OPT2,
+		ModelOption.TEMPORARY_OPT3,
+//		ModelOption.TEMPORARY_OPT4,
+//		ModelOption.TEMPORARY_OPT5,
+//		ModelOption.TEMPORARY_OPT6,
+//		ModelOption.TEMPORARY_OPT7,
+		ModelOption.TEMPORARY_OPT8,
+//		ModelOption.TEMPORARY_OPT9,
+//		ModelOption.TEMPORARY_OPT10,
+		ModelOption.TEMPORARY_OPT11,
+		ModelOption.TEMPORARY_OPT12,
+//		ModelOption.TEMPORARY_OPT13,
+		ModelOption.TEMPORARY_OPT14,
+//		ModelOption.TEMPORARY_OPT15,
+//		ModelOption.TEMPORARY_OPT16,
+//		ModelOption.TEMPORARY_OPT17,
+//		ModelOption.TEMPORARY_OPT18,
+	};
 
 }

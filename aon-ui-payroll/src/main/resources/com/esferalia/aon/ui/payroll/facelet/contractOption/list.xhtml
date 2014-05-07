@@ -25,12 +25,21 @@
 						actionListener="#{contractModel.onSelectModel}" />
 					
 					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
-						<aon:htmlCommandLink styleClass="aon-icon-pdf" style="padding-left: 15px;" 
-							title="#{bundle.download_file}"
-							target="_blank" value="&#160;"
-							rendered="#{contractModel.pdfEnabled}"
-							actionListener="#{contractModel.onDownloadContract}">
-						</aon:htmlCommandLink>
+						<aon:outputText value="-"
+							rendered="#{contractModel.selectedModel == to and contractModel.expandable}"/>
+						<aon:outputText value="+"
+							rendered="#{contractModel.selectedModel != to and contractModel.expandable}"/>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
+						<aon:div onmouseover="disableRowSelector();" onmouseout="enableRowSelector();" onmouseup="disableRowSelector();">
+							<aon:htmlCommandLink styleClass="aon-icon-pdf" style="padding-left: 15px;" 
+								title="#{bundle.download_file}"
+								target="_blank" value="&#160;"
+								rendered="#{contractModel.pdfEnabled}"
+								actionListener="#{contractModel.onDownloadContract}">
+							</aon:htmlCommandLink>
+						</aon:div>
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
@@ -45,8 +54,8 @@
 						style="background-color: #FBEDB6;"
 						value="#{contractModel.optionModel}"
 						var="option" >
-						<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;">
-						</aon:column>
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;"/>
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;"/>
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="background-color: #FBEDB6;">
 							<aon:outputText value="#{option}" />
 						</aon:column>

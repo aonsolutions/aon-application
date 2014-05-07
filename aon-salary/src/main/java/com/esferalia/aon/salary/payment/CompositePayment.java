@@ -56,7 +56,7 @@ public class CompositePayment implements IPayment {
 	
 	@Override
 	public double getAmount() {
-		double t = 0;
+		double t = 0.00;
 		for (IPayment d : getPayments()) {
 			t = CommonUtil.round(t + d.getAmount());
 		}

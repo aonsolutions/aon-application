@@ -91,6 +91,9 @@ public class Mod303Controller extends FiscalModelController {
 		setSelectedKey(m303key.getParentKey()==null?m303key:m303key.getParentKey());
 		setModulesPanelVisible(!getSelectedKey().isFarmer());
 		setFarmerPanelVisible(getSelectedKey().isFarmer());
+		fillActivities();
+	}
+	private void fillActivities() {
 		moduleKeys = new LinkedList<Mod303Key>();
 		Mod303 declaration = (Mod303) getDeclaration();
 		for (Mod303Key k : declaration.getMap().keySet()) {
@@ -113,6 +116,16 @@ public class Mod303Controller extends FiscalModelController {
 		try {
 			getDeclaration().calculate();
 			onHideActivityPanel(event);
+		} catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage()); 
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+	
+	public void onChangeZD(ActionEvent event) {
+		try {
+			getDeclaration().calculate();
+			fillActivities();
 		} catch (Throwable e) {
 			AonUtil.addErrorMessage(e.getMessage()); 
 			throw new AbortProcessingException(e.getMessage(),e);
@@ -192,6 +205,10 @@ public class Mod303Controller extends FiscalModelController {
 	public FiscalModelDetail getModD() { return getSelectedDetail("D"); }
 	public Mod303Key getModZKey() { return getSelectedKey("Z"); }
 	public FiscalModelDetail getModZ() { return getSelectedDetail("Z"); }
+	public Mod303Key getModZAKey() { return getSelectedKey("ZA"); }
+	public FiscalModelDetail getModZA() { return getSelectedDetail("ZA"); }
+	public Mod303Key getModZDKey() { return getSelectedKey("ZD"); }
+	public FiscalModelDetail getModZD() { return getSelectedDetail("ZD"); }
 	public Mod303Key getModEKey() { return getSelectedKey("E"); }
 	public FiscalModelDetail getModE() { return getSelectedDetail("E"); }
 	public Mod303Key getModFKey() { return getSelectedKey("F"); }
@@ -253,6 +270,11 @@ public class Mod303Controller extends FiscalModelController {
 		return format.getMimeType();
 	}
 	
+	@Override
+	protected String getFormPage() {
+		return "mod303_form";
+	}	
+
 	public String aeatReport() {
 		try {
 			if (getFileOutput() == null) {

@@ -35,7 +35,7 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 			companyName = company.getName();
 			companyFullAddress = company.getDefaultAddress().getFullAddress();
 		} catch (ManagerBeanException e) {
-			String msg = "Se ha priducido un error de lectura. Vuela a intentarlo pasados unos segundos.";
+			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);

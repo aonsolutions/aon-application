@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -284,13 +285,14 @@ public class ExcelWriter extends BasicExporter {
 	}
 	
 	private byte[] getExcelData() {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			exporter.autoSizeColumns();
-			exporter.endExport(getOutputStream());
+			exporter.endExport(bos);
 		} catch (ReportException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		return getData();
+		return bos.toByteArray();
 	}
 	
 	@Override

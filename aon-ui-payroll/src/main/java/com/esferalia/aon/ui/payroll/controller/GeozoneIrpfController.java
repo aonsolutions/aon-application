@@ -116,7 +116,12 @@ public class GeozoneIrpfController {
 	}
 	
 	public void onInitialize(ActionEvent event){
-		setYear(CommonUtil.getYear(new Date()));
+		setIrpfModel(null);
+		setDescendantModel(null);
+		setHandicapModel(null);
+		setSelectedIrpf(null);
+		setAdministration(null);
+		setYear(CommonUtil.getYear(new Date()));		
 	}
 	
 	public void onSearch(ActionEvent event){
@@ -128,6 +133,35 @@ public class GeozoneIrpfController {
 		try {
 			initializeDescendantsModel();
 			initializeHandicapModel();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException("error on onSelectGeozone");
+		}
+	}
+	
+	public void onReloadModel(ActionEvent event){
+		try {
+			if(getAdministration()!=null && getYear()!=null){
+				GeoIrpf g = new GeoIrpf();
+				if(getAdministration()==Administration.ALAVA){
+					g.setGeozoneCode(ARABA_CODE);
+				} else if(getAdministration()==Administration.BIZKAIA){
+					g.setGeozoneCode(BIZKAIA_CODE);
+				} else if(getAdministration()==Administration.GIPUZKOA){
+					g.setGeozoneCode(GIPUZKOA_CODE);
+				} else if(getAdministration()==Administration.NAVARRA){
+					g.setGeozoneCode(NAFARROA_CODE);
+				} else {
+					g.setGeozoneCode(null);
+				}
+				g.setYear(getYear());
+				setSelectedIrpf(g);
+				initializeDescendantsModel();
+				initializeHandicapModel();
+			} else {
+				setSelectedIrpf(null);
+				setDescendantModel(null);
+				setHandicapModel(null);
+			}
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("error on onSelectGeozone");
 		}

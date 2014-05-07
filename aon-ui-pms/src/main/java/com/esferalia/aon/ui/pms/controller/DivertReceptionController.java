@@ -22,7 +22,6 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -103,7 +102,7 @@ public class DivertReceptionController extends BasicController {
 		try {
 			buildReallocationRoomList(event);
 			ProjectReservationDivert divert = (ProjectReservationDivert) getTo();
-			RoomAvailabilityController roomAvailabilityController = (RoomAvailabilityController) FormUtil.getController(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+			RoomAvailabilityController roomAvailabilityController = (RoomAvailabilityController) AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			roomAvailabilityController.getFilterParams().setViewerStartDate(divert.getDivertDate());
 			roomAvailabilityController.getFilterParams().setViewerEndDate(divert.getProjectReservation().getEndDate());
 			roomAvailabilityController.getFilterParams().setHotel(divert.getDivertHotel());

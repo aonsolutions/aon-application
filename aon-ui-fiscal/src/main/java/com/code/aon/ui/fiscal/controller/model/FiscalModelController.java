@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -36,6 +37,7 @@ import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.FiscalModelManagerFactory;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.fiscal.model.IFiscalModelManager;
@@ -50,11 +52,12 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
+import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public abstract class FiscalModelController extends BasicController {
+public abstract class FiscalModelController extends BasicController implements IFiscalModelController{
 
 	private final static String DATA_TAB = "headerData";
 	private final static String LIQUIDATION_TAB = "liquidationTab";
@@ -66,6 +69,9 @@ public abstract class FiscalModelController extends BasicController {
 	private String selectedTab;
 	private boolean showAuditInfoWindow;
 	private boolean finalizePanelVisible;
+	
+	private List<FiscalModel> previousDeclarations;
+	private String previousDeclarationDocument;
 	
 	private RegistryBank registryBank;
 	private Mipf mipf;
@@ -126,6 +132,12 @@ public abstract class FiscalModelController extends BasicController {
 		this.finalizePanelVisible = finalizePanelVisible;
 	}
 	
+	public boolean isMultiDeclarationEnabled() {
+		return (getModelType() == FiscalModelType.M130 
+				&& getPreviousDeclarations() != null 
+				&& getPreviousDeclarations().size() > 0);
+	}
+
 	public boolean isShowAuditInfoWindow() {
 		return showAuditInfoWindow;
 	}
@@ -174,32 +186,41 @@ public abstract class FiscalModelController extends BasicController {
 		criteria.addOrder(getFieldName(IEntityAlias.FISCAL_MODEL_YEAR), false);
 		criteria.addOrder(getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD), false);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list != null && list.size() > 0) {
-			FiscalModel fs = (FiscalModel) list.get(0);
-			to.setDocument(fs.getDocument());
-			to.setName(fs.getName());
-			to.setSurname(fs.getSurname());
-			
-			to.setStreetInitial(fs.getStreetInitial());
-			to.setStreetName( fs.getStreetName() );
-			to.setStreetNumber( fs.getStreetNumber() ); 
-			to.setTown( fs.getTown());
-			to.setProvince(fs.getProvince());
-			to.setZip( fs.getZip() );
-			
-			to.setPhone(fs.getPhone() );
-			
-			to.setContactPerson( fs.getContactPerson() );
-			to.setContactPhone(fs.getContactPhone() );
-			to.setContactCellular( fs.getContactCellular() );
-			to.setContactEmail( fs.getContactEmail() );
-			
+		setPreviousDeclarations(null);
+		setPreviousDeclarationDocument(null);
+		if (list != null) {
+			if (list.size() == 1) {
+				FiscalModel fs = (FiscalModel) list.get(0);
+				initializeData(fs);
+			} else {
+				setPreviousDeclarations( new LinkedList<FiscalModel>());
+				for (ITransferObject t : list) {
+					FiscalModel fs = (FiscalModel) t;
+					boolean found = false;
+					for (FiscalModel fm : previousDeclarations) {
+						if (StringUtils.isBlank(fs.getDocument())
+							|| StringUtils.equals(fs.getDocument(), fm.getDocument())) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						previousDeclarations.add(fs);	
+					}
+				}
+				if (previousDeclarations.size() == 1) {
+					setPreviousDeclarations(null);
+					setPreviousDeclarationDocument(null);
+				}
+			}
 		}
 		
 		Company company = getCompany();
 		if (StringUtils.isEmpty(to.getDocument())) {
 			to.setDocument(company.getDocument());	
 		}
+		to.setCompanyDocument(company.getDocument());
+		to.setParticipationPercent(100.0);
 		
 		if (StringUtils.isEmpty(to.getName())) {
 			String name = company.getName();
@@ -222,10 +243,10 @@ public abstract class FiscalModelController extends BasicController {
 			RegistryAddress address = company.getDefaultAddress();
 			if (address != null) {
 				to.setStreetInitial(address.getStreetType().getValue());
-				to.setStreetName( address.getAddress() );
+				to.setStreetName( StringUtils.left(address.getAddress(),17) );
 				to.setStreetNumber( address.getNumber() ); 
-				to.setTown( address.getCity());
-				to.setProvince(address.getGeozone()==null?"":address.getGeozone().getName());
+				to.setTown( StringUtils.left(address.getCity(),20));
+				to.setProvince(StringUtils.left(address.getGeozone()==null?"":address.getGeozone().getName(),15));
 				to.setZip("00000");
 				if (address.getZip() != null){
 					to.setZip(address.getZip());
@@ -253,6 +274,50 @@ public abstract class FiscalModelController extends BasicController {
 			to.setContactEmail( fiscalParams.getContactMail() );
 		}		
 	}
+	
+	private void initializeData(FiscalModel fs) {
+		FiscalModel to = (FiscalModel) getTo();
+		to.setDocument(fs.getDocument());
+		to.setName(fs.getName());
+		to.setSurname(fs.getSurname());
+		
+		to.setStreetInitial(fs.getStreetInitial());
+		to.setStreetName( fs.getStreetName() );
+		to.setStreetNumber( fs.getStreetNumber() ); 
+		to.setTown( fs.getTown());
+		to.setProvince(fs.getProvince());
+		to.setZip( fs.getZip() );
+		
+		to.setPhone(fs.getPhone() );
+		
+		to.setContactPerson( fs.getContactPerson() );
+		to.setContactPhone(fs.getContactPhone() );
+		to.setContactCellular( fs.getContactCellular() );
+		to.setContactEmail( fs.getContactEmail() );
+	}
+	
+	public List<FiscalModel> getPreviousDeclarations() {
+		return previousDeclarations;
+	}
+	public void setPreviousDeclarations(List<FiscalModel> previousDeclarations) {
+		this.previousDeclarations = previousDeclarations;
+	}
+	public String getPreviousDeclarationDocument() {
+		return previousDeclarationDocument;
+	}
+	public void setPreviousDeclarationDocument(String previousDeclarationDocument) {
+		this.previousDeclarationDocument = previousDeclarationDocument;
+	}
+	public List<SelectItem> getPreviousDeclarationDocuments() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		list.add(new SelectItem(null," ------- "));
+		for ( FiscalModel fm : getPreviousDeclarations()) {
+			String name = fm.getName(); 
+			String surname = fm.getSurname();
+			list.add(new SelectItem(fm.getDocument(),(name==null?"":(name + " ") + surname)));
+		}
+		return list;
+	}
 
 	public void initializeDetails() throws AonException {
 		setDeclaration((getFiscalModelManager()
@@ -261,11 +326,15 @@ public abstract class FiscalModelController extends BasicController {
 	}
 
 	public void load() throws AonException {
+		setPreviousDeclarations(null);
+		setPreviousDeclarationDocument(null);
 		FiscalModel to = (FiscalModel) getTo();
 		setDeclaration((getFiscalModelManager().loadFiscalModel(to)));
 	}
 
 	public void unload() throws AonException {
+		setPreviousDeclarations(null);
+		setPreviousDeclarationDocument(null);
 		setDeclaration(null);
 	}
 
@@ -509,6 +578,7 @@ public abstract class FiscalModelController extends BasicController {
 		return (getModelType() == FiscalModelType.M303 || getModelType() == FiscalModelType.M311); 
 	}
 	protected abstract FiscalModelType getModelType();
+	protected abstract String getFormPage();
 
 	public abstract boolean isDifEnabled();
 
@@ -601,5 +671,45 @@ public abstract class FiscalModelController extends BasicController {
 		getMipf().validateAeatFile(fiscalModel.getYear(),fileOutput);
 		return null;
 	}
+	public boolean isParticipationPercentEnabled() {
+		return (getModelType() == FiscalModelType.M130);
+	}
 	
+	public void onSelectPreviousDeclarationDocument(ActionEvent event){
+		for (FiscalModel fm : getPreviousDeclarations()) {
+			if (StringUtils.equals(fm.getDocument(), getPreviousDeclarationDocument())) {
+				initializeData(fm);
+				FiscalModel fiscalModel = (FiscalModel) getTo();
+				fiscalModel.setParticipationPercent(null);
+				break;
+			}
+		}
+	}
+	@Override
+	public String editModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_YEAR); 
+		String periodAlias = getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD);
+		String admonAlias = getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(periodAlias,period);
+		criteria.addEqualExpression(admonAlias,administration);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+		return getFormPage();
+	}
+
+	@Override
+	public String newModel(Administration administration, int year,
+			Period period) throws ManagerBeanException{
+		onReset(null);
+		FiscalModel fm = (FiscalModel) getTo();
+		fm.setYear(year);
+		fm.setPeriod(period);
+		fm.setAdministration(administration);
+		return getFormPage();
+	}	
 }

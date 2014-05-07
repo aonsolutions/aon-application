@@ -19,8 +19,11 @@
 		
 		<aon:outputText value="#{bundle.aon_document}" />
 		<aon:div>
-			<aon:inputText disabled="#{true}" size="12"
-				value="#{contract.to.person.registry.document}"/>
+			<aon:outputText value="#{contract.to.person.registry.documentType}"/>
+			<aon:outputText value=" ("/>
+			<aon:outputText value="#{contract.to.person.registry.documentCountry.value}"/>
+			<aon:outputText value=") - "/>
+			<aon:outputText value="#{contract.to.person.registry.document}"/>
 			<!-- ONLY FOR DEVELOPMENT  
 			<aon:outputText value="&#160;(" />
 			<aon:outputText value="#{contract.to.id}" />
@@ -30,11 +33,10 @@
 		
 		<aon:outputText value="#{bundle.registry_person_birthDate}" />
 		<aon:div>
-			<aon:selectInputDate disabled="#{true}" 
-				value="#{contract.to.person.birthDate}"
-				inputSize="10" 
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}" />
+			<aon:outputText value="#{contract.to.person.birthDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText> 
 			<aon:outputText value="&#160;(" rendered="#{contract.to.person.age!=null}"/>
 			<aon:outputText value="#{contract.to.person.age}" rendered="#{contract.to.person.age!=null}"/>
 			<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{contract.to.person.age!=null}"/>
@@ -42,18 +44,12 @@
 		</aon:div>
 		
 		<aon:outputText value="#{bundle.registry_nationality}" />
-		<aon:selectOneMenu disabled="#{true}"
-			value="#{contract.to.person.registry.nationality}" >
-			<f:selectItem value="#{null}" itemLabel="-"/>
-			<f:selectItems value="#{commonCollections.countries}" />
-		</aon:selectOneMenu>	
+		<aon:outputText value="#{contract.to.person.registry.nationality}" />
 		
 		<aon:outputText value="#{bundle.registry_person_nss}" />
-		<aon:inputText disabled="#{true}" size="13"
-			value="#{contract.to.person.socialSecurityNumber}"/>
+		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"/>
 
 		<aon:outputText value="#{bundle.aon_address}" />
-		<aon:inputText disabled="#{true}" size="32"
-			value="#{contract.to.person.registry.defaultAddress.fullAddress}"/>
+		<aon:outputText value="#{contract.to.person.registry.defaultAddress.fullAddress}"/>
 
 </ui:composition>

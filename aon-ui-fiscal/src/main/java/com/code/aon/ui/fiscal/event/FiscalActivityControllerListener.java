@@ -229,7 +229,7 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 					detailList.add(info);
 				}
 			}
-			if (c.getM311List() == null || c.getM311List().size() == 0 ) {
+			if (fa.getYear() < 2014 && (c.getM311List() == null || c.getM311List().size() == 0) ) {
 				c.fillM311(fa);
 				c.calculateM311();
 			}

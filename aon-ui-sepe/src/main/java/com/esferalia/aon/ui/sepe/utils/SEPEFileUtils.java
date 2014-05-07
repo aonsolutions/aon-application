@@ -44,7 +44,7 @@ public class SEPEFileUtils {
 	
 	public static void validateCertificadosXmlPattern(InputStream xmlStream, String SCHEMA) throws IOException, SAXException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL[] urls = Classpath.search(cl, "META-INF/schema", SCHEMA);
+		URL[] urls = Classpath.search(cl, "META-INF/schemas/contrata", SCHEMA);
 		
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = sf.newSchema(urls[0]);
@@ -59,7 +59,7 @@ public class SEPEFileUtils {
 		File schemaFile = null;
 		try {
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, "META-INF/schema", SCHEMA);
+			URL[] urls = Classpath.search(cl, "META-INF/schemas/contrata", SCHEMA);
 			
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			schemaFile = getSchemaFile(SCHEMA, urls[0], contractCode);
@@ -90,7 +90,7 @@ public class SEPEFileUtils {
 		} else if( schema.equals(TRANSFORMACIONES_SCHEMA_FILE_NAME) ){
 			return obtainTransformacionesSchemaFile(url, contractCode);
 		} else if( schema.equals(PRORROGAS_SCHEMA_FILE_NAME) ){
-			return null;	
+			return obtainProrrogasSchemaFile(url, contractCode);
 		}
 		return null;	
 	}
@@ -237,4 +237,28 @@ public class SEPEFileUtils {
 		}
 		return null;
 	}	
+	
+	private static File obtainProrrogasSchemaFile(URL url, String contractCode) {
+		try {
+			File tempFile = File.createTempFile("tmpEsquemaProrrogas50",".xsd");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), XML_FILE_ENCODING));
+			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), XML_FILE_ENCODING);
+			String currentLine;
+			while((currentLine = reader.readLine()) != null) {
+				writer.write(currentLine);
+			}
+			writer.close();
+			return tempFile;
+		} catch (FileNotFoundException e) {
+			String msg = "No se encuentra el esquema de validacion";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (IOException e) {
+			String msg = "Error de lectura al obtener el esquema de validacion";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+		return null;
+	}
+	
 }

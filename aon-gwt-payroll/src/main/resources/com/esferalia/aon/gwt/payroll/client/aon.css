@@ -26,6 +26,18 @@
 	gwt-image: "changed" ; 
 }
 
+@sprite .aon-icon-x {
+	gwt-image: "x" ; 
+}
+
+@sprite .aon-icon-f {
+	gwt-image: "f" ; 
+}
+
+@sprite .aon-icon-fx {
+	gwt-image: "fx" ; 
+}
+
 @sprite .aon-icon-warn {
 	gwt-image: "warn" ; 
 }
@@ -37,6 +49,21 @@
 @sprite .aon-icon-ine {
 	gwt-image: "ine" ; 
 }
+
+@sprite .aon-icon-lamp {
+	gwt-image: "lamp" ; 
+}
+
+@sprite .aon-icon-expand {
+	gwt-image: "expand" ; 
+	background-position: center;
+}
+
+@sprite .aon-icon-collapse {
+	gwt-image: "collapse" ; 
+	background-position: center;
+}
+
 
 @sprite .aon-icon-employee {
 	gwt-image: "employee" ; 
@@ -114,9 +141,10 @@
 }
 
 .aon-comboBoxPopup {
+	padding: 0px;
 	background-color: #FBEDB6;
-	border: solid #808080 1px;
 	border-top: 0px;
+	border: solid #808080 1px;
 	box-shadow: 2px 2px 2px #888888;
 }
 
@@ -150,4 +178,93 @@
 
 .aon-finding-toolbar-item {
 	height: 14px;	
+}
+
+.aon-tooltip { 
+	/* the outside of the popup */
+	margin-left: 32px;
+}
+.aon-tooltip .popupContent { 
+	/* the wrapper around the content */
+    padding: 6px;
+	color : #000 ;
+	font-size : 11px ;
+	border: 1px solid #CCCCCC;
+	border-top: none;
+    box-shadow: 2px 2px 5px #CCCCCC;
+    background: none repeat scroll 0 0 #FFFFFF !important;
+}
+.aon-tooltip .popupTopLeft { 
+	/* the top left cell */
+	background: inherit;
+}
+.aon-tooltip .popupTopLeftInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+@sprite .aon-tooltip .popupTopCenter { 
+	/* the top center cell */
+	gwt-image: "tooltip_top";
+	width: auto;
+	background-position: center top;
+}
+.aon-tooltip .popupTopCenterInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupTopRight { 
+	/* the top right cell */
+	background: inherit;
+}
+.aon-tooltip .popupTopRightInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupMiddleLeft { 
+	/* the middle left cell */
+	background: inherit;
+}
+.aon-tooltip .popupMiddleLeftInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupMiddleCenter { 
+	/* the middle center cell */
+	background: inherit;
+}
+.aon-tooltip .popupMiddleCenterInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupMiddleRight { 
+	/* the middle right cell */
+	background: inherit;
+}
+.aon-tooltip .popupMiddleRightInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupBottomLeft { 
+	/* the bottom left cell */
+	background: inherit;
+}
+.aon-tooltip .popupBottomLeftInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupBottomCenter { 
+	/* the bottom center cell */
+	background: inherit;
+}
+.aon-tooltip .popupBottomCenterInner { 
+	/* the inner element of the cell */
+	background: inherit;
+}
+.aon-tooltip .popupBottomRight { 
+	/* the bottom right cell */
+	background: inherit;
+}
+.aon-tooltip .popupBottomRightInner { 
+	/* the inner element of the cell */
+	background: inherit;
 }

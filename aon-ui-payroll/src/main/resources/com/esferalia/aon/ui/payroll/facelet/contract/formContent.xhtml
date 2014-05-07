@@ -30,53 +30,90 @@
 		<aon:outputLabel for="workPlace" 
 			value="#{bundle.purchase_workplace}" />
 		<aon:selectOneMenu id="workPlace" required="true"
+			rendered="#{!readOnly}"
 			disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 			value="#{contract.to.workPlace}" >
 			<f:selectItems value="#{contract.workPlaces}" />
 			<a4j:support event="onchange" actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" reRender="contract_panel" />
 		</aon:selectOneMenu>
+		<aon:outputText value="#{contract.to.workPlace.description}"
+			rendered="#{readOnly}" />
 		
 		<c:if test="#{!contract.params.retaQuote}">
 			<aon:outputLabel for="enterpriseActivities" value="#{bundle.aon_activity}" 
 				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 			<aon:selectOneMenu id="enterpriseActivities" 
+				rendered="#{!readOnly}"
 				disabled="#{contract.to.workPlace.id==null}"
 				value="#{contract.to.activity}" >
 				<f:selectItems value="#{contract.activities}" />
 				<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
 			</aon:selectOneMenu>
-	
+			<aon:div rendered="#{readOnly}" >
+				<aon:outputText value="#{contract.to.activity.description}" />
+				<aon:outputText value=" - (" />
+				<aon:outputText value="#{contract.to.activity.cnae2009.code}" />
+				<aon:outputText value=") " />
+				<aon:outputText value="#{contract.to.activity.cnae2009.title}" />
+			</aon:div>
+			
 			<aon:outputLabel for="enterpriseCCClist" value="#{bundle.company_enterprise_ccc}"
 				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 			<aon:div id="enterpriseCCCs">
 				<aon:selectOneMenu id="enterpriseCCClist" required="true"
-					rendered="#{fn:length(contract.activities) > 0}"
+					rendered="#{!readOnly}"
 					disabled="#{contract.to.activity.id==null}"
 					value="#{contract.to.enterpriseCCC}" >
 					<f:selectItems value="#{contract.enterpriseCCCs}" />
 				</aon:selectOneMenu>
-				<aon:outputText 
-					rendered="#{not (fn:length(contract.activities) > 0)}"
-					value="#{contract.to.enterpriseCCC.type}" />
-				<aon:outputText 
-					rendered="#{not (fn:length(contract.activities) > 0)}"
-					value="#{contract.to.enterpriseCCC.fullCcc}" />
+				<aon:div rendered="#{readOnly}" >
+					<aon:outputText value="#{contract.to.enterpriseCCC.type}" />
+					<aon:outputText value=" - " />
+					<aon:outputText  value="#{contract.to.enterpriseCCC.fullCcc}"/>
+				</aon:div>
 			</aon:div>
 		</c:if>
 		
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_type}" />
 		<aon:div rendered="#{!contract.params.retaQuote}">
-			<aon:selectOneMenu id="Contract_contractCode" required="true" 
-				value="#{contract.params.contractCode}">
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{payrollCollections.allContractCodes}" />
-				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
-			</aon:selectOneMenu>
+			<aon:div rendered="#{contract.extendedContract}">
+				<aon:outputText value="Contrato prorrogado" />
+			</aon:div>
+			<c:if test="#{contract.new}" >
+				<aon:selectOneMenu id="Contract_contractCode" required="true"
+					rendered="#{!contract.readOnly}" 
+					value="#{contract.params.contractCode}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{payrollCollections.allContractCodes}" />
+					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
+				</aon:selectOneMenu>
+			</c:if>
+			<c:if test="#{!contract.new}" >
+				<aon:selectOneMenu id="Contract_contractCode" required="true"
+					rendered="#{!contract.readOnly and !contract.transformedContract}"
+					value="#{contract.params.contractCode}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{payrollCollections.contractCodes}" />
+					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
+				</aon:selectOneMenu>
+				<aon:selectOneMenu id="Contract_transformCode" required="true" 
+					rendered="#{!contract.readOnly and contract.transformedContract}"
+					value="#{contract.params.contractCode}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{payrollCollections.contractTransformCodes}" />
+					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
+				</aon:selectOneMenu>
+			</c:if>
+			<aon:div rendered="#{readOnly}" >
+				<aon:outputText value="#{contract.params.contractCode.value}" />
+				<aon:outputText value=" - " />
+				<aon:outputText value="#{contract.params.contractCode}" />
+			</aon:div>
 		<!--  
-			<aon:selectOneMenu id="Contract_contractCode" required="true" 
-				rendered="#{contract.new or !contract.transformedContract}"
-				value="#{contract.params.contractCode}">
+			<aon:selectOneMenu id="Contract_transformCode" required="true" 
+				rendered="#{contract.transformedContract}"
+				value="#{contract.params.transformCode}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.contractCodes}" />
 				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
@@ -96,18 +133,21 @@
 			<aon:outputLabel for="Contract_contractModel"
 				value="#{bundle.payroll_contract_contract_model}" />
 			<aon:div id="Contract_contractModelDiv">
-				<aon:selectOneMenu id="Contract_contractModel" 
-					disabled="#{contract.params.contractTransformCode!=null}"
+				<aon:selectOneMenu id="Contract_contractModel"
+					rendered="#{!contract.readOnly}" 
 					value="#{contract.params.contractModelOption}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{contract.contractModel}" />
 				</aon:selectOneMenu>
+				<aon:outputText value="#{contract.params.contractModelOption}"
+					rendered="#{contract.readOnly}" />
 			</aon:div>
 		</c:if>
 		
 		<aon:outputLabel for="Contract_startDate" value="#{bundle.aon_start_date}" />
 		<aon:div>
-			<aon:selectInputDate id="Contract_startDate" 
+			<aon:selectInputDate id="Contract_startDate"
+				rendered="#{!contract.readOnly}" 
 				value="#{contract.to.startDate}" required="true"
 				valueChangeListener="#{contract.onChangeStartDate}" 
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
@@ -116,11 +156,16 @@
 				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true" />
 				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true" />
 			</aon:selectInputDate>
+			<aon:outputText value="#{contract.to.startDate}" 
+				rendered="#{contract.readOnly}"  >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
 			<c:if test="#{!contract.params.retaQuote}">
 				<aon:outputLabel for="Contract_seniorityDate" 
-					styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+					styleClass="aon-italic aon-margin-right aon-margin-left" style="font-size: 0.9em" 
 					value="#{bundle.payroll_salary_seniority_date2}" />
-				<aon:panelGroup id="seniorityDateContainer">
+				<aon:panelGroup id="seniorityDateContainer" rendered="#{!contract.readOnly}">
 					<aon:selectInputDate id="Contract_seniorityDate"
 						value="#{contract.to.seniorityDate}" required="true" 
 						inputSize="10" renderAsPopup="true" enableManualInput="true"
@@ -134,12 +179,18 @@
 						styleClass="aon-icon-info"
 						rendered="#{contract.to.seniorityDateDifferent}" />
 				</aon:panelGroup>
+				<aon:outputText value="#{contract.to.seniorityDate}" 
+					rendered="#{contract.readOnly}"  >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText> 
 			</c:if>
 		</aon:div>
 		
 		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
 		<aon:div id="endDataContainer">
 			<aon:selectInputDate id="Contract_endDate" 
+				rendered="#{!contract.readOnly}" 
 				required="#{false}"
 				value="#{contract.to.endDate}"
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
@@ -150,7 +201,12 @@
 				<a4j:support event="onchanged" reRender="endDataContainer"
 					actionListener="#{contract.onChangeEndDate}" />
 			</aon:selectInputDate>
-			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.new}">
+			<aon:outputText value="#{contract.to.endDate}"
+				rendered="#{contract.readOnly}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText> 
+			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.new and !contract.readOnly}">
 				<aon:div style="display:inline;"
 					rendered="#{contract.to.endDate!=null}">
 					<aon:outputLabel for="contract_suspensionCause" 
@@ -206,30 +262,39 @@
 			<c:if test="#{!contract.params.retaQuote}">
 				<aon:outputLabel for="quote_group"
 					value="#{bundle.payroll_contract_quote_group}" />
-				<aon:selectOneMenu id="quote_group"  
+				<aon:selectOneMenu id="quote_group"
+					rendered="#{!contract.readOnly}"  
 					value="#{contract.params.quoteGroup}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{payrollCollections.quoteGroups}" />
 				</aon:selectOneMenu>
+				<aon:outputText value="#{contract.params.quoteGroup}"
+					rendered="#{contract.readOnly}" />
 				
 				<aon:outputLabel value="#{bundle.report_occupation}"
 					for="occupationType"/>
-				<aon:selectOneMenu id="occupationType" 
+				<aon:selectOneMenu id="occupationType"
+					rendered="#{!contract.readOnly}" 
 					value="#{contract.params.occupationType}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{payrollCollections.occupationTypes}" />
 				</aon:selectOneMenu>
+				<aon:outputText value="#{contract.params.occupationType}"
+					rendered="#{contract.readOnly}" />
 				
 				<aon:outputLabel for="workingWeekHours"
 					rendered="#{contract.partiallyTimeContract}"
 					value="#{bundle.sepe_contrata_contract_working_day_duration}" />
 				<aon:div rendered="#{contract.partiallyTimeContract}">
 					<aon:inputText id="workingWeekHours"
+						rendered="#{!contract.readOnly}"
 						size="2" maxlength="5"
 						required="#{true}"
 						value="#{contract.params.weekHours}" >
 						<f:validateDoubleRange minimum="0" maximum="39.00" />
 					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekHours}"
+						rendered="#{contract.readOnly}" />
 					<aon:outputText styleClass="aon-margin-left"
 						value="horas semanales" >
 					</aon:outputText>

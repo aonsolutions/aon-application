@@ -7,44 +7,43 @@
 
 	<aon:methodParam name="resetAction" value="" />
 	
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">	
-		<ui:param name="showDescription" value="false" />		
-		<ui:param name="innerToolbar" value="true" />
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">	
 		<ui:param name="skipSearchButton" value="true" />
 		<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />		
 	</ui:include>
 
 	<aon:methodParam name="rowSelectorAction" value="" />
 	
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-		<ui:param name="controller" value="#{enterpriseActivity}" />
-		<ui:param name="rowSelectorReRender" value="#{controller.beanName}Content" />
-		
-		<ui:define name="columns">
-		
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" />
-			</aon:column>
+	<aon:div styleClass="aon-scroll-area">	
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{enterpriseActivity}" />
+			<ui:param name="rowSelectorReRender" value="#{controller.beanName}Content" />
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.payroll_activity_quoteRegime}" />
-				</f:facet>
-				<aon:outputText value="#{to.type}" />
-			</aon:column>
+			<ui:define name="columns">
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.company_cnae2009_module}" />
-				</f:facet>
-				<aon:outputText value="#{to.cnae2009.title}"  />
-			</aon:column>
-	
-		</ui:define>
-	</ui:decorate>
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.description}" />
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.payroll_activity_quoteRegime}" />
+					</f:facet>
+					<aon:outputText value="#{to.type}" />
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.company_cnae2009_module}" />
+					</f:facet>
+					<aon:outputText value="#{to.cnae2009.title}"  />
+				</aon:column>
+		
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
 
 </ui:composition>

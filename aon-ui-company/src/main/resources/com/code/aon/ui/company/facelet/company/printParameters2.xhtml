@@ -8,19 +8,6 @@
 	xmlns:a4j="http://richfaces.org/a4j" >
 
 	<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
-		<aon:outputLabel for="Company_invoice_template"
-			value="#{bundle.company_saleInvoice_template}" />
-		<c:if test="#{!company.customReportTemplate}">
-			<aon:selectOneMenu id="Company_invoice_template"
-				value="#{company.saleInvoiceTemplate}" >
-					<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
-			</aon:selectOneMenu>
-		</c:if>
-		<c:if test="#{company.customReportTemplate}">
-			<aon:outputText id="Company_invoice_template"
-				value="#{bundle.company_custom_template}" />
-		</c:if>
-			
 		<aon:outputLabel for="Company_print_logo"
 			value="#{bundle.company_print_logo}" />
 		<aon:selectBooleanCheckbox id="Company_print_logo"
@@ -53,11 +40,6 @@
 			value="#{company.printInternetData}">
 			<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
 		</aon:selectOneMenu>
-		
-		<aon:outputLabel for="Company_print_saleInvoice_footer"
-			value="#{bundle.company_saleInvoice_footer_text}" />
-		<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
-			value="#{company.printSaleInvoiceFooter}" />
 	</c:if>
-
+	
 </ui:composition>

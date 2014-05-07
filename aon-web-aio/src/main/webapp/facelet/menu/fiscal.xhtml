@@ -166,7 +166,6 @@
 											</aon:commandLink>
 
 											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-											
 												<aon:commandLink id="mod131" 
 													action="mod131_search"
 													actionListener="#{mod131.onEditSearch}"
@@ -195,7 +194,16 @@
 													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_311_module}"/>
 												</aon:commandLink>
 												<aon:outputText value="&#160;"/>
-												
+											</c:if>
+											
+											<c:if test="#{domainSwitcher.domainManagementAvailable}">
+												<aon:div styleClass="aon-direct-access-list-element">
+													<aon:commandLink id="fiscalMatrix" 
+														action="fiscalMatrix_list"
+														actionListener="#{fiscalMatrix.onSearch}"
+														title="Matriz de empresas y modelos fiscales"
+														value="Matriz de empresas y modelos fiscales" />
+												</aon:div> 
 											</c:if>
 							    </h:panelGrid>
 							     

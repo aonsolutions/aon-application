@@ -8,34 +8,61 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
+	<c:if test="#{not empty contractPdf.documentType}">
 	<aon:div styleClass="aon-scroll-area" 
 		style="height:#{contractPdf.documentHeight}px; width:#{contractPdf.documentWidth}px; border: #000000 1px solid; margin-left: 10px;">
 	<aon:div styleClass="contractModalContent"
 		style="position: absolute; left: 30; right: 30; margin: auto; background: white url(#{contractPdf.imageUrl}) top left no-repeat; border:#ffffff 1px solid; height:#{contractPdf.documentHeight}px; width:#{contractPdf.documentWidth}px;">
 		
 		<c:forEach items="#{contractPdf.contractPdfWriter.contractPdfFields}" var="field" >
+			
+		<!-- READ ONLY -->
+		<c:if test="#{contractPdf.readOnly}">
+		<aon:div style="color: navy;">
 			<c:if test="#{field.text}">
-				<aon:inputText 
-					title="#{field.label}"
-					rendered="#{field.page==contractPdf.documentPage}"
-					style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
-					onmouseover="this.style.border = '#000000 1px solid'" onmouseout="this.style.border = '#E0ECF8 2px solid'"
-					value="#{field.value}" size="#{field.width}"
-					maxlength="#{(not empty field.maxLength)?(field.maxLength):(field.width)}" />
+			<aon:outputText 
+				title="#{field.label}"
+				rendered="#{contractPdf.readOnly and field.page==contractPdf.documentPage}"
+				style="background-color:transparent; white-space: nowrap; overflow: hidden; position:absolute; bottom:#{(field.scaledBottomCoordinates*contractPdf.factorizedValue)-2}px; left:#{(field.scaledLeftCoordinates*contractPdf.factorizedValue)}px;width:#{(field.scaledWidth*contractPdf.factorizedValue)}px; "
+				value="#{field.value}" size="#{field.width}"
+				maxlength="#{(not empty field.maxLength)?(field.maxLength):(field.width)}" />
 			</c:if>
 			<c:if test="#{field.check}">
-				<aon:selectBooleanCheckbox 
-					title="#{field.label}"
-					rendered="#{field.page==contractPdf.documentPage}"
-					style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px; "
-					onmouseover="this.style.backgroundColor = '#000000'" onmouseout="this.style.backgroundColor = '#E0ECF8'"
-					value="#{field.booleanValue}" >
-				</aon:selectBooleanCheckbox>
+			<aon:outputText value="&#160;X" 
+				title="#{field.label}"
+				rendered="#{field.page==contractPdf.documentPage and field.booleanValue}"
+				style="position:absolute; bottom:#{(field.scaledBottomCoordinates*contractPdf.factorizedValue)-2}px; left:#{(field.scaledLeftCoordinates*contractPdf.factorizedValue)}px; "
+				styleClass="aon-bold" />
 			</c:if>
+		</aon:div>
+		</c:if>
+			
+		<!-- EDITABLE -->
+		<c:if test="#{!contractPdf.readOnly}">
+			<c:if test="#{field.text}">
+			<aon:inputText 
+				title="#{field.label}"
+				rendered="#{!contractPdf.readOnly and field.page==contractPdf.documentPage}"
+				style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{(field.scaledBottomCoordinates*contractPdf.factorizedValue)-2}px; left:#{(field.scaledLeftCoordinates*contractPdf.factorizedValue)}px;width:#{(field.scaledWidth*contractPdf.factorizedValue)}px; "
+				onmouseover="this.style.border = '#000000 1px solid'" onmouseout="this.style.border = '#E0ECF8 2px solid'"
+				value="#{field.value}" size="#{field.width}"
+				maxlength="#{(not empty field.maxLength)?(field.maxLength):(field.width)}" />
+			</c:if>
+			<c:if test="#{field.check}">
+			<aon:selectBooleanCheckbox 
+				title="#{field.label}"
+				rendered="#{field.page==contractPdf.documentPage}"
+				style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{(field.scaledBottomCoordinates*contractPdf.factorizedValue)-2}px; left:#{(field.scaledLeftCoordinates*contractPdf.factorizedValue)}px; "
+				onmouseover="this.style.backgroundColor = '#000000'" onmouseout="this.style.backgroundColor = '#E0ECF8'"
+				value="#{field.booleanValue}" >
+			</aon:selectBooleanCheckbox>
+			</c:if>
+		</c:if>
 		</c:forEach>
 			
 	</aon:div>
 	</aon:div>
+	</c:if>
 		 
 
 </ui:composition>

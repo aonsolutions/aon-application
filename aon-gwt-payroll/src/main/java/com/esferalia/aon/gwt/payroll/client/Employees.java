@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.ConstantEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -265,42 +268,49 @@ public class Employees extends ResizeComposite implements
 				//
 
 				Agreement agreement = workplace.getAgreement();
-				/*
-				 * EventMetaData fteMetaData = new EnumEventMetaData("FTE",
-				 * "DESEMPE\u00D1O", "Desempe\u00F1o por Trabajador y Jornada",
-				 * "", "4", "8", "10", "12", "L", "LT", "LR", "F", "FT", "FR",
-				 * "V", "B", "P", "AI", "M");
-				 * 
-				 * final EventsDraftObject eventsDraftObject = new
-				 * EventsDraftObject( workplace.getId(), agreement != null ?
-				 * agreement.getId() : null, employeesService, fteMetaData, new
-				 * DecimalEventMetaData("INCENTIVOS"), new
-				 * DecimalEventMetaData("ATRASOS"), new
-				 * DecimalEventMetaData("ANTICIPOS"), new
-				 * DecimalEventMetaData("EMBARGOS"), new
-				 * DecimalEventMetaData("LTA",
-				 * "D\u00EDas Libres Trabajados canjeados por Alojamiento"), new
-				 * DecimalEventMetaData("CLT",
-				 * "Coste d\u00EDa Libre Trabajado"), new
-				 * DecimalEventMetaData("CD",
-				 * "Coste Diario del trabajador (jornada 8 horas)"), new
-				 * ConstantEventMetaData("CFT",
-				 * "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
-				 * new BooleanEventMetaData("LTNR",
-				 * "D\u00EDas Libres Trabajados No Recuperables"), new
-				 * DecimalEventMetaData("HFD",
-				 * "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"
-				 * ), new EventMetaData("OBSERVACIONES"), new
-				 * ConstantEventMetaData("PLUS_TURNICIDAD",
-				 * "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
-				 */
-				final EventsDraftObject eventsDraftObject = new EventsDraftObject(
-						workplace.getId(),
-						agreement != null ? agreement.getId() : null,
-						employeesService, new BooleanEventMetaData(
-								"DIAS_EFECTIVOS"), new BooleanEventMetaData(
-								"DIAS_VACACIONES"), new BooleanEventMetaData(
-								"HUELGA"), new EventMetaData("OBSERVACIONES"));
+
+				final EventsDraftObject eventsDraftObject;
+
+				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
+						"DESEMPE\u00D1O",
+						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
+						"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
+						"B", "P", "AI", "M");
+				if (Enterprise.isGPS(enterprise))
+					eventsDraftObject = new EventsDraftObject(
+							workplace.getId(),
+							agreement != null ? agreement.getId() : null,
+							employeesService,
+							fteMetaData,
+							new DecimalEventMetaData("INCENTIVOS"),
+							new DecimalEventMetaData("ATRASOS"),
+							new DecimalEventMetaData("ANTICIPOS"),
+							new DecimalEventMetaData("EMBARGOS"),
+							new DecimalEventMetaData("LTA",
+									"D\u00EDas Libres Trabajados canjeados por Alojamiento"),
+							new DecimalEventMetaData("CLT",
+									"Coste d\u00EDa Libre Trabajado"),
+							new DecimalEventMetaData("CD",
+									"Coste Diario del trabajador (jornada 8 horas)"),
+							new ConstantEventMetaData("CFT",
+									"Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
+							new BooleanEventMetaData("LTNR",
+									"D\u00EDas Libres Trabajados No Recuperables"),
+							new DecimalEventMetaData("HFD",
+									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
+							new EventMetaData("OBSERVACIONES"),
+							new ConstantEventMetaData("PLUS_TURNICIDAD",
+									"Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
+				else
+					eventsDraftObject = new EventsDraftObject(
+							workplace.getId(),
+							agreement != null ? agreement.getId() : null,
+							employeesService, new BooleanEventMetaData(
+									"DIAS_EFECTIVOS"),
+							new BooleanEventMetaData("DIAS_VACACIONES"),
+							new BooleanEventMetaData("HUELGA"),
+							new EventMetaData("OBSERVACIONES"));
+				
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
@@ -561,6 +571,7 @@ public class Employees extends ResizeComposite implements
 					predicate, fireEvents);
 		}
 	}
+
 	// ------------------------------------------------------------------------
 
 	EmployeesServiceAsync getEmployeesService() {
@@ -1307,7 +1318,6 @@ public class Employees extends ResizeComposite implements
 		return treeItem;
 	}
 
-
 	private void selectEmployeeItem(final TreeItem workplaceItem,
 			final int start, final Predicate<TreeItem> predicate,
 			final boolean fireEvents) {
@@ -1324,11 +1334,10 @@ public class Employees extends ResizeComposite implements
 
 						TreeItem draftItem = getTreeItem(workplaceItem,
 								predicate, start);
-						if (draftItem == null){
+						if (draftItem == null) {
 							selectEmployeeItem(workplaceItem, start, predicate,
 									fireEvents);
-						}
-						else {
+						} else {
 							tree.setSelectedItem(draftItem, fireEvents);
 							tree.ensureSelectedItemVisible();
 							draftItem.getElement().scrollIntoView();
@@ -1388,4 +1397,5 @@ public class Employees extends ResizeComposite implements
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
 
 	}
+	
 }

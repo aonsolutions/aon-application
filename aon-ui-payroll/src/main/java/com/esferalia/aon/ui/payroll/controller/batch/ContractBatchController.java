@@ -40,6 +40,9 @@ import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -271,11 +274,13 @@ public class ContractBatchController extends BasicController {
 				HibernateUtil.beginTransaction(sessionName);
 				
 				IManagerBean detailBean = BeanManager.getManagerBean(ContractBatchDetail.class);
+				IManagerBean infoBean = BeanManager.getManagerBean(ContractInfo.class);
 				for(ITransferObject to: selectedList){
 					ContractBatchDetail detail = (ContractBatchDetail) to;
 					detail.setContractBatch(batch);
 					detail.setStatus(FileStatus.PENDING);
 					detailBean.insert(detail);
+					
 				}
 				
 				HibernateUtil.commitTransaction(sessionName);

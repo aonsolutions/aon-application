@@ -36,6 +36,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.AccountEntryDetail;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
@@ -82,7 +83,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public JooqSalaryBuilder(Connection connection) {
 		this(DSL.using(connection, getDefaultSettings()));
 	}
-		
+
 	public JooqSalaryBuilder(DSLContext dslContext) {
 		this.dslContext = dslContext;
 		this.variables = new Variables(null);
@@ -361,7 +362,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void addPayment(Double amount, Double quote, Double tax,
-			String description, IPayment payment,
+			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 
 		InsertSetStep<SalaryPaymentRecord> insertPayment = insertMorePayment == null ? dslContext
@@ -373,8 +374,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 				.set(SALARY_PAYMENT.DOMAIN, this.domainId)
 				.set(SALARY_PAYMENT.SALARY, salaryId)
 				.set(SALARY_PAYMENT.AMOUNT, amount)
-				.set(SALARY_PAYMENT.QUOTE, quote)
-				.set(SALARY_PAYMENT.IRPF, tax)
+				.set(SALARY_PAYMENT.QUOTE, quote).set(SALARY_PAYMENT.IRPF, tax)
 				.set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName())
 				// .set(SALARY_PAYMENT.EXPRESSION, payment.getExpression())
 				.set(SALARY_PAYMENT.DESCRIPTION, description)
@@ -387,7 +387,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	@Override
 	public void addZeroPayment(Double quote, Double tax, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		addPayment(0.00, quote, tax, payment.getDescription(), payment, context);
+		addPayment(0.00, quote, tax, payment.getDescription(), null, null, payment, context);
 	}
 
 	@Override
@@ -467,11 +467,11 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 		return sql.toString();
 	}
-	
+
 	public DSLContext getDSLContext() {
 		return dslContext;
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 	private void setDomain(Integer domainId) {
@@ -515,7 +515,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	// ------------------------------------------------------------------------
 
 	private static Settings getDefaultSettings() {
-		if ( SETTINGS == null ) {
+		if (SETTINGS == null) {
 			SETTINGS = new Settings();
 			SETTINGS.setRenderSchema(false);
 		}
@@ -581,7 +581,6 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 		return max == null ? 0 : max; // null if the query returned no records.
 	}
-	
 
 	// ------------------------------------------------------------------------
 
@@ -616,22 +615,16 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 						+ ".id";
 			}
 		};
-/*		System.out
-				.println(DSL.using(connection)
-						.select(WORKPLACE.ENTERPRISE, WORKPLACE.ID, CONTRACT.ID)
-						.from(SALARY)
-						.join(CONTRACT)
-						.onKey()
-						.join(WORKPLACE)
-						.onKey()
-						.where(SALARY.TYPE.eq(
-								(byte) SalaryType.SALARY.ordinal()).and(
-								SALARY.START_DATE.between(toSqlDate(startDate),
-										toSqlDate(endDate))))
-						.getSQL(ParamType.INLINED));
-*/
+		/*
+		 * System.out .println(DSL.using(connection)
+		 * .select(WORKPLACE.ENTERPRISE, WORKPLACE.ID, CONTRACT.ID)
+		 * .from(SALARY) .join(CONTRACT) .onKey() .join(WORKPLACE) .onKey()
+		 * .where(SALARY.TYPE.eq( (byte) SalaryType.SALARY.ordinal()).and(
+		 * SALARY.START_DATE.between(toSqlDate(startDate), toSqlDate(endDate))))
+		 * .getSQL(ParamType.INLINED));
+		 */
 		while (sqlContractSalaryCalculatorContext.next()) {
-			
+
 			calculator.calculate(sqlContractSalaryCalculatorContext);
 		}
 
@@ -648,4 +641,5 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 		sqlContractSalaryCalculatorContext.close();
 
 	}
+
 }

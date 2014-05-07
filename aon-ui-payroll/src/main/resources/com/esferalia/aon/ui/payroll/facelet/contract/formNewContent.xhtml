@@ -253,29 +253,6 @@
 			
 		</aon:panelGrid>
 		
-<!--  
-		<aon:panel id="bonus_panel" 
-			rendered="#{contract.params.subsidized}">
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.payroll_salary_bonus_tab}" />
-			</f:facet>
-			<aon:dataTable id="listData" value="#{bonusConcept.model}"
-				var="to" rows="20" rendered="#{bonusConcept.model.rowCount > 0}" >	
-				<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>
-				<aon:column styleClass="aon-editDataTable-iconColumn">
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-					<aon:selectBooleanCheckbox 
-						value="#{contract.bonusRowChecked}"
-						valueChangeListener="#{contract.bonusRowSelected}" >
-					</aon:selectBooleanCheckbox>	
-				</aon:column>
-				<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/bonusConcept/list_content.xhtml" />
-			</aon:dataTable>	
-		</aon:panel>
--->
-		
 	</aon:div>
 	
 </ui:composition>

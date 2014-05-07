@@ -582,5 +582,18 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	public List<?> getDetailList() {
 		return getReservationInvoiceTo().getServices();
 	}
-
+	
+	public boolean isInvoiceRectificable() {
+		try {
+			if (getModel().isRowAvailable()) {
+				Invoice invoice = (Invoice)getModel().getRowData();
+				return ProjectReservationController.isInvoiceRectificable(invoice, null);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+		return false;
+	}
+	
 }

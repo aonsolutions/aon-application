@@ -13,31 +13,23 @@
 			<ui:param name="lookupTo" value="#{controller.to.calendar}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupInputSuggestSize" value="40" />
-			<ui:param name="lookupSuffix" value="-PayrollWorkPlace" />
+			<ui:param name="lookupSuffix" value="-PayrollWorkPlace#{lookupSufix}" />
 		</ui:include>	
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{controller.to.agreement}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupInputSuggestSize" value="40" />
+			<ui:param name="lookupSuffix" value="-PayrollWorkPlace#{lookupSufix}" />
 		</ui:include>	
 		
 		<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity" 
 			value="#{bundle.aon_activity}" />
-		<aon:div>
-			<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
-				value="#{controller.to.enterpriseActivity}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{enterprisePayroll.activities}" />
-			</aon:selectOneMenu>
-			<aon:div style="display: inline;" rendered="#{!controller.new and not empty controller.to.enterpriseActivity and !controller.existValidCCC}">
-				<aon:outputText value="&#160;"
-					styleClass="aon-margin-left aon-icon-commandButton aon-icon-exception" />
-				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
-					<aon:outputText value="#{bundle.payroll_payrollWorkPlace_not_valid_enterpriseCCC}" />
-				</rich:toolTip>
-			</aon:div>
-		</aon:div>
+		<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity#{sufix}"
+			value="#{controller.to.enterpriseActivity}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{enterprisePayroll.activities}" />
+		</aon:selectOneMenu>
 						
 	</aon:panelGrid>
 	

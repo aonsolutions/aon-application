@@ -50,7 +50,6 @@ import com.esferalia.aon.payroll.enumeration.contrata.THPCOLFO;
 import com.esferalia.aon.payroll.enumeration.contrata.THYDISLE;
 import com.esferalia.aon.payroll.enumeration.contrata.TQOCOLRE;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
-import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO100TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO130TYPE;
@@ -905,16 +904,18 @@ public class ContrataReader {
 		}
 	}
 	private void completeDATOSADICIONALESPRORROGA(DATOSADICIONALESPRORROGATYPE datos, ContrataProrrogaParams params){
-		if(StringUtils.isNotBlank(datos.getHORASFORMACION()) && datos.getHORASFORMACION().length()==6){
+		if(datos!=null && StringUtils.isNotBlank(datos.getHORASFORMACION()) && datos.getHORASFORMACION().length()==6){
 			params.setHorasFormacion(datos.getHORASFORMACION().substring(0, 4));
 			params.setMinutosFormacion(datos.getHORASFORMACION().substring(3, 5));
 		}
-		if(StringUtils.isNotBlank(datos.getINDDURACINFERIOR())){
+		if(datos!=null && StringUtils.isNotBlank(datos.getINDDURACINFERIOR())){
 			params.setIndDuracInferior(datos.getINDDURACINFERIOR().equals("S"));
 		}
 	}
 	private void completeDATOSUSOLIBREEMPRESA(com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSUSOLIBREEMPRESATYPE datos, ContrataProrrogaParams params){
-		params.setUsoLibreEmpresa(datos.getUSOLIBREEMPRESA());
+		if(datos!=null){
+			params.setUsoLibreEmpresa(datos.getUSOLIBREEMPRESA());
+		}
 	}
 	
 	

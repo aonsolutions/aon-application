@@ -36,6 +36,13 @@
 		<validator-class>com.code.aon.ui.common.validator.BICValidator</validator-class>
 	</validator>	
 	
+   	<!-- ************* BYTE ARRAY CONVERTER ***************** -->	
+	<converter>
+		<description>Conversor para convertir String a un byte array.</description>
+		<converter-id>aon.ByteArrayConverter</converter-id>
+		<converter-class>com.code.aon.ui.common.converter.ByteArrayConverter</converter-class>
+	</converter>
+	
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>
 		<managed-bean-name>timeZoneController</managed-bean-name>

@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.event;
 
+import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
@@ -13,6 +14,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.util.AppParamUtil;
@@ -37,6 +39,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintInternetData(companyController.obtainPrintInternetData());
 			companyController.setPrintSaleInvoiceFooter(companyController.obtainPrintSaleInvoiceFooter());
 			companyController.setSmartCard(companyController.obtainSmartCard());
+			companyController.setFinancePaymentTemplate(companyController.obtainFinancePaymentTemplate());
 			companyController.searchCustomReportTemplate();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -74,6 +77,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		updateParam(APP_PRINT_INTERNET_DATA_PARAM, companyController.getPrintInternetData());
 		AppParamUtil.insertParameter(APP_PRINT_S_INVOICE_FOOTER_PARAM, companyController.isPrintSaleInvoiceFooter());
 		AppParamUtil.insertParameter(APP_SMART_CARD_PARAM, companyController.isSmartCard());	
+		updateParam(APP_FPAYMENT_TEMPLATE_PARAM, companyController.getFinancePaymentTemplate());
 	}
 	
 	private void updateParam(AppParam appParam, ReportPrintOption value) throws ManagerBeanException {
@@ -81,6 +85,10 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	}
 	
 	private void updateParam(AppParam appParam, SaleInvoiceTemplate value) throws ManagerBeanException {
+		AppParamUtil.insertParameter(appParam, (value != null) ? value.getValue() : null);
+	}
+
+	private void updateParam(AppParam appParam, FinancePaymentTemplate value) throws ManagerBeanException {
 		AppParamUtil.insertParameter(appParam, (value != null) ? value.getValue() : null);
 	}
 	

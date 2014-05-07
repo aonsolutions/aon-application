@@ -5,19 +5,21 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -132,15 +134,25 @@ public class SalaryDraftObject implements IContextProvider{
 	// ------------------------------------------------------------------------
 	// IContextProvider methods
 	// ------------------------------------------------------------------------
+	
+	public boolean isEditable(String name) {
+		for ( Payment payment: getPayments() )
+			if ( StringUtils.equals(name, payment.getName()))
+				return false;
+		return true;
+	};
+	
 	@Override
 	public void getContext( AsyncCallback<ContextDescriptor> callback ) {
 		employeesServiceAsync.getContext(salaryDraft, callback);
 	}
 	
 	@Override
-	public void eval(String expression, AsyncCallback<Double> callback) {
-		employeesServiceAsync.eval(expression, salaryDraft, callback);
+	public void eval(String expression,  List<Variable> vars, AsyncCallback<List<Result>> callback) {
+		employeesServiceAsync.eval(expression, newSalaryDraft(salaryDraft, vars) , callback);
 	}
+	
+	
 	
 	public void getExtras(AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
@@ -585,6 +597,51 @@ public class SalaryDraftObject implements IContextProvider{
 		
 		return newPayment;
 	}
+	private SalaryDraft  newSalaryDraft(SalaryDraft src, List<Variable> vars) {
+		SalaryDraft draft = new SalaryDraft();
+
+		draft.setId(src.getId());
+		draft.setType(src.getType());
+		
+		draft.setStartDate(src.getStartDate());
+		draft.setEndDate(src.getEndDate());
+		draft.setIssueDate(src.getIssueDate());
+		draft.setChargeDate(src.getChargeDate());
+		
+		draft.setEmployee(src.getEmployee());
+		
+		for (Variable variable : src.getDraftContext())
+			draft.addDraftVariable(variable);
+		
+		for (Variable variable : vars) {
+			variable.setScope(Scope.SALARY);
+			variable.setStartDate(src.getStartDate());
+			variable.setEndDate(src.getEndDate());
+			draft.addDraftVariable(variable);
+		}
+		
+		List<Variable> ctx = src.getContext();
+		
+		for( Payment payment: src.getPayments()){
+			String name = payment.getName();
+			if ( name == null )
+				continue;
+			
+			Variable variable = getVariable(name, ctx);
+			if ( variable != null ) {
+				draft.addDraftVariable(variable);
+			}
+
+		}
+		
+		
+		
+		return draft;
+	}
+	
+	
+	
+
 	// ------------------------------------------
 	//
 
@@ -602,6 +659,7 @@ public class SalaryDraftObject implements IContextProvider{
 	private static void removeSalaryPart(SalaryDraft salaryDraft) {
 		salaryDraft.clear();
 	}
+
 
 	private static boolean isDraftPeriodSet(Date draftStartDate,
 			Date draftEndDate, SalaryDraft draft) {
@@ -645,4 +703,12 @@ public class SalaryDraftObject implements IContextProvider{
 		}
 		return true;
 	}
+	
+	private static Variable getVariable(String name, List<Variable> list){
+		for (Variable var : list)
+			if ( name.equals(var.getName()))
+				return var;
+		return null;
+	}
+	
 }

@@ -80,7 +80,8 @@ public class SSEnumLookupBean {
 	}
 	
 	public void onSearch(ActionEvent event) {
-		SSCodeTables codeTable = SSCodeTables.getEnumByValue(getEnumName());
+		String value = getEnumName().contains("-")?getEnumName():StringUtils.replace(getEnumName(), "T", "T-");
+		SSCodeTables codeTable = SSCodeTables.getEnumByValue(value);
 		if(codeTable!=null){
 			handler = new PayrollCodeTablesController();
 			handler.selectSSTable(codeTable);

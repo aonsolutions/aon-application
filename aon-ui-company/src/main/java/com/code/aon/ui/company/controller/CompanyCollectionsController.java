@@ -17,6 +17,7 @@ import com.code.aon.company.Department;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
+import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
@@ -39,6 +40,21 @@ public class CompanyCollectionsController {
 	private List<SelectItem> saleInvoiceTemplates;
 	private List<SelectItem> reportPrintOptions;
 	private List<SelectItem> simpleReportPrintOptions;
+	private List<SelectItem> financePaymentTemplate;
+	
+	public List<SelectItem> getFinancePaymentTemplates(){
+		if (financePaymentTemplate == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			financePaymentTemplate = new LinkedList<SelectItem>();
+			FinancePaymentTemplate[] list = FinancePaymentTemplate.values();
+			for (FinancePaymentTemplate o : list) {
+				String name = o.getName(locale);
+				SelectItem item = new SelectItem(o, name);
+				financePaymentTemplate.add(item);
+			}
+		}
+		return financePaymentTemplate;
+	}
 	
 	public List<SelectItem> getShortReportPrintOptions() {
 		if (simpleReportPrintOptions == null) {

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+						
+	<aon:panelTab id="cnaeRate" label="Tarifas de IT e IMS"
+		actionListener="#{cnaeRate.onInitialize}">
+		<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+			<aon:div styleClass="aon-panelGrid-search-info">
+				<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+			</aon:div>
+			<aon:panelGrid columns="3">
+				<aon:inputText id="cnaeRateFilter" size="150" value="#{cnaeRate.filter}">
+					<a4j:support 
+						event="onkeyup"
+						actionListener="#{cnaeRate.onReloadModel}"
+						reRender="cnaeRateTable"
+						eventsQueue="cnaeRateFilterKeyUp"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true"/>
+				</aon:inputText>
+				
+				<aon:outputText value="#{bundle.aon_year}" />
+				<rich:inputNumberSpinner value="#{cnaeRate.year}"
+	   				inputSize="4" minValue="2009" maxValue="2020">
+					<a4j:support 
+						event="onchange"
+						actionListener="#{cnaeRate.onReloadModel}"
+						reRender="cnaeRateTable"
+						eventsQueue="cnaeRateFilterKeyUp"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true"/>
+	   			</rich:inputNumberSpinner>
+			</aon:panelGrid>	
+		</aon:div>
+	
+		<aon:dataTable id="cnaeRateTable" value="#{cnaeRate.model}" var="to">
+
+			<aon:rowSelector id="cnaeRateList-select" toggleOnClick="#{false}" />
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_id}" />
+				</f:facet>
+				<aon:outputText value="#{to.cnae2009.code}"  />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.cnae2009.title}"  />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputText value="IT" />
+				</f:facet>
+				<aon:outputText value="#{to.itAmount}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputText value="IMS" />
+				</f:facet>
+				<aon:outputText value="#{to.imsAmount}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+			
+			
+		</aon:dataTable>
+	</aon:panelTab>
+						
+</ui:composition>

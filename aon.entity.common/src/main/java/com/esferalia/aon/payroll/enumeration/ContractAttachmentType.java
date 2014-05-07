@@ -35,6 +35,8 @@ public enum ContractAttachmentType implements IResourceable {
 	SEPE_CERTIFICADOS_COMMUNICATION_ID,
 	SEPE_CERTIFICADOS_RESPONSE,
 	
+	SEPE_TRANSFORM_FILE,
+	
 	;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_contract_attachment_type_";

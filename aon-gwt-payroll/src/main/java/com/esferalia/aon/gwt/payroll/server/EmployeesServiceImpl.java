@@ -99,14 +99,17 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
@@ -674,38 +677,39 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Double eval(String expression, SalaryDraft salaryDraft)
+	public List<Result> eval(String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException {
 		try {
 			initFacesContext();
 			List<ITimedResult<Double>> results = eval(expression, salaryDraft,
 					Double.class);
-			Double total = 0.00;
+			List<Result> returnList = new ArrayList<Result>(results.size());
 			for (ITimedResult<Double> result : results) {
-				Double value = result.getValue();
-				if (value != null)
-					total += value;
+				returnList.add(new Result(cast(result), cast(result
+						.getContext())));
 			}
-			return total;
+
+			return returnList;
 		} finally {
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
-	public Double eval(String expression, AgreementDraft agreementDraft, int levelId)
-			throws IllegalArgumentException, EvalException {
+	public List<Result> eval(String expression, AgreementDraft agreementDraft,
+			int levelId) throws IllegalArgumentException, EvalException {
 		try {
 			initFacesContext();
-			List<ITimedResult<Double>> results = eval(expression, agreementDraft, levelId,
-					Double.class);
-			Double total = 0.00;
+			List<ITimedResult<Double>> results = eval(expression,
+					agreementDraft, levelId, Double.class);
+
+			List<Result> returnList = new ArrayList<Result>(results.size());
 			for (ITimedResult<Double> result : results) {
-				Double value = result.getValue();
-				if (value != null)
-					total += value;
+				returnList.add(new Result(cast(result), cast(result
+						.getContext())));
 			}
-			return total;
+
+			return returnList;
 		} finally {
 			releaseFacesContext();
 		}
@@ -720,7 +724,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public ContextDescriptor getContext(AgreementDraft agreementDraft,
 			int levelId) throws IllegalArgumentException {
@@ -2584,7 +2588,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static void calculate(SalaryDraft draft) {
 
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
+		try {
 		calculate(draft, salaryBuilder, salaryBuilder);
+		} catch ( Exception e ){
+			e.printStackTrace();
+		}
 
 		try {
 			ISalary dbSalary = getDBSalary(draft);
@@ -2592,7 +2600,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryBuilder.setDbSalary(dbSalary);
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
-		}
+		} 
 
 	}
 
@@ -2689,23 +2697,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
-				
+
 				try {
 					variables.addAll(ExpressionContext.getVariableSet(
-						payment.getExpression(), payment.getIrpfExpression(),
-						payment.getQuoteExpression()));
-				} catch ( Exception e ){
-					// TODO: 
-					
+							payment.getExpression(),
+							payment.getIrpfExpression(),
+							payment.getQuoteExpression()));
+				} catch (Exception e) {
+					// TODO:
+
 				}
-				
+
 				paymentsNames.add(payment.getName());
 
 				allPayments.add(payment);
 			}
-			
+
 			variables.removeAll(paymentsNames);
-			
 
 			// Filter ContextVariable
 			List<String> contextVariables = new LinkedList<String>();
@@ -2875,17 +2883,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			defined[Scope.AGREEMENT.ordinal()] = true;
 		}
-		
-		for( IContractPayment p : ctx.getAgreementPayments() ){
-			if ( StringUtils.isBlank(p.getName()))
-					continue;
-			
+
+		for (IContractPayment p : ctx.getAgreementPayments()) {
+			if (StringUtils.isBlank(p.getName()))
+				continue;
+
 			boolean defined[] = new boolean[Scope.NUM_VALUES];
 			defined[Scope.AGREEMENT.ordinal()] = true;
 			definedMap.put(p.getName(), defined);
-			
+
 		}
-		
 
 		ExpressionContext implicitCtx = ctx.getImplicitExpressionContext();
 		for (String name : ctx.getImplicitExpressionContext().variablesSet()) {
@@ -2917,6 +2924,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					draft, null);
 			return ctx.getExpressionContext().eval(expression,
 					ctx.getStartDate(), ctx.getEndDate(), toType);
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
@@ -2927,11 +2935,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (RemoveVariableError e) {
 			return Collections.emptyList();
 		} catch (UndefinedVariablesException e) {
-			throw new EvalWarning(e.getMessage());
+			throw new UnknownVariablesWarning(e.getVariableNames());
 		} catch (CompileException e) {
 			throw new EvalSyntaxErrorException(e.getMessage());
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e.getMessage());
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			throw e;
 		} finally {
 			if (conn != null) {
 				try {
@@ -2945,7 +2956,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static <T> List<ITimedResult<T>> eval(String expression,
-			AgreementDraft draft, int levelId, Class<T> toType) throws EvalException {
+			AgreementDraft draft, int levelId, Class<T> toType)
+			throws EvalException {
 		Connection conn = null;
 
 		try {
@@ -2964,7 +2976,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (RemoveVariableError e) {
 			return Collections.emptyList();
 		} catch (UndefinedVariablesException e) {
-			throw new EvalWarning(e.getMessage());
+			throw new UnknownVariablesWarning(e.getVariableNames());
 		} catch (CompileException e) {
 			throw new EvalSyntaxErrorException(e.getMessage());
 		} catch (ExpressionException e) {
@@ -2989,7 +3001,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
 					conn, draft, null);
 
-			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+			return getContext(conn, calculatorCtx, draft.getStartDate(),
+					draft.getEndDate());
 
 		} catch (ExpressionException e) {
 			// TODO Auto-generated catch block
@@ -3007,14 +3020,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	protected static ContextDescriptor getContext(Connection conn , IContractSalaryCalculatorContext calculatorCtx, Date startDate, Date endDate) {
+	protected static ContextDescriptor getContext(Connection conn,
+			IContractSalaryCalculatorContext calculatorCtx, Date startDate,
+			Date endDate) {
 		try {
 			ExpressionContext expressionContext = notNull(
 					calculatorCtx.getExpressionContext(),
 					calculatorCtx.getSystemExpressionContext());
 
-			Date start = notNull(calculatorCtx.getStartDate(),
-					startDate);
+			Date start = notNull(calculatorCtx.getStartDate(), startDate);
 
 			Date end = notNull(calculatorCtx.getEndDate(), endDate);
 
@@ -3076,10 +3090,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
-		} 
+		}
 	}
 
-	protected static ContextDescriptor getDraftContext(AgreementDraft draft, int levelId ) {
+	protected static ContextDescriptor getDraftContext(AgreementDraft draft,
+			int levelId) {
 		Connection conn = null;
 		try {
 			conn = getConnection();
@@ -3087,7 +3102,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
 					conn, draft, levelId);
 
-			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+			return getContext(conn, calculatorCtx, draft.getStartDate(),
+					draft.getEndDate());
 
 		} catch (ExpressionException e) {
 			// TODO Auto-generated catch block
@@ -3473,8 +3489,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public IContractSalaryCalculatorContext visitNotEnjoyedVacations(
 							SalaryType salaryType) {
 						try {
-							return getNotEnjoyedCalculatorContextImpl(conn, draft,
-									listener);
+							return getNotEnjoyedCalculatorContextImpl(conn,
+									draft, listener);
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
 						} catch (ExpressionException e) {
@@ -3737,7 +3753,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
+				draft.getIssueDate(), draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();
@@ -4272,4 +4288,48 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return null;
 	}
 
+	private static NumberVariable cast(ITimedResult<Double> src) {
+		NumberVariable target = new NumberVariable();
+		target.setValue(src.getValue());
+		target.setStartDate(src.getPeriod().getStart());
+		target.setEndDate(src.getPeriod().getEnd());
+		return target;
+	}
+
+	private static Variable cast(ITimedVariable<?> src) {
+		Variable target = null;
+		Object value = src.getValue(src.getPeriod());
+		if (value instanceof MethodStub) {
+			throw new ClassCastException();
+		} else if (value instanceof Number) {
+			target = new NumberVariable();
+		} else {
+			target = new StringVariable();
+		}
+		target.setValue(value);
+		target.setStartDate(src.getPeriod().getStart());
+		target.setEndDate(src.getPeriod().getEnd());
+		return target;
+	}
+
+	private static List<Variable> cast(Map<String, ITimedVariable<?>> ctx) {
+		List<Variable> target = new ArrayList<Variable>(ctx.size());
+		for (Map.Entry<String, ITimedVariable<?>> entry : ctx.entrySet()) {
+
+			ContextVariable contextVariable = ContextVariable
+					.getVariableByName(entry.getKey());
+			if (contextVariable != null && contextVariable.isInternal()) {
+				continue;
+			}
+
+			try {
+				Variable variable = cast(entry.getValue());
+				variable.setName(entry.getKey());
+				target.add(variable);
+			} catch (ClassCastException e) {
+
+			}
+		}
+		return target;
+	}
 }

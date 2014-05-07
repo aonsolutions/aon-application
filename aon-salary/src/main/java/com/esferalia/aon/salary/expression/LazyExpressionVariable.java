@@ -1,5 +1,6 @@
 package com.esferalia.aon.salary.expression;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -33,17 +34,26 @@ public class LazyExpressionVariable implements IExpressionVariable<Object> {
 
 	@Override
 	public Object getValue(Period period) {
-		addExpression();
-		return ctx.getVariable(expression.getName(), period.getStart(),
-				period.getEnd(), Object.class);
+		try {
+			addExpression();
+			return ctx.getVariable(expression.getName(), period.getStart(),
+					period.getEnd(), Object.class);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	public Map<String, ITimedVariable<?>> getContext() {
-
-		IExpressionVariable<?> var = (IExpressionVariable<?>) ctx.getVariable(
-				expression.getName(), period.getStart(), period.getEnd());
-		return var.getContext();
+		try {
+			IExpressionVariable<?> var = (IExpressionVariable<?>) ctx
+					.getVariable(expression.getName(), period.getStart(),
+							period.getEnd());
+			return var.getContext();
+		} catch (ClassCastException e) {
+			return Collections.emptyMap();
+		}
 	}
 
 	@Override
@@ -55,9 +65,8 @@ public class LazyExpressionVariable implements IExpressionVariable<Object> {
 
 	private void addExpression() {
 		try {
-			ctx.addExpression(expression,
-					period.getStart(), period.getEnd());
-
+			ctx.addVariable(expression.getName(), null, period.getStart(), period.getEnd());
+			ctx.addExpression(expression, period.getStart(), period.getEnd());
 		} catch (ExpressionException e) {
 			throw new ExpressionExceptionWrapper(e);
 		}

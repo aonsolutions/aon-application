@@ -24,9 +24,10 @@ import com.code.aon.common.util.Classpath;
 
 public class ContrataCodeTablesWriter {
 	
-	final static String PARENT_FOLDER_PATH 				= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
-	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/contrata/";
-	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
+	final static String BASE_DIR 						= "/AON-TRUNK";
+	final static String PARENT_FOLDER_PATH 				= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
+	final static String ENUMERATIONS_FOLDER_PATH 		= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/contrata/";
+	final static String COLLECTIONS_CLASS_PATH			= BASE_DIR + "/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
 	final static String COLLECTIONS_CLASS_NAME			= "ContrataCollectionsController";
 	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.sepe.controller";
 

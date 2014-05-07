@@ -271,20 +271,6 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			if(params.getContractTransformCode()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TC2.getName() );
-				data.setExpression("\"" + params.getContractTransformCode().getValue() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			if(params.getSubsidized()!=null){
 				data = new ContractData();
 				data.setContract(contract);
@@ -707,6 +693,23 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
+		try {
+			if(params.getSsStatusInfo()!=null && params.getSsStatusInfo().getId()!=null){
+				bean.update(params.getSsStatusInfo());
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el estado del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		try {
+			if(params.getSepeStatusInfo()!=null && params.getSepeStatusInfo().getId()!=null){
+				bean.update(params.getSepeStatusInfo());
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el estado del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
 	}
 	
 	public void loadContractData(Contract contract, ContractParams params) throws ManagerBeanException {
@@ -741,12 +744,13 @@ public class ContractUtils {
 		if(map.get(ContextVariable.CONTRACT_END_CODE.getName())!=null){
 			params.setSuspensionCause(TLDCAUSS.getEnumByValue(map.get(ContextVariable.CONTRACT_END_CODE.getName())));
 		}
-		
+		if(map.get("DIAS_PREAVISO")!=null){
+			params.setSuspensionCause(TLDCAUSS.getEnumByValue(map.get(ContextVariable.CONTRACT_END_CODE.getName())));
+		}
 	}
 	
 	public void loadContractInfo(Contract contract, ContractParams params) throws ManagerBeanException {
 		Map<String, String> map = getContractInfoMap(contract);
-		
 		if(map.get(ContractVariable.SELF_EMPLOYED.getValue())!=null){
 			params.setRetaQuote(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue())));
 		} 
@@ -769,6 +773,15 @@ public class ContractUtils {
 				params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
 			}
 		}
+		
+		
+		Map<String, ContractInfo> infoMap = SEPEUtils.getInstance().getContractInfoMap(contract, contract.getStartDate(), contract.getEndDate());
+		if(map.get(ContractVariable.SEPE_CONTRACT.getValue())!=null){
+			params.setSepeStatusInfo(infoMap.get(ContractVariable.SEPE_CONTRACT.getValue()));
+		} 
+		if(map.get(ContractVariable.SS_MA.getValue())!=null){
+			params.setSsStatusInfo(infoMap.get(ContractVariable.SS_MA.getValue()));
+		} 
 	}
 	
 	public void loadContractBonuses(Contract contract, ContractParams params) throws ManagerBeanException {

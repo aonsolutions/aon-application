@@ -71,7 +71,7 @@ public class AuditManager implements IAuditConstants {
 	}
 
 	public static void closeLoginAudit( HttpSession httpSession ) throws ManagerBeanException {
-		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+		Session session = AuditManager.getSession(httpSession);
 		if ( session != null ) {
 			IManagerBean sessionBean = (IManagerBean) httpSession.getAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN );
 			session.setEndDate( new Date() );
@@ -260,6 +260,16 @@ public class AuditManager implements IAuditConstants {
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error deleting action {}. " + th.getMessage(), th );
 		}
+	}
+	
+	public static Session getSession( HttpSession httpSession ) {
+		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+		if ( session != null ) {
+			if (! session.getSessionId().equals(httpSession.getId()) ) {
+				LOGGER.warn( "Session id changed, stored {}, current {}", session.getSessionId(), httpSession.getId());
+			}
+		}		
+		return session;
 	}
 	
 }

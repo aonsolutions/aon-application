@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +38,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -51,7 +51,6 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -67,6 +66,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
@@ -296,7 +296,7 @@ public class ContractController extends BasicController {
 		if(this.getParams().getContractCode()!=null){
 			contractCode = this.getParams().getContractCode().getValue();
 		}
-		return !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4");
+		return contractCode!=null && !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4");
 	}
 	
 	public boolean isExtensibleContract(){
@@ -322,12 +322,21 @@ public class ContractController extends BasicController {
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			Contract contract = (Contract) this.getTo();
-			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
-					" AND name IN ('" + ContractVariable.SEPE_EXTENSION.getValue() + "') " +
-					" ORDER BY start_date;";
+			String sepeIdSelect = "SELECT name, expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN (" +
+//						"'" + ContractVariable.SEPE_CONTRACT.getValue() + "'," +
+						"'" + ContractVariable.SEPE_EXTENSION.getValue() + "')" +
+//						"'" + ContractVariable.SEPE_TRANSFORM.getValue() + "') " +
+					" ORDER BY start_date desc;";
 			ps = conn.prepareStatement(sepeIdSelect);
 			rs = ps.executeQuery();
-			if (rs.next()) return true;
+//			if (rs.next()) return true;
+			if (rs.next()){
+				String name = rs.getString(1);
+//				String expression = rs.getString(2);
+				if(ContractVariable.SEPE_EXTENSION.getValue().equals(name)) return true;
+			}
+			
 		} catch (SQLException e) {
 			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
@@ -348,6 +357,40 @@ public class ContractController extends BasicController {
 		}
 		String[] codes = {"109","139","189","209","239","289","309","339","389"};
 		return ArrayUtils.contains(codes, contractCode) ;
+	}
+	
+	public boolean isReadOnly(){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String sepeIdSelect = "SELECT name, expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN (" +
+						"'" + ContractVariable.SEPE_CONTRACT.getValue() + "'," +
+						"'" + ContractVariable.SEPE_EXTENSION.getValue() + "'," +
+						"'" + ContractVariable.SEPE_TRANSFORM.getValue() + "', " +
+						"'" + ContractVariable.SS_MA.getValue() + "', " +
+						"'" + ContractVariable.SS_MB.getValue() + "') " +
+					" AND expression NOT IN (" +
+						"'" + ContractSepeStatus.PENDING.getValue() + "'," +
+						"'" + ContractSepeStatus.DENIED.getValue() + "') " +
+					" ORDER BY start_date desc;";
+			ps = conn.prepareStatement(sepeIdSelect);
+			rs = ps.executeQuery();
+			if (rs.next()) return true;
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return false;
 	}
 
 	public boolean isUnsuportedContract(){
@@ -372,19 +415,30 @@ public class ContractController extends BasicController {
 		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
 	}
 	
-	public ContractSsStatus getSsStatus(){
+	public ContractSsStatus getModelSsStatus(){
+		try {
+			return getSsStatus((Contract) this.getModel().getRowData());
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+		}
+		return null;
+	}
+	public ContractSsStatus getSelectedSsStatus(){
+		return getSsStatus((Contract) this.getTo());
+	}
+	public ContractSsStatus getSsStatus(Contract contract){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			Contract contract = (Contract) this.getTo();
-			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
-					" AND name IN ('" + ContractVariable.SEPE_CONTRACT.getValue() + "', " +
-					" '" + ContractVariable.SS_MA.getValue() + "', " +
+			String ssIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN ('" + ContractVariable.SS_MA.getValue() + "', " +
 					" '" + ContractVariable.SS_MB.getValue() + "') " +
 					" ORDER BY start_date;";
-			ps = conn.prepareStatement(sepeIdSelect);
+			ps = conn.prepareStatement(ssIdSelect);
 			rs = ps.executeQuery();
 			if (rs.next()) return ContractSsStatus.valueOf(rs.getString(1));
 		} catch (SQLException e) {
@@ -400,13 +454,25 @@ public class ContractController extends BasicController {
 		return null;
 	}
 	
-	public ContractSepeStatus getSepeStatus(){
+	public ContractSepeStatus getModelSepeStatus(){
+		try {
+			return getSepeStatus((Contract) this.getModel().getRowData());
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+		}
+		return null;
+	}
+	public ContractSepeStatus getSelectedSepeStatus(){
+		return getSepeStatus((Contract) this.getTo());
+	}
+	private ContractSepeStatus getSepeStatus(Contract contract){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			Contract contract = (Contract) this.getTo();
 			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
 					" AND name IN ('" + ContractVariable.SEPE_CONTRACT.getValue() + "', " +
 					" '" + ContractVariable.SEPE_EXTENSION.getValue() + "', " +
@@ -433,7 +499,7 @@ public class ContractController extends BasicController {
 	}
 	
 	public List<?> getContractModel() {
-		ModelOption[] availableModels = IPayrollConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS; 
+		ModelOption[] availableModels = ISepeConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS; 
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if(getParams().getContractCode()!=null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -891,6 +957,11 @@ public class ContractController extends BasicController {
 	public void onContrataTransformShow(ActionEvent event){
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
+		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataController.getParams();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(((Contract) this.getTo()).getEndDate());
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		params.setFechaInicio(cal.getTime());
 		contrataController.onContrataDataShow(event);
 	}
 	
@@ -899,7 +970,8 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onTransformContract(ActionEvent event){
-		ContractData currentCodeData = SEPEUtils.getInstance().getContractDataMap((Contract)this.getTo(), null, null).get(ContextVariable.TC2.getName());
+		Contract contract = (Contract)this.getTo();
+		ContractData currentCodeData = SEPEUtils.getInstance().getContractDataMap(contract, null, null).get(ContextVariable.TC2.getName());
 		ContractData newCodeData = new ContractData();
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataController.getParams();
@@ -911,8 +983,6 @@ public class ContractController extends BasicController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			bean.insert(newCodeData);
-			ContractUtils.getInstance().loadContractData((Contract) this.getTo(), this.getParams());
-			contrataController.onContrataAccept(event);
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
 			AonUtil.addErrorMessage(msg);
@@ -920,6 +990,20 @@ public class ContractController extends BasicController {
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg);
 		}
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			contract.setEndDate(null);
+			bean.restoreNullSubPOJOs(contract);
+			bean.update(contract);
+			ContractUtils.getInstance().loadContractData((Contract) this.getTo(), this.getParams());
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			LOGGER.error(msg);
+			throw new AbortProcessingException(msg);
+		}
+		contrataController.onContrataAccept(event);
 	}
 	
 
@@ -1043,6 +1127,42 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public List<SelectItem> getSepeStatuses(){
+		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(ContractSepeStatus.PENDING, "Pendiente");
+		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.BATCHED, "Remesado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.ACCEPTED, "Aceptado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.ACCEPTED_WITH_ERRORS, "Aceptado con errores", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.DENIED, "Rechazado", "", true);
+//		list.add(item);			
+		item = new SelectItem(ContractSepeStatus.BLOCKED, "Bloqueado");
+		list.add(item);			
+		item = new SelectItem(ContractSepeStatus.MANUAL, "Manual");
+		list.add(item);			
+		return list;
+	}
+
+	public List<SelectItem> getSsStatuses(){
+		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(ContractSsStatus.PENDING, "Pendiente");
+		list.add(item);			
+//		item = new SelectItem(ContractSsStatus.BATCHED, "Remesado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSsStatus.RECORDED, "Grabado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSsStatus.DENIED, "Rechazado", "", true);
+//		list.add(item);			
+		item = new SelectItem(ContractSsStatus.BLOCKED, "Bloqueado");
+		list.add(item);			
+		item = new SelectItem(ContractSsStatus.MANUAL, "Manual");
+		list.add(item);			
+		return list;
+	}
+	
 	/*
 	 * INNER CLASES
 	 */
@@ -1062,12 +1182,28 @@ public class ContractController extends BasicController {
 		private Integer filterYear;
 		private Month filterMonth;
 		
+		// PECULIAR QUOTE PERCENT VALUES
+		private Map<String, ContractData> peculiarQuoteMap;
+		private Map<String, Boolean> checkedQuoteMap;
+		
 		public SalaryInfoHandler(Contract contract){
 			this.contract = contract;
 			this.filterYear = Calendar.getInstance().get(Calendar.YEAR);
 			this.filterMonth = Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH));
 		}
 		
+		public Map<String, ContractData> getPeculiarQuoteMap() {
+			return peculiarQuoteMap;
+		}
+		public void setPeculiarQuoteMap(Map<String, ContractData> peculiarQuoteMap) {
+			this.peculiarQuoteMap = peculiarQuoteMap;
+		}
+		public Map<String, Boolean> getCheckedQuoteMap() {
+			return checkedQuoteMap;
+		}
+		public void setCheckedQuoteMap(Map<String, Boolean> checkedQuoteMap) {
+			this.checkedQuoteMap = checkedQuoteMap;
+		}
 		public Integer getFilterYear() {
 			return filterYear;
 		}
@@ -1291,6 +1427,7 @@ public class ContractController extends BasicController {
 			loadContractData(contract);
 			loadPayments(contract);
 			loadDeductions(contract);
+			loadPeculiarQuote(contract);
 		}
 		public void loadContractData(Contract contract){
 			try {
@@ -1411,17 +1548,166 @@ public class ContractController extends BasicController {
 				throw new AbortProcessingException("No se ha podido borrar el objeto.");
 			}
 		}
+		
+		private void loadPeculiarQuote(Contract contract){
+			peculiarQuoteMap = new HashMap<String, ContractData>();
+			checkedQuoteMap = new HashMap<String, Boolean>();
+			
+			SEPEUtils utils = SEPEUtils.getInstance();
+			Map<String, ContractData> map = utils.getContractDataMap(contract, contract.getStartDate(), contract.getEndDate());
+
+//			TRABAJADOR
+			if(map.containsKey("PORCENTAJE_DESMPL")){
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL", map.get("PORCENTAJE_DESMPL"));
+				checkedQuoteMap.put("PORCENTAJE_DESMPL", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_DESMPL");
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL", data);
+			}
+			if(map.containsKey("PORCENTAJE_CGC")){
+				peculiarQuoteMap.put("PORCENTAJE_CGC", map.get("PORCENTAJE_CGC"));
+				checkedQuoteMap.put("PORCENTAJE_CGC", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CGC");
+				peculiarQuoteMap.put("PORCENTAJE_CGC", data);
+			}
+			if(map.containsKey("PORCENTAJE_FP")){
+				peculiarQuoteMap.put("PORCENTAJE_FP", map.get("PORCENTAJE_FP"));
+				checkedQuoteMap.put("PORCENTAJE_FP", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_FP");
+				peculiarQuoteMap.put("PORCENTAJE_FP", data);
+			}
+			if(map.containsKey("PORCENTAJE_EXTR")){
+				peculiarQuoteMap.put("PORCENTAJE_EXTR", map.get("PORCENTAJE_EXTR"));
+				checkedQuoteMap.put("PORCENTAJE_EXTR", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_EXTR");
+				peculiarQuoteMap.put("PORCENTAJE_EXTR", data);
+			}
+			if(map.containsKey("PORCENTAJE_NEXTR")){
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR", map.get("PORCENTAJE_NEXTR"));
+				checkedQuoteMap.put("PORCENTAJE_NEXTR", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_NEXTR");
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR", data);
+			}
+			
+//			EMPRESA
+			if(map.containsKey("PORCENTAJE_DESMPL_E")){
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL_E", map.get("PORCENTAJE_DESMPL_E"));
+				checkedQuoteMap.put("PORCENTAJE_DESMPL_E", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_DESMPL_E");
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_FOGASA")){
+				peculiarQuoteMap.put("PORCENTAJE_FOGASA", map.get("PORCENTAJE_FOGASA"));
+				checkedQuoteMap.put("PORCENTAJE_FOGASA", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_FOGASA");
+				peculiarQuoteMap.put("PORCENTAJE_FOGASA", data);
+			}
+			if(map.containsKey("PORCENTAJE_CGC_E")){
+				peculiarQuoteMap.put("PORCENTAJE_CGC_E", map.get("PORCENTAJE_CGC_E"));
+				checkedQuoteMap.put("PORCENTAJE_CGC_E", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CGC_E");
+				peculiarQuoteMap.put("PORCENTAJE_CGC_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_EXTR_E")){
+				peculiarQuoteMap.put("PORCENTAJE_EXTR_E", map.get("PORCENTAJE_EXTR_E"));
+				checkedQuoteMap.put("PORCENTAJE_EXTR_E", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_EXTR_E");
+				peculiarQuoteMap.put("PORCENTAJE_EXTR_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_NEXTR_E")){
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR_E", map.get("PORCENTAJE_NEXTR_E"));
+				checkedQuoteMap.put("PORCENTAJE_NEXTR_E", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_NEXTR_E");
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_FP_E")){
+				peculiarQuoteMap.put("PORCENTAJE_FP_E", map.get("PORCENTAJE_FP_E"));
+				checkedQuoteMap.put("PORCENTAJE_FP_E", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_FP_E");
+				peculiarQuoteMap.put("PORCENTAJE_FP_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_CORTA_DURACION")){
+				peculiarQuoteMap.put("PORCENTAJE_CORTA_DURACION", map.get("PORCENTAJE_CORTA_DURACION"));
+				checkedQuoteMap.put("PORCENTAJE_CORTA_DURACION", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CORTA_DURACION");
+				peculiarQuoteMap.put("PORCENTAJE_CORTA_DURACION", data);
+			}
+			if(map.containsKey("PORCENTAJE_IT")){
+				peculiarQuoteMap.put("PORCENTAJE_IT", map.get("PORCENTAJE_IT"));
+				checkedQuoteMap.put("PORCENTAJE_IT", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_IT");
+				peculiarQuoteMap.put("PORCENTAJE_IT", data);
+			}
+			if(map.containsKey("PORCENTAJE_IMS")){
+				peculiarQuoteMap.put("PORCENTAJE_IMS", map.get("PORCENTAJE_IMS"));
+				checkedQuoteMap.put("PORCENTAJE_IMS", Boolean.TRUE);
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_IMS");
+				peculiarQuoteMap.put("PORCENTAJE_IMS", data);
+			}
+		}
+		
+		public void onAcceptPeculiarQuote(ActionEvent event){
+			for(String key: peculiarQuoteMap.keySet()){
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+					ContractData data = peculiarQuoteMap.get(key);
+					if( checkedQuoteMap.containsKey(key) && checkedQuoteMap.get(key) && StringUtils.isNotBlank(data.getExpression()) ){
+						data.setContract(contract);
+						data.setStartDate(contract.getStartDate());
+						data.setEndDate(contract.getEndDate());
+						bean.insertOrUpdate(data);
+					} else {
+						if(data.getId() != null){
+							bean.remove(data);
+						}
+					}
+				} catch (ManagerBeanException e) {
+					String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
+					AonUtil.addErrorMessage(msg);
+				}
+			}
+		}
 	}
 	
 // ************************************
 // ************************************
 	public class ContractParams {
+
+		private ContractInfo sepeStatusInfo;
+		private ContractInfo ssStatusInfo;
+		
 		private boolean retaQuote;
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
 		private ContractCode contractCode;
-		private ContractCode contractTransformCode;
 		private QuoteGroup quoteGroup;
 		private OccupationType occupationType;
 		private Double irpf;
@@ -1447,12 +1733,42 @@ public class ContractController extends BasicController {
 		private TLDCAUSS suspensionCause;
 		private String contractEndCode;
 		private String contractEndDescription;
-		private Date settleAdvanceNoticeDate;
-		private Integer settleCompensationDays;
-		private Integer settleNonEnjoyedVacations;
-		private Integer settleWorkedYears;
-		private Integer settleWorkedMonths;
+		private Integer settleAdvanceNoticeDays;
 		
+		public ContractInfo getSepeStatusInfo() {
+			return sepeStatusInfo;
+		}
+		public void setSepeStatusInfo(ContractInfo sepeStatusInfo) {
+			this.sepeStatusInfo = sepeStatusInfo;
+		}
+		public ContractSepeStatus getSepeStatus() {
+			if(getSepeStatusInfo()!=null){
+				return ContractSepeStatus.valueOf(getSepeStatusInfo().getExpression());
+			}
+			return null;
+		}
+		public void setSepeStatus(ContractSepeStatus sepeStatus) {
+			if(this.sepeStatusInfo!=null && sepeStatus!=null){
+				this.sepeStatusInfo.setExpression(sepeStatus.getValue());
+			}
+		}
+		public ContractInfo getSsStatusInfo() {
+			return ssStatusInfo;
+		}
+		public void setSsStatusInfo(ContractInfo ssStatusInfo) {
+			this.ssStatusInfo = ssStatusInfo;
+		}
+		public ContractSsStatus getSsStatus() {
+			if(getSsStatusInfo()!=null){
+				return ContractSsStatus.valueOf(getSsStatusInfo().getExpression());
+			}
+			return null;
+		}
+		public void setSsStatus(ContractSsStatus ssStatus) {
+			if(this.ssStatusInfo!=null && ssStatus!=null){
+				this.ssStatusInfo.setExpression(ssStatus.getValue());
+			}
+		}
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
 		}
@@ -1540,12 +1856,6 @@ public class ContractController extends BasicController {
 		public void setContractCode(ContractCode contractCode) {
 			this.contractCode = contractCode;
 		}
-		public ContractCode getContractTransformCode() {
-			return contractTransformCode;
-		}
-		public void setContractTransformCode(ContractCode contractTransformCode) {
-			this.contractTransformCode = contractTransformCode;
-		}
 		public QuoteGroup getQuoteGroup() {
 			return quoteGroup;
 		}
@@ -1627,50 +1937,22 @@ public class ContractController extends BasicController {
 		public void setSuspensionCause(TLDCAUSS suspensionCause) {
 			this.suspensionCause = suspensionCause;
 		}
+		public Integer getSettleAdvanceNoticeDays() {
+			return settleAdvanceNoticeDays;
+		}
+		public void setSettleAdvanceNoticeDays(Integer settleAdvanceNoticeDays) {
+			this.settleAdvanceNoticeDays = settleAdvanceNoticeDays;
+		}
 		public Date getSettleAdvanceNoticeDate() {
-			return settleAdvanceNoticeDate;
-		}
-		public void setSettleAdvanceNoticeDate(Date settleAdvanceNoticeDate) {
-			this.settleAdvanceNoticeDate = settleAdvanceNoticeDate;
-		}
-		public Long getSettleAdvanceNoticeDays() {
-			Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
-			if(contract.getEndDate()!=null && getSettleAdvanceNoticeDate()!=null){
-				return CommonUtil.getDaysBetweenDates(getSettleAdvanceNoticeDate(), contract.getEndDate(), false);
+			Contract contract = (Contract) ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo(); 
+			if( contract.getEndDate()!=null && settleAdvanceNoticeDays!=null){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(contract.getEndDate());
+				cal.add(Calendar.DAY_OF_MONTH, settleAdvanceNoticeDays);
+				return cal.getTime();
 			}
 			return null;
 		}
-		public Integer getSettleCompensationDays() {
-			return settleCompensationDays;
-		}
-		public void setSettleCompensationDays(Integer settleCompensationDays) {
-			this.settleCompensationDays = settleCompensationDays;
-		}
-		public Integer getSettleNonEnjoyedVacations() {
-			return settleNonEnjoyedVacations;
-		}
-		public void setSettleNonEnjoyedVacations(Integer settleNonEnjoyedVacations) {
-			this.settleNonEnjoyedVacations = settleNonEnjoyedVacations;
-		}
-		public Integer getSettleWorkedYears() {
-			return settleWorkedYears;
-		}
-		public void setSettleWorkedYears(Integer settleWorkedYears) {
-			this.settleWorkedYears = settleWorkedYears;
-		}
-		public Integer getSettleWorkedMonths() {
-			return settleWorkedMonths;
-		}
-		public void setSettleWorkedMonths(Integer settleWorkedMonths) {
-			this.settleWorkedMonths = settleWorkedMonths;
-		}
-		public Double getSettleTotalWorkedYears() {
-			if(settleWorkedYears!=null && settleWorkedMonths!=null){
-				return CommonUtil.round(settleWorkedYears.doubleValue() + (settleWorkedMonths.doubleValue()/12), 2);
-			}
-			return null;
-		}
-		
 		
 	}
 	

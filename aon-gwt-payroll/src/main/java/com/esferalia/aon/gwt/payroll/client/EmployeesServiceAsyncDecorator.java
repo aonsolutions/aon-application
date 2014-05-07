@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -205,21 +206,21 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 
 	@Override
 	public void eval(String expression, SalaryDraft salaryDraft,
-			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
 			EvalException {
 		AON.start();
 		employeesServiceAsync.eval(expression, salaryDraft,
-				new AsyncCallbackWrapper<Double>(callback));
+				new AsyncCallbackWrapper<List<Result>>(callback));
 
 	}
 	
 	@Override
 	public void eval(String expression, AgreementDraft agreementDraft, int levelId,
-			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
 			EvalException {
 		AON.start();
 		employeesServiceAsync.eval(expression, agreementDraft,levelId,
-				new AsyncCallbackWrapper<Double>(callback));
+				new AsyncCallbackWrapper<List<Result>>(callback));
 	}
 
 	@Override

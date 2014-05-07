@@ -12,8 +12,10 @@ import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
+import com.google.gwt.user.client.Window;
 
 public class SQLITData implements Serializable {
 	
@@ -43,18 +45,21 @@ public class SQLITData implements Serializable {
 					+ " person.name,"
 					+ " person.first_surname,"
 					+ " person.second_surname,"
+					+ " person.social_security_num,"
 					+ " contract.start_date,"
 					+ " contract.end_date,"
-					+ " ifnull(contract_leave.type, -1),"
-					+ " contract_leave.start_date,"
-					+ " contract_leave.end_date"
+					+ " ifnull(contract_leave.type, -1) as type,"
+					+ " contract_leave.start_date," //pos 10 problemas con ContractLeaveColumns
+					+ " contract_leave.end_date"	//pos 11
 					+ " FROM contract"
 					+ " left join contract_leave on "
 					+ "contract.id = contract_leave.contract"
 					+ " inner join person on "
 					+ "contract.person = person.registry "
 					+ " where contract.workplace = ?"
-					+ " order by person.first_surname asc,"					
+					+ " order by person.first_surname asc,"
+					+ " person.second_surname asc,"
+					+ " person.name asc,"
 					+ " contract_leave.start_date asc";
 
 			stmt = conn.prepareStatement(select);
@@ -69,6 +74,7 @@ public class SQLITData implements Serializable {
 				String name = rs.getString(PersonColumns.NAME);
 				String fSurname = rs.getString(PersonColumns.FIRST_SURNAME);
 				String sSurname = rs.getString(PersonColumns.SECOND_SURNAME);
+				String social_security = rs.getString(PersonColumns.SOCIAL_SECURITY_NUM);				
 				
 				if(sSurname == null) {
 					sSurname = "";
@@ -80,9 +86,9 @@ public class SQLITData implements Serializable {
 			
 				Date endContract = rs.getDate(ContractColumns.END_DATE);
 				contractMax = DateUtils.after(contractMax, endContract);		
-				Integer type = rs.getInt(8);
-				Date startContractLeave = rs.getDate(9);
-				Date endContractLeave = rs.getDate(10);	
+				Integer type = Integer.parseInt(rs.getString(SQLConstants.ContractLeaveColumns.TYPE));
+				Date startContractLeave = rs.getDate(10);
+				Date endContractLeave = rs.getDate(11);	
 				
 				if(!itData.getEmployees().containsKey(contractId)) {					
 					
@@ -92,9 +98,9 @@ public class SQLITData implements Serializable {
 					employee.setName(name);
 					employee.setFirstSurname(fSurname);
 					employee.setSecondSurName(sSurname);
+					employee.setSocialSecurity(social_security);
 					employee.setStartDate(startContract);
 					employee.setEndDate(endContract);
-					
 					itData.setEmployee(contractId, employee);
 				}
 				
