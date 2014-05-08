@@ -60,12 +60,13 @@ public class Mod349Manager {
 				
 				detail.setAccumulated(CommonUtil.round(rs.getDouble(AMOUNT_ALIAS)));
 				
-				declaredPs.setInt(1, mod349.getYear());
-				declaredPs.setInt(2, mod349.getPeriod().ordinal() );
-				declaredPs.setInt(3, detail.isRectification()?1:0 );
-				declaredPs.setString(4, detail.getType().getValue() );
-				declaredPs.setString(5, detail.getCountry().getValue() );
-				declaredPs.setString(6, detail.getDocument() );
+				declaredPs.setInt(1, mod349.getDomain());
+				declaredPs.setInt(2, mod349.getYear());
+				declaredPs.setInt(3, mod349.getPeriod().ordinal() );
+				declaredPs.setInt(4, detail.isRectification()?1:0 );
+				declaredPs.setString(5, detail.getType().getValue() );
+				declaredPs.setString(6, detail.getCountry().getValue() );
+				declaredPs.setString(7, detail.getDocument() );
 				declaredRs = declaredPs.executeQuery();
 				if (declaredRs.next()) {
 					detail.setDeclared(CommonUtil.round(declaredRs.getDouble(AMOUNT_ALIAS)));	
@@ -134,7 +135,8 @@ public class Mod349Manager {
 		buf.append("SELECT SUM(det.amount) amount");
 		buf.append(" FROM fs_mod349_detail det");  
 		buf.append(" INNER JOIN fs_mod349 cab ON (cab.id = det.fs_mod349)");  
-		buf.append(" WHERE cab.year = ?");
+		buf.append(" WHERE cab.domain  = ?");
+		buf.append(" AND cab.year = ?");
 		buf.append(" AND cab.period < ?");
 		buf.append(" AND det.rectification =  ?");
 		buf.append(" AND det.type =  ?");

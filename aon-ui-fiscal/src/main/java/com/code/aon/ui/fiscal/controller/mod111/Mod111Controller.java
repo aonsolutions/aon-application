@@ -92,4 +92,8 @@ public class Mod111Controller extends FiscalModelController {
 		
 	}
 	
+	@Override
+	protected String getFormPage() {
+		return "mod111_form";
+	}	
 }

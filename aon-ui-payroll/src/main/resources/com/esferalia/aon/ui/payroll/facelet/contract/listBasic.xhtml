@@ -93,9 +93,20 @@
 	<aon:column 
 		styleClass="aon-editDataTable-textColumn aon-width-70">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.payroll_contract_sepe_status}" />
+			<aon:outputText value="&#160;"
+				title="Estado (Seguridad Social)"
+				styleClass="aon-icon-winsuite aon-padding-left aon-padding-right" />
 		</f:facet>
-		<aon:outputText value="#{to.sepeStatus}"/>
+		<aon:outputText value="#{contract.modelSsStatus}"/>
+	</aon:column>
+	<aon:column 
+		styleClass="aon-editDataTable-textColumn aon-width-70">
+		<f:facet name="header">
+			<aon:outputText value="&#160;"
+				title="Estado (S.E.P.E.)"
+				styleClass="aon-icon-sepe aon-padding-left aon-padding-right" />
+		</f:facet>
+		<aon:outputText value="#{contract.modelSepeStatus}"/>
 	</aon:column>
 
 </ui:composition>

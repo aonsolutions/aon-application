@@ -264,7 +264,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void addPayment(Double amount, Double quote, Double tax,
-			String description, IPayment payment,
+			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 
 		SalaryPayment sPayment = new SalaryPayment();

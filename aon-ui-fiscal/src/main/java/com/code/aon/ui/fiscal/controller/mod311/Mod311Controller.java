@@ -74,6 +74,11 @@ public class Mod311Controller extends FiscalModelController {
 	}
 
 	@Override
+	protected String getFormPage() {
+		return "mod311_form";
+	}	
+
+	@Override
 	public void onEditSearch(ActionEvent event) {
 		checkFiscalActivity(FiscalModelType.M311);
 		super.onEditSearch(event);	

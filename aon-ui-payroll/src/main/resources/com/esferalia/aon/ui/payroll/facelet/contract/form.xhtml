@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -39,16 +40,38 @@
 						
 						<aon:outputText value="#{bundle.aon_status}" />
 						<aon:div>
-							<aon:commandButton rendered="#{contract.ssStatus!=null}"
-								styleClass="aon-icon-commandButton" >
-								<aon:outputText value="#{contract.ssStatus}" 
-									styleClass="aon-icon-commandButton aon-icon-winsuite aon-padding-left aon-margin-right" />
-							</aon:commandButton>
-							<aon:commandButton rendered="#{contract.sepeStatus!=null}"
-								styleClass="aon-icon-commandButton" >
-								<aon:outputText value="#{contract.sepeStatus}"
-									styleClass="aon-icon-commandButton aon-icon-sepe aon-padding-left aon-padding-right aon-margin-right" />
-							</aon:commandButton>
+							<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder">
+								<rich:dropDownMenu id="ssStatusDropDown" event="onclick"
+									submitMode="none" direction="bottom-left"
+									jointPoint="br" hideDelay="300">
+									<f:facet name="label"> 
+										<aon:outputText value="#{contract.params.ssStatus}" 
+											styleClass="aon-icon-commandButton aon-icon-winsuite aon-padding-left aon-margin-right" />
+					                </f:facet>
+					                <rich:menuItem submitMode="none">
+				                        <aon:selectOneMenu value="#{contract.params.ssStatus}" layout="pageDirection">
+											<f:selectItems value="#{contract.ssStatuses}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="ssStatusDropDown" />
+										</aon:selectOneMenu>
+				                    </rich:menuItem>
+								</rich:dropDownMenu>
+								<rich:dropDownMenu id="sepeStatusDropDown" event="onclick"
+									submitMode="none" direction="bottom-left"
+									jointPoint="br" hideDelay="300">
+									<f:facet name="label"> 
+										<aon:outputText value="#{contract.params.sepeStatus}" 
+											styleClass="aon-icon-commandButton aon-icon-sepe aon-padding-left aon-margin-right" />
+					                </f:facet>
+					                <rich:menuItem submitMode="none" id="sepeStatusDropDownOptionsItem">
+				                        <aon:selectOneMenu value="#{contract.params.sepeStatus}" focus="sepeManualId" layout="pageDirection">
+											<f:selectItems value="#{contract.sepeStatuses}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="sepeStatusDropDown" />
+											<a4j:support event="onblur" ajaxSingle="true" reRender="sepeStatusDropDown" />
+										</aon:selectOneMenu>
+				                    </rich:menuItem>
+								</rich:dropDownMenu>
+							</aon:panelGrid>
+					
 						</aon:div>
 							
 					</aon:panelGrid>

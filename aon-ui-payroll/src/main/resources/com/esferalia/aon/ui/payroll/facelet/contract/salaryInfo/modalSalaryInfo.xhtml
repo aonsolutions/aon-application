@@ -36,6 +36,13 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
+								
+								
+								
+								
+<aon:panelTabSet >
+								
+	<aon:panelTab id="contractData" label="Contrato" >
 									
 <aon:panel styleClass="aon-panelGrid-search" id="filterPanel" style="padding:5px;">
 		<aon:panelGrid columns="5" 
@@ -454,6 +461,172 @@
 		</aon:column>
 	</aon:dataTable>
 </aon:panel>
+
+
+	</aon:panelTab>		
+	<aon:panelTab id="peculiarQuote" label="Peculiaridades de cotización" >
+		
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="innerToolbar" value="true" />
+			
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="peculiarQuote-accept"
+					value="#{bundle.aon_save}"
+					actionListener="#{contract.salaryInfoHandler.onAcceptPeculiarQuote}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept" />
+			</ui:define>
+		</ui:decorate>
+			
+		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder, aon-panelGrid-even aon-vertical-align-top aon-noborder">
+
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="Trabajador" />
+				</f:facet>
+				<aon:panelGrid columns="2">
+					<aon:outputLabel for="percent_desmpl" value="Desempleo" />
+					<aon:div>
+						<aon:inputText id="percent_desmpl" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_DESMPL'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_cgc" value="Contingencias comunes" />
+					<aon:div>
+						<aon:inputText id="percent_cgc" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CGC'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_cgp" value="Contingencias profesionales" />
+					<aon:div>
+						<aon:inputText id="percent_cgp" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CGP'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_extr" value="Horas extra" />
+					<aon:div>
+						<aon:inputText id="percent_extr" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_EXTR'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_nextr" value="Resto horas extra" />
+					<aon:div>
+						<aon:inputText id="percent_nextr" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_NEXTR'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+					
+				</aon:panelGrid>
+			</aon:panel>
+			
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="Empresa" />
+				</f:facet>
+				<aon:panelGrid columns="2">
+					
+					<aon:outputLabel for="percent_desmpl_e" value="Desempleo" />
+					<aon:div>
+						<aon:inputText id="percent_desmpl_e" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_DESMPL_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_cgc_e" value="Contingencias comunes" />
+					<aon:div>
+						<aon:inputText id="percent_cgc_e" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CGC_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_extr_e" value="Horas extra" />
+					<aon:div>
+						<aon:inputText id="percent_extr_e" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_EXTR_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_nextr_e" value="Resto horas extra" />
+					<aon:div>
+						<aon:inputText id="percent_nextr_e" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_NEXTR_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_it" value="IT" />
+					<aon:div>
+						<aon:inputText id="percent_it" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_IT'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+				
+					<aon:outputLabel for="percent_ims" value="IMS" />
+					<aon:div>
+						<aon:inputText id="percent_ims" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_IMS'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+		
+					<aon:outputLabel for="percent_fogasa" value="FOGASA" />
+					<aon:div>
+						<aon:inputText id="percent_fogasa" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_FOGASA'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>					
+
+					<aon:outputLabel for="percent_fp_e" value="FP" />
+					<aon:div>
+						<aon:inputText id="percent_fp_e" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_FP_E'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="percent_corta_duracion" value="Contrato corta duración" />
+					<aon:div>
+						<aon:inputText id="percent_corta_duracion" size="5" 
+							value="#{contract.salaryInfoHandler.peculiarQuoteMap['PORCENTAJE_CORTA_DURACION'].expression}" >
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<aon:outputText value="%" />
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:panel>
+			
+		</aon:panelGrid>
+		
+	</aon:panelTab>		
+</aon:panelTabSet>
+
 									
 								</aon:div>
 							</aon:div>

@@ -21,18 +21,23 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.enumeration.Mod347Status;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.mod347.Mod347Parameters;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
+import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD347Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod347Controller extends BasicController {
+public class Mod347Controller extends BasicController implements IFiscalModelController{
 
 	private FileOutput fileOutput;
 	private FiscalParametersController fiscalParams;
@@ -178,4 +183,28 @@ public class Mod347Controller extends BasicController {
 	}
 	
 	
+	@Override
+	public String editModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.MOD347_YEAR); 
+		String admonAlias = getManagerBean().getFieldName(IEntityAlias.MOD347_ADMINISTRATION);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(admonAlias,administration);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+		return "mod347_form";
+	}
+
+	@Override
+	public String newModel(Administration administration, int year,
+			Period period) throws ManagerBeanException{
+		onReset(null);
+		Mod347 fm = (Mod347) getTo();
+		fm.setYear(year);
+		fm.setAdministration(administration);
+		return "mod347_form";
+	}	
 }

@@ -21,8 +21,6 @@ import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.IFiscalConstants;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class Mipf  {
@@ -149,12 +147,7 @@ public class Mipf  {
 			if (pdfFile.exists()) {
 				fisPDF = new FileInputStream( pdfFile );
 				response.setContentType( MimeType.MIME_PDF.getName() );
-				CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-				String name = fiscalModel.getModel() 
-						+ "_" + fiscalModel.getPeriod() 
-						+ "_" + fiscalModel.getYear() 
-						+ (isDraft?"_Borrador":"")
-						+ "_" + companyController.getCompanyLabel();
+				String name = getAutomaticFileName(fiscalModel) + (isDraft?"_Borrador":"");
 				response.setHeader("Content-Disposition", "attachment; filename=\"" + name + ".pdf" + "\"");
 				response.setHeader("Content-Length", String.valueOf(pdfFile.length()));
 				IOUtils.copy(fisPDF, response.getOutputStream());
@@ -311,5 +304,23 @@ public class Mipf  {
 				return;
 			}
 		}
+	}
+
+	protected String getAutomaticFileName(FiscalModel fm) {
+		String s = fm.getName() + fm.getSurname();
+	    StringBuilder sb = new StringBuilder();
+	    if(!Character.isJavaIdentifierStart(s.charAt(0))) {
+	        sb.append("_");
+	    }
+	    for (char c : s.toCharArray()) {
+	        if(Character.isJavaIdentifierPart(c)) {
+	            sb.append(c);
+	        }
+	    }		
+		
+		return fm.getModel() 
+				+ "_" + fm.getYear() 
+				+ "_" + fm.getPeriod()
+				+ "_" + sb.toString();
 	}
 }

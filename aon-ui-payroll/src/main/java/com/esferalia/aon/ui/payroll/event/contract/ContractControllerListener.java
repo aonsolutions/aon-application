@@ -110,8 +110,20 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 		}
 
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.initialize((Contract) controller.getTo());
+		ContrataController contrataController = null;
+		if(controller.isTransformedContract()){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize((Contract) controller.getTo());
+		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize((Contract) controller.getTo());
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize((Contract) controller.getTo());
+		} else {
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize((Contract) controller.getTo());
+		}
+		
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize((Contract) controller.getTo());
 	}
@@ -153,9 +165,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		try {
 			if(!controller.getParams().isRetaQuote()){
 				utils.insertContractData((Contract) controller.getTo(), controller.getParams());
-				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-				contrataController.initialize((Contract) controller.getTo());
-				contrataController.onContrataDataShow(null);
 				importContractClauses((Contract)controller.getTo());
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.PENDING.getValue());
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.PENDING.getValue());
@@ -163,6 +172,8 @@ public class ContractControllerListener extends ControllerAdapter{
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.MANUAL.getValue());
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.MANUAL.getValue());
 			}
+			utils.loadContractData((Contract) controller.getTo(), controller.getParams());
+			utils.loadContractInfo((Contract) controller.getTo(), controller.getParams());
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error saving contract status");
 		}
@@ -175,9 +186,9 @@ public class ContractControllerListener extends ControllerAdapter{
 			ContractUtils utils = ContractUtils.getInstance();
 			utils.updateContractData((Contract) controller.getTo(), controller.getParams());
 			utils.updateContractInfo((Contract) controller.getTo(), controller.getParams());
-			if(!controller.isTransformedContract()){
-				updateContrataData();
-			}
+			
+			updateContrataData();
+			
 			updateContractDocumentFields();
 		}
 	}
@@ -190,9 +201,21 @@ public class ContractControllerListener extends ControllerAdapter{
 	}
 	
 	private void updateContrataData() {
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.getHandler().initialize((Contract) this.getController().getTo());
-		contrataController.onContrataAccept(null);
+		ContrataController contrataController = null;
+		ContractController controller = (ContractController) this.getController();
+		
+		if(controller.isTransformedContract()){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		} else {
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		}
+		
+		if(contrataController.isUpdateRequired()){
+			contrataController.getHandler().initialize((Contract) this.getController().getTo());
+			contrataController.onContrataAccept(null);
+		}
 	}
 	
 	private void updateContractDocumentFields() {

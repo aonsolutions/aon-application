@@ -118,6 +118,26 @@ public class Declaration {
 		if ("An".equals(period)) return "0A"; // ¿?
 		return period;
 	}
+	public String getPeriodForGipuzkoa() {
+		if ("01".equals(period)) return "01";
+		if ("02".equals(period)) return "02";
+		if ("03".equals(period)) return "03";
+		if ("04".equals(period)) return "04";
+		if ("05".equals(period)) return "05";
+		if ("06".equals(period)) return "06";
+		if ("07".equals(period)) return "07";
+		if ("08".equals(period)) return "08";
+		if ("09".equals(period)) return "09";
+		if ("10".equals(period)) return "10";
+		if ("11".equals(period)) return "11";
+		if ("12".equals(period)) return "12";
+		if ("T1".equals(period)) return "01";
+		if ("T2".equals(period)) return "02";
+		if ("T3".equals(period)) return "03";
+		if ("T4".equals(period)) return "04"; // ¿?
+		if ("An".equals(period)) return "  "; // ¿?
+		return period;
+	}
 	public void setPeriod(String period) {
 		this.period = period;
 	}
@@ -561,6 +581,15 @@ public class Declaration {
 	}
 	public void setDepositBankAccount(String depositBankAccount) {
 		this.depositBankAccount = depositBankAccount;
+	}
+	public String getGipuzkoaBankAccount() {
+		if (getDeposit() > 0) {
+			return depositBankAccount;	
+		} 
+		if (getPayBack() > 0) {
+			return payBackBankAccount;
+		}
+		return "00000000000000000000";
 	}
 	
 

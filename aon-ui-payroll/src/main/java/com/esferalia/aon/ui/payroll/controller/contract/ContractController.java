@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
@@ -372,19 +374,30 @@ public class ContractController extends BasicController {
 		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
 	}
 	
-	public ContractSsStatus getSsStatus(){
+	public ContractSsStatus getModelSsStatus(){
+		try {
+			return getSsStatus((Contract) this.getModel().getRowData());
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+		}
+		return null;
+	}
+	public ContractSsStatus getSelectedSsStatus(){
+		return getSsStatus((Contract) this.getTo());
+	}
+	public ContractSsStatus getSsStatus(Contract contract){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			Contract contract = (Contract) this.getTo();
-			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
-					" AND name IN ('" + ContractVariable.SEPE_CONTRACT.getValue() + "', " +
-					" '" + ContractVariable.SS_MA.getValue() + "', " +
+			String ssIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+					" AND name IN ('" + ContractVariable.SS_MA.getValue() + "', " +
 					" '" + ContractVariable.SS_MB.getValue() + "') " +
 					" ORDER BY start_date;";
-			ps = conn.prepareStatement(sepeIdSelect);
+			ps = conn.prepareStatement(ssIdSelect);
 			rs = ps.executeQuery();
 			if (rs.next()) return ContractSsStatus.valueOf(rs.getString(1));
 		} catch (SQLException e) {
@@ -400,13 +413,25 @@ public class ContractController extends BasicController {
 		return null;
 	}
 	
-	public ContractSepeStatus getSepeStatus(){
+	public ContractSepeStatus getModelSepeStatus(){
+		try {
+			return getSepeStatus((Contract) this.getModel().getRowData());
+		} catch (ManagerBeanException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+		}
+		return null;
+	}
+	public ContractSepeStatus getSelectedSepeStatus(){
+		return getSepeStatus((Contract) this.getTo());
+	}
+	private ContractSepeStatus getSepeStatus(Contract contract){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			Contract contract = (Contract) this.getTo();
 			String sepeIdSelect = "SELECT expression  FROM contract_info  WHERE contract = " + contract.getId() + 
 					" AND name IN ('" + ContractVariable.SEPE_CONTRACT.getValue() + "', " +
 					" '" + ContractVariable.SEPE_EXTENSION.getValue() + "', " +
@@ -1043,6 +1068,42 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public List<SelectItem> getSepeStatuses(){
+		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(ContractSepeStatus.PENDING, "Pendiente");
+		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.BATCHED, "Remesado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.ACCEPTED, "Aceptado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.ACCEPTED_WITH_ERRORS, "Aceptado con errores", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSepeStatus.DENIED, "Rechazado", "", true);
+//		list.add(item);			
+		item = new SelectItem(ContractSepeStatus.BLOCKED, "Bloqueado");
+		list.add(item);			
+		item = new SelectItem(ContractSepeStatus.MANUAL, "Manual");
+		list.add(item);			
+		return list;
+	}
+
+	public List<SelectItem> getSsStatuses(){
+		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(ContractSsStatus.PENDING, "Pendiente");
+		list.add(item);			
+//		item = new SelectItem(ContractSsStatus.BATCHED, "Remesado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSsStatus.RECORDED, "Grabado", "", true);
+//		list.add(item);			
+//		item = new SelectItem(ContractSsStatus.DENIED, "Rechazado", "", true);
+//		list.add(item);			
+		item = new SelectItem(ContractSsStatus.BLOCKED, "Bloqueado");
+		list.add(item);			
+		item = new SelectItem(ContractSsStatus.MANUAL, "Manual");
+		list.add(item);			
+		return list;
+	}
+	
 	/*
 	 * INNER CLASES
 	 */
@@ -1062,12 +1123,21 @@ public class ContractController extends BasicController {
 		private Integer filterYear;
 		private Month filterMonth;
 		
+		// PECULIAR QUOTE PERCENT VALUES
+		private Map<String, ContractData> peculiarQuoteMap;
+		
 		public SalaryInfoHandler(Contract contract){
 			this.contract = contract;
 			this.filterYear = Calendar.getInstance().get(Calendar.YEAR);
 			this.filterMonth = Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH));
 		}
 		
+		public Map<String, ContractData> getPeculiarQuoteMap() {
+			return peculiarQuoteMap;
+		}
+		public void setPeculiarQuoteMap(Map<String, ContractData> peculiarQuoteMap) {
+			this.peculiarQuoteMap = peculiarQuoteMap;
+		}
 		public Integer getFilterYear() {
 			return filterYear;
 		}
@@ -1291,6 +1361,7 @@ public class ContractController extends BasicController {
 			loadContractData(contract);
 			loadPayments(contract);
 			loadDeductions(contract);
+			loadPeculiarQuote(contract);
 		}
 		public void loadContractData(Contract contract){
 			try {
@@ -1411,11 +1482,146 @@ public class ContractController extends BasicController {
 				throw new AbortProcessingException("No se ha podido borrar el objeto.");
 			}
 		}
+		
+		private void loadPeculiarQuote(Contract contract){
+			peculiarQuoteMap = new HashMap<String, ContractData>();
+			
+			SEPEUtils utils = SEPEUtils.getInstance();
+			Map<String, ContractData> map = utils.getContractDataMap(contract, contract.getStartDate(), contract.getEndDate());
+
+//			TRABAJADOR
+			if(map.containsKey("PORCENTAJE_DESMPL")){
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL", map.get("PORCENTAJE_DESMPL"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_DESMPL");
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL", data);
+			}
+			if(map.containsKey("PORCENTAJE_CGC")){
+				peculiarQuoteMap.put("PORCENTAJE_CGC", map.get("PORCENTAJE_CGC"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CGC");
+				peculiarQuoteMap.put("PORCENTAJE_CGC", data);
+			}
+			if(map.containsKey("PORCENTAJE_CGP")){
+				peculiarQuoteMap.put("PORCENTAJE_CGP", map.get("PORCENTAJE_CGP"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CGP");
+				peculiarQuoteMap.put("PORCENTAJE_CGP", data);
+			}
+			if(map.containsKey("PORCENTAJE_EXTR")){
+				peculiarQuoteMap.put("PORCENTAJE_EXTR", map.get("PORCENTAJE_EXTR"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_EXTR");
+				peculiarQuoteMap.put("PORCENTAJE_EXTR", data);
+			}
+			if(map.containsKey("PORCENTAJE_NEXTR")){
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR", map.get("PORCENTAJE_NEXTR"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_NEXTR");
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR", data);
+			}
+			
+//			EMPRESA
+			if(map.containsKey("PORCENTAJE_IT")){
+				peculiarQuoteMap.put("PORCENTAJE_IT", map.get("PORCENTAJE_IT"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_IT");
+				peculiarQuoteMap.put("PORCENTAJE_IT", data);
+			}
+			if(map.containsKey("PORCENTAJE_IMS")){
+				peculiarQuoteMap.put("PORCENTAJE_IMS", map.get("PORCENTAJE_IMS"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_IMS");
+				peculiarQuoteMap.put("PORCENTAJE_IMS", data);
+			}
+			if(map.containsKey("PORCENTAJE_DESMPL_E")){
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL_E", map.get("PORCENTAJE_DESMPL_E"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_DESMPL_E");
+				peculiarQuoteMap.put("PORCENTAJE_DESMPL_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_FOGASA")){
+				peculiarQuoteMap.put("PORCENTAJE_FOGASA", map.get("PORCENTAJE_FOGASA"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_FOGASA");
+				peculiarQuoteMap.put("PORCENTAJE_FOGASA", data);
+			}
+			if(map.containsKey("PORCENTAJE_CGC_E")){
+				peculiarQuoteMap.put("PORCENTAJE_CGC_E", map.get("PORCENTAJE_CGC_E"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CGC_E");
+				peculiarQuoteMap.put("PORCENTAJE_CGC_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_EXTR_E")){
+				peculiarQuoteMap.put("PORCENTAJE_EXTR_E", map.get("PORCENTAJE_EXTR_E"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_EXTR_E");
+				peculiarQuoteMap.put("PORCENTAJE_EXTR_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_NEXTR_E")){
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR_E", map.get("PORCENTAJE_NEXTR_E"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_NEXTR_E");
+				peculiarQuoteMap.put("PORCENTAJE_NEXTR_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_FP_E")){
+				peculiarQuoteMap.put("PORCENTAJE_FP_E", map.get("PORCENTAJE_FP_E"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_FP_E");
+				peculiarQuoteMap.put("PORCENTAJE_FP_E", data);
+			}
+			if(map.containsKey("PORCENTAJE_CORTA_DURACION")){
+				peculiarQuoteMap.put("PORCENTAJE_CORTA_DURACION", map.get("PORCENTAJE_CORTA_DURACION"));
+			} else {
+				ContractData data = new ContractData();
+				data.setName("PORCENTAJE_CORTA_DURACION");
+				peculiarQuoteMap.put("PORCENTAJE_CORTA_DURACION", data);
+			}
+		}
+		
+		public void onAcceptPeculiarQuote(ActionEvent event){
+			for(String key: peculiarQuoteMap.keySet()){
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+					ContractData data = peculiarQuoteMap.get(key);
+					if(StringUtils.isNotBlank(data.getExpression())){
+						data.setContract(contract);
+						data.setStartDate(contract.getStartDate());
+						data.setEndDate(contract.getEndDate());
+						bean.insertOrUpdate(data);
+					} else {
+						if(data.getId() != null){
+							bean.remove(data);
+						}
+					}
+				} catch (ManagerBeanException e) {
+					String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
+					AonUtil.addErrorMessage(msg);
+				}
+			}
+		}
 	}
 	
 // ************************************
 // ************************************
 	public class ContractParams {
+
+		private ContractInfo sepeStatusInfo;
+		private ContractInfo ssStatusInfo;
+		
 		private boolean retaQuote;
 		private ContractOption contractOption;
 		private ContractType contractType;
@@ -1453,6 +1659,40 @@ public class ContractController extends BasicController {
 		private Integer settleWorkedYears;
 		private Integer settleWorkedMonths;
 		
+		public ContractInfo getSepeStatusInfo() {
+			return sepeStatusInfo;
+		}
+		public void setSepeStatusInfo(ContractInfo sepeStatusInfo) {
+			this.sepeStatusInfo = sepeStatusInfo;
+		}
+		public ContractSepeStatus getSepeStatus() {
+			if(getSepeStatusInfo()!=null){
+				return ContractSepeStatus.valueOf(getSepeStatusInfo().getExpression());
+			}
+			return null;
+		}
+		public void setSepeStatus(ContractSepeStatus sepeStatus) {
+			if(this.sepeStatusInfo!=null && sepeStatus!=null){
+				this.sepeStatusInfo.setExpression(sepeStatus.getValue());
+			}
+		}
+		public ContractInfo getSsStatusInfo() {
+			return ssStatusInfo;
+		}
+		public void setSsStatusInfo(ContractInfo ssStatusInfo) {
+			this.ssStatusInfo = ssStatusInfo;
+		}
+		public ContractSsStatus getSsStatus() {
+			if(getSsStatusInfo()!=null){
+				return ContractSsStatus.valueOf(getSsStatusInfo().getExpression());
+			}
+			return null;
+		}
+		public void setSsStatus(ContractSsStatus ssStatus) {
+			if(this.ssStatusInfo!=null && ssStatus!=null){
+				this.ssStatusInfo.setExpression(ssStatus.getValue());
+			}
+		}
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
 		}

@@ -54,7 +54,9 @@ public class SQLITData implements Serializable {
 					+ " inner join person on "
 					+ "contract.person = person.registry "
 					+ " where contract.workplace = ?"
-					+ " order by person.first_surname asc,"					
+					+ " order by person.first_surname asc,"
+					+ " person.second_surname asc,"
+					+ " person.name asc,"
 					+ " contract_leave.start_date asc";
 
 			stmt = conn.prepareStatement(select);

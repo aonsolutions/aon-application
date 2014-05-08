@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
@@ -27,7 +30,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
@@ -51,10 +53,12 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 	}
 
+	private static final List<Variable> EMPTY_VARS = Collections.emptyList();
+
 	private static final Binder binder = GWT.create(Binder.class);
 
 	private class ExpressionTextBox extends TextBox implements BlurHandler,
-			FocusHandler, AsyncCallback<Double> {
+			FocusHandler, AsyncCallback<List<Result>> {
 
 		private String result;
 		private String expression;
@@ -99,8 +103,11 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 		}
 
 		@Override
-		public void onSuccess(Double d) {
-			result = format(d);
+		public void onSuccess(List<Result> results) {
+			double total = 0.00;
+			for (Result result : results)
+				total += result.getResult().doubleValue();
+			result = format(total);
 			setText(result);
 		}
 
@@ -127,7 +134,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 		}
 
 		void eval(boolean fire) {
-			contextProvider.eval(expression, this);
+			contextProvider.eval(expression, EMPTY_VARS, this);
 		}
 
 		boolean changed(String newExpression) {

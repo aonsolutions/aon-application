@@ -366,8 +366,10 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			fillVatModules(fa, epigrafe );
 			fillIrpfModules(fa, epigrafe );
 			fillInfoChoices();
-		} 
-		fillM311( fa );
+		}
+		if (fa.getYear() < 2014) {
+			fillM311( fa );
+		}
 	}
 
 	private void fillInfo(FiscalActivity fa) {
@@ -625,10 +627,12 @@ public class FiscalActivityController extends BasicController implements IFiscal
 
 	public void calculateM311() throws AonException {
 		FiscalActivity fa =  getFiscalActivity();
-		if (fa.isFarmer()) {
-			getCalculator().calculateFarmerM311();
-		} else {
-			getCalculator().calculateM311();
+		if (fa.getYear() < 2014) {
+			if (fa.isFarmer()) {
+				getCalculator().calculateFarmerM311();
+			} else {
+				getCalculator().calculateM311();
+			}
 		}
 	}
 

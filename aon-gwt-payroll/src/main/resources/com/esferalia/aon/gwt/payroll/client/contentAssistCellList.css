@@ -1,0 +1,19 @@
+.cellListWidget {
+  
+}
+
+.cellListEvenItem,
+.cellListOddItem {
+  	color: black;
+}
+.cellListOddItem:hover,
+.cellListEvenItem:hover{
+	background: none;	
+}
+
+.cellListSelectedItem ,
+.cellListKeyboardSelectedItem,
+.cellListWidget:hover .cellListSelectedItem {
+	background: none repeat scroll 0 0 #E3DFD9;
+}
+

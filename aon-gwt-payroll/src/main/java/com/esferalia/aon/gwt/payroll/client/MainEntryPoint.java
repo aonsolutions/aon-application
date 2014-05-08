@@ -49,6 +49,20 @@ public class MainEntryPoint implements EntryPoint {
 		@Source("aon.css")
 		CssResource css();
 
+		ImageResource x();
+
+		ImageResource f();
+
+		ImageResource fx();
+
+		ImageResource lamp();
+
+		ImageResource expand();
+		
+		ImageResource collapse();
+		
+		ImageResource tooltip_top();
+
 		@Source("draft.png")
 		ImageResource draft();
 

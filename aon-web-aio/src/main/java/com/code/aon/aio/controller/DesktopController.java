@@ -97,7 +97,8 @@ public class DesktopController {
     private boolean adminDomain;
     private boolean supportEnabled;
     private boolean patchInitAction;
-
+	private Boolean logEnabled;
+    
     public DesktopController() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		this.adminDomain = ds.getType() == DomainType.ADMIN;
@@ -487,6 +488,13 @@ public class DesktopController {
 		if ( value != Boolean.TRUE ) {
 			this.homepagOption = null;	
 		}
+	}
+
+	public boolean isLogEnabled() {
+		if ( logEnabled == null ) {
+			this.logEnabled = AppParamUtil.getValueAsBoolean(AppParam.AON_LOG_ENABLED);
+		}
+		return logEnabled;
 	}
 	
 }

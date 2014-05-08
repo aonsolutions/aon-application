@@ -72,6 +72,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	private boolean showExtensionContrataWindow;
 	private boolean showTransformContrataWindow;
 	
+	private boolean updateRequired;
+	
 	private boolean newBatch;
 	
 	private IContrataHandler handler;
@@ -234,6 +236,13 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	@Override
 	public boolean isNewBatch() {
 		return newBatch;
+	}
+	
+	public boolean isUpdateRequired() {
+		return updateRequired;
+	}
+	public void setUpdateRequired(boolean updateRequired) {
+		this.updateRequired = updateRequired;
 	}
 	
 	public String getContrataModelName(){

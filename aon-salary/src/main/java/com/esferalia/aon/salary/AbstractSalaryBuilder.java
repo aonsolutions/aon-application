@@ -180,20 +180,21 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
 	}
-	
+
 	@Override
 	public void addEmbargo(Integer embargo, Double amount, String description) {
 
 	}
 
 	@Override
-	public void addCost(Double amount, String description,
-			IDeduction cost, Map<String, ITimedVariable<?>> context) {
+	public void addCost(Double amount, String description, IDeduction cost,
+			Map<String, ITimedVariable<?>> context) {
 
 	}
 
 	@Override
-	public void addPayment(Double amount, Double quote, Double tax, String description, IPayment payment,
+	public void addPayment(Double amount, Double quote, Double tax,
+			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 	}
 

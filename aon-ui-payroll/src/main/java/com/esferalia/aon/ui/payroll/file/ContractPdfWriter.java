@@ -23,19 +23,8 @@ import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
 public class ContractPdfWriter {
 	
-	private static ContractPdfWriter instance;
 	private URL contractDocumentUrl;
 	private IContractPdfDocument pdfDocument;
-	
-	private ContractPdfWriter(){
-	}
-	
-	public static ContractPdfWriter getInstance(){
-		if (instance == null) {
-			instance = new ContractPdfWriter();
-		}
-		return instance;
-	}
 	
 	public IContractPdfDocument getPdfDocument(){
 		return pdfDocument;

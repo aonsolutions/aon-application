@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.check.modules.account;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Connection;
 import java.text.MessageFormat;
@@ -10,6 +11,7 @@ import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
+import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -38,12 +40,27 @@ public class ParentEntryCheck implements ICheckModule {
 			Stack<String> stack = null;
 			connection = DatabaseUtil.getConnection(params.getDomainName());
 			DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
-			Result<Record3<String,Byte,String>> record = 
-				ctx.select(ACCOUNT.CODE,ACCOUNT.LEVEL,ACCOUNT.DESCRIPTION)
-					.from(ACCOUNT)
-					.where(ACCOUNT.DOMAIN.equal(params.getDomainId()))
-					.orderBy(ACCOUNT.CODE)
-					.fetch();
+			Record2<Byte,Integer> domainRecord = ctx.select(DOMAIN.ENABLEHEREDITY,DOMAIN.PARENT)
+							  .from(DOMAIN)
+							  .where(DOMAIN.ID.equal(params.getDomainId()))
+							  .fetchOne();
+			Byte enabled = domainRecord.getValue(DOMAIN.ENABLEHEREDITY);
+			Result<Record3<String,Byte,String>> record = null;
+			if (enabled != null && enabled == 1) {
+				Integer parentDomain = domainRecord.getValue(DOMAIN.PARENT);
+				record = ctx.select(ACCOUNT.CODE,ACCOUNT.LEVEL,ACCOUNT.DESCRIPTION)
+						.from(ACCOUNT)
+						.where(ACCOUNT.DOMAIN.equal(params.getDomainId()))
+						.or(ACCOUNT.DOMAIN.equal(parentDomain))
+						.orderBy(ACCOUNT.CODE)
+						.fetch();
+			} else {
+				record = ctx.select(ACCOUNT.CODE,ACCOUNT.LEVEL,ACCOUNT.DESCRIPTION)
+						.from(ACCOUNT)
+						.where(ACCOUNT.DOMAIN.equal(params.getDomainId()))
+						.orderBy(ACCOUNT.CODE)
+						.fetch();
+			}
 			for (Record3<String,Byte,String> step : record) {
 				String code = step.getValue(ACCOUNT.CODE);
 				byte level = step.getValue(ACCOUNT.LEVEL);

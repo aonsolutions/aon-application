@@ -435,7 +435,7 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 			
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.10; 
+			coef = coef + (0.10 * as); 
 			as = CommonUtil.round(as - 1);
 		}
 		if (CommonUtil.round(as) > 0.0) {

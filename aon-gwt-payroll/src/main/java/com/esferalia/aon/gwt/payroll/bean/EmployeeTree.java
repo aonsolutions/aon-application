@@ -192,6 +192,13 @@ public class EmployeeTree {
 		this.selection = Selection.BONUS_CONCEPTS;
 	}
 	
+	
+	public boolean isGps() {
+		EnterpriseController ec = (EnterpriseController) AonUtil
+				.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
+		return com.esferalia.aon.gwt.payroll.shared.Enterprise.isGPS(((Enterprise) ec.getTo()).getRegistry().getName());
+	}
+	
 	private static final Random RANDOM = new Random();
 	// I use this at 'gwt.xhtml'. This way I can force load of GWT javascript each time.
 	// src="...aon_gwt_payroll.nocache.js?...&amp;horribleFix=#{employeeTree.nextInt}"

@@ -48,6 +48,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
@@ -215,7 +216,8 @@ public class SQLContractSalaryCalculatorContext implements
 			+ "	ON payment_concept = payment_concept.id"
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
 			+ " OR end_date >= ? )" + " AND "
-			+ SQLContractPayment.PAYMENT_ALIAS + ".domain = ? ";
+			+ SQLContractPayment.PAYMENT_ALIAS + ".domain IN ( " 
+			+ StringUtils.repeat("?", ",", SSRegimeType.class.getEnumConstants().length ) + ") ";
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data"
 			+ " WHERE contract = ? " + "AND start_date <= ? "
@@ -477,7 +479,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private Date contractEndDate;
 	private Collection<IContractCost> systemCosts;
 	private Collection<IContractDeduction> systemDeductions;
-	private Collection<IContractPayment> systemPayments;
+	private Collection<ISystemPayment> systemPayments;
 
 	private SQLCnae2009 cnae2009;
 	private LRUCache<Integer, ICalendar> calendars;
@@ -828,7 +830,7 @@ public class SQLContractSalaryCalculatorContext implements
 			// this.systemPayments.iterator());
 
 			return new CompositePayments(this.sqlContractPayment,
-					getAgreementPayments(), this.systemPayments);
+					getAgreementPayments(), getSystemPayments());
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -1200,6 +1202,23 @@ public class SQLContractSalaryCalculatorContext implements
 		return agreementExpressionContexts.get(agreementAndLevel);
 	}
 
+	private Collection<IContractPayment> getSystemPayments() throws AonException {
+		List<IContractPayment> payments = new ArrayList<IContractPayment>(
+				systemPayments.size());
+		for (ISystemPayment systemPayment : systemPayments) {
+			if ( filter(systemPayment)) {
+				payments.add(systemPayment);
+			}
+		}
+		return payments;
+
+	}
+	
+	private boolean filter(ISystemPayment systemPayment){
+		return systemPayment.getDomain() == (-1) *  getSSRegime().ordinal(); 
+	}
+	
+	
 	/*
 	 * Devuelve el <code>ICalendar</code> asociado con el contrato (trabajador),
 	 * si no tiene calendario propio devuelve el de su centro de trabajo o el
@@ -1402,7 +1421,7 @@ public class SQLContractSalaryCalculatorContext implements
 							public String getRetenedorApellidosNombre() {
 								return "LINUX FOUNDATION";
 							}
-							
+
 							public int getAñoNacimiento() {
 								return 1969;
 							};
@@ -1457,7 +1476,7 @@ public class SQLContractSalaryCalculatorContext implements
 				public String getApellidosNombre() {
 					return "TORVALDS BENEDICT LINUS";
 				}
-				
+
 				@Override
 				public int getAñoNacimiento() {
 					return 1969;
@@ -2399,9 +2418,13 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
+			
+			for (int i = 0; i < SSRegimeType.class.getEnumConstants().length; i++) {
+				stmt.setInt(i+3, i*(-1));
+			}
+			
 			rs = stmt.executeQuery();
-			systemPayments = SQLCollections.paymentsCollection(rs);
+			systemPayments = SQLCollections.systemPaymentsCollection(rs);
 		} finally {
 			if (rs != null)
 				rs.close();

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -86,11 +87,11 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync {
 			throws IllegalArgumentException;
 
 	void eval(String expression, SalaryDraft salaryDraft,
-			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
 			EvalException;
 
 	void eval(String expression, AgreementDraft agreementDraft ,int levelId,
-			AsyncCallback<Double> callback) throws IllegalArgumentException,
+			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
 			EvalException;
 
 	void getContext(SalaryDraft salaryDraft,

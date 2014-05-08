@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.mvel2.util.MethodStub;
+
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
@@ -51,6 +54,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 
 public class SalaryDraftBuilder implements ISalaryBuilder,
@@ -357,7 +361,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
@@ -372,7 +376,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		myBonus.setType(getBonusType(bonus.getType()));
 
 		salaryDraft.addBonus(myBonus);
-		
+
 	}
 
 	@Override
@@ -382,9 +386,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	}
 
 	@Override
-	public void addCost(Double amount, String description,
-			IDeduction cost, Map<String, ITimedVariable<?>> context) {
-		
+	public void addCost(Double amount, String description, IDeduction cost,
+			Map<String, ITimedVariable<?>> context) {
+
 		addContext(context);
 
 		Deduction myCost = new Deduction();
@@ -401,7 +405,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void addPayment(Double amount, Double quote, Double tax,
-			String description, IPayment payment,
+			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
 
 		addContext(context);
@@ -414,15 +418,24 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		draftPayment.setQuote(quote);
 		draftPayment.setDescription(description);
 		draftPayment.setType(getPaymentType(payment.getType()));
+		draftPayment.setStartDate(startDate);
+		draftPayment.setEndDate(endDate);
 
-		salaryDraft.addPayment(draftPayment);
+		CompositePayment compositePayment = getPayment(draftPayment.getId());
+
+		if (compositePayment != null)
+			compositePayment.addChild(draftPayment);
+		else
+			salaryDraft.addPayment(draftPayment);
 
 	}
 
 	@Override
 	public void addZeroPayment(Double quote, Double tax, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		addPayment(0.00, quote, tax, payment.getDescription(), payment, context);
+		addPayment(0.00, quote, tax, payment.getDescription(),
+				((IContractPayment) payment).getStartDate(),
+				((IContractPayment) payment).getEndDate(), payment, context);
 	}
 
 	@Override
@@ -637,11 +650,14 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	private void clearSalaryDraft() {
 		salaryDraft.clear();
-		
+
 	}
 
 	private void addContext(Map<String, ITimedVariable<?>> context) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
+
+			String name = entry.getKey();
+
 			ITimedVariable<?> var = entry.getValue();
 
 			ContextVariable contextVariable = ContextVariable
@@ -650,20 +666,23 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 				continue;
 			}
 
-			if (var instanceof IExpressionVariable<?>) {
+			Period period = var.getPeriod();
+			Object value = var.getValue(period);
+
+			if (value instanceof MethodStub)
+				continue;
+
+			if (var instanceof IExpressionVariable<?> && !isPayment(name)) {
 				IExpressionVariable<?> exprVar = (IExpressionVariable<?>) var;
 				IExpression expr = exprVar.getExpression();
 				Scope scope = getScope(expr.getScope());
-				String name = entry.getKey();
-				salaryDraft.addVariable(entry.getKey(), var.getValue(var
-						.getPeriod()), var.getPeriod().getStart(), var
-						.getPeriod().getEnd(), scope, expr.getExpression(),
-						defined.get(name));
+				salaryDraft.addVariable(entry.getKey(), value,
+						period.getStart(), period.getEnd(), scope,
+						expr.getExpression(), defined.get(name));
 				addContext(exprVar.getContext());
 			} else {
-				salaryDraft.addVariable(entry.getKey(), var.getValue(var
-						.getPeriod()), var.getPeriod().getStart(), var
-						.getPeriod().getEnd());
+				salaryDraft.addVariable(entry.getKey(), value,
+						period.getStart(), period.getEnd());
 			}
 		}
 	}
@@ -701,13 +720,30 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		payment.setDescription(contractPayment.getDescription());
 		payment.setIrpfExpression(contractPayment.getIrpfExpression());
 		payment.setQuoteExpression(contractPayment.getQuoteExpression());
-		
-		if ( !StringUtils.isBlank(contractPayment.getName()) && 
-				defined.containsKey(contractPayment.getName()) )
+
+		if (!StringUtils.isBlank(contractPayment.getName())
+				&& defined.containsKey(contractPayment.getName()))
 			payment.setDefined(defined.get(contractPayment.getName()));
-		
-		
+
 		return payment;
+	}
+
+	private CompositePayment getPayment(Integer id) {
+		List<Payment> payments = salaryDraft.getPayments();
+		for (int i = 0; i < payments.size(); i++) {
+			Payment payment = payments.get(i);
+			if (payment.getId() == id) {
+				if (payment instanceof CompositePayment)
+					return (CompositePayment) payment;
+
+				CompositePayment composite = new CompositePayment();
+				composite.addChild(payment);
+				payments.set(i, composite);
+				return composite;
+
+			}
+		}
+		return null;
 	}
 
 	// ------------------------------------------------------------------------
@@ -727,6 +763,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	private Scope getScope(ExpressionScope exprScope) {
 		return exprScope != null ? Scope.values()[exprScope.ordinal()]
 				: Scope.SYSTEM;
+	}
+
+	private boolean isPayment(String name) {
+		for (Payment payment : salaryDraft.getPayments())
+			if (StringUtils.equals(name, payment.getName()))
+				return true;
+		return false;
 	}
 
 	private static Payment.Type getPaymentType(PaymentType type) {

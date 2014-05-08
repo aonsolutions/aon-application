@@ -39,9 +39,9 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// BT=TOTAL OP. INTERIORES
 	BT	("BT"	,true	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2,VatTaxKey.B3},null),
 	// C1=IMPORTACIONES DE BIENES CORRIENTES
-	C1	("C1"	,true	,false	,true	,false	,false	,false	,false	,null,null),
+	C1	("C1"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// C2=IMPORTACIONES DE BIENES DE INVERSION
-	C2	("C2"	,true	,false	,true	,false	,false	,false	,false	,null,null),
+	C2	("C2"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// CT=TOTAL IMPORTACIONES
 	CT	("CT"	,true	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2},null),
 	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES

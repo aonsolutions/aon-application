@@ -59,7 +59,14 @@ public class Enterprise implements Serializable, HasId<Integer>, HasName<String>
 	public void addActivity(Activity activity ) {
 		activities.add(activity);
 	}
+
+	public static boolean isGPS(Enterprise enterprise) {
+		return isGPS(enterprise.getName());
+	}
 	
+	public static boolean isGPS(String name ) {
+		return name != null && name.matches(".*GO\\s*LAM\\s*SEC.*");
+	}
 	
 	
 }
