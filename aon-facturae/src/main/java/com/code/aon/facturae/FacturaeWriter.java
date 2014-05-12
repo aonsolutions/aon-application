@@ -424,13 +424,18 @@ public class FacturaeWriter {
 		return invoiceIssueData;
 	}	
 	
+	private double getTaxQuota( TaxBreakDown tbd ) {
+		int precision = DecimalUtil.isFixDecimals() ? 6 : 2;
+		return CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100, precision);
+	}
+	
 	private TaxType getTax( TaxBreakDown tbd, boolean lineTax ) {
 		TaxType tax = new TaxType();
 		tax.setTaxTypeCode(RETENTION_TAX_TYPE_CODE);
 		tax.setTaxRate( tbd.getTaxPercent() );
 		tax.setTaxableBase( Util.getAmount(tbd.getBase()) );
 		if( lineTax && tbd.getTaxQuota() == 0 ) {
-			double quota = CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100);
+			double quota = getTaxQuota(tbd);
 			tax.setTaxAmount( Util.getAmount(quota) );
 		} else {
 			tax.setTaxAmount( Util.getAmount(tbd.getTaxQuota()) );	
@@ -450,7 +455,7 @@ public class FacturaeWriter {
 		taxOutput.setTaxRate( tbd.getTaxPercent() );
 		taxOutput.setTaxableBase( Util.getAmount(tbd.getBase()) );
 		if( lineTax && tbd.getTaxQuota()==0 ) {
-			double quota = CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100);
+			double quota = getTaxQuota(tbd);
 			taxOutput.setTaxAmount( Util.getAmount(quota) );
 		} else {
 			taxOutput.setTaxAmount( Util.getAmount(tbd.getTaxQuota()) );	
