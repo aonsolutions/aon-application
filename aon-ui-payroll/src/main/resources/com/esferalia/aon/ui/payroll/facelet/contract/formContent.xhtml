@@ -62,7 +62,6 @@
 			<aon:div id="enterpriseCCCs">
 				<aon:selectOneMenu id="enterpriseCCClist" required="true"
 					rendered="#{!readOnly}"
-					disabled="#{contract.to.activity.id==null}"
 					value="#{contract.to.enterpriseCCC}" >
 					<f:selectItems value="#{contract.enterpriseCCCs}" />
 				</aon:selectOneMenu>
@@ -135,7 +134,8 @@
 			<aon:div id="Contract_contractModelDiv">
 				<aon:selectOneMenu id="Contract_contractModel"
 					rendered="#{!contract.readOnly}" 
-					value="#{contract.params.contractModelOption}">
+					value="#{contract.params.contractModelOption}"
+					valueChangeListener="#{contract.onChangeModel}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{contract.contractModel}" />
 				</aon:selectOneMenu>
@@ -196,9 +196,9 @@
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="endDataContainer" 
+				<a4j:support event="oninputchange" reRender="endDataContainer" ajaxSingle="true" 
 					actionListener="#{contract.onChangeEndDate}" />
-				<a4j:support event="onchanged" reRender="endDataContainer"
+				<a4j:support event="onchanged" reRender="endDataContainer" ajaxSingle="true"
 					actionListener="#{contract.onChangeEndDate}" />
 			</aon:selectInputDate>
 			<aon:outputText value="#{contract.to.endDate}"

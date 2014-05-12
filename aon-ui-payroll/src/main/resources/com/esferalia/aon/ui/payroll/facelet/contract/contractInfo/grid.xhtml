@@ -6,7 +6,105 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="innerToolbar" value="#{true}" />
+		<ui:param name="toolbarID" value="aonToolbar-contractPdfField" />
+		<ui:define name="toolbarContent">
+		<aon:commandButton id="contractPdfField-save"
+			value="#{bundle.aon_save}" 
+			actionListener="#{controller.onSaveDomainFields}"
+			styleClass="aon-finding-toolbar-item aon-icon-accept" />
+		</ui:define>
+	</ui:decorate>
+
+	<aon:panelTabSet switchType="ajax">
+						
+		<aon:panelTab label="Indefinido" >
+			<a4j:repeat var="to" value="#{controller.indefiniteFieldList}">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
+				
+					<aon:outputText value="#{to.name}" />
+					<aon:inputText value="#{to.expression}"
+						maxlength="128" size="64"
+						rendered="#{!to.check}" />
+					<aon:selectBooleanCheckbox value="#{to.expression}"
+						rendered="#{to.check and !to.composite}" />
+					<aon:selectOneMenu value="#{to.expression}"
+						rendered="#{to.check and to.composite}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{to.compositeList}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+			</a4j:repeat>
+		</aon:panelTab>
+		<aon:panelTab label="Temporal" >
+			<a4j:repeat var="to" value="#{controller.temporaryFieldList}">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
+				
+					<aon:outputText value="#{to.name}" />
+					<aon:inputText value="#{to.expression}"
+						maxlength="128" size="64"
+						rendered="#{!to.check}" />
+					<aon:selectBooleanCheckbox value="#{to.expression}"
+						rendered="#{to.check and !to.composite}" />
+					<aon:selectOneMenu value="#{to.expression}"
+						rendered="#{to.check and to.composite}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{to.compositeList}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+			</a4j:repeat>
+		</aon:panelTab>
+		<aon:panelTab label="Formacion" >
+			<a4j:repeat var="to" value="#{controller.learningFieldList}">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
+				
+					<aon:outputText value="#{to.name}" />
+					<aon:inputText value="#{to.expression}"
+						maxlength="128" size="64"
+						rendered="#{!to.check}" />
+					<aon:selectBooleanCheckbox value="#{to.expression}"
+						rendered="#{to.check and !to.composite}" />
+					<aon:selectOneMenu value="#{to.expression}"
+						rendered="#{to.check and to.composite}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{to.compositeList}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+			</a4j:repeat>
+		</aon:panelTab>
+		<aon:panelTab label="Practicas" >
+			<a4j:repeat var="to" value="#{controller.practiceFieldList}">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
+				
+					<aon:outputText value="#{to.name}" />
+					<aon:inputText value="#{to.expression}"
+						maxlength="128" size="64"
+						rendered="#{!to.check}" />
+					<aon:selectBooleanCheckbox value="#{to.expression}"
+						rendered="#{to.check and !to.composite}" />
+					<aon:selectOneMenu value="#{to.expression}"
+						rendered="#{to.check and to.composite}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{to.compositeList}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+			</a4j:repeat>
+		</aon:panelTab>
 	
+	</aon:panelTabSet>
+	
+	
+<!--	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:define name="columns">
 			
@@ -22,14 +120,14 @@
 						rendered="#{formEdit}"
 						value="#{controller.to.name}" >
 						<f:selectItem itemLabel=" - " value="#{null}" />
-						<f:selectItems value="#{controller.fieldNames}" />
+						<f:selectItems value="#{controller.commonFields}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
 						<aon:selectOneMenu id="ContractInfo_name-New" required="true"
 							rendered="#{formNew}"
 							value="#{controller.to.name}" >
 							<f:selectItem itemLabel=" - " value="#{null}" />
-							<f:selectItems value="#{controller.fieldNames}" />
+							<f:selectItems value="#{controller.commonFields}" />
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>
@@ -70,7 +168,7 @@
 						value="#{controller.to.expression}" maxlength="128" />
 				</f:facet>
 			</aon:column>
-			
+		
 			<aon:column alias="ContractInfo.startDate"
 				styleClass="aon-editDataTable-dateColumn aon-width-150">
 				<f:facet name="header">
@@ -117,5 +215,6 @@
 			
 		</ui:define>
 	</ui:decorate>
+-->			
 	
 </ui:composition>

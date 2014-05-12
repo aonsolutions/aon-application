@@ -110,6 +110,7 @@ public class CompanyCollectionsController {
 		return saleInvoiceTemplates;
 	}
 	
+	@Deprecated
 	public List<SelectItem> getSalaryTemplates() {
 		if (salaryTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

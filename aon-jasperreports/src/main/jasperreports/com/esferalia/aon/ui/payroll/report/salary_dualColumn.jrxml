@@ -1,0 +1,915 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
+	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
+	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
+	<style name="label" vAlign="Bottom" fontSize="9">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[false]]></conditionExpression>
+			<style forecolor="#808080"/>
+		</conditionalStyle>
+	</style>
+	<style name="title" style="label" backcolor="#FFFFFF" fontSize="11" isBold="true" isUnderline="true"/>
+	<style name="title1" style="label" fontSize="10" isBold="true"/>
+	<style name="title2" style="label" fontSize="9" isBold="true"/>
+	<style name="box" style="label">
+		<box>
+			<pen lineWidth="1.0"/>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0"/>
+			<bottomPen lineWidth="1.0"/>
+			<rightPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="label_dotts" style="label">
+		<box>
+			<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+		</box>
+	</style>
+	<style name="title2_dotts" style="title2">
+		<box>
+			<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+		</box>
+	</style>
+	<style name="title1_dotts" style="title1">
+		<box>
+			<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+		</box>
+	</style>
+	<style name="underline">
+		<box>
+			<bottomPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="amount" style="label" hAlign="Right">
+		<box>
+			<bottomPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="total1" style="title1" hAlign="Right">
+		<box>
+			<bottomPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<subDataset name="payments">
+		<field name="description" class="java.lang.String"/>
+		<field name="expression" class="java.lang.String"/>
+		<field name="amount" class="java.lang.Double"/>
+		<field name="type" class="com.esferalia.aon.salary.enumeration.PaymentType"/>
+		<group name="type">
+			<groupExpression><![CDATA[$F{type}]]></groupExpression>
+		</group>
+	</subDataset>
+	<subDataset name="fills"/>
+	<subDataset name="deductions">
+		<field name="description" class="java.lang.String"/>
+		<field name="expression" class="java.lang.String"/>
+		<field name="amount" class="java.lang.Double"/>
+		<field name="type" class="com.esferalia.aon.salary.enumeration.DeductionType"/>
+		<group name="type">
+			<groupExpression><![CDATA[$F{type}]]></groupExpression>
+		</group>
+	</subDataset>
+	<queryString language="hql">
+		<![CDATA[FROM Salary WHERE Id=9]]>
+	</queryString>
+	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
+	<variable name="supplements" class="java.util.List">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSalarySupplements().getValues()]]></variableExpression>
+	</variable>
+	<variable name="deductions" class="java.util.List">
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryDeductions(),"type", "description")]]></variableExpression>
+	</variable>
+	<variable name="compensations" class="java.util.List">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getCompensationOrPrepaidExpenses().getValues()]]></variableExpression>
+	</variable>
+	<variable name="others" class="java.util.List">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getOtherNonWages().getValues()]]></variableExpression>
+	</variable>
+	<variable name="ssBenefits" class="java.util.List">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getValues()]]></variableExpression>
+	</variable>
+	<variable name="salaryInKind" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSalaryInKind().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="totalPayment" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{salary}.getTotalPayment() + $V{salaryInKind}]]></variableExpression>
+	</variable>
+	<variable name="totalDeduction" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{salary}.getTotalDeduction() + $V{salaryInKind}]]></variableExpression>
+	</variable>
+	<variable name="printedLines" class="java.lang.Integer">
+		<variableExpression><![CDATA[$V{supplements}.size()]]></variableExpression>
+	</variable>
+	<variable name="remainLines" class="java.lang.Integer">
+		<variableExpression><![CDATA[$V{supplements}.size() <= 4 ? 4 - Math.max(1, $V{supplements}.size()) : 23]]></variableExpression>
+	</variable>
+	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
+		<variableExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.SIGNATURE)]]></variableExpression>
+	</variable>
+	<variable name="allPayments" class="java.util.List">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getOrderedPayment()]]></variableExpression>
+	</variable>
+	<variable name="remainPayments" class="java.lang.Integer">
+		<variableExpression><![CDATA[$V{allPayments}.size() >= 15 ? 0 : (25-$V{allPayments}.size())]]></variableExpression>
+	</variable>
+	<background>
+		<band height="802">
+			<line>
+				<reportElement x="-1" y="113" width="557" height="1"/>
+			</line>
+			<line>
+				<reportElement x="-1" y="114" width="1" height="536"/>
+			</line>
+			<line>
+				<reportElement x="277" y="121" width="1" height="429"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="555" y="114" width="1" height="536"/>
+			</line>
+			<line>
+				<reportElement x="-1" y="650" width="557" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="801" width="556" height="1"/>
+			</line>
+			<line>
+				<reportElement x="-1" y="655" width="1" height="146"/>
+			</line>
+			<line>
+				<reportElement x="-1" y="654" width="557" height="1"/>
+			</line>
+			<line>
+				<reportElement x="555" y="655" width="1" height="146"/>
+			</line>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="114">
+			<textField>
+				<reportElement style="title" x="0" y="1" width="555" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE " +
+(($F{salary}!=null && $F{salary}.getType()!=null)?(
+($F{salary}.getType().ordinal()==0?"SALARIOS":"")+
+($F{salary}.getType().ordinal()==1?"P. EXTRAS":"")+
+($F{salary}.getType().ordinal()==2?"FINIQUITOS":"")+
+($F{salary}.getType().ordinal()==3?"ATRASOS":"")+
+($F{salary}.getType().ordinal()==4?"VACACIONES":"")
+):"SALARIOS")]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement style="box" x="0" y="19" width="276" height="70"/>
+				<staticText>
+					<reportElement style="label" x="4" y="2" width="50" height="13"/>
+					<textElement/>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="54" y="2" width="221" height="13"/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="15" width="50" height="13"/>
+					<textElement/>
+					<text><![CDATA[Domicilio:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="54" y="15" width="221" height="26"/>
+					<box topPadding="1"/>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseAddress()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="41" width="20" height="13"/>
+					<textElement/>
+					<text><![CDATA[CIF:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="24" y="41" width="251" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseDocument()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="54" width="200" height="13"/>
+					<textElement/>
+					<text><![CDATA[Cód. cuenta de cotización a la Seguridad Social:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="204" y="54" width="71" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getCcc()]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement style="box" x="279" y="19" width="276" height="70"/>
+				<staticText>
+					<reportElement style="label" x="4" y="2" width="55" height="13"/>
+					<textElement/>
+					<text><![CDATA[Trabajador:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="59" y="2" width="216" height="13"/>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="15" width="29" height="13"/>
+					<textElement/>
+					<text><![CDATA[N.I.F:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="33" y="15" width="242" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getEmployeeDocument()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="28" width="185" height="13"/>
+					<textElement/>
+					<text><![CDATA[Número de afiliciación a la Seguridad Social:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="189" y="28" width="86" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityNumber()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="41" width="127" height="13"/>
+					<textElement/>
+					<text><![CDATA[Categoría o grupo profesional:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="131" y="41" width="144" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getCategory()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="4" y="54" width="88" height="13"/>
+					<textElement/>
+					<text><![CDATA[Grupo de cotización:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="92" y="54" width="34" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getQuoteGroup()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="126" y="54" width="79" height="13"/>
+					<textElement/>
+					<text><![CDATA[Fecha Antigüedad:]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement style="label" x="205" y="54" width="70" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getContract().getSeniorityDate()]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement style="box" x="0" y="92" width="555" height="18"/>
+				<staticText>
+					<reportElement style="label" x="4" y="3" width="109" height="13"/>
+					<textElement/>
+					<text><![CDATA[Periodo de liquidación:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="115" y="2" width="348" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( new java.text.MessageFormat("del {0,date,dd 'de' MMMMMMMMMMM 'de' yyyy} al {1,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate() } , new StringBuffer(), null ).toString()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="label" x="471" y="3" width="47" height="13"/>
+					<textElement/>
+					<text><![CDATA[Total días]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="label" x="518" y="2" width="36" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getTimeUnits()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="353" splitType="Stretch">
+			<staticText>
+				<reportElement style="title1" x="4" y="11" width="109" height="13"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[I. DEVENGOS]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" positionType="Float" mode="Transparent" x="12" y="27" width="262" height="26" isRemoveLineWhenBlank="true"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="payments">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{allPayments})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="212">
+						<jr:groupHeader groupName="type">
+							<jr:cell height="13" rowSpan="1">
+								<textField pattern="##00" isBlankWhenNull="true">
+									<reportElement style="label_dotts" x="0" y="0" width="212" height="13"/>
+									<box>
+										<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+									</box>
+									<textElement>
+										<font isBold="true" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{type}.ordinal() + ". " +
+($F{type}.ordinal()==1?"Percepciones salariales":$F{type}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement style="label_dotts" x="0" y="0" width="212" height="13"/>
+								<box leftPadding="10">
+									<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								</box>
+								<textElement/>
+								<textFieldExpression><![CDATA[ReportUtils.capitalize($F{description})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50">
+						<jr:groupHeader groupName="type">
+							<jr:cell height="13" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell height="14" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="amount" x="0" y="0" width="50" height="13"/>
+								<box>
+									<bottomPen lineWidth="0.5"/>
+								</box>
+								<textElement/>
+								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" positionType="Float" x="178" y="66" width="96" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalPayment} == 0.00 ? null : $V{totalPayment}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title1_dotts" positionType="Float" x="1" y="66" width="177" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[A. TOTAL DEVENGADO]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="box" positionType="Float" x="2" y="92" width="276" height="242"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<staticText>
+					<reportElement positionType="Float" x="71" y="109" width="152" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Fuerza mayor o estructurales]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="199" width="50" height="13">
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getOther().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getOther().getAmount())]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="21" y="83" width="40" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getJobTraining().getDescription() + " %"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="187" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$V{salaryInKind} == 0.00 ? null : $V{salaryInKind}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="21" y="57" width="40" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getDescription() + " %"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="title1" positionType="Float" x="3" y="15" width="109" height="13"/>
+					<textElement>
+						<font size="9" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[II. DEDUCCIONES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="12" y="135" width="164" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[TOTAL APORTACIONES]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="31" y="122" width="40" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getDescription() + " %"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="11" y="187" width="212" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[4. Valor de los productos recibidos en especie]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="174" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getAdvancePayment().getAmount())]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="11" y="200" width="212" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[5. Otras deducciones]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="71" y="122" width="152" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[No estructurales]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="109" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getStructuralOvertime().getAmount())]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="83" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getJobTraining().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getJobTraining().getAmount())]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="176" y="135" width="97" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions() == 0.00 ? "" : $F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="61" y="83" width="162" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Formación Profesional]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="31" y="109" width="40" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getDescription() + " %"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="70" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getUnemployment().getAmount())]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="22" y="161" width="39" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getDescription() + " %"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="61" y="57" width="162" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Contingencias comunes]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="122" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getNonStructuralOvertime().getAmount())]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="161" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getIrpf().getAmount())]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="21" y="70" width="40" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getDescription() + " %"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement style="amount" positionType="Float" x="223" y="57" width="50" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getCommonContingency().getAmount())]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="12" y="148" width="261" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="21" y="96" width="252" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[Horas extraordinarias]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="61" y="70" width="162" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Desempleo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="11" y="174" width="212" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[3. Anticipos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="12" y="31" width="261" height="26"/>
+					<textElement>
+						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[1. Aportaciones del trabajador a las cotizaciones de la Seguridad Social y conceptos de recaudación conjunta]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="61" y="161" width="162" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[I.R.P.F.]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement key="table" positionType="Float" mode="Transparent" x="21" y="213" width="252" height="13" isRemoveLineWhenBlank="true"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="deductions">
+							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{deductions})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="202">
+							<jr:detailCell height="13" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement style="label_dotts" x="0" y="0" width="202" height="13" isRemoveLineWhenBlank="true">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.OTHER || $F{type} == DeductionType.ADVANCE_PAYMENT]]></printWhenExpression>
+									</reportElement>
+									<box leftPadding="10">
+										<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+									</box>
+									<textElement/>
+									<textFieldExpression><![CDATA[ReportUtils.capitalize($F{description})]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="50">
+							<jr:detailCell height="13" rowSpan="1">
+								<textField pattern="#,##0.00" isBlankWhenNull="true">
+									<reportElement style="amount" x="0" y="0" width="50" height="13" isRemoveLineWhenBlank="true">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.OTHER || $F{type} == DeductionType.ADVANCE_PAYMENT]]></printWhenExpression>
+									</reportElement>
+									<box>
+										<bottomPen lineWidth="0.5"/>
+									</box>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" positionType="Float" x="177" y="334" width="97" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalDeduction} == 0.00 ? null : $V{totalDeduction}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title1_dotts" positionType="Float" x="1" y="334" width="176" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[B. TOTAL A DEDUCIR]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table" positionType="Float" mode="Transparent" x="12" y="79" width="262" height="13" isRemoveLineWhenBlank="true"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="payments">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource($V{remainPayments})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="212">
+						<jr:detailCell height="13" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement style="label_dotts" x="0" y="0" width="212" height="13"/>
+								<box leftPadding="10">
+									<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+								</box>
+								<textElement/>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50">
+						<jr:detailCell height="13" rowSpan="1">
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="amount" x="0" y="0" width="50" height="13"/>
+								<box>
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement/>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="252" splitType="Prevent">
+			<staticText>
+				<reportElement style="title1_dotts" x="161" y="5" width="284" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[LÍQUIDO TOTAL A PERCIBIR (A-B)]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" x="445" y="5" width="107" height="13"/>
+				<textElement>
+					<font size="9" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid() == 0.00 ? null : new Double($F{salary}.getTotalLiquid())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="label" x="350" y="22" width="195" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[( new java.text.MessageFormat("{0,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getIssueDate(), $F{salary}.getEndDate() }, new StringBuffer(), null ).toString()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="label" x="350" y="38" width="33" height="13"/>
+				<textElement/>
+				<text><![CDATA[RECIBÍ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="label" x="14" y="22" width="334" height="13"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Firma y sello de la empresa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title1" x="7" y="108" width="541" height="26"/>
+				<textElement/>
+				<text><![CDATA[DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y DE LA BASE SUJETA A RETENCIÓN DEL IRPF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title2" x="17" y="137" width="531" height="13"/>
+				<textElement/>
+				<text><![CDATA[1. Base de cotización por contingencias comunes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="label_dotts" x="27" y="150" width="471" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Remuneración mensual]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="amount" x="498" y="150" width="50" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getRemuneration() == 0.00 ? "" : $F{salary}.getRemuneration()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="label_dotts" x="27" y="163" width="471" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Prorrata de pagas extraordinarias]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="amount" x="498" y="163" width="50" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getExtraPayProration() == 0.00 ? "" : $F{salary}.getExtraPayProration()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title1" x="27" y="176" width="421" height="13"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" x="451" y="176" width="97" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getCommonBase() == 0.00 ? "" : $F{salary}.getCommonBase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title2_dotts" x="17" y="194" width="481" height="26"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[2. Base de cotización por contingencias profesionales (AT y EP) y conceptos de recaudación conjunta (desempleo, formación profesional, Fondo de Garantía Salarial)]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" x="498" y="207" width="50" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title2_dotts" x="17" y="221" width="481" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[3. Base de cotización adicional por horas extraordinarias]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" x="498" y="221" width="50" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase() == 0.00 ? "" : $F{salary}.getOvertimeBase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title2_dotts" x="17" y="234" width="481" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[4. Base sujeta a retención del IRPF]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="total1" x="498" y="235" width="50" height="13"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getIrpfBase() == 0.00 ? "": $F{salary}.getIrpfBase()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="false">
+				<reportElement mode="Transparent" x="14" y="35" width="334" height="65">
+					<printWhenExpression><![CDATA[($V{signature} != null)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream($V{signature}.getData())]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>

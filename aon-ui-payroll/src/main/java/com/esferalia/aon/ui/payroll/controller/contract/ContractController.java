@@ -51,6 +51,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -90,6 +91,7 @@ import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
@@ -316,36 +318,37 @@ public class ContractController extends BasicController {
 	}
 
 	public boolean isExtendedContract(){
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			Contract contract = (Contract) this.getTo();
-			String sepeIdSelect = "SELECT name, expression  FROM contract_info  WHERE contract = " + contract.getId() + 
-					" AND name IN (" +
-//						"'" + ContractVariable.SEPE_CONTRACT.getValue() + "'," +
+		Contract contract = (Contract) this.getTo();
+		if(contract!=null && contract.getId()!=null ){
+			Connection conn = null;
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			try {
+				conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				String sepeIdSelect = "SELECT name, expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+						" AND name IN (" +
 						"'" + ContractVariable.SEPE_EXTENSION.getValue() + "')" +
-//						"'" + ContractVariable.SEPE_TRANSFORM.getValue() + "') " +
-					" ORDER BY start_date desc;";
-			ps = conn.prepareStatement(sepeIdSelect);
-			rs = ps.executeQuery();
-//			if (rs.next()) return true;
-			if (rs.next()){
-				String name = rs.getString(1);
-//				String expression = rs.getString(2);
-				if(ContractVariable.SEPE_EXTENSION.getValue().equals(name)) return true;
+						" ORDER BY start_date desc;";
+				ps = conn.prepareStatement(sepeIdSelect);
+				rs = ps.executeQuery();
+				if (rs.next()){
+					String name = rs.getString(1);
+					if(ContractVariable.SEPE_EXTENSION.getValue().equals(name)) return true;
+				}
+				
+			} catch (SQLException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} catch (AonConnectionException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} catch (Exception e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} finally {
+				DatabaseUtil.closeQuietly(ps);
+				DatabaseUtil.closeQuietly(conn);
 			}
-			
-		} catch (SQLException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-		} catch (AonConnectionException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-		} finally {
-			DatabaseUtil.closeQuietly(ps);
-			DatabaseUtil.closeQuietly(conn);
 		}
 		return false;
 	}
@@ -360,35 +363,40 @@ public class ContractController extends BasicController {
 	}
 	
 	public boolean isReadOnly(){
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			Contract contract = (Contract) this.getTo();
-			String sepeIdSelect = "SELECT name, expression  FROM contract_info  WHERE contract = " + contract.getId() + 
-					" AND name IN (" +
+		Contract contract = (Contract) this.getTo();
+		if(contract!=null && contract.getId()!=null ){
+			Connection conn = null;
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			try {
+				conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				String sepeIdSelect = "SELECT name, expression  FROM contract_info  WHERE contract = " + contract.getId() + 
+						" AND name IN (" +
 						"'" + ContractVariable.SEPE_CONTRACT.getValue() + "'," +
 						"'" + ContractVariable.SEPE_EXTENSION.getValue() + "'," +
 						"'" + ContractVariable.SEPE_TRANSFORM.getValue() + "', " +
 						"'" + ContractVariable.SS_MA.getValue() + "', " +
 						"'" + ContractVariable.SS_MB.getValue() + "') " +
-					" AND expression NOT IN (" +
+						" AND expression NOT IN (" +
 						"'" + ContractSepeStatus.PENDING.getValue() + "'," +
 						"'" + ContractSepeStatus.DENIED.getValue() + "') " +
-					" ORDER BY start_date desc;";
-			ps = conn.prepareStatement(sepeIdSelect);
-			rs = ps.executeQuery();
-			if (rs.next()) return true;
-		} catch (SQLException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-		} catch (AonConnectionException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-		} finally {
-			DatabaseUtil.closeQuietly(ps);
-			DatabaseUtil.closeQuietly(conn);
+						" ORDER BY start_date desc;";
+				ps = conn.prepareStatement(sepeIdSelect);
+				rs = ps.executeQuery();
+				if (rs.next()) return true;
+			} catch (SQLException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} catch (AonConnectionException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} catch (Exception e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} finally {
+				DatabaseUtil.closeQuietly(ps);
+				DatabaseUtil.closeQuietly(conn);
+			}
 		}
 		return false;
 	}
@@ -817,6 +825,14 @@ public class ContractController extends BasicController {
 		contract.setSeniorityDate( (Date)event.getNewValue() );
 	}
 	
+	public void onChangeModel(ValueChangeEvent event){
+		ModelOption model = (ModelOption) event.getNewValue();
+		if(!this.isNew() && model != null){
+			ContractInfoController controller = (ContractInfoController) FormUtil.getController("contractDocumentInfo");
+			controller.loadContractFields((Contract) this.getTo(), true);
+		}
+	}
+	
 	public List<SelectItem> getTrainingCenters(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		CNO cno = getParams().getCno();
@@ -1117,10 +1133,22 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onChangeEndDate(ActionEvent event){
-		Date endDate = ((Contract)this.getTo()).getEndDate();
-		if(endDate==null){
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(((Contract)this.getTo()).getStartDate());
+		startCal.set(Calendar.HOUR_OF_DAY, 0);  
+		startCal.set(Calendar.MINUTE, 0);  
+		startCal.set(Calendar.SECOND, 0);  
+		startCal.set(Calendar.MILLISECOND, 0);  
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(((Contract)this.getTo()).getEndDate());
+		endCal.set(Calendar.HOUR_OF_DAY, 0);  
+		endCal.set(Calendar.MINUTE, 0);  
+		endCal.set(Calendar.SECOND, 0);  
+		endCal.set(Calendar.MILLISECOND, 0);  
+		
+		if(((Contract)this.getTo()).getEndDate()==null){
 			getParams().setSuspensionCause(null);
-		} else if(endDate.before(((Contract)this.getTo()).getStartDate())){
+		} else if(endCal.before(startCal)){
 			((Contract)this.getTo()).setEndDate(null);
 			getParams().setSuspensionCause(null);
 			AonUtil.addErrorMessage("La fecha fin no puede ser anterior a la fecha inicio.");

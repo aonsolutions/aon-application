@@ -275,6 +275,30 @@ public class PdfModelHandler {
 		}
 		return map;
 	}
+
+	public Map<String, String> getContractDataMap(Contract contract, Date startDate, Date endDate, boolean current) {
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			if(startDate!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
+			}
+			if(endDate!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
+			}
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), current);
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():null);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve un mapa vacio
+			return map;
+		}
+		return map;
+	}
 	
 	public Map<String, String> getContractInfoMap(Contract contract) {
 		Map<String, String> map = new HashMap<String, String>();

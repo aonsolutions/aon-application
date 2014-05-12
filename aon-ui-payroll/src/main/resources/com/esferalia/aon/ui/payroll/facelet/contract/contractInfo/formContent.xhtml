@@ -14,7 +14,8 @@
 					<aon:outputText value="Seleccione la modalidad del contrato para poder introducir los datos" />
 				</f:facet>
 				<aon:panelGrid columns="2">
-					<aon:selectOneMenu value="#{contract.params.contractModelOption}">
+					<aon:selectOneMenu value="#{contract.params.contractModelOption}"
+						valueChangeListener="#{contract.onChangeModel}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contract.contractModel}" />
 					</aon:selectOneMenu>

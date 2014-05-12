@@ -34,7 +34,7 @@ public class EnterpriseActivity extends EnterpriseActivityDB {
 		if(this.getType()==SSRegimeType.GENERAL){
 			return TCHRGCOT.TCHRGCOT_0111.getCode();
 		} else if(this.getType()==SSRegimeType.AGRICULTURAL){
-			return TCHRGCOT.TCHRGCOT_0613.getCode();
+			return TCHRGCOT.TCHRGCOT_0163.getCode();
 		} else if(this.getType()==SSRegimeType.DOMESTIC_EMPLOYEES){
 			return TCHRGCOT.TCHRGCOT_0138.getCode();
 		} else if(this.getType()==SSRegimeType.SELF_EMPLOYED){

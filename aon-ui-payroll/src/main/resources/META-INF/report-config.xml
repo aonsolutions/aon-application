@@ -56,6 +56,27 @@
 		<params>
 		</params>
 	</report>
+	
+	<report id="salary_dualColumn" description="Default salary with two column ">
+		<template path="/com/esferalia/aon/ui/payroll/report/salary_dualColumn.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+		</params>
+	</report>
+	
+	<report id="salary_invoiceSimple" description="Invoice format style salary">
+		<template path="/com/esferalia/aon/ui/payroll/report/salary_invoiceSimple.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+		</params>
+	</report>
+	
+	<report id="salary_invoiceCraGroup" description="Invoice format style salary, grouped by CRA code">
+		<template path="/com/esferalia/aon/ui/payroll/report/salary_invoiceCraGroup.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+		</params>
+	</report>
 
 	<report id="settlement" description="Default settlement report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/settlement.jasper" />

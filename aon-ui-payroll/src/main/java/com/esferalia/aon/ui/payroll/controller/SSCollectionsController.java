@@ -109,6 +109,29 @@ public class SSCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T2.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T2CodeList;
+
+	public List<SelectItem> getT2CodeList() {
+		if (T2CodeList == null) {
+			T2CodeList = new LinkedList<SelectItem>();
+			T2[] el = T2.values();
+			for (T2 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T2CodeList.add(item);
+				}
+			}
+		}
+		return T2CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T21.java
 	 *  ------------------------------------------------------------------------
 	 */ 

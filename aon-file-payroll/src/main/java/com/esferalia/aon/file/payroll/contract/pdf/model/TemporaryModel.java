@@ -232,8 +232,8 @@ public class TemporaryModel extends AbstractContractModel {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.EMPLOYEE_CONTRACT_DISTANCE.toString()))){
 				setPdfFieldValue(PdfFieldTemporary.EMPLOYEE_CONTRACT_DISTANCE.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.EMPLOYEE_CONTRACT_DISTANCE.toString()));
 			}
-			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()))){
-				setPdfFieldValue(PdfFieldTemporary.EMPLOYEE_CONTRACT_DISTANCE_ADDR.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()));
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.EMPLOYEE_CONTRACT_DIST_ADDR.toString()))){
+				setPdfFieldValue(PdfFieldTemporary.EMPLOYEE_CONTRACT_DIST_ADDR.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.EMPLOYEE_CONTRACT_DIST_ADDR.toString()));
 			}
 			
 			if(code.getValue().startsWith("1") || code.getValue().startsWith("4")){
@@ -269,8 +269,8 @@ public class TemporaryModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.PARTIALLY_TIME_JOB_LOWER_THAN.toString()))){
 					setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME_JOB_LOWER_THAN.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.PARTIALLY_TIME_JOB_LOWER_THAN.toString()));
 				}
-				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.PARTIALLY_TIME_JOB_DISTRIBUTION.toString()))){
-					setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME_JOB_DISTRIBUTION.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.PARTIALLY_TIME_JOB_DISTRIBUTION.toString()));
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.PARTIALLY_TIME_JOB_DISTRIB.toString()))){
+					setPdfFieldValue(PdfFieldTemporary.PARTIALLY_TIME_JOB_DISTRIB.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.PARTIALLY_TIME_JOB_DISTRIB.toString()));
 				}
 			}
 			
@@ -544,8 +544,8 @@ public class TemporaryModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_ONSITE_WEEK_HOURS.toString()))){
 					setPdfFieldValue(PdfFieldTemporary.OPT12_ONSITE_WEEK_HOURS.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_ONSITE_WEEK_HOURS.toString()));
 				}
-				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_ONSITE_HOURS_DISTRIBUTION.toString()))){
-					setPdfFieldValue(PdfFieldTemporary.OPT12_ONSITE_HOURS_DISTRIBUTION.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_ONSITE_HOURS_DISTRIBUTION.toString()));
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_ONSITE_HOURS_DISTRIB.toString()))){
+					setPdfFieldValue(PdfFieldTemporary.OPT12_ONSITE_HOURS_DISTRIB.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_ONSITE_HOURS_DISTRIB.toString()));
 				}
 				key = getContractInfoMap(contract).get(PdfFieldTemporary.OPT12_SALARY_OPT.toString());
 				if(StringUtils.isNotBlank(key)){

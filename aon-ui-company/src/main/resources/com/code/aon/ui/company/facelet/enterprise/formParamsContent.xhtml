@@ -11,7 +11,7 @@
 		<aon:outputLabel for="salary_model" value="#{bundle.company_enterprise_params_salary_model}" />
 		<aon:selectOneMenu id="salary_model"
 			value="#{enterpriseParams.parameters['PAY_REPORT_salary_PAY'].expression}">
-			<f:selectItems value="#{companyCollections.salaryTemplates}" />
+			<f:selectItems value="#{payrollCollections.salaryTemplates}" />
 		</aon:selectOneMenu>
 
 		<aon:outputLabel for="enterprise_salary_model" value="#{bundle.company_enterprise_params_enterprise_salary_model}" />
