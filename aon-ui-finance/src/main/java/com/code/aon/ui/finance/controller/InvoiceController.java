@@ -950,9 +950,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			Criteria criteria = new Criteria();
 			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
 			criteria.addEqualExpression(invoiceAlias, getInvoice().getId());
-			// String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_TYPE);
-			// TODO Poner bien cuando funcione la generación de alias con formulas
-			String typeAlias = "InvoiceAttachment.type";
+			String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_TYPE);
 			criteria.addEqualExpression(typeAlias, InvoiceAttachmentType.INVOICE);
 			return bean.getCount(criteria) > 0;
 		} catch (ManagerBeanException e) {

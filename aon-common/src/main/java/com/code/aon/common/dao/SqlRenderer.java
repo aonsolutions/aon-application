@@ -152,32 +152,36 @@ public class SqlRenderer implements CriterionVisitor {
 		write(" is not null ");
 	}
 
-	public void visitConstantExpression(ConstantExpression expression) {
-		if ( expression.getData().getClass().isEnum() ) {
-			Enum<?> en = (Enum<?>) expression.getData();
-			write("\'" + en.ordinal() + "\'");
-			
-		} else if ( expression.getData() instanceof Date ) {
-			Date date = (Date) expression.getData();
+	private String getDataString( Object data ) {
+		String value = null;
+		if ( data.getClass().isEnum() ) {
+			Enum<?> en = (Enum<?>) data;
+			value = "\'" + en.ordinal() + "\'";
+		} else if ( data instanceof Date ) {
+			Date date = (Date) data;
 			write("\'" + DATE_FORMATTER.format(date) + "\'");	
-		} else if (expression.getData() instanceof List<?>) {
-			List<?> list = (List<?>) expression.getData();
+		} else if (data instanceof List<?>) {
+			List<?> list = (List<?>) data;
 			if (!list.isEmpty()) {
 				StringBuffer buf = new StringBuffer();
+				buf.append('(');
 				for (Object o : list) {
-					if (buf.length() > 0) {
+					if (buf.length() > 1) {
 						buf.append(',');
 					}
-					buf.append("\'");
-					buf.append(o);
-					buf.append("\'");
+					buf.append(getDataString(o));
 				}
-				write("(" + buf.toString() + ")");
+				buf.append(')');
+				value = buf.toString();
 			}
 		} else {
-			write("\'" + expression.getData() + "\'");	
+			value = "\'" + data + "\'";	
 		}
-		
+		return value;
+	}
+	
+	public void visitConstantExpression(ConstantExpression expression) {
+		write( getDataString(expression.getData()));
 	}
 
 	public void visitBetweenExpression(BetweenExpression expression) {
