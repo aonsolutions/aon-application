@@ -71,6 +71,14 @@ public class RackController extends BasicController implements IPmsConstants {
 		}
 	}
 
+	public void onSearch(ActionEvent event) {
+		try {
+			clearCriteria();
+		} catch (ManagerBeanException ex) {
+		}
+		super.onSearch(event);
+	}
+
 	@Override
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		List<ITransferObject> list = super.search(start, count);
@@ -220,14 +228,6 @@ public class RackController extends BasicController implements IPmsConstants {
 					break;
 		}
 		getFilterParams().setViewerStartDate(viewerStartDate);
-	}
-
-	public void onSearch(ActionEvent event) {
-		try {
-			clearCriteria();
-		} catch (ManagerBeanException ex) {
-		}
-		super.onSearch(event);
 	}
 
 	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {

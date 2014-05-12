@@ -71,11 +71,12 @@ public class RackSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
 		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());
 		}
 		if (getItem() != null && getItem().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());
 		}
 		if (StringUtils.isNotEmpty(getRoomName())) {
 			String roomExpr = (getRoomName().indexOf("*") >= 0) ? (getRoomName().replace('*', '%')) : ("%" + getRoomName() + "%");
