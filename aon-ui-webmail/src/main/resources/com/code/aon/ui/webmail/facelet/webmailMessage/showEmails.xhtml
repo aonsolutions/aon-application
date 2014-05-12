@@ -1,38 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:c="http://java.sun.com/jstl/core">
-<body>
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
-<ui:composition>
-
-	<aon:form>
-		<aon:panelGroup id="showEmailWindow#{messageSuffix}">
-			<c:if test="#{webmailMessage.showEmailsWindow}">
-				<rich:modalPanel id="showEmailsModalPanel#{messageSuffix}"
-					rendered="#{webmailMessage.showEmailsWindow}" showWhenRendered="true"
-					minHeight="390" height="390" width="650" top="50" zindex="2000">
-					<f:facet name="header">
-						<aon:div styleClass="aon-popupWindow-title">
-							<aon:outputText
-								rendered="#{webmailMessage.selectedDestinyContainer=='To'}"
-								value="#{bundle.webmail_to}" />
-							<aon:outputText
-								rendered="#{webmailMessage.selectedDestinyContainer=='Cc'}"
-								value="#{bundle.webmail_cc}" />
-							<aon:outputText
-								rendered="#{webmailMessage.selectedDestinyContainer=='Bcc'}"
-								value="#{bundle.webmail_bcc}" />
-							<aon:outputText value="-" />
-							<aon:outputText
-								value="#{bundle.webmail_message_selectEmail}" />
-						</aon:div>
-					</f:facet>
-					<f:facet name="controls">
+	<aon:panelGroup id="showEmailWindow#{messageSuffix}">
+		<c:if test="#{webmailMessage.showEmailsWindow}">
+			<rich:modalPanel id="showEmailsModalPanel#{messageSuffix}"
+				rendered="#{webmailMessage.showEmailsWindow}" showWhenRendered="true"
+				minHeight="390" height="390" width="650" top="50" zindex="2000">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText
+							rendered="#{webmailMessage.selectedDestinyContainer=='To'}"
+							value="#{bundle.webmail_to}" />
+						<aon:outputText
+							rendered="#{webmailMessage.selectedDestinyContainer=='Cc'}"
+							value="#{bundle.webmail_cc}" />
+						<aon:outputText
+							rendered="#{webmailMessage.selectedDestinyContainer=='Bcc'}"
+							value="#{bundle.webmail_bcc}" />
+						<aon:outputText value="-" />
+						<aon:outputText
+							value="#{bundle.webmail_message_selectEmail}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
 						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 							immediate="true" reRender="showEmailWindow#{messageSuffix},newMessageHeader#{messageSuffix}">
 							<f:setPropertyActionListener target="#{webmailMessage.showEmailsWindow}"
@@ -40,9 +37,10 @@
 							<rich:componentControl for="showEmailsModalPanel#{messageSuffix}" operation="hide"
 								event="onclick" />
 						</aon:commandButton>
-					</f:facet>
-	
-	
+					</aon:form>
+				</f:facet>
+
+				<aon:form>
 					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="selectEmail#{messageSuffix}"
 							actionListener="#{webmailMessage.onAcceptAllEmailItems}"
@@ -100,12 +98,9 @@
 							</ui:define>
 						</ui:decorate>	
 					</aon:div>
-				</rich:modalPanel>
-			</c:if>
-		</aon:panelGroup>
-	</aon:form>
+				</aon:form>					
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
 	
 </ui:composition>
-
-</body>
-</html>
