@@ -18,8 +18,8 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 
 	public SEPA19_14CoreXml(Lot lot, boolean cor1, File file) {
 		super(file);
+		this.cor1 = cor1;		
 		this.lot = lot;
-		this.cor1 = cor1;
 	}
 
 	@Override
