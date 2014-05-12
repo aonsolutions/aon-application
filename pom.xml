@@ -159,7 +159,7 @@
 		<module>aon-jasperreports</module>
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
-		<module>aon-payroll-ctsql2mysql</module>
+		<!--module>aon-payroll-ctsql2mysql</module-->
 	</modules>
 
 	<scm>
