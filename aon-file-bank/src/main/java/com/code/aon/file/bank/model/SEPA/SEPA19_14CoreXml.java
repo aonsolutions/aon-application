@@ -13,10 +13,13 @@ import com.code.aon.file.bank.model.CSB19.data.Lot;
 public class SEPA19_14CoreXml extends BasicSEPAXml {
 	
 	private Lot lot;
+	
+	private boolean cor1;
 
-	public SEPA19_14CoreXml(Lot lot, File file) {
+	public SEPA19_14CoreXml(Lot lot, boolean cor1, File file) {
 		super(file);
 		this.lot = lot;
+		this.cor1 = cor1;
 	}
 
 	@Override
@@ -53,7 +56,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 	
 	private void addGroupHeader( Element customerDirectDebitInitiation ) {
 		Element groupHeader = createGroupHeader(customerDirectDebitInitiation,
-				lot.getId(), anteriorFechaHabil(lot.getPresenter().getMakeDate()),
+				lot.getId(), lot.getOrderer().getMakeDate(),
 				lot.getOrderer().getNumIndividuals(), lot.getAmount());
 		
 		addInitiatingParty(groupHeader);
@@ -106,11 +109,8 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addValue(paymentMethod, PAYMENT_METHOD_DD_VALUE);
 		paymentInformation.appendChild(paymentMethod);		
 
-		Element batchBooking = createElement(BATCH_BOOKING);
-		addValue(batchBooking, FALSE_VALUE);
-		paymentInformation.appendChild(batchBooking);		
-		
-		addPaymentTypeInformation(paymentInformation, LOCAL_INSTRUMENT_CODE_CORE_VALUE, SEQUENCE_TYPE_RCUR_VALUE);
+		String licValue = cor1 ? LOCAL_INSTRUMENT_CODE_COR1_VALUE : LOCAL_INSTRUMENT_CODE_CORE_VALUE;
+		addPaymentTypeInformation(paymentInformation, licValue, SEQUENCE_TYPE_RCUR_VALUE);
 		
 		Element requestedCollectionDate = createElement(REQUEST_COLLECTION_DATE);
 		addISODate(requestedCollectionDate, lot.getPresenter().getMakeDate());

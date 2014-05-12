@@ -6,6 +6,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERRO
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -73,6 +75,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private FileOutput aebOutput;
 	private MimeType mimeType;
 	private Date recordDate;
+	private Date bankDate;
 	private boolean showFbatchRecordWindow;
 	private AccountEntryFinanceWriter writer;
 
@@ -118,6 +121,63 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setRecordDate(Date recordDate) {
 		this.recordDate = recordDate;
+	}
+	
+	public Date getBankDate() {
+		return bankDate;
+	}
+
+	public void setBankDate(Date bankDate) {
+		this.bankDate = bankDate;
+	}
+	
+	private boolean isHoliday( Calendar calendar ) {
+		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+		int month = calendar.get(Calendar.MONTH);
+		if (Calendar.JANUARY == month) {
+			if ( (dayOfMonth==1) || (dayOfMonth==6) ) {
+				return true;	
+			}
+		}
+		if ( (Calendar.MAY == month) && (dayOfMonth==1) ) {
+			return true;
+		}
+		if ( (Calendar.OCTOBER == month) && (dayOfMonth==12) ) {
+			return true;
+		}
+		if ( (Calendar.NOVEMBER == month) && (dayOfMonth==1) ) {
+			return true;
+		}
+		if (Calendar.DECEMBER == month) {
+			if ( (dayOfMonth==6) || (dayOfMonth==8) || (dayOfMonth==25)) {
+				return true;	
+			}
+		}
+		return false;		
+	}
+	
+	private boolean esHabil(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		switch ( calendar.get(Calendar.DAY_OF_WEEK) ) {
+			case Calendar.SATURDAY:
+			case Calendar.SUNDAY:
+				return false;
+			default:
+				return !isHoliday(calendar);
+        }
+    }	
+	
+	private Date anteriorFechaHabil(Date date) {
+    	Date result = DateUtils.addDays(date, -1);
+   		while (!esHabil(result)) {
+   			result = DateUtils.addDays(result, -1);
+   		}
+    	return result;
+    }
+    	
+	public void calculateBankDate( Date date ) {
+		setBankDate(anteriorFechaHabil(date));
 	}
 
 	public boolean isShowFbatchRecordWindow() {
@@ -400,27 +460,42 @@ public class FBatchController extends BasicController implements ICollectionProv
 
     	this.mimeType = MimeType.MIME_TXT;
     	List<FinanceBatchDetail> fbatchDetailCollection = obtainDetailsCollection(fbatch);
-        if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
-			AEB19Writer aeb19Writer = new AEB19Writer();
-			aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
-		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_32) {
-			AEB32Writer aeb32Writer = new AEB32Writer();
-			aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
-		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34 || fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34_N) {
-			AEB34Writer aeb34Writer = new AEB34Writer();
-			aebOutput = aeb34Writer.createAEB34(getCompany(), fbatch, fbatchDetailCollection);
-		} else if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58_D)) {
-			AEB58Writer aeb58Writer = new AEB58Writer();
-			aebOutput = aeb58Writer.createAEB58(getCompany(), fbatch, fbatchDetailCollection);
-		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_CORE_XML) {
-			this.mimeType = MimeType.MIME_XML;
-			SEPA19_14CoreXmlWriter sepaWriter = new SEPA19_14CoreXmlWriter();
-			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
-		} else if ((fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_XML) || (fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_N_XML)) {			
-			this.mimeType = MimeType.MIME_XML;
-			SEPA34_14XmlWriter sepaWriter = new SEPA34_14XmlWriter();
-			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
-		}
+    	switch ( fbatch.getFinanceBatchType() ) {
+	    	case AEB_19:
+	    	case AEB_19_D:
+				AEB19Writer aeb19Writer = new AEB19Writer();
+				aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
+				break;
+	    	case AEB_32:
+				AEB32Writer aeb32Writer = new AEB32Writer();
+				aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
+	    		break;
+	    	case AEB_34:
+	    	case AEB_34_N:
+				AEB34Writer aeb34Writer = new AEB34Writer();
+				aebOutput = aeb34Writer.createAEB34(getCompany(), fbatch, fbatchDetailCollection);
+				break;
+	    	case AEB_58:
+	    	case AEB_58_D:
+				AEB58Writer aeb58Writer = new AEB58Writer();
+				aebOutput = aeb58Writer.createAEB58(getCompany(), fbatch, fbatchDetailCollection);
+				break;
+	    	case SEPA_19_14_CORE_XML:
+	    	case SEPA_19_14_COR1_XML:
+				this.mimeType = MimeType.MIME_XML;
+				SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
+				aebOutput = sepa19Writer.createXml(getCompany(), bankDate, fbatch, fbatchDetailCollection);
+				break;
+	    	case SEPA_34_14_XML:
+	    	case SEPA_34_14_N_XML:
+				this.mimeType = MimeType.MIME_XML;
+				SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
+				aebOutput = sepa34Writer.createXml(getCompany(), fbatch, fbatchDetailCollection);
+	    		break;
+	    	case NONE:
+	    		LOGGER.debug( "None finance batch type");
+	    		break;
+    	}
 
         if (aebOutput != null) {
         	if (aebOutput.getErrors().size() > 0) {

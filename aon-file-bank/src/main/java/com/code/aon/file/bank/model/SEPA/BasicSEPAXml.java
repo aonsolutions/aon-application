@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -21,7 +20,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -65,52 +63,6 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
  		transformer.transform(source, result);				
 	}
 	
-	
-	private boolean isHoliday( Calendar calendar ) {
-		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-		int month = calendar.get(Calendar.MONTH);
-		if (Calendar.JANUARY == month) {
-			if ( (dayOfMonth==1) || (dayOfMonth==6) ) {
-				return true;	
-			}
-		}
-		if ( (Calendar.MAY == month) && (dayOfMonth==1) ) {
-			return true;
-		}
-		if ( (Calendar.OCTOBER == month) && (dayOfMonth==12) ) {
-			return true;
-		}
-		if ( (Calendar.NOVEMBER == month) && (dayOfMonth==1) ) {
-			return true;
-		}
-		if (Calendar.DECEMBER == month) {
-			if ( (dayOfMonth==6) || (dayOfMonth==8) || (dayOfMonth==25)) {
-				return true;	
-			}
-		}
-		return false;		
-	}
-	
-	protected boolean esHabil(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		switch ( calendar.get(Calendar.DAY_OF_WEEK) ) {
-			case Calendar.SATURDAY:
-			case Calendar.SUNDAY:
-				return false;
-			default:
-				return !isHoliday(calendar);
-        }
-    }	
-	
-	protected Date anteriorFechaHabil(Date date) {
-    	Date result = DateUtils.addDays(date, -1);
-   		while (!esHabil(result)) {
-   			result = DateUtils.addDays(result, -1);
-   		}
-    	return result;
-    }
-    
     protected void addRawValue( Element element, String value ) {
 		element.appendChild(document.createTextNode(value));
 	}    
