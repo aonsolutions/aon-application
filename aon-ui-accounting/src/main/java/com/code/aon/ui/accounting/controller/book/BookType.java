@@ -8,6 +8,8 @@ public enum BookType {
     BAL_SUMS2	(AonReportType.TRIAL 	,"Balance de Summas y Saldos 01-06"),
     BAL_SUMS3	(AonReportType.TRIAL 	,"Balance de Summas y Saldos 01-09"),
     BAL_SUMS4	(AonReportType.TRIAL 	,"Balance de Summas y Saldos 01-12"),
+    EXPENSES	(AonReportType.OPERATION,"Libro de compras y gastos"),
+    INCOMES		(AonReportType.OPERATION,"Libro de ventas e ingresos"),
     INVENTAR	(AonReportType.OTHER	,"Inventario"),
     BALANCES	(AonReportType.BALANCE	,"Balances predefinidos"),
     MEMORIA		(AonReportType.OTHER	,"Memoria"),

@@ -154,10 +154,10 @@ public class AccountingBookController implements ICollectionProvider{
 		TaxRegime taxRegime = fpc.getTaxRegime();
 		List<AccountingBook> books = new LinkedList<AccountingBook>();  
 		if (taxRegime == TaxRegime.EDS || taxRegime == TaxRegime.MODULES) {
-			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.IVAR		,true ));
-			books.add( new AccountingBook( 1, 1, 1,MimeType.MIME_PDF,BookType.IVAS		,true ));
-			books.add( new AccountingBook( 1, 2, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
-			books.add( new AccountingBook( 2, 3, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
+			books.add( new AccountingBook( 1, 1, 1,MimeType.MIME_PDF,BookType.EXPENSES 	,true ));
+			books.add( new AccountingBook( 1, 2, 1,MimeType.MIME_PDF,BookType.INCOMES	,true ));
+			books.add( new AccountingBook( 1, 3, 1,MimeType.MIME_PDF,BookType.IVAI		,true ));
+			books.add( new AccountingBook( 2, 4, 1,MimeType.MIME_PDF,BookType.PER_GAN	,true ));
 		} else {
 			books.add( new AccountingBook( 1, 0, 1,MimeType.MIME_PDF,BookType.DIARIO	,false));
 			books.add( new AccountingBook( 2, 1, 1,MimeType.MIME_PDF,BookType.MAYOR		,true ));
@@ -278,6 +278,7 @@ public class AccountingBookController implements ICollectionProvider{
 		AccountingBook book = getSelectedBook();
 		List<AccountingBook> list = getBookList();
 		list.remove(book);
+		setValid(false);
 	}
 	
 	public void onValidate(ActionEvent event) {

@@ -16,6 +16,7 @@ public class AccountingBookRunnerManager {
 		runners.add( OfficialBalanceBookRunner.class );
 		runners.add( RegistryAttachBookRunner.class );
 		runners.add( CoverBookRunner.class );
+		runners.add( OperationReportRunner.class );
 	}
 	
 	public IAccountingBookRunner getRunner( AccountingBookContext ctx) throws AccountingBookException {
