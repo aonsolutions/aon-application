@@ -6,9 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<ui:param name="searchController" value="#{customerSearch}" />
 	<c:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
-		<ui:param name="searchController" value="#{customerSearch}" />
 	</c:if>
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
@@ -40,7 +40,7 @@
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchProjectContent.xhtml" />
 	
 	<aon:outputText value="#{bundle.aon_status}"/>
-	<aon:selectManyCheckbox value="#{customerSearch.customerStatuses}">
+	<aon:selectManyCheckbox value="#{searchController.customerStatuses}">
 		<f:selectItems value="#{customerCollections.customerStatuses}"/>
 	</aon:selectManyCheckbox>							
 	
