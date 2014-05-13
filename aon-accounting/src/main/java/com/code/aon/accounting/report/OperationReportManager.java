@@ -35,6 +35,7 @@ public class OperationReportManager {
 				+"LEFT OUTER JOIN invoice i on aei.invoice = i.id "
 				+"WHERE ae.domain = ? "
 				+"AND ae.entry_date between ? and ? "
+				+"AND ae.entry_type != 2 "
 				+"AND a.code like ? "
 				+"GROUP BY ae.id,aed.account "
 				+"ORDER BY ae.entry_date,ae.id,aed.id";

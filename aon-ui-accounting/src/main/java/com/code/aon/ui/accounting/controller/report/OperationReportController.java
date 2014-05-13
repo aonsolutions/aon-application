@@ -35,6 +35,7 @@ public class OperationReportController implements IAccountingBookItem{
 
 	private static final String ID = "id";
 	private static final String DATE = "date";
+	private static final String ACCOUNT = "cuenta";
 	private static final String CONCEPT = "concepto";
 	private static final String AMOUNT = "importe";
 	private static final String DOCUMENT_NUMBER = "numDoc";
@@ -48,6 +49,7 @@ public class OperationReportController implements IAccountingBookItem{
 	private static final ReportColumnMetadata[] COLUMN_LABELS = new ReportColumnMetadata[]{
 		new ReportColumnMetadata(ID,Types.INTEGER,ID,10)
 		,new ReportColumnMetadata(DATE,Types.DATE,"Fecha",10)
+		,new ReportColumnMetadata(ACCOUNT,Types.VARCHAR,"Cuenta",50)
 		,new ReportColumnMetadata(CONCEPT,Types.VARCHAR,"Concepto",50)
 		,new ReportColumnMetadata(AMOUNT,Types.DOUBLE,"Importe",10)
 		,new ReportColumnMetadata(DOCUMENT_NUMBER,Types.VARCHAR,"Nº Docum.",15)
@@ -173,6 +175,7 @@ public class OperationReportController implements IAccountingBookItem{
 				int i = 0;
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getId() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getEntryDate() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), op.getAccount() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getConcept() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getBalance() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), op.getDocumentNumber() );
@@ -184,7 +187,7 @@ public class OperationReportController implements IAccountingBookItem{
 						if (!first) {
 							exporter.endLine();
 							exporter.startLine();
-							for (i=0;i<7;i++){
+							for (i=0;i<8;i++){
 								exporter.exportColumn(metadata.getColumns().get((i)), null );	
 							}
 						}
