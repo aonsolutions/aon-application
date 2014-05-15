@@ -117,11 +117,11 @@ public class SepeTablesController implements Serializable {
 	}
 	
 	private boolean isContrataSelected(){
-		return getSelectedTab().equals("contrata");
+		return StringUtils.equals(getSelectedTab(),"contrata");
 	}
 
 	private boolean isCertificadosSelected(){
-		return getSelectedTab().equals("certificados");
+		return StringUtils.equals(getSelectedTab(),"certificados");
 	}
 
 	public String getSelectedTableLabel(){
@@ -134,7 +134,10 @@ public class SepeTablesController implements Serializable {
 	}
 	
 	public void onInit(ActionEvent event){
-		setSelectedTab("contrata");
+		setSelectedTab("ss");
+		onSelectTab(event);
+	}
+	public void onSelectTab(ActionEvent event){
 		setTablesFilter(null);
 		onInitTablesModels(event);
 	}

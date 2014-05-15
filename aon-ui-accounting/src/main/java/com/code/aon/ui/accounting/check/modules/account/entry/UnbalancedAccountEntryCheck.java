@@ -1,25 +1,38 @@
 package com.code.aon.ui.accounting.check.modules.account.entry;
 
-import java.util.Iterator;
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
+import org.jooq.AggregateFunction;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record2;
+import org.jooq.Result;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;
 import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.check.ICheckModule;
 
-public class UnbalancedAccountEntryCheck implements ICheckModule {
+public class UnbalancedAccountEntryCheck implements ICheckModule, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String label = "Chequeo de apuntes descuadrados.";
 	private boolean enabled;
@@ -32,26 +45,26 @@ public class UnbalancedAccountEntryCheck implements ICheckModule {
 	@Override
 	public void onExecute(CheckParams params) throws AonCheckException {
 		list = new LinkedList<ICheckEntry>();
+		Connection connection = null;
+		
 		try {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
-			String select = 
-					"SELECT ae.id id,SUM(ROUND(debit - credit,2)) sum"
-					+" FROM account_entry ae "
-					+" INNER JOIN account_entry_detail aed ON aed.account_entry = ae.id" 
-					+" WHERE account_period = " + params.getPeriod().getId()
-					+" AND " + DomainManager.getSQLWhereClause("ae.domain")
-					+" GROUP BY ae.id"
-					+" HAVING SUM(ROUND(debit - credit,2)) != 0";			
-			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
-			List<?> queryList = query
-					.addScalar("id", Hibernate.INTEGER)
-					.addScalar("sum", Hibernate.DOUBLE)
-					.list();
-			Iterator<?> iterator = queryList.iterator();
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			while (iterator.hasNext()) {
-				Object[] obj = (Object[]) iterator.next();
-				Integer id = (Integer) obj[0];
+
+			connection = DatabaseUtil.getConnection(params.getDomainName());
+			DSLContext ctx = DSL.using(connection, getDefaultSettings());
+			
+			Field<Double> roundFunc = DSL.round(ACCOUNT_ENTRY_DETAIL.DEBIT.sub(ACCOUNT_ENTRY_DETAIL.CREDIT),2);
+			AggregateFunction<BigDecimal> sumFunc = DSL.sum(roundFunc);
+			
+			Result<Record2<Integer,BigDecimal>> record = ctx.select(ACCOUNT_ENTRY.ID,sumFunc)
+				.from(ACCOUNT_ENTRY)
+				.join(ACCOUNT_ENTRY_DETAIL).onKey()
+				.where(ACCOUNT_ENTRY.DOMAIN.equal(params.getDomainId()))
+				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(params.getPeriod().getId()))
+				.groupBy(ACCOUNT_ENTRY.ID)
+				.having(sumFunc.notEqual(new BigDecimal(0))).fetch();
+			for (Record2<Integer,BigDecimal> step : record) {
+				Integer id = step.value1();
 				AccountEntry entry = (AccountEntry) entryBean.get(id);
 				UnbalancedAccountEntryCheckEntry e = new UnbalancedAccountEntryCheckEntry();
 				e.setMessage( message );
@@ -60,7 +73,10 @@ public class UnbalancedAccountEntryCheck implements ICheckModule {
 			}
 		} catch (ManagerBeanException e) {
 			throw new AonCheckException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new AonCheckException(e.getMessage(), e);
 		} finally {
+			DatabaseUtil.closeQuietly(connection);
 		}
 	}
 	
@@ -88,5 +104,22 @@ public class UnbalancedAccountEntryCheck implements ICheckModule {
 	public CheckCategory getCategory() {
 		return CheckCategory.ACCOUNTING;
 	}
+	
+	private static Settings SETTINGS = null;
+
+	private static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
+	}
+
+	@Override
+	public void mock() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 
 }

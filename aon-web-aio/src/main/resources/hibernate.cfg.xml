@@ -7,7 +7,6 @@
 	<session-factory>
 		<property name="connection.provider_class">com.code.aon.ui.common.hibernate.HibernateConnectionProvider</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-		<property name="temp.use_jdbc_metadata_defaults">false</property>
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 

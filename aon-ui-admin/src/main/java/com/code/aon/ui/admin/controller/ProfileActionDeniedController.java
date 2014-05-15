@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
 
 import java.io.Serializable;
@@ -17,11 +16,11 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -77,7 +76,7 @@ public class ProfileActionDeniedController implements Serializable {
 	}
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

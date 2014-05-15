@@ -1,7 +1,6 @@
 package com.code.aon.ui.audit.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MODULES_ENABLED;
@@ -125,7 +124,7 @@ public class ActionDeniedController implements Serializable {
 	}
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 	
 	public void onInit( ActionEvent event ) {

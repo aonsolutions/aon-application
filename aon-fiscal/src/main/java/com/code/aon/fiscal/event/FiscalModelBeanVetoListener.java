@@ -99,6 +99,9 @@ public class FiscalModelBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD), fiscalModel.getPeriod());
 			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION), fiscalModel.getAdministration());
 			c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_MODEL), fiscalModel.getModel());
+			if (fiscalModel.getModel() == FiscalModelType.M130) {
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_DOCUMENT), fiscalModel.getDocument());	
+			}
 			if (fiscalModel.getId() != null) {
 				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_MODEL_ID), fiscalModel.getId()));
 			}

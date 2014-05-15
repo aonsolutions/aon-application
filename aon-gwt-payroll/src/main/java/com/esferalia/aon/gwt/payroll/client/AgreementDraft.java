@@ -10,7 +10,6 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.ZOOM_STEP;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +31,7 @@ import com.esferalia.aon.gwt.payroll.shared.HasDescription;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
@@ -41,9 +41,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.OptionElement;
-import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -123,7 +120,6 @@ public class AgreementDraft extends ResizeComposite implements
 
 		public TypeListBox(Class<T> type) {
 			this(type, 20);
-			
 
 		}
 
@@ -133,36 +129,35 @@ public class AgreementDraft extends ResizeComposite implements
 			getElement().getStyle().setWidth(size, Unit.EM);
 		}
 
-
 		public T getSelected() {
 			int ordinal = getOrdinal(getSelectedIndex());
 			for (T t : type.getEnumConstants())
-				if ( ordinal == t.ordinal() )
+				if (ordinal == t.ordinal())
 					return t;
 			return null;
 		}
 
 		public void setSelected(T t) {
 			int ordinal = t == null ? -1 : t.ordinal();
-			for( int i = 0; i < getItemCount(); i++)
-				if ( ordinal == getOrdinal(i) )
+			for (int i = 0; i < getItemCount(); i++)
+				if (ordinal == getOrdinal(i))
 					setSelectedIndex(i);
 		}
 
 		private void loadTypeItems() {
-			
+
 			for (T t : type.getEnumConstants()) {
 				String description = t.getDescription();
-				if ( description != null ) {
+				if (description != null) {
 					addItem(description, Integer.toString(t.ordinal()));
 				}
 			}
 		}
-		
-		private int getOrdinal(int index ) {
+
+		private int getOrdinal(int index) {
 			return Integer.valueOf(getValue(index));
 		}
-		
+
 	}
 
 	private static abstract class SuccessCalculateCallback implements
@@ -415,11 +410,11 @@ public class AgreementDraft extends ResizeComposite implements
 						}
 					});
 			this.descriptionTextBox.addBlurHandler(new BlurHandler() {
-				
+
 				@Override
 				public void onBlur(BlurEvent event) {
-					int next = getSalaryTableEditorIndexOf(LevelEditor.this) +1 ;
-					if ( salaryTableEditors.size() > next )
+					int next = getSalaryTableEditorIndexOf(LevelEditor.this) + 1;
+					if (salaryTableEditors.size() > next)
 						salaryTableEditors.get(next).setFocus();
 				}
 			});
@@ -485,11 +480,11 @@ public class AgreementDraft extends ResizeComposite implements
 						}
 					});
 			this.categoriesTextBox.addBlurHandler(new BlurHandler() {
-				
+
 				@Override
 				public void onBlur(BlurEvent event) {
-					int next = getSalaryTableEditorIndexOf(CategoriesEditor.this) +1 ;
-					if ( salaryTableEditors.size() > next )
+					int next = getSalaryTableEditorIndexOf(CategoriesEditor.this) + 1;
+					if (salaryTableEditors.size() > next)
 						salaryTableEditors.get(next).setFocus();
 				}
 			});
@@ -867,20 +862,30 @@ public class AgreementDraft extends ResizeComposite implements
 			return null;
 		}
 	}
-	
-	
-	private class ContextProvider implements IContextProvider{
 
+	private class ContextProvider implements IContextProvider {
+		
 		@Override
-		public void getContext(AsyncCallback<ContextDescriptor> callback) {
-			AgreementDraft.this.agreementDraftObject.getContext(AgreementDraft.this.fxLevel, callback);
-		}
-
-		@Override
-		public void eval(String expression, AsyncCallback<Double> callback) {
-			AgreementDraft.this.agreementDraftObject.eval(expression, AgreementDraft.this.fxLevel, callback);
+		public boolean isEditable(String name) {
+			for ( Payment payment: AgreementDraft.this.agreementDraftObject.getPayments())
+				if ( StringUtils.equals(payment.getName(), name))
+					return false;
+			return true;
 		}
 		
+		@Override
+		public void getContext(AsyncCallback<ContextDescriptor> callback) {
+			AgreementDraft.this.agreementDraftObject.getContext(
+					AgreementDraft.this.fxLevel, callback);
+		}
+
+		@Override
+		public void eval(String expression, List<Variable> vars,
+				AsyncCallback<List<Result>> callback) {
+			AgreementDraft.this.agreementDraftObject.eval(expression,
+					AgreementDraft.this.fxLevel, vars, callback);
+		}
+
 	}
 
 	@UiField
@@ -964,8 +969,8 @@ public class AgreementDraft extends ResizeComposite implements
 	private List<ExtraEditor> extraEditors;
 	private List<PaymentEditor> paymentEditors;
 	private List<IFocusableEditor> salaryTableEditors;
-	
-	private ContextProvider contextProvider ;
+
+	private ContextProvider contextProvider;
 
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -981,7 +986,7 @@ public class AgreementDraft extends ResizeComposite implements
 		extraEditors = new ArrayList<ExtraEditor>();
 		paymentEditors = new ArrayList<PaymentEditor>();
 		salaryTableEditors = new ArrayList<IFocusableEditor>();
-		
+
 		contextProvider = new ContextProvider();
 
 		showDraft();
@@ -1092,7 +1097,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@UiHandler("fxButton")
 	void onFxClicked(MouseDownEvent event) {
-		FxDialog fxDialog = new FxDialog( contextProvider );
+		FxDialog fxDialog = new FxDialog(contextProvider);
 		fxDialog.setExpression(fxhasValue.getValue());
 		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
 		fxDialog.center();
@@ -2556,9 +2561,11 @@ public class AgreementDraft extends ResizeComposite implements
 		return null;
 	}
 
-	private IFocusableEditor getNextSalaryTableEditorIndexOf(IFocusableEditor editor) {
+	private IFocusableEditor getNextSalaryTableEditorIndexOf(
+			IFocusableEditor editor) {
 		int index = salaryTableEditors.indexOf(editor) + 1;
-		return index < salaryTableEditors.size() ? salaryTableEditors.get(index) : null;
+		return index < salaryTableEditors.size() ? salaryTableEditors
+				.get(index) : null;
 	}
 
 	private int getSalaryTableEditorIndexOf(IFocusableEditor editor) {
@@ -2680,7 +2687,6 @@ public class AgreementDraft extends ResizeComposite implements
 		int zoom = getZoom();
 		Type type = getType();
 		int levelId = getLevelId();
-
 
 		agreementDraftObject.preview(levelId, type, zoom,
 				new AsyncCallback<String>() {

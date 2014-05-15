@@ -75,4 +75,8 @@ public class Mod130Controller extends FiscalModelController {
 		return format.getMimeType();
 	}	
 	
+	@Override
+	protected String getFormPage() {
+		return "mod130_form";
+	}	
 }

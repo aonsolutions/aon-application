@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.BOUND_TO_SELECTION;
+
 import java.util.List;
 
 import com.google.gwt.cell.client.AbstractSafeHtmlCell;
@@ -11,6 +13,7 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -31,13 +34,16 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.web.bindery.requestfactory.vm.impl.Deobfuscator;
 
 public class ComboBox<T> extends ListBox implements HasData<T> {
 
+	private static final int MAX_DISPLAY_ROWS = 12;
 	private static final int DEFAULT_PAGE_SIZE = 24;
 	private static final int DEFAULT_INCREMENT_SIZE = DEFAULT_PAGE_SIZE / 2;
 
@@ -52,17 +58,18 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 			return obj != null ? String.valueOf(obj) : "";
 		}
 	}
-	
+
 	public static abstract class AbstractFormatSafeHtmlRenderer<E> extends
-	AbstractSafeHtmlRenderer<E> {
+			AbstractSafeHtmlRenderer<E> {
 
 		public abstract Format<E> getFormat();
 
 		public abstract SafeHtml render(E e);
 
 	}
-	
-	public static class FormatSafeHtmlRenderer<E> extends AbstractFormatSafeHtmlRenderer<E> {
+
+	public static class FormatSafeHtmlRenderer<E> extends
+			AbstractFormatSafeHtmlRenderer<E> {
 
 		private Format<E> format;
 
@@ -95,21 +102,18 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		DropDownListStyle cellListStyle();
 
 	}
-	
-	
+
 	public static class FormatSafeHtmlCell<E> extends AbstractSafeHtmlCell<E> {
 
 		private ComboBox<E> comboBox;
 
 		public FormatSafeHtmlCell(AbstractFormatSafeHtmlRenderer<E> renderer) {
-			super(renderer, BrowserEvents.CLICK,
-					BrowserEvents.KEYPRESS);
+			super(renderer, BrowserEvents.CLICK, BrowserEvents.KEYPRESS);
 		}
 
 		public FormatSafeHtmlCell(Format<E> format) {
 			this(new FormatSafeHtmlRenderer<E>(format));
 		}
-
 
 		public AbstractFormatSafeHtmlRenderer<E> getFormatSafeHtmlRenderer() {
 			return (AbstractFormatSafeHtmlRenderer<E>) super.getRenderer();
@@ -175,13 +179,12 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		// Add a selection model to handle user selection.
 		dropDownselectionModel = new SingleSelectionModel<T>();
 		dropDownCellList.setSelectionModel(dropDownselectionModel);
-		dropDownCellList
-				.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+		dropDownCellList.setKeyboardSelectionPolicy(BOUND_TO_SELECTION);
 
 		// Do not let the scrollable take tab focus.
 		dropDownScrollPanel.getElement().setTabIndex(-1);
 
-		dropDownPopupPanel.addStyleName("aon-comboBoxPopup");
+		dropDownPopupPanel.setStyleName("aon-comboBoxPopup");
 
 		super.insertItem("", null, "", 0);
 
@@ -192,6 +195,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		addHandlers2DropDownPopupPanel();
 
 		dropDowncell.setComboBox(this);
+
 	}
 
 	// ------------------------------------------------------- delegated methods
@@ -220,6 +224,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		T t = dropDownCellList.getVisibleItem(index);
 		dropDownselectionModel.setSelected(t, selected);
 	}
+
 	// -------------------------------------------------------- HasData methods
 
 	@Override
@@ -320,19 +325,46 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 	}
 
 	// ------------------------------------------------------- protected methods
-	
-	void onResizeDropDownList(int dropDownListWidth) {
-		setWidth(String.valueOf(dropDownListWidth) + "px");
+
+	void onResizeDropDownPopup() {
+
+		if (dropDownPopupPanel.isShowing())
+			return;
+
+		dropDownPopupPanel.setVisible(false);
+		Element popupEl = dropDownPopupPanel.getElement();
+		Document.get().getBody().appendChild(popupEl);
+		popupEl.getStyle().setPosition(Position.ABSOLUTE);
+
+		int listHeight = dropDownCellList.getOffsetHeight();
+		int itemCount = dropDownCellList.getVisibleItemCount();
+		int itemHeight = listHeight / itemCount;
+
+		int height = Math.min(MAX_DISPLAY_ROWS * itemHeight, listHeight);
+		dropDownScrollPanel.setHeight(String.valueOf(height) + "px");
+		dropDownScrollPanel.onResize();
+
+		onResizeDropDownList(dropDownScrollPanel.getOffsetWidth());
+
+		popupEl.removeFromParent();
+		popupEl.getStyle().clearPosition();
 	}
 
-	AbstractFormatSafeHtmlRenderer<T> getFormatSafeHtmlRenderer(){
-		return ( AbstractFormatSafeHtmlRenderer<T> ) dropDowncell.getRenderer();
+	void onResizeDropDownList(int dropDownListWidth) {
+		setWidth(String.valueOf(dropDownListWidth + 2 /* TODO: border-width */)
+				+ "px");
 	}
-	
+
+	AbstractFormatSafeHtmlRenderer<T> getFormatSafeHtmlRenderer() {
+		return (AbstractFormatSafeHtmlRenderer<T>) dropDowncell.getRenderer();
+	}
+
 	// --------------------------------------------------------- private methods
 
 	private void showDropDownList() {
+
 		dropDownPopupPanel.setVisible(false);
+
 		dropDownPopupPanel.show();
 
 		int left = getAbsoluteLeft();
@@ -341,23 +373,16 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		dropDownPopupPanel.setPopupPosition(left, top);
 
 		int listHeight = dropDownCellList.getOffsetHeight();
-		if (dropDownScrollPanel.getOffsetHeight() >= listHeight) {
-			
-			dropDownScrollPanel.setHeight(String.valueOf(listHeight) + "px");
-			int listWidth = dropDownCellList.getOffsetWidth();
+		// int rowCount = dropDownCellList.getRowCount();
+		int itemCount = dropDownCellList.getVisibleItemCount();
+		int itemHeight = listHeight / itemCount;
 
-			dropDownScrollPanel
-					.setHeight(String.valueOf(listHeight / 2) + "px");
-			int scrollWidth = dropDownCellList.getOffsetWidth();
+		int height = Math.min(MAX_DISPLAY_ROWS * itemHeight, listHeight);
+		dropDownScrollPanel.setHeight(String.valueOf(height) + "px");
+		dropDownScrollPanel.onResize();
 
-			int dropDownPopupWidth = listWidth + 2 * (listWidth - scrollWidth);
+		onResizeDropDownList(dropDownScrollPanel.getOffsetWidth());
 
-			onResizeDropDownList(dropDownPopupWidth);
-			
-			dropDownScrollPanel.setWidth(String
-					.valueOf(dropDownPopupWidth - 2 /* TODO: Borders ? */)
-					+ "px");
-		} //
 		dropDownPopupPanel.setVisible(true);
 
 		dropDownCellList.setFocus(true);
@@ -368,6 +393,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 	private void hideDropDownList() {
 		dropDownPopupPanel.hide();
 	}
+
 
 	private void addHandlers2ComboBox() {
 		class ComboBoxHandlers implements MouseDownHandler {
@@ -384,6 +410,14 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 	}
 
 	private void addHandlers2DropDownCellList() {
+		class DropDownCellListHandler implements RangeChangeEvent.Handler {
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				ComboBox.this.onResizeDropDownPopup();
+			}
+		}
+		DropDownCellListHandler handler = new DropDownCellListHandler();
+		dropDownCellList.addRangeChangeHandler(handler);
 	}
 
 	private void addHandlers2DropDownSelectionModel() {
@@ -446,7 +480,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 					int incrementSize = rangeStart - newRangeStart;
 					ComboBox.this.setVisibleRange(newRangeStart, rangeLength
 							+ incrementSize);
-					Scheduler.get().scheduleFinally(this);					
+					Scheduler.get().scheduleFinally(this);
 
 				} else if (lastScrollPos >= maxScrollPos) {
 					visibleItem = getVisibleItem(getVisibleItemCount() - 1);
@@ -489,11 +523,10 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		dropDownScrollPanel.setVerticalScrollPosition(realOffset
 				- scrollElement.getOffsetHeight() / 2);
 	}
-	
-	
-	private void fireChangeEvent(){
+
+	private void fireChangeEvent() {
 		Scheduler.get().scheduleFinally(new ScheduledCommand() {
-			
+
 			@Override
 			public void execute() {
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(),

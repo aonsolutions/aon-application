@@ -55,7 +55,19 @@
 					target="#{contractPdf.showDocumentGenerationWindow}" value="#{true}" />
  			</aon:menuItem>
 			
-			<c:if test="#{sepeAppParams.developmentMode}">
+			<c:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
+
+				<aon:menuItem id="document-preview" 
+					value="Vista Previa"
+					action="contractPdfEdition_form" ajaxSingle="true"
+					iconClass="aon-icon-page" >
+					<f:setPropertyActionListener
+						target="#{contractPdf.documentType}" value="#{null}" />
+					<f:setPropertyActionListener
+						target="#{contractPdf.backAction}" value="contract_form" />
+					<aon:actionListener method="#{contractPdf.onContractDocumentPreview}" />
+	 			</aon:menuItem>
+	 			
 				<rich:menuGroup 
 					value="Editar documentos"
 					iconClass="aon-menuGroup-styleClass">
@@ -154,7 +166,7 @@
 				disabled="#{contractContrata.new}"
 				rendered="#{!contract.extendedContract and !contract.transformedContract}" ajaxSingle="true"
 				reRender="showContrataCommunicationWindow-#{contractContrata.contrataModelName}"
-				actionListener="#{contractContrata.onContrataDataShow}"
+				actionListener="#{contractContrata.onContrataCommunicatioShow}"
 				iconClass="aon-icon-sepe-contrata" >
 				<f:setPropertyActionListener
 					target="#{contractContrata.showCommunicationWindow}" value="#{true}" />

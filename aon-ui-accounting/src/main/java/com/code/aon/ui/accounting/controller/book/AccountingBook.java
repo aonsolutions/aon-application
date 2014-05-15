@@ -1,8 +1,11 @@
 package com.code.aon.ui.accounting.controller.book;
 
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.Balance;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -10,7 +13,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.RegistryAttachment;
 
-public class AccountingBook implements Comparable<AccountingBook>{
+public class AccountingBook implements Comparable<AccountingBook>, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int order;
 	private int mergeOrder;

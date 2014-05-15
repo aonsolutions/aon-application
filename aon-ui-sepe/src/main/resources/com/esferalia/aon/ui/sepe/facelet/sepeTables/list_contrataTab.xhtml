@@ -7,7 +7,28 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j">
 						
-	<aon:panelTab id="contrata" label="Contrat@">
+	<aon:panelTab id="contrata" label="Contrat@"
+		actionListener="#{controller.onSelectTab}">
+	
+		<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+			<aon:div styleClass="aon-panelGrid-search-info">
+				<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+			</aon:div>
+			<aon:panelGrid columns="1">
+				<aon:inputText id="contrataCodeTablesFilter" size="150" value="#{controller.tablesFilter}">
+					<a4j:support 
+						event="onkeyup"
+						actionListener="#{controller.onInitTablesModels}"
+						reRender="contrataCodelList"
+						eventsQueue="contrataCodeTablesFilterKeyUp"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true"/>
+				</aon:inputText>
+			</aon:panelGrid>	
+		</aon:div>
+	
 		<aon:dataTable id="contrataCodelList" value="#{controller.contrataTablesModel}" var="to">
 
 			<aon:rowSelector id="contrataCodelList-select" 

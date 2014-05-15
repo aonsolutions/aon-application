@@ -21,6 +21,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,6 +29,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jacob Hookom
@@ -54,7 +58,7 @@ public final class Classpath {
 				cl.getResources(prefix),
 				cl.getResources(prefix + "MANIFEST.MF")
 			};
-		Set all = new LinkedHashSet();
+		Set<URL> all = new LinkedHashSet<URL>();
 		URL url;
 		URLConnection conn;
 		JarFile jarFile;
@@ -64,11 +68,7 @@ public final class Classpath {
 				conn = url.openConnection();
 				conn.setUseCaches(false);
 				conn.setDefaultUseCaches(false);
-				if (conn instanceof JarURLConnection) {
-					jarFile = ((JarURLConnection) conn).getJarFile();
-				} else {
-					jarFile = getAlternativeJarFile(url);
-				}
+				jarFile = getJarFile(url, conn);
 				if (jarFile != null) {
 					searchJar(cl, all, jarFile, prefix, suffix);
 				} else {
@@ -80,16 +80,46 @@ public final class Classpath {
 				}
 			}
 		}
-		URL[] urlArray = (URL[]) all.toArray(new URL[all.size()]);
-		return urlArray;
+		return (URL[]) all.toArray(new URL[all.size()]);
 	}
+	
+	public static JarFile[] searchJars(ClassLoader cl, String[] prefixes) throws IOException {
+		Enumeration<URL> resources = cl.getResources("META-INF");
+		Set<JarFile> all = new LinkedHashSet<JarFile>();
+		JarFile jarFile;
+		while (resources.hasMoreElements()) {
+			URL url = (URL) resources.nextElement();
+			URLConnection conn = url.openConnection();
+			conn.setUseCaches(false);
+			conn.setDefaultUseCaches(false);
+			jarFile = getJarFile(url, conn);
+			if (jarFile != null) {
+				String name = FilenameUtils.getName(jarFile.getName());
+				for( String prefix : prefixes ) {
+					if ( StringUtils.startsWith(name, prefix) ) {
+						all.add(jarFile);
+					}
+				}
+			}
+		}
+		return all.toArray(new JarFile[all.size()]);
+	}	
 
-    private static boolean searchDir(Set result, File file, String suffix) 
+	private static JarFile getJarFile( URL url, URLConnection conn ) throws IOException {
+		JarFile jarFile = null;
+		if (conn instanceof JarURLConnection) {
+			jarFile = ((JarURLConnection) conn).getJarFile();
+		} else {
+			jarFile = getAlternativeJarFile(url);
+		}		
+		return jarFile;
+	}
+	
+    private static boolean searchDir(Set<URL> result, File file, String suffix) 
             throws IOException {
 		if (file.exists() && file.isDirectory()) {
 			File[] fc = file.listFiles();
 			String path;
-			URL src;
 			for (int i = 0; i < fc.length; i++) {
 				path = fc[i].getAbsolutePath();
 				if (fc[i].isDirectory()) {
@@ -114,7 +144,7 @@ public final class Classpath {
 	 * @param url the current url to start search
 	 * @throws IOException for any error
 	 */
-	private static void searchFromURL(Set result, String prefix, String suffix,
+	private static void searchFromURL(Set<URL> result, String prefix, String suffix,
 			URL url) throws IOException {
 		boolean done = false;
 		InputStream is = getInputStream(url);
@@ -215,9 +245,9 @@ public final class Classpath {
 		return null;
 	}
 
-    private static void searchJar(ClassLoader cl, Set result, JarFile file,
+    private static void searchJar(ClassLoader cl, Set<URL> result, JarFile file,
             String prefix, String suffix) throws IOException {
-		Enumeration e = file.entries();
+		Enumeration<JarEntry> e = file.entries();
 		JarEntry entry;
 		String name;
 		while (e.hasMoreElements()) {
@@ -228,12 +258,19 @@ public final class Classpath {
 			}
 			name = entry.getName();
 			if (name.startsWith(prefix) && name.endsWith(suffix)) {
-				Enumeration e2 = cl.getResources(name);
+				Enumeration<URL> e2 = cl.getResources(name);
 				while (e2.hasMoreElements()) {
 					result.add(e2.nextElement());
 				}
 			}
 		}
 	}
-
+    
+    public static Collection<URL> searchJar(ClassLoader cl, JarFile file,
+    		String prefix, String suffix) throws IOException {
+    	Set<URL> all = new LinkedHashSet<URL>();    	
+    	searchJar(cl, all, file, prefix, suffix);
+    	return all;
+    }
+    
 }

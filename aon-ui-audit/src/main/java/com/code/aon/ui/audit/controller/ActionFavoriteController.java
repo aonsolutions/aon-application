@@ -61,7 +61,7 @@ public class ActionFavoriteController implements IAuditConstants, Serializable {
 	}
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 
 	private ActionDeniedController getDeniedController() {

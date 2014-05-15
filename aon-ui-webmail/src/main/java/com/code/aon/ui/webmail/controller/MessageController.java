@@ -126,6 +126,7 @@ public class MessageController implements IWebMailConstants, Serializable {
     	f.setFileName(item.getFileName());
     	f.setMimeType(f.resolveMimeType());
     	LOGGER.info( "Uploaded file: {}", f );
+    	addAttachment( f );
 	}	
 	
 	public void addAttachment( AonFile aonFile ) {

@@ -91,7 +91,7 @@ public class SEPEUtils {
 		}
 		if(endDate!=null){
 			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-			Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
+			Expression exp = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), startDate);
 			endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
 			criteria.addExpression(endDateExp);
 		}
@@ -123,16 +123,19 @@ public class SEPEUtils {
 	}
 	
 	public Map<String, ContractInfo> getContractInfoMap(Contract contract, Date startDate, Date endDate) {
+		return getContractInfoMap(contract, startDate, endDate, false);
+	}
+	public Map<String, ContractInfo> getContractInfoMap(Contract contract, Date startDate, Date endDate, boolean includeChildDomains) {
 		Map<String, ContractInfo> map = new HashMap<String, ContractInfo>();
 		try {
-			for(ITransferObject to: getContractInfoList(contract, startDate, endDate, false)){
+			for(ITransferObject to: getContractInfoList(contract, startDate, endDate, includeChildDomains)){
 				ContractInfo info = (ContractInfo) to;
 				if(info.getExpression()!=null){
 					map.put(info.getName(), info);
 				}
 			}
 		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
+			// NADA, se devuelve un mapa vacio
 		}
 		return map;
 	}

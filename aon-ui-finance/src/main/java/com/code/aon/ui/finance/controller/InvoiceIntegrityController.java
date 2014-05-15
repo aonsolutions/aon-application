@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_INTEGRITY_NO_RESULT;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -228,7 +229,10 @@ public class InvoiceIntegrityController extends DataScrollerState {
 		}
 	}
 
-	public class Preview {
+	public static class Preview implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		int id;
 		int count;
 		boolean checked;
@@ -348,7 +352,9 @@ public class InvoiceIntegrityController extends DataScrollerState {
 		}
 	}
 	
-	public class BreakDown {
+	public static class BreakDown implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		boolean checked;
 		int registry;

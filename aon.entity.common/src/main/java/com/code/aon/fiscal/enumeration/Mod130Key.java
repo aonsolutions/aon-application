@@ -12,6 +12,8 @@ import com.code.aon.fiscal.enumeration.Mod130Key;
 
 public enum Mod130Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 
+	P1 ("130-P1" ,false,true ,0,null),
+	SP1("130-SP1",true ,false,0,null),
 	H1 ("130-H1" ,true ,false,0,null),
 	C01("130-01" ,false,false,1,null),
 	C02("130-02" ,false,false,1,null),

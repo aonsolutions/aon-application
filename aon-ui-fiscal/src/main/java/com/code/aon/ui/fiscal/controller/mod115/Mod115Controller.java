@@ -18,7 +18,7 @@ import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD115Writer;
 import com.code.aon.ui.util.AonUtil;
 
-public class Mod115Controller extends FiscalModelController {
+public class Mod115Controller extends FiscalModelController  {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -62,6 +62,11 @@ public class Mod115Controller extends FiscalModelController {
 		FiscalModel fm = (FiscalModel) getTo();
 		MOD115Format format = MOD115Format.getFormat(fm.getAdministration(), fm.getYear());
 		return format.getMimeType();
+	}
+
+	@Override
+	protected String getFormPage() {
+		return "mod115_form";
 	}	
 	
 }

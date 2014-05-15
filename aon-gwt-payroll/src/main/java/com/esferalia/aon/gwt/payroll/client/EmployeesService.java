@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -74,10 +75,10 @@ public interface EmployeesService extends RemoteService, StatisticsService  {
 	ContextDescriptor getContext(AgreementDraft agreementDraft, int levelId)
 			throws IllegalArgumentException;
 
-	Double eval(String expression, SalaryDraft salaryDraft)
+	List<Result> eval(String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException;
 
-	Double eval(String expression, AgreementDraft agreementDraft, int levelId)
+	List<Result> eval(String expression, AgreementDraft agreementDraft, int levelId)
 			throws IllegalArgumentException, EvalException;
 
 	Double calculateIrpf(SalaryDraft salaryDraft)

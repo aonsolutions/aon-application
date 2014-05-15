@@ -1,11 +1,13 @@
 package com.code.aon.fiscal.mod130;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.finance.Finance;
@@ -18,7 +20,9 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.registry.enumeration.TaxRegime;
 
-public class Mod130 implements IFiscalDeclaration {
+public class Mod130 implements IFiscalDeclaration, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private FiscalModel fiscalModel;
 	private Map<Mod130Key,FiscalModelDetail> map;

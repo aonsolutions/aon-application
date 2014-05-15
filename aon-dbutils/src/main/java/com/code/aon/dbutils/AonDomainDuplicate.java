@@ -297,7 +297,7 @@ public class AonDomainDuplicate implements Constants {
 	}
 	
 	public static void main(String[] args) {
-		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
+		DbUtils.loadDriver("com.mysql.jdbc.Driver");
 		
 		Integer sourceDomain = 791;
 		String domainName = "prueba-confialia.aonsolutions.net";

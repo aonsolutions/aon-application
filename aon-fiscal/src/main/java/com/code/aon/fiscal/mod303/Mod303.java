@@ -1,5 +1,6 @@
 package com.code.aon.fiscal.mod303;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -37,8 +39,9 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
+public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private FiscalModel fiscalModel;
 	private Map<Mod303Key,FiscalModelDetail> map;
@@ -123,9 +126,15 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 			criteria.addEqualExpression(infoBean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_FISCAL_ACTIVITY_ID), fa.getId());
 			List<ITransferObject> infos = infoBean.getList(criteria);
 			int moduleNumber = 1;
+			double seasonDays = 0;
 			for (ITransferObject infoTo : infos) {
 				FiscalActivityInfo info = (FiscalActivityInfo) infoTo;
-				if (info.getType() == FiscalActivityInfoType.VAT_MODULE) {
+				if (info.getType() == FiscalActivityInfoType.INFO) {
+					if (info.getInfoKey() == FiscalActivityInfoKey.A03) {
+						seasonDays = info.getDoubleValue();
+						System.out.println("seasonDays ...: " + seasonDays); 
+					}
+				}else if (info.getType() == FiscalActivityInfoType.VAT_MODULE) {
 					detail = new FiscalModelDetail();
 			    	detail.setFiscalModel(getHeader());
 					detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "M" + moduleNumber + "U");
@@ -138,16 +147,21 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 					detail.setDescription(info.getInfoKey().getName(locale));
 					detail.setAccumulatedAmount(info.getBase());
 					addDetail(detail);
+					
+					detail = getDetail(Mod303Key.getKeyWithValue(Mod303Key.ACTIVITIES_PREFIX + ac + "C") );
+					if (detail == null) {
+						detail = new FiscalModelDetail();
+						detail.setFiscalModel(getHeader());
+						detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "C");
+					}
+					double d = CommonUtil.round( detail.getAccumulatedAmount() + info.getBase() );
+					detail.setAccumulatedAmount( d );
+					addDetail(detail);
+
 					moduleNumber++;	
 				} else {
 					if (info.getType() == FiscalActivityInfoType.VAT_INFO) {
-						if (info.getInfoKey() == FiscalActivityInfoKey.V02) {
-							detail = new FiscalModelDetail();
-					    	detail.setFiscalModel(getHeader());
-							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "C");
-							detail.setAccumulatedAmount(info.getDoubleValue());
-							addDetail(detail);
-						} else if (info.getInfoKey() == FiscalActivityInfoKey.V03) {
+						if (info.getInfoKey() == FiscalActivityInfoKey.V03) {
 							detail = new FiscalModelDetail();
 					    	detail.setFiscalModel(getHeader());
 							detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "D");
@@ -159,8 +173,22 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 								detail = new FiscalModelDetail();
 						    	detail.setFiscalModel(getHeader());
 								detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "Z");
-								detail.setAccumulatedAmount(info.getDoubleValue());
+								double d = info.getDoubleValue();
+								detail.setAccumulatedAmount(d);
 								addDetail(detail);
+								if (d > 0) { // Actividad de temporada
+									detail = new FiscalModelDetail();
+							    	detail.setFiscalModel(getHeader());
+									detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "ZA");
+									detail.setAccumulatedAmount(seasonDays);
+									addDetail(detail);
+
+									detail = new FiscalModelDetail();
+							    	detail.setFiscalModel(getHeader());
+									detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "ZD");
+									detail.setAccumulatedAmount(seasonDays);
+									addDetail(detail);
+								}
 							} else if (info.getInfoKey() == FiscalActivityInfoKey.V05) {
 								detail = new FiscalModelDetail();
 						    	detail.setFiscalModel(getHeader());

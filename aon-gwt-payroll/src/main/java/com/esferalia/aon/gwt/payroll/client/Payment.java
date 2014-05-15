@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,10 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
@@ -47,6 +51,8 @@ public class Payment extends ResizeComposite {
 	public static final String NONE = "NONE";
 	public static final String IPREM = "IPREM";
 	public static final String CUSTOM = "CUSTOM";
+	
+	private static final List<Variable> EMPTY_VARS = Collections.emptyList();
 
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.MONTH);
@@ -58,7 +64,7 @@ public class Payment extends ResizeComposite {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	private class ExpressionTextBox extends TextBox implements BlurHandler,
-			FocusHandler, AsyncCallback<Double> {
+			FocusHandler, AsyncCallback<List<Result>> {
 
 		private String result;
 		private String expression;
@@ -108,8 +114,11 @@ public class Payment extends ResizeComposite {
 		}
 
 		@Override
-		public void onSuccess(Double d) {
-			result = format(d);
+		public void onSuccess(List<Result> results) {
+			double total = 0.00;
+			for (Result result : results)
+				total += result.getResult().doubleValue();
+			result = format(total);
 			setText(result);
 		}
 
@@ -136,7 +145,7 @@ public class Payment extends ResizeComposite {
 		}
 
 		void eval(boolean fire) {
-			contextProvider.eval(getParentExpression() + expression, this);
+			contextProvider.eval(getParentExpression() + expression, EMPTY_VARS,this);
 			if (fire) {
 				for (ExpressionTextBox child : childs) {
 					child.eval(fire);

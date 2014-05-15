@@ -1,5 +1,7 @@
 package com.code.aon.aio.controller;
 
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,16 +10,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+import org.jooq.AggregateFunction;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record2;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +40,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.fiscal.config.Model;
+import com.code.aon.fiscal.config.ModelConfig;
+import com.code.aon.fiscal.config.ModelManager;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.accounting.check.AonCheckException;
@@ -41,6 +55,8 @@ import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryC
 import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountEntryCheck;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
+import com.code.aon.ui.fiscal.controller.IFiscalModelController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -58,16 +74,13 @@ public class DashboardController implements Serializable {
 	private List<DashboardMessage> messages;
 	private DashboardEntry[] periodEntriesCount;
 
-	// private DashboardEntry[] payrollEntriesCount;
 	private List<Map<String, Object>> salaryEntriesCount;
-	//private List<Map<String, Object>> contractEntriesCount;
 	private LinkedList<DashboardStaff> staff;
 	private DashboardEntry[] salaryMonthsEntriesCount;
 	private DashboardEntry[] contractMonthsEntriesCount;
-	private List<DashboardFiscalStatus> fiscalStatus;
-	private static String[] MODELS = new String[] { "111", "115", "123", "130",
-			"131", "310", "311", "303", "349", "347" };
 
+	private List<ModelConfig> fiscalConfig;
+	
 	private com.code.aon.accounting.Period accountingPeriod;
 	private Integer fiscalYear;
 	private Integer payrollYear;
@@ -134,7 +147,8 @@ public class DashboardController implements Serializable {
 	}
 
 	public void onFiscalPeriodChanged(ActionEvent event) {
-		fiscalStatus = null;
+		this.fiscalConfig = null;
+		this.fiscalConfig = getFiscalInfo();
 	}
 
 	public Integer getFiscalYear() {
@@ -161,13 +175,12 @@ public class DashboardController implements Serializable {
 	public void onRefresh(ActionEvent event) {
 		this.messages = null;
 		this.periodEntriesCount = null;
-		this.fiscalStatus = null;
+		this.fiscalConfig = null;
+
 	}
 
 	public DashboardEntry[] getPeriodEntriesCount() throws ManagerBeanException {
 		if (periodEntriesCount == null && getAccountingPeriod() != null) {
-			PreparedStatement ps = null;
-			ResultSet rs = null;
 			Connection c = null;
 			periodEntriesCount = new DashboardEntry[12];
 			try {
@@ -178,139 +191,112 @@ public class DashboardController implements Serializable {
 					de.setValue(0);
 					periodEntriesCount[i] = de;
 				}
-				String select = "SELECT " + " COUNT(*)"
-						+ ", MONTH(ae.entry_date)" + " FROM account_entry ae"
-						+ WHERE + DomainManager.getSQLWhereClause("ae.domain")
-						+ " AND ae.account_period = ?"
-						+ " GROUP BY MONTH(ae.entry_date)";
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
-				ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
-						ResultSet.CONCUR_READ_ONLY);
-				ps.setInt(1, getAccountingPeriod().getId());
-				rs = ps.executeQuery();
-				while (rs.next()) {
-					int count = rs.getInt(1);
-					int month = rs.getInt(2) - 1;
+				int domainId = DomainManager.getCurrentDomain();
+				DSLContext ctx = DSL.using(c, AccountingUtil.getDefaultSettings());
+				AggregateFunction<Integer> countFunc = DSL.count(); 
+				Field<Integer> monthFunc = DSL.month(ACCOUNT_ENTRY.ENTRY_DATE);
+				for (Record2<Integer,Integer> record:
+						ctx.select(countFunc, monthFunc)
+							.from(ACCOUNT_ENTRY)
+							.where(ACCOUNT_ENTRY.DOMAIN.equal(domainId))
+							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(getAccountingPeriod().getId()))
+							.groupBy(monthFunc)
+							.fetch() ) {
+					int count = record.getValue(countFunc);
+					int month = record.getValue(monthFunc) - 1;
 					periodEntriesCount[month].setValue(count);
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				// Nothing. Se mostrara array vacio.
 			} catch (AonConnectionException e) {
 				e.printStackTrace();
 				// Nothing. Se mostrara array vacio.
 			} finally {
-				DatabaseUtil.closeQuietly(rs);
-				DatabaseUtil.closeQuietly(ps);
 				DatabaseUtil.closeQuietly(c);
 			}
 		}
 		return periodEntriesCount;
 	}
-
-	public List<DashboardFiscalStatus> getFiscalStatus()
-			throws ManagerBeanException {
-		if (fiscalStatus == null) {
-			fiscalStatus = new LinkedList<DashboardFiscalStatus>();
-			String select = "SELECT fm.model,fm.period,ELT(fm.status  + 1,0,1,1,1)"
-					+ " FROM fs_model fm"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("fm.domain")
-					+ " AND fm.year = ?"
-					+ " UNION "
-					+ "SELECT '303',vat.period,ELT(vatdec.status + 1,1,1)"
-					+ " FROM fs_vat vat,fs_vat_declaration vatdec"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("vat.domain")
-					+ " AND vatdec.fs_vat = vat.id"
-					+ " AND vat.year = ?"
-					+ " UNION "
-					+ "SELECT '349',m349.period,ELT(m349.status + 1,0,1)"
-					+ " FROM fs_mod349 m349"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("m349.domain")
-					+ " AND m349.year = ?"
-					+ " UNION "
-					+ "SELECT '347',16,ELT(m347.status + 1,0,1)"
-					+ " FROM fs_mod347 m347"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("m347.domain")
-					+ " AND m347.year = (? - 1)"
-					+ " UNION "
-					+ "SELECT '115',16,1"
-					+ " FROM fs_model180 m180"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("m180.domain")
-					+ " AND m180.year = ?"
-					+ " UNION "
-					+ "SELECT '111',16,1"
-					+ " FROM fs_model190 m190"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("m190.domain")
-					+ " AND m190.year = ?"
-					+ " UNION "
-					+ "SELECT '303',16,1"
-					+ " FROM fs_model390 m390"
-					+ WHERE
-					+ DomainManager.getSQLWhereClause("m390.domain")
-					+ " AND m390.year = ?";
-			PreparedStatement ps = null;
-			ResultSet rs = null;
+	public class DashboardFiscalInfo {
+		
+	}
+	
+	public List<ModelConfig> getFiscalInfo() {
+		if (fiscalConfig == null) {
+			fiscalConfig = new LinkedList<ModelConfig>();
 			Connection c = null;
 			try {
-				for (Period p : Period.values()) {
-					if (p.getStartMonth() != p.getDueMonth()) {
-						DashboardFiscalStatus de = new DashboardFiscalStatus();
-						de.setPeriod(p);
-						de.setModels(new HashMap<String, Integer>());
-						for (String model : getModels()) {
-							de.getModels().put(model, -1);
-						}
-						fiscalStatus.add(de);
-					}
-				}
+				ModelManager mm = new ModelManager();
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
-				ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
-						ResultSet.CONCUR_READ_ONLY);
-				ps.setInt(1, getFiscalYear());
-				ps.setInt(2, getFiscalYear());
-				ps.setInt(3, getFiscalYear());
-				ps.setInt(4, getFiscalYear());
-				ps.setInt(5, getFiscalYear());
-				ps.setInt(6, getFiscalYear());
-				ps.setInt(7, getFiscalYear());
-				rs = ps.executeQuery();
-				while (rs.next()) {
-					String model = rs.getString(1);
-					Period period = Period.values()[rs.getInt(2)];
-					int exists = rs.getInt(3);
-					if (rs.wasNull()) {
-						exists = -1;
-					}
-					for (DashboardFiscalStatus de : fiscalStatus) {
-						if (de.getPeriod() == period) {
-							de.getModels().put(model, exists);
-						}
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				// Nothing. Se mostrara array vacio.
-			} catch (AonConnectionException e) {
-				e.printStackTrace();
-				// Nothing. Se mostrara array vacio.
+				int domainId = DomainManager.getCurrentDomain();
+				fiscalConfig = mm.getModelsPanel(c, domainId, getFiscalYear());
+			} catch (Throwable e) {
+				// Nothing. Se mostrara array vacio. Pero se podrá usar la aplicación.
+				LOGGER.error(e.getMessage());
 			} finally {
-				DatabaseUtil.closeQuietly(rs);
-				DatabaseUtil.closeQuietly(ps);
 				DatabaseUtil.closeQuietly(c);
 			}
-
 		}
-		return fiscalStatus;
+		return fiscalConfig;
 	}
 
-	public String[] getModels() {
-		return MODELS;
+	public String navigateModel() {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		String ad = params.get("adm");
+		Administration administration = null;
+		if (StringUtils.isNotBlank(ad)) {
+			administration = Administration.valueOf(ad);
+		}
+		Model mod = Model.valueOf(params.get("model"));
+		Period period = Period.valueOf(params.get("period"));
+		boolean missing = Boolean.valueOf(params.get("status"));
+		String beanName = null;
+		if ( mod == Model.M111) {
+			beanName = "mod111";
+		} else if ( mod == Model.M115) {
+			beanName = "mod115";
+		} else if ( mod == Model.M123) {
+			beanName = "mod123";
+		} else if ( mod == Model.M130) {
+			beanName = "mod130";
+		} else if ( mod == Model.M131) {
+			beanName = "mod131";
+		} else if ( mod == Model.M303_RG) {
+			beanName = "vatTax";
+		} else if ( mod == Model.M303_RS) {
+			beanName = "mod303";
+		} else if ( mod == Model.M347) {
+			beanName = "mod347";
+		} else if ( mod == Model.M349) {
+			beanName = "mod349";
+		} else if ( mod == Model.M390_HF) {
+			beanName = "vatTax";
+		} else if ( mod == Model.M311) {
+			beanName = "mod311";
+		} else if ( mod == Model.M310) {
+			beanName = "mod310";
+		} else if ( mod == Model.M390) {
+			return "gwt_mod390";
+		} else if ( mod == Model.M180) {
+			return "gwt_mod180";
+		} else if ( mod == Model.M190) {
+			return "gwt_mod190";
+		}
+		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
+		try {
+			String navKey = "";
+			if (missing) {
+				navKey = controller.newModel(administration, getFiscalYear(), period);	
+			} else {
+				navKey = controller.editModel(administration, getFiscalYear(), period);
+			}
+			this.fiscalConfig = null;
+			return navKey;
+		} catch (ManagerBeanException e) {
+			String message = "Imposible realizar la navegación al modelo solicitado.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message,e);
+		}
 	}
 
 	public List<DashboardMessage> getMessages() {
@@ -319,7 +305,9 @@ public class DashboardController implements Serializable {
 			messages = new LinkedList<DashboardMessage>();
 			try {
 				if (getAccountingPeriod() != null) {
-					CheckParams params = new CheckParams();
+					String domainName = AonUtil.getDomainName();
+					int domainId = DomainManager.getCurrentDomain();
+					CheckParams params = new CheckParams(domainName,domainId);
 					params.setPeriod(getAccountingPeriod());
 
 					UnbalancedAccountEntryCheck uc = new UnbalancedAccountEntryCheck();

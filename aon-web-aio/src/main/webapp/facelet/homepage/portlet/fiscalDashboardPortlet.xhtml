@@ -16,10 +16,9 @@
 			</aon:div>
 			<aon:div styleClass="aon-portlet-body">
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-width-half,aon-width-half">
+					columnClasses="aon-width-half aon-vertical-align-top,aon-width-half">
 					
-					<aon:div id="fiscal_status_div" 
-					style="width: 100%; height: 200px; border:solid #BBB 1px; text-align: center;;padding-top: 5px;">
+					<aon:div id="fiscal_status_div">
 						<aon:div styleClass="aon-bold">
 							<aon:outputText value="Tabla fiscal del ejercicio "/>
 							<aon:selectOneMenu id="Dashboard_fiscalYear"
@@ -27,10 +26,8 @@
 								value="#{dashboard.fiscalYear}">
 								<a4j:support event="onchange"
 									actionListener="#{dashboard.onFiscalPeriodChanged}" 
-									reRender="fiscal_status_div"
+									reRender="fiscal_status_div_inner"
 									ajaxSingle="true" />
-								<f:selectItem itemLabel="2009" itemValue="2009" />
-								<f:selectItem itemLabel="2010" itemValue="2010" />
 								<f:selectItem itemLabel="2011" itemValue="2011" />
 								<f:selectItem itemLabel="2012" itemValue="2012" />
 								<f:selectItem itemLabel="2013" itemValue="2013" />
@@ -43,162 +40,153 @@
 								<f:selectItem itemLabel="2020" itemValue="2021" />
 							</aon:selectOneMenu>
 						</aon:div>
-						
-						<table style="margin: 10px;">
-							<tr>
-								<td style="width: 80px;">
-									<aon:outputText value="&#160;"/>
-								</td>
-								<c:forEach var="fsmodel" items="#{dashboard.models}">
-									<c:if test="#{fsmodel != '347'}">
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">
-											<aon:outputText value="#{fsmodel}"/>
+						<aon:div id="fiscal_status_div_inner">
+							<c:if test="#{empty dashboard.fiscalInfo}">
+									<aon:div style="padding-top: 10px;">
+										<aon:outputText value="No se encontraron resultados"/>
+									</aon:div>
+							</c:if>
+							<table style="margin: 10px;margin-left: auto; margin-right: auto; ">
+							<c:if test="#{not empty dashboard.fiscalInfo}">
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="E"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="F"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="M"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="A"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="M"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="J"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="X"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="A"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="S"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="O"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="N"/></td>
+									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="D"/></td>
+								</tr>
+							</c:if>
+							<ui:repeat var="modelConfig" value="#{dashboard.fiscalInfo}">
+								<tr>
+									<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">
+										<aon:outputText value=""
+											style="padding-left: 16px;"
+											rendered="#{modelConfig.administration != null}"
+											styleClass="#{modelConfig.administrationStyle} aon-nowrap"
+											/>
+										<aon:outputText value="?"
+											rendered="#{modelConfig.administration == null}"/>
+									</td>
+									<td style="width: 55px; border: solid #BBB 1px; font-weight: bold; white-space: nowrap;">
+										<aon:outputText value="#{modelConfig.model.name}"/>
+									</td>
+									<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">
+										<aon:div style="display:inline;cursor:pointer;"
+											rendered="#{modelConfig.document != null}">
+											<aon:outputText value="&#160;" 
+												style="padding-left:15px;" styleClass="aon-icon-comment"/>
+											<rich:toolTip value="#{modelConfig.document} - #{modelConfig.name}" 
+												showEvent="onmouseover"
+												style="width: 400px;">
+												<f:facet name="defaultContent">
+													<aon:outputText value="#{bundle.aon_in_progress}" />
+												</f:facet>
+											</rich:toolTip>
+										</aon:div>
+									</td>
+									<ui:repeat var="status" value="#{modelConfig.statusList}">
+										<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"
+											title="Modelo #{modelConfig.model.name}/#{status.period} - #{status.message}"
+											colspan="#{12 / modelConfig.numberOfStatuses}">
+											
+											<aon:commandLink action="#{dashboard.navigateModel}">
+												<aon:outputText value=""
+													rendered="#{!status.missing}"
+													style="padding-left: 16px;"
+													styleClass="#{status.styleClass} aon-nowrap"
+													/>
+												<aon:outputText value="+"
+													rendered="#{status.missing}"
+													/>
+												<f:param name="model" value="#{modelConfig.model}"/>
+												<f:param name="period" value="#{status.period}"/>
+												<f:param name="adm" value="#{modelConfig.administration}"/>
+												<f:param name="status" value="#{status.missing}"/>
+											</aon:commandLink>
 										</td>
-									</c:if>
-								</c:forEach>
-							</tr>
-							<c:forEach var="fs" items="#{dashboard.fiscalStatus}">
-								<c:if test="#{fs.period.name == 'An'}">
-									<tr>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="190"/></td>
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="180"/></td>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="390"/></td>
-										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="347"/></td>
-									</tr>
-									<tr>
-										<td style="border: solid #BBB 1px; white-space: nowrap;">
-											<aon:outputText value="#{fs.period}"/>
-										</td>
-										<c:forEach var="fsmodel" items="#{dashboard.models}">
-											<c:if test="#{fsmodel == '130' or fsmodel == '131' or fsmodel == '349' or fsmodel == '310' or fsmodel == '311'}">
-												<td></td>
-											</c:if>
-											<c:if test="#{fsmodel != '130' and fsmodel != '131' and 
-														  fsmodel != '349' and fsmodel != '310' and fsmodel != '311'}">
-												<td style="border: solid #BBB 1px;">
-													<aon:outputText value="--"
-														rendered="#{fs.models[fsmodel] == -1}"
-														style="font-weight:bold;"
-														title="No Creado"/>
-													<aon:outputText value="&#160;"
-														rendered="#{fs.models[fsmodel] == 0}"
-														title="Creado, Sin terminar"
-														style="padding-left: 15px;" 
-														styleClass="aon-icon-edit"/>
-													<aon:outputText value="&#160;"
-														rendered="#{fs.models[fsmodel] == 1}"
-														title="Finalizado"
-														style="padding-left: 15px;" 
-														styleClass="aon-icon-lock"/>
-												</td>
-											</c:if>
-										</c:forEach>
-									</tr>
-								</c:if>
-								<c:if test="#{fs.period.name != 'An'}">
-									<tr>
-										<td style="border: solid #BBB 1px; white-space: nowrap;">
-											<aon:outputText value="#{fs.period}"/>
-										</td>
-										<c:forEach var="fsmodel" items="#{dashboard.models}">
-											<c:if test="#{fsmodel != '347'}">
-												<td style="border: solid #BBB 1px;">
-													<aon:outputText value="--"
-														rendered="#{fs.models[fsmodel] == -1}"
-														style="font-weight:bold;"
-														title="No Creado"/>
-													<aon:outputText value="&#160;"
-														rendered="#{fs.models[fsmodel] == 0}"
-														title="Creado, Sin terminar"
-														style="padding-left: 15px;" 
-														styleClass="aon-icon-edit"/>
-													<aon:outputText value="&#160;"
-														rendered="#{fs.models[fsmodel] == 1}"
-														title="Finalizado"
-														style="padding-left: 15px;" 
-														styleClass="aon-icon-lock"/>
-												</td>
-											</c:if>
-										</c:forEach>
-									</tr>
-								</c:if>
-							</c:forEach>
-						</table>
-					</aon:div>
-
-					<aon:div id="accountingGraphContainer" 
-					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
-						<aon:div styleClass="aon-bold">
-							<aon:outputText value="Apuntes por Meses del Ejercicio"/>
-							<aon:selectOneMenu id="Dashboard_accountPeriod"
-								style="border: none;"
-								value="#{dashboard.accountingPeriod}">
-								<a4j:support event="onchange"
-									actionListener="#{dashboard.onAccountingPeriodChanged}" 
-									reRender="accountingGraphContainer,messageList"
-									ajaxSingle="true" />
-								<f:selectItem itemLabel="-" itemValue="" />
-								<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
-							</aon:selectOneMenu>
+									</ui:repeat>
+								</tr>
+							</ui:repeat>
+							</table>
 						</aon:div>
-						<aon:div id="bar_chart_div" style="width: 100%; height: 180px;"/>
-<!-- 						
-						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
- -->						
-						<script type="text/javascript"> 
-							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
-							function drawCharts(){
-								var data = new google.visualization.DataTable();
-								data.addColumn('string', 'Mes');
-								data.addColumn('number', 'Apuntes');
-								<c:forEach var="entry" items="#{dashboard.periodEntriesCount}">
-									data.addRow(['#{entry.name}', #{entry.value}]);
+					</aon:div>
+					
+					<aon:panelGrid columns="1" styleClass="aon-width-all" columnClasses="aon-width-all">
+						<aon:div id="accountingGraphContainer" 
+							style="width: 98%; min-height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
+							<aon:div styleClass="aon-bold">
+								<aon:outputText value="Apuntes por Meses del Ejercicio"/>
+								<aon:selectOneMenu id="Dashboard_accountPeriod"
+									style="border: none;"
+									value="#{dashboard.accountingPeriod}">
+									<a4j:support event="onchange"
+										actionListener="#{dashboard.onAccountingPeriodChanged}" 
+										reRender="accountingGraphContainer,messageList"
+										ajaxSingle="true" />
+									<f:selectItem itemLabel="-" itemValue="" />
+									<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+								</aon:selectOneMenu>
+							</aon:div>
+							<aon:div id="bar_chart_div" style="width: 100%; min-height: 180px;"/>
+							<script type="text/javascript"> 
+								google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
+								function drawCharts(){
+									var data = new google.visualization.DataTable();
+									data.addColumn('string', 'Mes');
+									data.addColumn('number', 'Apuntes');
+									<c:forEach var="entry" items="#{dashboard.periodEntriesCount}">
+										data.addRow(['#{entry.name}', #{entry.value}]);
+									</c:forEach>
+									var options = {
+										chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},
+										legend: {position: 'none'},
+										tooltip: {isHtml: true},
+										series: [{color: 'SteelBlue'}],
+									};
+									var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:bar_chart_div'));
+									chart.draw(data, options);
+								}
+						   </script>
+						</aon:div>
+						
+						<aon:div id="messageList" style="width: 99%; margin-left: 5px; border:solid #BBB 1px; text-align: center; margin-top: 10px;padding-bottom: 10px;padding-top: 5px;">
+							<aon:div styleClass="aon-bold">
+								<aon:outputText value="Datos relativos al ejercicio Contable "/>
+								<aon:selectOneMenu id="Dashboard_accountPeriod2"
+									style="border: none;"
+									value="#{dashboard.accountingPeriod}">
+									<a4j:support event="onchange"
+										actionListener="#{dashboard.onAccountingPeriodChanged}" 
+										reRender="accountingGraphContainer,messageList"
+										ajaxSingle="true" />
+									<f:selectItem itemLabel="-" itemValue="" />
+									<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+								</aon:selectOneMenu>
+							</aon:div>
+							<ul class="aon-width-all aon-text-left" 
+								style="margin-left: 10px; margin-top: 10px; list-style-type:none;">
+								<c:forEach var="msg" items="#{dashboard.messages}">
+									<li style="margin-left: 5px;">
+										<aon:outputText value="#{msg.category}" 
+											style="padding-left: 20px;"
+											styleClass="aon-bold aon-icon-point-#{msg.level}"/>
+										<aon:outputText value="#{msg.message}" styleClass="aon-padding-left" />
+									</li>
 								</c:forEach>
-								var options = {
-									chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},
-									legend: {position: 'none'},
-									tooltip: {isHtml: true},
-									series: [{color: 'SteelBlue'}],
-								};
-								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:bar_chart_div'));
-								chart.draw(data, options);
-							}
-					   </script>
-					</aon:div>
-				</aon:panelGrid>
-				<aon:div id="messageList" style="width: 99%; border:solid #BBB 1px; text-align: center; margin-top: 10px;padding-bottom: 10px;padding-top: 5px;">
-					<aon:div styleClass="aon-bold">
-						<aon:outputText value="Datos relativos al ejercicio Contable "/>
-						<aon:selectOneMenu id="Dashboard_accountPeriod2"
-							style="border: none;"
-							value="#{dashboard.accountingPeriod}">
-							<a4j:support event="onchange"
-								actionListener="#{dashboard.onAccountingPeriodChanged}" 
-								reRender="accountingGraphContainer,messageList"
-								ajaxSingle="true" />
-							<f:selectItem itemLabel="-" itemValue="" />
-							<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
-						</aon:selectOneMenu>
-					</aon:div>
-					<ul class="aon-width-all aon-text-left" 
-						style="margin-left: 10px; margin-top: 10px; list-style-type:none;">
-						<c:forEach var="msg" items="#{dashboard.messages}">
-							<li style="margin-left: 5px;">
-								<aon:outputText value="#{msg.category}" 
-									style="padding-left: 20px;"
-									styleClass="aon-bold aon-icon-point-#{msg.level}"/>
-								<aon:outputText value="#{msg.message}" styleClass="aon-padding-left" />
-							</li>
-						</c:forEach>
-					</ul>
-				</aon:div>				
+							</ul>
+						</aon:div>
+					</aon:panelGrid>
+				</aon:panelGrid>				
 			</aon:div>
 		</aon:div>
 </ui:composition>

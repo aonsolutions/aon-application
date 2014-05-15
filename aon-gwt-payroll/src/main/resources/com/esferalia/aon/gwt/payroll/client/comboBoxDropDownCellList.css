@@ -5,6 +5,7 @@ cellListWidget {
 .cellListEvenItem,
 .cellListOddItem {
 	cursor: pointer;
+	padding-right: 32px;
 }
 
 .cellListEvenItem:hover,

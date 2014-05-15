@@ -1,5 +1,8 @@
 package com.code.aon.product.strategy;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -11,7 +14,9 @@ import com.code.aon.config.enumeration.VatDeductionType;
  * @since 1.0
  *
  */
-public class TaxBreakDown {
+public class TaxBreakDown implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private TaxType taxType;
 	private double taxPercent;

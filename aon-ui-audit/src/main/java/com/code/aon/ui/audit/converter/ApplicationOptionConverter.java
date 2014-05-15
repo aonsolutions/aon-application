@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class ApplicationOptionConverter implements Converter, IAuditConstants {
 	
@@ -21,7 +20,7 @@ public class ApplicationOptionConverter implements Converter, IAuditConstants {
 	public Object getAsObject(FacesContext context, UIComponent component,
 			String value) {
 		if (! StringUtils.isEmpty(value) ) {
-			ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+			ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 			ApplicationOption option = aoc.getOptionMap().get(value);
 			return option;			
 		}

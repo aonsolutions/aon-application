@@ -210,7 +210,7 @@ public class CheckIntegrity implements Constants {
 	}
 	
 	public static void main(String[] args) {
-		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
+		DbUtils.loadDriver("com.mysql.jdbc.Driver");
 		
 		Integer[] domains = new Integer[]{4};
 		

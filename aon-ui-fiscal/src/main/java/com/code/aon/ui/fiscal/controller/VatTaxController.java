@@ -24,6 +24,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -48,7 +49,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class VatTaxController extends BasicController {
+public class VatTaxController extends BasicController implements IFiscalModelController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -871,4 +872,28 @@ public class VatTaxController extends BasicController {
 		return keys;
 	}
 	
+	@Override
+	public String editModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.VAT_TAX_YEAR); 
+		String periodAlias = getManagerBean().getFieldName(IEntityAlias.VAT_TAX_PERIOD);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(periodAlias,period);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+		return "vatTax_form";
+	}
+
+	@Override
+	public String newModel(Administration administration, int year,
+			Period period) throws ManagerBeanException{
+		onReset(null);
+		VatTax fm = (VatTax) getTo();
+		fm.setYear(year);
+		fm.setPeriod(period);
+		return "vatTax_form";
+	}	
 }

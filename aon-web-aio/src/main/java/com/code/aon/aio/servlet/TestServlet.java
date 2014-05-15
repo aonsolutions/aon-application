@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ui.audit.session.JSFStartupUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class TestServlet extends HttpServlet {
@@ -33,8 +34,9 @@ public class TestServlet extends HttpServlet {
 		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String host = null;
 		try {
-			String host = req.getParameter("aon.domain");
+			host = req.getParameter("aon.domain");
 			if (host == null || "".equals(host)){
 				host = AonUtil.getServerName(req);
 			}
@@ -53,9 +55,12 @@ public class TestServlet extends HttpServlet {
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
 			DatabaseUtil.closeQuietly(c);
-			LOGGER.info("TestServlet: ("+domainId+") response time : " + (new Date().getTime() - start.getTime()) + "Ms.");
 		}
-		
+		JSFStartupUtil util = new JSFStartupUtil(getServletContext());
+		if (! util.isStarted() ) {
+			util.init(host);
+		}
+		LOGGER.info("TestServlet: ("+domainId+") response time : " + (new Date().getTime() - start.getTime()) + "Ms.");		
 	}
 	
 

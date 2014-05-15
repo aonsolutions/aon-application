@@ -11,8 +11,8 @@
 	<aon:panelGroup id="showDocumentGenerationWindow">
 		<c:if test="#{contractPdf.showDocumentGenerationWindow}">
 			<rich:modalPanel id="documentGenerationPanel" 
-				width="350" height="#{90+(contractPdf.availableDocumentCount*25)}"
-				minWidth="350" minHeight="#{90+(contractPdf.availableDocumentCount*25)}"
+				width="350" height="#{110+(contractPdf.availableDocumentCount*25)}"
+				minWidth="350" minHeight="#{110+(contractPdf.availableDocumentCount*25)}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -55,14 +55,12 @@
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												onclick="Richfaces.showModalPanel('waitProccess')" 
 	 											oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-											<!--  
 											<aon:commandButton value="#{bundle.aon_save}" id="documents-accept" 
 												rendered="#{contractPdf.generatonFinished}"
 												actionListener="#{contractPdf.onSaveFiles}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
-												reRender="showNewMessageWindow"
-												title="Guardar en documentos de contrato" />
-											-->
+												reRender="showDocumentGenerationWindow"
+												title="Guardar documentos adjuntos" />
 											<aon:commandButton value="#{bundle.aon_email_abrv}" id="documents-email" 
 												rendered="#{contractPdf.generatonFinished}"
 												actionListener="#{contractPdf.onSendSelectedByEmail}"
@@ -74,13 +72,20 @@
 									     		actionListener="#{contractPdf.onDownloadMergedFile}" 
 												styleClass="aon-finding-toolbar-item aon-icon-pdf"
 												style="line-height:16px;margin-right:0;"
-										    	title="#{bundle.aon_fileupload_download}">
-												<aon:outputText value="#{bundle.aon_documents}" />
+												title="Descargar todo en un archivo">
+												<aon:outputText value="#{bundle.webmail_download}" />
 											</aon:htmlCommandLink>			
 										</aon:div>
 									
 										<aon:div styleClass="aon-scroll-area" style="margin-top: 2px;">
-									
+											<aon:outputText value="Documentos que se van a generar:"
+												rendered="#{!contractPdf.generatonFinished}"/>
+											<aon:outputText value="Documentos generados correctamente"
+												styleClass="aon-bold"
+												rendered="#{contractPdf.generatonFinished}"/>
+											<aon:outputText value="Documentos guardados correctamente"
+												styleClass="aon-bold"
+												rendered="#{false}"/>
 											<aon:selectManyCheckbox layout="pageDirection"
 												disabled="#{contractPdf.generatonFinished}" 
 												value="#{contractPdf.selectedDocuments}">

@@ -20,16 +20,21 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.Mod349;
 import com.code.aon.fiscal.enumeration.Mod349Status;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.mod349.Mod349Parameters;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
+import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD349Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod349Controller extends BasicController {
+public class Mod349Controller extends BasicController implements IFiscalModelController{
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -153,4 +158,32 @@ public class Mod349Controller extends BasicController {
 	public int getYear() {
 		return ((Mod349) getTo()).getYear();
 	}
+
+	@Override
+	public String editModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.MOD349_YEAR);
+		String periodAlias = getManagerBean().getFieldName(IEntityAlias.MOD349_PERIOD);
+		String admonAlias = getManagerBean().getFieldName(IEntityAlias.MOD349_ADMINISTRATION);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(periodAlias,period);
+		criteria.addEqualExpression(admonAlias,administration);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+		return "mod349_form";
+	}
+
+	@Override
+	public String newModel(Administration administration, int year,
+			Period period) throws ManagerBeanException{
+		onReset(null);
+		Mod349 fm = (Mod349) getTo();
+		fm.setYear(year);
+		fm.setPeriod(period);
+		fm.setAdministration(administration);
+		return "mod349_form";
+	}	
 }

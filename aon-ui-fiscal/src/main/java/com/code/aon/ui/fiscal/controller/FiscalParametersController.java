@@ -91,7 +91,22 @@ public class FiscalParametersController implements IFiscalConstants, Serializabl
 						,FS_CONCTACT_PHONE
 						,FS_CONCTACT_CELLULAR
 						,FS_CONCTACT_MAIL
-						,FS_MOD303_BY_DIFFERENCE_DISABLED};
+						,FS_MOD303_BY_DIFFERENCE_DISABLED
+						,FS_MOD303_BY_DIFFERENCE_DISABLED
+						,FS_MODEL_CFG_M111
+						,FS_MODEL_CFG_M115
+						,FS_MODEL_CFG_M123
+						,FS_MODEL_CFG_M130
+						,FS_MODEL_CFG_M131
+						,FS_MODEL_CFG_M303_RS
+						,FS_MODEL_CFG_M303_RG
+						,FS_MODEL_CFG_M347
+						,FS_MODEL_CFG_M349
+						,FS_MODEL_CFG_M390_HF
+						,FS_MODEL_CFG_M390
+						,FS_MODEL_CFG_M180
+						,FS_MODEL_CFG_M190
+						};
 		
 		for (String key : keys) {
 			if (!parameters.containsKey(key)) {
@@ -282,6 +297,85 @@ public class FiscalParametersController implements IFiscalConstants, Serializabl
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
+	}
+	
+	public String getMod111() {
+		return getParameters().get(FS_MODEL_CFG_M111).getValue();
+	}
+	public void setMod111(String config) {
+		getParameters().get(FS_MODEL_CFG_M111).setValue(config);		
+	}
+	public String getMod115() {
+		return getParameters().get(FS_MODEL_CFG_M115).getValue();
+	}
+	public void setMod115(String config) {
+		getParameters().get(FS_MODEL_CFG_M115).setValue(config);		
+	}
+	public String getMod123() {
+		return getParameters().get(FS_MODEL_CFG_M123).getValue();
+	}
+	public void setMod123(String config) {
+		getParameters().get(FS_MODEL_CFG_M123).setValue(config);		
+	}
+	public String getMod130() {
+		return getParameters().get(FS_MODEL_CFG_M130).getValue();
+	}
+	public void setMod130(String config) {
+		getParameters().get(FS_MODEL_CFG_M130).setValue(config);		
+	}
+	public String getMod131() {
+		return getParameters().get(FS_MODEL_CFG_M131).getValue();
+	}
+	public void setMod131(String config) {
+		getParameters().get(FS_MODEL_CFG_M131).setValue(config);		
+	}
+	public String getMod303RS() {
+		return getParameters().get(FS_MODEL_CFG_M303_RS).getValue();
+	}
+	public void setMod303RS(String config) {
+		getParameters().get(FS_MODEL_CFG_M303_RS).setValue(config);		
+	}
+	public String getMod303RG() {
+		return getParameters().get(FS_MODEL_CFG_M303_RG).getValue();
+	}
+	public void setMod303RG(String config) {
+		getParameters().get(FS_MODEL_CFG_M303_RG).setValue(config);		
+	}
+	public String getMod347() {
+		return getParameters().get(FS_MODEL_CFG_M347).getValue();
+	}
+	public void setMod347(String config) {
+		getParameters().get(FS_MODEL_CFG_M347).setValue(config);		
+	}
+	public String getMod349() {
+		return getParameters().get(FS_MODEL_CFG_M349).getValue();
+	}
+	public void setMod349(String config) {
+		getParameters().get(FS_MODEL_CFG_M349).setValue(config);		
+	}
+	public String getMod390HF() {
+		return getParameters().get(FS_MODEL_CFG_M390_HF).getValue();
+	}
+	public void setMod390HF(String config) {
+		getParameters().get(FS_MODEL_CFG_M390_HF).setValue(config);		
+	}
+	public String getMod390() {
+		return getParameters().get(FS_MODEL_CFG_M390).getValue();
+	}
+	public void setMod390(String config) {
+		getParameters().get(FS_MODEL_CFG_M390).setValue(config);		
+	}
+	public String getMod180() {
+		return getParameters().get(FS_MODEL_CFG_M180).getValue();
+	}
+	public void setMod180(String config) {
+		getParameters().get(FS_MODEL_CFG_M180).setValue(config);		
+	}
+	public String getMod190() {
+		return getParameters().get(FS_MODEL_CFG_M190).getValue();
+	}
+	public void setMod190(String config) {
+		getParameters().get(FS_MODEL_CFG_M190).setValue(config);		
 	}
 	
 	public void onAccept(ActionEvent event) {

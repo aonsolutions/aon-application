@@ -13,10 +13,32 @@
 		columnClasses="aon-panelGrid-odd aon-width-150
 					  ,aon-panelGrid-even aon-width-auto">
 
+		<c:if test="#{controller.multiDeclarationEnabled}">
+			<aon:outputLabel for="controller_previous" value="Seleccione datos previos" />
+			<aon:selectOneMenu id="controller_previous" value="#{controller.previousDeclarationDocument}">
+				<f:selectItems value="#{controller.previousDeclarationDocuments}" />
+				<a4j:support ajaxSingle="true" event="onchange"
+					actionListener="#{controller.onSelectPreviousDeclarationDocument}"
+					reRender="panelIdentification"/>
+			</aon:selectOneMenu>
+			
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+		</c:if>
+
 		<aon:outputLabel for="controller_document" value="#{bundle.aon_company_document}" />
-		<aon:inputText id="controller_document" size="10" maxlength="9" required="true"
-			value="#{controller.to.document}" disabled="#{controller.declaration.header.readOnly}">
-		</aon:inputText>
+		<aon:div id="documentContainer">
+			<aon:inputText id="controller_document" size="10" maxlength="9" required="true"
+				value="#{controller.to.document}" disabled="#{controller.declaration.header.readOnly}">
+			</aon:inputText>
+			<aon:panelGroup rendered="#{controller.participationPercentEnabled and controller.new}" style="margin-left: 5px;">
+				<aon:outputLabel for="controller_participation" value="#{bundle.fiscal_model_particiapation_percent}" />
+				<aon:inputText id="controller_participation" size="5" maxlength="6" 
+					required="true" style="margin-left: 5px;" value="#{controller.to.participationPercent}" 
+					disabled="#{controller.declaration.header.readOnly}">
+				</aon:inputText>
+			</aon:panelGroup>
+		</aon:div>
 		
 		<aon:outputLabel for="controller_name" value="#{bundle.aon_name}" />
 		<aon:inputText id="controller_name" size="45" maxlength="45" required="true" 

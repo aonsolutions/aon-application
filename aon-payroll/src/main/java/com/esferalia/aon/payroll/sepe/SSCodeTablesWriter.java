@@ -17,15 +17,20 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.Classpath;
 
+/*
+ * SOURCE: http://www.seg-social.es/prdi00/groups/public/documents/binario/50045.pdf
+ */
 public class SSCodeTablesWriter {
 	
-	final static String PARENT_FOLDER_PATH 				= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
-	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/ss/";
-	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/";
+	final static String BASE_DIR 						= "/AON-TRUNK-OTHER";
+	final static String PARENT_FOLDER_PATH 				= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
+	final static String ENUMERATIONS_FOLDER_PATH 		= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/ss/";
+	final static String COLLECTIONS_CLASS_PATH			= BASE_DIR + "/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/";
 	final static String COLLECTIONS_CLASS_NAME			= "SSCollectionsController";
 	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.payroll.controller";
 
@@ -33,31 +38,11 @@ public class SSCodeTablesWriter {
 	
 	final static String JAVA_FILE_EXTENSION = ".java";
 	
-	final static String TXT_CONTAINER_URL	= "com/esferalia/aon/payroll/ss/";
+	final static String ZIP_CONTAINER_URL	= "com/esferalia/aon/payroll/ss/";
+	final static String TABLES_FILE_NAME	= "TABLAS_FORMATOS_COMUNES";
 	
-	final static String TABLES_ENUM_NAME 	= "SSCodeTables";
-	
-	
-	/* 
-	 * SOURCE: http://www.seg-social.es/prdi00/groups/public/documents/binario/50045.pdf
-	 */
-	final static String T01_TABLE_DESCRIPTION = "Indicador de prueba";
-	final static String T05_TABLE_DESCRIPTION = "Calificados de liquidación";
-	final static String T06_TABLE_DESCRIPTION = "Clase de liquidación";
-	final static String T07_TABLE_DESCRIPTION = "Acción";
-	final static String T10_TABLE_DESCRIPTION = "Clave de entidad de AT y EP";
-	final static String T18_TABLE_DESCRIPTION = "Grupo de cotización";
-	final static String T21_TABLE_DESCRIPTION = "Situación";
-	final static String T37_TABLE_DESCRIPTION = "Condición de desempleado";
-	final static String T41_TABLE_DESCRIPTION = "Tipos de inactividad";
-	final static String T49_TABLE_DESCRIPTION = "Tipo de peculiaridad de cotización";
-	final static String T50_TABLE_DESCRIPTION = "Fracción-Cuota";
-	final static String T54_TABLE_DESCRIPTION = "Colectivo de peculiaridad de cotización";
-	final static String T58_TABLE_DESCRIPTION = "Ocupación";
-	final static String T61_TABLE_DESCRIPTION = "Colectivo de trabajador";
-	final static String T68_TABLE_DESCRIPTION = "Indicativo pérdida de beneficios (trabajador)";
-	final static String T83_TABLE_DESCRIPTION = "Exclusión social/Víctimas";
-	final static String T84_TABLE_DESCRIPTION = "Concepto retributivo";
+	final static String LEAME_FILE_NAME 		= "LEAME";
+	final static String LEAME_FILE_ENUM_NAME 	= "SSCodeTables";
 	
 	
 	private static int tablesCount;
@@ -69,10 +54,13 @@ public class SSCodeTablesWriter {
 	public static void main(String[] args) throws IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		
-		URL[] codeTablesFiles = Classpath.search(cl, TXT_CONTAINER_URL, ".txt");
-		if(codeTablesFiles.length==0){
-			throw new IOException("¡¡¡¡¡¡¡¡¡ Ruta de tablas de codigos no encontrado !!!!!!");
+		String TABLE_TXT_FILE_PATH = "/tmp/ss/codeTables/";
+		
+		URL[] codeTablesZip = Classpath.search(cl, ZIP_CONTAINER_URL, ".zip");
+		if(codeTablesZip.length==0){
+			throw new IOException("¡¡¡¡¡¡¡¡¡ Fichero de tablas de codigos no encontrado !!!!!!");
 		}
+		
 		
 		int enumCount = 0;
 		int propertiesCount = 0;
@@ -82,23 +70,38 @@ public class SSCodeTablesWriter {
 		System.out.println("*******************************************************");
 		System.out.println("*** S.S. - TABLAS DE CODIGOS DE LA SEGURIDAD SOCIAL ***");
 		System.out.println("*******************************************************");
-		System.out.println("*** Iniciando proceso. " + dateFormatter.format(new Date()));
-		for(URL url: codeTablesFiles){
-
-			File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(url) + JAVA_FILE_EXTENSION);
-			System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
-			writeEnum(new File(url.getPath()), newFile);
-			System.out.println(" generado!");
-			enumCount++;
-			tablesCount++;
-		}
+		System.out.println("*** Iniciando proceso.  " + dateFormatter.format(new Date()));
+		System.out.println("*** Espacio de trabajo: " + BASE_DIR);
 		
-		File newFile = new File(ENUMERATIONS_FOLDER_PATH + TABLES_ENUM_NAME + JAVA_FILE_EXTENSION);
-		System.out.print("Enum " + TABLES_ENUM_NAME + " en proceso ...");
-		writeTablesEnum(newFile);
-		System.out.println(" generado!");
-		enumCount++;
-		tablesCount++;
+		
+		
+		for(URL url: codeTablesZip){
+			if(getFileNameWithoutExtension(url).equals(TABLES_FILE_NAME)){
+				uncompressZipData(url.openStream(), new File(TABLE_TXT_FILE_PATH));
+				File codeDir = new File(TABLE_TXT_FILE_PATH);
+				File[] filesList = codeDir.listFiles();
+				for(File file: filesList){
+					
+					if( getFileNameWithoutExtension(file).equals(LEAME_FILE_ENUM_NAME) ){
+						File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
+						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
+						writeTablesEnum(file, newFile);
+						System.out.println(" generado!");
+						enumCount++;
+						tablesCount++;
+					} else {
+						File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
+						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
+						writeEnum(file, newFile);
+						System.out.println(" generado!");
+						enumCount++;
+						tablesCount++;
+					}
+				}
+				FileUtils.deleteQuietly(codeDir);
+			}
+		}
+	
 		
 		System.out.println("*** Enumeraciones generadas. ("+enumCount+")");
 		System.out.println("*** Ficheros de propiedades generados. ("+propertiesCount+")");
@@ -161,9 +164,9 @@ public class SSCodeTablesWriter {
 	        fileNameWithOutExt = fileNameWithExt;
 	    }
 	    
-//	    if(fileNameWithOutExt.equals(LEAME_FILE_NAME)) {
-//	    	return LEAME_FILE_ENUM_NAME;
-//	    }
+	    if(fileNameWithOutExt.equals(LEAME_FILE_NAME)) {
+	    	return LEAME_FILE_ENUM_NAME;
+	    }
 	    return fileNameWithOutExt;
 	}
 
@@ -508,14 +511,19 @@ public class SSCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	private static void writeTablesEnum( File file ) throws IOException {
+	private static void writeTablesEnum( File file, File newFile ) throws IOException {
 		
 		try {
-			File folder = new File(ENUMERATIONS_FOLDER_PATH);
-			File[] listOfFiles = folder.listFiles();
 			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			String currentLine;
+			while((currentLine = reader.readLine()) != null) {
+				if(!currentLine.startsWith("#")){
+					break;
+				}
+			}
 			
-			BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+			BufferedWriter out = new BufferedWriter( new FileWriter(newFile) );
 			
 			out.write( "package " + ENUMERATION_CLASS_PACKAGE_NAME + ";" );
 			out.newLine();
@@ -529,10 +537,11 @@ public class SSCodeTablesWriter {
 			out.newLine();
 			out.write( "import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;" );
 			out.newLine();
+			out.newLine();
 			
 			out.write( "/** " );
 			out.newLine();
-			out.write( " * Enumeration for represent SOCIAL SECURITY table codes." );
+			out.write( " * Enumeration for represent SOCIAL SECURITY - Sistema RED table codes." );
 			out.newLine();
 			out.write( " * Generation main class: " + SSCodeTablesWriter.class.getCanonicalName() );
 			out.newLine();
@@ -543,52 +552,29 @@ public class SSCodeTablesWriter {
 			out.newLine();
 			
 			
-			for (File enumFile : listOfFiles) {
-			    if (enumFile.isFile() && enumFile.getName().endsWith(JAVA_FILE_EXTENSION)) {
-			    	String enumName = enumFile.getName().replaceAll(JAVA_FILE_EXTENSION, "");
-			    	String enumDescription = null;
-			    	
-			    	if( !enumName.equals(TABLES_ENUM_NAME) ){
-			    		if(getFileNameWithoutExtension(enumFile).equals("T01")){
-			    			enumDescription = T01_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T05")){
-			    			enumDescription = T05_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T06")){
-			    			enumDescription = T06_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T07")){
-			    			enumDescription = T07_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T10")){
-			    			enumDescription = T10_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T18")){
-			    			enumDescription = T18_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T21")){
-			    			enumDescription = T21_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T37")){
-			    			enumDescription = T37_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T41")){
-			    			enumDescription = T41_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T49")){
-			    			enumDescription = T49_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T50")){
-			    			enumDescription = T50_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T54")){
-			    			enumDescription = T54_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T58")){
-			    			enumDescription = T58_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T61")){
-			    			enumDescription = T61_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T68")){
-			    			enumDescription = T68_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T83")){
-			    			enumDescription = T83_TABLE_DESCRIPTION;
-			    		} else if(getFileNameWithoutExtension(enumFile).equals("T84")){
-			    			enumDescription = T84_TABLE_DESCRIPTION;
-			    		}
-			    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", \"" + enumDescription + "\",null)," );
-			    		out.newLine();
-			    	}
-			    	
-			    }
+			int t16count = 0;
+			while((currentLine = reader.readLine()) != null) {
+				currentLine = StringUtils.strip(currentLine);
+				
+				StringTokenizer token = new StringTokenizer(currentLine, ";");
+				if(token.hasMoreTokens()){
+					String code = token.nextToken();
+					
+					out.write( "\t"+"T_"+code.replace("*", "").replace("-", "").replace(" y ", "_y_").toUpperCase() );
+					
+					if(code.equals("T-16")){ 
+						t16count++;
+						out.write( "_"+t16count );
+					}
+					
+					out.write( "( \""+code.trim()+"\"" );
+					if(token.hasMoreTokens()){
+						String label = StringUtils.strip(token.nextToken());
+						out.write(", \""+(label)+"\"");
+					}
+					out.write(", null ),");
+				}
+				out.newLine();
 			}
 			
 			out.write( "\t;" );

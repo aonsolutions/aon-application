@@ -2,10 +2,6 @@ package com.esferalia.aon.ui.sepe.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +13,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -265,7 +260,9 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 		if(params.getIndicadorConvCol()!=null){
 			datos.setINDICADORCONVCOL(params.getIndicadorConvCol()?"S":"N");
 		}
-		datos.setINDICADORDISCONTINUIDAD(params.getIndicadorDiscontinuidad()?"I":null);
+		if(params.getIndicadorDiscontinuidad()!=null){
+			datos.setINDICADORDISCONTINUIDAD(params.getIndicadorDiscontinuidad()?"I":null);
+		}
 		if(params.getIndEmpresaAappUniversidad()!=null){
 			datos.setINDEMPRESAAAPPUNIVERSIDAD(params.getIndEmpresaAappUniversidad()?"S":"N");
 		}
@@ -310,10 +307,14 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	 * 
 	 */
 	private DATOSADICIONALESPRORROGATYPE createDatosAdicionalesProrroga(ContrataProrrogaParams params) {
-		DATOSADICIONALESPRORROGATYPE datos = factory.createDATOSADICIONALESPRORROGATYPE();
+		DATOSADICIONALESPRORROGATYPE datos = null;
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
-		datos.setHORASFORMACION(duracionformacion.isEmpty()?null:completeLength(duracionformacion, 6, "0", false));
+		if(StringUtils.isNotBlank(duracionformacion)){
+			datos = factory.createDATOSADICIONALESPRORROGATYPE();
+			datos.setHORASFORMACION(duracionformacion.isEmpty()?null:completeLength(duracionformacion, 6, "0", false));
+		}
 		if(params.getIndDuracInferior()!=null){
+			datos = datos==null?factory.createDATOSADICIONALESPRORROGATYPE():datos;
 			datos.setINDDURACINFERIOR(params.getIndDuracInferior()?"S":"N");
 		}
 		return datos;
@@ -340,7 +341,7 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	 * @return
 	 */
 	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataProrrogaParams params) {
-		if(params.getUsoLibreEmpresa()!=null){
+		if(StringUtils.isNotBlank(params.getUsoLibreEmpresa())){
 			DATOSUSOLIBREEMPRESATYPE datos = factory.createDATOSUSOLIBREEMPRESATYPE();
 			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
 			return datos;

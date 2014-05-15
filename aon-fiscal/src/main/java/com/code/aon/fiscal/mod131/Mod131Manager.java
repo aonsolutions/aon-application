@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -32,6 +33,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod131Manager extends FiscalModelManager {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String SELECT_15 = "SELECT " 
 			+" SUM( IF(fmd.amount<0,fmd.amount,0) )"
@@ -190,11 +193,12 @@ public class Mod131Manager extends FiscalModelManager {
 			double previousC03 = getC09_03(conn,SELECT_09_03,fiscalModel,Mod131Key.C03);
 			double previousC08 = getC09_08(conn,SELECT_09_08,fiscalModel,Mod131Key.C08);
 			double c09 = 0;
-			if ( CommonUtil.round(sumC01 + previousC03 + previousC08) <= 12000 ) {
-				if ( CommonUtil.round(previousC03 + previousC08) <= 8000 ) {
-					c09 = CommonUtil.round( 400.0 / 4 );		
+			double temp = CommonUtil.round(sumC01 + previousC03 + previousC08);
+			if ( temp <= 12000 ) {
+				if ( temp <= 8000 ) {
+					c09 = CommonUtil.round( 400.0 / 4 );
 				} else {
-					c09 = CommonUtil.round( (400.0 - ((previousC03 + previousC08 - 8000) * 0.1)) / 4);
+					c09 = CommonUtil.round( (400.0 - ((temp - 8000) * 0.1)) / 4);
 				}
 			}
 			mod131.ensureDetail(Mod131Key.C09).addAccumulatedAmount(c09);

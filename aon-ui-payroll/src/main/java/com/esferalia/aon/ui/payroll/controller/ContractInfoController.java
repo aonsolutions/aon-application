@@ -22,15 +22,11 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractFieldName;
-import com.esferalia.aon.file.payroll.contract.pdf.IndefiniteCommonField;
-import com.esferalia.aon.file.payroll.contract.pdf.IndefiniteOptionField;
-import com.esferalia.aon.file.payroll.contract.pdf.LearningCommonField;
-import com.esferalia.aon.file.payroll.contract.pdf.LearningOptionField;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
-import com.esferalia.aon.file.payroll.contract.pdf.PracticeCommonField;
-import com.esferalia.aon.file.payroll.contract.pdf.PracticeOptionField;
-import com.esferalia.aon.file.payroll.contract.pdf.TemporaryCommonField;
-import com.esferalia.aon.file.payroll.contract.pdf.TemporaryOptionField;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldIndefinite;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldLearning;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldPractice;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldTemporary;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
@@ -121,35 +117,22 @@ public class ContractInfoController extends BasicController {
 			String option = contractModelOption.substring(contractModelOption.lastIndexOf("_")+1, contractModelOption.length()); 
 			String contractModel = ModelOption.valueOf(contractModelOption).getPdfModel();
 			if(IndefiniteModel.MODEL_NAME.equals(contractModel)){
-				addAllCommonFields(list, IndefiniteCommonField.values());
-				addAllOptionFields(list, IndefiniteOptionField.values(), option);
+				addAllOptionFields(list, PdfFieldIndefinite.values(), option);
 			} else if(TemporaryModel.MODEL_NAME.equals(contractModel)){
-				addAllCommonFields(list, TemporaryCommonField.values());
-				addAllOptionFields(list, TemporaryOptionField.values(), option);
+				addAllOptionFields(list, PdfFieldTemporary.values(), option);
 			} else if(LearningModel.MODEL_NAME.equals(contractModel)){
-				addAllCommonFields(list, LearningCommonField.values());
-				addAllOptionFields(list, LearningOptionField.values(), option);
+				addAllOptionFields(list, PdfFieldLearning.values(), option);
 			} else if(PracticeModel.MODEL_NAME.equals(contractModel)){
-				addAllCommonFields(list, PracticeCommonField.values());
-				addAllOptionFields(list, PracticeOptionField.values(), option);
+				addAllOptionFields(list, PdfFieldPractice.values(), option);
 			}
 		}
 		return list;
 	}
-	private void addAllCommonFields(List<IContractFieldName> list , IContractFieldName[] fieldNameValues){
-		for(IContractFieldName field: fieldNameValues){
-			if(field.isOverridable()){
-				if(field.toString().length()>32){
-					LOGGER.error(" ######## ContractInfo ########  COMMON FIELD NAME TOO LONG -> " + field.toString());
-				} else {
-					list.add(field);
-				}
-			}
-		}
-	}
+	
 	private void addAllOptionFields(List<IContractFieldName> list , IContractFieldName[] fieldNameValues, String option){
-		for(IContractFieldName field: fieldNameValues){
-			if(field.toString().substring(0, field.toString().indexOf("_")).equals(option) && field.isOverridable()){
+		for(IContractFieldName field: fieldNameValues){ 
+			if( (field.isCommonValue() ||  StringUtils.substring(field.toString(), 0, field.toString().indexOf("_")).equals(option)) 
+					&& field.isOverridable() ){
 				if(field.toString().length()>32){
 					LOGGER.error(" ######## ContractInfo ########  OPTION FIELD NAME TOO LONG -> " + field.toString());
 				} else {

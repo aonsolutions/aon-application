@@ -6,71 +6,48 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-		<ui:param name="showDescription" value="false" />
-		<ui:param name="skipSearchButton" value="true" />
-		<ui:param name="innerToolbar" value="true" />
-
-		<aon:methodParam name="saveAction" value="" />
-		<ui:param name="saveButtonReRender" value="#{controller.beanName}Content" />
-		<aon:methodParam name="cancelAction" value="" />
-		<ui:param name="cancelButtonReRender" value="#{controller.beanName}Content" />
-		<aon:methodParam name="removeAction" value="" />
-		<ui:param name="removeButtonReRender" value="#{controller.beanName}Content" />
-		<aon:methodParam name="resetAction" value="" />
-		<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />
-		<aon:methodParam name="backAction" value="" />
-		<ui:param name="backButtonReRender" value="#{controller.beanName}Content" />
+	<aon:panelGrid columns="2" 
+		columnClasses="
+		aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top,
+		aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top">
+		<aon:panelGrid columns="2" style="width: 50%;">
+			
+			<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
+			<aon:inputText id="WorkPlace_description#{sufix}"  
+				value="#{payrollWorkPlace.to.workPlace.description}" 
+				required="true" size="40" maxlength="64" />
+			
+			<aon:outputLabel for="WorkPlace_address_id" value="#{bundle.aon_address}" />
+			<aon:selectOneMenu id="WorkPlace_address_id#{sufix}" 
+				value="#{payrollWorkPlace.to.workPlace.address}" 
+				required="true">
+				<f:selectItems value="#{companyCollections.companyAddresses}" />
+			</aon:selectOneMenu>
 		
-		<ui:param name="controller" value="#{payrollWorkPlace}" />
-
-	</ui:include>
-
-	<aon:div styleClass="aon-scroll-area">
-		<aon:panelGrid columns="2" 
-			columnClasses="
-			aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top,
-			aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top">
-			<aon:panelGrid columns="2" style="width: 50%;">
+			<aon:outputText for="WorkPlace_economicAgreement" value="#{bundle.config_administration}" />
+			<aon:selectOneMenu id="WorkPlace_economicAgreement#{sufix}"
+				value="#{payrollWorkPlace.to.workPlace.economicAgreement}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{configCollections.administrations}" />
+			</aon:selectOneMenu>	
 				
-				<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
-				<aon:inputText id="WorkPlace_description"  
-					value="#{payrollWorkPlace.to.workPlace.description}" 
-					required="true" size="40" maxlength="64" />
-				
-				<aon:outputLabel for="WorkPlace_address_id" value="#{bundle.aon_address}" />
-				<aon:selectOneMenu id="WorkPlace_address_id" 
-					value="#{payrollWorkPlace.to.workPlace.address}" 
-					required="true">
-					<f:selectItems value="#{companyCollections.companyAddresses}" />
-				</aon:selectOneMenu>
-			
-				<aon:outputText for="WorkPlace_economicAgreement" value="#{bundle.config_administration}" />
-				<aon:selectOneMenu id="WorkPlace_economicAgreement"
-					value="#{payrollWorkPlace.to.workPlace.economicAgreement}" >
-					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{configCollections.administrations}" />
-				</aon:selectOneMenu>	
-					
-				<aon:outputLabel for="WorkPlace_scope" value="#{bundle.aon_scope}" />
-				<aon:selectOneMenu id="WorkPlace_scope" 
-					value="#{controller.to.workPlace.scope}">
-					<f:selectItems value="#{configCollections.currentUserScopes}" />
-				</aon:selectOneMenu>
-			
-				<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
-				<aon:selectBooleanCheckbox id="WorkPlace_active" styleClass="aon-margin-left"
-					value="#{controller.to.workPlace.active}"  />
-								
-			</aon:panelGrid>
-			
-			<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/tab_form.xhtml" >
-				<ui:param name="controller" value="#{payrollWorkPlace}" />
-			</ui:include>
+			<aon:outputLabel for="WorkPlace_scope" value="#{bundle.aon_scope}" />
+			<aon:selectOneMenu id="WorkPlace_scope#{sufix}" 
+				value="#{controller.to.workPlace.scope}">
+				<f:selectItems value="#{configCollections.currentUserScopes}" />
+			</aon:selectOneMenu>
 		
+			<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
+			<aon:selectBooleanCheckbox id="WorkPlace_active#{sufix}" styleClass="aon-margin-left"
+				value="#{controller.to.workPlace.active}"  />
+							
 		</aon:panelGrid>
 		
-	</aon:div>
+		<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/tab_form.xhtml" >
+			<ui:param name="controller" value="#{payrollWorkPlace}" />
+			<ui:param name="lookupSufix" value="#{sufix}" />
+		</ui:include>
+	
+	</aon:panelGrid>
 
 </ui:composition>

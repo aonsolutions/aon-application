@@ -747,13 +747,13 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataTransformacionesParams params) {
 		// TODO
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();		
-		datos.setTIPOJORNADA(params.getTipoJornada().getCode());
+		datos.setTIPOJORNADA(params.getTipoJornada()==null?null:params.getTipoJornada().getCode());
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 	    datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
 	    datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
 	    datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
-	    datos.setFIJODISCONTINUOPERIODICO(params.getFijoDiscontinuoPeriodico()?"S":"N");
+	    datos.setFIJODISCONTINUOPERIODICO((params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico())?"S":"N");
 		return datos;
 	}
 	

@@ -1,6 +1,5 @@
 package com.code.aon.ui.audit.controller;
 
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ADMIN_ADVANCED_MODE;
 import static com.code.aon.ui.common.ICommonMessages.DOMAIN_CHANGE;
 import static com.code.aon.ui.common.ICommonMessages.FAVORITES_MANAGEMENT;
@@ -96,7 +95,7 @@ public class ActionEntryController extends LinesController {
 
 	public static String getOptionDescription( String action ) {
 		String description = action;
-		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 		ApplicationCategory category = aoc.getCategory(action);
 		if ( category != null ) {
 			description = category.getDescription() + " (" + AonUtil.getMessage(MENU) + ")";

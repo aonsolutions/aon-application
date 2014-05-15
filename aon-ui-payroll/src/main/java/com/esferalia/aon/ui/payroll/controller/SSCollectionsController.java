@@ -46,93 +46,24 @@ public class SSCollectionsController implements Serializable {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * T01.java
+	 * T1.java
 	 *  ------------------------------------------------------------------------
 	 */ 
-	private List<SelectItem> T01CodeList;
+	private List<SelectItem> T1CodeList;
 
-	public List<SelectItem> getT01CodeList() {
-		if (T01CodeList == null) {
-			T01CodeList = new LinkedList<SelectItem>();
-			T01[] el = T01.values();
-			for (T01 obj : el) {
+	public List<SelectItem> getT1CodeList() {
+		if (T1CodeList == null) {
+			T1CodeList = new LinkedList<SelectItem>();
+			T1[] el = T1.values();
+			for (T1 obj : el) {
 				if(obj.isActive()){
 					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
 					SelectItem item = new SelectItem(obj, name);
-					T01CodeList.add(item);
+					T1CodeList.add(item);
 				}
 			}
 		}
-		return T01CodeList;
-	}
-
-	/** 
-	 *  ------------------------------------------------------------------------
-	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * T05.java
-	 *  ------------------------------------------------------------------------
-	 */ 
-	private List<SelectItem> T05CodeList;
-
-	public List<SelectItem> getT05CodeList() {
-		if (T05CodeList == null) {
-			T05CodeList = new LinkedList<SelectItem>();
-			T05[] el = T05.values();
-			for (T05 obj : el) {
-				if(obj.isActive()){
-					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-					SelectItem item = new SelectItem(obj, name);
-					T05CodeList.add(item);
-				}
-			}
-		}
-		return T05CodeList;
-	}
-
-	/** 
-	 *  ------------------------------------------------------------------------
-	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * T06.java
-	 *  ------------------------------------------------------------------------
-	 */ 
-	private List<SelectItem> T06CodeList;
-
-	public List<SelectItem> getT06CodeList() {
-		if (T06CodeList == null) {
-			T06CodeList = new LinkedList<SelectItem>();
-			T06[] el = T06.values();
-			for (T06 obj : el) {
-				if(obj.isActive()){
-					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-					SelectItem item = new SelectItem(obj, name);
-					T06CodeList.add(item);
-				}
-			}
-		}
-		return T06CodeList;
-	}
-
-	/** 
-	 *  ------------------------------------------------------------------------
-	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * T07.java
-	 *  ------------------------------------------------------------------------
-	 */ 
-	private List<SelectItem> T07CodeList;
-
-	public List<SelectItem> getT07CodeList() {
-		if (T07CodeList == null) {
-			T07CodeList = new LinkedList<SelectItem>();
-			T07[] el = T07.values();
-			for (T07 obj : el) {
-				if(obj.isActive()){
-					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-					SelectItem item = new SelectItem(obj, name);
-					T07CodeList.add(item);
-				}
-			}
-		}
-		return T07CodeList;
+		return T1CodeList;
 	}
 
 	/** 
@@ -299,6 +230,29 @@ public class SSCollectionsController implements Serializable {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T5.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T5CodeList;
+
+	public List<SelectItem> getT5CodeList() {
+		if (T5CodeList == null) {
+			T5CodeList = new LinkedList<SelectItem>();
+			T5[] el = T5.values();
+			for (T5 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T5CodeList.add(item);
+				}
+			}
+		}
+		return T5CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T50.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -368,6 +322,29 @@ public class SSCollectionsController implements Serializable {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T6.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T6CodeList;
+
+	public List<SelectItem> getT6CodeList() {
+		if (T6CodeList == null) {
+			T6CodeList = new LinkedList<SelectItem>();
+			T6[] el = T6.values();
+			for (T6 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T6CodeList.add(item);
+				}
+			}
+		}
+		return T6CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T61.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -409,6 +386,29 @@ public class SSCollectionsController implements Serializable {
 			}
 		}
 		return T68CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T7.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T7CodeList;
+
+	public List<SelectItem> getT7CodeList() {
+		if (T7CodeList == null) {
+			T7CodeList = new LinkedList<SelectItem>();
+			T7[] el = T7.values();
+			for (T7 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T7CodeList.add(item);
+				}
+			}
+		}
+		return T7CodeList;
 	}
 
 	/** 

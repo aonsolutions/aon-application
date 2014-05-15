@@ -15,5 +15,7 @@ public interface ICheckModule {
 	
 	public String getLabel();
 	
+	public void mock(); // remove
+	
 }	
 	

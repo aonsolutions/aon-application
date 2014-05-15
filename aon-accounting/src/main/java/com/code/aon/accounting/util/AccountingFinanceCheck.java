@@ -1,8 +1,13 @@
 package com.code.aon.accounting.util;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
-public class AccountingFinanceCheck {
+public class AccountingFinanceCheck implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private int accountId;
 	private String accountCode;

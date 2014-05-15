@@ -10,6 +10,7 @@ import javax.faces.model.DataModel;
 
 import com.code.aon.accounting.Period;
 import com.code.aon.AonVersion;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.accounting.check.modules.account.AccountEnabledCheck;
 import com.code.aon.ui.accounting.check.modules.account.ParentEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryCheck;
@@ -84,11 +85,17 @@ public class CheckController extends DataScrollerState {
 	
 
 	public void onInitialize(ActionEvent event) {
-		setParams(new CheckParams());
+		setParams(getNewCheckParams());
 		for (ICheckModule accountCheck: getAccountChecks()) {
 			accountCheck.setEnabled(true);
 		}
 		setModel(null);
+	}
+
+	private CheckParams getNewCheckParams() {
+		String domainName = AonUtil.getDomainName(); 
+		int domainId = DomainManager.getCurrentDomain();
+		return new CheckParams(domainName,domainId);
 	}
 
 	public void onExecute(ActionEvent event) {
@@ -136,7 +143,7 @@ public class CheckController extends DataScrollerState {
 	}
 	
 	public void checkEmptyAccountEntry(Period p) throws AonCheckException{
-		setParams(new CheckParams());
+		setParams(getNewCheckParams());
 		getParams().setPeriod(p);
 		List<ICheckModule> list = getAccountChecks();
 		for (ICheckModule accountCheck: list) {

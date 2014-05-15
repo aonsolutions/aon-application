@@ -3,6 +3,7 @@ package com.code.aon.fiscal.mod310;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -21,6 +22,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod310Manager extends FiscalModelManager {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String domainName;
 	

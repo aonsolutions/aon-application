@@ -4,7 +4,6 @@ public interface IAuditConstants {
 
 	// Controllers	
 	String AUDIT_COLLECTIONS_CONTROLLER_NAME = "auditCollections";
-	String APPLICATION_OPTION_CONTROLLER_NAME = "appOption";
 	String ACTION_DENIED_CONTROLLER_NAME = "actionDenied";	
 	String AUDIT_CONTROLLER_NAME = "audit";
 	String ACTION_MORE_USED_CONTROLLER_NAME = "actionMoreUsed";

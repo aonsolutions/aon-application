@@ -1,9 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.List;
+
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
+import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -72,7 +76,14 @@ public class BonusEditor extends ResizeComposite {
 		
 		class ContextProvider implements IContextProvider{
 			@Override
-			public void eval(String expression, AsyncCallback<Double> callback) {
+			public boolean isEditable(String name) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+
+			@Override
+			public void eval(String expression, List<Variable> vars,
+					AsyncCallback<List<Result>> callback) {
 				callback.onFailure(new EvalException());
 			}
 			

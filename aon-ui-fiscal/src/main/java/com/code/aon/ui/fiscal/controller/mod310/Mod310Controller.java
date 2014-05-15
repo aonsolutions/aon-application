@@ -23,6 +23,11 @@ public class Mod310Controller extends FiscalModelController {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
+	protected String getFormPage() {
+		return "mod310_form";
+	}	
+
+	@Override
 	protected FiscalModelType getModelType() {
 		return 	FiscalModelType.M310;
 	}

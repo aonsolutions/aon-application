@@ -961,17 +961,32 @@ color:#000;
 .aon-icon-aeat{
 	background:transparent url(images/aon-icon/aon-aeat.png) scroll left center no-repeat;	
 }
+.aon-icon-aeat-bw{
+	background:transparent url(images/aon-icon/aon-aeat-bw.png) scroll left center no-repeat;	
+}
 .aon-icon-araba{
 	background:transparent url(images/aon-icon/aon-icon-araba.png) scroll left center no-repeat;	
+}
+.aon-icon-araba-bw{
+	background:transparent url(images/aon-icon/aon-icon-araba-bw.png) scroll left center no-repeat;	
 }
 .aon-icon-bizkaia{
 	background:transparent url(images/aon-icon/aon-icon-bizkaia.png) scroll left center no-repeat;	
 }
+.aon-icon-bizkaia-bw{
+	background:transparent url(images/aon-icon/aon-icon-bizkaia-bw.png) scroll left center no-repeat;	
+}
 .aon-icon-navarra{
 	background:transparent url(images/aon-icon/aon-icon-navarra.png) scroll left center no-repeat;	
 }
+.aon-icon-navarra-bw{
+	background:transparent url(images/aon-icon/aon-icon-navarra-bw.png) scroll left center no-repeat;	
+}
 .aon-icon-gipuzkoa{
 	background:transparent url(images/aon-icon/aon-icon-gipuzkoa.png) scroll left center no-repeat;	
+}
+.aon-icon-gipuzkoa-bw{
+	background:transparent url(images/aon-icon/aon-icon-gipuzkoa-bw.png) scroll left center no-repeat;	
 }
 
 .aon-icon-winsuite{
@@ -2799,6 +2814,20 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-disableHeredity{
 	background:transparent url(images/aon-icon/aon-icon-disableHeredity.png) no-repeat scroll center left;
 }
+.aon-icon-lookup-new{
+	background:transparent url(images/aon-icon/aon-icon-lookup-new.png) scroll left center no-repeat;
+}
+.aon-icon-minus{
+	background:transparent url(images/aon-icon/aon-icon-minus.png) scroll left center no-repeat;
+}
+.aon-icon-check-blue{
+	background:transparent url(images/aon-icon/aon-icon-check-blue.png) scroll left center no-repeat;
+}
+.aon-icon-edit-blue{
+	background:transparent url(images/aon-icon/aon-icon-edit-blue.png) scroll left center no-repeat;
+}
+
+
 .aon-subTable-column{
 	padding-left: 10px; 
 	border: none; 

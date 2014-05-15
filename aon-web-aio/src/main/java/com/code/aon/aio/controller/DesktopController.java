@@ -2,7 +2,6 @@ package com.code.aon.aio.controller;
 
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 
 import java.io.IOException;
@@ -61,7 +60,8 @@ public class DesktopController implements Serializable {
     	}
     	return state;
 	}
-
+	private Boolean logEnabled;
+    
 	public DataModel getRecentNoteModel() {
     	return getState().getRecentNoteModel();
     }    
@@ -180,7 +180,7 @@ public class DesktopController implements Serializable {
     }
 	
 	public String getInitActionTemplate() throws IOException {
-		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 		String template = aoc.getTemplate(IAuditConstants.INIT_ACTION_TEMPLATE, 
 				IAuditConstants.OPTION_VM, getState().getHomepagOption());
 		resetHomepage();
@@ -193,6 +193,13 @@ public class DesktopController implements Serializable {
 		if ( value != Boolean.TRUE ) {
 			getState().setHomepagOption(null);	
 		}
+	}
+
+	public boolean isLogEnabled() {
+		if ( logEnabled == null ) {
+			this.logEnabled = AppParamUtil.getValueAsBoolean(AppParam.AON_LOG_ENABLED);
+		}
+		return logEnabled;
 	}
 	
 }

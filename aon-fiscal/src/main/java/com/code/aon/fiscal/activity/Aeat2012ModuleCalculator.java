@@ -1,9 +1,11 @@
 package com.code.aon.fiscal.activity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,7 +19,9 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
-public class Aeat2012ModuleCalculator implements IModuleCalculator {
+public class Aeat2012ModuleCalculator implements IModuleCalculator, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Map<String, FiscalActivityInfoKey[]> SPECIAL_EPIGRAPHS = new HashMap<String, FiscalActivityInfoKey[]>();
 	static {
@@ -435,7 +439,7 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 			
 		}
 		if (CommonUtil.round(as) > 0.0) {
-			coef = coef + 0.10; 
+			coef = coef + (0.10 * as); 
 			as = CommonUtil.round(as - 1);
 		}
 		if (CommonUtil.round(as) > 0.0) {

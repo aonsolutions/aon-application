@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * @author atellitu
@@ -26,6 +29,8 @@ public class ApplicationOptionController {
 	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/audit/controller/";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationOptionController.class);
+	
+	public static final String CONTEXT_PROPERTY = "com.code.aon.ApplicationOptionController";
 	
 	private Map<String,ApplicationOption> optionMap;
 	
@@ -38,8 +43,12 @@ public class ApplicationOptionController {
 	/**
 	 * Instantiates a new application option controller.
 	 */
-	public ApplicationOptionController() {
-		init();
+	public ApplicationOptionController( ServletContext servletContext ) {
+		init(servletContext);
+	}
+	
+	public static ApplicationOptionController getInstance() {
+		return (ApplicationOptionController) AonUtil.getServletContextAttribute(CONTEXT_PROPERTY); 
 	}
 	
 	public void addCategory( ApplicationCategory category ) {
@@ -67,11 +76,11 @@ public class ApplicationOptionController {
 		return null;
 	}
 	
-	private void init() {
+	private void init( ServletContext servletContext ) {
 		this.optionMap = new HashMap<String, ApplicationOption>();
 		this.groupMap = new HashMap<String, OptionGroup>();
 		this.categories = new ArrayList<ApplicationCategory>();
-		new MenuParser().parse(this);
+		new MenuParser(servletContext).parse(this);
 		Collections.sort( this.categories );
 	}
 

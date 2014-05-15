@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.AON.format;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -11,17 +13,23 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.UnknownVariablesWarning;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -29,11 +37,17 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FxDialog extends CustomDialog {
@@ -45,13 +59,47 @@ public class FxDialog extends CustomDialog {
 			.getFormat("#,##0.00");
 
 	public static interface IContextProvider {
+		boolean isEditable(String name);
 
 		void getContext(AsyncCallback<ContextDescriptor> callback);
-		void eval(String expression, AsyncCallback<Double> callback);
+
+		void eval(String expression, List<Variable> vars,
+				AsyncCallback<List<Result>> callback);
+		
 	}
-	
+
 	interface Binder extends UiBinder<Widget, FxDialog> {
 
+	}
+
+	interface Style extends CssResource {
+		@ClassName("variable-label")
+		String variableLabel();
+
+		@ClassName("variable-warn")
+		String variableWarn();
+
+		@ClassName("variable-changed")
+		String variableChanged();
+
+	}
+
+	class VariableChangeHandler
+			implements ValueChangeHandler<String> {
+		
+		private String name;
+
+		public VariableChangeHandler(String name,
+				HasValue<String> hasValue) {
+			this.name = name;
+			hasValue.addValueChangeHandler(this);
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			FxDialog.this.addVariable(name, event.getValue());
+			FxDialog.this.evalExpression(0);
+		}
 	}
 
 	class ContextCallback implements AsyncCallback<ContextDescriptor> {
@@ -70,35 +118,43 @@ public class FxDialog extends CustomDialog {
 			onCategoryChanged(null);
 			FxDialog.this.functionListBox.setSelectedIndex(0);
 			onFunctionChanged(null);
+			
+			FxDialog.this.evalExpression(0);
 		}
 
 	}
 
-	class ExpressionCallback extends Timer implements AsyncCallback<Double> {
+	class ExpressionCallback extends Timer implements
+			AsyncCallback<List<Result>> {
 
 		@Override
 		public void run() {
 			String expression = expressionTextArea.getText();
-			if ( StringUtils.isEmpty(expression) ) {
+			if (StringUtils.isEmpty(expression)) {
 				cleanError();
 				cleanResult();
-			}
-			else {
-				contextProvider.eval(expression, this);
+				cleanContext();
+			} else {
+				contextProvider.eval(expression, FxDialog.this.vars, this);
 			}
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			cleanResult();
+			cleanContext();
 			// Convenient way to find out which exception was thrown.
 			try {
 				throw caught;
 			} catch (InvocationException e) {
 				setError(e.getMessage());
 				// the call didn't complete cleanly
-			} catch (EvalWarning e) {
-				setWarning(e.getMessage());
+			} catch (UnknownVariablesWarning w) {
+				for (String name : w.getNames())
+					dumpUnknownVariable(name);
+				// one of the 'throws' from the original method
+			} catch (EvalWarning w) {
+				setWarning(w.getMessage());
 				// one of the 'throws' from the original method
 			} catch (EvalSyntaxErrorException e) {
 				setError(e.getMessage());
@@ -108,15 +164,24 @@ public class FxDialog extends CustomDialog {
 				// one of the 'throws' from the original method
 			} catch (Throwable e) {
 				// last resort -- a very unexpected exception
-				setError("Error desconocido." );
+				setError("Error desconocido.");
 			}
 
 		}
 
 		@Override
-		public void onSuccess(Double result) {
+		public void onSuccess(List<Result> results) {
 			cleanError();
-			resultLabel.setText(result.toString());
+			cleanContext();
+
+			double total = 0.00;
+
+			for (Result result : results) {
+				total += result.getResult().doubleValue();
+				dumpContext(result.getContext()); // TODO
+			}
+
+			resultLabel.setText(format(total));
 		}
 
 	}
@@ -154,9 +219,15 @@ public class FxDialog extends CustomDialog {
 	}
 
 	@UiField
+	Style style;
+
+	@UiField
 	ListBox categoryListBox;
 	@UiField
 	ListBox functionListBox;
+
+	@UiField
+	FlexTable contextTable;
 
 	@UiField
 	Label nameLabel;
@@ -177,7 +248,9 @@ public class FxDialog extends CustomDialog {
 	Button cancelButton;
 	@UiField
 	Button acceptButton;
-	
+
+	List<Variable> vars;
+
 	private boolean accepted;
 
 	private IContextProvider contextProvider;
@@ -194,6 +267,7 @@ public class FxDialog extends CustomDialog {
 		for (Category category : Category.values()) {
 			categoryListBox.addItem(category.getName());
 		}
+		this.vars = new ArrayList<Variable>();
 		this.contextProvider = contextProvider;
 		this.contextCallback = new ContextCallback();
 		this.expressionCallback = new ExpressionCallback();
@@ -203,12 +277,10 @@ public class FxDialog extends CustomDialog {
 	@Override
 	public void show() {
 		contextProvider.getContext(contextCallback);
-		evalExpression(0);
+		//evalExpression(0);
 		super.show();
-
 	}
-	
-	
+
 	public boolean isAccepted() {
 		return accepted;
 	}
@@ -216,11 +288,18 @@ public class FxDialog extends CustomDialog {
 	public void setExpression(String expression) {
 		expressionTextArea.setText(expression);
 	}
-	
-	public String getExpression(){
+
+	public String getExpression() {
 		return expressionTextArea.getText();
 	}
 	
+	
+	public List<Variable> getVariables(){
+		return vars;
+	}
+
+	// ------------------------------------------------------------- UiHandlers
+
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		hide();
@@ -231,7 +310,6 @@ public class FxDialog extends CustomDialog {
 		accepted = true;
 		hide();
 	}
-	
 
 	@UiHandler("categoryListBox")
 	void onCategoryChanged(ChangeEvent event) {
@@ -286,22 +364,25 @@ public class FxDialog extends CustomDialog {
 	@UiHandler("expressionTextArea")
 	void onExpressionChange(ChangeEvent event) {
 		String expression = expressionTextArea.getValue();
-		if ( StringUtils.isBlank(expression) )
+		if (StringUtils.isBlank(expression))
 			return;
-		if ( expression.length() > EXPRESSION_MAX_LENGTH){
-			setError("F\u00f3rmula demasiado larga ( l\u00edmite " + EXPRESSION_MAX_LENGTH + " caracteres ).");
+		if (expression.length() > EXPRESSION_MAX_LENGTH) {
+			setError("F\u00f3rmula demasiado larga ( l\u00edmite "
+					+ EXPRESSION_MAX_LENGTH + " caracteres ).");
 			acceptButton.setEnabled(false);
-		}else if ( !acceptButton.isEnabled() ){
+		} else if (!acceptButton.isEnabled()) {
 			acceptButton.setEnabled(true);
 		}
 	}
-	
-	void evalExpression(int milliseconds) {
+
+	// ---------------------------------------------------------------- Private
+
+	private void evalExpression(int milliseconds) {
 		expressionCallback.cancel();
 		expressionCallback.schedule(milliseconds);
 	}
 
-	void loadContext4Category(Category category) {
+	private void loadContext4Category(Category category) {
 
 		functionListBox.clear();
 
@@ -328,23 +409,89 @@ public class FxDialog extends CustomDialog {
 									: "FunctionDescriptor");
 		}
 	}
-	
-	void cleanResult() {
+
+	private void cleanResult() {
 		resultLabel.setHTML("&nbsp");
 	}
 
-	void cleanError() {
+	private void cleanError() {
 		errorLabel.setHTML("&nbsp");
 		errorLabel.setStyleName("");
 	}
 
-	void setError(String html) {
+	private void setError(String html) {
 		errorLabel.setHTML(html);
 		errorLabel.addStyleName("gwt-Error");
 	}
 
-	void setWarning(String html) {
+	private void setWarning(String html) {
 		errorLabel.setHTML(html);
 		errorLabel.addStyleName("gwt-Warn");
 	}
+
+	private void cleanContext() {
+		contextTable.removeAllRows();
+	}
+
+	private void dumpContext(List<Variable> ctx) {
+		for (Variable var : ctx)
+				dumpVariable(var);
+	}
+
+	private <T extends IsWidget & HasValue<String> & HasEnabled >  void dumpVariable(Variable var) {
+
+		if (SalaryDraft.skipVariable(var) )
+			return;
+
+		String name = var.getName();
+		Label label = new Label(name);
+		label.setTitle(getDescription(name));
+		label.addStyleName(style.variableLabel());
+
+		int row = contextTable.getRowCount();
+		contextTable.setWidget(row, 0, label);
+		
+		T editor = SalaryDraft.createEditor(var);
+		if ( var.getValue() != null  )
+			editor.setValue(String.valueOf(var.getValue()));
+		editor.setEnabled(contextProvider.isEditable(name));
+		
+		
+		contextTable.setWidget(row, 1, editor);
+		new VariableChangeHandler(name, editor);
+
+	}
+
+	private void dumpUnknownVariable(final String name) {
+
+		if (SalaryDraft.skipVariable(name) )
+			return;
+
+		Label label = new Label(name);
+		label.setTitle(getDescription(name));
+		label.addStyleName(style.variableWarn());
+		label.addStyleName(style.variableLabel());
+
+		int row = contextTable.getRowCount();
+		contextTable.setWidget(row, 0, label);
+
+		TextBox textBox = new TextBox();
+		contextTable.setWidget(row, 1, textBox);
+
+		new VariableChangeHandler(name, textBox);
+		
+	}
+
+	private void addVariable(String name, String value) {
+		StringVariable variable = new StringVariable();
+		variable.setName(name);
+		variable.setExpression(value);
+		vars.add(variable);
+	}
+	
+	private String getDescription(String name){
+		VariableDescriptor  descriptor =  contextDescriptor.get(name);
+		return descriptor!= null ? descriptor.getDescription(): null;
+	}
+
 }

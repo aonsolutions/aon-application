@@ -6,13 +6,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,18 +41,24 @@ public class BeanConfiguration implements Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BeanConfiguration.class);
 	
-	private static final String AON_CONFIG_XML = "/WEB-INF/aon-config.xml";
+	public static final String CONTEXT_PROPERTY = "com.code.aon.BeanConfiguration";
+	
+	public static final String AON_CONFIG_XML = "/WEB-INF/aon-config.xml";
 	
 	private static final String CONFIG_SHCHEMA = "config.xsd";
 
 	private Map<String,Map<String,Object>> bean;
 	
-	public BeanConfiguration() {
-		Document document = getConfigDocument();
+	public BeanConfiguration( URL url ) {
+		Document document = getConfigDocument(url);
 		if ( document != null ) {
 			bean = loadBeanConfiguration( document );
 		}		
 	}
+	
+	public static BeanConfiguration getInstance() {
+		return (BeanConfiguration) AonUtil.getServletContextAttribute(CONTEXT_PROPERTY); 
+	}	
 
 	private StreamSource[] getXmlSchemas() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -77,16 +80,7 @@ public class BeanConfiguration implements Serializable {
         return null;
 	}	
 	
-	private Document getConfigDocument() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		URL config = null;
-		try {
-			config = ec.getResource(AON_CONFIG_XML);
-		} catch (MalformedURLException e) {
-			LOGGER.error(AON_CONFIG_XML + " not found", e);
-			return null;
-		}
-		
+	private Document getConfigDocument( URL config ) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		
 		factory.setNamespaceAware(true);

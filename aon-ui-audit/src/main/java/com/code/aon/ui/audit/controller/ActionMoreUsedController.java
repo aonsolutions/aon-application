@@ -40,7 +40,7 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 	}
 
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 	
 	private ActionDeniedController getDeniedController() {

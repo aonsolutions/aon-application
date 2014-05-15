@@ -403,6 +403,7 @@
 		<param-value>aon</param-value>
 	</context-param>
 
+	<!--
 	<context-param>
 		<description>
 			Is a comma-separated list of custom ViewHandler instances
@@ -418,6 +419,7 @@
 		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
 		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
 	</context-param>
+	-->
 
 	<context-param>
 		<description>Define que los recursos no expiren en 100 dias
@@ -469,13 +471,6 @@
 		</listener-class>
 	</listener>
 
-	<!-- HIBERNATE CONFIGURATION -->
-	<listener>
-		<listener-class>
-			com.code.aon.ui.common.hibernate.ServletContextHibernateListener
-		</listener-class>
-	</listener>
-	
 	<!-- Audit Filter -->
 	<filter>
 		<filter-name>AuditFilter</filter-name>
@@ -501,6 +496,13 @@
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+	</listener>
+
+	<!-- AON STARTUP CONFIGURATION -->
+	<listener>
+		<listener-class>
+			com.code.aon.ui.audit.session.AonStartupServletContextListener
+		</listener-class>
 	</listener>
 
 	<welcome-file-list>

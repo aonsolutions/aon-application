@@ -22,6 +22,7 @@ import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfModel;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
@@ -69,26 +70,47 @@ public class ContractModelController implements Serializable {
 		this.optionModel = optionModel;
 	}
 
+	public boolean isExpandable() {
+		ContractPdfModel model = (ContractPdfModel) getModel().getRowData();
+		return ContractPdfModel.PE200 != model && ContractPdfModel.PE192 != model && ContractPdfModel.PE191 != model;
+	}
+
 	public void onReset(ActionEvent event) {
 		setModel(null);
 	}
 	
 	public void onSelectModel(ActionEvent event ) {
-		setSelectedModel((ContractPdfModel) getModel().getRowData());
-		List<ModelOption> list = new LinkedList<ModelOption>();
-		for(ModelOption option: ModelOption.values()){
-			if(getPdfModel(option.getPdfModel())==getSelectedModel()){
-				list.add(option);
+		if(getSelectedModel() == getModel().getRowData()){
+			optionModel = null;
+			setSelectedModel(null);
+		} else {
+			setSelectedModel((ContractPdfModel) getModel().getRowData());
+			List<ModelOption> list = new LinkedList<ModelOption>();
+			for(ModelOption option: ModelOption.values()){
+				if(getPdfModel(option.getPdfModel())==getSelectedModel()){
+					list.add(option);
+				}
 			}
+			optionModel = new SerializableListDataModel( list );
 		}
-		optionModel = new SerializableListDataModel( list );
 	}
 	
 	public boolean isPdfEnabled() {
 		String name = getPdfName((ContractPdfModel) getModel().getRowData());
 		try {
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, name + ".pdf");
+			URL[] urls = null;
+			
+			if(ContractPdfModel.PE200==getPdfModel(name)){
+				urls = null;
+			} else if(ContractPdfModel.PE192==getPdfModel(name)){
+				urls = null;
+			} else if(ContractPdfModel.PE191.toString()==name){
+				urls = Classpath.search(cl, Extension.CONTRACT_EXTENSION_PATH, name + ".pdf");
+			} else {
+				urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, name + ".pdf");
+			}
+			
 			URL url = urls!= null && urls.length > 0?urls[0]:null;
 			return (url != null);
 		} catch (IOException e) {
@@ -110,7 +132,7 @@ public class ContractModelController implements Serializable {
 		} else if(ContractPdfModel.PE192==model){
 			return null;
 		} else if(ContractPdfModel.PE191==model){
-			return null;
+			return Extension.EXTENSION_NAME;
 		}
 		return null;
 	}
@@ -135,7 +157,20 @@ public class ContractModelController implements Serializable {
 		try {
 			String name = getPdfName((ContractPdfModel) getModel().getRowData());
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, name + ".pdf");
+			
+			URL[] urls = null;
+			
+			if(ContractPdfModel.PE200==getPdfModel(name)){
+				urls = null;
+			} else if(ContractPdfModel.PE192==getPdfModel(name)){
+				urls = null;
+			} else if(ContractPdfModel.PE191.toString()==name){
+				urls = Classpath.search(cl, Extension.CONTRACT_EXTENSION_PATH, name + ".pdf");
+			} else {
+				urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, name + ".pdf");
+			}
+			
+			
 			URL url = urls[0];
 			InputStream is = url.openStream();
 			buf = new BufferedInputStream(is);

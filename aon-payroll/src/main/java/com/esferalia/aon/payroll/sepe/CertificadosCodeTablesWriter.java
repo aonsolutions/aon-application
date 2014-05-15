@@ -25,9 +25,10 @@ import com.code.aon.common.util.Classpath;
 
 public class CertificadosCodeTablesWriter {
 	
-	final static String PARENT_FOLDER_PATH 				= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
-	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/certificados/";
-	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
+	final static String BASE_DIR 						= "/AON-TRUNK";
+	final static String PARENT_FOLDER_PATH 				= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
+	final static String ENUMERATIONS_FOLDER_PATH 		= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/certificados/";
+	final static String COLLECTIONS_CLASS_PATH			= BASE_DIR + "/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
 	final static String COLLECTIONS_CLASS_NAME			= "CertificadosCollectionsController";
 	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.sepe.controller";
 	

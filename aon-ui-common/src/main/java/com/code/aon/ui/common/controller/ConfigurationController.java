@@ -1,6 +1,5 @@
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.BEAN_CONFIG_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.ON_LOGOUT;
 
 import java.io.Serializable;
@@ -213,8 +212,7 @@ public class ConfigurationController implements Serializable {
 	 */
 	public Map<String, Map<String, Object>> getBean() {
 		if ( bean == null ) {
-			BeanConfiguration beanConfig = (BeanConfiguration) AonUtil.getRegisteredBean(BEAN_CONFIG_CONTROLLER_NAME); 
-			this.bean = beanConfig.getBeanCopy();					
+			this.bean = BeanConfiguration.getInstance().getBeanCopy();
 		}
 		return bean;
 	}

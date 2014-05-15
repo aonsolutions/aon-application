@@ -20,7 +20,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -34,6 +33,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -318,7 +318,7 @@ public class CraBatchController extends BasicController {
 				selectedList.add(detail);
 			}
 	        listController.getCheckHandler().clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 	        controller.onSearchCCCs(event);
 		}
 
@@ -331,7 +331,7 @@ public class CraBatchController extends BasicController {
 	        	}
 	        }
 	        clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 	        controller.loadDetails();
 	        controller.onSearchCCCs(event);
 		}

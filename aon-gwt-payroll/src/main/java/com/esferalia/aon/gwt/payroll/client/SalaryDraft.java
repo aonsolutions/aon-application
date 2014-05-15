@@ -173,7 +173,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	//@formatter:off
 	private static String[] SKIP_VARIABLES = { 
 		"CONVENIO", "SISTEMA", "NETO", "BRUTO", "GTZDO", "_OLD",// functions 
-		"GET_VARIABLE", 										// functions 
+		"GET_VARIABLE", "SI", "MAX", "MIN", "ABS",				// functions 
 		
 		"ANTICIPO_ATRASOS", PORCENTAJE_IRPF,  					//  
 		
@@ -185,8 +185,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		
 		"CONTEXT", "SELF",	"THIS",								// context
 		
-		"OCUPACION_IT", "OCUPACION_IMS", "PORCENTAJE_DESMPL", 	// constants 
-		"PORCENTAJE_DESMPL_E", "PORCENTAJE_IMS", "PORCENTAJE_IT"// constants 
+		"OCUPACION_IT", "OCUPACION_IMS", 
+		"_PORCENTAJE_DESMPL", "_PORCENTAJE_DESMPL_E", 			// constants 
+		"_PORCENTAJE_IMS", "_PORCENTAJE_IT"						// constants 
 	};
 	//@formatter:on
 
@@ -2005,6 +2006,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				((Focusable) fxhasValue).setFocus(true);
 				if (fxDialog.isAccepted()) {
 					fxhasValue.setValue(fxDialog.getExpression());
+					for ( Variable var: fxDialog.getVariables() ) {
+						var.setScope(Scope.SALARY);
+						var.setImplicit(false);
+						var.setStartDate(SalaryDraft.this.salaryDraftObject.getStartDate());
+						var.setEndDate(SalaryDraft.this.salaryDraftObject.getEndDate());
+						SalaryDraft.this.salaryDraftObject.addDraftVariable(var);
+					}
 				}
 			}
 		});
@@ -3366,7 +3374,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	// TODO : ???
-	private boolean displayNow(Payment payment) {
+	private static boolean displayNow(Payment payment) {
 		return true;
 		/*
 		 * Short month = payment.getMonth(); if (month == null) return true;
@@ -3376,22 +3384,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		 */
 	}
 
-	private boolean displayNow(UndefinedPaymentVariable var) {
+	private static boolean displayNow(UndefinedPaymentVariable var) {
 		return displayNow(var.getPayment());
 	}
 
-	private boolean skipVariable(Variable variable) {
-		String name = variable.getName();
-		for (String skip : SKIP_VARIABLES) {
-			if (skip.equals(name))
-				return true;
-		}
-		if (variable instanceof UndefinedPaymentVariable
-				&& !displayNow((UndefinedPaymentVariable) variable))
-			return true;
-
-		return false;
-	}
 
 	private String getIconRowStyle(Item item) {
 
@@ -3601,6 +3597,34 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	// ------------------------------------------------------- Static 'Library'
+	static boolean skipVariable(String name) {
+		for (String skip : SKIP_VARIABLES)
+			if (skip.equals(name))
+				return true;
+		return false;
+	}
+	static boolean skipVariable(Variable variable) {
+		String name = variable.getName();
+		for (String skip : SKIP_VARIABLES) {
+			if (skip.equals(name))
+				return true;
+		}
+		
+		if (variable instanceof UndefinedPaymentVariable
+				&& !displayNow((UndefinedPaymentVariable) variable))
+			return true;
+
+		return false;
+	}
+	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> T createEditor(
+			Variable variable) {
+		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
+			if (factory.accept(variable))
+				return factory.create(variable);
+		}
+		return null;
+	}
+	// ------------------------------------------------------- Static 'Library'
 
 	private static Double getDbPercent(Deduction deduction,
 			SalaryDraftObject draftObject) {
@@ -3718,14 +3742,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			new BooleanEditorFactory(),
 			new DefaultEditorFactory() };
 	//@formatter:on
-
-	private static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> T createEditor(
-			Variable variable) {
-		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
-			if (factory.accept(variable))
-				return factory.create(variable);
-		}
-		return null;
-	}
+	
 
 }

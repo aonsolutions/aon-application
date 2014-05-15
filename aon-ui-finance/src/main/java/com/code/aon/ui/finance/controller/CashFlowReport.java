@@ -3,10 +3,16 @@
  */
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-public class CashFlowReport implements Comparable<CashFlowReport>{
+import com.code.aon.AonVersion;
+
+public class CashFlowReport implements Comparable<CashFlowReport>, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Integer id; // ID del vtos. o de la previsión.
 	private Date date;
 	private String type;

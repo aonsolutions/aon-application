@@ -28,7 +28,7 @@ public class PayrollCodeTablesController extends SepeTablesController {
 
 	
 	private boolean isSSSelected(){
-		return getSelectedTab().equals("ss");
+		return StringUtils.equals(getSelectedTab(),"ss");
 	}
 	
 	public DataModel getSsTablesModel() {
@@ -56,10 +56,21 @@ public class PayrollCodeTablesController extends SepeTablesController {
 		}
 	}
 	
+	public boolean isTableDefined(){
+		try {
+			SSCodeTables table = ((SSCodeTables)getSsTablesModel().getRowData());
+			Class.forName(SS_ENUMERATIONS_PACKAGE_NAME + "." + table.getCode().trim().replace("*", "").replace("-", ""));
+			return true;
+		} catch (ClassNotFoundException e1) {
+			// nothing to do
+		}
+		return false;
+	}
+		
 	@Override
 	public void onInit(ActionEvent event){
-		super.onInit(event);
 		setSelectedTab("ss");
+		super.onSelectTab(event);
 	}
 	
 	@Override
@@ -106,10 +117,11 @@ public class PayrollCodeTablesController extends SepeTablesController {
 	
 	private void initSSCodesModel(){
 		try {
-			Class<?> clazz = Class.forName(SS_ENUMERATIONS_PACKAGE_NAME + "." + getSSTable().getCode().trim().replace("*", ""));
+			Class<?> clazz = Class.forName(SS_ENUMERATIONS_PACKAGE_NAME + "." + getSSTable().getCode().trim().replace("*", "").replace("-", ""));
 			completeCodesModel(clazz);
 		} catch (ClassNotFoundException e1) {
 			// nothing to do
+			setCodesModel(null);
 		}
 	}
 	

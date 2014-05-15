@@ -264,7 +264,6 @@ public class SalaryDraft extends SalaryPreview {
 			context.add(var);
 	}
 	
-
 	public Variable addDraftVariable(Variable var) {
 		Variable oldVariable = null;
 
@@ -276,6 +275,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftContext.add(var);
 		return oldVariable;
 	}
+
 	
 	public boolean removeDraftVariable(Variable variable) {
 			return draftContext.remove(variable);
@@ -318,13 +318,25 @@ public class SalaryDraft extends SalaryPreview {
 	public List<Variable> getDraftContext() {
 		return draftContext;
 	}
+	
+	public void setDraftContext(List<Variable> draftContext) {
+		this.draftContext = draftContext;
+	}
 
 	public List<Payment> getDraftPayments() {
 		return draftPayments;
 	}
+	
+	public void setDraftPayments(List<Payment> draftPayments) {
+		this.draftPayments = draftPayments;
+	}
 
 	public List<Deduction> getDraftDeductions() {
 		return draftDeductions;
+	}
+	
+	public void setDraftDeductions(List<Deduction> draftDeductions) {
+		this.draftDeductions = draftDeductions;
 	}
 
 	public void clearContext() {

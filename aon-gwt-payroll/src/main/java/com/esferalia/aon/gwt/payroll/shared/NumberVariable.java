@@ -28,4 +28,11 @@ public class NumberVariable extends Variable {
 		return super.equals(obj);
 	}
 
+	public double doubleValue() {
+		return value != null ? value.doubleValue() : 0.00;
+	}
+
+	
+	
+
 }

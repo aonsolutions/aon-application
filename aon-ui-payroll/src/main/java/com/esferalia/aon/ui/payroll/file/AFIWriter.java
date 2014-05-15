@@ -24,20 +24,20 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.afi.AFI;
+import com.esferalia.aon.file.payroll.afi.data.AYN;
 import com.esferalia.aon.file.payroll.afi.data.EMP;
 import com.esferalia.aon.file.payroll.afi.data.ETF;
 import com.esferalia.aon.file.payroll.afi.data.ETI;
 import com.esferalia.aon.file.payroll.afi.data.FAB;
 import com.esferalia.aon.file.payroll.afi.data.RZS;
 import com.esferalia.aon.file.payroll.afi.data.TRA;
-import com.esferalia.aon.file.payroll.afi.data.AYN;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.ss.T07;
+import com.esferalia.aon.payroll.enumeration.ss.T7;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class AFIWriter implements Serializable {
@@ -211,7 +211,7 @@ public class AFIWriter implements Serializable {
 		FAB fab = new FAB();
 		
 		// TODO Actions  
-		fab.setAccion(autoComplete(T07.T07_MA.getCode(), 3, "0", false));
+		fab.setAccion(autoComplete(T7.T7_MA.getCode(), 3, "0", false));
 		
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(contract.getStartDate())));
 		

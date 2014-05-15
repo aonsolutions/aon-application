@@ -1,6 +1,7 @@
 package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,8 +26,6 @@ import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.OptionGroup;
-import com.sun.facelets.impl.DefaultResourceResolver;
-import com.sun.facelets.impl.ResourceResolver;
 import com.sun.faces.application.ApplicationAssociate;
 import com.sun.faces.application.ConfigNavigationCase;
 
@@ -100,10 +99,10 @@ public class MenuParser {
 	
 	private Element lastPanelGrid;
 	
-	private ResourceResolver resolver;
+	private ServletContext servletContext;
 	
-	public MenuParser() {
-		this.resolver = new DefaultResourceResolver();
+	public MenuParser( ServletContext servletContext ) {
+		this.servletContext = servletContext;
 	}
 	
 	public static Document getDocument( URL url ) {
@@ -118,12 +117,21 @@ public class MenuParser {
 	}
 
 	private Document getDocument( String path ) {
-		return getDocument( resolver.resolveUrl(path) );
+		return getDocument( resolveURL(path) );
+	}
+	
+	private URL resolveURL( String resource ) {
+		URL url = null;
+		try {
+			url = servletContext.getResource(resource);
+		} catch (MalformedURLException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return url;
 	}
 	
 	private String getPath( String action ) {
-		ApplicationAssociate associate = ApplicationAssociate.getInstance(
-				FacesContext.getCurrentInstance().getExternalContext());
+		ApplicationAssociate associate = ApplicationAssociate.getInstance(this.servletContext);
 		if (associate != null) {
 			List<ConfigNavigationCase> list = associate.getNavigationCaseListMappings().get("*");
 			for( ConfigNavigationCase cnc : list ) {
@@ -180,14 +188,12 @@ public class MenuParser {
 		if ( document != null ) {
 			parseMenu( document );
 		}		
-		List<URL> list = getFacesConfigURLs();
-		parseFacesConfigs(list);
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		String value = ctx.getExternalContext().getInitParameter(IAuditConstants.CHECK_SERIALIZATION);
-		if ( StringUtils.equals(Boolean.TRUE.toString(), value) ) {
-			SerializationChecker checker = new SerializationChecker();
-			checker.check(list);			
-		}
+		parseFacesConfigs(getFacesConfigURLs());
+	}
+	
+	public void checkSerialization() {
+		SerializationChecker checker = new SerializationChecker();
+		checker.check(getFacesConfigURLs());			
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -445,27 +451,6 @@ public class MenuParser {
         }		
 	}
 	
-	private Map<String,String> getViewIdMap() {
-       	Map<String,String> viewIdMap = new HashMap<String, String>();
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        try {
-	        URL[] urls = Classpath.search(cl, "META-INF/", FACES_CONFIG_FILE);
-	        if (! ArrayUtils.isEmpty(urls) ) {
-		        for (URL url : urls) {
-		        	parseFacesConfig(url, viewIdMap);
-		        }	        	
-	        }
-	    	FacesContext ctx = FacesContext.getCurrentInstance();
-	        URL url = ctx.getExternalContext().getResource("/WEB-INF/"+ FACES_CONFIG_FILE);
-	        if ( url != null ) {
-	        	parseFacesConfig(url, viewIdMap);        	
-	        }
-		} catch (IOException e) {
-        	LOGGER.error("Error searching report config files", e);
-        }		
-        return viewIdMap;
-	}
-	
 	private List<URL> getFacesConfigURLs() {
 		List<URL> list = new LinkedList<URL>();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -474,8 +459,7 @@ public class MenuParser {
 	        if (! ArrayUtils.isEmpty(urls) ) {
 	        	list.addAll(Arrays.asList(urls));
 	        }
-	    	FacesContext ctx = FacesContext.getCurrentInstance();
-	        URL url = ctx.getExternalContext().getResource("/WEB-INF/"+ FACES_CONFIG_FILE);
+	        URL url = resolveURL("/WEB-INF/"+ FACES_CONFIG_FILE);
 	        if ( url != null ) {
 	        	list.add(url);      	
 	        }

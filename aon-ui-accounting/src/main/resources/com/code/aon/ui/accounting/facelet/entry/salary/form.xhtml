@@ -73,12 +73,14 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_concept"
+						styleClass="aon-outputLabel aon-input-required"
 						value="#{bundle.aon_concept}" />
 					<rich:comboBox id="Account_concept"
 						suggestionValues="#{accountingCollections.conceptsDescriptions}"
 						value="#{salaryEntry.entry.concept}" required="true"
 						maxlength="32" width="200" 
 						directInputSuggestions="true"
+						label="#{bundle.aon_concept}"
 						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
 						buttonDisabledStyle="display:none;"
 						buttonInactiveStyle="display:none;"

@@ -662,11 +662,56 @@ public class ContrataContratosWriter implements IContrataWriter{
 		return datos;
 	}
 
+	/**
+	 * <xsd:complexType name="NOMBREAPELLIDOSTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Nombre y apellidos.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="NOMBRE">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="15"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PRIMER_APELLIDO">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="20"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="SEGUNDO_APELLIDO" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es"> Obligatorio cuando la 1ª letra del IDENTIFICADORPFISICA sea una D (tipo de documento sea un DNI).</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:maxLength value="20"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param person
+	 * @return
+	 */
 	private NOMBREAPELLIDOSTYPE createNombreApellidos(Person person) {
 		NOMBREAPELLIDOSTYPE datos = factory.createNOMBREAPELLIDOSTYPE();
-		datos.setNOMBRE(person!=null?person.getName():null);
-		datos.setPRIMERAPELLIDO(person!=null?person.getFirstSurname():null);
-		datos.setSEGUNDOAPELLIDO(person!=null?person.getSecondSurname():null);
+		if(person!=null){
+			String name = StringUtils.trimToEmpty(person.getName());
+			String firstSurname = StringUtils.trimToEmpty(person.getFirstSurname());
+			String secondSurname = StringUtils.trimToEmpty(person.getSecondSurname());
+			
+			name = name.length()>15?name.substring(0, 15):name;
+			firstSurname = firstSurname.length()>20?firstSurname.substring(0, 20):firstSurname;
+			secondSurname = secondSurname.length()>20?secondSurname.substring(0, 20):secondSurname;
+			
+			datos.setNOMBRE(name);
+			datos.setPRIMERAPELLIDO(firstSurname);
+			datos.setSEGUNDOAPELLIDO(secondSurname);
+		}
 		return datos;
 	}
 

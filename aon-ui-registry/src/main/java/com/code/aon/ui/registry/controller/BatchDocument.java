@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -17,7 +18,6 @@ import java.util.zip.ZipOutputStream;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
 import javax.faces.model.DataModel;
 
 import org.slf4j.Logger;
@@ -105,7 +105,8 @@ public class BatchDocument extends DataScrollerState {
 	}
 	
 	private void updateModel() {
-		setModel(new ArrayDataModel(this.documents.toArray()));		
+		List<IAttachment> list = new LinkedList<IAttachment>(this.documents);
+		setModel(new SerializableListDataModel(list));		
 	}
 
 	public void addToBatch(IAttachment attachment) {

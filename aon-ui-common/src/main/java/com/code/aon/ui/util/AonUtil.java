@@ -24,6 +24,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -624,5 +625,10 @@ public class AonUtil {
 	public static String getDomainName() {
 		return getAuthPrincipal().getDomain();
 	}
-    
+ 
+	public static Object getServletContextAttribute(String name) {
+		ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();		
+		return servletContext.getAttribute(name);
+	}
+	
 }

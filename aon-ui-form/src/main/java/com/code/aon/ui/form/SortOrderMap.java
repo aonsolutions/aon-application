@@ -43,22 +43,17 @@ public class SortOrderMap extends AbstractMap<String,Ordering> implements Serial
 	 */
 	public SortOrderMap() {
 		_criteria = new Criteria();
-		this.provider = new ICriteriaProvider() {
-
-			@Override
-			public Criteria getCriteria() throws ManagerBeanException {
-				return _criteria;
-			}
-			
-		};
 	}
 
 	private Criteria getCriteria() {
 		try {
-			return provider.getCriteria();
+			if ( provider != null ) {
+				return provider.getCriteria();	
+			}
 		} catch (ManagerBeanException e) {
 			throw new FacesException(e.getMessage(), e); 
 		}
+		return _criteria;
 	}
 	
 	private String[] getAliases( String key ) {

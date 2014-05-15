@@ -1,9 +1,6 @@
 package com.code.aon.faces.component;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.faces.component.UIComponent;
 
@@ -19,11 +16,10 @@ import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
-import com.sun.facelets.util.Classpath;
 
 public class ComponentManager {
 
-	private static final String SUFFIX = ".aonlib.xml";
+	private static final String AON_LIBRARY = "META-INF/aon-rich-components.aonlib.xml";
 
 	private static final String DISABLED_STYLE_CLASS = "disabledStyleClass";		
 	
@@ -33,37 +29,29 @@ public class ComponentManager {
 	
 	private static final ComponentManager SINGLETON = new ComponentManager();
 	
-	private Map<String,ComponentLibrary> libraries;
+	private ComponentLibrary library;
 	
 	private ComponentManager() {
-		this.libraries = new HashMap<String, ComponentLibrary>();
 		loadImplicit();
 	}
 	
     public void loadImplicit() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        try {
-	        URL[] urls = Classpath.search(cl, "META-INF/", SUFFIX);
-	        for (int i = 0; i < urls.length; i++) {
-	            try {
-	            	addComponentLibrary( urls[i] );
-	                LOGGER.debug("Added Library from: " + urls[i]);
-	            } catch (Exception e) {
-	            	LOGGER.error("Error Loading Library: " + urls[i], e);
-	            }
-	        }
-        } catch ( IOException ioe ) {
-        	LOGGER.error("Error searching files with suffix: " + SUFFIX, ioe);
+        URL url = cl.getResource(AON_LIBRARY);
+        if ( url != null ) {
+            try {
+            	this.library = new ComponentLibrary(url);
+                LOGGER.debug("Added Library from: " + url);
+            } catch (Exception e) {
+            	LOGGER.error("Error Loading Library: " + url, e);
+            }        	
+        } else {
+        	LOGGER.error("Error Library not found: {}", AON_LIBRARY);
         }
     }
 	
 	public static ComponentManager getInstance() {
 		return SINGLETON;
-	}
-	
-	private void addComponentLibrary( URL resource ) {
-		ComponentLibrary library = new ComponentLibrary(resource);
-		this.libraries.put( library.getNamespace(), library );
 	}
 	
 	public ComponentInfo getComponentInfo( AonComponentHandler aonComponent ) {
@@ -72,11 +60,7 @@ public class ComponentManager {
 	}
 
 	public ComponentInfo getComponentInfo( Tag tag ) {
-		ComponentLibrary library = this.libraries.get(tag.getNamespace());
-		if ( library != null ) {
-			return library.getComponent( tag.getLocalName() );			
-		}
-		return null;
+		return library.getComponent( tag.getLocalName() );			
 	}
 	
 	public void updateMetaRuleset( Tag tag, MetaRuleset set ) {

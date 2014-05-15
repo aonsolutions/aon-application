@@ -1,7 +1,6 @@
 package com.code.aon.aio;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.Serializable;
@@ -14,8 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -50,6 +51,7 @@ import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.audit.controller.MenuParser;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
@@ -77,6 +79,8 @@ public class DesktopState implements Serializable {
 	
 	private static final String PATCH_INIT_ACTION = "aon.patch.initAction";
 	
+	private static final String CHECK_SERIALIZATION = "com.code.aon.checkSerialization";
+	
     private DataModel recentNoteModel;
     private NoticeInfo noticeInfo;
     private TaskInfo taskInfo;
@@ -99,6 +103,7 @@ public class DesktopState implements Serializable {
 		initUser();
 		initSupport();
 		initPortal(ds);
+		checkSerialization();
 	}
 
 	private void initAdminDomain() {
@@ -124,7 +129,7 @@ public class DesktopState implements Serializable {
 
 	private IOption getOption( String actionName ) {
 		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
-		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		ApplicationOption option = aoc.getOptionMap().get(actionName);
 		if ( option!=null && option.getViewId()!=null && !adc.isDenied(option) ) {
@@ -387,4 +392,13 @@ public class DesktopState implements Serializable {
 		return patchInitAction;
 	}
 	
+	private void checkSerialization() {
+		ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+		String value = ectx.getInitParameter(CHECK_SERIALIZATION);
+		if ( StringUtils.equals(Boolean.TRUE.toString(), value) ) {
+			ServletContext servletContext = (ServletContext) ectx.getContext();
+			MenuParser parser = new MenuParser(servletContext);
+			parser.checkSerialization();
+		}	
+	}
 }

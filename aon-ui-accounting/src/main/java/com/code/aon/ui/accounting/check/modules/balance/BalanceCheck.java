@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.check.modules.balance;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
@@ -16,7 +18,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -29,7 +30,9 @@ import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class BalanceCheck implements ICheckModule{
+public class BalanceCheck implements ICheckModule, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String label = "Chequeo de cuentas ausentes o duplicadas en los balances oficiales.";
 	private boolean enabled;
@@ -112,7 +115,7 @@ public class BalanceCheck implements ICheckModule{
 								}
 								if (msg != null) {
 									BalanceCheckEntry e = new BalanceCheckEntry();
-									if (DomainManager.getCurrentDomain() != balance.getDomain()) {
+									if (params.getDomainId() != balance.getDomain()) {
 										msg += " Balance definido en entorno superior"; 
 									}
 									e.setMessage( msg );
@@ -157,6 +160,12 @@ public class BalanceCheck implements ICheckModule{
 	@Override
 	public CheckCategory getCategory() {
 		return CheckCategory.ACCOUNTING;
+	}
+
+	@Override
+	public void mock() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -19,6 +19,8 @@ public class FiscalModel extends FiscalModelDB implements IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private String companyDocument;
+	private Double participationPercent;
 	private boolean readRetentionFromAccount;
 	private int receiverCount;
 	
@@ -29,6 +31,24 @@ public class FiscalModel extends FiscalModelDB implements IAuditable {
 		setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
 	
+	@Transient
+	public String getCompanyDocument() {
+		return companyDocument;
+	}
+
+	public void setCompanyDocument(String companyDocument) {
+		this.companyDocument = companyDocument;
+	}
+
+	@Transient
+	public Double getParticipationPercent() {
+		return participationPercent;
+	}
+
+	public void setParticipationPercent(Double participationPercent) {
+		this.participationPercent = participationPercent;
+	}
+
 	@Transient
 	public boolean isReadOnly() {
 		return (getStatus() != FiscalModelStatus.PENDING);

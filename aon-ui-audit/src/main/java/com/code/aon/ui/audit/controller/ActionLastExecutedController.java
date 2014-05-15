@@ -27,7 +27,7 @@ public class ActionLastExecutedController extends BasicController implements IAu
 	private static final int LAST_EXECUTED_COUNT = 5;
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 
 	private ActionDeniedController getDeniedController() {

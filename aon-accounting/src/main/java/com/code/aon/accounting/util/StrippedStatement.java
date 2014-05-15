@@ -1,10 +1,14 @@
 package com.code.aon.accounting.util;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
-public class StrippedStatement {
+public class StrippedStatement implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String documentNumber;
 	private String concept;

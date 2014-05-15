@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -20,7 +21,11 @@
 			
 				<c:if test="#{!contract.new}" >
 				
-					<aon:panelGrid id="contract-panelGrib" columns="4" styleClass="aon-width-all" >
+					<aon:panelGrid id="contract-panelGrib" columns="4" styleClass="aon-width-all"
+						columnClasses="
+						aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-200,
+						aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto
+						" >
 						
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
 						
@@ -39,16 +44,38 @@
 						
 						<aon:outputText value="#{bundle.aon_status}" />
 						<aon:div>
-							<aon:commandButton rendered="#{contract.ssStatus!=null}"
-								styleClass="aon-icon-commandButton" >
-								<aon:outputText value="#{contract.ssStatus}" 
-									styleClass="aon-icon-commandButton aon-icon-winsuite aon-padding-left aon-margin-right" />
-							</aon:commandButton>
-							<aon:commandButton rendered="#{contract.sepeStatus!=null}"
-								styleClass="aon-icon-commandButton" >
-								<aon:outputText value="#{contract.sepeStatus}"
-									styleClass="aon-icon-commandButton aon-icon-sepe aon-padding-left aon-padding-right aon-margin-right" />
-							</aon:commandButton>
+							<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder">
+								<rich:dropDownMenu id="ssStatusDropDown" event="onclick"
+									submitMode="none" direction="bottom-left"
+									jointPoint="br" hideDelay="300">
+									<f:facet name="label"> 
+										<aon:outputText value="#{contract.params.ssStatus}" 
+											styleClass="aon-icon-commandButton aon-icon-winsuite aon-padding-left aon-margin-right" />
+					                </f:facet>
+					                <rich:menuItem submitMode="none">
+				                        <aon:selectOneMenu value="#{contract.params.ssStatus}" layout="pageDirection">
+											<f:selectItems value="#{contract.ssStatuses}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="ssStatusDropDown" />
+										</aon:selectOneMenu>
+				                    </rich:menuItem>
+								</rich:dropDownMenu>
+								<rich:dropDownMenu id="sepeStatusDropDown" event="onclick"
+									submitMode="none" direction="bottom-left"
+									jointPoint="br" hideDelay="300">
+									<f:facet name="label"> 
+										<aon:outputText value="#{contract.params.sepeStatus}" 
+											styleClass="aon-icon-commandButton aon-icon-sepe aon-padding-left aon-margin-right" />
+					                </f:facet>
+					                <rich:menuItem submitMode="none" id="sepeStatusDropDownOptionsItem">
+				                        <aon:selectOneMenu value="#{contract.params.sepeStatus}" focus="sepeManualId" layout="pageDirection">
+											<f:selectItems value="#{contract.sepeStatuses}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="sepeStatusDropDown" />
+											<a4j:support event="onblur" ajaxSingle="true" reRender="sepeStatusDropDown" />
+										</aon:selectOneMenu>
+				                    </rich:menuItem>
+								</rich:dropDownMenu>
+							</aon:panelGrid>
+					
 						</aon:div>
 							
 					</aon:panelGrid>
@@ -57,7 +84,9 @@
 						switchType="ajax" immediate="true">
 						
 						<aon:panelTab id="mainData" label="#{bundle.payroll_contract_general_data}" >
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
+								<ui:param name="readOnly" value="#{contract.readOnly}" />
+							</ui:include>
 							<c:if test="#{contract.params.bonusModel.rowCount>0}" >
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/panel_list.xhtml" >
 									<ui:param name="removeButtonReRender" value="contract-panelTab" />
@@ -71,23 +100,69 @@
 						</aon:panelTab>
 						
 						<c:if test="#{!contract.params.retaQuote}">
-							<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
-								actionListener="#{contractContrata.onContrataDataShow}" >
-								<c:if test="#{contractContrata.enabledContrataEdition}">
-									<aon:div style="width:920px;">
-										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
-										<br />
-										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
-											<ui:param name="controller" value="#{contractContrata}" />
-										</ui:include>
-										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
-									</aon:div>		
-								</c:if>
-								<c:if test="#{!contractContrata.enabledContrataEdition}">
-									<aon:outputText style="color:red;padding-left:18px;" styleClass="aon-icon-wrong"
-										value="Tipo de contrato sin implementación para comunicaciones con Contrat@." />
-								</c:if>
-							</aon:panelTab>
+
+							<c:if test="#{!contract.transformedContract and !contract.extendedContract}">
+								<aon:panelTab id="contractContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
+									actionListener="#{contractContrata.onContrataDataShow}" >
+										<aon:div style="width:920px;">
+											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
+											<br />
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
+												<ui:param name="controller" value="#{contractContrata}" />
+											</ui:include>
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
+										</aon:div>		
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{!contract.transformedContract and contract.extendedContract}">
+								<aon:panelTab id="extensionContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
+									actionListener="#{extensionContrata.onContrataDataShow}" >
+									<aon:actionListener method="#{extensionContrata.onContrataDataShow}" />
+									<aon:actionListener method="#{contractContrata.onContrataDataShow}" />
+										<aon:div style="width:920px;">
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/form_content.xhtml" >
+												<ui:param name="controller" value="#{extensionContrata}" />
+											</ui:include>
+											
+											<br />
+											
+											<aon:panelCollapsible expanded="false" label="Datos contrato inicial"
+												style="text-align:left;">
+											
+											<!--  
+											<aon:panel style="width:920px;">
+												<f:facet name="header">
+													<aon:outputText value="Datos contrato inicial" />
+												</f:facet>
+												<aon:panelGrid columns="2" 
+													columnClasses="aon-noborder aon-text-left aon-width-170, aon-noborder aon-text-left">
+												</aon:panelGrid>
+											-->
+												<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
+												<br />
+												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
+													<ui:param name="controller" value="#{contractContrata}" />
+												</ui:include>
+												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
+											<!--  
+											</aon:panel>
+											-->
+											</aon:panelCollapsible>
+										</aon:div>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{contract.transformedContract}">
+								<aon:panelTab id="transformContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
+									actionListener="#{transformContrata.onContrataDataShow}" >
+										<aon:div style="width:920px;">
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" >
+												<ui:param name="controller" value="#{transformContrata}" />
+											</ui:include>
+										</aon:div>
+								</aon:panelTab>
+							</c:if>
 	
 							<aon:panelTab id="documentOtherData" label="#{bundle.aon_addInfo}"
 								actionListener="#{contractDocumentInfo.onLoadContractFields}" ajaxSingle="#{true}">

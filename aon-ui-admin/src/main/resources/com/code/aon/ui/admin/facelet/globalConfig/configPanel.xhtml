@@ -59,6 +59,14 @@
 										actionListener="#{globalConfig.onInitEnterprise}"
 										value="#{bundle.company_workplaces}">
 										<aon:actionListener method="#{companyWorkPlace.onCancel}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="economicActivities" 
+										reRender="configPanelBar,configContent"
+										action="globalConfig_form"
+										actionListener="#{globalConfig.onInitEnterprise}"
+										value="#{bundle.aon_economic_activities_abbr}">
 										<aon:actionListener method="#{enterpriseActivity.onCancel}" />
 									</aon:commandLink>
 								</aon:div>

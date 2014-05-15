@@ -195,13 +195,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************ CONTRACT CODE ************** -->
-	<managed-bean>
-		<managed-bean-name>contractCode</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractCodeController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ************ CONTRACT ************** -->
 	<managed-bean>
 		<managed-bean-name>contract</managed-bean-name>
@@ -2342,6 +2335,13 @@
 			<value>geozoneIrpf</value>
 		</managed-property>
 	</managed-bean>
+
+	<!-- ************ CNAE IT IMS RATE ************** -->
+	<managed-bean>
+		<managed-bean-name>cnaeRate</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.CnaeRateController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!--  **** SS TABLES VIEWER **** -->
 	<managed-bean>
@@ -2426,12 +2426,6 @@
 		<navigation-case>
 			<from-outcome>contractOption_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractOption/list.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contractCode_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractCode/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== FDI Batch ========================== -->
@@ -2659,22 +2653,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLeave/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== GEOZONE IRPF ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>geozoneIrpf_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>geozoneIrpf_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>geozoneIrpf_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- ************* SS TABLES VIEWER ************* -->
+	<!-- ************* PREDEFINED TABLES VIEWER ************* -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>payrollCodeTables_list</from-outcome>

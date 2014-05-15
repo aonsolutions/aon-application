@@ -29,13 +29,18 @@
 		</ui:define>
 		
 		<ui:define name="additionalColumns" >
-			<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachmentType"
+			<aon:column alias="ContractAttachment.attachmentType"
 				styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputLabel for="#{controller.beanName}_attachmentType"
 						value="#{bundle.aon_type}" />
 				</f:facet>
-				<aon:outputText value="#{to.attachmentType}" rendered="#{formList}" />
+				<aon:div rendered="#{formList}" >
+					<aon:outputText value="(" />
+					<aon:outputText value="#{to.mimeType.extension}" />
+					<aon:outputText value=") " />
+					<aon:outputText value="#{to.attachmentType}" />
+				</aon:div>
 				<aon:selectOneMenu id="#{controller.beanName}_attachmentType" rendered="#{formEdit}"
 					value="#{controller.to.attachmentType}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
@@ -67,7 +72,7 @@
 					</f:facet>
 				</aon:column>
 			</c:if>		
-			<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachDate"
+			<aon:column alias="ContractAttachment.attachDate"
 				styleClass="aon-editDataTable-dateColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="#{controller.beanName}_scope"
@@ -87,7 +92,7 @@
 				</f:facet>
 			</aon:column>		
 			<c:if test="#{!skipScopeColumn}"> 
-				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope.description"
+				<aon:column alias="ContractAttachment.scope.description"
 					styleClass="aon-editDataTable-textColumn aon-width-120">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_scope"

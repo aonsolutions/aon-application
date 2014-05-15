@@ -708,7 +708,7 @@ public class AonDomainMerger {
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
 		/*
-		Class.forName("org.gjt.mm.mysql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/tad-aonsolutions-net","dbuser","serubd2000");
 		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/tadsg000-aonsolutions-net","dbuser","serubd2000");
 		String domainName = "tadsg000-aonsolutions-net";
@@ -717,7 +717,7 @@ public class AonDomainMerger {
         source.close();
         target.close();
         */        
-        Class.forName("org.gjt.mm.mysql.Driver");
+        Class.forName("com.mysql.jdbc.Driver");
 		
 		String targetURL = args[0];
 		String targetUser = args.length > 1 ? args[1] : "dbuser";

@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -35,6 +36,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod130Manager extends FiscalModelManager {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String SELECT_TAX_REGIME = "SELECT "
 		+" value FROM app_param "
@@ -50,6 +52,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
+			+" AND fm.document < ? "
 			+" AND fmd.type = ? ";
 	
 	private static String SELECT_15 = "SELECT " 
@@ -61,6 +64,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
+			+" AND fm.document < ? "
 			+" AND fmd.type = ? ";
 
 	private static String SELECT_05_1 = "SELECT " 
@@ -72,6 +76,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
+			+" AND fm.document < ? "
 			+" AND fmd.type = ? ";
 
 	private static String SELECT_05_2 = "SELECT " 
@@ -83,6 +88,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
+			+" AND fm.document < ? "
 			+" AND fmd.type = ? ";
 	
 
@@ -105,6 +111,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.model = ? "
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
+			+" AND fm.document = ? "
 			+" AND fmd.type = ? "
 			+" ORDER by fm.period";
 	
@@ -116,6 +123,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.model = ? "
 			+" AND fm.administration!= ? "
 			+" AND fm.year = ? "
+			+" AND fm.document = ? "
 			+" AND fmd.type = ? "
 			+" ORDER by fm.period";
 	
@@ -153,6 +161,12 @@ public class Mod130Manager extends FiscalModelManager {
 			Date dateFrom = getInitialDate(fiscalModel);	
 			Date dateTo = getDueDate(fiscalModel);
 			
+			double p1 = fiscalModel.getParticipationPercent();
+			if (p1 == 0) {
+				p1 = 100;
+			}
+			mod130.ensureDetail(Mod130Key.P1).addAccumulatedAmount(p1);
+			
 	//		 Casilla 01. Consigne la totalidad de los ingresos í­ntegros fiscalmente 
 	//		 computables procedentes de las actividades económicas a las que se 
 	//		 refiere este apartado y que correspondan al perí­odo comprendido entre 
@@ -165,6 +179,7 @@ public class Mod130Manager extends FiscalModelManager {
 			params.setToDate(dateTo);
 			SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
 			double c01 = CommonUtil.round(sc.getOpeningCredit() + sc.getCredit() - sc.getOpeningDebit() - sc.getDebit());
+			c01 = CommonUtil.round( c01 * p1 / 100);
 			mod130.ensureDetail(Mod130Key.C01).addAccumulatedAmount(c01);
 			
 	//		 Casilla 02. Haga constar el importe de los gastos que, teniendo la 
@@ -190,7 +205,7 @@ public class Mod130Manager extends FiscalModelManager {
 			params.setToDate(dateTo);
 			sc = sp.getSummaryCollection(conn,params,false);
 			double c02 = CommonUtil.round(sc.getOpeningDebit() + sc.getDebit() - sc.getOpeningCredit() - sc.getCredit());
-			
+			c02 = CommonUtil.round( c02 * p1 / 100);
 
 	// 		Artí­culo 30. Determinación del rendimiento neto en el método de estimación 
 	// 		directa simplificada.
@@ -232,7 +247,9 @@ public class Mod130Manager extends FiscalModelManager {
 	//		 actividades económicas a que se refiere este apartado, correspondientes 
 	//		 al perí­odo comprendido entre el primer dí­a del año y el último dí­a del 
 	//		 trimestre a que se refiere el pago fraccionado.
-			mod130.ensureDetail(Mod130Key.C06).addAccumulatedAmount(getC06(conn,dateFrom,dateTo));
+			double c06 = getC06(conn,dateFrom,dateTo);
+			c06 = CommonUtil.round(c06 * p1 / 100);
+			mod130.ensureDetail(Mod130Key.C06).addAccumulatedAmount(c06);
 	//		 ------------------------------------------------------------------------
 			
 	//		Casilla 13. Podrán cumplimentar esta casilla únicamente los contribuyentes que 
@@ -410,6 +427,7 @@ public class Mod130Manager extends FiscalModelManager {
 			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
 			ps.setInt(++i, fiscalModel.getYear());
 			ps.setInt(++i, fiscalModel.getPeriod().ordinal());
+			ps.setString(++i, fiscalModel.getDocument());
 			ps.setString(++i, key.getValue());
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -511,6 +529,7 @@ public class Mod130Manager extends FiscalModelManager {
 			ps.setString(++i, fiscalModel.getModel().getValue());
 			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
 			ps.setInt(++i, fiscalModel.getYear());
+			ps.setString(++i, fiscalModel.getDocument());
 			ps.setString(++i, key.getValue());
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -564,6 +583,7 @@ public class Mod130Manager extends FiscalModelManager {
 			ps.setString(++i, fiscalModel.getModel().getValue());
 			ps.setInt(++i, fiscalModel.getAdministration().ordinal());
 			ps.setInt(++i, fiscalModel.getYear());
+			ps.setString(++i, fiscalModel.getDocument());
 			ps.setString(++i, key.getValue());
 			rs = ps.executeQuery();
 			if (rs.next()) {

@@ -3,6 +3,7 @@ package com.code.aon.ui.accounting.check.modules.account;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -13,6 +14,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private boolean fixed = false;
 	private String fixLabel;
 	
@@ -20,8 +23,13 @@ public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 	@Override
 	public void onFix(ActionEvent event) throws AonCheckException{
 		try {
-			Account account = (Account) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(Account.class);
+			Account account = null;
+			if (getTo() == null) {
+				account = (Account) bean.get(getId());
+			} else {
+				account = (Account) getTo();
+			}
 			account.setEntryEnabled(!account.isEntryEnabled());
 			bean.update(account);
 			fixed = true;
@@ -34,7 +42,7 @@ public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 
 	@Override
 	public boolean isFixAvailable() {
-		return true;
+		return getTo() != null || getId() != null;
 	}
 	@Override
 	public boolean isFixed() {
@@ -43,8 +51,9 @@ public class AccountEnabledCheckEntry extends CheckEntryAdapter {
 
 	@Override
 	public String getMessage() {
-		Account account = (Account) getTo();
-		return super.getMessage() + "(" + account.getCode() + " " + account.getDescription() + ")";	
+		return super.getMessage();
+//		Account account = (Account) getTo();
+//		return super.getMessage() + "(" + account.getCode() + " " + account.getDescription() + ")";	
 	}
 
 	@Override

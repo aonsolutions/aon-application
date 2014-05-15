@@ -232,7 +232,7 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 					detailList.add(info);
 				}
 			}
-			if (c.getM311List() == null || c.getM311List().size() == 0 ) {
+			if (fa.getYear() < 2014 && (c.getM311List() == null || c.getM311List().size() == 0) ) {
 				c.fillM311(fa);
 				c.calculateM311();
 			}
@@ -275,8 +275,7 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			}
 			FiscalActivityInfo info = c.getInfo(FiscalActivityInfoKey.A03);
 			if (info != null && info.getValue() != null) {
-				Integer i = (Integer) info.cast();
-				if (i != 0) {
+				if (info.getDoubleValue() != 0) {
 					throw new AonException("No se puede indicar ejercicio para NUEVAS ACTIVIDADES cuando se trate de actividades de temporada.");
 				}
 			}
@@ -289,8 +288,7 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			Integer d = (Integer) v;
 			if (d == 1) {
 				FiscalActivityInfo info = c.getInfo(FiscalActivityInfoKey.A07);
-				Integer i = (Integer) info.cast();
-				if (i != 1 ) {
+				if (info.getDoubleValue() != 1 ) {
 					throw new AonException("Si dispone de UN SOLO vehículo afecto a la actividad, señale si su capacidad de carga supera o no 1.000 kg.");
 				}
 			}

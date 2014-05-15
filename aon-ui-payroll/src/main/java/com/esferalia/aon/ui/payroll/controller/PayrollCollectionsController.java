@@ -230,17 +230,16 @@ public class PayrollCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getAllContractCodes() {
-		if (contractCodes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			contractCodes = new LinkedList<SelectItem>();
-			ContractCode[] codes = ContractCode.values();
-			for (ContractCode code : codes) {
-				String name = code.getValue() +" - "+ code.getName(locale);
-				SelectItem item = new SelectItem(code, name);
-				contractCodes.add(item);
-			}
+		List<SelectItem> list;
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		list = new LinkedList<SelectItem>();
+		ContractCode[] codes = ContractCode.values();
+		for (ContractCode code : codes) {
+			String name = code.getValue() +" - "+ code.getName(locale);
+			SelectItem item = new SelectItem(code, name);
+			list.add(item);
 		}
-		return contractCodes;
+		return list;
 	}
 	
 	public List<SelectItem> getContractCodes() {
@@ -269,7 +268,7 @@ public class PayrollCollectionsController implements Serializable {
 				if( ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, code.getValue()) ){
 					String name = code.getValue() +" - "+ code.getName(locale);
 					if(StringUtils.contains(name,", TRANSFORMACIÓN CONTRATO TEMPORAL")){
-						name = StringUtils.replace(name, ", TRANSFORMACIÓN CONTRATO TEMPORAL", "");
+						name = StringUtils.replace(name, "TRANSFORMACIÓN CONTRATO TEMPORAL", "TRANSFORMACIÓN");
 					}
 					SelectItem item = new SelectItem(code, name);
 					contractTransformCodes.add(item);

@@ -106,15 +106,18 @@ public class ClausulasModel extends AbstractContractModel {
 			return false;
 		}
 		@Override
+		public boolean isCommonValue() {
+			return false;
+		}
+		@Override
 		public String getValue() {
 			return value;
 		}
-
 		@Override
 		public IContractFieldName[] getCompositeValues() {
-			// TODO Auto-generated method stub
 			return null;
 		}
+
 	}
 	
 }
