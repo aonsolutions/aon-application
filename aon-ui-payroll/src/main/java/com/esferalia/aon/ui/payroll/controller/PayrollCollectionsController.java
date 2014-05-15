@@ -17,11 +17,9 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.enumeration.SalaryTemplate;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -113,6 +111,7 @@ public class PayrollCollectionsController {
 	
 	private List<SelectItem> liquidationTypes;
 	private List<SelectItem> mutualList;
+	private List<SelectItem> salaryTemplates;
 	
 	
 	private String getAbbreviatedSelectItemLabel(String name, int lenght) {
@@ -787,44 +786,38 @@ public class PayrollCollectionsController {
 		return null;
 	}
 	
-	private List<SelectItem> salaryTemplates;
-	
 	public List<SelectItem> getSalaryTemplates() {
 		if (salaryTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			salaryTemplates = new LinkedList<SelectItem>();
-			SelectItem item = new SelectItem(SalaryTemplate.DEFAULT, SalaryTemplate.DEFAULT.getName(locale));
+			SelectItem item = new SelectItem(SalaryTemplate.DEFAULT.getValue(), SalaryTemplate.DEFAULT.getName(locale));
 			salaryTemplates.add(item);
-			// TODO add new values to salary template enumeration
-//			item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN, SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale));
-			item = new SelectItem("salary_dualColumn", "Estándar (2 columnas)");
+			item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN.getValue(), SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale));
 			salaryTemplates.add(item);
-//			item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE, SalaryTemplate.INVOICE_SIMPLE.getName(locale));
-			item = new SelectItem("salary_invoiceSimple", "Factura simple");
+			item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE.getValue(), SalaryTemplate.INVOICE_SIMPLE.getName(locale));
 			salaryTemplates.add(item);
-//			item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP, SalaryTemplate.INVOICE_CRA_GROUP.getName(locale));
-			item = new SelectItem("salary_invoiceCraGroup", "Factura (agrupación CRA)");
+			item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP.getValue(), SalaryTemplate.INVOICE_CRA_GROUP.getName(locale));
 			salaryTemplates.add(item);
 				
 			PayrollUtils utils = PayrollUtils.getInstance();
-			utils.getAdditionalSalaryTemplates();
-				
-			for(String s: utils.getAdditionalSalaryTemplates()){
-				if(s.equals(SalaryTemplate.NOMINASTA.getValue())){
-					item = new SelectItem(SalaryTemplate.NOMINASTA, SalaryTemplate.NOMINASTA.getName(locale));
-					salaryTemplates.add(item);
-				} else if(s.equals(SalaryTemplate.NOMINASTA_CODINT.getValue())){
-					item = new SelectItem(SalaryTemplate.NOMINASTA_CODINT, SalaryTemplate.NOMINASTA_CODINT.getName(locale));
-					salaryTemplates.add(item);
-				} else if(s.equals(SalaryTemplate.NOMINASTA_CONDDIAS.getValue())){
-					item = new SelectItem(SalaryTemplate.NOMINASTA_CONDDIAS, SalaryTemplate.NOMINASTA_CONDDIAS.getName(locale));
-					salaryTemplates.add(item);
-				} else if(s.equals(SalaryTemplate.NOMINASTA_LDH.getValue())){
-					item = new SelectItem(SalaryTemplate.NOMINASTA_LDH, SalaryTemplate.NOMINASTA_LDH.getName(locale));
-					salaryTemplates.add(item);
-				} else if(s.equals(SalaryTemplate.IDAZKIAK_ES.getValue())){
-					item = new SelectItem(SalaryTemplate.IDAZKIAK_ES, SalaryTemplate.IDAZKIAK_ES.getName(locale));
-					salaryTemplates.add(item);
+			if(utils.getAdditionalSalaryTemplates()!=null){
+				for(String s: utils.getAdditionalSalaryTemplates()){
+					if(s.equals(SalaryTemplate.NOMINASTA.getValue())){
+						item = new SelectItem(SalaryTemplate.NOMINASTA.getValue(), SalaryTemplate.NOMINASTA.getName(locale));
+						salaryTemplates.add(item);
+					} else if(s.equals(SalaryTemplate.NOMINASTA_CODINT.getValue())){
+						item = new SelectItem(SalaryTemplate.NOMINASTA_CODINT.getValue(), SalaryTemplate.NOMINASTA_CODINT.getName(locale));
+						salaryTemplates.add(item);
+					} else if(s.equals(SalaryTemplate.NOMINASTA_CONDDIAS.getValue())){
+						item = new SelectItem(SalaryTemplate.NOMINASTA_CONDDIAS.getValue(), SalaryTemplate.NOMINASTA_CONDDIAS.getName(locale));
+						salaryTemplates.add(item);
+					} else if(s.equals(SalaryTemplate.NOMINASTA_LDH.getValue())){
+						item = new SelectItem(SalaryTemplate.NOMINASTA_LDH.getValue(), SalaryTemplate.NOMINASTA_LDH.getName(locale));
+						salaryTemplates.add(item);
+					} else if(s.equals(SalaryTemplate.IDAZKIAK_ES.getValue())){
+						item = new SelectItem(SalaryTemplate.IDAZKIAK_ES.getValue(), SalaryTemplate.IDAZKIAK_ES.getName(locale));
+						salaryTemplates.add(item);
+					}
 				}
 			}
 				
