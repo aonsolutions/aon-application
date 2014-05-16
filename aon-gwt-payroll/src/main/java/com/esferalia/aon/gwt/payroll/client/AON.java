@@ -92,6 +92,7 @@ public class AON {
 	public static final String AON_ICON_DEDUCTION = "aon-icon-deduction";
 	public static final String AON_ICON_BONUS = "aon-icon-segsocial";
 	public static final String AON_ICON_BONUS_SMALL = "aon-icon-segsocial-small";
+	public static final String AON_ICON_BONUS_NORML_SMALL = "aon-icon-normal-segsocial-small";
 	public static final String AON_ICON_CONFIG = "aon-icon-config";
 	public static final String AON_ICON_CLEAN = "aon-lookupButton-clear";
 	public static final String AON_NO_MARGIN = "aon-no-margin";
@@ -107,6 +108,7 @@ public class AON {
 	public static final String AON_ICON_COLLAPSE = "aon-icon-collapse";
 	public static final String AON_ICON_EXPAND = "aon-icon-expand";
 	public static final String AON_TOOLTIP = "aon-tooltip";
+	public static final String AON_ICON_CARD = "aon-icon-card";
 
 	
 	public static final String RICH_CALENDAR_BUTTON = "rich-calendar-button";

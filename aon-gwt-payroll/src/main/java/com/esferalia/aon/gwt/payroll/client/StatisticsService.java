@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.payroll.shared.ITData;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 
 public interface StatisticsService {
@@ -15,5 +16,8 @@ public interface StatisticsService {
 			throws IllegalArgumentException;
 	
 	public abstract ITData getWorkplaceITData(int workplaceId)
+			throws IllegalArgumentException;
+
+	public abstract void saveITDataPerson(ITDataPerson dataPerson)
 			throws IllegalArgumentException;
 }

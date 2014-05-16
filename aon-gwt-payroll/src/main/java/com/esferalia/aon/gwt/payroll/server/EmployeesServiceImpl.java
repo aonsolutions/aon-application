@@ -18,6 +18,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,6 +55,7 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
+import org.jooq.DSLContext;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -95,6 +97,7 @@ import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
@@ -1268,6 +1271,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
+	}
+	
+	@Override
+	public void saveITDataPerson(ITDataPerson dataPerson)
+			throws IllegalArgumentException {
+	
+		
+		
 	}
 
 	@Override

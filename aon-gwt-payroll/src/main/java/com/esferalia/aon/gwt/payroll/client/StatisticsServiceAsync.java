@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.payroll.shared.ITData;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -18,4 +19,6 @@ public interface StatisticsServiceAsync {
 	public abstract void getEnterpriseITData(int enterpriseId,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException;
 
+	public abstract void saveITDataPerson(ITDataPerson dataPerson,
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
 }
