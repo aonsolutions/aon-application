@@ -276,7 +276,7 @@ public class Employees extends ResizeComposite implements
 						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
 						"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
 						"B", "P", "AI", "M");
-				if (isGPS(enterprise))
+				if (Enterprise.isGPS(enterprise))
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
@@ -1396,11 +1396,6 @@ public class Employees extends ResizeComposite implements
 		Date firsDayOfMonth = DateUtils.getFirstDayOfMonth();
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
 
-	}
-	
-	private boolean isGPS(Enterprise enterprise) {
-		String name = enterprise.getName();
-		return name != null && enterprise.getName().matches(".*GO\\s*LAM\\s*SEC.*");
 	}
 	
 }

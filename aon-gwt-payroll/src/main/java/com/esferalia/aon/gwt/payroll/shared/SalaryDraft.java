@@ -241,12 +241,14 @@ public class SalaryDraft extends SalaryPreview {
 	public void addVariable(String name, Object value, Date startDate,
 			Date endDate, Scope scope, String expression, boolean defined []) {
 		Variable var;
-		if (value instanceof Number) {
+		if (value == null ) {
+			return;
+		}else if (value instanceof Number) {
 			var = new NumberVariable();
 			((NumberVariable) var).value = (Number) value;
 		} else {
 			var = new StringVariable();
-			((StringVariable) var).value = value.toString();
+			((StringVariable) var).value = String.valueOf(value);
 		}
 		var.setName( name );
 		var.setStartDate (startDate);

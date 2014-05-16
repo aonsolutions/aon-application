@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
@@ -150,6 +151,10 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	
 	public Map<String, String> getContractDataMap(Contract contract) {
 		return getHandler().getContractDataMap(contract);
+	}
+
+	public Map<String, String> getContractDataMap(Contract contract, Date startDate, Date endDate, boolean current) {
+		return getHandler().getContractDataMap(contract, startDate, endDate, current);
 	}
 	
 	public Map<String, String> getContractInfoMap(Contract contract) {

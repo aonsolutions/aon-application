@@ -31,7 +31,7 @@ public class DateListBox extends ComboBox<Date> {
 	}
 
 	interface Template extends SafeHtmlTemplates {
-		@SafeHtmlTemplates.Template("<span class=\"{0}\">{1}</span>")
+		@SafeHtmlTemplates.Template("<span class=\"aon-nowrap {0}\">{1}</span>")
 		SafeHtml span(String styles, SafeHtml str);
 	}
 

@@ -38,8 +38,11 @@ public class Gipuzkoa2010MOD303Factory implements IMOD303Factory {
 	}
 	
 	private class Gipuzkoa2010MOD303 extends AbstractFileFiller {
-		private static final String DECLARATION = "Declaration";
-		private static final String DECLARATION_METADATA = "/com/code/aon/file/tax/model/MOD303/2010_GIPUZKOA_Declaration.xml";
+		private static final String DECLARATION_LINE = "Declaration";
+		private static final String DECLARATION = "dec";
+		private static final String GENERAL_REGIME = "gr";
+		
+		private static final String DECLARATION_METADATA = "/com/code/aon/file/tax/model/MOD303/2014_GIPUZKOA_Declaration.xml";
 		
 		
 		private List<Declaration> declarations;
@@ -77,7 +80,8 @@ public class Gipuzkoa2010MOD303Factory implements IMOD303Factory {
 					// ------------------
 					
 					properties.put(DECLARATION, declaration);
-					createLine(DECLARATION,properties);
+					properties.put(GENERAL_REGIME, declaration.getGeneralRegime());
+					createLine(DECLARATION_LINE,properties);
 				}
 				getOutput().flush();
 			} catch (Throwable ex) {

@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -41,6 +42,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 
 
 public class PayrollUtils {
@@ -324,6 +326,49 @@ public class PayrollUtils {
 			DatabaseUtil.closeQuietly(conn);
 		}
 		return null;
+	}
+
+	public String[] getAdditionalSalaryTemplates() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT distinct(value) FROM app_param";
+			select += " WHERE name = '" + PayrollAppParamsController.REPORT_ADDITIONAL_SALAY_TEMPLATES + "'";
+			if( getParentDomainId()!=null ){
+				select += " AND domain in ( " +  DomainManager.getCurrentDomain() + ", " + getParentDomainId() +" );";
+			} else {
+				select += " AND domain in ( " +  DomainManager.getCurrentDomain() +" );";
+			}
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			String[] values = null;
+			if(rs.next()){
+				values = StringUtils.split(rs.getString(1), ";");
+			}
+			if(rs.next()){
+				String[] temp = StringUtils.split(rs.getString(1), ";");
+				if( temp!=null ){
+					for(String value: temp){
+						if(!ArrayUtils.contains(values, value)){
+							values = (String[]) ArrayUtils.add(values, value);
+						}
+					}
+				}
+			}
+			return values;
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener los convenios. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener los convenios. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
 	}
 	
 }

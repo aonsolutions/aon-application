@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.client.AON.format;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,6 +19,9 @@ import com.esferalia.aon.gwt.payroll.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.TextAreaElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -39,7 +41,6 @@ import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -49,6 +50,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.mchange.v2.async.CarefulRunnableQueue;
 
 public class FxDialog extends CustomDialog {
 
@@ -65,7 +67,7 @@ public class FxDialog extends CustomDialog {
 
 		void eval(String expression, List<Variable> vars,
 				AsyncCallback<List<Result>> callback);
-		
+
 	}
 
 	interface Binder extends UiBinder<Widget, FxDialog> {
@@ -84,13 +86,11 @@ public class FxDialog extends CustomDialog {
 
 	}
 
-	class VariableChangeHandler
-			implements ValueChangeHandler<String> {
-		
+	class VariableChangeHandler implements ValueChangeHandler<String> {
+
 		private String name;
 
-		public VariableChangeHandler(String name,
-				HasValue<String> hasValue) {
+		public VariableChangeHandler(String name, HasValue<String> hasValue) {
 			this.name = name;
 			hasValue.addValueChangeHandler(this);
 		}
@@ -118,8 +118,11 @@ public class FxDialog extends CustomDialog {
 			onCategoryChanged(null);
 			FxDialog.this.functionListBox.setSelectedIndex(0);
 			onFunctionChanged(null);
-			
+
 			FxDialog.this.evalExpression(0);
+
+			FxDialog.this.contentManager.cleanAll();
+			FxDialog.this.contentManager.addAll(result);
 		}
 
 	}
@@ -241,6 +244,7 @@ public class FxDialog extends CustomDialog {
 	InlineHTML errorLabel;
 	@UiField
 	InlineHTML descriptionLabel;
+
 	@UiField
 	TextArea expressionTextArea;
 
@@ -256,12 +260,14 @@ public class FxDialog extends CustomDialog {
 	private IContextProvider contextProvider;
 	private ContextDescriptor contextDescriptor;
 
+	private ContentAsistManager contentManager;
 	private ContextCallback contextCallback;
 	private ExpressionCallback expressionCallback;
 
 	public FxDialog(IContextProvider contextProvider) {
 
 		setCaption("Asistente");
+
 		setWidget(binder.createAndBindUi(this));
 
 		for (Category category : Category.values()) {
@@ -272,12 +278,15 @@ public class FxDialog extends CustomDialog {
 		this.contextCallback = new ContextCallback();
 		this.expressionCallback = new ExpressionCallback();
 
+		this.contentManager = new ContentAsistManager();
+		contentManager.addValueBox(expressionTextArea);
+
 	}
 
 	@Override
 	public void show() {
 		contextProvider.getContext(contextCallback);
-		//evalExpression(0);
+		// evalExpression(0);
 		super.show();
 	}
 
@@ -292,9 +301,8 @@ public class FxDialog extends CustomDialog {
 	public String getExpression() {
 		return expressionTextArea.getText();
 	}
-	
-	
-	public List<Variable> getVariables(){
+
+	public List<Variable> getVariables() {
 		return vars;
 	}
 
@@ -435,12 +443,13 @@ public class FxDialog extends CustomDialog {
 
 	private void dumpContext(List<Variable> ctx) {
 		for (Variable var : ctx)
-				dumpVariable(var);
+			dumpVariable(var);
 	}
 
-	private <T extends IsWidget & HasValue<String> & HasEnabled >  void dumpVariable(Variable var) {
+	private <T extends IsWidget & HasValue<String> & HasEnabled> void dumpVariable(
+			Variable var) {
 
-		if (SalaryDraft.skipVariable(var) )
+		if (SalaryDraft.skipVariable(var))
 			return;
 
 		String name = var.getName();
@@ -450,13 +459,12 @@ public class FxDialog extends CustomDialog {
 
 		int row = contextTable.getRowCount();
 		contextTable.setWidget(row, 0, label);
-		
+
 		T editor = SalaryDraft.createEditor(var);
-		if ( var.getValue() != null  )
+		if (var.getValue() != null)
 			editor.setValue(String.valueOf(var.getValue()));
 		editor.setEnabled(contextProvider.isEditable(name));
-		
-		
+
 		contextTable.setWidget(row, 1, editor);
 		new VariableChangeHandler(name, editor);
 
@@ -464,7 +472,7 @@ public class FxDialog extends CustomDialog {
 
 	private void dumpUnknownVariable(final String name) {
 
-		if (SalaryDraft.skipVariable(name) )
+		if (SalaryDraft.skipVariable(name))
 			return;
 
 		Label label = new Label(name);
@@ -479,7 +487,7 @@ public class FxDialog extends CustomDialog {
 		contextTable.setWidget(row, 1, textBox);
 
 		new VariableChangeHandler(name, textBox);
-		
+
 	}
 
 	private void addVariable(String name, String value) {
@@ -488,10 +496,13 @@ public class FxDialog extends CustomDialog {
 		variable.setExpression(value);
 		vars.add(variable);
 	}
-	
-	private String getDescription(String name){
-		VariableDescriptor  descriptor =  contextDescriptor.get(name);
-		return descriptor!= null ? descriptor.getDescription(): null;
+
+	private String getDescription(String name) {
+		VariableDescriptor descriptor = contextDescriptor.get(name);
+		return descriptor != null ? descriptor.getDescription() : null;
 	}
+
+	// ---------------------------------------------------------------- Insight
+
 
 }

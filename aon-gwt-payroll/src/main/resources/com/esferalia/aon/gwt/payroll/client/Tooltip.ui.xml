@@ -1,0 +1,64 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.Tooltip.Style'>
+
+		.legend-icon {
+		width: 13px;
+		height: 13px;
+		}
+
+		.buttons {
+		padding-top: 10px;
+		text-align: right;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel ui:field="principal">
+
+		<g:InlineLabel styleName="aon-bold aon-icon-employee aon-icon-commandButton"
+			ui:field="fullNameLabel"></g:InlineLabel>
+		<br></br>
+		<g:InlineLabel styleName="aon-icon-segsocial-small"
+			ui:field="iconSegSocial" title="Número de Afiliación a la Seguridad Social"></g:InlineLabel>
+		<g:InlineLabel styleName="aon-icon-commandButton"
+			ui:field="socialSecurityNum">
+		</g:InlineLabel>
+		<br></br>
+		<table>
+			<tbody>
+				<tr>
+					<td>
+						<g:HTML ui:field="iconStatusLabel" />
+					</td>
+					<td>
+						<g:InlineLabel ui:field="statusLabel"></g:InlineLabel>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<g:InlineLabel styleName="aon-bold" ui:field="workPeriodLabel"></g:InlineLabel>
+		<br></br>
+		<g:InlineLabel styleName="aon-bold" ui:field="numDaysLabel"></g:InlineLabel>
+		<g:InlineLabel>días</g:InlineLabel>
+		<table>
+			<tr>
+				<td>
+					<div>
+						<g:InlineLabel styleName="aon-icon-clipboard aon-icon-commandButton"
+							ui:field="dateLabel" title="Selecciona Fecha para finalizar estado">Fecha Fin: </g:InlineLabel>
+						<datepicker:DateBox width="50%" ui:field="fromDateBox" />
+					</div>
+				</td>
+				<td>
+					<div styleName="{style.buttons}">
+						<g:Button ui:field="acceptButton">Aceptar</g:Button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+</ui:UiBinder> 

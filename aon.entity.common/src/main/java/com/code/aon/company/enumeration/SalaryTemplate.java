@@ -19,6 +19,12 @@ public enum SalaryTemplate implements IResourceable {
 	
 	,IDAZKIAK_ES("idazkiak_es")
 	
+	,STANDARD_DUAL_COLUMN("salary_dualColumn")
+
+	,INVOICE_SIMPLE("salary_invoiceSimple")
+	
+	,INVOICE_CRA_GROUP("salary_invoiceCraGroup")
+	
 	;      
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_salary_template_";

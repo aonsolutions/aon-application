@@ -67,7 +67,7 @@ public class AuditSessionSearchListener extends ControllerSearchListenerEx {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		HttpSession httpSession = (HttpSession) ctx.getExternalContext().getSession(false);
 		if ( httpSession != null ) {
-			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+			Session session = AuditManager.getSession(httpSession);
 			if ( session != null ) {		
 				return session.getId();
 			}

@@ -7,6 +7,7 @@ public enum AonReportType {
 	TRIAL("officialTrialBalance"),
 	VAT("vatBook"),
 	BALANCE("officialBalance"),
+	OPERATION("operationReport"),
 	OTHER(null);
 
 	private String reportKey;

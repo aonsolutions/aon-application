@@ -19,7 +19,9 @@
 				<ui:param name="controller" value="#{alumnReclassification}" />
 				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchContent.xhtml" >
+						<ui:param name="searchController" value="#{customerSearch}" />
+					</ui:include>					
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

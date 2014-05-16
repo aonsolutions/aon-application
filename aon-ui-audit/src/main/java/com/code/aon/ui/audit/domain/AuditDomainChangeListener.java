@@ -58,7 +58,7 @@ public class AuditDomainChangeListener implements IDomainChangeListener, Seriali
 			HttpSession httpSession = request.getSession(false);
 
 			if ( httpSession != null) {
-				Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+				Session session = AuditManager.getSession(httpSession);
 				if ( session == null ) {
 					AuthPrincipal principal = AonUtil.getAuthPrincipal();
 					AuditManager.insertLoginAudit(httpSession, request, event.getNewDomain(), principal );

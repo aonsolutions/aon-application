@@ -27,9 +27,10 @@
 				
 				<c:if test="#{domainSearch.showList}">
 				
-					<aon:methodParam name="rowSelectorAction" value="start" />				
+					<aon:methodParam name="rowSelectorAction" value="home" />				
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 						<ui:param name="controller" value="#{domainPrint}" />
+						<ui:param name="rowSelectorReRender" value="aonHeader,aonContent" />
 						<ui:param name="skipSelectButton" value="#{true}" />
 						<ui:define name="columns">
 							<ui:include

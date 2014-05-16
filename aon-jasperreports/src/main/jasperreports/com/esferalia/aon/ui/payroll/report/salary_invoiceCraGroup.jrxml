@@ -1,0 +1,934 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_invoiceType" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="9"/>
+	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
+	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
+	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
+	<style name="label" isDefault="true" fontSize="7">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[false]]></conditionExpression>
+			<style forecolor="#808080"/>
+		</conditionalStyle>
+	</style>
+	<style name="title" style="label" isBold="true"/>
+	<style name="text" style="label" forecolor="#2B5E90" hAlign="Center" fontSize="9">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[false]]></conditionExpression>
+			<style forecolor="#718497"/>
+		</conditionalStyle>
+	</style>
+	<style name="cell" style="label">
+		<box>
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="table" style="label">
+		<box topPadding="0" bottomPadding="0">
+			<pen lineWidth="0.0"/>
+			<topPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="fill_table" style="table">
+		<box>
+			<bottomPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="table_CH" style="label">
+		<box>
+			<pen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="title_CH" style="title" hAlign="Center" vAlign="Middle"/>
+	<style name="table_TD" style="label">
+		<box topPadding="0" bottomPadding="0">
+			<pen lineWidth="0.5"/>
+			<topPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="text_TD" style="text" hAlign="Left" vAlign="Middle"/>
+	<style name="amount_TD" style="text_TD" hAlign="Right"/>
+	<subDataset name="payment">
+		<field name="amount" class="java.lang.Double"/>
+		<field name="description" class="java.lang.String"/>
+		<field name="expression" class="java.lang.String"/>
+		<field name="type" class="com.esferalia.aon.salary.enumeration.PaymentType"/>
+		<group name="type">
+			<groupExpression><![CDATA[$F{type}]]></groupExpression>
+		</group>
+	</subDataset>
+	<subDataset name="deduction">
+		<field name="amount" class="java.lang.Double"/>
+		<field name="description" class="java.lang.String"/>
+		<field name="expression" class="java.lang.String"/>
+		<field name="type" class="com.esferalia.aon.salary.enumeration.DeductionType"/>
+	</subDataset>
+	<subDataset name="fill"/>
+	<queryString language="hql">
+		<![CDATA[FROM Salary WHERE Id=9]]>
+	</queryString>
+	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
+	<variable name="payments" class="java.util.List">
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryPayments(), "type", "description")]]></variableExpression>
+	</variable>
+	<variable name="deductions" class="java.util.List">
+		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryDeductions(),"type", "description")]]></variableExpression>
+	</variable>
+	<variable name="printLines" class="java.lang.Integer">
+		<variableExpression><![CDATA[$V{payments}.size() + $V{deductions}.size() + 1]]></variableExpression>
+	</variable>
+	<variable name="remainLines" class="java.lang.Integer">
+		<variableExpression><![CDATA[38 - $V{printLines}]]></variableExpression>
+	</variable>
+	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
+		<variableExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.SIGNATURE)]]></variableExpression>
+	</variable>
+	<variable name="logo" class="com.code.aon.registry.RegistryAttachment" resetType="Page">
+		<initialValueExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.LOGO)]]></initialValueExpression>
+	</variable>
+	<background>
+		<band height="802">
+			<line>
+				<reportElement x="0" y="801" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="157" width="1" height="644"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="459" y="0" width="90" height="58">
+					<printWhenExpression><![CDATA[false]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="555" y="157" width="1" height="644"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="8" y="660" width="540" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="7" y="166" width="1" height="495"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="548" y="166" width="1" height="495"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="97" y="166" width="1" height="494"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="458" y="166" width="1" height="494"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="368" y="166" width="1" height="494"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="156" width="556" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="title" x="0" y="39" width="274" height="19">
+					<printWhenExpression><![CDATA[$V{logo} == null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="none">
+					<font size="13" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RECIBO DE " +
+(($F{salary}!=null && $F{salary}.getType()!=null)?(
+($F{salary}.getType().ordinal()==0?"SALARIOS":"")+
+($F{salary}.getType().ordinal()==1?"P. EXTRAS":"")+
+($F{salary}.getType().ordinal()==2?"FINIQUITOS":"")+
+($F{salary}.getType().ordinal()==3?"ATRASOS":"")+
+($F{salary}.getType().ordinal()==4?"VACACIONES":"")
+):"SALARIOS")]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="166">
+			<staticText>
+				<reportElement style="title" x="0" y="63" width="274" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[EMPRESA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="0" y="74" width="274" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="0" y="87" width="274" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[DOMICILIO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="0" y="98" width="274" height="26" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getEnterpriseAddress()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="0" y="124" width="137" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[CIF]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="0" y="135" width="137" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getEnterpriseDocument()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="137" y="124" width="137" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[N. INSCRIPCIÓN S.S.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="137" y="135" width="137" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getCcc()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="281" y="39" width="274" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[TRABAJADOR/A]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="281" y="50" width="274" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="281" y="87" width="45" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[G. COTIZ.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="281" y="98" width="45" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getQuoteGroup()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="326" y="87" width="158" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[PUESTO DE TRABAJO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="326" y="98" width="158" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getCategory()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="484" y="87" width="71" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[ANTIGÜEDAD]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="484" y="98" width="71" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd/MM/yyyy}", $F{salary}.getSeniorityDate() )]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="418" y="63" width="137" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[N. AFILIACIÓN S.S.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="418" y="74" width="137" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityNumber()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="281" y="63" width="137" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[NIF]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="281" y="74" width="137" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getEmployeeDocument()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="281" y="124" width="179" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[PERIODO DE LIQUIDACIÓN]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="281" y="135" width="179" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd/MM/yyyy} - {1,date,dd/MM/yyyy}", $F{salary}.getStartDate(), $F{salary}.getEndDate() )]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="460" y="124" width="95" height="11"/>
+				<box topPadding="2" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[TOTAL DÍAS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="text" x="460" y="135" width="95" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getTimeUnits()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="title" x="281" y="8" width="274" height="19">
+					<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="none">
+					<font size="13" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RECIBO DE " +
+(($F{salary}!=null && $F{salary}.getType()!=null)?(
+($F{salary}.getType().ordinal()==0?"SALARIOS":"")+
+($F{salary}.getType().ordinal()==1?"P. EXTRAS":"")+
+($F{salary}.getType().ordinal()==2?"FINIQUITOS":"")+
+($F{salary}.getType().ordinal()==3?"ATRASOS":"")+
+($F{salary}.getType().ordinal()==4?"VACACIONES":"")
+):"SALARIOS")]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="0" y="0" width="274" height="58">
+					<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
+				</reportElement>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream($V{logo}.getData())]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="13">
+			<staticText>
+				<reportElement style="title_CH" x="368" y="0" width="90" height="13"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[DEVENGOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title_CH" x="98" y="0" width="270" height="13"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title_CH" x="458" y="0" width="90" height="13"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[DEDUCCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title_CH" x="8" y="0" width="90" height="13"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[CUANTÍA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="395" splitType="Stretch">
+			<componentElement>
+				<reportElement key="payment_table" style="table" positionType="Float" mode="Transparent" x="8" y="13" width="540" height="26"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="payment">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{payments})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="90">
+						<jr:groupHeader groupName="type">
+							<jr:cell height="13" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="270">
+						<jr:groupHeader groupName="type">
+							<jr:cell height="13" rowSpan="1">
+								<textField pattern="##00" isBlankWhenNull="true">
+									<reportElement style="title_CH" x="0" y="0" width="270" height="13"/>
+									<box>
+										<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+									</box>
+									<textElement textAlignment="Left">
+										<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{type}.ordinal() + ". " +
+($F{type}.ordinal()==1?"Percepciones salariales":$F{type}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
+								</textField>
+							</jr:cell>
+						</jr:groupHeader>
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement style="text_TD" x="0" y="0" width="270" height="13" forecolor="#000000"/>
+								<box leftPadding="10"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90">
+						<jr:groupHeader groupName="type">
+							<jr:cell height="13" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="amount_TD" x="0" y="0" width="90" height="13" forecolor="#000000"/>
+								<box rightPadding="10"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90">
+						<jr:groupHeader groupName="type">
+							<jr:cell height="13" rowSpan="1"/>
+						</jr:groupHeader>
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table" style="table" positionType="Float" mode="Transparent" x="8" y="52" width="540" height="13"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="deduction">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{deductions})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="90">
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement style="amount_TD" x="0" y="0" width="90" height="13" forecolor="#000000">
+									<printWhenExpression><![CDATA[$F{type} != DeductionType.OTHER && $F{type} != DeductionType.ADVANCE_PAYMENT]]></printWhenExpression>
+								</reportElement>
+								<box rightPadding="10"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$F{description} + " %"]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="270">
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0" lineStyle="Solid"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement style="text_TD" x="0" y="0" width="270" height="13" forecolor="#000000"/>
+								<box leftPadding="10"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[($F{type} == DeductionType.IRPF?"IRPF":"") +
+($F{type} == DeductionType.COMMON_CONTINGENCY?"Contingencias Comunes":"") +
+($F{type} == DeductionType.UNEMPLOYMENT?"Desempleo":"") +
+($F{type} == DeductionType.JOB_TRAINING?"Formación Profesional":"") +
+($F{type} == DeductionType.STRUCTURAL_OVERTIME?"Horas Extras":"") +
+($F{type} == DeductionType.NON_STRUCTURAL_OVERTIME?"Horas Extras no autorizadas":"") +
+($F{type} == DeductionType.OTHER || $F{type} == DeductionType.ADVANCE_PAYMENT?$F{description}:"")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90">
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90">
+						<jr:detailCell style="table_TD" height="13" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement style="amount_TD" x="0" y="0" width="90" height="13" forecolor="#000000"/>
+								<box rightPadding="10"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="145" splitType="Prevent">
+			<staticText>
+				<reportElement style="label" x="21" y="104" width="198" height="10"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Base de Accidentes de Trabajo y Enfermedad Profesional]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="label" x="21" y="126" width="198" height="10"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Base de Horas Extras No Estructurales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="label" x="21" y="115" width="198" height="10"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Base de Horas Extras de Fuerza Mayor / Estructurales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" mode="Opaque" x="9" y="104" width="12" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" mode="Opaque" x="9" y="115" width="12" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" mode="Opaque" x="9" y="126" width="12" height="10" forecolor="#000000" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" x="8" y="13" width="90" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[REMUNERACIÓN TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="8" y="24" width="90" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getRemuneration()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="98" y="24" width="86" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{salary}.getExtraPayProration() != 0.00?$F{salary}.getExtraPayProration():"")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="98" y="13" width="86" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[PRORRATA PAGAS EXTR.]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="98" y="48" width="86" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{salary}.getOvertimeBase() != 0.00?$F{salary}.getOvertimeBase():"")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="98" y="37" width="74" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[BASE HE (FM/E)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" x="184" y="37" width="74" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[BASE HE (NE)]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="184" y="48" width="86" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{salary}.getNonEstructuralOvertimeBase() != 0.00?$F{salary}.getNonEstructuralOvertimeBase():"")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="8" y="61" width="90" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[BASE IRPF]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="8" y="72" width="90" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getIrpfBase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="184" y="13" width="86" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[BASE TOTAL COTIZ.]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="184" y="24" width="86" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getCommonBase()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="8" y="48" width="90" height="13" forecolor="#000000"/>
+				<box>
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="8" y="37" width="78" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[BASE AT y EP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" x="368" y="13" width="90" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[TOTAL DEVENGOS]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="368" y="24" width="90" height="13" forecolor="#000000"/>
+				<box rightPadding="10">
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="458" y="24" width="90" height="13" forecolor="#000000"/>
+				<box rightPadding="10">
+					<leftPen lineWidth="0.25" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalDeduction()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="458" y="13" width="90" height="11"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[TOTAL DEDUCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" x="458" y="37" width="90" height="11"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[LÍQUIDO A PERCIBIR]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="text" x="458" y="48" width="90" height="13" forecolor="#000000"/>
+				<box rightPadding="10">
+					<leftPen lineWidth="0.5" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="title" x="401" y="79" width="147" height="11"/>
+				<textElement/>
+				<text><![CDATA[RECIBÍ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" x="279" y="48" width="122" height="11"/>
+				<textElement/>
+				<text><![CDATA[SELLO Y FIRMA DE LA EMPRESA]]></text>
+			</staticText>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="false" onErrorType="Blank">
+				<reportElement x="270" y="59" width="131" height="82"/>
+				<graphicElement fill="Solid"/>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream($V{signature}.getData())]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement style="title" mode="Opaque" x="86" y="37" width="12" height="11" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" mode="Opaque" x="172" y="37" width="12" height="11" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="title" mode="Opaque" x="258" y="37" width="12" height="11" backcolor="#CCCCCC"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="label" x="401" y="66" width="147" height="13"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( new java.text.MessageFormat("{0,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getIssueDate(), $F{salary}.getEndDate() }, new StringBuffer(), null ).toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

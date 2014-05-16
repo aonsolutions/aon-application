@@ -108,6 +108,13 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
       <value>/com/code/aon/ui/account/facelet/account/formNewContent.xhtml</value>
     </managed-property>
   </managed-bean>
+  <!--  ********* ACCOUNT WIZARD  ***************** -->
+  <managed-bean>
+    <managed-bean-name>accountWizard</managed-bean-name>
+    <managed-bean-class>
+    com.code.aon.ui.account.controller.AccountWizard</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
   <!--  ********* ACCOUNT EXPORTER  ***************** -->
   <managed-bean>
     <managed-bean-name>accountExporter</managed-bean-name>

@@ -176,7 +176,12 @@ public class UserUtils implements Serializable {
 			List<Integer> list = getCurrentUserScopeIds(user);
 			if (list!= null && !list.isEmpty() ) {
 				String ljAlias = getLeftJoinAlias(resolvedAlias);
-				Expression scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
+				Expression scopeExp = null;
+				if ( list.size() == 1 ) {
+					scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, list.get(0));
+				} else {
+					scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
+				}
 				exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
 			}
 		}

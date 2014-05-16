@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance;
 
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -33,16 +32,16 @@ public class AplifisaWriter extends BasicExporter {
 	
 	private static final String FIELD_SEPARATOR = "#";
 	
-	private CharArrayWriter writer;
+	private StringBuffer writer;
 	
-	private CharArrayWriter accountWriter;
+	private StringBuffer accountWriter;
 	
 	private Set<String> exportedAccounts;
 	
 	public AplifisaWriter(InvoiceExportConfiguration configuration) {
 		super(configuration);
-		this.writer = new CharArrayWriter();
-		this.accountWriter = new CharArrayWriter();
+		this.writer = new StringBuffer();
+		this.accountWriter = new StringBuffer();
 		this.exportedAccounts = new HashSet<String>();		
 	}
 
@@ -61,9 +60,9 @@ public class AplifisaWriter extends BasicExporter {
 		return false;
 	}
 	
-	private void appendNewLine( CharArrayWriter writer ) throws IOException {
-		if ( writer.size() > 0 ) {
-			writer.write("\r\n");
+	private void appendNewLine( StringBuffer sb ) throws IOException {
+		if ( sb.length() > 0 ) {
+			sb.append(NEW_LINE);
 		}
 	}	
 	

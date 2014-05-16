@@ -149,7 +149,7 @@ public class DAOConstantsResolver {
 				} else {
 					list.add(new AliasEntry(aliasId, hibernateId, et));
 				}
-			} else if (!type.isCollectionType()) {
+			} else if (!(type.isCollectionType() || propertyInfo.isFormula()) ) {
 				list.add(new AliasEntry(aliasPreffix, hibernatePreffix, type));
 			}
 		}
@@ -274,6 +274,15 @@ public class DAOConstantsResolver {
 				}
 			}
 			return list;
+		}
+		
+		public boolean isFormula() {
+			if ( this.property != null ) {
+				if ( this.property.getValue().hasFormula() ) {
+					return true;
+				}
+			}
+			return false;
 		}
 		
 	}

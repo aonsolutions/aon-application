@@ -17,6 +17,7 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private ITransformacionType transformContract;
 	private ContractCode transformCode;
 	private Date fechaInicio;
 	private Date fechaTerminoReal;
@@ -45,6 +46,14 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 
 	public void setFechaTerminoReal(Date fechaTerminoReal) {
 		this.fechaTerminoReal = fechaTerminoReal;
+	}
+
+	public ITransformacionType getTransformContract() {
+		return transformContract;
+	}
+
+	public void setTransformContract(ITransformacionType transformContract) {
+		this.transformContract = transformContract;
 	}
 
 	public ContractCode getTransformCode() {

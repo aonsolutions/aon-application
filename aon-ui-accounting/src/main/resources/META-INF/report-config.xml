@@ -72,11 +72,8 @@
 	<report id="grossMargin" description="Gross Margin List">
 		<template path="/com/code/aon/ui/accounting/report/grossMarginGraph.jasper"/>
 	</report>
-
 	
-	
-	
-			<!--  BALANCE DE PERDIDAS Y GANACIAS GRÁFICOS GASTOS NETOS -->
+	<!--  BALANCE DE PERDIDAS Y GANACIAS GRÁFICOS GASTOS NETOS -->
 	<report id="profitAndLossNetExpenses" description="ProfitAndLoss graphics">
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraph.jasper"/>
 		<collection provider="#{profitAndLossReport.netExpenses}"/>
@@ -291,4 +288,17 @@
 		</params>
 	</report>
 
+	<!--  OPERATION REPORT -->
+	<report id="operationReport" description="Listado de Gastos-Compras/Ingresos-Ventas">
+		<template path="/com/code/aon/ui/accounting/report/operationReport.jasper"/>
+		<collection provider="#{operationReport.pdfReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{operationReport.getParams}" />
+			<param id="showCover" value="#{operationReport.isCoverVisible}" />
+			<param id="showCounter" value="#{operationReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{operationReport.getPageCounter}" />
+		</params>
+	</report>
 </report-config>

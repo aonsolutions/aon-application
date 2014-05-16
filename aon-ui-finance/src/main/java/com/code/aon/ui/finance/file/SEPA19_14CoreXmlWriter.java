@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -20,6 +21,7 @@ import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.enumeration.RegistryType;
@@ -27,13 +29,14 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SEPA19_14CoreXmlWriter {
 
-	public FileOutput createXml(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
+	public FileOutput createXml(Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB19Writer aeb19Writer = new AEB19Writer();
 		Lot lot = aeb19Writer.getLot(company, fBatch, fbatchDetails);
-		updateLot(lot, company, fBatch, fbatchDetails);
+		updateLot(lot, company, bankDate, fBatch, fbatchDetails);
 		try {
 			File file = File.createTempFile("SEPA19_14_CORE_", ".xml");
-			FileFiller sepa1914 = new SEPA19_14CoreXml(lot, file);
+			boolean cor1 = fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_COR1_XML;
+			FileFiller sepa1914 = new SEPA19_14CoreXml(lot, cor1, file);
 			FileOutput output = new FileOutput();
 			output.setFile(file);
 			output.setErrors(sepa1914.create());
@@ -43,7 +46,7 @@ public class SEPA19_14CoreXmlWriter {
 		}
 	}
 
-	private void updateLot( Lot lot, Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
+	private void updateLot( Lot lot, Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
 		lot.setId(SEPA34_14XmlWriter.createId(company, fBatch, true));
 		
 		Presenter presenter = lot.getPresenter();
@@ -58,7 +61,8 @@ public class SEPA19_14CoreXmlWriter {
 		String id = SEPA34_14XmlWriter.createIdentification(company.getDocumentCountry(), company.getDocument());
 		orderer.setId(id);
 		Address address = SEPA34_14XmlWriter.getAddress(company.getDefaultAddress());
-		orderer.setSEPAAddress(address);		
+		orderer.setSEPAAddress(address);	
+		orderer.setMakeDate(bankDate);
 		
 		Locale locale = AonUtil.getCurrentLocale();
 		Iterator<Individual> ii = orderer.getIndividualsIterator();

@@ -31,5 +31,7 @@ public interface BonusTypeVisitor {
 	void visitReductionFarmerCommonContingency(BonusType bonusType);
 	
 	void visitReductionFarmerUnemployment(BonusType bonusType);
+	
+	void visitReductionFlatRateRdl032014(BonusType bonusType);
 
 }

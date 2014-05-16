@@ -22,15 +22,12 @@
 					<aon:outputText value="#{bundle.payroll_contract_clauses}" />
 				</f:facet>
 				
-				<aon:div ajaxRendered="true" layout="none">
-					<ui:decorate
-						template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-						<ui:param name="controller" value="#{enterpriseClause}" />
-						<ui:param name="innerToolbar" value="#{true}" />
-						<ui:param name="skipToolbarTitle" value="true" />
-						<ui:param name="skipToolbarDescription" value="true" />
-					</ui:decorate>
-				</aon:div>				
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="controller" value="#{enterpriseClause}" />
+					<ui:param name="innerToolbar" value="#{true}" />
+					<ui:param name="skipToolbarTitle" value="true" />
+					<ui:param name="skipToolbarDescription" value="true" />
+				</ui:decorate>
 	
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/formContent.xhtml" >
 					<ui:param name="controller" value="#{enterpriseClause}" />
@@ -38,21 +35,17 @@
 				
 			</aon:panel>
 			
-<!-- COMING SOON ... -->
-<!-- 
-			<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
-				<aon:panel>
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.payroll_contractDocument_default_values}" />
-					</f:facet>
-					<aon:div styleClass="aon-scroll-area">
-						<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contractInfo/grid.xhtml" >
-							<ui:param name="controller" value="#{contractCommonValues}" />
-						</ui:include>
-					</aon:div>
-				</aon:panel>	
-			</c:if>
--->
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.payroll_contractDocument_default_values}" />
+				</f:facet>
+			
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractInfo/grid.xhtml" >
+					<ui:param name="controller" value="#{contractCommonValues}" />
+					<ui:param name="showContractFieldsColumn" value="#{true}" />
+				</ui:include>
+			
+			</aon:panel>	
 	
 		</aon:div>
 	</aon:form>

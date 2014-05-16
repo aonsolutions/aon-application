@@ -12,7 +12,8 @@
 		columnClasses="aon-width-50 aon-vertical-align-top
 					,aon-width-auto aon-vertical-align-top">
 					
-		<h:commandLink action="start" actionListener="#{domains.onParentDomain}" 
+		<aon:commandLink action="home" actionListener="#{domains.onParentDomain}"
+			reRender="aonHeader,aonContent" 
 			disabled="#{!domainSwitcher.enabledGoToParent}">
 			<a4j:mediaOutput
 				mimeType="#{parentDomain.mimeTypeName}"
@@ -21,10 +22,11 @@
 				style="height:60px;"
 				createContent="#{parentDomain.createLogoContent}">
 			</a4j:mediaOutput>
-		</h:commandLink>
+		</aon:commandLink>
 		
 		<h:panelGrid styleClass="aon-padding-left aon-width-all">
-			<h:commandLink action="start" actionListener="#{domains.onParentDomain}"
+			<aon:commandLink action="home" actionListener="#{domains.onParentDomain}"
+				reRender="aonHeader,aonContent"
 				style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}" 
 				disabled="#{!domainSwitcher.enabledGoToParent}" />
 			<aon:outputText value="#{parentDomain.phone}"/>						

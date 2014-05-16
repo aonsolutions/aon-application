@@ -124,5 +124,8 @@ public class ModelConfig implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public boolean isNameEnabled() {
+		return (StringUtils.isNotBlank(this.name) && getModel() == Model.M130);
+	}
 	
 }

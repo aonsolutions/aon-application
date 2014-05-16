@@ -227,8 +227,8 @@ public class IndefiniteModel extends AbstractContractModel {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DISTANCE.toString()))){
 				setPdfFieldValue(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DISTANCE.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DISTANCE.toString()));
 			}
-			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()))){
-				setPdfFieldValue(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DISTANCE_ADDR.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()));
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DIST_ADDR.toString()))){
+				setPdfFieldValue(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DIST_ADDR.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DIST_ADDR.toString()));
 			}
 			
 			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_DESCRIPTION.getValue(), null);
@@ -403,8 +403,8 @@ public class IndefiniteModel extends AbstractContractModel {
 					}
 				}
 				
-				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT5_UNEMPL_WITH_3_MONTH_BENEFIT.toString()))){
-					setPdfFieldValue(PdfFieldIndefinite.OPT5_UNEMPL_WITH_3_MONTH_BENEFIT.getValue(),"true");
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT5_UNEMPL_3_MONTH_BENEFIT.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT5_UNEMPL_3_MONTH_BENEFIT.getValue(),"true");
 				}
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT5_FIRST_EMPLOYEE_AND_LT_30.toString()))){
 					setPdfFieldValue(PdfFieldIndefinite.OPT5_FIRST_EMPLOYEE_AND_LT_30.getValue(),"true");
@@ -509,16 +509,47 @@ public class IndefiniteModel extends AbstractContractModel {
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_DISCONTINUOUS_TIME_QUOTE_BONUS_NO.getValue(),"true");
 					}
 				}
+				
+				
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_SEPE_MUNICIPALITY.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()));
+				}				
 				// TODO: complete this
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SEPE_MUNICIPALITY.getValue(),"");
 				setPdfFieldValue(PdfFieldIndefinite.OPT17_TRANSFORM_DATE.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME_DISCONTINUOUS.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SOURCE_CONTRACT.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SOURCE_CONTRACT_START_DATE.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SOURCE_CONTRACT_SEPE_MUNICIPALITY.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SOURCE_CONTRACT_SEPE_DATE.getValue(),"");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SOURCE_CONTRACT_SEPE_ID.getValue(),"");
+				
+				
+//				String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_TRANSFORMATION_TO.toString());
+//				if(StringUtils.isNotBlank(key)){
+//					if(PdfFieldIndefinite.OPT17_IS_FULL_TIME.toString().equals(key)){
+//						setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME.getValue(), "true");
+//					} else if(PdfFieldIndefinite.OPT17_IS_FULL_TIME_DISCONTINUOUS.toString().equals(key)){
+//						setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME_DISCONTINUOUS.getValue(), "true");
+//					}
+//				}
+				if(code == ContractCode.C309 || code == ContractCode.C339 || code == ContractCode.C389){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME.getValue(), "true");
+				} else {
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME_DISCONTINUOUS.getValue(), "true");
+				}
+				
+				String contractCode = getContractDataMap(contract, null, null, false).get(ContextVariable.TC2.getName());
+				if(StringUtils.isNotBlank(contractCode)){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT.getValue(),ContractCode.getContractCodeByValue(contractCode).getName(getLocale()));
+				}
+				
+				dateFormatter.applyPattern("dd/MM/yyyy");
+				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_START_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
+				
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_MUNIC.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_MUNIC.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_MUNIC.toString()));
+				}
+				
+				dateFormatter.applyPattern("dd/MM/yyyy");
+				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
+				
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(ContractVariable.SEPE_CONTRACT_ID.getValue()))){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_ID.getValue(),getContractInfoMap(contract).get(ContractVariable.SEPE_CONTRACT_ID.getValue()));
+				}
 			}
 			
 		} catch (IOException e) {

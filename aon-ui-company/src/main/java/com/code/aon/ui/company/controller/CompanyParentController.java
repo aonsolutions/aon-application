@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.controller;
 
+import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
@@ -40,6 +41,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
+import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.Scope;
@@ -129,6 +131,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private ReportPrintOption printInternetData;
 	
 	private boolean printSaleInvoiceFooter;
+
+	private FinancePaymentTemplate financePaymentTemplate;
 	
 	private boolean smartCard;
 	
@@ -766,6 +770,15 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printSaleInvoiceFooter = printSaleInvoiceFooter;
 	}
 
+	public FinancePaymentTemplate getFinancePaymentTemplate() {
+		return financePaymentTemplate;
+	}
+
+	public void setFinancePaymentTemplate(
+			FinancePaymentTemplate financePaymentTemplate) {
+		this.financePaymentTemplate = financePaymentTemplate;
+	}
+
 	public boolean isSmartCard() {
 		return smartCard;
 	}
@@ -805,6 +818,11 @@ public class CompanyParentController extends BasicController implements ICompany
 	public SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_SALE_INVOICE_TEMPLATE_PARAM);
 		return (value == null?null:SaleInvoiceTemplate.getEnumByValue(value));
+	}
+
+	public FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException {
+		String value = AppParamUtil.getValue(APP_FPAYMENT_TEMPLATE_PARAM);
+		return (value == null?null:FinancePaymentTemplate.getEnumByValue(value));
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {

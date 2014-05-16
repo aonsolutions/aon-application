@@ -70,6 +70,10 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource warn();
 	
 	ImageResource changed();
+
+	ImageResource x();
+	
+	ImageResource fx();
 	
 	@Source("aon-icon-statistics.png")
 	ImageResource statistics();

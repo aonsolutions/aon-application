@@ -70,6 +70,11 @@ public class AppParamUtil {
 		return insertParameter(appParam, Integer.valueOf(value).toString());
     }	
 	
+	public static ApplicationParameter insertParameter( AppParam appParam, Integer value ) {
+		String _value = (value != null) ? value.toString() : null;
+		return insertParameter(appParam, _value);
+    }	
+	
 	public static boolean removeParameter( AppParam appParam ) {
 		ApplicationParameter ap = getParameter(appParam);
 		if ( ap != null ) {

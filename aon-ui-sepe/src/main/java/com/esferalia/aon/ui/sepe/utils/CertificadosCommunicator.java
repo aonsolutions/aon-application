@@ -3,6 +3,8 @@ package com.esferalia.aon.ui.sepe.utils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -162,13 +164,23 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 	public boolean isCommunicationAccepted(byte[] data) {
 		if( data!=null ){
 			String value = new String(data); 
-			value = value.replaceAll("\n", "");
-			value = StringUtils.removeStart(value, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-			value = StringUtils.removeStart(value, "<COMUNICACION>");
-			value = StringUtils.removeEnd(value, "</COMUNICACION>");
-			if(value.contains("<NUM_ENVIO>") && !value.contains("<COD_ERROR>")){
-				return true;
+
+			Pattern p = Pattern.compile("(?<=\\<COD_ERROR>)(.*?)(?=\\</COD_ERROR>)");
+			Matcher m = p.matcher(value);
+			while(m.find()) {
+				if(StringUtils.isNotBlank(m.group())){
+					return false; 
+				}
 			}
+			
+			p = Pattern.compile("(?<=\\<NUM_ENVIO>)(.*?)(?=\\</NUM_ENVIO>)");
+			m = p.matcher(value);
+			while(m.find()) {
+				if(StringUtils.isNotBlank(m.group())){
+					return true; 
+				}
+			}
+
 		}
 		return false;
 	}

@@ -805,18 +805,8 @@ public class ProjectReservationController extends BasicController implements IPm
 		try {
 			if (getInvoiceModel().isRowAvailable()) {
 				Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-				if (invoice.isNoRectification()) {
-					boolean financeOperator = AonUtil.getRoleManager().isFinanceOperator();
-					if (invoice.isService()) {
-						return financeOperator || invoice.isAllCommercialProducts();
-					} else {
-						if (invoice.isAdvance()) {
-							return financeOperator && !((ProjectReservation)this.getTo()).isInvoiced();
-						} else {
-							return financeOperator && isLastReservationInvoice(invoice);
-						}
-					}
-				}
+				ProjectReservation pr = (ProjectReservation)this.getTo();
+				return isInvoiceRectificable(invoice, pr);
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -825,7 +815,23 @@ public class ProjectReservationController extends BasicController implements IPm
 		return false;
 	}
 
-	private boolean isLastReservationInvoice(Invoice invoice) throws ManagerBeanException {
+	public static boolean isInvoiceRectificable( Invoice invoice, ProjectReservation pr ) throws ManagerBeanException {		
+		if (invoice.isNoRectification()) {
+			boolean financeOperator = AonUtil.getRoleManager().isFinanceOperator();
+			if (invoice.isService()) {
+				return financeOperator || invoice.isAllCommercialProducts();
+			} else {
+				if (invoice.isAdvance()) {
+					return financeOperator && (pr != null) && !pr.isInvoiced();
+				} else {
+					return financeOperator && isLastReservationInvoice(invoice);
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static boolean isLastReservationInvoice(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addGreaterThanExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());

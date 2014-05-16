@@ -2,6 +2,8 @@ package com.esferalia.aon.salary.payment;
 
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -286,6 +288,25 @@ public class Payments {
 				list.add(payment);
 			}
 		}
+		return list;
+	}
+
+	public Collection<IPayment> getOrderedPayment() {
+		List<IPayment> list = new LinkedList<IPayment>();
+		list.addAll(getSalarySupplements().getValues());
+		Collections.sort(list, new Comparator<IPayment>() {
+			@Override
+			public int compare(IPayment x, IPayment y) {
+				if ( x.getType() == y.getType() ) {
+					return x.getDescription().compareTo(y.getDescription());
+				}
+				if ( y == null || x.getType().ordinal() >= y.getType().ordinal() )
+					return 1;
+				if ( x == null || x.getType().ordinal() < y.getType().ordinal() )
+					return -1;
+				return ( (Comparable) x ).compareTo(y);
+			}
+		});
 		return list;
 	}
 	

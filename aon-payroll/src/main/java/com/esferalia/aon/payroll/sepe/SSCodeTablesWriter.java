@@ -27,7 +27,7 @@ import com.code.aon.common.util.Classpath;
  */
 public class SSCodeTablesWriter {
 	
-	final static String BASE_DIR 						= "/AON-TRUNK-OTHER";
+	final static String BASE_DIR 						= "/AON-TRUNK";
 	final static String PARENT_FOLDER_PATH 				= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
 	final static String ENUMERATIONS_FOLDER_PATH 		= BASE_DIR + "/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/ss/";
 	final static String COLLECTIONS_CLASS_PATH			= BASE_DIR + "/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/";

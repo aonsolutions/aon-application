@@ -23,6 +23,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** FISCAL MATRIX  *************** -->
+	<managed-bean>
+		<managed-bean-name>fiscalMatrix</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.FiscalMatrix</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** MODEL 347  *************** -->
 	<managed-bean>
 		<managed-bean-name>mod347</managed-bean-name>
@@ -1210,5 +1217,14 @@
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/activity/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== FISCAL ACTIVITY  ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>fiscalMatrix_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/matrix/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 		
 </faces-config>

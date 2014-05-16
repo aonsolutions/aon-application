@@ -971,6 +971,8 @@ public class AgreementDraft extends ResizeComposite implements
 	private List<IFocusableEditor> salaryTableEditors;
 
 	private ContextProvider contextProvider;
+	
+	private ContentAsistManager contentAssistManager;
 
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -988,6 +990,7 @@ public class AgreementDraft extends ResizeComposite implements
 		salaryTableEditors = new ArrayList<IFocusableEditor>();
 
 		contextProvider = new ContextProvider();
+		contentAssistManager = new ContentAsistManager();
 
 		showDraft();
 	}
@@ -1050,7 +1053,8 @@ public class AgreementDraft extends ResizeComposite implements
 		extraEditors.addAll(dumpExtras(extraPayments));
 		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(),
 				extraPayments));
-
+		
+		loadContentAssistManager();
 	}
 
 	// ------------------------------------------
@@ -1815,6 +1819,7 @@ public class AgreementDraft extends ResizeComposite implements
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 3, expressionBox);
+		contentAssistManager.addValueBox(expressionBox);
 
 		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(
 				Salary.Type.class, 8);
@@ -1836,6 +1841,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentEditor.setDescriptionTextBox(descriptionBox);
 		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
+
 
 		if (isDraftPayment(payment)) {
 			paymentsTable.getRowFormatter().addStyleName(row,
@@ -2743,4 +2749,27 @@ public class AgreementDraft extends ResizeComposite implements
 		return ValueBox.wrap(Document.get().createTextInputElement(),
 				YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
 	}
+	
+	private void loadContentAssistManager() {
+		
+		class ProposalsLoader implements AsyncCallback<ContextDescriptor> {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(ContextDescriptor result) {
+				contentAssistManager.cleanAll();
+				contentAssistManager.addAll(result);
+			}
+
+		}
+		
+		agreementDraftObject.getContext(0, new ProposalsLoader());
+	}
+	
+	
 }

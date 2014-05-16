@@ -479,6 +479,13 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ********** OPERATION REPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>operationReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.OperationReportController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ********** PROFIT AND LOSS REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>profitAndLossReport</managed-bean-name>
@@ -1102,6 +1109,18 @@
 		<navigation-case>
 			<from-outcome>ledger_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/ledger/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- **************** OPERATION BOOK REPORT ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>operationReport_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/operationReport/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>operationReport_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/operationReport/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

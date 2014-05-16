@@ -14,7 +14,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.CompanySaleInvoiceFooterController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -38,7 +40,7 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 			String alias = this.getController().getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 			this.getController().getCriteria().addEqualExpression(alias, RegistryAttachmentType.INVOICE_FOOTER_TEXT);
 		} catch (ManagerBeanException e) {
-			String msg = "Se ha priducido un error de lectura. Vuela a intentarlo pasados unos segundos.";
+			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
@@ -55,10 +57,13 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 				controller.setText("");
 			} else {
 				controller.onSelectFirst(null);
-				controller.setText(new String(((RegistryAttachment)controller.getTo()).getData()));
+				RegistryAttachment attach = (RegistryAttachment) controller.getTo();
+				if(attach!=null && attach.getData()!=null){
+					controller.setText(new String(attach.getData()));
+				}
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Se ha priducido un error de lectura. Vuela a intentarlo pasados unos segundos.";
+			String msg = "Se ha producido un error de lectura. Vuelva a intentarlo pasados unos segundos.";
 			LOGGER.error( msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
@@ -68,19 +73,37 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		completeAttachInfo();
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		if(company.isPrintSaleInvoiceFooter()){
+			completeAttachInfo();
+		} else {
+			completeAttachInfo(null);
+			CompanySaleInvoiceFooterController controller = (CompanySaleInvoiceFooterController) this.getController();
+			controller.setText("");
+		}
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		completeAttachInfo();
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		if(company.isPrintSaleInvoiceFooter()){
+			completeAttachInfo();
+		} else {
+			completeAttachInfo(null);
+			CompanySaleInvoiceFooterController controller = (CompanySaleInvoiceFooterController) this.getController();
+			controller.setText("");
+		}
 	}
 
 	private void completeAttachInfo() {
 		CompanySaleInvoiceFooterController controller = (CompanySaleInvoiceFooterController) this.getController();
-		RegistryAttachment attach = (RegistryAttachment)controller.getTo(); 
-		attach.setData(controller.getText().getBytes());
+		completeAttachInfo(controller.getText().getBytes());
+	}
+
+	private void completeAttachInfo(byte[] data) {
+		RegistryAttachment attach = (RegistryAttachment)this.getController().getTo(); 
+		attach.setData(data);
 		attach.setRegistryAttachmentType(RegistryAttachmentType.INVOICE_FOOTER_TEXT);
 		attach.setDescription(AonUtil.getMessage(COMPANY_SALE_INVOICE_FOOTER_TEXT));
 		attach.setAttachDate(new Date());

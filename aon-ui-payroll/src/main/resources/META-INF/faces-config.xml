@@ -34,12 +34,17 @@
 			<map-entries>
 				<key-class>java.lang.String</key-class>
 				<value-class>java.lang.String</value-class>
+				<!-- key name max length is 32          | -->
 				<map-entry>
 					<key>PAY_REPORT_salary_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
 					<key>PAY_REPORT_salaryDraft_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_REPORT_additional_salary_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
@@ -1103,6 +1108,11 @@
 
 	<!-- ************ FAN BATCH **************** -->
 	<managed-bean>
+		<managed-bean-name>fanBatchTest</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanBatchTest</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>fanBatch</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanBatchController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -1524,7 +1534,6 @@
 	</managed-bean>
 
 	<!-- *************** PAYROLL APP PARAMS ***************** -->
-	<!-- name max length is 32 -->
 	<managed-bean>
 		<managed-bean-name>payrollAppParams</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController</managed-bean-class>
@@ -1534,12 +1543,17 @@
 			<map-entries>
 				<key-class>java.lang.String</key-class>
 				<value-class>java.lang.String</value-class>
+				<!-- key name max length is 32          | -->
 				<map-entry>
 					<key>PAY_REPORT_salary_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
 					<key>PAY_REPORT_salaryDraft_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>				
+				<map-entry>
+					<key>PAY_REPORT_additional_salary_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>

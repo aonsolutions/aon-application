@@ -101,7 +101,11 @@ public class ControllerSearchListenerEx extends ControllerAdapter {
 	protected void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
 		values = ArrayUtils.removeElement(values, null);
 		if (! ArrayUtils.isEmpty(values) ) {
-			criteria.addInExpression(alias, Arrays.asList(values));
+			if ( values.length == 1 ) {
+				criteria.addEqualExpression(alias, values[0]);
+			} else {
+				criteria.addInExpression(alias, Arrays.asList(values));	
+			}
 		}
 	}	
 

@@ -55,6 +55,7 @@ public class InvoiceExporterController extends BasicController {
 		ExporterController ec = (ExporterController) AonUtil.getRegisteredBean(IFinanceConstants.EXPORTER_CONTROLLER_NAME);
 		BasicExporter exporter = ec.start(); 
 		obtainData( exporter );
+		ec.setDataMap(exporter.getDataMap());
 		ec.finish();
 		if ( ! this.scored ) {
 			super.onSearch(event);

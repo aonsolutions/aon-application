@@ -40,6 +40,8 @@ public class PayrollAppParamsController implements Serializable {
 
 	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
 	public final static String FAN_TEST_ENVIRONMENT_ACTIVE	= "PAY_fan_test_env_PAY";
+	
+	public final static String REPORT_ADDITIONAL_SALAY_TEMPLATES 	= "PAY_REPORT_additional_salary_PAY";
 
 	private TrainingCenter defaultTrainingCenter;
 	private RegistryBank ssPaymentBankAccount;
@@ -306,6 +308,5 @@ public class PayrollAppParamsController implements Serializable {
 		}
 		return null;
 	}
-	
 	
 }

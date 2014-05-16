@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -21,7 +20,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -65,52 +63,6 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
  		transformer.transform(source, result);				
 	}
 	
-	
-	private boolean isHoliday( Calendar calendar ) {
-		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-		int month = calendar.get(Calendar.MONTH);
-		if (Calendar.JANUARY == month) {
-			if ( (dayOfMonth==1) || (dayOfMonth==6) ) {
-				return true;	
-			}
-		}
-		if ( (Calendar.MAY == month) && (dayOfMonth==1) ) {
-			return true;
-		}
-		if ( (Calendar.OCTOBER == month) && (dayOfMonth==12) ) {
-			return true;
-		}
-		if ( (Calendar.NOVEMBER == month) && (dayOfMonth==1) ) {
-			return true;
-		}
-		if (Calendar.DECEMBER == month) {
-			if ( (dayOfMonth==6) || (dayOfMonth==8) || (dayOfMonth==25)) {
-				return true;	
-			}
-		}
-		return false;		
-	}
-	
-	protected boolean esHabil(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		switch ( calendar.get(Calendar.DAY_OF_WEEK) ) {
-			case Calendar.SATURDAY:
-			case Calendar.SUNDAY:
-				return false;
-			default:
-				return !isHoliday(calendar);
-        }
-    }	
-	
-	protected Date anteriorFechaHabil(Date date) {
-    	Date result = DateUtils.addDays(date, -1);
-   		while (!esHabil(result)) {
-   			result = DateUtils.addDays(result, -1);
-   		}
-    	return result;
-    }
-    
     protected void addRawValue( Element element, String value ) {
 		element.appendChild(document.createTextNode(value));
 	}    
@@ -221,53 +173,57 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 	}	
 	
 	protected void addOrganisationIdentification( Element parent, String id, String issuer ) {
-		Element identification = createElement(IDENTIFICATION);
-		parent.appendChild(identification);		
-
-		Element organisationIdentification = createElement(ORGANISATION_IDENTIFICATION);
-		identification.appendChild(organisationIdentification);
-		
-		Element other = createElement(OTHER);
-		organisationIdentification.appendChild(other);		
-
-		Element innerIdentification = createElement(IDENTIFICATION);
-		addValue(innerIdentification, id, 35);
-		other.appendChild(innerIdentification);
-
-		if ( issuer != null ) {
-			Element issuerElement = createElement(ISSUER);
-			addValue(issuerElement, issuer, 35);
-			other.appendChild(issuerElement);					
+		if (! StringUtils.isEmpty(id) ) {
+			Element identification = createElement(IDENTIFICATION);
+			parent.appendChild(identification);		
+	
+			Element organisationIdentification = createElement(ORGANISATION_IDENTIFICATION);
+			identification.appendChild(organisationIdentification);
+			
+			Element other = createElement(OTHER);
+			organisationIdentification.appendChild(other);		
+	
+			Element innerIdentification = createElement(IDENTIFICATION);
+			addValue(innerIdentification, id, 35);
+			other.appendChild(innerIdentification);
+	
+			if ( issuer != null ) {
+				Element issuerElement = createElement(ISSUER);
+				addValue(issuerElement, issuer, 35);
+				other.appendChild(issuerElement);					
+			}
 		}
 	}	
 	
 	protected void addPrivateIdentification( Element parent, String id, String propietary, String issuer ) {
-		Element identification = createElement(IDENTIFICATION);
-		parent.appendChild(identification);		
-
-		Element privateIdentification = createElement(PRIVATE_IDENTIFICATION);
-		identification.appendChild(privateIdentification);		
-
-		Element other = createElement(OTHER);
-		privateIdentification.appendChild(other);		
-
-		Element innerIdentification = createElement(IDENTIFICATION);
-		addValue(innerIdentification, id, 35);
-		other.appendChild(innerIdentification);
-		
-		if ( propietary != null ) {
-			Element schemeName = createElement(SCHEME_NAME);
-			other.appendChild(schemeName);		
+		if (! StringUtils.isEmpty(id) ) {
+			Element identification = createElement(IDENTIFICATION);
+			parent.appendChild(identification);		
+	
+			Element privateIdentification = createElement(PRIVATE_IDENTIFICATION);
+			identification.appendChild(privateIdentification);		
+	
+			Element other = createElement(OTHER);
+			privateIdentification.appendChild(other);		
+	
+			Element innerIdentification = createElement(IDENTIFICATION);
+			addValue(innerIdentification, id, 35);
+			other.appendChild(innerIdentification);
 			
-			Element propietaryElement = createElement(PROPRIETARY);
-			addValue(propietaryElement, propietary, 35);
-			schemeName.appendChild(propietaryElement);
-		}
-		
-		if ( issuer != null ) {
-			Element issuerElement = createElement(ISSUER);
-			addValue(issuerElement, issuer, 35);
-			other.appendChild(issuerElement);					
+			if ( propietary != null ) {
+				Element schemeName = createElement(SCHEME_NAME);
+				other.appendChild(schemeName);		
+				
+				Element propietaryElement = createElement(PROPRIETARY);
+				addValue(propietaryElement, propietary, 35);
+				schemeName.appendChild(propietaryElement);
+			}
+			
+			if ( issuer != null ) {
+				Element issuerElement = createElement(ISSUER);
+				addValue(issuerElement, issuer, 35);
+				other.appendChild(issuerElement);					
+			}
 		}
 	}	
 	

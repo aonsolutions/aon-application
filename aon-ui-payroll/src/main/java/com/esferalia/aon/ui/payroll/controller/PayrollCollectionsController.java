@@ -19,8 +19,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.enumeration.SalaryTemplate;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -58,6 +61,7 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 
@@ -785,6 +789,51 @@ public class PayrollCollectionsController implements Serializable {
 			return (Long) iterator.next();
 		}
 		return null;
+	}
+	
+	private List<SelectItem> salaryTemplates;
+	
+	public List<SelectItem> getSalaryTemplates() {
+		if (salaryTemplates == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryTemplates = new LinkedList<SelectItem>();
+			SelectItem item = new SelectItem(SalaryTemplate.DEFAULT, SalaryTemplate.DEFAULT.getName(locale));
+			salaryTemplates.add(item);
+			// TODO add new values to salary template enumeration
+//			item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN, SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale));
+			item = new SelectItem("salary_dualColumn", "Estándar (2 columnas)");
+			salaryTemplates.add(item);
+//			item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE, SalaryTemplate.INVOICE_SIMPLE.getName(locale));
+			item = new SelectItem("salary_invoiceSimple", "Factura simple");
+			salaryTemplates.add(item);
+//			item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP, SalaryTemplate.INVOICE_CRA_GROUP.getName(locale));
+			item = new SelectItem("salary_invoiceCraGroup", "Factura (agrupación CRA)");
+			salaryTemplates.add(item);
+				
+			PayrollUtils utils = PayrollUtils.getInstance();
+			utils.getAdditionalSalaryTemplates();
+				
+			for(String s: utils.getAdditionalSalaryTemplates()){
+				if(s.equals(SalaryTemplate.NOMINASTA.getValue())){
+					item = new SelectItem(SalaryTemplate.NOMINASTA, SalaryTemplate.NOMINASTA.getName(locale));
+					salaryTemplates.add(item);
+				} else if(s.equals(SalaryTemplate.NOMINASTA_CODINT.getValue())){
+					item = new SelectItem(SalaryTemplate.NOMINASTA_CODINT, SalaryTemplate.NOMINASTA_CODINT.getName(locale));
+					salaryTemplates.add(item);
+				} else if(s.equals(SalaryTemplate.NOMINASTA_CONDDIAS.getValue())){
+					item = new SelectItem(SalaryTemplate.NOMINASTA_CONDDIAS, SalaryTemplate.NOMINASTA_CONDDIAS.getName(locale));
+					salaryTemplates.add(item);
+				} else if(s.equals(SalaryTemplate.NOMINASTA_LDH.getValue())){
+					item = new SelectItem(SalaryTemplate.NOMINASTA_LDH, SalaryTemplate.NOMINASTA_LDH.getName(locale));
+					salaryTemplates.add(item);
+				} else if(s.equals(SalaryTemplate.IDAZKIAK_ES.getValue())){
+					item = new SelectItem(SalaryTemplate.IDAZKIAK_ES, SalaryTemplate.IDAZKIAK_ES.getName(locale));
+					salaryTemplates.add(item);
+				}
+			}
+				
+		}
+		return salaryTemplates;
 	}
 	
 		

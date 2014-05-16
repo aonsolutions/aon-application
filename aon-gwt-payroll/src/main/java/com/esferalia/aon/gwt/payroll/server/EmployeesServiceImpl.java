@@ -2588,7 +2588,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static void calculate(SalaryDraft draft) {
 
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
+		try {
 		calculate(draft, salaryBuilder, salaryBuilder);
+		} catch ( Exception e ){
+			e.printStackTrace();
+		}
 
 		try {
 			ISalary dbSalary = getDBSalary(draft);
@@ -2596,7 +2600,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryBuilder.setDbSalary(dbSalary);
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
-		}
+		} 
 
 	}
 
@@ -3749,7 +3753,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
+				draft.getIssueDate(), draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();

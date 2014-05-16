@@ -59,6 +59,7 @@ public class Employee implements Serializable, HasId<Integer> {
 	private String name;
 	private String firstSurname;
 	private String secondSurname;
+	private String socialSecurity;
 
 	private Date startDate;
 	private Date endDate;
@@ -87,6 +88,14 @@ public class Employee implements Serializable, HasId<Integer> {
 
 	public void setDocument(String document) {
 		this.document = document;
+	}
+	
+	public void setSocialSecurity(String pSocialSecurity) {
+		socialSecurity = pSocialSecurity;
+	}
+	
+	public String getSocialSecurity() {
+		return socialSecurity;
 	}
 
 	public String getName() {

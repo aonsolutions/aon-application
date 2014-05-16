@@ -43,7 +43,7 @@ public class AuditSessionFilter implements Filter {
 			HttpSession httpSession = request.getSession(false);
 
 			if ( httpSession != null) {
-				Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+				Session session = AuditManager.getSession(httpSession);
 				if ( session == null ) {
 					insertLoginAudit(httpSession, request );
 				} else {

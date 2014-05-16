@@ -47,7 +47,7 @@ public class ExporterController implements Serializable {
 	
 	private boolean finished;
 	
-	private BasicExporter exporter;
+	private Map<String,byte[]> dataMap;
 	
 	private String fileName;
 	
@@ -85,7 +85,6 @@ public class ExporterController implements Serializable {
 	
 	public void onInit( ActionEvent event ) {
 		this.finished = false;
-		this.exporter = null;
 		this.configuration = new InvoiceExportConfiguration();
 	}
 	
@@ -94,7 +93,8 @@ public class ExporterController implements Serializable {
 	}
 	
 	public BasicExporter start() {
-		this.exporter = null;
+		BasicExporter exporter = null;
+		setDataMap(null);
 		this.finished = false;
 		switch ( this.configuration.getType() ) {
 			case GEYCE:
@@ -122,7 +122,6 @@ public class ExporterController implements Serializable {
 	}
 	
 	public void onDownload( ActionEvent event ) {
-		Map<String,byte[]> dataMap = exporter.getDataMap();
     	if ((dataMap != null) && !dataMap.isEmpty() ) {
     		try {
 	    		if ( dataMap.size() == 1 ) {
@@ -142,7 +141,6 @@ public class ExporterController implements Serializable {
 	
 	public void onFinish( ActionEvent event ) {
     	this.finished = false;
-    	this.exporter = null;
     	LogPanelController.getInstance().onCloseWindow(event);
 	}
 	
@@ -175,6 +173,10 @@ public class ExporterController implements Serializable {
 
 	public void onTypeChanged( ActionEvent event ) {
     	getConfiguration().initAccountSize();
+	}
+
+	public void setDataMap(Map<String, byte[]> dataMap) {
+		this.dataMap = dataMap;
 	}
 	
 }

@@ -404,11 +404,11 @@ public class VatCollection {
 		stmt.append(" ,i.vat_quota " + INVOICE_VAT);
 		stmt.append(" ,i.retention_quota " + INVOICE_RETENTION);
 		stmt.append(" ,i.total " + INVOICE_TOTAL);
-		stmt.append(" ,it.base " + TAXABLE_BASE);
+		stmt.append(" ,SUM(it.base) / count(DISTINCT ft.id)" + TAXABLE_BASE);
 		stmt.append(" ,IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) " + QUOTA);
 		stmt.append(" ,IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) " + SURCHARGE_QUOTA);
 		stmt.append(" ," + operation + VAT_TYPE );
-		stmt.append(" ,SUM( IF(ft.type=1, ft.amount,  -ft.amount )) " + FINANCE_AMOUNT);
+		stmt.append(" ,SUM( IF(ft.type=1, ft.amount,  -ft.amount )) / count(DISTINCT id.id)" + FINANCE_AMOUNT);
 		stmt.append("  FROM finance_tracking ft ");
 		stmt.append("  INNER JOIN finance f ON (ft.finance = f.id) ");
 		stmt.append("  INNER JOIN invoice i ON (f.invoice = i.id AND vat_accrual_payment = 1) ");

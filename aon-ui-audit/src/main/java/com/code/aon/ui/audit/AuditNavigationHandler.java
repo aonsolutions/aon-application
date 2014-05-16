@@ -22,18 +22,18 @@ public class AuditNavigationHandler extends AonNavigationHandler {
 	}	
 	
 	private void insertActionEntry( HttpSession httpSession, String name ) {
-		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
-		if ( session != null ) {		
-			try {
-				Action action = AuditManager.getAction( name, session.getApplication() );
-				if ( isActionExecutionAuditEnabled(httpSession) ) {
+		if ( isActionExecutionAuditEnabled(httpSession) ) {		
+			Session session = AuditManager.getSession(httpSession);
+			if ( session != null ) {		
+				try {
+					Action action = AuditManager.getAction( name, session.getApplication() );
 					AuditManager.createActionEntry(session, action);
+				} catch ( Throwable th ) {
+					LOGGER.error( "Error in insert action execution", th );
 				}
-			} catch ( Throwable th ) {
-				LOGGER.error( "Error in insert action execution", th );
+			} else {
+				LOGGER.debug( "Not found {} context property", AuditManager.AUDIT_SESSION_PROPERTY  );
 			}
-		} else {
-			LOGGER.debug( "Not found {} context property", AuditManager.AUDIT_SESSION_PROPERTY  );
 		}
 	}	
 	

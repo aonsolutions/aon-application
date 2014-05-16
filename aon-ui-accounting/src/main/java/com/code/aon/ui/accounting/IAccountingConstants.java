@@ -36,6 +36,7 @@ public interface IAccountingConstants {
 	String LEDGER_REPORT_CONTROLLER = "ledgerReport";
 	String OFFICIAL_TRIAL_BALANCE_CONTROLLER = "officialTrialBalance";
 	String VAT_REPORT_CONTROLLER = "vatReport";
+	String OPERATION_REPORT_CONTROLLER = "operationReport";	
 	String BALANCE_SHEET_CONTROLLER = "balanceSheet";
 	String FISCAL_PARAMETERS_CONTROLLER = "fiscalParams";
 	String PROFIT_AND_LOSS_CONTROLLER_NAME = "profitAndLossReport";

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -396,8 +397,22 @@ public class ExpressionContext {
 
 	public void addLazyExpression(IExpression expression, Date start, Date end)
 			throws ExpressionException {
-		addVariable(expression.getName(), new LazyExpressionVariable(this,
-				expression, start, end));
+		String script = expression.getExpression();
+		
+		Set<String> inputs = null;
+		
+		if ( StringUtils.isBlank(script) )
+			inputs =  Collections.emptySet(); 
+		else
+			inputs =  getVariables(script);
+		
+		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
+		for (PeriodMap periodMap : bindings) {
+			Period period = periodMap.getPeriod();
+			addVariable(expression.getName(), new LazyExpressionVariable(this,
+					expression, period.getStart(), period.getEnd()));
+		}
+
 	}
 
 	public List<ITimedResult<Object>> eval(String script, Date start, Date end)
@@ -509,7 +524,7 @@ public class ExpressionContext {
 		for (String input : inputs) {
 			String regex = String.format("%s\\((.+)\\)", input);
 			Matcher matcher = Pattern.compile(regex).matcher(script);
-			
+
 			if (!matcher.find()) {
 				vars.add(input);
 				continue;

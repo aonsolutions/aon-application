@@ -23,6 +23,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.Finance;
@@ -227,7 +228,9 @@ public class A3Writer extends BasicExporter {
 				}			
 			}
 		} else if ( isFacturaRecibida() ) {
-			if ( vdt != VatDeductionType.WITH_RIGHT) {
+			if ( isWithholdingFarmer() ) {
+				result = "02";
+			} else if ( vdt != VatDeductionType.WITH_RIGHT) {
 				result = "07";
 			} else {
 				switch ( getTransaction() ) {
@@ -236,13 +239,27 @@ public class A3Writer extends BasicExporter {
 						break;
 					case EXTRACOMMUNITY:
 						result = "06";
-						break;			
+						break;		
+					case OTHER_ISP:
+						result = "04";
+						break;
 					case CAN_CEU_MEL:
 					case NATIONAL:
-					case OTHER_ISP:
 						break;						
 				}
 			}
+		}
+		return result;
+	}
+	
+	private String getImpreso() {
+		String result = "01";
+		if ( getTransaction() == InvoiceTransactionType.INTRACOMMUNITY ) {
+			result = "02";
+		} else if ( isWithholdingFarmer() ) {
+			result = "07";
+		} else if ( isWithholding() ) {
+			result = "03";
 		}
 		return result;
 	}
@@ -349,7 +366,7 @@ public class A3Writer extends BasicExporter {
 		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
 		setNumber( amount, 101, 14);
 		// Impreso
-		setString( "01", 172, 2);
+		setString( getImpreso(), 172, 2);
 		if ( last ) {
 			writeDetailWithTaxes(getTaxBreakDowns(), last);
 		} else {

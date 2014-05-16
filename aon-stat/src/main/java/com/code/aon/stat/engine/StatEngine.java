@@ -995,7 +995,7 @@ public class StatEngine implements Serializable {
 			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringBuffer stmt = new StringBuffer();
-			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),SUM(id.quantity)");
+			stmt.append("SELECT p.id,p.code,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),SUM(id.quantity)");
 			stmt.append(" FROM invoice_detail id ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
@@ -1040,12 +1040,12 @@ public class StatEngine implements Serializable {
 			while (rs.next()) {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
-				stat.setName(rs.getString(2));
-				int count = rs.getInt(3);
+				stat.setName(rs.getString(2)+" - "+rs.getString(3));
+				int count = rs.getInt(4);
 				stat.setNumInvoice(count);
-				double amount = rs.getDouble(4);
+				double amount = rs.getDouble(5);
 				stat.setAmount(amount);
-				stat.setProductCount(rs.getInt(5));
+				stat.setProductCount(rs.getInt(6));
 				stat.setAverageAmount(CommonUtil.round(amount / count));
 				stats.add(stat);
 			}

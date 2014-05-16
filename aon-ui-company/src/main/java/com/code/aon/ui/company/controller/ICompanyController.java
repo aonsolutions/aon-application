@@ -1,6 +1,7 @@
 package com.code.aon.ui.company.controller;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.enumeration.FinancePaymentTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.Scope;
@@ -19,6 +20,9 @@ public interface ICompanyController extends IController {
 	
 	SaleInvoiceTemplate getSaleInvoiceTemplate();
 	void setSaleInvoiceTemplate(SaleInvoiceTemplate saleInvoiceTemplate);
+	
+	FinancePaymentTemplate getFinancePaymentTemplate();
+	void setFinancePaymentTemplate(FinancePaymentTemplate FinancePaymentTemplate);
 	
 	boolean isPrintLogo();
 	void setPrintLogo(boolean printLogo);
@@ -50,6 +54,7 @@ public interface ICompanyController extends IController {
 	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
 	SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException;
+	FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	ReportPrintOption obtainPrintName() throws ManagerBeanException;
 	ReportPrintOption obtainPrintNif() throws ManagerBeanException;

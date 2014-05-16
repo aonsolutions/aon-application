@@ -108,7 +108,7 @@ public interface ISalaryBuilder {
 			Map<String, ITimedVariable<?>> context);
 
 	public void addPayment(Double amount, Double quote, Double tax,
-			String description, IPayment payment,
+			String description, Date start, Date end, IPayment payment,
 			Map<String, ITimedVariable<?>> context);
 
 	public void addZeroPayment(Double quote, Double tax, IPayment payment,

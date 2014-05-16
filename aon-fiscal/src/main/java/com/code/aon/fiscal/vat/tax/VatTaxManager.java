@@ -572,7 +572,7 @@ public class VatTaxManager implements Serializable {
 	private String getVatAccrualSelect() {
 		String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 4) )";
 		StringWriter stmt = new StringWriter();
-		stmt.append("SELECT i.id");
+		stmt.append("SELECT it.id");
 		stmt.append(	",i.type " + TYPE);
 		stmt.append(	",i.rectification_type " + RECTIFICATION_TYPE);
 		stmt.append(	",i.service " + SERVICE);
@@ -603,7 +603,7 @@ public class VatTaxManager implements Serializable {
 		stmt.append(	" AND i.tax_date >= '2014-01-01'");
 		stmt.append(	" AND i.vat_accrual_payment = 1");	// Criterio de Caja.
 		stmt.append(	" AND i.status >= ? ");
-		stmt.append(" GROUP BY i.id,"+PERCENTAGE +","+ SURCHARGE_PERCENT+","+VAT_DEDUCTION_TYPE);
+		stmt.append(" GROUP BY it.id,"+PERCENTAGE +","+ SURCHARGE_PERCENT+","+VAT_DEDUCTION_TYPE);
 		
 		System.out.println( stmt.toString() );
 		return stmt.toString();
