@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:dataTable id="contractEmbargoList"
+		value="#{contractEmbargo.model}" var="to" >
+		
+		<aon:rowSelector id="contractEmbargo-select" actionListener="#{contract.onSelectEmbargo}" />
+		
+		<aon:column 
+			styleClass="aon-editDataTable-dateColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_startDate" value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.startDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+		
+		<aon:column 
+			styleClass="aon-editDataTable-dateColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_endDate" value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.endDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+		
+		<aon:column 
+			styleClass="aon-editDataTable-numberColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_total} embargo" />
+			</f:facet>
+			<aon:outputText value="#{to.amount}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:column>
+		
+		<aon:column 
+			styleClass="aon-editDataTable-numberColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_amount}  embargable" />
+			</f:facet>
+			<aon:outputText value="#{to.expression}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:column>
+			
+		<aon:column 
+			styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.description}" />
+		</aon:column>
+		
+	</aon:dataTable>
+	
+</ui:composition>

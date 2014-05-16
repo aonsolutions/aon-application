@@ -52,6 +52,7 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -580,6 +581,12 @@ public class ContractController extends BasicController {
 				throw new AbortProcessingException(msg, e);
 			}
 		}
+	}
+	
+	public void onSelectEmbargo(ActionEvent event){
+		setShowContractEmbargoWindow(true);
+		IController controller = FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
+		controller.onSelect(event);
 	}
 	
 	public void onShowSalaryInfoWindow(ActionEvent event){

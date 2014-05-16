@@ -530,7 +530,7 @@
 										<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{type}.ordinal() + ". " +
-($F{type}.ordinal()==1?"Percepciones salariales":$F{type}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
+($F{type}.ordinal()==1?"PERCEPCIONES SALARIALES":$F{type}.getName( $P{REPORT_LOCALE} ).toUpperCase())]]></textFieldExpression>
 								</textField>
 							</jr:cell>
 						</jr:groupHeader>
