@@ -154,6 +154,8 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		ResultSet allotmentRs = null;
 		PreparedStatement agencyBookingStmt = null;
 		ResultSet agencyBookingRs = null;
+		PreparedStatement agencyBreakdownStmt = null;
+		ResultSet agencyBreakdownRs = null;
 		try {
 			initializeAgencyList();
 			initializeBookingList();
@@ -223,7 +225,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 				}
 			}
 
-			agencyBookingStmt = connection.prepareStatement(getAgencyBookingSQL());
+			agencyBookingStmt = connection.prepareStatement(getAgencyBookingSQL(false, false));
 			SQLUtils.setDate(agencyBookingStmt, 1, getFromDate());
 			SQLUtils.setDate(agencyBookingStmt, 2, getToDate());
 			SQLUtils.setDate(agencyBookingStmt, 3, getFromDate());
@@ -235,7 +237,6 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 				int allotment = agencyBookingRs.getInt(ALLOTMENT);
 				Date stayDate = agencyBookingRs.getDate(STAY_DATE);
 				int rooms = agencyBookingRs.getInt(ROOMS);
-				String breakdown = (isRoomTypeBreakdown() || isTariffBreakdown()) ? agencyBookingRs.getString(BREAKDOWN) : null;
 
 				DayBooking dayBooking = new DayBooking();
 				dayBooking.setHotel(hotel);
@@ -252,19 +253,46 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 						}
 						dayAgencyBooking.setRoomBusy(dayAgencyBooking.getRoomBusy() + rooms);
 						dayAgencyBooking.setRoomAvailable(dayAgencyBooking.getRoomAvailable() - ((allotment > rooms) ? rooms : allotment));
-						if (breakdown != null) {
+						dayBooking.getAgencyBookingMap().put(agency, dayAgencyBooking);
+					}
+				}
+			}
+
+			if (isRoomTypeBreakdown() || isTariffBreakdown()) {
+				agencyBreakdownStmt = connection.prepareStatement(getAgencyBookingSQL(isRoomTypeBreakdown(), isTariffBreakdown()));
+				SQLUtils.setDate(agencyBreakdownStmt, 1, getFromDate());
+				SQLUtils.setDate(agencyBreakdownStmt, 2, getToDate());
+				SQLUtils.setDate(agencyBreakdownStmt, 3, getFromDate());
+				SQLUtils.setDate(agencyBreakdownStmt, 4, getToDate());
+				agencyBreakdownRs = agencyBreakdownStmt.executeQuery();
+				while (agencyBreakdownRs.next()) {
+					String agency = agencyBreakdownRs.getString(AGENCY);
+					String hotel = agencyBreakdownRs.getString(HOTEL);
+					Date stayDate = agencyBreakdownRs.getDate(STAY_DATE);
+					int rooms = agencyBreakdownRs.getInt(ROOMS);
+					String breakdown = agencyBreakdownRs.getString(BREAKDOWN);
+	
+					DayBooking dayBooking = new DayBooking();
+					dayBooking.setHotel(hotel);
+					dayBooking.setDate(stayDate);
+					int index = getBookingList().indexOf(dayBooking);
+					if (index >= 0) {
+						dayBooking = getBookingList().get(index);
+						if (isRequestedAgency(agency)) {
+							DayAgencyBooking dayAgencyBooking = new DayAgencyBooking();
+							if (dayBooking.getAgencyBookingMap().containsKey(agency)) {
+								dayAgencyBooking = dayBooking.getAgencyBookingMap().get(agency);
+							}
 							Integer occupationBreakdown = 0;
 							if (dayAgencyBooking.getOccupationBreakdownMap().containsKey(breakdown)) {
 								occupationBreakdown = dayAgencyBooking.getOccupationBreakdownMap().get(breakdown);
 							}
 							dayAgencyBooking.getOccupationBreakdownMap().put(breakdown, occupationBreakdown + rooms);
+							dayBooking.getAgencyBookingMap().put(agency, dayAgencyBooking);
 						}
-						dayBooking.getAgencyBookingMap().put(agency, dayAgencyBooking);
 					}
-				}
-
-				if (breakdown != null && getAgencyBreakdownMap().containsKey(agency)) {
-					if (!getAgencyBreakdownMap().get(agency).getBreakdowns().contains(breakdown)) {
+	
+					if (getAgencyBreakdownMap().containsKey(agency) && !getAgencyBreakdownMap().get(agency).getBreakdowns().contains(breakdown)) {
 						getAgencyBreakdownMap().get(agency).getBreakdowns().add(breakdown);
 					}
 				}
@@ -282,6 +310,8 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 			}
 			throw new AonSQLException(e.getMessage());
 		} finally {
+			SQLUtils.closeQuietly(agencyBreakdownRs);
+			SQLUtils.closeQuietly(agencyBreakdownStmt);
 			SQLUtils.closeQuietly(agencyBookingRs);
 			SQLUtils.closeQuietly(agencyBookingStmt);
 			SQLUtils.closeQuietly(allotmentRs);
@@ -396,13 +426,13 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		return stmt.toString();
 	}
 
-	private String getAgencyBookingSQL() throws ManagerBeanException {
+	private String getAgencyBookingSQL(boolean roomTypeBreakdown, boolean tariffBreakdown) throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT IFNULL(IFNULL(R.alias, R.name), IG.description) AS " + AGENCY + ", W.description AS " + HOTEL);
 		stmt.append(", A.quantity AS " + ALLOTMENT + ", B.stay_date AS " + STAY_DATE);
 		stmt.append(", COUNT(DISTINCT B.id) AS " + ROOMS);
-		stmt.append(isRoomTypeBreakdown() ? ", P.code AS " + BREAKDOWN : "");
-		stmt.append(isTariffBreakdown() ? ", T.code AS " + BREAKDOWN : "");
+		stmt.append(roomTypeBreakdown ? ", P.code AS " + BREAKDOWN : "");
+		stmt.append(tariffBreakdown ? ", T.code AS " + BREAKDOWN : "");
 		stmt.append(" FROM allotment AS A");
 		stmt.append(" LEFT JOIN hotel AS H ON A.hotel = H.id AND H.active = 1");
 		stmt.append(" LEFT JOIN workplace AS W ON H.workplace = W.id");
@@ -418,9 +448,9 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		stmt.append("        OR B.item IN (SELECT item FROM allotment_item WHERE allotment = A.id))");
 		stmt.append("    AND (0 = (SELECT COUNT(*) FROM allotment_tariff WHERE allotment = A.id)");
 		stmt.append("        OR B.tariff IN (SELECT tariff FROM allotment_tariff WHERE allotment = A.id))");
-		stmt.append(isRoomTypeBreakdown() ? " LEFT JOIN item AS I ON B.item = I.id" : "");
-		stmt.append(isRoomTypeBreakdown() ? " LEFT JOIN product AS P ON I.product = P.id" : "");
-		stmt.append(isTariffBreakdown() ? " LEFT JOIN tariff AS T ON B.tariff = T.id" : "");
+		stmt.append(roomTypeBreakdown ? " LEFT JOIN item AS I ON B.item = I.id" : "");
+		stmt.append(roomTypeBreakdown ? " LEFT JOIN product AS P ON I.product = P.id" : "");
+		stmt.append(tariffBreakdown ? " LEFT JOIN tariff AS T ON B.tariff = T.id" : "");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("A.domain"));
 		stmt.append(" AND A.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND A.end_date >= ?");
@@ -428,10 +458,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		stmt.append(" AND A.active = 1");
 		stmt.append(" AND B.stay_date IS NOT NULL");
 		stmt.append(" GROUP BY A.id, B.stay_date");
-		stmt.append(isRoomTypeBreakdown() ? ", P.code" : "");
-		stmt.append(isTariffBreakdown() ? ", T.code" : "");
+		stmt.append(roomTypeBreakdown ? ", P.code" : "");
+		stmt.append(tariffBreakdown ? ", T.code" : "");
 		stmt.append(" ORDER BY " + AGENCY + ", " + HOTEL + ", " + STAY_DATE);
-		stmt.append(isRoomTypeBreakdown() || isTariffBreakdown() ? ", " + BREAKDOWN : "");
+		stmt.append(roomTypeBreakdown || tariffBreakdown ? ", " + BREAKDOWN : "");
 
 		return stmt.toString();
 	}

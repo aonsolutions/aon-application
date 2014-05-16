@@ -31,14 +31,42 @@ public class ITDataPerson implements Serializable {
 		};
 	}
 	
+	public static enum DischargeCause implements HasDescription {
+		
+		CURATION("Curaci\u00F3n"),
+		DEATH("Fallecimiento"),
+		MEDICAL_INSPECTION("Inspecci\u00F3n m\u00E9dica"),
+		DISABILITY("Propuesta incapacidad"),
+		TIME_EXHAUSTION("Agotamiento de plazo"),
+		IMPROVEMENT("Mejor\u00EDa para el trabajo habitual"),
+		ENTERING("Incomparecencia"),
+		CONTROL_INSS("Control INSS duraci\u00F3n 12 meses"),
+		RECOVERY("Recuperaci\u00F3n capacidad profesional"),
+		ENTERING_EDUCATION("Incomp. CTTOs formaci\u00F3n");
+		
+		private String discharge_cause;
+		
+		private DischargeCause(String cause) {
+			this.discharge_cause = cause;
+		}
+
+		@Override
+		public String getDescription() {
+			// TODO Apéndice de método generado automáticamente
+			return discharge_cause;
+		};
+		
+	}
 
 	private int contractId;
+	private int contractLeaveId;
 	private Type type;	
-	
+	private DischargeCause discharge;
 	private Date leaveStartDate;
-	private Date leaveEndDate;	
+	private Date leaveEndDate;
+	private int discharge_cause;
 	
-	public ITDataPerson() {
+	public ITDataPerson() {		
 		
 	}	
 
@@ -49,6 +77,14 @@ public class ITDataPerson implements Serializable {
 	public void setContractId(int contractId) {
 		this.contractId = contractId;
 	}
+	
+	public int getContractLeaveId() {
+		return contractLeaveId;
+	}
+	
+	public void setContractLeaveId(int pContractLeaveId) {
+		contractLeaveId = pContractLeaveId;
+	}	
 
 	public Date getLeaveStartDate() {
 		return leaveStartDate;
@@ -64,6 +100,14 @@ public class ITDataPerson implements Serializable {
 
 	public void setLeaveEndDate(Date end_date) {
 		this.leaveEndDate = end_date;
+	}	
+
+	public int getDischarge_cause() {
+		return discharge_cause;
+	}
+
+	public void setDischarge_cause(int discharge_cause) {
+		this.discharge_cause = discharge_cause;
 	}
 
 	public Type getType() {
@@ -72,6 +116,10 @@ public class ITDataPerson implements Serializable {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+	
+	public DischargeCause getDischargeCause() {
+		return discharge;
 	}
 	
 }

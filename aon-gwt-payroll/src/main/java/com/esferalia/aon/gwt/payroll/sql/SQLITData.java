@@ -14,8 +14,9 @@ import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
-import com.google.gwt.user.client.Window;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 
 public class SQLITData implements Serializable {
 	
@@ -23,6 +24,10 @@ public class SQLITData implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3128764870965847834L;
+	
+	private static final String SELECT = "SELECT ";
+	private static final String FROM = " FROM ";
+	private static final String WHERE = " WHERE ";
 	
 	private static ITData itData;
 	
@@ -39,28 +44,42 @@ public class SQLITData implements Serializable {
 		PreparedStatement stmt = null;			
 
 		try {
-
-			String select = "SELECT person.registry,"
-					+ " contract.id,"
-					+ " person.name,"
-					+ " person.first_surname,"
-					+ " person.second_surname,"
-					+ " person.social_security_num,"
-					+ " contract.start_date,"
-					+ " contract.end_date,"
-					+ " ifnull(contract_leave.type, -1) as type,"
-					+ " contract_leave.start_date," //pos 10 problemas con ContractLeaveColumns
-					+ " contract_leave.end_date"	//pos 11
-					+ " FROM contract"
-					+ " left join contract_leave on "
-					+ "contract.id = contract_leave.contract"
-					+ " inner join person on "
-					+ "contract.person = person.registry "
-					+ " where contract.workplace = ?"
-					+ " order by person.first_surname asc,"
-					+ " person.second_surname asc,"
-					+ " person.name asc,"
-					+ " contract_leave.start_date asc";
+			
+			String select = SELECT
+					+ SQLConstants.REGISTRY+"."+RegistryColumns.DOCUMENT_COUNTRY+", "
+					+ SQLConstants.REGISTRY+"."+RegistryColumns.DOCUMENT+", "					
+					+ SQLConstants.CONTRACT+"."+ContractColumns.ID+", "
+					+ SQLConstants.PERSON+"."+PersonColumns.REGISTRY+", "
+					+ SQLConstants.PERSON+"."+PersonColumns.NAME+", "
+					+ SQLConstants.PERSON+"."+PersonColumns.FIRST_SURNAME+", "
+					+ SQLConstants.PERSON+"."+PersonColumns.SECOND_SURNAME+","
+					+ SQLConstants.PERSON+"."+PersonColumns.SOCIAL_SECURITY_NUM+", "
+					+ SQLConstants.CONTRACT+"."+ContractColumns.START_DATE+", "
+					+ SQLConstants.CONTRACT+"."+ContractColumns.END_DATE+", "
+					
+					+" ifnull("+SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.TYPE+",-1) as type, "
+					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.ID+", "
+					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.START_DATE+", "
+					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.END_DATE+", "
+					+" ifnull("+SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.DISCHARGE_CAUSE+",-1) as discharge_cause"
+					
+					+ FROM
+					+ SQLConstants.CONTRACT
+					+ " left join " + SQLConstants.CONTRACT_LEAVE + " on "
+					+ SQLConstants.CONTRACT+"."+ContractColumns.ID +"="+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.CONTRACT
+					+ " inner join " + SQLConstants.PERSON + " on "
+					+ SQLConstants.CONTRACT+"."+ContractColumns.PERSON +"="+ SQLConstants.PERSON+"."+PersonColumns.REGISTRY
+					+ " inner join " + SQLConstants.REGISTRY + " on " 
+					+ SQLConstants.PERSON+"."+ SQLConstants.REGISTRY +"=" + SQLConstants.REGISTRY+"." + RegistryColumns.ID
+					
+					+ WHERE
+					+ SQLConstants.CONTRACT+"."+ContractColumns.WORKPLACE+" = ? "
+					+ " order by " + SQLConstants.PERSON+"."+PersonColumns.FIRST_SURNAME + " asc, "
+					+ SQLConstants.PERSON+"."+PersonColumns.SECOND_SURNAME+" asc, "
+					+ SQLConstants.PERSON+"."+PersonColumns.NAME+" asc, "
+					+ SQLConstants.CONTRACT+"."+ContractColumns.START_DATE+" asc, "
+					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.START_DATE+" asc";
+				
 
 			stmt = conn.prepareStatement(select);
 			stmt.setInt(1, workplaceId);		
@@ -70,6 +89,8 @@ public class SQLITData implements Serializable {
 			while (rs.next()) {			
 			
 				int registry = rs.getInt(PersonColumns.REGISTRY);
+				String document_country = rs.getString(RegistryColumns.DOCUMENT_COUNTRY);
+				String document = rs.getString(RegistryColumns.DOCUMENT);
 				int contractId = rs.getInt(ContractColumns.ID);
 				String name = rs.getString(PersonColumns.NAME);
 				String fSurname = rs.getString(PersonColumns.FIRST_SURNAME);
@@ -87,13 +108,16 @@ public class SQLITData implements Serializable {
 				Date endContract = rs.getDate(ContractColumns.END_DATE);
 				contractMax = DateUtils.after(contractMax, endContract);		
 				Integer type = Integer.parseInt(rs.getString(SQLConstants.ContractLeaveColumns.TYPE));
-				Date startContractLeave = rs.getDate(10);
-				Date endContractLeave = rs.getDate(11);	
+				Date startContractLeave = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
+				Date endContractLeave = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
+				int discharge_cause = Integer.parseInt(rs.getString(ContractLeaveColumns.DISCHARGE_CAUSE));
+				int contractLeave_id = rs.getInt(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.ID);
 				
 				if(!itData.getEmployees().containsKey(contractId)) {					
 					
 					Employee employee = new Employee();
-					employee.setId(contractId);					
+					employee.setId(contractId);
+					employee.setDocument(document_country+"-"+document);
 					employee.setPerson(registry);
 					employee.setName(name);
 					employee.setFirstSurname(fSurname);
@@ -107,11 +131,13 @@ public class SQLITData implements Serializable {
 				if(type != -1) {
 					ITDataPerson dataPerson = new ITDataPerson();
 					dataPerson.setContractId(contractId);
+					dataPerson.setContractLeaveId(contractLeave_id);
 					dataPerson.setLeaveStartDate(startContractLeave);
 					dataPerson.setLeaveEndDate(endContractLeave);
+					dataPerson.setDischarge_cause(discharge_cause);
 					dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, type));
 					
-					itData.setITDataPerson(contractId, dataPerson);
+					itData.setITData(contractId, contractLeave_id, dataPerson);			
 								
 				}				
 		}

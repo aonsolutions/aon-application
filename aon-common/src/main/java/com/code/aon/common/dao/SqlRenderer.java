@@ -159,7 +159,7 @@ public class SqlRenderer implements CriterionVisitor {
 			value = "\'" + en.ordinal() + "\'";
 		} else if ( data instanceof Date ) {
 			Date date = (Date) data;
-			write("\'" + DATE_FORMATTER.format(date) + "\'");	
+			value = "\'" + DATE_FORMATTER.format(date) + "\'";	
 		} else if (data instanceof List<?>) {
 			List<?> list = (List<?>) data;
 			if (!list.isEmpty()) {

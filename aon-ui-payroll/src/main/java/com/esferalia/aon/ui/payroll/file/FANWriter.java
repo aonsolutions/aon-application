@@ -1923,9 +1923,9 @@ public class FANWriter {
 		amount += emp.getEdt().containsKey("EDTCD17")?emp.getEdtSegment("EDTCD17").getImporte():0;
 		amount += emp.getEdt().containsKey("EDTCD31")?emp.getEdtSegment("EDTCD31").getImporte():0;
 		if(amount != 0){
-			EDT edt = emp.getEdtSegment("EDTCA30");
+			EDT edt = emp.getEdtSegment("EDTCA22");
 			edt.setTipoElemento("CA");
-			edt.setClave(30);
+			edt.setClave(22);
 			edt.setCalificadorClave(null);
 			edt.setBase(null);
 			edt.setImporte(amount);

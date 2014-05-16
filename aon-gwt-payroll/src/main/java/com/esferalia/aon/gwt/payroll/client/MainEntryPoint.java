@@ -77,17 +77,17 @@ public class MainEntryPoint implements EntryPoint {
 		@Source("workplace.png")
 		ImageResource workplace();
 
-		// *** CHART-ICONS *****
 		@Source("columnchart.png")
 		ImageResource columnchart();
 
 		@Source("linechart.png")
 		ImageResource linechart();
 
-		// ********************
-
 		@Source("employee.png")
 		ImageResource employee();
+		
+		@Source("card.png")
+		ImageResource card();
 
 		@Source("agreement.png")
 		ImageResource agreement();

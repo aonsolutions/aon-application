@@ -18,6 +18,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,6 +55,7 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
+import org.jooq.DSLContext;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -95,6 +97,7 @@ import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
@@ -185,6 +188,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
@@ -1268,6 +1272,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
+	}
+	
+	@Override
+	public void saveITDataPerson(ITDataPerson dataPerson)
+			throws IllegalArgumentException {
+	
+		
+		
 	}
 
 	@Override
@@ -2589,8 +2601,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
 		try {
-		calculate(draft, salaryBuilder, salaryBuilder);
-		} catch ( Exception e ){
+			calculate(draft, salaryBuilder, salaryBuilder);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -2600,7 +2612,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryBuilder.setDbSalary(dbSalary);
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
-		} 
+		}
 
 	}
 
@@ -3579,10 +3591,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria) {
+
 						@Override
 						public Object liquid(double liquid)
 								throws ExpressionException, SQLException {
 							return x;
+						}
+
+						@Override
+						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Date issueDate, Criteria criteria) {
+							ISQLContractSalaryCalculatorContext draftCtx;
+							try {
+								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+										conn, startDate, endDate, issueDate, criteria);
+								draftCtx = new SQLSalaryDraftCalculatorContext(draft,
+										sqlCtx);
+								draftCtx.next();
+								return draftCtx;
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							}
 						}
 
 						@Override

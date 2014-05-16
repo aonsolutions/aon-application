@@ -1,8 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
-	<ui:style type='com.esferalia.aon.gwt.payroll.client.ITEditor.Style'>
+	<ui:style type='com.esferalia.aon.gwt.payroll.client.ITEditor.CustomStyle'>
 		.pos {
 		align: center;
 		text-align: center;
@@ -26,6 +28,15 @@
 			margin-left : 6px;
 			margin-right : 16px;
 			margin-bottom : 10px;
+		}
+		@sprite .redoButton {
+			gwt-image: 'redo';
+			background-position: left center;
+		}
+
+		@sprite .undoButton {
+			gwt-image: 'undo';
+			background-position: left center;
 		}
 		@eval activeBackground com.esferalia.aon.gwt.payroll.client.ITEditor.getColor(null);
 		.active {
@@ -53,24 +64,21 @@
 		}
 
 	</ui:style>
+	
+	<ui:image field='redo' src='redo.png' />
+	<ui:image field='undo' src='undo.png' />
+	
+	
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
 
-			<g:FlowPanel>
-
-				<g:MenuBar>
-				</g:MenuBar>
+			<g:FlowPanel>			    
 
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
 								<g:Label styleName="aon-outputText" ui:field="titleLabel">Partes I.T.</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
-								<g:Label styleName="aon-outputText" text=" " />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
@@ -81,10 +89,16 @@
 								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" >FILTRAR : </g:InlineLabel>
 							    <g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText"  />													
 							</g:HTMLPanel>
-						</g:HorizontalPanel>
-
+						</g:HorizontalPanel>						
+						
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='saveButton'
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
+									enabled="false" />
+							</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
+
 
 			</g:FlowPanel>
 

@@ -465,7 +465,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	// ContractSalaryCalculator.IListener methods
@@ -489,7 +489,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void onCheckError(IContractPayment payment, String message) {
-		// TODO Auto-generated method stub
+		PaymentEvent paymentEvent = new PaymentEvent();
+		paymentEvent.setMessage(message);
+		paymentEvent.setType(Event.Type.WARNING);
+		paymentEvent.setPayment(newPayment(payment));
+		
+		salaryDraft.addPaymentError(paymentEvent);
 
 	}
 
