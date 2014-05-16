@@ -188,6 +188,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
@@ -2600,8 +2601,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
 		try {
-		calculate(draft, salaryBuilder, salaryBuilder);
-		} catch ( Exception e ){
+			calculate(draft, salaryBuilder, salaryBuilder);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -2611,7 +2612,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryBuilder.setDbSalary(dbSalary);
 		} catch (SalaryException e) {
 		} catch (ManagerBeanException e) {
-		} 
+		}
 
 	}
 
@@ -3590,10 +3591,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria) {
+
 						@Override
 						public Object liquid(double liquid)
 								throws ExpressionException, SQLException {
 							return x;
+						}
+
+						@Override
+						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Date issueDate, Criteria criteria) {
+							ISQLContractSalaryCalculatorContext draftCtx;
+							try {
+								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
+										conn, startDate, endDate, issueDate, criteria);
+								draftCtx = new SQLSalaryDraftCalculatorContext(draft,
+										sqlCtx);
+								draftCtx.next();
+								return draftCtx;
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							}
 						}
 
 						@Override
