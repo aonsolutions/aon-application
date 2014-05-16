@@ -11,6 +11,7 @@ import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
 import com.esferalia.aon.payroll.enumeration.contrata.TEOCOLDE;
 import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.contrata.TERFIRCB;
+import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 
 
 public class ContrataTransformacionesParams implements IContrataParams, Serializable {

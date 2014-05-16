@@ -53,6 +53,7 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -1735,10 +1736,6 @@ public class ContractController extends BasicController {
 	public static class ContractParams implements Serializable {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
-
-		private ContractInfo sepeStatusInfo;
-		private ContractInfo ssStatusInfo;
 		
 
 		private ContractInfo sepeStatusInfo;
