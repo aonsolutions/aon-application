@@ -71,6 +71,13 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</c:if>
+						<aon:menuItem id="salesReturnRequest"
+							value="#{bundle.sales_return_request}"
+							rendered="#{!sales.new}"
+							iconClass="aon-icon-alternative"
+							action="sales_form"
+							actionListener="#{sales.onReturnRequest}" 
+							onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}" />
 						<aon:menuItem id="salesShipment"
 							value="#{bundle.carrier_shipment}"
 							rendered="#{!sales.new and sales.pending}"
@@ -123,6 +130,12 @@
 										rendered="#{!sales.pending and sales.to.confidential}" />
 								</c:if>
 
+								<aon:outputText id="sales-itemReturn"
+									rendered="#{sales.to.itemReturn}"
+									title="#{bundle.aon_return}"
+									value="&#160;"
+									styleClass="aon-icon-alternative aon-margin-left aon-padding-left aon-padding-right" />
+								
 								<aon:outputText id="sales-purchaseGenerated"
 									rendered="#{sales.to.purchaseGenerated}"
 									title="#{bundle.sales_purchase_generation_done}"
@@ -180,6 +193,15 @@
 							required="true" disabled="#{!sales.pending}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="Sales_documentType"
+							styleClass="aon-margin-left aon-italic"
+							rendered="#{sales.new}"
+							value="#{bundle.aon_type}: " />
+						<aon:selectOneMenu id="Sales_documentType"
+							rendered="#{sales.new}"
+							value="#{sales.to.documentType}">
+							<f:selectItems value="#{salesCollections.basicSalesTypes}" />
+						</aon:selectOneMenu>
 						<aon:outputLabel for="Sales_purchaseReference" 
 							styleClass="aon-margin-left aon-italic"
 							value="#{bundle.sales_purchase_reference}: " />

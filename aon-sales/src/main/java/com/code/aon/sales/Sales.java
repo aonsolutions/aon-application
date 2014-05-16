@@ -30,6 +30,7 @@ import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.sales.enumeration.DocumentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.SalesDB;
 
@@ -99,7 +100,12 @@ public class Sales extends SalesDB implements IHeaderObject, ICalculableContaine
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
-
+	
+	@Transient
+	public boolean isItemReturn() {
+		return getDocumentType()==DocumentType.ITEM_RETURN;
+	}
+	
 	@Transient
 	@SuppressWarnings("unchecked")
 	public List getDetailList() {
