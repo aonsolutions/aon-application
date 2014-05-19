@@ -1,10 +1,10 @@
 package com.code.aon.ui.registry.controller.event;
 
-import org.apache.commons.lang.ObjectUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -19,10 +19,19 @@ public class RecordDataAttachControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		RecordDataController recordDataController = (RecordDataController)event.getController();
 		RecordData recordData = (RecordData)recordDataController.getTo();
-		if ( recordData.getAttach().getId() != null ) {
-			recordDataController.setAttach( recordData.getAttach() );
+		RegistryAttachment attachment = recordData.getAttach();
+		if ( attachment.getId() != null ) {
+			AonFile f = new AonFile();
+			f.setAttachment(attachment);
+			f.setFileName(attachment.getDescription());
+			MimeType mimeType = attachment.getMimeType();
+			if ( mimeType == null ) {
+				mimeType = f.resolveMimeType();
+			}
+			f.setMimeType(mimeType);			
+			recordDataController.setAonFile(f);
 		} else {
-			recordDataController.setAttach( null );
+			recordDataController.setAonFile( null );
 		}
 	}
 
@@ -30,7 +39,7 @@ public class RecordDataAttachControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		RecordDataController recordDataController = (RecordDataController)event.getController();
-		recordDataController.setAttach( null );
+		recordDataController.setAonFile(null);
 	}
 
 	@Override
@@ -54,16 +63,24 @@ public class RecordDataAttachControllerListener extends ControllerAdapter {
 	private void updateAttachment(ControllerEvent event) throws ManagerBeanException {
 		RecordDataController recordDataController = (RecordDataController)event.getController();
 		RecordData recordData = (RecordData) recordDataController.getTo();
-		RegistryAttachment attach = recordDataController.getAttach();
-		if ( attach != null ) {
+		RegistryAttachment attach = recordData.getAttach();
+		AonFile aonFile = recordDataController.getAonFile();
+		if ( (aonFile != null) && aonFile.getSize() > 0 ) {
+			if ( attach == null ) {
+				attach = new RegistryAttachment();
+				recordData.setAttach(attach);
+			}
+			attach.setCategory(null);
+			attach.setData(aonFile.getData());
+			attach.setDescription(aonFile.getFileName());
 			attach.setRegistry(recordData.getRegistry());
+			attach.setMimeType(aonFile.getMimeType());			
 			IManagerBean rAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 			rAttachBean.insertOrUpdate(attach);
-		}
-		if (! ObjectUtils.equals(attach, recordData.getAttach()) ) {
+			aonFile.setAttachment(attach);
+		} else {
 			recordDataController.removeAttachment();
 		}
-		recordData.setAttach( attach );
 	}
 	
 	@Override

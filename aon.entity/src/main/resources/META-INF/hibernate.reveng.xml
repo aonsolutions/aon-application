@@ -254,6 +254,8 @@
 
 	<table name="certifica2_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+		<column name="income_file" exclude="true" />
+		<column name="outcome_file" exclude="true" />		
 	</table>
 	
 	<table name="certifica2_batch_detail">
@@ -343,10 +345,13 @@
 	<table name="contract_attach" class="com.esferalia.aon.entity.master.ContractAttachment">
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.ContractAttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />		
 	</table>
 
 	<table name="contract_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+		<column name="income_file" exclude="true" />
+		<column name="outcome_file" exclude="true" />		
 	</table>
 	
 	<table name="contract_batch_detail">
@@ -395,6 +400,8 @@
 	<table name="contrata_batch">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContrataFileType"/>
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+		<column name="income_file" exclude="true" />
+		<column name="outcome_file" exclude="true" />		
 	</table>
 	
 	<table name="contrata_batch_detail">
@@ -428,6 +435,8 @@
 	
 	<table name="cra_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+		<column name="income_file" exclude="true" />
+		<column name="outcome_file" exclude="true" />		
 	</table>
 
 	<table name="cra_batch_detail">
@@ -536,6 +545,8 @@
 	<table name="fan_batch">
 		<column name="liquidation_type" type="com.esferalia.aon.payroll.enumeration.LiquidationType"/>
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+		<column name="income_file" exclude="true" />
+		<column name="outcome_file" exclude="true" />		
 	</table>
 
 	<table name="fan_batch_detail">
@@ -586,6 +597,7 @@
 		<column name="year" type="java.lang.Integer"/>
 		<column name="comments" type="text"/>
 		<column name="type" type="com.code.aon.fiscal.enumeration.FiscalBatchType"/>
+		<column name="data" exclude="true" />		
 	</table>
 
 	<table name="fs_batch_detail" class="com.esferalia.aon.entity.master.FiscalBatchDetail">
@@ -708,6 +720,7 @@
 	<table name="iattach" class="com.esferalia.aon.entity.master.ItemAttachment">
 		<column name="type" type="com.code.aon.product.enumeration.AttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />		
 	</table>
 
 	<table name="income">
@@ -760,6 +773,7 @@
 	<table name="invoice_attach" class="com.esferalia.aon.entity.master.InvoiceAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 		<column name="type" type="com.code.aon.finance.enumeration.InvoiceAttachmentType" />
+		<column name="data" exclude="true" />
 	</table>
 
 	<table name="invoice_detail">
@@ -920,6 +934,8 @@
 	
 	<table name="leave_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+		<column name="income_file" exclude="true" />
+		<column name="outcome_file" exclude="true" />
 	</table>
 	
 	<table name="loan">
@@ -1035,6 +1051,7 @@
 	
 	<table name="offer_attach" class="com.esferalia.aon.entity.master.OfferAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />
 	</table>
 	
 	<table name="offer_detail">
@@ -1058,6 +1075,7 @@
 		<column name="source_batch" type="java.lang.Integer"/>
 		<column name="source_type" type="com.esferalia.aon.payroll.enumeration.PayrollBatchType" exclude="true"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />
 	</table>
 	
 	<table name="question">
@@ -1169,6 +1187,7 @@
 	
 	<table name="project_attach" class="com.esferalia.aon.entity.master.ProjectAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />
 	</table>
 
 	<table name="project_commercial">
@@ -1296,6 +1315,7 @@
 	<table name="rattach" class="com.esferalia.aon.entity.master.RegistryAttachment">
 		<column name="type" property="registryAttachmentType" type="com.code.aon.registry.enumeration.RegistryAttachmentType" />
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />
 	</table>
 
 	<table name="rattach_tag" class="com.esferalia.aon.entity.master.RegistryAttachmentTag" >
@@ -1489,6 +1509,7 @@
 		<column name="source_batch" type="java.lang.Integer"/>
 		<column name="source_type" type="com.esferalia.aon.payroll.enumeration.SepeBatchType" exclude="true"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="data" exclude="true" />
 	</table>
 	
 	<table name="signature">

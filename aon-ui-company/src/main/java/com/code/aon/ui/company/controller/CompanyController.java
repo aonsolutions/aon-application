@@ -1,18 +1,12 @@
 package com.code.aon.ui.company.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.faces.event.AbortProcessingException;
-
-import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 
 /**
  * Controller used in the company maintenance.
@@ -44,6 +38,9 @@ public class CompanyController extends CompanyParentController {
 	 *            the file
 	 */
 	public void setLogoFile(AonFile logoFile) {
+		if ( this.logoFile != null ) {
+			this.logoFile.clean();	
+		}		
 		this.logoFile = logoFile;
 	}
 
@@ -63,43 +60,18 @@ public class CompanyController extends CompanyParentController {
 	 *            the file
 	 */
 	public void setSignatureFile(AonFile signatureFile) {
+		if ( this.signatureFile != null ) {
+			this.signatureFile.clean();	
+		}				
 		this.signatureFile = signatureFile;
 	}
 
 	public void logoFileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setLogoFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setLogoFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	public void signatureFileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setSignatureFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setSignatureFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	/**
@@ -108,7 +80,7 @@ public class CompanyController extends CompanyParentController {
 	 * @throws IOException
 	 */
 	public void createCurrentLogoContent(OutputStream out, Object data) throws IOException {
-		if (getLogoFile() != null && getLogoFile().getData() != null) {
+		if (getLogoFile() != null && (getLogoFile().getSize() >0)) {
 			out.write(getLogoFile().getData());
 		}
 	}
@@ -137,7 +109,7 @@ public class CompanyController extends CompanyParentController {
 	 * @throws IOException
 	 */
 	public void createCurrentSignatureContent(OutputStream out, Object data) throws IOException {
-		if (getSignatureFile() != null && getSignatureFile().getData() != null) {
+		if (getSignatureFile() != null && (getSignatureFile().getSize() > 0) ) {
 			out.write(getSignatureFile().getData());
 		}
 	}

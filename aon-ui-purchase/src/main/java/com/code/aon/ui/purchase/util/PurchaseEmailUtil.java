@@ -157,7 +157,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 			logger.error( message + "<br />" + th.getMessage() + "<br />" + th.getCause() );
 		} finally {
 			if ( file != null ) {
-				FileUtils.deleteQuietly(file.getFile());	
+				file.clean();	
 			}
 			if ( xml != null ) {
 				FileUtils.deleteQuietly(xml.getFile());	

@@ -23,7 +23,7 @@ public class HtmlTemplateController extends RegistryAttachController {
 		RegistryAttachment attach = (RegistryAttachment) getTo();
 		AonFile aonFile = new AonFile();
 		aonFile.setMimeType(MimeType.MIME_HTML);
-		aonFile.setData( attach.getData() );
+		aonFile.setAttachment( attach );
 		setAonFile(aonFile);		
 	}
 	

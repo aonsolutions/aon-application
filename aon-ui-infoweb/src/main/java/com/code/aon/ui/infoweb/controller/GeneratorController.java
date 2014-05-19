@@ -53,7 +53,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.PublishParameterController;
 import com.code.aon.ui.config.util.FTPUtil;
@@ -500,13 +499,7 @@ public class GeneratorController implements VelocityConstants  {
 	}
 
 	public static String getImageName( RegistryAttachment ra, String name ) {
-		MimeType mimeType = ra.getMimeType();
-		if ( mimeType == null ) {
-			mimeType = CompanyImagesController.getMimeType(ra.getDescription(), ra.getData());
-			if ( mimeType == null ) {
-				mimeType = MimeType.MIME_JPEG;
-			}
-		}
+		MimeType mimeType = getMimeType(ra, MimeType.MIME_JPEG);
 		String preffix = (name != null ) ? name : ra.getDescription();
 		if ( StringUtils.isEmpty(preffix) ) {
 			preffix = "webInfoImage_" + ra.getId(); 
@@ -578,7 +571,7 @@ public class GeneratorController implements VelocityConstants  {
 		List<ITransferObject> attachList = attachBean.getList(attachCriteria);
 		for (int i=0; i<attachList.size(); i++) {
 			RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
-			if ( ra.getData() != null && !StringUtils.isEmpty(ra.getDescription()) ) {
+			if ( (ra.getSize()>0) && !StringUtils.isEmpty(ra.getDescription()) ) {
 				String filename = getImageName(ra);
 				File path = new File(imagesDirectory, filename);
 				if (!copyRegistryBlobToFile(ra, 200, 200, path)) {
@@ -738,19 +731,26 @@ public class GeneratorController implements VelocityConstants  {
 		return this.homepage == 0;
 	}
 	
-	private MimeType getMimeType( RegistryAttachment ra ) {
-		MimeType type = ra.getMimeType();
-		if ( type == null ) {
-			return MimeResolver.getMimeType(ra.getData());
+	private static MimeType getMimeType( RegistryAttachment ra, MimeType defaultType ) {
+		MimeType mimeType = ra.getMimeType();
+		if ( mimeType == null ) {
+			MimeType mt = MimeResolver.getMimeTypeByExtension(ra.getDescription());
+			if ( (mt == null) && (ra.getSize()>0) ) {
+				mt = MimeResolver.getMimeType(ra.getData());	
+			}
 		}
-		return type;
+		if ( mimeType == null ) {
+			mimeType = defaultType;
+		}
+		return mimeType;
 	}
 	
 	private boolean copyRegistryBlobToFile(RegistryAttachment ra, int maxWidth, int maxHeight, File file) {
 		try {
-			FileUtils.writeByteArrayToFile(file, ra.getData());
-			MimeType type = getMimeType(ra);
-			BufferedImage image = ImageUtilEx.getBufferedImage(ra.getData(), type);
+			byte[] data = ra.getData();
+			FileUtils.writeByteArrayToFile(file, data);
+			MimeType type = getMimeType(ra, MimeType.MIME_JPEG);
+			BufferedImage image = ImageUtilEx.getBufferedImage(data, type);
 			Dimension d = ImageUtil.getResizeDimension(image, maxWidth, maxHeight);
 			File outputFile = new File(file.getParentFile(), "tn_" + file.getName());		
 			BufferedImage newImage = ImageUtil.scale(image, d.width, d.height);

@@ -55,7 +55,7 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 			} else {
 				controller.onSelectFirst(null);
 				RegistryAttachment attach = (RegistryAttachment) controller.getTo();
-				if(attach!=null && attach.getData()!=null){
+				if(attach!=null && (attach.getSize() >0)) {
 					controller.setText(new String(attach.getData()));
 				}
 			}

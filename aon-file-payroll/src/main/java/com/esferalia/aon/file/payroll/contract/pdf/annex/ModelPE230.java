@@ -450,7 +450,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 		try {
 			if(trainingCourse!=null && trainingCourse.getId()!=null){
 				RegistryAttachment attach = obtainRegistrySignature(trainingCourse.getTrainingCenter().getRegistry());
-				if(attach!=null && attach.getId()!=null && attach.getData()!=null){
+				if(attach!=null && attach.getId()!=null && (attach.getSize()>0)){
 					PdfContentByte content = stamp.getOverContent(reader.getNumberOfPages());
 					Image image = Image.getInstance(attach.getData());
 					AcroFields form = stamp.getAcroFields();
@@ -477,7 +477,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 		try {
 			if(trainingCourse!=null && trainingCourse.getId()!=null){
 				RegistryAttachment attach = obtainRegistrySignature(contract.getWorkPlace().getEnterprise().getRegistry());
-				if(attach!=null && attach.getId()!=null && attach.getData()!=null){
+				if(attach!=null && attach.getId()!=null && (attach.getSize()>0)){
 					PdfContentByte content = stamp.getOverContent(reader.getNumberOfPages());
 					Image image = Image.getInstance(attach.getData());
 					AcroFields form = stamp.getAcroFields();

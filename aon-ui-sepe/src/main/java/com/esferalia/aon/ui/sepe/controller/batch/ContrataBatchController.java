@@ -213,7 +213,8 @@ public class ContrataBatchController extends BasicController {
 			os.write(XML_NEW_LINE.getBytes());
 			for(ITransferObject to: list){
 				ContractAttachment attach = (ContractAttachment) to;
-				os.write(attach.getData(), offset, attach.getData().length-lenght_increase);
+				byte[] data = attach.getData();
+				os.write(data, offset, data.length-lenght_increase);
 			}
 			os.write(XML_CONTRATOS_END_TAG.getBytes());
 			return os.toByteArray();

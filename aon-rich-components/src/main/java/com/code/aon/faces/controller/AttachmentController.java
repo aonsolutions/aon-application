@@ -71,6 +71,9 @@ public class AttachmentController extends LinesController implements IAttachment
 	 * @param aonFile the new aon file
 	 */
 	public void setAonFile(AonFile aonFile) {
+		if ( this.aonFile != null ) {
+			this.aonFile.clean();	
+		}
 		this.aonFile = aonFile;
 	}
 
@@ -91,5 +94,13 @@ public class AttachmentController extends LinesController implements IAttachment
         IAttachment attachment = (IAttachment) getManagerBean().get(Integer.valueOf(id));
         DownloadUtil.downloadAttachment( attachment );    	
     }
-	
+
+	@Override
+	public void onCancel(ActionEvent event) {
+		super.onCancel(event);
+		if ( this.aonFile != null ) {
+			this.aonFile.clean();	
+		}		
+	}
+    
 }

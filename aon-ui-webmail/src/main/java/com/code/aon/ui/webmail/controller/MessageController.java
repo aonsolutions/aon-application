@@ -25,16 +25,15 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
@@ -99,9 +98,7 @@ public class MessageController implements IWebMailConstants {
 		content = null;
 		if ( newMsgFileList != null ) {
 			for( AonFile af : newMsgFileList ) {
-				if ( af.getFile().exists() ) {
-					FileUtils.deleteQuietly( af.getFile() );
-				}
+				af.clean();
 			}
 	    	newMsgFileList = null;
 		}
@@ -116,12 +113,7 @@ public class MessageController implements IWebMailConstants {
 	//***************************************************************
 
 	public void fileUploaded(UploadEvent event) {
-		UploadItem item = event.getUploadItem();
-    	AonFile f = new AonFile();
-    	f.setFile(item.getFile());
-    	f.setFileName(item.getFileName());
-    	f.setMimeType(f.resolveMimeType());
-    	LOGGER.info( "Uploaded file: {}", f );
+    	AonFile f = AttachmentUtil.fileUploaded(event);
     	addAttachment( f );
 	}	
 	
@@ -477,7 +469,7 @@ public class MessageController implements IWebMailConstants {
 	
 	public void onRemoveAttachment( ActionEvent event ) {
 		AonFile af = getFiles().remove(this.attachRemoveIndex);
-		FileUtils.deleteQuietly( af.getFile() );
+		af.clean();
 	}
 
 	public boolean isShowNewMessageWindow() {

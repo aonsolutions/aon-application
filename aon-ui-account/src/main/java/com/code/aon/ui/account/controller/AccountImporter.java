@@ -1,8 +1,6 @@
 package com.code.aon.ui.account.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -11,14 +9,12 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.xmlrules.DigesterLoader;
-import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountImporter {
@@ -43,21 +39,7 @@ public class AccountImporter {
 	}
 
 	public void fileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setAonFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	public void onInitialize(ActionEvent event) {

@@ -738,6 +738,7 @@ public class DomainController extends BasicController {
 				message.setRecipientsBcc(emails);
 				sender.addMessageContent(message, getEmailContent(di), MimeType.MIME_HTML, diffFile);
 				sender.sendMessage(message);
+				diffFile.clean();
 			}
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
 			adc.init();				

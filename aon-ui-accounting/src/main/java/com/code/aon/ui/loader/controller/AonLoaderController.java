@@ -1,8 +1,6 @@
 package com.code.aon.ui.loader.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.faces.context.ExternalContext;
@@ -11,17 +9,15 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
@@ -53,6 +49,9 @@ public class AonLoaderController {
 		return this.aonFile;
 	}
 	public void setAonFile(AonFile aonFile) {
+		if ( this.aonFile != null ) {
+			this.aonFile.clean();
+		}
 		this.aonFile = aonFile;
 	}
 	public LoaderParams getParams() {
@@ -63,21 +62,7 @@ public class AonLoaderController {
 	}
 	
 	public void fileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setAonFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	public void onStart(ActionEvent event ) {
@@ -99,11 +84,12 @@ public class AonLoaderController {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
-			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
+			byte[] data = getAonFile().getData();
+			ByteArrayInputStream input = new ByteArrayInputStream(data);
 			loader.loadMetadata(input);
-			input = new ByteArrayInputStream(getAonFile().getData());
+			input = new ByteArrayInputStream(data);
 			loader.validate(input);
-			input = new ByteArrayInputStream(getAonFile().getData());
+			input = new ByteArrayInputStream(data);
 			loader.load(input,session);
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {

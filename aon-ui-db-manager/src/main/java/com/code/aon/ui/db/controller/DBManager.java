@@ -2,7 +2,6 @@ package com.code.aon.ui.db.controller;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,13 +22,11 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +36,7 @@ import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
 import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.db.HibernateDataManager;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ui.db.hibernate.ReplicateConfigurationFactory;
 import com.code.aon.ui.db.hibernate.ReplicateSessionFactoryNameProvider;
 import com.code.aon.ui.db.hibernate.TransferObjectImportVisitor;
@@ -183,16 +181,7 @@ public class DBManager {
 	}	
 	
 	public synchronized void fileUploaded(UploadEvent event) throws IOException {
-	    UploadItem item = event.getUploadItem();
-	    AonFile file = new AonFile();
-	    file.setFileName(item.getFileName());
-	    if ( item.isTempFile() ) {
-	    	byte[] data = FileUtils.readFileToByteArray(item.getFile());
-	    	file.setData(data);
-	    } else {
-		    file.setData(item.getData());	
-	    }
-	    files.add(file);	    
+	    files.add(AttachmentUtil.fileUploaded(event));	    
 	}	
 	
 	public void fileDeleted( ActionEvent event ) {
@@ -204,7 +193,7 @@ public class DBManager {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private List<ClassMetadata> getEntities() {
 		List<ClassMetadata> entities = new LinkedList<ClassMetadata>();
 		String factoryName = HibernateUtil.getSessionFactoryName();
@@ -246,9 +235,10 @@ public class DBManager {
 			hdm.setVisitor(visitor);
 			configure(hdm, false);
 			for( AonFile file : this.files ) {
-				ByteArrayInputStream in = new ByteArrayInputStream(file.getData());
+				InputStream in = file.openStream();
 				hdm.setInputStream( in );
 				hdm.execute();	
+				in.close();
 			}
 		} catch (Throwable e) {
 			LOGGER.error( ">>>> onExport " + e.getMessage() );

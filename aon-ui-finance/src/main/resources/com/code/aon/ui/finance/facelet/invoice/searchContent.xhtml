@@ -92,6 +92,11 @@
 					</ui:include>
 				</c:if>
 
+				<aon:outputLabel for="Invoice_lines_description"
+					value="#{bundle.aon_product_description}" />
+				<aon:inputText id="Invoice_lines_description"
+					valueChangeListener="#{controller.addExpression}" size="40" />
+
 				<aon:outputLabel for="Invoice_lines_quantity"
 					value="#{bundle.aon_quantity}" />
 				<aon:inputText id="Invoice_lines_quantity"

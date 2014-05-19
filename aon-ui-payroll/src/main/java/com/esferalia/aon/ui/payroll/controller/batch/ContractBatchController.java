@@ -41,8 +41,6 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractInfo;
-import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
-import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -65,7 +63,7 @@ public class ContractBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((ContractBatch)this.getTo()).getOutcomeFile()!=null;
+		return this.getTo()!=null && ((ContractBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -163,10 +161,11 @@ public class ContractBatchController extends BasicController {
         	Date date = batch.getDate();
         	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
     		String name = formatter.format(date);
-        	int size = batch.getOutcomeFile().length;
+    		byte[] data = batch.getOutcomeFile();
+        	int size = data.length;
 			response = DownloadUtil.getResponse();
     		out = DownloadUtil.initDownload(response, name+".AFI", null, size);
-        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(batch.getOutcomeFile()) );
+        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
         	IOUtils.copy( fileIn, out );
         	IOUtils.closeQuietly(fileIn);
 		} catch (Throwable e) {

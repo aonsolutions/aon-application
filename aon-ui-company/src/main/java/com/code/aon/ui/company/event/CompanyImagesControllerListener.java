@@ -16,11 +16,11 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 		RegistryAttachment image = (RegistryAttachment) imagesController.getTo();
 		if (image != null) {
 			AonFile f = new AonFile();
-			f.setData(image.getData());
+			f.setAttachment(image);
 			f.setFileName(image.getDescription());
 			MimeType mimeType = image.getMimeType();
 			if ( mimeType == null ) {
-				mimeType = CompanyImagesController.getMimeType(f.getFileName(), f.getData());
+				mimeType = f.resolveMimeType();
 			}
 			f.setMimeType(mimeType);
 			imagesController.setAonFile(f);

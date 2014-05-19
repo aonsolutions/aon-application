@@ -1,20 +1,15 @@
 package com.code.aon.faces.controller;
 
-import java.io.File;
-import java.io.IOException;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
-import javax.faces.event.AbortProcessingException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -30,7 +25,7 @@ public class AttachmentUtil implements ICommonMessages {
 	 */
 	public static boolean isUploaded( IAttachmentController controller ) {
 		AonFile aonFile = controller.getAonFile();
-		return (aonFile != null) && (! ArrayUtils.isEmpty(aonFile.getData())); 
+		return (aonFile != null) && (aonFile.getSize() > 0); 
 	}
 	
 	/**
@@ -43,20 +38,15 @@ public class AttachmentUtil implements ICommonMessages {
 		return ( maximumSize != -1 ) && ( controller.getAonFile().getSize() > maximumSize);
 	}
 	
-	public static void checkFileData( IAttachmentController controller, boolean isNew, boolean required ) throws ControllerListenerException {
-		boolean ok = true;
-		if ( isNew ) {
-			ok = isUploaded(controller);
-		} else {
-			IAttachment attach = controller.getAttachment();
-			ok = (attach.getData() != null) && (! ArrayUtils.isEmpty(attach.getData()));
-		}
-		if ( (!ok) && required ) {
+	public static void checkFileData( IAttachmentController controller, boolean required ) throws ControllerListenerException {
+		if ( isUploaded(controller) ) {
+			if ( isMaximumSizeExceeded(controller) ) {
+				String message = AonUtil.getMessage(DOCUMENT_MAX_SIZE_ERROR);
+				throw new ControllerListenerException(message);
+			}
+		} else if ( required && controller.isNew() ) {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
-			throw new ControllerListenerException( message.getSummary() );			
-		} else if ( isUploaded(controller) && isMaximumSizeExceeded(controller) ) {
-	        String message = AonUtil.getMessage(DOCUMENT_MAX_SIZE_ERROR);
-			throw new ControllerListenerException(message);			
+			throw new ControllerListenerException( message.getSummary() );						
 		}
 	}
 	
@@ -65,7 +55,7 @@ public class AttachmentUtil implements ICommonMessages {
 			if ( isUploaded(controller) ) {
 				AonFile aonFile = controller.getAonFile();
 				IAttachment attach = controller.getAttachment();
-				attach.setData(aonFile.getData());				
+				attach.setData(aonFile.getData());
 				attach.setMimeType(aonFile.getMimeType());
 				if ( StringUtils.isBlank(attach.getDescription()) ) {
 					attach.setDescription(FilenameUtils.getBaseName(aonFile.getFileName()));
@@ -82,21 +72,29 @@ public class AttachmentUtil implements ICommonMessages {
 	 * @param event the event
 	 */
 	public static void fileUploaded(UploadEvent event, IAttachmentController controller) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				byte[] data = FileUtils.readFileToByteArray(file);
-				f.setData(data);
-				FileUtils.deleteQuietly(file);
-			}
-			f.setFileName(item.getFileName());
-			f.setMimeType(f.resolveMimeType());
-			controller.setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		controller.setAonFile(fileUploaded(event));
 	}
 
+	/**
+	 * File uploaded.
+	 * 
+	 * @param event the event
+	 */
+	public static AonFile fileUploaded(UploadEvent event) {
+		UploadItem item = event.getUploadItem();
+		AonFile f = new AonFile();
+		if (item.isTempFile()) {
+			f.setFile(item.getFile());
+		} else {
+			f.setData(item.getData());
+		}
+		f.setFileName(item.getFileName());
+		MimeType mt = MimeType.get(item.getContentType());
+		if ( mt == null ) {
+			mt = f.resolveMimeType();
+		}
+		f.setMimeType(mt);
+		return f;
+	}
+	
 }

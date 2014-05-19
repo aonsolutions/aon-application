@@ -1,9 +1,6 @@
 package com.code.aon.ui.accounting.controller.report;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,9 +18,7 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ajax4jsf.org.w3c.tidy.Tidy;
-import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -36,7 +31,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.util.MimeResolver;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
@@ -123,37 +118,23 @@ public class ReportsLauncher {
 		return aonFile;
 	}
 	public void setAonFile(AonFile aonFile) {
+		if ( this.aonFile != null ) {
+			this.aonFile.clean();
+		}
 		this.aonFile = aonFile;
 	}
 	public void fileUploaded(UploadEvent event) {
-		try {
-			setMessage(null);
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
+		setMessage(null);
+		AonFile f = AttachmentUtil.fileUploaded(event);
+		setAonFile(f);
+		if (f.getMimeType() == null) {
+			setMessage("Formato de archivo desconocido. Si el archivo es de texto, renómbrelo con la extensión TXT.");
+		} else {
+			if (!f.getMimeType().getName().startsWith("text")) {
+				setMessage("La plantilla cargada es de tipo " + f.getMimeType().getName() 
+						+ ". La aplicación no soporta este tipo de archivo para su fusión con los datos contables." 
+						+ " Únicamente son válidos los archivos de texto.");
 			}
-			f.setFileName(item.getFileName());
-			MimeType mimeType = MimeResolver.getMimeType(item.getFile()); 
-			if (f.getMimeType() == null) {
-				mimeType = MimeResolver.getMimeTypeByExtension(item.getFileName());
-			}
-			f.setMimeType( mimeType );
-			setAonFile(f);
-			if (f.getMimeType() == null) {
-				setMessage("Formato de archivo desconocido. Si el archivo es de texto, renómbrelo con la extensión TXT.");
-			} else {
-				if (!f.getMimeType().getName().startsWith("text")) {
-					setMessage("La plantilla cargada es de tipo " + f.getMimeType().getName() 
-							+ ". La aplicación no soporta este tipo de archivo para su fusión con los datos contables." 
-							+ " Únicamente son válidos los archivos de texto.");
-				}
-			}
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 	
@@ -192,7 +173,7 @@ public class ReportsLauncher {
 				if (iter.hasNext()) {
 					RegistryAttachment ra = (RegistryAttachment) iter.next();
 					aonFile = new AonFile(); 
-					aonFile.setData(ra.getData());				
+					aonFile.setAttachment(ra);				
 					aonFile.setMimeType(ra.getMimeType());
 					aonFile.setFileName(ra.getDescription());
 				}
@@ -221,8 +202,10 @@ public class ReportsLauncher {
 			res.setContentType(MimeType.MIME_TXT.getName());
 			res.setCharacterEncoding(ENCODING);
 			tidy.setErrout(res.getWriter());
-			tidy.parse( new ByteArrayInputStream( getAonFile().getData()), null);
+			InputStream in = getAonFile().openStream();
+			tidy.parse( in, null);
 			DownloadUtil.finishDownload(res,null);
+			in.close();
 		} catch (IOException e) {
 			AonUtil.addErrorMessage("El fichero no es correcto");
 			throw new AbortProcessingException(e);
@@ -243,12 +226,13 @@ public class ReportsLauncher {
 			if (isUseDefaultTemplate()) {
 				in = manager.getClass().getResourceAsStream(DEFAULT_REPORT);	
 			} else {
-				in = new ByteArrayInputStream(getAonFile().getData());
+				in = getAonFile().openStream();
 			}
 			InputStreamReader reader = new InputStreamReader(in,ENCODING);
 			manager.resolve(reader, params, res.getWriter());
 			res.flushBuffer();
 			ctx.responseComplete();
+			reader.close();
 		} catch (IOException e) {
 			String msg = "Error al resolver la memoria";
 			AonUtil.addErrorMessage(msg);
@@ -302,10 +286,11 @@ public class ReportsLauncher {
 			if (isUseDefaultTemplate()) {
 				in = manager.getClass().getResourceAsStream(DEFAULT_REPORT);	
 			} else {
-				in = new ByteArrayInputStream(getAonFile().getData());
+				in = getAonFile().openStream();
 			}
 			InputStreamReader reader = new InputStreamReader(in,ENCODING);
 			manager.resolve(reader, params, writer);
+			reader.close();
 			ITextRenderer renderer = new ITextRenderer();
 			ByteArrayOutputStream tidyOut = new ByteArrayOutputStream(); //we need this later
 			Tidy tidy = new Tidy(); 
