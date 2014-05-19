@@ -11,6 +11,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
