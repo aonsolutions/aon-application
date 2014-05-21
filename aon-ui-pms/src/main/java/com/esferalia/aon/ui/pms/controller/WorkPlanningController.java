@@ -27,7 +27,6 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.RoomWorkPlanning;
 
-
 public class WorkPlanningController extends DataScrollerState implements ICollectionProvider {
 	
 	private Hotel hotel;
