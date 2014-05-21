@@ -35,6 +35,7 @@ public class TableInfo implements Constants {
 	private TableInfoListener listener;
 	private ColumnInfo cyclicColumn;
 	private boolean withBlobs;
+	private boolean actionReference;
 	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
@@ -98,6 +99,7 @@ public class TableInfo implements Constants {
 				if ( this.name.equals(fkTableName) ) {
 					this.recursive = true;
 				}
+				actionReference |= ci.isActionReference();
 			}
 		} catch (SQLException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -227,6 +229,10 @@ public class TableInfo implements Constants {
 	public boolean isWithBlobs() {
 		return withBlobs;
 	}
+	
+	public boolean isSingleInsert() {
+		return withBlobs || actionReference;
+	}
 
 	public String getSelectStatement( Integer[] domains, String where ) {
 		StringBuffer buf = new StringBuffer();
@@ -293,7 +299,7 @@ public class TableInfo implements Constants {
 		return StringUtils.equals(getName(), DOMAIN_TABLE_NAME);
 	}
 
-	public String getSetVariableStatement() {
+	public String getSetVariableStatementWithSelectMax() {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SET ").append( getVariableId() ).append(" = ");
 		sb.append("(SELECT (IFNULL(MAX(").append(getPkColumn().getName());
@@ -301,11 +307,12 @@ public class TableInfo implements Constants {
 		return sb.toString();
 	}
 
-	public String getSetVariableStatement( String lastId ) {
+	public String getSetVariableStatement() {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SET ").append( getVariableId() ).append(" = (SELECT ");
 		if ( getPkColumn().isFkColummn() ) {
-			sb.append(lastId);
+			TableInfo fkTableInfo = getPkColumn().getFtTable();
+			sb.append(fkTableInfo.getRelativeId(getBaseId()));
 		} else {
 			sb.append("LAST_INSERT_ID()");	
 		}			
@@ -368,7 +375,13 @@ public class TableInfo implements Constants {
 	}
 
 	public String getLockTables() {
-		return "LOCK TABLES " + getStrictName() + " WRITE;";
+		StringBuffer sb = new StringBuffer();
+		sb.append("LOCK TABLES ").append(getStrictName()).append(" WRITE");
+		if ( this.actionReference ) {
+			sb.append(", ").append(TABLE_BOUNDARY).append(ACTION_TABLE_NAME);
+			sb.append(TABLE_BOUNDARY).append(" READ");
+		}
+		return sb.append(";").toString();
 	}
 
 	public String getUnlockTables() {
