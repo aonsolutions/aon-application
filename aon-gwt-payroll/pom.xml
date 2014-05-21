@@ -84,8 +84,8 @@
                         <groupId>com.esferalia.aon</groupId>
                         <artifactId>aon.gwt.visualization</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
                 </dependency>
+
 
 		<dependency>
 			<groupId>com.google.gwt</groupId>
