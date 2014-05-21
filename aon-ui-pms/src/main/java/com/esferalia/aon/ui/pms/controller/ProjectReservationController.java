@@ -535,7 +535,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
-			if (reservation.isGuestHolder() && !PosUtils.isUserPosShiftOpened()) {
+			if (!PosUtils.isUserPosShiftOpened()) {
 				setShowInvoiceWindow(false);
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
