@@ -1,9 +1,10 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 
-public class ITDataPerson implements Serializable {
+public class ITDataPerson implements Serializable, Comparable {
 
 
 	/**
@@ -45,6 +46,7 @@ public class ITDataPerson implements Serializable {
 		ENTERING_EDUCATION("Incomp. CTTOs formaci\u00F3n");
 		
 		private String discharge_cause;
+		
 		
 		private DischargeCause(String cause) {
 			this.discharge_cause = cause;
@@ -121,5 +123,12 @@ public class ITDataPerson implements Serializable {
 	public DischargeCause getDischargeCause() {
 		return discharge;
 	}
+
+	public int compareTo(Object o1) {
+		
+		ITDataPerson data = (ITDataPerson) o1;
+		return this.getLeaveStartDate().compareTo(data.getLeaveStartDate());
+	}	
+	
 	
 }

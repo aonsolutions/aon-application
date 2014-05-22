@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.Tooltip.Style'>
@@ -23,7 +24,7 @@
 			ui:field="fullNameLabel"></g:InlineLabel>
 		<br></br>
 		<g:InlineLabel ui:field="dniLabel" styleName="aon-icon-card"
-		    title="Número Documento Nacional de Identidad"></g:InlineLabel>
+			title="Número Documento Nacional de Identidad"></g:InlineLabel>
 		<g:InlineLabel> - </g:InlineLabel>
 		<g:InlineLabel styleName="aon-icon-normal-segsocial-small"
 			ui:field="socialSecurityNum" title="Número de Afiliación a la Seguridad Social"></g:InlineLabel>
@@ -46,41 +47,54 @@
 			</tbody>
 		</table>
 		<g:InlineLabel styleName="aon-bold" ui:field="workPeriodLabel"></g:InlineLabel>
-		
-		    
-		    <table>
-		    <tr>
-		        <td>
-		            <g:InlineLabel ui:field="startDateLabel" > </g:InlineLabel>		            		            
-		        </td>
-		        <td>
-		            <datepicker:DateBox ui:field="startLeaveDateBox" />
-		            <g:TextBox ui:field="startLeaveTextBox" />
-		        </td>		        
-		    </tr>
-		    <tr>
-		        <td>
-		            <g:InlineLabel ui:field="endDateLabel"></g:InlineLabel>
-		        </td>		        
-		        <td>		            
+
+		<table>
+			<tr>
+				<td>
+					<g:Label styleName="aon-bold" ui:field="baja">Baja:</g:Label>
+				</td>
+				<td>
+					<g:InlineLabel ui:field="startDateLabel"></g:InlineLabel>
+				</td>
+				<td>
+					<datepicker:DateBox ui:field="startLeaveDateBox" />
+					
+				</td>
+				<td>
+					<g:InlineLabel ui:field="causeStartLabel">Motivo</g:InlineLabel>
+				</td>
+				<td>
+					<g:ListBox width="10em" ui:field='typeLeaveListBox' />
+					
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label styleName="aon-bold" ui:field="alta">Alta:</g:Label>
+				</td>
+				<td>
+					<g:InlineLabel ui:field="endDateLabel"></g:InlineLabel>
+				</td>
+				<td>
 					<datepicker:DateBox ui:field="fromDateBox" />
-					<g:TextBox ui:field="endLeaveTextBox" />
-		        </td>
-		    </tr>
-		    <tr>
-		        <td>
-		            <g:InlineLabel ui:field="causeLabel"></g:InlineLabel>
-		        </td>
-		        <td>
-		            <g:ListBox ui:field='typeListBox' />
-		        </td>
-		        <td>
-		            <div styleName="{style.buttons}">
+					
+				</td>
+				<td>
+					<g:InlineLabel ui:field="causeEndLabel">Motivo</g:InlineLabel>
+				</td>
+				<td>
+					<g:ListBox width="10em" ui:field='typeDischargeListBox' />				
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6" align="right">
+				    <br></br>
+					<div styleName="{style.buttons}">
 						<g:Button ui:field="acceptButton">Aceptar</g:Button>
-					</div>		            
-		        </td>
-		    </tr>
+					</div>
+				</td>
+			</tr>
 		</table>
-		   		
+
 	</g:HTMLPanel>
 </ui:UiBinder> 

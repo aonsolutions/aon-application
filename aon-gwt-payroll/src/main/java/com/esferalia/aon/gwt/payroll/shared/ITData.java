@@ -3,14 +3,15 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class ITData implements Serializable {
+public class ITData implements Serializable{
 
 	private static final long serialVersionUID = -8223289513867055037L;
 	
@@ -25,6 +26,10 @@ public class ITData implements Serializable {
 	 */	
 	
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> dataIts;
+	
+	private Map<Integer, ITDataPerson> add;
+	private Map<Integer, ITDataPerson> update;
+	private Map<Integer, ITDataPerson> remove;
 	
 	private List<Integer> contracts;
 	
@@ -144,7 +149,8 @@ public class ITData implements Serializable {
 		
 		employees = new LinkedHashMap<Integer, Employee>();				
 		dataIts = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();		
-		contracts = new ArrayList<Integer>();		
+		contracts = new ArrayList<Integer>();
+		
 		
 	}
 
@@ -199,16 +205,23 @@ public class ITData implements Serializable {
 		return contracts;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addLeaveItem(ITDataPerson itDataPerson) {	
 		
-		LinkedHashMap<Integer, ITDataPerson> map = dataIts.get(itDataPerson.getContractId());
-		map.put(itDataPerson.getContractLeaveId(), itDataPerson);
+		add = dataIts.get(itDataPerson.getContractId());		
+		add.put(itDataPerson.getContractLeaveId(), itDataPerson);
+		
+		sortMap(add);
 		
 	}
 	
-	public void removeLeaveItem(ITDataPerson itDataPerson) {		
-		LinkedHashMap<Integer, ITDataPerson> map = dataIts.get(itDataPerson.getContractId());
-		map.remove(itDataPerson.getContractLeaveId());
+	public void removeLeaveItem(ITDataPerson itDataPerson) {
+		
+		remove = dataIts.get(itDataPerson.getContractId());
+		remove.remove(itDataPerson.getContractLeaveId());
+		
+		sortMap(remove);
+			
 	}
 	
 	public void updateItem(ITDataPerson itDataPerson) {
@@ -216,10 +229,32 @@ public class ITData implements Serializable {
 		int contractId = itDataPerson.getContractId();
 		int leaveId = itDataPerson.getContractLeaveId();
 		
-		LinkedHashMap<Integer, ITDataPerson> map = dataIts.get(contractId);
-		map.put(leaveId, itDataPerson);
+		update = dataIts.get(contractId);		
+		update.put(leaveId, itDataPerson);
+		sortMap(update);	
 	}
 	
-	
+	private void sortMap(Map<Integer, ITDataPerson> map) {
+		
+		List<ITDataPerson> sortedList = new LinkedList<ITDataPerson>();
+		Iterator it = map.entrySet().iterator();
+		
+		while(it.hasNext()) {
+			
+			Map.Entry<Integer, ITDataPerson> e = (Map.Entry<Integer, ITDataPerson>) it.next();
+			sortedList.add(e.getValue());		
+		}
+		
+		Collections.sort(sortedList);
+		
+		map.clear();
+		
+		for(int x = 0; x<sortedList.size(); x++) {
+			
+			map.put(sortedList.get(x).getContractLeaveId(), sortedList.get(x));
+		}
+			
+	}
 
+	
 }
