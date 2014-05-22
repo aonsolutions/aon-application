@@ -23,6 +23,7 @@ public class WebInfoPage extends WebInfoPageDB {
 	private Set<WebInfoPageResource> resources;
 
 	public WebInfoPage() {
+		setActive(true);
 		setPosition(0);
 	}
 
