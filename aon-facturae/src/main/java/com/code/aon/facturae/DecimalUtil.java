@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -15,8 +16,17 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.finance.Invoice;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddInfo;
+import com.esferalia.aon.entity.IEntityAlias;
 
 import es.mityc.facturae32.AmountType;
 import es.mityc.facturae32.Facturae;
@@ -29,7 +39,8 @@ public class DecimalUtil {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DecimalUtil.class);
 	
-	private static final DecimalFormat DF6 = new DecimalFormat("0.000000");
+	public static final int DEFAULT_DECIMALS = 2;
+	private static final int MAX_DECIMALS = 6;	
 	
 	private static final String EQUIVALENCE_SURCHARGE_AMOUNT = "EquivalenceSurchargeAmount";
 	private static final String TAX_AMOUNT = "TaxAmount";
@@ -38,8 +49,41 @@ public class DecimalUtil {
 	private static final String TAX_TYPE_CODE = "TaxTypeCode";
 	private static final String ISSUER_TRANSACTION_REFERENCE = "IssuerTransactionReference";
 	
-	public static boolean isFixDecimals() {
-		return AppParamUtil.getValueAsBoolean(AppParam.AON_FACTURAE_DECIMAL_FIX);
+	private DecimalFormat decimalFormatter;
+	
+	public DecimalUtil(int numberOfDecimals) {
+		String pattern = StringUtils.rightPad("0.", numberOfDecimals+2, '0');
+		this.decimalFormatter = new DecimalFormat(pattern);
+	}
+
+	public static int getNumberOfDecimals( Invoice invoice ) {
+		int decimals = getRegistryDecimals(invoice.getRegistry());
+		if ( decimals == -1 ) {
+			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_FACTURAE_DECIMALS);
+			decimals = (value != null) ? value : DEFAULT_DECIMALS; 
+		}
+		decimals = Math.min(Math.max(DEFAULT_DECIMALS, decimals), MAX_DECIMALS);
+		return decimals;
+	}
+	
+	private static int getRegistryDecimals( Registry registry ) {
+		int value = -1;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), registry.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), AppParam.AON_FACTURAE_DECIMALS.getValue());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE_DATE), false);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				RegistryAddInfo addInfo = (RegistryAddInfo) list.get(0);
+				value = NumberUtils.toInt(addInfo.getValue(), -1);
+			}
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return value;
 	}
 	
 	private List<InvoiceLineType> getInvoiceLines( Facturae facturae ) {
@@ -68,7 +112,7 @@ public class DecimalUtil {
 	}
 	
 	private String format( double value ) {
-		return DF6.format(value).replace(',', '.');	
+		return decimalFormatter.format(value).replace(',', '.');	
 	}
 	
 	private void fix( AmountType amount, Element element ) {
