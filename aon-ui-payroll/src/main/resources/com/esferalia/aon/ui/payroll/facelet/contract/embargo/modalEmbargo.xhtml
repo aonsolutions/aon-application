@@ -103,6 +103,7 @@
 												<a4j:support event="onchange" reRender="ContractEmbargo_expression-div" ajaxSingle="#{true}" />
 											</aon:selectOneMenu>
 											<aon:outputLabel for="ContractEmbargo_feeAmount" value="#{bundle.aon_amount} embargable:"
+												rendered="#{controller.to.fixedAmount}"
 												styleClass="aon-margin-right aon-margin-left" />
 											<aon:inputText id="ContractEmbargo_feeAmount" 
 												required="#{true}"

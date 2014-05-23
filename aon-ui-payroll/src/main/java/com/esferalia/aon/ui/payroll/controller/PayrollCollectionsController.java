@@ -368,12 +368,20 @@ public class PayrollCollectionsController {
 		if (occupationTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			occupationTypes = new LinkedList<SelectItem>();
-			OccupationType[] types = OccupationType.values();
-			for (OccupationType t : types) {
-				String name = t.getFullName(locale);
-				SelectItem item = new SelectItem(t, getAbbreviatedSelectItemLabel(name, NAME_LENGHT_80));
-				occupationTypes.add(item);
-			}
+			SelectItem item = new SelectItem(OccupationType.A, getAbbreviatedSelectItemLabel(OccupationType.A.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
+			item = new SelectItem(OccupationType.B, getAbbreviatedSelectItemLabel(OccupationType.B.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
+			item = new SelectItem(OccupationType.D, getAbbreviatedSelectItemLabel(OccupationType.D.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
+			item = new SelectItem(OccupationType.E, getAbbreviatedSelectItemLabel(OccupationType.E.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
+			item = new SelectItem(OccupationType.F, getAbbreviatedSelectItemLabel(OccupationType.F.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
+			item = new SelectItem(OccupationType.G, getAbbreviatedSelectItemLabel(OccupationType.G.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
+			item = new SelectItem(OccupationType.H, getAbbreviatedSelectItemLabel(OccupationType.H.getFullName(locale), NAME_LENGHT_80));
+			occupationTypes.add(item);
 		}
 		return occupationTypes;
 	}
@@ -750,12 +758,10 @@ public class PayrollCollectionsController {
 		if (liquidationTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			liquidationTypes = new LinkedList<SelectItem>();
-			for( LiquidationType type : LiquidationType.values() ) {
-				String value = type.getValue();
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, value + " - " + name);
-				liquidationTypes.add(item);			
-			}
+			SelectItem item = new SelectItem(LiquidationType.L00, LiquidationType.L00.getValue()+ " - " + LiquidationType.L00.getName(locale));
+			liquidationTypes.add(item);			
+			item = new SelectItem(LiquidationType.L13, LiquidationType.L13.getValue()+ " - " + LiquidationType.L13.getName(locale));
+			liquidationTypes.add(item);			
 		}
 		return liquidationTypes;
 	}

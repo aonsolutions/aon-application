@@ -55,10 +55,11 @@ public class CnaeRateController {
 		this.model = model;
 	}
 	
-	public void onInitialize(ActionEvent event){
+	public void onInitialize(ActionEvent event) throws ManagerBeanException{
 		setFilter(null);
 		setYear(CommonUtil.getYear(new Date()));
 		setModel(null);
+		initializeModel();
 	}
 	
 	public void onReloadModel(ActionEvent event) throws ManagerBeanException{

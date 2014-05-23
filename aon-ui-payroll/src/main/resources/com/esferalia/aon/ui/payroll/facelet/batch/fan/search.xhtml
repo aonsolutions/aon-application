@@ -41,9 +41,9 @@
 					
 					<aon:outputLabel for="FanBatch_liquidationType" 
 						value="#{bundle.fanBatch_liquidation_type}" />
-					<aon:selectOneMenu id="FanBatch_liquidationType" 
-						valueChangeListener="#{controller.addEqualExpression}"
-						disabled="#{true}" >
+					<aon:selectOneMenu id="FanBatch_liquidationType" converter="aon.EnumConverter" 
+						valueChangeListener="#{controller.addEqualExpression}" >
+						<f:selectItem itemLabel=" - " value="#{null}" />
 						<f:selectItems value="#{payrollCollections.liquidationTypes}"  />
 					</aon:selectOneMenu>
 					

@@ -25,14 +25,6 @@
 					<ui:param name="controller" value="#{fanBatch}" />
 					<ui:define name="columns">
 
-						<aon:column alias="FanBatch.id"
-							styleClass="aon-editDataTable-numberColumn aon-width-50">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}" />
-						</aon:column>
-						
 						<aon:column alias="FanBatch.date"
 							styleClass="aon-editDataTable-numberColumn aon-width-150">
 							<f:facet name="header">
@@ -45,11 +37,11 @@
 						</aon:column>
 						
 						<aon:column alias="FanBatch.liquidationType"
-							styleClass="aon-editDataTable-textColumn aon-width-150">
+							styleClass="aon-editDataTable-textColumn aon-width-50">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.fanBatch_liquidation_type}" />
+								<aon:outputText value="#{bundle.aon_type}" />
 							</f:facet>
-							<aon:outputText value="#{to.liquidationType}" />
+							<aon:outputText value="#{to.liquidationType.value}" />
 						</aon:column>
 						
 						<aon:column alias="FanBatch.outcomeFileDate"

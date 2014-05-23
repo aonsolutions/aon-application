@@ -126,7 +126,7 @@ public class AFIReader {
 					fab.setClaveContrato(Integer.parseInt(currentLine.substring(21, 24)));
 					fab.setCondicionDesempleado(currentLine.substring(24, 25));
 					fab.setMujerSubrepresentada(currentLine.substring(25, 26));
-					fab.setCoeficienteTiempoParcial(Integer.parseInt(currentLine.substring(26, 29)));
+					fab.setCoeficienteTiempoParcial(currentLine.substring(26, 29));
 					fab.setColectivoTrabajador(Integer.parseInt(currentLine.substring(29, 32)));
 					fab.setIndicadorImpresion(currentLine.substring(32, 33));
 					fab.setCategoriaProfesional(Integer.parseInt(currentLine.substring(33, 40)));

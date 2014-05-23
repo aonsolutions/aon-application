@@ -63,7 +63,7 @@ public class LeaveBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((LeaveBatch)this.getTo()).getOutcomeFileSize()>0;
+		return this.getTo()!=null && ((LeaveBatch)this.getTo()).getOutcomeFileSize()!=null && ((LeaveBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {

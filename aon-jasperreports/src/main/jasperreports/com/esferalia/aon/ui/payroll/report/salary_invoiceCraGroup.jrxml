@@ -540,7 +540,9 @@
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField isBlankWhenNull="true">
-								<reportElement style="text_TD" x="0" y="0" width="270" height="13" forecolor="#000000"/>
+								<reportElement style="text_TD" x="0" y="0" width="270" height="13" isRemoveLineWhenBlank="true" forecolor="#000000">
+									<printWhenExpression><![CDATA[$F{amount}!=0.0]]></printWhenExpression>
+								</reportElement>
 								<box leftPadding="10"/>
 								<textElement/>
 								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
@@ -557,7 +559,9 @@
 								<rightPen lineWidth="0.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement style="amount_TD" x="0" y="0" width="90" height="13" forecolor="#000000"/>
+								<reportElement style="amount_TD" x="0" y="0" width="90" height="13" isRemoveLineWhenBlank="true" forecolor="#000000">
+									<printWhenExpression><![CDATA[$F{amount}!=0.0]]></printWhenExpression>
+								</reportElement>
 								<box rightPadding="10"/>
 								<textElement/>
 								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>

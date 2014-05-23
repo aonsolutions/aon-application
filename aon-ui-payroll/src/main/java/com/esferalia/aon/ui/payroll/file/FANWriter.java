@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -67,9 +68,11 @@ import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class FANWriter {
 	
+	private final String FAN 				= "FAN";
+	private final String WINSUITE_VERSION 	= "71WSxxx";
 	private final String TESTING_CHECK		= "P";
 	/* Clave proporcionada por la seguridad social */
-	private final Integer SS_KEY			= 12345678;
+	private final Integer SS_KEY			= 99999999;
 	
 	private final String  VIRGULILLA = "~";
 	
@@ -108,7 +111,7 @@ public class FANWriter {
 		this.eti = eti;
 	}
 
-	public FileOutput createFAN(boolean testFile, List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
+	public FileOutput createFAN(List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
 		try {
 			ETI eti = createETIRecord( isFanTestEnvironmentActive(), list, liquidationType, year, startMonth, endMonth );
 			File file = File.createTempFile("temp", ".FAN");
@@ -182,7 +185,13 @@ public class FANWriter {
 			TRA tra = null;
 			for(ITransferObject to: list){
 				Contract contract = (Contract) to;
-				if(getSalary(contract)!=null && contract.getRegimeType()!=SSRegimeType.SELF_EMPLOYED){
+				Salary salary = null;
+				if(liquidationType==LiquidationType.L00){
+					salary = getSalary(contract, SalaryType.SALARY);
+				} else if(liquidationType==LiquidationType.L13){
+					salary = getSalary(contract, SalaryType.SETTLE);
+				}
+				if(salary!=null && contract.getRegimeType()!=SSRegimeType.SELF_EMPLOYED){
 					if(previousPerson==null || !previousPerson.equals(contract.getPerson().getId())){
 						tra = createTRARecord(contract, emp);
 						previousPerson = contract.getPerson().getId();
@@ -322,43 +331,47 @@ public class FANWriter {
 	private List<DAT> createDATRecords(Contract contract) throws ManagerBeanException {
 		List<DAT> datList = new LinkedList<DAT>();
 		
-		if(isLessThan7DaysContract(contract)){
-			datList.add(createDATRecord(contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract)));
-		} else {
-			datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
-		}
-		
-		// TODO comprobar que situaciones implican un nuevo segmento de tipo DAT
-		// TODO
-//		if(isPartialStrike(contract)){
-//			datList.add(createDATRecord(contract, autoComplete("H", 1, " ", true), getContractDaysOrHours(contract)));
-//		}
-		// TODO
-//		if(isMoonlighting(contract)){
-//			datList.add(createDATRecord(contract, autoComplete("P", 2, " ", true), getContractDaysOrHours(contract)));
-//		}
-		if(StringUtils.isNotBlank(getJournalReduction(contract))){
-			Integer itDays = getItDays(contract);
-			String code = getContractCode(contract).getValue();
-			if(!code.startsWith("1") && !code.startsWith("4")){
-				String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-				Double dayHours = (Double.parseDouble(weekHours)/5);
-				itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
+		if(liquidationType==LiquidationType.L00){
+			if(isLessThan7DaysContract(contract)){
+				datList.add(createDATRecord(contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract)));
+			} else {
+				datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
 			}
-			datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays));
+			
+			// TODO comprobar que situaciones implican un nuevo segmento de tipo DAT
+			// TODO
+//			if(isPartialStrike(contract)){
+//				datList.add(createDATRecord(contract, autoComplete("H", 1, " ", true), getContractDaysOrHours(contract)));
+//			}
+			// TODO
+//			if(isMoonlighting(contract)){
+//				datList.add(createDATRecord(contract, autoComplete("P", 2, " ", true), getContractDaysOrHours(contract)));
+//			}
+			if(StringUtils.isNotBlank(getJournalReduction(contract))){
+				Integer itDays = getItDays(contract);
+				String code = getContractCode(contract).getValue();
+				if(!code.startsWith("1") && !code.startsWith("4")){
+					String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+					Double dayHours = (Double.parseDouble(weekHours)/5);
+					itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
+				}
+				datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays));
+			}
+			// TODO
+//			if(isMonthSalary(contract)){
+//				datList.add(createDATRecord(contract, autoComplete("M", 4, " ", true), getContractDaysOrHours(contract)));
+//			}
+			// TODO
+//			if(isNoRetributionDischarge(contract)){
+//				datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
+//			}
+			// TODO
+//			if(StringUtils.isNotBlank(getOthers(contract))){
+//				datList.add(createDATRecord(contract, autoComplete(getOthers(contract), 6, " ", true), getContractDaysOrHours(contract)));
+//			}
+		} else if(liquidationType==LiquidationType.L13){
+			datList.add(createDATRecord(contract, null, getNotEnjoyedVacationDays(contract)));
 		}
-		// TODO
-//		if(isMonthSalary(contract)){
-//			datList.add(createDATRecord(contract, autoComplete("M", 4, " ", true), getContractDaysOrHours(contract)));
-//		}
-		// TODO
-//		if(isNoRetributionDischarge(contract)){
-//			datList.add(createDATRecord(contract, autoComplete("A", 5, " ", true), getContractDaysOrHours(contract)));
-//		}
-		// TODO
-//		if(StringUtils.isNotBlank(getOthers(contract))){
-//			datList.add(createDATRecord(contract, autoComplete(getOthers(contract), 6, " ", true), getContractDaysOrHours(contract)));
-//		}
 		
 		return datList;
 	}
@@ -518,7 +531,12 @@ public class FANWriter {
 	}
 	
 	private void createEDLRecords(Contract contract, DAT dat) {
-		Salary salary = getSalary(contract);
+		Salary salary = null;
+	
+		if(liquidationType==LiquidationType.L00){
+			salary = getSalary(contract, SalaryType.SALARY);
+		
+		
 		if(salary!=null){
 				
 			List<ITransferObject> leaveList = getContractLeaves(contract, getStartDate(), getEndDate());
@@ -644,6 +662,15 @@ public class FANWriter {
 //		createEDLCd24Segment(salary, dat);
 //		createEDLCd26Segment(salary, dat);
 //		createEDLCd27Segment(salary, dat);
+		
+		} else if(liquidationType==LiquidationType.L13){
+			salary = getSalary(contract, SalaryType.SETTLE);
+			if(salary!=null){
+				createEDLBa01Segment(salary.getCommonBase(), dat);
+				createEDLBa02Segment(salary.getProfessionalBase(), dat);
+			}
+		}
+		
 	}
 	
 	////////////////////////
@@ -1160,7 +1187,7 @@ public class FANWriter {
 	private String getQuoteIndicator(Contract contract) {
 		// TODO 
 		String code = getContractCode(contract).getValue();
-		if(code.startsWith("2") || code.startsWith("5")){
+		if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 			if( StringUtils.isNotBlank(weekHours) ){
 				return "H";
@@ -1215,7 +1242,7 @@ public class FANWriter {
 			} else {
 				return 30;
 			}
-		} else if(code.startsWith("2") || code.startsWith("5")){
+		} else if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 			Double dayHours = (Double.parseDouble(weekHours)/7);
 			
@@ -1242,6 +1269,11 @@ public class FANWriter {
 		}
 		return null;
 		
+	}
+	
+	private Integer getNotEnjoyedVacationDays(Contract contract) {
+		String days = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
+		return (int) NumberUtils.toDouble(days);
 	}
 	
 	private long getAvailableDays(Date start, Date end) {
@@ -1438,7 +1470,14 @@ public class FANWriter {
 		for(ITransferObject to: contractList){
 			Contract c = (Contract) to;
 		
-			if(getSalary(c)!=null){
+			Salary salary = null;
+			if(liquidationType==LiquidationType.L00){
+				salary = getSalary(c, SalaryType.SALARY);
+			} else if(liquidationType==LiquidationType.L13){
+				salary = getSalary(c, SalaryType.SETTLE);
+			}
+			
+			if( salary!=null ){
 				
 				createEDTBa01Segment(emp);
 				createEDTBa02Segment(emp);
@@ -1591,7 +1630,7 @@ public class FANWriter {
 		Integer amount = 0; 
 		amount += (emp.getEdt().containsKey("EDTCA30")&&emp.getEdtSegment("EDTCA30").getImporte()!=null?emp.getEdtSegment("EDTCA30").getImporte():0); 
 		amount -= (emp.getEdt().containsKey("EDTCD03")?emp.getEdtSegment("EDTCD03").getImporte():0);
-		if(amount != 0){
+//		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTTT20");
 			edt.setTipoElemento("TT");
 			edt.setClave(20);
@@ -1602,7 +1641,7 @@ public class FANWriter {
 			edt.setParteDecimalFactorTipo(0);
 			edt.setImporte(amount);
 			edt.setSigno(amount<0?"-":" ");
-		}
+//		}
 	}
 	/**
 	 * 10 Liquido contingencias generales
@@ -1742,6 +1781,12 @@ public class FANWriter {
 	}
 	private Double obtainOtherEnterpriseTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
@@ -1750,7 +1795,8 @@ public class FANWriter {
 			select += " WHERE type in (" + DeductionType.UNEMPLOYMENT.ordinal() + ", " + DeductionType.JOB_TRAINING.ordinal() + ", " + DeductionType.FOGASA.ordinal() + ")";
 			select += " AND salary in (";
 			select += "SELECT id FROM salary WHERE domain = " + ccc.getDomain()
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND type = " + salaryType.ordinal() + ""
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -1766,6 +1812,12 @@ public class FANWriter {
 	
 	private Double obtainOtherEmployeeTotal(EnterpriseCCC ccc)  throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
@@ -1775,7 +1827,8 @@ public class FANWriter {
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'"
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND type = " + salaryType.ordinal() + ""
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -1819,6 +1872,12 @@ public class FANWriter {
 	}
 	private Double obtainImsTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
@@ -1829,7 +1888,8 @@ public class FANWriter {
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'"
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND type = " + salaryType.ordinal() + ""
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -1872,6 +1932,12 @@ public class FANWriter {
 	}
 	private Double obtainITTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
@@ -1881,7 +1947,8 @@ public class FANWriter {
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'" 
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND type = " + salaryType.ordinal() + "" 
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -1902,7 +1969,7 @@ public class FANWriter {
 		Integer amount = 0;
 		amount += emp.getEdt().containsKey("EDTCA31")?emp.getEdtSegment("EDTCA31").getImporte():0;
 		amount += emp.getEdt().containsKey("EDTCA32")?emp.getEdtSegment("EDTCA32").getImporte():0;
-		if(amount != 0){
+//		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCA30");
 			edt.setTipoElemento("CA");
 			edt.setClave(30);
@@ -1910,7 +1977,7 @@ public class FANWriter {
 			edt.setBase(null);
 			edt.setImporte(amount);
 			edt.setSigno(" ");
-		}
+//		}
 	}
 	/**
 	 *  TODO 22 Suma de compensaciones y reducciones
@@ -2000,7 +2067,7 @@ public class FANWriter {
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'"
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -2060,6 +2127,12 @@ public class FANWriter {
 	
 	private Double obtainCGCTotalEnterprise(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
@@ -2070,7 +2143,8 @@ public class FANWriter {
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'"
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND type = " + salaryType.ordinal() + ""
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -2085,6 +2159,12 @@ public class FANWriter {
 	}
 	private Double obtainCGCTotalEmployee(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		SalaryType salaryType = null;
+		if(liquidationType==LiquidationType.L00){
+			salaryType = SalaryType.SALARY;
+		} else if(liquidationType==LiquidationType.L13){
+			salaryType = SalaryType.SETTLE;
+		}
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
@@ -2094,7 +2174,8 @@ public class FANWriter {
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain() 
 					+ " AND ccc = '" + ccc.getCcc() + "'"
-					+ " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND type = " + salaryType.ordinal() + ""
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
 			select += " );";
 			
@@ -2853,7 +2934,8 @@ public class FANWriter {
 		return null;
 	}
 	
-	private Salary getSalary(Contract c) {
+	
+	private Salary getSalary(Contract c, SalaryType salaryType) {
 		Calendar startCal = Calendar.getInstance();
 		Calendar endCal = Calendar.getInstance();
 		startCal.set(Calendar.YEAR, year);
@@ -2868,8 +2950,8 @@ public class FANWriter {
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), c.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), salaryType);
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), startCal.getTime());
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){

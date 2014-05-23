@@ -71,7 +71,7 @@ public class FanBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((FanBatch)this.getTo()).getOutcomeFileSize()>0;
+		return this.getTo()!=null && (((FanBatch)this.getTo()).getOutcomeFileSize()!=null && ((FanBatch)this.getTo()).getOutcomeFileSize()>0);
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -131,15 +131,17 @@ public class FanBatchController extends BasicController {
 			if(this.isNew()){
 				getNewBatchWizard().accept(event);
 			}
+			
 			FanBatch batch = (FanBatch) getTo();
 			FANWriter fanWriter = new FANWriter();
-			File file = fanWriter.createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
+			File file = fanWriter.createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
 			if (file != null) {
 				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
 				batch.setOutcomeFileDate(new Date());
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
+			
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error generating FAN file");
 			AonUtil.addErrorMessage(e.getMessage());
@@ -263,6 +265,16 @@ public class FanBatchController extends BasicController {
 		
 		private DataModel selectedModel;
 		
+		private LiquidationType[] liquidationTypes;
+		
+		public LiquidationType[] getLiquidationTypes() {
+			return liquidationTypes;
+		}
+
+		public void setLiquidationTypes(LiquidationType[] liquidationTypes) {
+			this.liquidationTypes = liquidationTypes;
+		}
+
 		public boolean isNew(){
 			return true;
 		}

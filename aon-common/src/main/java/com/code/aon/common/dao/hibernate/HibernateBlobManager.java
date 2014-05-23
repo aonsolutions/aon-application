@@ -136,7 +136,7 @@ public class HibernateBlobManager implements IBlobManager {
 			pstmt = connection.prepareStatement(query.toString());
 			for(int i = 0; i < properties.length; i++) {
 				Integer size = getPropertySize(bo, properties[i]);
-				if ( size > 0 ) {
+				if ( (size != null) && (size > 0) ) {
 					byte[] data = getProperty(bo, properties[i]);
 					pstmt.setBytes(i+1, data);
 				} else {

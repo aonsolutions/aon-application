@@ -31,10 +31,10 @@
 			<ui:define name="batchContent" >
 				<aon:panelGrid id="info-panel" columns="4" styleClass="aon-width-all"
 					columnClasses="
-					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-150,
-					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto
+					aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-250,
+					aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto
 					" >
-					<aon:outputLabel value="#{bundle.fanBatch_liquidation_period}" />
+					<aon:outputLabel value="#{bundle.aon_period}" />
 					<aon:div>
 						<h:panelGrid columns="2" rendered="#{!fanBatch.recorded}">
 							<aon:selectOneMenu id="FanBatch_month" value="#{fanBatch.to.month}" >
@@ -50,10 +50,9 @@
 						</aon:outputText>
 					</aon:div>
 					
-					<aon:outputLabel value="#{bundle.fanBatch_liquidation_type}" />
+					<aon:outputLabel value="#{bundle.aon_type}" />
 					<aon:div>
 						<aon:selectOneMenu id="FanBatch_liquidationType" value="#{fanBatch.to.liquidationType}"
-							disabled="#{true}" 
 							rendered="#{!fanBatch.recorded}" >
 							<f:selectItems value="#{payrollCollections.liquidationTypes}"  />
 						</aon:selectOneMenu>
@@ -66,21 +65,20 @@
 			
 				<aon:panelGrid id="actions-panel" columns="2" styleClass="aon-width-all"
 					columnClasses="
-					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
+					aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto,
 					" >
-					<aon:outputText value="#{bundle.finance_disk} FAN" />
+					<aon:outputText value="#{bundle.finance_disk}" />
 					<aon:div>
 						<aon:commandButton id="fan-create-button" value="#{bundle.payroll_create_disk}"
 							rendered="#{fanBatch.new or (!fanBatch.recorded and fanBatchDetail.model.rowCount > 0)}"
 							reRender="batchForm"
-							styleClass="aon-icon-commandButton aon-icon-accept"
+							styleClass="aon-commandButton"
 							actionListener="#{fanBatch.onCreateDisk}"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
 
 						<aon:outputText value="Generado el "
-							rendered="#{fanBatch.recorded}"
-							styleClass="aon-bold" />
+							rendered="#{fanBatch.recorded}" />
 						<aon:outputText value="#{fanBatch.to.outcomeFileDate}"
 							rendered="#{fanBatch.recorded}"
 							styleClass="aon-bold aon-margin-right" >

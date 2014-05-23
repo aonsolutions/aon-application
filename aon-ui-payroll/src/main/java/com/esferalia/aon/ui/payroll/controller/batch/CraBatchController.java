@@ -61,7 +61,7 @@ public class CraBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((CraBatch)this.getTo()).getOutcomeFileSize()>0;
+		return this.getTo()!=null && ((CraBatch)this.getTo()).getOutcomeFileSize()!=null && ((CraBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {

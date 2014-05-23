@@ -63,7 +63,7 @@ public class ContractBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((ContractBatch)this.getTo()).getOutcomeFileSize()>0;
+		return this.getTo()!=null && ((ContractBatch)this.getTo()).getOutcomeFileSize()!=null && ((ContractBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
