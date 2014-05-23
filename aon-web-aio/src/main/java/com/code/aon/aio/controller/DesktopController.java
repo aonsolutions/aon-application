@@ -51,6 +51,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ActionSource;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.BasicOption;
 import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
@@ -85,7 +86,6 @@ public class DesktopController {
 	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
 	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";
-	private static final String NEW_COMPANY_TEMPLATE = "/com/code/aon/ui/company/facelet/company/form.xhtml";
 	private static final String PASSWORD_EXPIRED_TEMPLATE = "/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml";
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 	
@@ -93,7 +93,7 @@ public class DesktopController {
     
     private NoticeInfo noticeInfo;
     private TaskInfo taskInfo;
-    private IOption homepagOption;
+    private IOption initOption;
     private boolean adminDomain;
     private boolean supportEnabled;
     private boolean patchInitAction;
@@ -192,9 +192,7 @@ public class DesktopController {
 
 	private void initUser() {
 		User user = UserUtils.getInstance().getLoggedUser();
-		if ( user.getInitAction() != null ) {
-			setupInitAction(user.getInitAction());
-		}
+		setupInitAction(user);
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		if (! StringUtils.isEmpty(user.getLocale()) ) {
 			for( LocaleElement element : cc.getLocales() ) {
@@ -221,11 +219,11 @@ public class DesktopController {
 	
 	private String getHomepage() {
 		String value = HOMEPAGE_DESKTOP;
-		if ( this.homepagOption!=null && !patchInitAction ) {
-			for( ActionSource as : this.homepagOption.getActionSources() ) {
+		if ( this.initOption!=null && !patchInitAction ) {
+			for( ActionSource as : this.initOption.getActionSources() ) {
 				as.execute();
 			}
-			value = this.homepagOption.getViewId();
+			value = this.initOption.getViewId();
 			resetHomepage();		
 		}
 		return value;
@@ -241,13 +239,8 @@ public class DesktopController {
 	}
 	
 	public String getViewId() {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		if ( !hasCompany(controller) ) {
-			controller.onLoad(false);
-			controller.setHideHeaderContent(true);
-			return NEW_COMPANY_TEMPLATE;
-		}
 		if ( UserUtils.getInstance().isPasswordExpired() ) {
+			CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 			controller.setHideHeaderContent(true);
 			return PASSWORD_EXPIRED_TEMPLATE;
 		}
@@ -257,7 +250,7 @@ public class DesktopController {
 	public String getTemplate() {
 		if ( adminDomain ) {
 			return ADMIN_TEMPLATE;
-		} else if ( homepagOption!=null && patchInitAction ) {
+		} else if ( initOption!=null && patchInitAction ) {
 			return INIT_ACTION_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
@@ -446,25 +439,30 @@ public class DesktopController {
 		}
     }
 	
-	private void setupInitAction( String action ) {
-		if (! StringUtils.isEmpty(action) ) {
-			this.homepagOption = getOption(action);	
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			String value = ctx.getExternalContext().getInitParameter(PATCH_INIT_ACTION);
-			this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
+	private void setupInitAction( User user ) {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		if ( !hasCompany(controller) ) {
+			controller.onLoad(false);
+			controller.setHideHeaderContent(true);
+			this.initOption = new BasicOption(COMPANY_CONTROLLER_NAME, COMPANY_CONTROLLER_NAME);
+		} else if (! StringUtils.isEmpty(user.getInitAction()) ) {
+			this.initOption = getOption(user.getInitAction());	
 		}
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String value = ctx.getExternalContext().getInitParameter(PATCH_INIT_ACTION);
+		this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 	
 	public String getInitActionTemplate() throws IOException {
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 		String template = aoc.getTemplate(IAuditConstants.INIT_ACTION_TEMPLATE, 
-				IAuditConstants.OPTION_VM, this.homepagOption);
+				IAuditConstants.OPTION_VM, this.initOption);
 		resetHomepage();
 		return template;
 	}		
 
 	private void initPortal( DomainSwitcher ds ) {
-		if ( ds.isChildDomain() && this.homepagOption!=null ) {
+		if ( ds.isChildDomain() && this.initOption!=null ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			List<Module> modules = adc.getVisibleModules();
 			if ( modules.size()==1 && modules.get(0)==Module.PAYROLL_PORTAL ) {
@@ -486,7 +484,7 @@ public class DesktopController {
 		Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
 		Boolean value = (Boolean) properties.get( ICommonConstants.HIDE_MENU_HOME );
 		if ( value != Boolean.TRUE ) {
-			this.homepagOption = null;	
+			this.initOption = null;	
 		}
 	}
 

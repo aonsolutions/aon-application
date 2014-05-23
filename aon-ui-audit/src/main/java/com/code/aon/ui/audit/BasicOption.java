@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.ui.audit.controller.MenuParser;
 import com.code.aon.ui.util.AonUtil;
 
 public class BasicOption implements Serializable, IOption {
@@ -35,6 +36,17 @@ public class BasicOption implements Serializable, IOption {
 	
 	public BasicOption() {
 		this.actionSources = new LinkedList<ActionSource>();
+	}
+	
+	public BasicOption( String id, String action ) {
+		this();
+		setId(id);
+		setAction(action);
+		StringBuffer sb = new StringBuffer();
+		sb.append('<').append(MenuParser.A4J_COMMAND_LINK).append(' ');
+		sb.append(MenuParser.ID_ATTRIBUTE).append("=\"").append(ID_PATTERN).append("\" ");		
+		sb.append(MenuParser.ACTION_ATTRIBUTE).append("=\"").append(action).append("\"/>");
+		setXml(sb.toString());
 	}
 	
 	public List<ActionSource> getActionSources() {
