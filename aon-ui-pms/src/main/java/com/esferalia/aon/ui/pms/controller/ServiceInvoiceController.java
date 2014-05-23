@@ -58,8 +58,9 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.sql.ISQLConstants;
 
-public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer {
+public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer, ISQLConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoiceController.class);
 
