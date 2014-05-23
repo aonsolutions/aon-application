@@ -425,6 +425,6 @@ public class Tooltip extends DecoratedPopupPanel {
 	}
 	
 	public int getDischargeCause() {
-		return typeDischargeListBox.getSelectedIndex();
+		return typeDischargeListBox.getSelectedIndex() - 1;
 	}
 }
