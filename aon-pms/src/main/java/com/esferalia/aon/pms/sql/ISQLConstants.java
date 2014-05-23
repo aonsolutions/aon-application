@@ -18,6 +18,8 @@ public interface ISQLConstants {
 	String RESERVATION = "reservation";
 	String RESERVATION_ROOM = "reservationRoom";
 	String RESERVATION_ROOM_DETAIL = "reservationRoomDetail";
+	String ASSET_ACTIVITY = "assetActivity";
+	String ASSET = "asset";
 
 	String RESERVATION_HOTEL = "reservationHotel";
 	String CODE = "code";

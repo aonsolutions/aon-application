@@ -4,6 +4,10 @@ import static com.code.aon.ui.common.ICommonMessages.PMS_DAMAGES;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DEPOSITS;
 import static com.code.aon.ui.common.ICommonMessages.PMS_SERVICES;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,14 +23,18 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.asset.Asset;
+import com.code.aon.asset.AssetActivity;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -53,12 +61,14 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.sql.ISQLConstants;
+import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer, ISQLConstants {
 	
@@ -217,28 +227,84 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	public List<SelectItem> getRoomList() throws ManagerBeanException {
 		List<SelectItem> roomList = new LinkedList<SelectItem>();
 		if (getReservationInvoiceTo().getHotel() != null) {
-			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
-			Criteria criteria = new Criteria();
-			String alias = null;
-			if (getProjectReservation() != null & getProjectReservation().getId() != null) {
-				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
-				criteria.addEqualExpression(alias, getProjectReservation().getId());
-				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
-				criteria.addEqualExpression(alias, DateUtils.addDays(getProjectReservation().getEndDate(),-1));
-			} else {
-				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID);
-				criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getId());
-				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
-				criteria.addEqualExpression(alias, getReservationInvoiceTo().getIssueDate());
-			}
-			criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
-			for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
-				ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)ito;
-				SelectItem selectItem = new SelectItem(reservationRoomDetail, reservationRoomDetail.getRoom().getAsset().getName());
-				roomList.add(selectItem);
+			Connection connection = null;
+			PreparedStatement roomStmt = null;
+			ResultSet roomRs = null;
+			try {
+				connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				roomStmt = connection.prepareStatement(getRoomListSQL(getProjectReservation()));
+				SQLUtils.setInt(roomStmt, 1, getReservationInvoiceTo().getHotel().getId());
+				SQLUtils.setDate(roomStmt, 2, getReservationInvoiceTo().getIssueDate());
+				roomRs = roomStmt.executeQuery();
+				while (roomRs.next()) {
+					int reservationRoomDetailId = roomRs.getInt(RESERVATION_ROOM_DETAIL);
+					int domain = roomRs.getInt(DOMAIN);
+					int reservationRoomId = roomRs.getInt(RESERVATION_ROOM);
+					int reservationId = roomRs.getInt(RESERVATION);
+					int assetActivityId = roomRs.getInt(ASSET_ACTIVITY);
+					Date stayDate = roomRs.getDate(STAY_DATE);
+					int assetId = roomRs.getInt(ASSET);
+					String roomNumber = roomRs.getString(ROOM_NUMBER);
+
+					ProjectReservation reservation = new ProjectReservation();
+					reservation.setId(reservationId);
+					ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
+					reservationRoom.setId(reservationRoomId);
+					reservationRoom.setProjectReservation(reservation);
+					Asset asset = new Asset();
+					asset.setId(assetId);
+					asset.setName(roomNumber);
+					AssetActivity assetActivity = new AssetActivity();
+					assetActivity.setId(assetActivityId);
+					assetActivity.setDate(stayDate);
+					assetActivity.setAsset(asset); 
+
+					ProjectReservationRoomDetail reservationRoomDetail = new ProjectReservationRoomDetail();
+					reservationRoomDetail.setId(reservationRoomDetailId);
+					reservationRoomDetail.setDomain(domain);
+					reservationRoomDetail.setProjectReservationRoom(reservationRoom);
+					reservationRoomDetail.setAssetActivity(assetActivity);
+
+					SelectItem selectItem = new SelectItem(reservationRoomDetail, reservationRoomDetail.getRoom().getAsset().getName());
+					roomList.add(selectItem);
+				}
+			} catch (Throwable e) {
+				try {
+					connection.rollback();
+				} catch (SQLException ex) {
+				}
+				throw new ManagerBeanException(e.getMessage());
+			} finally {
+				SQLUtils.closeQuietly(roomRs);
+				SQLUtils.closeQuietly(roomStmt);
+				SQLUtils.closeQuietly(connection);
 			}
 		}
 		return roomList;
+	}
+
+	private String getRoomListSQL(ProjectReservation reservation) throws ManagerBeanException {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT PRRD.id AS " + RESERVATION_ROOM_DETAIL + ", PRRD.domain AS " + DOMAIN);
+		stmt.append(", PRR.id AS " + RESERVATION_ROOM + ", PRR.project_reservation AS " + RESERVATION); 
+		stmt.append(", AA.id AS " + ASSET_ACTIVITY + ", AA.date AS " + STAY_DATE);
+		stmt.append(", A.id AS " + ASSET + ", A.name AS " + ROOM_NUMBER);
+		stmt.append(" FROM booking AS B, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD");
+		stmt.append(", asset_activity AS AA, asset AS A");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
+		stmt.append(" AND B.hotel = ?");
+		stmt.append(" AND B.stay_date = ?");
+		stmt.append(" AND B.project_reservation_room = PRR.id");
+		if (reservation != null && reservation.getId() != null) {
+			stmt.append(" AND PRR.project_reservation = " + reservation.getId());
+		}
+		stmt.append(" AND PRR.id = PRRD.project_reservation_room");
+		stmt.append(" AND PRRD.asset_activity = AA.id");
+		stmt.append(" AND B.stay_date = AA.date");
+		stmt.append(" AND AA.asset = A.id");
+		stmt.append(" ORDER BY A.name");
+
+		return stmt.toString();
 	}
 
 	public void onInvoiceRoomChanged(ValueChangeEvent event) throws ManagerBeanException {
