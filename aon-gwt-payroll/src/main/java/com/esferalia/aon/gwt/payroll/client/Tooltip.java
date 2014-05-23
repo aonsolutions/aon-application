@@ -102,6 +102,8 @@ public class Tooltip extends DecoratedPopupPanel {
 	@UiField Label typeLeave;
 	@UiField Label endDate;
 	@UiField Label typeDischarge;
+	
+	private final String ACTIVE = "Activo";
 
 	private Date startContract;
 	private Date endContract;
@@ -131,8 +133,6 @@ public class Tooltip extends DecoratedPopupPanel {
 		fromDateBox.setWidth("6em");
 
 		setAutoHideEnabled(true);
-		
-		acceptButton.setVisible(false);
 
 	}
 
@@ -162,7 +162,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		typeDischarge.setVisible(false);
 		
 		startDateLabel.setText("Fecha");
-		startLeaveDateBox.setValue(getStartContract());
+		
 		causeStartLabel.setText("Motivo");
 		typeLeaveListBox.setItemSelected(0, true);
 
@@ -205,6 +205,9 @@ public class Tooltip extends DecoratedPopupPanel {
 		endDate.setVisible(false);
 		typeDischarge.setVisible(false);
 		
+		startLeaveDateBox.getTextBox().setReadOnly(true);
+		fromDateBox.getTextBox().setReadOnly(true);
+		
 		startDateLabel.setText("Fecha");
 		startLeaveDateBox.setValue(getStartContract());
 		causeStartLabel.setText("Motivo");
@@ -233,6 +236,8 @@ public class Tooltip extends DecoratedPopupPanel {
 		
 		startDate.setText(workPeriodLabel.getText());
 		endDate.setText(typeDischargeListBox.getItemText(getDischargeCause()));
+		
+		acceptButton.setVisible(false);
 		
 		showToolTip(clientX, clientY);
 		
@@ -274,39 +279,25 @@ public class Tooltip extends DecoratedPopupPanel {
 	@UiHandler("startLeaveDateBox")
 	void onValueChangeStartDateBox(ValueChangeEvent<Date> event) {
 
-		if (event.getValue().before(contractStartDate)) {
-			Window.alert("Comienzo de " + statusLabel.getText() + " - "
-					+ AON.DATE_FORMAT.format(contractStartDate));
-			startLeaveDateBox.setValue(new Date());
-		}
-
-		if (getFromDateBoxValue() != null
-				&& getStartDateBoxValue().after(getFromDateBoxValue())) {
-
-			Window.alert("Rango de fechas incorrectas");
-			startLeaveDateBox.setValue(getStartContract());
-			fromDateBox.setValue(getEndContract());
-		}
 	}
 
 	@UiHandler("fromDateBox")
 	void onValueChangeFromDateBox(ValueChangeEvent<Date> event) {
 
-		if (event.getValue().before(getStartDateBoxValue())) {
-			Window.alert("La fecha de alta no puede ser menor que la de baja.");
-			startLeaveDateBox.setValue(getStartContract());
-			fromDateBox.setValue(getEndContract());
-		}
 	}
 
 	private boolean accept = false;
 
 	@UiHandler("acceptButton")
 	void onAcceptClick(ClickEvent event) {
-
-		if (typeLeaveListBox.getSelectedIndex() > 0
-				&& typeDischargeListBox.getSelectedIndex() > 0) {
-
+		
+		if(startLeaveDateBox.getValue() == null) {
+			startLeaveDateBox.setFocus(true);
+		}
+		else if(typeLeaveListBox.getSelectedIndex() == 0) {
+			typeLeaveListBox.setFocus(true);
+		}
+		else {
 			accept = true;
 			hide();
 		}
@@ -322,13 +313,20 @@ public class Tooltip extends DecoratedPopupPanel {
 	}
 
 	public int getTypeLeaveListBox() {
+		
+		//Because my firts position is '-'
 
-		return typeLeaveListBox.getSelectedIndex();
+		return typeLeaveListBox.getSelectedIndex() - 1;
 	}
 
 	public int getTypeDischargeListBox() {
-
-		return typeDischargeListBox.getSelectedIndex();
+		
+		if(typeDischargeListBox.getSelectedIndex() == 0) {
+			return -1;
+		}
+		else {
+			return typeDischargeListBox.getSelectedIndex() - 1;
+		}		
 	}
 
 	public Date getStartDateBoxValue() {
@@ -381,12 +379,6 @@ public class Tooltip extends DecoratedPopupPanel {
 
 		this.startContract = start;
 		this.endContract = finish;
-		
-		startLeaveDateBox.setValue(start);
-		
-		if(endContract != null) {
-			fromDateBox.setValue(endContract);
-		}
 
 		int days = DateUtils.getDaysBetween(start, (finish == null ? new Date()
 				: finish)) + 1;

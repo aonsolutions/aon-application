@@ -581,18 +581,23 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 					if(tooltip.isAccept()) {						
 						
 						Date leaveStartDate = tooltip.getStartDateBoxValue();
-						Date leaveEndDate = DateUtils.getLastDayOfWorkWeek(leaveStartDate);
-					//	int leaveType = tooltip.getTypeListBox() - 1;
+						Date leaveEndDate = tooltip.getFromDateBoxValue();
 						
-						int contractId = data.getContractId(posColumn, posCell);
-					
+						try {
+							if(leaveEndDate == null) {
+								leaveEndDate = data.getStartDate(posColumn, posCell + 1);
+							}
+						}catch(Exception ex) {}
+						
+						int leaveType = tooltip.getTypeLeaveListBox();						
+						int contractId = data.getContractId(posColumn, posCell);						
 						
 						decremental = decremental - 1;
 						ITDataPerson dataPerson = new ITDataPerson();
 						dataPerson.setContractId(contractId);
 						dataPerson.setContractLeaveId(decremental);
-					//	dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, leaveType));
-						dataPerson.setDischarge_cause(-1);
+						dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, leaveType));
+						dataPerson.setDischarge_cause(tooltip.getTypeDischargeListBox());
 						dataPerson.setLeaveStartDate(leaveStartDate);
 						dataPerson.setLeaveEndDate(leaveEndDate);
 						
@@ -630,6 +635,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 					
 					try {						
 				
+						int leaveType = tooltip.getTypeLeaveListBox();
 						
 						int contractId = data.getContractId(posColumn, posCell);													
 						int leaveId = data.getContractLeaveId(posColumn, posCell);
@@ -637,8 +643,8 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						Date leaveEndDate = tooltip.getFromDateBoxValue();
 						Date leaveStartDate = tooltip.getStartDateBoxValue();
 						
-						//Because the first position is '-'						
-				//		int dischargeCause = tooltip.getTypeListBox() + 1;
+										
+						int dischargeCause = tooltip.getDischargeCause();
 						
 						ITDataPerson dataPerson = new ITDataPerson();
 						
@@ -646,8 +652,8 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						dataPerson.setContractLeaveId(leaveId);
 						dataPerson.setLeaveStartDate(leaveStartDate);
 						dataPerson.setLeaveEndDate(leaveEndDate);
-					//	dataPerson.setDischarge_cause(dischargeCause);
-						dataPerson.setType(itData.getDataIts(contractId).get(leaveId).getType());
+						dataPerson.setDischarge_cause(dischargeCause);
+						dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, leaveType));
 						
 						itData.updateItem(dataPerson);
 											
