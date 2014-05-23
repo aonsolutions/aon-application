@@ -97,10 +97,17 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	@UiField
 	InlineLabel daysLabel;
-
+	
+	@UiField Label startDate;
+	@UiField Label typeLeave;
+	@UiField Label endDate;
+	@UiField Label typeDischarge;
 
 	private Date startContract;
 	private Date endContract;
+	
+	private String formatStartDate;
+	private String formatEndDate;
 
 	/**
 	 * 0 - contract active 1 - contract ended 2 - leave active 3 - leave ended
@@ -149,6 +156,11 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	public void showContractActiveTooltip(final int clientX, final int clientY) {
 
+		startDate.setVisible(false);
+		typeLeave.setVisible(false);
+		endDate.setVisible(false);
+		typeDischarge.setVisible(false);
+		
 		startDateLabel.setText("Fecha");
 		startLeaveDateBox.setValue(getStartContract());
 		causeStartLabel.setText("Motivo");
@@ -162,6 +174,11 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	}	
 	public void showContractEndedTooltip(final int clientX, final int clientY) {
+		
+		startDate.setVisible(false);
+		typeLeave.setVisible(false);
+		endDate.setVisible(false);
+		typeDischarge.setVisible(false);
 		
 		baja.setVisible(false);		
 		startDateLabel.setVisible(false);
@@ -183,6 +200,11 @@ public class Tooltip extends DecoratedPopupPanel {
 	
 	public void showLeaveActiveTooltip(final int clientX, final int clientY) {
 		
+		startDate.setVisible(false);
+		typeLeave.setVisible(false);
+		endDate.setVisible(false);
+		typeDischarge.setVisible(false);
+		
 		startDateLabel.setText("Fecha");
 		startLeaveDateBox.setValue(getStartContract());
 		causeStartLabel.setText("Motivo");
@@ -192,13 +214,27 @@ public class Tooltip extends DecoratedPopupPanel {
 		fromDateBox.setValue(getEndContract());
 		causeEndLabel.setText("Motivo");
 		
-		showToolTip(clientX, clientY);
-		
-		
+		showToolTip(clientX, clientY);		
 	}
 	
 	public void showLeaveEndedTooltip(final int clientX, final int clientY) {
 		
+		workPeriodLabel.setVisible(false);
+		startDateLabel.setVisible(false);
+		startLeaveDateBox.setVisible(false);
+		typeLeaveListBox.setVisible(false);
+		typeDischargeListBox.setVisible(false);
+		fromDateBox.setVisible(false);
+		
+		causeStartLabel.setVisible(false);
+		typeLeave.setVisible(false);
+		causeEndLabel.setVisible(false);
+		typeDischarge.setVisible(false);
+		
+		startDate.setText(workPeriodLabel.getText());
+		endDate.setText(typeDischargeListBox.getItemText(getDischargeCause()));
+		
+		showToolTip(clientX, clientY);
 		
 	}
 
@@ -335,6 +371,9 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	public void setWorkPeriod(String pStartDate, String pEndDate) {
 
+		formatStartDate = pStartDate;
+		formatEndDate = pEndDate;
+		
 		workPeriodLabel.setText(pStartDate + " - " + pEndDate);
 	}
 
@@ -391,5 +430,9 @@ public class Tooltip extends DecoratedPopupPanel {
 		}
 		
 		typeDischargeListBox.setItemSelected(pDischargeCause, true);
+	}
+	
+	public int getDischargeCause() {
+		return typeDischargeListBox.getSelectedIndex();
 	}
 }

@@ -61,7 +61,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	private static int selectedYear;
 
 
-	interface CustomStyle extends CssResource {
+	interface Style extends CssResource {
 
 		@ClassName("legend-icon")
 		String legendIcon();
@@ -78,7 +78,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
-	CustomStyle style;
+	Style style;
 	
 	@UiField
 	Button saveButton;
@@ -143,7 +143,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		
 	}
 	
-	 private class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler,
+	 class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler,
 	 ScrollHandler{
 
 		 public MouseEventsHandlers(TimeLineChart timelineChart) {
@@ -151,6 +151,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 			 timelineChart.addContextMenuHandler(this);
 			 timelineChart.addScrollHandler(this);
 		}
+		 
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
 			
@@ -542,16 +543,16 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 			
 		switch (typeTooltip) {
 		case 0:
-			showContractActiveTooltip(tooltip, mouseClientX, mouseClientY);
+			this.showContractActiveTooltip(tooltip, mouseClientX, mouseClientY);
 			break;
 		case 1:
-			showContractEndedTooltip(tooltip, mouseClientX, mouseClientY);
+			this.showContractEndedTooltip(tooltip, mouseClientX, mouseClientY);
 			break;
 		case 2:
-			showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
+			this.showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
 			break;
-		case 3:
-			showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
+		case 3:		
+			this.showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
 		default:
 			break;
 				
@@ -560,10 +561,15 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	
 	private int decremental = 0;
 	
+	protected void showLeaveEndedTooltip(Tooltip tooltip,
+			final int clientX, final int clientY) {
+		tooltip.showLeaveEndedTooltip(clientX, clientY);	
+	}
+	
 	protected void showContractActiveTooltip(final Tooltip tooltip, 
 			final int clientX, final int clientY) {
 		
-		tooltip.showContractActiveTooltip(mouseClientX, mouseClientY);
+		tooltip.showContractActiveTooltip(clientX, clientY);
 		
 		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
 			
@@ -652,9 +658,9 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 					}						
 				}			
 			}
-		});
-		
-	}
+		});		
+	}	
+	
 	// TODO: To EnumUtils ???
 		public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass, Integer ordinal) {
 			if ( ordinal == null )

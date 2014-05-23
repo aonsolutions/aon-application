@@ -58,14 +58,14 @@
 				</td>
 				<td>
 					<datepicker:DateBox ui:field="startLeaveDateBox" />
-					
+					<g:Label ui:field="startDate"></g:Label>
 				</td>
 				<td>
 					<g:InlineLabel ui:field="causeStartLabel">Motivo</g:InlineLabel>
 				</td>
 				<td>
 					<g:ListBox width="10em" ui:field='typeLeaveListBox' />
-					
+					<g:Label ui:field="typeLeave"></g:Label>
 				</td>
 			</tr>
 			<tr>
@@ -77,13 +77,15 @@
 				</td>
 				<td>
 					<datepicker:DateBox ui:field="fromDateBox" />
+					<g:Label ui:field="endDate"></g:Label>
 					
 				</td>
 				<td>
 					<g:InlineLabel ui:field="causeEndLabel">Motivo</g:InlineLabel>
 				</td>
 				<td>
-					<g:ListBox width="10em" ui:field='typeDischargeListBox' />				
+					<g:ListBox width="10em" ui:field='typeDischargeListBox' />
+					<g:Label ui:field="typeDischarge"></g:Label>				
 				</td>
 			</tr>
 			<tr>

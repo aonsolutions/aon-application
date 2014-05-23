@@ -132,9 +132,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 			
 			@Override
 			protected void showLeaveActiveTooltip(Tooltip tooltip,
-					int clientX, int clientY) {
-				showContractEndedTooltip(tooltip, clientX, clientY);
+					final int clientX, final int clientY) {
+				showLeaveEndedTooltip(tooltip, clientX, clientY);
 			}
+			
 			
 			@Override
 			protected boolean isLeaveEmployee(String pElement) {
