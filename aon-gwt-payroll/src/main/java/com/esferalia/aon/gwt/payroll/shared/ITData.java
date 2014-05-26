@@ -2,68 +2,189 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-public class ITData implements Serializable {
+public class ITData implements Serializable{
 
 	private static final long serialVersionUID = -8223289513867055037L;
-
+	
 	/**
 	 * key: contractId
 	 */
-	private Map<Integer, Employee> employees;
-	
+	private Map<Integer, Employee> employees;	
 
 	/**
-	 * key: person registry
-	 */
-	private Map<Integer, LinkedList<ITDataPerson>> its;
+	 * MapKey: contract id
+	 * LinkedHashMap Key: contract leave id
+	 */	
 	
-
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> dataIts;
+	
+	private Map<Integer, ITDataPerson> add;
+	private Map<Integer, ITDataPerson> update;
+	private Map<Integer, ITDataPerson> remove;
+	
 	private List<Integer> contracts;
+	
+	public static class UnmodifiableEmployee extends Employee {
+
+		public UnmodifiableEmployee() {
+			
+		}		
+		public UnmodifiableEmployee(Employee employee) {
+			
+			super.setPerson(employee.getPerson());
+			super.setId(employee.getId());
+			super.setDocument(employee.getDocument());
+			super.setName(employee.getName());
+			super.setFirstSurname(employee.getFirstSurname());
+			super.setSecondSurName(employee.getSecondSurName());
+			super.setSocialSecurity(employee.getSocialSecurity());
+			super.setStartDate(employee.getStartDate());
+			super.setEndDate(employee.getEndDate());
+			
+		}
+		
+		@Override
+		public void setPerson(int personId) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setId(int id) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setDocument(String document) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setName(String name) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setFirstSurname(String firstSurname) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setSecondSurName(String secondSurName) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setSocialSecurity(String pSocialSecurity) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setStartDate(Date startDate) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setEndDate(Date endDate) {
+			throw new UnsupportedOperationException();
+		}		
+	}
+
+	public static class UnmodifiableITDataPerson extends ITDataPerson {
+
+		public UnmodifiableITDataPerson() {
+			
+		}
+
+		public UnmodifiableITDataPerson(ITDataPerson itDataPerson) {
+			
+			super.setContractLeaveId(itDataPerson.getContractLeaveId());
+			super.setContractId(itDataPerson.getContractId());
+			super.setLeaveStartDate(itDataPerson.getLeaveStartDate());
+			super.setLeaveEndDate(itDataPerson.getLeaveEndDate());
+			super.setType(itDataPerson.getType());
+			super.setDischarge_cause(itDataPerson.getDischarge_cause());
+		}
+		
+		@Override
+		public void setContractLeaveId(int pContractLeaveId) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setContractId(int contractId) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setLeaveStartDate(Date start_date) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setLeaveEndDate(Date end_date) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setType(Type type) {
+			throw new UnsupportedOperationException();
+		}
+		
+		@Override
+		public void setDischarge_cause(int discharge_cause) {
+			throw new UnsupportedOperationException();
+		}
+	}	
 
 	public ITData() {
 		
-		employees = new LinkedHashMap<Integer, Employee>();
-		
-		its = new TreeMap<Integer, LinkedList<ITDataPerson>>();
-		
+		employees = new LinkedHashMap<Integer, Employee>();				
+		dataIts = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();		
 		contracts = new ArrayList<Integer>();
+		
+		
 	}
 
 	public void setEmployee(int pKey, Employee pEmployee) {
-		employees.put(pKey, pEmployee);
+		employees.put(pKey, new UnmodifiableEmployee(pEmployee));
 	}
 
 	public Map<Integer, Employee> getEmployees() {
-		return employees;
-	}
-
-	public Map<Integer, LinkedList<ITDataPerson>> getIts() {
-		return its;
-	}
-
-	public List<ITDataPerson> getITDataPerson(int pKey) {
-
-		if (!its.containsKey(pKey)) {
-			its.put(pKey, new LinkedList<ITDataPerson>());
-		}
-		return its.get(pKey);
-	}
-
-	public void setITDataPerson(int pKey, ITDataPerson pDataPerson) {
-
-		if (!its.containsKey(pKey)) {
-			its.put(pKey, new LinkedList<ITDataPerson>());
-		}
-		its.get(pKey).add(pDataPerson);
+		return Collections.unmodifiableMap(employees);
 	}
 	
+	public void setITData(int contractId, int contractLeaveId, 
+			ITDataPerson itDataPerson) {
+		
+		if(dataIts.containsKey(contractId) == false) {	
+			
+			dataIts.put(contractId, new LinkedHashMap<Integer, ITDataPerson>());
+		}
+		
+		dataIts.get(contractId).put(contractLeaveId, new UnmodifiableITDataPerson(itDataPerson));
+		
+	}
+	
+	public Map<Integer, ITDataPerson> getDataIts(int contractId) {
+		
+		if(dataIts.containsKey(contractId) == false) {	
+			
+			dataIts.put(contractId, new LinkedHashMap<Integer, ITDataPerson>());
+		}
+		
+		return Collections.unmodifiableMap(dataIts.get(contractId));
+		
+	}
+
 	public void yearsExistContracts(Date pMin, Date pMax) {
 		contracts.clear();
 		int inicio = DateUtils.getYear(pMin);
@@ -83,5 +204,57 @@ public class ITData implements Serializable {
 	public List<Integer> getYears() {
 		return contracts;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void addLeaveItem(ITDataPerson itDataPerson) {	
+		
+		add = dataIts.get(itDataPerson.getContractId());		
+		add.put(itDataPerson.getContractLeaveId(), itDataPerson);
+		
+		sortMap(add);
+		
+	}
+	
+	public void removeLeaveItem(ITDataPerson itDataPerson) {
+		
+		remove = dataIts.get(itDataPerson.getContractId());
+		remove.remove(itDataPerson.getContractLeaveId());
+		
+		sortMap(remove);
+			
+	}
+	
+	public void updateItem(ITDataPerson itDataPerson) {
+		
+		int contractId = itDataPerson.getContractId();
+		int leaveId = itDataPerson.getContractLeaveId();
+		
+		update = dataIts.get(contractId);		
+		update.put(leaveId, itDataPerson);
+		sortMap(update);	
+	}
+	
+	private void sortMap(Map<Integer, ITDataPerson> map) {
+		
+		List<ITDataPerson> sortedList = new LinkedList<ITDataPerson>();
+		Iterator it = map.entrySet().iterator();
+		
+		while(it.hasNext()) {
+			
+			Map.Entry<Integer, ITDataPerson> e = (Map.Entry<Integer, ITDataPerson>) it.next();
+			sortedList.add(e.getValue());		
+		}
+		
+		Collections.sort(sortedList);
+		
+		map.clear();
+		
+		for(int x = 0; x<sortedList.size(); x++) {
+			
+			map.put(sortedList.get(x).getContractLeaveId(), sortedList.get(x));
+		}
+			
+	}
 
+	
 }

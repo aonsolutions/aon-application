@@ -9,6 +9,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -19,6 +20,18 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		checkQuantities();
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		checkQuantities();
+	}
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		SalesDetailController controller = (SalesDetailController)event.getController();
@@ -53,6 +66,17 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 		Projection projection = Projection.max(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
 		Object value = salesDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
+	}
+	
+	private void checkQuantities() throws ControllerListenerException {
+		Sales sales = (Sales) ((LinesController)this.getController()).getMasterController().getTo();
+		SalesDetail salesDetail = (SalesDetail) this.getController().getTo();
+		if (salesDetail.getQuantity() < 0 && !sales.isItemReturn()) {
+			throw new ControllerListenerException("La cantidad no puede ser negativa.");
+		}
+		if (salesDetail.getQuantity() > 0 && sales.isItemReturn()) {
+			throw new ControllerListenerException("La cantidad debe ser negativa.");
+		}
 	}
 
 }

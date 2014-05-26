@@ -1,12 +1,15 @@
 package com.code.aon.registry;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -15,15 +18,20 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.IBlobManager;
+import com.code.aon.common.IBlobObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.common.dao.hibernate.BlobEntityListener;
+import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
 import com.code.aon.ql.Criteria;
@@ -33,19 +41,39 @@ import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 @Entity
 @Table(name="rattach")
 @Heritable(force=true)
-public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment,IScopable {
+@EntityListeners(BlobEntityListener.class)
+public class RegistryAttachment extends RegistryAttachmentDB implements IAttachment,IScopable, IBlobObject {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<RegistryAttachmentTag> tags = new HashSet<RegistryAttachmentTag>();
 	
+	private byte[] data;
+	
 	private Integer size;
+	
+	private String MD5;
 
     public RegistryAttachment() {
     	setSecurityLevel( SecurityLevel.OFFICIAL );
     }
 
-	@Formula("LENGTH(data)")
+    @Transient
+	@Column(name="data")
+	public byte[] getData() {
+    	if ( data != null ) {
+    		return data;
+    	}
+		return getManager().getBlob(this, DATA_PROPERTY);
+	}
+
+	public void setData(byte[] data) {
+		this.data = data;
+		setSize(ArrayUtils.getLength(data));
+		setMD5(DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data)));			
+	}
+    
+	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;
 	}
@@ -56,7 +84,7 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	
 	@Transient
 	public String getSizeToDisplay() {
-		return FileUtils.byteCountToDisplaySize(ArrayUtils.getLength(getData()));
+		return FileUtils.byteCountToDisplaySize(getSize()!=null?getSize():0);
 	}
 
 	@Override
@@ -91,17 +119,50 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 		this.tags = tags;
 	}
 	
-	@Transient
+	@Formula("MD5(data)")	
 	public String getMD5() {
-		if ( getData() != null ) {
-			return DigestUtils.md5Hex(getData());	
-		}
-		return null;
+		return MD5;
 	}
 
+	public void setMD5(String mD5) {
+		MD5 = mD5;
+	}
+	
 	@Transient
 	public String getDownloadURL() {
 		return "/aonDocuments/" + getId() + "-" + getMD5();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.appendSuper(super.hashCode())
+			.append(size)
+			.append(MD5)
+			.toHashCode();
+	}   	
+	
+	@Override
+	@Transient
+	public String[] getBlobProperties() {
+		return DATA_BLOB_PROPERTIES;
+	}
+
+	@Override
+	@Transient
+	public Serializable getReference() {
+		return getId();
+	}
+
+	@Override
+	@Transient
+	public IBlobManager getManager() {
+		return HibernateBlobManager.getInstance();
+	}
+
+	@Override
+	public void reset() {
+		this.data = null;
 	}
 	
 }

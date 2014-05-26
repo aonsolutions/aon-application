@@ -81,7 +81,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>webPageResource</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>WebInfoPageResource_content</value>

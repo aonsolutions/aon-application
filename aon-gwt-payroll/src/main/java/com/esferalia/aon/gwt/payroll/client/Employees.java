@@ -271,17 +271,16 @@ public class Employees extends ResizeComposite implements
 
 				final EventsDraftObject eventsDraftObject;
 
-				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
-						"DESEMPE\u00D1O",
-						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
-						"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
-						"B", "P", "AI", "M");
 				if (Enterprise.isGPS(enterprise))
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService,
-							fteMetaData,
+							new EnumEventMetaData("DESEMPE\u00D1O",
+									"DESEMPE\u00D1O",
+									"Desempe\u00F1o por Trabajador y Jornada", "", "4",
+									"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
+									"B", "P", "AI", "M"),
 							new DecimalEventMetaData("INCENTIVOS"),
 							new DecimalEventMetaData("ATRASOS"),
 							new DecimalEventMetaData("ANTICIPOS"),
@@ -293,14 +292,11 @@ public class Employees extends ResizeComposite implements
 							new DecimalEventMetaData("CD",
 									"Coste Diario del trabajador (jornada 8 horas)"),
 							new ConstantEventMetaData("CFT",
-									"Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
-							new BooleanEventMetaData("LTNR",
-									"D\u00EDas Libres Trabajados No Recuperables"),
+									"Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0 )"),
+							new BooleanEventMetaData("LTR",
+									"D\u00EDas Libres Trabajados Recuperables"),
 							new DecimalEventMetaData("HFD",
-									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-							new EventMetaData("OBSERVACIONES"),
-							new ConstantEventMetaData("PLUS_TURNICIDAD",
-									"Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
+									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"));
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),

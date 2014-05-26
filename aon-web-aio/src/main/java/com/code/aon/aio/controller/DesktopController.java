@@ -47,12 +47,12 @@ public class DesktopController implements Serializable {
 	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
 	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";
-	private static final String NEW_COMPANY_TEMPLATE = "/com/code/aon/ui/company/facelet/company/form.xhtml";
 	private static final String PASSWORD_EXPIRED_TEMPLATE = "/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml";
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 	
 	private DesktopState state;
+	private Boolean logEnabled;
 	
     public DesktopState getState() {
     	if ( state == null ) {
@@ -60,7 +60,6 @@ public class DesktopController implements Serializable {
     	}
     	return state;
 	}
-	private Boolean logEnabled;
     
 	public DataModel getRecentNoteModel() {
     	return getState().getRecentNoteModel();
@@ -90,33 +89,19 @@ public class DesktopController implements Serializable {
 
 	private String getHomepage() {
 		String value = HOMEPAGE_DESKTOP;
-		if ( getState().getHomepagOption()!=null && !getState().isPatchInitAction() ) {
-			for( ActionSource as : getState().getHomepagOption().getActionSources() ) {
+		if ( getState().getInitOption()!=null && !getState().isPatchInitAction() ) {
+			for( ActionSource as : getState().getInitOption().getActionSources() ) {
 				as.execute();
 			}
-			value = getState().getHomepagOption().getViewId();
+			value = getState().getInitOption().getViewId();
 			resetHomepage();		
 		}
 		return value;
 	}
 	
-	private boolean hasCompany(CompanyController controller) {
-		try {
-			return controller.getModel().getRowCount() > 0;
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return false;
-	}
-	
 	public String getViewId() {
-		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		if ( !hasCompany(controller) ) {
-			controller.onLoad(false);
-			controller.setHideHeaderContent(true);
-			return NEW_COMPANY_TEMPLATE;
-		}
 		if ( UserUtils.getInstance().isPasswordExpired() ) {
+			CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 			controller.setHideHeaderContent(true);
 			return PASSWORD_EXPIRED_TEMPLATE;
 		}
@@ -126,7 +111,7 @@ public class DesktopController implements Serializable {
 	public String getTemplate() {
 		if ( getState().isAdminDomain() ) {
 			return ADMIN_TEMPLATE;
-		} else if ( getState().getHomepagOption()!=null && getState().isPatchInitAction() ) {
+		} else if ( getState().getInitOption()!=null && getState().isPatchInitAction() ) {
 			return INIT_ACTION_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
@@ -182,7 +167,7 @@ public class DesktopController implements Serializable {
 	public String getInitActionTemplate() throws IOException {
 		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 		String template = aoc.getTemplate(IAuditConstants.INIT_ACTION_TEMPLATE, 
-				IAuditConstants.OPTION_VM, getState().getHomepagOption());
+				IAuditConstants.OPTION_VM, getState().getInitOption());
 		resetHomepage();
 		return template;
 	}		
@@ -191,7 +176,7 @@ public class DesktopController implements Serializable {
 		Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
 		Boolean value = (Boolean) properties.get( ICommonConstants.HIDE_MENU_HOME );
 		if ( value != Boolean.TRUE ) {
-			getState().setHomepagOption(null);	
+			getState().setInitOption(null);	
 		}
 	}
 

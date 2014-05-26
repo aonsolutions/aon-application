@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -67,6 +68,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("employee.png")
 		ImageResource employee();
+		
+		@Source("card.png")
+		ImageResource card();
 
 		@Source("agreement.png")
 		ImageResource agreement();
@@ -119,7 +123,25 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		cost = new Cost();
 		salary = new Salary();
 		stats = new Statistics();
-		it = new ITEditor();
+		it = new ITEditor(){
+			@Override
+			protected void showContractActiveTooltip(Tooltip tooltip,
+					int clientX, int clientY) {
+				showContractEndedTooltip(tooltip, clientX, clientY);
+			}
+			
+			@Override
+			protected void showLeaveActiveTooltip(Tooltip tooltip,
+					final int clientX, final int clientY) {
+				showLeaveEndedTooltip(tooltip, clientX, clientY);
+			}
+			
+			
+			@Override
+			protected boolean isLeaveEmployee(String pElement) {
+				return false;
+			}
+		};
 		salary.hideDeleteButton();
 		documents = new Documents();
 		employees.addListener(this);

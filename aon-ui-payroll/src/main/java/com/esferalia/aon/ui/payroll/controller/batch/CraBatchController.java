@@ -65,7 +65,7 @@ public class CraBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((CraBatch)this.getTo()).getOutcomeFile()!=null;
+		return this.getTo()!=null && ((CraBatch)this.getTo()).getOutcomeFileSize()!=null && ((CraBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -154,10 +154,11 @@ public class CraBatchController extends BasicController {
         	Date date = batch.getDate();
         	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
     		String name = formatter.format(date);
-        	int size = batch.getOutcomeFile().length;
+    		byte[] data = batch.getOutcomeFile();
+        	int size = data.length;
 			response = DownloadUtil.getResponse();
     		out = DownloadUtil.initDownload(response, name+".CRA", null, size);
-        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(batch.getOutcomeFile()) );
+        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
         	IOUtils.copy( fileIn, out );
         	IOUtils.closeQuietly(fileIn);
 		} catch (Throwable e) {

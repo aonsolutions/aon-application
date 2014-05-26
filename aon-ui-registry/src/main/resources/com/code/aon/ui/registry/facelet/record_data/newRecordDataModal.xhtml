@@ -32,13 +32,13 @@
 					<aon:div id="attachmentGrid">
 						<a4j:region>
 							<aon:commandLink styleClass="aon-icon aon-icon-delete"
-								rendered="#{recordDataController.attachAvailable}" reRender="attachmentGrid"
+								rendered="#{recordDataController.aonFile.size &gt; 0}" reRender="attachmentGrid"
 								actionListener="#{recordDataController.onAttachRemove}"
 								title="#{bundle.aon_fileupload_remove}">
 								<aon:outputText value="&#160;" />
 							</aon:commandLink>
 							<a4j:htmlCommandLink target="_blank"
-								rendered="#{recordDataController.attachAvailable}"
+								rendered="#{recordDataController.aonFile.size &gt; 0}"
 								actionListener="#{recordDataController.downloadAttachment}"
 								styleClass="aon-icon aon-icon-mail-save"
 								title="#{bundle.aon_fileupload_download}">

@@ -23,6 +23,7 @@
 	<ui:include
 		src="/com/code/aon/ui/registry/facelet/registry/formDocument.xhtml" >
 		<ui:param name="registry" value="#{controller.to}" />
+		<ui:param name="pojoName" value="#{controller.pojoShortName}"/>
 	</ui:include>	
 
 	<aon:outputLabel for="Company_address"
@@ -68,6 +69,7 @@
 			value="#{controller.mainAddress.geozone}"
 			styleClass="aon-margin-left aon-form-selectOneMenu-field"
 			valueChangeListener="#{controller.addressChanged}">
+			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{geozoneCollections.geoTrees}" />
 			<a4j:support event="onchange" reRender="Company_address_municipality" ajaxSingle="true" />
 		</aon:selectOneMenu>

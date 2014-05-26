@@ -316,8 +316,9 @@ public class CertificadosController implements ISepeHandler, Serializable {
 	
 	@Override
 	public void onDownloadSepeXml(ActionEvent event){
-		InputStream in = new ByteArrayInputStream(getGeneratedFile().getData());
-		long size = ArrayUtils.getLength(getGeneratedFile().getData());
+		byte[] data = getGeneratedFile().getData();
+		InputStream in = new ByteArrayInputStream(data);
+		long size = ArrayUtils.getLength(data);
 		DownloadUtil.downloadAttachment("certificado-"+"NO_DESCRIPTION", MimeType.MIME_XML, in, size);
 	}
 

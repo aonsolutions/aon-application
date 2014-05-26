@@ -8,7 +8,8 @@
 	
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>
-	
+	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>
+		
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />
 	<!-- English language, independent of country -->

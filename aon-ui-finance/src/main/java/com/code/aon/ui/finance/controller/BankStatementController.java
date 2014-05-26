@@ -5,7 +5,6 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHECK_NO_LINE_SELEC
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND;
 import static com.code.aon.ui.common.ICommonMessages.PENDING;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -44,6 +43,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
@@ -488,10 +488,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void fileUploaded(UploadEvent event) {
-		AonFile aonFile = new AonFile();
-		aonFile.setFile(event.getUploadItem().getFile());
-		aonFile.setFileName(event.getUploadItem().getFileName());
-		setAonFile(aonFile);
+		setAonFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	public void onImportFile(ActionEvent event) {
@@ -530,7 +527,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	private void importAeb43(int lotNumber) throws ManagerBeanException, IOException {
 		BankStatement bankStatement = null;
-		LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(getAonFile().getFile())));
+		LineNumberReader reader = new LineNumberReader(new InputStreamReader(getAonFile().openStream()));
 		String line = reader.readLine();
 		while (line != null) {
 			String lineType = line.substring(0, 2);
@@ -601,7 +598,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void importCsv(int lotNumber) throws ManagerBeanException, IOException {
-		LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(getAonFile().getFile())));
+		LineNumberReader reader = new LineNumberReader(new InputStreamReader(getAonFile().openStream()));
 		String line = reader.readLine();
 		while (line != null) {
 			importCsvData(line, lotNumber);

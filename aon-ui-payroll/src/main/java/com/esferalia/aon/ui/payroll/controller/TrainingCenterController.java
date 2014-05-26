@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.io.IOUtils;
@@ -23,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -134,6 +136,9 @@ public class TrainingCenterController extends RegistryController {
 	 *            the file
 	 */
 	public void setLogoFile(AonFile logoFile) {
+		if ( this.logoFile != null ) {
+			this.logoFile.clean();	
+		}				
 		this.logoFile = logoFile;
 	}
 
@@ -153,6 +158,9 @@ public class TrainingCenterController extends RegistryController {
 	 *            the file
 	 */
 	public void setSignatureFile(AonFile signatureFile) {
+		if ( this.signatureFile != null ) {
+			this.signatureFile.clean();	
+		}				
 		this.signatureFile = signatureFile;
 	}
 	
@@ -358,39 +366,11 @@ public class TrainingCenterController extends RegistryController {
 	}
 
 	public void logoFileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setLogoFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setLogoFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	public void signatureFileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setSignatureFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setSignatureFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	/**
@@ -399,7 +379,7 @@ public class TrainingCenterController extends RegistryController {
 	 * @throws IOException
 	 */
 	public void createCurrentLogoContent(OutputStream out, Object data) throws IOException {
-		if (getLogoFile() != null && getLogoFile().getData() != null) {
+		if (getLogoFile() != null && (getLogoFile().getSize() > 0)) {
 			out.write(getLogoFile().getData());
 		}
 	}
@@ -410,7 +390,7 @@ public class TrainingCenterController extends RegistryController {
 	 * @throws IOException
 	 */
 	public void createCurrentSignatureContent(OutputStream out, Object data) throws IOException {
-		if (getSignatureFile() != null && getSignatureFile().getData() != null) {
+		if (getSignatureFile() != null && (getSignatureFile().getSize()>0)) {
 			out.write(getSignatureFile().getData());
 		}
 	}
@@ -511,5 +491,11 @@ public class TrainingCenterController extends RegistryController {
 		}
 		return null;
 	}
-	
+
+	@Override
+	public void onCancel(ActionEvent event) {
+		super.onCancel(event);
+		setLogoFile(null);
+		setSignatureFile(null);
+	}	
 }

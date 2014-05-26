@@ -1,9 +1,6 @@
 package com.code.aon.ui.dbutils.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.List;
@@ -11,17 +8,15 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
 import com.code.aon.dbutils.AonSQLScript;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
@@ -37,25 +32,14 @@ public class SQLScriptController implements Serializable {
 	}
 
 	public void setAonFile(AonFile aonFile) {
+		if ( this.aonFile != null ) {
+			this.aonFile.clean();
+		}
 		this.aonFile = aonFile;
 	}
 
 	public void fileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setAonFile(AttachmentUtil.fileUploaded(event));
 	}
 
 	public void fileDeleted(AonFile aonFile) {

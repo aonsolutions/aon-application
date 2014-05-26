@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.mvel2.util.MethodStub;
 
@@ -38,6 +39,24 @@ public class ContextFunctions {
 	private static final String _OLD = "_OLD";
 	private static final String _GROSS = "_BRUTO";
 	private static final String MONTHS_IMPL = "MESESIMPL";
+
+	public static class UselessGuaranteeException extends CheckException {
+
+		private static Locale ES = new Locale("es", "ES");
+
+		private static String EQ_MSG = "Garantizado sin efecto. El importe de los conceptos garantizados (%,.2f) es igual para los per\u00EDodos con I.T que sin ella.";
+		private static String ER_MSG = "Garantizado sin efecto. El importe de los conceptos garantizados es mayor para los per\u00EDodos con I.T (%,.2f) que sin ella (%,.2f).";
+
+		public UselessGuaranteeException(double amount) {
+			super(String.format(ES, EQ_MSG,amount));
+		}
+
+		public UselessGuaranteeException(double amount, double amountIt) {
+			super(String.format(ES, ER_MSG,amountIt, amount));
+		}
+
+
+	}
 
 	public static enum Years {
 		ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5), SIX(6), SEVEN(7);
@@ -309,7 +328,6 @@ public class ContextFunctions {
 		return null;
 	}
 
-
 	// ------------------------------------------------------------------------
 	// Private methods
 	// ------------------------------------------------------------------------
@@ -495,7 +513,6 @@ public class ContextFunctions {
 		}
 	}
 
-
 	public static void loadFunctions(ExpressionContext context, Date startDate,
 			Date endDate) throws ExpressionException {
 		loadCheckFunction(context, startDate, endDate);
@@ -507,6 +524,5 @@ public class ContextFunctions {
 		loadExcessFunction(context, startDate, endDate);
 		loadSeniorityFunction(context, startDate, endDate);
 	}
-
 
 }

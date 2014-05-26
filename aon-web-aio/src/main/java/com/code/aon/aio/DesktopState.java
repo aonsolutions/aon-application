@@ -1,6 +1,7 @@
 package com.code.aon.aio;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.Serializable;
@@ -47,6 +48,7 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.BasicOption;
 import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
@@ -57,6 +59,7 @@ import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -84,7 +87,7 @@ public class DesktopState implements Serializable {
     private DataModel recentNoteModel;
     private NoticeInfo noticeInfo;
     private TaskInfo taskInfo;
-    private IOption homepagOption;
+    private IOption initOption;
     private boolean adminDomain;
     private boolean supportEnabled;
     private boolean patchInitAction;
@@ -143,21 +146,33 @@ public class DesktopState implements Serializable {
 		}
 		return null;
 	}
-	
-	private void setupInitAction( String action ) {
-		if (! StringUtils.isEmpty(action) ) {
-			this.homepagOption = getOption(action);	
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			String value = ctx.getExternalContext().getInitParameter(PATCH_INIT_ACTION);
-			this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
+
+	private boolean hasCompany(CompanyController controller) {
+		try {
+			return controller.getModel().getRowCount() > 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
 		}
+		return false;
+	}	
+	
+	private void setupInitAction( User user ) {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		if ( !hasCompany(controller) ) {
+			controller.onLoad(false);
+			controller.setHideHeaderContent(true);
+			this.initOption = new BasicOption(COMPANY_CONTROLLER_NAME, COMPANY_CONTROLLER_NAME);
+		} else if (! StringUtils.isEmpty(user.getInitAction()) ) {
+			this.initOption = getOption(user.getInitAction());	
+		}
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String value = ctx.getExternalContext().getInitParameter(PATCH_INIT_ACTION);
+		this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 	
 	private void initUser() {
 		User user = UserUtils.getInstance().getLoggedUser();
-		if ( user.getInitAction() != null ) {
-			setupInitAction(user.getInitAction());
-		}
+		setupInitAction(user);
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		if (! StringUtils.isEmpty(user.getLocale()) ) {
 			for( LocaleElement element : cc.getLocales() ) {
@@ -197,7 +212,7 @@ public class DesktopState implements Serializable {
 	}	
 
 	private void initPortal( DomainSwitcher ds ) {
-		if ( ds.isChildDomain() && this.homepagOption!=null ) {
+		if ( ds.isChildDomain() && this.initOption!=null ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			List<Module> modules = adc.getVisibleModules();
 			if ( modules.size()==1 && modules.get(0)==Module.PAYROLL_PORTAL ) {
@@ -376,12 +391,12 @@ public class DesktopState implements Serializable {
 		this.recentNoteModel = recentNoteModel;
 	}
 
-	public IOption getHomepagOption() {
-		return homepagOption;
+	public IOption getInitOption() {
+		return initOption;
 	}
 
-	public void setHomepagOption(IOption homepagOption) {
-		this.homepagOption = homepagOption;
+	public void setInitOption(IOption initOption) {
+		this.initOption = initOption;
 	}
 
 	public boolean isAdminDomain() {

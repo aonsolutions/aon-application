@@ -29,7 +29,6 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.RoomWorkPlanning;
 
-
 public class WorkPlanningController extends DataScrollerState implements ICollectionProvider {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

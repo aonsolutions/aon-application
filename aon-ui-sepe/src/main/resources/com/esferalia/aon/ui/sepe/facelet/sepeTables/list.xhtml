@@ -21,33 +21,14 @@
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
 				
-					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
-						<aon:div styleClass="aon-panelGrid-search-info">
-							<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
-						</aon:div>
-						<aon:panelGrid columns="1">
-							<aon:inputText id="sepeTablesFilter" size="150" value="#{sepeTables.tablesFilter}">
-								<a4j:support 
-									event="onkeyup"
-									actionListener="#{sepeTables.onInitTablesModels}"
-									reRender="sepeTablesTab"
-									eventsQueue="sepeTablesFilterKeyUp"
-									requestDelay="500"
-									ajaxSingle="true"
-									ignoreDupResponses="true"
-									limitToList="true"/>
-							</aon:inputText>
-						</aon:panelGrid>	
-					</aon:div>
-				
 					<aon:panelTabSet id="sepeTablesTab" selectedTab="#{sepeTables.selectedTab}">
 						
-						<ui:include template="/com/esferalia/aon/ui/sepe/facelet/sepeTables/list_contrataTab.xhtml" >
+						<ui:include src="/com/esferalia/aon/ui/sepe/facelet/sepeTables/list_contrataTab.xhtml" >
 							<ui:param name="controller" value="#{sepeTables}" />
 							<ui:param name="listAction" value="sepeCodes_list" />
 						</ui:include>
 						
-						<ui:include template="/com/esferalia/aon/ui/sepe/facelet/sepeTables/list_certificadosTab.xhtml" >
+						<ui:include src="/com/esferalia/aon/ui/sepe/facelet/sepeTables/list_certificadosTab.xhtml" >
 							<ui:param name="controller" value="#{sepeTables}" />
 							<ui:param name="listAction" value="sepeCodes_list" />
 						</ui:include>

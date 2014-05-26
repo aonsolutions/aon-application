@@ -43,6 +43,15 @@
 											<f:setPropertyActionListener
 												target="#{contract.showContractEmbargoWindow}" value="#{false}" />
 										</aon:commandButton>
+										<aon:commandButton id="removeContractEmbargo" 
+											value="#{bundle.aon_remove}" 
+											rendered="#{!controller.new}"
+											reRender="showContractEmbargoWindow, #{reRender}"
+											actionListener="#{controller.onRemove}" 
+											styleClass="aon-finding-toolbar-item aon-icon-delete">
+											<f:setPropertyActionListener
+												target="#{contract.showContractEmbargoWindow}" value="#{false}" />
+										</aon:commandButton>
 										<aon:commandButton id="embargoCancel"
 											value="#{bundle.aon_cancel}"
 											reRender="showContractEmbargoWindow, #{reRender}"
@@ -55,12 +64,14 @@
 									</aon:div>
 
 									<aon:panelGrid id="embargoModalContent" columns="2" style="width: 100%;">
+										<!--  
 										<aon:outputLabel for="ContractEmbargo_embargableType" value="#{bundle.aon_type}" />
 										<aon:selectOneMenu id="ContractEmbargo_embargableType"
 											value="#{controller.to.embargableType}">
 											<f:selectItem value="#{null}" itemLabel=" - " />
 											<f:selectItems value="#{payrollCollections.embargableTypeList}"  />
 										</aon:selectOneMenu>	
+										-->
 									
 										<aon:outputLabel for="ContractEmbargo_startDate" value="#{bundle.aon_start_date}" />
 										<aon:selectInputDate id="ContractEmbargo_startDate" 
@@ -75,18 +86,32 @@
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"/>
 										
-										<aon:outputText value="#{bundle.aon_end_date}" 
-											rendered="#{controller.to.endDate!=null}" />
-										<aon:outputText value="#{controller.to.endDate}"
-											rendered="#{controller.to.endDate!=null}" >
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>  
-										
-										<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_amount}" />
+										<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_total} embargo" />
 										<aon:inputText id="ContractEmbargo_amount" required="#{true}"
 											size="20" maxlength="18"
-											value="#{controller.to.amount}" />
+											value="#{controller.to.amount}" >
+											<f:validateDoubleRange />
+										</aon:inputText>
+											
+										<aon:outputLabel for="ContractEmbargo_expression" value="#{bundle.aon_fee}" />
+										<aon:div id="ContractEmbargo_expression-div">
+											<aon:selectOneMenu id="ContractEmbargo_expression"
+												required="#{true}"
+												value="#{controller.to.fixedAmount}">
+												<f:selectItem itemValue="#{true}" itemLabel="Fija" />
+												<f:selectItem itemValue="#{false}" itemLabel="Máximo embargable" />
+												<a4j:support event="onchange" reRender="ContractEmbargo_expression-div" ajaxSingle="#{true}" />
+											</aon:selectOneMenu>
+											<aon:outputLabel for="ContractEmbargo_feeAmount" value="#{bundle.aon_amount} embargable:"
+												rendered="#{controller.to.fixedAmount}"
+												styleClass="aon-margin-right aon-margin-left" />
+											<aon:inputText id="ContractEmbargo_feeAmount" 
+												required="#{true}"
+												rendered="#{controller.to.fixedAmount}" size="10"
+												value="#{controller.to.fee}" maxlength="18" >
+												<f:validateDoubleRange />
+											</aon:inputText>
+										</aon:div>
 										
 										<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
 										<aon:inputText id="ContractEmbargo_description"

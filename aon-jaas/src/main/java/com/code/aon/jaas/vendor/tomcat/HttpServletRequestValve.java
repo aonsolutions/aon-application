@@ -2,6 +2,7 @@ package com.code.aon.jaas.vendor.tomcat;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.net.IDN;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +63,10 @@ public class HttpServletRequestValve extends ValveBase {
 
 	public static void setHttpServletRequest( HttpServletRequest request ) {
 		httpRequest.set(request);
+	}
+	
+	public static String getServerName() {
+		return IDN.toUnicode(getHttpServletRequest().getServerName());
 	}
 	
 }

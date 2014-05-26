@@ -10,7 +10,11 @@
 		<f:facet name ="header">
 			<aon:outputText value="#{bundle.payroll_salary_embargos_tab}" />
 		</f:facet>
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/grid.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/grid.xhtml" >
+			<ui:param name="skipSelectRow" value="#{true}" />
+			<ui:param name="skipResetButton" value="#{true}" />
+			<ui:param name="showDataScroller" value="#{false}" />
+		</ui:include>
 	</aon:panel>
 	
 </ui:composition>

@@ -67,7 +67,7 @@ public class LeaveBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((LeaveBatch)this.getTo()).getOutcomeFile()!=null;
+		return this.getTo()!=null && ((LeaveBatch)this.getTo()).getOutcomeFileSize()!=null && ((LeaveBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -163,10 +163,11 @@ public class LeaveBatchController extends BasicController {
         	Date date = batch.getDate();
         	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
     		String name = formatter.format(date);
-        	int size = batch.getOutcomeFile().length;
+    		byte[] data = batch.getOutcomeFile();
+        	int size = data.length;
 			response = DownloadUtil.getResponse();
     		out = DownloadUtil.initDownload(response, name+".FDI", null, size);
-        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(batch.getOutcomeFile()) );
+        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
         	IOUtils.copy( fileIn, out );
         	IOUtils.closeQuietly(fileIn);
 		} catch (Throwable e) {

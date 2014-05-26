@@ -54,6 +54,10 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
 				configuration.configure();
 			}
 	        configuration.setListener("pre-insert", new DomainEntityListener());
+			Object blobListener = new BlobEntityListener();
+	        configuration.setListener("post-commit-insert", blobListener);
+	        configuration.setListener("post-commit-update", blobListener);
+	        configuration.setListener("post-commit-delete", blobListener);
 	        updateConfiguration(configuration);
 			return configuration;
 		}

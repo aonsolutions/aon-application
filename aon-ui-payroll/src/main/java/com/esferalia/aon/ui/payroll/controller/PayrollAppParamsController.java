@@ -40,6 +40,7 @@ public class PayrollAppParamsController implements Serializable {
 
 	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
 	public final static String FAN_TEST_ENVIRONMENT_ACTIVE	= "PAY_fan_test_env_PAY";
+	public final static String AFI_TEST_ENVIRONMENT_ACTIVE	= "PAY_afi_test_env_PAY";
 	
 	public final static String REPORT_ADDITIONAL_SALAY_TEMPLATES 	= "PAY_REPORT_additional_salary_PAY";
 
@@ -47,6 +48,7 @@ public class PayrollAppParamsController implements Serializable {
 	private RegistryBank ssPaymentBankAccount;
 	private List<ContractCode> availableNewContracts;
 	private Boolean fanTestEnvironment;
+	private Boolean afiTestEnvironment;
 	
 	private Map<String, ApplicationParameter> parameters;
 	private Map<String, String> defaultParameters;
@@ -71,6 +73,29 @@ public class PayrollAppParamsController implements Serializable {
 				setFanTestEnvironment(new Boolean(getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).getValue()));
 			} else {
 				setFanTestEnvironment(true);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+
+	public Boolean getAfiTestEnvironment() {
+		if(afiTestEnvironment==null){
+			initAfiTestEnvironment();
+		}
+		return afiTestEnvironment;
+	}
+	
+	public void setAfiTestEnvironment(Boolean afiTestEnvironment) {
+		this.afiTestEnvironment = afiTestEnvironment;
+	}
+	
+	private void initAfiTestEnvironment() {
+		try {
+			if(getParameter(AFI_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
+				setAfiTestEnvironment(new Boolean(getParameter(AFI_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			} else {
+				setAfiTestEnvironment(true);
 			}
 		} catch (ManagerBeanException e) {
 			// NADA
@@ -293,6 +318,7 @@ public class PayrollAppParamsController implements Serializable {
 			getParameter(SS_MUTUAL_KEY).setValue(null);
 		}
 		getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).setValue(getFanTestEnvironment().toString());
+		getParameter(AFI_TEST_ENVIRONMENT_ACTIVE).setValue(getAfiTestEnvironment().toString());
 		
 	}
 

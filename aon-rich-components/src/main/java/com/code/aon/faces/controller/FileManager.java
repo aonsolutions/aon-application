@@ -234,12 +234,8 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 		this.currentFile = file;
 		this.aonFile = getAonFile(file);
 		if (! isImage() ) {
-			try {
-				byte[] data = this.aonFile.getOrReadData();
-				this.fileValue = new String(data);
-			} catch (IOException e) {
-				LOGGER.error( e.getMessage(), e );
-			}
+			byte[] data = this.aonFile.getData();
+			this.fileValue = new String(data);
 		}
 	}
 	
@@ -337,9 +333,8 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 	}
 
 	public void createImageContent(OutputStream out, Object data) throws IOException {
-		byte[] buffer = this.aonFile.getOrReadData();
-		if (! ArrayUtils.isEmpty(buffer) ) {
-			out.write(buffer);
+		if (this.aonFile.getSize() > 0) {
+			out.write(this.aonFile.getData());
 		}
 	}
 	

@@ -6,29 +6,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options;
-import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.BarLabelStyle;
-import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.RowLabelStyle;
-import com.esferalia.aon.gwt.payroll.client.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
+import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -38,6 +38,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractPager;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -57,6 +58,8 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 public class ITEditor extends AbstractPager implements RequiresResize {
 
 	private static final String ACTIVE = "Activo";
+	private static int selectedYear;
+
 
 	interface Style extends CssResource {
 
@@ -66,53 +69,19 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		@ClassName("legend-caption")
 		String legendCaption();
 		
-	}
+	}	
 	
 
 	interface Binder extends UiBinder<Widget, ITEditor> {
-	}
-
-	class ExpressionCallback extends Timer {	
-
-		@Override
-		public void run() {
-			container = nameEmployee.getText().toUpperCase();
-			
-			if (StringUtils.isEmpty(container)) {
-				//DEFAULT_INCREMENT = 50;
-				printTimelineChart(itData);
-			} else if (container.length() > 2) {
-				
-				printTimelineChart(itData);
-			}
-		}
-	}	
-	
-	
-	class TooltipCallBack extends Timer {
-
-		@Override
-		public void run() {
-			
-			if (cadenaTooltip.contains("axis")) {
-				// Click sobre el Mes. De momento no hago nada
-			}
-			if (cadenaTooltip.contains("\"vR\":")) {
-				// Click en tipo de contrato
-				tratarContrato(cadenaTooltip);
-			}
-			if (cadenaTooltip.contains("index")) {
-				// Click fuera del contrato
-				//tratarFueraContrato(cadenaTooltip);
-			}		
-		}
-		
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
 	Style style;
+	
+	@UiField
+	Button saveButton;
 	
 	@UiField
 	ScrollPanel scrollPanelTimeline;
@@ -132,17 +101,13 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	
 	
 	private static final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG);
-			//.getFormat("dd/MM/yyyy");
 	
-	//private static Map<Integer, String> employees;
 	private static LinkedList<LinkedList<Status>> myEmployees;
-	private int selectedYear;	
+		
 	private boolean finalizado;
 	private boolean ifNull; // Evitar el Null del Timeline
 	private Map<Integer, Employee> centineels;
 	private DataTableWrapper data;
-	
-	private EmployeeContextMenu menuEmployee;
 	
 	private MultiWordSuggestOracle names = new MultiWordSuggestOracle();	
 	
@@ -155,11 +120,14 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	
 	//private static int DEFAULT_INCREMENT = 50;	
 	
+	private PopupPanel popupPanel;
+	private MenuBar popupMenuBar;
+	
 	private Date startYear;
 	private Date endYear;
 
 	private com.esferalia.aon.gwt.payroll.shared.ITData itData;
-
+	
 	public ITEditor() {
 
 		nameEmployee = new SuggestBox(names);
@@ -170,9 +138,85 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		this.expressionCallback = new ExpressionCallback();
 		this.tooltipCallback = new TooltipCallBack();
 		
-		tooltip = new Tooltip();		
+		tooltip = new Tooltip();	
+		
 		
 	}
+	
+	 class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler,
+	 ScrollHandler{
+
+		 public MouseEventsHandlers(TimeLineChart timelineChart) {
+			 timelineChart.addMouseOverHandler(this);
+			 timelineChart.addContextMenuHandler(this);
+			 timelineChart.addScrollHandler(this);
+		}
+		 
+		@Override
+		public void onMouseOver(MouseOverEvent event) {
+			
+			try {
+				
+				Element el = Element
+						.as(event.getNativeEvent().getEventTarget());				
+				
+				mouseClientX = event.getClientX();				
+				mouseClientY = event.getClientY();				
+				cadenaTooltip = el.getPropertyJSO("logicalname").toString();
+				
+				if(tooltip.isShowing() == false) {
+					
+					evalTooltip();
+				}
+				
+			}catch(Throwable ex) {
+				
+			}finally {
+				event.stopPropagation();
+			}				
+			
+		}
+
+		@Override
+		public void onContextMenu(ContextMenuEvent event) {
+			
+			Element el = Element
+					.as(event.getNativeEvent().getEventTarget());
+			
+			String cadena = el.getPropertyJSO("logicalname").toString();
+			
+			try {
+				
+				if(isLeaveEmployee(cadena)) {
+					
+					popupPanel = new PopupPanel(true);
+					
+					
+					new LeaveContextMenu();
+						
+					popupPanel.setPopupPosition(event.getNativeEvent().getClientX(),
+								event.getNativeEvent().getClientY());	
+						
+					popupPanel.show();			
+					if ( tooltipCallback.isRunning() ) 
+						tooltipCallback.cancel(); 
+					
+				}				
+				
+			}catch(Exception ex) {
+				
+			}finally{
+				event.preventDefault();			
+				event.stopPropagation();
+				event.getNativeEvent();			
+			}			
+		}
+		@Override
+		public void onScroll(ScrollEvent event) {
+			// TODO Apéndice de método generado automáticamente
+			
+		}			
+	}		
 
 	@Override
 	public void setTitle(String title) {
@@ -193,14 +237,14 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	}
 
 	private void printTimelineChart(
-			final com.esferalia.aon.gwt.payroll.shared.ITData pITData) {
-		
-	
+			final com.esferalia.aon.gwt.payroll.shared.ITData pITData) {	
 		
 		Runnable onLoadCallback = new Runnable() {
 
 			public void run() {
+				
 				try {
+					
 					// Create a pie chart visualization.
 					AbstractDataTable dataTable = createTable(container);
 					Options options = createOptions(dataTable);
@@ -208,7 +252,10 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 					
 					if(ifNull == false) {
 						timelinePanel.setWidget(timelineChart);
-						loadTimelineEvents();
+					
+					  new MouseEventsHandlers(timelineChart);
+				
+						
 					}else {
 						timelinePanel.clear();
 					}					
@@ -223,195 +270,6 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				TimeLineChart.PACKAGE);
 	}
 	
-	private int mouseClientX;
-	private int mouseClientY;
-
-	private void loadTimelineEvents() {
-		
-		timelineChart.addScrollHandler(new ScrollHandler() {
-
-			int lastScrollPos = 0;
-
-			public void onScroll(ScrollEvent event) {
-
-				EventTarget target = event.getNativeEvent().getEventTarget();
-
-				Element el = Element.as(target);
-
-				int scrollPos = timelineChart.getVerticalScrollPosition(el);
-
-				if (lastScrollPos >= scrollPos) {
-					lastScrollPos = scrollPos;
-					return;
-				}
-
-				lastScrollPos = scrollPos;
-
-				int maxScrollPos = timelineChart
-						.getMaximumVerticalScrollPosition(el);
-
-				if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos
-						&& finalizado == false) {
-					Window.alert("Acercandose");
-					//DEFAULT_INCREMENT += 50;
-					//printTimelineChart(itData);
-
-				}
-			}
-		});
-
-		timelineChart.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				
-	
-			}
-		});
-		
-		timelineChart.addMouseMoveHandler(new MouseMoveHandler() {
-			
-			@Override
-			public void onMouseMove(MouseMoveEvent event) {
-				
-				Element el = Element
-						.as(event.getNativeEvent().getEventTarget());				
-				
-				mouseClientX = event.getClientX();				
-				mouseClientY = event.getClientY();				
-				cadenaTooltip = el.getPropertyJSO("logicalname").toString();
-				
-				if(tooltip.isShowing() == false) {
-					evalTooltip();
-				}
-				event.stopPropagation();
-				
-			}
-		});
-
-		timelineChart.addContextMenuHandler(new ContextMenuHandler() {
-
-			@Override
-			public void onContextMenu(ContextMenuEvent event) {
-
-				Element el = Element
-						.as(event.getNativeEvent().getEventTarget());
-				
-				String cadena = el.getPropertyJSO("logicalname").toString();
-				
-				if(cadena.contains("index")) {
-					//Click fuera del contrato
-					popupPanel = new PopupPanel(true);
-					menuEmployee = new EmployeeContextMenu();		
-					
-					
-					popupPanel.setPopupPosition(event.getNativeEvent().getClientX(),
-							event.getNativeEvent().getClientY());	
-					
-					popupPanel.show();
-					
-				}			
-				
-				event.preventDefault();			
-				event.stopPropagation();
-				event.getNativeEvent();
-				
-				
-			}
-		});
-	}
-	
-	private void evalTooltip() {
-		
-		tooltipCallback.cancel();
-		tooltipCallback.schedule(1000);	
-	}
-	
-
-	private void tratarContrato(String element) {
-		
-		int auxX = element.indexOf("vR\":") + 4;
-		int auxY = element.indexOf("uR\":") - 2;
-
-		int posColumn = Integer.parseInt(cadenaTooltip.substring(auxX, auxY));
-
-		auxX = element.indexOf("uR\":") + 4;
-		auxY = element.indexOf("}}");
-
-		int posCell = Integer.parseInt(element.substring(auxX, auxY));
-		
-		String fullName = data.getFullName(posColumn, posCell);
-		String segSocial = data.getMyEmployees().get(posColumn).get(posCell)
-				.getSocialSecurity();
-		String estado = data.getMyEmployees().get(posColumn).get(posCell)
-				.getEstado();
-		String startDate = format.format(data.getMyEmployees().get(posColumn)
-				.get(posCell).getStartDate());
-
-		String endDate = "";
-
-		if (data.getMyEmployees().get(posColumn).get(posCell).getEndDate() == null) {
-			endDate = "En vigor";
-		} else {
-			endDate = format.format(data.getMyEmployees().get(posColumn)
-					.get(posCell).getEndDate());
-		}
-		
-		Date start = data.getMyEmployees().get(posColumn)
-				.get(posCell).getStartDate();
-		Date finish = data.getMyEmployees().get(posColumn)
-				.get(posCell).getEndDate();
-		
-		int days = DateUtils.getDaysBetween(start, (finish == null ? new Date() : finish )) +1;
-
-			
-			//CONTRATO ACTUAL			
-			tooltip = new Tooltip();
-			tooltip.setFinish(finish);
-			tooltip.setFullName(fullName);
-			tooltip.setSocialSecurity(segSocial);
-			tooltip.setStatus(estado);		
-			tooltip.setWorkPeriod(startDate, endDate);
-			tooltip.setNumDays(days);
-			tooltip.setColor(getColor(estado));
-			tooltip.showToolTip(mouseClientX, mouseClientY);
-			
-	}
-	
-	private PopupPanel popupPanel;
-	private MenuBar popupMenuBar;
-
-	class EmployeeContextMenu extends ContextMenu { 
-
-		AddContractCommand addContract;
-		
-		public EmployeeContextMenu() {			
-
-			popupMenuBar = new MenuBar(true);
-			
-			MenuItem add = addItem("Nuevo Contrato", addContract = new AddContractCommand(),
-					AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
-			
-			popupMenuBar.addItem(add);			
-			popupMenuBar.setVisible(true);
-			popupPanel.add(popupMenuBar);
-		}
-	}
-	
-	class AddContractCommand implements ScheduledCommand {
-		
-		public AddContractCommand() {
-			
-		}
-		
-		@Override
-		public void execute() {
-			
-			popupPanel.hide();
-			Window.alert("Nuevo contracto");
-		}
-	}
-
 	private Options createOptions(AbstractDataTable dataTable) {
 
 		Options options = Options.create();
@@ -490,14 +348,22 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				start = DateUtils.after(start, startYear);
 				end = DateUtils.before(end, endYear);
 
-				if (itData.getITDataPerson(contractId).size() > 0) {
+				if (itData.getDataIts(contractId).size() > 0) {
 					addLeaveRows(employee, contractId, start, end);
 
 				} else {
+					
+					/**
+					 * contractId is duplicate because obviusly isnt leave when its active.
+					 * i havent other constructor in DataTable Wrapper.
+					 */
+					
 					data.addRow(employee.getFullname(), ACTIVE, start, end,
 							employee.getStartDate(), employee.getEndDate(), 
-							employee.getSocialSecurity());
+							employee.getDocument(), employee.getSocialSecurity(), contractId,
+							contractId, -1);
 				}
+				
 				finalizado = true;
 			}
 		}
@@ -510,7 +376,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		Date leaveStart = null;
 		Date leaveEnd = null;
 
-		for (ITDataPerson itDataPerson : itData.getITDataPerson(contractId)) {
+		for (ITDataPerson itDataPerson : itData.getDataIts(contractId).values()) {
 
 			if ((DateUtils.compare(itDataPerson.getLeaveStartDate(), endYear) > 0)
 					|| (DateUtils.compare(itDataPerson.getLeaveEndDate(),
@@ -529,22 +395,399 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 			leaveEnd = DateUtils
 					.before(leaveEndAux, endYear);
 			
+			int contractLeaveId = itDataPerson.getContractLeaveId();
+		
+			
 			data.addRow(employee.getFullname(), ACTIVE, start, leaveStart,
-					employee.getStartDate(), employee.getEndDate(), 
-					employee.getSocialSecurity());
+					employee.getStartDate(), employee.getEndDate(), employee.getDocument(), 
+					employee.getSocialSecurity(), contractId, contractId,-1);	
 
 			data.addRow(employee.getFullname(), type.getDescription(),
 					leaveStart, leaveEnd, itDataPerson.getLeaveStartDate(),
-					itDataPerson.getLeaveEndDate(), 
-					employee.getSocialSecurity());
+					itDataPerson.getLeaveEndDate(), employee.getDocument(),
+					employee.getSocialSecurity(), contractId, contractLeaveId,
+					itDataPerson.getDischarge_cause());
 
 			start = leaveEnd;
 
 		}
 		if(DateUtils.equals(start, end) == false) {
 			data.addRow(employee.getFullname(), ACTIVE, start, end,
-					employee.getStartDate(), employee.getEndDate(), 
-					employee.getSocialSecurity());
+					employee.getStartDate(), employee.getEndDate(), employee.getDocument(),
+					employee.getSocialSecurity(), contractId, contractId,-1);
+		}
+		
+	}
+	
+	
+	private int mouseClientX;
+	private int mouseClientY;
+
+//	private void loadTimelineEvents() {		
+		
+		/*timelineChart.addScrollHandler(new ScrollHandler() {
+
+			int lastScrollPos = 0;
+
+			public void onScroll(ScrollEvent event) {
+
+				EventTarget target = event.getNativeEvent().getEventTarget();
+
+				Element el = Element.as(target);
+
+				int scrollPos = timelineChart.getVerticalScrollPosition(el);
+
+				if (lastScrollPos >= scrollPos) {
+					lastScrollPos = scrollPos;
+					return;
+				}
+
+				lastScrollPos = scrollPos;
+
+				int maxScrollPos = timelineChart
+						.getMaximumVerticalScrollPosition(el);
+
+				if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos
+						&& finalizado == false) {
+					Window.alert("Acercandose");
+					//DEFAULT_INCREMENT += 50;
+					//printTimelineChart(itData);
+
+				}
+			}
+		});*/
+		
+	
+	private void evalTooltip() {
+		
+		tooltipCallback.cancel();
+		tooltipCallback.schedule(500);	
+	}
+	
+	private int posCell; //vR
+	private int posColumn; //uR
+	
+	private void getPosStatusEmployee(String element) {
+		
+		int auxX = element.indexOf("vR\":") + 4;
+		int auxY = element.indexOf("uR\":") - 2;
+
+		posColumn = Integer.parseInt(cadenaTooltip.substring(auxX, auxY));
+
+		auxX = element.indexOf("uR\":") + 4;
+		auxY = element.indexOf("}}");
+
+		posCell = Integer.parseInt(element.substring(auxX, auxY));
+		
+	}
+	
+	protected boolean isLeaveEmployee (String pElement) {
+		
+		getPosStatusEmployee(pElement);
+		String cadena = pElement;
+		
+		if(cadena.contains("\"vR\":") && 
+				cadena.contains("\"uR\":") && 
+				data.isActive(posColumn, posCell) == false) {			
+			return true;			
+		}
+		else {
+			return false;
+		}
+	}
+	
+
+	private void tratarContrato(String pElement) {
+		
+		getPosStatusEmployee(pElement);		
+		
+		String fullName = data.getFullName(posColumn, posCell);		
+		String dni = data.getDocument(posColumn, posCell);			
+		String segSocial = data.getSocialSecurity(posColumn, posCell);		
+		String estado = data.getStatus(posColumn, posCell);		
+		Date startDate = data.getStartDate(posColumn, posCell);		
+		String formatStartDate = format.format(startDate);
+		Date endDate = data.getEndDate(posColumn, posCell);
+		String formatEndDate = "...";
+
+		if(endDate != null) {
+			formatEndDate = format.format(endDate);
+		}
+		
+		Date rowStart = data.getRowStartDate(posColumn, posCell);
+		Date rowEndDate = data.getRowEndDate(posColumn, posCell);
+		
+		int dischargeCause = data.getDischargeCause(posColumn, posCell);
+		int typeTooltip = data.getTypeTooltip(posColumn, posCell);
+		
+		tooltip = new Tooltip();
+		
+		tooltip.setFullName(fullName);
+		tooltip.setDNI(dni);
+		tooltip.setSocialSecurity(segSocial);
+		tooltip.setColor(getColor(estado));
+		tooltip.setStatus(estado);
+		tooltip.setWorkPeriod(formatStartDate, formatEndDate);
+		tooltip.setNumDays(startDate, endDate);		
+		tooltip.setDischargeCause(dischargeCause);
+		
+			
+		/**
+		 *  0 - contract active
+		 *  1 - contract ended
+		 *  2 - leave active
+		 *  3 - leave ended
+		 */
+			
+			
+			
+		switch (typeTooltip) {
+		case 0:
+			this.showContractActiveTooltip(tooltip, mouseClientX, mouseClientY);
+			break;
+		case 1:
+			this.showContractEndedTooltip(tooltip, mouseClientX, mouseClientY);
+			break;
+		case 2:
+			this.showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
+			break;
+		case 3:		
+			this.showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
+		default:
+			break;
+				
+		}
+	}
+	
+	private int decremental = 0;
+	
+	protected void showLeaveEndedTooltip(Tooltip tooltip,
+			final int clientX, final int clientY) {
+		tooltip.showLeaveEndedTooltip(clientX, clientY);	
+	}
+	
+	protected void showContractActiveTooltip(final Tooltip tooltip, 
+			final int clientX, final int clientY) {
+		
+		tooltip.showContractActiveTooltip(clientX, clientY);
+		
+		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
+			
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				
+				try {
+					
+					if(tooltip.isAccept()) {						
+						
+						Date leaveStartDate = tooltip.getStartDateBoxValue();
+						Date leaveEndDate = tooltip.getFromDateBoxValue();
+						
+						try {
+							if(leaveEndDate == null) {
+								leaveEndDate = data.getStartDate(posColumn, posCell + 1);
+							}
+						}catch(Exception ex) {}
+						
+						int leaveType = tooltip.getTypeLeaveListBox();						
+						int contractId = data.getContractId(posColumn, posCell);						
+						
+						decremental = decremental - 1;
+						ITDataPerson dataPerson = new ITDataPerson();
+						dataPerson.setContractId(contractId);
+						dataPerson.setContractLeaveId(decremental);
+						dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, leaveType));
+						dataPerson.setDischarge_cause(tooltip.getTypeDischargeListBox());
+						dataPerson.setLeaveStartDate(leaveStartDate);
+						dataPerson.setLeaveEndDate(leaveEndDate);
+						
+						itData.addLeaveItem(dataPerson);
+						
+						printTimelineChart(itData);
+						
+					}				
+					
+				}catch(Throwable ex) {
+					
+				}			
+				
+			}
+		});
+		
+	}
+		
+	protected void showContractEndedTooltip(Tooltip tooltip,
+			final int clientX, final int clientY) {
+		tooltip.showContractEndedTooltip(clientX, clientY);
+		
+	}
+	protected void showLeaveActiveTooltip(final Tooltip tooltip, 
+			final int clientX, final int clientY) {
+		
+		tooltip.showLeaveActiveTooltip(clientX, clientY);
+		
+		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
+			
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				
+				if(tooltip.isAccept()) {
+					
+					try {						
+				
+						int leaveType = tooltip.getTypeLeaveListBox();
+						
+						int contractId = data.getContractId(posColumn, posCell);													
+						int leaveId = data.getContractLeaveId(posColumn, posCell);
+						
+						Date leaveEndDate = tooltip.getFromDateBoxValue();
+						Date leaveStartDate = tooltip.getStartDateBoxValue();
+						
+										
+						int dischargeCause = tooltip.getDischargeCause();
+						
+						ITDataPerson dataPerson = new ITDataPerson();
+						
+						dataPerson.setContractId(contractId);
+						dataPerson.setContractLeaveId(leaveId);
+						dataPerson.setLeaveStartDate(leaveStartDate);
+						dataPerson.setLeaveEndDate(leaveEndDate);
+						dataPerson.setDischarge_cause(dischargeCause);
+						dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, leaveType));
+						
+						itData.updateItem(dataPerson);
+											
+						printTimelineChart(itData);	
+						
+					}catch(Exception ex) {
+						Window.alert(ex.getMessage());
+					}						
+				}			
+			}
+		});		
+	}	
+	
+	// TODO: To EnumUtils ???
+		public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass, Integer ordinal) {
+			if ( ordinal == null )
+				return null;
+			if ( ordinal < 0 )
+				return null;
+			
+			T constants [] = enumClass.getEnumConstants();
+			if ( ordinal >= constants.length )
+				return null;
+			
+			return constants[ordinal];
+		}
+	
+	class LeaveContextMenu extends ContextMenu {
+		
+		DeleteContractCommand deleteContract;
+		
+		public LeaveContextMenu() {
+			
+			popupMenuBar = new MenuBar(true);
+			
+			MenuItem add = addItem("Eliminar Baja", deleteContract = new DeleteContractCommand(),
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+			
+			popupMenuBar.addItem(add);			
+			popupMenuBar.setVisible(true);
+			popupPanel.add(popupMenuBar);
+			
+		}
+		
+	}
+	
+	class DeleteContractCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			
+			try {
+				
+				popupPanel.hide();
+				
+				int contractId = data.getContractId(posColumn, posCell);
+				int contractLeave = data.getContractLeaveId(posColumn, posCell);
+				
+				itData.removeLeaveItem(itData.getDataIts(contractId).get(contractLeave));				
+				
+				printTimelineChart(itData);
+				
+			} catch(Exception ex) {
+				
+			}		
+		}
+		
+	}
+
+	class EmployeeContextMenu extends ContextMenu { 
+
+		AddContractCommand addContract;
+		
+		public EmployeeContextMenu() {			
+
+			popupMenuBar = new MenuBar(true);
+			
+			MenuItem add = addItem("Nuevo Contrato", addContract = new AddContractCommand(),
+					AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
+			
+			popupMenuBar.addItem(add);			
+			popupMenuBar.setVisible(true);
+			popupPanel.add(popupMenuBar);
+		}
+	}
+	
+	class AddContractCommand implements ScheduledCommand {
+		
+		public AddContractCommand() {
+		}
+		
+		@Override
+		public void execute() {
+			
+			popupPanel.hide();
+			Window.alert("Nuevo contracto");
+		}
+	}
+	
+	class ExpressionCallback extends Timer {	
+
+		@Override
+		public void run() {
+			
+			container = nameEmployee.getText().toUpperCase();
+			
+			if (StringUtils.isEmpty(container)) {
+				//DEFAULT_INCREMENT = 50;
+				printTimelineChart(itData);
+			} else if (container.length() > 2) {
+				
+				printTimelineChart(itData);
+			}
+		}
+	}	
+	
+	
+	class TooltipCallBack extends Timer {
+
+		@Override
+		public void run() {
+			
+			if (cadenaTooltip.contains("axis")) {
+				// Click sobre el Mes. De momento no hago nada
+			}
+			if (cadenaTooltip.contains("\"vR\":")) {
+				// Click en tipo de contrato
+				
+				tratarContrato(cadenaTooltip);
+			}
+			if (cadenaTooltip.contains("index")) {
+				// Click fuera del contrato
+				//tratarFueraContrato(cadenaTooltip);
+			}		
 		}
 		
 	}
@@ -629,7 +872,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 	// ---------------------------------------------------------------- Library
 
-	private static class DataTableWrapper {
+	public static class DataTableWrapper {
 
 		private int row;
 		private DataTable data;
@@ -651,7 +894,8 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 		public void addRow(String pName, String pStatus, Date pRowStartDate,
 				Date pRowEndDate, Date pStartDate, Date pEndDate, 
-				String pSocialSecurity) {
+				String pDni, String pSocialSecurity, int pContractId, int contractLeaveId, 
+				int discharge_cause) {
 			
 			data.addRow();
 
@@ -662,74 +906,92 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 			this.row++;		
 			
-			/*if(employees.containsKey(idPerson) == false) {
-				employees.put(idPerson, pName);
-			}*/
-
-			Status status;
-
-			if (myEmployees.isEmpty()) {
+			if(myEmployees.isEmpty()) {				
 				statusList = new LinkedList<ITEditor.Status>();
-				status = new Status();
-				status.setFullName(pName);
-				status.setSocialSecurity(pSocialSecurity);
-				status.setEstado(pStatus);
-				status.setRowStartDate(pRowStartDate);
-				status.setRowEndDate(pRowEndDate);
-				status.setStartDate(pStartDate);
-				status.setEndDate(pEndDate);				
-				statusList.add(status);				
-				myEmployees.add(statusList);
-
-			} else {
-				
-				if (myEmployees.getLast().getLast().getFullName().compareTo(pName) == 0) {
-					status = new Status();
-					status.setFullName(pName);
-					status.setSocialSecurity(pSocialSecurity);
-					status.setEstado(pStatus);
-					status.setStartDate(pRowStartDate);
-					status.setEndDate(pRowEndDate);
-					status.setStartDate(pStartDate);
-					status.setEndDate(pEndDate);				
-					myEmployees.getLast().addLast(status);
-					
-				} else {
-					statusList = new LinkedList<ITEditor.Status>();
-					status = new Status();
-					status.setFullName(pName);
-					status.setSocialSecurity(pSocialSecurity);
-					status.setEstado(pStatus);
-					status.setStartDate(pRowStartDate);
-					status.setEndDate(pRowEndDate);
-					status.setStartDate(pStartDate);
-					status.setEndDate(pEndDate);				
-					statusList.add(status);
-					myEmployees.add(statusList);
-				}
+				myEmployees.add(statusList);				
 			}
-
+			else {				
+				if(myEmployees.getLast().getLast().getFullName().equals(pName) == false) {					
+					statusList = new LinkedList<ITEditor.Status>();					
+					myEmployees.add(statusList);					
+				}								
+			}			
+			statusList.add(new Status());
+			myEmployees.getLast().getLast().setFullName(pName);
+			myEmployees.getLast().getLast().setDNI(pDni);
+			myEmployees.getLast().getLast().setSocialSecurity(pSocialSecurity);
+			myEmployees.getLast().getLast().setEstado(pStatus);
+			myEmployees.getLast().getLast().setRowStartDate(pRowStartDate);
+			myEmployees.getLast().getLast().setRowEndDate(pRowEndDate);
+			myEmployees.getLast().getLast().setStartDate(pStartDate);
+			myEmployees.getLast().getLast().setEndDate(pEndDate);
+			myEmployees.getLast().getLast().setContractId(pContractId);
+			myEmployees.getLast().getLast().setContractLeaveId(contractLeaveId);
+			myEmployees.getLast().getLast().setDischarge_cause(discharge_cause);
+			myEmployees.getLast().getLast().calculateTypeTooltip();
+			
 		}
 
-		public LinkedList<LinkedList<Status>> getMyEmployees() {
+	/*	public LinkedList<LinkedList<Status>> getMyEmployees() {
 			return myEmployees;
-		}
-
-		public String getFullName(int pColumn, int pRow) {
-			return getMyEmployees().get(pColumn).get(pRow).getFullName();
-		}
-		
-		/*public int getSizeEmployees() {
-			return employees.size();
-		}
-
-		public Map<Integer, String> getEmployees() {
-			return employees;
 		}*/
-
+		
 		public AbstractDataTable getDataTable() {
 			return data;
 		}
+		
+		private String getFullName(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getFullName();
+		}
+		
+		private String getDocument(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getDNI();
+		}
+		
+		private String getSocialSecurity(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getSocialSecurity();
+		}
+		
+		private int getContractId(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getContractId();
+		}
+		
+		private int getContractLeaveId(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getContractLeaveId();
+		}
+		
+		private String getStatus(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getEstado();
+		}
+		
+		private Date getStartDate(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getStartDate();
+		}
+		
+		private Date getEndDate(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getEndDate();
+		}
+		
+		private Date getRowStartDate(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getRowStartDate();
+		}
+		
+		private Date getRowEndDate(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getRowEndDate();
+		}
+		
+		private int getDischargeCause(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getDischarge_cause();
+		}
+		
+		private int getTypeTooltip(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getTypeTooltip();
+		}	
+		
+		private boolean isActive(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).isActive();
+		}
+		
 	}
 
 	public static String getColor(Type type) {
@@ -767,12 +1029,25 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	private static class Status {
 
 		private String fullName;
+		private String dni;
 		private String socialSecurityNum;
+		private int contractId;
+		private int contractLeaveId;
 		private String estado;
 		private Date startDate;
 		private Date endDate;
 		private Date rowStartDate;
 		private Date rowEndDate;
+		private int discharge_cause;
+		
+		/**
+		 *  0 - contract active
+		 *  1 - contract ended
+		 *  2 - leave active
+		 *  3 - leave ended
+		 */
+		private int typeTooltip;
+
 
 		public Status() {
 
@@ -786,16 +1061,51 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 			this.fullName = fullName;
 		}
 		
+		public void setDNI(String pDni) {
+			dni = pDni;
+		}
+		
+		public String getDNI() {
+			return dni;
+		}
+		
 		public void setSocialSecurity(String pSocialSecurity) {
 			socialSecurityNum = pSocialSecurity;
 		}
 		
 		public String getSocialSecurity() {
 			return socialSecurityNum;
+		}		
+		
+
+		public int getContractId() {
+			return contractId;
+		}
+
+		public void setContractId(int contractId) {
+			this.contractId = contractId;
+		}
+		
+		public void setContractLeaveId(int pLeaveId) {
+			contractLeaveId = pLeaveId;
+		}
+		
+		public int getContractLeaveId() {
+			return contractLeaveId;
 		}
 
 		public String getEstado() {
 			return estado;
+		}
+		
+		public boolean isActive() {
+			
+			if(getEstado().equals(ACTIVE)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 
 		public void setEstado(String estado) {
@@ -832,8 +1142,62 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 		public void setRowEndDate(Date rowEndDate) {
 			this.rowEndDate = rowEndDate;
+		}	
+		
+		public int getDischarge_cause() {
+			
+			return discharge_cause + 1;
 		}
 
+		public void setDischarge_cause(int discharge_cause) {
+			this.discharge_cause = discharge_cause;
+			
+		}
+		
+		private void setTypeTooltip(int pTypeTooltip) {
+			typeTooltip = pTypeTooltip;
+		}
+		public int getTypeTooltip() {
+			return typeTooltip;
+		}		
+		
+		/**
+		 *  0 - contract active
+		 *  1 - contract ended
+		 *  2 - contractLeave active
+		 *  3 - contractLeave ended
+		 */
+		
+		public void calculateTypeTooltip() {
+			
+			if(selectedYear == DateUtils.getYear()) {
+				
+				if(getEstado().equals(ACTIVE)) {
+					
+					if(DateUtils.isAfterOrEquals(getEndDate(), new Date()))
+						setTypeTooltip(0);
+					else 
+						setTypeTooltip(1);
+				}
+				else {
+					if(DateUtils.isAfterOrEquals(getEndDate(), new Date()))
+						setTypeTooltip(2);
+					else
+						setTypeTooltip(3);
+				}
+			}
+			
+			else {
+				
+				if(getEstado().equals(ACTIVE))
+					setTypeTooltip(1);
+				else
+					setTypeTooltip(3);
+				
+			}
+		}
 	}
 
-}
+		
+	}
+

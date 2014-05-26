@@ -51,6 +51,10 @@
 						value="#{bundle.finance_exporter_account_size}" />
 					<aon:selectOneMenu id="Exporter_accountSize"
 						value="#{exporter.configuration.accountSize}" required="true">
+						<c:if test="#{exporter.configuration.type == 'A3'}">
+							<f:selectItem itemLabel="7" itemValue="#{7}" />
+							<f:selectItem itemLabel="8" itemValue="#{8}" />
+						</c:if>
 						<f:selectItem itemLabel="9" itemValue="#{9}" />
 						<f:selectItem itemLabel="10" itemValue="#{10}" />
 						<f:selectItem itemLabel="11" itemValue="#{11}" />

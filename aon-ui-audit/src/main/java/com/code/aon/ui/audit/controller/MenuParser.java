@@ -67,7 +67,7 @@ public class MenuParser {
 	
 	private static final String TITLE_ATTRIBUTE = "title";
 
-	private static final String ACTION_ATTRIBUTE = "action";
+	public static final String ACTION_ATTRIBUTE = "action";
 		
 	private static final String SRC_ATTRIBUTE = "src";
 	
@@ -81,7 +81,7 @@ public class MenuParser {
 	
 	private static final String TEST_ATTRIBUTE = "test";
 	
-	private static final String ID_ATTRIBUTE = "id";
+	public static final String ID_ATTRIBUTE = "id";
 	
 	private static final String METHOD_ATTRIBUTE = "method";
 	

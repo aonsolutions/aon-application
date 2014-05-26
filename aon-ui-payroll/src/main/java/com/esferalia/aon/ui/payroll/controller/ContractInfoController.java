@@ -211,13 +211,13 @@ public class ContractInfoController extends BasicController {
 		ModelOption contractModel = controller.getParams().getContractModelOption();
 		if(contract!=null && contractModel!=null){
 			if(IndefiniteModel.MODEL_NAME.equals(contractModel.getPdfModel())){
-				addAllOptionFields(list, PdfFieldIndefinite.values(), contractModel.getPdfModel());
+				addAllOptionFields(list, PdfFieldIndefinite.values(), contractModel.toString());
 			} else if(TemporaryModel.MODEL_NAME.equals(contractModel.getPdfModel())){
-				addAllOptionFields(list, PdfFieldTemporary.values(), contractModel.getPdfModel());
+				addAllOptionFields(list, PdfFieldTemporary.values(), contractModel.toString());
 			} else if(LearningModel.MODEL_NAME.equals(contractModel.getPdfModel())){
-				addAllOptionFields(list, PdfFieldLearning.values(), contractModel.getPdfModel());
+				addAllOptionFields(list, PdfFieldLearning.values(), contractModel.toString());
 			} else if(PracticeModel.MODEL_NAME.equals(contractModel.getPdfModel())){
-				addAllOptionFields(list, PdfFieldPractice.values(), contractModel.getPdfModel());
+				addAllOptionFields(list, PdfFieldPractice.values(), contractModel.toString());
 			}
 		}
 		
@@ -239,6 +239,7 @@ public class ContractInfoController extends BasicController {
 	}
 	
 	private void addAllOptionFields(List<IContractFieldName> list , IContractFieldName[] fieldNameValues, String option){
+		option = StringUtils.substring(option, option.indexOf("_")+1, option.length()); 
 		for(IContractFieldName field: fieldNameValues){ 
 			if( (field.isCommonValue() ||  StringUtils.substring(field.toString(), 0, field.toString().indexOf("_")).equals(option)) 
 					&& field.isOverridable() ){

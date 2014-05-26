@@ -28,16 +28,32 @@ public class AttachmentControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IAttachmentController controller = (IAttachmentController) event.getController();
-		AttachmentUtil.checkFileData(controller, event.getController().isNew(), true);
+		AttachmentUtil.checkFileData(controller, true);
 		AttachmentUtil.updateAttachment(controller);
 	}
-	
+
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		IAttachmentController controller = (IAttachmentController) event.getController();
-		AttachmentUtil.checkFileData(controller, event.getController().isNew(), true);
+		AttachmentUtil.checkFileData(controller, true);
 		AttachmentUtil.updateAttachment(controller);
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		IAttachmentController controller = (IAttachmentController) event.getController();
+		if ( controller.getAonFile() != null ) {
+			controller.getAonFile().setAttachment(controller.getAttachment());
+		}
+	}	
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		IAttachmentController controller = (IAttachmentController) event.getController();
+		if ( controller.getAonFile() != null ) {
+			controller.getAonFile().setAttachment(controller.getAttachment());	
+		}
 	}
 	
 }

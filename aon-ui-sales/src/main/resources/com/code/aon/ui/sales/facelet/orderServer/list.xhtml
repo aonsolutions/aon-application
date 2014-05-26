@@ -52,7 +52,9 @@
 								<a4j:support event="onclick" reRender="orderServerList" />
 							</aon:selectBooleanCheckbox>
 						</aon:column>
-						<ui:include src="/com/code/aon/ui/sales/facelet/sales/listColumns.xhtml" />
+						<ui:include src="/com/code/aon/ui/sales/facelet/sales/listColumns.xhtml" >
+							<ui:param name="itemReturnInRed" value="#{true}" />
+						</ui:include>
 					</ui:define>
 				</ui:decorate>
 

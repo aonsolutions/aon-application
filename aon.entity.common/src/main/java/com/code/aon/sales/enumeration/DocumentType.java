@@ -23,7 +23,12 @@ public enum DocumentType implements IResourceable {
     /**
      * INTERNET
      */
-    INTERNET;
+    INTERNET,
+
+    /**
+     * ITEM RETURN
+     */
+    ITEM_RETURN;
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_document_type_";

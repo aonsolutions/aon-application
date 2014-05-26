@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -78,7 +77,7 @@ public class TemplateController extends BasicController {
 			"<tbody><tr><td align=\"center\">");		
 		if (! nullTemplate ) {
 			RegistryAttachment ht = template.getHeaderTemplate();
-			if ( ht != null && ht.getId()!=null && !ArrayUtils.isEmpty(ht.getData()) ) {
+			if ( ht != null && ht.getId()!=null && (ht.getSize() > 0) ) {
 				sb.append( new String(ht.getData()) );	
 			}
 		}		
@@ -87,7 +86,7 @@ public class TemplateController extends BasicController {
 	public static void addFooter( Template template, StringBuffer sb ) {
 		if ( template!=null && template.getId()!=null ) {
 			RegistryAttachment ft = template.getFooterTemplate();
-			if ( ft!=null && ft.getId()!=null && !ArrayUtils.isEmpty(ft.getData()) ) {
+			if ( ft!=null && ft.getId()!=null && (ft.getSize() > 0) ) {
 				sb.append( new String(ft.getData()) );	
 			}
 		}

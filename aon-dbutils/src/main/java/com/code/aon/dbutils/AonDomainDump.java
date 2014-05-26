@@ -50,7 +50,6 @@ public class AonDomainDump implements Constants {
 	private Connection connection;
 	private Integer[] domains;
 	private BufferedWriter writer;
-	private String lastId;
 	private IDumpListener listener;
 	
 	public AonDomainDump(Connection connection) throws AonSQLException {
@@ -170,9 +169,9 @@ public class AonDomainDump implements Constants {
 		QueryRunner run = new QueryRunner();
 		ResultSetHandler<Object[]> hs = new ArrayHandler();
 		Object[] result = run.query( connection,
-				"SELECT name,application FROM action WHERE id = ?", hs, id );
+				"SELECT name,application FROM `action` WHERE id = ?", hs, id );
 		if (! ArrayUtils.isEmpty(result) ) {
-			return "(SELECT id FROM action WHERE name='" + result[0] + "' AND application=" + result[1] + ")"; 
+			return "(SELECT id FROM `action` WHERE name='" + result[0] + "' AND application=" + result[1] + ")"; 
 		}
 		return String.valueOf(id);
 	}
@@ -233,7 +232,7 @@ public class AonDomainDump implements Constants {
 				writeLine(t.getLockTables());
 				if ( dumpInfo.isFirstInsert() ) {
 					if ( t.isRecursive() ) {
-						writeLine( t.getSetVariableStatement() );	
+						writeLine( t.getSetVariableStatementWithSelectMax() );	
 					}				
 					writeLine( t.getInsertStatementBegin(t.getPkColumn().isFkColummn()) );
 				} else {
@@ -243,11 +242,11 @@ public class AonDomainDump implements Constants {
 				do {
 					moreRows = dump(rs,t,dumpInfo.isFirstInsert());
 					if ( dumpInfo.isFirstInsert() ) {
-						writeLine( t.getSetVariableStatement(this.lastId) );
+						writeLine( t.getSetVariableStatement() );
 						if ( moreRows ) {
 							writeLine( t.getInsertStatementBegin(true) );					
 						}
-					} else if ( t.isWithBlobs() && moreRows ) {
+					} else if ( t.isSingleInsert() && moreRows ) {
 						writeLine( t.getInsertStatementBegin(true) );
 					}
 					dumpInfo.incRows();					
@@ -349,12 +348,9 @@ public class AonDomainDump implements Constants {
 			} else {
 				values[i] = "NULL";	
 			}
-			if ( ci.isPrimaryKey() ) {
-				this.lastId = values[i];
-			}
 		}
 		boolean moreRows = rs.next();
-		boolean finishStatement = t.isWithBlobs() || firstInsert || !moreRows;
+		boolean finishStatement = t.isSingleInsert() || firstInsert || !moreRows;
 		writeLine( "\t (" + StringUtils.join(values, ",") + ")" + (finishStatement?";":",") );
 		return moreRows;
 	}

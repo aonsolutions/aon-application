@@ -12,7 +12,7 @@ public class FAB {
 	private Integer claveContrato;
 	private String condicionDesempleado;
 	private String mujerSubrepresentada;
-	private Integer coeficienteTiempoParcial;
+	private String coeficienteTiempoParcial;
 	private Integer colectivoTrabajador;
 	private String indicadorImpresion;
 	private Integer categoriaProfesional;
@@ -71,10 +71,10 @@ public class FAB {
 	public void setMujerSubrepresentada(String mujerSubrepresentada) {
 		this.mujerSubrepresentada = mujerSubrepresentada;
 	}
-	public Integer getCoeficienteTiempoParcial() {
+	public String getCoeficienteTiempoParcial() {
 		return coeficienteTiempoParcial;
 	}
-	public void setCoeficienteTiempoParcial(Integer coeficienteTiempoParcial) {
+	public void setCoeficienteTiempoParcial(String coeficienteTiempoParcial) {
 		this.coeficienteTiempoParcial = coeficienteTiempoParcial;
 	}
 	public Integer getColectivoTrabajador() {

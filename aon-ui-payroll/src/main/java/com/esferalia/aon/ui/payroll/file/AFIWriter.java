@@ -3,25 +3,34 @@ package com.esferalia.aon.ui.payroll.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.person.enumeration.Gender;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.afi.AFI;
 import com.esferalia.aon.file.payroll.afi.data.AYN;
@@ -37,7 +46,9 @@ import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.ss.T21;
 import com.esferalia.aon.payroll.enumeration.ss.T7;
+import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class AFIWriter implements Serializable {
@@ -48,7 +59,7 @@ public class AFIWriter implements Serializable {
 	private final String WINSUITE_VERSION 	= "71WSxxx";
 	private final String TESTING_CHECK		= "P";
 	/* Clave proporcionada por la seguridad social */
-	private final Integer SS_KEY			= 12345678;
+	private final Integer SS_KEY			= 99999999;
 	
 	private final String WHITESPACE_1  = " ";
 	private final String WHITESPACE_2  = "  ";
@@ -69,7 +80,7 @@ public class AFIWriter implements Serializable {
 
 	public FileOutput createAFI(List<Contract> contractList ) throws ManagerBeanException {
 		try {
-			ETI eti = createETIRecord( true, contractList );
+			ETI eti = createETIRecord( isAfiTestEnvironmentActive(), contractList );
 			File file = File.createTempFile("temp", ".AFI");
 			FileFiller afi = new AFI(eti, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
@@ -80,7 +91,7 @@ public class AFIWriter implements Serializable {
 			throw new ManagerBeanException(e);
 		}
 	}
-
+	
 	private ETI createETIRecord( boolean testFile, List<Contract> contractList ) throws ManagerBeanException {
 		ETI eti = new ETI();
 		
@@ -211,14 +222,14 @@ public class AFIWriter implements Serializable {
 		FAB fab = new FAB();
 		
 		// TODO Actions  
-		fab.setAccion(autoComplete(T7.T7_MA.getCode(), 3, "0", false));
+		fab.setAccion(autoComplete(T7.T7_MA.getCode(), 3, " ", false));
+		
+		// TODO
+		// Clave obligatoria para altas y bajas que indica el motivo de alta o baja. Ver capítulo Tablas.
+		fab.setSituacion(autoComplete(T21.T21_1.getCode(), 2, "0", true));
 		
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(contract.getStartDate())));
 		
-		/*
-		 * Clave obligatoria para altas y bajas que indica el motivo de alta o baja. Ver capítulo Tablas.
-		 */
-		fab.setSituacion(null);	// TODO
 		Integer quoteGroup = getQuoteGroup(contract);
 		if(quoteGroup!=null){
 			fab.setGrupoCotizacion(quoteGroup);
@@ -226,11 +237,12 @@ public class AFIWriter implements Serializable {
 		fab.setClaveContrato(Integer.parseInt(getContractCode(contract).getValue()));
 		fab.setCondicionDesempleado(null);	// TODO
 		fab.setMujerSubrepresentada(null);	// TODO
-		if(fab.getClaveContrato().toString().startsWith("2") || fab.getClaveContrato().toString().startsWith("5")){
+		if( !fab.getClaveContrato().toString().startsWith("1") && !fab.getClaveContrato().toString().startsWith("4") ){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			if(weekHours!=null){
-				Double hoursPercent = Double.parseDouble(weekHours)*2.5;
-				fab.setCoeficienteTiempoParcial((int)CommonUtil.ceil(hoursPercent, 0));
+			if(weekHours!=null && NumberUtils.isNumber(weekHours)){
+				Double hoursPercent = Double.parseDouble(weekHours) * 2.5;
+				int percent = (int)CommonUtil.ceil(hoursPercent, 0);
+				fab.setCoeficienteTiempoParcial( autoComplete(String.valueOf(percent), 3, "0", false) );
 			}
 		}
 		fab.setColectivoTrabajador(null);	// TODO
@@ -246,7 +258,9 @@ public class AFIWriter implements Serializable {
 				|| contract.getEnterpriseCCC().getActivity().getType()==SSRegimeType.SEA_WORKERS){
 			fab.setCategoriaProfesional(null);	// TODO
 		}
-		fab.setFechaNacimiento(dateFormatter.format(contract.getPerson().getBirthDate()));
+		if(contract.getPerson().getBirthDate()!=null){
+			fab.setFechaNacimiento(dateFormatter.format(contract.getPerson().getBirthDate()));
+		}
 		if(contract.getPerson().getGender()==Gender.MALE){
 			fab.setSexo(1);
 		} else if(contract.getPerson().getGender()==Gender.FEMALE){
@@ -319,6 +333,31 @@ public class AFIWriter implements Serializable {
 	private ContractCode getContractCode(Contract contract) {
 		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
 		return ContractCode.getContractCodeByValue(tc2);
+	}
+	
+	private boolean isAfiTestEnvironmentActive() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT value FROM app_param";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain();
+			select += " AND name = '" + PayrollAppParamsController.AFI_TEST_ENVIRONMENT_ACTIVE + "';";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getBoolean(1);
+			}
+		} catch (AonConnectionException e) {
+			// return null
+		} catch (SQLException e) {
+			// return null
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return false;
 	}
 	
 }

@@ -14,6 +14,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +22,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
-import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.registry.controller.RegistryAttachController;
@@ -121,26 +120,17 @@ public class CompanyImagesController extends RegistryAttachController {
 	}    
 	
 	public void update(RegistryAttachment attachment ) {
-		byte[] data = getAonFile().getData();
 		if ( isDimensionEditable() ) {
-			if ( (width != getOriginalWidth()) || (height != getOriginalHeight()) ) {
+			if ( (!ObjectUtils.equals(width, getOriginalWidth())) || (!ObjectUtils.equals(height, getOriginalHeight())) ) {
+				byte[] data = getAonFile().getData();
 				BufferedImage image = ImageUtil.getBufferedImage( data );
 				BufferedImage newImage = ImageUtil.scale(image, width, height);
 				String format = (getAonFile().getMimeType() != null) ? getAonFile().getMimeType().getExtension() : null;
 				data = ImageUtil.getImage(newImage, format);
+				attachment.setData(data);
+				attachment.setMimeType(getAonFile().resolveMimeType());
 			}			
-		}
-		attachment.setData(data);
-		MimeType mimeType = CompanyImagesController.getMimeType(getAonFile().getFileName(), data);
-		attachment.setMimeType(mimeType);		
-	}
-	
-	public static MimeType getMimeType(String resource, byte[] data) {
-		MimeType mt = MimeResolver.getMimeTypeByExtension(resource);
-		if ( mt == null ) {
-			mt = MimeResolver.getMimeType(data);
-		}
-		return mt;
+		}		
 	}
 	
 	public void imageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
@@ -181,14 +171,15 @@ public class CompanyImagesController extends RegistryAttachController {
 		}
 	}	
 
-	public void createContent(OutputStream out, Object data) throws IOException {
-		Integer id = (Integer) data;
+	public void createContent(OutputStream out, Object idData) throws IOException {
+		Integer id = (Integer) idData;
 		if ( id != null ) {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 				RegistryAttachment ra = (RegistryAttachment) bean.get(id);
-				if (! ArrayUtils.isEmpty(ra.getData()) ) {
-					out.write(ra.getData());
+				byte[] data = ra.getData();
+				if (! ArrayUtils.isEmpty(data) ) {
+					out.write(data);
 				}
 			} catch (ManagerBeanException e) {
 				LOGGER.error( e.getMessage(), e );

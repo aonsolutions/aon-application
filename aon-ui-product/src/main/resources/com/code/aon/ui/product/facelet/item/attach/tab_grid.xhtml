@@ -62,7 +62,7 @@
 				<aon:div id="attachFile">													
 					<aon:htmlCommandLink id="download" target="_blank"
 						onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-						rendered="#{formList and (to.data != null)}"
+						rendered="#{formList and (to.size &gt; 0)}"
 						actionListener="#{controller.downloadAttachment}"
 						styleClass="aon-icon aon-icon-mail-save"
 						style="line-height:16px;margin-right:0;"

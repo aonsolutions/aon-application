@@ -36,8 +36,8 @@
 			
 				<aon:outputLabel for="FtpPassword"
 					value="#{bundle.aon_login_passwd}" />
-				<aon:inputText id="FtpPassword" value="#{publishParameter.to.ftpPassword}"
-					size="20" required="true" />
+				<aon:inputSecret id="FtpPassword" value="#{publishParameter.to.ftpPassword}"
+					size="20" required="true" redisplay="true" />
 
 				<aon:outputLabel for="PublishPath"
 					value="#{bundle.config_publish_path}" />

@@ -69,6 +69,14 @@
 	gwt-image: "employee" ; 
 }
 
+@sprite .aon-icon-card {
+	width: auto;
+	height: auto;
+	padding: 0 0 0 18px;
+	text-align: left;
+	gwt-image: "card" ; 
+}
+
 @sprite .aon-icon-workplace {
 	gwt-image: "workplace" ; 
 }
@@ -113,6 +121,12 @@
 	gwt-image: "segsocial_small" ; 
 	padding-right: 14px;	
 	background-position: right center;
+}
+
+@sprite .aon-icon-normal-segsocial-small {
+	gwt-image: "segsocial_small" ; 
+	padding: 0px 0px 0px 14px;
+	background-position:left;
 }
 
 @sprite .aon-icon-clipboard {

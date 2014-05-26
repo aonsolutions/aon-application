@@ -107,6 +107,8 @@ public class FacturaeWriter {
 	
 	private Locale locale;
 	
+	private int numberOfDecimals;
+	
 	public FacturaeWriter( Locale locale ) {
 		this.locale = locale;
 	}
@@ -425,8 +427,7 @@ public class FacturaeWriter {
 	}	
 	
 	private double getTaxQuota( TaxBreakDown tbd ) {
-		int precision = DecimalUtil.isFixDecimals() ? 6 : 2;
-		return CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100, precision);
+		return CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100, numberOfDecimals);
 	}
 	
 	private TaxType getTax( TaxBreakDown tbd, boolean lineTax ) {
@@ -651,6 +652,7 @@ public class FacturaeWriter {
 		this.pmsUtil = new PmsUtil(invoice);
 		this.workPlace = getWorkPlace();
 		this.enterprise = this.workPlace.getEnterprise();
+		this.numberOfDecimals = DecimalUtil.getNumberOfDecimals(invoice);
 	}
 	
 	public void serialize( Invoice invoice, String fileName ) throws AonException {
@@ -661,7 +663,8 @@ public class FacturaeWriter {
 		HibernateUtil.setBeginTransaction(false);
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-			init( (Invoice) bean.get(invoice.getId()) );
+			Invoice _invoice = (Invoice) bean.get(invoice.getId());
+			init( _invoice );
 			Facturae facturae = getFacturae();  	
 			MarshallerUtil marshallerUtil32 = MarshallerUtil.getInstance(FacturaeVersion.FACTURAE_32);
 			marshallerUtil32.marshal( facturae, fileName );
@@ -669,8 +672,8 @@ public class FacturaeWriter {
 	    	if ( pmsUtil.isAddExtensions() ) {
 	    		pmsUtil.transform(realName);
 	    	}
-	    	if ( DecimalUtil.isFixDecimals() ) {
-	    		new DecimalUtil().transform(facturae, realName);
+	    	if ( numberOfDecimals != DecimalUtil.DEFAULT_DECIMALS ) {
+	    		new DecimalUtil(numberOfDecimals).transform(facturae, realName);
 	    	}
 		} catch (Throwable t ) {
 		    try {

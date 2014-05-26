@@ -189,6 +189,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error saving contract status");
 		}
+		
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) controller.getTo());
 	}
 	
 	@Override

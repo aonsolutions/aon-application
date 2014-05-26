@@ -14,7 +14,7 @@
 	<aon:div id="#{controller.beanName}_descriptionDiv">
 		<aon:inputText id="#{controller.beanName}_description" required="true"
 			value="#{controller.to.description}" maxlength="64" size="#{descriptionInputSize}" />
-		<aon:div styleClass="aon-margin-top" rendered="#{controller.to.data != null}" >
+		<aon:div styleClass="aon-margin-top" rendered="#{controller.to.size &gt; 0}" >
 			<aon:outputText styleClass="aon-italic" 
 				value="#{controller.to.mimeType}" />			
 			<aon:outputText styleClass="aon-margin-left aon-italic"

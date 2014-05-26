@@ -171,7 +171,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			logger.error( message );
 		} finally {
 			if ( file != null ) {
-				FileUtils.deleteQuietly(file.getFile());	
+				file.clean();
 			}
 			if ( xml != null ) {
 				FileUtils.deleteQuietly(xml.getFile());	

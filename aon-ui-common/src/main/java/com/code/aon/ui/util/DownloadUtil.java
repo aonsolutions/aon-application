@@ -52,8 +52,9 @@ public class DownloadUtil {
 	 * @param attach the attach
 	 */
 	public static void downloadAttachment(IAttachment attach) {
-		InputStream in = new ByteArrayInputStream(attach.getData());
-		long size = ArrayUtils.getLength(attach.getData());
+		byte[] data = attach.getData();
+		InputStream in = new ByteArrayInputStream(data);
+		long size = ArrayUtils.getLength(data);
 		downloadAttachment(attach.getDescription(), attach.getMimeType(), in, size);
 	}
 	

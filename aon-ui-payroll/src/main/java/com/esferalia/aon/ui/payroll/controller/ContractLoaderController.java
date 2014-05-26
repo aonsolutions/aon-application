@@ -1,9 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Serializable;
@@ -11,10 +10,8 @@ import java.io.Serializable;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +19,8 @@ import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.esferalia.aon.ui.payroll.file.ContractAfiLoader;
 import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
@@ -66,25 +63,14 @@ public class ContractLoaderController implements Serializable {
 		return this.aonFile;
 	}
 	public void setAonFile(AonFile aonFile) {
+		if ( this.aonFile != null ) {
+			this.aonFile.clean();
+		}
 		this.aonFile = aonFile;
 	}
 	
 	public void fileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName( item.getFileName() );
-			f.setMimeType( MimeType.get(item.getContentType()) );
-			setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setAonFile(AttachmentUtil.fileUploaded(event));
 		try {
 			initContractLoader();
 		} catch (AonException e) {
@@ -154,15 +140,15 @@ public class ContractLoaderController implements Serializable {
 	}
 
 	public IContractLoader initContractLoader() throws AonException, IOException{
-		if (getAonFile() == null || getAonFile().getData()==null) {
+		if (getAonFile() == null || (getAonFile().getSize()<=0)) {
 			throw new AbortProcessingException("La entrada está vacia!");
 		}
 
-		ByteArrayInputStream input = null;
+		InputStream input = null;
 		InputStreamReader inputReader = null;
 		LineNumberReader reader = null;
 		try {
-			input = new ByteArrayInputStream(getAonFile().getData());
+			input = getAonFile().openStream();
 			inputReader = new InputStreamReader(input, SEPEFileUtils.XML_FILE_ENCODING);
 			reader = new LineNumberReader(inputReader);
 			loader = new ContractContrataLoader();

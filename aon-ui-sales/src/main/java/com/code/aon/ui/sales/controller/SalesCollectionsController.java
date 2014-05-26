@@ -44,5 +44,15 @@ public class SalesCollectionsController implements Serializable {
 		}
 		return documentTypes;
 	}
+	
+	public List<SelectItem> getBasicSalesTypes() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		SelectItem item = new SelectItem(DocumentType.NORMAL, DocumentType.NORMAL.getName(locale));
+		list.add(item);
+		item = new SelectItem(DocumentType.ITEM_RETURN, DocumentType.ITEM_RETURN.getName(locale));
+		list.add(item);
+		return list;
+	}
 
 }

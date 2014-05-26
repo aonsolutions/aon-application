@@ -7,7 +7,6 @@ import static com.code.aon.ui.company.controller.ICompanyConstants.SIGNATURE_MAX
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,13 +14,11 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -40,7 +37,7 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 
 	private void checkAonFile( CompanyController companyController ) throws ControllerListenerException {
 		AonFile aonFile = companyController.getSignatureFile();
-		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
+		if ( aonFile.getSize() <= 0 ) {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );									
 		} else if (aonFile.getSize() > SIGNATURE_MAX_SIZE) {
@@ -60,20 +57,21 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CompanyController companyController = (CompanyController) event.getController();
-		if (companyController.getSignatureFile() != null) {
+		AonFile aonFile = companyController.getSignatureFile();
+		if ((aonFile != null) && aonFile.isDirty() ) {
 			checkAonFile(companyController);
 			try {
-				AonFile aonFile = companyController.getSignatureFile();
 				RegistryAttachment attach = new RegistryAttachment();
 				attach.setRegistryAttachmentType(RegistryAttachmentType.SIGNATURE);
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
 				attach.setDescription("aon-signature");
 				attach.setRegistry((Company) event.getController().getTo());
-				MimeType mt = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mt);
+				attach.setMimeType(aonFile.getMimeType());
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				companyController.setSignatureAttach((RegistryAttachment) attachBean.insert(attach));
+				attachBean.insert(attach);
+				companyController.setSignatureAttach(attach);
+				aonFile.setAttachment(attach);
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating signature", e);
 			}
@@ -92,10 +90,10 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CompanyController companyController = (CompanyController) event.getController();
-		if (companyController.getSignatureFile() != null) {
+		AonFile aonFile = companyController.getSignatureFile();
+		if ((aonFile != null) && aonFile.isDirty() ) {
 			checkAonFile(companyController);
 			try {
-				AonFile aonFile = companyController.getSignatureFile();
 				RegistryAttachment attach = companyController.obtainCompanySignature();				
 				if (attach == null) {
 					attach = new RegistryAttachment();
@@ -105,14 +103,11 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 				attach.setData(aonFile.getData());
 				attach.setDescription("aon-signature");
 				attach.setRegistry((Company) event.getController().getTo());
-				MimeType mt = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mt);
+				attach.setMimeType(aonFile.getMimeType());
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				if (attach.getId() == null) {
-					companyController.setSignatureAttach((RegistryAttachment) attachBean.insert(attach));
-				} else {
-					companyController.setSignatureAttach((RegistryAttachment) attachBean.update(attach));
-				}
+				attachBean.insertOrUpdate(attach);
+				companyController.setSignatureAttach(attach);
+				aonFile.setAttachment(attach);
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating signature", e);
 			}
@@ -128,11 +123,12 @@ public class CompanySignatureControllerListener extends ControllerAdapter {
 				companyController.setSignatureAttach(companySignature);
 				
 				AonFile f = new AonFile();
-				f.setKey(companySignature.getId());
-				f.setData(companySignature.getData());
+				f.setAttachment(companySignature);
 				f.setFileName(companySignature.getDescription());
 				f.setMimeType(companySignature.getMimeType());
 				companyController.setSignatureFile(f);
+			} else {
+				companyController.setSignatureFile(null);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );

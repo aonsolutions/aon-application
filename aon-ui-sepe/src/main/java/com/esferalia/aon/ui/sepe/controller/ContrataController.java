@@ -611,8 +611,9 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	
 	@Override
 	public void onDownloadSepeXml(ActionEvent event){
-		InputStream in = new ByteArrayInputStream(getGeneratedFile().getData());
-		long size = ArrayUtils.getLength(getGeneratedFile().getData());
+		byte[] data = getGeneratedFile().getData();
+		InputStream in = new ByteArrayInputStream(data);
+		long size = ArrayUtils.getLength(data);
 		DownloadUtil.downloadAttachment("contrato-"+getContract().getPerson().getRegistry().getDocument(), MimeType.MIME_XML, in, size);
 	}
 	

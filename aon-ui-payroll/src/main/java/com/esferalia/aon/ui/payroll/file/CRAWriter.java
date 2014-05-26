@@ -1,24 +1,34 @@
 package com.esferalia.aon.ui.payroll.file;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
+
+import org.jooq.DSLContext;
+import org.jooq.Record3;
+import org.jooq.Result;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.cra.CRA;
 import com.esferalia.aon.file.payroll.cra.data.CRE;
 import com.esferalia.aon.file.payroll.cra.data.DDE;
@@ -26,8 +36,6 @@ import com.esferalia.aon.file.payroll.cra.data.ETI;
 import com.esferalia.aon.file.payroll.cra.data.TRB;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.enumeration.ss.T84;
 
 public class CRAWriter {
 	
@@ -37,22 +45,7 @@ public class CRAWriter {
 	private final String WHITESPACE_1  = " ";
 	
 	private ETI eti;
-	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-
-	private Integer year;
-	private Month month;
-	
-	private Date getStartDate(){
-		Calendar cal = Calendar.getInstance();
-		cal.set(year, month.ordinal(), 1, 0, 0, 0);
-		return cal.getTime(); 
-	}
-	private Date getEndDate(){
-		Calendar cal = Calendar.getInstance();
-		cal.set(year, month.ordinal(), 1, 23, 59, 59);
-		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-		return cal.getTime();
-	}
+	private static Settings SETTINGS = null;
 	
 	public ETI getEti() {
 		return eti;
@@ -63,7 +56,7 @@ public class CRAWriter {
 
 	public FileOutput createCRA(List<EnterpriseCCC> list, Integer year, Month month) throws ManagerBeanException {
 		try {
-			ETI eti = createETIRecord( list, year, month );
+			ETI eti = buildCRA( list, year, month );
 			File file = File.createTempFile("temp", ".CRA");
 			FileFiller cra = new CRA(eti, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
@@ -75,19 +68,48 @@ public class CRAWriter {
 		}
 	}
 	
-	public ETI createETIRecord(List<EnterpriseCCC> list, Integer year, Month month) throws ManagerBeanException {
-		ETI eti = new ETI();
-		this.year = year;
-		this.month = month;
+	private ETI buildCRA(List<EnterpriseCCC> cccs, Integer year, Month month) throws ManagerBeanException {
+		ETI eti = createETIRecord(year, month);
+		Connection connection = null; 
+		try {
+			IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
+			Calendar startCal = Calendar.getInstance();
+			startCal.set(year, month.ordinal(), 1, 0, 0, 0);
+			Calendar endCal = Calendar.getInstance();
+			endCal.set(year, month.ordinal(), 1, 23, 59, 59);
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			for (EnterpriseCCC ccc: cccs) {
+				DDE dde = createDDERecord(year, month, ccc.getFullCcc());
+				eti.getDdeList().add(dde);
+				Result<Record3<Byte, Double, Integer>> record = getSalaryPaymentSelect(connection, ccc, startCal.getTime(), endCal.getTime() );
+				TRB trb = null;
+				for (Record3<Byte, Double, Integer> step : record) {
+					Byte type = step.value1();
+					Double amount = step.value2();
+					Integer contractId = step.value3();
+					Contract contract = (Contract) contractBean.get(contractId);
+					if(trb==null || !contract.getPerson().getSocialSecurityNumber().equals(trb.getNaf())){
+						trb = createTRBRecord(contract.getPerson().getSocialSecurityNumber());
+						dde.getTrbList().add(trb);
+					}
+					CRE cre = createCRERecord(String.valueOf(type), amount);
+					trb.getCreList().add(cre);
+				}
+			}
+			return eti;
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}		
+	}
 		
+		
+	private ETI createETIRecord(Integer year, Month month) throws ManagerBeanException {
+		ETI eti = new ETI();
 		eti.setClave(SS_KEY);
 		eti.setPrueba(WHITESPACE_1);
-		for (EnterpriseCCC ccc: list) {
-			DDE dde = createDDERecord(ccc);
-			if(dde!=null){
-				eti.getDdeList().add(dde);
-			}
-		}
 		setEti( eti );
 		return getEti();
 	}
@@ -99,22 +121,12 @@ public class CRAWriter {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	private DDE createDDERecord(EnterpriseCCC ccc) throws  ManagerBeanException {
+	private DDE createDDERecord(Integer year, Month month, String ccc) throws  ManagerBeanException {
 		DDE dde = new DDE();
 		dde.setAnio(year.toString());
 		dde.setMes(String.valueOf(month.ordinal()+1));
-		dde.setCodigoCuentaCotizacionSeguridadSocial(ccc.getFullCcc());
-    	
-		List<ITransferObject> list = obtainContracts(ccc);
-		if(!list.isEmpty()){
-			for(ITransferObject to: list){
-				Contract contract = (Contract) to;
-				TRB trb = createTRBRecord(contract, dde);
-				dde.getTrbList().add(trb);
-			}
-			return dde;
-		}
-		return null;
+		dde.setCodigoCuentaCotizacionSeguridadSocial(ccc);
+		return dde;
 	}
 	
 	/**
@@ -125,18 +137,9 @@ public class CRAWriter {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	private TRB createTRBRecord(Contract contract, DDE dde) throws ManagerBeanException {
+	private TRB createTRBRecord(String socialSecurityNumber) throws ManagerBeanException {
 		TRB trb = new TRB();
-		trb.setNaf(contract.getPerson().getSocialSecurityNumber());
-		List<ITransferObject> list = obtainContractPayments(contract);
-		if(!list.isEmpty()){
-			for(ITransferObject to: list){
-				CRE cre = createCRERecord((SalaryPayment)to);
-				if(cre!=null){
-					trb.getCreList().add(cre);
-				}
-			}
-		}
+		trb.setNaf(socialSecurityNumber);
 		return trb;
 	}
 	
@@ -146,49 +149,52 @@ public class CRAWriter {
 	 * @param to
 	 * @return
 	 */
-	private CRE createCRERecord(SalaryPayment payment) {
+	private CRE createCRERecord(String code, Double amount) {
 		// TODO
-		T84 paymentType = T84.getEnumByValue(payment.getType().toString().replace("CRA_", ""));
-		if(paymentType!=null){
-			CRE cre = new CRE();
-			cre.setConcepto(paymentType.getCode());
-//			Valores posibles: (IndicativoConcepto)
-//			E=concepto excluido de la base; 
-//			I=concepto incluido de la base.
-			cre.setIndicativoConcepto((payment.getType().ordinal()==35 || payment.getType().ordinal()>=42 ) ? "E" : "I");
-			cre.setImporte(String.valueOf((int)(CommonUtil.round(payment.getAmount(), 2)*100)));
-			cre.setIndicativoTipoActuacion("");
-			return cre;
-		}
-		return null;
+		CRE cre = new CRE();
+		cre.setConcepto(autoComplete(code, 4, "0", true));		
+//		Valores posibles: (IndicativoConcepto)
+//		E=concepto excluido de la base; 
+//		I=concepto incluido de la base.
+		cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
+		cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
+		cre.setIndicativoTipoActuacion("");
+		return cre;
 	}
-	
 	
 	//////////////////////////
 	// AUX
 	//////////////////////////
 	
-	private List<ITransferObject> obtainContracts(EnterpriseCCC ccc) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-		Criteria criteria = new Criteria();
-		criteria.setSkipDomainFilter(true);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ENTERPRISE_CCC_ID), ccc.getId());
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getEndDate());
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getStartDate());
-		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		criteria.addOrder("Contract.person.socialSecurityNumber");
-		return bean.getList(criteria);
+	private Result<Record3<Byte, Double, Integer>> getSalaryPaymentSelect(Connection connection, EnterpriseCCC ccc, Date startDate, Date endDate ) {
+		DSLContext ctx = DSL.using(connection, getDefaultSettings());
+			
+		Result<Record3<Byte, Double, Integer>> record = ctx.select(SALARY_PAYMENT.TYPE, SALARY_PAYMENT.AMOUNT, SALARY.CONTRACT)
+			.from(SALARY_PAYMENT)
+			.leftOuterJoin(SALARY).onKey()
+			.where(SALARY.END_DATE.between(toSqlDate(startDate)).and(toSqlDate(endDate)))
+			.and(SALARY.CONTRACT.in( ctx.select(CONTRACT.ID).from(CONTRACT).where(CONTRACT.ENTERPRISE_CCC.equal(ccc.getId())) ))
+			.orderBy(SALARY.SOCIAL_SECURITY_NUMBER)
+			.fetch();
+		return record;
 	}
-
-	private List<ITransferObject> obtainContractPayments(Contract contract) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
-		Criteria criteria = new Criteria();
-		criteria.setSkipDomainFilter(true);
-		criteria.addEqualExpression("SalaryPayment.salary.contract.id", contract.getId());
-		criteria.addGreaterThanOrEqualExpression("SalaryPayment.salary.startDate", getStartDate());
-		criteria.addLessThanOrEqualExpression("SalaryPayment.salary.endDate", getEndDate());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_PAYMENT_TYPE));
-		return bean.getList(criteria);
+	
+	protected java.sql.Date toSqlDate(Date date){
+		return (date==null)?null:new java.sql.Date( date.getTime() );
+	}
+	
+	private String autoComplete(String value, int lenght, String completeValue, boolean leftSide) {
+		while( value.length() < lenght ){
+			value = leftSide ? (completeValue + value) : (value + completeValue);
+		}
+		return value;
+	}
+	
+	private static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
 	}
 }

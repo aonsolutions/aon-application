@@ -162,7 +162,7 @@
 					</aon:outputText>
 
 					<c:if test="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}" >					
-						<c:if test="#{fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML'}" >
+						<c:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')}" >
 							<aon:outputLabel for="FinanceBatch_bankDate"
 								value="#{bundle.aon_date_send_bank}" />
 							<aon:selectInputDate id="FinanceBatch_bankDate" 

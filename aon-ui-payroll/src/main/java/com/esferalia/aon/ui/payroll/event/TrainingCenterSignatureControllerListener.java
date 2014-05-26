@@ -4,7 +4,6 @@ import static com.code.aon.ui.common.ICommonMessages.COMPANY_LOGO_MAX_SIZE_ERROR
 import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
 import static com.code.aon.ui.company.controller.ICompanyConstants.LOGO_MAX_SIZE;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +11,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.util.MimeResolver;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -35,7 +32,7 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrainingCenterSignatureControllerListener.class.getName());
 	
 	private void checkAonFile( AonFile aonFile ) throws ControllerListenerException {
-		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
+		if ( aonFile.getSize() <= 0 ) {			
 			throw new ControllerListenerException( AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );									
 		} else if (aonFile.getSize() > LOGO_MAX_SIZE) {
 			String message = AonUtil.getMessage(COMPANY_LOGO_MAX_SIZE_ERROR, LOGO_MAX_SIZE);
@@ -63,20 +60,21 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		TrainingCenterController trainingCenterController = (TrainingCenterController) event.getController();
-		if (trainingCenterController.getSignatureFile() != null) {
-			checkAonFile(trainingCenterController.getSignatureFile());
+		AonFile aonFile = trainingCenterController.getSignatureFile();
+		if ((aonFile != null) && aonFile.isDirty() ) {
+			checkAonFile(aonFile);
 			try {
-				AonFile aonFile = trainingCenterController.getSignatureFile();
 				RegistryAttachment attach = new RegistryAttachment();
 				attach.setRegistryAttachmentType(RegistryAttachmentType.SIGNATURE);
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
 				attach.setDescription("aon-signature");
 				attach.setRegistry(((TrainingCenter) event.getController().getTo()).getRegistry());
-				MimeType mt = getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mt);
+				attach.setMimeType(aonFile.getMimeType());
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				trainingCenterController.setSignatureAttach((RegistryAttachment) attachBean.insert(attach));
+				attachBean.insert(attach);
+				trainingCenterController.setSignatureAttach(attach);
+				aonFile.setAttachment(attach);				
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating signature", e);
 			}
@@ -95,10 +93,10 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		TrainingCenterController trainingCenterController = (TrainingCenterController) event.getController();
-		if (trainingCenterController.getSignatureFile() != null) {
-			checkAonFile(trainingCenterController.getSignatureFile());
+		AonFile aonFile = trainingCenterController.getSignatureFile();
+		if ((aonFile != null) && aonFile.isDirty() ) {
+			checkAonFile(aonFile);
 			try {
-				AonFile aonFile = trainingCenterController.getSignatureFile();
 				RegistryAttachment attach = trainingCenterController.obtainTrainingCenterSignature();				
 				if (attach == null) {
 					attach = new RegistryAttachment();
@@ -108,14 +106,11 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 				attach.setData(aonFile.getData());
 				attach.setDescription("aon-signature");
 				attach.setRegistry(((TrainingCenter) event.getController().getTo()).getRegistry());
-				MimeType mt = getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mt);
+				attach.setMimeType(aonFile.getMimeType());
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				if (attach.getId() == null) {
-					trainingCenterController.setSignatureAttach((RegistryAttachment) attachBean.insert(attach));
-				} else {
-					trainingCenterController.setSignatureAttach((RegistryAttachment) attachBean.update(attach));
-				}
+				attachBean.insertOrUpdate(attach);
+				trainingCenterController.setSignatureAttach(attach);
+				aonFile.setAttachment(attach);
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating signature", e);
 			}
@@ -131,8 +126,7 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 				trainingCenterController.setSignatureAttach(trainingCenterSignature);
 				
 				AonFile f = new AonFile();
-				f.setKey(trainingCenterSignature.getId());
-				f.setData(trainingCenterSignature.getData());
+				f.setAttachment(trainingCenterSignature);
 				f.setFileName(trainingCenterSignature.getDescription());
 				f.setMimeType(trainingCenterSignature.getMimeType());
 				trainingCenterController.setSignatureFile(f);
@@ -157,12 +151,4 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 		}
 	}
 
-	private MimeType getMimeType(String resource, byte[] data) {
-		MimeType mt = MimeResolver.getMimeTypeByExtension(resource);
-		if ( mt == null ) {
-			mt = MimeResolver.getMimeType(data);
-		}
-		return mt;
-	}
-	
 }

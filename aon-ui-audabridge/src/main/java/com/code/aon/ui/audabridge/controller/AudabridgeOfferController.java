@@ -381,7 +381,6 @@ public class AudabridgeOfferController implements Serializable {
 		attach.setData(arr);
 		attach.setDescription("Valoración XML AudaTex " + getOffer().getExternalReference());
 		attach.setMimeType(MimeType.MIME_XML);
-		attach.setSize(arr.length);
 		bean.insert(attach);
 		
 		attach = new OfferAttachment();
@@ -391,7 +390,6 @@ public class AudabridgeOfferController implements Serializable {
 		attach.setData(arr);
 		attach.setDescription("Valoración PDF AudaTex " + getOffer().getExternalReference());
 		attach.setMimeType(MimeType.MIME_PDF);
-		attach.setSize(arr.length);
 		bean.insert(attach);
 		
 	}

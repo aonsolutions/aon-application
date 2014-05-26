@@ -379,7 +379,7 @@ public class ContractPdfController implements Serializable {
 		
 		contrataController.onContrataDataShow(null);
 		
-		if(contrataController.getGeneratedFile()!=null && contrataController.getGeneratedFile().getData()!=null){
+		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
 			setContrataParams(contrataController.getHandler().getParams());
 		} else {
 			setContrataParams(null);

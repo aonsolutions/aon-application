@@ -75,7 +75,7 @@ public class FanBatchController extends BasicController {
 	}
 	
 	public boolean isRecorded() {
-		return this.getTo()!=null && ((FanBatch)this.getTo()).getOutcomeFile()!=null;
+		return this.getTo()!=null && (((FanBatch)this.getTo()).getOutcomeFileSize()!=null && ((FanBatch)this.getTo()).getOutcomeFileSize()>0);
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -135,15 +135,17 @@ public class FanBatchController extends BasicController {
 			if(this.isNew()){
 				getNewBatchWizard().accept(event);
 			}
+			
 			FanBatch batch = (FanBatch) getTo();
 			FANWriter fanWriter = new FANWriter();
-			File file = fanWriter.createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
+			File file = fanWriter.createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
 			if (file != null) {
 				batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
 				batch.setOutcomeFileDate(new Date());
 				batch.setStatus(FileStatus.GENERATED);
 				super.accept(null);
 			}
+			
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error generating FAN file");
 			AonUtil.addErrorMessage(e.getMessage());
@@ -164,10 +166,11 @@ public class FanBatchController extends BasicController {
         	Date date = batch.getDate();
         	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
     		String name = formatter.format(date);
-        	int size = batch.getOutcomeFile().length;
+    		byte[] data = batch.getOutcomeFile();
+        	int size = data.length;
 			response = DownloadUtil.getResponse();
     		out = DownloadUtil.initDownload(response, name+".FAN", null, size);
-        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(batch.getOutcomeFile()) );
+        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
         	IOUtils.copy( fileIn, out );
         	IOUtils.closeQuietly(fileIn);
 		} catch (Throwable e) {
@@ -269,9 +272,19 @@ public class FanBatchController extends BasicController {
 		private ArrayList<Object> checks = new ArrayList<Object>();
 		
 		private DataModel selectedModel;
-		
+
+		private LiquidationType[] liquidationTypes;
+				
 		public FanBatchNewWizard(FanBatchController controller) {
 			this.controller = controller;
+		}
+
+		public LiquidationType[] getLiquidationTypes() {
+			return liquidationTypes;
+		}
+
+		public void setLiquidationTypes(LiquidationType[] liquidationTypes) {
+			this.liquidationTypes = liquidationTypes;
 		}
 
 		public boolean isNew(){
