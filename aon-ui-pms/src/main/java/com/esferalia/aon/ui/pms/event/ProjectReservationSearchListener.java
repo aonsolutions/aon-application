@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.event;
 import java.util.Date;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
@@ -24,6 +25,7 @@ import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	private Hotel hotel;
+	private String code;
 	private Date creationDateFrom;
 	private Date creationDateTo;
 	private Date insideDateFrom;
@@ -39,6 +41,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public Date getCreationDateFrom() {
@@ -108,6 +118,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setCode(null);
 		setCreationDateFrom(null);
 		setCreationDateTo(null);
 		setInsideDateFrom(null);
@@ -122,6 +133,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
+		}
+		if (StringUtils.isNotBlank(getCode())) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), StringUtils.trim(getCode()));			
 		}
 		if (getCreationDateFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), getCreationDateFrom());
