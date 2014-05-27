@@ -231,10 +231,16 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			PreparedStatement roomStmt = null;
 			ResultSet roomRs = null;
 			try {
+				boolean isReservation = getProjectReservation() != null && getProjectReservation().getId() != null;
 				connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-				roomStmt = connection.prepareStatement(getRoomListSQL(getProjectReservation()));
-				SQLUtils.setInt(roomStmt, 1, getReservationInvoiceTo().getHotel().getId());
-				SQLUtils.setDate(roomStmt, 2, getReservationInvoiceTo().getIssueDate());
+				roomStmt = connection.prepareStatement(getRoomListSQL(isReservation));
+				if (!isReservation) {
+					SQLUtils.setInt(roomStmt, 1, getReservationInvoiceTo().getHotel().getId());
+					SQLUtils.setDate(roomStmt, 2, getReservationInvoiceTo().getIssueDate());
+				} else {
+					SQLUtils.setInt(roomStmt, 1, getProjectReservation().getId());
+					SQLUtils.setDate(roomStmt, 2, DateUtils.addDays(getProjectReservation().getEndDate(), -1));
+				}
 				roomRs = roomStmt.executeQuery();
 				while (roomRs.next()) {
 					int reservationRoomDetailId = roomRs.getInt(RESERVATION_ROOM_DETAIL);
@@ -283,7 +289,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		return roomList;
 	}
 
-	private String getRoomListSQL(ProjectReservation reservation) throws ManagerBeanException {
+	private String getRoomListSQL(boolean isReservation) throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT PRRD.id AS " + RESERVATION_ROOM_DETAIL + ", PRRD.domain AS " + DOMAIN);
 		stmt.append(", PRR.id AS " + RESERVATION_ROOM + ", PRR.project_reservation AS " + RESERVATION); 
@@ -292,12 +298,9 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		stmt.append(" FROM booking AS B, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD");
 		stmt.append(", asset_activity AS AA, asset AS A");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
-		stmt.append(" AND B.hotel = ?");
+		stmt.append((!isReservation) ? " AND B.hotel = ?" : " AND PRR.project_reservation = ?");
 		stmt.append(" AND B.stay_date = ?");
 		stmt.append(" AND B.project_reservation_room = PRR.id");
-		if (reservation != null && reservation.getId() != null) {
-			stmt.append(" AND PRR.project_reservation = " + reservation.getId());
-		}
 		stmt.append(" AND PRR.id = PRRD.project_reservation_room");
 		stmt.append(" AND PRRD.asset_activity = AA.id");
 		stmt.append(" AND B.stay_date = AA.date");
