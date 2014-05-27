@@ -162,9 +162,9 @@ public class ReportsObject {
 			dataTable.addColumn(getColumnType(column.getType()),
 					column.getLabel(), column.getId());
 		
-		int rows = reportData.rows();
+		int rows = Math.min(reportData.rows(), MAX);
 		dataTable.addRows(rows);
-		for (int row = 0; row < Math.min(rows, MAX ); row++) {
+		for (int row = 0; row < rows; row++) {
 			String values[] = reportData.getRow(row);
 			for (int col = 0; col < values.length; col++) {
 				Object value = columns[col].parse(values[col]);
