@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_SHORT;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -56,6 +60,7 @@ public class Reports extends ResizeComposite {
 	@UiField
 	MenuItem filterMenuItem;
 
+	private DataTable dataTable;
 	private ReportsObject reportsObject;
 
 	public Reports() {
@@ -64,10 +69,16 @@ public class Reports extends ResizeComposite {
 
 		excelButton.addClickHandler(new ClickHandler() {
 			@Override
-			public void onClick(ClickEvent arg0) {
+			public void onClick(ClickEvent event) {
+				String title = getSelectedType().getDescription()
+						+ "_"
+						+ DateTimeFormat.getFormat(DATE_SHORT).format(
+								getSelectedMonth());
+
+				Window.open(ReportsObject.toCSVDataURL(dataTable, ','), title,
+						null);
 			}
 		});
-		excelButton.setEnabled(false);
 
 		// init reportListBox
 		for (ReportsType type : ReportsType.values())
@@ -124,10 +135,10 @@ public class Reports extends ResizeComposite {
 
 			@Override
 			public void execute() {
-				
+
 				workplaceDialog.setData(reportsObject.getAllWorkplaces());
 				workplaceDialog.setSelectedData(reportsObject.getWorkplaces());
-				
+
 				workplaceDialog.setWidth(Window.getClientWidth() / 2 + "px");
 
 				workplaceDialog.center();
@@ -163,7 +174,10 @@ public class Reports extends ResizeComposite {
 			}
 
 			@Override
-			public void onSuccess(DataTable result) {
+			public void onSuccess(DataTable dataTable) {
+
+				Reports.this.dataTable = dataTable;
+
 				Options options = Options.create();
 
 				options.setSort(Policy.ENABLE);
@@ -174,11 +188,11 @@ public class Reports extends ResizeComposite {
 				cssClassNames.setHeaderRow("aon-dataTable-header");
 				cssClassNames.setTableRow("aon-dataTable-row-even");
 				cssClassNames.setOddTableRow("aon-dataTable-row-odd");
-				cssClassNames.setHoverTableRow("aon-table-row-over");
+				cssClassNames.setHoverTableRow("aon-table-row-hover");
 
 				options.setCssClassNames(cssClassNames);
 
-				Table table = new Table(result, options);
+				Table table = new Table(dataTable, options);
 				table.addStyleName("aon-dataTable-chart");
 				panel.setWidget(table);
 			}
@@ -210,9 +224,12 @@ public class Reports extends ResizeComposite {
 
 	}
 
+	private Date getSelectedMonth() {
+		return monthListBox.getSelected();
+	}
+
 	private void setSelectedMonth(final Date month) {
 		monthListBox.setSelectedMonth(month);
 	}
-	
 
 }

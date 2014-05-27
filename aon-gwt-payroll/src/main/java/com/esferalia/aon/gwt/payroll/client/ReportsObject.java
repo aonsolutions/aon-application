@@ -1,10 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -72,7 +71,7 @@ public class ReportsObject {
 	private Date month = DateUtils.getFirstDayOfMonth();
 	private ReportsType reportsType = ReportsType.A3;
 	private List<Workplace> workplaces = Collections.emptyList();
-
+	
 	
 	public ReportsObject(Enterprise enterprise,
 			GPSReportsServiceAsync serviceAsync) {
@@ -178,7 +177,7 @@ public class ReportsObject {
 			dataTable.addColumn(getColumnType(column.getType()),
 					column.getLabel(), column.getId());
 		
-		int rows = Math.min(reportData.rows(), MAX);
+		int rows = reportData.rows();
 		dataTable.addRows(rows);
 		for (int row = 0; row < rows; row++) {
 			String values[] = reportData.getRow(row);
@@ -216,5 +215,34 @@ public class ReportsObject {
 
 		return ColumnType.STRING;
 	}
+	
+	static String toCSVDataURL(DataTable dataTable, char sep) {
+		StringBuffer buffer = new StringBuffer();
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		buffer.append("data:");
+		buffer.append("text/csv");
+		buffer.append(";charset=utf-8");
+		buffer.append(",");
+		appendCSV2(buffer, dataTable, sep);
+		
+		return buffer.toString();
+	}
+	
+	static void appendCSV2(StringBuffer csvBuffer, DataTable dataTable, char sep) {
+		int cols = dataTable.getNumberOfColumns();
+		for (int col = 0; col < cols -1; col++){
+			csvBuffer.append(dataTable.getColumnLabel(col)).append(sep);
+		}
+		csvBuffer.append(dataTable.getColumnLabel(cols-1)).append("\r\n");
+
+		int rows = dataTable.getNumberOfRows();
+		for ( int row = 0; row < rows ; row++ ) {
+			for (int col = 0; col < cols -1; col++){
+				csvBuffer.append(dataTable.getFormattedValue(row, col)).append(sep);
+			}
+			csvBuffer.append(dataTable.getFormattedValue(row, cols-1)).append("\r\n");
+		}
+	}
+	
 
 }

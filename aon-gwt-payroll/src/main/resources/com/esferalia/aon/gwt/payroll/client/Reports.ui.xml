@@ -48,7 +48,7 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='excelButton'
-									styleName='aon-finding-toolbar-item aon-icon-excel' text="Excel" />
+									styleName='aon-finding-toolbar-item aon-icon-excel' text="CSV" />
 
 								<g:ListBox ui:field='reportListBox' />
 

@@ -17,7 +17,9 @@ public class Deduction extends Item<Deduction.Type> {
 		IRPF, ADVANCE_PAYMENT, 
 		IN_KIND, 
 		OTHER, 
-		FOGASA // TODO:
+		FOGASA, // TODO:
+		
+		EMBARGO // Other type really
 		;
 		public String getDescription() {
 			return DESCRIPTIONS.get(this);
@@ -36,6 +38,7 @@ public class Deduction extends Item<Deduction.Type> {
 				put(IN_KIND, "Valor de productos en especie");
 				put(OTHER, "Otras deducciones");
 				put(FOGASA, "FOGASA");
+				put(EMBARGO, "Embargo");
 			}
 		};
 
