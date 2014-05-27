@@ -57,8 +57,22 @@ public class BackupController implements IDumpListener, Serializable {
 	private int maxProgressValue;
 	private String progressMessage;
 	private boolean enabledProgressBar;
-	private Locale locale = AonUtil.getCurrentLocale();
+	private Locale locale;
+	private String tableStartMessage;
+	private String tableProgressMessage;
+	private String tableFinishMessage;
+	private String infoMessage;
+	private String errorMessage;
 	
+	public BackupController() {
+		this.locale = AonUtil.getCurrentLocale();
+		this.tableStartMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
+		this.tableProgressMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
+		this.tableFinishMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
+		this.infoMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);		
+		this.errorMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
+	}
+
 	public boolean isIncludeParentDomain() {
 		return includeParentDomain;
 	}
@@ -140,8 +154,7 @@ public class BackupController implements IDumpListener, Serializable {
         } catch (Throwable e) {
 			LOGGER.error(">>>> onDump: ", e);
 			this.progressValue = this.maxProgressValue + 1;
-			String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
-			setProgressMessage( format(message, e.getMessage()) );
+			setProgressMessage( format(errorMessage, e.getMessage()) );
 		} finally {
 			IOUtils.closeQuietly(zipOut);
 			DbUtils.closeQuietly(connection);
@@ -206,29 +219,25 @@ public class BackupController implements IDumpListener, Serializable {
 	public synchronized void initDump(String databaseName, String version, int numberOfTables) {
 		this.progressValue = 0;
 		this.maxProgressValue = numberOfTables;
-		String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);
-		setProgressMessage( format(message, databaseName, version) );
+		setProgressMessage( format(infoMessage, databaseName, version) );
 	}
 
 	@Override
 	public synchronized void startDumpTable(String table) {
 		this.progressValue++;
-		String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
-		setProgressMessage( format(message, table) );
+		setProgressMessage( format(tableStartMessage, table) );
 	}
 	
 	@Override
 	public synchronized void dumpTable(String table, int rowCount) {
 		if ( rowCount%100 == 0 ) {
-			String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
-			setProgressMessage( format(message, table, rowCount) );	
+			setProgressMessage( format(tableProgressMessage, table, rowCount) );	
 		}
 	}
 
 	@Override
 	public synchronized void endDumpTable(String table, int rowCount) {
-		String message = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
-		setProgressMessage( format(message, table, rowCount) );
+		setProgressMessage( format(tableFinishMessage, table, rowCount) );
 	}
 
 	@Override

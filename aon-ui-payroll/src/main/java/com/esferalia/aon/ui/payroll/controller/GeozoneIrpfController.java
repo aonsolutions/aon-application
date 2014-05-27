@@ -328,7 +328,10 @@ public class GeozoneIrpfController implements Serializable {
 			this.year = year;
 		}
 	}
-	public class GeozoneIrpfCount{
+	public static class GeozoneIrpfCount implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer count;
 		private Double percent;
 		public Double getPercent() {
@@ -344,7 +347,10 @@ public class GeozoneIrpfController implements Serializable {
 			this.percent = percent;
 		}
 	}
-	public class GeoIrpfDescendants{
+	public static class GeoIrpfDescendants implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Double fromAmount;
 		private Double toAmount;
 		private List<GeozoneIrpfCount> descendants;
@@ -370,7 +376,10 @@ public class GeozoneIrpfController implements Serializable {
 			this.descendants = descendants;
 		}
 	}
-	public class GeoIrpfHandicap{
+	public static class GeoIrpfHandicap implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Double fromAmount;
 		private Double toAmount;
 		private List<GeozoneIrpfCount> handicap;

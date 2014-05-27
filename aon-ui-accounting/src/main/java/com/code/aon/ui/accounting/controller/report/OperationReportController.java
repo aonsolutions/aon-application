@@ -9,7 +9,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +29,7 @@ import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
@@ -152,7 +152,7 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 			}
 			OperationReportManager operationReportManager = new OperationReportManager();
 			List<OperationReport> list = operationReportManager.getReport( getParams() );
-			setDetailModel(new ListDataModel(list));
+			setDetailModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
