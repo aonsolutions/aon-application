@@ -1,20 +1,21 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
-import com.google.gwt.visualization.client.visualizations.Table;
-import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.Table;
 
 public class ReportsObject {
 	
@@ -70,11 +71,14 @@ public class ReportsObject {
 
 	private Date month = DateUtils.getFirstDayOfMonth();
 	private ReportsType reportsType = ReportsType.A3;
+	private List<Workplace> workplaces = Collections.emptyList();
 
+	
 	public ReportsObject(Enterprise enterprise,
 			GPSReportsServiceAsync serviceAsync) {
 		this.enterprise = enterprise;
 		this.serviceAsync = serviceAsync;
+		this.workplaces = enterprise.getWorkplaces();
 	}
 
 	public Date getMonth() {
@@ -115,13 +119,25 @@ public class ReportsObject {
 
 	}
 	
+	public List<Workplace> getWorkplaces() {
+		return workplaces;
+	}
+	
 
+	public void setWorkplaces(List<Workplace> workplaces) {
+		this.workplaces = workplaces;
+	}
+	
+	public List<Workplace> getAllWorkplaces(){
+		return enterprise.getWorkplaces();
+		
+	}
+	
 	// ------------------------------------------------------------------------
 	// Private methods
 	private void getReport(ReportsType type, final Date month,
 			final AsyncCallback<ReportData> callback) {
 
-		List<Workplace> workplaces = enterprise.getWorkplaces();
 		final int[] workplaceIds = new int[workplaces.size()];
 		for (int i = 0; i < workplaceIds.length; i++)
 			workplaceIds[i] = workplaces.get(i).getId();

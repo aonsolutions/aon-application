@@ -25,6 +25,14 @@
 			<g:FlowPanel>
 
 
+				<g:MenuBar>
+					<g:MenuItem ui:field="viewMenuItem" text="Ver">
+						<g:MenuBar vertical="true">
+							<g:MenuItem text="Filtros..." ui:field="filterMenuItem" />
+						</g:MenuBar>
+					</g:MenuItem>
+				</g:MenuBar>
+
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">

@@ -139,14 +139,6 @@
 		<servlet-name>Caculate Servlet</servlet-name>
 		<url-pattern>/aon_gwt_payroll/calculate</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>GPS FTE Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.gps.ReportServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>GPS FTE Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/gps/*</url-pattern>
-	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>TemplatePreview</servlet-name>
