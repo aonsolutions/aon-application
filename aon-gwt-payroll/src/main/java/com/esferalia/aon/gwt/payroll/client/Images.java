@@ -80,5 +80,7 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	@Source("aon-icon-it.png")
 	ImageResource itDatas();
+	
+	ImageResource gps();
 
 }

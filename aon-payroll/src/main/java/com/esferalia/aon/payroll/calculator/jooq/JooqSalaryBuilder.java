@@ -33,7 +33,6 @@ import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.conf.ParamType;
-import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.AccountEntryDetail;
@@ -62,7 +61,6 @@ import com.esferalia.aon.salary.payment.IPayment;
 
 public class JooqSalaryBuilder implements ISalaryBuilder {
 
-	private static Settings SETTINGS = null;
 	private static List<String> ALREADY_AT_SALARY = null;
 
 	private DSLContext dslContext;
@@ -81,7 +79,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	private Variables variables;
 
 	public JooqSalaryBuilder(Connection connection) {
-		this(DSL.using(connection, getDefaultSettings()));
+		this(DSL.using(connection, JooqCommon.getDefaultSettings()));
 	}
 
 	public JooqSalaryBuilder(DSLContext dslContext) {
@@ -513,14 +511,6 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	}
 
 	// ------------------------------------------------------------------------
-
-	private static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
 
 	private static java.sql.Date toSqlDate(Date date) {
 		return new java.sql.Date(date.getTime());

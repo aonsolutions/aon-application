@@ -78,6 +78,8 @@ public class Employees extends ResizeComposite implements
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
+		void onReportsSelected(ReportsObject reports);
+
 		void onStatisticsSelected(Statistics stats);
 
 		void onITDataSelected(ITData itData);
@@ -114,6 +116,8 @@ public class Employees extends ResizeComposite implements
 	private static final int ENTERPRISE_SALARIES_INDEX = 1;
 	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
 	private static final int ENTERPRISE_PARTSIT_INDEX = 3;
+	private static final int ENTERPRISE_REPORTS_INDEX = 4;
+
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_SALARIES_INDEX = 1;
 	private static final int WORKPLACE_STATISTICS_INDEX = 2;
@@ -141,6 +145,7 @@ public class Employees extends ResizeComposite implements
 	private boolean formers = true;
 	private boolean endDate = true;
 	private boolean extended = false;
+	private boolean inactive = false;
 
 	private Date fromDate = null;
 	private String namePattern = null;
@@ -234,6 +239,10 @@ public class Employees extends ResizeComposite implements
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 
+		if (Enterprise.isGPS(enterprise))
+			addImageItem(enterpriseItem, "Informes", images.gps())
+					.setUserObject(new ReportsObject(enterprise, employeesService));
+
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
 			for (Activity activity : activities) {
@@ -253,6 +262,8 @@ public class Employees extends ResizeComposite implements
 			workplaceItem = addImageItem(enterpriseItem, description,
 					images.workplace());
 			workplaceItem.setUserObject(workplace);
+			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
+			
 
 			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
@@ -278,9 +289,9 @@ public class Employees extends ResizeComposite implements
 							employeesService,
 							new EnumEventMetaData("DESEMPE\u00D1O",
 									"DESEMPE\u00D1O",
-									"Desempe\u00F1o por Trabajador y Jornada", "", "4",
-									"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
-									"B", "P", "AI", "M"),
+									"Desempe\u00F1o por Trabajador y Jornada",
+									"", "4", "8", "10", "12", "L", "LT", "LR",
+									"F", "FT", "FR", "V", "B", "P", "AI", "M"),
 							new DecimalEventMetaData("INCENTIVOS"),
 							new DecimalEventMetaData("ATRASOS"),
 							new DecimalEventMetaData("ANTICIPOS"),
@@ -296,7 +307,11 @@ public class Employees extends ResizeComposite implements
 							new BooleanEventMetaData("LTR",
 									"D\u00EDas Libres Trabajados Recuperables"),
 							new DecimalEventMetaData("HFD",
-									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"));
+									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
+							new ConstantEventMetaData("PLUS_TURNICIDAD",
+									"PLUS_TURNICIDAD=( LT - LR - LA ) * CLT"),
+							new ConstantEventMetaData("CECO", "% por CECO"),
+							new EventMetaData("OBSERVACIONES"));
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
@@ -306,7 +321,7 @@ public class Employees extends ResizeComposite implements
 							new BooleanEventMetaData("DIAS_VACACIONES"),
 							new BooleanEventMetaData("HUELGA"),
 							new EventMetaData("OBSERVACIONES"));
-				
+
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
@@ -434,6 +449,8 @@ public class Employees extends ResizeComposite implements
 			onSalariesSelected((SalariesDocuments) userObject);
 		} else if (userObject instanceof CostDocuments) {
 			onCostsSelected((CostDocuments) userObject);
+		} else if (userObject instanceof ReportsObject) {
+			onReportsSelected((ReportsObject) userObject);
 		} else if (userObject instanceof Statistics) {
 			onStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof ITData) {
@@ -864,6 +881,12 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
+	private void onReportsSelected(ReportsObject reports) {
+		for (Listener listener : listeners) {
+			listener.onReportsSelected(reports);
+		}
+	}
+
 	private void onStatisticsSelected(Statistics stats) {
 		for (Listener listener : listeners) {
 			listener.onStatisticsSelected(stats);
@@ -1086,6 +1109,7 @@ public class Employees extends ResizeComposite implements
 			private PopupPanel popup = new PopupPanel();
 
 			private MenuItem formerMenuItem;
+			private MenuItem inactiveMenuItem;
 			private MenuItem endDateMenuItem;
 			private MenuItem filterMenuItem;
 			private FilterDialog filterDialog;
@@ -1119,6 +1143,25 @@ public class Employees extends ResizeComposite implements
 						});
 				formerMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
 				menuBar.addItem(formerMenuItem);
+
+				inactiveMenuItem = new MenuItem("Centros Inactivos",
+						new Command() {
+							@Override
+							public void execute() {
+								try {
+								inactive = !inactive;
+								
+								changeVisibleWorkplaces();
+								formerMenuItem.setStyleName(
+										"aon-MenuItemCheckYes", inactive);
+								popup.hide();
+								} catch ( Throwable t) {
+									Window.alert(t.getMessage());
+								}
+							}
+						});
+				inactiveMenuItem.setStyleName("aon-MenuItemCheckYes", inactive);
+				menuBar.addItem(inactiveMenuItem);
 
 				filterDialog = new FilterDialog() {
 					{
@@ -1247,8 +1290,36 @@ public class Employees extends ResizeComposite implements
 
 	}
 
+	private void changeVisibleWorkplaces() {
+		Window.alert("changeVisibleWorkplaces");
+		TreeItem enterpriseItem = tree.getItem(0);
+		int childCount = enterpriseItem.getChildCount();
+		int workplacesOffset = getWorkplacesOffset();
+		for (int j = workplacesOffset; j < childCount; j++) {
+			TreeItem workplaceItem = enterpriseItem.getChild(j);
+			Workplace workplace = (Workplace) enterpriseItem.getUserObject();
+			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
+		}
+
+	}
+	
+	private boolean isWorkPlaceVisible(Workplace workplace) {
+		return workplace.isActive() || inactive;
+	}
+
 	private int getWorkplacesOffset() {
-		return extended ? 3 : 2;
+		int itemCount = tree.getItemCount();
+
+		for (int i = 0; i < itemCount; i++) {
+			TreeItem treeItem = tree.getItem(i);
+			Object userObject = treeItem.getUserObject();
+			if (userObject instanceof Workplace)
+				return i;
+		}
+
+		return itemCount;
+
+		// return extended ? 3 : 2;
 	}
 
 	private int getEmployeesOffset() {
@@ -1393,5 +1464,5 @@ public class Employees extends ResizeComposite implements
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
 
 	}
-	
+
 }

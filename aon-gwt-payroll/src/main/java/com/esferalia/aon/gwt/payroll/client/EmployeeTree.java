@@ -597,7 +597,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			submit(fileName, params);
 		}
 
-	}
+	}	
+
 
 	static class A3ReportEnterpriseCommand extends GPSReportEnterpriseCommand
 			implements ReportConstants {
@@ -859,6 +860,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Irpf irpf;
 	private Salary salary;
 	private Statistics stats;
+	private Reports reports;
 	private ITEditor it;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
@@ -909,6 +911,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		irpf = new Irpf();
 		salary = new Salary();
 		stats = new Statistics();
+		reports = new Reports();
 		it = new ITEditor();
 		documents = new Documents();
 		eventsDraft = new EventsDraft();
@@ -981,6 +984,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(cost);
 		cost.setCostDocuments(docs);
 
+	}
+
+	@Override
+	public void onReportsSelected(ReportsObject reportsObject) {
+		employeeDetail.setWidget(reports);
+		reports.setReportsObject(reportsObject);
+		
 	}
 
 	@Override

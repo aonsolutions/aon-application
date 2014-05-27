@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -79,42 +80,46 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getEnterpriseCosts(enterpriseId,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
-	
+
 	@Override
 	public void getWorkplaceStats(int workplaceId,
 			AsyncCallback<Statistics> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getWorkplaceStats(workplaceId, new AsyncCallbackWrapper<Statistics>(callback));
+		employeesServiceAsync.getWorkplaceStats(workplaceId,
+				new AsyncCallbackWrapper<Statistics>(callback));
 	}
-	
+
 	@Override
 	public void getEnterpriseStats(int enterpriseId,
 			AsyncCallback<Statistics> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEnterpriseStats(enterpriseId, new AsyncCallbackWrapper<Statistics>(callback));
+		employeesServiceAsync.getEnterpriseStats(enterpriseId,
+				new AsyncCallbackWrapper<Statistics>(callback));
 	}
-	
+
 	@Override
 	public void getWorkplaceITData(int workplaceId,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getWorkplaceITData(workplaceId, new AsyncCallbackWrapper<ITData>(callback));
+		employeesServiceAsync.getWorkplaceITData(workplaceId,
+				new AsyncCallbackWrapper<ITData>(callback));
 	}
 
 	@Override
 	public void getEnterpriseITData(int enterpriseId,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEnterpriseITData(enterpriseId, new AsyncCallbackWrapper<ITData>(callback));		
+		employeesServiceAsync.getEnterpriseITData(enterpriseId,
+				new AsyncCallbackWrapper<ITData>(callback));
 	}
-	
+
 	public void getSalaries(Employee employee,
 			AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getSalaries(employee,
 				new AsyncCallbackWrapper<List<Salary>>(callback));
-	}	
+	}
 
 	@Override
 	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
@@ -207,20 +212,20 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 
 	@Override
 	public void eval(String expression, SalaryDraft salaryDraft,
-			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
-			EvalException {
+			AsyncCallback<List<Result>> callback)
+			throws IllegalArgumentException, EvalException {
 		AON.start();
 		employeesServiceAsync.eval(expression, salaryDraft,
 				new AsyncCallbackWrapper<List<Result>>(callback));
 
 	}
-	
+
 	@Override
-	public void eval(String expression, AgreementDraft agreementDraft, int levelId,
-			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
-			EvalException {
+	public void eval(String expression, AgreementDraft agreementDraft,
+			int levelId, AsyncCallback<List<Result>> callback)
+			throws IllegalArgumentException, EvalException {
 		AON.start();
-		employeesServiceAsync.eval(expression, agreementDraft,levelId,
+		employeesServiceAsync.eval(expression, agreementDraft, levelId,
 				new AsyncCallbackWrapper<List<Result>>(callback));
 	}
 
@@ -371,9 +376,32 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	public void saveITDataPerson(ITDataPerson dataPerson,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		// TODO Apéndice de método generado automáticamente
-		
+
 	}
 
-	
-	
+	// ------------------------------------------------- GPSReportsServiceAsync
+	@Override
+	public void getA3Report(Date month, int[] workplaces,
+			AsyncCallback<ReportData> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getA3Report(month, workplaces,
+				new AsyncCallbackWrapper<ReportData>(callback));
+	}
+
+	@Override
+	public void getFTEReport(Date start, Date end, int[] workplaces,
+			AsyncCallback<ReportData> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getFTEReport(start, end, workplaces,
+				new AsyncCallbackWrapper<ReportData>(callback));
+	}
+
+	@Override
+	public void getHolidayReport(Date start, Date end, int[] workplaces,
+			AsyncCallback<ReportData> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getHolidayReport(start, end, workplaces,
+				new AsyncCallbackWrapper<ReportData>(callback));
+	}
+
 }

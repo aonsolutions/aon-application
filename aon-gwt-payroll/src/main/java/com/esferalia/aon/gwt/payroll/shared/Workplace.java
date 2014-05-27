@@ -12,6 +12,7 @@ public class Workplace implements Serializable, HasId<Integer> {
 	private int				id;
 	private String 			description;
 	private Agreement		agreement;
+	private boolean		active;
 	
 	public Workplace() {
 	}
@@ -38,6 +39,14 @@ public class Workplace implements Serializable, HasId<Integer> {
 	
 	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 	

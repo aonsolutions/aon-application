@@ -26,7 +26,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * The async counterpart of <code>EmployeesService</code>.
  */
-public interface EmployeesServiceAsync extends StatisticsServiceAsync {
+public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSReportsServiceAsync{
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 

@@ -166,6 +166,9 @@
 	gwt-image: "month_changed"
 }
 
+.aon-dataTable-chart table {
+	border-collapse: collapse;
+}
 
 .aon-dataTable-cell-highlight {
 	background: #fffadc;
