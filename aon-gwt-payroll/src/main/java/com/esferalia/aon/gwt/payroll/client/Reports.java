@@ -75,7 +75,7 @@ public class Reports extends ResizeComposite {
 						+ DateTimeFormat.getFormat(DATE_SHORT).format(
 								getSelectedMonth());
 
-				Window.open(ReportsObject.toCSVDataURL(dataTable, ','), title,
+				Window.open(ReportsObject.toCSVDataURL(dataTable, ',', "\r\n"), "_blank",
 						null);
 			}
 		});

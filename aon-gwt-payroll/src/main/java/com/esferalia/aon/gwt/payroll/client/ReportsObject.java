@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
@@ -17,7 +17,7 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.Table;
 
 public class ReportsObject {
-	
+
 	private int MAX = 200;
 
 	public static enum ReportsType {
@@ -71,8 +71,7 @@ public class ReportsObject {
 	private Date month = DateUtils.getFirstDayOfMonth();
 	private ReportsType reportsType = ReportsType.A3;
 	private List<Workplace> workplaces = Collections.emptyList();
-	
-	
+
 	public ReportsObject(Enterprise enterprise,
 			GPSReportsServiceAsync serviceAsync) {
 		this.enterprise = enterprise;
@@ -117,21 +116,20 @@ public class ReportsObject {
 		}, Table.PACKAGE);
 
 	}
-	
+
 	public List<Workplace> getWorkplaces() {
 		return workplaces;
 	}
-	
 
 	public void setWorkplaces(List<Workplace> workplaces) {
 		this.workplaces = workplaces;
 	}
-	
-	public List<Workplace> getAllWorkplaces(){
+
+	public List<Workplace> getAllWorkplaces() {
 		return enterprise.getWorkplaces();
-		
+
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Private methods
 	private void getReport(ReportsType type, final Date month,
@@ -168,6 +166,15 @@ public class ReportsObject {
 
 	}
 
+	static String toCSVDataURL(DataTable dataTable, char sep, String ln) {
+		StringBuilder builder = new StringBuilder();
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		builder.append("data:").append("text/csv").append(";charset=utf-16")
+				.append(",").append(csv(dataTable, String.valueOf(sep), ln));
+
+		return builder.toString();
+	}
+
 	// ------------------------------------------------- Private Static Methods
 
 	private DataTable getDataTable(ReportData reportData) {
@@ -176,7 +183,7 @@ public class ReportsObject {
 		for (Column column : columns)
 			dataTable.addColumn(getColumnType(column.getType()),
 					column.getLabel(), column.getId());
-		
+
 		int rows = reportData.rows();
 		dataTable.addRows(rows);
 		for (int row = 0; row < rows; row++) {
@@ -215,34 +222,35 @@ public class ReportsObject {
 
 		return ColumnType.STRING;
 	}
-	
-	static String toCSVDataURL(DataTable dataTable, char sep) {
-		StringBuffer buffer = new StringBuffer();
-		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
-		buffer.append("data:");
-		buffer.append("text/csv");
-		buffer.append(";charset=utf-8");
-		buffer.append(",");
-		appendCSV2(buffer, dataTable, sep);
-		
-		return buffer.toString();
-	}
-	
-	static void appendCSV2(StringBuffer csvBuffer, DataTable dataTable, char sep) {
+
+	private static CharSequence csv(DataTable dataTable, String sep, String ln) {
+
+		ln = URL.encodePathSegment(ln);
+		sep = URL.encodePathSegment(sep);
+
+		StringBuilder builder = new StringBuilder();
+
 		int cols = dataTable.getNumberOfColumns();
-		for (int col = 0; col < cols -1; col++){
-			csvBuffer.append(dataTable.getColumnLabel(col)).append(sep);
+		for (int col = 0; col < cols - 1; col++) {
+			builder.append(URL.encodePathSegment(dataTable.getColumnLabel(col)))
+					.append(sep);
 		}
-		csvBuffer.append(dataTable.getColumnLabel(cols-1)).append("\r\n");
+		builder.append(
+				URL.encodePathSegment(dataTable.getColumnLabel(cols - 1)))
+				.append(ln);
 
 		int rows = dataTable.getNumberOfRows();
-		for ( int row = 0; row < rows ; row++ ) {
-			for (int col = 0; col < cols -1; col++){
-				csvBuffer.append(dataTable.getFormattedValue(row, col)).append(sep);
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols - 1; col++) {
+				builder.append(
+						URL.encodePathSegment(dataTable.getFormattedValue(row,
+								col))).append(sep);
 			}
-			csvBuffer.append(dataTable.getFormattedValue(row, cols-1)).append("\r\n");
+			builder.append(
+					URL.encodePathSegment(dataTable.getFormattedValue(row,
+							cols - 1))).append(ln);
 		}
+		return builder;
 	}
-	
 
 }
