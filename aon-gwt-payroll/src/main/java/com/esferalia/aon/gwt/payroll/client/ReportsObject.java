@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
@@ -109,7 +110,11 @@ public class ReportsObject {
 
 					@Override
 					public void onSuccess(ReportData reportData) {
-						callback.onSuccess(getDataTable(reportData));
+						try {
+							callback.onSuccess(getDataTable(reportData));
+						} catch ( Throwable t ) {
+							Window.alert(t.getMessage());
+						}
 					}
 				});
 			}
@@ -178,6 +183,7 @@ public class ReportsObject {
 	// ------------------------------------------------- Private Static Methods
 
 	private DataTable getDataTable(ReportData reportData) {
+		
 		DataTable dataTable = DataTable.create();
 		Column columns[] = reportData.getColumns();
 		for (Column column : columns)

@@ -302,15 +302,10 @@ public class Employees extends ResizeComposite implements
 									"Coste d\u00EDa Libre Trabajado"),
 							new DecimalEventMetaData("CD",
 									"Coste Diario del trabajador (jornada 8 horas)"),
-							new ConstantEventMetaData("CFT",
-									"Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0 )"),
 							new BooleanEventMetaData("LTR",
 									"D\u00EDas Libres Trabajados Recuperables"),
 							new DecimalEventMetaData("HFD",
 									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-							new ConstantEventMetaData("PLUS_TURNICIDAD",
-									"PLUS_TURNICIDAD=( LT - LR - LA ) * CLT"),
-							new ConstantEventMetaData("CECO", "% por CECO"),
 							new EventMetaData("OBSERVACIONES"));
 				else
 					eventsDraftObject = new EventsDraftObject(

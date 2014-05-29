@@ -1,10 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_SHORT;
+import static com.esferalia.aon.gwt.payroll.client.ReportsObject.toCSVDataURL;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.ReportsObject.ReportsType;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
@@ -17,19 +16,21 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.Table.Options;
@@ -38,16 +39,40 @@ import com.google.gwt.visualization.client.visualizations.Table.Options.Policy;
 
 public class Reports extends ResizeComposite {
 
+	private static final String DOWNLOAD = "download";
+
 	interface Binder extends UiBinder<Widget, Reports> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField
-	SimplePanel panel;
+	private static final DateTimeFormat YEAR_MONTH = DateTimeFormat
+			.getFormat("y-M");
+
+	private static class ResizeTable extends Table implements RequiresResize {
+
+		private Options options;
+		private AbstractDataTable data;
+
+		ResizeTable(AbstractDataTable data, Options options) {
+			super(data, options);
+			this.data = data;
+			this.options = options;
+		}
+
+		// --------------------------------------------------------------------
+		@Override
+		public void onResize() {
+			// draw(data, options);
+		}
+
+	}
 
 	@UiField
-	Button excelButton;
+	SimpleLayoutPanel panel;
+
+	@UiField
+	Anchor excelButton;
 
 	@UiField
 	ListBox reportListBox;
@@ -70,13 +95,17 @@ public class Reports extends ResizeComposite {
 		excelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				String title = getSelectedType().getDescription()
-						+ "_"
-						+ DateTimeFormat.getFormat(DATE_SHORT).format(
-								getSelectedMonth());
-
-				Window.open(ReportsObject.toCSVDataURL(dataTable, ',', "\r\n"), "_blank",
-						null);
+				String name = getSelectedType().getDescription();
+				String date = YEAR_MONTH.format(
+						getSelectedMonth());
+				excelButton.setHref(toCSVDataURL(dataTable, ',',
+						"\r\n"));
+				excelButton.getElement().setPropertyString(DOWNLOAD,
+						name + "_" + date + ".csv");
+				
+				// Window.open(ReportsObject.toCSVDataURL(dataTable, ',',
+				// "\r\n"),
+				// "_blank", null);
 			}
 		});
 
@@ -164,6 +193,8 @@ public class Reports extends ResizeComposite {
 	// -------------------------------------------------------- Private methods
 
 	private void reloadData() {
+		excelButton.setEnabled(false);
+
 		reportsObject.getReport(new AsyncCallback<DataTable>() {
 
 			@Override
@@ -178,23 +209,10 @@ public class Reports extends ResizeComposite {
 
 				Reports.this.dataTable = dataTable;
 
-				Options options = Options.create();
+				show(dataTable);
 
-				options.setSort(Policy.ENABLE);
-				options.setAlternatingRowStyle(true);
+				excelButton.setEnabled(true);
 
-				CssClassNames cssClassNames = CssClassNames.createObject()
-						.cast();
-				cssClassNames.setHeaderRow("aon-dataTable-header");
-				cssClassNames.setTableRow("aon-dataTable-row-even");
-				cssClassNames.setOddTableRow("aon-dataTable-row-odd");
-				cssClassNames.setHoverTableRow("aon-table-row-hover");
-
-				options.setCssClassNames(cssClassNames);
-
-				Table table = new Table(dataTable, options);
-				table.addStyleName("aon-dataTable-chart");
-				panel.setWidget(table);
 			}
 
 		});
@@ -230,6 +248,35 @@ public class Reports extends ResizeComposite {
 
 	private void setSelectedMonth(final Date month) {
 		monthListBox.setSelectedMonth(month);
+	}
+
+	private void show(DataTable dataTable) {
+		Options options = Options.create();
+
+		options.setSort(Policy.ENABLE);
+		options.setAlternatingRowStyle(true);
+
+		CssClassNames cssClassNames = CssClassNames.createObject().cast();
+		cssClassNames.setHeaderRow("rich-table-subheader aon-dataTable-header");
+		cssClassNames.setHeaderCell(" aon-dataTable-header");
+		cssClassNames.setTableRow("rich-table-cell aon-dataTable-row-even");
+		cssClassNames.setOddTableRow("rich-table-cell aon-dataTable-row-odd");
+		cssClassNames.setTableCell("rich-table-cell aon-nowrap");
+
+		cssClassNames.setHoverTableRow("aon-table-row-hover");
+
+		options.setCssClassNames(cssClassNames);
+
+		int height = panel.getElement().getClientHeight();
+		options.setHeight(String.valueOf(height));
+
+		int width = panel.getElement().getClientWidth();
+		options.setWidth(String.valueOf(width));
+
+		Table table = new ResizeTable(dataTable, options);
+		table.addStyleName("rich-table aon-dataTable-chart");
+
+		panel.setWidget(table);
 	}
 
 }
