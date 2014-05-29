@@ -81,8 +81,8 @@ public class Employees extends ResizeComposite implements
 		void onReportsSelected(ReportsObject reports);
 
 		void onStatisticsSelected(Statistics stats);
-
-		void onITDataSelected(ITData itData);
+		
+		void onITDataSelected(ITDataObject dataObject);
 
 		void onSalariesSelected(SalaryDocuments docs);
 
@@ -103,7 +103,7 @@ public class Employees extends ResizeComposite implements
 		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
 
 		void onEnterpriseContextMenu(Enterprise enterprise,
-				ContextMenuEvent event);
+				ContextMenuEvent event);		
 	}
 
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -141,6 +141,7 @@ public class Employees extends ResizeComposite implements
 	private Images images;
 	private List<Listener> listeners;
 	private EmployeesServiceAsync employeesService;
+	private StatisticsServiceAsync statisticsService;
 
 	private boolean formers = true;
 	private boolean endDate = true;
@@ -269,7 +270,8 @@ public class Employees extends ResizeComposite implements
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
-			addImageItem(workplaceItem, "Partes IT", images.itDatas());
+			addImageItem(workplaceItem, "Partes IT", images.itDatas()).setUserObject
+			(new ITDataObject(workplace.getId(),employeesService));
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -448,8 +450,8 @@ public class Employees extends ResizeComposite implements
 			onReportsSelected((ReportsObject) userObject);
 		} else if (userObject instanceof Statistics) {
 			onStatisticsSelected((Statistics) userObject);
-		} else if (userObject instanceof ITData) {
-			onITDataSelected((ITData) userObject);
+		} else if (userObject instanceof ITDataObject) {
+			onITDataSelected((ITDataObject) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
 			onSalariesSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
@@ -694,7 +696,6 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-
 	}
 
 	/*
@@ -753,28 +754,6 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-
-		final TreeItem partsItItem = workplaceItem
-				.getChild(WORKPLACE_PARTSIT_INDEX);
-
-		if (null == partsItItem.getUserObject()) {
-
-			employeesService.getWorkplaceITData(workplace.getId(),
-					new AsyncCallback<ITData>() {
-
-						@Override
-						public void onSuccess(ITData partsIt) {
-							partsItItem.setUserObject(partsIt);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							// TODO Apéndice de método generado automáticamente
-							Window.alert(caught.getLocalizedMessage());
-						}
-					});
-		}
-
 		if (workplaceItem.getChildCount() > getEmployeesOffset()) {
 			return;
 		} // end-if: Employees of this workplace already loaded .
@@ -888,9 +867,9 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	private void onITDataSelected(ITData itData) {
+	private void onITDataSelected(ITDataObject dataObject) {
 		for (Listener listener : listeners) {
-			listener.onITDataSelected(itData);
+			listener.onITDataSelected(dataObject);
 		}
 	}
 

@@ -107,15 +107,9 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	private Date startContract;
 	private Date endContract;
-	
-	private String formatStartDate;
-	private String formatEndDate;
-
-	/**
-	 * 0 - contract active 1 - contract ended 2 - leave active 3 - leave ended
-	 **/
-
 	private Date contractStartDate;
+	
+	private int dischargeCause;
 
 	interface TooltipUiBinder extends UiBinder<Widget, Tooltip> {
 	}
@@ -368,9 +362,6 @@ public class Tooltip extends DecoratedPopupPanel {
 	}
 
 	public void setWorkPeriod(String pStartDate, String pEndDate) {
-
-		formatStartDate = pStartDate;
-		formatEndDate = pEndDate;
 		
 		workPeriodLabel.setText(pStartDate + " - " + pEndDate);
 	}
@@ -414,17 +405,21 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	public void setDischargeCause(int pDischargeCause) {
 		
+		this.dischargeCause = pDischargeCause;
+		
 		typeDischargeListBox.addItem("-");
 
 		for (ITDataPerson.DischargeCause cause : DischargeCause.values()) {
-
 			typeDischargeListBox.addItem(cause.getDescription());
-		}
-		
+		}		
 		typeDischargeListBox.setItemSelected(pDischargeCause, true);
 	}
 	
 	public int getDischargeCause() {
-		return typeDischargeListBox.getSelectedIndex() - 1;
+		
+		if(dischargeCause <= 0) 
+			return 0;		
+		else 
+			return typeDischargeListBox.getSelectedIndex() - 1;		
 	}
 }

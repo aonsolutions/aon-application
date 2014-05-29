@@ -240,9 +240,6 @@ public class SalaryDraftObject implements IContextProvider{
 					}
 				});
 	}
-	
-	
-
 
 	public void redo() {
 		undoManager.redo();

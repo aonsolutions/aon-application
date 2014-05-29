@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -25,13 +24,10 @@ public class ITData implements Serializable{
 	 * LinkedHashMap Key: contract leave id
 	 */	
 	
-	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> dataIts;
-	
-	private Map<Integer, ITDataPerson> add;
-	private Map<Integer, ITDataPerson> update;
-	private Map<Integer, ITDataPerson> remove;
-	
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> dataIts;	
 	private List<Integer> contracts;
+	
+	
 	
 	public static class UnmodifiableEmployee extends Employee {
 
@@ -143,15 +139,13 @@ public class ITData implements Serializable{
 		public void setDischarge_cause(int discharge_cause) {
 			throw new UnsupportedOperationException();
 		}
-	}	
+	}
 
 	public ITData() {
 		
-		employees = new LinkedHashMap<Integer, Employee>();				
-		dataIts = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();		
-		contracts = new ArrayList<Integer>();
-		
-		
+		this.dataIts = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();		
+		this.employees = new LinkedHashMap<Integer, Employee>();			
+		this.contracts = new ArrayList<Integer>();		
 	}
 
 	public void setEmployee(int pKey, Employee pEmployee) {
@@ -205,56 +199,69 @@ public class ITData implements Serializable{
 		return contracts;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void addLeaveItem(ITDataPerson itDataPerson) {	
-		
-		add = dataIts.get(itDataPerson.getContractId());		
-		add.put(itDataPerson.getContractLeaveId(), itDataPerson);
-		
+	public ITDataPerson setLeaveItem(ITDataPerson itDataPerson) {
+		LinkedHashMap<Integer, ITDataPerson> add = dataIts.get(itDataPerson.getContractId());		
+		ITDataPerson oldData = add.put(itDataPerson.getContractLeaveId(), itDataPerson);		
 		sortMap(add);
+		return oldData;
+	}
+	
+	public ITDataPerson addLeaveItem(ITDataPerson itDataPerson) {	
+		
+		LinkedHashMap<Integer, ITDataPerson> add = dataIts.get(itDataPerson.getContractId());		
+		ITDataPerson oldData = add.put(itDataPerson.getContractLeaveId(), itDataPerson);		
+		sortMap(add);
+		return oldData;
 		
 	}
 	
-	public void removeLeaveItem(ITDataPerson itDataPerson) {
+	public ITDataPerson removeLeaveItem(ITDataPerson itDataPerson) {
 		
-		remove = dataIts.get(itDataPerson.getContractId());
-		remove.remove(itDataPerson.getContractLeaveId());
-		
+		LinkedHashMap<Integer, ITDataPerson> remove = dataIts.get(itDataPerson.getContractId());
+		ITDataPerson oldData = remove.remove(itDataPerson.getContractLeaveId());		
 		sortMap(remove);
+		return oldData;
 			
 	}
 	
-	public void updateItem(ITDataPerson itDataPerson) {
+/*	public ITDataPerson updateItem(ITDataPerson itDataPerson) {
 		
 		int contractId = itDataPerson.getContractId();
 		int leaveId = itDataPerson.getContractLeaveId();
 		
-		update = dataIts.get(contractId);		
-		update.put(leaveId, itDataPerson);
-		sortMap(update);	
-	}
+		LinkedHashMap<Integer, ITDataPerson> update = dataIts.get(contractId);		
+		ITDataPerson oldData = update.put(leaveId, itDataPerson);
+		sortMap(update);
+		return oldData;
+	}*/
 	
-	private void sortMap(Map<Integer, ITDataPerson> map) {
-		
+	public void sortMap(Map<Integer, ITDataPerson> map) {
+
 		List<ITDataPerson> sortedList = new LinkedList<ITDataPerson>();
 		Iterator it = map.entrySet().iterator();
-		
-		while(it.hasNext()) {
-			
-			Map.Entry<Integer, ITDataPerson> e = (Map.Entry<Integer, ITDataPerson>) it.next();
-			sortedList.add(e.getValue());		
+
+		while (it.hasNext()) {
+
+			Map.Entry<Integer, ITDataPerson> e = (Map.Entry<Integer, ITDataPerson>) it
+					.next();
+			sortedList.add(e.getValue());
 		}
-		
+
 		Collections.sort(sortedList);
-		
+
 		map.clear();
-		
-		for(int x = 0; x<sortedList.size(); x++) {
-			
+
+		for (int x = 0; x < sortedList.size(); x++) {
+
 			map.put(sortedList.get(x).getContractLeaveId(), sortedList.get(x));
 		}
-			
+
 	}
 
+	
+
+	
+
+	
 	
 }

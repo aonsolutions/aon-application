@@ -194,9 +194,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}	
 
 	@Override
-	public void onITDataSelected(com.esferalia.aon.gwt.payroll.shared.ITData itData) {
+	public void onITDataSelected(ITDataObject dataObject) {
 		detailPanel.setWidget(it);
-		it.setITEditor(itData);		
+		it.setITEditor(dataObject);		
 	}
 	
 	@Override
