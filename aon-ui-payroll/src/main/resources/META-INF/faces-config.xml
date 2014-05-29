@@ -55,6 +55,10 @@
 					<key>PAY_salarySendingMethod_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
+				<map-entry>
+					<key>PAY_salarySending_email_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
@@ -2343,6 +2347,29 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!--  **** SALARY PRINT **** -->
+	<managed-bean>
+		<managed-bean-name>salaryPrint</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SalaryPrintController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Salary</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salaryPrint</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Salary_type,Salary_endDate desc,Salary_enterpriseName,Salary_employeeName</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************ GEOZONE IRPF ************** -->
 	<managed-bean>
 		<managed-bean-name>geozoneIrpf</managed-bean-name>
@@ -2680,6 +2707,13 @@
 		<navigation-case>
 			<from-outcome>payrollCodes_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/codeTables/code_list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ************* SALARY PRINT ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>salaryPrint_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryPrint/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

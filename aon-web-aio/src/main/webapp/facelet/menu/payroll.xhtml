@@ -320,6 +320,14 @@
 										actionListener="#{expenseInvoice.onEditSearch}"
 										value="#{bundle.finance_expense_invoice_management_module}" />
 								</aon:div>
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="salaryPrint-payroll"
+											action="salaryPrint_list-payroll"
+											actionListener="#{salaryPrint.onInit}"
+											value="#{bundle.payroll_salaryPrint_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -359,7 +367,7 @@
 									<aon:commandLink id="mod111-payroll"
 										action="mod111_search-payroll"
 										actionListener="#{mod111.onEditSearch}"
-										value="#{bundle.fiscal_model_111_module_abbr}" />
+										value="Mod. 111 - #{bundle.fiscal_model_111_module_abbr}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_mod190-payroll"
