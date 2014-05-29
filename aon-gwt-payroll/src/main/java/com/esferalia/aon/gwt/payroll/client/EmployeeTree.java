@@ -797,10 +797,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onITDataSelected(
-			com.esferalia.aon.gwt.payroll.shared.ITData itData) {
+			ITDataObject dataObject) {
 
 		employeeDetail.setWidget(it);
-		it.setITEditor(itData);
+		it.setITEditor(dataObject);
 
 	}
 
