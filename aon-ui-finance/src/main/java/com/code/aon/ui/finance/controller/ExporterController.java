@@ -2,9 +2,9 @@ package com.code.aon.ui.finance.controller;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,8 @@ import java.util.zip.ZipOutputStream;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,7 @@ public class ExporterController {
 	
 	private boolean finished;
 	
-	private Map<String,byte[]> dataMap;
+	private Map<String,File> dataMap;
 	
 	private String fileName;
 	
@@ -114,14 +116,19 @@ public class ExporterController {
 	}
 	
 	public void finish() {
+		LogPanelController log = LogPanelController.getInstance();
 		this.finished = true;
+		if ( dataMap.isEmpty() ) {
+			log.error( AonUtil.getMessage(ICommonMessages.FINANCE_EXPORTER_NO_DATA) );										
+		}
+		log.finish();
 	}
 	
 	public void onDownload( ActionEvent event ) {
-    	if ((dataMap != null) && !dataMap.isEmpty() ) {
+    	if (! isDataEmpty() ) {
     		try {
 	    		if ( dataMap.size() == 1 ) {
-	    			Map.Entry<String,byte[]> entry = dataMap.entrySet().iterator().next();
+	    			Map.Entry<String,File> entry = dataMap.entrySet().iterator().next();
 	    			downloadFile(entry.getKey(), entry.getValue());
 	    		} else {
 	    			downloadZip(dataMap);
@@ -137,20 +144,24 @@ public class ExporterController {
 	
 	public void onFinish( ActionEvent event ) {
     	this.finished = false;
+		for( File file : dataMap.values() ) {
+			FileUtils.deleteQuietly(file);
+		}    	
     	LogPanelController.getInstance().onCloseWindow(event);
 	}
 	
-	private void downloadFile( String name, byte[] data ) {
-    	InputStream in = new ByteArrayInputStream(data);
-        DownloadUtil.downloadAttachment(name, null, in, data.length);	    				    					
+	private void downloadFile( String name, File file ) throws FileNotFoundException {
+    	InputStream in = new BufferedInputStream(new FileInputStream(file));
+        DownloadUtil.downloadAttachment(name, null, in, file.length());	    
+        IOUtils.closeQuietly(in);
 	}
 
-    private File getZipFile( Map<String,byte[]> dataMap ) throws IOException {
+    private File getZipFile( Map<String,File> dataMap ) throws IOException {
     	File file = File.createTempFile( "geyce", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		for( Map.Entry<String,byte[]> entry : dataMap.entrySet() ) {
-			byte[] data = entry.getValue();
+		for( Map.Entry<String,File> entry : dataMap.entrySet() ) {
+			byte[] data = FileUtils.readFileToByteArray(entry.getValue());
 			if (! ArrayUtils.isEmpty(data) ) {
 	            zipOut.putNextEntry(new ZipEntry(entry.getKey()));
 	            zipOut.write(data);
@@ -161,18 +172,23 @@ public class ExporterController {
 		return file;
     }
 	
-	private void downloadZip( Map<String,byte[]> dataMap ) throws IOException {
+	private void downloadZip( Map<String,File> dataMap ) throws IOException {
 		File zipFile = getZipFile(dataMap);
 		InputStream in = new BufferedInputStream(new FileInputStream(zipFile));
         DownloadUtil.downloadAttachment(this.fileName, MimeType.MIME_ZIP, in, zipFile.length() );
+        FileUtils.deleteQuietly(zipFile);
 	}
 
 	public void onTypeChanged( ActionEvent event ) {
     	getConfiguration().initAccountSize();
 	}
 
-	public void setDataMap(Map<String, byte[]> dataMap) {
+	public void setDataMap(Map<String,File> dataMap) {
 		this.dataMap = dataMap;
+	}
+	
+	public boolean isDataEmpty() {
+		return (dataMap == null) || dataMap.isEmpty();		
 	}
 	
 }

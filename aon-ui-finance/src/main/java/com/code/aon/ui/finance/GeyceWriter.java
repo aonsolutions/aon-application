@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -331,10 +332,10 @@ public class GeyceWriter extends BasicExporter {
 	}
 
 	@Override
-	public Map<String, byte[]> getDataMap() {
-		Map<String, byte[]> map = new HashMap<String, byte[]>();
-		map.put("gyccon.txt", getData());
-		map.put("gycplan.txt", this.outGycPlan);
+	public Map<String, File> getDataMap() {
+		Map<String, File> map = new HashMap<String, File>();
+		addData(map, "gyccon", ".txt", getData());
+		addData(map, "gycplan", ".txt", this.outGycPlan);
 		return map;
 	}
 	

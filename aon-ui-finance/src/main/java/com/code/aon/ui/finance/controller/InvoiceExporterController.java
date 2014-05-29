@@ -132,7 +132,6 @@ public class InvoiceExporterController extends BasicController {
 			}		    
 		    log.error(AonUtil.getMessage(ICommonMessages.FINANCE_INVOICES_EXPORT_ERROR, t.getMessage()));
 		} finally {
-			log.finish();
 			HibernateUtil.closeSession(sessionName);
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
