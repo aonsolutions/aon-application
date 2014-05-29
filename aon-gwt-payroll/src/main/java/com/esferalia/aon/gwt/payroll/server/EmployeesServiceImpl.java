@@ -104,6 +104,7 @@ import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
+import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -1323,32 +1324,52 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 
+			
+			Date start = DateUtils.getFirstDayOfMonth(month);
+			Date end = DateUtils.getLastDayOfMonth(month);
+			
+			Report<A3Line> a3Report = JooqGPSReports.getA3Report(conn,
+					SQLUtils.date2sql(start), SQLUtils.date2sql(end), workplaces);
+			
 			//@formatter:off
 			ReportData reportData = new ReportData(
 					new ReportData.StringColumn("NIF"),
 					new ReportData.StringColumn("NOMBRE TRABAJADOR"),
-					new ReportData.IntColumn("PLUS TURNICIDAD"),
-					new ReportData.IntColumn("INCENTIVOS"),
-					new ReportData.IntColumn("EMBARGOS"),
-					new ReportData.IntColumn("ATRASOS"),
+					new ReportData.DoubleColumn("PLUS TURNICIDAD"),
+					new ReportData.DoubleColumn("INCENTIVOS"),
+					new ReportData.DoubleColumn("EMBARGOS"),
+					new ReportData.DoubleColumn("ATRASOS"),
 					new ReportData.StringColumn("OBSERVACIONES")
 					);
 			//@formatter:on
-
-			Report<A3Line> a3Report = JooqGPSReports.getA3Report(conn,
-					SQLUtils.date2sql(month), workplaces);
+			
+			int cecoCols = 0;
 
 			for (A3Line a3Line : a3Report) {
+				
+				Map<String, Double> cecos = 
+						a3Line.getCECOs();
+				
+				for ( int ceco = cecoCols; cecoCols < cecos.size();  cecoCols++)
+					reportData.addColums(new ReportData.StringColumn("CECO " + (ceco +1) ),
+							new ReportData.DoubleColumn("% CECO " + ( ceco + 1) ));
+				
+				List<Object> values = new ArrayList<Object>();
+				values.add(a3Line.getNIF());
+				values.add(a3Line.getPerson());
+				values.add(a3Line.getTurnPlus());
+				values.add(a3Line.getIncentives());
+				values.add(a3Line.getEmbargos());
+				values.add(a3Line.getDelays());
+				values.add(a3Line.getComments());
+				
+				for (Entry<String, Double> ceco : cecos.entrySet() ){
+					values.add(ceco.getKey());
+					values.add(ceco.getValue());
+				}
+				
 				//@formatter:off
-				reportData.addRow(
-						a3Line.getNIF(),
-						a3Line.getPerson(),
-						a3Line.getTurnPlus(),
-						a3Line.getIncentives(),
-						a3Line.getEmbargos(),
-						a3Line.getDelays(),
-						a3Line.getComments()
-						);
+				reportData.addRow(values.toArray());
 				//@formatter:on
 			}
 

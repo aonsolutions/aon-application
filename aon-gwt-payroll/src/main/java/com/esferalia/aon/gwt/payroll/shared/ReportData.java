@@ -2,10 +2,10 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 public class ReportData implements Serializable {
 	
@@ -74,12 +74,12 @@ public class ReportData implements Serializable {
 		
 		@Override
 		public Object parse(String str) {
-			return str;
+			return StringUtils.isEmpty(str) ? null : str;
 		}
 
 		@Override
 		public String format(Object obj) {
-			return (String)obj;
+			return obj == null ? null : (String)obj;
 		}
 	}
 
@@ -103,12 +103,12 @@ public class ReportData implements Serializable {
 		
 		@Override
 		public Object parse(String str) {
-			return Double.parseDouble(str);
+			return  StringUtils.isEmpty(str) ? null : Double.parseDouble(str);
 		}
 
 		@Override
 		public String format(Object obj) {
-			return Double.toString((Double) obj);
+			return obj == null ? null : Double.toString((Double) obj);
 		}
 	}
 
@@ -132,12 +132,12 @@ public class ReportData implements Serializable {
 		
 		@Override
 		public Object parse(String str) {
-			return Integer.parseInt(str);
+			return StringUtils.isEmpty(str) ? null : Integer.parseInt(str);
 		}
 
 		@Override
 		public String format(Object obj) {
-			return Integer.toString((Integer) obj);
+			return obj == null ? null :  Integer.toString((Integer) obj);
 		}
 	}
 
@@ -161,6 +161,9 @@ public class ReportData implements Serializable {
 		
 		@Override
 		public Object parse(String str) {
+			if ( StringUtils.isEmpty(str) ) 
+				return  null;
+			
 			String split []= str.split("-");
 			return new Date(Integer.valueOf(split[0]),
 					Integer.valueOf(split[1]),
@@ -169,6 +172,8 @@ public class ReportData implements Serializable {
 
 		@Override
 		public String format(Object obj) {
+			if ( obj == null )
+				return null;
 			Date date = ( Date ) obj;
 			return date.getYear()+"-"+date.getMonth()+"-"+date.getDay();
 		}
@@ -204,33 +209,51 @@ public class ReportData implements Serializable {
 	}
 		
 
-	private Column [] columns;
 	private List<String[]> rows;
+	private List<Column> columns;
 	
-	private ReportData() {
+
+	public ReportData() {
+		this.columns = new ArrayList<Column>();
+		this.rows = new ArrayList<String[]>();
 	}
 
 	public ReportData(Column...columns) {
-		this.columns = columns;
-		this.rows = new ArrayList<String[]>();
+		this();
+		addColums(columns);
 	}
 
 	public int rows(){
 		return rows.size();
 	}
 	
-	public Column [] getColumns() {
-		return columns; 
+	public int cols(){
+		return columns.size();
 	}
 	
-	public String[] getRow(int row){
-		return rows.get(row);
+	public void addColums(Column... columns){
+		for (Column column : columns)
+			this.columns.add(column);
+	}
+
+	public Column [] getColumns() {
+		return columns.toArray( new Column [columns.size()]); 
+	}
+	
+	public String[] getRow(int rowIndex){
+		String row [] = new String [columns.size()];
+		String values [] = rows.get(rowIndex);
+		
+		for (int i = 0; i < values.length; i++)
+			row[i] = values[i];
+
+		return values ;
 	}
 	
 	public void addRow(Object ...values) {
 		String strs [] = new String [values.length];
 		for (int i = 0; i < values.length; i++) 
-			strs[i] = columns[i].format(values[i]);
+			strs[i] = columns.get(i).format(values[i]);
 		rows.add(strs);
 	}
 	

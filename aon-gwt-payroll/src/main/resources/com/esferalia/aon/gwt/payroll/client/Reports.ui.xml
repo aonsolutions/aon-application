@@ -47,7 +47,7 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='excelButton'
+								<g:Anchor ui:field='excelButton'
 									styleName='aon-finding-toolbar-item aon-icon-excel' text="CSV" />
 
 								<g:ListBox ui:field='reportListBox' />
@@ -63,9 +63,13 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel styleName="{style.editor}">
+			<g:SimpleLayoutPanel styleName="{style.editor}">
+				<g:SimpleLayoutPanel ui:field='panel' styleName="{style.document}" />
+			</g:SimpleLayoutPanel>
+			
+			<!--  g:ScrollPanel styleName="{style.editor}">
 				<g:SimplePanel ui:field='panel' styleName="{style.document}" />
-			</g:ScrollPanel>
+			</g:ScrollPanel-->
 		</g:center>
 	</g:DockLayoutPanel>
 
