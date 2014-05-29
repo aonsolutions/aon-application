@@ -344,7 +344,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			double cgpBase = quoteCalculator.getRawCgpBase();
 			try {
-				cgpBase = quoteCalculator.getCgcBase();
+				cgpBase = quoteCalculator.getCgpBase();
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
