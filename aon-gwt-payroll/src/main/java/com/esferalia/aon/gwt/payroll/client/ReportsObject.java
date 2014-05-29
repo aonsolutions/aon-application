@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -77,7 +79,19 @@ public class ReportsObject {
 			GPSReportsServiceAsync serviceAsync) {
 		this.enterprise = enterprise;
 		this.serviceAsync = serviceAsync;
-		this.workplaces = enterprise.getWorkplaces();
+
+		try {
+			Workplace mainWorkplace = Collections.min(enterprise.getWorkplaces(),
+					new Comparator<Workplace>() {
+						@Override
+						public int compare(Workplace w1, Workplace w2) {
+							return w1.getId() - w2.getId();
+						}
+					});
+			this.workplaces = Collections.singletonList(mainWorkplace);
+		} catch (NoSuchElementException e) {
+			this.workplaces = Collections.emptyList();
+		}
 	}
 
 	public Date getMonth() {
@@ -112,7 +126,7 @@ public class ReportsObject {
 					public void onSuccess(ReportData reportData) {
 						try {
 							callback.onSuccess(getDataTable(reportData));
-						} catch ( Throwable t ) {
+						} catch (Throwable t) {
 							Window.alert(t.getMessage());
 						}
 					}
@@ -183,7 +197,7 @@ public class ReportsObject {
 	// ------------------------------------------------- Private Static Methods
 
 	private DataTable getDataTable(ReportData reportData) {
-		
+
 		DataTable dataTable = DataTable.create();
 		Column columns[] = reportData.getColumns();
 		for (Column column : columns)
