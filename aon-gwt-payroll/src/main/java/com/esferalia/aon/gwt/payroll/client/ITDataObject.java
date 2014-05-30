@@ -57,6 +57,23 @@ public class ITDataObject {
 			itData.removeLeaveItem(t);
 		}
 	}
+	
+	private class UndoableRemoveEdit extends UndoableEdit<ITDataPerson> {
+
+		public UndoableRemoveEdit(ITDataPerson oldT, ITDataPerson newT) {
+			super(oldT, newT);			
+		}
+		
+		@Override
+		void addIT(ITDataPerson t) {
+			itData.setLeaveItem(t);						
+		}
+		@Override
+		void removeIT(ITDataPerson t) {
+			itData.removeLeaveItem(t);			
+		}
+		
+	}
 
 	private UndoManager<UndoableEdit<?>> undoManager;
 	private EmployeesServiceAsync employeesService;
@@ -136,7 +153,7 @@ public class ITDataObject {
 
 	public void removeLeaveItem(ITDataPerson newItObject) {
 		ITDataPerson oldData = itData.removeLeaveItem(newItObject);
-		setUndoableUpdateEdit(oldData,newItObject);		
+		setUndoableRemoveEdit(oldData, newItObject);		
 	}
 
 	public void updateItem(ITDataPerson newItObject) {		
@@ -146,6 +163,10 @@ public class ITDataObject {
 	
 	private void setUndoableUpdateEdit(ITDataPerson oldData, ITDataPerson newData) {
 		undoManager.add(new UndoableUpdateEdit(oldData, newData));
+	}
+	
+	private void setUndoableRemoveEdit(ITDataPerson oldData, ITDataPerson newData) {
+		undoManager.add(new UndoableRemoveEdit(oldData, newData));
 	}
 
 	public void load(final AsyncCallback<ITDataObject> cb) {
@@ -180,12 +201,5 @@ public class ITDataObject {
 	
 	// ------------------------------------------ Undoable control
 
-	public void setUndoableITDataPerson(ITDataPerson data) {
-		undoableMap.put(data.getContractLeaveId(), data);
-	}
-
-	public void removeUndoableITDataPerson(ITDataPerson data) {
-		undoableMap.remove(data.getContractLeaveId());
-	}
 
 }

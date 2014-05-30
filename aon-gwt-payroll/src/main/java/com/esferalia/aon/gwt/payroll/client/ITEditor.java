@@ -76,8 +76,6 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-	
-
 
 	@UiField
 	Style style;
@@ -122,7 +120,6 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 	private Tooltip tooltip;
 	private ITDataObject dataObject;
-	private TimelineChart chart;
 	private DataTableWrapper data;
 	private Options options;
 
@@ -144,46 +141,6 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		this.expressionCallback = new ExpressionCallback();
 		this.tooltipCallback = new TooltipCallBack();
 		this.tooltip = new Tooltip();
-	}
-
-	class TimelineChart {
-
-		public TimelineChart() {
-			onLoad();
-		}
-
-		private void onLoad() {
-			Runnable onLoadCallback = new Runnable() {
-				public void run() {
-					try {
-						AbstractDataTable dataTable = createTable();
-						Options options = createOptions(dataTable);
-						timelineChart = new TimeLineChart(dataTable, options);
-						if (ifNull == false) {
-							timelinePanel.setWidget(timelineChart);
-							new MouseEventsHandlers(timelineChart);
-						} else {
-							timelinePanel.clear();
-						}
-					} catch (Throwable ex) {
-						Window.alert(ex
-								+ " Se ha producido un error, printTimelineChart");
-					}
-				}
-			};
-			VisualizationUtils.loadVisualizationApi(onLoadCallback,
-					TimeLineChart.PACKAGE);
-		}
-
-		public void setTimeline() {
-
-			AbstractDataTable dataTable = createTable();
-			Options options = createOptions(dataTable);
-			timelineChart = new TimeLineChart(dataTable, options);
-			timelinePanel.setWidget(timelineChart);
-			new MouseEventsHandlers(timelineChart);
-		}
-
 	}
 
 	class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler,
@@ -269,7 +226,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				initDateListBox();
 				finalizado = false;
 				initSuggestBox();
-				chart = new TimelineChart();
+				printTimelineChart();
 			}
 
 			@Override
@@ -279,7 +236,37 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		});
 	}
 
-	// private void printTimelineChart() {}
+	private final void printTimelineChart() {
+
+		Runnable onLoadCallback = new Runnable() {
+			public void run() {
+				try {
+					AbstractDataTable dataTable = createTable();
+					Options options = createOptions(dataTable);
+					timelineChart = new TimeLineChart(dataTable, options);
+					if (ifNull == false) {
+						timelinePanel.setWidget(timelineChart);
+						new MouseEventsHandlers(timelineChart);
+					} else {
+						timelinePanel.clear();
+					}
+				} catch (Throwable ex) {
+					Window.alert(ex
+							+ " Se ha producido un error, printTimelineChart");
+				}
+			}
+		};
+		VisualizationUtils.loadVisualizationApi(onLoadCallback,
+				TimeLineChart.PACKAGE);	
+	}
+	
+	private final void reloadTimeline() {
+		AbstractDataTable dataTable = createTable();
+		Options options = createOptions(dataTable);
+		timelineChart = new TimeLineChart(dataTable, options);
+		timelinePanel.setWidget(timelineChart);
+		new MouseEventsHandlers(timelineChart);
+	}
 
 	private Options createOptions(AbstractDataTable dataTable) {
 
@@ -328,7 +315,6 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	}
 
 	private final AbstractDataTable createTable() {
-
 		String container = nameEmployee.getText().toUpperCase();
 		data = new DataTableWrapper();
 		ifNull = true;
@@ -531,10 +517,8 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		tooltip.setDischargeCause(dischargeCause);
 
 		/**
-		 * 0 - contract active 
-		 * 1 - contract ended 
-		 * 2 - leave active 
-		 * 3 - leave ended
+		 * 0 - contract active 1 - contract ended 2 - leave active 3 - leave
+		 * ended
 		 */
 
 		switch (typeTooltip) {
@@ -600,8 +584,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						newData.setLeaveStartDate(leaveStartDate);
 						newData.setLeaveEndDate(leaveEndDate);
 						dataObject.addLeaveItem(newData);
-
-						chart.setTimeline();
+						reloadTimeline();
 					}
 
 				} catch (Throwable ex) {
@@ -649,9 +632,10 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						newDataPerson.setLeaveEndDate(leaveEndDate);
 						newDataPerson.setDischarge_cause(dischargeCause);
 						newDataPerson.setType(getEnumConstant(
-								ITDataPerson.Type.class, leaveType));
+								ITDataPerson.Type.class, leaveType));						
 						dataObject.updateItem(newDataPerson);
-						chart.setTimeline();
+						reloadTimeline();
+						
 
 					} catch (Exception ex) {
 						Window.alert(ex.getMessage() + " " + ex.getCause()
@@ -701,15 +685,13 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		public void execute() {
 
 			try {
-
 				popupPanel.hide();
 
 				int contractId = data.getContractId(posColumn, posCell);
 				int contractLeave = data.getContractLeaveId(posColumn, posCell);
 				dataObject.removeLeaveItem(dataObject.getDataIts(contractId)
 						.get(contractLeave));
-				chart.setTimeline();
-
+				reloadTimeline();
 			} catch (Exception ex) {
 
 			}
@@ -757,10 +739,9 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 			if (StringUtils.isEmpty(container)) {
 				// DEFAULT_INCREMENT = 50;
-				chart = new TimelineChart();
+				reloadTimeline();
 			} else if (container.length() > 2) {
-
-				chart.setTimeline();
+				reloadTimeline();
 			}
 		}
 	}
@@ -800,14 +781,13 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	@UiHandler("undoButton")
 	void onUndoSelected(ClickEvent event) {
 		dataObject.undo();
-		chart.setTimeline();
-
+		reloadTimeline();
 	}
 
 	@UiHandler("redoButton")
 	void onRedoSelected(ClickEvent event) {
 		dataObject.redo();
-		chart.setTimeline();
+		reloadTimeline();
 	}
 
 	@UiHandler("dateListBox")
@@ -820,15 +800,8 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				selectedYear));
 		endYear = DateUtils.getLastDayOfYear(DateUtils
 				.getDate(11, selectedYear));
-
 		initSuggestBox();
-		AbstractDataTable dataTable = createTable();
-		Options options = createOptions(dataTable);
-		timelineChart = new TimeLineChart(dataTable, options);
-		timelinePanel.setWidget(timelineChart);
-		new MouseEventsHandlers(timelineChart);
-
-		// printTimelineChart();
+		reloadTimeline();
 	}
 
 	@UiHandler("nameEmployee")
@@ -905,7 +878,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 
 		@Override
 		public void onChange(UndoManager undoManager) {
-			enableUndoRedoButtons();			
+			enableUndoRedoButtons();
 		}
 
 	}
