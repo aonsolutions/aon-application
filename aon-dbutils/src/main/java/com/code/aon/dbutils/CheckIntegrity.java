@@ -1,8 +1,8 @@
 package com.code.aon.dbutils;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,6 +33,8 @@ public class CheckIntegrity implements Constants {
 	
 	public void execute( Integer[] domains ) throws AonSQLException {
 		try {
+			LOGGER.info("Database {}, domains {}", connection.getMetaData().getURL(), ArrayUtils.toString(domains) );
+			
 			this.domains = domains;
 			this.domainMap = new HashMap<Integer, DomainInfo>();
 			this.ids = new HashMap<String, Map<Integer,Integer>>();
@@ -90,7 +92,7 @@ public class CheckIntegrity implements Constants {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SELECT ");
 		String pk = "id";
-		if ( table != null ) {
+		if ( (table != null) && (table.getPkColumn() != null) ) {
 			pk = table.getPkColumn().getName();
 		}
 		sb.append( pk );
@@ -109,6 +111,9 @@ public class CheckIntegrity implements Constants {
 	}
 	
 	private boolean exist(DomainInfo di, TableInfo ti, Integer value) {
+		if ( ti == null ) {
+			LOGGER.error("TI null");
+		}
 		Map<Integer,Integer> idMap = this.ids.get(ti.getName());
 		if ( idMap == null ) {
 			this.ids.put(ti.getName(), new HashMap<Integer, Integer>());
@@ -141,12 +146,21 @@ public class CheckIntegrity implements Constants {
 		idMap.put(id, domain);
 	}	
 	
+	private boolean hasDomainColumn( TableInfo ti ) {
+		for( ColumnInfo ci : ti.getColumns() ) {
+			if ( DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {
+				return true;
+			}
+		}
+		return false;			
+	}
+	
 	private boolean checkId(TableInfo table, Integer value, Integer domainId) throws SQLException {
 		DomainInfo di = getDomainInfo(domainId);
 		if ( exist(di, table, value) ) {
 			return true;
 		}				
-		boolean domainColumn = (table != null) && !table.isDomainTable();
+		boolean domainColumn = (table != null) && hasDomainColumn(table);
 		String sentence = getSelect(table, value, domainColumn); 
 		Statement s = null;
 		ResultSet rs = null;
@@ -191,7 +205,7 @@ public class CheckIntegrity implements Constants {
 			if (value != null) {
 				if ( ci.isFkColummn() ) {
 					Integer fkId = (Integer) value;
-					checkId( ci.getFtTable(), fkId, domainId );
+					checkId( ci.getFkTableEx(), fkId, domainId );
 				} else {
 					if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
@@ -209,25 +223,33 @@ public class CheckIntegrity implements Constants {
 		return rs.next();
 	}
 	
-	public static void main(String[] args) {
-		DbUtils.loadDriver("com.mysql.jdbc.Driver");
+	public static void main(String[] arguments) {
+		DomainCommandLine dcl = new DomainCommandLine(false);
 		
-		Integer[] domains = new Integer[]{4};
-		
-		String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
-		// String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
-		String user = "dbuser";
-		String password = "serubd2000";
-		
-		Connection connection  = null ;
+		dcl.parse(CheckIntegrity.class.getName(), arguments);
+				
+		Connection connection = null;
+		Writer writer = null;
 		try {
-			connection = DriverManager.getConnection(url, user, password);
-			CheckIntegrity ci = new CheckIntegrity(connection);
-			ci.execute(domains);
+			connection = dcl.getConnection();
+			
+			Integer[] domains = dcl.getDomains(connection);
+			if (! ArrayUtils.isEmpty(domains) ) {
+				LOGGER.info( "Starting process..." );
+				CheckIntegrity ci = new CheckIntegrity(connection);
+				ci.execute(domains);
+			}
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(connection);
+			if ( writer != null ) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
 		}
 	}
 	

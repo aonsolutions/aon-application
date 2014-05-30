@@ -7,6 +7,7 @@ public interface Constants {
 	String ACTION_ENTRY_TABLE_NAME = "action_entry";
 	String ACTION_FAVORITE_TABLE_NAME = "action_favorite";
 	String ACTION_DENIED_TABLE_NAME = "action_denied";
+	String AGREEMENT_TABLE_NAME = "agreement";
 	String PROFILE_ACTION_DENIED_TABLE_NAME = "profile_action_denied";
 	String PROFILE_MODULE_DENIED_TABLE_NAME = "profile_module_denied";
 	String PROFILE_ROLE_TABLE_NAME = "profile_role";
@@ -25,6 +26,7 @@ public interface Constants {
 	String COMPANY_TABLE_NAME = "company";
 	String DOMAIN_TABLE_NAME = "domain";
 	String DELIVERY_DETAIL_TABLE_NAME = "delivery_detail";
+	String ENTERPRISE_DATA_TABLE_NAME = "enterprise_data";
 	String FBATCH_TABLE_NAME = "fbatch";
 	String FINANCE_TABLE_NAME = "finance";
 	String FINANCE_TRACKING_TABLE_NAME = "finance_tracking";
@@ -53,6 +55,7 @@ public interface Constants {
 	String SOURCE_COLUMN_NAME = "source";
 	String VALUE_COLUMN_NAME = "value";
 	String ID_COLUMN_NAME = "id";
+	String EXPRESSION_COLUMN_NAME = "expression";
 	
 	String IS_AUTOINCREMENT = "IS_AUTOINCREMENT";
 	String COLUMN_NAME = "COLUMN_NAME";
@@ -72,6 +75,7 @@ public interface Constants {
 	String TYPE_NAME = "TYPE_NAME";
 	String DATA_TYPE = "DATA_TYPE";
 	String YES_VALUE = "YES";
+	String AGREEMENT_VALUE = "agreement";
 
 	
 }

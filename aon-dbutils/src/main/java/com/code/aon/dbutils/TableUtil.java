@@ -115,7 +115,12 @@ public class TableUtil implements Constants {
 			FINANCE_TABLE_NAME, null, SOURCE_ID_COLUMN_NAME
 			, new Object[0]
 			, new String[] {SALARY_TABLE_NAME});
-	
+
+	private static final AonInternalReference ENTERPRISE_DATA_REFERENCES = new AonInternalReference(
+			ENTERPRISE_DATA_TABLE_NAME, NAME_COLUMN_NAME, EXPRESSION_COLUMN_NAME
+			, new String[] {AGREEMENT_VALUE}
+			, new String[] {AGREEMENT_TABLE_NAME});
+
 	private static final Map<String,AonInternalReference> INTERNAL_REFERENCES_TABLES = new HashMap<String, AonInternalReference>();
 
 	static {
@@ -124,6 +129,7 @@ public class TableUtil implements Constants {
 		INTERNAL_REFERENCES_TABLES.put(ALARM_REFERENCES.getTableName(),ALARM_REFERENCES);
 		INTERNAL_REFERENCES_TABLES.put(APP_PARAM_REFERENCES.getTableName(),APP_PARAM_REFERENCES);
 		INTERNAL_REFERENCES_TABLES.put(FINANCE_REFERENCES.getTableName(),FINANCE_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put(ENTERPRISE_DATA_REFERENCES.getTableName(),ENTERPRISE_DATA_REFERENCES);
 	}
 	
 	private Map<String,TableInfo> tables;
@@ -215,7 +221,7 @@ public class TableUtil implements Constants {
 		for( TableInfo ti : tables.values() ) {
 			for( ColumnInfo ci : ti.getColumns() ) {
 				if ( ci.isFkColummn() ) {
-					ci.setFtTable( tables.get(ci.getFkTableName()) );
+					ci.setFkTable( tables.get(ci.getFkTableName()) );
 				}
 			}
 		}
@@ -237,10 +243,10 @@ public class TableUtil implements Constants {
 	
 	private boolean isCyclicReference( TableInfo ti, ColumnInfo ci ) {
 		if ( ci.isFkColummn() ) {
-			TableInfo ti2 = ci.getFtTable();
+			TableInfo ti2 = ci.getFkTable();
 			if ( ti2!=null && !ti.equals(ti2) ) {
 				for( ColumnInfo ci2 : ti2.getColumns() ) {
-					if ( ci2.isFkColummn() && ti.equals(ci2.getFtTable()) ) {
+					if ( ci2.isFkColummn() && ti.equals(ci2.getFkTable()) ) {
 						return true;
 					}
 				}
@@ -258,8 +264,8 @@ public class TableUtil implements Constants {
 					ti.setCyclicColumn(ci);
 					if (! ci.isNullable() ) {
 						newMap.remove(ti.getName());
-					} else if (! newMap.containsKey(ci.getFtTable().getName()) ) {
-						newMap.put(ci.getFtTable().getName(), ci.getFtTable());			
+					} else if (! newMap.containsKey(ci.getFkTable().getName()) ) {
+						newMap.put(ci.getFkTable().getName(), ci.getFkTable());			
 					}
 				}
 			}

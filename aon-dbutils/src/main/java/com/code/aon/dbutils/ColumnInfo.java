@@ -9,7 +9,7 @@ public class ColumnInfo implements Constants {
 	private boolean autoIncrement;
 	private boolean primaryKey;
 	private String fkTableName;
-	private TableInfo ftTable;
+	private TableInfo fkTable;
 	private boolean nullable;
 
 	public ColumnInfo(String name, int type, boolean autoIncrement,
@@ -48,12 +48,20 @@ public class ColumnInfo implements Constants {
 		this.fkTableName = fkTableName;
 	}
 
-	public TableInfo getFtTable() {
-		return ftTable;
+	public TableInfo getFkTable() {
+		return fkTable;
 	}
 
-	public void setFtTable(TableInfo ftTable) {
-		this.ftTable = ftTable;
+	public TableInfo getFkTableEx() {
+		if ( fkTable == null ) {
+			TableInfo ti = new TableInfo(fkTableName);
+			return ti;
+		}
+		return fkTable;
+	}
+	
+	public void setFkTable(TableInfo ftTable) {
+		this.fkTable = ftTable;
 	}
 
 	public boolean isFkColummn() {
