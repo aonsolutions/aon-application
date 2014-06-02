@@ -186,6 +186,7 @@ public enum ContextVariable implements IResourceable{
 	FIVE("QUINQUENIO", VariableType.UNKNOWN, true ),
 	SIX("SEXENIO", VariableType.UNKNOWN, true ),
 	SEVEN("SEPTENIO", VariableType.UNKNOWN, true ),
+	UNDEFINED("UNDEFINED", VariableType.UNKNOWN ),
 	
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE ),
 	EXCESS("EXCESO", VariableType.DOUBLE ),
