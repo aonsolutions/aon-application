@@ -8,6 +8,7 @@ import org.mvel2.util.MethodStub;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class AonFunctions {
 	
@@ -21,6 +22,10 @@ public class AonFunctions {
 		return Math.max(a, b);
 	}
 	
+	@Variable(ContextVariable.UNDEFINED)
+	public static final Double undefined(String var) throws UndefinedVariablesException {
+		throw new UndefinedVariablesException(var);
+	}
 	
 	// ------------------------------------------------------------------------
 	// 
