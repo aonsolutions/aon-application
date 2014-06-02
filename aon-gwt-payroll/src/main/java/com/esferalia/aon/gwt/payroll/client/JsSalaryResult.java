@@ -6,9 +6,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class JsSalaryResult extends JavaScriptObject {
-
-	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
-			.getFormat("yyyy-MM-dd");
+	
+	private static DateTimeFormat DATE_FORMAT = null;
 
 	protected JsSalaryResult() {
 	}
@@ -72,14 +71,20 @@ public class JsSalaryResult extends JavaScriptObject {
 	public final native double getCounterTotalDeduction() /*-{
 		return this.counterTotalDeduction;
 	}-*/;
-	
-	
+
 	public final Date getStartDate() {
-		return DATE_FORMAT.parse(getStartDateString());
+		return getDateTimeFormat().parse(
+				getStartDateString());
 	}
 
 	public final Date getEndDate() {
-		return DATE_FORMAT.parse(getEndDateString());
+		return getDateTimeFormat().parse(getEndDateString());
 	}
-	
+
+	private DateTimeFormat getDateTimeFormat() {
+		if (DATE_FORMAT == null)
+			DATE_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
+		return DATE_FORMAT;
+	}
+
 }

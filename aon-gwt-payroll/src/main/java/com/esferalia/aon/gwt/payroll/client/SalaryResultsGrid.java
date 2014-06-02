@@ -15,6 +15,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DefaultCellTableBuilder;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.cellview.client.TextHeader;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -109,7 +110,7 @@ public class SalaryResultsGrid extends CustomDataGrid<JsSalaryResult> implements
 			SelectionHandler<JsSalaryResult> handler) {
 		return addHandler(handler, SelectionEvent.getType());
 	}
-
+	
 	private JsSalaryResult getSelectedSalaryResult() {
 		return ((SingleSelectionModel<JsSalaryResult>) getSelectionModel())
 				.getSelectedObject();
@@ -153,7 +154,7 @@ public class SalaryResultsGrid extends CustomDataGrid<JsSalaryResult> implements
 
 			@Override
 			public String getIconStyle(Context context, JsSalaryResult result) {
-				return isWorkplaceSep(result) ? null : SalaryResultsGrid
+					return isWorkplaceSep(result) ? null : SalaryResultsGrid
 						.getIconStyle(result);
 			}
 
@@ -172,6 +173,7 @@ public class SalaryResultsGrid extends CustomDataGrid<JsSalaryResult> implements
 			@Override
 			public String getValue(JsSalaryResult result) {
 				return result.getEmployeeName();
+				
 			}
 		});
 		setColumnWidth(col++, 30, Unit.PCT);
@@ -203,7 +205,7 @@ public class SalaryResultsGrid extends CustomDataGrid<JsSalaryResult> implements
 
 			@Override
 			public String getValue(JsSalaryResult result) {
-				return SalaryResultsGrid.format(result.getTotalPayment());
+					return SalaryResultsGrid.format(result.getTotalPayment());
 			}
 		}, paymentHeader);
 

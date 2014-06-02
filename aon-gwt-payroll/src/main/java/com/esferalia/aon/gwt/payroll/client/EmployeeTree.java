@@ -11,6 +11,7 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.client.MinimizePanel.MinimizeEvent;
@@ -41,6 +42,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -112,7 +114,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
-
 
 	class ShowResultsCommand implements ScheduledCommand {
 
@@ -346,7 +347,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		@Override
 		public void onSuccess(JsSalaryResult result) {
 			resultsDataProvider.getList().add(result);
-
 		}
 
 		// ---------------------------------------------------- Private methods
@@ -487,7 +487,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 	}
 
-
 	class WorkplaceContextMenu extends ContextMenu {
 
 		CalcWorkplaceCommand calcCmd;
@@ -525,8 +524,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		CalcEnterpriseCommand calcCmd;
 
-		
-
 		public EnterpriseContextMenu() {
 
 			MenuBar newPopup = new MenuBar(true);
@@ -554,7 +551,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
-			
+
 		}
 
 		void setEnterprise(Enterprise enterprise) {
@@ -784,7 +781,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onReportsSelected(ReportsObject reportsObject) {
 		employeeDetail.setWidget(reports);
 		reports.setReportsObject(reportsObject);
-		
+
 	}
 
 	@Override
@@ -796,8 +793,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	@Override
-	public void onITDataSelected(
-			ITDataObject dataObject) {
+	public void onITDataSelected(ITDataObject dataObject) {
 
 		employeeDetail.setWidget(it);
 		it.setITEditor(dataObject);
@@ -982,28 +978,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 					String text = xhr.getResponseText();
 
-					for (JsSalaryResult result = read(text); result != null; result = read(text))
-						callback.onSuccess(result);
+					try {
+						for (JsSalaryResult result = read(text); text != null; result = read(text))
+							callback.onSuccess(result);
+					} catch (IndexOutOfBoundsException e) {
+					}
 				}
 
 			}
 
 			private JsSalaryResult read(String text) {
-				int begin = loaded;
-				while (begin < text.length()) {
+				for (int begin = loaded ; begin < text.length() ; begin++ ) {
 					if (text.charAt(begin) == '{') {
-						try {
-							loaded = findEnd(text, begin + 1) + 1;
-						} catch (IndexOutOfBoundsException e) {
-							return null;
-						}
+						loaded = findEnd(text, begin + 1) + 1;
 						String json = text.substring(begin, loaded);
 						return JsonUtils.safeEval(json);
 					}
-					begin++;
 				}
-
-				return null;
+				throw new IndexOutOfBoundsException();
 			}
 
 			private int findEnd(String text, int start) {
