@@ -21,6 +21,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.Domain;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -42,7 +43,6 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 
 
 public class PayrollUtils {
@@ -334,7 +334,7 @@ public class PayrollUtils {
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT distinct(value) FROM app_param";
-			select += " WHERE name = '" + PayrollAppParamsController.REPORT_ADDITIONAL_SALAY_TEMPLATES + "'";
+			select += " WHERE name = '" + AppParam.PAY_REPORT_additional_salary_PAY.getValue() + "'";
 			if( getParentDomainId()!=null ){
 				select += " AND domain in ( " +  DomainManager.getCurrentDomain() + ", " + getParentDomainId() +" );";
 			} else {
