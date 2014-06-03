@@ -2,6 +2,7 @@
 # Created by: rtrepiana@esferalia.com
 # Creation Date: 02/06/2014 
 
+SET FOREIGN_KEY_CHECKS=0;
 
 # Like `description` at `contract_payment` ....
 ALTER TABLE  salary_payment MODIFY `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripcion';
@@ -22,3 +23,5 @@ INSERT INTO deduction_concept ( domain, type, description) VALUES ( 0, 8, 'VALOR
 UPDATE `db_version` SET `version_number` = '7.32.1';
 
 COMMIT;
+
+SET FOREIGN_KEY_CHECKS=1;
