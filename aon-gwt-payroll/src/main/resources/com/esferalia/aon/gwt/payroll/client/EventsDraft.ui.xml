@@ -137,9 +137,9 @@
 						</g:cell>
 	
 						<g:ListBox ui:field="dateRangeListBox">
-							<g:item value="0">Semana</g:item>
+							<!--  g:item value="0">Semana</g:item>
 							<g:item value="1">Mes</g:item>
-							<g:item value="2">A&ntilde;o</g:item>
+							<g:item value="2">A&ntilde;o</g:item> -->
 						</g:ListBox>
 	
 					</g:HorizontalPanel>

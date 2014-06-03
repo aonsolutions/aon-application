@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
@@ -34,6 +35,9 @@ public interface EmployeesService extends RemoteService, StatisticsService, GPSR
 	Enterprise[] getEnterprises() throws IllegalArgumentException;
 
 	List<Payment> getAvailablePayments(int employeeId)
+			throws IllegalArgumentException;
+
+	List<Deduction> getAvailableDeductions(int employeeId)
 			throws IllegalArgumentException;
 
 	List<Cost> getWorkplaceCosts(int workplaceId)

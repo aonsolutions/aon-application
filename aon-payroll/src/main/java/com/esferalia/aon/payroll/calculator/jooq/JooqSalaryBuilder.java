@@ -259,6 +259,11 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public void setIrpfBase(Double irpfBase) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase);
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE, inkindIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
@@ -310,7 +315,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 		InsertSetStep<SalaryEmbargoRecord> insertEmbargo = insertMoreEmbargo == null ? dslContext
 				.insertInto(SALARY_EMBARGO) : insertMoreEmbargo.newRecord();
 
@@ -318,9 +324,15 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 				.set(SALARY_BONUS.DOMAIN, this.domainId)
 				.set(SALARY_EMBARGO.SALARY, salaryId)
 				.set(SALARY_EMBARGO.AMOUNT, amount)
-				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, embargo)
+				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, id)
 				.set(SALARY_EMBARGO.DESCRIPTION, description);
 
+	}
+	
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		addEmbargo(id, 0.00, embargo.getDescription(), embargo, context);
 	}
 
 	@Override

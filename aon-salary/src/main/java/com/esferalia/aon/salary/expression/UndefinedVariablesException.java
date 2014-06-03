@@ -6,6 +6,7 @@ public class UndefinedVariablesException extends ExpressionException {
 	
 	private String variableNames [];
 	
+
 	public UndefinedVariablesException(String ...variableNames) {
 		this.variableNames = variableNames;
 	}

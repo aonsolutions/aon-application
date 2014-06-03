@@ -39,6 +39,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -882,7 +883,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			payment.setScope(Scope.SALARY);
 			payment.setDescription(description);
 			salaryDraftObject.addDraftPayment(payment);
-			// salaryDraftObject.calculate(SalaryDraft.this);
 			SalaryDraft.this.calculate(getExpressionFocusCallback());
 		}
 
@@ -891,7 +891,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			payment.setScope(Scope.SALARY);
 			payment.setExpression(expression);
 			salaryDraftObject.addDraftPayment(payment);
-			// salaryDraftObject.calculate(SalaryDraft.this);
 			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
 		}
 
@@ -962,11 +961,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// --------------------------------------------------------------------
 		@Override
 		public void onAccept(DeductionDialog dialog) {
+			
 			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
 			item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getDeductionExpression());
-			salaryDraftObject.addDraftDeduction(item);
+			
+			if ( item.getType() == Deduction.Type.EMBARGO)
+				salaryDraftObject.addDraftEmbargo(item);
+			else
+				salaryDraftObject.addDraftDeduction(item);
+			
 			salaryDraftObject.calculate(SalaryDraft.this);
 
 		}
@@ -1003,7 +1008,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		void onDescriptionChange(Deduction item, String description) {
 			item.setScope(Scope.SALARY);
 			item.setDescription(description);
-			salaryDraftObject.addDraftDeduction(item);
+			
+			if ( item.getType() == Deduction.Type.EMBARGO)
+				salaryDraftObject.addDraftEmbargo(item);
+			else
+				salaryDraftObject.addDraftDeduction(item);
+			
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
@@ -1011,12 +1021,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		void onExpressionChange(Deduction item, String expression) {
 			item.setScope(Scope.SALARY);
 			item.setExpression(expression);
-			salaryDraftObject.addDraftDeduction(item);
+			
+			if ( item.getType() == Deduction.Type.EMBARGO)
+				salaryDraftObject.addDraftEmbargo(item);
+			else
+				salaryDraftObject.addDraftDeduction(item);
+			
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
-
 	}
-
+	
+	
 	abstract class NewItemHandler<T extends Item> extends
 			DefaultSuggestionDisplay {
 
@@ -1114,7 +1129,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					return;
 				}
 			}
-
 			addDrafItem(item, expression);
 
 			calculate(item);
@@ -1163,7 +1177,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		protected List<Deduction> getAvailableItems() {
-			return Collections.<Deduction> emptyList();
+			return SalaryDraft.this.availableDeductions;
 		}
 
 		@Override
@@ -1183,7 +1197,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			deduction.setStartDate(salaryDraftObject.getEndDate());
 			deduction.setStartDate(salaryDraftObject.getStartDate());
 
-			salaryDraftObject.addDraftDeduction(deduction);
+			if ( item.getType() == Deduction.Type.EMBARGO)
+				salaryDraftObject.addDraftEmbargo(deduction);
+			else
+				salaryDraftObject.addDraftDeduction(deduction);
 		}
 
 		// ------------------------------------------- DeductionDialog.Callback
@@ -1204,7 +1221,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			deduction.setConceptId(concept != null ? concept.getId() : null);
 			deduction.setName(concept != null ? concept.getName() : null);
 
-			salaryDraftObject.addDraftDeduction(deduction);
+			if ( deduction.getType() == Deduction.Type.EMBARGO)
+				salaryDraftObject.addDraftEmbargo(deduction);
+			else
+				salaryDraftObject.addDraftDeduction(deduction);
+			
+			calculate(deduction);
 		}
 
 	}
@@ -1322,6 +1344,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			draftPayment.setSalaryType(SalaryDraft.this.salaryDraftObject
 					.getType());
 			salaryDraftObject.addDraftPayment(draftPayment);
+			calculate(draftPayment);
 		}
 
 		private CalculateCallback getNewPaymentFocusCallback() {
@@ -1631,6 +1654,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private SalaryDraftObject salaryDraftObject;
 	private Map<Event.Type, String[]> eventStyles;
 	private List<Payment> availablePaymens = new ArrayList<Payment>();
+	private List<Deduction> availableDeductions = new ArrayList<Deduction>();
 
 	private HasValue<String> fxhasValue;
 
@@ -2009,6 +2033,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		clearPaymentsTable();
 
 		initAvailablePayments();
+		initAvailableDeductions();
 		List<Payment> payments = salaryDraftObject.getPayments();
 		paymentChangeHandlers = dumpPayments(payments);
 		newPaymentHandler = insertNewPaymentRow();
@@ -2016,6 +2041,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		List<Deduction> deductions = salaryDraftObject.getDeductions();
 		dumpDeductions(deductions);
+		List<Deduction> embargos = salaryDraftObject.getEmbargos();
+		dumpDeductions(embargos);
 		insertNewDeductionRow();
 		insertBlankPaymentRow();
 		insertBlankPaymentRow();
@@ -2067,7 +2094,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				});
 	}
 
-	private void initAvailableEmbargoes() {
+	private void initAvailableDeductions() {
+		availableDeductions.clear();
+		salaryDraftObject
+				.getDeductionConcepts(new AsyncCallback<List<Deduction>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onSuccess(List<Deduction> result) {
+						availableDeductions.addAll(result);
+					}
+				});
 	}
 
 	@UiHandler("fxButton")
@@ -2650,6 +2691,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
+		handler.setDescriptionWidget(descriptionBox);
 
 		TextBox amountBox = new TextBox();
 		enable(amountBox, isEditable);
@@ -2658,6 +2700,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setMaxLength(EXPRESSION_MAX_LENGTH);
+		handler.setExpressionWidget(amountBox);
 
 		contentAssistManager.addValueBox(amountBox);
 
@@ -2684,10 +2727,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		addDbWidget(dbWidget);
 
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
-		if (!isEditable)
 
-			handler.setDescriptionWidget(descriptionBox);
-		handler.setExpressionWidget(amountBox);
 
 		paymentsTable.setHTML(row, isDeduction ? 3 : 4, "&nbsp;");
 
@@ -3435,7 +3475,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private void showCosts(boolean show) {
 
 		int costsBeforeRow = paymentsTable.getRowCount()
-				- (2 /* blank lines */+ 1 /* new line */);
+				- (2 /* new line */+ 1 /* blanks line */);
 
 		int costsCount = salaryDraftObject.getCosts().size();
 
@@ -3445,7 +3485,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		} else {
 			int bonusCount = salaryDraftObject.getBonuses().size();
 			hideCosts(costsBeforeRow - (costsCount + bonusCount));
-			hideBonus(costsBeforeRow - (bonusCount));
+			
+			int bonusBeforeRow = paymentsTable.getRowCount()
+					- (2 /* new line */+ 1 /* blanks line */);
+			hideBonus(bonusBeforeRow - (bonusCount));
 		}
 	}
 

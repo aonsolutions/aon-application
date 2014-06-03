@@ -175,7 +175,7 @@ public class SQLEvents {
 					+ ContractDataColumns.END_DATE + " IS NULL  " + " OR "
 					+ ContractDataColumns.END_DATE + " >= ? ) " + " AND "
 					+ ContractDataColumns.CONTRACT + " IN ( " + idsSqlBuffer
-					+ " ) " + " AND " + SystemDataColumns.NAME + " IN (" + namesHosts + ")"
+					+ " ) " + " AND " + ContractDataColumns.NAME + " IN (" + namesHosts + ")"
 					+ " ORDER BY " + ContractDataColumns.CONTRACT
 					+ " ASC ";
 

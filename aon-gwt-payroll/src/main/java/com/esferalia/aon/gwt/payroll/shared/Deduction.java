@@ -14,17 +14,17 @@ public class Deduction extends Item<Deduction.Type> {
 		JOB_TRAINING, 
 		STRUCTURAL_OVERTIME, 
 		NON_STRUCTURAL_OVERTIME, 
-		IRPF, ADVANCE_PAYMENT, 
+		IRPF, 
+		ADVANCE_PAYMENT, 
 		IN_KIND, 
 		OTHER, 
 		FOGASA, // TODO:
-		
-		EMBARGO // Other type really
+		EMBARGO // TODO: ???
 		;
 		public String getDescription() {
 			return DESCRIPTIONS.get(this);
 		}
-
+		
 		static Map<Type, String> DESCRIPTIONS = new HashMap<Type, String>() {
 			{
 				put(COMMON_CONTINGENCY, "Contingencias Comunes");
@@ -35,7 +35,7 @@ public class Deduction extends Item<Deduction.Type> {
 				put(NON_STRUCTURAL_OVERTIME, "Resto Horas Extraordinarias");
 				put(IRPF, "I.R.P.F");
 				put(ADVANCE_PAYMENT, "Anticipo");
-				put(IN_KIND, "Valor de productos en especie");
+				put(IN_KIND, "valor de productos en especie");
 				put(OTHER, "Otras deducciones");
 				put(FOGASA, "FOGASA");
 				put(EMBARGO, "Embargo");
@@ -44,5 +44,7 @@ public class Deduction extends Item<Deduction.Type> {
 
 
 	}
+
+
 
 }

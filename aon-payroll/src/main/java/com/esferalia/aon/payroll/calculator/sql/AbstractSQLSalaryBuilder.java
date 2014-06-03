@@ -176,6 +176,11 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	public void setIrpfBase(Double irpfBase) {
 		salary.setIrpfBase(irpfBase);
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		salary.setInkindIrpfBase(inkindIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
@@ -244,14 +249,15 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 		
 		salaryCosts.add(salaryCost);
 	}
-
+	
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryEmbargo salaryEmbargo= 
 			new AbstractSQL.SalaryEmbargo();
 		
 		salaryEmbargo.setAmount(amount);
-		salaryEmbargo.setContractEmbargo(embargo);
+		salaryEmbargo.setContractEmbargo(id);
 		salaryEmbargo.setDescription(description);
 		
 		salaryEmbargos.add(salaryEmbargo);
@@ -298,5 +304,11 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 		// TODO Auto-generated method stub
 	}
 	
-
+	
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		// TODO Auto-generated method stub
+		
+	}
 }

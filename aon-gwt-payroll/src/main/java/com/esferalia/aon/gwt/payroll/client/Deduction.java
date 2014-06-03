@@ -29,6 +29,7 @@ public class Deduction extends
 		addType(Type.ADVANCE_PAYMENT);
 		addType(Type.IN_KIND);
 		addType(Type.OTHER);
+		addType(Type.EMBARGO);
 	}
 
 	private void addType(Type type) {

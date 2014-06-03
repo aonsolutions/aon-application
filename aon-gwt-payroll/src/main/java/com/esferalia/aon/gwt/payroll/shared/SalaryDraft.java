@@ -93,6 +93,8 @@ public class SalaryDraft extends SalaryPreview {
 	private Double dbGgpBase;
 	private Double irpfBase;
 	private Double dbIrpfBase;
+	private Double inkindIrpfBase;
+	private Double dbInkindIrpfBase;
 	private Double hExtraBase;
 	private Double dbHExtraBase;
 	private Double nonHExtraBase;
@@ -113,6 +115,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Event> events;
 	private List<Payment> payments;
 	private List<Deduction> deductions;
+	private List<Deduction> embargos;
 
 	private List<Bonus> bonuses;
 	private List<Deduction> costs;
@@ -120,6 +123,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Variable> draftContext;
 	private List<Payment> draftPayments;
 	private List<Deduction> draftDeductions;
+	private List<Deduction> draftEmbargos;
 	
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
@@ -128,10 +132,12 @@ public class SalaryDraft extends SalaryPreview {
 		deductions = new LinkedList<Deduction>();
 		costs = new LinkedList<Deduction>();
 		bonuses = new LinkedList<Bonus>();
+		embargos = new LinkedList<Deduction>();
 
 		draftContext = new LinkedList<Variable>();
 		draftPayments = new LinkedList<Payment>();
 		draftDeductions = new LinkedList<Deduction>();
+		draftEmbargos = new LinkedList<Deduction>();
 	}
 
 	public void clear() {
@@ -139,6 +145,7 @@ public class SalaryDraft extends SalaryPreview {
 		clearCosts();
 		clearEvents();
 		clearContext();
+		clearBonuses();
 		clearPayments();
 		clearDeductions();
 	}
@@ -160,13 +167,15 @@ public class SalaryDraft extends SalaryPreview {
 		draftContext.clear();
 		draftPayments.clear();
 		draftDeductions.clear();
+		draftEmbargos.clear();
 	}
 	
 	
 	public boolean hasDrafts(){
 		return  (draftContext.size() > 0) ||
 				(draftPayments.size() > 0) ||
-				(draftDeductions.size() > 0 );
+				(draftDeductions.size() > 0 )||
+				(draftEmbargos.size() > 0);
 	}
 	
 	public void addPayment(Payment payment) {
@@ -199,8 +208,13 @@ public class SalaryDraft extends SalaryPreview {
 		deductions.add(deduction);
 	}
 	
+	public void addEmbargo(Deduction embargo) {
+		deductions.add(embargo);
+	}
 	
 	public Deduction addDraftDeduction(Deduction deduction) {
+		
+		
 		
 		if ( deduction.getId() == null ) {
 			deduction.setId((-1) * ( draftDeductions.size() + 1));
@@ -214,10 +228,32 @@ public class SalaryDraft extends SalaryPreview {
 		draftDeductions.add(deduction);
 		return oldDeduction;
 	}
+	
+	
 
 	public boolean removeDraftDeduction(Deduction deduction) {
 		return draftDeductions.remove(deduction);
 	}
+
+	public Deduction addDraftEmbargo(Deduction embargo) {
+		
+		if ( embargo.getId() == null ) {
+			embargo.setId((-1) * ( draftEmbargos.size() + 1));
+		}
+		
+		Deduction oldEmbargo = null;
+		int i = draftEmbargos.indexOf(embargo);
+		if ( i != -1 ) {
+			oldEmbargo = draftEmbargos.remove(i);
+		}
+		draftEmbargos.add(embargo);
+		return oldEmbargo;
+	}
+	
+	public boolean removeDraftEmbargo(Deduction embargo) {
+		return draftEmbargos.remove(embargo);
+	}
+	
 
 	public void addVariable(String name, Object value, Date startDate,
 			Date endDate) {
@@ -304,9 +340,17 @@ public class SalaryDraft extends SalaryPreview {
 	public List<Deduction> getDeductions() {
 		return deductions;
 	}
-
+	
+	public List<Deduction> getEmbargos() {
+		return embargos;
+	}
+	
 	public void clearDeductions() {
 		deductions.clear();
+	}
+
+	public void clearEmbargos() {
+		embargos.clear();
 	}
 
 	public List<Event> getEvents() {
@@ -339,6 +383,14 @@ public class SalaryDraft extends SalaryPreview {
 	
 	public void setDraftDeductions(List<Deduction> draftDeductions) {
 		this.draftDeductions = draftDeductions;
+	}
+	
+	public List<Deduction> getDraftEmbargos() {
+		return draftEmbargos;
+	}
+	
+	public void setDraftEmbargos(List<Deduction> draftEmbargos) {
+		this.draftEmbargos = draftEmbargos;
 	}
 
 	public void clearContext() {
@@ -396,6 +448,14 @@ public class SalaryDraft extends SalaryPreview {
 	public void setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
 	}
+	
+	public Double getInkindIrpfBase() {
+		return inkindIrpfBase;
+	}
+	
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		this.inkindIrpfBase = inkindIrpfBase;
+	}
 
 	public Double getProrationBase() {
 		return prorationBase;
@@ -451,6 +511,14 @@ public class SalaryDraft extends SalaryPreview {
 
 	public void setDbIrpfBase(Double dbIrpfBase) {
 		this.dbIrpfBase = dbIrpfBase;
+	}
+	
+	public Double getDbInkindIrpfBase() {
+		return dbInkindIrpfBase;
+	}
+	
+	public void setDbInkindIrpfBase(Double dbInkindIrpfBase) {
+		this.dbInkindIrpfBase = dbInkindIrpfBase;
 	}
 
 	public Double getDbHExtraBase() {

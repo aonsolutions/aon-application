@@ -232,5 +232,11 @@ public abstract class AbstractSalary implements ISalary {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Double getInKindIrpfBase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

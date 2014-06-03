@@ -178,6 +178,11 @@ public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 		public Double getIrpfBase() {
 			return salary.getIrpfBase();
 		}
+		
+		@Override
+		public Double getInKindIrpfBase() {
+			return salary.getInkindIrpfBase();
+		}
 
 		@Override
 		public java.sql.Date getIssueDate() {

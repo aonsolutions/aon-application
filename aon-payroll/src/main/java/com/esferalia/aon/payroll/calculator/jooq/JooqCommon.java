@@ -6,7 +6,7 @@ public class JooqCommon {
 
 	private static Settings SETTINGS = null;
 
-	static Settings getDefaultSettings() {
+	public static Settings getDefaultSettings() {
 		if (SETTINGS == null) {
 			SETTINGS = new Settings();
 			SETTINGS.setRenderSchema(false);

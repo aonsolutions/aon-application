@@ -135,6 +135,10 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	public void setIrpfBase(Double irpfBase) {
 
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
@@ -180,10 +184,11 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context) {
 	}
-
+	
+	
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
-
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 	}
 
 	@Override
@@ -213,7 +218,14 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	public void addZeroDeduction(IDeduction deduction,
 			Map<String, ITimedVariable<?>> context) {
 	}
-
+	
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 

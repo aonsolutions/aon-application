@@ -5,18 +5,18 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class HierarchyDeductions  extends HierarchyIterator<IContractDeduction> {
+public class HierarchyDeductions<T extends IContractDeduction >  extends HierarchyIterator<T> {
 
 	private Set<String> names;
 
-	public HierarchyDeductions(Iterator<IContractDeduction>... childs) {
+	public HierarchyDeductions(Iterator<T>... childs) {
 		super(childs);
 		names = new HashSet<String>();
 	}
 
 	
 	@Override
-	protected IContractDeduction next(IContractDeduction e) {
+	protected T next(T e) {
 		String name = e.getName();
 		if ( name == null ) 
 			return e;

@@ -77,6 +77,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -87,6 +88,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
@@ -1087,6 +1089,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public List<Deduction> getAvailableDeductions(int employeeId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+
+			conn = getConnection();
+
+			int domainId = getDomainID();
+
+			return JooqDeductions.getConcepts(conn, domainId,
+					getParentDomainID());
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
 	public void saveEvents(Events events, Date startDate, Date endDate) {
 		Connection conn = null;
 		try {
@@ -1324,13 +1354,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 
-			
 			Date start = DateUtils.getFirstDayOfMonth(month);
 			Date end = DateUtils.getLastDayOfMonth(month);
-			
+
 			Report<A3Line> a3Report = JooqGPSReports.getA3Report(conn,
-					SQLUtils.date2sql(start), SQLUtils.date2sql(end), workplaces);
-			
+					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
+					workplaces);
+
 			//@formatter:off
 			ReportData reportData = new ReportData(
 					new ReportData.StringColumn("NIF"),
@@ -1342,18 +1372,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					new ReportData.StringColumn("OBSERVACIONES")
 					);
 			//@formatter:on
-			
+
 			int cecoCols = 0;
 
 			for (A3Line a3Line : a3Report) {
-				
-				Map<String, Double> cecos = 
-						a3Line.getCECOs();
-				
-				for ( int ceco = cecoCols; cecoCols < cecos.size();  cecoCols++)
-					reportData.addColums(new ReportData.StringColumn("CECO " + (ceco +1) ),
-							new ReportData.DoubleColumn("% CECO " + ( ceco + 1) ));
-				
+
+				Map<String, Double> cecos = a3Line.getCECOs();
+
+				for (int ceco = cecoCols; cecoCols < cecos.size(); cecoCols++)
+					reportData.addColums(new ReportData.StringColumn("CECO "
+							+ (ceco + 1)), new ReportData.DoubleColumn(
+							"% CECO " + (ceco + 1)));
+
 				List<Object> values = new ArrayList<Object>();
 				values.add(a3Line.getNIF());
 				values.add(a3Line.getPerson());
@@ -1362,12 +1392,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				values.add(a3Line.getEmbargos());
 				values.add(a3Line.getDelays());
 				values.add(a3Line.getComments());
-				
-				for (Entry<String, Double> ceco : cecos.entrySet() ){
+
+				for (Entry<String, Double> ceco : cecos.entrySet()) {
 					values.add(ceco.getKey());
 					values.add(ceco.getValue());
 				}
-				
+
 				//@formatter:off
 				reportData.addRow(values.toArray());
 				//@formatter:on

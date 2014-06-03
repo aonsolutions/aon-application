@@ -7,14 +7,18 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.esferalia.aon.entity.master.ContractEmbargoDB;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
 @Table(name="contract_embargo")
-public class ContractEmbargo extends ContractEmbargoDB {
+public class ContractEmbargo extends ContractEmbargoDB implements IContractEmbargo {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private boolean fixedAmount;
+	
 	
 	@Transient
 	public boolean isFixedAmount() {
@@ -41,6 +45,47 @@ public class ContractEmbargo extends ContractEmbargoDB {
 	public void setFee(Double fee){
 		setExpression(fee.toString());
 	}
+	
+	
+	// ------------------------------------------------------------------------
+	
+	@Override
+	@Transient
+	public String getName() {
+		return null;
+	}
 
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.CONTRACT;
+	}
+	
+	@Override
+	@Transient
+	public DeductionType getType() {
+		return null;
+	}
 
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return false;
+	}
+
+	@Override
+	@Transient
+	public Integer getEmbargo() {
+		return getId();
+	}
+
+	@Override
+	@Transient
+	public double getAmount() {
+		if (NumberUtils.isNumber(getExpression()) ) {
+			return NumberUtils.toDouble(getExpression());	
+		}
+		return 0;
+	}
+	
 }

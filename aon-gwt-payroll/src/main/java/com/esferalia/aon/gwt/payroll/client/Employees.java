@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.DAY;
+import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.MONTH;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +10,7 @@ import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.ConstantEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
@@ -81,7 +85,7 @@ public class Employees extends ResizeComposite implements
 		void onReportsSelected(ReportsObject reports);
 
 		void onStatisticsSelected(Statistics stats);
-		
+
 		void onITDataSelected(ITDataObject dataObject);
 
 		void onSalariesSelected(SalaryDocuments docs);
@@ -103,7 +107,7 @@ public class Employees extends ResizeComposite implements
 		void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event);
 
 		void onEnterpriseContextMenu(Enterprise enterprise,
-				ContextMenuEvent event);		
+				ContextMenuEvent event);
 	}
 
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -242,7 +246,8 @@ public class Employees extends ResizeComposite implements
 
 		if (Enterprise.isGPS(enterprise))
 			addImageItem(enterpriseItem, "Informes", images.gps())
-					.setUserObject(new ReportsObject(enterprise, employeesService));
+					.setUserObject(
+							new ReportsObject(enterprise, employeesService));
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -264,14 +269,15 @@ public class Employees extends ResizeComposite implements
 					images.workplace());
 			workplaceItem.setUserObject(workplace);
 			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
-			
 
 			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
-			addImageItem(workplaceItem, "Partes IT", images.itDatas()).setUserObject
-			(new ITDataObject(workplace.getId(),employeesService));
+			addImageItem(workplaceItem, "Partes IT", images.itDatas())
+					.setUserObject(
+							new ITDataObject(workplace.getId(),
+									employeesService));
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -289,35 +295,53 @@ public class Employees extends ResizeComposite implements
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService,
+							//@formatter:off
 							new EnumEventMetaData("DESEMPE\u00D1O",
 									"DESEMPE\u00D1O",
 									"Desempe\u00F1o por Trabajador y Jornada",
-									"", "4", "8", "10", "12", "L", "LT", "LR",
-									"F", "FT", "FR", "V", "B", "P", "AI", "M"),
-							new DecimalEventMetaData("INCENTIVOS"),
-							new DecimalEventMetaData("ATRASOS"),
-							new DecimalEventMetaData("ANTICIPOS"),
-							new DecimalEventMetaData("EMBARGOS"),
+									"", 
+									new String[]{
+									"4", 
+									"8", 
+									"10", 
+									"12", 
+									"L", 
+									"LT", 
+									"LR",
+									"F", 
+									"FT", 
+									"FR", 
+									"V", 
+									"B", 
+									"P", 
+									"AI", 
+									"M"}, 
+									DAY),
+							//@formatter:on
+							new DecimalEventMetaData("INCENTIVOS", MONTH),
+							new DecimalEventMetaData("ATRASOS", MONTH),
+							new DecimalEventMetaData("ANTICIPOS", MONTH),
+							new DecimalEventMetaData("EMBARGOS", MONTH),
 							new DecimalEventMetaData("LTA",
-									"D\u00EDas Libres Trabajados canjeados por Alojamiento"),
+									"D\u00EDas Libres Trabajados canjeados por Alojamiento", MONTH),
 							new DecimalEventMetaData("CLT",
-									"Coste d\u00EDa Libre Trabajado"),
+									"Coste d\u00EDa Libre Trabajado", MONTH),
 							new DecimalEventMetaData("CD",
-									"Coste Diario del trabajador (jornada 8 horas)"),
+									"Coste Diario del trabajador (jornada 8 horas)", MONTH),
 							new BooleanEventMetaData("LTR",
-									"D\u00EDas Libres Trabajados Recuperables"),
+									"D\u00EDas Libres Trabajados Recuperables", MONTH),
 							new DecimalEventMetaData("HFD",
-									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-							new EventMetaData("OBSERVACIONES"));
+									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo", MONTH),
+							new EventMetaData("OBSERVACIONES", MONTH));
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService, new BooleanEventMetaData(
-									"DIAS_EFECTIVOS"),
-							new BooleanEventMetaData("DIAS_VACACIONES"),
-							new BooleanEventMetaData("HUELGA"),
-							new EventMetaData("OBSERVACIONES"));
+									"DIAS_EFECTIVOS", DAY),
+							new BooleanEventMetaData("DIAS_VACACIONES", DAY),
+							new BooleanEventMetaData("HUELGA", DAY),
+							new EventMetaData("OBSERVACIONES", MONTH));
 
 				Date date = new Date();
 
@@ -1123,13 +1147,13 @@ public class Employees extends ResizeComposite implements
 							@Override
 							public void execute() {
 								try {
-								inactive = !inactive;
-								
-								changeVisibleWorkplaces();
-								formerMenuItem.setStyleName(
-										"aon-MenuItemCheckYes", inactive);
-								popup.hide();
-								} catch ( Throwable t) {
+									inactive = !inactive;
+
+									changeVisibleWorkplaces();
+									formerMenuItem.setStyleName(
+											"aon-MenuItemCheckYes", inactive);
+									popup.hide();
+								} catch (Throwable t) {
 									Window.alert(t.getMessage());
 								}
 							}
@@ -1276,7 +1300,7 @@ public class Employees extends ResizeComposite implements
 		}
 
 	}
-	
+
 	private boolean isWorkPlaceVisible(Workplace workplace) {
 		return workplace.isActive() || inactive;
 	}

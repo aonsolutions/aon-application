@@ -185,6 +185,12 @@ public class CompositeSalaryBuilder<T extends ISalaryBuilder> implements
 		for (ISalaryBuilder builder : builders)
 			builder.setIrpfBase(irpfBase);
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		for (ISalaryBuilder builder : builders)
+			builder.setInkindIrpfBase(inkindIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
@@ -244,9 +250,10 @@ public class CompositeSalaryBuilder<T extends ISalaryBuilder> implements
 	}
 
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder builder : builders)
-			builder.addEmbargo(embargo, amount, description);
+			builder.addEmbargo(id, amount, description, embargo, context);
 	}
 
 	@Override
@@ -285,7 +292,15 @@ public class CompositeSalaryBuilder<T extends ISalaryBuilder> implements
 		for (ISalaryBuilder builder : builders)
 			builder.addZeroDeduction(deduction, context);
 	}
-
+	
+	
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		for (ISalaryBuilder builder : builders)
+			builder.addZeroEmbargo(id, embargo, context);
+		
+	}
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 		for (ISalaryBuilder builder : builders)

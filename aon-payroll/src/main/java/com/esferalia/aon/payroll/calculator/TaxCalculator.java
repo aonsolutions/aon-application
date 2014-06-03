@@ -18,6 +18,7 @@ public abstract class TaxCalculator {
 	double irpfBase = 0 ;
 	double renumeration = 0;
 	double totalPayment = 0;
+	double inKindIrpfBase = 0 ;
 
 
 	public double getIrpfBase() {
@@ -31,6 +32,10 @@ public abstract class TaxCalculator {
 
 	public double getTotalPayment() {
 		return totalPayment;
+	}
+	
+	public double getInKindIrpfBase() {
+		return inKindIrpfBase;
 	}
 		
 	
@@ -114,6 +119,7 @@ public abstract class TaxCalculator {
 				@Override
 				public void visitSalaryInKind(PaymentType paymentType) {
 					DefaultTaxCalculator.this.irpfBase += tax;
+					DefaultTaxCalculator.this.inKindIrpfBase += tax;
 				}
 				
 				@Override
