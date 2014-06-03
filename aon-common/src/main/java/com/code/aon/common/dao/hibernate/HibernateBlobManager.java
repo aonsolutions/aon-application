@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +39,17 @@ public class HibernateBlobManager implements IBlobManager {
 	}
 
 	private String getTableName(IBlobObject blobObject) {
-		Class<? extends IBlobObject> _class = blobObject.getClass();
+		Class<?> _class = blobObject.getClass();
 		Table table = (Table) _class.getAnnotation(Table.class);
-		if (table != null) {
-			return table.name();
+		while ( table == null ) {
+			_class = _class.getSuperclass();
+			if ( _class != null ) {
+				table = (Table) _class.getAnnotation(Table.class);
+			} else {
+				return null;
+			}
 		}
-		return null;
+		return table.name();
 	}
 	
 	private Connection getConnection() throws AonConnectionException {
