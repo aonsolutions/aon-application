@@ -44,7 +44,7 @@ public class SEPEFileUtils {
 	
 	public static void validateCertificadosXmlPattern(InputStream xmlStream, String SCHEMA) throws IOException, SAXException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL[] urls = Classpath.search(cl, "META-INF/schemas/contrata", SCHEMA);
+		URL[] urls = Classpath.search(cl, "META-INF/schemas/certificados", SCHEMA);
 		
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = sf.newSchema(urls[0]);

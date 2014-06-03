@@ -11,6 +11,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -151,7 +152,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {
-			ApplicationParameter defaultContractCode = params.getParameter(PayrollAppParamsController.DEFAULT_CONTRACT_CODE_KEY);
+			ApplicationParameter defaultContractCode = params.getParameter(AppParam.PAY_default_contractCode_PAY.getValue());
 			if(defaultContractCode!=null && defaultContractCode.getValue()!=null){
 				controller.getParams().setContractModelCode(ContractModelCode.valueOf(defaultContractCode.getValue()));
 			}

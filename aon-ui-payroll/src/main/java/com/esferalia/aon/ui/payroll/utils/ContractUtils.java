@@ -37,6 +37,8 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
+import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
@@ -327,6 +329,77 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
+
+		try {
+			if(params.getWeekDayHours()[0]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.MONDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[0].toString());
+				bean.insert(data);
+			}
+			if(params.getWeekDayHours()[1]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.TUESDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[1].toString());
+				bean.insert(data);
+			}
+			if(params.getWeekDayHours()[2]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEDNESDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[2].toString());
+				bean.insert(data);
+			}
+			if(params.getWeekDayHours()[3]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.THURSDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[3].toString());
+				bean.insert(data);
+			}
+			if(params.getWeekDayHours()[4]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.FRIDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[4].toString());
+				bean.insert(data);
+			}
+			if(params.getWeekDayHours()[5]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.SATURDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[5].toString());
+				bean.insert(data);
+			}
+			if(params.getWeekDayHours()[6]!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.SUNDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[6].toString());
+				bean.insert(data);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
+		
 	}
 	
 	public void insertContractInfo(Contract contract, ContractParams params) {
@@ -396,6 +469,42 @@ public class ContractUtils {
 			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		
+//		
+//		try {
+//			if(params.getMondayHours()!=null){
+//				info = new ContractInfo();
+//				info.setContract(contract);
+//				info.setStartDate(contract.getStartDate());
+//				info.setEndDate(contract.getEndDate());
+//				info.setName( ContractVariable.HOURS_M.getValue() );
+//				info.setExpression("\"" + params.getContractModelOption() + "\"");
+//				bean.insert(info);
+//			}
+//			if(params.getTuesdayHours()!=null){
+//				
+//			}
+//			if(params.getWednesdayHours()!=null){
+//				
+//			}
+//			if(params.getThursdayHours()!=null){
+//				
+//			}
+//			if(params.getFridayHours()!=null){
+//				
+//			}
+//			if(params.getSaturdayHours()!=null){
+//				
+//			}
+//			if(params.getSundayHours()!=null){
+//				
+//			}
+//		} catch (ManagerBeanException e) {
+//			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
+//			AonUtil.addErrorMessage(msg);
+//		}
+//		
+		
 	
 	}
 	
@@ -623,6 +732,110 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
+		try {
+			ContractData mondayHours = obtainContractData(contract, ContextVariable.MONDAY_HOURS.getName());
+//			if(params.getMondayHours()!=null){
+			if(params.getWeekDayHours()[0]!=null){
+				data = mondayHours!=null?mondayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.MONDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[0].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(mondayHours !=null){
+					bean.remove(mondayHours);
+				}
+			}
+			ContractData tuesdayHours = obtainContractData(contract, ContextVariable.TUESDAY_HOURS.getName());
+			if(params.getWeekDayHours()[1]!=null){
+				data = tuesdayHours!=null?tuesdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.TUESDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[1].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(tuesdayHours!=null){
+					bean.remove(tuesdayHours);
+				}
+			}
+			ContractData wednesdayHours = obtainContractData(contract, ContextVariable.WEDNESDAY_HOURS.getName());
+			if(params.getWeekDayHours()[2]!=null){
+				data = wednesdayHours!=null?wednesdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEDNESDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[2].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(wednesdayHours!=null){
+					bean.remove(wednesdayHours);
+				}
+			}
+			ContractData thursdayHours = obtainContractData(contract, ContextVariable.THURSDAY_HOURS.getName());
+			if(params.getWeekDayHours()[3]!=null){
+				data = thursdayHours!=null?thursdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.THURSDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[3].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(thursdayHours!=null){
+					bean.remove(thursdayHours);
+				}
+			}
+			ContractData fridayHours = obtainContractData(contract, ContextVariable.FRIDAY_HOURS.getName());
+			if(params.getWeekDayHours()[4]!=null){
+				data = fridayHours!=null?fridayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.FRIDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[4].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(fridayHours!=null){
+					bean.remove(fridayHours);
+				}
+			}
+			ContractData saturdayHours = obtainContractData(contract, ContextVariable.SATURDAY_HOURS.getName());
+			if(params.getWeekDayHours()[5]!=null){
+				data = saturdayHours!=null?saturdayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.SATURDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[5].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(saturdayHours!=null){
+					bean.remove(saturdayHours);
+				}
+			}
+			ContractData sundayHours = obtainContractData(contract, ContextVariable.SUNDAY_HOURS.getName());
+			if(params.getWeekDayHours()[6]!=null){
+				data = sundayHours!=null?sundayHours:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.SUNDAY_HOURS.getName() );
+				data.setExpression(params.getWeekDayHours()[6].toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(sundayHours!=null){
+					bean.remove(sundayHours);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 	}
 	
 	public void updateContractInfo(Contract contract, ContractParams params) throws ControllerListenerException {
@@ -694,16 +907,16 @@ public class ContractUtils {
 		}
 		
 		try {
-			if(params.getSsStatusInfo()!=null && params.getSsStatusInfo().getId()!=null){
-				bean.update(params.getSsStatusInfo());
+			if(params.getSsStatusInfo()!=null){
+				bean.insertOrUpdate(params.getSsStatusInfo());
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el estado del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			if(params.getSepeStatusInfo()!=null && params.getSepeStatusInfo().getId()!=null){
-				bean.update(params.getSepeStatusInfo());
+			if(params.getSepeStatusInfo()!=null){
+				bean.insertOrUpdate(params.getSepeStatusInfo());
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el estado del contrato. (" +e.getMessage() + ")";
@@ -736,7 +949,12 @@ public class ContractUtils {
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
 		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
-			params.setWeekHours(Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())));
+			Double weekHours = Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName()));
+			params.getWeekDayHours()[0] = CommonUtil.round(weekHours/5);
+			params.getWeekDayHours()[1] = CommonUtil.round(weekHours/5);
+			params.getWeekDayHours()[2] = CommonUtil.round(weekHours/5);
+			params.getWeekDayHours()[3] = CommonUtil.round(weekHours/5);
+			params.getWeekDayHours()[4] = CommonUtil.round(weekHours/5);
 		}
 		if(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())!=null){
 			params.setCollectivePeculiarityQuote(T54.getEnumByValue(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())));
@@ -746,6 +964,27 @@ public class ContractUtils {
 		}
 		if(map.get("DIAS_PREAVISO")!=null){
 			params.setSuspensionCause(TLDCAUSS.getEnumByValue(map.get(ContextVariable.CONTRACT_END_CODE.getName())));
+		}
+		if(map.get(ContextVariable.MONDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[0] = (Double.parseDouble(map.get(ContextVariable.MONDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.TUESDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[1] = (Double.parseDouble(map.get(ContextVariable.TUESDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.WEDNESDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[2] = (Double.parseDouble(map.get(ContextVariable.WEDNESDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.THURSDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[3] = (Double.parseDouble(map.get(ContextVariable.THURSDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.FRIDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[4] = (Double.parseDouble(map.get(ContextVariable.FRIDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.SATURDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[5] = (Double.parseDouble(map.get(ContextVariable.SATURDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.SUNDAY_HOURS.getName())!=null){
+			params.getWeekDayHours()[6] = (Double.parseDouble(map.get(ContextVariable.SUNDAY_HOURS.getName())));
 		}
 	}
 	
@@ -778,9 +1017,25 @@ public class ContractUtils {
 		Map<String, ContractInfo> infoMap = SEPEUtils.getInstance().getContractInfoMap(contract, contract.getStartDate(), contract.getEndDate());
 		if(map.get(ContractVariable.SEPE_CONTRACT.getValue())!=null){
 			params.setSepeStatusInfo(infoMap.get(ContractVariable.SEPE_CONTRACT.getValue()));
-		} 
+		} else {
+			ContractInfo sepeStatus = new ContractInfo();
+			sepeStatus.setContract(contract);
+			sepeStatus.setStartDate(contract.getStartDate());
+			sepeStatus.setEndDate(contract.getEndDate());
+			sepeStatus.setName( ContractVariable.SEPE_CONTRACT.getValue() );
+			sepeStatus.setExpression(ContractSepeStatus.PENDING.getValue());
+			params.setSepeStatusInfo(sepeStatus);
+		}
 		if(map.get(ContractVariable.SS_MA.getValue())!=null){
 			params.setSsStatusInfo(infoMap.get(ContractVariable.SS_MA.getValue()));
+		} else {
+			ContractInfo ssStatus = new ContractInfo();
+			ssStatus.setContract(contract);
+			ssStatus.setStartDate(contract.getStartDate());
+			ssStatus.setEndDate(contract.getEndDate());
+			ssStatus.setName( ContractVariable.SS_MA.getValue() );
+			ssStatus.setExpression(ContractSsStatus.PENDING.getValue());
+			params.setSsStatusInfo(ssStatus);
 		} 
 	}
 	

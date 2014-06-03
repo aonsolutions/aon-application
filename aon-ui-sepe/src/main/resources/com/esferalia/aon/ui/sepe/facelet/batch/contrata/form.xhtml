@@ -22,7 +22,7 @@
 				<aon:commandButton id="contrata-batch-communication"
 					value="#{bundle.sepe_contrata}"
 					rendered="#{controller.recorded}" ajaxSingle="true"
-					reRender="showContrataCommunicationWindow"
+					reRender="showContrataCommunicationWindow-#{contractContrata.contrataModelName}"
 					styleClass="aon-finding-toolbar-item aon-icon-sepe-contrata" >
 					<f:setPropertyActionListener
 						target="#{contractContrata.showCommunicationWindow}" value="#{true}" />

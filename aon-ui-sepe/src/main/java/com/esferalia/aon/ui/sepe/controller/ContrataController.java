@@ -253,6 +253,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			return "extension";
 		} else if(isTransformacionFile()){
 			return "transform";
+		} else if(getBatch()!=null){
+			return "batch";
 		}
 		return null;
 	}
@@ -300,7 +302,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	@Override
 	public boolean isCommunicationAvailable(){
-		return getHandler().isCommunicationAvailable();
+		return getBatch() != null || getHandler().isCommunicationAvailable();
 	}
 	
 	@Override
@@ -352,6 +354,20 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		setGeneratedFile(obtainContrataAttach(SepeBatchAttachmentType.GENERATED_FILE));
 		setCommunicationIdFile(obtainContrataAttach(SepeBatchAttachmentType.COMMUNICATION_ID));
 		setResponseFile(obtainContrataAttach(SepeBatchAttachmentType.RESPONSE_FILE));
+		
+//		ContractAttachmentType generatedType = null;
+//		ContractAttachmentType communicationIdType = null;
+//		ContractAttachmentType responseType = null;
+		//  
+		setHandler( new ContrataContratosHandler() );
+//		generatedType = ContractAttachmentType.SEPE_CONTRACT_FILE;
+//		communicationIdType = ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID;
+//		responseType = ContractAttachmentType.SEPE_CONTRACT_RESPONSE;
+		
+//		getHandler().initialize(null);
+//		setGeneratedFile(obtainContrataAttach(generatedType));
+//		setCommunicationIdFile(obtainContrataAttach(communicationIdType));
+//		setResponseFile(obtainContrataAttach(responseType));
 	}
 	
 	public void initialize(Contract contract){
@@ -376,7 +392,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			responseType = ContractAttachmentType.SEPE_EXTENSION_RESPONSE;
 		} else if(isTransformacionFile()){
 			setHandler( new ContrataTransformacionesHandler() );
-//			generatedType = ContractAttachmentType.SEPE_TRANSFORM_FILE;
+			generatedType = ContractAttachmentType.SEPE_TRANSFORM_FILE;
 //			communicationIdType = ContractAttachmentType.SEPE_TRANSFORM_COMMUNICATION_ID;
 //			responseType = ContractAttachmentType.SEPE_TRANSFORM_RESPONSE;
 		}
@@ -429,10 +445,10 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			}
 			
 			try {
-				if(isEnabledContrataEdition()){
+//				if(isEnabledContrataEdition()){
 					loadContrataData(getGeneratedFile());
 					setUpdateRequired(true);
-				}
+//				}
 			} catch (ManagerBeanException e) {
 				String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
 				LOGGER.error(msg, e);
@@ -526,33 +542,35 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	}
 
 	public boolean validateContrataData() {
-		InputStream is = new ByteArrayInputStream(getGeneratedFile().getData());
-		String contractCode = getHandler().getContractCode().getValue();
-		String schema = null;
-		if( contratoFile ){
-			schema = SEPEFileUtils.CONTRATOS_SCHEMA_FILE_NAME;
-		} else if( transformacionFile ) {
-			schema = SEPEFileUtils.TRANSFORMACIONES_SCHEMA_FILE_NAME;
-		} else if( prorrogaFile ) {
-			schema = SEPEFileUtils.PRORROGAS_SCHEMA_FILE_NAME;
-		}
-		try {
-			SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
-		} catch (SAXException saxe) {
-			String msg = "Error de validación de Contrat@ (ausencia de datos o formato no correcto)";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(saxe.getMessage() );
-			return false;
-		} catch (IOException ioe) {
-			String msg = "Error de I/O al validar los datos";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(ioe.getMessage() );
-			return false;
-		} catch (Exception e) {
-			String msg = "Error general al validar los datos";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage() );
-			return false;
+		if(getContract()!=null && getBatch()==null){
+			InputStream is = new ByteArrayInputStream(getGeneratedFile().getData());
+			String contractCode = getHandler().getContractCode().getValue();
+			String schema = null;
+			if( contratoFile ){
+				schema = SEPEFileUtils.CONTRATOS_SCHEMA_FILE_NAME;
+			} else if( transformacionFile ) {
+				schema = SEPEFileUtils.TRANSFORMACIONES_SCHEMA_FILE_NAME;
+			} else if( prorrogaFile ) {
+				schema = SEPEFileUtils.PRORROGAS_SCHEMA_FILE_NAME;
+			}
+			try {
+				SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
+			} catch (SAXException saxe) {
+				String msg = "Error de validación de Contrat@ (ausencia de datos o formato no correcto)";
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(saxe.getMessage() );
+				return false;
+			} catch (IOException ioe) {
+				String msg = "Error de I/O al validar los datos";
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(ioe.getMessage() );
+				return false;
+			} catch (Exception e) {
+				String msg = "Error general al validar los datos";
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(e.getMessage() );
+				return false;
+			}
 		}
 		return true;
 	}
@@ -678,8 +696,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 				attach.setAttachmentType(ContractAttachmentType.SEPE_EXTENSION_FILE);
 				attach.setDescription("PRORROGA - Contrat@");
 			} else if(isTransformacionFile()){
-				// TODO
-//				attach.setAttachmentType(ContractAttachmentType.SEPE_TRANSFORM_FILE);
+				attach.setAttachmentType(ContractAttachmentType.SEPE_TRANSFORM_FILE);
 				attach.setDescription("TRANSFORMACION - Contrat@");
 			}
 			attach.setMimeType(MimeType.MIME_XML);

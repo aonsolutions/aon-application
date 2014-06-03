@@ -39,7 +39,7 @@
 			<c:if test="#{not empty controller.generatedFile}">
 				<aon:commandButton id="sepe-communication"
 					value="#{bundle.sepe_communicate}"
-					disabled="#{controller.communicationAccepted}"
+					disabled="#{controller.communicationIdReceived}"
 					reRender="showCertificadosCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
 					actionListener="#{controller.onSendSepeFile}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -48,7 +48,7 @@
 				
 				<aon:commandButton id="sepe-dataQuery"
 					value="#{bundle.sepe_status_check}"
-					disabled="#{!controller.communicationAccepted}"
+					disabled="#{!controller.communicationIdReceived}"
 					reRender="showCertificadosCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
 					actionListener="#{controller.onSepeDataQuery}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 

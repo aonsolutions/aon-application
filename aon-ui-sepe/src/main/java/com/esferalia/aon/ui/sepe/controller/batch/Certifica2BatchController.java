@@ -240,7 +240,14 @@ public class Certifica2BatchController extends BasicController {
 				Certifica2Batch batch = (Certifica2Batch)getTo();
 				File file = getCertificadosWriter().createFile(batch, detailList);
 				
-				validateCertificadosFile(file);
+//				validateCertificadosFile(file);
+				
+//				if (file != null) {
+//					batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
+//					batch.setOutcomeFileDate(new Date());
+//					batch.setStatus(FileStatus.GENERATED);
+//					super.accept(null);
+//				}
 				
 				IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 				if (file != null) {
@@ -257,7 +264,7 @@ public class Certifica2BatchController extends BasicController {
 					attach.setScope(null);
 					attach.setData(data);
 					attach.setAttachDate(new Date());
-					bean.insertOrUpdate(attach);
+					attach = (Certifica2BatchAttachment) bean.insertOrUpdate(attach);
 					setRecorded(true);
 					changeBatchStatus(FileStatus.GENERATED);
 					Certifica2BatchAttachController controller = (Certifica2BatchAttachController) FormUtil.getController("certifica2BatchAttach");
@@ -270,6 +277,21 @@ public class Certifica2BatchController extends BasicController {
 			AonUtil.addErrorMessage("error on generateCertifica2File ["+e.getMessage()+"]");
 		} catch (IOException e) {
 			AonUtil.addErrorMessage("error on generateCertifica2File ["+e.getMessage()+"]");
+		}
+	}
+	
+	public void onRemoveFile(ActionEvent event) throws ManagerBeanException{
+		Certifica2BatchAttachment attach = obtainGeneratedFile();
+		if(attach!=null){
+			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
+			bean.remove(attach);
+		}
+		Certifica2Batch batch = (Certifica2Batch) this.getTo();
+		if(batch!=null){
+			batch.setOutcomeFile(null);
+			batch.setOutcomeFileDate(null);
+			batch.setStatus(FileStatus.PENDING);
+			this.getManagerBean().update(batch);
 		}
 	}
 	
@@ -328,15 +350,29 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
+//		IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), ((Certifica2Batch)this.getTo()).getId());
+//		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
+//		if(bean.getCount(criteria)>0){
+//			setRecorded(true);
+//		} else {
+//			setRecorded(false);
+//		}
+		Certifica2BatchAttachment attach = obtainGeneratedFile();
+		setRecorded(attach!=null);
+	}
+	
+	private Certifica2BatchAttachment obtainGeneratedFile() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), ((Certifica2Batch)this.getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), SepeBatchAttachmentType.GENERATED_FILE);
 		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 		if(bean.getCount(criteria)>0){
-			setRecorded(true);
-		} else {
-			setRecorded(false);
-		}
+			return (Certifica2BatchAttachment) bean.getList(criteria).get(0);
+		} 
+		return null;
 	}
 	
 	private List<ITransferObject> getCertifica2DetailList(Certifica2Batch batch) {
@@ -359,6 +395,7 @@ public class Certifica2BatchController extends BasicController {
 	public void onInitCertificados(ActionEvent event){
 		Certifica2Batch batch =  (Certifica2Batch) this.getTo();
 		if(batch.getStatus() == FileStatus.GENERATED){
+//			validateCertificadosFile(file);
 			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 			certificadosController.initialize(batch);
 		}

@@ -538,6 +538,7 @@ public class CertificadosController implements ISepeHandler{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 			resultAttach.setAttachDate(new Date());
+			resultAttach.setDomain(getBatch().getEnterprise().getDomain());
 			Certifica2BatchAttachment attach = (Certifica2BatchAttachment) bean.insertOrUpdate(resultAttach);
 			if(type == SepeBatchAttachmentType.COMMUNICATION_ID){
 				setCommunicationIdFile(attach);
@@ -583,6 +584,7 @@ public class CertificadosController implements ISepeHandler{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			resultAttach.setAttachDate(new Date());
+			resultAttach.setDomain(getContract().getDomain());
 			ContractAttachment attach = (ContractAttachment) bean.insertOrUpdate(resultAttach);
 			if(type == ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID){
 				setCommunicationIdFile(attach);
