@@ -287,20 +287,6 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			if(params.getWeekHours()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.WEEK_HOURS.getName() );
-				data.setExpression(params.getWeekHours().toString());
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			if(params.getCollectivePeculiarityQuote()!=null){
 				data = new ContractData();
 				data.setContract(contract);
@@ -398,7 +384,20 @@ public class ContractUtils {
 			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
-		
+		try {
+			if(params.getWeekHours()!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEEK_HOURS.getName() );
+				data.setExpression(params.getWeekHours().toString());
+				bean.insert(data);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
 	}
 	
@@ -949,12 +948,15 @@ public class ContractUtils {
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
 		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
-			Double weekHours = Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName()));
-			params.getWeekDayHours()[0] = CommonUtil.round(weekHours/5);
-			params.getWeekDayHours()[1] = CommonUtil.round(weekHours/5);
-			params.getWeekDayHours()[2] = CommonUtil.round(weekHours/5);
-			params.getWeekDayHours()[3] = CommonUtil.round(weekHours/5);
-			params.getWeekDayHours()[4] = CommonUtil.round(weekHours/5);
+			params.setWeekHours( Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())) );
+			if( params.getWeekDayHours()[0]==null && params.getWeekDayHours()[1]==null && params.getWeekDayHours()[2]==null && params.getWeekDayHours()[3]==null
+					&& params.getWeekDayHours()[4]==null && params.getWeekDayHours()[5]==null && params.getWeekDayHours()[6]==null ){
+				params.getWeekDayHours()[0] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[1] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[2] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[3] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[4] = CommonUtil.round(params.getWeekHours()/5);
+			}
 		}
 		if(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())!=null){
 			params.setCollectivePeculiarityQuote(T54.getEnumByValue(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())));

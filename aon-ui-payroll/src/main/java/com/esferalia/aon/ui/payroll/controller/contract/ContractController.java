@@ -38,7 +38,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -1972,48 +1971,6 @@ public class ContractController extends BasicController {
 		public void setWeekHours(Double weekHours) {
 			this.weekHours = weekHours;
 		}
-//		public Double getMondayHours() {
-//			return mondayHours;
-//		}
-//		public void setMondayHours(Double mondayHours) {
-//			this.mondayHours = mondayHours;
-//		}
-//		public Double getTuesdayHours() {
-//			return tuesdayHours;
-//		}
-//		public void setTuesdayHours(Double tuesdayHours) {
-//			this.tuesdayHours = tuesdayHours;
-//		}
-//		public Double getWednesdayHours() {
-//			return wednesdayHours;
-//		}
-//		public void setWednesdayHours(Double wednesdayHours) {
-//			this.wednesdayHours = wednesdayHours;
-//		}
-//		public Double getThursdayHours() {
-//			return thursdayHours;
-//		}
-//		public void setThursdayHours(Double thursdayHours) {
-//			this.thursdayHours = thursdayHours;
-//		}
-//		public Double getFridayHours() {
-//			return fridayHours;
-//		}
-//		public void setFridayHours(Double fridayHours) {
-//			this.fridayHours = fridayHours;
-//		}
-//		public Double getSaturdayHours() {
-//			return saturdayHours;
-//		}
-//		public void setSaturdayHours(Double saturdayHours) {
-//			this.saturdayHours = saturdayHours;
-//		}
-//		public Double getSundayHours() {
-//			return sundayHours;
-//		}
-//		public void setSundayHours(Double sundayHours) {
-//			this.sundayHours = sundayHours;
-//		}
 		
 		public Double[] getWeekDayHours() {
 			return weekDayHours;
@@ -2021,15 +1978,14 @@ public class ContractController extends BasicController {
 		public void setWeekDayHours(Double[] weekDayHours) {
 			this.weekDayHours = weekDayHours;
 		}
-		public Double getTotalWeekHours(){
+		public void reloadTotalWeekHours(ActionEvent event){
 			Double total = 0.0;
 			for(int i=0; i<7; i++){
 				if( weekDayHours[i]!=null ){
 					total +=  weekDayHours[i];
 				}
 			}
-//			return mondayHours + tuesdayHours + wednesdayHours + thursdayHours + fridayHours + saturdayHours + sundayHours;
-			return total;
+			weekHours = total;
 		}
 		
 		public T54 getCollectivePeculiarityQuote() {
