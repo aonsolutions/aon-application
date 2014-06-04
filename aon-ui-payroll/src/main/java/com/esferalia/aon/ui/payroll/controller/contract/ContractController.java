@@ -92,6 +92,9 @@ import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
@@ -1986,6 +1989,18 @@ public class ContractController extends BasicController {
 				}
 			}
 			weekHours = total;
+		}
+		public Double getPartiallityCoef(){
+			Contract contract = (Contract) ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo();
+			try {
+				List<ITimedResult<Object>> result = contract.getSalaryCalculatorContext(new Date(), new Date(), new Date()).getExpressionContext().eval("COEFICIENTE_PARCIALIDAD", new Date(), new Date());
+				return (Double) result.get(0).getValue();
+			} catch (SalaryException e) {
+				// nada
+			} catch (ExpressionException e) {
+				// nada
+			}
+			return null;
 		}
 		
 		public T54 getCollectivePeculiarityQuote() {

@@ -389,15 +389,21 @@
 					</aon:inputText>
 					<aon:outputText value="#{contract.params.weekDayHours[6]}" 
 						rendered="#{contract.readOnly}" />
-						
 					
-					<aon:outputText value=" (" />
-					<aon:outputText id="workingWeekHours" 
-						value="#{contract.params.weekHours}" />
-					<aon:outputText styleClass="aon-margin-left"
-						value="horas semanales" >
-					</aon:outputText>
-					<aon:outputText value=")" />
+					<aon:div style="display:inline;">
+						<aon:outputText value="(" styleClass="aon-margin-left" />
+						<aon:outputText value="#{contract.params.weekHours}" id="workingWeekHours" />
+						<aon:outputText  value="horas semanales" styleClass="aon-margin-left" />
+						<aon:outputText value=")" />
+					</aon:div>
+
+					<aon:div style="display:inline;"
+						rendered="#{contract.params.partiallityCoef != null}" >
+						<aon:outputText value="(" styleClass="aon-margin-left" />
+						<aon:outputText value="Coef.TP:" />
+						<aon:outputText value="#{contract.params.partiallityCoef}" styleClass="aon-margin-left"/>
+						<aon:outputText value=")" />
+					</aon:div>
 					
 				</aon:div>
 				
