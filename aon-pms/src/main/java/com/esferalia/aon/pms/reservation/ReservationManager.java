@@ -269,7 +269,7 @@ public class ReservationManager implements IReservationConstants {
 			createReservationService(reservationType, reservation);
 		} catch (Exception ex) {
 			String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
-			if (actionType.equals(ADD_RESERVATION)) {
+			if (actionType.equals(ADD_RESERVATION) && reservation.getId() != null) {
 				try {
 					removeReservationAttach(reservation);
 					removeReservationService(reservation);
@@ -693,11 +693,14 @@ public class ReservationManager implements IReservationConstants {
 		if (tpaExtension != null) {
 			if (attribute == null) {
 				Node tpaValue = tpaExtension.getFirstChild();
-				if (tpaValue.getNodeType() == Node.TEXT_NODE) {
+				if (tpaValue != null && tpaValue.getNodeType() == Node.TEXT_NODE) {
 					return tpaValue.getNodeValue();
 				}
 			} else {
-				return findAttribute(tpaExtension, attribute).getNodeValue();
+				Node tpaValue = findAttribute(tpaExtension, attribute);
+				if (tpaValue != null) {
+					return tpaValue.getNodeValue();
+				}
 			}
 		}
 		return null;
