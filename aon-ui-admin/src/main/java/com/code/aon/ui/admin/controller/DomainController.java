@@ -1,13 +1,15 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +22,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
@@ -29,7 +32,6 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -40,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.AonException;
+import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -57,11 +60,14 @@ import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
@@ -72,9 +78,11 @@ import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -83,6 +91,7 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
@@ -92,6 +101,12 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
 
+	private static final String LEGAL_WARNING_NAME = "avisoLegal";
+	
+	private static final String LEGAL_WARNING_FILE = LEGAL_WARNING_NAME + "." + MimeType.MIME_PDF.getExtension();
+	
+	private static final String LEGAL_WARNING_PATH = AdminMainController.PROPERTIES_PATH + LEGAL_WARNING_FILE;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
 	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;	
@@ -138,6 +153,8 @@ public class DomainController extends BasicController {
 	
 	private boolean showAuditInfoWindow;
 	
+	private DataScrollerState historyState;
+	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
 	}
@@ -161,11 +178,15 @@ public class DomainController extends BasicController {
 			initDomainApplication();
 			initApplicationInfos();
 			initOEM();
-			updateDocumental();			
+			updateDocumental();		
+			initHistory();
+			this.currentDomainInfo = getDomainInfo();
+			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
+				saveHistory(this.currentDomainInfo);
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
-		this.currentDomainInfo = getDomainInfo();
 	}
 	
 	public DomainModuleInfo getDocumental() {
@@ -596,10 +617,8 @@ public class DomainController extends BasicController {
 	private DomainInfo getDomainInfo() {
 		Domain domain = getDomain();
 		DomainInfo di = new DomainInfo();
-		di.setName( domain.getDescription() );
-		di.setUrl( domain.getName() );
+		di.setUser(AonUtil.getAuthPrincipal().getShortName());
 		di.setType(domain.getType());
-		di.setParent(domain.getParent());
 		di.setNumberOfUsers(domain.getMaxDefinedUsers());
 		di.setMaxTotalDocumentSize(domain.getMaxTotalDocumentSize());
 		di.setDomainManagement(domain.isDomainManagement());
@@ -610,10 +629,6 @@ public class DomainController extends BasicController {
 			}
 		}
 		di.setModules(modules);
-		di.setActive(domain.isActive());
-		if ( this.domainApplication != null ) {
-			di.setAuditLevel(this.domainApplication.getAuditLevel());
-		}
 		return di;
 	}
 	
@@ -631,7 +646,7 @@ public class DomainController extends BasicController {
 		return new EmailSender( from, mailAccount );							
 	}
 	
-	private String getEmailContent( DomainInfo di ) {
+	private String getEmailContent( Domain domain, DomainInfo di ) {
 		StringBuffer body = new StringBuffer();
 		body.append( "<html><head>" );
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
@@ -639,10 +654,10 @@ public class DomainController extends BasicController {
 		
 		body.append( AonUtil.getMessage(ICommonMessages.COMPANY_EMAIL_BODY_HEADER) );
 		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
-		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_2, StringEscapeUtils.escapeHtml(di.getName())) );
-		if ( di.getParent() != null && di.getParent().getId() != null ) {
-			String parent = StringEscapeUtils.escapeHtml(di.getParent().getDescription());
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), domain.getName()) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_2, StringEscapeUtils.escapeHtml(domain.getDescription())) );
+		if ( domain.getParent() != null && domain.getParent().getId() != null ) {
+			String parent = StringEscapeUtils.escapeHtml(domain.getParent().getDescription());
 			body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_3, parent) );
 		}
 		Locale locale = AonUtil.getCurrentLocale();
@@ -665,58 +680,12 @@ public class DomainController extends BasicController {
 		return body.toString();
 	}	
 
-	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
-		diff( AonUtil.getMessage(message), sb, oldValue, newValue );
-	}
-
-	private void diff( String message, StringBuffer sb, Object oldValue, Object newValue ) {
-		sb.append( message ).append(": ");
-		sb.append( oldValue ).append( " -> ").append( newValue );
-		sb.append(IOUtils.LINE_SEPARATOR);
-	}
-	
 	private AonFile getDiffFile( DomainInfo di1, DomainInfo di2 ) throws IOException {
-		StringBuffer sb = new StringBuffer();
-		Locale locale = AonUtil.getCurrentLocale();	
-		if (! StringUtils.equals(di1.getName(), di2.getName()) ) {
-			diff( sb, ICommonMessages.DOMAIN_DISPLAY_NAME, di1.getName(), di2.getName() );
-		}
-		if ( di1.getType() != di2.getType() ) {
-			diff( sb, ICommonMessages.DOMAIN_TYPE, di1.getType().getName(locale), di2.getType().getName(locale) );
-		}
-		if (! StringUtils.equals(di1.getUrl(), di2.getUrl()) ) {
-			diff( sb, ICommonMessages.DOMAIN_URL, di1.getUrl(), di2.getUrl() );
-		}
-		if (! ObjectUtils.equals(di1.getParentId(), di2.getParentId()) ) {
-			String p1 = (di1.getParentId() != null) ? di1.getParent().getId() + "-" + di1.getParent().getDescription() : "null";
-			String p2 = (di2.getParentId() != null) ? di2.getParent().getId() + "-" + di2.getParent().getDescription() : "null";
-			diff( sb, ICommonMessages.DOMAIN_PARENT, p1, p2 );
-		}
-		if (! ObjectUtils.equals(di1.getNumberOfUsers(), di2.getNumberOfUsers()) ) {
-			diff( sb, ICommonMessages.DOMAIN_MAX_DEFINED_USERS, di1.getNumberOfUsers(), di2.getNumberOfUsers() );
-		}
-		if (! ObjectUtils.equals(di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize()) ) {
-			diff( sb, ICommonMessages.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE, di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize() );
-		}
-		if ( di1.isDomainManagement() != di2.isDomainManagement() ) {
-			diff( sb, ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT, di1.isDomainManagement(), di2.isDomainManagement() );
-		}
-		if (! Arrays.equals(di1.getModuleArray(), di2.getModuleArray()) ) {
-			diff( sb, ICommonMessages.DOMAIN_MODULES, di1.getModuleList(), di2.getModuleList() );
-		}
-		if ( di1.isActive() != di2.isActive() ) {
-			String active1 = di1.isActive() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
-			String active2 = di2.isActive() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
-			diff( AonUtil.getMessage(ICommonMessages.ACTIVE), sb, active1, active2 );
-		}
-		if (! ObjectUtils.equals(di1.getAuditLevel(), di2.getAuditLevel()) ) {
-			diff( AonUtil.getMessage(ICommonMessages.AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
-		}
-		
-		if ( sb.length() > 0 ) {
+		String diff = di1.getDifferences(di2);
+		if (! StringUtils.isEmpty(diff) ) {
 			AonFile aonFile = new AonFile();
 			File file = File.createTempFile( "diff", "." + MimeType.MIME_TXT.getExtension() );
-			FileUtils.writeStringToFile(file, sb.toString());
+			FileUtils.writeStringToFile(file, diff);
 			aonFile.setFile( file );
 			aonFile.setFileName( "diff." + MimeType.MIME_TXT.getExtension() );
 			aonFile.setMimeType(MimeType.MIME_TXT);
@@ -725,23 +694,54 @@ public class DomainController extends BasicController {
 		return null;
 	}		
 	
-	public void updateDomainInfo() throws IOException, WebmailException {
+	private void updateDomain( Domain domain, AuthPrincipal principal ) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			domain.setModificationUser(principal.getShortName());
+			domain.setModificationDate(new Date());
+			bean.update(domain);
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	private AonFile getTermsOfServiceFile() throws IOException {
+		File file = File.createTempFile( LEGAL_WARNING_NAME, "." + MimeType.MIME_PDF.getExtension() );
+		FileUtils.writeByteArrayToFile(file, getTermsOfServiceData());
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);
+		aonFile.setFileName(LEGAL_WARNING_FILE);
+		aonFile.setMimeType(MimeType.MIME_PDF);
+		return aonFile;
+	}	
+	
+	public void updateDomainInfo() throws IOException, WebmailException, ManagerBeanException {
 		DomainInfo di = getDomainInfo(); 
 		AonFile diffFile = getDiffFile(this.currentDomainInfo, di);
 		if ( diffFile != null ) {
+			Domain domain = getDomain();
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			updateDomain(domain, principal);
+			saveHistory(di);
 			Address[] emails = getNotificationEmails();
 			if (! ArrayUtils.isEmpty(emails) ) {
 				LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
 				EmailSender sender = getEmailSender();
-				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_MANAGEMENT);
+				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_SUBJECT, domain.getName());
 				AonMessage message = sender.createMessage(subject);
 				message.setRecipientsBcc(emails);
-				sender.addMessageContent(message, getEmailContent(di), MimeType.MIME_HTML, diffFile);
+				String content = getEmailContent(domain, di);
+				AonFile termsOfServiceFile = getTermsOfServiceFile();
+				sender.addMessageContent(message, content, MimeType.MIME_HTML, diffFile, termsOfServiceFile);
 				sender.sendMessage(message);
 				diffFile.clean();
+				termsOfServiceFile.clean();
 			}
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
-			adc.init();				
+			if ( DomainSwitcher.getDomainType(principal.getDomainId()) != DomainType.ADMIN ) {
+				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
+				adc.init();
+			}
+			initHistory();
 		}
 		this.currentDomainInfo = di;
 	}
@@ -906,4 +906,83 @@ public class DomainController extends BasicController {
 		return MAX_DOMAIN_NAME_LENGTH;
 	}
 
+	private Company getCompany() {
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		return companyController.obtainCompany();		
+	}
+	
+	private void initHistory() throws ManagerBeanException {
+		List<DomainInfo> list = new LinkedList<DomainInfo>();
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		Integer companyId = getCompany().getId();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), companyId);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_MIME_TYPE), MimeType.MIME_TXT);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), false);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			DomainInfo di = DomainInfo.getDomainInfo((RegistryAttachment) to);
+			list.add(di);
+		}
+		this.historyState = new DataScrollerState(new ListDataModel(list), "history");
+	}
+	
+	private void saveHistory( DomainInfo di ) throws ManagerBeanException {
+		RegistryAttachment ra = new RegistryAttachment();
+		ra.setRegistry(getCompany());
+		ra.setAttachDate(new Date());
+		String description = DomainInfo.DATE_FORMAT.format(ra.getAttachDate());
+		ra.setDescription(description);
+		ra.setRegistryAttachmentType(RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+		ra.setData(di.getData());
+		ra.setMimeType(MimeType.MIME_TXT);
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		bean.insert(ra);
+	}
+	
+	public DataScrollerState getHistoryState() {
+		return historyState;
+	}
+
+	public void setHistoryState(DataScrollerState historyState) {
+		this.historyState = historyState;
+	}
+
+	@SuppressWarnings("unchecked")
+	public String getCurrentDiff() {
+		String diff = null;
+		if ( historyState.getDirectModel().isRowAvailable() ) {
+			List<DomainInfo> list = (List<DomainInfo>) historyState.getDirectModel().getWrappedData();
+			int index = historyState.getDirectModel().getRowIndex();
+			diff = list.get(index+1).getDifferences(list.get(index));
+		}
+		if ( StringUtils.isEmpty(diff) ) {
+			diff = AonUtil.getMessage(ICommonMessages.FINANCE_NONE);
+		}
+		return diff;
+	}
+	
+	private byte[] getTermsOfServiceData() {
+		InputStream in = null;
+		byte[] data = null;
+		try {
+			in = DomainController.class.getResourceAsStream(LEGAL_WARNING_PATH);
+			data = IOUtils.toByteArray(in);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e );
+		} finally {
+			IOUtils.closeQuietly(in);
+		}	
+		return data;
+	}
+
+	public void onDownloadTermsOfService( ActionEvent event ) {
+		byte[] data = getTermsOfServiceData();
+		BasicAttachment attach = new BasicAttachment();
+		attach.setData(data);
+		attach.setDescription(LEGAL_WARNING_FILE);
+		attach.setMimeType(MimeType.MIME_PDF);
+		DownloadUtil.downloadAttachment(attach);
+	}
+	
 }

@@ -23,11 +23,11 @@ public class DocumentManager {
 	
 	private static final Long MB_SIZE = 1048576L;
 	
-	private static final int MINIMUM_MAX_DOCUMENT_SIZE = 1;
+	public static final int MINIMUM_MAX_DOCUMENT_SIZE = 1;
 	
 	private static final int MAXIMUM_MAX_DOCUMENT_SIZE = 16;
 	
-	private static final int MINIMUM_MAX_TOTAL_DOCUMENT_SIZE = 100;
+	public static final int MINIMUM_MAX_TOTAL_DOCUMENT_SIZE = 100;
 	
 	private static final int MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE = 1500;
 	

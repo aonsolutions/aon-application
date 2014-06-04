@@ -248,10 +248,10 @@ public class DesktopController {
 	}
 	
 	public String getTemplate() {
-		if ( adminDomain ) {
-			return ADMIN_TEMPLATE;
-		} else if ( initOption!=null && patchInitAction ) {
+		if ( initOption!=null && patchInitAction ) {
 			return INIT_ACTION_TEMPLATE;
+		} else if ( adminDomain ) {
+			return ADMIN_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
 	}

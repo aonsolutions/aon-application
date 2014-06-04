@@ -196,6 +196,7 @@ public interface ICommonMessages {
 	String DOMAIN_MODULES = "admin_modules";
 	String WRONG_EMAIL = "admin_wrong_email";
 	String WRONG_EMAILS = "admin_wrong_emails";
+	String DOMAIN_EMAIL_SUBJECT = "admin_domain_email_subject";
 	String DOMAIN_EMAIL_BODY_1 = "admin_domain_email_body_1";
 	String DOMAIN_EMAIL_BODY_2 = "admin_domain_email_body_2";
 	String DOMAIN_EMAIL_BODY_3 = "admin_domain_email_body_3";
@@ -321,6 +322,7 @@ public interface ICommonMessages {
 	String FINANCE_FINANCES_EXPORT_ERROR = "finance_finances_export_error";
 	String FINANCE_EXPORTER_NOT_CONFIG = "finance_exporter_not_config";
 	String FINANCE_EXPORTER_NO_DATA = "finance_exporter_no_data";
+	String FINANCE_NONE = "finance_none";
 	
 	String FISCAL_RESULT = "fiscal_result";
 	

@@ -11,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
-import com.code.aon.ui.admin.util.ManagerLogger;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
@@ -34,21 +33,14 @@ public class AdminMainController implements IAdminConstants {
 	
 	private Properties properties;
 	
-	private ManagerLogger logger;
-	
 	private boolean termsOfServiceAccepted;
 	
 	public AdminMainController() {
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
-		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
 	}
 	
 	public Properties getProperties() {
 		return properties;
-	}
-	
-	public ManagerLogger getLogger() {
-		return logger;
 	}
 	
 	public String getUser() {

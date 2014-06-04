@@ -18,7 +18,6 @@ import com.code.aon.config.DomainApplication;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.ApplicationProfileController;
-import com.code.aon.ui.admin.controller.DomainApplicationController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -39,22 +38,6 @@ public class DomainApplicationControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		getAdmin().resetTermsOfServiceAccepted();	
-	}
-
-	@Override
-	public void afterBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainApplicationController dac = (DomainApplicationController) event.getController();
-		DomainApplication application = dac.getDomainApplication();
-		getAdmin().getLogger().domainApplicationAddded(application);
-	}	
-	
-	@Override
-	public void afterBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainApplicationController dac = (DomainApplicationController) event.getController();
-		DomainApplication application = dac.getDomainApplication();
-		getAdmin().getLogger().domainApplicationRemoved(application);
 	}
 
 	@Override

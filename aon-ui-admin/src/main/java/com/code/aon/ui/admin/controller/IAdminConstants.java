@@ -15,6 +15,7 @@ public interface IAdminConstants {
 	String DOMAIN_APPLICATION_MODULE_CONTROLLER_NAME = "domainApplicationModule";
 	String PROFILE_ACTION_DENIED_CONTROLLER_NAME = "profileActionDenied";
 	String DOMAINS_CONTROLLER_NAME = "domains";
+	String DOMAINS_SEARCH_CONTROLLER_NAME = "domainSearch";
 	String NEW_DOMAIN_CONTROLLER_NAME = "adminNewDomain";
 	String REMOVE_DOMAIN_CONTROLLER_NAME = "adminRemoveDomain";
 	String GLOBAL_CONFIG_CONTROLLER_NAME = "globalConfig";

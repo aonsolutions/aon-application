@@ -49,6 +49,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -307,6 +308,8 @@ public class NewDomainController {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();		
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = new Domain();
+		domain.setCreationUser(AonUtil.getAuthPrincipal().getShortName());
+		domain.setCreationDate(new Date());		
 		domain.setDomainManagement( isDomainManagement() );
 		domain.setType( getType() );
 		domain.setParent( getParentDomain() );
@@ -317,6 +320,8 @@ public class NewDomainController {
 		domain.setMaxDefinedUsers(0);
 		domain.setExpirationDate(getExpirationDate());
 		domain.setScope( getScope() );
+		domain.setMaxDocumentSize(DocumentManager.MINIMUM_MAX_DOCUMENT_SIZE);
+		domain.setMaxTotalDocumentSize(DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
 		if ( isDomainManagement() ) {
 			domain.setSubDomainSuffix(name);
 		}
@@ -329,11 +334,15 @@ public class NewDomainController {
 		return domain.getId();		
 	}
 	
-	private void updateDomainParent( Integer domainId, Domain newParent ) throws ManagerBeanException {
+	private void updateDomain( Integer domainId  ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(domainId);
 		if ( domain != null ) {
-			domain.setParent(newParent);
+			domain.setParent(getParentDomain());
+			domain.setCreationUser(AonUtil.getAuthPrincipal().getShortName());
+			domain.setCreationDate(new Date());
+			domain.setModificationDate(null);
+			domain.setModificationUser(null);
 			bean.update(domain);
 		}
 	}
@@ -346,8 +355,8 @@ public class NewDomainController {
 			add.setDescription(getDomainDescription());
 			add.setOwner(getOwner());
 			Integer newDomainId = add.execute(getTemplateDomain().getId(), name);
-			if ( newDomainId != null && parentDomain != null ) {
-				updateDomainParent( newDomainId, parentDomain );
+			if ( newDomainId != null ) {
+				updateDomain( newDomainId );
 			}
 		} finally {
 			DbUtils.closeQuietly(connection);

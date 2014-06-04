@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+
+	<ui:define name="configContent">
+
+		<aon:form id="domainForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{bundle.aon_history}" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="adminDomain_form"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{adminDomain.historyState}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>							
+							<aon:outputText	value="#{to.date}" >
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_login_user}" />
+							</f:facet>							
+							<aon:outputText	value="#{to.user}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>							
+							<aon:outputText value="#{to.type}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.admin_domain_domainManagement}" />
+							</f:facet>
+							<aon:outputText value="&#160;"
+								styleClass="aon-icon #{(to.domainManagement)?'aon-icon-checked':'aon-icon-check'}" />							
+						</aon:column>	
+							
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.admin_users}" />
+							</f:facet>							
+							<aon:outputText value="#{to.numberOfUsers}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_document} (MB)" />
+							</f:facet>							
+							<aon:outputText value="#{to.maxTotalDocumentSize}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.admin_modules}" />
+							</f:facet>							
+							<aon:outputText value="#{to.moduleList}" />
+						</aon:column>		
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_changes}" />
+							</f:facet>
+							<aon:div rendered="#{toIndex != (adminDomain.historyState.model.rowCount-1)}">
+								<aon:outputText value="&#160;"
+									style="padding-left:15px;" styleClass="aon-icon-comment"/>
+								<rich:toolTip value="#{adminDomain.currentDiff}"
+									styleClass="aon-width-450" />						
+							</aon:div>													
+						</aon:column>	
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>

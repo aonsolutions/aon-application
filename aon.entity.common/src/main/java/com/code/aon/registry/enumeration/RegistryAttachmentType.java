@@ -18,7 +18,8 @@ public enum RegistryAttachmentType implements IResourceable {
 	SIGNATURE,
 	INVOICE_FOOTER_TEXT,
 	MARKETING_TEMPLATE,
-	ENTERPRISE_CONTRACT_CLAUSES;
+	ENTERPRISE_CONTRACT_CLAUSES,
+	DOMAIN_BOOK_HISTORY;
 	
 	
     /** Message key prefix. */
