@@ -11,10 +11,13 @@ import java.util.TreeMap;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
@@ -42,6 +45,7 @@ public class SepeAppParamsController{
 	private Map<String, ApplicationParameter> parameters;
 
 	private Map<String, String> defaultParameters;
+	
 	
 	public Boolean getDevelopmentMode() {
 		if(developmentMode==null){
@@ -374,13 +378,21 @@ public class SepeAppParamsController{
 
 		// CONTRATA PARAMS
 		getParameter(AppParam.PAY_contrata_user_PAY.getValue()).setValue(getContrataUser());
-		getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).setValue(getContrataPassword());
+		if(StringUtils.isNotBlank(getContrataUser())){
+			getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).setValue(getContrataPassword());
+		} else {
+			getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).setValue(null);
+		}
 		getParameter(AppParam.PAY_contrata_test_env_active_PAY.getValue()).setValue(getContrataTestEnviroment().toString());
 		getParameter(AppParam.PAY_contrata_ssl_env_active_PAY.getValue()).setValue(getContrataSSLEnviroment().toString());
 		
 		// CERTIFICA2 PARAMS
 		getParameter(AppParam.PAY_certifica2_user_PAY.getValue()).setValue(getCertifica2User());
-		getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).setValue(getCertifica2Password());
+		if(StringUtils.isNotBlank(getCertifica2User())){
+			getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).setValue(getCertifica2Password());
+		} else {
+			getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).setValue(null);
+		}
 		getParameter(AppParam.PAY_certifica2_test_env_PAY.getValue()).setValue(getCertifica2TestEnviroment().toString());
 		getParameter(AppParam.PAY_certifica2_ssl_env_PAY.getValue()).setValue(getCertifica2SSLEnviroment().toString());
 
@@ -392,6 +404,79 @@ public class SepeAppParamsController{
 	
 	public void validateCertifica2Login(ActionEvent event){
 		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(getCertifica2SSLEnviroment(), getCertifica2TestEnviroment(), getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
+	}
+	
+	
+	/*
+	 * PARENT DOMAIN SEPE AUTHENTICATION DATA
+	 */
+	// Contrata
+	public boolean isContrataLoginDefined(){
+		return StringUtils.isNotBlank(getContrataUser());
+	}
+	public boolean isParentContrataLoginDefined(){
+		String user = getParentContrataUser();
+		return StringUtils.isNotBlank(user);
+	}
+	public String getParentContrataUser(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_contrata_user_PAY);
+		return ap!=null?ap.getValue():null;
+	}
+	public String getParentContrataPassword(){
+		return obtainParentLoginValue(AppParam.PAY_contrata_passwd_PAY).getValue();
+	}
+	public boolean isParentContrataTestEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_contrata_test_env_active_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public boolean isParentContrataSSLEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_contrata_ssl_env_active_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public void onRedefineContrataLogin(ActionEvent event){
+		setContrataUser(getParentContrataUser());
+	}
+	// Certifica2
+	public boolean isCertifica2LoginDefined(){
+		return StringUtils.isNotBlank(getCertifica2User());
+	}
+	public boolean isParentCertifica2LoginDefined(){
+		String user = getParentCertifica2User();
+		return StringUtils.isNotBlank(user);
+	}
+	public String getParentCertifica2User(){
+		ApplicationParameter ap =  obtainParentLoginValue(AppParam.PAY_certifica2_user_PAY);
+		return ap!=null?ap.getValue():null;
+	}
+	public String getParentCertifica2Password(){
+		return obtainParentLoginValue(AppParam.PAY_certifica2_passwd_PAY).getValue();
+	}
+	public boolean isParentCertifica2TestEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_certifica2_test_env_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public boolean isParentCertifica2SSLEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_certifica2_ssl_env_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public void onRedefineCertificadosLogin(ActionEvent event){
+		setCertifica2User(getParentCertifica2User());
+	}
+
+	private ApplicationParameter obtainParentLoginValue(AppParam ap){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), DomainManager.getDomainProvider().getParentDomain());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), ap.getValue());
+			List<ITransferObject> list = bean.getList(criteria, 0, 1);
+			if (! list.isEmpty() ) {
+				return (ApplicationParameter) list.get(0);
+			}
+		} catch ( ManagerBeanException e ) {
+		}
+		return null;
 	}
 	
 }
