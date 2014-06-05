@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -13,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
@@ -28,6 +31,8 @@ public class AplifisaWriter extends BasicExporter {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AplifisaWriter.class);
+	
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private static final String FIELD_SEPARATOR = "#";
@@ -204,13 +209,13 @@ public class AplifisaWriter extends BasicExporter {
 	}
 	
 	@Override
-	public Map<String, byte[]> getDataMap() {
-		Map<String, byte[]> map = new HashMap<String, byte[]>();
+	public Map<String, File> getDataMap() {
+		Map<String, File> map = new HashMap<String, File>();
 		try {
-			map.put("asientos.txt", writer.toString().getBytes("ISO-8859-1"));
-			map.put("subcuentas.txt", accountWriter.toString().getBytes("ISO-8859-1"));
+			addData(map, "asientos", ".txt", writer.toString().getBytes("ISO-8859-1"));
+			addData(map, "subcuentas", ".txt", accountWriter.toString().getBytes("ISO-8859-1"));
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		return map;
 	}

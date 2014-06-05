@@ -67,40 +67,6 @@
 				</ui:define>
 
 			</ui:decorate>
-			<c:if test="#{gps}">
-				<ui:decorate
-					template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-					<ui:param name="toolbarID" value="gpsToolbar" />
-					<ui:param name="toolbarTitle" value="Grupo Playasol" />
-					<ui:param name="toolbarDescription" value="Informes" />
-
-
-					<ui:define name="toolbarContent">
-
-						<aon:commandButton id="Fte-report" ajaxSingle="true"
-							reRender="enterpriseMainGrid" value="Informe FTE"
-							styleClass="aon-finding-toolbar-item aon-icon-excel"
-							onclick="fteReport();">
-						</aon:commandButton>
-
-						<aon:commandButton id="Free-report" ajaxSingle="true"
-							reRender="enterpriseMainGrid"
-							title="Informe Control Festivos, Libres y Vacaciones"
-							value="Informe Festivos..."
-							styleClass="aon-finding-toolbar-item aon-icon-excel"
-							onclick="ctrlReport();">
-						</aon:commandButton>
-
-						<aon:commandButton id="A3-report" ajaxSingle="true"
-							reRender="enterpriseMainGrid" value="Informe A3"
-							styleClass="aon-finding-toolbar-item aon-icon-excel"
-							onclick="a3Report();">
-						</aon:commandButton>
-
-					</ui:define>
-
-				</ui:decorate>
-			</c:if>
 
 		</c:if>
 		<c:if test="#{!edit}">

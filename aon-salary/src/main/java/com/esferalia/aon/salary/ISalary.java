@@ -46,6 +46,7 @@ public interface ISalary {
 	
 	<T extends IPayment> Collection<T> getPaymentS() throws SalaryException ;
 	<T extends IDeduction>  Collection<T> getDeductionS() throws SalaryException ;
+	//<T extends IDeduction>  Collection<T> getEmbargoS() throws SalaryException ;
 	
 	Double getTotalIrpf();
 
@@ -71,5 +72,7 @@ public interface ISalary {
 	Double getNonEstructuralOvertimeBase();
 	//Base sujeta a retención del I.R.P.F.
 	Double getIrpfBase();
+	
+	Double getInKindIrpfBase();
 	
 }

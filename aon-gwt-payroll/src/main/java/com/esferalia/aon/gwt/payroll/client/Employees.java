@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.DAY;
+import static com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField.MONTH;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +10,7 @@ import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.ConstantEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
@@ -78,9 +82,11 @@ public class Employees extends ResizeComposite implements
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
+		void onReportsSelected(ReportsObject reports);
+
 		void onStatisticsSelected(Statistics stats);
 
-		void onITDataSelected(ITData itData);
+		void onITDataSelected(ITDataObject dataObject);
 
 		void onSalariesSelected(SalaryDocuments docs);
 
@@ -114,6 +120,8 @@ public class Employees extends ResizeComposite implements
 	private static final int ENTERPRISE_SALARIES_INDEX = 1;
 	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
 	private static final int ENTERPRISE_PARTSIT_INDEX = 3;
+	private static final int ENTERPRISE_REPORTS_INDEX = 4;
+
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_SALARIES_INDEX = 1;
 	private static final int WORKPLACE_STATISTICS_INDEX = 2;
@@ -137,10 +145,12 @@ public class Employees extends ResizeComposite implements
 	private Images images;
 	private List<Listener> listeners;
 	private EmployeesServiceAsync employeesService;
+	private StatisticsServiceAsync statisticsService;
 
 	private boolean formers = true;
 	private boolean endDate = true;
 	private boolean extended = false;
+	private boolean inactive = false;
 
 	private Date fromDate = null;
 	private String namePattern = null;
@@ -234,6 +244,11 @@ public class Employees extends ResizeComposite implements
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 
+		if (Enterprise.isGPS(enterprise))
+			addImageItem(enterpriseItem, "Informes", images.gps())
+					.setUserObject(
+							new ReportsObject(enterprise, employeesService));
+
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
 			for (Activity activity : activities) {
@@ -253,12 +268,16 @@ public class Employees extends ResizeComposite implements
 			workplaceItem = addImageItem(enterpriseItem, description,
 					images.workplace());
 			workplaceItem.setUserObject(workplace);
+			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
 
 			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 			addImageItem(workplaceItem, "Estad\u00EDsticas",
 					images.statistics());
-			addImageItem(workplaceItem, "Partes IT", images.itDatas());
+			addImageItem(workplaceItem, "Partes IT", images.itDatas())
+					.setUserObject(
+							new ITDataObject(workplace.getId(),
+									employeesService));
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -276,37 +295,54 @@ public class Employees extends ResizeComposite implements
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService,
+							//@formatter:off
 							new EnumEventMetaData("DESEMPE\u00D1O",
 									"DESEMPE\u00D1O",
-									"Desempe\u00F1o por Trabajador y Jornada", "", "4",
-									"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
-									"B", "P", "AI", "M"),
-							new DecimalEventMetaData("INCENTIVOS"),
-							new DecimalEventMetaData("ATRASOS"),
-							new DecimalEventMetaData("ANTICIPOS"),
-							new DecimalEventMetaData("EMBARGOS"),
+									"Desempe\u00F1o por Trabajador y Jornada",
+									"", 
+									new String[]{
+									"4", 
+									"8", 
+									"10", 
+									"12", 
+									"L", 
+									"LT", 
+									"LR",
+									"F", 
+									"FT", 
+									"FR", 
+									"V", 
+									"B", 
+									"P", 
+									"AI", 
+									"M"}, 
+									DAY),
+							//@formatter:on
+							new DecimalEventMetaData("INCENTIVOS", MONTH),
+							new DecimalEventMetaData("ATRASOS", MONTH),
+							new DecimalEventMetaData("ANTICIPOS", MONTH),
+							new DecimalEventMetaData("EMBARGOS", MONTH),
 							new DecimalEventMetaData("LTA",
-									"D\u00EDas Libres Trabajados canjeados por Alojamiento"),
+									"D\u00EDas Libres Trabajados canjeados por Alojamiento", MONTH),
 							new DecimalEventMetaData("CLT",
-									"Coste d\u00EDa Libre Trabajado"),
+									"Coste d\u00EDa Libre Trabajado", MONTH),
 							new DecimalEventMetaData("CD",
-									"Coste Diario del trabajador (jornada 8 horas)"),
-							new ConstantEventMetaData("CFT",
-									"Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0 )"),
+									"Coste Diario del trabajador (jornada 8 horas)", MONTH),
 							new BooleanEventMetaData("LTR",
-									"D\u00EDas Libres Trabajados Recuperables"),
+									"D\u00EDas Libres Trabajados Recuperables", MONTH),
 							new DecimalEventMetaData("HFD",
-									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"));
+									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo", MONTH),
+							new EventMetaData("OBSERVACIONES", MONTH));
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
 							agreement != null ? agreement.getId() : null,
 							employeesService, new BooleanEventMetaData(
-									"DIAS_EFECTIVOS"),
-							new BooleanEventMetaData("DIAS_VACACIONES"),
-							new BooleanEventMetaData("HUELGA"),
-							new EventMetaData("OBSERVACIONES"));
-				
+									"DIAS_EFECTIVOS", DAY),
+							new BooleanEventMetaData("DIAS_VACACIONES", DAY),
+							new BooleanEventMetaData("HUELGA", DAY),
+							new EventMetaData("OBSERVACIONES", MONTH));
+
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
@@ -434,10 +470,12 @@ public class Employees extends ResizeComposite implements
 			onSalariesSelected((SalariesDocuments) userObject);
 		} else if (userObject instanceof CostDocuments) {
 			onCostsSelected((CostDocuments) userObject);
+		} else if (userObject instanceof ReportsObject) {
+			onReportsSelected((ReportsObject) userObject);
 		} else if (userObject instanceof Statistics) {
 			onStatisticsSelected((Statistics) userObject);
-		} else if (userObject instanceof ITData) {
-			onITDataSelected((ITData) userObject);
+		} else if (userObject instanceof ITDataObject) {
+			onITDataSelected((ITDataObject) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
 			onSalariesSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
@@ -682,7 +720,6 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-
 	}
 
 	/*
@@ -741,28 +778,6 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		}
-
-		final TreeItem partsItItem = workplaceItem
-				.getChild(WORKPLACE_PARTSIT_INDEX);
-
-		if (null == partsItItem.getUserObject()) {
-
-			employeesService.getWorkplaceITData(workplace.getId(),
-					new AsyncCallback<ITData>() {
-
-						@Override
-						public void onSuccess(ITData partsIt) {
-							partsItItem.setUserObject(partsIt);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							// TODO Apéndice de método generado automáticamente
-							Window.alert(caught.getLocalizedMessage());
-						}
-					});
-		}
-
 		if (workplaceItem.getChildCount() > getEmployeesOffset()) {
 			return;
 		} // end-if: Employees of this workplace already loaded .
@@ -864,15 +879,21 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
+	private void onReportsSelected(ReportsObject reports) {
+		for (Listener listener : listeners) {
+			listener.onReportsSelected(reports);
+		}
+	}
+
 	private void onStatisticsSelected(Statistics stats) {
 		for (Listener listener : listeners) {
 			listener.onStatisticsSelected(stats);
 		}
 	}
 
-	private void onITDataSelected(ITData itData) {
+	private void onITDataSelected(ITDataObject dataObject) {
 		for (Listener listener : listeners) {
-			listener.onITDataSelected(itData);
+			listener.onITDataSelected(dataObject);
 		}
 	}
 
@@ -1086,6 +1107,7 @@ public class Employees extends ResizeComposite implements
 			private PopupPanel popup = new PopupPanel();
 
 			private MenuItem formerMenuItem;
+			private MenuItem inactiveMenuItem;
 			private MenuItem endDateMenuItem;
 			private MenuItem filterMenuItem;
 			private FilterDialog filterDialog;
@@ -1119,6 +1141,25 @@ public class Employees extends ResizeComposite implements
 						});
 				formerMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
 				menuBar.addItem(formerMenuItem);
+
+				inactiveMenuItem = new MenuItem("Centros Inactivos",
+						new Command() {
+							@Override
+							public void execute() {
+								try {
+									inactive = !inactive;
+
+									changeVisibleWorkplaces();
+									formerMenuItem.setStyleName(
+											"aon-MenuItemCheckYes", inactive);
+									popup.hide();
+								} catch (Throwable t) {
+									Window.alert(t.getMessage());
+								}
+							}
+						});
+				inactiveMenuItem.setStyleName("aon-MenuItemCheckYes", inactive);
+				menuBar.addItem(inactiveMenuItem);
 
 				filterDialog = new FilterDialog() {
 					{
@@ -1247,8 +1288,36 @@ public class Employees extends ResizeComposite implements
 
 	}
 
+	private void changeVisibleWorkplaces() {
+		Window.alert("changeVisibleWorkplaces");
+		TreeItem enterpriseItem = tree.getItem(0);
+		int childCount = enterpriseItem.getChildCount();
+		int workplacesOffset = getWorkplacesOffset();
+		for (int j = workplacesOffset; j < childCount; j++) {
+			TreeItem workplaceItem = enterpriseItem.getChild(j);
+			Workplace workplace = (Workplace) enterpriseItem.getUserObject();
+			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
+		}
+
+	}
+
+	private boolean isWorkPlaceVisible(Workplace workplace) {
+		return workplace.isActive() || inactive;
+	}
+
 	private int getWorkplacesOffset() {
-		return extended ? 3 : 2;
+		int itemCount = tree.getItemCount();
+
+		for (int i = 0; i < itemCount; i++) {
+			TreeItem treeItem = tree.getItem(i);
+			Object userObject = treeItem.getUserObject();
+			if (userObject instanceof Workplace)
+				return i;
+		}
+
+		return itemCount;
+
+		// return extended ? 3 : 2;
 	}
 
 	private int getEmployeesOffset() {
@@ -1393,5 +1462,5 @@ public class Employees extends ResizeComposite implements
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
 
 	}
-	
+
 }

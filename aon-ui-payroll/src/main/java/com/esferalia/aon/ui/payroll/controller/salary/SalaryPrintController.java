@@ -1,0 +1,470 @@
+package com.esferalia.aon.ui.payroll.controller.salary;
+
+
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_FOOTER;
+import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
+import static com.code.aon.ui.common.ICommonMessages.SALARY_EMAIL_BODY_HEADER;
+import static com.code.aon.ui.common.ICommonMessages.SALARY_EMAIL_BODY_LINE;
+import static com.code.aon.ui.common.ICommonMessages.SALARY_EMAIL_SUBJECT;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.company.util.CompanyEmailUtil;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.report.controller.ReportManager;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+
+public class SalaryPrintController extends BasicController implements ICollectionProvider, IPayrollConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
+	
+	private static final String SALARY_PATTERN = "Nomina {0} ({1,date,dd.MM.yyyy}-{2,date,dd.MM.yyyy})";
+	
+	private static final String SALARIES_ZIP_NAME = "nominas";
+
+	private static final String SALARY_COST_FILE_NAME = "costes_empresa";
+	
+	private List<SelectItem> availableWorkPlaces;
+	
+	private boolean showWorkPlaces;
+	
+	private WorkPlace workPlace;
+	
+	private String[] types;
+	
+	private boolean includeEnterpriseCost;
+	
+	private Month month;
+	
+	private Integer year;
+
+	private Set<Integer> checks = new HashSet<Integer>();
+
+	
+	public boolean isIncludeEnterpriseCost() {
+		return includeEnterpriseCost;
+	}
+
+	public void setIncludeEnterpriseCost(boolean includeEnterpriseCost) {
+		this.includeEnterpriseCost = includeEnterpriseCost;
+	}
+
+	public Month getMonth() {
+		return month;
+	}
+
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+
+	public Set<Integer> getChecked() {
+		return checks;
+	}
+
+	public void clearChecked() {
+		checks = new HashSet<Integer>();
+	}
+	
+	public boolean isSelectionEmpty() {
+		return this.checks.isEmpty();
+	}
+	
+	public boolean isShowWorkPlaces() {
+		return showWorkPlaces;
+	}
+
+	public List<SelectItem> getAvailableWorkPlaces() {
+		return availableWorkPlaces;
+	}
+	
+	public String[] getTypes() {
+		return types;
+	}
+
+	public void setTypes(String[] types) {
+		this.types = types;
+	}
+	
+	
+	
+	public void onInit( ActionEvent event ) throws ManagerBeanException {
+		setIncludeEnterpriseCost(false);
+		loadWorkPlaces();
+		this.resetCriteria();
+		clearFilters();
+		resetCriteria();
+		onFilter(event);
+	}
+
+	public void onClearFilter( ActionEvent event ) throws ManagerBeanException {
+		clearFilters();
+		resetCriteria();
+		this.initializeModel();
+	}
+	
+	public void onFilter( ActionEvent event ) throws ManagerBeanException {
+		resetCriteria();
+		Criteria criteria = this.getCriteria();
+		if(this.month!=null && this.year!=null){
+			Calendar from = Calendar.getInstance();
+			from.set(Calendar.YEAR, this.year);
+			from.set(Calendar.MONTH, this.month.getValue());
+			from.set(Calendar.DAY_OF_MONTH, from.getActualMinimum(Calendar.DAY_OF_MONTH));
+			from.set(Calendar.HOUR_OF_DAY, 0);
+			from.set(Calendar.MINUTE, 0);
+			from.set(Calendar.SECOND, 0);
+			from.set(Calendar.MILLISECOND, 0);
+			Calendar to = Calendar.getInstance();
+			to.set(Calendar.YEAR, this.year);
+			to.set(Calendar.MONTH, this.month.getValue());
+			to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
+			to.set(Calendar.HOUR_OF_DAY, 23);
+			to.set(Calendar.MINUTE, 59);
+			to.set(Calendar.SECOND, 59);
+			to.set(Calendar.MILLISECOND, 59);
+			String alias = this.getFieldName(IEntityAlias.SALARY_END_DATE);
+			criteria.addGreaterThanOrEqualExpression(alias, from.getTime());
+			alias = this.getFieldName(IEntityAlias.SALARY_END_DATE);
+			criteria.addLessThanOrEqualExpression(alias, to.getTime());
+		}
+		if(getTypes()!=null && getTypes().length>0){
+			String alias = this.getFieldName(IEntityAlias.SALARY_TYPE);			
+			List<Object> list = new LinkedList<Object>();
+			for( String value : getTypes() ) {
+				if ( value != null ) {
+					list.add(SalaryType.valueOf(value));
+				}
+			}
+			if ( list.size() == 1 ) {
+				criteria.addEqualExpression(alias, list.get(0));
+			} else {
+				criteria.addInExpression(alias, list);	
+			}
+		}
+		if ((getWorkPlace() != null) && (getWorkPlace().getId() !=null)) {
+			String alias = this.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID);
+			criteria.addEqualExpression(alias, getWorkPlace().getId());
+		}		
+		this.initializeModel();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void checkAll(ActionEvent event) throws ManagerBeanException {
+		String id = this.getFieldName(IEntityAlias.SALARY_ID);
+		ProjectionList pl = new ProjectionList( Projection.property(id) );
+		List<Integer> list = this.getManagerBean().getList(pl, this.getCriteria());
+		checks.clear();
+		checks.addAll( list );
+	}
+
+	public void checkNone(ActionEvent event) {
+		clearChecked();
+	}
+
+	private void clearFilters() {
+		Calendar cal = Calendar.getInstance();
+		this.year = cal.get(Calendar.YEAR);
+		this.month = Month.getMonthByValue(cal.get(Calendar.MONTH)-1);
+		this.workPlace = null;
+		this.types = null;
+	}
+	
+	private void resetCriteria() throws ManagerBeanException {
+		Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
+		clearChecked();
+		this.clearCriteria();
+		Criteria criteria = this.getCriteria();
+		String alias = this.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+		criteria.addEqualExpression(alias, enterprise.getId());		
+	}
+
+	public boolean isRowChecked() throws ManagerBeanException {
+		Salary to = (Salary) this.getModel().getRowData();
+		return checks.contains(to.getId());
+	}
+
+	public void setRowChecked(boolean rowChecked) throws ManagerBeanException {
+		Integer id = ((Salary) this.getModel().getRowData()).getId();		
+		if (rowChecked) {
+			if (!checks.contains(id)) {
+				checks.add(id);
+			}
+		} else {
+			if (checks.contains(id)) {
+				checks.remove(id);
+			}
+		}
+	}
+	
+	private void loadWorkPlaces() throws ManagerBeanException {
+		Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
+		this.availableWorkPlaces = null;
+		this.showWorkPlaces = false;
+		
+		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+		Criteria criteria = new Criteria();
+		String enterpriseId = bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID);
+		criteria.addEqualExpression(enterpriseId, enterprise.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
+		if ( bean.getCount(criteria) > 1 ) {
+			List<ITransferObject> list = bean.getList(criteria);
+			this.availableWorkPlaces = new LinkedList<SelectItem>();
+			for (ITransferObject to : list) {
+				WorkPlace workPlace = (WorkPlace)to;
+				availableWorkPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
+			}
+			this.showWorkPlaces = true;
+		}
+	}	
+
+	@Override
+	public Collection<ITransferObject> getCollection() {
+		try {
+			return getCollection(false);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public Collection<ITransferObject> getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		IManagerBean bean = this.getManagerBean();
+		List<ITransferObject> l = new LinkedList<ITransferObject>();
+		for( Integer id : checks ) {
+			l.add( bean.get(id) );
+		}
+		return l;
+	}
+
+	public String onPrint() throws ManagerBeanException {
+		ReportManager reportManager = new ReportManager();
+		obtainSalaryTemplate();
+		reportManager.setReportKey(obtainSalaryTemplate());
+		reportManager.setOutputFormat(OutputFormat.PDF);
+		reportManager.setCollectionProvider( this );
+		return reportManager.onExecute();	
+	}
+	
+	
+	private String obtainSalaryTemplate() throws ManagerBeanException{
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		Company company = companyController.obtainCompany();
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		try {
+			controller.select(null, company.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+		return enterpriseParams.getParameter("PAY_REPORT_salary_PAY").getExpression();
+	}
+
+	private String obtainSalarySendingEmail() throws ManagerBeanException{
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		Company company = companyController.obtainCompany();
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		try {
+			controller.select(null, company.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+		return enterpriseParams.getParameter("PAY_salarySending_email_PAY").getExpression();
+	}
+	
+	private void writeSalariesZip( File file, Collection<Salary> collection ) throws IOException, ReportException, ManagerBeanException {
+		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
+		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
+		for (Salary salary : collection) {
+			String fileName = this.getFileName(salary) + "." + MimeType.MIME_PDF.getExtension();
+       		zipOut.putNextEntry(new ZipEntry(fileName));
+       		this.writeReport(salary, zipOut);
+        	zipOut.closeEntry();
+        }
+		IOUtils.closeQuietly(zipOut);
+	}
+	
+	private AonFile getSalariesZipFile( Collection<Salary> salaries ) throws IOException, ReportException, ManagerBeanException {
+		File file = File.createTempFile( SALARIES_ZIP_NAME, "." + MimeType.MIME_ZIP.getExtension() );
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		writeSalariesZip( file, salaries );
+		IOUtils.closeQuietly(out);
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);	
+		aonFile.setFileName( SALARIES_ZIP_NAME + "." + MimeType.MIME_ZIP.getExtension() );
+		return aonFile;
+	}
+	
+	private AonFile getSalaryCostFile( ) throws IOException, ReportException {
+		File file = File.createTempFile( SALARY_COST_FILE_NAME, "." + MimeType.MIME_PDF.getExtension() );
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		writeEnterpriseCostReport(new BufferedOutputStream( new FileOutputStream(file) ));
+		IOUtils.closeQuietly(out);
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);	
+		aonFile.setFileName( SALARY_COST_FILE_NAME + "." + MimeType.MIME_PDF.getExtension() );
+		return aonFile;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onSendByEmail( ActionEvent event ) {
+		try {
+			Collection<?> list = getCollection();
+			Collection<Salary> salaries = (Collection<Salary>) list;
+			
+			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			if (mailConfig.getMailAccountCount() > 0) {
+				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+				messageController.initNewMessage();
+				messageController.setSubject( getEmailSubject() );
+				messageController.updateMessageBody(getEmailContent(salaries));
+				setRecipients(messageController);
+				
+				messageController.addAttachment( getSalariesZipFile(salaries) );
+				if(isIncludeEnterpriseCost()){
+					messageController.addAttachment( getSalaryCostFile() );
+				}
+				messageController.setShowNewMessageWindow(true);
+			} else {
+				AonUtil.addErrorMessageFromBundle(NOT_MAIL_ACCOUNTS);
+			}
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onSendByEmail ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	private String getEmailSubject() {
+		String message = AonUtil.getMessage(SALARY_EMAIL_SUBJECT);
+		Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
+		return MessageFormat.format(message, enterprise.getRegistry().getFullName() );
+	}
+	
+	private String getEmailContent( Collection<Salary> salaries ) {
+		StringBuffer body = new StringBuffer();
+		body.append( "<html><head>" );
+		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
+		body.append( "</head><body>" );
+		
+		body.append(AonUtil.getMessage(SALARY_EMAIL_BODY_HEADER) );
+		for( Salary salary : salaries ) {
+			body.append( "<ul>" );
+			String message = AonUtil.getMessage(SALARY_EMAIL_BODY_LINE);
+			String line = MessageFormat.format(message, salary.getContract().getPerson().getFullName(), salary.getIssueDate() );
+			body.append( line );
+			body.append( "</ul>" );
+		}
+		body.append("<br />" );		
+		body.append(AonUtil.getMessage(COMPANY_EMAIL_BODY_FOOTER) );		
+		return body.toString();
+	}
+	
+	private void setRecipients( MessageController messageController) throws ManagerBeanException {
+		String[] emails = null;			
+		String email = obtainSalarySendingEmail();
+		if(StringUtils.isNotEmpty(email)){
+			emails = new String[]{email};
+		} else {
+			Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
+			emails = CompanyEmailUtil.getAdministrativeEmails(enterprise.getRegistry());			
+		}
+		CompanyEmailUtil.initMessageController(messageController, emails);
+	}
+	
+	private void writeReport( Salary salary, OutputStream out ) throws ReportException, ManagerBeanException {
+		ReportManager reportManager = new ReportManager();
+		reportManager.setOutputFormat(OutputFormat.PDF);
+		reportManager.setCollectionProvider( new SingleCollectionProvider(salary) );
+		reportManager.execute( out, obtainSalaryTemplate() );
+	}
+
+	private void writeEnterpriseCostReport( OutputStream out ) throws ReportException {
+		SalaryExpenseController salaryExpense = new SalaryExpenseController();
+		salaryExpense.setYear(getYear());
+		salaryExpense.setMonth(getMonth());
+		
+		ReportManager reportManager = new ReportManager();
+		reportManager.setOutputFormat(OutputFormat.PDF);
+		reportManager.setCollectionProvider( salaryExpense );
+		reportManager.execute( out, COST_REPORT );
+	}
+	
+	
+	private String getFileName( Salary salary ) {
+		String name = salary.getContract().getPerson().getFullName();
+		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
+	}
+	
+}

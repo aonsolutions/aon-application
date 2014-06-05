@@ -215,14 +215,6 @@
 					<f:setPropertyActionListener
 						target="#{contract.showContractBonusWindow}" value="#{true}" />
 				</aon:menuItem>
-				<aon:menuItem id="contract-embargo" 
-					value="#{bundle.payroll_salary_embargos_tab}"
-					reRender="showContractEmbargoWindow"
-					actionListener="#{contractEmbargo.onReset}"
-					iconClass="aon-icon-settle" >
-					<f:setPropertyActionListener
-						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
-				</aon:menuItem>
 				<aon:menuItem id="contract-salary-info" 
 					value="Datos de cálculo"
 					reRender="showContractSalaryInfoWindow"

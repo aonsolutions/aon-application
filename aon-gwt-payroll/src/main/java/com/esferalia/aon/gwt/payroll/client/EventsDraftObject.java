@@ -80,6 +80,10 @@ public class EventsDraftObject {
 		void onEventAdded(Event event);
 	}
 
+	static enum DateField {
+		DAY, WEEK, MONTH, YEAR;
+	}
+
 	static class EventMetaData {
 
 		private String name;
@@ -88,28 +92,31 @@ public class EventsDraftObject {
 
 		private Cell<Event> editCell;
 		private Cell<Event> displayCell;
+		
+		private DateField [] dateFields ;
 
-		public EventMetaData(String name) {
-			this(name, name);
+		public EventMetaData(String name, DateField... dateFields) {
+			this(name, name, dateFields);
 		}
 
-		public EventMetaData(String name, String description) {
+		public EventMetaData(String name, String description, DateField... dateFields) {
 			this(name, name, description, new EventTextCell(),
-					new EventInputTextCell());
+					new EventInputTextCell(), dateFields);
 		}
 
-		public EventMetaData(String name, String label, String description) {
+		public EventMetaData(String name, String label, String description, DateField... dateFields) {
 			this(name, label, description, new EventTextCell(),
-					new EventInputTextCell());
+					new EventInputTextCell(), dateFields);
 		}
 
 		protected EventMetaData(String name, String label, String description,
-				Cell<Event> displayCell, Cell<Event> editCell) {
+				Cell<Event> displayCell, Cell<Event> editCell, DateField... dateFields) {
 			this.name = name;
 			this.label = label;
 			this.description = description;
 			this.displayCell = displayCell;
 			this.editCell = editCell;
+			this.dateFields = dateFields;
 		}
 
 		public String getName() {
@@ -132,19 +139,27 @@ public class EventsDraftObject {
 			return displayCell;
 		}
 
+		public boolean accept(DateField dateField) {
+			
+			for (DateField field : dateFields)
+				if ( field == dateField )
+					return true;
+			
+			return false;
+		}
 	}
 
 	static class EnumEventMetaData extends EventMetaData {
 
 		public EnumEventMetaData(String name, String label, String description,
-				String nullOption, String... options) {
-			this(name, label, description, Arrays.asList(options), nullOption);
+				String nullOption, String  options [], DateField ...dateFields) {
+			this(name, label, description, Arrays.asList(options), nullOption, dateFields);
 		}
 
 		public EnumEventMetaData(String name, String label, String description,
-				List<String> options, String nullOption) {
+				List<String> options, String nullOption , DateField ...dateFields) {
 			super(name, label, description, new EventTextCell(),
-					new EventSelectionCell(options, nullOption));
+					new EventSelectionCell(options, nullOption),dateFields);
 		}
 
 	}
@@ -154,19 +169,19 @@ public class EventsDraftObject {
 		private static final NumberConstants NUMBER_CONSTANTS = LocaleInfo
 				.getCurrentLocale().getNumberConstants();
 
-		public DecimalEventMetaData(String name) {
-			this(name, null);
+		public DecimalEventMetaData(String name, DateField... dateFields) {
+			this(name, null, dateFields);
 		}
 
-		public DecimalEventMetaData(String name, String description) {
-			this(name, name, description);
+		public DecimalEventMetaData(String name, String description, DateField... dateFields) {
+			this(name, name, description, dateFields);
 		}
 
 		public DecimalEventMetaData(String name, String label,
-				String description) {
+				String description, DateField... dateFields) {
 			super(name, label, description, new EventNumberCell(
 					NUMBER_CONSTANTS), new EventInputNumberCell(
-					NUMBER_CONSTANTS));
+					NUMBER_CONSTANTS), dateFields);
 		}
 
 	}
@@ -176,36 +191,36 @@ public class EventsDraftObject {
 		private static final NumberConstants NUMBER_CONSTANTS = LocaleInfo
 				.getCurrentLocale().getNumberConstants();
 
-		public BooleanEventMetaData(String name) {
-			this(name, null);
+		public BooleanEventMetaData(String name, DateField... dateFields) {
+			this(name, null, dateFields);
 		}
 
-		public BooleanEventMetaData(String name, String description) {
-			this(name, name, description);
+		public BooleanEventMetaData(String name, String description, DateField... dateFields) {
+			this(name, name, description, dateFields);
 		}
 
 		public BooleanEventMetaData(String name, String label,
-				String description) {
+				String description, DateField... dateFields) {
 			super(name, label, description, new EventBooleanCell(),
-					new EventInputCheckCell());
+					new EventInputCheckCell(), dateFields);
 		}
 
 	}
 
 	static class ConstantEventMetaData extends EventMetaData {
 
-		public ConstantEventMetaData(String name) {
-			this(name, null);
+		public ConstantEventMetaData(String name, DateField... dateFields) {
+			this(name, null, dateFields);
 		}
 
-		public ConstantEventMetaData(String name, String description) {
-			this(name, name, description);
+		public ConstantEventMetaData(String name, String description, DateField... dateFields) {
+			this(name, name, description, dateFields);
 		}
 
 		public ConstantEventMetaData(String name, String label,
-				String description) {
+				String description, DateField... dateFields) {
 			super(name, label, description, new EventTextCell(),
-					new EventTextCell());
+					new EventTextCell(), dateFields);
 		}
 
 	}
@@ -870,8 +885,8 @@ public class EventsDraftObject {
 	public Date getEndDate() {
 		return endDate;
 	}
-	
-	public void setPeriod(Date startDate, Date endDate, Callback cb){
+
+	public void setPeriod(Date startDate, Date endDate, Callback cb) {
 		this.events.clear();
 		this.eventsMetaDataMap = null;
 		this.startDate = startDate;
@@ -1019,6 +1034,10 @@ public class EventsDraftObject {
 		return events.getEvent(employee.getId(), name, start, end);
 	}
 
+	public boolean eventAccept(String name, DateField dateField) {
+		return eventsMetaDataMap.get(name).accept(dateField);
+	}
+
 	// -------------------------------------------------------------------------
 	// Draft related
 
@@ -1057,9 +1076,9 @@ public class EventsDraftObject {
 						// TODO Auto-generated method stub
 						eventsMetaDataMap = new HashMap<String, EventMetaData>();
 						eventsMetaDataMap.putAll(userEventsMetaDataMap);
-						
+
 						cb.onFailure(caught);
-						
+
 					}
 				});
 

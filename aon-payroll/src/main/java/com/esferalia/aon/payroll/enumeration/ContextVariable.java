@@ -66,6 +66,13 @@ public enum ContextVariable implements IResourceable{
 	// Horas ( contratos  a tiempo parcial )
 	WEEK_HOURS("HORAS_SEMANA", VariableType.DOUBLE, false),
 	SALARY_HOURS("HORAS_NOMINA", VariableType.DOUBLE, false),
+	MONDAY_HOURS("HORAS_LUNES", VariableType.DOUBLE),
+	TUESDAY_HOURS("HORAS_MARTES", VariableType.DOUBLE),
+	WEDNESDAY_HOURS("HORAS_MIERCOLES", VariableType.DOUBLE),
+	THURSDAY_HOURS("HORAS_JUEVES", VariableType.DOUBLE),
+	FRIDAY_HOURS("HORAS_VIERNES", VariableType.DOUBLE),
+	SATURDAY_HOURS("HORAS_SABADO", VariableType.DOUBLE),
+	SUNDAY_HOURS("HORAS_DOMINGO", VariableType.DOUBLE),
 
 	NIGHT("NOCTURNO", VariableType.BOOLEAN, false),
 	//NIGHT_HOURS("HORAS_NOCHE", VariableType.INTEGER, false),
@@ -186,6 +193,7 @@ public enum ContextVariable implements IResourceable{
 	FIVE("QUINQUENIO", VariableType.UNKNOWN, true ),
 	SIX("SEXENIO", VariableType.UNKNOWN, true ),
 	SEVEN("SEPTENIO", VariableType.UNKNOWN, true ),
+	UNDEFINED("UNDEFINED", VariableType.UNKNOWN ),
 	
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE ),
 	EXCESS("EXCESO", VariableType.DOUBLE ),

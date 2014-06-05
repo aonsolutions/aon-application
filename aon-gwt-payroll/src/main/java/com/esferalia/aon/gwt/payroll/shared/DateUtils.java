@@ -5,7 +5,9 @@ import java.util.Date;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class DateUtils {
-
+	
+	
+	
 	public static int getYear() {
 		return getYear(new Date());
 	}
@@ -204,6 +206,5 @@ public class DateUtils {
 	    date.setSeconds(0);
 	  }
 
-	
 
 }

@@ -40,7 +40,6 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 	
 	private byte[] data;
 	
-	@Transient
 	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
 		return size;

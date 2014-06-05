@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.sepe.controller.handler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -14,12 +15,15 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
+import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -67,24 +71,20 @@ public class ContrataTransformacionesHandler implements IContrataHandler, Serial
 		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract).get(ContextVariable.TC2.getName()) );
 		getParams().setFechaInicio(contract.getEndDate());
 //		getParams().setFechaTerminoReal(fechaTerminoReal);
-		getParams().setCno(obtainCno(utils.getContractDataMap(this.contract).get(ContextVariable.CNO.getName())));
+//		getParams().setCno(obtainCno(utils.getContractDataMap(this.contract).get(ContextVariable.CNO.getName())));
 	}
 	
 	@Override
 	public void loadContrataData(IAttachment attach) throws ManagerBeanException, IOException{
 		// TODO make ContrataReader return correct params type
-//		try {
-//			if(contrataAttach!=null){
-//				ContrataReader reader = new ContrataReader();
-//				this.params = reader.readFile( new ByteArrayInputStream(contrataAttach.getData()) );
-//			}
-//		} catch (ManagerBeanException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		if(attach==null){
+			attach = new ContractAttachment();
+		} 
+		else {
+			ContrataReader reader = new ContrataReader();
+			this.params = (ContrataTransformacionesParams) reader.readFile( new ByteArrayInputStream(attach.getData()) );
+		}
+		
 	}
 	
 	private CNO obtainCno(String expression) {

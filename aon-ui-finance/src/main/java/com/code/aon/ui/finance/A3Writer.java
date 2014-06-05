@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -656,9 +657,9 @@ public class A3Writer extends BasicExporter {
 	}
 
 	@Override
-	public Map<String, byte[]> getDataMap() {
-		Map<String, byte[]> map = new HashMap<String, byte[]>();
-		map.put("suenlace.dat", getData());
+	public Map<String, File> getDataMap() {
+		Map<String, File> map = new HashMap<String, File>();
+		addData(map, "suenlace", ".dat", getData());
 		return map;
 	}
 	

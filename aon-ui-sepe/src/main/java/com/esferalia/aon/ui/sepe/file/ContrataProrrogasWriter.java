@@ -25,6 +25,8 @@ import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.CIFNIFTYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSADICIONALESPRORROGATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSCONTRATOTYPE;
@@ -103,7 +105,29 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	private DATOSEMPRESATYPE createDatosEmpresa(ContrataProrrogaParams params) throws ManagerBeanException {
 		DATOSEMPRESATYPE datos = factory.createDATOSEMPRESATYPE();
 		datos.setCIFNIFEMPRESA(createCifNif(getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()));
-		datos.setCCC(completeLength(getEnterpriseCCC(getContract().getWorkPlace().getEnterprise()),15,"0",false));
+		EnterpriseCCC ccc = getContract().getEnterpriseCCC();
+		// TODO: research about ccc quote regime
+		String quoteRegime = "0000";
+		if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.GENERAL){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0111.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.AGRICULTURAL){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0613.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.ARTIST){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0112.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.COAL_MINING){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0911.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.DOMESTIC_EMPLOYEES){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0138.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.SEA_WORKERS){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0800.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.SELF_EMPLOYED){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0721.getCode();
+		} else if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.STUDENT_INSURANCE){
+			quoteRegime = TCHRGCOT.TCHRGCOT_1911.getCode();
+		}
+		if(ccc!=null){
+			datos.setCCC(quoteRegime+ccc.getCcc());
+		}
 		return datos;
 	}
 	

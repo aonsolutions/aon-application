@@ -73,7 +73,7 @@ public class GeneratorController implements VelocityConstants, Serializable  {
 
 	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION = "WebInfoPageResource.rattach.description";
 
-	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DATA = "WebInfoPageResource.rattach.data";
+	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_SIZE = "WebInfoPageResource.rattach.size";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class.getName());
 	
@@ -334,7 +334,7 @@ public class GeneratorController implements VelocityConstants, Serializable  {
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
-		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DATA);
+		wiprCriteria.addGreaterThanExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_SIZE,0);
 		List<ITransferObject> wiprList = wiprBean.getList(wiprCriteria);
 
 		for (int i = 0; i < wiprList.size(); i++) {
@@ -357,7 +357,7 @@ public class GeneratorController implements VelocityConstants, Serializable  {
 		Criteria wiprCriteria = new Criteria();
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
 		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION);
-		wiprCriteria.addNotNullExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_DATA);
+		wiprCriteria.addGreaterThanExpression(WEB_INFO_PAGE_RESOURCE_RATTACH_SIZE,0);
 		List<ITransferObject> wiprList = wiprBean.getList(wiprCriteria);
 		String previous_link = "";
 		String next_link = "";

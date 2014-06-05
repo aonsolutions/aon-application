@@ -13,10 +13,14 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.AonVersion;
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
@@ -27,18 +31,6 @@ public class SepeAppParamsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	public final static String DEVELOPMENT_MODE = "PAY_dev_mode_PAY";
-	
-	public final static String CONTRATA_USER = "PAY_contrata_user_PAY";
-	public final static String CONTRATA_PASSWORD = "PAY_contrata_passwd_PAY";
-	public final static String CONTRATA_TEST_ENVIRONMENT_ACTIVE = "PAY_contrata_test_env_active_PAY";
-	public final static String CONTRATA_SSL_ENVIRONMENT_ACTIVE = "PAY_contrata_ssl_env_active_PAY";
-
-	public final static String CERTIFICA2_USER = "PAY_certifica2_user_PAY";
-	public final static String CERTIFICA2_PASSWORD = "PAY_certifica2_passwd_PAY";
-	public final static String CERTIFICA2_TEST_ENVIRONMENT_ACTIVE = "PAY_certifica2_test_env_PAY";
-	public final static String CERTIFICA2_SSL_ENVIRONMENT_ACTIVE = "PAY_certifica2_ssl_env_PAY";
-
 	private Boolean developmentMode;
 
 	private String contrataUser;
@@ -58,6 +50,7 @@ public class SepeAppParamsController implements Serializable {
 
 	private Map<String, String> defaultParameters;
 	
+	
 	public Boolean getDevelopmentMode() {
 		if(developmentMode==null){
 			initDevelopmentMode();
@@ -71,8 +64,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initDevelopmentMode() {
 		try {
-			if(getParameter(DEVELOPMENT_MODE).getValue()!=null){
-				setDevelopmentMode(new Boolean(getParameter(DEVELOPMENT_MODE).getValue()));
+			if(getParameter(AppParam.PAY_dev_mode_PAY.getValue()).getValue()!=null){
+				setDevelopmentMode(new Boolean(getParameter(AppParam.PAY_dev_mode_PAY.getValue()).getValue()));
 			} else {
 				setDevelopmentMode(false);
 			}
@@ -106,8 +99,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initContrataUser() {
 		try {
-			if(getParameter(CONTRATA_USER).getValue()!=null){
-				setContrataUser(getParameter(CONTRATA_USER).getValue());
+			if(getParameter(AppParam.PAY_contrata_user_PAY.getValue()).getValue()!=null){
+				setContrataUser(getParameter(AppParam.PAY_contrata_user_PAY.getValue()).getValue());
 			} else {
 				setContrataUser("");
 			}
@@ -129,8 +122,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initContrataPassword() {
 		try {
-			if(getParameter(CONTRATA_PASSWORD).getValue()!=null){
-				setContrataPassword(getParameter(CONTRATA_PASSWORD).getValue());
+			if(getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).getValue()!=null){
+				setContrataPassword(getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).getValue());
 			} else {
 				setContrataPassword("");
 			}
@@ -152,8 +145,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initContrataTestEnviroment() {
 		try {
-			if(getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
-				setContrataTestEnviroment(new Boolean(getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			if(getParameter(AppParam.PAY_contrata_test_env_active_PAY.getValue()).getValue()!=null){
+				setContrataTestEnviroment(new Boolean(getParameter(AppParam.PAY_contrata_test_env_active_PAY.getValue()).getValue()));
 			} else {
 				setContrataTestEnviroment(true);
 			}
@@ -175,8 +168,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initContrataSSLEnviroment() {
 		try {
-			if(getParameter(CONTRATA_SSL_ENVIRONMENT_ACTIVE).getValue()!=null){
-				setContrataSSLEnviroment(new Boolean(getParameter(CONTRATA_SSL_ENVIRONMENT_ACTIVE).getValue()));
+			if(getParameter(AppParam.PAY_contrata_ssl_env_active_PAY.getValue()).getValue()!=null){
+				setContrataSSLEnviroment(new Boolean(getParameter(AppParam.PAY_contrata_ssl_env_active_PAY.getValue()).getValue()));
 			} else {
 				setContrataSSLEnviroment(true);
 			}
@@ -210,8 +203,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initCertifica2User() {
 		try {
-			if(getParameter(CERTIFICA2_USER).getValue()!=null){
-				setCertifica2User(getParameter(CERTIFICA2_USER).getValue());
+			if(getParameter(AppParam.PAY_certifica2_user_PAY.getValue()).getValue()!=null){
+				setCertifica2User(getParameter(AppParam.PAY_certifica2_user_PAY.getValue()).getValue());
 			} else {
 				setCertifica2User("");
 			}
@@ -233,8 +226,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initCertifica2Password() {
 		try {
-			if(getParameter(CERTIFICA2_PASSWORD).getValue()!=null){
-				setCertifica2Password(getParameter(CERTIFICA2_PASSWORD).getValue());
+			if(getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).getValue()!=null){
+				setCertifica2Password(getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).getValue());
 			} else {
 				setCertifica2Password("");
 			}
@@ -256,8 +249,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initCertifica2TestEnviroment() {
 		try {
-			if(getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
-				setCertifica2TestEnviroment(new Boolean(getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			if(getParameter(AppParam.PAY_certifica2_test_env_PAY.getValue()).getValue()!=null){
+				setCertifica2TestEnviroment(new Boolean(getParameter(AppParam.PAY_certifica2_test_env_PAY.getValue()).getValue()));
 			} else {
 				setCertifica2TestEnviroment(true);
 			}
@@ -279,8 +272,8 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void initCertifica2SSLEnviroment() {
 		try {
-			if(getParameter(CERTIFICA2_SSL_ENVIRONMENT_ACTIVE).getValue()!=null){
-				setCertifica2SSLEnviroment(new Boolean(getParameter(CERTIFICA2_SSL_ENVIRONMENT_ACTIVE).getValue()));
+			if(getParameter(AppParam.PAY_certifica2_ssl_env_PAY.getValue()).getValue()!=null){
+				setCertifica2SSLEnviroment(new Boolean(getParameter(AppParam.PAY_certifica2_ssl_env_PAY.getValue()).getValue()));
 			} else {
 				setCertifica2SSLEnviroment(true);
 			}
@@ -385,19 +378,27 @@ public class SepeAppParamsController implements Serializable {
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
 	
-		getParameter(DEVELOPMENT_MODE).setValue(getDevelopmentMode().toString());
+		getParameter(AppParam.PAY_dev_mode_PAY.getValue()).setValue(getDevelopmentMode().toString());
 
 		// CONTRATA PARAMS
-		getParameter(CONTRATA_USER).setValue(getContrataUser());
-		getParameter(CONTRATA_PASSWORD).setValue(getContrataPassword());
-		getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).setValue(getContrataTestEnviroment().toString());
-		getParameter(CONTRATA_SSL_ENVIRONMENT_ACTIVE).setValue(getContrataSSLEnviroment().toString());
+		getParameter(AppParam.PAY_contrata_user_PAY.getValue()).setValue(getContrataUser());
+		if(StringUtils.isNotBlank(getContrataUser())){
+			getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).setValue(getContrataPassword());
+		} else {
+			getParameter(AppParam.PAY_contrata_passwd_PAY.getValue()).setValue(null);
+		}
+		getParameter(AppParam.PAY_contrata_test_env_active_PAY.getValue()).setValue(getContrataTestEnviroment().toString());
+		getParameter(AppParam.PAY_contrata_ssl_env_active_PAY.getValue()).setValue(getContrataSSLEnviroment().toString());
 		
 		// CERTIFICA2 PARAMS
-		getParameter(CERTIFICA2_USER).setValue(getCertifica2User());
-		getParameter(CERTIFICA2_PASSWORD).setValue(getCertifica2Password());
-		getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).setValue(getCertifica2TestEnviroment().toString());
-		getParameter(CERTIFICA2_SSL_ENVIRONMENT_ACTIVE).setValue(getCertifica2SSLEnviroment().toString());
+		getParameter(AppParam.PAY_certifica2_user_PAY.getValue()).setValue(getCertifica2User());
+		if(StringUtils.isNotBlank(getCertifica2User())){
+			getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).setValue(getCertifica2Password());
+		} else {
+			getParameter(AppParam.PAY_certifica2_passwd_PAY.getValue()).setValue(null);
+		}
+		getParameter(AppParam.PAY_certifica2_test_env_PAY.getValue()).setValue(getCertifica2TestEnviroment().toString());
+		getParameter(AppParam.PAY_certifica2_ssl_env_PAY.getValue()).setValue(getCertifica2SSLEnviroment().toString());
 
 	}
 	
@@ -407,6 +408,79 @@ public class SepeAppParamsController implements Serializable {
 	
 	public void validateCertifica2Login(ActionEvent event){
 		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(getCertifica2SSLEnviroment(), getCertifica2TestEnviroment(), getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
+	}
+	
+	
+	/*
+	 * PARENT DOMAIN SEPE AUTHENTICATION DATA
+	 */
+	// Contrata
+	public boolean isContrataLoginDefined(){
+		return StringUtils.isNotBlank(getContrataUser());
+	}
+	public boolean isParentContrataLoginDefined(){
+		String user = getParentContrataUser();
+		return StringUtils.isNotBlank(user);
+	}
+	public String getParentContrataUser(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_contrata_user_PAY);
+		return ap!=null?ap.getValue():null;
+	}
+	public String getParentContrataPassword(){
+		return obtainParentLoginValue(AppParam.PAY_contrata_passwd_PAY).getValue();
+	}
+	public boolean isParentContrataTestEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_contrata_test_env_active_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public boolean isParentContrataSSLEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_contrata_ssl_env_active_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public void onRedefineContrataLogin(ActionEvent event){
+		setContrataUser(getParentContrataUser());
+	}
+	// Certifica2
+	public boolean isCertifica2LoginDefined(){
+		return StringUtils.isNotBlank(getCertifica2User());
+	}
+	public boolean isParentCertifica2LoginDefined(){
+		String user = getParentCertifica2User();
+		return StringUtils.isNotBlank(user);
+	}
+	public String getParentCertifica2User(){
+		ApplicationParameter ap =  obtainParentLoginValue(AppParam.PAY_certifica2_user_PAY);
+		return ap!=null?ap.getValue():null;
+	}
+	public String getParentCertifica2Password(){
+		return obtainParentLoginValue(AppParam.PAY_certifica2_passwd_PAY).getValue();
+	}
+	public boolean isParentCertifica2TestEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_certifica2_test_env_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public boolean isParentCertifica2SSLEnviroment(){
+		ApplicationParameter ap = obtainParentLoginValue(AppParam.PAY_certifica2_ssl_env_PAY);
+		return ap !=null && Boolean.parseBoolean(ap.getValue());
+	}
+	public void onRedefineCertificadosLogin(ActionEvent event){
+		setCertifica2User(getParentCertifica2User());
+	}
+
+	private ApplicationParameter obtainParentLoginValue(AppParam ap){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), DomainManager.getDomainProvider().getParentDomain());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), ap.getValue());
+			List<ITransferObject> list = bean.getList(criteria, 0, 1);
+			if (! list.isEmpty() ) {
+				return (ApplicationParameter) list.get(0);
+			}
+		} catch ( ManagerBeanException e ) {
+		}
+		return null;
 	}
 	
 }

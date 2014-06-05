@@ -851,9 +851,8 @@ public class ProjectReservationController extends BasicController implements IPm
 			throw new AbortProcessingException(msg);
 		}
 
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-		if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
+		if (!PosUtils.isUserPosShiftOpened()) {
 			setShowRectificationWindow(false);
 			String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
@@ -904,9 +903,8 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(msg);
 			}
 
-			ProjectReservation reservation = (ProjectReservation)this.getTo();
 			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-			if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
+			if (!PosUtils.isUserPosShiftOpened()) {
 				setShowModificationWindow(false);
 				String msg = "No se puede Modificar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);

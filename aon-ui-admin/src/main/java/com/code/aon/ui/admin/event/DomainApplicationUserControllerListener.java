@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.config.ApplicationUser;
-import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainController;
@@ -24,10 +23,6 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationUserControllerListener.class);
 
-	private AdminMainController getAdmin() {
-		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
-	}
-	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
@@ -74,7 +69,6 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
-		getAdmin().getLogger().domainApplicationUserAddded(user);
 	}
 
 	@Override
@@ -99,13 +93,6 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
-	}
-
-	@Override
-	public void afterBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		ApplicationUser user = (ApplicationUser) event.getController().getTo();		
-		getAdmin().getLogger().domainApplicationUserRemoved(user);
 	}
 
 }

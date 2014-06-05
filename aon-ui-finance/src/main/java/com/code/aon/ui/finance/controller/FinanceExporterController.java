@@ -71,12 +71,18 @@ public class FinanceExporterController extends BasicController implements IFinan
 	
 	private void exportFinance( BasicExporter exporter, Finance finance ) {
 		LogPanelController log = LogPanelController.getInstance();
-		String key = finance.isPayment() ? ICommonMessages.FINANCE_PAYMENT_EXPORT : ICommonMessages.FINANCE_CHARGE_EXPORT;
 		String reference = finance.isEmptyInvoice() ? finance.getDocumentNumber() : finance.getReferenceCode();
-		log.info(AonUtil.getMessage(key, exporter.getType().getName(AonUtil.getCurrentLocale()), reference) );
 		try {
 			exporter.init(finance);
-			exporter.write();
+			if ( exporter.hasAccountData() ) {
+				String key = finance.isPayment() ? ICommonMessages.FINANCE_PAYMENT_EXPORT : ICommonMessages.FINANCE_CHARGE_EXPORT;
+				log.info(AonUtil.getMessage(key, exporter.getType().getName(AonUtil.getCurrentLocale()), reference) );
+				exporter.write();	
+			} else {
+				String errorKey = finance.isPayment() ? ICommonMessages.FINANCE_PAYMENT_NO_DATA : ICommonMessages.FINANCE_CHARGE_NO_DATA;
+				String msg = AonUtil.getMessage(errorKey, reference);
+				log.error(msg);							
+			}
 		} catch ( Throwable e ) {
 			String errorKey = finance.isPayment() ? ICommonMessages.FINANCE_PAYMENT_EXPORT_ERROR : ICommonMessages.FINANCE_CHARGE_EXPORT_ERROR;
 			String msg = AonUtil.getMessage(errorKey, reference, e.getMessage());
@@ -159,7 +165,6 @@ public class FinanceExporterController extends BasicController implements IFinan
 			}		    
 		    log.error(AonUtil.getMessage(ICommonMessages.FINANCE_FINANCES_EXPORT_ERROR, t.getMessage()));
 		} finally {
-			log.finish();
 			HibernateUtil.closeSession(sessionName);
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);

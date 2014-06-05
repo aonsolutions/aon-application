@@ -137,6 +137,7 @@
 						<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 								<ui:param name="controller" value="#{enterpriseRAttach}" />
+								<ui:param name="allowDocumentEdit" value="#{aonRole.documentManager}" />
 							</ui:include>								
 						</aon:panelTab>
 					</c:if>	
@@ -145,6 +146,7 @@
 						<aon:panelTab id="contractClauses" label="#{bundle.payroll_contract_clauses}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 								<ui:param name="controller" value="#{enterpriseClauses}" />
+								<ui:param name="allowDocumentEdit" value="#{aonRole.documentManager}" />
 							</ui:include>
 						</aon:panelTab>
 					</c:if>		

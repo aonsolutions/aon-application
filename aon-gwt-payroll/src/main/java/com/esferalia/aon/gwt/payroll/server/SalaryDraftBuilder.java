@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -78,6 +79,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		salaryDraft.setHasDbSalary(true);
 
 		salaryDraft.setDbIrpfBase(dbSalary.getIrpfBase());
+		salaryDraft.setDbInkindIrpfBase(dbSalary.getInKindIrpfBase());
 		salaryDraft.setDbGgcBase(dbSalary.getCommonBase());
 		salaryDraft.setDbGgpBase(dbSalary.getProfessionalBase());
 		salaryDraft.setDbHExtraBase(dbSalary.getOvertimeBase());
@@ -170,6 +172,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			deduction.setDescription(dbPayment.getDescription());
 			salaryDraft.addDeduction(deduction);
 		}
+
+		// match up draft embargos & db embargos
+		//
+		//List<IDeduction> dbEmbargos;
+		//dbEmbargos = new ArrayList<IDeduction>(dbSalary.getDeductionS()..);
 	}
 
 	@Override
@@ -317,6 +324,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	public void setIrpfBase(Double irpfBase) {
 		salaryDraft.setIrpfBase(irpfBase);
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		salaryDraft.setInkindIrpfBase(inkindIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
@@ -378,11 +390,22 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		salaryDraft.addBonus(myBonus);
 
 	}
-
+	
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
-		// TODO Auto-generated method stub
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction iembargo, Map<String, ITimedVariable<?>> context) {
+		addContext(context);
 
+		IContractEmbargo contractEmbargo = (IContractEmbargo) iembargo;
+
+		Deduction embargo = newDeduction(contractEmbargo);
+		// override by calculated...
+		embargo.setName(iembargo.getName());
+		embargo.setAmount(amount);
+		embargo.setDescription(description);
+		embargo.setType(Deduction.Type.EMBARGO);
+
+		salaryDraft.addEmbargo(embargo);
 	}
 
 	@Override
@@ -462,6 +485,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		addDeduction(0.00, deduction.getDescription(), deduction, context);
 	}
 
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		addEmbargo(id, 0.00, embargo.getDescription(), embargo, context);
+		
+	}
+	
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 		// TODO Auto-generated method stub

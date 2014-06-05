@@ -209,10 +209,9 @@ public class ReservationManager implements IReservationConstants {
 			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
 			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
 			double total = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue());
-			if (CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
+			calculateTaxData = (vatQuota == 0);
+			if (!calculateTaxData && CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
 				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
-			} else {
-				calculateTaxData = (vatQuota == 0);
 			}
 
 			Hotel hotel = getReservationUtils().obtainHotel(hotelCode);
@@ -269,7 +268,7 @@ public class ReservationManager implements IReservationConstants {
 			createReservationService(reservationType, reservation);
 		} catch (Exception ex) {
 			String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
-			if (actionType.equals(ADD_RESERVATION)) {
+			if (actionType.equals(ADD_RESERVATION) && reservation.getId() != null) {
 				try {
 					removeReservationAttach(reservation);
 					removeReservationService(reservation);
@@ -693,11 +692,14 @@ public class ReservationManager implements IReservationConstants {
 		if (tpaExtension != null) {
 			if (attribute == null) {
 				Node tpaValue = tpaExtension.getFirstChild();
-				if (tpaValue.getNodeType() == Node.TEXT_NODE) {
+				if (tpaValue != null && tpaValue.getNodeType() == Node.TEXT_NODE) {
 					return tpaValue.getNodeValue();
 				}
 			} else {
-				return findAttribute(tpaExtension, attribute).getNodeValue();
+				Node tpaValue = findAttribute(tpaExtension, attribute);
+				if (tpaValue != null) {
+					return tpaValue.getNodeValue();
+				}
 			}
 		}
 		return null;

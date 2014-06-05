@@ -21,10 +21,18 @@
 		</aon:selectOneMenu>
 
 		<aon:outputLabel for="salary_sending_method" value="#{bundle.company_enterprise_params_salary_sending_method}" />
-		<aon:selectOneMenu id="salary_sending_method"
-			value="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression}">
-			<f:selectItems value="#{companyCollections.salarySendingMethods}" />
-		</aon:selectOneMenu>
+		<aon:div id="salary_sending_method-div">
+			<aon:selectOneMenu id="salary_sending_method"
+				value="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression}">
+				<f:selectItems value="#{companyCollections.salarySendingMethods}" />
+				<a4j:support event="onchange" reRender="salary_sending_method-div" />
+			</aon:selectOneMenu>
+			<aon:outputText value="A la direccion:" styleClass="aon-margin-left"
+				rendered="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression == 'EMAIL'}" />
+			<aon:inputText id="salarySending_email" size="50"
+				rendered="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression == 'EMAIL'}"
+				value="#{enterpriseParams.parameters['PAY_salarySending_email_PAY'].expression}" />
+		</aon:div>
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{enterpriseParams.agreement}" />

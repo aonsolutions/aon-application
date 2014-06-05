@@ -33,7 +33,6 @@ import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.conf.ParamType;
-import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.AccountEntryDetail;
@@ -62,7 +61,6 @@ import com.esferalia.aon.salary.payment.IPayment;
 
 public class JooqSalaryBuilder implements ISalaryBuilder {
 
-	private static Settings SETTINGS = null;
 	private static List<String> ALREADY_AT_SALARY = null;
 
 	private DSLContext dslContext;
@@ -81,7 +79,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	private Variables variables;
 
 	public JooqSalaryBuilder(Connection connection) {
-		this(DSL.using(connection, getDefaultSettings()));
+		this(DSL.using(connection, JooqCommon.getDefaultSettings()));
 	}
 
 	public JooqSalaryBuilder(DSLContext dslContext) {
@@ -261,6 +259,11 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public void setIrpfBase(Double irpfBase) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase);
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE, inkindIrpfBase);
+	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
@@ -312,7 +315,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 		InsertSetStep<SalaryEmbargoRecord> insertEmbargo = insertMoreEmbargo == null ? dslContext
 				.insertInto(SALARY_EMBARGO) : insertMoreEmbargo.newRecord();
 
@@ -320,9 +324,15 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 				.set(SALARY_BONUS.DOMAIN, this.domainId)
 				.set(SALARY_EMBARGO.SALARY, salaryId)
 				.set(SALARY_EMBARGO.AMOUNT, amount)
-				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, embargo)
+				.set(SALARY_EMBARGO.CONTRACT_EMBARGO, id)
 				.set(SALARY_EMBARGO.DESCRIPTION, description);
 
+	}
+	
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		addEmbargo(id, 0.00, embargo.getDescription(), embargo, context);
 	}
 
 	@Override
@@ -513,14 +523,6 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	}
 
 	// ------------------------------------------------------------------------
-
-	private static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
 
 	private static java.sql.Date toSqlDate(Date date) {
 		return new java.sql.Date(date.getTime());

@@ -76,9 +76,12 @@ public interface ISalaryBuilder {
 
 	public void setIrpfBase(Double irpfBase);
 
+	public void setInkindIrpfBase(Double inkindIrpfBase);
+
 	public void setHExtraBase(Double hExtraBase);
 
 	public void setNonHExtraBase(Double nonHExtraBase);
+	
 
 	// ------------------------------------------------------------------------
 	// Totals
@@ -99,8 +102,6 @@ public interface ISalaryBuilder {
 	// ------------------------------------------------------------------------
 	// Paymnets, deductions, embargos ...
 
-	public void addEmbargo(Integer embargo, Double amount, String description);
-
 	public void addCost(Double amount, String description, IDeduction cost,
 			Map<String, ITimedVariable<?>> context);
 
@@ -118,6 +119,12 @@ public interface ISalaryBuilder {
 			IDeduction deduction, Map<String, ITimedVariable<?>> context);
 
 	public void addZeroDeduction(IDeduction deduction,
+			Map<String, ITimedVariable<?>> context);
+
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context);
+
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
 			Map<String, ITimedVariable<?>> context);
 
 	// ------------------------------------------------------------------------

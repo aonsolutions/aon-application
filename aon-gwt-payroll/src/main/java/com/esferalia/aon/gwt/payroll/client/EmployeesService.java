@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
@@ -28,12 +29,15 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("employees")
-public interface EmployeesService extends RemoteService, StatisticsService  {
+public interface EmployeesService extends RemoteService, StatisticsService, GPSReportsService {
 	Enterprise getEnterprise() throws IllegalArgumentException;
 
 	Enterprise[] getEnterprises() throws IllegalArgumentException;
 
 	List<Payment> getAvailablePayments(int employeeId)
+			throws IllegalArgumentException;
+
+	List<Deduction> getAvailableDeductions(int employeeId)
 			throws IllegalArgumentException;
 
 	List<Cost> getWorkplaceCosts(int workplaceId)

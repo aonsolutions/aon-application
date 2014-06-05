@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.CopyCallback;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.GetCallback;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.SaveCallback;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -112,6 +114,10 @@ public class EventsDraft extends ResizeComposite {
 
 	interface DateRange {
 
+		String getDescription();
+
+		DateField getDateField();
+
 		Date getStart(Date date);
 
 		Date getNext(Date date);
@@ -138,6 +144,16 @@ public class EventsDraft extends ResizeComposite {
 				.getFormat("dd");
 		private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 				.getFormat("dd 'de' MMMM 'de' yyyy");
+
+		@Override
+		public String getDescription() {
+			return "Semana";
+		}
+
+		@Override
+		public DateField getDateField() {
+			return DateField.DAY;
+		}
 
 		@Override
 		public Date getStart(Date date) {
@@ -195,6 +211,16 @@ public class EventsDraft extends ResizeComposite {
 				.getFormat("dd");
 		private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 				.getFormat("dd 'de' MMMM 'de' yyyy");
+
+		@Override
+		public String getDescription() {
+			return "Mes";
+		}
+
+		@Override
+		public DateField getDateField() {
+			return DateField.DAY;
+		}
 
 		@Override
 		public Date getStart(Date date) {
@@ -255,6 +281,16 @@ public class EventsDraft extends ResizeComposite {
 				.getFormat("dd 'de' MMMM");
 		private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 				.getFormat("dd 'de' MMMM 'de' yyyy");
+
+		@Override
+		public String getDescription() {
+			return "A\u00f1o";
+		}
+
+		@Override
+		public DateField getDateField() {
+			return DateField.MONTH;
+		}
 
 		@Override
 		public Date getStart(Date date) {
@@ -480,32 +516,12 @@ public class EventsDraft extends ResizeComposite {
 	// ------------------------------------------
 
 	public void setEventsDraftObject(EventsDraftObject draftObject) {
-
 		this.draftObject = draftObject;
 
-		syncWithDateRange(new EventsDraftObject.Callback() {
+		fillEventList();
+		fillDateRangeList();
 
-			@Override
-			public void onSucces() {
-				fillDateRange();
-				fillEventList();
-
-				initAndfillEventsTable();
-
-				fillCopyDateRange();
-			}
-
-			@Override
-			public void onFailure(Throwable throwable) {
-				fillDateRange();
-				fillEventList();
-
-				initAndfillEventsTable();
-
-				fillCopyDateRange();
-			}
-
-		});
+		syncWithDateRange();
 
 	}
 
@@ -633,29 +649,18 @@ public class EventsDraft extends ResizeComposite {
 	@UiHandler("eventListBox")
 	void onEventListBoxChanged(ChangeEvent event) {
 		updateEventLabel();
+
+		if (fillDateRangeList()) {
+			syncWithDateRange();
+		}
+
 		initAndfillEventsTable();
 		fillCopyDateRange();
 	}
 
 	@UiHandler("dateRangeListBox")
-	void ondateRangeListBoxChanged(ChangeEvent event) {
-		syncWithDateRange(new EventsDraftObject.Callback() {
-
-			@Override
-			public void onSucces() {
-				fillDateRange();
-				initAndfillEventsTable();
-				fillCopyDateRange();
-			}
-
-			@Override
-			public void onFailure(Throwable throwable) {
-				fillDateRange();
-				initAndfillEventsTable();
-				fillCopyDateRange();
-			}
-
-		});
+	void onDateRangeListBoxChanged(ChangeEvent event) {
+		syncWithDateRange();
 	}
 
 	@UiHandler("eventsTableScrollPane")
@@ -669,7 +674,7 @@ public class EventsDraft extends ResizeComposite {
 
 	private void reload() {
 		clearEventsTable();
-		fillDateRange();
+		fillDateRangeLabel();
 		initAndfillEventsTable();
 		fillCopyDateRange();
 	}
@@ -762,12 +767,13 @@ public class EventsDraft extends ResizeComposite {
 				draftObject.getEndDate());
 
 		for (Employee employee : employees) {
-
+			
 			eventsTable.setText(row, 0, employee.getDocument());
 			cellFormatter.addStyleName(row, 0, AON.AON_NOWRAP);
 			cellFormatter.addStyleName(row, 0, AON.AON_TEXT_CENTER);
+			String fullName = employee.getFullname();
 			eventsTable
-					.setHTML(row, 1, "&nbsp;&nbsp;" + employee.getFullname());
+					.setHTML(row, 1, "&nbsp;&nbsp;" + (StringUtils.isBlank(fullName) ?  "&nbsp;" : fullName ) );
 			cellFormatter.addStyleName(row, 1, AON.AON_NOWRAP);
 
 			int col = 2;
@@ -909,14 +915,61 @@ public class EventsDraft extends ResizeComposite {
 
 	}
 
-	private void fillDateRange() {
+	private void fillDateRangeLabel() {
 		dateRangeLabel.setText(getDateRange().format(
 				draftObject.getStartDate(), draftObject.getEndDate()));
 
 	}
 
+	private boolean fillDateRangeList() {
+
+		int previous = dateRangeListBox.getItemCount() > 0 ? Integer.valueOf(dateRangeListBox
+				.getValue(dateRangeListBox.getSelectedIndex())) : -1 ;
+
+		dateRangeListBox.clear();
+
+		String event = getSelectedEvent();
+		for (int i = 0; i < DATE_RANGES.length; i++) {
+			DateRange dateRange = DATE_RANGES[i];
+			if (draftObject.eventAccept(event, dateRange.getDateField())) {
+				dateRangeListBox.addItem(dateRange.getDescription(),
+						String.valueOf(i));
+				if ( previous == i ) {
+					dateRangeListBox.setSelectedIndex(dateRangeListBox.getItemCount()-1);
+				}
+			}
+		}
+		
+		int current = dateRangeListBox.getItemCount() > 0 ? Integer.valueOf(dateRangeListBox
+				.getValue(dateRangeListBox.getSelectedIndex())) : -1 ;
+
+		return ( previous != current ) ;
+	}
+
+	private void syncWithDateRange() {
+		syncWithDateRange(new EventsDraftObject.Callback() {
+
+			@Override
+			public void onSucces() {
+				fillDateRangeLabel();
+				initAndfillEventsTable();
+				fillCopyDateRange();
+			}
+
+			@Override
+			public void onFailure(Throwable throwable) {
+				fillDateRangeLabel();
+				initAndfillEventsTable();
+				fillCopyDateRange();
+			}
+
+		});
+	}
+
 	private void syncWithDateRange(EventsDraftObject.Callback cb) {
+
 		DateRange dateRange = getDateRange();
+
 		Date startDate = dateRange.getStart(draftObject.getStartDate());
 		Date endDate = dateRange.getNext(startDate);
 		CalendarUtil.addDaysToDate(endDate, -1);
@@ -929,7 +982,7 @@ public class EventsDraft extends ResizeComposite {
 	}
 
 	private void fillCopyDateRange() {
-		
+
 		copyDateRangeListBox.clear();
 
 		String name = getSelectedEvent();
@@ -954,8 +1007,7 @@ public class EventsDraft extends ResizeComposite {
 					copyDateRangeListBox.addItem("-", "");
 					copyDateRangeListBox.setSelectedIndex(0);
 				}
-				
-				
+
 				while (date.before(current)) {
 
 					// Compare with actual day ( keep out time ).
@@ -985,7 +1037,7 @@ public class EventsDraft extends ResizeComposite {
 					copyDateRangeListBox.setSelectedIndex(copyDateRangeListBox
 							.getItemCount() - 1);
 				}
-				
+
 			}
 
 			@Override

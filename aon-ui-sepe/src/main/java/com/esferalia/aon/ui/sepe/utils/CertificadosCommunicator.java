@@ -331,8 +331,13 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
-			user = appParams.getCertifica2User();
-			passwd = appParams.getCertifica2Password();
+			if(appParams.isCertifica2LoginDefined()){
+				user = appParams.getCertifica2User();
+				passwd = appParams.getCertifica2Password();
+			} else if(appParams.isParentCertifica2LoginDefined()){
+				user = appParams.getParentCertifica2User();
+				passwd = appParams.getParentCertifica2Password();
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido obtener los datos identificativos.";
 			LOGGER.error(msg, e);
@@ -345,8 +350,13 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
-			testEnv = appParams.getCertifica2TestEnviroment();
-			sslEnv = appParams.getCertifica2SSLEnviroment();
+			if(appParams.isCertifica2LoginDefined()){
+				testEnv = appParams.getCertifica2TestEnviroment();
+				sslEnv = appParams.getCertifica2SSLEnviroment();
+			} else if(appParams.isParentCertifica2LoginDefined()){
+				testEnv = appParams.isParentCertifica2TestEnviroment();
+				sslEnv = appParams.isParentCertifica2SSLEnviroment();
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST) sin seguridad (no SSL).";
 			LOGGER.error(msg, e);

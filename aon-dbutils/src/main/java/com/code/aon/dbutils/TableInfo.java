@@ -37,6 +37,11 @@ public class TableInfo implements Constants {
 	private boolean withBlobs;
 	private boolean actionReference;
 	
+	public TableInfo(String name) {
+		this.name = name;
+		this.columns = new ColumnInfo[0];
+	}
+	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
 		this.keys = new HashMap<Integer, Integer>();
@@ -298,7 +303,7 @@ public class TableInfo implements Constants {
 	public boolean isDomainTable() {
 		return StringUtils.equals(getName(), DOMAIN_TABLE_NAME);
 	}
-
+	
 	public String getSetVariableStatementWithSelectMax() {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SET ").append( getVariableId() ).append(" = ");
@@ -311,7 +316,7 @@ public class TableInfo implements Constants {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SET ").append( getVariableId() ).append(" = (SELECT ");
 		if ( getPkColumn().isFkColummn() ) {
-			TableInfo fkTableInfo = getPkColumn().getFtTable();
+			TableInfo fkTableInfo = getPkColumn().getFkTable();
 			sb.append(fkTableInfo.getRelativeId(getBaseId()));
 		} else {
 			sb.append("LAST_INSERT_ID()");	

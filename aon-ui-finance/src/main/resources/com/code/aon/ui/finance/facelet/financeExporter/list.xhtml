@@ -84,7 +84,7 @@
 			<ui:param name="logPanelTitle" value="#{bundle.finance_account_export_module}" />			
 			<ui:param name="pollInterval" value="5000" /> 
 			<ui:define name="additionalLogPanelContent">
-				<c:if test="#{exporter.finished}">
+				<c:if test="#{exporter.finished and (!exporter.dataEmpty)}">
 					<aon:div styleClass="aon-margin-bottom">
 						<aon:htmlCommandLink id="downloadExport"
 							value="#{bundle.aon_fileupload_download}" target="_blank"

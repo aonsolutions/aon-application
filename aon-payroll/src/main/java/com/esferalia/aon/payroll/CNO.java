@@ -8,14 +8,14 @@ import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.CNODB;
 
 @Entity
-@Table(name="cno")
+@Table(name = "cno")
 public class CNO extends CNODB {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+
 	@Transient
-	public String getFullDescription(){
-		return getId()!=null?("("+getCode()+") " + getTitle()):"";
+	public String getFullDescription() {
+		return getId() != null ? ("(" + getCode() + ") " + getTitle()) : "";
 	}
 
 }

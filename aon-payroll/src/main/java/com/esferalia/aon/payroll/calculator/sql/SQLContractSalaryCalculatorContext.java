@@ -646,7 +646,7 @@ public class SQLContractSalaryCalculatorContext implements
 		initPaymentStmt();
 		initDeductionStmt();
 		initBonusStmt();
-		// initEmbargoStmt();
+		initEmbargoStmt();
 		initCeventStmt();
 		initLeaveStmt();
 		initSystemCosts();

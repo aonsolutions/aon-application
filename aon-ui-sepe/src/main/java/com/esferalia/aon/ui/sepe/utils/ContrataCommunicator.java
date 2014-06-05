@@ -484,8 +484,13 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
-			user = appParams.getContrataUser();
-			passwd = appParams.getContrataPassword();
+			if(appParams.isContrataLoginDefined()){
+				user = appParams.getContrataUser();
+				passwd = appParams.getContrataPassword();
+			} else if(appParams.isParentContrataLoginDefined()){
+				user = appParams.getParentContrataUser();
+				passwd = appParams.getParentContrataPassword();
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido obtener los datos identificativos.";
 			LOGGER.error(msg, e);
@@ -498,8 +503,13 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
-			testEnv = appParams.getContrataTestEnviroment();
-			sslEnv = appParams.getContrataSSLEnviroment();
+			if(appParams.isContrataLoginDefined()){
+				testEnv = appParams.getContrataTestEnviroment();
+				sslEnv = appParams.getContrataSSLEnviroment();
+			} else if(appParams.isParentContrataLoginDefined()){
+				testEnv = appParams.isParentContrataTestEnviroment();
+				sslEnv = appParams.isParentContrataSSLEnviroment();
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST) sin seguridad (no SSL).";
 			LOGGER.error(msg, e);

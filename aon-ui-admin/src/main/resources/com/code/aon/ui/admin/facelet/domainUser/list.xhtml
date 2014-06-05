@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
 
 	<ui:define name="configContent">
@@ -69,6 +70,12 @@
 					<ui:define name="additionalDataTableContent" >
 						<aon:div styleClass="aon-margin-top" >
 							<aon:outputText value="#{controller.detailMessage}" />
+							<aon:div styleClass="aon-margin-left" layout="inline"
+								rendered="#{adminDomain.to.maxDefinedUsers &gt; domainUser.numberOfActiveUsers}">
+								<aon:outputText value="&#160;" styleClass="aon-icon-exception"
+									style="padding-left:12px" />
+								<rich:toolTip value="#{bundle.admin_domain_user_warning}" />
+							</aon:div>
 						</aon:div>
 					</ui:define>			
 				</ui:decorate>

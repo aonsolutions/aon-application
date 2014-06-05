@@ -46,6 +46,8 @@ public enum AppParam {
 	
 	ACC_SALARY_CHARGED_RET_ACC,
 	
+	AGREEMENT,
+	
 	AON_CUSTOMIZE_FONT_COLOR,
 	
 	AON_CUSTOMIZE_HERITABLE_ID,
@@ -135,6 +137,44 @@ public enum AppParam {
 	WEBINFO_PUBLISH_URL,
 	
 	WEBINFO_TEMPLATE_NAME,
+	
+	PAY_available_contract_codes_PAY,
+
+	PAY_afi_test_env_PAY,
+	
+	PAY_certifica2_passwd_PAY,
+	
+	PAY_certifica2_ssl_env_PAY,
+	
+	PAY_certifica2_test_env_PAY,
+	
+	PAY_certifica2_user_PAY,
+	
+	PAY_contrata_passwd_PAY,
+	
+	PAY_contrata_ssl_env_active_PAY,
+	
+	PAY_contrata_test_env_active_PAY,
+	
+	PAY_contrata_user_PAY,
+	
+	PAY_default_contractCode_PAY,
+	
+	PAY_default_trainingCenter_PAY,
+	
+	PAY_dev_mode_PAY,
+	
+	PAY_fan_test_env_PAY,
+	
+	PAY_REPORT_additional_salary_PAY,
+	
+	PAY_REPORT_salary_PAY,
+	
+	PAY_REPORT_salaryDraft_PAY,
+	
+	PAY_ss_mutual_PAY,
+	
+	PAY_ss_payment_bankAccount_PAY,
 	
 	POS_INVOICE_PRINT_OUTPUT,
 	

@@ -64,34 +64,78 @@
 			background-color: professionalBackground;
 		}
 
+		@sprite .fxButton {
+			gwt-image: 'fx';
+			background-position: left center;
+		}
+
+		@sprite .redoButton {
+			gwt-image: 'redo';
+			background-position: left center;
+		}
+
+		@sprite .undoButton {
+			gwt-image: 'undo';
+			background-position: left center;
+		}
+
 	</ui:style>
 	
+	<ui:image field='fx' src='fx.png' />
+	<ui:image field='aet' src='aet.png' />
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
 
-			<g:FlowPanel>			    
-
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
+			<g:FlowPanel>	
+			    
+			    <g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
 								<g:Label styleName="aon-outputText" ui:field="titleLabel">Partes I.T.</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:ListBox ui:field='dateListBox' styleName='' />																
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">								
+								<g:ListBox ui:field='dateListBox' styleName='' />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border" >FILTRAR : </g:InlineLabel>
-							    <g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText"  />													
+							    <g:SuggestBox ui:field='nameEmployee' styleName="aon-inputText" width="300px"  />													
 							</g:HTMLPanel>
-						</g:HorizontalPanel>						
-						
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:FlowPanel>		    
+								
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText">Edici&oacute;n</g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText"></g:Label>
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">								
+								<g:Button ui:field="undoButton"
+									styleName='aon-finding-toolbar-item {style.undoButton}' enabled="false" />
+								<g:Button ui:field='redoButton'
+									styleName="aon-finding-toolbar-item {style.redoButton}" enabled="false" />
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='saveButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 									enabled="false" />

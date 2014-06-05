@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -11,8 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
@@ -48,6 +52,8 @@ import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class BasicExporter implements Serializable {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicExporter.class);
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -590,10 +596,26 @@ public abstract class BasicExporter implements Serializable {
 			write(accountEntry);
 		}			
 	}
+
+	public boolean hasAccountData() {
+		return ! accountEntries.isEmpty();
+	}
+		
+	protected void addData( Map<String, File> map, String prefix, String suffix, byte[] data) {
+		if (! ArrayUtils.isEmpty(data) ) {
+			try {
+				File file = File.createTempFile(prefix, suffix);
+				FileUtils.writeByteArrayToFile(file, data);
+				map.put(prefix+suffix, file);			
+			} catch ( IOException e ) {
+				LOGGER.error(e.getMessage(), e);
+			}			
+		}
+	}
 	
 	public abstract void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException;
 	
-	public abstract Map<String,byte[]> getDataMap();
+	public abstract Map<String,File> getDataMap();
 	
 	public abstract InvoiceExportType getType();
 	

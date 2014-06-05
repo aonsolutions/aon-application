@@ -28,10 +28,6 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserControllerListener.class);
-
-	private AdminMainController getAdmin() {
-		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
-	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
@@ -68,7 +64,6 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
-		getAdmin().getLogger().domainUserAddded(user);
 		update(duc);
 	}
 	
@@ -84,14 +79,6 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}	
 	}	
-	
-	@Override
-	public void afterBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainUserController duc = (DomainUserController) event.getController();
-		User user = duc.getDomainUser();
-		getAdmin().getLogger().domainUserdRemoved(user);
-	}
 	
 	private void update( DomainUserController duc ) throws ControllerListenerException {
 		User user = duc.getDomainUser();

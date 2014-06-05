@@ -165,6 +165,11 @@ public class SalaryBuilder implements ISalaryBuilder {
 		this.salary.setIrpfBase(irpfBase);
 
 	}
+	
+	@Override
+	public void setInkindIrpfBase(Double inkindIrpfBase) {
+		this.salary.setInkindIrpfBase(inkindIrpfBase);
+	}
 
 	@Override
 	public void setNonHExtraBase(Double overtimeBase) {
@@ -175,7 +180,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 	public void setItBase(Double itBase) {
 		this.salary.setIrpfBase(itBase);
 	}
-
+	
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
 		this.salary.setRawCommonBase(rawCgcBase);
@@ -246,7 +251,8 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
+	public void addEmbargo(Integer id, Double amount, String description,
+			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 
 		SalaryEmbargo salaryEmbargo = new SalaryEmbargo();
 
@@ -255,11 +261,17 @@ public class SalaryBuilder implements ISalaryBuilder {
 		salaryEmbargo.setAmount(amount);
 		salaryEmbargo.setDescription(description);
 
-		ContractEmbargo contractEmbargo = getContractEmbargo(embargo);
+		ContractEmbargo contractEmbargo = getContractEmbargo(id);
 		salaryEmbargo.setContractEmbargo(contractEmbargo);
 
 		this.salary.getSalaryEmbargos().add(salaryEmbargo);
 
+	}
+	
+	@Override
+	public void addZeroEmbargo(Integer id, IDeduction embargo,
+			Map<String, ITimedVariable<?>> context) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override

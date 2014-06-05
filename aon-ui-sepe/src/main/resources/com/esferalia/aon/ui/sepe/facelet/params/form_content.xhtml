@@ -19,141 +19,171 @@
 		</aon:panel>
 	</c:if>
 	
-	<aon:div styleClass="aon-group" style="width: 700px;">
+	<aon:div id="Contrata-login-data" 
+		styleClass="aon-group" style="width: 700px;">
 		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{bundle.sepe_contrata} - #{bundle.sepe_loginData}"/>
+			<aon:panelGroup>
+				<aon:outputText value="&#160;" styleClass="aon-icon2 aon-icon-sepe"/>
+				<aon:outputText value="#{bundle.sepe_contrata} - #{bundle.sepe_loginData}"/>
+			</aon:panelGroup>
 		</aon:div>
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
-			
-				<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
-					<aon:selectBooleanCheckbox id="ssl_enviroment"
-						styleClass="aon-margin-left"
-						disabled="#{!aonRole.sysAdmin}"
-						value="#{sepeAppParams.contrataSSLEnviroment}" />
-					<aon:outputLabel for="ssl_enviroment"
-						value="#{bundle.sepe_ssl_environment_active}" />
-				</aon:div>
 				
-				<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-
-					<aon:panelGrid columns="2" style="width: 300px;">
-						<aon:outputLabel for="contrata_user" 
-							value="#{bundle.aon_login_user}" />
-						<aon:inputText id="contrata_user" style="width: 100%;"
-							value="#{sepeAppParams.contrataUser}" />
-
-						<aon:outputLabel for="contrata_passwd"  
-							value="#{bundle.aon_login_passwd}" />
-						<aon:inputSecret id="contrata_passwd" redisplay="#{true}" style="width: 100%;"
-							value="#{sepeAppParams.contrataPassword}" />
-							
-						<aon:outputLabel for="contrata-test-environment"
-							value="#{bundle.marketing_communications}" />
-						<aon:selectOneMenu id="contrata-test-environment"
-							value="#{sepeAppParams.contrataTestEnviroment}">
-							<f:selectItem itemLabel="Estado de pruebas" itemValue="#{true}" />
-							<f:selectItem itemLabel="Entorno de producción REAL" itemValue="#{false}" />
-						</aon:selectOneMenu>
-					</aon:panelGrid>
-			
-					<aon:div id="contrata-login-confirm-result" style="margin-left:1em; text-align: center;">
-						<aon:commandButton value="#{bundle.sepe_validateLogin}"
-							disabled="#{empty sepeAppParams.contrataUser or empty sepeAppParams.contrataPassword}"
-							reRender="contrata-login-confirm-result"
-							actionListener="#{sepeAppParams.validateContrataLogin}"
-							styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
-						<aon:div styleClass="aon-margin-top"
-							rendered="#{sepeAppParams.contrataLoginChecked}">
-							<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
-								rendered="#{sepeAppParams.validContrataLogin}"
-								styleClass="aon-icon-predetermine" />
-							<aon:outputText value="#{bundle.sepe_login_ok}"
-								rendered="#{sepeAppParams.validContrataLogin}"
-								style="color:blue;"
-								styleClass="aon-bold" />
-							
-							<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
-								rendered="#{!sepeAppParams.validContrataLogin}"
-								styleClass="aon-icon-wrong " />
-							<aon:outputText value="#{bundle.sepe_login_ko}"
-								rendered="#{!sepeAppParams.validContrataLogin}"
-								style="color:red;"
-								styleClass="aon-bold" />
-						</aon:div>
-					</aon:div>
-						
-				</aon:panelGrid>	
-			</aon:div>
-		</aon:div>
-	</aon:div>
-	
-	<c:if test="#{actionDenied.moduleEnabled['payroll']}">
-		<aon:div styleClass="aon-group" style="width: 700px;">
-			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{bundle.sepe_certificados} - #{bundle.sepe_loginData}"/>
-			</aon:div>
-			<aon:div styleClass="aon-group-body"> 
-				<aon:div styleClass="aon-group-body-internal">
+				<c:if test="#{!sepeAppParams.contrataLoginDefined and sepeAppParams.parentContrataLoginDefined}">
+					<aon:outputText value="DATOS IDENTIFICATIVOS DEFINIDOS EN EL ENTORNO" styleClass="aon-bold" />
+					<aon:commandButton ajaxSingle="#{true}"
+						value="&#160;&#160;&#160;"
+						title="#{bundle.admin_overload}"
+						styleClass="aon-icon-commandButton aon-icon-edit aon-margin-left"
+						actionListener="#{sepeAppParams.onRedefineContrataLogin}" 
+						reRender="Contrata-login-data" />
+				</c:if>
 				
+				<c:if test="#{sepeAppParams.contrataLoginDefined or (!sepeAppParams.contrataLoginDefined and !sepeAppParams.parentContrataLoginDefined)}">
 					<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
-						<aon:selectBooleanCheckbox id="ssl_enviroment-certifica2"
+						<aon:selectBooleanCheckbox id="ssl_enviroment"
 							styleClass="aon-margin-left"
 							disabled="#{!aonRole.sysAdmin}"
-							value="#{sepeAppParams.certifica2SSLEnviroment}" />
-						<aon:outputLabel for="ssl_enviroment-certifica2"
+							value="#{sepeAppParams.contrataSSLEnviroment}" />
+						<aon:outputLabel for="ssl_enviroment"
 							value="#{bundle.sepe_ssl_environment_active}" />
 					</aon:div>
-					
 					<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
 	
 						<aon:panelGrid columns="2" style="width: 300px;">
-							<aon:outputLabel for="certifica2_user" 
+							<aon:outputLabel for="contrata_user" 
 								value="#{bundle.aon_login_user}" />
-							<aon:inputText id="certifica2_user" style="width: 100%;"
-								value="#{sepeAppParams.certifica2User}" />
+							<aon:inputText id="contrata_user" style="width: 100%;"
+								value="#{sepeAppParams.contrataUser}" />
 	
-							<aon:outputLabel for="certifica2_passwd"  
+							<aon:outputLabel for="contrata_passwd"  
 								value="#{bundle.aon_login_passwd}" />
-							<aon:inputSecret id="certifica2_passwd" redisplay="#{true}" style="width: 100%;"
-								value="#{sepeAppParams.certifica2Password}" />
-							
-							<aon:outputLabel for="certifica2-test-environment"
+							<aon:inputSecret id="contrata_passwd" redisplay="#{true}" style="width: 100%;"
+								value="#{sepeAppParams.contrataPassword}" />
+								
+							<aon:outputLabel for="contrata-test-environment"
 								value="#{bundle.marketing_communications}" />
-							<aon:selectOneMenu id="certifica2-test-environment"
-								value="#{sepeAppParams.certifica2TestEnviroment}">
+							<aon:selectOneMenu id="contrata-test-environment"
+								value="#{sepeAppParams.contrataTestEnviroment}">
 								<f:selectItem itemLabel="Estado de pruebas" itemValue="#{true}" />
 								<f:selectItem itemLabel="Entorno de producción REAL" itemValue="#{false}" />
 							</aon:selectOneMenu>
 						</aon:panelGrid>
 				
-						<aon:div id="certificados-login-confirm-result" style="margin-left:1em; text-align: center;">
+						<aon:div id="contrata-login-confirm-result" style="margin-left:1em; text-align: center;">
 							<aon:commandButton value="#{bundle.sepe_validateLogin}"
-								disabled="#{empty sepeAppParams.certifica2User or empty sepeAppParams.certifica2Password}" 
-								reRender="certificados-login-confirm-result"
-								actionListener="#{sepeAppParams.validateCertifica2Login}"
+								disabled="#{empty sepeAppParams.contrataUser or empty sepeAppParams.contrataPassword}"
+								reRender="contrata-login-confirm-result"
+								actionListener="#{sepeAppParams.validateContrataLogin}"
 								styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
 							<aon:div styleClass="aon-margin-top"
-								rendered="#{sepeAppParams.certifica2LoginChecked}">
+								rendered="#{sepeAppParams.contrataLoginChecked}">
 								<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
-									rendered="#{sepeAppParams.validCertifica2Login}"
+									rendered="#{sepeAppParams.validContrataLogin}"
 									styleClass="aon-icon-predetermine" />
 								<aon:outputText value="#{bundle.sepe_login_ok}"
-									rendered="#{sepeAppParams.validCertifica2Login}"
+									rendered="#{sepeAppParams.validContrataLogin}"
 									style="color:blue;"
 									styleClass="aon-bold" />
 								
 								<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
-									rendered="#{!sepeAppParams.validCertifica2Login}"
+									rendered="#{!sepeAppParams.validContrataLogin}"
 									styleClass="aon-icon-wrong " />
 								<aon:outputText value="#{bundle.sepe_login_ko}"
-									rendered="#{!sepeAppParams.validCertifica2Login}"
+									rendered="#{!sepeAppParams.validContrataLogin}"
 									style="color:red;"
 									styleClass="aon-bold" />
 							</aon:div>
 						</aon:div>
 							
 					</aon:panelGrid>	
+				</c:if>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	
+	<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+		<aon:div id="Certificados-login-data" 
+			styleClass="aon-group" style="width: 700px;">
+			<aon:div styleClass="aon-group-title">
+				<aon:panelGroup>
+					<aon:outputText value="&#160;" styleClass="aon-icon2 aon-icon-sepe"/>
+					<aon:outputText value="#{bundle.sepe_certificados} - #{bundle.sepe_loginData}"/>
+				</aon:panelGroup>
+			</aon:div>
+			<aon:div styleClass="aon-group-body"> 
+				<aon:div styleClass="aon-group-body-internal">
+					
+					<c:if test="#{!sepeAppParams.certifica2LoginDefined and sepeAppParams.parentCertifica2LoginDefined}">
+						<aon:outputText value="DATOS IDENTIFICATIVOS DEFINIDOS EN EL ENTORNO" styleClass="aon-bold" />
+						<aon:commandButton ajaxSingle="#{true}"
+							value="&#160;&#160;&#160;"
+							title="#{bundle.admin_overload}"
+							styleClass="aon-icon-commandButton aon-icon-edit aon-margin-left"
+							actionListener="#{sepeAppParams.onRedefineCertificadosLogin}" 
+							reRender="Certificados-login-data" />
+					</c:if>
+					
+					<c:if test="#{sepeAppParams.certifica2LoginDefined or (!sepeAppParams.certifica2LoginDefined and !sepeAppParams.parentCertifica2LoginDefined)}">
+						<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
+							<aon:selectBooleanCheckbox id="ssl_enviroment-certifica2"
+								styleClass="aon-margin-left"
+								disabled="#{!aonRole.sysAdmin}"
+								value="#{sepeAppParams.certifica2SSLEnviroment}" />
+							<aon:outputLabel for="ssl_enviroment-certifica2"
+								value="#{bundle.sepe_ssl_environment_active}" />
+						</aon:div>
+						<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
+		
+							<aon:panelGrid columns="2" style="width: 300px;">
+								<aon:outputLabel for="certifica2_user" 
+									value="#{bundle.aon_login_user}" />
+								<aon:inputText id="certifica2_user" style="width: 100%;"
+									value="#{sepeAppParams.certifica2User}" />
+		
+								<aon:outputLabel for="certifica2_passwd"  
+									value="#{bundle.aon_login_passwd}" />
+								<aon:inputSecret id="certifica2_passwd" redisplay="#{true}" style="width: 100%;"
+									value="#{sepeAppParams.certifica2Password}" />
+								
+								<aon:outputLabel for="certifica2-test-environment"
+									value="#{bundle.marketing_communications}" />
+								<aon:selectOneMenu id="certifica2-test-environment"
+									value="#{sepeAppParams.certifica2TestEnviroment}">
+									<f:selectItem itemLabel="Estado de pruebas" itemValue="#{true}" />
+									<f:selectItem itemLabel="Entorno de producción REAL" itemValue="#{false}" />
+								</aon:selectOneMenu>
+							</aon:panelGrid>
+					
+							<aon:div id="certificados-login-confirm-result" style="margin-left:1em; text-align: center;">
+								<aon:commandButton value="#{bundle.sepe_validateLogin}"
+									disabled="#{empty sepeAppParams.certifica2User or empty sepeAppParams.certifica2Password}" 
+									reRender="certificados-login-confirm-result"
+									actionListener="#{sepeAppParams.validateCertifica2Login}"
+									styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
+								<aon:div styleClass="aon-margin-top"
+									rendered="#{sepeAppParams.certifica2LoginChecked}">
+									<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+										rendered="#{sepeAppParams.validCertifica2Login}"
+										styleClass="aon-icon-predetermine" />
+									<aon:outputText value="#{bundle.sepe_login_ok}"
+										rendered="#{sepeAppParams.validCertifica2Login}"
+										style="color:blue;"
+										styleClass="aon-bold" />
+									
+									<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+										rendered="#{!sepeAppParams.validCertifica2Login}"
+										styleClass="aon-icon-wrong " />
+									<aon:outputText value="#{bundle.sepe_login_ko}"
+										rendered="#{!sepeAppParams.validCertifica2Login}"
+										style="color:red;"
+										styleClass="aon-bold" />
+								</aon:div>
+							</aon:div>
+								
+						</aon:panelGrid>	
+					</c:if>
 				</aon:div>
 			</aon:div>
 		</aon:div>

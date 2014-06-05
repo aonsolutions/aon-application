@@ -21,6 +21,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -48,7 +49,6 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T21;
 import com.esferalia.aon.payroll.enumeration.ss.T7;
-import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class AFIWriter implements Serializable {
@@ -342,7 +342,7 @@ public class AFIWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT value FROM app_param";
 			select += " WHERE domain = " + DomainManager.getCurrentDomain();
-			select += " AND name = '" + PayrollAppParamsController.AFI_TEST_ENVIRONMENT_ACTIVE + "';";
+			select += " AND name = '" + AppParam.PAY_afi_test_env_PAY.getValue() + "';";
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();

@@ -110,6 +110,14 @@ import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.DATOSGENERALESPRORROGATYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGAS;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGATIPOTYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION109TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION139TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION189TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION209TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION239TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION289TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION309TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION389TYPE;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
@@ -179,7 +187,7 @@ public class ContrataReader {
 			} else if( isTransformacionFile ) {
 				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
+//				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
 				ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
@@ -220,7 +228,7 @@ public class ContrataReader {
 				String line = reader.readLine();
 				line = reader.readLine();
 				String contratoFile = "<CONTRATOS>";
-				String transformacionFile = "<TRANSFORMACION>";
+				String transformacionFile = "<TRANSFORMACIONES>";
 				String prorrogaFile = "<PRORROGAS>";
 				if(line.equals(contratoFile)){
 					isContratoFile = true;
@@ -926,234 +934,235 @@ public class ContrataReader {
 	 */
 	public void completeTransformacionesParams(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws JAXBException, IOException {
 		
-//		if (transformacionType instanceof TRANSFORMACION109TYPE) {
-//			readTransformacion109((TRANSFORMACION109TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
-//			readTransformacion139((TRANSFORMACION139TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
-//			readTransformacion189((TRANSFORMACION189TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
-//			readTransformacion209((TRANSFORMACION209TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
-//			readTransformacion239((TRANSFORMACION239TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
-//			readTransformacion289((TRANSFORMACION289TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
-//			readTransformacion309((TRANSFORMACION309TYPE)transformacionType);
-////	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
-////		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
-////			readTransformacion339((TRANSFORMACION339TYPE)transformacionType);
-//		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
-//			readTransformacion389((TRANSFORMACION389TYPE)transformacionType);
-//		}
+		if (transformacionType instanceof TRANSFORMACION109TYPE) {
+			readTransformacion109((TRANSFORMACION109TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION139TYPE) {
+			readTransformacion139((TRANSFORMACION139TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION189TYPE) {
+			readTransformacion189((TRANSFORMACION189TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION209TYPE) {
+			readTransformacion209((TRANSFORMACION209TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION239TYPE) {
+			readTransformacion239((TRANSFORMACION239TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION289TYPE) {
+			readTransformacion289((TRANSFORMACION289TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION309TYPE) {
+			readTransformacion309((TRANSFORMACION309TYPE)transformacionType, params);
+//	TODO: nueva clave de contrato - Boletin Noticias RED 2012/05
+//		} else if (transformacionType instanceof TRANSFORMACION339TYPE) {
+//			readTransformacion339((TRANSFORMACION339TYPE)transformacionType, params);
+		} else if (transformacionType instanceof TRANSFORMACION389TYPE) {
+			readTransformacion389((TRANSFORMACION389TYPE)transformacionType, params);
+		}
 		
 		
 	}
 	
-//	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion139(TRANSFORMACION139TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion189(TRANSFORMACION189TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//    	completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion209(TRANSFORMACION209TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion239(TRANSFORMACION239TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion289(TRANSFORMACION289TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion309(TRANSFORMACION309TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	private void readTransformacion389(TRANSFORMACION389TYPE transformacionType){
-//		completeDatosEmpresa(transformacionType.getDATOSEMPRESA());
-//		completeDatosContrato(transformacionType.getDATOSCONTRATO());
-//		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION());
-//		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL());
-//		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO());
-//		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION());
-//		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO());
-//		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA());
-//		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA());
-//	}
-//	
-//	
-//	private void completeDatosUsoLibreEmpresa(
-//			com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSUSOLIBREEMPRESATYPE datosusolibreempresa) {
-//		if(datosusolibreempresa != null){
-//			params.setUsoLibreEmpresa(datosusolibreempresa.getUSOLIBREEMPRESA());
-//		}
-//	}
-//
-//	private void completeDatosComunicaCopiaBasica(
-//			com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSCOMUNICACOPIABASICATYPE datoscomunicacopiabasica) {
-//		if(datoscomunicacopiabasica != null){
-//			// TODO
-//			datoscomunicacopiabasica.getDOMICCENTROTRABAJO();
-//			params.setTextoCopiaBasica(datoscomunicacopiabasica.getTEXTOCOPIABASICA());
-//			params.setTipoFirmaCopiaBasica(TERFIRCB.getEnumByValue(datoscomunicacopiabasica.getTIPOFIRMA()));
-//		}
-//	}
-//
-//	private void completeDatosAnexoContratoRelevo(
-//			com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSANEXOCONTRATORELEVOTYPE datosanexocontratorelevo) {
-//		if(datosanexocontratorelevo != null){
-//			params.setReliefData(true);
-//			Person person = new Person();
-//			person.setName(datosanexocontratorelevo.getNOMBREAPELLIDOS().getNOMBRE());
-//			person.setFirstSurname(datosanexocontratorelevo.getNOMBREAPELLIDOS().getPRIMERAPELLIDO());
-//			person.setSecondSurname(datosanexocontratorelevo.getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO());
-//			params.setReliefPerson(person);
-//		}
-//	}
-//
-//	private void completeDatosAdicionalesTransformacion(
-//			DATOSADICIONALESTRANSFORMACIONTYPE datosadicionalestransformacion) {
-//		// TODO 
-//		datosadicionalestransformacion.getCODIGOCOLECTIVOREDUCCION();
-//		if(datosadicionalestransformacion.getINDDISCAPACIDAD()!=null){
-//			params.setIndDiscapacidad(TEJINDIS.getEnumByValue(datosadicionalestransformacion.getINDDISCAPACIDAD()));
+	private void readTransformacion109(TRANSFORMACION109TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion139(TRANSFORMACION139TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion189(TRANSFORMACION189TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+    	completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion209(TRANSFORMACION209TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion239(TRANSFORMACION239TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion289(TRANSFORMACION289TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion309(TRANSFORMACION309TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosBonificacion(transformacionType.getDATOSBONIFICACION(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	private void readTransformacion389(TRANSFORMACION389TYPE transformacionType, ContrataTransformacionesParams params){
+		completeDatosEmpresa(transformacionType.getDATOSEMPRESA(), params);
+		completeDatosContrato(transformacionType.getDATOSCONTRATO(), params);
+		completeDatosGeneralesTransformacion(transformacionType.getDATOSGENERALESTRANSFORMACION(), params);
+		completeDatosContratoTiempoParcial(transformacionType.getDATOSCONTRATOTIEMPOPARCIAL(), params);
+		completeDatosMedidasFomento(transformacionType.getDATOSMEDIDASFOMENTO(), params);
+		completeDatosAdicionalesTransformacion(transformacionType.getDATOSADICIONALESTRANSFORMACION(), params);
+		completeDatosAnexoContratoRelevo(transformacionType.getDATOSANEXOCONTRATORELEVO(), params);
+		completeDatosComunicaCopiaBasica(transformacionType.getDATOSCOMUNICACOPIABASICA(), params);
+		completeDatosUsoLibreEmpresa(transformacionType.getDATOSUSOLIBREEMPRESA(), params);
+	}
+	
+	
+	private void completeDatosUsoLibreEmpresa(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSUSOLIBREEMPRESATYPE datosusolibreempresa, ContrataTransformacionesParams params) {
+		if(datosusolibreempresa != null){
+			params.setUsoLibreEmpresa(datosusolibreempresa.getUSOLIBREEMPRESA());
+		}
+	}
+
+	private void completeDatosComunicaCopiaBasica(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSCOMUNICACOPIABASICATYPE datoscomunicacopiabasica, ContrataTransformacionesParams params) {
+		if(datoscomunicacopiabasica != null){
+			// TODO
+			datoscomunicacopiabasica.getDOMICCENTROTRABAJO();
+			params.setTextoCopiaBasica(datoscomunicacopiabasica.getTEXTOCOPIABASICA());
+			params.setTipoFirmaCopiaBasica(TERFIRCB.getEnumByValue(datoscomunicacopiabasica.getTIPOFIRMA()));
+		}
+	}
+
+	private void completeDatosAnexoContratoRelevo(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSANEXOCONTRATORELEVOTYPE datosanexocontratorelevo, ContrataTransformacionesParams params) {
+		if(datosanexocontratorelevo != null){
+			params.setReliefData(true);
+			Person person = new Person();
+			person.setName(datosanexocontratorelevo.getNOMBREAPELLIDOS().getNOMBRE());
+			person.setFirstSurname(datosanexocontratorelevo.getNOMBREAPELLIDOS().getPRIMERAPELLIDO());
+			person.setSecondSurname(datosanexocontratorelevo.getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO());
+			params.setReliefPerson(person);
+		}
+	}
+
+	private void completeDatosAdicionalesTransformacion(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSADICIONALESTRANSFORMACIONTYPE datosadicionalestransformacion, ContrataTransformacionesParams params) {
+		// TODO 
+		datosadicionalestransformacion.getCODIGOCOLECTIVOREDUCCION();
+		if(datosadicionalestransformacion.getINDDISCAPACIDAD()!=null){
+			params.setIndDiscapacidad(TEJINDIS.getEnumByValue(datosadicionalestransformacion.getINDDISCAPACIDAD()));
 //			params.setDisabilityData(true);
-//		}
-//	}
-//
-//	private void completeDatosMedidasFomento(
-//			com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSMEDIDASFOMENTOTYPE datosmedidasfomento) {
-//		if(datosmedidasfomento != null){
+		}
+	}
+
+	private void completeDatosMedidasFomento(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSMEDIDASFOMENTOTYPE datosmedidasfomento, ContrataTransformacionesParams params) {
+		if(datosmedidasfomento != null){
 //			params.setMedidasFomentoData(true);
-//			params.setIndCosteDespido(datosmedidasfomento.getINDCOSTEDESPIDO().equals("1")?true:false);
-//			if(datosmedidasfomento.getCODIGOCOLECTIVODESPIDO()!=null){
-//				params.setCodigoColectivoDespido(TEOCOLDE.getEnumByValue(datosmedidasfomento.getCODIGOCOLECTIVODESPIDO()));
-//			}
-//		}
-//	}
-//
-//	private void completeDatosGeneralesTransformacion(
-//			DATOSGENERALESTRANSFORMACIONTYPE datosgeneralestransformacion) {
-//		// TODO 
-//		
-//		if(datosgeneralestransformacion != null){
-//			
-////			datosgeneralestransformacion.getFECHAINICIO()
-////			datosgeneralestransformacion.getFECHATERMINOREAL()
-////			datosgeneralestransformacion.getINDICADORDISCONTINUIDAD()
-////			datosgeneralestransformacion.getMUNICIPIOCT()
-////			datosgeneralestransformacion.getNACIONALIDADCT()
-//			
-//			if(datosgeneralestransformacion.getCODIGOOCUPACION()!=null){
-//				params.setCno(getCno(datosgeneralestransformacion.getCODIGOOCUPACION()));
-//			}
-//		}
-//	}
-//
-//	private void completeDatosContrato(DATOSCONTRATOTYPE datoscontrato) {
-//		// TODO 
-//		
-//		if(datoscontrato != null){
-//			
-////			datoscontrato.getCLAVECONTRATO()
-////			datoscontrato.getFECHAINICIOCTO()
-////			datoscontrato.getIDENTIFICADORPFISICA()
-//			
-//		}
-//	}
-//
-//	private void completeDatosEmpresa(DATOSEMPRESATYPE datosempresa) {
-//		// TODO 
-//		
-//		if(datosempresa != null){
-////			datosempresa.getCIFNIFEMPRESA()
-////			datosempresa.getCODIGOCUENTACOTIZACION()
-//		}
-//	}
-//	
-//	private void completeDatosBonificacion(
-//			com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSBONIFICACIONTYPE datosbonificacion) {
-//		// TODO 
-//		
-//		if(datosbonificacion != null){
-////			datosbonificacion.getACOGIDOMATERNIDADEXCEDENCIA()
-////			datosbonificacion.getCODIGOCOLECTIVOBONIF()
-////			datosbonificacion.getCOLECTIVODISCAPACITADOS()
-//		}
-//	}
-//
-//	private void completeDatosContratoTiempoParcial(
-//			com.esferalia.aon.file.payroll.contract.generated.transformaciones.DATOSCONTRATOTIEMPOPARCIALTYPE datoscontratotiempoparcial) {
-//		if(datoscontratotiempoparcial != null){
-//			params.setActividadSinFechaCierta(datoscontratotiempoparcial.getACTIVIDADSINFECHACIERTA());
-//			params.setFijoDiscontinuoPeriodico(datoscontratotiempoparcial.getFIJODISCONTINUOPERIODICO().equals("S"));
-//			params.setHorasConvenio(getHoras(datoscontratotiempoparcial.getHORASCONVENIO()));
-//			params.setMinutosConvenio(getMinutos(datoscontratotiempoparcial.getHORASCONVENIO()));
-//			params.setHorasJornada(getHoras(datoscontratotiempoparcial.getHORASJORNADA()));
-//			params.setMinutosJornada(getMinutos(datoscontratotiempoparcial.getHORASJORNADA()));
-//			params.setTipoJornada(TEQPTIEM.getEnumByValue(datoscontratotiempoparcial.getTIPOJORNADA()));
-//		}
-//	}
+			params.setIndCosteDespido(datosmedidasfomento.getINDCOSTEDESPIDO().equals("1")?true:false);
+			if(datosmedidasfomento.getCODIGOCOLECTIVODESPIDO()!=null){
+				params.setCodigoColectivoDespido(TEOCOLDE.getEnumByValue(datosmedidasfomento.getCODIGOCOLECTIVODESPIDO()));
+			}
+		}
+	}
+
+	private void completeDatosGeneralesTransformacion(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSGENERALESTRANSFORMACIONTYPE datosgeneralestransformacion, ContrataTransformacionesParams params) {
+		// TODO 
+		
+		if(datosgeneralestransformacion != null){
+			
+//			datosgeneralestransformacion.getFECHAINICIO()
+//			datosgeneralestransformacion.getFECHATERMINOREAL()
+//			datosgeneralestransformacion.getINDICADORDISCONTINUIDAD()
+//			datosgeneralestransformacion.getMUNICIPIOCT()
+//			datosgeneralestransformacion.getNACIONALIDADCT()
+			
+			if(datosgeneralestransformacion.getCODIGOOCUPACION()!=null){
+				params.setCno(getCno(datosgeneralestransformacion.getCODIGOOCUPACION()));
+			}
+		}
+	}
+
+	private void completeDatosContrato(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSCONTRATOTYPE datoscontrato, ContrataTransformacionesParams params) {
+		// TODO 
+		
+		if(datoscontrato != null){
+			
+//			datoscontrato.getCLAVECONTRATO()
+//			datoscontrato.getFECHAINICIOCTO()
+//			datoscontrato.getIDENTIFICADORPFISICA()
+			
+		}
+	}
+
+	private void completeDatosEmpresa(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSEMPRESATYPE datosempresa, ContrataTransformacionesParams params) {
+		// TODO 
+		if(datosempresa != null){
+//			datosempresa.getCIFNIFEMPRESA()
+//			datosempresa.getCODIGOCUENTACOTIZACION()
+		}
+	}
+	
+	private void completeDatosBonificacion(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSBONIFICACIONTYPE datosbonificacion, ContrataTransformacionesParams params) {
+		// TODO 
+		
+		if(datosbonificacion != null){
+//			datosbonificacion.getACOGIDOMATERNIDADEXCEDENCIA()
+//			datosbonificacion.getCODIGOCOLECTIVOBONIF()
+//			datosbonificacion.getCOLECTIVODISCAPACITADOS()
+		}
+	}
+
+	private void completeDatosContratoTiempoParcial(
+			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSCONTRATOTIEMPOPARCIALTYPE datoscontratotiempoparcial, ContrataTransformacionesParams params) {
+		if(datoscontratotiempoparcial != null){
+			params.setActividadSinFechaCierta(datoscontratotiempoparcial.getACTIVIDADSINFECHACIERTA());
+			params.setFijoDiscontinuoPeriodico(datoscontratotiempoparcial.getFIJODISCONTINUOPERIODICO().equals("S"));
+			params.setHorasConvenio(getHoras(datoscontratotiempoparcial.getHORASCONVENIO()));
+			params.setMinutosConvenio(getMinutos(datoscontratotiempoparcial.getHORASCONVENIO()));
+			params.setHorasJornada(getHoras(datoscontratotiempoparcial.getHORASJORNADA()));
+			params.setMinutosJornada(getMinutos(datoscontratotiempoparcial.getHORASJORNADA()));
+			params.setTipoJornada(TEQPTIEM.getEnumByValue(datoscontratotiempoparcial.getTIPOJORNADA()));
+		}
+	}
 	
 
 	/* ***************************************

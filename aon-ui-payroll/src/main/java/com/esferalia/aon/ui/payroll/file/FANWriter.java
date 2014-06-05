@@ -22,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
@@ -65,7 +66,6 @@ import com.esferalia.aon.payroll.enumeration.ss.T33;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class FANWriter implements Serializable {
@@ -339,7 +339,10 @@ public class FANWriter implements Serializable {
 			if(isLessThan7DaysContract(contract)){
 				datList.add(createDATRecord(contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract)));
 			} else {
-				datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
+				Integer days = getContractDaysOrHours(contract);
+				if(days!=null && days>0){
+					datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
+				}
 			}
 			
 			// TODO comprobar que situaciones implican un nuevo segmento de tipo DAT
@@ -423,10 +426,10 @@ public class FANWriter implements Serializable {
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), contract.getId());
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), endDate);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), startDate);
-//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE), startDate);
-//			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));
-//			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), startDate);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE), startDate);
+			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE));
 			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {
@@ -2852,7 +2855,7 @@ public class FANWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT value FROM app_param";
 			select += " WHERE domain = " + DomainManager.getCurrentDomain();
-			select += " AND name = '" + PayrollAppParamsController.FAN_TEST_ENVIRONMENT_ACTIVE + "';";
+			select += " AND name = '" + AppParam.PAY_fan_test_env_PAY.getValue() + "';";
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
@@ -2876,7 +2879,7 @@ public class FANWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT value FROM app_param";
 			select += " WHERE domain = " + ccc.getDomain();
-			select += " AND name = '" + PayrollAppParamsController.SS_PAYMENT_BANK_ACCOUNT_KEY + "';";
+			select += " AND name = '" + AppParam.PAY_ss_payment_bankAccount_PAY.getValue() + "';";
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
@@ -2915,7 +2918,7 @@ public class FANWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT value FROM app_param";
 			select += " WHERE domain = " + ccc.getDomain();
-			select += " AND name = '" + PayrollAppParamsController.SS_MUTUAL_KEY + "';";
+			select += " AND name = '" + AppParam.PAY_ss_mutual_PAY.getValue() + "';";
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();

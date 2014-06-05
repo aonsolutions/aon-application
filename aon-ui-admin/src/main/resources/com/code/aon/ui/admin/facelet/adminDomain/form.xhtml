@@ -12,15 +12,30 @@
 
 		<aon:form id="domainForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarID" value="adminDomainToolbar" />
 				<ui:param name="toolbarTitle" value="#{bundle.admin_domain_management}" />
-				<ui:param name="controller" value="#{adminDomain}" />
-				<ui:param name="skipResetButton" value="#{true}" />
-				<ui:param name="skipRemoveButton" value="#{true}" />
-				<ui:param name="skipBackButton" value="#{true}" />
-				<ui:param name="skipSearchButton" value="#{true}" />
-				<ui:param name="skipSaveButton" value="#{!(adminMain.termsOfServiceAccepted or aonRole.sysAdmin)}" />
-				<ui:define name="beforeSpinToolbarContent">				
+				<ui:define name="toolbarContent">
+					<c:if test="#{adminMain.termsOfServiceAccepted or aonRole.sysAdmin}" >
+						<aon:commandButton id="contract"
+							title="#{bundle.aon_key_save_accelerator}"
+							value="#{bundle.admin_domain_contract}"
+							action="adminDomain_form" actionListener="#{adminDomain.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" />						
+					</c:if>						
+					<aon:htmlCommandLink id="showTermsOfService"
+						rendered="#{!aonRole.sysAdmin}"
+						value="#{bundle.admin_service_terms}" target="_blank"
+						actionListener="#{adminDomain.onDownloadTermsOfService}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+					</aon:htmlCommandLink>
+					<aon:commandButton id="domainHistory" 
+						rendered="#{adminDomain.historyState.model.rowCount &gt; 1}"
+						action="adminDomain_history"
+						value="#{bundle.aon_history}"
+						styleClass="aon-finding-toolbar-item aon-icon-info" />						
 					<aon:commandButton id="audit-info"
 						value="#{bundle.aon_audit}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-audit"
@@ -157,6 +172,12 @@
 							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
 							<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
 						</aon:inputText>
+						<aon:div styleClass="aon-margin-left"  layout="inline"
+							rendered="#{adminDomain.to.maxDefinedUsers &gt; domainUser.numberOfActiveUsers}">
+							<aon:outputText value="&#160;" styleClass="aon-icon-exception"
+								style="padding-left:12px" />
+							<rich:toolTip value="#{bundle.admin_domain_user_warning}" />
+						</aon:div>						
 						<aon:outputFormat styleClass="aon-margin-left" value="#{bundle.admin_active_users}">
 							<f:param value="#{domainUser.numberOfActiveUsers}" />
 						</aon:outputFormat>
@@ -203,9 +224,18 @@
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
 					
+					<c:if test="#{!aonRole.sysAdmin}" >
+						<aon:div styleClass="aon-note aon-margin-bottom" style="background-color:#FFFFDD;">
+							<aon:div styleClass="aon-note-internal">
+								<aon:panelGroup>
+									<aon:outputText value="#{bundle.admin_service_terms_note}" />
+								</aon:panelGroup>
+							</aon:div>
+						</aon:div>	
+					</c:if>
+					
 					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
 						<ui:param name="controller" value="#{adminDomain}" />
-						<ui:param name="termsOfServiceURL" value="#{adminMain.properties.updateDomainURL}" />
 					</ui:include>
 				</c:if>
 								

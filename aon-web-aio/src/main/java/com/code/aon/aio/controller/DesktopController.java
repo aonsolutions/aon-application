@@ -109,10 +109,10 @@ public class DesktopController implements Serializable {
 	}
 	
 	public String getTemplate() {
-		if ( getState().isAdminDomain() ) {
-			return ADMIN_TEMPLATE;
-		} else if ( getState().getInitOption()!=null && getState().isPatchInitAction() ) {
+		if ( getState().getInitOption()!=null && getState().isPatchInitAction() ) {
 			return INIT_ACTION_TEMPLATE;
+		} else if ( getState().isAdminDomain() ) {
+			return ADMIN_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
 	}

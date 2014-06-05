@@ -285,7 +285,10 @@
 				<aon:outputLabel for="workingWeekHours"
 					rendered="#{contract.partiallyTimeContract}"
 					value="#{bundle.sepe_contrata_contract_working_day_duration}" />
-				<aon:div rendered="#{contract.partiallyTimeContract}">
+				<aon:div id="partially-week-day-hours" 
+					rendered="#{contract.partiallyTimeContract}">
+					
+					<!--  
 					<aon:inputText id="workingWeekHours"
 						rendered="#{!contract.readOnly}"
 						size="2" maxlength="5"
@@ -298,7 +301,110 @@
 					<aon:outputText styleClass="aon-margin-left"
 						value="horas semanales" >
 					</aon:outputText>
+					-->
 					<!-- TODO: other journal type implementation -->
+					
+					
+					<aon:outputText 
+						value="#{bundle.aon_calendar_monday_abr}:" />
+					<aon:inputText id="monday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[0]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[0]}" 
+						rendered="#{contract.readOnly}" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{bundle.aon_calendar_tuesday_abr}:" />
+					<aon:inputText id="tuesday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[1]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[1]}" 
+						rendered="#{contract.readOnly}" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{bundle.aon_calendar_wednesday_abr}:" />
+					<aon:inputText id="wednesday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[2]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[2]}" 
+						rendered="#{contract.readOnly}" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{bundle.aon_calendar_thursday_abr}:" />
+					<aon:inputText id="thursday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[3]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[3]}" 
+						rendered="#{contract.readOnly}" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{bundle.aon_calendar_friday_abr}:" />
+					<aon:inputText id="friday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[4]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[4]}" 
+						rendered="#{contract.readOnly}" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{bundle.aon_calendar_saturday_abr}:" />
+					<aon:inputText id="saturday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[5]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[5]}" 
+						rendered="#{contract.readOnly}" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{bundle.aon_calendar_sunday_abr}:" />
+					<aon:inputText id="sunday_hours"
+						rendered="#{!contract.readOnly}"
+						size="2" maxlength="5"
+						actionListener="#{contract.params.reloadTotalWeekHours}"
+						reRender="partially-week-day-hours"
+						value="#{contract.params.weekDayHours[6]}" >
+						<f:validateDoubleRange minimum="0" maximum="23.59" />
+					</aon:inputText>
+					<aon:outputText value="#{contract.params.weekDayHours[6]}" 
+						rendered="#{contract.readOnly}" />
+					
+					<aon:div style="display:inline;">
+						<aon:outputText value="(" styleClass="aon-margin-left" />
+						<aon:outputText value="#{contract.params.weekHours}" id="workingWeekHours" />
+						<aon:outputText  value="horas semanales" styleClass="aon-margin-left" />
+						<aon:outputText value=")" />
+					</aon:div>
+
+					<aon:div style="display:inline;"
+						rendered="#{contract.params.partiallityCoef != null}" >
+						<aon:outputText value="(" styleClass="aon-margin-left" />
+						<aon:outputText value="Coef.TP:" />
+						<aon:outputText value="#{contract.params.partiallityCoef}" styleClass="aon-margin-left"/>
+						<aon:outputText value=")" />
+					</aon:div>
+					
 				</aon:div>
 				
 			</c:if>

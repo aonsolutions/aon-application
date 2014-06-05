@@ -98,6 +98,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	private boolean purchase;
 	private boolean showBankManualInput;
 	private RegistryBank registryBank;
+	private boolean showRemarksWindow;
 	private boolean showFinanceGroupWindow;
 	private boolean financeGroup;
 	private boolean showFinancePayrollWindow;
@@ -297,6 +298,14 @@ public class FinanceController extends FinanceListController implements IFinance
 
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
+	}
+
+	public boolean isShowRemarksWindow() {
+		return showRemarksWindow;
+	}
+
+	public void setShowRemarksWindow(boolean showRemarksWindow) {
+		this.showRemarksWindow = showRemarksWindow;
 	}
 
 	public boolean isShowFinanceGroupWindow() {

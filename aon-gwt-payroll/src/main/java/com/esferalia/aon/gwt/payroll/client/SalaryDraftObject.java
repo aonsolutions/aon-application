@@ -20,10 +20,11 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class SalaryDraftObject implements IContextProvider{
+public class SalaryDraftObject implements IContextProvider {
 
 	public static Date NULL_DATE = new Date() {
 	};
@@ -116,6 +117,25 @@ public class SalaryDraftObject implements IContextProvider{
 
 	}
 
+	class UndoableEmbargoEdit extends UndoableEdit<Deduction> {
+
+		public UndoableEmbargoEdit(Deduction oldT, Deduction newT) {
+			super(oldT, newT);
+		}
+
+		@Override
+		void addDraft(Deduction t) {
+			salaryDraft.addDraftEmbargo(t);
+		}
+
+		@Override
+		void removeDraft(Deduction t) {
+			salaryDraft.removeDraftEmbargo(t);
+
+		}
+
+	}
+
 	private Date draftEndDate;
 	private Date draftStartDate;
 
@@ -130,30 +150,30 @@ public class SalaryDraftObject implements IContextProvider{
 		this.employeesServiceAsync = employeesServiceAsync;
 		this.undoManager = new UndoManager<UndoableEdit<?>>();
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// IContextProvider methods
 	// ------------------------------------------------------------------------
-	
+
 	public boolean isEditable(String name) {
-		for ( Payment payment: getPayments() )
-			if ( StringUtils.equals(name, payment.getName()))
+		for (Payment payment : getPayments())
+			if (StringUtils.equals(name, payment.getName()))
 				return false;
 		return true;
 	};
-	
+
 	@Override
-	public void getContext( AsyncCallback<ContextDescriptor> callback ) {
+	public void getContext(AsyncCallback<ContextDescriptor> callback) {
 		employeesServiceAsync.getContext(salaryDraft, callback);
 	}
-	
+
 	@Override
-	public void eval(String expression,  List<Variable> vars, AsyncCallback<List<Result>> callback) {
-		employeesServiceAsync.eval(expression, newSalaryDraft(salaryDraft, vars) , callback);
+	public void eval(String expression, List<Variable> vars,
+			AsyncCallback<List<Result>> callback) {
+		employeesServiceAsync.eval(expression,
+				newSalaryDraft(salaryDraft, vars), callback);
 	}
-	
-	
-	
+
 	public void getExtras(AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
 		employeesServiceAsync.getExtras(getEmployee(), callback);
@@ -169,7 +189,6 @@ public class SalaryDraftObject implements IContextProvider{
 
 					@Override
 					public void onSuccess(Void result) {
-
 
 						undoManager.discardAll();
 						salaryDraft.clearDrafts();
@@ -240,9 +259,6 @@ public class SalaryDraftObject implements IContextProvider{
 					}
 				});
 	}
-	
-	
-
 
 	public void redo() {
 		undoManager.redo();
@@ -284,8 +300,7 @@ public class SalaryDraftObject implements IContextProvider{
 	}
 
 	public void downloadIrpf(String mime, AsyncCallback<String> callback) {
-		employeesServiceAsync
-				.getIrpfDraftReceipt(salaryDraft, mime, callback);
+		employeesServiceAsync.getIrpfDraftReceipt(salaryDraft, mime, callback);
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
@@ -293,15 +308,18 @@ public class SalaryDraftObject implements IContextProvider{
 		employeesServiceAsync.getAvailablePayments(employeeId, callback);
 	}
 
+	public void getDeductionConcepts(AsyncCallback<List<Deduction>> callback) {
+		int employeeId = salaryDraft.getEmployee().getId();
+		employeesServiceAsync.getAvailableDeductions(employeeId, callback);
+	}
+
 	public SalaryDraft asSalaryPreview() {
 		return salaryDraft;
 	}
-	
 
 	// -------------------------------------------
 	// SalaryDraft Delegated
 	// -------------------------------------------
-	
 
 	public Type getType() {
 		return salaryDraft.getType();
@@ -315,7 +333,7 @@ public class SalaryDraftObject implements IContextProvider{
 		return salaryDraft.getEndDate();
 	}
 
-	public Employee getEmployee(){
+	public Employee getEmployee() {
 		return salaryDraft.getEmployee();
 	}
 
@@ -334,7 +352,12 @@ public class SalaryDraftObject implements IContextProvider{
 	public List<Deduction> getDeductions() {
 		return salaryDraft.getDeductions();
 	}
-
+	
+	public List<Deduction> getEmbargos() {
+		return salaryDraft.getEmbargos();
+	}
+	
+	
 	public List<Variable> getContext() {
 		return salaryDraft.getContext();
 	}
@@ -378,7 +401,7 @@ public class SalaryDraftObject implements IContextProvider{
 	public Double getCgpBase() {
 		return salaryDraft.getCgpBase();
 	}
-	
+
 	public Double getRawCgcBase() {
 		return salaryDraft.getRawCgcBase();
 	}
@@ -520,7 +543,15 @@ public class SalaryDraftObject implements IContextProvider{
 
 	public Deduction addDraftDeduction(Deduction deduction) {
 		Deduction oldDeduction = salaryDraft.addDraftDeduction(deduction);
+
 		undoManager.add(new UndoableDeductionEdit(oldDeduction, deduction));
+		return oldDeduction;
+	}
+
+	public Deduction addDraftEmbargo(Deduction embargo) {
+		Deduction oldDeduction = salaryDraft.addDraftEmbargo(embargo);
+
+		undoManager.add(new UndoableEmbargoEdit(oldDeduction, embargo));
 		return oldDeduction;
 	}
 
@@ -530,43 +561,44 @@ public class SalaryDraftObject implements IContextProvider{
 		return oldVar;
 	}
 
-	public void renameVariable(Variable oldVar, String newName ) {
-		
-		String oldName = oldVar.getName(); 
+	public void renameVariable(Variable oldVar, String newName) {
 
-		addDraftVariable( clone(oldVar, newName));
-		
+		String oldName = oldVar.getName();
+
+		addDraftVariable(clone(oldVar, newName));
+
 		List<Payment> payments = salaryDraft.getDraftPayments();
 		for (Payment payment : payments) {
 			String expression = payment.getExpression();
-			if ( expression == null  ) 
+			if (expression == null)
 				continue;
-			if ( expression.indexOf(oldName) == - 1)
+			if (expression.indexOf(oldName) == -1)
 				continue;
 
 			String newExpression = expression.replaceAll(oldName, newName);
-			
+
 			addDraftPayment(clonePayment(payment, newExpression));
 		}
 
 		payments = salaryDraft.getPayments();
 		for (Payment payment : payments) {
 			String expression = payment.getExpression();
-			if ( expression == null  ) 
+			if (expression == null)
 				continue;
-			if ( expression.indexOf(oldName) == - 1)
+			if (expression.indexOf(oldName) == -1)
 				continue;
 
 			String newExpression = expression.replaceAll(oldName, newName);
-			
+
 			addDraftPayment(clonePayment(payment, newExpression));
 		}
-		
+
 	}
+
 	// ------------------------------------------
 	//
 
-	private Variable clone(Variable var, String newName){
+	private Variable clone(Variable var, String newName) {
 		StringVariable newVar = new StringVariable();
 		newVar.setImplicit(var.isImpicit());
 		newVar.setScope(Scope.SALARY); // DRAFT
@@ -576,10 +608,10 @@ public class SalaryDraftObject implements IContextProvider{
 		newVar.setExpression(var.getExpression());
 		return newVar;
 	}
-	
-	private Payment clonePayment(Payment oldPayment, String newExpression){
+
+	private Payment clonePayment(Payment oldPayment, String newExpression) {
 		Payment newPayment = new Payment();
-		
+
 		newPayment.setId(oldPayment.getId());
 		newPayment.setName(oldPayment.getName());
 		newPayment.setType(oldPayment.getType());
@@ -594,55 +626,50 @@ public class SalaryDraftObject implements IContextProvider{
 		newPayment.setStartDate(getStartDate());
 		newPayment.setSalaryType(getType());
 
-		
 		return newPayment;
 	}
-	private SalaryDraft  newSalaryDraft(SalaryDraft src, List<Variable> vars) {
+
+	private SalaryDraft newSalaryDraft(SalaryDraft src, List<Variable> vars) {
 		SalaryDraft draft = new SalaryDraft();
 
 		draft.setId(src.getId());
 		draft.setType(src.getType());
-		
+
 		draft.setStartDate(src.getStartDate());
 		draft.setEndDate(src.getEndDate());
 		draft.setIssueDate(src.getIssueDate());
 		draft.setChargeDate(src.getChargeDate());
-		
+
 		draft.setEmployee(src.getEmployee());
-		
+
 		for (Variable variable : src.getDraftContext())
 			draft.addDraftVariable(variable);
-		
+
 		for (Variable variable : vars) {
 			variable.setScope(Scope.SALARY);
 			variable.setStartDate(src.getStartDate());
 			variable.setEndDate(src.getEndDate());
 			draft.addDraftVariable(variable);
 		}
-		
+
 		List<Variable> ctx = src.getContext();
-		
-		for( Payment payment: src.getPayments()){
+
+		for (Payment payment : src.getPayments()) {
 			String name = payment.getName();
-			if ( name == null )
+			if (name == null)
 				continue;
-			
+
 			Variable variable = getVariable(name, ctx);
-			if ( variable != null ) {
+			if (variable != null) {
 				draft.addDraftVariable(variable);
 			}
 
 		}
-		
-		
-		
+
 		return draft;
 	}
-	
-	
-	
 
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 	//
 
 	private static <T> boolean sameDate(Date d1, Date d2) {
@@ -655,11 +682,9 @@ public class SalaryDraftObject implements IContextProvider{
 		return CalendarUtil.isSameDate(d1, d2);
 	}
 
-
 	private static void removeSalaryPart(SalaryDraft salaryDraft) {
 		salaryDraft.clear();
 	}
-
 
 	private static boolean isDraftPeriodSet(Date draftStartDate,
 			Date draftEndDate, SalaryDraft draft) {
@@ -672,6 +697,9 @@ public class SalaryDraftObject implements IContextProvider{
 		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
 				draft.getDraftDeductions()))
 			return false;
+		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
+				draft.getDraftEmbargos()))
+			return false;
 		return true;
 	}
 
@@ -683,6 +711,8 @@ public class SalaryDraftObject implements IContextProvider{
 				draft.getDraftPayments());
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftDeductions());
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftEmbargos());
 	}
 
 	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
@@ -703,12 +733,13 @@ public class SalaryDraftObject implements IContextProvider{
 		}
 		return true;
 	}
-	
-	private static Variable getVariable(String name, List<Variable> list){
+
+	private static Variable getVariable(String name, List<Variable> list) {
 		for (Variable var : list)
-			if ( name.equals(var.getName()))
+			if (name.equals(var.getName()))
 				return var;
 		return null;
 	}
+	
 	
 }

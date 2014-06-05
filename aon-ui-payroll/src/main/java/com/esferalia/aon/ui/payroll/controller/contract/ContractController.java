@@ -94,6 +94,9 @@ import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
@@ -1775,6 +1778,17 @@ public class ContractController extends BasicController {
 		private Date trainingEndDate;
 		private ModelOption contractModelOption;
 		private Double weekHours;
+		
+		private Double[] weekDayHours = new Double[7];
+//		private Double mondayHours;
+//		private Double tuesdayHours;
+//		private Double wednesdayHours;
+//		private Double thursdayHours;
+//		private Double fridayHours;
+//		private Double saturdayHours;
+//		private Double sundayHours;
+		
+		
 		private TLDCAUSS suspensionCause;
 		private String contractEndCode;
 		private String contractEndDescription;
@@ -1970,6 +1984,35 @@ public class ContractController extends BasicController {
 		public void setWeekHours(Double weekHours) {
 			this.weekHours = weekHours;
 		}
+		
+		public Double[] getWeekDayHours() {
+			return weekDayHours;
+		}
+		public void setWeekDayHours(Double[] weekDayHours) {
+			this.weekDayHours = weekDayHours;
+		}
+		public void reloadTotalWeekHours(ActionEvent event){
+			Double total = 0.0;
+			for(int i=0; i<7; i++){
+				if( weekDayHours[i]!=null ){
+					total +=  weekDayHours[i];
+				}
+			}
+			weekHours = total;
+		}
+		public Double getPartiallityCoef(){
+			Contract contract = (Contract) ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo();
+			try {
+				List<ITimedResult<Object>> result = contract.getSalaryCalculatorContext(new Date(), new Date(), new Date()).getExpressionContext().eval("COEFICIENTE_PARCIALIDAD", new Date(), new Date());
+				return (Double) result.get(0).getValue();
+			} catch (SalaryException e) {
+				// nada
+			} catch (ExpressionException e) {
+				// nada
+			}
+			return null;
+		}
+		
 		public T54 getCollectivePeculiarityQuote() {
 			return collectivePeculiarityQuote;
 		}

@@ -21,11 +21,17 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.admin.DomainInfo;
+import com.code.aon.ui.admin.event.DomainSearchListener;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -138,5 +144,57 @@ public class DomainPrintController extends BasicController {
 		DomainsController controller = (DomainsController) AonUtil.getRegisteredBean(DOMAINS_CONTROLLER_NAME);
 		controller.selectDomain( (Domain) getSelectedTO() );
 	}
+	
+
+	private Criteria getDiffCriteria( Domain domain, IManagerBean bean ) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		Integer companyId = AdminUtil.getCompanyId(domain.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), companyId);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_MIME_TYPE), MimeType.MIME_TXT);
+		DomainSearchListener dsl = (DomainSearchListener) AonUtil.getRegisteredBean(IAdminConstants.DOMAINS_SEARCH_CONTROLLER_NAME);
+		dsl.addModificationDateRange(criteria, bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ATTACH_DATE) );
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), false);		
+		return criteria;
+	}
+	
+	public boolean isCurrentHasModifications() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+			Criteria criteria = getDiffCriteria(domain, bean);
+			return bean.getCount(criteria) > 1;
+		}
+		return false;				
+	}
+	
+	private DomainInfo getDomainInfo( IManagerBean bean, Criteria criteria, int offset ) throws ManagerBeanException {
+		DomainInfo di = null;
+		List<ITransferObject> list = bean.getList(criteria, offset, 1);
+		if (! list.isEmpty() ) {
+			RegistryAttachment ra = (RegistryAttachment) list.get(0);
+			di = DomainInfo.getDomainInfo(ra);
+		}
+		return di;
+	}
+	
+	public String getCurrentModifications() throws ManagerBeanException {
+		String diff = null;
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+			Criteria criteria = getDiffCriteria(domain, bean);
+			int count = bean.getCount(criteria);
+			DomainInfo di1 = getDomainInfo(bean, criteria, 0);
+			DomainInfo di2 = getDomainInfo(bean, criteria, count-1);
+			diff = di2.getDifferences(di1);
+			if ( StringUtils.isEmpty(diff) ) {
+				diff = AonUtil.getMessage(ICommonMessages.FINANCE_NONE);
+			}
+		}
+		return diff;
+	}
+	
 	
 }

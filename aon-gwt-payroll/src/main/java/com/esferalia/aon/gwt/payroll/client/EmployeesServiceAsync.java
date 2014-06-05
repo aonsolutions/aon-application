@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * The async counterpart of <code>EmployeesService</code>.
  */
-public interface EmployeesServiceAsync extends StatisticsServiceAsync {
+public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSReportsServiceAsync{
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 
@@ -35,6 +36,10 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync {
 
 	void getAvailablePayments(int employeeId,
 			AsyncCallback<List<Payment>> callback)
+			throws IllegalArgumentException;
+
+	void getAvailableDeductions(int employeeId,
+			AsyncCallback<List<Deduction>> callback)
 			throws IllegalArgumentException;
 
 	void getWorkplaceCosts(int workplaceId, AsyncCallback<List<Cost>> callback)

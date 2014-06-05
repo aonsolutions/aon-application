@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -197,10 +198,11 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 
 		@Override
 		public Boolean getValue() {
-			
+
 			int visibleItemCount = dataGrid.getVisibleItemCount();
-			return visibleItemCount > 0 && visibleItemCount == selectionModel
-					.getSelectedSet().size();
+			return visibleItemCount > 0
+					&& visibleItemCount == selectionModel.getSelectedSet()
+							.size();
 		}
 
 		@Override
@@ -213,7 +215,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 				selectionModel.setSelected(item, isChecked);
 			}
 		}
-		
+
 		// --------------------------------------------------------------------
 
 	}
@@ -222,11 +224,10 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 
 	}
 
-
 	private static final Binder binder = GWT.create(Binder.class);
 
 	static final int PAGE_SIZE = 25;
-	
+
 	@UiField
 	Button acceptButton;
 	@UiField
@@ -242,7 +243,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 	MultiSelectionModel<T> selectionModel;
 	ShowMorePager showMorePager;
 	SelectAllHeader<T> selectAllHeader;
-
+	
 	public SelectDialog() {
 
 		// Create a DataGrid
@@ -286,7 +287,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		selectDataGrid.getElement().getStyle()
 				.setPropertyPx("minHeight", Window.getClientHeight() / 3);
 		selectDataGrid.setWidth("100%");
-		
+
 		setWidget(binder.createAndBindUi(this));
 
 		showMorePager = new ShowMorePager((CustomDataGrid<T>) selectDataGrid);
@@ -326,8 +327,13 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		selectDataGrid.onResize();
 		super.show();
 	}
-	
-	
+
+	@Override
+	public void center() {
+		selectDataGrid.onResize();
+		super.center();
+	}
+
 	public void setData(List<T> data) {
 		selectDataGrid.setRowData(data);
 		selectionModel.clear();
@@ -337,6 +343,11 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		return selectionModel.getSelectedSet();
 	}
 
+	public void setSelectedData(List<T> data) {
+		selectionModel.clear();
+		for (T t : data)
+			selectionModel.setSelected(t, true);
+	}
 
 	public boolean isAllSelected() {
 		return selectAllHeader.getValue();
@@ -354,7 +365,5 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 	public HandlerRegistration addAcceptHandler(AcceptHandler handler) {
 		return addHandler(handler, AcceptEvent.getType());
 	}
-	
-
 
 }

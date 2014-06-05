@@ -120,7 +120,13 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		int seniorityYear = cal.get(Calendar.YEAR);
 		return getYear() - seniorityYear;
 	}
-
+	
+	@Override
+	@Transient
+	public Double getInKindIrpfBase() {
+		return super.getInkindIrpfBase();
+	}
+	
 	// *******************************************************
 	// ********************** DATA ***************************
 	// *******************************************************

@@ -93,6 +93,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private JSF jsf;
 	private Cost cost;
 	private Salary salary;
+	private Reports reports;
 	private Statistics stats;
 	private ITEditor it;
 	private Documents documents;
@@ -122,6 +123,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		jsf = new JSF();
 		cost = new Cost();
 		salary = new Salary();
+		reports = new Reports();
 		stats = new Statistics();
 		it = new ITEditor(){
 			@Override
@@ -179,15 +181,22 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 	
 	@Override
+	public void onReportsSelected(ReportsObject reportsObject) {
+		detailPanel.setWidget(reports);
+		reports.setReportsObject(reportsObject);
+		
+	}
+	
+	@Override
 	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		detailPanel.setWidget(stats);
 		stats.setStatistics(statistics);
 	}	
 
 	@Override
-	public void onITDataSelected(com.esferalia.aon.gwt.payroll.shared.ITData itData) {
+	public void onITDataSelected(ITDataObject dataObject) {
 		detailPanel.setWidget(it);
-		it.setITEditor(itData);		
+		it.setITEditor(dataObject);		
 	}
 	
 	@Override

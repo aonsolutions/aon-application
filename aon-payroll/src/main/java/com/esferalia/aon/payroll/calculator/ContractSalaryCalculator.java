@@ -128,7 +128,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		}
 
 	}
-	
+
 	private IListener listener;
 	private ISalaryBuilder salaryBuilder;
 
@@ -172,7 +172,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		expressionContext.addVariable(TOTAL_LIQUID, totalPayment
 				- totalDeduction, start, end);
-		Double totalEmbargos = 0.00; //fillEmbargos(contractSalaryCalculatorContext);
+		Double totalEmbargos = fillEmbargos(contractSalaryCalculatorContext);
 
 		salaryBuilder.setTotalDeduction(totalDeduction + totalEmbargos);
 
@@ -188,7 +188,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		return salaryBuilder.getSalary();
 	}
-	
+
 	// -------------------------------------------------------------- Protected
 
 	protected void fillEnterpriseData(IContractSalaryCalculatorContext ctx) {
@@ -325,6 +325,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			Date irpfDate = ctx.getIrpfDate();
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase());
+			salaryBuilder.setInkindIrpfBase(taxCalculator.getInKindIrpfBase());
 			expressionContext.addVariable(IRPF_BASE,
 					taxCalculator.getIrpfBase(), irpfDate, irpfDate);
 
@@ -344,7 +345,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			double cgpBase = quoteCalculator.getRawCgpBase();
 			try {
-				cgpBase = quoteCalculator.getCgcBase();
+				cgpBase = quoteCalculator.getCgpBase();
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
@@ -379,11 +380,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 	protected QuoteCalculator getQuoteCalculator(
 			IContractSalaryCalculatorContext ctx) {
-		return QuoteCalculator
-				.getQuoteCalculator(ctx);
+		return QuoteCalculator.getQuoteCalculator(ctx);
 	}
 
-	protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+	protected TaxCalculator getTaxCalculator(
+			IContractSalaryCalculatorContext ctx) {
 		return TaxCalculator.getTaxCalculator(ctx);
 	}
 
@@ -484,44 +485,28 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 						start);
 				Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
 
-				expressionContext.addVariable(EMBARGO_PAID, total, start, end);
-				// Un poco tricky, ejecutamos un string del contexto para
-				double embargoLimit = 0.00;
-				String embargoMax = expressionContext.getVariable(EMBARGO_MAX,
-						embargoStart, embargoEnd, String.class);
-				List<ITimedResult<Double>> embargosMax = expressionContext
-						.eval(embargoMax, embargoStart, embargoEnd,
-								Double.class);
-				for (ITimedObject<Double> amout : embargosMax) {
-					embargoLimit += amout.getValue();
-				}
-				if (embargoLimit <= 0.00) {
-					break;
-				} // Ya no se puede embargar mas.
-
-				expressionContext.addVariable(EMBARGO_LIMIT, embargoLimit,
-						start, end);
-
 				double left = contractEmbargo.getAmount();
-				expressionContext.addVariable(EMBARGO_LEFT, left, embargoStart,
+				expressionContext.addVariable(EMBARGO_PAID, left, embargoStart,
 						embargoEnd);
-
-				String expression = contractEmbargo.getExpression();
-				List<ITimedResult<Double>> amounts = expressionContext.eval(
-						expression, embargoStart, embargoEnd, Double.class);
-
-				String description = contractEmbargo.getDescription();
-
-				double embargo = 0.00;
-				for (ITimedObject<Double> amount : amounts) {
-					Double value = amount.getValue();
-					if (value != null) {
-						salaryBuilder.addEmbargo(contractEmbargo.getEmbargo(),
-								value, description);
-						embargo += value;
-					}
+				try {
+					double embargo = resolveEmbargo(expressionContext,
+							contractEmbargo, embargoStart, embargoEnd);
+					total += embargo;
+				} catch (RemoveException e) {
+					// TODO: Something ??? It's really necessary...
+				} catch (InvalidVariables e) {
+					onInvalidData(contractEmbargo, e.getMessage(),
+							e.getVariables());
+				} catch (CheckException e) {
+					onCheckError(contractEmbargo, e.getMessage());
+				} catch (RemoveVariableError e) {
+					onUndefinedData(contractEmbargo, e.getVariable());
+				} catch (UndefinedVariablesException e) {
+					onUndefinedData(contractEmbargo, e.getMessage(),
+							e.getVariableNames());
+				} catch (CompileException e) {
+					onCompileError(contractEmbargo, e.getMessage());
 				}
-				total += embargo;
 
 			}
 
@@ -697,14 +682,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 								contractPayment.getDescription(), amountStart,
 								amountEnd);
 						// TODO ¿ Append period to description ?
-						//description = getDescriptionPeriod(description,
-						//		paymentStart, paymentEnd, amountStart,
-						//		amountEnd);
+						// description = getDescriptionPeriod(description,
+						// paymentStart, paymentEnd, amountStart,
+						// amountEnd);
 					} catch (Exception e) {
 						// TODO : Log ???
 					}
-					salaryBuilder.addPayment(value, quote, tax, description, amountStart, amountEnd,
-							contractPayment, result.getContext());
+					salaryBuilder.addPayment(value, quote, tax, description,
+							amountStart, amountEnd, contractPayment,
+							result.getContext());
 
 				} catch (NotNowException e) {
 					salaryBuilder.addZeroPayment(quote, 0.00, contractPayment,
@@ -717,7 +703,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			// paymentEnd, total);
 
 		} catch (RemoveException e) {
-			e.printStackTrace();
 			// TODO: Something ??? It's really necessary...
 		} catch (InvalidVariables e) {
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
@@ -740,8 +725,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";
-
-
 
 	private Double resolveDeduction(ExpressionContext ctx,
 			IContractDeduction d, Date start, Date end)
@@ -778,6 +761,41 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		return total;
 	}
 
+	private Double resolveEmbargo(ExpressionContext ctx,
+			IContractEmbargo embargo, Date start, Date end)
+			throws ExpressionException {
+
+		List<ITimedResult<Double>> results = ctx.addExpression(embargo, start,
+				end, Double.class);
+
+		Double total = 0.00;
+
+		for (ITimedResult<Double> result : results) {
+			Double value = result.getValue();
+
+			if (value == null || value == 0) {
+				salaryBuilder.addZeroEmbargo(embargo.getId(), embargo,
+						result.getContext());
+				continue;
+			}
+
+			String description = null;
+			try {
+				Period period = result.getPeriod();
+				description = ctx.evalTemplate(embargo.getDescription(),
+						period.getStart(), period.getEnd());
+			} catch (Exception ex) {
+				// TODO : Log ???
+			}
+			salaryBuilder.addEmbargo(embargo.getId(), value, description,
+					embargo, result.getContext());
+			total += value;
+		}
+
+		results = null;
+
+		return total;
+	}
 
 	private void onInvalidData(String... variableNames) {
 		if (listener != null) {
@@ -875,7 +893,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			}
 		}
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 }

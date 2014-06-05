@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
@@ -33,16 +34,16 @@ public class PayrollAppParamsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	public final static String DEFAULT_CONTRACT_CODE_KEY 	= "PAY_default_contractCode_PAY";
-	public final static String DEFAULT_TRAINING_CENTER_KEY 	= "PAY_default_trainingCenter_PAY";
-	public final static String SS_PAYMENT_BANK_ACCOUNT_KEY 	= "PAY_ss_payment_bankAccount_PAY";
-	public final static String SS_MUTUAL_KEY				= "PAY_ss_mutual_PAY";
-
-	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
-	public final static String FAN_TEST_ENVIRONMENT_ACTIVE	= "PAY_fan_test_env_PAY";
-	public final static String AFI_TEST_ENVIRONMENT_ACTIVE	= "PAY_afi_test_env_PAY";
-	
-	public final static String REPORT_ADDITIONAL_SALAY_TEMPLATES 	= "PAY_REPORT_additional_salary_PAY";
+//	public final static String DEFAULT_CONTRACT_CODE_KEY 	= "PAY_default_contractCode_PAY";
+//	public final static String DEFAULT_TRAINING_CENTER_KEY 	= "PAY_default_trainingCenter_PAY";
+//	public final static String SS_PAYMENT_BANK_ACCOUNT_KEY 	= "PAY_ss_payment_bankAccount_PAY";
+//	public final static String SS_MUTUAL_KEY				= "PAY_ss_mutual_PAY";
+//
+//	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
+//	public final static String FAN_TEST_ENVIRONMENT_ACTIVE	= "PAY_fan_test_env_PAY";
+//	public final static String AFI_TEST_ENVIRONMENT_ACTIVE	= "PAY_afi_test_env_PAY";
+//	
+//	public final static String REPORT_ADDITIONAL_SALAY_TEMPLATES 	= "PAY_REPORT_additional_salary_PAY";
 
 	private TrainingCenter defaultTrainingCenter;
 	private RegistryBank ssPaymentBankAccount;
@@ -69,8 +70,8 @@ public class PayrollAppParamsController implements Serializable {
 	
 	private void initFanTestEnvironment() {
 		try {
-			if(getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
-				setFanTestEnvironment(new Boolean(getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			if(getParameter(AppParam.PAY_fan_test_env_PAY.getValue()).getValue()!=null){
+				setFanTestEnvironment(new Boolean(getParameter(AppParam.PAY_fan_test_env_PAY.getValue()).getValue()));
 			} else {
 				setFanTestEnvironment(true);
 			}
@@ -92,8 +93,8 @@ public class PayrollAppParamsController implements Serializable {
 	
 	private void initAfiTestEnvironment() {
 		try {
-			if(getParameter(AFI_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
-				setAfiTestEnvironment(new Boolean(getParameter(AFI_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			if(getParameter(AppParam.PAY_afi_test_env_PAY.getValue()).getValue()!=null){
+				setAfiTestEnvironment(new Boolean(getParameter(AppParam.PAY_afi_test_env_PAY.getValue()).getValue()));
 			} else {
 				setAfiTestEnvironment(true);
 			}
@@ -112,7 +113,7 @@ public class PayrollAppParamsController implements Serializable {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AVAILABLE_NEW_CONTRACT_CODES);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AppParam.PAY_available_contract_codes_PAY.getValue());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), DomainManager.getCurrentDomain());
 			List<ITransferObject> list = bean.getList(criteria);
 			criteria = null;
@@ -120,7 +121,7 @@ public class PayrollAppParamsController implements Serializable {
 			if(list.isEmpty() && parentDomain!=null ){
 				criteria = new Criteria();
 				criteria.setSkipDomainFilter(true);
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AVAILABLE_NEW_CONTRACT_CODES);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), AppParam.PAY_available_contract_codes_PAY.getValue());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), parentDomain);
 				list = bean.getList(criteria);
 			}
@@ -165,9 +166,9 @@ public class PayrollAppParamsController implements Serializable {
 	private void initDefaultTrainingCenter() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
-			if(getParameter(DEFAULT_TRAINING_CENTER_KEY).getValue()!=null){
+			if(getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).getValue()!=null){
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(getParameter(DEFAULT_TRAINING_CENTER_KEY).getValue()));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).getValue()));
 				setDefaultTrainingCenter((TrainingCenter) bean.getList(criteria).get(0));
 			} else {
 				setDefaultTrainingCenter((TrainingCenter) bean.createNewTo());
@@ -191,9 +192,9 @@ public class PayrollAppParamsController implements Serializable {
 	private void initSsPaymentBankAccount() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
-			if(getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).getValue()!=null){
+			if(getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).getValue()!=null){
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).getValue()));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).getValue()));
 				setSsPaymentBankAccount((RegistryBank) bean.getList(criteria).get(0));
 			} else {
 				setSsPaymentBankAccount((RegistryBank) bean.createNewTo());
@@ -301,24 +302,24 @@ public class PayrollAppParamsController implements Serializable {
 
 		// CONTRACT PARAMS
 		if(getDefaultTrainingCenter()!=null && getDefaultTrainingCenter().getId()!=null){
-			getParameter(DEFAULT_TRAINING_CENTER_KEY).setValue(getDefaultTrainingCenter().getId().toString());
+			getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).setValue(getDefaultTrainingCenter().getId().toString());
 		} else {
-			getParameter(DEFAULT_TRAINING_CENTER_KEY).setValue(null);
+			getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).setValue(null);
 		}
 		
 		// SS PAYMENT BANK ACCOUNT
 		if(ssPaymentBankAccount!=null && ssPaymentBankAccount.getId()!=null){
-			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(ssPaymentBankAccount.getId().toString());
+			getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).setValue(ssPaymentBankAccount.getId().toString());
 		} else {
-			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(null);
+			getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).setValue(null);
 		}
-		if( StringUtils.isNotBlank(getParameter(SS_MUTUAL_KEY).getValue()) ){
-			getParameter(SS_MUTUAL_KEY).setValue(getSSMutual());
+		if( StringUtils.isNotBlank(getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).getValue()) ){
+			getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).setValue(getSSMutual());
 		} else {
-			getParameter(SS_MUTUAL_KEY).setValue(null);
+			getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).setValue(null);
 		}
-		getParameter(FAN_TEST_ENVIRONMENT_ACTIVE).setValue(getFanTestEnvironment().toString());
-		getParameter(AFI_TEST_ENVIRONMENT_ACTIVE).setValue(getAfiTestEnvironment().toString());
+		getParameter(AppParam.PAY_fan_test_env_PAY.getValue()).setValue(getFanTestEnvironment().toString());
+		getParameter(AppParam.PAY_afi_test_env_PAY.getValue()).setValue(getAfiTestEnvironment().toString());
 		
 	}
 
@@ -329,8 +330,8 @@ public class PayrollAppParamsController implements Serializable {
 		return null;
 	}
 	private String getSSMutual() throws ManagerBeanException {
-		if( StringUtils.isNotBlank(getParameter(SS_MUTUAL_KEY).getValue()) ){
-			return getParameter(SS_MUTUAL_KEY).getValue();
+		if( StringUtils.isNotBlank(getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).getValue()) ){
+			return getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).getValue();
 		}
 		return null;
 	}

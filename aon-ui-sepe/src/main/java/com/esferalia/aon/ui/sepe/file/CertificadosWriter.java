@@ -353,6 +353,17 @@ public class CertificadosWriter implements Serializable {
 					}
 				}
 			}
+		} else {
+			Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate(), Boolean.TRUE);
+			Integer totalWeekDays = 0;
+			totalWeekDays += map.get(ContextVariable.MONDAY_HOURS.getName())!=null?1:0;
+			totalWeekDays += map.get(ContextVariable.TUESDAY_HOURS.getName())!=null?1:0;
+			totalWeekDays += map.get(ContextVariable.WEDNESDAY_HOURS.getName())!=null?1:0;
+			totalWeekDays += map.get(ContextVariable.THURSDAY_HOURS.getName())!=null?1:0;
+			totalWeekDays += map.get(ContextVariable.FRIDAY_HOURS.getName())!=null?1:0;
+			totalWeekDays += map.get(ContextVariable.SATURDAY_HOURS.getName())!=null?1:0;
+			totalWeekDays += map.get(ContextVariable.SUNDAY_HOURS.getName())!=null?1:0;
+			addPeriod(REGULAR_VALUE, batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate(), totalWeekDays.toString(), listaPeriodos, periodo);
 		}
 
 		if(!listaPeriodos.isEmpty()){
@@ -385,9 +396,10 @@ public class CertificadosWriter implements Serializable {
 	}
 	
 	private void addPeriod(String tipoTp, Period p, String diasTp, List<PERIODODISTRIBUCIONJORNADASTYPE> listaPeriodos, PERIODODISTRIBUCIONJORNADASTYPE periodo) {
+		addPeriod(tipoTp, p.getStart(), p.getEnd(), diasTp, listaPeriodos, periodo);
+	}
+	private void addPeriod(String tipoTp, Date startDate, Date endDate, String diasTp, List<PERIODODISTRIBUCIONJORNADASTYPE> listaPeriodos, PERIODODISTRIBUCIONJORNADASTYPE periodo) {
 		DateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
-		Date startDate = p.getStart();
-		Date endDate = p.getEnd();
 		if(listaPeriodos.isEmpty()){
 			periodo = createPeriodoDistribucionJornadasType(tipoTp,startDate,endDate,diasTp);
 			listaPeriodos.add(periodo);

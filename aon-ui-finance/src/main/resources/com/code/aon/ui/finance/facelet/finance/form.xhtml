@@ -18,6 +18,7 @@
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipSaveButton" value="#{!finance.new and !finance.pending and !finance.returned}" />
 				<ui:param name="skipRemoveButton" value="#{finance.new or !finance.to.emptyInvoice or finance.grouped}" />
+				<ui:param name="showMoreMenu" value="#{!finance.new}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="paymentPopup" 
@@ -49,10 +50,20 @@
 						styleClass="aon-finding-toolbar-item aon-icon-fraction"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
 				</ui:define>				
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="remarks"
+						value="#{bundle.aon_remark}"
+						iconClass="aon-icon-notes"
+						reRender="showRemarksWindow">
+						<f:setPropertyActionListener target="#{finance.showRemarksWindow}"
+							value="#{true}" />							
+					</aon:menuItem>		
+				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+				<aon:panelGrid id="dataTable" columns="4"
+					styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-140
 						,aon-panelGrid-even aon-width-500
 						,aon-panelGrid-odd aon-width-140
@@ -400,6 +411,24 @@
 					</aon:outputText>	
 
 				</aon:panelGrid>
+
+				<aon:panelGrid columns="2"
+					styleClass="aon-width-all aon-margin-top"
+					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto"
+					rendered="#{!empty finance.to.remarks}">
+
+					<aon:div>
+						<aon:outputLabel for="Finance_remarks"
+							value="#{bundle.aon_remark}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_remark_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Finance_remarks" cols="145" rows="2"
+						value="#{finance.to.remarks}" />
+
+				</aon:panelGrid>
 					
 				<c:if test="#{!finance.new}">
 					<aon:div styleClass="aon-padding-top">
@@ -510,6 +539,9 @@
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalRemarks.xhtml">
+			<ui:param name="controller" value="#{finance}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalGroup.xhtml" >
 			<ui:param name="modalReRender" value="Finance_amount-Panel,Finance_total" />
 		</ui:include>

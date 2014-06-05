@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="salaryPrintList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="Impresion / eMail de Nominas" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				<ui:define name="toolbarContent">
+					<aon:div style="display:inline-block; width: 30px;"
+						rendered="#{!salaryPrint.selectionEmpty}" >
+						<rich:dropDownMenu id="emailDropDown" event="onmouseover"
+							style="width: 25px;"
+							submitMode="none" direction="bottom-right"
+							jointPoint="bl" hideDelay="150">
+							<f:facet name="label"> 
+								<aon:outputText value="&#160;" 
+									styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" />
+			                </f:facet>
+			                <rich:menuItem submitMode="none">
+		                        <aon:selectBooleanCheckbox id="includeEnterpriseCost"
+									value="#{salaryPrint.includeEnterpriseCost}" />
+								<aon:outputLabel for="includeEnterpriseCost"
+									value="#{bundle.payroll_salaryPrint_include_enterprise_cost}" />
+		                    </rich:menuItem>
+			                <rich:menuItem submitMode="none">
+								<aon:commandButton id="email"
+									value="#{bundle.webmail_send_email}" 
+									actionListener="#{salaryPrint.onSendByEmail}"
+									styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+									reRender="emailDropDown, showNewMessageWindow" />
+			                </rich:menuItem>
+						</rich:dropDownMenu>
+					</aon:div>
+					<aon:htmlCommandLink id="currentSalary-report"
+						rendered="#{!salaryPrint.selectionEmpty}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{bundle.aon_salaries}"
+						action="#{salaryPrint.onPrint}" />
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<a4j:region id="searchPanel">
+					<aon:panelCollapsible 
+						label="#{bundle.payroll_data_filter}"
+						headerClass="aon-panelGrid-search-info" 
+						bodyClass="aon-panelGrid-search"
+						value="#{false}" >
+						<aon:panelGrid columns="2">
+						
+							<aon:outputLabel value="#{bundle.payroll_liquidation_date}" />
+							<h:panelGrid columns="2" >
+								<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}" >
+									<f:selectItems value="#{commonCollections.months}"  />
+								</aon:selectOneMenu>
+								<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
+					   				inputSize="4" minValue="2013" maxValue="2020">
+					   			</rich:inputNumberSpinner>
+							</h:panelGrid>
+							
+							<aon:outputLabel for="Salary_type"
+								value="#{bundle.aon_type}" />
+							<aon:selectManyCheckbox id="Salary_type"
+								value="#{salaryPrint.types}" >
+								<f:selectItem itemLabel="Nómina" itemValue="SALARY" />
+								<f:selectItem itemLabel="Extra" itemValue="EXTRA" />
+								<f:selectItem itemLabel="Finiquito" itemValue="SETTLE" />
+								<f:selectItem itemLabel="Atraso" itemValue="DELAY" />
+							</aon:selectManyCheckbox>
+							
+							<c:if test="#{salaryPrint.showWorkPlaces}">
+								<aon:outputLabel for="Salary_contract_workPlace_id"
+									value="#{bundle.payroll_workplace}" />
+								<aon:selectOneMenu id="Salary_contract_workPlace_id"
+									value="#{salaryPrint.workPlace}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{salaryPrint.availableWorkPlaces}" />
+								</aon:selectOneMenu>		
+								<!-- add more minus buttons -->	
+							</c:if>
+										
+							<aon:outputText value="&#160;" />
+							<aon:commandButton id="filterSearch"
+								value="#{bundle.aon_search}" status="aonStatus"
+								reRender="salaryPrintList"
+								actionListener="#{salaryPrint.onFilter}"
+								requestDelay="100"
+								styleClass="aon-icon-rubber aon-search-lookup-button">
+							</aon:commandButton>
+						</aon:panelGrid>
+					</aon:panelCollapsible>
+				</a4j:region>
+
+				<aon:div id="salaryPrintDataDiv">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{salaryPrint}" />
+						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+						<ui:param name="skipSelectButton" value="#{true}" />
+						<ui:define name="columns">
+
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<f:facet name="header">
+									<aon:panelGroup>
+										<aon:commandButton styleClass="aon-icon-commandButton aon-icon-checkAll"
+											title="#{bundle.aon_check_all}"
+											value="&#160;"
+											reRender="salaryPrintDataDiv,aonToolbar"
+											actionListener="#{salaryPrint.checkAll}"
+											ajaxSingle="true" 
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+								     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+										<aon:commandButton styleClass="aon-icon-commandButton aon-icon-checkNone"
+											title="#{bundle.aon_uncheck_all}"
+											value="&#160;"
+											reRender="salaryPrintDataDiv,aonToolbar"
+											actionListener="#{salaryPrint.checkNone}"
+											ajaxSingle="true" 
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+								     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+									</aon:panelGroup>
+								</f:facet>
+								<a4j:region>
+									<aon:selectBooleanCheckbox
+											value="#{salaryPrint.rowChecked}" >
+										<a4j:support event="onclick" reRender="aonToolbar" />
+									</aon:selectBooleanCheckbox>
+								</a4j:region>
+							</aon:column>
+							
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryPrint/listContent.xhtml" />
+
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+			<ui:param name="skipAttachButton" value="#{true}" />
+		</ui:include>	
+
+	</ui:define>
+</ui:composition>

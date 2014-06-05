@@ -812,6 +812,16 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 	
 	@Override
+	public void addTrimExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			String value = event.getNewValue().toString();
+			if (! StringUtils.isBlank(value)) {
+				addExpression(criteria, event.getComponent().getId(), value.trim());
+			}
+		}
+	}
+
+	@Override
 	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
 		Object value = event.getNewValue();
 		if (value != null) {

@@ -24,12 +24,14 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -72,7 +74,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 	}
 
-	static class DrafDeduction extends ContractDeduction {
+	static class DraftDeduction extends ContractDeduction {
 		private String name;
 
 		@Override
@@ -90,6 +92,10 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		public ExpressionScope getScope() {
 			return ExpressionScope.SALARY;
 		}
+	}
+
+	static class DraftEmbargo extends ContractEmbargo {
+
 	}
 
 	private static class DraftCompositePayments extends CompositePayments
@@ -120,16 +126,16 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 	}
 
-	static class DraftHierarchyDeductions extends HierarchyDeductions {
+	static class DraftHierarchyDeductions<T extends IContractDeduction> extends HierarchyDeductions<T> {
 
 		private Set<Integer> ids = new HashSet<Integer>();
 
-		public DraftHierarchyDeductions(Iterator<IContractDeduction>... childs) {
+		public DraftHierarchyDeductions(Iterator<T>... childs) {
 			super(childs);
 		}
 
 		@Override
-		protected IContractDeduction next(IContractDeduction e) {
+		protected T next(T e) {
 			Integer id = e.getId();
 			// Not it's not tricky. Remember we use Set, and Set's
 			// add methos return true if this Set not already contain
@@ -140,6 +146,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 				return null;
 		}
 	}
+
 
 	class DraftDeferredExpressionVariable extends DeferredExpressionVariable {
 
@@ -218,8 +225,15 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {
-		return new DraftHierarchyDeductions(getDraftDeductions().iterator(),
+		return new DraftHierarchyDeductions<IContractDeduction>(getDraftDeductions().iterator(),
 				super.getContractDeductions().iterator());
+	}
+	
+	@Override
+	public Collection<IContractEmbargo> getContractEmbargos()
+			throws AonException {
+		return new DraftHierarchyDeductions<IContractEmbargo>(getDraftEmbargos().iterator(),
+				super.getContractEmbargos().iterator());
 	}
 
 	@Override
@@ -259,7 +273,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 		for (Deduction deduction : draft.getDraftDeductions()) {
 
-			DrafDeduction draftDeduction = new DrafDeduction();
+			DraftDeduction draftDeduction = new DraftDeduction();
 
 			draftDeduction.setId(deduction.getId());
 			draftDeduction.setName(deduction.getName());
@@ -269,11 +283,30 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 			draftDeduction.setExpression(deduction.getExpression());
 			draftDeduction.setDescription(deduction.getDescription());
 			draftDeduction.setType(getDeductionType(deduction.getType()));
-
+			
 			deductions.add(draftDeduction);
 		}
 
 		return deductions;
+	}
+
+	private Collection<IContractEmbargo> getDraftEmbargos() {
+		Collection<IContractEmbargo> embargos = new LinkedList<IContractEmbargo>();
+
+		for (Deduction embargo : draft.getDraftEmbargos()) {
+
+			DraftEmbargo draftEmbargo = new DraftEmbargo();
+			
+			draftEmbargo.setId(embargo.getId());
+			draftEmbargo.setEndDate(resetTime(embargo.getEndDate()));
+			draftEmbargo.setStartDate(resetTime(embargo.getStartDate()));
+			draftEmbargo.setExpression(embargo.getExpression());
+			draftEmbargo.setDescription(embargo.getDescription());
+
+			embargos.add(draftEmbargo);
+		}
+
+		return embargos;
 	}
 
 	private IContractPayment getDraftPayment(Payment payment) {

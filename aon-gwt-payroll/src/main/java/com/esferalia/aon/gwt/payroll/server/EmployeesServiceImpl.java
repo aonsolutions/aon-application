@@ -18,7 +18,6 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,7 +54,6 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
-import org.jooq.DSLContext;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -79,6 +77,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -89,6 +88,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
@@ -105,6 +105,8 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.ReportData;
+import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -121,6 +123,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
+import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -130,6 +133,11 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
+import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
+import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.A3Line;
+import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.FTELine;
+import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.HolidayLine;
+import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.Report;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
@@ -188,7 +196,6 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
-import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
@@ -717,6 +724,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} finally {
 			releaseFacesContext();
 		}
+
 	}
 
 	@Override
@@ -1081,6 +1089,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public List<Deduction> getAvailableDeductions(int employeeId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+
+			conn = getConnection();
+
+			int domainId = getDomainID();
+
+			return JooqDeductions.getConcepts(conn, domainId,
+					getParentDomainID());
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
 	public void saveEvents(Events events, Date startDate, Date endDate) {
 		Connection conn = null;
 		try {
@@ -1273,13 +1309,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public void saveITDataPerson(ITDataPerson dataPerson)
 			throws IllegalArgumentException {
-	
-		
-		
+
 	}
 
 	@Override
@@ -1310,6 +1344,213 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
+	}
+
+	@Override
+	public ReportData getA3Report(Date month, int[] workplaces)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+
+			Date start = DateUtils.getFirstDayOfMonth(month);
+			Date end = DateUtils.getLastDayOfMonth(month);
+
+			Report<A3Line> a3Report = JooqGPSReports.getA3Report(conn,
+					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
+					workplaces);
+
+			//@formatter:off
+			ReportData reportData = new ReportData(
+					new ReportData.StringColumn("NIF"),
+					new ReportData.StringColumn("NOMBRE TRABAJADOR"),
+					new ReportData.DoubleColumn("PLUS TURNICIDAD"),
+					new ReportData.DoubleColumn("INCENTIVOS"),
+					new ReportData.DoubleColumn("EMBARGOS"),
+					new ReportData.DoubleColumn("ATRASOS"),
+					new ReportData.StringColumn("OBSERVACIONES")
+					);
+			//@formatter:on
+
+			int cecoCols = 0;
+
+			for (A3Line a3Line : a3Report) {
+
+				Map<String, Double> cecos = a3Line.getCECOs();
+
+				for (int ceco = cecoCols; cecoCols < cecos.size(); cecoCols++)
+					reportData.addColums(new ReportData.StringColumn("CECO "
+							+ (ceco + 1)), new ReportData.DoubleColumn(
+							"% CECO " + (ceco + 1)));
+
+				List<Object> values = new ArrayList<Object>();
+				values.add(a3Line.getNIF());
+				values.add(a3Line.getPerson());
+				values.add(a3Line.getTurnPlus());
+				values.add(a3Line.getIncentives());
+				values.add(a3Line.getEmbargos());
+				values.add(a3Line.getDelays());
+				values.add(a3Line.getComments());
+
+				for (Entry<String, Double> ceco : cecos.entrySet()) {
+					values.add(ceco.getKey());
+					values.add(ceco.getValue());
+				}
+
+				//@formatter:off
+				reportData.addRow(values.toArray());
+				//@formatter:on
+			}
+
+			return reportData;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+	}
+
+	@Override
+	public ReportData getFTEReport(Date start, Date end, int[] workplaces)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+
+			//@formatter:off
+			ReportData reportData = new ReportData(
+					new ReportData.StringColumn("HOTEL"),
+					new ReportData.StringColumn("DEPARTAMENTO"),
+					new ReportData.StringColumn("PUESTO"),
+					new ReportData.IntColumn("SEMANA"),
+					new ReportData.DateColumn("FECHA"),
+					new ReportData.StringColumn("PERSONA"),
+					new ReportData.BooleanColumn("CIERRE"),
+					new ReportData.IntColumn("HORAS"),
+					new ReportData.IntColumn("PERSONAL"),
+					new ReportData.DoubleColumn("PERSONAL EFECTIVO")
+					);
+			//@formatter:on
+
+			Report<FTELine> fteReport = JooqGPSReports.getFTEReport(conn,
+					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
+					workplaces);
+
+			for (FTELine fteLine : fteReport) {
+				//@formatter:off
+				reportData.addRow(
+						fteLine.getHotel(),
+						fteLine.getSection(),
+						fteLine.getJob(),
+						fteLine.getWeek(),
+						fteLine.getDay(),
+						fteLine.getPerson(),
+						fteLine.isClosed(),
+						fteLine.getHours(),
+						fteLine.getStaff(),
+						fteLine.getRealStaff()
+						);
+				//@formatter:on
+			}
+
+			return reportData;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+	}
+
+	@Override
+	public ReportData getHolidayReport(Date start, Date end, int[] workplaces)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+
+			//@formatter:off
+			ReportData reportData = new ReportData(
+					new ReportData.StringColumn("HOTEL"),
+					new ReportData.StringColumn("DEPARTAMENTO"),
+					new ReportData.StringColumn("PUESTO"),
+					new ReportData.IntColumn("SEMANA"),
+					new ReportData.DateColumn("FECHA"),
+					new ReportData.StringColumn("PERSONA"),
+					new ReportData.BooleanColumn("CIERRE"),
+					new ReportData.IntColumn("V"),
+					new ReportData.IntColumn("FT"),
+					new ReportData.IntColumn("FR"),
+					new ReportData.IntColumn("LT"),
+					new ReportData.IntColumn("LL"),
+					new ReportData.IntColumn("LL-LT"),
+					new ReportData.IntColumn("HE"),
+					new ReportData.IntColumn("HFD-HE")
+					);
+			//@formatter:on
+
+			Report<HolidayLine> holidayReport = JooqGPSReports
+					.getHolidayReport(conn, SQLUtils.date2sql(start),
+							SQLUtils.date2sql(end), workplaces);
+
+			for (HolidayLine holidayLine : holidayReport) {
+				//@formatter:off
+				reportData.addRow(
+						holidayLine.getHotel(),
+						holidayLine.getSection(),
+						holidayLine.getJob(),
+						holidayLine.getWeek(),
+						holidayLine.getDay(),
+						holidayLine.getPerson(),
+						holidayLine.isClosed(),
+						holidayLine.getV(),
+						holidayLine.getFT(),
+						holidayLine.getFR(),
+						holidayLine.getLT(),
+						holidayLine.getLL() ,
+						holidayLine.getLL() - holidayLine.getLT(),
+						holidayLine.getHE(),
+						holidayLine.getHFD() - holidayLine.getHE() 
+						);
+				//@formatter:on
+			}
+
+			return reportData;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
 	}
 
 	// -------------------------------------------------------- Private methods
@@ -1972,7 +2213,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				irpfData.setId(rs.getInt(IRPF_DATA + "." + IrpfDataColumns.ID));
 
 				IrpfResult irpfResult = new IrpfResult();
-				irpfResult.setId(rs.getInt(IRPF_RESULT + "."
+				irpfResult.setId(rs.getInt(IRPF_RESULT + ".get"
 						+ IrpfResultColumns.ID));
 
 				outcome.setIrpfData(irpfData);
@@ -3605,9 +3846,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							ISQLContractSalaryCalculatorContext draftCtx;
 							try {
 								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
-										conn, startDate, endDate, issueDate, criteria);
-								draftCtx = new SQLSalaryDraftCalculatorContext(draft,
-										sqlCtx);
+										conn, startDate, endDate, issueDate,
+										criteria);
+								draftCtx = new SQLSalaryDraftCalculatorContext(
+										draft, sqlCtx);
 								draftCtx.next();
 								return draftCtx;
 							} catch (ExpressionException e) {
@@ -4032,6 +4274,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					.setId(rs.getInt(tableCol(WORKPLACE, WorkplaceColumns.ID)));
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE,
 					WorkplaceColumns.DESCRIPTION)));
+			workplace.setActive(rs.getBoolean(tableCol(WORKPLACE,
+					WorkplaceColumns.ACTIVE)));
 
 			Object agreementId = rs.getObject(tableCol(PAYROLL_WORKPLACE,
 					PayrollWorkplaceColumns.AGREEMENT));
