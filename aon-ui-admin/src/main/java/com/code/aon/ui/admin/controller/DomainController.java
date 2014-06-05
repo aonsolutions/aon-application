@@ -178,7 +178,6 @@ public class DomainController extends BasicController {
 			initDomainApplication();
 			initApplicationInfos();
 			initOEM();
-			updateDocumental();		
 			initHistory();
 			this.currentDomainInfo = getDomainInfo();
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
@@ -547,7 +546,10 @@ public class DomainController extends BasicController {
 
 	public void updateDocumental() throws ManagerBeanException {
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME);
-		dm.updateLimits(getManagerBean(), getDomain());
+		Domain domain = getDomain();
+		if ( dm.updateLimits(domain) ) {
+			getManagerBean().update(domain);
+		}
 	}
 
 	public IControllerListener getParentDomainFilter() {

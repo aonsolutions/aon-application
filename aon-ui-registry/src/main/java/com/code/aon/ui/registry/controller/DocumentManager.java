@@ -48,14 +48,14 @@ public class DocumentManager {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			if ( domain != null ) {
-				updateLimits(bean, domain);
+				updateLimits(domain);
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error init max document szie", th);
 		}		
 	}
 	
-	public void updateLimits( IManagerBean bean, Domain domain ) throws ManagerBeanException {
+	public boolean updateLimits( Domain domain ) throws ManagerBeanException {
 		boolean updateDomain = false;
 		Integer value = domain.getMaxDocumentSize();
 		if ( (value == null) || (value < MINIMUM_MAX_DOCUMENT_SIZE)  ) {
@@ -75,9 +75,7 @@ public class DocumentManager {
 			domain.setMaxTotalDocumentSize(MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE);
 		}
 		maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
-		if ( updateDomain ) {
-			bean.update(domain);
-		}		
+		return updateDomain;
 	}
 	
 	private Long getUsedSpace() {

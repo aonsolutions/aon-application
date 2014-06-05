@@ -230,13 +230,23 @@ public class DomainInfo {
 	
 	public byte[] getData() {
 		Properties properties = new Properties();
-		properties.setProperty(TYPE, type.toString());
-		properties.setProperty(NUMBER_OF_USERS, numberOfUsers.toString());
-		properties.setProperty(MAX_TOTAL_DOCUMENT_SIZE, maxTotalDocumentSize.toString());
+		if ( type != null ) {
+			properties.setProperty(TYPE, type.toString());	
+		}
+		if ( numberOfUsers != null ) {
+			properties.setProperty(NUMBER_OF_USERS, numberOfUsers.toString());	
+		}
+		if ( maxTotalDocumentSize != null ) {
+			properties.setProperty(MAX_TOTAL_DOCUMENT_SIZE, maxTotalDocumentSize.toString());	
+		}
 		properties.setProperty(DOMAIN_MANAGEMENT, Boolean.toString(domainManagement));
-		properties.setProperty(USER, user);
-		String modulesValue = StringUtils.join(modules, " ");
-		properties.setProperty(MODULES, modulesValue);
+		if (! StringUtils.isEmpty(user)) {
+			properties.setProperty(USER, user);	
+		}
+		if (! modules.isEmpty() ) {
+			String modulesValue = StringUtils.join(modules, " ");
+			properties.setProperty(MODULES, modulesValue);			
+		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			properties.store(bos, "");
