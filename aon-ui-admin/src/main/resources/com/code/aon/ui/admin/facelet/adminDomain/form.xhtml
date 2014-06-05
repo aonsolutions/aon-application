@@ -25,6 +25,7 @@
 							accesskey="#{bundle.aon_key_save}" />						
 					</c:if>						
 					<aon:htmlCommandLink id="showTermsOfService"
+						rendered="#{!aonRole.sysAdmin}"
 						value="#{bundle.admin_service_terms}" target="_blank"
 						actionListener="#{adminDomain.onDownloadTermsOfService}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -223,13 +224,15 @@
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
 					
-					<aon:div styleClass="aon-note aon-margin-bottom" style="background-color:#FFFFDD;">
-						<aon:div styleClass="aon-note-internal">
-							<aon:panelGroup>
-								<aon:outputText value="#{bundle.admin_service_terms_note}" />
-							</aon:panelGroup>
-						</aon:div>
-					</aon:div>	
+					<c:if test="#{!aonRole.sysAdmin}" >
+						<aon:div styleClass="aon-note aon-margin-bottom" style="background-color:#FFFFDD;">
+							<aon:div styleClass="aon-note-internal">
+								<aon:panelGroup>
+									<aon:outputText value="#{bundle.admin_service_terms_note}" />
+								</aon:panelGroup>
+							</aon:div>
+						</aon:div>	
+					</c:if>
 					
 					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
 						<ui:param name="controller" value="#{adminDomain}" />

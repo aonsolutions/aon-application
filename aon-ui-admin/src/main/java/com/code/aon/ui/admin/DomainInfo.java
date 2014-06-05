@@ -177,22 +177,40 @@ public class DomainInfo {
 	}
 
 	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
-		diff( AonUtil.getMessage(message), sb, oldValue, newValue );
+		diff( sb, message, oldValue + " -> "+ newValue );
 	}
 
-	private void diff( String message, StringBuffer sb, Object oldValue, Object newValue ) {
+	private void diff( StringBuffer sb, String message, String differences ) {
 		if ( sb.length() > 0 ) {
 			sb.append(", ");
 		}
-		sb.append( message ).append(": ");
-		sb.append( oldValue ).append( " -> ").append( newValue );
+		sb.append( AonUtil.getMessage(message) ).append(": ").append( differences );
 		sb.append(IOUtils.LINE_SEPARATOR);
 	}
 	
+	private void diff( StringBuffer sb, char sign, List<Module> list1, List<Module> list2 ) {
+		Locale locale = AonUtil.getCurrentLocale();
+		for( Module module : list1 ) {
+			if (! list2.contains(module) ) {
+				if ( sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(sign).append(module.getName(locale));
+			}
+		}				
+	}
+	
+	private void diffList( StringBuffer sb, String message, List<Module> list1, List<Module> list2 ) {
+		StringBuffer differences = new StringBuffer();
+		diff( differences, '-', list1, list2 );
+		diff( differences, '+', list2, list1 );
+		diff(sb, message, differences.toString());
+	}
+	
 	public String getDifferences( DomainInfo di ) {
-		StringBuffer sb = new StringBuffer();
-		Locale locale = AonUtil.getCurrentLocale();	
+		StringBuffer sb = new StringBuffer();	
 		if ( getType() != di.getType() ) {
+			Locale locale = AonUtil.getCurrentLocale();
 			diff( sb, ICommonMessages.DOMAIN_TYPE, getType().getName(locale), di.getType().getName(locale) );
 		}
 		if (! ObjectUtils.equals(getNumberOfUsers(), di.getNumberOfUsers()) ) {
@@ -205,7 +223,7 @@ public class DomainInfo {
 			diff( sb, ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT, isDomainManagement(), di.isDomainManagement() );
 		}
 		if (! Arrays.equals(getModuleArray(), di.getModuleArray()) ) {
-			diff( sb, ICommonMessages.DOMAIN_MODULES, getModuleList(), di.getModuleList() );
+			diffList( sb, ICommonMessages.DOMAIN_MODULES, getModules(), di.getModules() );
 		}
 		return sb.toString();
 	}

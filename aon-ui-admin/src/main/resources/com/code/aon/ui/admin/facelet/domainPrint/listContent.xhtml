@@ -58,7 +58,8 @@
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
-		<rich:toolTip styleClass="aon-width-200" >						
+		<rich:toolTip styleClass="aon-width-200"
+			rendered="#{(to.creationUser != null) or (to.creationDate != null)}" >				
 			<aon:outputText rendered="#{to.creationUser != null}"
 				value="#{to.creationUser} / " />
 			<aon:outputText rendered="#{to.creationDate != null}"
@@ -79,7 +80,8 @@
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
-		<rich:toolTip styleClass="aon-width-200" >
+		<rich:toolTip styleClass="aon-width-200" 
+			rendered="#{(to.modificationUser != null) or (to.modificationDate != null)}" >
 			<aon:outputText rendered="#{to.modificationUser != null}"
 				value="#{to.modificationUser} / " />
 			<aon:outputText rendered="#{to.modificationDate != null}"
