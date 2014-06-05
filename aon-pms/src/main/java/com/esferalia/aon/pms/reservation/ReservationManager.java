@@ -443,8 +443,13 @@ public class ReservationManager implements IReservationConstants {
 
 		if (calculateTaxData) {
 			totalTaxableBase = CommonUtil.round(totalTaxableBase);
-			reservation.setTaxableBase(totalTaxableBase);
-			reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
+			if (reservation.getTotal() >= totalTaxableBase) {
+				reservation.setTaxableBase(totalTaxableBase);
+				reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
+			} else {
+				throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
+			}
+
 		}
 		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 
