@@ -405,13 +405,11 @@
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
 			</c:if>
-			<c:if test="#{aonRole.documentManager}">
-				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
-					<ui:param name="controller" value="#{customer}" />
-					<ui:param name="attachmentController" value="#{customerRAttach}" />
-					<ui:param name="modalReRender" value="customerTab" />
-				</ui:include>
-			</c:if>
+			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
+				<ui:param name="controller" value="#{customer}" />
+				<ui:param name="attachmentController" value="#{customerRAttach}" />
+				<ui:param name="modalReRender" value="customerTab" />
+			</ui:include>
 			<c:if test="#{customer.showAlumnData}">
 				<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
 					<ui:include src="/com/code/aon/ui/academy/facelet/customerAbsence/newAbsenceModal.xhtml">

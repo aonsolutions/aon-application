@@ -257,15 +257,11 @@
 					<ui:param name="modalReRender" value="targetTab" />
 				</ui:include>
 			</c:if>
-			<c:if test="#{aonRole.documentManager}">
-				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
-					<ui:param name="controller" value="#{target}" />
-					<ui:param name="attachmentController" value="#{targetRAttach}" />
-					<ui:param name="modalReRender" value="targetTab" />
-				</ui:include>
-			</c:if>
-			
-			
+			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
+				<ui:param name="controller" value="#{target}" />
+				<ui:param name="attachmentController" value="#{targetRAttach}" />
+				<ui:param name="modalReRender" value="targetTab" />
+			</ui:include>
 		</c:if>	
 	</ui:define>
 </ui:composition>

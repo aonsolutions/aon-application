@@ -171,13 +171,11 @@
 					<ui:param name="modalReRender" value="creditorTab" />
 				</ui:include>
 			</c:if>
-			<c:if test="#{aonRole.documentManager}">
-				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
-					<ui:param name="controller" value="#{creditor}" />
-					<ui:param name="attachmentController" value="#{creditorRAttach}" />
-					<ui:param name="modalReRender" value="creditorTab" />
-				</ui:include>
-			</c:if>
+			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
+				<ui:param name="controller" value="#{creditor}" />
+				<ui:param name="attachmentController" value="#{creditorRAttach}" />
+				<ui:param name="modalReRender" value="creditorTab" />
+			</ui:include>
 		</c:if>
 	</ui:define>
 </ui:composition>
