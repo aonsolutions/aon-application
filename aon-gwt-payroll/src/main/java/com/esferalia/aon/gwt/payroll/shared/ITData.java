@@ -27,8 +27,6 @@ public class ITData implements Serializable{
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> dataIts;	
 	private List<Integer> contracts;
 	
-	
-	
 	public static class UnmodifiableEmployee extends Employee {
 
 		public UnmodifiableEmployee() {
@@ -178,6 +176,10 @@ public class ITData implements Serializable{
 		return Collections.unmodifiableMap(dataIts.get(contractId));
 		
 	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getITs() {
+		return Collections.unmodifiableMap(dataIts);
+	}
 
 	public void yearsExistContracts(Date pMin, Date pMax) {
 		contracts.clear();
@@ -223,17 +225,6 @@ public class ITData implements Serializable{
 		return oldData;
 			
 	}
-	
-/*	public ITDataPerson updateItem(ITDataPerson itDataPerson) {
-		
-		int contractId = itDataPerson.getContractId();
-		int leaveId = itDataPerson.getContractLeaveId();
-		
-		LinkedHashMap<Integer, ITDataPerson> update = dataIts.get(contractId);		
-		ITDataPerson oldData = update.put(leaveId, itDataPerson);
-		sortMap(update);
-		return oldData;
-	}*/
 	
 	public void sortMap(Map<Integer, ITDataPerson> map) {
 

@@ -383,11 +383,30 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	}
 
 	@Override
-	public void saveITDataPerson(ITDataPerson dataPerson,
+	public void saveUpdateITDataPerson(Map<Integer, ITDataPerson> map,
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
-		// TODO Apéndice de método generado automáticamente
-
+		AON.start();
+		employeesServiceAsync.saveUpdateITDataPerson(map, 
+				new AsyncCallbackWrapper<Void>(callback));		
 	}
+	
+	@Override
+	public void saveInsertITDataPerson(Map<Integer, ITDataPerson> map,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {	
+		
+		AON.start();
+		employeesServiceAsync.saveInsertITDataPerson(map, 
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+	 @Override
+	public void saveRemoveITDataPerson(Map<Integer, ITDataPerson> map,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		 
+		 AON.start();
+			employeesServiceAsync.saveRemoveITDataPerson(map, 
+					new AsyncCallbackWrapper<Void>(callback));
+	}
+	
 
 	// ------------------------------------------------- GPSReportsServiceAsync
 	@Override

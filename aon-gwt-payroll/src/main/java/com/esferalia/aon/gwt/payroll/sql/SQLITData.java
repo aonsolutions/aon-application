@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import org.jooq.conf.Settings;
+
 import com.code.aon.dbutils.DatabaseUtil;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -18,8 +20,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 
-public class SQLITData implements Serializable {
-	
+public class SQLITData implements Serializable {	
 	/**
 	 * 
 	 */
@@ -29,21 +30,36 @@ public class SQLITData implements Serializable {
 	private static final String FROM = " FROM ";
 	private static final String WHERE = " WHERE ";
 	
-	private static ITData itData;
+	private static Settings SETTINGS = null;
 	
+	public static void updateContractLeave(Connection connection, ITDataPerson itData) {
+
+	/*	DSLContext create = DSL.using(connection, SQLDialect.MYSQL);
+		create.update(ContractLeave.CONTRACT_LEAVE)
+				.set(CONTRACT_LEAVE.TYPE, (byte)itData.getNumType())
+				.set(CONTRACT_LEAVE.START_DATE, new java.sql.Date(itData.getLeaveStartDate().getTime()));
+//				.se;*/
+		
+		
+				
+		//create.update(ContractLeave.CONTRACT_LEAVE);
+		
+	}
+	
+
 	public static ITData getEnterpriseITData(Connection conn, int enterpriseId) {
 		return null;
 	}
 	
 	public static ITData getWorplaceItTData(Connection conn, int workplaceId) {
 		
-		itData = new ITData();		
+		ITData itData = new ITData();		
 		Date contractMin = null;
 		Date contractMax = new Date(01,01,1900);
 		ResultSet rs = null;
 		PreparedStatement stmt = null;			
 
-		try {
+		try {			
 			
 			String select = SELECT
 					+ SQLConstants.REGISTRY+"."+RegistryColumns.DOCUMENT_COUNTRY+", "
@@ -135,10 +151,10 @@ public class SQLITData implements Serializable {
 					dataPerson.setLeaveStartDate(startContractLeave);
 					dataPerson.setLeaveEndDate(endContractLeave);
 					dataPerson.setDischarge_cause(discharge_cause);
+					dataPerson.setNumType(type);
 					dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, type));
 					
-					itData.setITData(contractId, contractLeave_id, dataPerson);			
-								
+					itData.setITData(contractId, contractLeave_id, dataPerson);								
 				}				
 		}
 		
@@ -170,7 +186,4 @@ public class SQLITData implements Serializable {
 		
 		return constants[ordinal];
 	}
-	
- 
-
 }

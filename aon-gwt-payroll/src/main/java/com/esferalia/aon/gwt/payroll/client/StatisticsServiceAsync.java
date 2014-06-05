@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Map;
+
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
@@ -19,6 +21,12 @@ public interface StatisticsServiceAsync {
 	public abstract void getEnterpriseITData(int enterpriseId,
 			AsyncCallback<ITData> callback) throws IllegalArgumentException;
 
-	public abstract void saveITDataPerson(ITDataPerson dataPerson,
+	public abstract void saveUpdateITDataPerson(Map<Integer, ITDataPerson> map,
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	public abstract void saveRemoveITDataPerson(Map<Integer, ITDataPerson> map,
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	public abstract void saveInsertITDataPerson(Map<Integer, ITDataPerson> map,
 			AsyncCallback<Void> callback) throws IllegalArgumentException;
 }

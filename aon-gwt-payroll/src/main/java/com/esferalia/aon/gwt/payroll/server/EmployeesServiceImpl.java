@@ -835,7 +835,62 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	@Override
+	public void saveUpdateITDataPerson(Map<Integer, ITDataPerson> map)
+			throws IllegalArgumentException {
+		
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			
+		}catch(Throwable ex) {
+			
+		}
 
+	}
+	
+	private void saveUpdateItem(ITDataPerson dataPerson) {
+		
+	}
+	
+	@Override
+	public void saveRemoveITDataPerson(Map<Integer, ITDataPerson> map)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			
+		}catch(Throwable ex) {
+			
+		}
+		
+	}
+	
+	private void saveRemoveITDataPerson(ITDataPerson dataPerson) {
+		
+	}
+	
+	@Override
+	public void saveInsertITDataPerson(Map<Integer, ITDataPerson> map)
+			throws IllegalArgumentException {
+		
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			
+		}catch(Throwable ex) {
+			
+		}
+		
+	}
+	
 	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
@@ -1308,12 +1363,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-	}
-
-	@Override
-	public void saveITDataPerson(ITDataPerson dataPerson)
-			throws IllegalArgumentException {
-
 	}
 
 	@Override

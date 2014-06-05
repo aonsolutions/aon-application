@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Date;
 
 public class ITDataPerson implements Serializable, Comparable {
@@ -54,7 +53,6 @@ public class ITDataPerson implements Serializable, Comparable {
 
 		@Override
 		public String getDescription() {
-			// TODO Apéndice de método generado automáticamente
 			return discharge_cause;
 		};
 		
@@ -62,7 +60,8 @@ public class ITDataPerson implements Serializable, Comparable {
 
 	private int contractId;
 	private int contractLeaveId;
-	private Type type;	
+	private Type type;
+	private int numType;
 	private DischargeCause discharge;
 	private Date leaveStartDate;
 	private Date leaveEndDate;
@@ -73,7 +72,7 @@ public class ITDataPerson implements Serializable, Comparable {
 	}	
 
 	public int getContractId() {
-		return contractId;
+		return this.contractId;
 	}
 
 	public void setContractId(int contractId) {
@@ -81,15 +80,15 @@ public class ITDataPerson implements Serializable, Comparable {
 	}
 	
 	public int getContractLeaveId() {
-		return contractLeaveId;
+		return this.contractLeaveId;
 	}
 	
 	public void setContractLeaveId(int pContractLeaveId) {
-		contractLeaveId = pContractLeaveId;
+		this.contractLeaveId = pContractLeaveId;
 	}	
 
 	public Date getLeaveStartDate() {
-		return leaveStartDate;
+		return this.leaveStartDate;
 	}
 
 	public void setLeaveStartDate(Date start_date) {
@@ -97,7 +96,7 @@ public class ITDataPerson implements Serializable, Comparable {
 	}
 
 	public Date getLeaveEndDate() {
-		return leaveEndDate;
+		return this.leaveEndDate;
 	}
 
 	public void setLeaveEndDate(Date end_date) {
@@ -105,7 +104,7 @@ public class ITDataPerson implements Serializable, Comparable {
 	}	
 
 	public int getDischarge_cause() {
-		return discharge_cause;
+		return this.discharge_cause;
 	}
 
 	public void setDischarge_cause(int discharge_cause) {
@@ -113,22 +112,35 @@ public class ITDataPerson implements Serializable, Comparable {
 	}
 
 	public Type getType() {
-		return type;
+		return this.type;
 	}
 
 	public void setType(Type type) {
 		this.type = type;
 	}
 	
+	public void setNumType(int numType) {
+		this.numType = numType;
+	}
+	
+	public int getNumType() {
+		return this.numType;
+	}
+	
 	public DischargeCause getDischargeCause() {
-		return discharge;
+		return this.discharge;
 	}
 
-	public int compareTo(Object o1) {
-		
+	public int compareTo(Object o1) {		
 		ITDataPerson data = (ITDataPerson) o1;
 		return this.getLeaveStartDate().compareTo(data.getLeaveStartDate());
 	}	
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj != null) && (obj instanceof ITDataPerson)
+				&& (contractLeaveId == ((ITDataPerson) obj).contractLeaveId);
+	}
 	
 	
 }

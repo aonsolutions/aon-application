@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jooq.SQLDialect;
+
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -573,10 +576,10 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						int leaveType = tooltip.getTypeLeaveListBox();
 						int contractId = data.getContractId(posColumn, posCell);
 
-						decremental = decremental - 1;
 						ITDataPerson newData = new ITDataPerson();
 						newData.setContractId(contractId);
-						newData.setContractLeaveId(decremental);
+						newData.setContractLeaveId(--decremental);
+						newData.setContractLeaveId(leaveType);
 						newData.setType(getEnumConstant(
 								ITDataPerson.Type.class, leaveType));
 						newData.setDischarge_cause(tooltip
@@ -631,10 +634,12 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						newDataPerson.setLeaveStartDate(leaveStartDate);
 						newDataPerson.setLeaveEndDate(leaveEndDate);
 						newDataPerson.setDischarge_cause(dischargeCause);
+						newDataPerson.setNumType(leaveType);
 						newDataPerson.setType(getEnumConstant(
 								ITDataPerson.Type.class, leaveType));						
-						dataObject.updateItem(newDataPerson);
+						dataObject.updateLeaveItem(newDataPerson);
 						reloadTimeline();
+					
 						
 
 					} catch (Exception ex) {
@@ -644,21 +649,6 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				}
 			}
 		});
-	}
-
-	// TODO: To EnumUtils ???
-	public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass,
-			Integer ordinal) {
-		if (ordinal == null)
-			return null;
-		if (ordinal < 0)
-			return null;
-
-		T constants[] = enumClass.getEnumConstants();
-		if (ordinal >= constants.length)
-			return null;
-
-		return constants[ordinal];
 	}
 
 	class LeaveContextMenu extends ContextMenu {
@@ -882,6 +872,20 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		}
 
 	}
+	
+	// TODO: To EnumUtils ???
+		public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass, Integer ordinal) {
+			if ( ordinal == null )
+				return null;
+			if ( ordinal < 0 )
+				return null;
+			
+			T constants [] = enumClass.getEnumConstants();
+			if ( ordinal >= constants.length )
+				return null;
+			
+			return constants[ordinal];
+		}
 
 	// ---------------------------------------------------------------- Library
 
