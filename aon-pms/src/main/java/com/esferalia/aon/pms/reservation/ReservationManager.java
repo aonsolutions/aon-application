@@ -209,10 +209,9 @@ public class ReservationManager implements IReservationConstants {
 			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
 			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
 			double total = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue());
-			if (CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
+			calculateTaxData = (vatQuota == 0);
+			if (!calculateTaxData && CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
 				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
-			} else {
-				calculateTaxData = (vatQuota == 0);
 			}
 
 			Hotel hotel = getReservationUtils().obtainHotel(hotelCode);
