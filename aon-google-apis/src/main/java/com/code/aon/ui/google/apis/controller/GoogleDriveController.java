@@ -1,0 +1,149 @@
+package com.code.aon.ui.google.apis.controller;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.richfaces.event.UploadEvent;
+
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.google.apis.DriveFile;
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.Utils;
+import com.code.aon.ui.util.DownloadUtil;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
+
+import eu.medsea.mimeutil.MimeException;
+
+
+
+public class GoogleDriveController {
+	
+	
+	
+	
+	private String beanName;
+
+	private DriveFile upload;
+	
+	public boolean google= isGoogle();
+	
+	public Drive getClientSession(){
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExternalContext ec = ctx.getExternalContext();
+		Object session=((HttpSession) ec.getSession(false)).getAttribute("Drive");
+		Drive drive=(Drive)session;
+		return drive;
+	}
+	
+	public boolean isGoogle(){
+		if(getClientSession()!=null) return true;
+		else return false;
+	}
+	
+	public DriveFile [] getFiles() throws IOException{
+		
+		Drive drive=getClientSession();
+		
+		FileList files = DriveUtils.getRootFiles(drive);
+		DriveFile[] driveFiles= new DriveFile[files.getItems().size()];
+		for(int i=0;i<driveFiles.length;i++){
+			driveFiles[i]=new DriveFile(files.getItems().get(i).getId(),files.getItems().get(i).getAlternateLink()
+					,files.getItems().get(i).getTitle(),files.getItems().get(i).getMimeType());
+			
+			System.out.println(files.getItems().get(i).getMimeType());
+		}
+		
+		return driveFiles; //DriveUtils.getFiles(drive);//new DriveFile[]{new DriveFile("_1", "Hello"), new DriveFile("_2", "World!!!") };
+	}
+
+
+	public void onAccept(ActionEvent event) {
+		System.out.println("onUpload");
+		upload = new DriveFile("",null, "","");
+	}
+
+	public void onUpload(ActionEvent event) {
+		System.out.println("onUpload");
+		upload = new DriveFile("",null, "","");
+	}
+	
+	public void onDownload(ActionEvent event){
+		System.out.println("onDownload");
+		
+		Drive drive=getClientSession();
+		
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String fileId = ctx.getExternalContext().getRequestParameterMap().get("id");
+	}
+	
+	public void onDelete(ActionEvent event) throws IOException{
+		System.out.println("onDelete");
+		
+		Drive drive=getClientSession();
+		
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String fileId = ctx.getExternalContext().getRequestParameterMap().get("id");
+		
+		System.out.println(fileId);		
+		DriveUtils.deleteFile(drive, fileId);;
+		
+	}
+	
+	public void onSearch(ActionEvent event) {
+		System.out.println("onSearch");
+	}
+	
+	/**
+	 * File uploaded.
+	 * 
+	 * @param event the event
+	 * @throws IOException 
+	 */
+	public void fileUploaded(UploadEvent event) throws IOException {
+		Drive drive=getClientSession();
+		DriveFile file=new DriveFile("","", event.getUploadItem().getFileName(), event.getUploadItem().getContentType());
+		DriveUtils.insertFile(drive,event.getUploadItem().getFile(), file);
+	}
+	
+	public void fileDownloaded(ActionEvent event) throws IOException {
+		Drive drive=getClientSession();
+		
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse)ctx.getExternalContext().getResponse();
+		String fileId = ctx.getExternalContext().getRequestParameterMap().get("id");
+
+		System.out.println(fileId);
+		com.google.api.services.drive.model.File driveFile = drive.files().get(fileId).execute();
+		InputStream data = DriveUtils.downloadFile(drive, driveFile);
+		
+		response.setContentType(driveFile.getMimeType());
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + driveFile.getTitle() + "\";");
+		response.getOutputStream().write(Utils.InputStreamToByte(data));
+		response.flushBuffer();
+		ctx.responseComplete();
+		
+	}
+
+	public DriveFile getUpload() {
+		return upload;
+	}
+	
+	public String getBeanName() {
+		return beanName;
+	}
+	
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+	
+}
