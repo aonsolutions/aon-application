@@ -622,7 +622,7 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						int contractId = data.getContractId(posColumn, posCell);
 						int leaveId = data.getContractLeaveId(posColumn,
 								posCell);
-						int dischargeCause = tooltip.getDischargeCause();
+						int dischargeCause = tooltip.getTypeDischargeListBox();
 
 						Date leaveEndDate = tooltip.getFromDateBoxValue();
 						Date leaveStartDate = tooltip.getStartDateBoxValue();
@@ -1149,10 +1149,14 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		public void setRowEndDate(Date rowEndDate) {
 			this.rowEndDate = rowEndDate;
 		}
+		
+		/**
+		 * @return discharge_cause - Min value -1
+		 */
 
 		public int getDischarge_cause() {
 
-			return discharge_cause + 1;
+			return discharge_cause;
 		}
 
 		public void setDischarge_cause(int discharge_cause) {

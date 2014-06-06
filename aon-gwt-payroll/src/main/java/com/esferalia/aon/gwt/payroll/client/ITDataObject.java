@@ -70,12 +70,12 @@ public class ITDataObject {
 
 		@Override
 		void addIT(ITDataPerson t) {
-			removeSaveDeletes(t);		
+			saveUpdates(t);		
 		}
 
 		@Override
-		void removeIT(ITDataPerson t) {
-			saveUpdates(t);
+		void removeIT(ITDataPerson t) {			
+			removeSaveDeletes(t);
 		}
 	}
 

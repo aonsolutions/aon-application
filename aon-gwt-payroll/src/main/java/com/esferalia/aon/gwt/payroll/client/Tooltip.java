@@ -125,7 +125,8 @@ public class Tooltip extends DecoratedPopupPanel {
 
 		fromDateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		fromDateBox.setWidth("6em");
-
+		
+		loadTypeListBox();
 		setAutoHideEnabled(true);
 
 	}
@@ -206,7 +207,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		startLeaveDateBox.setValue(getStartContract());
 		causeStartLabel.setText("Motivo");
 		typeLeaveListBox.setItemSelected(0, true);
-		
+		typeDischargeListBox.setItemSelected(getDischargeCause(), true);
 		endDateLabel.setText("Fecha");
 		fromDateBox.setValue(getEndContract());
 		causeEndLabel.setText("Motivo");
@@ -309,18 +310,12 @@ public class Tooltip extends DecoratedPopupPanel {
 	public int getTypeLeaveListBox() {
 		
 		//Because my firts position is '-'
-
 		return typeLeaveListBox.getSelectedIndex() - 1;
 	}
 
 	public int getTypeDischargeListBox() {
 		
-		if(typeDischargeListBox.getSelectedIndex() == 0) {
-			return -1;
-		}
-		else {
-			return typeDischargeListBox.getSelectedIndex() - 1;
-		}		
+		return typeDischargeListBox.getSelectedIndex() - 1;	
 	}
 
 	public Date getStartDateBoxValue() {
@@ -343,14 +338,7 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	public void setStatus(String pStatus) {
 		
-		typeLeaveListBox.addItem("-");
-
-		for (ITDataPerson.Type type : Type.values()) {
-
-			typeLeaveListBox.addItem(type.getDescription());
-		}
-		typeLeaveListBox.setItemSelected(0, false);
-		
+		typeLeaveListBox.setItemSelected(0, false);		
 		statusLabel.setText(pStatus);
 	}
 
@@ -403,23 +391,33 @@ public class Tooltip extends DecoratedPopupPanel {
 		contractStartDate = pContractStart;
 	}
 
-	public void setDischargeCause(int pDischargeCause) {
+	public void setDischargeCause(Integer pDischargeCause) {
 		
-		this.dischargeCause = pDischargeCause;
-		
-		typeDischargeListBox.addItem("-");
-
-		for (ITDataPerson.DischargeCause cause : DischargeCause.values()) {
-			typeDischargeListBox.addItem(cause.getDescription());
-		}		
-		typeDischargeListBox.setItemSelected(pDischargeCause, true);
+		if(pDischargeCause == null) {
+			this.dischargeCause = 0;
+		}
+		if(pDischargeCause < 0) {
+			this.dischargeCause = 0;
+		}
+		else {
+			this.dischargeCause = pDischargeCause + 1;
+		}
 	}
 	
-	public int getDischargeCause() {
+	private int getDischargeCause() {		
+		return this.dischargeCause;
+	}
+	
+	private void loadTypeListBox() {
+		typeDischargeListBox.addItem("-");
+		for (ITDataPerson.DischargeCause cause : DischargeCause.values()) {
+			typeDischargeListBox.addItem(cause.getDescription());
+		}
 		
-		if(dischargeCause <= 0) 
-			return 0;		
-		else 
-			return typeDischargeListBox.getSelectedIndex() - 1;		
+		typeLeaveListBox.addItem("-");
+		for (ITDataPerson.Type type : Type.values()) {
+			typeLeaveListBox.addItem(type.getDescription());
+		}
+		
 	}
 }
