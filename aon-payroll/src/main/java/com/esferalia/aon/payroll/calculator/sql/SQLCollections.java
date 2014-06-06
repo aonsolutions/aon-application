@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -97,6 +98,8 @@ public class SQLCollections {
 
 	
 	private static class ContractCost extends SimpleContractDeduction implements IContractCost {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		public ContractCost() {
 		}

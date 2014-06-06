@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -13,6 +14,8 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractPayment extends SQLCollection<IContractPayment> implements IContractPayment {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static final String SCOPE_ALIAS = "scope";
 	public static final String PAYMENT_ALIAS = "payment";

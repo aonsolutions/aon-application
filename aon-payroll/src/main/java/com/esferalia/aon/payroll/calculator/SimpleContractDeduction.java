@@ -2,10 +2,13 @@ package com.esferalia.aon.payroll.calculator;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SimpleContractDeduction implements IContractDeduction {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	private double amount;

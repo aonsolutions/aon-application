@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractEmbargoColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -13,6 +14,8 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 public class SQLContractEmbargo 
 	extends SQLCollection<IContractEmbargo> 
 	implements IContractEmbargo{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public SQLContractEmbargo() {
 	}

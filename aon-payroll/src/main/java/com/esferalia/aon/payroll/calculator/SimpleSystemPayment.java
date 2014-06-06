@@ -1,6 +1,10 @@
 package com.esferalia.aon.payroll.calculator;
 
+import com.code.aon.AonVersion;
+
 public class SimpleSystemPayment extends SimpleContractPayment implements ISystemPayment{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	int domain;
 	

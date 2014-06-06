@@ -22,7 +22,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
@@ -79,6 +78,7 @@ import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -929,7 +929,7 @@ public class DomainController extends BasicController {
 			DomainInfo di = DomainInfo.getDomainInfo((RegistryAttachment) to);
 			list.add(di);
 		}
-		this.historyState = new DataScrollerState(new ListDataModel(list), "history");
+		this.historyState = new DataScrollerState(new SerializableListDataModel(list), "history");
 	}
 	
 	private void saveHistory( DomainInfo di ) throws ManagerBeanException {

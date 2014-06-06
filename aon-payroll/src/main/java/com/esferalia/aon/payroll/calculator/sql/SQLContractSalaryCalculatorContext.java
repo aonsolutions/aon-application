@@ -78,6 +78,7 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
@@ -315,6 +316,8 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 
 	static class GuarenteeException extends SalaryException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private double guarentee;
 

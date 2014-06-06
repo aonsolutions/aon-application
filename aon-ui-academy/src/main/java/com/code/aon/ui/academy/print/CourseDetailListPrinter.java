@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
@@ -148,7 +149,9 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 	
-	public class ReportCourseAlumn implements ITransferObject {
+	public static class ReportCourseAlumn implements ITransferObject {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private CourseAlumn courseAlumn;
 		private String previousCourse;

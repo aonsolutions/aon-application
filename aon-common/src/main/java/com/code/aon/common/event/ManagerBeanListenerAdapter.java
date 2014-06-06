@@ -1,5 +1,6 @@
 package com.code.aon.common.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 
 /**
@@ -13,6 +14,8 @@ import com.code.aon.common.ManagerBeanException;
  */
 
 public class ManagerBeanListenerAdapter implements IManagerBeanListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/*
 	 * (non-Javadoc)

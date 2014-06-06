@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseEvaluation;
 import com.code.aon.academy.CourseObservation;
@@ -62,8 +63,10 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		return null;
 	}
 	
-	public class ReportCourseEvaluation implements ITransferObject {
+	public static class ReportCourseEvaluation implements ITransferObject {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Course course;
 		private List<CourseEvaluation> courseEvaluations;
 		private List<CourseObservation> courseObservations;

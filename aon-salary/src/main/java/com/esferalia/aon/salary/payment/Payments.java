@@ -1,6 +1,7 @@
 package com.esferalia.aon.salary.payment;
 
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,11 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
 
-public class Payments {
+public class Payments implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Map<PaymentType, IPayment> map;
 	private BaseSalary baseSalary;

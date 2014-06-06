@@ -1,12 +1,16 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.AbstractIterator;
 
-public abstract class SQLCollection<E> extends AbstractIterator<E> {
+public abstract class SQLCollection<E> extends AbstractIterator<E> implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public SQLCollection() {
 	}

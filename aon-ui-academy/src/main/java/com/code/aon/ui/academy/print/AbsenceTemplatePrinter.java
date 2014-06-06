@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.CourseInstructor;
@@ -73,7 +74,9 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 		return null;
 	}
 	
-	public class AbsenceReportTo implements ITransferObject{
+	public static class AbsenceReportTo implements ITransferObject{
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Course course;
 		private List<CourseAlumn> courseAlumns;

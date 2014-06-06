@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
@@ -118,7 +119,9 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 	
-	public class ReportTemplateMark implements ITransferObject {
+	public static class ReportTemplateMark implements ITransferObject {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Course course;
 		private TaskHolder instructor;
@@ -148,23 +151,27 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			return detail;
 		}
 		
-		public class TemplateMarkDetail implements ITransferObject {
-			
-			private AcademicSkill academicSkill;
-			private Customer alumn;
-			
-			public AcademicSkill getAcademicSkill() {
-				return academicSkill;
-			}
-			public void setAcademicSkill(AcademicSkill academicSkill) {
-				this.academicSkill = academicSkill;
-			}
-			public Customer getAlumn() {
-				return alumn;
-			}
-			public void setAlumn(Customer alumn) {
-				this.alumn = alumn;
-			}
+	}
+
+	private static class TemplateMarkDetail implements ITransferObject {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private AcademicSkill academicSkill;
+		private Customer alumn;
+		
+		public AcademicSkill getAcademicSkill() {
+			return academicSkill;
+		}
+		public void setAcademicSkill(AcademicSkill academicSkill) {
+			this.academicSkill = academicSkill;
+		}
+		public Customer getAlumn() {
+			return alumn;
+		}
+		public void setAlumn(Customer alumn) {
+			this.alumn = alumn;
 		}
 	}
+
 }

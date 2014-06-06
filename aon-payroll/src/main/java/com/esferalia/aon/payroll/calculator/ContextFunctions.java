@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import org.mvel2.util.MethodStub;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -32,6 +33,8 @@ public class ContextFunctions {
 	private static final String MONTHS_IMPL = "MESESIMPL";
 
 	public static class UselessGuaranteeException extends CheckException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private static Locale ES = new Locale("es", "ES");
 

@@ -6,10 +6,13 @@ import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
 public class CompositePayment implements IPayment {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	List<IPayment> payments;
 

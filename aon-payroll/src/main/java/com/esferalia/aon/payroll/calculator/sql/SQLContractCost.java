@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemCostColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -11,6 +12,8 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 public class SQLContractCost 
 	extends SQLCollection<IContractCost> 
 	implements IContractCost{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public SQLContractCost() {
 	}

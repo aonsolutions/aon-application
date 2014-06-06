@@ -1,11 +1,14 @@
 package com.esferalia.aon.payroll.calculator;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class UndefinedContextVariablesException extends
 		UndefinedVariablesException {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	public UndefinedContextVariablesException(ContextVariable... variables) {
 		super(names(variables));
 		;
