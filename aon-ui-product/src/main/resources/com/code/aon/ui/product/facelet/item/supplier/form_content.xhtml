@@ -14,7 +14,8 @@
 
 	<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
 	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{controller.to.supplier}" />
+		<ui:param name="lookupTo" value="#{controller.to.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
 		<ui:param name="idRequired" value="#{true}" />
 		<ui:param name="skipLabel" value="#{true}" />
 		<aon:methodParam name="lookupChangeListener"
@@ -29,6 +30,11 @@
 	<aon:outputLabel for="ItemSupplier_Price" value="#{bundle.aon_price}" />
 	<aon:inputText id="ItemSupplier_Price"
 		value="#{controller.to.price}"
+		required="true" size="5" />
+
+	<aon:outputLabel for="ItemSupplier_Discount" value="#{bundle.aon_discount}" />
+	<aon:inputText id="ItemSupplier_Discount"
+		value="#{controller.to.discountExpression.discountExpr}"
 		required="true" size="5" />
 
 	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >

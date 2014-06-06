@@ -1,6 +1,5 @@
 package com.code.aon.ui.warehouse.controller;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
@@ -11,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -102,10 +100,8 @@ public class DeliveryDetailController extends LinesController implements IWareho
 				deliveryDetail.setQuantity(1);
 			}
 
-			DeliveryController master = (DeliveryController)getMasterController();
-			Date date = ((Delivery)master.getTo()).getIssueTime();
-			Tariff tariff = ((Delivery)master.getTo()).getCustomer().getTariff();
-			price = getPriceStrategy().getUnitPrice(deliveryDetail, date, tariff);
+			Delivery delivery = (Delivery)getMasterController().getTo();
+			price = getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getDate(), delivery.getCustomer());
 		}
 		deliveryDetail.setPrice(price);
 	}	
@@ -117,10 +113,8 @@ public class DeliveryDetailController extends LinesController implements IWareho
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 				deliveryDetail.setQuantity((Double)event.getNewValue());
 	
-				DeliveryController master = (DeliveryController)getMasterController();
-				Date date = ((Delivery)master.getTo()).getIssueTime();
-				Tariff tariff = ((Delivery)master.getTo()).getCustomer().getTariff();
-				price = getPriceStrategy().getUnitPrice(deliveryDetail, date, tariff);
+				Delivery delivery = (Delivery)getMasterController().getTo();
+				price = getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getDate(), delivery.getCustomer());
 			}
 			deliveryDetail.setPrice(price);
 		}

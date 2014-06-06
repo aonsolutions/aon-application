@@ -25,7 +25,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.product.Item;
-import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
@@ -35,6 +34,8 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.seller.Seller;
@@ -165,15 +166,16 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 		Supplier supplier = null;
 		try {
 			supplier = (Supplier) BeanManager.getManagerBean(Supplier.class).createNewTo();
-			IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+			IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), detail.getItem().getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), detail.getItem().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 			
 			for (ITransferObject ito : bean.getList(criteria)) {
-				ItemSupplier is = (ItemSupplier) ito;
-				if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(detail.getSales().getWorkPlace().getId())){
-					supplier = is.getSupplier();
+				RegistryItem rItem = (RegistryItem)ito;
+				if(rItem.getWorkPlace()==null || rItem.getWorkPlace().getId().equals(detail.getSales().getWorkPlace().getId())){
+					supplier = (Supplier)BeanManager.getManagerBean(Supplier.class).get(rItem.getRegistry());
 				}
 			}
 			return supplier!=null?supplier:(Supplier) BeanManager.getManagerBean(Supplier.class).createNewTo();
@@ -393,14 +395,15 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 	}
 	
 	private double obtainItemPrice(Supplier supplier, Item item) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ID), supplier.getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), supplier.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY), true);
 		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return ((ItemSupplier)list.get(0)).getPrice();
+		if (!list.isEmpty()) {
+			return ((RegistryItem)list.get(0)).getPrice();
 		}
 		return item.getPurchasePrice();
 	}

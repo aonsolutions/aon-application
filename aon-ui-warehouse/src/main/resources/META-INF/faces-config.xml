@@ -69,7 +69,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>aliasName</property-name>
-			<value>Inventory_warehouse_workPlace_scope_id</value>
+			<value>Inventory_warehouse_workPlace&lt;scope_id</value>
 		</managed-property>
 	</managed-bean>
 	

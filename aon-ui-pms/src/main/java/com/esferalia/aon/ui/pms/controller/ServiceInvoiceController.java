@@ -446,7 +446,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				double prices = 0;
 				Date date = hotelService.getFromDate();
 				while (date.compareTo(hotelService.getToDate()) <= 0) {
-					prices += strategy.getUnitPrice(hotelService, date, getReservationInvoiceTo().getHotel().getCustomer().getTariff());
+					prices += strategy.getUnitPrice(hotelService, date, getReservationInvoiceTo().getHotel().getCustomer());
 					date = DateUtils.addDays(date, 1);
 				}
 				hotelService.setPrice(CommonUtil.round(prices, 4));

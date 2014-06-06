@@ -31,17 +31,17 @@
 	</bean>
 
 	<bean description="">
-		<pojo>com.code.aon.product.ItemSupplier</pojo>
-		<listeners>
-	        <listener>com.code.aon.product.event.ItemSupplierBeanListener</listener>
-		</listeners>
-	</bean>
-
-	<bean description="">
 		<pojo>com.code.aon.product.Product</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.product.event.ProductBeanVetoListener</vetoListener>
 		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.registry.RegistryItem</pojo>
+		<listeners>
+	        <listener>com.code.aon.product.event.RegistryItemBeanListener</listener>
+		</listeners>
 	</bean>
 
 </bean-config>

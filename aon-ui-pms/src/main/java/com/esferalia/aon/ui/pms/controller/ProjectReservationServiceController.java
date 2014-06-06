@@ -17,7 +17,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -218,8 +217,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 	        ReservationUtils reservationUtils = new ReservationUtils();
 			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
-			Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
+			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), getServiceReservationRoom());
 			setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 		}
 	}	
@@ -237,8 +235,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 		        ReservationUtils reservationUtils = new ReservationUtils();
 				double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
-				Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-				double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
+				double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), getServiceReservationRoom());
 				setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 			} else {
 				setServiceQuantity(1);

@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.32.0
+# Version: 7.35.0
 # Created by: girazu
-# Creation Date: 27/03/2014 17:35
+# Creation Date: 04/06/2014 17:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2666,7 +2666,6 @@ CREATE TABLE `offer` (
   `number` int(4) NOT NULL COMMENT 'Numero del Presupuesto',
   `version` smallint(2) NOT NULL default '0' COMMENT 'Numero de version de Presupuesto',
   `address` int(4) default NULL COMMENT 'Identificador de la Direccion de envio del Presupuesto',
-  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa del Presupuesto',
   `seller` int(4) default NULL COMMENT 'Agente Comercial del Presupuesto',
   `supplier` int(4) default NULL COMMENT 'Identificador del Proveedor',
   `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del Presupuesto',
@@ -2699,7 +2698,6 @@ CREATE TABLE `offer` (
   KEY `IDX_OFFER_SELLER` (`seller`),
   KEY `IDX_OFFER_PAY_METHOD` (`pay_method`),
   KEY `IDX_OFFER_WORKPLACE` (`workplace`),
-  KEY `IDX_OFFER_TARIFF` (`tariff`),
   KEY `IDX_OFFER_DOMAIN` (`domain`),
   CONSTRAINT `FK_OFFER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
@@ -2709,7 +2707,6 @@ CREATE TABLE `offer` (
   CONSTRAINT `FK_OFFER_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_OFFER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
   CONSTRAINT `FK_OFFER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
-  CONSTRAINT `FK_OFFER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `FK_OFFER_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuestos';
 
@@ -5354,30 +5351,6 @@ CREATE TABLE `item_composition` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Composicion de Articulos';
 
 #
-# Structure for the `item_supplier` table : 
-#
-
-CREATE TABLE `item_supplier` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
-  `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador de Proveedor',
-  `code` varchar(15) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Producto en el Proveedor',
-  `price` double default '0' COMMENT 'Precio del Producto en el Proveedor',
-  `priority` tinyint(2) default '0' COMMENT 'Prioridad del Proveedor',
-  `workplace` int(4) default NULL COMMENT 'Identificador del Centro de Trabajo',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ITEM_SUPPLIER_ITEM` (`item`),
-  KEY `IDX_ITEM_SUPPLIER_SUPPLIER` (`supplier`),
-  KEY `IDX_ITEM_SUPPLIER_DOMAIN` (`domain`),
-  KEY `IDX_ITEM_SUPPLIER_WORKPLACE` (`workplace`),
-  CONSTRAINT `FK_ITEM_SUPPLIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ITEM_SUPPLIER_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_ITEM_SUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
-  CONSTRAINT `FK_ITEM_SUPPLIER_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo por Proveedor';
-
-#
 # Structure for the `item_tariff` table : 
 #
 
@@ -6696,14 +6669,22 @@ CREATE TABLE `ritem` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Identificador de Persona o Empresa',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
+  `type` tinyint(2) default '0' COMMENT 'Tipo de relacion',
+  `code` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Producto',
+  `price` double default '0' COMMENT 'Precio del Producto',
+  `discount_expr` varchar(32) collate latin1_spanish_ci default '0.0' COMMENT 'Descuentos del Producto',
+  `priority` tinyint(2) default '0' COMMENT 'Prioridad del Producto',
+  `workplace` int(4) default NULL COMMENT 'Identificador del Centro de Trabajo',
   `status` tinyint(2) NOT NULL COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `IDX_RITEM_DOMAIN` (`domain`),
   KEY `IDX_RITEM_ITEM` (`item`),
   KEY `IDX_RITEM_REGISTRY` (`registry`),
+  KEY `IDX_RITEM_WORKPLACE` (`workplace`),
   CONSTRAINT `FK_RITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_RITEM_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_RITEM_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RITEM_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos interesados por Personas o Empresas';
 
 #
@@ -7078,7 +7059,7 @@ CREATE TABLE `salary_payment` (
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepción Salarial',
   `payment_concept` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   `irpf` double(15,3) default '0.000' COMMENT 'Importe I.R.P.F',
@@ -7666,7 +7647,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.32.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.35.0');
 
 COMMIT;
 

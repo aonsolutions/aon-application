@@ -908,10 +908,6 @@
 		</foreign-key>
 	</table>
 	
-	<table name="item_supplier">
-		<column name="priority" type="java.lang.Integer" />
-	</table>
-	
 	<table name="item_tariff">
 		<column name="type" type="com.code.aon.product.enumeration.ItemTariffType" />
 	</table>
@@ -1370,6 +1366,9 @@
 	</table>
 	    
 	<table name="ritem" class="com.esferalia.aon.entity.master.RegistryItem" >
+		<column name="type" type="com.code.aon.registry.enumeration.RegistryMode"/>
+		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
+		<column name="priority" type="java.lang.Integer" />
 		<column name="status" type="com.code.aon.registry.enumeration.RegistryItemStatus"/>
 	</table>
     

@@ -13,9 +13,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.IncomeDetailDB;
 
@@ -46,18 +47,20 @@ public class IncomeDetail extends IncomeDetailDB implements ICalculable, IStocka
 	@Transient
     public String getItemSupplierCode() {
     	try {
-			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
+			IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
-			criteria.addEqualExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID),getIncome().getSupplier().getId());
-			Iterator<?> iterator = itemSupplierBean.getList(criteria).iterator();
+			criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), getIncome().getSupplier().getId());
+			criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), getItem().getId());
+			criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+			Iterator<?> iterator = rItemBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
-				ItemSupplier itemSupplier = (ItemSupplier)iterator.next();
-				return itemSupplier.getCode();
+				RegistryItem registryItem = (RegistryItem)iterator.next();
+				return registryItem.getCode();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Can't get ItemSupplier.code", e);
 		}
 		return null;
-	}  
+	}
+
 }

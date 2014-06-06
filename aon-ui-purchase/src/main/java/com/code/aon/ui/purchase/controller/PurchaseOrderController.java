@@ -31,7 +31,6 @@ import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.product.Item;
-import com.code.aon.product.ItemSupplier;
 import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
@@ -39,6 +38,8 @@ import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.purchase.enumeration.ProposalTransferStatus;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -49,7 +50,6 @@ import com.code.aon.ui.purchase.event.PurchaseSearchListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-
 
 public class PurchaseOrderController extends DataScrollerState {
 	
@@ -355,7 +355,7 @@ public class PurchaseOrderController extends DataScrollerState {
 		IManagerBean bean = BeanManager.getManagerBean(ProposalDetail.class);
 		ProposalDetail pd = (ProposalDetail) getDetailModel().getRowData();
 		pd.setSkipProposalUpdating(true);
-		pd.setPrice( ((ItemSupplier)getItemSuppliers(pd.getItem(), pd.getSupplier()).get(0)).getPrice() );
+		pd.setPrice(((RegistryItem)getRegistryItems(pd.getItem(), pd.getSupplier()).get(0)).getPrice());
 		bean.update(pd);
 		setDetailIndex(-1);
 	}
@@ -370,7 +370,7 @@ public class PurchaseOrderController extends DataScrollerState {
 		setDetailIndex(-1);
 	}
 	
-	public List<SelectItem> getItemSuppliers(){
+	public List<SelectItem> getRegistryItems(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if( isReturnedProduct() ) {
 			SelectItem i = new SelectItem(getUtils().getCompanySupplier(), getUtils().getCompanySupplier().getRegistry().getFullName());
@@ -378,14 +378,15 @@ public class PurchaseOrderController extends DataScrollerState {
 		} else {
 			ProposalDetail proposalDetail = (ProposalDetail)getDetailModel().getRowData();
 			try {
-				for (ITransferObject ito : getItemSuppliers(proposalDetail.getItem(), null)) {
-					ItemSupplier is = (ItemSupplier) ito;
-					if(is.getWorkPlace()==null){
-						SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
+				for (ITransferObject ito : getRegistryItems(proposalDetail.getItem(), null)) {
+					RegistryItem rItem = (RegistryItem)ito;
+					Supplier supplier = (Supplier)BeanManager.getManagerBean(Supplier.class).get(rItem.getRegistry().getId());
+					if (rItem.getWorkPlace()==null) {
+						SelectItem i = new SelectItem(supplier, rItem.getRegistry().getFullName());
 						list.add(i);
 					}
-					if(is.getWorkPlace()!=null && is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
-						SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
+					if (rItem.getWorkPlace()!=null && rItem.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
+						SelectItem i = new SelectItem(supplier, rItem.getRegistry().getFullName());
 						list.add(0, i);
 					}
 				}
@@ -398,14 +399,15 @@ public class PurchaseOrderController extends DataScrollerState {
 		return list;
 	}
 	
-	private List<ITransferObject> getItemSuppliers(Item item, Supplier supplier) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+	private List<ITransferObject> getRegistryItems(Item item, Supplier supplier) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
-		if(supplier!=null && supplier.getId()!=null){
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID), supplier.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+		if (supplier!=null && supplier.getId()!=null) {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), supplier.getId());
 		}
-		criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 		return bean.getList(criteria);
 	}
 	

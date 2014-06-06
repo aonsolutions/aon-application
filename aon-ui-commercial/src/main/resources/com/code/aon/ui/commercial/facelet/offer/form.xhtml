@@ -223,7 +223,7 @@
 						<ui:param name="lookupTo" value="#{offer.to.target}" />
 						<ui:param name="lookupDisabled" value="#{offer.targetReadOnly}" />
 						<ui:param name="lookupReRender" 
-							value="Target_registry_document,OfferAddress,OfferProject,lookupSeller,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />
+							value="Target_registry_document,OfferAddress,OfferProject,lookupSeller,Offer_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{offer.targetData}" type="lookupChangeListener" />
@@ -266,7 +266,7 @@
 						<ui:param name="lookupTo" value="#{offer.to.supplier}" />
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 						<ui:param name="lookupRendered" value="#{offer.dealership}" />
-						<ui:param name="lookupReRender" value="Supplier_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />				
+						<ui:param name="lookupReRender" value="Supplier_registry_document,Offer_defaultPayMethod,payMethodDiv" />				
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{offer.supplierData}" type="lookupChangeListener" />
@@ -289,32 +289,23 @@
 						</ui:include>
 					</c:if>
 
-					<aon:outputLabel for="Offer_scope" 
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Offer_scope" 
-						value="#{offer.to.scope}"
-						disabled="true">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Offer_tariff" 
-						value="#{bundle.report_tariff}" />
-					<aon:selectOneMenu id="Offer_tariff" 
-						value="#{offer.to.tariff}"
-						disabled="#{offer.readOnly}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{configCollections.tariffs}" />
-					</aon:selectOneMenu>
-
 					<aon:outputLabel for="Offer_workPlace" 
 						value="#{bundle.purchase_workplace}" />
-					<aon:selectOneMenu id="Offer_workPlace" 
-						value="#{offer.to.workPlace}"
-						disabled="#{offer.readOnly}"
-						valueChangeListener="#{offer.onWorkPlaceChanged}" 
-						reRender="Offer_scope">
-						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="Offer_workPlace" 
+							value="#{offer.to.workPlace}"
+							disabled="#{offer.readOnly}"
+							valueChangeListener="#{offer.onWorkPlaceChanged}" 
+							reRender="Offer_scope">
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel for="Offer_scope" 
+							styleClass="aon-margin-left aon-italic"
+							value="#{bundle.aon_scope}:" />
+						<aon:outputText id="Offer_scope" 
+							styleClass="aon-margin-left aon-bold"
+							value="#{offer.to.scope.description}" />
+					</aon:div>
 
 					<aon:outputLabel for="Offer_defaultPayMethod" 
 						value="#{bundle.finance_payMethod}" />

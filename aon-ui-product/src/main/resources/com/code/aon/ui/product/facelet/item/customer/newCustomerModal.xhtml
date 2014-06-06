@@ -9,16 +9,16 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 	<ui:decorate template="/com/code/aon/ui/product/facelet/item/newDetailModal.xhtml">
-		<ui:param name="detailId" value="Supplier" />
+		<ui:param name="detailId" value="Customer" />
 		<ui:param name="minWidth" value="740" />
 		<ui:param name="minHeight" value="300" />
-		<ui:param name="modalTitle" value="#{bundle.aon_suppliers}" />
-		<ui:param name="showNewDetailWindow" value="#{controller.showNewSupplierWindow}" />
-		<ui:param name="detailController" value="#{supplierController}" />
+		<ui:param name="modalTitle" value="#{bundle.customer_finance_checking}" />
+		<ui:param name="showNewDetailWindow" value="#{controller.showNewCustomerWindow}" />
+		<ui:param name="detailController" value="#{customerController}" />
 	
 		<ui:define name="content">
-			<ui:include src="/com/code/aon/ui/product/facelet/item/supplier/form_content.xhtml" >
-				<ui:param name="controller" value="#{supplierController}" />
+			<ui:include src="/com/code/aon/ui/product/facelet/item/customer/form_content.xhtml" >
+				<ui:param name="controller" value="#{customerController}" />
 			</ui:include>
 		</ui:define>
 		

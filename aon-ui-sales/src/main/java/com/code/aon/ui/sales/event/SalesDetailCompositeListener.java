@@ -17,6 +17,7 @@ public class SalesDetailCompositeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		SalesDetailController controller = (SalesDetailController)event.getController();
+		Sales sales = (Sales)controller.getMasterController().getTo();
 		SalesDetail salesDetail = (SalesDetail)controller.getTo();
 		if (salesDetail.getItem().getProduct().isComposition()) {
 			double quantity = salesDetail.getQuantity();
@@ -27,7 +28,7 @@ public class SalesDetailCompositeListener extends ControllerAdapter {
 					salesDetail.setItem(composition.getCompositionItem());
 					salesDetail.setDescription(composition.getDescription());
 					salesDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-					salesDetail.setPrice(obtainCompositionItemPrice(salesDetail, composition, controller.getPriceStrategy()));
+					salesDetail.setPrice(obtainCompositionItemPrice(salesDetail, sales, composition, controller.getPriceStrategy()));
 					salesDetail.setDiscountExpression(obtainCompositionDiscount(composition));
 					salesDetail = (SalesDetail)controller.getManagerBean().insert(salesDetail);
 				}
@@ -37,19 +38,17 @@ public class SalesDetailCompositeListener extends ControllerAdapter {
 		}
 	}
 
-	private double obtainCompositionItemPrice(SalesDetail salesDetail, ItemComposition composition, IPriceStrategy priceStrategy) {
+	private double obtainCompositionItemPrice(SalesDetail salesDetail, Sales sales, ItemComposition composition, IPriceStrategy priceStrategy) {
 		double price = 0;
 		if (composition.getItem().getProduct().isCompositionPrice()) {
-			Sales sales = salesDetail.getSales();
-			price = priceStrategy.getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer().getTariff());
+			price = priceStrategy.getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
 		}
 		return price;
 	}
 
 	private DiscountExpression obtainCompositionDiscount(ItemComposition composition) {
 		DiscountExpression discountExpr = new DiscountExpression("0.0");
-		if (composition.getItem().getProduct().isCompositionPrice() &&
-			composition.getDiscountExpression() != null) {
+		if (composition.getItem().getProduct().isCompositionPrice() && composition.getDiscountExpression() != null) {
 			discountExpr = composition.getDiscountExpression();
 		}
 		return discountExpr;

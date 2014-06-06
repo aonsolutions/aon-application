@@ -43,6 +43,13 @@
 						</aon:menuItem>
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+						<aon:menuItem id="customer-button"
+							value="#{bundle.customer_finance_checking}"
+							reRender="showNewCustomerWindow"
+							iconClass="aon-icon-customer"
+							actionListener="#{itemCustomer.onReset}">
+							<f:setPropertyActionListener target="#{item.showNewCustomerWindow}" value="#{true}" />							
+						</aon:menuItem>
 						<aon:menuItem id="supplier-button"
 							value="#{bundle.aon_suppliers}"
 							reRender="showNewSupplierWindow"
@@ -140,6 +147,16 @@
 							</aon:panelTab>
 						</c:if>
 
+						<c:if test="#{aonConfiguration.bean.product.showSuppliers and itemCustomer.model.rowCount > 0}">
+							<aon:panelTab id="itemCustomerPanelTab"
+								label="#{bundle.customer_finance_checking}">
+								<ui:include	src="/com/code/aon/ui/product/facelet/item/customer/tab_grid.xhtml">
+									<ui:param name="controller" value="#{itemCustomer}" />
+									<ui:param name="removeButtonReRender" value="productDiv" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
 						<c:if test="#{aonConfiguration.bean.product.showSuppliers and itemSupplier.model.rowCount > 0}">
 							<aon:panelTab id="itemSupplierPanelTab"
 								label="#{bundle.aon_suppliers}">
@@ -194,6 +211,7 @@
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+				<aon:lookupButtonPopup lookup="#{customerLookup}" />
 				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 			</c:if>
 			<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
@@ -217,6 +235,11 @@
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+				<ui:include src="/com/code/aon/ui/product/facelet/item/customer/newCustomerModal.xhtml">
+					<ui:param name="controller" value="#{item}" />
+					<ui:param name="customerController" value="#{itemCustomer}" />
+					<ui:param name="modalReRender" value="productDiv" />
+				</ui:include>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/supplier/newSupplierModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="supplierController" value="#{itemSupplier}" />

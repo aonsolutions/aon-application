@@ -38,9 +38,9 @@ public class PosUtils {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());
 			criteria.addNullExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
-			List<ITransferObject> list = posShiftBean.getList(criteria);
-			if (! list.isEmpty() ) {
-				result = (PosShift) list.get(0);
+			List<ITransferObject> posShiftList = posShiftBean.getList(criteria);
+			if (posShiftList.size() > 0) {
+				result = (PosShift)posShiftList.get(0);
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());

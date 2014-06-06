@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:outputLabel for="Customer_id" value="#{bundle.aon_customer}" />
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{controller.to.registry}" />
+		<ui:param name="lookupForRegistry" value="#{true}" />
+		<ui:param name="idRequired" value="#{true}" />
+		<ui:param name="skipLabel" value="#{true}" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{controller.onCustomerChanged}" type="lookupChangeListener" />
+	</ui:include>
+
+	<aon:outputLabel for="ItemCustomer_Code" value="#{bundle.product_item_customer_code}" />
+	<aon:inputText id="ItemCustomer_Code"
+		value="#{controller.to.code}"
+		size="15" maxlength="15" />
+
+	<aon:outputLabel for="ItemCustomer_Price" value="#{bundle.aon_price}" />
+	<aon:inputText id="ItemCustomer_Price"
+		value="#{controller.to.price}"
+		required="true" size="5" />
+
+	<aon:outputLabel for="ItemCustomer_Discount" value="#{bundle.aon_discount}" />
+	<aon:inputText id="ItemCustomer_Discount"
+		value="#{controller.to.discountExpression.discountExpr}"
+		required="true" size="5" />
+
+</ui:composition>

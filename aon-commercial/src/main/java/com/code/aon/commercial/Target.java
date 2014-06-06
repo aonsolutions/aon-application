@@ -10,12 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Where;
 
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
@@ -25,7 +27,7 @@ import com.esferalia.aon.entity.master.TargetDB;
 
 @Entity
 @Table(name="target")
-public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
+public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable, ITariffable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -52,6 +54,7 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	}
 		
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	
+	@Where(clause = "type=0")
 	public Set<RegistryItem> getItems() {
 		return items;
 	}

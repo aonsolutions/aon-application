@@ -3,7 +3,6 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.ui.common.ICommonMessages.NO_FEE_CUSTOMER_REPORT;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +23,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.product.Item;
@@ -117,10 +115,8 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 			fee.setItem(item);
 			fee.setDescription(item.getFullName());
 
-			Date date = fee.getInitialDate();
 			Customer customer = (Customer)getMasterController().getTo();
-			Tariff tariff = customer.getTariff();
-			price = getPriceStrategy().getUnitPrice(fee, date, tariff);
+			price = getPriceStrategy().getUnitPrice(fee, fee.getInitialDate(), customer);
 		}
 		fee.setPrice(price);
 	}	
@@ -132,10 +128,8 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 				fee.setQuantity((Double)event.getNewValue());
 	
-				Date date = fee.getInitialDate();
 				Customer customer = (Customer)getMasterController().getTo();
-				Tariff tariff = customer.getTariff();
-				price = getPriceStrategy().getUnitPrice(fee, date, tariff);
+				price = getPriceStrategy().getUnitPrice(fee, fee.getInitialDate(), customer);
 			}
 			fee.setPrice(price);
 		}

@@ -9,10 +9,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.ItemSupplier;
 import com.code.aon.purchase.Proposal;
 import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
@@ -36,39 +38,41 @@ public class ProposalDetailController extends LinesController implements IPurcha
 	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
 		ProposalDetail proposalDetail = (ProposalDetail) getTo();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			ItemSupplier is = getMorePriorityItemSupplier((Item)event.getNewValue());
-			if(is!=null && is.getId()!=null){
-				proposalDetail.setPrice(is.getPrice());
-				proposalDetail.setSupplier(is.getSupplier());
+			RegistryItem rItem = getMorePriorityRegistryItem((Item)event.getNewValue());
+			if (rItem!=null && rItem.getId()!=null) {
+				proposalDetail.setPrice(rItem.getPrice());
+				proposalDetail.setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).get(rItem.getRegistry().getId()));
 			}
 		}
 	}
 	
-	private ItemSupplier getMorePriorityItemSupplier(Item item) throws ManagerBeanException {
+	private RegistryItem getMorePriorityRegistryItem(Item item) throws ManagerBeanException {
 		Proposal proposal = (Proposal) getMasterController().getTo();
-		ItemSupplier itemSupplier = null;
-		IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+		RegistryItem rItem = null;
+		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_WORK_PLACE_ID), proposal.getWorkPlace().getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), proposal.getWorkPlace().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY), true);
 		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			itemSupplier = (ItemSupplier) list.get(0);
+		if (!list.isEmpty()) {
+			rItem = (RegistryItem)list.get(0);
 		} else {
 			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY), true);
 			list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				itemSupplier = (ItemSupplier) list.get(0);
+			if (!list.isEmpty()) {
+				rItem = (RegistryItem)list.get(0);
 			}
 		}
-		if(itemSupplier==null){
+		if(rItem==null){
 			String msg = "El producto no tiene ningún proveedor asignado";
 			AonUtil.addErrorMessage(msg);
 		}
-		return itemSupplier;
+		return rItem;
 	}
 	
 }

@@ -7,6 +7,8 @@ public interface IPriceable {
 	public double getProfitablePrice();
 	public double getProfitPercent();
 	public void setProfitPercent(double value);
+	public double getSalesProfitPercent();
+	public void setSalesProfitPercent(double value);
 	public double getPrice();
 	public void setPrice(double value);
 	public double getSalesPrice(double price);

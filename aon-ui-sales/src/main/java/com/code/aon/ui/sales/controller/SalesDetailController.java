@@ -1,7 +1,6 @@
 package com.code.aon.ui.sales.controller;
 
 import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
@@ -12,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -115,10 +113,8 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				salesDetail.setQuantity(1);
 			}
 
-			Date date = salesDetail.getSales().getIssueDate();
-			SalesController master = (SalesController)getMasterController();
-			Tariff tariff = ((Sales)master.getTo()).getCustomer().getTariff();
-			price = getPriceStrategy().getUnitPrice(salesDetail, date, tariff);
+			Sales sales = (Sales)getMasterController().getTo();
+			price = getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
 		}
 		salesDetail.setPrice(price);
 	}	
@@ -130,10 +126,8 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 				salesDetail.setQuantity((Double)event.getNewValue());
 	
-				Date date = salesDetail.getSales().getIssueDate();
-				SalesController master = (SalesController)getMasterController();
-				Tariff tariff = ((Sales)master.getTo()).getCustomer().getTariff();
-				price = getPriceStrategy().getUnitPrice(salesDetail, date, tariff);
+				Sales sales = (Sales)getMasterController().getTo();
+				price = getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
 			}
 			salesDetail.setPrice(price);
 		}

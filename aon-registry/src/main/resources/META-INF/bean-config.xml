@@ -14,6 +14,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.code.aon.registry.RegistryAddress</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.registry.event.RegistryAddressBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.registry.RegistryNote</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.registry.event.RegistryNoteBeanVetoListener</vetoListener>
@@ -26,12 +33,5 @@
 	        <vetoListener>com.code.aon.registry.event.RegistryPayMethodBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
-	
-	<bean description="">
-		<pojo>com.code.aon.registry.RegistryAddress</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.registry.event.RegistryAddressBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
+
 </bean-config>

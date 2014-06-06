@@ -451,7 +451,6 @@ public class AonExporter extends GenericExporter{
 		map.put("ItemAlternative","com.code.aon.product.ItemAlternative");
 		map.put("ItemAttachment","com.code.aon.product.ItemAttachment");
 		map.put("ItemComposition","com.code.aon.product.ItemComposition");
-		map.put("ItemSupplier","com.code.aon.product.ItemSupplier");
 		map.put("ItemTariff","com.code.aon.product.ItemTariff");
 		map.put("Product","com.code.aon.product.Product");
 		map.put("ProductCategory","com.code.aon.product.ProductCategory");
@@ -497,21 +496,21 @@ public class AonExporter extends GenericExporter{
 		map.put("QuestionValue","com.code.aon.registry.QuestionValue");		
 		map.put("RecordData","com.code.aon.registry.RecordData");
 		map.put("Registry","com.code.aon.registry.Registry");
-		map.put("RegistryItem","com.code.aon.registry.RegistryItem");
-		map.put("RegistryProfile","com.code.aon.registry.RegistryProfile");
-		map.put("RegistrySeller","com.code.aon.registry.RegistrySeller");
-		map.put("RegistrySupplier","com.code.aon.registry.RegistrySupplier");		
 		map.put("RegistryAddInfo","com.code.aon.registry.RegistryAddInfo");
 		map.put("RegistryAddress","com.code.aon.registry.RegistryAddress");
 		map.put("RegistryAttachment","com.code.aon.registry.RegistryAttachment");
 		map.put("RegistryAttachmentTag","com.code.aon.registry.RegistryAttachmentTag");
 		map.put("RegistryDirStaff","com.code.aon.registry.RegistryDirStaff");
 		map.put("RegistryBank","com.code.aon.registry.RegistryBank");
+		map.put("RegistryItem","com.code.aon.registry.RegistryItem");
 		map.put("RegistryMedia","com.code.aon.registry.RegistryMedia");
 		map.put("RegistryNote","com.code.aon.registry.RegistryNote");
 		map.put("RegistryPayMethod","com.code.aon.registry.RegistryPayMethod");
+		map.put("RegistryProfile","com.code.aon.registry.RegistryProfile");
 		map.put("RegistryRelationship","com.code.aon.registry.RegistryRelationship");
 		map.put("RegistrySegment","com.code.aon.registry.RegistrySegment");
+		map.put("RegistrySeller","com.code.aon.registry.RegistrySeller");
+		map.put("RegistrySupplier","com.code.aon.registry.RegistrySupplier");		
 		map.put("Relationship","com.code.aon.registry.Relationship");
 		map.put("Segment","com.code.aon.registry.Segment");
 

@@ -85,7 +85,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 			addEnumToCriteria(criteria, status, getItemStatuses());
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getController().resolveAlias("Item_suppliers_supplier_id"), getSupplier().getId());
+			criteria.addEqualExpression(getController().resolveAlias("Item_suppliers_registry_id"), getSupplier().getId());
 		}
 		if (getProduct() != null && getProduct().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getProduct().getId());

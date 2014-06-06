@@ -20,12 +20,13 @@ import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.product.CatalogueItem;
-import com.code.aon.product.ItemSupplier;
 import com.code.aon.purchase.Proposal;
 import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.purchase.enumeration.ProposalTransferStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -212,15 +213,16 @@ public class ProposalController extends BasicController {
 			if(itemIds.isEmpty()){
 				itemIds.add(-1);
 			}
-			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
-			Criteria itemSupCriteria = new Criteria();
-			itemSupCriteria.addInExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), itemIds);
-			itemSupCriteria.addNotNullExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID));
+			IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
+			Criteria rItemCriteria = new Criteria();
+			rItemCriteria.addNotNullExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID));
+			rItemCriteria.addInExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), itemIds);
+			rItemCriteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
 
-			for (ITransferObject ito : itemSupplierBean.getList(itemSupCriteria)) {
-				ItemSupplier is = (ItemSupplier) ito;
-				if( is.getWorkPlace() == null || is.getWorkPlace().getId() == null || is.getWorkPlace().getId().equals(proposal.getWorkPlace().getId()) ){
-					list.add(is.getItem().getId());
+			for (ITransferObject ito : rItemBean.getList(rItemCriteria)) {
+				RegistryItem rItem = (RegistryItem)ito;
+				if (rItem.getWorkPlace() == null || rItem.getWorkPlace().getId() == null || rItem.getWorkPlace().getId().equals(proposal.getWorkPlace().getId())) {
+					list.add(rItem.getItem().getId());
 				}
 			}
 		}

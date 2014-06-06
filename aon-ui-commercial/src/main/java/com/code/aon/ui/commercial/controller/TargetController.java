@@ -156,7 +156,7 @@ public class TargetController extends RegistryController implements ICommonMessa
 			+" LEFT OUTER JOIN segment s ON rs.segment = s.id"
 			+" LEFT OUTER JOIN rattach cd ON cd.registry = r.id"
 			+" LEFT OUTER JOIN category cdc ON cd.category = cdc.id"
-			+" LEFT OUTER JOIN ritem ti ON ti.registry = r.id"
+			+" LEFT OUTER JOIN ritem ti ON ti.registry = r.id AND ti.type = 0"
 			+" LEFT OUTER JOIN item i ON ti.item = i.id"
 			+" LEFT OUTER JOIN product p ON p.id = i.product"
 			+" LEFT OUTER JOIN pcategory pc ON pc.id = p.category"

@@ -17,6 +17,7 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		OfferDetailController controller = (OfferDetailController)event.getController();
+		Offer offer = (Offer)controller.getMasterController().getTo();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
 		if (offerDetail.getItem() != null && offerDetail.getItem().getId() != null && offerDetail.getItem().getProduct().isComposition()) {
 			double quantity = offerDetail.getQuantity();
@@ -27,7 +28,7 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 					offerDetail.setItem(composition.getCompositionItem());
 					offerDetail.setDescription(composition.getDescription());
 					offerDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-					offerDetail.setPrice(obtainCompositionItemPrice(offerDetail, composition, controller.getPriceStrategy()));
+					offerDetail.setPrice(obtainCompositionItemPrice(offerDetail, offer, composition, controller.getPriceStrategy()));
 					offerDetail.setDiscountExpression(obtainCompositionDiscount(composition));
 					offerDetail = (OfferDetail)controller.getManagerBean().insert(offerDetail);
 				}
@@ -37,11 +38,10 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 		}
 	}
 
-	private double obtainCompositionItemPrice(OfferDetail offerDetail, ItemComposition composition, IPriceStrategy priceStrategy) {
+	private double obtainCompositionItemPrice(OfferDetail offerDetail, Offer offer, ItemComposition composition, IPriceStrategy priceStrategy) {
 		double price = 0;
 		if (composition.getItem().getProduct().isCompositionPrice()) {
-			Offer offer = offerDetail.getOffer();
-			price = priceStrategy.getUnitPrice(offerDetail, offer.getIssueDate(), offer.getTariff());
+			price = priceStrategy.getUnitPrice(offerDetail, offer.getDate(), offer.getTarget());
 		}
 		return price;
 	}

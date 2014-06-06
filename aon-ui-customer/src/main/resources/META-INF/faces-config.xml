@@ -876,6 +876,15 @@
 			<value>customer</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryItem_type</key>
+					<value>0</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>RegistryItem_item_product_name</value>
 		</managed-property>		
@@ -888,8 +897,23 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerItemControllerListener}</value> 
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>customerItemControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistryItemControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>customerItemListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
