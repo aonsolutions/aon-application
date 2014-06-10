@@ -2,18 +2,23 @@ package com.esferalia.aon.payroll.irpf;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.config.enumeration.Administration;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.IrpfRegularization;
 import com.esferalia.aon.payroll.IrpfResult;
+import com.esferalia.aon.payroll.calculator.jooq.JooqGeozoneIrpf;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Discapacidad;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.SituacionFamiliar;
+import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -46,16 +51,15 @@ import es.aeat.pret.rw13.jaxb.TipoRetenidoSalida2013.Reduccion;
 import es.aeat.pret.rw13.util.ValidaNif;
 
 public class IrpfCalculator {
-	
+
 	public static String DEFAULT_NIF = "87449445H";
 	public static String DEFAULT_CIF = "Z7896423E";
-	
+
 	public static boolean isValidNif(String nif) {
 		ValidaNif validaNif = new ValidaNif();
 		validaNif.checkNif(nif);
 		return validaNif.isOk();
 	}
-	
 
 	public static double calculate(IIrpfCalculatorContext ctx) {
 		AEATRetencionesSalida2013 aeatRetencionesSalida2013 = calculate2013(ctx);
@@ -87,7 +91,7 @@ public class IrpfCalculator {
 
 		IrpfOutcome irpfOutcome = new IrpfOutcome();
 
-		irpfOutcome.setNif(ctx.getNif() == DEFAULT_NIF ? null : ctx.getNif() );
+		irpfOutcome.setNif(ctx.getNif() == DEFAULT_NIF ? null : ctx.getNif());
 		irpfOutcome.setBirthYear(ctx.getAñoNacimiento());
 
 		IrpfResult irpfResult = new IrpfResult();
@@ -211,9 +215,10 @@ public class IrpfCalculator {
 			Mayores75 mayores75 = ascendientes.getMayores75();
 			if (mayores75 != null) {
 			}
-			Ascendientes.ConDiscapacidad conDiscapacidad = ascendientes.getConDiscapacidad();
-			if ( conDiscapacidad != null ) {
-				
+			Ascendientes.ConDiscapacidad conDiscapacidad = ascendientes
+					.getConDiscapacidad();
+			if (conDiscapacidad != null) {
+
 			}
 		}
 
@@ -252,72 +257,16 @@ public class IrpfCalculator {
 		return irpfOutcome;
 	}
 
-	protected static AEATRetencionesSalida2013 calculate(
-			AEATRetencionesEntrada2013 entrada2013)
-			throws IrpfCalculateException {
-		ModeloRetencionesXMLJaxb modeloRetencionesXMLJaxb = new ModeloRetencionesXMLJaxb();
-
-		modeloRetencionesXMLJaxb.setEntradaRetenciones(entrada2013);
-		modeloRetencionesXMLJaxb
-				.setXMLProgressListener(new XMLProgressListener() {
-					@Override
-					public void avanzarBarraProgreso() {
-					}
-				});
-
-		try {
-			modeloRetencionesXMLJaxb.calcularXML();
-		} catch (NullPointerException ignore) {
-		}
-
-		AEATRetencionesError2013 error2013 = modeloRetencionesXMLJaxb
-				.getSalidaXMLError();
-		if (error2013 != null)
-			throw new IrpfCalculateException(error2013);
-
-		AEATRetencionesSalida2013 salida2013 = modeloRetencionesXMLJaxb
-				.getSalidaRetenciones();
-
-		return salida2013;
-	}
-
 	protected static AEATRetencionesSalida2013 calculate2013(
 			IIrpfCalculatorContext ctx) {
-		try {
-			ctx.next();
-			AEATRetencionesEntrada2013 aeatRetencionesEntrada2013 = AEATRetencionesEntradaFactory
-					.create(ctx);
-			return IrpfCalculator.calculate(aeatRetencionesEntrada2013);
-		} catch (SQLException e) {
-			throw new ExpressionExceptionWrapper(new ExpressionException(e));
-		} catch (ExpressionException e) {
-			throw new ExpressionExceptionWrapper(e);
-		} catch (IrpfCalculateException e) {
-			AEATRetencionesError2013 error = e.getAEATRetencionesError2013();
-			List<TipoRetenedorError2013> retenedores = error.getRetenedor();
-			String message = null;
-			TipoRetenedorError2013 retenedor = retenedores.get(0);
-			List<TipoRetenidoError2013> retenidos = retenedor.getRetenido();
-			if (retenidos.size() > 0) {
-				TipoRetenidoError2013 retenido = retenidos.get(0);
-				List<TipoError> tipoErrores = retenido.getError();
-				if ( tipoErrores.size() > 0  ){
-					TipoError tipoError = tipoErrores.get(0);
-					message = tipoError.getDescripcion();
-				} 
-			} 
-			if ( message == null ) {
-				List<TipoErrorGeneral> errores = error.getErrorGeneral();
-				if ( errores.size() > 0 ){
-					message = errores.get(0).getDescripcion();
-				}
-				
-			}
-			ExpressionException expressionException = new CheckException(
-					message);
-			throw new ExpressionExceptionWrapper(expressionException);
-		}
-
+		ctx.next();
+		
+		for( Calculate calculate : ForalCalculate.INSTANCES )
+			if ( calculate.accept(ctx))
+				return calculate.calculate(ctx);
+		
+		
+		return AEATCalculate.INSTANCE.calculate(ctx);
 	}
 
 	private static Integer toInteger(Byte b) {
@@ -361,4 +310,159 @@ public class IrpfCalculator {
 	private static IrpfRegularizationReason toIrpfRegularizationReason(int causa) {
 		return IrpfRegularizationReason.valueof(causa);
 	}
+
+	private static interface Calculate {
+		boolean accept(IIrpfCalculatorContext ctx);
+
+		AEATRetencionesSalida2013 calculate(IIrpfCalculatorContext ctx);
+
+	}
+
+	private static class AEATCalculate implements Calculate {
+
+		private static AEATCalculate INSTANCE = new AEATCalculate();
+
+		@Override
+		public boolean accept(IIrpfCalculatorContext ctx) {
+			return true;
+		}
+
+		@Override
+		public AEATRetencionesSalida2013 calculate(IIrpfCalculatorContext ctx) {
+			try {
+				AEATRetencionesEntrada2013 aeatRetencionesEntrada2013 = AEATRetencionesEntradaFactory
+						.create(ctx);
+				return calculate(aeatRetencionesEntrada2013);
+			} catch (SQLException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (ExpressionException e) {
+				throw new ExpressionExceptionWrapper(e);
+			} catch (IrpfCalculateException e) {
+				AEATRetencionesError2013 error = e
+						.getAEATRetencionesError2013();
+				List<TipoRetenedorError2013> retenedores = error.getRetenedor();
+				String message = null;
+				TipoRetenedorError2013 retenedor = retenedores.get(0);
+				List<TipoRetenidoError2013> retenidos = retenedor.getRetenido();
+				if (retenidos.size() > 0) {
+					TipoRetenidoError2013 retenido = retenidos.get(0);
+					List<TipoError> tipoErrores = retenido.getError();
+					if (tipoErrores.size() > 0) {
+						TipoError tipoError = tipoErrores.get(0);
+						message = tipoError.getDescripcion();
+					}
+				}
+				if (message == null) {
+					List<TipoErrorGeneral> errores = error.getErrorGeneral();
+					if (errores.size() > 0) {
+						message = errores.get(0).getDescripcion();
+					}
+
+				}
+				ExpressionException expressionException = new CheckException(
+						message);
+				throw new ExpressionExceptionWrapper(expressionException);
+			}
+		}
+
+		// --------------------------------------------------------------------
+		private AEATRetencionesSalida2013 calculate(
+				AEATRetencionesEntrada2013 entrada2013)
+				throws IrpfCalculateException {
+			ModeloRetencionesXMLJaxb modeloRetencionesXMLJaxb = new ModeloRetencionesXMLJaxb();
+
+			modeloRetencionesXMLJaxb.setEntradaRetenciones(entrada2013);
+			modeloRetencionesXMLJaxb
+					.setXMLProgressListener(new XMLProgressListener() {
+						@Override
+						public void avanzarBarraProgreso() {
+						}
+					});
+
+			try {
+				modeloRetencionesXMLJaxb.calcularXML();
+			} catch (NullPointerException ignore) {
+			}
+
+			AEATRetencionesError2013 error2013 = modeloRetencionesXMLJaxb
+					.getSalidaXMLError();
+			if (error2013 != null)
+				throw new IrpfCalculateException(error2013);
+
+			AEATRetencionesSalida2013 salida2013 = modeloRetencionesXMLJaxb
+					.getSalidaRetenciones();
+
+			return salida2013;
+		}
+
+	}
+
+	private static class ForalCalculate implements Calculate {
+
+		
+		public static ForalCalculate [] INSTANCES = { 
+		new  ForalCalculate("01", Administration.ALAVA)
+		,new  ForalCalculate("48", Administration.BIZKAIA)
+		,new  ForalCalculate("20", Administration.GIPUZKOA)
+		,new  ForalCalculate("31", Administration.NAVARRA)};
+		
+		private String geozone;
+		private Administration administration;
+		
+		
+
+		ForalCalculate(String geozone, Administration administration) {
+			this.geozone = geozone;
+			this.administration = administration;
+		}
+
+		@Override
+		public boolean accept(IIrpfCalculatorContext ctx) {
+			return ctx instanceof SQLIrpfCalculatorContext
+					&& ((SQLIrpfCalculatorContext) ctx).getEconomicAgreement() == administration;
+		}
+
+		@Override
+		public AEATRetencionesSalida2013 calculate(IIrpfCalculatorContext ctx) {
+			// TODO Auto-generated method stub
+			byte descendants = 0;
+			Iterable<Descendiente> descendientes = ctx.getDescendientes();
+			if (descendientes != null)
+				for (Descendiente descendiente : descendientes)
+					descendants++;
+
+			byte handicap = 0;
+			Discapacidad discapacidad = ctx.getDiscapacidad();
+			if (discapacidad != null)
+					handicap = (byte)discapacidad.ordinal();
+
+			double amount = 0.00;
+			BigDecimal retribAnuales = ctx.getRetribAnuales();
+			if (retribAnuales != null)
+				amount = retribAnuales.doubleValue();
+			
+			SQLIrpfCalculatorContext sqlCtx = (SQLIrpfCalculatorContext) ctx;
+
+			double percent = JooqGeozoneIrpf.getPercent(sqlCtx.getConnection(),
+					geozone, amount, descendants, handicap, new java.sql.Date(
+							sqlCtx.getChargeDate().getTime()));
+			
+			
+			
+			TipoRetenidoSalida2013 retenidoSalida = new TipoRetenidoSalida2013();
+			retenidoSalida.setTipoRetencion(BigDecimal.valueOf(percent));
+			
+			ArrayList<TipoRetenidoSalida2013> retenidosSalida = new ArrayList<TipoRetenidoSalida2013>(1);
+			retenidosSalida.add(retenidoSalida);
+			TipoRetenedorSalida2013 retenedorSalida2013 = new TipoRetenedorSalida2013();
+			retenedorSalida2013.setRetenido(retenidosSalida);
+			ArrayList<TipoRetenedorSalida2013> retenedoresSalida = new ArrayList<TipoRetenedorSalida2013>(1);
+			retenedoresSalida.add(retenedorSalida2013);
+			AEATRetencionesSalida2013 aeatRetencionesSalida = new AEATRetencionesSalida2013();
+			aeatRetencionesSalida.setRetenedor(retenedoresSalida);
+			
+			return aeatRetencionesSalida;
+		}
+	}
+
 }

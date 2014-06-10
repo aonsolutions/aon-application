@@ -19,6 +19,9 @@ import java.util.NoSuchElementException;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.DelegateCollection;
 import com.esferalia.aon.payroll.DelegateContractPayment;
@@ -38,12 +41,14 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataAscendantsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataDescendientsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -258,17 +263,20 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return ctx.getDate(tableLabel, columnLabel);
 		}
 
+		public String getString(String tableLabel, String columnLabel) {
+			return ctx.getString(tableLabel, columnLabel);
+		}
+
 		private Collection<IContractPayment> explode(
 				Collection<IContractPayment> payments) {
 			List<Period> periods = getPeriods();
 			Collection<IContractPayment> exploded = new ArrayList<IContractPayment>();
 			for (IContractPayment payment : payments) {
 				/*
-				if (payment.getMonth() != null) {
-					exploded.add(new SimpleContractPayment(payment));
-					continue;
-				} // Only for one Month
-				*/
+				 * if (payment.getMonth() != null) { exploded.add(new
+				 * SimpleContractPayment(payment)); continue; } // Only for one
+				 * Month
+				 */
 
 				for (Period period : periods) {
 
@@ -453,6 +461,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private PreparedStatement ascendantsStmt;
 	private PreparedStatement descendantsStmt;
+	
+	private Connection connection;
 
 	private IrpfContractSalaryCalculatorContext salaryCalculatorContext;
 
@@ -466,6 +476,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	public SQLIrpfCalculatorContext(Connection conn, Date startDate,
 			Date endDate, ISQLContractSalaryCalculatorContext ctx)
 			throws ExpressionException, SQLException {
+		connection = conn;
 		salaryCalculatorContext = new IrpfContractSalaryCalculatorContext(ctx);
 
 		salaryStmt = conn.prepareStatement(SALARY_SQL);
@@ -532,6 +543,27 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		} catch (ExpressionException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public Administration getEconomicAgreement() {
+		Integer value = salaryCalculatorContext.getInt(SQLConstants.WORKPLACE,
+				WorkplaceColumns.ECONOMICAGREEMENT);
+		if ( value == null )
+			return null;
+		if ( value < 0 )
+			return null;
+		Administration values[] = Administration.values();
+		if ( value >= values.length)
+			return null;
+		return values[value];
+	}
+	
+	public Date getChargeDate() {
+		return salaryCalculatorContext.getChargeDate();
+	}
+
+	public Connection getConnection() {
+		return connection;
 	}
 
 	@Override
