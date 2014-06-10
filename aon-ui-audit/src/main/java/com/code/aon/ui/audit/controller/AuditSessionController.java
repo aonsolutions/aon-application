@@ -108,28 +108,32 @@ public class AuditSessionController extends BasicController {
 	
 	public IControllerListener getListener() {
 		if ( listener == null ) {
-			this.listener = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						Criteria criteria = controller.getCriteria();
-						DomainSwitcher dw = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-						if ( dw.isChildDomain() ) {
-							criteria.setSkipDomainFilter(true);
-							List<Integer> domains = new LinkedList<Integer>();
-							domains.add(dw.getParentDomain());
-							domains.add(dw.getDomainId());
-							criteria.addInExpression("User.domain", domains);
-						}
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering domain", e);
-					}
-				}
-			};
+			this.listener = new DomainsFilter();
 		}
 		return listener;
 	}	
 
+	private static class DomainsFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				Criteria criteria = controller.getCriteria();
+				DomainSwitcher dw = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+				if ( dw.isChildDomain() ) {
+					criteria.setSkipDomainFilter(true);
+					List<Integer> domains = new LinkedList<Integer>();
+					domains.add(dw.getParentDomain());
+					domains.add(dw.getDomainId());
+					criteria.addInExpression("User.domain", domains);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering domain", e);
+			}
+		}
+		
+	}
+	
 }

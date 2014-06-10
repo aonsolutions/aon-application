@@ -21,6 +21,7 @@ public interface ICommercialConstants {
 	String OFFER_ATTACH_CONTROLLER_NAME = "offerAttachment";
 	String OFFER_SIGNER_CONTROLLER_NAME = "offerSigner";
 	String OFFER_SEARCH_LISTENER_NAME = "offerSearch";
+	String OFFER_TERM_GENERAL_CONTROLLER_NAME ="offerTermGeneral";
 	String TARGET_CONTROLLER_NAME = "target";
 	String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";

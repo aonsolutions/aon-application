@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -56,33 +58,9 @@ public class CourseAlumnController extends LinesController {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<Integer> getCustomerList() throws ManagerBeanException {
-		IController controller = FormUtil.getController(COURSE_CONTROLLER_NAME);
-		Serializable id = controller.getManagerBean().getId(controller.getTo());
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ID), id);
-		String courseId = getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID);
-		return getManagerBean().getList(new ProjectionList(Projection.property(courseId)), criteria);
-	}
-	
 	public IControllerListener getCustomerFilter() {
 		if ( this.customerFilter == null ) {
-			this.customerFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {
-						String courseId = controller.getFieldName(IEntityAlias.CUSTOMER_ID);
-						for( Integer id : getCustomerList() ) {
-							controller.getCriteria().addNotEqualExpression(courseId, id);	
-						}
-					} catch (ManagerBeanException e) {
-						throw new ControllerListenerException(e);
-					} 
-				}		
-			};
+			this.customerFilter = new CustomerFilter();
 		}
 		return this.customerFilter;
 	}	
@@ -95,6 +73,35 @@ public class CourseAlumnController extends LinesController {
 
 	public void onRefresAlumn(ActionEvent event){
 		this.initializeModel();
+	}
+
+	private static class CustomerFilter extends ControllerAdapter {
+
+		@SuppressWarnings("unchecked")
+		private List<Integer> getCustomerList() throws ManagerBeanException {
+			IController controller = FormUtil.getController(COURSE_CONTROLLER_NAME);
+			Serializable id = controller.getManagerBean().getId(controller.getTo());
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ID), id);
+			String courseId = bean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID);
+			return bean.getList(new ProjectionList(Projection.property(courseId)), criteria);
+		}
+				
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {
+				String courseId = controller.getFieldName(IEntityAlias.CUSTOMER_ID);
+				for( Integer id : getCustomerList() ) {
+					controller.getCriteria().addNotEqualExpression(courseId, id);	
+				}
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e);
+			} 
+		}		
+		
 	}
 	
 }

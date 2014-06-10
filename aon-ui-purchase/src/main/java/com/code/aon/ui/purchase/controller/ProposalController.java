@@ -189,63 +189,9 @@ public class ProposalController extends BasicController {
 		return list;
 	}
 	
-	public List<Integer> getDepartmentsItemIds() throws ManagerBeanException{
-		List<Integer> list = new LinkedList<Integer>();
-		Proposal proposal = ((Proposal)getTo()); 
-		if(proposal.getDepartment()!=null){
-			List<Integer> catalogueIds = new LinkedList<Integer>();
-			for(ITransferObject to: getWorkplaceDepartments(proposal)){
-				WorkplaceDepartment wd = (WorkplaceDepartment) to;
-				catalogueIds.add(wd.getCatalogue().getId());
-			}
-			if(catalogueIds.isEmpty()){
-				String msg = "El departamento se ha desactivado.";
-				AonUtil.addErrorMessage(msg);
-				catalogueIds.add(-1);
-			}
-			IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
-			Criteria deptCriteria = new Criteria();
-			deptCriteria.addInExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueIds);
-			List<Integer> itemIds = new LinkedList<Integer>();
-			for (ITransferObject ito : catalogueItemBean.getList(deptCriteria)) {
-				itemIds.add(((CatalogueItem)ito).getItem().getId());
-			}
-			if(itemIds.isEmpty()){
-				itemIds.add(-1);
-			}
-			IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
-			Criteria rItemCriteria = new Criteria();
-			rItemCriteria.addNotNullExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID));
-			rItemCriteria.addInExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), itemIds);
-			rItemCriteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
-
-			for (ITransferObject ito : rItemBean.getList(rItemCriteria)) {
-				RegistryItem rItem = (RegistryItem)ito;
-				if (rItem.getWorkPlace() == null || rItem.getWorkPlace().getId() == null || rItem.getWorkPlace().getId().equals(proposal.getWorkPlace().getId())) {
-					list.add(rItem.getItem().getId());
-				}
-			}
-		}
-		if(list.isEmpty()){
-			list.add(-1);
-		}
-		return list;
-	}
-	
 	public IControllerListener getDepartmentItemFilter() {
 		if ( this.departmentItemFilter == null ) {
-			this.departmentItemFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelSearched(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						controller.getCriteria().addInExpression(controller.getFieldName(IEntityAlias.ITEM_ID), getDepartmentsItemIds());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering items", e);
-					}
-				}
-			};
+			this.departmentItemFilter = new DepartmentItemFilter();
 		}
 		return this.departmentItemFilter;
 	}
@@ -254,11 +200,7 @@ public class ProposalController extends BasicController {
 		return getWorkplaceDepartments(workPlace, null, false);
 	}
 	
-	private List<ITransferObject> getWorkplaceDepartments(Proposal proposal){
-		return getWorkplaceDepartments(proposal.getWorkPlace(), proposal.getDepartment(), true);
-	}
-	
-	private List<ITransferObject> getWorkplaceDepartments(WorkPlace workPlace, Department department, boolean  filterDepartment){
+	private static List<ITransferObject> getWorkplaceDepartments(WorkPlace workPlace, Department department, boolean  filterDepartment){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
 			Criteria criteria = new Criteria();
@@ -493,6 +435,69 @@ public class ProposalController extends BasicController {
 		ORDER,
 		ITEM_RETURN,
 		TRANSFER;
+	}
+	
+	private static class DepartmentItemFilter  extends ControllerAdapter {
+
+		private List<ITransferObject> getWorkplaceDepartments(Proposal proposal){
+			return ProposalController.getWorkplaceDepartments(proposal.getWorkPlace(), proposal.getDepartment(), true);
+		}
+				
+		private List<Integer> getDepartmentsItemIds() throws ManagerBeanException{
+			List<Integer> list = new LinkedList<Integer>();
+			IController proposalController = FormUtil.getController(IPurchaseConstants.PROPOSAL_CONTROLLER_NAME);
+			Proposal proposal = (Proposal)proposalController.getTo(); 
+			if(proposal.getDepartment()!=null){
+				List<Integer> catalogueIds = new LinkedList<Integer>();
+				for(ITransferObject to: getWorkplaceDepartments(proposal)){
+					WorkplaceDepartment wd = (WorkplaceDepartment) to;
+					catalogueIds.add(wd.getCatalogue().getId());
+				}
+				if(catalogueIds.isEmpty()){
+					String msg = "El departamento se ha desactivado.";
+					AonUtil.addErrorMessage(msg);
+					catalogueIds.add(-1);
+				}
+				IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
+				Criteria deptCriteria = new Criteria();
+				deptCriteria.addInExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueIds);
+				List<Integer> itemIds = new LinkedList<Integer>();
+				for (ITransferObject ito : catalogueItemBean.getList(deptCriteria)) {
+					itemIds.add(((CatalogueItem)ito).getItem().getId());
+				}
+				if(itemIds.isEmpty()){
+					itemIds.add(-1);
+				}
+				IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
+				Criteria rItemCriteria = new Criteria();
+				rItemCriteria.addNotNullExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID));
+				rItemCriteria.addInExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), itemIds);
+				rItemCriteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+
+				for (ITransferObject ito : rItemBean.getList(rItemCriteria)) {
+					RegistryItem rItem = (RegistryItem)ito;
+					if (rItem.getWorkPlace() == null || rItem.getWorkPlace().getId() == null || rItem.getWorkPlace().getId().equals(proposal.getWorkPlace().getId())) {
+						list.add(rItem.getItem().getId());
+					}
+				}
+			}
+			if(list.isEmpty()){
+				list.add(-1);
+			}
+			return list;
+		}		
+		
+		@Override
+		public void beforeModelSearched(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().addInExpression(controller.getFieldName(IEntityAlias.ITEM_ID), getDepartmentsItemIds());
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering items", e);
+			}
+		}
+		
 	}
 	
 }

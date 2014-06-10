@@ -102,25 +102,29 @@ public class RemoveDomainController {
 
 	public IControllerListener getDomainFilter() {
 		if ( this.domainFilter == null ) {
-			this.domainFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						Criteria criteria = controller.getCriteria();
-						criteria.setSkipDomainFilter(true);
-						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE), Boolean.TRUE);
-						Integer domainId = DomainManager.getCurrentDomain();
-						criteria.addNotEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ID), domainId);
-						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domainId);
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering domain", e);
-					}
-				}
-			};
+			this.domainFilter = new DomainFilter();
 		}
 		return this.domainFilter;
+	}
+	
+	private static class DomainFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				Criteria criteria = controller.getCriteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE), Boolean.TRUE);
+				Integer domainId = DomainManager.getCurrentDomain();
+				criteria.addNotEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_ID), domainId);
+				criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domainId);
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering domain", e);
+			}
+		}
+		
 	}
 	
 }

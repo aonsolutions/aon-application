@@ -31,6 +31,7 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -156,26 +157,7 @@ public class CommercialTrackingController extends BasicController {
 	
 	public IControllerListener getOfferFilter() {
 		if ( this.offerFilter == null ) {
-			this.offerFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					CommercialTracking ct = (CommercialTracking) getTo();
-					try {					
-						if ( ct.getSeller().getId() != null ) {
-							String alias = controller.getFieldName(IEntityAlias.OFFER_SELLER_ID);
-							controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
-						}
-						if ( ct.getProject().getTarget().getId() != null ) {
-							String alias = controller.getFieldName(IEntityAlias.OFFER_TARGET_ID);
-							controller.getCriteria().addEqualExpression(alias, ct.getProject().getTarget().getId());
-						}						
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering offer", e);
-					}
-				}
-			};
+			this.offerFilter = new OfferFilter();
 		}
 		return this.offerFilter;
 	}
@@ -301,6 +283,29 @@ public class CommercialTrackingController extends BasicController {
         	LOGGER.error( e.getMessage(), e );
             throw new AbortProcessingException(e.getMessage(), e);
         }			
+	}
+
+	private static class OfferFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			CommercialTracking ct = (CommercialTracking) FormUtil.getController(COMMERCIAL_TRACKING_CONTROLLER_NAME).getTo();
+			try {					
+				if ( ct.getSeller().getId() != null ) {
+					String alias = controller.getFieldName(IEntityAlias.OFFER_SELLER_ID);
+					controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
+				}
+				if ( ct.getProject().getTarget().getId() != null ) {
+					String alias = controller.getFieldName(IEntityAlias.OFFER_TARGET_ID);
+					controller.getCriteria().addEqualExpression(alias, ct.getProject().getTarget().getId());
+				}						
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering offer", e);
+			}
+		}
+		
 	}
 	
 }

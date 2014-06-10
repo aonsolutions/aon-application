@@ -115,21 +115,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	
 	public IControllerListener getCurrentReservationFilter() {
 		if ( this.currentReservationFilter == null ) {
-			this.currentReservationFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelSearched(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
-						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-						controller.getCriteria().addLessThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
-						controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering reservation", e);
-					}
-				}
-			};
+			this.currentReservationFilter = new CurrentReservationFilter();
 		}
 		return this.currentReservationFilter;
 	}
@@ -664,6 +650,24 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 		return false;
+	}
+
+	private static class CurrentReservationFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelSearched(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
+				controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+				controller.getCriteria().addLessThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+				controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering reservation", e);
+			}
+		}
+		
 	}
 	
 }

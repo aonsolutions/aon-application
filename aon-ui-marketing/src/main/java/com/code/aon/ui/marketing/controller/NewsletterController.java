@@ -42,31 +42,9 @@ public class NewsletterController extends BasicController {
 	
 	private IControllerListener newsFilter;
 	
-	private List<MimeType> getImageMimeTypes() {
-		List<MimeType> list = new LinkedList<MimeType>();
-		for( MimeType mimeType : MimeType.values() ) {
-			if ( mimeType.getName().startsWith("image/") ) {
-				list.add(mimeType);
-			}
-		}
-		return list;
-	}
-	
 	public IControllerListener getImageFilter() {
 		if ( this.imageFilter == null ) {
-			this.imageFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						String alias = controller.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_MIME_TYPE);
-						controller.getCriteria().addInExpression(alias, getImageMimeTypes());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering documents", e);
-					}
-				}
-			};
+			this.imageFilter = new ImagesFilter();
 		}
 		return this.imageFilter;
 	}
@@ -131,6 +109,32 @@ public class NewsletterController extends BasicController {
 			this.newsFilter = new NewsFilter(NewsType.NEWS);
 		}
 		return this.newsFilter;
+	}
+
+	private static class ImagesFilter extends ControllerAdapter {
+
+		private List<MimeType> getImageMimeTypes() {
+			List<MimeType> list = new LinkedList<MimeType>();
+			for( MimeType mimeType : MimeType.values() ) {
+				if ( mimeType.getName().startsWith("image/") ) {
+					list.add(mimeType);
+				}
+			}
+			return list;
+		}
+				
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				String alias = controller.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_MIME_TYPE);
+				controller.getCriteria().addInExpression(alias, getImageMimeTypes());
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering documents", e);
+			}
+		}
+		
 	}
 	
 }

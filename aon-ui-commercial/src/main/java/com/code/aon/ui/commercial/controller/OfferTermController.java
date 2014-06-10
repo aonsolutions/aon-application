@@ -15,6 +15,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -55,36 +56,39 @@ public class OfferTermController extends LinesController {
 		Expression expression = ExpressionUtilities.getEqualExpression(generalAlias, general);
 		initExpressions.add( expression );
 		setInitExpressions(initExpressions);
-		this.lookupListener = getTermListener();
+		this.lookupListener = new TermsFilter();
 	}
 
 	public IControllerListener getLookupListener() {
 		return lookupListener;
 	}
 
-	private IControllerListener getTermListener() {
-		return new ControllerAdapter() {
+	private static class TermsFilter extends ControllerAdapter {
+		
+		public boolean isGeneral() {
+			OfferTermController oft = (OfferTermController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_TERM_GENERAL_CONTROLLER_NAME);
+			return oft.isGeneral();
+		}
 
-			@Override
-			public void beforeModelInitialized(ControllerEvent event)
-					throws ControllerListenerException {
-				try {
-					Criteria criteria = event.getController().getCriteria();
-					String generalField = event.getController().getFieldName(IEntityAlias.COMMERCIAL_TERM_GENERAL);
-					criteria.addEqualExpression(generalField, general);
-				} catch (ManagerBeanException e) {
-					throw new ControllerListenerException( e.getMessage(), e );
-				}
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			try {
+				Criteria criteria = event.getController().getCriteria();
+				String generalField = event.getController().getFieldName(IEntityAlias.COMMERCIAL_TERM_GENERAL);
+				criteria.addEqualExpression(generalField, isGeneral());
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException( e.getMessage(), e );
 			}
+		}
 
-			@Override
-			public void afterBeanCreated(ControllerEvent event)
-					throws ControllerListenerException {
-				CommercialTerm ct = (CommercialTerm) event.getController().getTo();
-				ct.setGeneral(general);
-			}
-			
-		};
+		@Override
+		public void afterBeanCreated(ControllerEvent event)
+				throws ControllerListenerException {
+			CommercialTerm ct = (CommercialTerm) event.getController().getTo();
+			ct.setGeneral(isGeneral());
+		}
+		
 	}
-
+	
 }

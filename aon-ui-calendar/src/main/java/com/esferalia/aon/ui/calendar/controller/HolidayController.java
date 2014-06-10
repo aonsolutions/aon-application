@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -53,24 +54,29 @@ public class HolidayController extends BasicController {
 	
 	public IControllerListener getExcludeCurrentHoliday() {
 		if ( this.excludeCurrentHoliday == null ) {
-			this.excludeCurrentHoliday = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					Holiday holiday = (Holiday) getTo();
-					if ( holiday!=null && holiday.getId()!=null ) {
-						try {
-							String alias = controller.getFieldName(IEntityAlias.HOLIDAY_ID);
-							controller.getCriteria().addNotEqualExpression(alias, holiday.getId());
-						} catch (ManagerBeanException e) {
-							LOGGER.error("Error filtering current holiday", e);
-						}
-					}
-				}
-			};
+			this.excludeCurrentHoliday = new ExcludeCurrentHolidayFilter();
 		}
 		return this.excludeCurrentHoliday;
 	}
 
+	private static class ExcludeCurrentHolidayFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			IController hc = FormUtil.getController(ICalendarConstants.HOLIDAY_CONTROLLER_NAME);
+			Holiday holiday = (Holiday) hc.getTo();
+			if ( holiday!=null && holiday.getId()!=null ) {
+				try {
+					String alias = controller.getFieldName(IEntityAlias.HOLIDAY_ID);
+					controller.getCriteria().addNotEqualExpression(alias, holiday.getId());
+				} catch (ManagerBeanException e) {
+					LOGGER.error("Error filtering current holiday", e);
+				}
+			}
+		}
+		
+	}
+	
 }
