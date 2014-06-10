@@ -79,7 +79,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
 	
-	private static final String SALARY_PATTERN = "Nomina {0} ({1,date,dd.MM.yyyy}-{2,date,dd.MM.yyyy})";
+	private static final String SALARY_PATTERN = "{0} {1} ({2,date,dd.MM.yyyy}-{3,date,dd.MM.yyyy})";
 	
 	private static final String SALARIES_ZIP_NAME = "nominas";
 
@@ -407,7 +407,8 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 		String type = parameters.get("reportType");
 		if (type == null) {
-			throw new AbortProcessingException("Empty reportType!");
+			LOGGER.warn("Empty reportType!");
+			type = "SALARY";
 		}
 		for( Integer id : checks ) {
 			ITransferObject to = bean.get(id);
@@ -417,10 +418,18 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		}
 		return l;
 	}
+	
+	private Collection<ITransferObject> getSelectedAllSalaries() throws ManagerBeanException {
+		IManagerBean bean = this.getManagerBean();
+		List<ITransferObject> l = new LinkedList<ITransferObject>();
+		for( Integer id : checks ) {
+			l.add( bean.get(id) );
+		}
+		return l;		
+	}
 
 	public String onPrint() throws ManagerBeanException {
 		ReportManager reportManager = new ReportManager();
-		obtainSalaryTemplate();
 		reportManager.setReportKey(obtainSalaryTemplate());
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( this );
@@ -432,7 +441,8 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 		String type = parameters.get("reportType");
 		if (type == null) {
-			throw new AbortProcessingException("Empty reportType!");
+			LOGGER.warn("Empty reportType!");
+			type = "SALARY";
 		}
 		if(SalaryType.valueOf(type) == SalaryType.SETTLE){
 			return IPayrollConstants.SETTLE_REPORT;
@@ -463,10 +473,11 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return enterpriseParams.getParameter("PAY_salarySending_email_PAY").getExpression();
 	}
 	
-	private void writeSalariesZip( File file, Collection<Salary> collection ) throws IOException, ReportException, ManagerBeanException {
+	private void writeSalariesZip( File file, Collection<ITransferObject> collection ) throws IOException, ReportException, ManagerBeanException {
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		for (Salary salary : collection) {
+		for (ITransferObject to : collection) {
+			Salary salary = (Salary) to;
 			String fileName = this.getFileName(salary) + "." + MimeType.MIME_PDF.getExtension();
        		zipOut.putNextEntry(new ZipEntry(fileName));
        		this.writeReport(salary, zipOut);
@@ -475,7 +486,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		IOUtils.closeQuietly(zipOut);
 	}
 	
-	private AonFile getSalariesZipFile( Collection<Salary> salaries ) throws IOException, ReportException, ManagerBeanException {
+	private AonFile getSalariesZipFile( Collection<ITransferObject> salaries ) throws IOException, ReportException, ManagerBeanException {
 		File file = File.createTempFile( SALARIES_ZIP_NAME, "." + MimeType.MIME_ZIP.getExtension() );
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		writeSalariesZip( file, salaries );
@@ -508,11 +519,11 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return aonFile;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onSendByEmail( ActionEvent event ) {
 		try {
-			Collection<?> list = getCollection();
-			Collection<Salary> salaries = (Collection<Salary>) list;
+//			Collection<?> list = getCollection();
+//			Collection<Salary> salaries = (Collection<Salary>) list;
+			Collection<ITransferObject> salaries = getSelectedAllSalaries();
 			
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 			if (mailConfig.getMailAccountCount() > 0) {
@@ -522,7 +533,30 @@ public class SalaryPrintController extends BasicController implements ICollectio
 				messageController.updateMessageBody(getEmailContent(salaries));
 				setRecipients(messageController);
 				
+//				if(isContainsSalary()){
+//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+//					parameters.put("reportType", "SALARY");
+//					messageController.addAttachment( getSalariesZipFile(salaries) );
+//				}
+//				if(isContainsSettle()){
+//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+//					parameters.put("reportType", "SETTLE");
+//					messageController.addAttachment( getSalariesZipFile(salaries) );
+//				}
+//				if(isContainsExtra()){
+//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+//					parameters.put("reportType", "EXTRA");
+//					messageController.addAttachment( getSalariesZipFile(salaries) );
+//				}
+//				if(isContainsDelay()){
+//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+//					parameters.put("reportType", "DELAY");
+//					messageController.addAttachment( getSalariesZipFile(salaries) );
+//				}
+				
+//				TODO
 				messageController.addAttachment( getSalariesZipFile(salaries) );
+				
 				if(isIncludeEnterpriseCost()){
 					messageController.addAttachment( getSalaryCostFile() );
 				}
@@ -546,14 +580,15 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return MessageFormat.format(message, enterprise.getRegistry().getFullName() );
 	}
 	
-	private String getEmailContent( Collection<Salary> salaries ) {
+	private String getEmailContent( Collection<ITransferObject> salaries ) {
 		StringBuffer body = new StringBuffer();
 		body.append( "<html><head>" );
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
 		body.append(AonUtil.getMessage(SALARY_EMAIL_BODY_HEADER) );
-		for( Salary salary : salaries ) {
+		for( ITransferObject to : salaries ) {
+			Salary salary = (Salary) to;
 			body.append( "<ul>" );
 			String message = AonUtil.getMessage(SALARY_EMAIL_BODY_LINE);
 			String line = MessageFormat.format(message, salary.getContract().getPerson().getFullName(), salary.getIssueDate() );
@@ -619,7 +654,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	private String getFileName( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
-		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
+		return MessageFormat.format(SALARY_PATTERN, salary.getType().getName(AonUtil.getCurrentLocale()), name, salary.getStartDate(), salary.getEndDate());
 	}
 	
 	public class PartialContractProvider implements ICollectionProvider {

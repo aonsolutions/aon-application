@@ -33,7 +33,8 @@
 								<aon:outputLabel for="includeEnterpriseCost"
 									value="#{bundle.payroll_salaryPrint_include_enterprise_cost}" />
 		                    </rich:menuItem>
-			                <rich:menuItem submitMode="none">
+			                <rich:menuItem submitMode="none"
+			                	rendered="#{salaryPrint.containsPartialTime}">
 		                        <aon:selectBooleanCheckbox id="includeTPhours"
 									value="#{salaryPrint.includeTPhours}" />
 								<aon:outputLabel for="includeTPhours"
@@ -214,12 +215,10 @@
 								     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 									</aon:panelGroup>
 								</f:facet>
-								<a4j:region>
-									<aon:selectBooleanCheckbox
-											value="#{salaryPrint.rowChecked}" >
-										<a4j:support event="onclick" reRender="aonToolbar" ajaxSingle="true" />
-									</aon:selectBooleanCheckbox>
-								</a4j:region>
+								<aon:selectBooleanCheckbox
+										value="#{salaryPrint.rowChecked}" >
+									<a4j:support event="onclick" reRender="aonToolbar" ajaxSingle="true" />
+								</aon:selectBooleanCheckbox>
 							</aon:column>
 							
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryPrint/listContent.xhtml" />
