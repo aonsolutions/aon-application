@@ -263,7 +263,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		String id = this.getFieldName(IEntityAlias.SALARY_ID);
 		ProjectionList pl = new ProjectionList( Projection.property(id) );
 		List<Integer> list = this.getManagerBean().getList(pl, this.getCriteria());
-		checks.clear();
+		clearChecked();
 		checks.addAll( list );
 	}
 
@@ -619,15 +619,30 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		reportManager.execute( out, obtainSalaryTemplate() );
 	}
 
-	private void writeEnterpriseCostReport( OutputStream out ) throws ReportException {
-		SalaryExpenseController salaryExpense = new SalaryExpenseController();
-		salaryExpense.setYear(getYear());
-		salaryExpense.setMonth(getMonth());
+	private String writeEnterpriseCostReport( OutputStream out ) throws ReportException {
+//		SalaryExpenseController salaryExpense = new SalaryExpenseController();
+//		salaryExpense.setYear(getYear());
+//		salaryExpense.setMonth(getMonth());
 		
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
-		reportManager.setCollectionProvider( salaryExpense );
-		reportManager.execute( out, COST_REPORT );
+//		reportManager.setCollectionProvider( salaryExpense );
+		reportManager.setCollectionProvider( new SalaryCostProvider() );
+		return reportManager.execute( out, COST_REPORT );
+	}
+	
+	public String onExecuteEnterpriseCostReport() {
+		OutputStream out = null;
+		try {
+			out = DownloadUtil.initDownload(DownloadUtil.getResponse(), COST_REPORT, OutputFormat.PDF.getMimeType2());
+			return writeEnterpriseCostReport( out );
+		} catch (IOException e) {
+			return null;
+		} catch (ReportException e) {
+			return null;
+		} finally {
+			DownloadUtil.finishDownload(DownloadUtil.getResponse(), out);
+		}
 	}
 
 	private String writeTPContractHoursReport( OutputStream out ) throws ReportException {
@@ -712,12 +727,30 @@ public class SalaryPrintController extends BasicController implements ICollectio
 				l.add( to );
 			}
 			return l;
-			
-//			List<ITransferObject> l = new LinkedList<ITransferObject>();
-//			for( Integer id : checks ) {
-//				l.add( bean.get(id) );
-//			}
-//			return l;
+		}
+	}
+		
+	public class SalaryCostProvider implements ICollectionProvider {
+		
+		@Override
+		public Collection<ITransferObject> getCollection() {
+			try {
+				return getCollection(false);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return null;
+		}
+		
+		@Override
+		public Collection<ITransferObject> getCollection(boolean forceRefresh)
+				throws ManagerBeanException {
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			List<ITransferObject> l = new LinkedList<ITransferObject>();
+			for( Integer id : checks ) {
+				l.add( bean.get(id) );
+			}
+			return l;
 		}
 		
 	}

@@ -88,34 +88,19 @@
 			                    	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
 							</aon:panelGroup>
 			            </f:facet>			
-						<aon:menuItem  
-							rendered="#{!salaryPrint.selectionEmpty}"
+						<aon:menuItem rendered="#{!salaryPrint.selectionEmpty}"
 							iconClass="aon-icon-pdf">
-							<aon:htmlCommandLink id="salaryExpense_report"
+							<aon:htmlCommandLink id="salaryExpense_report" target="_blank"
 								rendered="#{!salaryPrint.selectionEmpty}"
-								target="_blank"
 								value="Costes de empresa"
-								actionListener="#{enterprise.onSelectFirst}"
-								action="#{report.onExecute}">
-								<f:setPropertyActionListener
-									target="#{salaryExpense.year}" value="#{salaryPrint.year}" />
-								<f:setPropertyActionListener
-									target="#{salaryExpense.month}" value="#{salaryPrint.month}" />
-								<f:param name="reportKey" value="salaryExpenseReport" />
-								<f:param name="outputFormat" value="PDF" />
-							</aon:htmlCommandLink>	
+								action="#{salaryPrint.onExecuteEnterpriseCostReport}" />	
 			 			</aon:menuItem>
-						<aon:menuItem  
-							rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsPartialTime}"
+						<aon:menuItem rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsPartialTime}"
 							iconClass="aon-icon-pdf">
-							<aon:htmlCommandLink id="contractMonthlyHours_report"
+							<aon:htmlCommandLink id="contractMonthlyHours_report" target="_blank"
 								rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsPartialTime}"
-								target="_blank"
 								value="HORAS T.P."
-								action="#{salaryPrint.onExecuteTPContractHoursReport}">
-								<f:param name="reportKey" value="contractMonthlyHours" />
-								<f:param name="outputFormat" value="PDF" />
-							</aon:htmlCommandLink>	
+								action="#{salaryPrint.onExecuteTPContractHoursReport}" />	
 			 			</aon:menuItem>
 					</aon:dropDownMenu>	
 						
