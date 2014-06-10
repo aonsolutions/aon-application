@@ -76,6 +76,8 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	private static final String SALARIES_ZIP_NAME = "nominas";
 
 	private static final String SALARY_COST_FILE_NAME = "costes_empresa";
+
+	private static final String TP_CONTRACT_HOURS_FILE_NAME = "horas_contratos_tp";
 	
 	private List<SelectItem> availableWorkPlaces;
 	
@@ -86,20 +88,50 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	private String[] types;
 	
 	private boolean includeEnterpriseCost;
-	
-	private Month month;
+
+	private boolean includeTPhours;
 	
 	private Integer year;
+	
+	private Month month;
+
+	private Integer fromDay;
+
+	private Integer toDay;
 
 	private Set<Integer> checks = new HashSet<Integer>();
 
 	
+	public boolean isIncludeTPhours() {
+		return includeTPhours;
+	}
+
+	public void setIncludeTPhours(boolean includeTPhours) {
+		this.includeTPhours = includeTPhours;
+	}
+
 	public boolean isIncludeEnterpriseCost() {
 		return includeEnterpriseCost;
 	}
 
 	public void setIncludeEnterpriseCost(boolean includeEnterpriseCost) {
 		this.includeEnterpriseCost = includeEnterpriseCost;
+	}
+
+	public Integer getFromDay() {
+		return fromDay;
+	}
+
+	public void setFromDay(Integer fromDay) {
+		this.fromDay = fromDay;
+	}
+
+	public Integer getToDay() {
+		return toDay;
+	}
+
+	public void setToDay(Integer toDay) {
+		this.toDay = toDay;
 	}
 
 	public Month getMonth() {
@@ -158,6 +190,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
 		setIncludeEnterpriseCost(false);
+		setIncludeTPhours(false);
 		loadWorkPlaces();
 		this.resetCriteria();
 		clearFilters();
@@ -285,6 +318,22 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			this.showWorkPlaces = true;
 		}
 	}	
+	
+	public boolean isContainsSalary(){
+		return true;
+	}
+	public boolean isContainsExtra(){
+		
+		return true;
+	}
+	public boolean isContainsSettle(){
+		
+		return true;
+	}
+	public boolean isContainsDelay(){
+		
+		return true;
+	}
 
 	@Override
 	public Collection<ITransferObject> getCollection() {
@@ -377,6 +426,17 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return aonFile;
 	}
 
+	private AonFile getTPContractHoursFile( ) throws IOException, ReportException {
+		File file = File.createTempFile( TP_CONTRACT_HOURS_FILE_NAME, "." + MimeType.MIME_PDF.getExtension() );
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		writeTPContractHoursReport(new BufferedOutputStream( new FileOutputStream(file) ));
+		IOUtils.closeQuietly(out);
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);	
+		aonFile.setFileName( TP_CONTRACT_HOURS_FILE_NAME + "." + MimeType.MIME_PDF.getExtension() );
+		return aonFile;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void onSendByEmail( ActionEvent event ) {
 		try {
@@ -394,6 +454,9 @@ public class SalaryPrintController extends BasicController implements ICollectio
 				messageController.addAttachment( getSalariesZipFile(salaries) );
 				if(isIncludeEnterpriseCost()){
 					messageController.addAttachment( getSalaryCostFile() );
+				}
+				if(isIncludeTPhours()){
+					messageController.addAttachment( getTPContractHoursFile() );
 				}
 				messageController.setShowNewMessageWindow(true);
 			} else {
@@ -459,6 +522,13 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( salaryExpense );
 		reportManager.execute( out, COST_REPORT );
+	}
+
+	private void writeTPContractHoursReport( OutputStream out ) throws ReportException {
+		ReportManager reportManager = new ReportManager();
+		reportManager.setOutputFormat(OutputFormat.PDF);
+		reportManager.setCollectionProvider( this );
+		reportManager.execute( out, CONTRACT_MONTHLY_HOURS );
 	}
 	
 	

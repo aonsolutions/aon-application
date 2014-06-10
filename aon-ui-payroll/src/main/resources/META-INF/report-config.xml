@@ -220,5 +220,18 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 		</params>
 	</report>
+
+	<!--  HORAS DE CONTRATOS A TIEMPO PARCIAL -->
+	<report id="contractMonthlyHours" description="Contract monthly hours">
+		<template path="/com/esferalia/aon/ui/payroll/report/contractMonthlyHours.jasper" />
+		<collection provider="#{salaryPrint}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="signatureImageFile" value="#{company.getSignatureAttachAsInputStream}" />
+		</params>
+	</report>
 	
 </report-config>

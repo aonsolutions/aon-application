@@ -34,6 +34,12 @@
 									value="#{bundle.payroll_salaryPrint_include_enterprise_cost}" />
 		                    </rich:menuItem>
 			                <rich:menuItem submitMode="none">
+		                        <aon:selectBooleanCheckbox id="includeTPhours"
+									value="#{salaryPrint.includeTPhours}" />
+								<aon:outputLabel for="includeTPhours"
+									value="#{bundle.payroll_salaryPrint_include_tp_hours}" />
+		                    </rich:menuItem>
+			                <rich:menuItem submitMode="none">
 								<aon:commandButton id="email"
 									value="#{bundle.webmail_send_email}" 
 									actionListener="#{salaryPrint.onSendByEmail}"
@@ -42,11 +48,69 @@
 			                </rich:menuItem>
 						</rich:dropDownMenu>
 					</aon:div>
-					<aon:htmlCommandLink id="currentSalary-report"
-						rendered="#{!salaryPrint.selectionEmpty}"
+					<aon:htmlCommandLink id="salary-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsSalary}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.aon_salaries}"
 						action="#{salaryPrint.onPrint}" />
+					<!--  
+					<aon:htmlCommandLink id="extra-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsExtra}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="Extras"
+						action="#{salaryPrint.onPrint}" />
+					<aon:htmlCommandLink id="settle-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsSettle}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="Finiquitos"
+						action="#{salaryPrint.onPrint}" />
+					<aon:htmlCommandLink id="delay-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsDelay}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="Atrasos"
+						action="#{salaryPrint.onPrint}" />
+					-->
+						
+					<aon:dropDownMenu value="#{bundle.aon_more2}"
+						style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+						<f:facet name="label">
+							<aon:panelGroup>
+			            		<aon:outputText value="#{bundle.aon_more2} listados" /> 
+			                    <aon:graphicImage style="vertical-align:middle;"
+			                    	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+							</aon:panelGroup>
+			            </f:facet>			
+						<aon:menuItem  
+							rendered="#{!salaryPrint.selectionEmpty}"
+							iconClass="aon-icon-pdf">
+							<aon:htmlCommandLink id="salaryExpense_report"
+								rendered="#{!salaryPrint.selectionEmpty}"
+								target="_blank"
+								value="Costes de empresa"
+								actionListener="#{enterprise.onSelectFirst}"
+								action="#{report.onExecute}">
+								<f:setPropertyActionListener
+									target="#{salaryExpense.year}" value="#{salaryPrint.year}" />
+								<f:setPropertyActionListener
+									target="#{salaryExpense.month}" value="#{salaryPrint.month}" />
+								<f:param name="reportKey" value="salaryExpenseReport" />
+								<f:param name="outputFormat" value="PDF" />
+							</aon:htmlCommandLink>	
+			 			</aon:menuItem>
+						<aon:menuItem  
+							rendered="#{!salaryPrint.selectionEmpty}"
+							iconClass="aon-icon-pdf">
+							<aon:htmlCommandLink id="contractMonthlyHours_report"
+								rendered="#{!salaryPrint.selectionEmpty}"
+								target="_blank"
+								value="HORAS T.P."
+								action="#{report.onExecute}">
+								<f:param name="reportKey" value="contractMonthlyHours" />
+								<f:param name="outputFormat" value="PDF" />
+							</aon:htmlCommandLink>	
+			 			</aon:menuItem>
+					</aon:dropDownMenu>	
+						
 				</ui:define>				
 			</ui:decorate>
 			
@@ -60,12 +124,23 @@
 						<aon:panelGrid columns="2">
 						
 							<aon:outputLabel value="#{bundle.payroll_liquidation_date}" />
-							<h:panelGrid columns="2" >
+							<h:panelGrid columns="6" >
 								<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}" >
 									<f:selectItems value="#{commonCollections.months}"  />
+									<a4j:support event="onchange" reRender="contract_panel" 
+										actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" />
 								</aon:selectOneMenu>
 								<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
 					   				inputSize="4" minValue="2013" maxValue="2020">
+					   			</rich:inputNumberSpinner>
+								
+								<aon:outputText value="del" />
+								<rich:inputNumberSpinner value="#{salaryPrint.year}"
+					   				inputSize="2" minValue="2013" maxValue="2020">
+					   			</rich:inputNumberSpinner>
+								<aon:outputText value="al" />
+								<rich:inputNumberSpinner  value="#{salaryPrint.year}"
+					   				inputSize="2" minValue="2013" maxValue="2020">
 					   			</rich:inputNumberSpinner>
 							</h:panelGrid>
 							

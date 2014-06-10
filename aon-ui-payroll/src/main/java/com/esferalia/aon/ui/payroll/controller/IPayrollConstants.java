@@ -77,6 +77,7 @@ public interface IPayrollConstants {
 	// ************************************************************
 	// REPORT
 	// ************************************************************
+	String CONTRACT_MONTHLY_HOURS = "contractMonthlyHours";
 	String SALARY_REPORT = "salary";
 	String SALARY_LIST_REPORT = "salaryList";
 	String DEFAULT_SETTLEMENT_TEMPLATE = "settlement";
