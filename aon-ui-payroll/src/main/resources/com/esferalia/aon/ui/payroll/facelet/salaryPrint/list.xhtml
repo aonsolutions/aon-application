@@ -105,13 +105,13 @@
 							</aon:htmlCommandLink>	
 			 			</aon:menuItem>
 						<aon:menuItem  
-							rendered="#{!salaryPrint.selectionEmpty}"
+							rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsPartialTime}"
 							iconClass="aon-icon-pdf">
 							<aon:htmlCommandLink id="contractMonthlyHours_report"
-								rendered="#{!salaryPrint.selectionEmpty}"
+								rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsPartialTime}"
 								target="_blank"
 								value="HORAS T.P."
-								action="#{report.onExecute}">
+								action="#{salaryPrint.onExecuteTPContractHoursReport}">
 								<f:param name="reportKey" value="contractMonthlyHours" />
 								<f:param name="outputFormat" value="PDF" />
 							</aon:htmlCommandLink>	
@@ -134,8 +134,9 @@
 							<h:panelGrid columns="6" >
 								<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}" >
 									<f:selectItems value="#{commonCollections.months}"  />
-									<a4j:support event="onchange" reRender="contract_panel" 
-										actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" />
+								<!--  
+									<a4j:support event="onchange" reRender="searchPanel" ajaxSingle="true" />
+								-->
 								</aon:selectOneMenu>
 								<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
 					   				inputSize="4" minValue="2013" maxValue="2020">
@@ -216,7 +217,7 @@
 								<a4j:region>
 									<aon:selectBooleanCheckbox
 											value="#{salaryPrint.rowChecked}" >
-										<a4j:support event="onclick" reRender="aonToolbar" />
+										<a4j:support event="onclick" reRender="aonToolbar" ajaxSingle="true" />
 									</aon:selectBooleanCheckbox>
 								</a4j:region>
 							</aon:column>

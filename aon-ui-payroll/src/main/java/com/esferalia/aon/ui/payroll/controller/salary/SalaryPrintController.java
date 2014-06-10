@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,8 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -59,11 +62,14 @@ import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -321,6 +327,27 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		}
 	}	
 	
+	public boolean isContainsPartialTime(){
+		try {
+			String id = this.getFieldName(IEntityAlias.SALARY_CONTRACT_ID);
+			ProjectionList pl = new ProjectionList( Projection.property(id) );
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			List<Integer> list = this.getManagerBean().getList(pl, criteria);
+//			List<Integer> list = this.getManagerBean().getList(pl, this.getCriteria());
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria = new Criteria();
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), list);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
+			Expression exp1 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"2%\"");
+			Expression exp2 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"3%\"");
+			Expression exp3 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"5%\"");
+			criteria.addExpression( ExpressionUtilities.getOrExpression(ExpressionUtilities.getOrExpression(exp1, exp2), exp3) );
+			return bean.getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
 	public boolean isContainsSalary(){
 		try {
 			Criteria criteria = new Criteria();
@@ -568,17 +595,96 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		reportManager.execute( out, COST_REPORT );
 	}
 
-	private void writeTPContractHoursReport( OutputStream out ) throws ReportException {
+	private String writeTPContractHoursReport( OutputStream out ) throws ReportException {
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
-		reportManager.setCollectionProvider( this );
-		reportManager.execute( out, CONTRACT_MONTHLY_HOURS );
+		reportManager.setCollectionProvider( new PartialContractProvider() );
+		return reportManager.execute( out, CONTRACT_MONTHLY_HOURS );
+	}
+	
+	public String onExecuteTPContractHoursReport(){
+		OutputStream out = null;
+		try {
+			out = DownloadUtil.initDownload(DownloadUtil.getResponse(), CONTRACT_MONTHLY_HOURS, OutputFormat.PDF.getMimeType2());
+			return writeTPContractHoursReport( out );
+		} catch (IOException e) {
+			return null;
+		} catch (ReportException e) {
+			return null;
+		} finally {
+			DownloadUtil.finishDownload(DownloadUtil.getResponse(), out);
+		}
 	}
 	
 	
 	private String getFileName( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
 		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
+	}
+	
+	public class PartialContractProvider implements ICollectionProvider {
+				
+		@Override
+		public Collection<ITransferObject> getCollection() {
+			try {
+				return getCollection(false);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return null;
+		}
+
+		@Override
+		public Collection<ITransferObject> getCollection(boolean forceRefresh)
+				throws ManagerBeanException {
+			
+			List<Integer> salaryContractIdList = null;
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+				String id = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID);
+				ProjectionList pl = new ProjectionList( Projection.property(id) );
+				Criteria criteria = new Criteria();
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_ID), checks);
+				salaryContractIdList = bean.getList(pl, criteria);
+			} catch (ManagerBeanException e) {
+				return Collections.emptyList();	
+			}
+			List<Integer> contractIdList = null;
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+				String id = bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID);
+				ProjectionList pl = new ProjectionList( Projection.property(id) );
+				Criteria criteria = new Criteria();
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), salaryContractIdList);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
+				Expression exp1 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"2%\"");
+				Expression exp2 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"3%\"");
+				Expression exp3 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"5%\"");
+				criteria.addExpression( ExpressionUtilities.getOrExpression(ExpressionUtilities.getOrExpression(exp1, exp2), exp3) );
+				contractIdList = bean.getList(pl, criteria);
+			} catch (ManagerBeanException e) {
+				return Collections.emptyList();	
+			}
+			
+			List<ITransferObject> l = new LinkedList<ITransferObject>();
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contractIdList);
+			bean.getList(criteria);
+			
+			for( ITransferObject to : bean.getList(criteria) ) {
+				l.add( to );
+			}
+			return l;
+			
+//			List<ITransferObject> l = new LinkedList<ITransferObject>();
+//			for( Integer id : checks ) {
+//				l.add( bean.get(id) );
+//			}
+//			return l;
+		}
+		
 	}
 	
 }
