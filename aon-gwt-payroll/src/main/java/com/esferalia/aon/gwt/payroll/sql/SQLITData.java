@@ -6,14 +6,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import org.jooq.DSLContext;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.SQLDialect;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
 import com.code.aon.dbutils.DatabaseUtil;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.esferalia.aon.jooq.tables.ContractLeave;
+import com.esferalia.aon.jooq.tables.ContractLeaveDetail;
+import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
@@ -32,19 +43,159 @@ public class SQLITData implements Serializable {
 	
 	private static Settings SETTINGS = null;
 	
-	public static void updateContractLeave(Connection connection, ITDataPerson itData) {
+	public static void save(Connection conn,  Integer domain, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates) {		
+		
+		insertIterator(conn, domain, inserts);
+		updateIterator(conn, domain, updates);
+		deletesIterator(conn, domain, deletes);
+	}
+	
+	private static void insertIterator(Connection conn, Integer domain, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts) {
+		
+		for (Integer contractId : inserts.keySet()) {
+			
+			if(inserts.get(contractId).isEmpty() == false) {
+				
+				Iterator iter = inserts.get(contractId).entrySet().iterator();
+				
+				while(iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					ITDataPerson dataPerson = (ITDataPerson) entry.getValue();
+					insertContractLeave(conn, domain, dataPerson);
+				}
+			}
+		}		
+	}
+	
+	private static void deletesIterator(Connection conn, Integer domain, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes) {
+		
+		for (Integer leaveId : deletes.keySet()) {
+			
+			if(deletes.get(leaveId).isEmpty() == false) {
+				
+				Iterator iter = deletes.get(leaveId).entrySet().iterator();
+				
+				while(iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					ITDataPerson dataPerson = (ITDataPerson) entry.getValue();
+					deleteContractLeave(conn, domain, dataPerson);
+				}
+			}
+		}		
+	}
+	
+	private static void updateIterator(Connection conn, Integer domain, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates) {
+		
+		for (Integer contractId : updates.keySet()) {
+			
+			if(updates.get(contractId).isEmpty() == false) {
+				
+				Iterator iter = updates.get(contractId).entrySet().iterator();
+				
+				while(iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					ITDataPerson dataPerson = (ITDataPerson) entry.getValue();
+					updateContractLeave(conn, domain, dataPerson);
+				}
+			}
+		}		
+	}
+	
+	private static void updateContractLeave(Connection connection, Integer domain, ITDataPerson itData) {
+		
+		try {
+			DSLContext create = DSL.using(connection, SQLDialect.MYSQL, getDefaultSettings());
+			
+			UpdateSetMoreStep<ContractLeaveRecord> update = create.update(ContractLeave.CONTRACT_LEAVE)
+					.set(ContractLeave.CONTRACT_LEAVE.DOMAIN, domain)						
+					.set(ContractLeave.CONTRACT_LEAVE.TYPE, (byte)itData.getNumType())
+					.set(ContractLeave.CONTRACT_LEAVE.CONTRACT, itData.getContractId())
+					.set(ContractLeave.CONTRACT_LEAVE.START_DATE, new java.sql.Date(itData.getLeaveStartDate().getTime()));
+			
+			if ( itData.getLeaveEndDate() != null )
+				update = update.set(ContractLeave.CONTRACT_LEAVE.END_DATE, new java.sql.Date(itData.getLeaveEndDate().getTime()));
+			
+			if(itData.getDischarge_cause() >= 0)
+				update = update.set(ContractLeave.CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) itData.getDischarge_cause());
+			update.where(ContractLeave.CONTRACT_LEAVE.ID.equal(itData.getContractLeaveId()));
+			update.execute();
+			
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private static void deleteContractLeave(Connection connection, Integer domain, ITDataPerson itData) {
+		
+		try {
+			DSLContext create = DSL.using(connection, SQLDialect.MYSQL, getDefaultSettings());
+			
+			create.delete(ContractLeaveDetail.CONTRACT_LEAVE_DETAIL)
+			.where(ContractLeaveDetail.CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.equal(itData.getContractLeaveId()))
+			.execute();
+			
+			create.delete(ContractLeave.CONTRACT_LEAVE)
+				.where(ContractLeave.CONTRACT_LEAVE.ID.equal(itData.getContractLeaveId()))
+				.execute();
+			
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
+	
+	public static void insertContractLeave (Connection connection, Integer domain, ITDataPerson itData) {
+		
+		try {	
+			
+			DSLContext create = DSL.using(connection, SQLDialect.MYSQL, getDefaultSettings());			
+			
+			InsertSetMoreStep<ContractLeaveRecord> insert = create.insertInto(ContractLeave.CONTRACT_LEAVE)
+					.set(ContractLeave.CONTRACT_LEAVE.DOMAIN, domain)						
+					.set(ContractLeave.CONTRACT_LEAVE.TYPE, (byte)itData.getNumType())
+					.set(ContractLeave.CONTRACT_LEAVE.CONTRACT, itData.getContractId())
+					.set(ContractLeave.CONTRACT_LEAVE.START_DATE, new java.sql.Date(itData.getLeaveStartDate().getTime()));
+			
+			if ( itData.getLeaveEndDate() != null )
+				insert = insert.set(ContractLeave.CONTRACT_LEAVE.END_DATE, new java.sql.Date(itData.getLeaveEndDate().getTime()));
+			
+			if(itData.getDischarge_cause() >= 0)
+				insert = insert.set(ContractLeave.CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) itData.getDischarge_cause());
+			
+			insert.execute();
+			
+			
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();	
+		}						
+					
+	}
+	
+/*	public static void updateContractLeave(Connection connection, ITDataPerson itData) {
+		
+		DSLContext create = DSL.using(connection, SQLDialect.MYSQL);
+		create.update(ContractLeave.CONTRACT_LEAVE)
+				.set(ContractLeave.CONTRACT_LEAVE.TYPE, (byte)itData.getNumType())
+				.set(ContractLeave.CONTRACT_LEAVE., value)
 
-	/*	DSLContext create = DSL.using(connection, SQLDialect.MYSQL);
+		/*DSLContext create = DSL.using(connection, SQLDialect.MYSQL);
 		create.update(ContractLeave.CONTRACT_LEAVE)
 				.set(CONTRACT_LEAVE.TYPE, (byte)itData.getNumType())
-				.set(CONTRACT_LEAVE.START_DATE, new java.sql.Date(itData.getLeaveStartDate().getTime()));
-//				.se;*/
+				.set(CONTRACT_LEAVE.START_DATE, new java.sql.Date(itData.getLeaveStartDate().getTime()))
 		
 		
 				
 		//create.update(ContractLeave.CONTRACT_LEAVE);
 		
-	}
+	}*/
 	
 
 	public static ITData getEnterpriseITData(Connection conn, int enterpriseId) {
@@ -185,5 +336,13 @@ public class SQLITData implements Serializable {
 			return null;
 		
 		return constants[ordinal];
+	}
+	
+	public static Settings getDefaultSettings() {
+		if (SETTINGS == null) {
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+		}
+		return SETTINGS;
 	}
 }

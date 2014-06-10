@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -76,6 +77,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
+import com.esferalia.aon.gwt.payroll.client.ITDataObject;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
@@ -833,64 +835,36 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 			releaseFacesContext();
 		}
-
 	}
 	
 	@Override
-	public void saveUpdateITDataPerson(Map<Integer, ITDataPerson> map)
-			throws IllegalArgumentException {
-		
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-			disableAutoCommit(conn);
-			
-		}catch(Throwable ex) {
-			
-		}
-
-	}
-	
-	private void saveUpdateItem(ITDataPerson dataPerson) {
-		
-	}
-	
-	@Override
-	public void saveRemoveITDataPerson(Map<Integer, ITDataPerson> map)
+	public void saveITDataPerson(
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes,
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			
-		}catch(Throwable ex) {
-			
+			SQLITData.save(conn, getDomainID(), inserts, deletes, updates);
+			commit(conn);
+		}catch(SQLException ex) {
+			rollback(conn);
+			ex.printStackTrace();
+		} finally {
+			enableAutoCommit(conn);
+			if(conn != null) {
+				try {
+					conn.close();
+				}catch(SQLException ex){					
+				}
+			}
+			releaseFacesContext();
 		}
+	}	
 		
-	}
-	
-	private void saveRemoveITDataPerson(ITDataPerson dataPerson) {
-		
-	}
-	
-	@Override
-	public void saveInsertITDataPerson(Map<Integer, ITDataPerson> map)
-			throws IllegalArgumentException {
-		
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-			disableAutoCommit(conn);
-			
-		}catch(Throwable ex) {
-			
-		}
-		
-	}
-	
 	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {

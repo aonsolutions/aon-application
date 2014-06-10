@@ -12,9 +12,15 @@ import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ITDataObject {
+	
+	interface CallculateCallback {		
+		void onCalculateSuccess(ITDataObject object);		
+		void onCalculateFailure(Throwable throwable);
+	}
 
 	abstract private class UndoableEdit<T> implements Undoable {
 
@@ -70,7 +76,7 @@ public class ITDataObject {
 
 		@Override
 		void addIT(ITDataPerson t) {
-			saveUpdates(t);		
+			saveDeletes(t);		
 		}
 
 		@Override
@@ -100,6 +106,7 @@ public class ITDataObject {
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates;
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes;
 
+
 	private UndoManager<UndoableEdit<?>> undoManager;
 	private EmployeesServiceAsync employeesService;
 	private int workplaceId;
@@ -111,9 +118,12 @@ public class ITDataObject {
 		this.employeesService = employeesService;
 		this.undoManager = new UndoManager<UndoableEdit<?>>();
 		
-		this.inserts = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();
-		this.deletes = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();
-		this.updates = new LinkedHashMap<Integer, LinkedHashMap<Integer, ITDataPerson>>();		
+		this.inserts = new LinkedHashMap<Integer, 
+				LinkedHashMap<Integer, ITDataPerson>>();
+		this.deletes = new LinkedHashMap<Integer, 
+				LinkedHashMap<Integer, ITDataPerson>>();
+		this.updates = new LinkedHashMap<Integer, 
+				LinkedHashMap<Integer, ITDataPerson>>();
 	}
 
 	// ------------------------------------------
@@ -133,7 +143,7 @@ public class ITDataObject {
 		map.putAll(itData.getDataIts(contractId));
 		map.putAll(getSaveInserts(contractId));		
 		map.putAll(getSaveUpdates(contractId));
-		map.keySet().removeAll(getSaveDeletes(contractId).keySet());		
+		map.keySet().removeAll(getSaveDeletes(contractId).keySet());
 		sortMap(map);
 		 
 		return map;
@@ -159,20 +169,29 @@ public class ITDataObject {
 		return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
 	}
 	
-	public void removeLeaveItem(ITDataPerson newItem) {
+	public void removeLeaveItem(int contractId, int leaveId) {
+		
+		ITDataPerson newItem = getDataIts(contractId).get(leaveId);
 		ITDataPerson oldItem = saveDeletes(newItem);
-		undoManager.add(new UndoableDeleteEdit(oldItem, newItem));		
+		
+		undoManager.add(new UndoableDeleteEdit(oldItem, newItem));
+		
 	}
 	
 	private ITDataPerson saveDeletes(ITDataPerson object) {
+		
 		if(object.getContractLeaveId() < 0) 
 			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());		
-		else 
-			return getSaveDeletes(object.getContractId()).put(object.getContractLeaveId(), object);					
+		else {			
+			return getSaveDeletes(object.getContractId()).put(object.getContractLeaveId(), object);
+		}
 	}
 	
 	private ITDataPerson removeSaveDeletes(ITDataPerson object) {
-		return getSaveDeletes(object.getContractId()).remove(object.getContractLeaveId());
+		if(object.getContractLeaveId() < 0) 
+			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
+		else
+			return getSaveDeletes(object.getContractId()).remove(object.getContractLeaveId());	
 	}
 	
 	public void updateLeaveItem(ITDataPerson newItem) {
@@ -184,9 +203,9 @@ public class ITDataObject {
 		
 		if(object.getContractLeaveId() < 0)
 			return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);			
-		else {
+		else 
 			return getSaveUpdates(object.getContractId()).put(object.getContractLeaveId(), object);
-		}		
+				
 	}
 	
 	private ITDataPerson removeSaveUpdates(ITDataPerson object) {
@@ -194,7 +213,27 @@ public class ITDataObject {
 		if(object.getContractLeaveId() < 0) {
 			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
 		}
-		return updates.get(object.getContractId()).remove(object.getContractLeaveId());
+		else {
+			return getSaveUpdates(object.getContractId()).remove(object.getContractLeaveId());
+		}		
+	}
+	
+	private void clearDrafts() {		
+		inserts.clear();
+		updates.clear();
+		deletes.clear();
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getInserts() {		
+		return Collections.unmodifiableMap(inserts);
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getUpdates() {		
+		return Collections.unmodifiableMap(updates);
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getDeletes() {		
+		return Collections.unmodifiableMap(deletes);
 	}
 	
 	
@@ -247,73 +286,40 @@ public class ITDataObject {
 				});
 	}
 
-	/*public void saveToDataBase() {
+	public void save(final CallculateCallback callback) {
+		
+		employeesService.saveITDataPerson(inserts, deletes, updates, new AsyncCallback<ITData>() {
+			
+			@Override
+			public void onSuccess(ITData result) {
+				
+				undoManager.discardAll();
+				clearDrafts();
+				
+				employeesService.saveITDataPerson(inserts, deletes, updates,  
+						new AsyncCallback<ITData>() {
+					
+					@Override
+					public void onSuccess(ITData result) {
+						ITDataObject.this.itData = result;
+						callback.onCalculateSuccess(ITDataObject.this);
+					}
 
-		if (saveInserts.isEmpty() == false)
-			saveInsertItemsToDataBase();
-		if (saveRemoves.isEmpty() == false)
-			saveRemovesToDataBase();
-		if (saveUpdates.isEmpty() == false)
-			saveUpdateToDataBase();
-	}*/
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);						
+					}					
+				});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onCalculateFailure(caught);				
+			}			
+		});		
+	}
 
 	// ------------------------------------------
-
-/*	private void saveInsertItemsToDataBase() {
-
-		employeesService.saveInsertITDataPerson(saveInserts,
-				new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Apéndice de método generado automáticamente
-
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						// TODO Apéndice de método generado automáticamente
-
-					}
-				});
-	}
-
-	private void saveRemovesToDataBase() {
-		employeesService.saveRemoveITDataPerson(saveRemoves,
-				new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Apéndice de método generado automáticamente
-
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						// TODO Apéndice de método generado automáticamente
-
-					}
-				});
-	}
-
-	private void saveUpdateToDataBase() {
-
-		employeesService.saveUpdateITDataPerson(saveUpdates,
-				new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Apéndice de método generado automáticamente
-
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						// TODO Apéndice de método generado automáticamente
-
-					}
-				});
-	}*/
 	
 	@SuppressWarnings("unchecked")
 	private void sortMap(Map<Integer, ITDataPerson> map) {

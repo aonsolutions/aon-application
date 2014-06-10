@@ -6,14 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jooq.SQLDialect;
-
+import com.esferalia.aon.gwt.payroll.client.ITDataObject.CallculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -60,7 +58,7 @@ import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 
-public class ITEditor extends AbstractPager implements RequiresResize {
+public class ITEditor extends AbstractPager implements RequiresResize, CallculateCallback {
 
 	private static final String ACTIVE = "Activo";
 	private static int selectedYear;
@@ -579,13 +577,14 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 						ITDataPerson newData = new ITDataPerson();
 						newData.setContractId(contractId);
 						newData.setContractLeaveId(--decremental);
-						newData.setContractLeaveId(leaveType);
+						newData.setNumType(leaveType);
 						newData.setType(getEnumConstant(
 								ITDataPerson.Type.class, leaveType));
 						newData.setDischarge_cause(tooltip
 								.getTypeDischargeListBox());
 						newData.setLeaveStartDate(leaveStartDate);
 						newData.setLeaveEndDate(leaveEndDate);
+						
 						dataObject.addLeaveItem(newData);
 						reloadTimeline();
 					}
@@ -678,9 +677,8 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				popupPanel.hide();
 
 				int contractId = data.getContractId(posColumn, posCell);
-				int contractLeave = data.getContractLeaveId(posColumn, posCell);
-				dataObject.removeLeaveItem(dataObject.getDataIts(contractId)
-						.get(contractLeave));
+				int leaveId = data.getContractLeaveId(posColumn, posCell);
+				dataObject.removeLeaveItem(contractId, leaveId);
 				reloadTimeline();
 			} catch (Exception ex) {
 
@@ -761,6 +759,9 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 	private void enableUndoRedoButtons() {
 		undoButton.setEnabled(dataObject.canUndo());
 		redoButton.setEnabled(dataObject.canRedo());
+		
+		saveButton.setEnabled(dataObject.canUndo());
+		
 	}
 
 	// ------------------------------------------------------------- UiHandlers
@@ -779,7 +780,12 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 		dataObject.redo();
 		reloadTimeline();
 	}
-
+	
+	@UiHandler("saveButton")
+	void onClick(ClickEvent event) {
+		dataObject.save(this);
+	}	
+	
 	@UiHandler("dateListBox")
 	void onYearChanged(ChangeEvent event) {
 
@@ -885,6 +891,28 @@ public class ITEditor extends AbstractPager implements RequiresResize {
 				return null;
 			
 			return constants[ordinal];
+		}
+	
+		@Override
+		public void onCalculateSuccess(ITDataObject object) {
+			
+			boolean dataObjectChanged = this.dataObject != object;
+			
+			if(dataObjectChanged) {
+				this.dataObject = object;
+				this.dataObject.addListener(new UndoListener());
+				this.initDateListBox();
+				this.finalizado = false;
+				this.initSuggestBox();
+				this.printTimelineChart();
+			}			
+		}
+
+		@Override
+		public void onCalculateFailure(Throwable throwable) {
+			// TODO Apéndice de método generado automáticamente
+			Window.alert(throwable.getMessage());
+			
 		}
 
 	// ---------------------------------------------------------------- Library
