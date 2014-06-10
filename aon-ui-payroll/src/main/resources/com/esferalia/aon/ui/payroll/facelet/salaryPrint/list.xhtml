@@ -52,8 +52,30 @@
 						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsSalary}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.aon_salaries}"
-						action="#{salaryPrint.onPrint}" />
-					
+						action="#{salaryPrint.onPrint}" >
+						<f:param name="reportType" value="SALARY" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="extra-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsExtra}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="Extras"
+						action="#{salaryPrint.onPrint}" >
+						<f:param name="reportType" value="EXTRA" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="settle-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsSettle}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="Finiquitos"
+						action="#{salaryPrint.onPrint}" >
+						<f:param name="reportType" value="SETTLE" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="delay-report"
+						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsDelay}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="Atrasos"
+						action="#{salaryPrint.onPrint}" >
+						<f:param name="reportType" value="DELAY" />
+					</aon:htmlCommandLink>
 						
 					<aon:dropDownMenu value="#{bundle.aon_more2}"
 						rendered="#{!salaryPrint.selectionEmpty}"
@@ -118,7 +140,16 @@
 								<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
 					   				inputSize="4" minValue="2013" maxValue="2020">
 					   			</rich:inputNumberSpinner>
-								
+								<!--  
+								<aon:outputText value="del" />
+								<rich:inputNumberSpinner value="#{salaryPrint.year}"
+					   				inputSize="2" minValue="2013" maxValue="2020">
+					   			</rich:inputNumberSpinner>
+								<aon:outputText value="al" />
+								<rich:inputNumberSpinner  value="#{salaryPrint.year}"
+					   				inputSize="2" minValue="2013" maxValue="2020">
+					   			</rich:inputNumberSpinner>
+								-->
 							</h:panelGrid>
 							
 							<aon:outputLabel for="Salary_type"

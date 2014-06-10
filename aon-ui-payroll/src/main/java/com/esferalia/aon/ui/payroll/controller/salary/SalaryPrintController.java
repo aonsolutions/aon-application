@@ -20,10 +20,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -101,7 +103,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 
 	private Set<Integer> checks = new HashSet<Integer>();
 
-	
+
 	public boolean isIncludeTPhours() {
 		return includeTPhours;
 	}
@@ -320,19 +322,44 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	}	
 	
 	public boolean isContainsSalary(){
-		return true;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
 	}
 	public boolean isContainsExtra(){
-		
-		return true;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.EXTRA);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
 	}
 	public boolean isContainsSettle(){
-		
-		return true;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
 	}
 	public boolean isContainsDelay(){
-		
-		return true;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.DELAY);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -350,8 +377,16 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			throws ManagerBeanException {
 		IManagerBean bean = this.getManagerBean();
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
+		Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String type = parameters.get("reportType");
+		if (type == null) {
+			throw new AbortProcessingException("Empty reportType!");
+		}
 		for( Integer id : checks ) {
-			l.add( bean.get(id) );
+			ITransferObject to = bean.get(id);
+			if(((Salary)to).getType()==SalaryType.valueOf(type)){
+				l.add( to );
+			}
 		}
 		return l;
 	}
@@ -367,16 +402,25 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	
 	private String obtainSalaryTemplate() throws ManagerBeanException{
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		Company company = companyController.obtainCompany();
-		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		try {
-			controller.select(null, company.getId());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+		Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String type = parameters.get("reportType");
+		if (type == null) {
+			throw new AbortProcessingException("Empty reportType!");
 		}
-		EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
-		return enterpriseParams.getParameter("PAY_REPORT_salary_PAY").getExpression();
+		if(SalaryType.valueOf(type) == SalaryType.SETTLE){
+			return IPayrollConstants.SETTLE_REPORT;
+		} else {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			Company company = companyController.obtainCompany();
+			EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+			try {
+				controller.select(null, company.getId());
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+			return enterpriseParams.getParameter("PAY_REPORT_salary_PAY").getExpression();
+		}
 	}
 
 	private String obtainSalarySendingEmail() throws ManagerBeanException{
