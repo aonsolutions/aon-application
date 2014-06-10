@@ -334,7 +334,6 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			Criteria criteria = new Criteria();
 			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
 			List<Integer> list = this.getManagerBean().getList(pl, criteria);
-//			List<Integer> list = this.getManagerBean().getList(pl, this.getCriteria());
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			criteria = new Criteria();
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), list);
@@ -521,10 +520,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 
 	public void onSendByEmail( ActionEvent event ) {
 		try {
-//			Collection<?> list = getCollection();
-//			Collection<Salary> salaries = (Collection<Salary>) list;
 			Collection<ITransferObject> salaries = getSelectedAllSalaries();
-			
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 			if (mailConfig.getMailAccountCount() > 0) {
 				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
@@ -533,28 +529,6 @@ public class SalaryPrintController extends BasicController implements ICollectio
 				messageController.updateMessageBody(getEmailContent(salaries));
 				setRecipients(messageController);
 				
-//				if(isContainsSalary()){
-//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-//					parameters.put("reportType", "SALARY");
-//					messageController.addAttachment( getSalariesZipFile(salaries) );
-//				}
-//				if(isContainsSettle()){
-//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-//					parameters.put("reportType", "SETTLE");
-//					messageController.addAttachment( getSalariesZipFile(salaries) );
-//				}
-//				if(isContainsExtra()){
-//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-//					parameters.put("reportType", "EXTRA");
-//					messageController.addAttachment( getSalariesZipFile(salaries) );
-//				}
-//				if(isContainsDelay()){
-//					Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-//					parameters.put("reportType", "DELAY");
-//					messageController.addAttachment( getSalariesZipFile(salaries) );
-//				}
-				
-//				TODO
 				messageController.addAttachment( getSalariesZipFile(salaries) );
 				
 				if(isIncludeEnterpriseCost()){
@@ -619,30 +593,15 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		reportManager.execute( out, obtainSalaryTemplate() );
 	}
 
-	private String writeEnterpriseCostReport( OutputStream out ) throws ReportException {
-//		SalaryExpenseController salaryExpense = new SalaryExpenseController();
-//		salaryExpense.setYear(getYear());
-//		salaryExpense.setMonth(getMonth());
+	private void writeEnterpriseCostReport( OutputStream out ) throws ReportException {
+		SalaryExpenseController salaryExpense = new SalaryExpenseController();
+		salaryExpense.setYear(getYear());
+		salaryExpense.setMonth(getMonth());
 		
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
-//		reportManager.setCollectionProvider( salaryExpense );
-		reportManager.setCollectionProvider( new SalaryCostProvider() );
-		return reportManager.execute( out, COST_REPORT );
-	}
-	
-	public String onExecuteEnterpriseCostReport() {
-		OutputStream out = null;
-		try {
-			out = DownloadUtil.initDownload(DownloadUtil.getResponse(), COST_REPORT, OutputFormat.PDF.getMimeType2());
-			return writeEnterpriseCostReport( out );
-		} catch (IOException e) {
-			return null;
-		} catch (ReportException e) {
-			return null;
-		} finally {
-			DownloadUtil.finishDownload(DownloadUtil.getResponse(), out);
-		}
+		reportManager.setCollectionProvider( salaryExpense );
+		reportManager.execute( out, COST_REPORT );
 	}
 
 	private String writeTPContractHoursReport( OutputStream out ) throws ReportException {
@@ -725,30 +684,6 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			
 			for( ITransferObject to : bean.getList(criteria) ) {
 				l.add( to );
-			}
-			return l;
-		}
-	}
-		
-	public class SalaryCostProvider implements ICollectionProvider {
-		
-		@Override
-		public Collection<ITransferObject> getCollection() {
-			try {
-				return getCollection(false);
-			} catch (ManagerBeanException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			return null;
-		}
-		
-		@Override
-		public Collection<ITransferObject> getCollection(boolean forceRefresh)
-				throws ManagerBeanException {
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			List<ITransferObject> l = new LinkedList<ITransferObject>();
-			for( Integer id : checks ) {
-				l.add( bean.get(id) );
 			}
 			return l;
 		}
