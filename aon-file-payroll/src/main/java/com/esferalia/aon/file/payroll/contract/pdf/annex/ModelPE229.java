@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.annex;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.common.BeanManager;
@@ -29,7 +30,7 @@ public class ModelPE229 extends AbstractAnnexModel {
 		super.documentName = MODEL_NAME;
 	}
 	
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));

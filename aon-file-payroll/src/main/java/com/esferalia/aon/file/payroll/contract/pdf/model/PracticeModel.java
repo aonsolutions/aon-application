@@ -1,6 +1,7 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
@@ -23,7 +24,7 @@ public class PracticeModel extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
 		// TODO
 		try {
@@ -34,7 +35,7 @@ public class PracticeModel extends AbstractContractModel {
 			getReader().selectPages(range);
 			readPdfFields();
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams;
+			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			
 			super.loadPdfCommonFields(contract, contrataParams);
 			

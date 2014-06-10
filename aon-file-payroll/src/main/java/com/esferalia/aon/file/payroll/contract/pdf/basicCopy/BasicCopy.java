@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.basicCopy;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -27,7 +28,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 		super.documentName = BASIC_COPY_NAME;
 	}
 	
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
 		
 		try {
@@ -35,7 +36,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			readPdfFields();
 //			super.loadPdfCommonFields(contract);
 
-			ContrataContratoParams params = (ContrataContratoParams) contrataParams;
+			ContrataContratoParams params = (ContrataContratoParams) contrataParams.get(0);
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 

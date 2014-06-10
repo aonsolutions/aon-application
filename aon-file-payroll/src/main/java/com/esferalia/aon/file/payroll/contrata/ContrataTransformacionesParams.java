@@ -12,8 +12,10 @@ import com.esferalia.aon.payroll.enumeration.contrata.TERFIRCB;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 
 
-public class ContrataTransformacionesParams implements IContrataParams{
+public class ContrataTransformacionesParams implements IContrataParams {
 	
+	private String sourceContractSepeId;
+	private ContractCode sourceContractCode;
 	private ITransformacionType transformContract;
 	private ContractCode transformCode;
 	private Date fechaInicio;
@@ -21,6 +23,22 @@ public class ContrataTransformacionesParams implements IContrataParams{
 	private String indicadorDiscontinuidad;
 	
 	
+	public String getSourceContractSepeId() {
+		return sourceContractSepeId;
+	}
+
+	public void setSourceContractSepeId(String sourceContractSepeId) {
+		this.sourceContractSepeId = sourceContractSepeId;
+	}
+
+	public ContractCode getSourceContractCode() {
+		return sourceContractCode;
+	}
+
+	public void setSourceContractCode(ContractCode sourceContractCode) {
+		this.sourceContractCode = sourceContractCode;
+	}
+
 	public String getIndicadorDiscontinuidad() {
 		return indicadorDiscontinuidad;
 	}

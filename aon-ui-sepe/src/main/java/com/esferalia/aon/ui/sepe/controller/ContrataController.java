@@ -355,19 +355,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		setCommunicationIdFile(obtainContrataAttach(SepeBatchAttachmentType.COMMUNICATION_ID));
 		setResponseFile(obtainContrataAttach(SepeBatchAttachmentType.RESPONSE_FILE));
 		
-//		ContractAttachmentType generatedType = null;
-//		ContractAttachmentType communicationIdType = null;
-//		ContractAttachmentType responseType = null;
-		//  
+		//TODO prorrogas? transformaciones?  
 		setHandler( new ContrataContratosHandler() );
-//		generatedType = ContractAttachmentType.SEPE_CONTRACT_FILE;
-//		communicationIdType = ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID;
-//		responseType = ContractAttachmentType.SEPE_CONTRACT_RESPONSE;
-		
-//		getHandler().initialize(null);
-//		setGeneratedFile(obtainContrataAttach(generatedType));
-//		setCommunicationIdFile(obtainContrataAttach(communicationIdType));
-//		setResponseFile(obtainContrataAttach(responseType));
 	}
 	
 	public void initialize(Contract contract){

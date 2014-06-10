@@ -4,15 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -28,6 +30,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
+import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.CIFNIFTYPE;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSADICIONALESTRANSFORMACIONTYPE;
@@ -53,6 +56,8 @@ import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACION389TYP
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContrataTransformacionesWriter implements IContrataWriter {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataTransformacionesWriter.class.getName());
 	
 	final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
 	
@@ -408,7 +413,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @return
 	 */
 	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataTransformacionesParams params) {
-		// TODO 
+		// TODO  createDatosMedidasFomento
 		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
 		datos.setINDCOSTEDESPIDO(params.isIndCosteDespido()?"1":"2");
 		if(params.isIndCosteDespido()){
@@ -509,7 +514,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 */
 	private DATOSGENERALESTRANSFORMACIONTYPE createDatosGeneralesTransformacion(ContrataTransformacionesParams params) {
 		DATOSGENERALESTRANSFORMACIONTYPE datos = factory.createDATOSGENERALESTRANSFORMACIONTYPE();
-		datos.setFECHAINICIO(getFormatedDate(getContract().getStartDate()));
+		datos.setFECHAINICIO(getFormatedDate(params.getFechaInicio()));
 		// TODO
 //		"I" (ILT- Invalidez laboral transitoria) 
 //		"P"(Prórroga tácita)
@@ -573,16 +578,17 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 */
 	private DATOSCONTRATOTYPE createDatosContrato(ContrataTransformacionesParams params) {
 		DATOSCONTRATOTYPE datos = factory.createDATOSCONTRATOTYPE();
-		datos.setCLAVECONTRATO(null);
-		if(datos.getCLAVECONTRATO()==null){
-			Person person = getContract().getPerson();
-			if(StringUtils.isEmpty(person.getRegistry().getDocument())){
+		
+		if(StringUtils.isNotBlank(params.getSourceContractSepeId())){
+			datos.setCLAVECONTRATO(params.getSourceContractSepeId());
+		} else {
+			if(StringUtils.isEmpty(getContract().getPerson().getRegistry().getDocument())){
 				AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento..");
 			} else {
-				if(person.getRegistry().getDocumentType()==DocumentType.NIF){
-					datos.setIDENTIFICADORPFISICA("D"+person.getRegistry().getDocument());
-				} else if(person.getRegistry().getDocumentType()==DocumentType.NIE){
-					datos.setIDENTIFICADORPFISICA("E"+person.getRegistry().getDocument());
+				if(getContract().getPerson().getRegistry().getDocumentType()==DocumentType.NIF){
+					datos.setIDENTIFICADORPFISICA("D"+getContract().getPerson().getRegistry().getDocument());
+				} else if(getContract().getPerson().getRegistry().getDocumentType()==DocumentType.NIE){
+					datos.setIDENTIFICADORPFISICA("E"+getContract().getPerson().getRegistry().getDocument());
 				}
 			}
 			datos.setFECHAINICIOCTO(null);
@@ -630,10 +636,13 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @return
 	 */
 	private DATOSADICIONALESTRANSFORMACIONTYPE createDatosAdicionalesTransformacion(ContrataTransformacionesParams params) {
-		DATOSADICIONALESTRANSFORMACIONTYPE datos = factory.createDATOSADICIONALESTRANSFORMACIONTYPE();
-		datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
-		// TODO
-		datos.setCODIGOCOLECTIVOREDUCCION(null);
+		DATOSADICIONALESTRANSFORMACIONTYPE datos = null;
+		if(params.getIndDiscapacidad()!=null){
+			datos = factory.createDATOSADICIONALESTRANSFORMACIONTYPE();
+			datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
+			// TODO createDatosAdicionalesTransformacion setCODIGOCOLECTIVOREDUCCION
+			datos.setCODIGOCOLECTIVOREDUCCION(null);
+		}
 		return datos;
 	}
 	
@@ -688,12 +697,15 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param ContrataContratoParams
 	 * @return
 	 */
-	private DATOSBONIFICACIONTYPE createDatosBonificacion(ContrataTransformacionesParams ContrataContratoParams) {
-		// TODO
-		DATOSBONIFICACIONTYPE datos = factory.createDATOSBONIFICACIONTYPE();
-		datos.setCODIGOCOLECTIVOBONIF("00");
-		datos.setACOGIDOMATERNIDADEXCEDENCIA(null);
-		datos.setCOLECTIVODISCAPACITADOS(null);
+	private DATOSBONIFICACIONTYPE createDatosBonificacion(ContrataTransformacionesParams params) {
+		DATOSBONIFICACIONTYPE datos = null;
+		// TODO createDatosBonificacion
+		if(false){
+			datos = factory.createDATOSBONIFICACIONTYPE();
+			datos.setCODIGOCOLECTIVOBONIF("00");
+			datos.setACOGIDOMATERNIDADEXCEDENCIA(null);
+			datos.setCOLECTIVODISCAPACITADOS(null);
+		}
 		return datos;
 	}
 	
@@ -770,13 +782,20 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @return
 	 */
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataTransformacionesParams params) {
-		// TODO
+		// TODO createDatosContratoTiempoParcial
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();		
-		datos.setTIPOJORNADA(params.getTipoJornada()==null?null:params.getTipoJornada().getCode());
+		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getCode():TEQPTIEM.TEQPTIEM_S.getCode());
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
-		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
-	    datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
-	    datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
+		
+		String duracionjornada = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.WEEK_HOURS.getName());
+		duracionjornada = (duracionjornada==null?"":completeLength(getHours(duracionjornada), 4, "0", false)+(completeLength(getMinutes(duracionjornada), 2, "0", false)));
+		if(StringUtils.isBlank(duracionjornada)){
+			duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
+		}
+		
+		datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
+		datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
+		
 	    datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
 	    datos.setFIJODISCONTINUOPERIODICO((params.getFijoDiscontinuoPeriodico()!=null && params.getFijoDiscontinuoPeriodico())?"S":"N");
 		return datos;
@@ -789,18 +808,27 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * ***************************************
 	 * ***************************************
 	 */
-//	private Map<String, String> contractDataMap;
-//	
-//	protected Map<String, String> getContractDataMap(Contract contract) {
-//		if(contractDataMap==null){
-//			SEPEUtils utils = new SEPEUtils();
-//			contractDataMap = utils.getContractDataMap(contract);
-//		}
-//		return contractDataMap;
-//	}
-//	protected Map<String, String> getContractDataMap() {
-//		return contractDataMap;
-//	}
+	private Integer getHours(String value){
+		try{
+			return (int)Double.parseDouble(value);
+		} catch (Exception e) {
+			LOGGER.error("Error al obtener las horas del valor");
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+	}
+	
+	private Integer getMinutes(String value){
+		try {
+			Double _value = Double.parseDouble(value);
+			Double fraction = _value - (int)(CommonUtil.round(_value, 2));
+			return (int)(60*fraction);
+		} catch (Exception e) {
+			LOGGER.error("Error al obtener los minutos del valor");
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+	}
 	
 	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);

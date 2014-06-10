@@ -47,7 +47,7 @@ public class LearningModel extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
 		try {			
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
@@ -57,7 +57,7 @@ public class LearningModel extends AbstractContractModel {
 			getReader().selectPages(range);
 			readPdfFields();
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams;
+			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			// print all field keys of the pdf document

@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +36,7 @@ public class TemporaryModel extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
 		try {
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
@@ -45,7 +46,7 @@ public class TemporaryModel extends AbstractContractModel {
 			getReader().selectPages(range);
 			readPdfFields();
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams;
+			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 

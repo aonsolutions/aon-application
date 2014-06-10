@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -133,7 +134,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		getHandler().setPdfFieldValue(name, value);
 	}
 	
-	public void loadPdfCommonFields(Contract contract, IContrataParams contrataParams) throws ManagerBeanException{
+	public void loadPdfCommonFields(Contract contract, List<IContrataParams> contrataParams) throws ManagerBeanException{
 		
 	}
 	

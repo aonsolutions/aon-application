@@ -61,7 +61,7 @@ public interface ISepeConstants {
 	public static final ContrataFileType[] AVAILABLE_CONTRATA_FILE_TYPES = {
 		ContrataFileType.CONTRACT,
 		ContrataFileType.EXTENSION,
-//		ContrataFileType.TRANSFORMATION,
+		ContrataFileType.TRANSFORMATION,
 //		ContrataFileType.INDEFINITE_CALL,
 //		ContrataFileType.BASIC_COPY,
 //		ContrataFileType.GROUP_CONTRACT,
@@ -93,7 +93,7 @@ public interface ISepeConstants {
 //		ModelOption.INDEFINITE_OPT14,
 //		ModelOption.INDEFINITE_OPT15,
 //		ModelOption.INDEFINITE_OPT16,
-//		ModelOption.INDEFINITE_OPT17, // TRANSFORMATION CODES
+		ModelOption.INDEFINITE_OPT17, 
 		ModelOption.LEARNING_OPT1,
 //		ModelOption.LEARNING_OPT2,
 //		ModelOption.LEARNING_OPT3,

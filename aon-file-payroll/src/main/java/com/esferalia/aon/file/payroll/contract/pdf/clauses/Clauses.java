@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.clauses;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -20,7 +21,7 @@ public class Clauses extends AbstractContractClauses {
 		super.documentName = CLAUSES_NAME;
 	}
 	
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		
 		try {
