@@ -93,6 +93,7 @@ public class IrpfCalculator {
 
 		irpfOutcome.setNif(ctx.getNif() == DEFAULT_NIF ? null : ctx.getNif());
 		irpfOutcome.setBirthYear(ctx.getAñoNacimiento());
+		irpfOutcome.setComunidadAutonoma(retenidoSalida2013.getComunidadAutonoma());
 
 		IrpfResult irpfResult = new IrpfResult();
 		irpfResult.setEffectiveDate(new Date()); // TODO: Now ???
@@ -451,6 +452,7 @@ public class IrpfCalculator {
 			
 			TipoRetenidoSalida2013 retenidoSalida = new TipoRetenidoSalida2013();
 			retenidoSalida.setTipoRetencion(BigDecimal.valueOf(percent));
+			retenidoSalida.setComunidadAutonoma(geozone);
 			
 			ArrayList<TipoRetenidoSalida2013> retenidosSalida = new ArrayList<TipoRetenidoSalida2013>(1);
 			retenidosSalida.add(retenidoSalida);
@@ -460,6 +462,7 @@ public class IrpfCalculator {
 			retenedoresSalida.add(retenedorSalida2013);
 			AEATRetencionesSalida2013 aeatRetencionesSalida = new AEATRetencionesSalida2013();
 			aeatRetencionesSalida.setRetenedor(retenedoresSalida);
+			
 			
 			return aeatRetencionesSalida;
 		}

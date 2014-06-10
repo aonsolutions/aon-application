@@ -57,15 +57,15 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private class ExpressionTextBox extends TextBox implements BlurHandler,
+	private class MyExpressionBox extends ExpressionBox implements BlurHandler,
 			FocusHandler, AsyncCallback<List<Result>> {
 
 		private String result;
 		private String expression;
 
-		private ExpressionTextBox parent;
+		private MyExpressionBox parent;
 
-		public ExpressionTextBox() {
+		public MyExpressionBox() {
 			addBlurHandler(this);
 			addFocusHandler(this);
 		}
@@ -169,7 +169,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 	Button resetDescriptionButton;
 
 	@UiField(provided = true)
-	ExpressionTextBox expressionTextBox;
+	MyExpressionBox expressionTextBox;
 	@UiField
 	Button resetExpressionButton;
 
@@ -212,7 +212,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 	}
 
 	public String getExpression() {
-		return ((ExpressionTextBox) expressionTextBox).getExpression();
+		return ((MyExpressionBox) expressionTextBox).getExpression();
 	}
 
 	public void setExpression(String deduction) {
@@ -312,7 +312,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				Item.this.showFxDialog((ExpressionTextBox) expressionTextBox);
+				Item.this.showFxDialog((MyExpressionBox) expressionTextBox);
 			}
 		});
 	}
@@ -321,7 +321,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 	private void initProvided() {
 
-		expressionTextBox = new ExpressionTextBox(); // TODO : UiBinder
+		expressionTextBox = new MyExpressionBox(); // TODO : UiBinder
 
 		conceptSuggestOracle = new MultiWordSuggestOracle();
 		descriptionSuggestOracle = new MultiWordSuggestOracle();
@@ -341,7 +341,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 	}
 
-	private void showFxDialog(final ExpressionTextBox textBox) {
+	private void showFxDialog(final MyExpressionBox textBox) {
 		final FxDialog fxDialog = new FxDialog(contextProvider);
 		fxDialog.setExpression(textBox.getExpression());
 		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
@@ -374,7 +374,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 	private void showOrHideResetPaymentButton() {
 		resetExpressionButton.setVisible(concept != null
 				&& !StringUtils.equals(concept.getExpression(),
-						((ExpressionTextBox) expressionTextBox).expression));
+						((MyExpressionBox) expressionTextBox).expression));
 	}
 
 }

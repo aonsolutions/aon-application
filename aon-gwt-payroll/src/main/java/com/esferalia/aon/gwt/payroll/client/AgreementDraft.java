@@ -1813,7 +1813,7 @@ public class AgreementDraft extends ResizeComposite implements
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 
-		TextBox expressionBox = new TextBox();
+		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.setText(payment.getExpression());
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
