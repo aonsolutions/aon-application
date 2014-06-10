@@ -93,7 +93,8 @@
 							<aon:htmlCommandLink id="salaryExpense_report" target="_blank"
 								rendered="#{!salaryPrint.selectionEmpty}"
 								value="Costes de empresa"
-								action="#{salaryPrint.onExecuteEnterpriseCostReport}">
+								actionListener="#{enterprise.onSelectFirst}"
+								action="#{report.onExecute}">
 								<f:setPropertyActionListener
 									target="#{salaryExpense.year}" value="#{salaryPrint.year}" />
 								<f:setPropertyActionListener
