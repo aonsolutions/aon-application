@@ -175,7 +175,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 			for (ITransferObject ito : bean.getList(criteria)) {
 				RegistryItem rItem = (RegistryItem)ito;
 				if(rItem.getWorkPlace()==null || rItem.getWorkPlace().getId().equals(detail.getSales().getWorkPlace().getId())){
-					supplier = (Supplier)BeanManager.getManagerBean(Supplier.class).get(rItem.getRegistry());
+					supplier = (Supplier)BeanManager.getManagerBean(Supplier.class).get(rItem.getRegistry().getId());
 				}
 			}
 			return supplier!=null?supplier:(Supplier) BeanManager.getManagerBean(Supplier.class).createNewTo();
