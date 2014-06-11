@@ -134,7 +134,8 @@ public class CalendarUtils {
 		public static CalendarList calendarsSort(CalendarList cals){
 			calendars = cals;
 			number = cals.getItems().size();
-			quicksortCalendars(0,number - 1);
+			if (number!=0)
+				quicksortCalendars(0,number - 1);
 			return calendars;
 		}
 		public static Events eventsSort(Events eventos) {

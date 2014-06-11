@@ -21,6 +21,7 @@ public class Utils{
 	public static File InputStreamToFile(Rattach rattach) throws IOException{
 		byte[] data = IOUtils.toByteArray(rattach.getData());
 		File aux = new File("/tmp/" + rattach.getDescription() );
+		if(!aux.isDirectory())
 		org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
 		return aux;
 		

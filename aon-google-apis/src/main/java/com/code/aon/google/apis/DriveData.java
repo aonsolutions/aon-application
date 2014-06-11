@@ -1,54 +1,52 @@
 package com.code.aon.google.apis;
 
 import java.io.InputStream;
+import java.util.Vector;
+
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 
 
 public class DriveData{
 	
-	private String ID;
-	private String MIMETYPE;
-	private String TITLE;
-	private InputStream FILE;
+	private DomainGserviceaccount Gservice;
+	private Vector<Rattach> rattachs;
+	private String domain;
+
 	
-	public DriveData(String Id,String Mimetype,String Title){
-		ID=Id;
-		MIMETYPE=Mimetype;
-		TITLE=Title;
+	public DriveData(DomainGserviceaccount Gservice,Vector<Rattach> rattachs){
+		this.Gservice=Gservice;
+		this.rattachs=rattachs;
+		
 	}
 	
 	public DriveData(){
 		
 	}
 	
-	public String getId(){
-		return ID;
+	public DomainGserviceaccount getGservice(){
+		return Gservice;
 	}
 	
-	public void setId(String id){
-		ID=id;
+	public void setGservice(DomainGserviceaccount Gservice){
+		this.Gservice=Gservice;
 	}
 	
-	public String getMimeType(){
-		return MIMETYPE;
+	public Vector<Rattach> getRattachs(){
+		return rattachs;
 	}
 	
-	public void setMimeType(String mimetype){
-		MIMETYPE=mimetype;
+	
+	public void setRattachs(Vector<Rattach> rattachs){
+		this.rattachs=rattachs;
 	}
 	
-	public String getTitle(){
-		return TITLE;
+	public String getDomain(){
+		return domain;
 	}
 	
-	public void setTitle(String title){
-		TITLE=title;
-	}
-
-	public InputStream getFile(){
-		return FILE;
-	}
 	
-	public void setFile(InputStream file){
-		FILE=file;
+	public void setDomain(String domain){
+		this.domain=domain;
 	}
-}
+	}

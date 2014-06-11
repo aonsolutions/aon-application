@@ -9,12 +9,16 @@ import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.g
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.DigestInputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -26,11 +30,13 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.engine.Collections;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.servlet.GoogleAuthorizationCodeCallbackServlet;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
@@ -62,8 +68,48 @@ import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizatio
 public class DriveUtils  {
 
 	
+	public static class CheckSum {
+		    /***
+		     * Convierte un arreglo de bytes a String usando valores hexadecimales
+		     * @param digest arreglo de bytes a convertir
+		     * @return String creado a partir de <code>digest</code>
+		     */
+		    private static String toHexadecimal(byte[] digest){
+		        String hash = "";
+		        for(byte aux : digest) {
+		            int b = aux & 0xff;
+		            if (Integer.toHexString(b).length() == 1) hash += "0";
+		            hash += Integer.toHexString(b);
+		        }
+		        return hash;
+		    }
+		 
+		    /***
+		     * Realiza la suma de verificación de un archivo mediante MD5
+		     * @param archivo archivo a que se le aplicara la suma de verificación
+		     * @return valor de la suma de verificación.
+		     */
+		    public static String getMD5Checksum(InputStream is) {
+		        byte[] textBytes = new byte[1024];
+		        MessageDigest md = null;
+		        int read = 0;
+		        String md5 = null;
+		        try {
+		            md = MessageDigest.getInstance("MD5");
+		            while ((read = is.read(textBytes)) > 0) {
+		                md.update(textBytes, 0, read);
+		            }
+		            is.close();
+		            byte[] md5sum = md.digest();
+		            md5 = toHexadecimal(md5sum);
+		        } catch (FileNotFoundException e) {
+		        } catch (NoSuchAlgorithmException e) {
+		        } catch (IOException e) {
+		        }
+		    return md5;
+		    }
+		}
 
-	
 	public static class View {
 
 		  static void header1(String name) {
@@ -131,10 +177,6 @@ public class DriveUtils  {
 	
 	//private static Credential credential;	
 	private static Drive client;
-	private static final String UPLOAD_FILE_PATH = "Enter File Path";
-	private static final String DIR_FOR_DOWNLOADS = "Enter Download Directory";
-	private static final java.io.File UPLOAD_FILE = new java.io.File(UPLOAD_FILE_PATH);
-	private static String AonFolderID = "";
 	
 	public static void initialize() throws IOException,ServletException {
 		//credential = newFlow().loadCredential(getPrincipalShortName(req));/**HttpServletRequest req**/
@@ -144,19 +186,20 @@ public class DriveUtils  {
 		
 		client=GoogleAuthorizationCodeCallbackServlet.drive;
 		
-		AonFolderID = getAonFolder().getId();
 
 	}
 	
-	public static Drive serviceInitialize(String domain) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
+	public static Drive serviceInitialize(DomainGserviceaccount d) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
 		
-		DomainGserviceaccount dgserviceaccount= getServiceAccount(domain);
+		
+		//DomainGserviceaccount dgserviceaccount= getServiceAccount(domain);
 		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
-		final String SERVICE_ACCOUNT_ID = dgserviceaccount.getEmailAddress();
+		final String SERVICE_ACCOUNT_ID = "1081696571072-dth57vuulpuf0q67k9op41fkg4hlkjq3@developer.gserviceaccount.com"; //dgserviceaccount.getEmailAddress();
 
-		InputStream keyStream = dgserviceaccount.getPrivateKey();
+		InputStream keyStream = DriveUtils.class
+				.getResourceAsStream("/com/code/aon/google/apis/5da2a9898fbf28add1d4c6d1856b5c581425bebb-privatekey.p12");//dgserviceaccount.getPrivateKey();
 		PrivateKey serviceAccountPrivateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), keyStream, "notasecret",
 		          "privatekey", "notasecret");
 		
@@ -176,43 +219,6 @@ public class DriveUtils  {
 		
 	}
 	
-	/*************** SOBRE LA CARPETA AON *********************/
-	
-	public static File getAonFolder() throws IOException {
-		FileList list = client.files().list().execute();
-		File file= null;
-		for(int i=0; i< list.size();i++){
-			if (list.getItems().get(i).getTitle().equals("aonSolutions")){
-				file=list.getItems().get(i);
-				i=list.size();
-			}
-		}
-		if (file==null){
-			file = createAonFolder();
-		}
-		return file;
-	}
-	
-	public static void insertToAonFolder(File folder,File file) throws IOException{
-		//suponiendo que el archivo file ya esta en google DRive.
-		ParentReference parent = new ParentReference();
-		parent.setId(folder.getId());
-		client.parents().insert(file.getId(), parent).execute();
-		
-	}
-	
-	public static File createAonFolder() throws IOException{
-		File folder=new File();
-		folder.setTitle("aonSolutions");
-		folder.setDescription("aonSolutions files container");
-		folder.setMimeType("application/vnd.google-apps.folder");
-		folder.setAppDataContents(true);// Indica que es un archivo de la aplicación, por lo tanto, el usuario no podrá borrar el archivo.
-		folder = client.files().insert(folder).execute().setId("appdata");
-		return folder;
-	}
-	
-	
-	
 	/************************** OBTENER TODOS LOS ARCHIVOS **************************/
 	
 	public static DriveFile[] getFiles(Drive drive) throws IOException {
@@ -225,8 +231,9 @@ public class DriveUtils  {
 		return driveFiles;
 	}
 
-	public static FileList getFiles(){
-		return new FileList();
+	public static FileList getFiles() throws IOException{
+		
+		return client.files().list().execute();
 		
 	}
 	
@@ -253,10 +260,8 @@ public class DriveUtils  {
 		return nuevo;
 	}
 	
- 	
 	/********************* UTILS *********************/
 	
-	//HACERLO GENERICO
 	public static int searchFiles(FileList files , String dato, int n) {
 
 		int centro;
@@ -275,22 +280,19 @@ public class DriveUtils  {
 		return -1;
 	}
 	
-	
-	
 	/*************************** SUBIR ARCHIVO A DRIVE ***********************/
 	
 	public static File newFile(Rattach rattach){
 		short type = rattach.getMimeType();
 		MimeType t = MimeType.values()[type];
 		File file=new File();
+		
 		file.setTitle(rattach.getDescription());
 		file.setMimeType(t.getName());
 		//file.setAppDataContents(true);// Indica que es un archivo de la aplicación, por lo tanto, el usuario no podrá borrar el archivo.
 		return file;
 	}
-	
-
-	
+		
 	public static File insertFile(Drive drive,java.io.File file, DriveFile driveFile) throws IOException{
 		
 		File fileAux=new File();
@@ -306,28 +308,21 @@ public class DriveUtils  {
 		
 	}
 	
-	private static File insertFile(Rattach rattach, String parentId) throws SQLException, AonConnectionException, IOException {
-	    // File's metadata.
-	    File file = newFile(rattach);
-	    // Set the parent folder.
-	    file.setParents(Arrays.asList(new ParentReference().setId(parentId)));
-	    //hay que añadir el atributo parent a la BDtable rattach
-	 
-	 
-	    // File's content.
+	private static File updateFile(Rattach rattach) throws IOException{
+	    File file=getFile(rattach.getDriveId());
+		
+		// File's content.
 	    java.io.File fileContent = Utils.InputStreamToFile(rattach);
-	    FileContent mediaContent = new FileContent("mimeType", fileContent);
+	    FileContent mediaContent = new FileContent(file.getMimeType(), fileContent);
 	  
 	    try {
-	      file = client.files().insert(file, mediaContent).execute();
-	      DatabaseSync.addDriveIds(file.getId(), file.getParents().get(0).getId());
+	      file = client.files().update(rattach.getDriveId(),file, mediaContent).execute();
 	      return file;
 	    } catch (IOException e) {
 	      System.out.println("An error occured: " + e);
 	      return null;
 	    }
-	  }
-	
+	}
 	
 	private static File insertFile(Rattach rattach) throws SQLException, AonConnectionException, IOException {
 	    // File's metadata.
@@ -335,10 +330,11 @@ public class DriveUtils  {
 
 	    // File's content.
 	    java.io.File fileContent = Utils.InputStreamToFile(rattach);
-	    FileContent mediaContent = new FileContent("mimeType", fileContent);
+	    FileContent mediaContent = new FileContent(file.getMimeType(), fileContent);
 	  
 	    try {
 	      file = client.files().insert(file, mediaContent).execute();
+	      System.out.println(file.getId());
 	      return file;
 	    } catch (IOException e) {
 	      System.out.println("An error occured: " + e);
@@ -346,46 +342,88 @@ public class DriveUtils  {
 	    }
 	  }
 	
-	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+	/*********************** Sincronizar BD a Google Drive ***************************/
+	
+	public static boolean checkType(Rattach rattach, Vector<RegistryAttachmentType> types){
+		boolean bool=false;
+		short type = rattach.getType();
+		RegistryAttachmentType t = RegistryAttachmentType.values()[type];
+		int i=0;
+		while(i<types.size() && !bool){
+			if(types.get(i).equals(t))
+				bool=true;
+			i++;
+		}
+		return bool;
+	}
+	
+	public static void sync(Rattach rattach,String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, NoSuchAlgorithmException{
+		System.out.println(checkType(rattach,types));
+		if(checkType(rattach,types)){
 		
-		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
-		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
-			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
-			Map<Integer,Vector<Rattach>> map=DatabaseSync.getFilesAll(key);
-			for(int i=0;i<companies.size();i++){
-				serviceInitialize(companies.get(i).getName());
-				FileList files = Quicksort.sort(getFiles());
-				java.util.Vector<Rattach> rattachs = map.get(companies.get(i).getId());
-				for(int j=0;j<rattachs.size();j++){
-					//subir archivo de la base de datos
-					int aux=searchFiles(files, rattachs.get(j).getDescription(), rattachs.size());
-					if(aux==-1){
-						File file= insertFile(rattachs.get(j));
-					}
+			if(rattach.getDriveId()==null){
+				InputStream i =DatabaseSync.getData(rattach.getId(),domain);
+				rattach.setData(i);
+				System.out.println(i+"   "+rattach.getId());
+				File file= insertFile(rattach);
+				if(file!=null){
+					DatabaseSync.addDriveId(file.getId(),rattach.getId(),domain);
+					//DatabaseSync.deleteBlob(rattach.getId(),domain);
 				}
 			}
-		}
-		
-	}
-	public static void uploadBDFiles() throws SQLException, IOException, AonConnectionException{
-		java.util.Vector<Rattach> rattachs = DatabaseSync.getFiles("");
-		FileList files = Quicksort.sort(getFiles());
-		for(int j=0;j<rattachs.size();j++){
-			//subir archivo de la base de datos
-			int aux=searchFiles(files, rattachs.get(j).getDescription(), rattachs.size());
-			if(aux==-1){
-				File file= insertFile(rattachs.get(j),AonFolderID);
+			else{
+				InputStream is =DatabaseSync.getData(rattach.getId(),domain);
+				rattach.setData(is);
+				File fileAux = getFile(rattach.getDriveId());
+				
+				System.out.println("MD5 --> "+fileAux.getMd5Checksum()+"  :  "+ CheckSum.getMD5Checksum(is));
+				
+				if(!fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(is))){
+					InputStream i =DatabaseSync.getData(rattach.getId(),domain);
+					rattach.setData(i);
+					System.out.println(i+"   "+rattach.getId());
+					File file= updateFile(rattach);
+					if(file!=null){
+						DatabaseSync.addDriveId(file.getId(),rattach.getId(),domain);
+						//DatabaseSync.deleteBlob(rattach.getId(),domain);
+					}
+				}	
 			}
 		}
 	}
 	
-	/* Otro modo */
-	public static void uploadFile(FileContent fileContent, File file,String folderId) throws IOException{
-		ParentReference parent = new ParentReference();
-		parent.setId(folderId);
-		file=client.files().insert(file, fileContent).execute();
-		client.parents().insert(file.getId(),parent).execute();
+	public static void synchronize(Integer id, String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
+		
+		
+		serviceInitialize(DatabaseSync.getServiceAccount(domain));
+		Rattach rattach=DatabaseSync.getFile(id,domain); 
+		
+		sync(rattach,domain,types);
 	}
+	
+	public static void synchronize(String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
+		DriveData dd=DatabaseSync.getDomainFiles(domain);
+		
+		serviceInitialize(dd.getGservice());
+			
+		if(dd.getRattachs()!=null && dd.getRattachs().size()>0){
+			for(int j=0;j<dd.getRattachs().size();j++){
+				sync(dd.getRattachs().get(j),domain,types);
+			}
+		}	
+		
+	}
+	
+	public static void synchronize(Vector<RegistryAttachmentType> types) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+		
+		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
+		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
+				
+			synchronize(key,types);
+		}
+		
+	}
+	
 	
 	/************************* DESCARGAR ARCHIVO DE DRIVE *********************/
 	
@@ -413,6 +451,42 @@ public class DriveUtils  {
 	
 	public static void deleteFile(Drive drive,String fileId ) throws IOException{
 		drive.files().delete(fileId).execute();
+	}
+	
+	public static void delete(String fileId,String domain,int id) throws IOException, SQLException{
+		client.files().delete(fileId).execute();
+		DatabaseSync.deleteDriveID(id, domain);
+	}
+	
+	/*********************** MAIN ******************************/
+	public static void main(String[] args) throws GeneralSecurityException,
+	IOException, ServletException, SQLException, AonConnectionException {
+			
+			Vector<RegistryAttachmentType> types= new Vector<RegistryAttachmentType>();
+			types.add(RegistryAttachmentType.DOCUMENT);
+			types.add(RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+			types.add(RegistryAttachmentType.MARKETING_TEMPLATE);
+			types.add(RegistryAttachmentType.ENTERPRISE_CONTRACT_CLAUSES);
+			
+			//synchronize("cemerida.aibanez.net",types);
+			//DomainGserviceaccount d=new DomainGserviceaccount();
+			//serviceInitialize(d);
+			 
+			
+			FileList files=client.files().list().execute();
+			
+			for(int i = 0;i<files.size();i++){
+				System.out.println(files.getItems().get(i).getTitle());
+			}
+			
+		
+		/*DriveData dd=DatabaseSync.getDomainFiles("hotelcervantes-cemerida.aibanez.net");
+		
+		for (int i=0;i<dd.getRattachs().size();i++){
+			System.out.println("Domain: "+ dd.getRattachs().get(i).getDomain() +"   ID: "+dd.getRattachs().get(i).getId()+"  Name: "+dd.getRattachs().get(i).getDescription() );
+		}*/
+
+			
 	}
 	  		
 }

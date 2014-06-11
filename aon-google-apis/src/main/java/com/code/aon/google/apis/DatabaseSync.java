@@ -1,5 +1,6 @@
 package com.code.aon.google.apis;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -784,8 +785,8 @@ public class DatabaseSync {
 		try {
 			String sql = "SELECT DG.* FROM "+SQLConstants.DOMAIN_GSERVICEACCOUNT
 					+ " AS DG inner join "+SQLConstants.DOMAIN
-					+ " AS D ON DG."+DomainGserviceaccountColumns.DOMAIN
-					+ "= D."+ DomainColumns.ID
+					+ " AS D ON (DG."+DomainGserviceaccountColumns.DOMAIN
+					+ "= D."+ DomainColumns.ID+" OR D."+DomainColumns.PARENT+" = DG."+DomainGserviceaccountColumns.DOMAIN+")"
 					+ " WHERE D."+DomainColumns.NAME+"= ?";
 			
 			connection = getConnection(key);
@@ -806,7 +807,7 @@ public class DatabaseSync {
 				dgserviceaccount.setPrivateKey(rs.getAsciiStream(DomainGserviceaccountColumns.PRIVATE_KEY));
 			
 			}
-			else dgserviceaccount= getGeneralServiceAccount(key);
+			
 		
 		
 			return dgserviceaccount;
@@ -1133,9 +1134,11 @@ public class DatabaseSync {
 		PreparedStatement stmt = null;
 		try {
 			String sql = "SELECT RA.* FROM " + SQLConstants.RATTACH 
-					+" AS RA ";
+					+" AS RA inner join "+SQLConstants.DOMAIN+" AS D ON RA."+RattachColumns.DOMAIN+" = D."+DomainColumns.ID
+					+" WHERE D."+DomainColumns.NAME+" = ?";
 			connection = getConnection(key);// CONSEGUIR EL DOMINIO DE LA CONEXIÓN!!!!!!!!
 			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, key);
 			rs = stmt.executeQuery();
 			
 			Vector<Rattach> rattachs = new Vector<Rattach>();
@@ -1154,6 +1157,8 @@ public class DatabaseSync {
 				rattach.setScope(rs.getInt(RattachColumns.SCOPE));
 				rattach.setSecurityLevel(rs.getShort(RattachColumns.SECURITY_LEVEL));
 				rattach.setAttachDate(rs.getDate(RattachColumns.ATTACH_DATE));
+				rattach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
+
 				rattachs.add(rattach);
 			}
 			return rattachs;
@@ -1178,7 +1183,7 @@ public class DatabaseSync {
 			connection = getConnection(key);// CONSEGUIR EL DOMINIO DE LA CONEXIÓN!!!!!!!!
 			stmt = connection.prepareStatement(sql);
 			rs = stmt.executeQuery();
-			
+
 			Map<Integer,Vector<Rattach>> map = new Hashtable<Integer,Vector<Rattach>>();
 			while (rs.next()){
 				Rattach rattach= new Rattach();
@@ -1195,6 +1200,8 @@ public class DatabaseSync {
 				rattach.setScope(rs.getInt(RattachColumns.SCOPE));
 				rattach.setSecurityLevel(rs.getShort(RattachColumns.SECURITY_LEVEL));
 				rattach.setAttachDate(rs.getDate(RattachColumns.ATTACH_DATE));
+				rattach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
+
 				
 				if (map.containsKey(rattach.getDomain())){
 					map.get(rattach.getDomain()).add(rattach);
@@ -1218,6 +1225,187 @@ public class DatabaseSync {
 		}
 	}
 	
+	public static Rattach getFile(int id,String key) throws SQLException{
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT RA."+RattachColumns.ID+",RA."+RattachColumns.DOMAIN+",RA."+RattachColumns.MIMETYPE+",RA."+RattachColumns.DESCRIPTION+",RA."+RattachColumns.TYPE+",RA."
+					+RattachColumns.DRIVE_ID + " FROM " + SQLConstants.RATTACH 
+					+" AS RA inner join "+SQLConstants.DOMAIN+" AS D ON RA."+RattachColumns.DOMAIN+" = D."+DomainColumns.ID
+					+" WHERE D."+DomainColumns.NAME+" = ? AND RA."+RattachColumns.ID+" = ?";
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, key);
+			stmt.setInt(2, id);
+			rs = stmt.executeQuery();
+			
+			Rattach rattach = new Rattach();
+			
+			rattach.setId(rs.getInt(RattachColumns.ID));
+			rattach.setDomain(rs.getInt(RattachColumns.DOMAIN));
+			rattach.setMimeType(rs.getShort(RattachColumns.MIMETYPE));
+			rattach.setDescription(rs.getString(RattachColumns.DESCRIPTION));
+			rattach.setType(rs.getShort(RattachColumns.TYPE));
+			rattach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
+			
+			return rattach;
+		
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static InputStream getData(int id,String key) throws SQLException{
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT "+RattachColumns.DATA +" FROM " + SQLConstants.RATTACH 
+					+" WHERE "+RattachColumns.ID+" = ?";
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, id);
+			rs = stmt.executeQuery();
+			
+			
+			InputStream data;
+			if (rs.next())
+				data = rs.getAsciiStream(RattachColumns.DATA);
+			else
+				data = null;
+			
+			
+	
+			return data;
+		
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+		
+	}
+	
+	public static DriveData getDomainFiles(String key) throws SQLException{
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT RA."+RattachColumns.ID+",RA."+RattachColumns.MIMETYPE+",RA."+RattachColumns.DESCRIPTION+",RA."+RattachColumns.TYPE+",RA."
+								+RattachColumns.DRIVE_ID+",G.*, D."+DomainColumns.NAME
+					+ " FROM (" + SQLConstants.RATTACH +" AS RA inner join "+SQLConstants.DOMAIN+" AS D ON RA."+RattachColumns.DOMAIN+" = D."+DomainColumns.ID
+					+ ") inner join "+SQLConstants.DOMAIN_GSERVICEACCOUNT+" AS G ON (G."+DomainGserviceaccountColumns.DOMAIN+" = D."+DomainColumns.ID+" OR D."
+					+ DomainColumns.PARENT+" = G."+DomainGserviceaccountColumns.DOMAIN+") "
+					+ "WHERE D."+DomainColumns.NAME+" = ? OR D."+DomainColumns.PARENT+ " IN(SELECT "+DomainColumns.ID
+																							+" FROM "+SQLConstants.DOMAIN
+																							+" WHERE "+DomainColumns.NAME+" = ?)" ;
+																
+			
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, key);
+			stmt.setString(2, key);
+			rs = stmt.executeQuery();
+			
+			
+			Vector<Rattach> rattachs = new Vector<Rattach>();
+			DomainGserviceaccount dgserviceaccount= new DomainGserviceaccount();
+
+			while (rs.next()){
+				Rattach rattach= new Rattach();
+				//todos los atributos de la tabla... error en el proyecto aon.sql.google
+				rattach.setId(rs.getInt(RattachColumns.ID));
+				rattach.setDomain(rs.getInt(RattachColumns.DOMAIN));
+				rattach.setMimeType(rs.getShort(RattachColumns.MIMETYPE));
+				rattach.setDescription(rs.getString(RattachColumns.DESCRIPTION));
+				rattach.setType(rs.getShort(RattachColumns.TYPE));
+				rattach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
+				
+				
+		
+				
+				dgserviceaccount.setClientId(rs.getString(DomainGserviceaccountColumns.CLIENT_ID));
+				dgserviceaccount.setClientSecret(rs.getAsciiStream(DomainGserviceaccountColumns.CLIENT_SECRET));
+				dgserviceaccount.setDomain(rs.getInt(DomainGserviceaccountColumns.DOMAIN));
+				dgserviceaccount.setEmailAddress(rs.getString(DomainGserviceaccountColumns.EMAIL_ADDRESS));
+				dgserviceaccount.setPublicKey(rs.getString(DomainGserviceaccountColumns.PUBLIC_KEY));
+				dgserviceaccount.setPrivateKey(rs.getAsciiStream(DomainGserviceaccountColumns.PRIVATE_KEY));
+				
+				rattachs.add(rattach);
+				
+				
+				
+			}
+			
+			DriveData dd=new DriveData(dgserviceaccount, rattachs);
+			return dd;
+			
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
+	
+	public static void deleteBlob(int id,String key) throws SQLException{
+		
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "UPDATE "+ SQLConstants.RATTACH+" SET "+RattachColumns.DATA+"=null "
+					+"WHERE "+RattachColumns.ID+" = ?";
+
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, id);
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void deleteDriveID(int id,String key) throws SQLException{
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "UPDATE "+ SQLConstants.RATTACH+" SET "+RattachColumns.DRIVE_ID+"=null "
+					+"WHERE "+RattachColumns.ID+" = ?";
+
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, id);
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
 	//--amoldar a rattach
 	public static void addDriveIds(String driveId, String parentId) throws SQLException, AonConnectionException {
 		
@@ -1225,8 +1413,8 @@ public class DatabaseSync {
 		PreparedStatement stmt = null;
 		try {
 			String sql = "INSERT INTO " + SQLConstants.RATTACH
-					+"("/*+RattachColumns.DRIVEID*/+","+/*RattachColumns.DPARENTID 
-					+*/") VALUES(?,?)";
+					+"("+RattachColumns.DRIVE_ID+","+RattachColumns.DPARENT_ID 
+					+") VALUES(?,?)";
 
 			connection = getConnection("demo.aonsolutions.net");
 			stmt = connection.prepareStatement(sql);
@@ -1245,6 +1433,33 @@ public class DatabaseSync {
 		
 	}
 	
-	
+	public static void addDriveId(String driveId,int id, String domain) throws SQLException, AonConnectionException {
+		
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+			String sql = "UPDATE " + SQLConstants.RATTACH
+					+" SET "+RattachColumns.DRIVE_ID + "= ? "
+					+ "WHERE "+RattachColumns.ID+" = ?";
+			
+			
+			connection = getConnection(domain);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, driveId);
+			stmt.setLong(2, id);
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
+
 	
 }
