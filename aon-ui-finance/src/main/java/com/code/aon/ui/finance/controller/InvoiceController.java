@@ -622,6 +622,20 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 		return CommonUtil.round(financeTotal);
 	}
+	
+	public double getTotalDetailQuantity(){
+		try {
+			IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), ((Invoice)this.getTo()).getId());
+			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_QUANTITY));
+			Object value = detailBean.getUniqueResult(projection, criteria);
+			return (value != null) ? ((Double)value) : 0;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
+		}
+		return 0;
+	}
 
 	public boolean isRemovable() {
 		InvoiceDetailController invoiceDetailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
