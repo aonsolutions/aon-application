@@ -49,6 +49,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private boolean forceCalculateTotals;
 	private boolean forceRefreshBooking;
 	private double vatPercent;
+	private double realDiscountPercent;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 	private Set<Invoice> invoices = new HashSet<Invoice>();
@@ -82,6 +83,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setVatPercent(double vatPercent) {
 		this.vatPercent = vatPercent;
+	}
+
+	@Transient
+	public double getRealDiscountPercent() {
+		return realDiscountPercent;
+	}
+	public void setRealDiscountPercent(double realDiscountPercent) {
+		this.realDiscountPercent = CommonUtil.round(realDiscountPercent, 6);
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})

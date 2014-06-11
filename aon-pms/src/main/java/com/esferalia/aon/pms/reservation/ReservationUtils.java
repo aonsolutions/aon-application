@@ -845,11 +845,11 @@ public class ReservationUtils implements IReservationConstants {
 					pricesList = new LinkedList<Double>();
 				}
 				for (int j=0; j<price.getNumberOfUnits(); j++) {
-					pricesList.add(price.getBase().getAmountBeforeTax().doubleValue());
+					pricesList.add(CommonUtil.round(price.getBase().getAmountBeforeTax().doubleValue() * (1 - reservation.getRealDiscountPercent() / 100), 6));
 				}
 				pricesMap.put(effectiveDate, pricesList);
 			} else if (price.getTotal() != null) {
-				serviceBase = price.getTotal().getAmountBeforeTax().doubleValue();
+				serviceBase = CommonUtil.round(price.getTotal().getAmountBeforeTax().doubleValue() * (1 - reservation.getRealDiscountPercent() / 100), 6);
 			}
 		}
 
