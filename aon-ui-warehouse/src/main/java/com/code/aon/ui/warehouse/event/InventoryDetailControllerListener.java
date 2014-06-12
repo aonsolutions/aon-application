@@ -28,7 +28,8 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 			Double q = new Double(quantity);
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID) ,inventoryDetail.getItem().getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), inventoryDetail.getItem().getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), inventoryDetail.getInventory().getWarehouse().getId());
 			Iterator<?> stockListIter = stockBean.getList(criteria).iterator();
 			if (stockListIter.hasNext()){
 				Stock stock = (Stock) stockListIter.next();
