@@ -220,6 +220,10 @@
 			<value>companyWorkPlace</value>
 		</managed-property>
 		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>lazyInitialization</property-name>
 			<value>true</value>
 		</managed-property>						
@@ -241,10 +245,27 @@
 			</map-entries>
 		</managed-property>		
 		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{companyWorkPlaceScopeListener}</value>
+			</list-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>optionalListenerClasses</property-name>
 			<value>#{companyWorkPlaceOptionalListeners}</value>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyWorkPlaceScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>WorkPlace_scope_id</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- **** COMPANY RBANK **** -->
 	<managed-bean>
