@@ -298,7 +298,7 @@ public class ReservationManager implements IReservationConstants {
 	private boolean createReservationAttach(ProjectReservation reservation, String actionType) throws ManagerBeanException {
 		if (reservation != null) {
 			ProjectAttachment projectAttach = new ProjectAttachment();
-			projectAttach.setDomain(getReservationUtils().getDomain());
+			projectAttach.setDomain(reservation.getDomain());
 			projectAttach.setProject(reservation.getProject());
 			projectAttach.setMimeType(MimeType.MIME_XML);
 			projectAttach.setDescription(getReservationUtils().obtainCrsAttachDescription(actionType));
