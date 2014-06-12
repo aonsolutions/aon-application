@@ -29,6 +29,10 @@
 			<property-name>beanName</property-name>
 			<value>warehouse</value>
 		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Warehouse_name</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!--  **** INVENTORY **** -->

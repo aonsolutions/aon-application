@@ -8,10 +8,10 @@
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="controller" value="#{questionValue}" />
-			<ui:param name="columnClasses" value="aon-editDataTable-numberColumn aon-width-60, aon-editDataTable-textColumn" />
 			<ui:define name="columns">
 
-				<aon:column>
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60"
+					alias="QuestionValue.id" >				
 					<f:facet name="header">
 						<aon:outputLabel
 							value="#{bundle.aon_id}" />
@@ -22,7 +22,7 @@
 					</f:facet>
 				</aon:column>
 	
-				<aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="QuestionValue_value"
 							value="#{bundle.aon_value}" />
