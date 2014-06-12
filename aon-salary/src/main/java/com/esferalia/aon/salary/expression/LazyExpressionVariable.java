@@ -38,8 +38,9 @@ public class LazyExpressionVariable implements IExpressionVariable<Object> {
 			addExpression();
 			return ctx.getVariable(expression.getName(), period.getStart(),
 					period.getEnd(), Object.class);
+		} catch (ExpressionExceptionWrapper w) {
+			throw w;
 		} catch (Throwable t) {
-			t.printStackTrace();
 			return null;
 		}
 	}

@@ -6,7 +6,6 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENG
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
@@ -39,7 +39,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -89,9 +88,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVisibility;
@@ -2613,7 +2612,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
 			ItemChangeHandler<TextBox, Payment> handler) {
-		dumpPayment(payment, row, iconStyleName, handler, true);
+		boolean isReadOnly = SpecialExpresion.isReadOnly(payment.getExpression()); 
+		dumpPayment(payment, row, iconStyleName, handler, !isReadOnly);
 	}
 
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
@@ -2655,8 +2655,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private <I extends Item> void dumpItem(I item, int row,
 			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
+		boolean isReadOnly = SpecialExpresion.isReadOnly(item.getExpression());
 		dumpItem(item, row, iconStyleName, handler, isDeduction, null, null,
-				true);
+				!isReadOnly);
 
 	}
 
@@ -2700,7 +2701,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 		handler.setDescriptionWidget(descriptionBox);
-
+		
 		TextBox amountBox = new ExpressionBox();
 		enable(amountBox, isEditable);
 		String amount = format(item.getAmount());
@@ -2709,7 +2710,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		handler.setExpressionWidget(amountBox);
-
 		contentAssistManager.addValueBox(amountBox);
 
 		InlineLabel dbAmountLabel = new InlineLabel();

@@ -2,9 +2,11 @@ package com.esferalia.aon.payroll.calculator.jooq;
 
 import static com.esferalia.aon.jooq.Keys.FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF;
 import static com.esferalia.aon.jooq.Keys.FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.GeozoneIrpf.GEOZONE_IRPF;
 import static com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT;
 import static com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 
 import java.sql.Connection;
@@ -13,21 +15,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Calendar;
 
+import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record4;
 import org.jooq.Result;
 import org.jooq.SortOrder;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant;
+import com.esferalia.aon.jooq.tables.Rattach;
 
 public class JooqGeozoneIrpf {
 
 	public static double getPercent(Connection conn, String geozone_code,
 			double amount, int descendants, int handicap, Date date) {
 		return getPercent(DSL.using(conn, getDefaultSettings()), geozone_code,
-				amount, (byte) descendants, (byte)handicap, date);
+				amount, (byte) descendants, (byte) handicap, date);
 	}
 
 	public static double getPercent(Connection conn, String geozone_code,
@@ -39,7 +46,8 @@ public class JooqGeozoneIrpf {
 	// ------------------------------------------------------------------------
 
 	private static double getPercent(DSLContext dslContext,
-			String geozone_code, double amount, byte descendants, byte handicap, Date date) {
+			String geozone_code, double amount, byte descendants,
+			byte handicap, Date date) {
 
 		GeozoneIrpfDescendant MIN_GEOZONE_IRPF_DESCENDANT = new GeozoneIrpfDescendant(
 				"max_geaozone_irpf_descendant");
@@ -68,8 +76,8 @@ public class JooqGeozoneIrpf {
 		.orderBy(GEOZONE_IRPF.AMOUNT.sort(SortOrder.DESC))
 		.fetch();
 		//@formatter:on
-		
-		for (Record4<Double, Double, Double, Double > record : result) {
+
+		for (Record4<Double, Double, Double, Double> record : result) {
 			Double handicap_percent = record
 					.getValue(GEOZONE_IRPF_HANDICAP.PERCENT);
 			Double descendat_percent = record
@@ -92,16 +100,38 @@ public class JooqGeozoneIrpf {
 
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+	public static void main(String[] args) throws ClassNotFoundException,
+			SQLException {
+
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = DriverManager.getConnection(
 				"jdbc:mysql://127.0.0.1:3306/pro-aonsolutions-net", "aon",
 				"40n");
-		Calendar current = Calendar.getInstance();
+		/*
+		 * Calendar current = Calendar.getInstance();
+		 * 
+		 * Date date = new Date(current.getTimeInMillis());
+		 * 
+		 * System.out.println(getPercent(connection, "01", 30000, (byte)1,
+		 * (byte)0, date));
+		 */
+		Settings settings = new Settings();
+		settings.setRenderSchema(false);
+		DSLContext dslContext = DSL.using(connection, settings);
 
-		Date date = new Date(current.getTimeInMillis());
+		//@formatter:off
+		Cursor<Record> cursor = 
+				dslContext.select()
+				.from(RATTACH)
+				.join(DOMAIN).onKey()
+				.where(DOMAIN.NAME.like("cemerida%")).fetchLazy();
+		//@formatter:on
 
-		System.out.println(getPercent(connection, "01", 30000, (byte)1, (byte)0, date));
+		for (Record record : cursor) {
+			String description = record.getValue(RATTACH.DESCRIPTION);
+			System.out.println(description);
+		}
 
+		// System.out.println(dslContext.select().from(RATTACH).where(RATTACH.DOMAIN.eq(1)).toString());
 	}
 }

@@ -127,7 +127,7 @@ public class Employees extends ResizeComposite implements
 	private static final int WORKPLACE_STATISTICS_INDEX = 2;
 	private static final int WORKPLACE_PARTSIT_INDEX = 3;
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
-	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not
+	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 2; // TODO : It's not
 																// statci ???
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
@@ -922,11 +922,6 @@ public class Employees extends ResizeComposite implements
 
 	}
 
-	private void onIrpfsSelected(IrpfDocuments docs) {
-		for (Listener listener : listeners) {
-			listener.onIrpfsSelected(docs);
-		}
-	}
 
 	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		for (Listener listener : listeners) {
@@ -1013,18 +1008,14 @@ public class Employees extends ResizeComposite implements
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
+				/*
 				TreeItem salaryPreviewItem = addImageItem(employeeItem,
 						"Preliminar", images.preview());
+						
 				SalaryPreview salaryPreview = new SalaryPreview();
 				salaryPreview.setEmployee(employee);
 
-				Date salaryDate = DateUtils.before(
-						DateUtils.after(new Date(), employee.getStartDate()),
-						employee.getEndDate());
 
-				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
-				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
-				Date issueDate = endDate;
 
 				salaryPreview.setStartDate(startDate);
 				salaryPreview.setEndDate(endDate);
@@ -1034,6 +1025,13 @@ public class Employees extends ResizeComposite implements
 				SalaryPreviewDocument salaryPreviewDocument = new SalaryPreviewDocument(
 						salaryPreview, employeesService);
 				salaryPreviewItem.setUserObject(salaryPreviewDocument);
+				*/
+				Date salaryDate = DateUtils.before(
+						DateUtils.after(new Date(), employee.getStartDate()),
+						employee.getEndDate());
+				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+				Date issueDate = endDate;
 
 				TreeItem salaryDraftItem = addImageItem(employeeItem,
 						"Borrador", images.draft());
@@ -1049,20 +1047,8 @@ public class Employees extends ResizeComposite implements
 				salaryDraftItem.setUserObject(draftObject);
 
 				// Agencia Tributaria
-				TreeItem aetItem = addImageItem(employeeItem,
+				addImageItem(employeeItem,
 						"Regularizaciones", images.aet());
-				/*
-				 * TreeItem aetPersonalDataItem = addImageItem(aetItem,
-				 * "Datos personales", images.person()); TreeItem
-				 * aetFamilyDataItem = addImageItem(aetItem,
-				 * "Ascendientes y descendientes", images.family()); TreeItem
-				 * aetEconomicDataItem = addImageItem(aetItem,
-				 * "Datos econ\u00f3micos", images.euro()); TreeItem
-				 * aetReglarizationDataItem = addImageItem(aetItem,
-				 * "Datos regularizaci\u00f3n", images.calendar()); TreeItem
-				 * aetResultsItem = addImageItem(aetItem, "Resultados",
-				 * images.calc());
-				 */
 			}
 
 			added++;
@@ -1232,10 +1218,6 @@ public class Employees extends ResizeComposite implements
 	private Date getFromDate() {
 		return formers ? (fromDate == null ? new Date(0) : fromDate)
 				: DateUtils.getFirstDayOfMonth();
-	}
-
-	private String getNamePattern() {
-		return namePattern;
 	}
 
 	private void collapse() {

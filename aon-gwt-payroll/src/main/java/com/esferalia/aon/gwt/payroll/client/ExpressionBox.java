@@ -3,15 +3,10 @@
  */
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.UserExpresion.getNoLabelExpression;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.shared.UserExpresion;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.TextBox;
+import com.ibm.icu.impl.duration.impl.DataRecord.EPluralization;
 
 /**
  * @author rtrepiana
@@ -19,7 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class ExpressionBox extends TextBox {
 
-	private UserExpresion userExpresion;
+	private SpecialExpresion specialExpresion;
 
 	public ExpressionBox() {
 	}
@@ -41,35 +36,17 @@ public class ExpressionBox extends TextBox {
 	// ------------------------------------------------------------------------
 
 	private void setExpression(String expression) {
-		try {
-			userExpresion = parse(expression);
-			super.setText(userExpresion.getInput());
-		} catch (IllegalArgumentException e) {
-			userExpresion = new UserExpresion() {
-				public String replace(String replacement) {return null;}
-			};// Null UserExpression
-		}
+		specialExpresion = SpecialExpresion.parse(expression);
+		super.setText(specialExpresion.getInput());
+		setReadOnly(specialExpresion.isReadOnly());
 	}
 
 	private String getExpression() {
 
-		return userExpresion.replace(super.getText());
+		return specialExpresion.replace(super.getText());
 	}
 
 	// ------------------------------------------------------------------------
 
-	public static boolean accept(String expression) {
-		try {
-			getNoLabelExpression(expression);
-			return true;
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
-	}
-
-	private static UserExpresion parse(final String expression)
-			throws IllegalArgumentException {
-		return getNoLabelExpression(expression);
-	}
 
 }

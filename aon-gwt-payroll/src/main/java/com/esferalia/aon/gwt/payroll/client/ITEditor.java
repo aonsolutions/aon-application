@@ -18,8 +18,13 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -58,7 +63,8 @@ import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 
-public class ITEditor extends AbstractPager implements RequiresResize, CallculateCallback {
+public class ITEditor extends AbstractPager implements RequiresResize,
+		CallculateCallback {
 
 	private static final String ACTIVE = "Activo";
 	private static int selectedYear;
@@ -150,7 +156,6 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 		public MouseEventsHandlers(TimeLineChart timelineChart) {
 			timelineChart.addMouseOverHandler(this);
 			timelineChart.addContextMenuHandler(this);
-			timelineChart.addScrollHandler(this);
 		}
 
 		@Override
@@ -158,17 +163,21 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 			try {
 				Element el = Element
 						.as(event.getNativeEvent().getEventTarget());
+
 				mouseClientX = event.getClientX();
 				mouseClientY = event.getClientY();
-				cadenaTooltip = el.getPropertyJSO("logicalname").toString();
+
+				cadenaTooltip = getLogicalName(el, mouseClientX, mouseClientY);
+
+				if (cadenaTooltip == null)
+					return;
 
 				if (tooltip.isShowing() == false) {
-
 					evalTooltip();
 				}
 
 			} catch (Throwable ex) {
-
+				Window.alert("Error [onMouseOver] : " + ex.getMessage());
 			} finally {
 				event.stopPropagation();
 			}
@@ -194,7 +203,8 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 						tooltipCallback.cancel();
 				}
 
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
+				Window.alert("Error [onMouseOver] : " + ex.getMessage());
 
 			} finally {
 				event.preventDefault();
@@ -217,7 +227,6 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 	}
 
 	public final void setITEditor(final ITDataObject dataObject) {
-
 		dataObject.load(new AsyncCallback<ITDataObject>() {
 
 			@Override
@@ -232,7 +241,7 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 
 			@Override
 			public void onFailure(Throwable caught) {
-
+				Window.alert(caught.getMessage());
 			}
 		});
 	}
@@ -258,9 +267,9 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 			}
 		};
 		VisualizationUtils.loadVisualizationApi(onLoadCallback,
-				TimeLineChart.PACKAGE);	
+				TimeLineChart.PACKAGE);
 	}
-	
+
 	private final void reloadTimeline() {
 		AbstractDataTable dataTable = createTable();
 		Options options = createOptions(dataTable);
@@ -584,7 +593,7 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 								.getTypeDischargeListBox());
 						newData.setLeaveStartDate(leaveStartDate);
 						newData.setLeaveEndDate(leaveEndDate);
-						
+
 						dataObject.addLeaveItem(newData);
 						reloadTimeline();
 					}
@@ -635,11 +644,9 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 						newDataPerson.setDischarge_cause(dischargeCause);
 						newDataPerson.setNumType(leaveType);
 						newDataPerson.setType(getEnumConstant(
-								ITDataPerson.Type.class, leaveType));						
+								ITDataPerson.Type.class, leaveType));
 						dataObject.updateLeaveItem(newDataPerson);
 						reloadTimeline();
-					
-						
 
 					} catch (Exception ex) {
 						Window.alert(ex.getMessage() + " " + ex.getCause()
@@ -759,9 +766,9 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 	private void enableUndoRedoButtons() {
 		undoButton.setEnabled(dataObject.canUndo());
 		redoButton.setEnabled(dataObject.canRedo());
-		
+
 		saveButton.setEnabled(dataObject.canUndo());
-		
+
 	}
 
 	// ------------------------------------------------------------- UiHandlers
@@ -780,12 +787,12 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 		dataObject.redo();
 		reloadTimeline();
 	}
-	
+
 	@UiHandler("saveButton")
 	void onClick(ClickEvent event) {
 		dataObject.save(this);
-	}	
-	
+	}
+
 	@UiHandler("dateListBox")
 	void onYearChanged(ChangeEvent event) {
 
@@ -878,42 +885,43 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 		}
 
 	}
-	
-	// TODO: To EnumUtils ???
-		public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass, Integer ordinal) {
-			if ( ordinal == null )
-				return null;
-			if ( ordinal < 0 )
-				return null;
-			
-			T constants [] = enumClass.getEnumConstants();
-			if ( ordinal >= constants.length )
-				return null;
-			
-			return constants[ordinal];
-		}
-	
-		@Override
-		public void onCalculateSuccess(ITDataObject object) {
-			
-			boolean dataObjectChanged = this.dataObject != object;
-			
-			if(dataObjectChanged) {
-				this.dataObject = object;
-				this.dataObject.addListener(new UndoListener());
-				this.initDateListBox();
-				this.finalizado = false;
-				this.initSuggestBox();
-				this.printTimelineChart();
-			}			
-		}
 
-		@Override
-		public void onCalculateFailure(Throwable throwable) {
-			// TODO Apéndice de método generado automáticamente
-			Window.alert(throwable.getMessage());
-			
+	// TODO: To EnumUtils ???
+	public static <T extends Enum<?>> T getEnumConstant(Class<T> enumClass,
+			Integer ordinal) {
+		if (ordinal == null)
+			return null;
+		if (ordinal < 0)
+			return null;
+
+		T constants[] = enumClass.getEnumConstants();
+		if (ordinal >= constants.length)
+			return null;
+
+		return constants[ordinal];
+	}
+
+	@Override
+	public void onCalculateSuccess(ITDataObject object) {
+
+		boolean dataObjectChanged = this.dataObject != object;
+
+		if (dataObjectChanged) {
+			this.dataObject = object;
+			this.dataObject.addListener(new UndoListener());
+			this.initDateListBox();
+			this.finalizado = false;
+			this.initSuggestBox();
+			this.printTimelineChart();
 		}
+	}
+
+	@Override
+	public void onCalculateFailure(Throwable throwable) {
+		// TODO Apéndice de método generado automáticamente
+		Window.alert(throwable.getMessage());
+
+	}
 
 	// ---------------------------------------------------------------- Library
 
@@ -1177,7 +1185,7 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 		public void setRowEndDate(Date rowEndDate) {
 			this.rowEndDate = rowEndDate;
 		}
-		
+
 		/**
 		 * @return discharge_cause - Min value -1
 		 */
@@ -1232,6 +1240,82 @@ public class ITEditor extends AbstractPager implements RequiresResize, Callculat
 
 			}
 		}
+	}
+
+	private static class JsLogicalName extends JavaScriptObject {
+
+		private static class JsData extends JavaScriptObject {
+			protected JsData() {
+			}
+
+			public final native int getvR() /*-{
+				return this.vR;
+			}-*/;
+
+			public final native int getuR() /*-{
+				return this.uR;
+			}-*/;
+
+		}
+
+		protected JsLogicalName() {
+		}
+
+		public final native String getType() /*-{
+			return this.type;
+		}-*/;
+
+		public final native JsData getData() /*-{
+			return this.data;
+		}-*/;
+	}
+
+	private static String getLogicalName(Element el, int x, int y) {
+		String json = el.getPropertyString("logicalname");
+		if (json != null)
+			return json; // JsonUtils.safeEval(json);
+
+		Document doc = Document.get();
+		//
+		if (IFrameElement.is(el)) {
+			x -= el.getAbsoluteLeft();
+			y -= el.getAbsoluteTop();
+			doc = IFrameElement.as(el).getContentDocument();
+		}
+
+		NodeList<Element> rects = doc.getElementsByTagName("rect");
+
+		for (int i = 0; i < rects.getLength(); i++) {
+
+			Element rect = rects.getItem(i);
+
+			json = rect.getPropertyString("logicalname");
+			if (json == null)
+				continue;
+
+			JsLogicalName logicalName = JsonUtils.safeEval(json);
+
+			if (!"bar".equals(logicalName.getType()))
+				continue;
+
+			if (isElementAt(rect, x, y))
+				return json;
+
+		}
+
+		return null;
+	}
+
+	private static boolean isElementAt(Element el, int x, int y) {
+		if (x < el.getAbsoluteLeft())
+			return false;
+		if (x > el.getAbsoluteLeft() + el.getOffsetWidth())
+			return false;
+		if (y < el.getAbsoluteTop())
+			return false;
+		if (y > el.getAbsoluteTop() + el.getOffsetHeight())
+			return false;
+		return true;
 	}
 
 }
