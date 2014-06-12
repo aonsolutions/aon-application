@@ -54,6 +54,7 @@ public interface IReservationConstants {
 	String TARIFF_ALIAS = "ALIAS";
 	String SERVICE_ALIAS = "ALIAS";
 	String SERVICE_BREAKDOWN = "SERVICE_BREAKDOWN";
+	String AGENCY_COMMISSION = "AGENCY_COMMISSION";
 
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";

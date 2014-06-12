@@ -41,6 +41,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -66,6 +67,7 @@ public class ReservationManager implements IReservationConstants {
 	private ReservationUtils reservationUtils;
 	private IPriceStrategy priceStrategy;
 	private String xmlData;
+	private boolean calculateCommission;
 	private boolean calculateTaxData;
 	private Map<String, List<Integer>> roomServicesMap;
 	private Map<String, Integer> successMap;
@@ -190,7 +192,8 @@ public class ReservationManager implements IReservationConstants {
 	private void createReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
 		String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS);
 		try {
-			String hotelCode = reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode();
+			Hotel hotel = getReservationUtils().obtainHotel(reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode());
+			getReservationUtils().setDomain(hotel.getDomain());
 			String reservationCode = findReservationId(reservationType.getResGlobalInfo(), EXT);
 			String operationDate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, DATE);
 			String operationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
@@ -201,8 +204,10 @@ public class ReservationManager implements IReservationConstants {
 			if (agencyInfo == null) {
 				agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
 			}
+			Customer agency = getReservationUtils().obtainAgency(agencyInfo);
 			double agencyCommissionPercent = getReservationUtils().obtainAgencyCommissionPercent(agencyInfo);
 			double agencyCommissionAmount = getReservationUtils().obtainAgencyCommissionAmount(agencyInfo);
+			calculateCommission = agencyCommissionAmount != 0 && getReservationUtils().isAgencyCommission(agency);
 			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
 			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, null);
 			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
@@ -218,9 +223,6 @@ public class ReservationManager implements IReservationConstants {
 				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
 			}
 
-			Hotel hotel = getReservationUtils().obtainHotel(hotelCode);
-			getReservationUtils().setDomain(hotel.getDomain());
-
 			reservation.setHotel(hotel);
 			reservation.setHotelReservation(hotel);
 			reservation.setCode(reservationCode);
@@ -229,7 +231,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setStartTime(DateUtils.addHours(reservation.getStartDate(), 14));
 			reservation.setEndTime(DateUtils.addHours(reservation.getEndDate(), 12));
 			reservation.setSeller(getReservationUtils().obtainSeller(sellerSource));
-			reservation.setAgency(getReservationUtils().obtainAgency(agencyInfo));
+			reservation.setAgency(agency);
 			reservation.setAgencyCommissionPercent(agencyCommissionPercent);
 			reservation.setAgencyCommissionAmount(agencyCommissionAmount);
 			reservation.setAgencyRebate(agencyRebate != null && agencyRebate.equals(AGENCY_REBATE));
@@ -240,7 +242,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setTaxableBase(taxableBase);
 			reservation.setVatQuota(vatQuota);
 			reservation.setOtherTaxQuota(otherTaxQuota);
-			reservation.setTotal(total);
+			reservation.setTotal(calculateCommission ? CommonUtil.round(total - agencyCommissionAmount) : total);
 			reservation.setRemarks(remarks);
 			reservation.setSource(ReservationSource.CRS);
 			reservation.setCrsCode(reservationCrsCode);
@@ -455,18 +457,18 @@ public class ReservationManager implements IReservationConstants {
 			} else {
 				throw new ReservationException("Reservation Total is not correct", reservation.getCrsCode(), 197);
 			}
-
+		} else {
+			if (reservation.getTaxableBase() != totalTaxableBase) {
+				throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
+			}
 		}
 		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
-
-		if (reservation.getTaxableBase() != totalTaxableBase) {
-			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
-		}
 	}
 
-	private void calculateRealDiscountPercent(ServicesType servicesType, ProjectReservation reservation) {
+	private void calculateRealDiscountPercent(ServicesType servicesType, ProjectReservation reservation) throws ReservationException {
 		double discountPercent = 0;
-		if (reservation.getDiscountAmount() != 0) {
+		if (calculateCommission || reservation.getDiscountAmount() != 0) {
+			double totalDiscount = calculateCommission ? reservation.getAgencyCommissionAmount() : reservation.getDiscountAmount();
 			double totalServices = 0;
 			for (int i=0; i<servicesType.sizeOfServiceArray(); i++) {
 				Service service = servicesType.getServiceArray(i);
@@ -478,8 +480,14 @@ public class ReservationManager implements IReservationConstants {
 				}
 			}
 
-			if (totalServices == CommonUtil.round(reservation.getTotal() + reservation.getDiscountAmount())) {
+			if (totalServices == CommonUtil.round(reservation.getTotal() + totalDiscount)) {
 				discountPercent = (1 - reservation.getTotal() / totalServices) * 100;
+			} else {
+				if (calculateCommission) {
+					throw new ReservationException("Reservation Commission Amount is not correct", reservation.getCrsCode(), 197);
+				} else {
+					throw new ReservationException("Reservation Discount Amount is not correct", reservation.getCrsCode(), 197);
+				}
 			}
 		}
 		reservation.setRealDiscountPercent(discountPercent);

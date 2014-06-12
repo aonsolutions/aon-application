@@ -862,10 +862,10 @@ public class ReservationUtils implements IReservationConstants {
 
 			for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); date.before(toDate); date=DateUtils.addDays(date, 1)) {
 				for (Double price : pricesMap.get(date)) {
-					serviceBase = CommonUtil.round(serviceBase - price);
+					serviceBase = CommonUtil.round(serviceBase - price, 6);
 				}
 			}
-			if (serviceBase != 0) {
+			if (CommonUtil.round(serviceBase, 4) != 0) {
 				throw new ReservationException("Service Price is not correctly defined for RPH " + service.getServiceRPH() + ".", reservation.getCrsCode(), 197);
 			}
 		} else {
@@ -933,6 +933,23 @@ public class ReservationUtils implements IReservationConstants {
 			return CRS_ATTACH_CANCEL;
 		}
 		return null;
+	}
+
+	public boolean isAgencyCommission(Customer agency) throws ManagerBeanException {
+		if (agency != null && agency.getId() != null) {
+			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), agency.getRegistry().getId());
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), AGENCY_COMMISSION);
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
+			RegistryAddInfo rAddInfo = null;
+			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
+				rAddInfo = (RegistryAddInfo)ito;
+				break;
+			}
+			return rAddInfo != null && rAddInfo.getValue().equalsIgnoreCase(YES);
+		}
+		return false;
 	}
 
 }
