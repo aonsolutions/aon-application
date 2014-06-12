@@ -217,7 +217,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 	        ReservationUtils reservationUtils = new ReservationUtils();
 			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
-			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), getServiceReservationRoom());
+			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), reservationService.getProjectReservation().getCustomer());
 			setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 		}
 	}	
@@ -225,21 +225,19 @@ public class ProjectReservationServiceController extends LinesController {
 	public void onQuantityChanged(ValueChangeEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		Item item = reservationService.getItem();
-		if (item != null && item.getId() != null) {
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-				setServiceQuantity(CommonUtil.round((Double)event.getNewValue()));
-	
-				ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
-				reservationServiceDetail.setProjectReservationService(reservationService);
-				reservationServiceDetail.setQuantity(getServiceQuantity());
+		if (item != null && item.getId() != null && event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			setServiceQuantity(CommonUtil.round((Double)event.getNewValue()));
 
-		        ReservationUtils reservationUtils = new ReservationUtils();
-				double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
-				double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), getServiceReservationRoom());
-				setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
-			} else {
-				setServiceQuantity(1);
-			}
+			ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
+			reservationServiceDetail.setProjectReservationService(reservationService);
+			reservationServiceDetail.setQuantity(getServiceQuantity());
+
+	        ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
+			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), reservationService.getProjectReservation().getCustomer());
+			setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
+		} else {
+			setServiceQuantity(1);
 		}
 	}	
 

@@ -32,7 +32,7 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB implements 
 
 	@Transient
 	public Registry getRegistry() {
-		return (getProjectReservation().getAgency() != null) ? getProjectReservation().getAgency().getRegistry() : null;
+		return getProjectReservation().getCustomer().getRegistry();
 	}
 
 	@Transient
