@@ -18,8 +18,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/aon.parent-7.35-SNAPSHOT/aon-common-resources</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/aon.parent-7.35-SNAPSHOT/aon-common-resources</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-common-resources</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-common-resources</connection>
 	</scm>
 
   	<build>

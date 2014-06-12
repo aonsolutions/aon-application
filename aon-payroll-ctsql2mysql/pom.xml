@@ -17,8 +17,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/aon.parent-7.35-SNAPSHOT/aon-payroll-ctsql2mysql</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/aon.parent-7.35-SNAPSHOT/aon-payroll-ctsql2mysql</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-payroll-ctsql2mysql</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-payroll-ctsql2mysql</connection>
 	</scm>
 
 	<repositories>
