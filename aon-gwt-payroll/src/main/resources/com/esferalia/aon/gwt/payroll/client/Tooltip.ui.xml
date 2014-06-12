@@ -76,7 +76,7 @@
 					<g:InlineLabel ui:field="endDateLabel"></g:InlineLabel>
 				</td>
 				<td>
-					<datepicker:DateBox ui:field="fromDateBox" />
+					<datepicker:DateBox ui:field="endDateBox" />
 					<g:Label ui:field="endDate"></g:Label>
 					
 				</td>
