@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -45,7 +46,7 @@ public class StockReport implements ICollectionProvider{
 	
 	public StockManager getManager() {
 		if (manager == null) {
-			manager = new StockManager();
+			manager = new StockManager(AonUtil.getDomainName(), AccountingUtil.getDefaultSettings());
 		}
 		return manager;
 	}
