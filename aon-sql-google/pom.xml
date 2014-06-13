@@ -25,7 +25,7 @@
 				</executions>
 				<configuration>
 					<targetPackage>com.esferalia.aon.google.sql</targetPackage>
-					<dbtables>task,domain.*,registry,user.*,commercial.*,project.*,enterprise,rmedia,rattach</dbtables>
+					<dbtables>person,mail_account,task,domain.*,registry,user.*,commercial.*,project.*,enterprise,rmedia,rattach</dbtables>
 				</configuration>
 			</plugin>
 		</plugins>
