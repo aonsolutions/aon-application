@@ -2317,6 +2317,8 @@ CREATE TABLE `rattach` (
   `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `drive_id` VARCHAR(45) NULL,
+  `dparent_id` VARCHAR(45) NULL,   
   PRIMARY KEY  (`id`),
   KEY `IDX_RATTACH_SCOPE` (`scope`),
   KEY `IDX_RATTACH_CATEGORY` (`category`),
