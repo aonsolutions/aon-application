@@ -1,4 +1,4 @@
-# Version: Upgrade from version 7.31.1 to 7.32.0.
+# Version: Upgrade from version 7.35.0 to 7.36.0.
 # Created by: rtrepiana@esferalia.com
 # Creation Date: 02/06/2014 
 
@@ -20,5 +20,6 @@ CREATE TABLE `domain_gserviceaccount` (
 
 ALTER TABLE `rattach` ADD COLUMN `drive_id` VARCHAR(45) NULL  AFTER `attach_date` , ADD COLUMN `dparent_id` VARCHAR(45) NULL  AFTER `drive_id` ;
 
+UPDATE `db_version` SET `version_number` = '7.36.0';
 
 SET FOREIGN_KEY_CHECKS=1;
