@@ -16,7 +16,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
-import com.code.aon.fiscal.enumeration.FiscalBatchType;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
@@ -44,7 +43,6 @@ public class FiscalCollectionsController {
 	private List<SelectItem> mod347Types;
 	private List<SelectItem> mod349Statuses;
 	private List<SelectItem> mod349Types;	
-	private List<SelectItem> fiscalBatchTypes;
 	private List<SelectItem> fiscalModelStatuses;
 
 	public List<SelectItem> getWithholdingStatuses() {
@@ -148,19 +146,6 @@ public class FiscalCollectionsController {
 			quarterPeriods.add( new SelectItem(Period.T4, Period.T4.getName(locale)) );
 		}
 		return quarterPeriods;
-	}
-	
-	public List<SelectItem> getFiscalBatchTypes() {
-		if (fiscalBatchTypes == null) {
-			fiscalBatchTypes = new LinkedList<SelectItem>();
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			for (FiscalBatchType type:FiscalBatchType.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				fiscalBatchTypes.add(item);
-			}
-		}
-		return fiscalBatchTypes;
 	}
 
 	public List<SelectItem> getMod347Formats() {

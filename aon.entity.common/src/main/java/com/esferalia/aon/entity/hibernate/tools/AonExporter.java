@@ -310,8 +310,6 @@ public class AonExporter extends GenericExporter{
 		//AON-FISCAL  	
 		map.put("FiscalActivity","com.code.aon.fiscal.FiscalActivity");
 		map.put("FiscalActivityInfo","com.code.aon.fiscal.FiscalActivityInfo");
-		map.put("FiscalBatch","com.code.aon.fiscal.FiscalBatch");
-		map.put("FiscalBatchDetail","com.code.aon.fiscal.FiscalBatchDetail");
 		map.put("FiscalModel","com.code.aon.fiscal.FiscalModel");
 		map.put("FiscalModelDetail","com.code.aon.fiscal.FiscalModelDetail");
 		map.put("Mod347","com.code.aon.fiscal.Mod347");
@@ -374,10 +372,6 @@ public class AonExporter extends GenericExporter{
 		map.put("SurveyResponseDetail","com.code.aon.marketing.SurveyResponseDetail");
 		map.put("SurveyWorkflow","com.code.aon.marketing.SurveyWorkflow");
 		map.put("Template","com.code.aon.marketing.Template");
-		
-		//AON-MESSAGING
-		map.put("Message","com.code.aon.messaging.Message");
-		map.put("MessageContent","com.code.aon.messaging.MessageContent");
 		
 		//AON-PAYROLL 
 		map.put("Agreement","com.esferalia.aon.payroll.Agreement");
@@ -550,6 +544,11 @@ public class AonExporter extends GenericExporter{
 		map.put("WarehouseTransfer","com.code.aon.warehouse.WarehouseTransfer");
 		map.put("WarehouseTransferDetail","com.code.aon.warehouse.WarehouseTransferDetail");
 		
+		//AON-MESSAGING
+		//map.put("Message","com.code.aon.messaging.Message");
+		//map.put("MessageContent","com.code.aon.messaging.MessageContent");
+		//map.put("FiscalBatch","com.code.aon.fiscal.FiscalBatch");
+		//map.put("FiscalBatchDetail","com.code.aon.fiscal.FiscalBatchDetail");
 	}
 
 }

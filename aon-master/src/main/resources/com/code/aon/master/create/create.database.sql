@@ -59,6 +59,22 @@ CREATE TABLE `domain` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
 
 #
+# Structure for the `domain_gserviceaccount` table : 
+#
+
+CREATE TABLE `domain_gserviceaccount` (
+  `client_id` varchar(100) COLLATE latin1_spanish_ci NOT NULL,
+  `email_address` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `public_key` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `private_key` mediumblob,
+  `client_secret` mediumblob,
+  `domain` int(4) DEFAULT NULL,
+  PRIMARY KEY (`client_id`),
+  KEY `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN_IDX` (`domain`),
+  CONSTRAINT `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+#
 # Structure for the `academic_year` table : 
 #
 
@@ -3827,24 +3843,6 @@ CREATE TABLE `domain_application_module` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
 
 #
-# Structure for the `enterprise_agreement` table : 
-#
-
-CREATE TABLE `enterprise_agreement` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
-  `agreement` int(4) NOT NULL COMMENT 'Identificador del Convenio',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ENTERPRISE_AGREEMENT_ENTERPRISE` (`enterprise`),
-  KEY `IDX_ENTERPRISE_AGREEMENT_AGREEMENT` (`agreement`),
-  KEY `IDX_ENTERPRISE_AGREEMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ENTERPRISE_AGREEMENT_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_AGREEMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_AGREEMENT_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenio de la Empresa';
-
-#
 # Structure for the `enterprise_data` table : 
 #
 
@@ -4036,51 +4034,6 @@ CREATE TABLE `fs_activity_info` (
   CONSTRAINT `FK_FS_ACTIVITY_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_ACTIVITY_INFO_FS_ACTIVITY` FOREIGN KEY (`fs_activity`) REFERENCES `fs_activity` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fiscal. Informacion de los Datos previos de Modulos';
-
-#
-# Structure for the `fs_batch` table : 
-#
-
-CREATE TABLE `fs_batch` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `date` date NOT NULL COMMENT 'Fecha de creacion del Lote',
-  `administration` tinyint(2) NOT NULL default '0' COMMENT 'Administracion',
-  `year` int(4) NOT NULL COMMENT 'Ejercicio del Lote',
-  `period` tinyint(2) default '0' COMMENT 'Periodo del Lote',
-  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
-  `type` tinyint(2) default '0' COMMENT 'Tipo de Declaracion/Impuesto',
-  `issue_date` date default NULL COMMENT 'Fecha de generacion del archivo',
-  `data` mediumblob COMMENT 'Archivo Generado',
-  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Lote',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_FS_BATCH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lotes de declaraciones / Impuestos';
-
-#
-# Structure for the `fs_batch_detail` table : 
-#
-
-CREATE TABLE `fs_batch_detail` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `fs_batch` int(4) NOT NULL default '0' COMMENT 'Identificador del Lote',
-  `child_domain` int(4) NOT NULL COMMENT 'Identificador del Dominio de la declaracion',
-  `company` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre / Razon Social de la declaracion',
-  `detail_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
-  `year` int(4) NOT NULL COMMENT 'Ejercicio de la declaracion',
-  `period` tinyint(2) default '0' COMMENT 'Periodo de la declaracion',
-  `complementary` tinyint(1) default '0' COMMENT 'Declaracion complementaria',
-  `replacement` tinyint(1) default '0' COMMENT 'Declaracion sustitutiva',
-  `description` varchar(40) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion',
-  `result` double(15,3) default '0.000' COMMENT 'Resultado de la declaracion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_FS_BATCH_DETAIL_DOMAIN` (`domain`),
-  KEY `IDX_FS_BATCH_DETAIL_FS_BATCH` (`fs_batch`),
-  CONSTRAINT `FK_FS_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_BATCH_DETAIL_FS_BATCH` FOREIGN KEY (`fs_batch`) REFERENCES `fs_batch` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los lotes de declaraciones / impuestos';
 
 #
 # Structure for the `fs_mod347` table : 
@@ -4454,86 +4407,6 @@ CREATE TABLE `fs_model_detail` (
   CONSTRAINT `FK_FS_MODEL_DETAIL_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Declaraciones Fiscales';
 
-#
-# Structure for the `fs_renting` table : 
-#
-
-CREATE TABLE `fs_renting` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
-  `period` tinyint(2) default '0' COMMENT 'Periodo de la Declaracion',
-  `administration` tinyint(2) default '0' COMMENT 'Administracion',
-  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
-  `status` tinyint(2) default '0' COMMENT 'Estado de la Declaracion',
-  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
-  `complementary` tinyint(1) default '0' COMMENT 'Declaracion complementaria',
-  `replacement` tinyint(1) default '0' COMMENT 'Declaracion sustitutiva',
-  `lessor_count_accumulated` double(15,3) default '0.000' COMMENT 'Numero de arrendadores acumulado',
-  `lessor_count_declared` double(15,3) default '0.000' COMMENT 'Numero de arrendadores declarado',
-  `lessor_count_result` double(15,3) default '0.000' COMMENT 'Numero de arrendadores resultado',
-  `lessor_count_adjust` double(15,3) default '0.000' COMMENT 'Numero de arrendadores ajuste',
-  `lessor_count` double(15,3) default '0.000' COMMENT 'Numero de arrendadores',
-  `renting_amount_accumulated` double(15,3) default '0.000' COMMENT 'Importe de los arrendamientos acumulado',
-  `renting_amount_declared` double(15,3) default '0.000' COMMENT 'Importe de los arrendamientos declarado',
-  `renting_amount_result` double(15,3) default '0.000' COMMENT 'Importe de los arrendamientos resultado',
-  `renting_amount_adjust` double(15,3) default '0.000' COMMENT 'Importe de los arrendamientos ajuste',
-  `renting_amount` double(15,3) default '0.000' COMMENT 'Importe de los arrendamientos',
-  `retention_accumulated` double(15,3) default '0.000' COMMENT 'Importe de la retencion acumulado',
-  `retention_declared` double(15,3) default '0.000' COMMENT 'Importe de la retencion declarado',
-  `retention_result` double(15,3) default '0.000' COMMENT 'Importe de la retencion resultado',
-  `retention_adjust` double(15,3) default '0.000' COMMENT 'Importe de la retencion ajuste',
-  `retention` double(15,3) default '0.000' COMMENT 'Importe de la retencion',
-  `lessor_count_in_kind_accumulated` double(15,3) default '0.000' COMMENT 'Numero de arrendadores (especie) acumulado',
-  `lessor_count_in_kind_declared` double(15,3) default '0.000' COMMENT 'Numero de arrendadores (especie) declarado',
-  `lessor_count_in_kind_result` double(15,3) default '0.000' COMMENT 'Numero de arrendadores (especie) resultado',
-  `lessor_count_in_kind_adjust` double(15,3) default '0.000' COMMENT 'Numero de arrendadores (especie) ajuste',
-  `lessor_count_in_kind` double(15,3) default '0.000' COMMENT 'Numero de arrendadores (especie)',
-  `remuneration_in_kind_accumulated` double(15,3) default '0.000' COMMENT 'Retribucion en especie acumulado',
-  `remuneration_in_kind_declared` double(15,3) default '0.000' COMMENT 'Retribucion en especie declarado',
-  `remuneration_in_kind_result` double(15,3) default '0.000' COMMENT 'Retribucion en especie resultado',
-  `remuneration_in_kind_adjust` double(15,3) default '0.000' COMMENT 'Retribucion en especie ajuste',
-  `remuneration_in_kind` double(15,3) default '0.000' COMMENT 'Retribucion en especie',
-  `account_deposit_accumulated` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta acumulado',
-  `account_deposit_declared` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta declarado',
-  `account_deposit_result` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta resultado',
-  `account_deposit_adjust` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta ajuste',
-  `account_deposit` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta',
-  `extra_charge` double(15,3) default '0.000' COMMENT 'Recargo',
-  `delay_interest` double(15,3) default '0.000' COMMENT 'Intereses de demora',
-  `total_tax_debt` double(15,3) default '0.000' COMMENT 'Total deuda tributaria',
-  `rbank` int(4) default NULL COMMENT 'Banco de la Compañia',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_FS_RENTING_RBANK` (`rbank`),
-  KEY `IDX_FS_RENTING_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_RENTING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_RENTING_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de IRPF';
-
-#
-# Structure for the `fs_renting_detail` table : 
-#
-
-CREATE TABLE `fs_renting_detail` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `fs_renting` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
-  `type` tinyint(2) default '0' COMMENT 'Modalidad',
-  `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
-  `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Apellidos  y Nombre',
-  `paid_returns` double(15,3) default '0.000' COMMENT 'Rendimientos satisfechos',
-  `percent` double(15,3) default '0.000' COMMENT 'Porcentaje de retencion',
-  `account_deposit` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta',
-  `accrual_period` int(4) default '0' COMMENT 'Periodo de devengo',
-  `address` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Direccion',
-  `city` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Municipio',
-  `province` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Provincia',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_FS_RENTING_DETAIL_FS_RENTING` (`fs_renting`),
-  KEY `IDX_FS_RENTING_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_RENTING_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FS_RENTING_DETAIL_FS_RENTING` FOREIGN KEY (`fs_renting`) REFERENCES `fs_renting` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de la Declaracion de IRPF';
 
 #
 # Structure for the `fs_vat` table : 
@@ -5548,40 +5421,6 @@ CREATE TABLE `mark` (
   CONSTRAINT `FK_MARK_ALUMN` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`),
   CONSTRAINT `FK_MARK_SUBJECT` FOREIGN KEY (`subject`) REFERENCES `course_academicskill` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Notas de Alumnos';
-
-#
-# Structure for the `message_content` table : 
-#
-
-CREATE TABLE `message_content` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `content` text collate latin1_spanish_ci NOT NULL COMMENT 'Contenido del Mensaje',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_MESSAGE_CONTENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MESSAGE_CONTENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contenido de Mensajes';
-
-#
-# Structure for the `message_log` table : 
-#
-
-CREATE TABLE `message_log` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `message_id` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador del Mensaje para el servidor de Esendex',
-  `message_content` int(4) default NULL COMMENT 'Identificador del Contenido del Mensaje',
-  `recipient` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Destinatario del Mensaje',
-  `type` varchar(10) collate latin1_spanish_ci default NULL COMMENT 'Tipo de Mensaje',
-  `sent_date` datetime NOT NULL COMMENT 'Fecha y hora de envio del Mensaje',
-  `message_parts` tinyint(2) NOT NULL default '1' COMMENT 'Numero de partes que componen el Mensaje',
-  `username` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Usuario que envia el mensaje',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_MESSAGE_LOG_MESSAGE_CONTENT` (`message_content`),
-  KEY `IDX_MESSAGE_LOG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MESSAGE_LOG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MESSAGE_LOG_MESSAGE_CONTENT` FOREIGN KEY (`message_content`) REFERENCES `message_content` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
 
 #
 # Structure for the `mk_campaign` table : 
@@ -7647,7 +7486,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.35.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.36.1');
 
 COMMIT;
 
