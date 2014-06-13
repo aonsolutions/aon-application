@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.calculator.jooq;
 
-import static com.esferalia.aon.jooq.Keys.FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF;
-import static com.esferalia.aon.jooq.Keys.FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.GeozoneIrpf.GEOZONE_IRPF;
 import static com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT;
@@ -29,7 +27,10 @@ import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant;
 import com.esferalia.aon.jooq.tables.Rattach;
 
-public class JooqGeozoneIrpf {
+public class JooqGeozoneIrpf extends org.jooq.impl.AbstractKeys {
+
+	private static final org.jooq.ForeignKey<com.esferalia.aon.jooq.tables.records.GeozoneIrpfHandicapRecord, com.esferalia.aon.jooq.tables.records.GeozoneIrpfRecord> FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF = org.jooq.impl.AbstractKeys.createForeignKey(com.esferalia.aon.jooq.Keys.KEY_GEOZONE_IRPF_PRIMARY, com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP, com.esferalia.aon.jooq.tables.GeozoneIrpfHandicap.GEOZONE_IRPF_HANDICAP.GEOZONE_IRPF);
+	private static final org.jooq.ForeignKey<com.esferalia.aon.jooq.tables.records.GeozoneIrpfDescendantRecord, com.esferalia.aon.jooq.tables.records.GeozoneIrpfRecord> FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF = org.jooq.impl.AbstractKeys.createForeignKey(com.esferalia.aon.jooq.Keys.KEY_GEOZONE_IRPF_PRIMARY, com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT, com.esferalia.aon.jooq.tables.GeozoneIrpfDescendant.GEOZONE_IRPF_DESCENDANT.GEOZONE_IRPF);
 
 	public static double getPercent(Connection conn, String geozone_code,
 			double amount, int descendants, int handicap, Date date) {
