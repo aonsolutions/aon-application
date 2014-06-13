@@ -37,6 +37,7 @@
 		<module>aon-ui-db-manager</module>
 		<module>aon-sql-payroll</module>
 		<module>aon-master-jooq</module>
+		<module>aon-sql-google</module>
 
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>
@@ -56,6 +57,7 @@
 		<module>aon-jsf-bridge</module>
 		<module>aon-admin</module>
 		<module>aon-ui-admin</module>
+		<module>aon-google-apis</module>
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
