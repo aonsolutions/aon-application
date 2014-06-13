@@ -162,7 +162,6 @@
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
 		<module>aon-payroll-ctsql2mysql</module>
-		<module>aon-google-api</module>
 	</modules>
 
 	<scm>
