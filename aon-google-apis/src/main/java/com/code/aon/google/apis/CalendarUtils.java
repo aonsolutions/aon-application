@@ -228,15 +228,14 @@ public class CalendarUtils {
 	}
 	
 	
-	public static void serviceInitialize(String domain) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
+	public static void serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
 		
-		DomainGserviceaccount dgserviceaccount= getServiceAccount(domain);
 		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
-		final String SERVICE_ACCOUNT_ID = dgserviceaccount.getEmailAddress();
+		final String SERVICE_ACCOUNT_ID = g.getEmailAddress();
 
-		InputStream keyStream = dgserviceaccount.getPrivateKey();
+		InputStream keyStream = g.getPrivateKey();
 		PrivateKey serviceAccountPrivateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), keyStream, "notasecret",
 		          "privatekey", "notasecret");
 		
@@ -625,45 +624,49 @@ public class CalendarUtils {
 	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
 		
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
-		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
-			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
-			Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-			for(int j=0;j<companies.size();j++){
-				serviceInitialize(companies.get(j).getName());
-				CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
-				Vector<CommercialTracking> eventsBD = map.get(companies.get(j).getId());
-				if (eventsBD !=null && eventsBD.size()>0){
-					int aux=searchCalendars(calendars,companies.get(j).getName(),calendars.getItems().size());
-					if (aux==-1){
-						Calendar calendar = newCalendar(companies.get(j),key);
-						int k=0;
-						while( k<eventsBD.size()){		
-							CommercialTracking commercialTracking = eventsBD.get(k);
-							System.out.println("		"+commercialTracking.getId());
-							addEvent(calendar.getId(),newEvent(commercialTracking,key));
-							k++;
-						}
-					}
-					else{
-						modifyCommercialCalendar(calendars.getItems().get(aux),companies.get(j),key);
-						Events events = Quicksort.eventsSort(getEvents(calendars.getItems().get(aux).getId()));
-						int k=0;
-						while(k<eventsBD.size()){		
-							CommercialTracking commercialTracking = eventsBD.get(k);
-							int aux2 = searchEvents(events, commercialTracking.getId(), events.getItems().size());
-							if (aux2 == -1) {
-								addEvent(calendars.getItems().get(aux).getId(),newEvent(commercialTracking,key));
-							}
-							else{
-								modifyEvent(events.getItems().get(aux2), commercialTracking,calendars.getItems().get(aux).getId(),key);
+		for (String key : domains.keySet()) { // recorre todos los dominios de la BD
+			
+			DomainGserviceaccount g = DatabaseSync.getServiceAccount(key);
+			System.out.println(key+" : "+g.getClientId());
+			if(g.getClientId()!=null){
+				Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
+				Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
+				for(int j=0;j<companies.size();j++){
+					serviceInitialize(g);
+					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
+					Vector<CommercialTracking> eventsBD = map.get(companies.get(j).getId());
+					if (eventsBD !=null && eventsBD.size()>0){
+						int aux=searchCalendars(calendars,companies.get(j).getName(),calendars.getItems().size());
+						if (aux==-1){
+							Calendar calendar = newCalendar(companies.get(j),key);
+							int k=0;
+							while( k<eventsBD.size()){		
+								CommercialTracking commercialTracking = eventsBD.get(k);
+								System.out.println("		"+commercialTracking.getId());
+								addEvent(calendar.getId(),newEvent(commercialTracking,key));
+								k++;
 							}
 						}
-					}
-				}	
-			}						
-		}	
+						else{
+							modifyCommercialCalendar(calendars.getItems().get(aux),companies.get(j),key);
+							Events events = Quicksort.eventsSort(getEvents(calendars.getItems().get(aux).getId()));
+							int k=0;
+							while(k<eventsBD.size()){		
+								CommercialTracking commercialTracking = eventsBD.get(k);
+								int aux2 = searchEvents(events, commercialTracking.getId(), events.getItems().size());
+								if (aux2 == -1) {
+									addEvent(calendars.getItems().get(aux).getId(),newEvent(commercialTracking,key));
+								}
+								else{
+									modifyEvent(events.getItems().get(aux2), commercialTracking,calendars.getItems().get(aux).getId(),key);
+								}
+							}
+						}
+					}	
+				}						
+			}	
+		}
 	}
-	
 	/**
 	 * 
 	 * @param vector

@@ -197,7 +197,7 @@ public class TaskUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static TaskList addTaskList(TaskList taskList) throws IOException{
+	public static TaskList addTaskList(TaskList taskList,com.google.api.services.tasks.Tasks client) throws IOException{
 		TaskList result = client.tasklists().insert(taskList).execute();
 		return result;
 	}
@@ -208,7 +208,7 @@ public class TaskUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static TaskList removeTaskList(TaskList taskList) throws IOException{
+	public static TaskList removeTaskList(TaskList taskList, com.google.api.services.tasks.Tasks client) throws IOException{
 		client.tasklists().delete(taskList.getId()).execute();
 		return taskList;
 	}
@@ -219,7 +219,7 @@ public class TaskUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static TaskList updateTaskList(TaskList taskList) throws IOException{
+	public static TaskList updateTaskList(TaskList taskList,com.google.api.services.tasks.Tasks client) throws IOException{
 		TaskList result = client.tasklists().update(taskList.getId(), taskList).execute();
 		return result;
 	}
@@ -252,7 +252,7 @@ public class TaskUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Task addTask(Task task, TaskList taskList) throws IOException{
+	public static Task addTask(Task task, TaskList taskList,com.google.api.services.tasks.Tasks client) throws IOException{
 		Task result = client.tasks().insert(taskList.getId() , task).execute();
 		return result;
 	}
@@ -264,7 +264,7 @@ public class TaskUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Task removeTask(Task task, TaskList taskList) throws IOException{
+	public static Task removeTask(Task task, TaskList taskList,com.google.api.services.tasks.Tasks client) throws IOException{
 		client.tasks().delete(taskList.getId(),task.getId()).execute();
 		return task;
 	}
@@ -276,7 +276,7 @@ public class TaskUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Task updateTask(Task task, TaskList taskList) throws IOException{
+	public static Task updateTask(Task task, TaskList taskList, com.google.api.services.tasks.Tasks client) throws IOException{
 		Task result = client.tasks().update(taskList.getId(), task.getId(), task).execute();
 		return result;
 	}
@@ -290,7 +290,7 @@ public class TaskUtils {
 	 * @throws AonConnectionException
 	 * @throws IOException
 	 */
-	public static void synchronize() throws SQLException, AonConnectionException, IOException{
+	public static void synchronize(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
 		Vector<com.esferalia.aon.google.sql.AbstractSQL.Task> tasksBD = getTask();
 		TaskList taskList = null;
 		int aux = -1;
@@ -300,7 +300,7 @@ public class TaskUtils {
 			TaskLists taskLists = Search.taskListsort(client.tasklists().list().execute());
 			aux = Search.searchProject(project,taskLists, taskLists.getItems().size());
 			if (aux ==-1 ){
-				taskList = addTaskList(newTaskList(project));
+				taskList = addTaskList(newTaskList(project),client);
 			}
 			if (taskList !=null){
 				com.google.api.services.tasks.model.Tasks tasks= client.tasks().list(taskList.getId()).execute();
@@ -308,8 +308,8 @@ public class TaskUtils {
 					tasks = Search.tasksort(tasks);
 					aux2 = Search.searchTask(tasksBD.get(i),tasks,tasks.getItems().size());
 				}
-				if (aux2==-1) addTask(newTask(tasksBD.get(i)), taskList);
-				else updateTask(tasks.getItems().get(aux2), taskList);
+				if (aux2==-1) addTask(newTask(tasksBD.get(i)), taskList,client);
+				else updateTask(tasks.getItems().get(aux2), taskList,client);
 			}
 			else{
 				com.google.api.services.tasks.model.Tasks tasks= client.tasks().list(taskLists.getItems().get(aux).getId()).execute();
@@ -317,8 +317,8 @@ public class TaskUtils {
 					tasks = Search.tasksort(tasks);
 					aux2 = Search.searchTask(tasksBD.get(i),tasks,tasks.getItems().size());
 				}
-				if (aux2==-1) addTask(newTask(tasksBD.get(i)),taskLists.getItems().get(aux));
-				else updateTask(tasks.getItems().get(aux2), taskLists.getItems().get(aux));
+				if (aux2==-1) addTask(newTask(tasksBD.get(i)),taskLists.getItems().get(aux),client);
+				else updateTask(tasks.getItems().get(aux2), taskLists.getItems().get(aux),client);
 			}
 		}
 	}

@@ -30,6 +30,14 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.engine.Collections;
 
@@ -62,6 +70,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentList;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.api.services.drive.model.Permission;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
 
 
@@ -190,16 +199,13 @@ public class DriveUtils  {
 	}
 	
 	public static Drive serviceInitialize(DomainGserviceaccount d) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
-		
-		
-		//DomainGserviceaccount dgserviceaccount= getServiceAccount(domain);
+				
 		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 		final JsonFactory JSON_FACTORY = new JacksonFactory();
-		final String SERVICE_ACCOUNT_ID = "1081696571072-dth57vuulpuf0q67k9op41fkg4hlkjq3@developer.gserviceaccount.com"; //dgserviceaccount.getEmailAddress();
+		final String SERVICE_ACCOUNT_ID = d.getEmailAddress();
 
-		InputStream keyStream = DriveUtils.class
-				.getResourceAsStream("/com/code/aon/google/apis/5da2a9898fbf28add1d4c6d1856b5c581425bebb-privatekey.p12");//dgserviceaccount.getPrivateKey();
+		InputStream keyStream = d.getPrivateKey();
 		PrivateKey serviceAccountPrivateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), keyStream, "notasecret",
 		          "privatekey", "notasecret");
 		
@@ -287,6 +293,9 @@ public class DriveUtils  {
 		MimeType t = MimeType.values()[type];
 		File file=new File();
 		
+		
+
+		
 		file.setTitle(rattach.getDescription());
 		file.setMimeType(t.getName());
 		//file.setAppDataContents(true);// Indica que es un archivo de la aplicación, por lo tanto, el usuario no podrá borrar el archivo.
@@ -311,6 +320,7 @@ public class DriveUtils  {
 	private static File updateFile(Rattach rattach) throws IOException{
 	    File file=getFile(rattach.getDriveId());
 		
+
 		// File's content.
 	    java.io.File fileContent = Utils.InputStreamToFile(rattach);
 	    FileContent mediaContent = new FileContent(file.getMimeType(), fileContent);
@@ -324,16 +334,41 @@ public class DriveUtils  {
 	    }
 	}
 	
-	private static File insertFile(Rattach rattach) throws SQLException, AonConnectionException, IOException {
+	private static File insertFile(Rattach rattach,Vector<String> emails) throws SQLException, AonConnectionException, IOException {
 	    // File's metadata.
 	    File file = newFile(rattach);
-
+	    
+	    Permission p=new Permission();
+		p.setValue("aibanezdegau004@gmail.com");
+		p.setType("user");//user || group || domain || anyone
+		p.setRole("reader");//owner || reader || writer || commenter
+		
+		
+		file.setShared(true);
+		
+		
+		
 	    // File's content.
 	    java.io.File fileContent = Utils.InputStreamToFile(rattach);
 	    FileContent mediaContent = new FileContent(file.getMimeType(), fileContent);
 	  
 	    try {
 	      file = client.files().insert(file, mediaContent).execute();
+	      Permission permission=client.permissions().insert(file.getId(), p).execute();
+	      //Dar permisos al archivo
+	      System.out.println(emails.size());
+		 for (int i=0;i<emails.size();i++) {
+			System.out.println(emails.get(i));
+			  
+			 	/*Permission p=new Permission();
+			  p.setValue(string);
+			  p.setType("user");//user || group || domain || anyone
+			  p.setRole("reader");//owner || reader || writer || commenter
+			  p.setEmailAddress(string);
+		  		
+			  Permission permission=client.permissions().insert(file.getId(), p).execute();
+		  */
+		  }
 	      System.out.println(file.getId());
 	      return file;
 	    } catch (IOException e) {
@@ -360,12 +395,12 @@ public class DriveUtils  {
 	public static void sync(Rattach rattach,String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, NoSuchAlgorithmException{
 		System.out.println(checkType(rattach,types));
 		if(checkType(rattach,types)){
-		
+			Vector<String> emails=DatabaseSync.getEmails(domain);
 			if(rattach.getDriveId()==null){
 				InputStream i =DatabaseSync.getData(rattach.getId(),domain);
 				rattach.setData(i);
 				System.out.println(i+"   "+rattach.getId());
-				File file= insertFile(rattach);
+				File file= insertFile(rattach,emails);
 				if(file!=null){
 					DatabaseSync.addDriveId(file.getId(),rattach.getId(),domain);
 					//DatabaseSync.deleteBlob(rattach.getId(),domain);
@@ -461,32 +496,88 @@ public class DriveUtils  {
 	/*********************** MAIN ******************************/
 	public static void main(String[] args) throws GeneralSecurityException,
 	IOException, ServletException, SQLException, AonConnectionException {
+		
+			parse(args);
+			
+		
+			String domain = "audibal.aonsolutions.net";
+			
+			
 			
 			Vector<RegistryAttachmentType> types= new Vector<RegistryAttachmentType>();
-			types.add(RegistryAttachmentType.DOCUMENT);
-			types.add(RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+			//types.add(RegistryAttachmentType.DOCUMENT);
 			types.add(RegistryAttachmentType.MARKETING_TEMPLATE);
+			/*types.add(RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
+			
 			types.add(RegistryAttachmentType.ENTERPRISE_CONTRACT_CLAUSES);
+			*/
 			
-			//synchronize("cemerida.aibanez.net",types);
-			//DomainGserviceaccount d=new DomainGserviceaccount();
-			//serviceInitialize(d);
-			 
+			synchronize(domain,types);
 			
-			FileList files=client.files().list().execute();
 			
-			for(int i = 0;i<files.size();i++){
-				System.out.println(files.getItems().get(i).getTitle());
+			
+			
+			
+			DomainGserviceaccount d=DatabaseSync.getServiceAccount(domain);
+			serviceInitialize(d);
+			DriveData dd=DatabaseSync.getDomainFiles(domain);
+			for(int j=0;j<dd.getRattachs().size();j++){
+				String id = dd.getRattachs().get(j).getDriveId();
+				if(id!=null){
+					File file=getFile(id);
+				
+					System.out.println(file.getTitle()+" link: "+file.getAlternateLink());
+					
+					//delete(id, "audibal.aonsolutions.net", dd.getRattachs().get(j).getId());
+					
+				}
 			}
 			
-		
-		/*DriveData dd=DatabaseSync.getDomainFiles("hotelcervantes-cemerida.aibanez.net");
-		
-		for (int i=0;i<dd.getRattachs().size();i++){
-			System.out.println("Domain: "+ dd.getRattachs().get(i).getDomain() +"   ID: "+dd.getRattachs().get(i).getId()+"  Name: "+dd.getRattachs().get(i).getDescription() );
-		}*/
-
 			
+			
+		
+	
+			
+	}
+	private static String types [];
+	private static String domains[];
+	
+	private static void parse(String  args []) {
+		CommandLineParser parser = new PosixParser();
+		HelpFormatter helpFormatter = new HelpFormatter();
+		
+		Options options = new Options();
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(false);
+		OptionBuilder.withDescription("imprime esta ayuda.");
+		Option helpOption = OptionBuilder.create("help");
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("dominio a sincronizar.");
+		Option domainOption = OptionBuilder.create("domain");
+
+		OptionBuilder.isRequired(true);
+		OptionBuilder.hasArg(true);
+		OptionBuilder.withDescription("documento a sincronizar.");
+		Option typeOption = OptionBuilder.create("type");
+
+		options.addOption(helpOption);
+		options.addOption(domainOption);
+		options.addOption(typeOption);
+		
+		
+		try {
+			CommandLine line = parser.parse(options, args);
+			
+			types  = line.getOptionValues("type");
+			domains= line.getOptionValues("domain");
+			
+		} catch (ParseException e) {
+			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
+					options, true);
+		}
 	}
 	  		
 }

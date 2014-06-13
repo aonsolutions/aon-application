@@ -28,6 +28,7 @@ import com.esferalia.aon.google.sql.SQLConstants.CommercialTrackingColumns;
 import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.google.sql.SQLConstants.DomainGserviceaccountColumns;
 import com.esferalia.aon.google.sql.SQLConstants.EnterpriseColumns;
+import com.esferalia.aon.google.sql.SQLConstants.MailAccountColumns;
 import com.esferalia.aon.google.sql.SQLConstants.ProjectColumns;
 import com.esferalia.aon.google.sql.SQLConstants.ProjectCommercialColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RegistryColumns;
@@ -1432,6 +1433,50 @@ public class DatabaseSync {
 		}
 		
 	}
+	
+	public static Vector<String> getEmails(String key) throws SQLException{
+		
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT DISTINCT MA."+MailAccountColumns.EMAIL
+					+" FROM ("+SQLConstants.RATTACH+" AS R inner join "+SQLConstants.MAIL_ACCOUNT
+					+" AS MA ON MA."+MailAccountColumns.DOMAIN+"= R."+RattachColumns.DOMAIN+") inner join "
+					+SQLConstants.DOMAIN+" AS D ON D."+DomainColumns.ID+"=R."+RattachColumns.DOMAIN
+					+" WHERE D."+DomainColumns.NAME+"= ? OR D."+DomainColumns.PARENT+" IN (SELECT "+DomainColumns.ID+
+																							" FROM "+SQLConstants.DOMAIN+
+																							" wHERE "+DomainColumns.NAME+" = ?)";
+																
+			
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, key);
+			stmt.setString(2, key);
+			rs = stmt.executeQuery();
+			
+			
+			Vector<String> emails = new Vector<String>();
+
+			while (rs.next()){
+				String email=rs.getString(MailAccountColumns.EMAIL);
+	
+				emails.add(email);	
+			}
+			
+			return emails;
+			
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+
 	
 	public static void addDriveId(String driveId,int id, String domain) throws SQLException, AonConnectionException {
 		
