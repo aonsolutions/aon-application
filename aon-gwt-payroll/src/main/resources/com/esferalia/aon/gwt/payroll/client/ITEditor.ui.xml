@@ -30,6 +30,7 @@
 			margin-right : 16px;
 			margin-bottom : 10px;
 		}
+
 		@sprite .redoButton {
 			gwt-image: 'redo';
 			background-position: left center;

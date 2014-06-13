@@ -135,7 +135,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	// private static int DEFAULT_INCREMENT = 50;
 
 	private PopupPanel popupPanel;
-	private MenuBar popupMenuBar;
 
 	private Date startYear;
 	private Date endYear;
@@ -147,11 +146,11 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		this.expressionCallback = new ExpressionCallback();
 		this.tooltipCallback = new TooltipCallBack();
+		this.popupPanel = new PopupPanel(true);
 		this.tooltip = new Tooltip();
 	}
 
-	class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler,
-			ScrollHandler {
+	class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler {
 
 		public MouseEventsHandlers(TimeLineChart timelineChart) {
 			timelineChart.addMouseOverHandler(this);
@@ -172,7 +171,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				if (cadenaTooltip == null)
 					return;
 
-				if (tooltip.isShowing() == false) {
+				if (tooltip.isShowing() == false &&
+						popupPanel.isShowing() == false) {
 					evalTooltip();
 				}
 
@@ -188,7 +188,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 			Element el = Element.as(event.getNativeEvent().getEventTarget());
 
-			String cadena = el.getPropertyJSO("logicalname").toString();
+			String cadena = el.getPropertyJSO("logicalname").toString();			
 
 			try {
 
@@ -212,10 +212,41 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				event.getNativeEvent();
 			}
 		}
+	}
+	
+	class LeaveContextMenu extends ContextMenu {
+
+		DeleteContractCommand deleteContract;
+
+		public LeaveContextMenu() {
+
+			MenuBar popupMenuBar = new MenuBar(true);
+
+			MenuItem add = addItem("Eliminar Baja",
+					deleteContract = new DeleteContractCommand(),
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+
+			popupMenuBar.addItem(add);
+			popupMenuBar.setVisible(true);
+			popupPanel.add(popupMenuBar);
+		}
+	}
+
+	class DeleteContractCommand implements ScheduledCommand {
 
 		@Override
-		public void onScroll(ScrollEvent event) {
-			// TODO Apéndice de método generado automáticamente
+		public void execute() {
+
+			try {
+				popupPanel.hide();
+
+				int contractId = data.getContractId(posColumn, posCell);
+				int leaveId = data.getContractLeaveId(posColumn, posCell);
+				dataObject.removeLeaveItem(contractId, leaveId);
+				reloadTimeline();
+			} catch (Exception ex) {
+
+			}
 		}
 	}
 
@@ -390,7 +421,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 							startYear) < 0))
 				continue;
 
-			Type type = itDataPerson.getType();
+			Type type = itDataPerson.getType();			
 			Date leaveEndAux = itDataPerson.getLeaveEndDate();
 
 			if (leaveEndAux == null) {
@@ -477,15 +508,15 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		posCell = Integer.parseInt(element.substring(auxX, auxY));
 
-	}
+	} 
 
 	protected boolean isLeaveEmployee(String pElement) {
-
-		getPosStatusEmployee(pElement);
+		
 		String cadena = pElement;
 
 		if (cadena.contains("\"vR\":") && cadena.contains("\"uR\":")
 				&& data.isActive(posColumn, posCell) == false) {
+			getPosStatusEmployee(pElement);
 			return true;
 		} else {
 			return false;
@@ -514,6 +545,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		int dischargeCause = data.getDischargeCause(posColumn, posCell);
 		int typeTooltip = data.getTypeTooltip(posColumn, posCell);
+		
 
 		tooltip = new Tooltip();
 
@@ -614,9 +646,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 	protected void showLeaveActiveTooltip(final Tooltip tooltip,
 			final int clientX, final int clientY) {
-
 		tooltip.showLeaveActiveTooltip(clientX, clientY);
-
+		
 		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
 
 			@Override
@@ -655,52 +686,15 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				}
 			}
 		});
-	}
-
-	class LeaveContextMenu extends ContextMenu {
-
-		DeleteContractCommand deleteContract;
-
-		public LeaveContextMenu() {
-
-			popupMenuBar = new MenuBar(true);
-
-			MenuItem add = addItem("Eliminar Baja",
-					deleteContract = new DeleteContractCommand(),
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-
-			popupMenuBar.addItem(add);
-			popupMenuBar.setVisible(true);
-			popupPanel.add(popupMenuBar);
-		}
-	}
-
-	class DeleteContractCommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-
-			try {
-				popupPanel.hide();
-
-				int contractId = data.getContractId(posColumn, posCell);
-				int leaveId = data.getContractLeaveId(posColumn, posCell);
-				dataObject.removeLeaveItem(contractId, leaveId);
-				reloadTimeline();
-			} catch (Exception ex) {
-
-			}
-		}
-
-	}
-
+	}	
+	
 	class EmployeeContextMenu extends ContextMenu {
 
 		AddContractCommand addContract;
 
 		public EmployeeContextMenu() {
 
-			popupMenuBar = new MenuBar(true);
+			MenuBar popupMenuBar = new MenuBar(true);
 
 			MenuItem add = addItem("Nuevo Contrato",
 					addContract = new AddContractCommand(), AON.AON_ICON_RESET,
@@ -1191,13 +1185,11 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		 */
 
 		public int getDischarge_cause() {
-
 			return discharge_cause;
 		}
 
 		public void setDischarge_cause(int discharge_cause) {
 			this.discharge_cause = discharge_cause;
-
 		}
 
 		private void setTypeTooltip(int pTypeTooltip) {
@@ -1237,7 +1229,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 					setTypeTooltip(1);
 				else
 					setTypeTooltip(3);
-
 			}
 		}
 	}
