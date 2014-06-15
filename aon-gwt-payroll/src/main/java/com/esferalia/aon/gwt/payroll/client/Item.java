@@ -8,10 +8,12 @@ import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -147,6 +149,23 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 			return !expression.trim().equals(newExpression.trim());
 		}
+		void enable(boolean enabled) {
+
+			if (isEnabled() == enabled)
+				return;
+
+			setEnabled(enabled);
+
+			if (!enabled) {
+				getElement().getStyle().setColor("inherit");
+				getElement().getStyle().setBackgroundColor("inherit");
+				getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+			} else {
+				getElement().getStyle().clearColor();
+				getElement().getStyle().clearBackgroundColor();
+				getElement().getStyle().clearBorderStyle();
+			}
+		}
 
 	}
 
@@ -218,6 +237,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 	public void setExpression(String deduction) {
 		expressionTextBox.setExpression(deduction);
 		showOrHideResetPaymentButton();
+		expressionTextBox.enable(!SpecialExpresion.isReadOnly(deduction));
 	}
 
 	public abstract T getType();

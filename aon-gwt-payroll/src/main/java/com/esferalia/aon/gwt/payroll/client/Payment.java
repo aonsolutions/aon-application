@@ -11,10 +11,12 @@ import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -179,6 +181,23 @@ public class Payment extends ResizeComposite {
 			return buffer.toString();
 		}
 
+		void enable(boolean enabled) {
+
+			if (isEnabled() == enabled)
+				return;
+
+			setEnabled(enabled);
+
+			if (!enabled) {
+				getElement().getStyle().setColor("inherit");
+				getElement().getStyle().setBackgroundColor("inherit");
+				getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+			} else {
+				getElement().getStyle().clearColor();
+				getElement().getStyle().clearBackgroundColor();
+				getElement().getStyle().clearBorderStyle();
+			}
+		}
 	}
 
 	@UiField
@@ -272,6 +291,7 @@ public class Payment extends ResizeComposite {
 	public void setExpression(String payment) {
 		paymentTextBox.setExpression(payment);
 		showOrHideResetPaymentButton();
+		paymentTextBox.enable(!SpecialExpresion.isReadOnly(payment));
 	}
 
 	public String getIrpfExpression() {
@@ -286,6 +306,7 @@ public class Payment extends ResizeComposite {
 		onTaxListBoxChange(null);
 		taxTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetTaxButton();
+		taxTextBox.enable(!SpecialExpresion.isReadOnly(expression));
 	}
 
 	public String getQuoteExpression() {
@@ -299,6 +320,7 @@ public class Payment extends ResizeComposite {
 		onQuoteListBoxChange(null);
 		quoteTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetQuoteButton();
+		quoteTextBox.enable(!SpecialExpresion.isReadOnly(expression));
 	}
 
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {

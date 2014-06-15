@@ -2612,8 +2612,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
 			ItemChangeHandler<TextBox, Payment> handler) {
-		boolean isReadOnly = SpecialExpresion.isReadOnly(payment.getExpression()); 
-		dumpPayment(payment, row, iconStyleName, handler, !isReadOnly);
+		dumpPayment(payment, row, iconStyleName, handler, true);
 	}
 
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
@@ -2655,9 +2654,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private <I extends Item> void dumpItem(I item, int row,
 			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
-		boolean isReadOnly = SpecialExpresion.isReadOnly(item.getExpression());
 		dumpItem(item, row, iconStyleName, handler, isDeduction, null, null,
-				!isReadOnly);
+				true);
 
 	}
 
@@ -2693,17 +2691,19 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			paymentsTable.setHTML(row, 1, "&nbsp;");
 		else
 			paymentsTable.setWidget(row, 1, labelWidget);
-
+		
 		TextBox descriptionBox = new TextBox();
-		enable(descriptionBox, isEditable);
+		enable(descriptionBox, isEditable  );
 		descriptionBox.setText(item.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 		handler.setDescriptionWidget(descriptionBox);
 		
+		String expression = item.getExpression();
+		boolean isReadOnly = SpecialExpresion.isReadOnly(expression); 
 		TextBox amountBox = new ExpressionBox();
-		enable(amountBox, isEditable);
+		enable(amountBox, isEditable && !isReadOnly );
 		String amount = format(item.getAmount());
 		amountBox.setText(amount != null ? amount : item.getExpression());
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
