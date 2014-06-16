@@ -140,19 +140,21 @@ public class Tooltip extends DecoratedPopupPanel {
 		loadTypeListBox();
 		setAutoHideEnabled(true);
 		
-		startLeaveDateBox.getTextBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+		startLeaveDateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {				
-				changes = true;								
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				changes = true;
+				
 			}
 		});
 		
-		endDateBox.getTextBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+		endDateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				changes = true;				
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				changes = true;
+				
 			}
 		});
 		
@@ -335,16 +337,20 @@ public class Tooltip extends DecoratedPopupPanel {
 	private boolean accept = false;
 
 	@UiHandler("acceptButton")
-	void onAcceptClick(ClickEvent event) {		
+	void onAcceptClick(ClickEvent event) {			
 		
-		if(changes == false) {
-			accept = false;
-			hide();
+		if(startLeaveDateBox.getValue() == null) {
+			startLeaveDateBox.getTextBox().setFocus(true);
+			return;
 		}
-		else {
-			accept = true;
-			hide();
+		
+		if(typeLeaveListBox.getSelectedIndex() == 0) {
+			typeLeaveListBox.setFocus(true);
+			return;
 		}
+		
+		accept = changes;
+		hide ();		
 	}
 
 	public boolean isAccept() {
