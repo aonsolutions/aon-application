@@ -165,24 +165,7 @@ public class ContractLeaveController extends BasicController {
 	
 	public IControllerListener getContractFilter() {
 		if ( this.contractFilter == null ) {
-			this.contractFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {
-						String alias = controller.getFieldName(IEntityAlias.CONTRACT_END_DATE);
-						Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
-						Expression expr2 = ExpressionUtilities.getNullExpression(alias);
-						controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-						controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
-						controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
-						controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering contracts by endDate", e);
-					}
-				}
-			};
+			this.contractFilter = new ContractFilter();
 		}
 		return this.contractFilter;
 	}
@@ -237,4 +220,26 @@ public class ContractLeaveController extends BasicController {
 			}
 		}
 	}
+
+	private static class ContractFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {
+				String alias = controller.getFieldName(IEntityAlias.CONTRACT_END_DATE);
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(alias);
+				controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+				controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
+				controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
+				controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering contracts by endDate", e);
+			}
+		}
+		
+	}
+	
 }

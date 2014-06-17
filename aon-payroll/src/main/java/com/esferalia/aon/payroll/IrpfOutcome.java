@@ -11,6 +11,7 @@ public class IrpfOutcome {
 	private String nif;
 	private int  birthYear;
 	
+	private String comunidadAutonoma;
 	
 	
 	public IrpfResult getIrpfResult() {
@@ -49,6 +50,14 @@ public class IrpfOutcome {
 	
 	public int getBirthYear() {
 		return birthYear;
+	}
+	
+	public String getComunidadAutonoma() {
+		return comunidadAutonoma;
+	}
+	
+	public void setComunidadAutonoma(String comunidadAutonoma) {
+		this.comunidadAutonoma = comunidadAutonoma;
 	}
 
 }

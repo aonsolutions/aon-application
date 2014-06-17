@@ -6,7 +6,6 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERRO
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,7 +19,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -80,6 +78,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private Date recordDate;
 	private Date bankDate;
 	private boolean showFbatchRecordWindow;
+	private boolean showSEPAWindow;
 	private AccountEntryFinanceWriter writer;
 
 	public Company getCompany() {
@@ -133,55 +132,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void setBankDate(Date bankDate) {
 		this.bankDate = bankDate;
 	}
-	
-	private boolean isHoliday( Calendar calendar ) {
-		int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-		int month = calendar.get(Calendar.MONTH);
-		if (Calendar.JANUARY == month) {
-			if ( (dayOfMonth==1) || (dayOfMonth==6) ) {
-				return true;	
-			}
-		}
-		if ( (Calendar.MAY == month) && (dayOfMonth==1) ) {
-			return true;
-		}
-		if ( (Calendar.OCTOBER == month) && (dayOfMonth==12) ) {
-			return true;
-		}
-		if ( (Calendar.NOVEMBER == month) && (dayOfMonth==1) ) {
-			return true;
-		}
-		if (Calendar.DECEMBER == month) {
-			if ( (dayOfMonth==6) || (dayOfMonth==8) || (dayOfMonth==25)) {
-				return true;	
-			}
-		}
-		return false;		
-	}
-	
-	private boolean esHabil(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		switch ( calendar.get(Calendar.DAY_OF_WEEK) ) {
-			case Calendar.SATURDAY:
-			case Calendar.SUNDAY:
-				return false;
-			default:
-				return !isHoliday(calendar);
-        }
-    }	
-	
-	private Date anteriorFechaHabil(Date date) {
-    	Date result = DateUtils.addDays(date, -1);
-   		while (!esHabil(result)) {
-   			result = DateUtils.addDays(result, -1);
-   		}
-    	return result;
-    }
-    	
-	public void calculateBankDate( Date date ) {
-		setBankDate(anteriorFechaHabil(date));
-	}
 
 	public boolean isShowFbatchRecordWindow() {
 		return showFbatchRecordWindow;
@@ -190,7 +140,15 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void setShowFbatchRecordWindow(boolean value) {
 		this.showFbatchRecordWindow = value;
 	}
-	
+
+	public boolean isShowSEPAWindow() {
+		return showSEPAWindow;
+	}
+
+	public void setShowSEPAWindow(boolean showSEPAWindow) {
+		this.showSEPAWindow = showSEPAWindow;
+	}
+
 	public AccountEntryFinanceWriter getWriter() {
 		if(writer == null){
 			writer = new AccountEntryFinanceWriter();
@@ -606,4 +564,9 @@ public class FBatchController extends BasicController implements ICollectionProv
 		}
 	}
 
+	public void onShowSEPAWindow( ActionEvent event ) {
+		setBankDate(new Date());
+		setShowSEPAWindow(true);
+	}
+	
 }

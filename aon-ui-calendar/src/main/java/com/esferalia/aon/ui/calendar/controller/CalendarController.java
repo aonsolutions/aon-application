@@ -22,6 +22,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -108,22 +109,7 @@ public class CalendarController extends BasicController {
 	
 	public IControllerListener getExcludeCurrentCalendar() {
 		if ( this.excludeCurrentCalendar == null ) {
-			this.excludeCurrentCalendar = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					Calendar calendar = (Calendar) getTo();
-					if ( calendar!=null && calendar.getId()!=null ) {
-						try {
-							String alias = controller.getFieldName(IEntityAlias.CALENDAR_ID);
-							controller.getCriteria().addNotEqualExpression(alias, calendar.getId());
-						} catch (ManagerBeanException e) {
-							LOGGER.error("Error filtering current calendar", e);
-						}
-					}
-				}
-			};
+			this.excludeCurrentCalendar = new ExcludeCurrentCalendarFilter();
 		}
 		return this.excludeCurrentCalendar;
 	}
@@ -247,5 +233,26 @@ public class CalendarController extends BasicController {
 			calendar.setSundayHours(newCalendar.getSundayHours());
 		}
 	}
+
+	private static class ExcludeCurrentCalendarFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			IController cc = FormUtil.getController(ICalendarConstants.CALENDAR_CONTROLLER_NAME);
+			Calendar calendar = (Calendar) cc.getTo();
+			if ( calendar!=null && calendar.getId()!=null ) {
+				try {
+					String alias = controller.getFieldName(IEntityAlias.CALENDAR_ID);
+					controller.getCriteria().addNotEqualExpression(alias, calendar.getId());
+				} catch (ManagerBeanException e) {
+					LOGGER.error("Error filtering current calendar", e);
+				}
+			}
+		}
+		
+	}
+
 
 }

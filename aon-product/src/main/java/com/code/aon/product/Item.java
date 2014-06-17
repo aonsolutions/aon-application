@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Where;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -25,6 +26,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.pricing.IPriceable;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ItemDB;
 
@@ -35,8 +37,27 @@ public class Item extends ItemDB implements IPriceable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-    private Set<ItemSupplier> suppliers = new HashSet<ItemSupplier>();
+    private Set<RegistryItem> customers = new HashSet<RegistryItem>();
+    private Set<RegistryItem> suppliers = new HashSet<RegistryItem>();
 
+	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
+	@Where(clause = "type=1")
+	public Set<RegistryItem> getCustomers() {
+		return customers;
+	}
+	public void setCustomers(Set<RegistryItem> customers) {
+		this.customers = customers;
+	}
+	
+	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
+	@Where(clause = "type=2")
+	public Set<RegistryItem> getSuppliers() {
+		return suppliers;
+	}
+	public void setSuppliers(Set<RegistryItem> suppliers) {
+		this.suppliers = suppliers;
+	}
+	
 	@Transient
 	public String getFullName() {
 		StringBuffer sb = new StringBuffer();
@@ -65,30 +86,41 @@ public class Item extends ItemDB implements IPriceable {
 	public void setFullName( String value ) {
 	}
 	
-    public void setPrice(double price) {
-        super.setPrice(CommonUtil.round(price, 4));
-    }
-    
-	public void setProfitPercent(double profitPercent) {
-		super.setProfitPercent(CommonUtil.round(profitPercent, 3));
-	}
-	
     public void setPurchasePrice(double purchasePrice) {
 		super.setPurchasePrice(CommonUtil.round(purchasePrice, 4));
 	}
 
+	public void setProfitPercent(double profitPercent) {
+		super.setProfitPercent(CommonUtil.round(profitPercent, 3));
+	}
+	
+    public void setPrice(double price) {
+        super.setPrice(CommonUtil.round(price, 4));
+    }
+    
 	@Transient
 	public double getProfitablePrice() {
 		return getPurchasePrice();
 	}
 
 	@Transient
+	public double getSalesProfitPercent() {
+		return getSalesProfitPercent(getPurchasePrice(), getPrice());
+	}
+	public double getSalesProfitPercent(double purchasePrice, double price) {
+		ItemPricesManager pricesManager = new ItemPricesManager();
+		return pricesManager.getSalesProfit(purchasePrice, price);
+	}
+	public void setSalesProfitPercent(double salesProfitPercent) {
+	}
+
+	@Transient
 	public double getSalesPrice() {
-		return getSalesPrice(this.getPrice());
+		return getSalesPrice(getPrice());
 	}
 	public double getSalesPrice(double price) {
 		ItemPricesManager pricesManager = new ItemPricesManager();
-		return pricesManager.getSalesPrice(this, getPrice());
+		return pricesManager.getSalesPrice(this, price);
 	}
 	public void setSalesPrice(double salesPrice) {
 	}
@@ -125,12 +157,4 @@ public class Item extends ItemDB implements IPriceable {
 		return compositionList;
 	}
 
-	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
-	public Set<ItemSupplier> getSuppliers() {
-		return this.suppliers;
-	}
-	public void setSuppliers(Set<ItemSupplier> suppliers) {
-		this.suppliers = suppliers;
-	}
-	
 }

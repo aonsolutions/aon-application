@@ -1,6 +1,7 @@
 package com.esferalia.aon.file.payroll.contract.pdf;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public interface IContractPdfDocument {
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft);
 	
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException;
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException;
 	
 	public Collection<ContractPdfField> getPdfFields();
 	

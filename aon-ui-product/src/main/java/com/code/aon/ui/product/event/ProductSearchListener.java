@@ -200,7 +200,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 			addEnumToCriteria(criteria, "Product.tags.tag.id", getTagsIds().toArray());	
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getController().resolveAlias("Product_items_suppliers_supplier_id"), getSupplier().getId());
+			criteria.addEqualExpression(getController().resolveAlias("Product_items_suppliers_registry_id"), getSupplier().getId());
 		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Product_category<id"), getCategory().getId());

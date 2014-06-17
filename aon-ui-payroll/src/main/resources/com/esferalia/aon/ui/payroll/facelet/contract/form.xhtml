@@ -122,27 +122,13 @@
 											
 											<br />
 											
-											<aon:panelCollapsible expanded="false" label="Datos contrato inicial"
-												style="text-align:left;">
-											
-											<!--  
-											<aon:panel style="width:920px;">
-												<f:facet name="header">
-													<aon:outputText value="Datos contrato inicial" />
-												</f:facet>
-												<aon:panelGrid columns="2" 
-													columnClasses="aon-noborder aon-text-left aon-width-170, aon-noborder aon-text-left">
-												</aon:panelGrid>
-											-->
+											<aon:panelCollapsible expanded="false" label="Datos contrato inicial" ajaxSingle="#{true}">
 												<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
 												<br />
 												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
 													<ui:param name="controller" value="#{contractContrata}" />
 												</ui:include>
 												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
-											<!--  
-											</aon:panel>
-											-->
 											</aon:panelCollapsible>
 										</aon:div>
 								</aon:panelTab>
@@ -151,10 +137,22 @@
 							<c:if test="#{contract.transformedContract}">
 								<aon:panelTab id="transformContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
 									actionListener="#{transformContrata.onContrataDataShow}" >
+									<aon:actionListener method="#{contractContrata.onContrataDataShow}" />
 										<aon:div style="width:920px;">
 											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" >
 												<ui:param name="controller" value="#{transformContrata}" />
 											</ui:include>
+											
+											<br />
+											
+											<aon:panelCollapsible expanded="false" label="Datos contrato inicial" ajaxSingle="#{true}">
+												<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
+												<br />
+												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
+													<ui:param name="controller" value="#{contractContrata}" />
+												</ui:include>
+												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
+											</aon:panelCollapsible>
 										</aon:div>
 								</aon:panelTab>
 							</c:if>
@@ -221,6 +219,9 @@
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{extensionContrata}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
+			<ui:param name="controller" value="#{transformContrata}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{contractCertificados}" />

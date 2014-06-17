@@ -10,11 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import org.hibernate.annotations.Where;
+
 import com.code.aon.account.IAccount;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryItem;
@@ -24,7 +27,7 @@ import com.esferalia.aon.entity.master.CustomerDB;
 
 @Entity
 @Table(name="customer")
-public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry,IAccount{
+public class Customer extends CustomerDB implements ITaxInfo, IRegistry, IScopable, IAccount, ITariffable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -41,11 +44,6 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
     	setDeliveryValuated(true);
     }
 
-    @Transient
-	public Customer getInvoicingCustomer() {
-		return (getInvoicingGroup() != null && getInvoicingGroup().getId() != null) ? getInvoicingGroup().getCustomer() : this;
-    }
-
     @OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;
@@ -55,6 +53,7 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
 	}	
 	
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	
+	@Where(clause = "type=0")
 	public Set<RegistryItem> getItems() {
 		return items;
 	}
@@ -80,6 +79,11 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
 	public void setProfiles(Set<RegistryProfile> profiles) {
 		this.profiles = profiles;
 	}	
+
+    @Transient
+	public Customer getInvoicingCustomer() {
+		return (getInvoicingGroup() != null && getInvoicingGroup().getId() != null) ? getInvoicingGroup().getCustomer() : this;
+    }
 
 	@Transient
 	public boolean isWithholdingFarmer() {

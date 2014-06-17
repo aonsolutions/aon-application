@@ -24,6 +24,7 @@ public class ItemController extends BasicController {
 	private String selectedTab;
 	private boolean showNewTariffWindow;
 	private boolean showNewCatalogueWindow;
+	private boolean showNewCustomerWindow;
 	private boolean showNewSupplierWindow;
 	private boolean showNewAlternativeWindow;
 	private boolean showNewAddInfoWindow;
@@ -52,6 +53,14 @@ public class ItemController extends BasicController {
 
 	public void setShowNewCatalogueWindow(boolean showNewCatalogueWindow) {
 		this.showNewCatalogueWindow = showNewCatalogueWindow;
+	}
+
+	public boolean isShowNewCustomerWindow() {
+		return showNewCustomerWindow;
+	}
+
+	public void setShowNewCustomerWindow(boolean showNewCustomerWindow) {
+		this.showNewCustomerWindow = showNewCustomerWindow;
 	}
 
 	public boolean isShowNewSupplierWindow() {
@@ -99,6 +108,10 @@ public class ItemController extends BasicController {
 
 	public void onProfitChanged(ValueChangeEvent event) {
 		getPricesManager().onProfitChanged((Item)this.getTo(), event.getNewValue());
+	}
+
+	public void onSalesProfitChanged(ValueChangeEvent event) {
+		getPricesManager().onSalesProfitChanged((Item)this.getTo(), event.getNewValue());
 	}
 
 	public void onPriceChanged(ValueChangeEvent event) {

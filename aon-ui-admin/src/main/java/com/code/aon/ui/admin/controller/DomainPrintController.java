@@ -120,21 +120,7 @@ public class DomainPrintController extends BasicController {
 	
 	public IControllerListener getDomainFilter() {
 		if ( this.domainFilter == null ) {
-			this.domainFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						Criteria criteria = controller.getCriteria();
-						criteria.setSkipDomainFilter(true);
-						criteria.addNotEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_TYPE), DomainType.ADMIN);
-						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT), Boolean.TRUE);
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering domain", e);
-					}
-				}
-			};
+			this.domainFilter = new DomainFilter();
 		}
 		return this.domainFilter;
 	}
@@ -195,6 +181,23 @@ public class DomainPrintController extends BasicController {
 		}
 		return diff;
 	}
-	
+
+	private static class DomainFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				Criteria criteria = controller.getCriteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addNotEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_TYPE), DomainType.ADMIN);
+				criteria.addEqualExpression(controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT), Boolean.TRUE);
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering domain", e);
+			}
+		}
+		
+	}
 	
 }

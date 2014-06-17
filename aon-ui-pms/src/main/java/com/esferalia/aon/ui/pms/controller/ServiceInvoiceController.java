@@ -118,21 +118,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	
 	public IControllerListener getCurrentReservationFilter() {
 		if ( this.currentReservationFilter == null ) {
-			this.currentReservationFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelSearched(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
-						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-						controller.getCriteria().addLessThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
-						controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering reservation", e);
-					}
-				}
-			};
+			this.currentReservationFilter = new CurrentReservationFilter();
 		}
 		return this.currentReservationFilter;
 	}
@@ -449,7 +435,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				double prices = 0;
 				Date date = hotelService.getFromDate();
 				while (date.compareTo(hotelService.getToDate()) <= 0) {
-					prices += strategy.getUnitPrice(hotelService, date, getReservationInvoiceTo().getHotel().getCustomer().getTariff());
+					prices += strategy.getUnitPrice(hotelService, date, getReservationInvoiceTo().getHotel().getCustomer());
 					date = DateUtils.addDays(date, 1);
 				}
 				hotelService.setPrice(CommonUtil.round(prices, 4));
@@ -667,6 +653,24 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 		return false;
+	}
+
+	private static class CurrentReservationFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelSearched(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
+				controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+				controller.getCriteria().addLessThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+				controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering reservation", e);
+			}
+		}
+		
 	}
 	
 }

@@ -136,7 +136,7 @@
 					<aon:outputText value="&#160;" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+				<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:panelGrid columns="4" 
 						columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-100, aon-noborder aon-width-120, aon-noborder aon-width-auto">
 						<aon:div>
@@ -167,7 +167,7 @@
 					</aon:panelGrid>
 				</aon:column>
 
-				<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:div>
 						<aon:outputLabel value="#{bundle.pms_room}:" styleClass="aon-margin-right" />
 						<aon:outputText value="#{serviceDetail.projectReservationRoomDetail.assetActivity.asset.name}" styleClass="aon-italic"
@@ -175,6 +175,10 @@
 						<aon:outputText value="--" styleClass="aon-italic"
 							rendered="#{serviceDetail.projectReservationRoomDetail == null}" />
 					</aon:div>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+					<aon:outputText value="&#160;" />
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">

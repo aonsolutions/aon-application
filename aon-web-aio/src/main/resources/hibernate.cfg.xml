@@ -169,8 +169,6 @@
 		<!-- AON-FISCAL Mapping files -->
 		<mapping class="com.code.aon.fiscal.FiscalActivity"/>
 		<mapping class="com.code.aon.fiscal.FiscalActivityInfo"/>
-		<mapping class="com.code.aon.fiscal.FiscalBatch"/>
-		<mapping class="com.code.aon.fiscal.FiscalBatchDetail"/>
 		<mapping class="com.code.aon.fiscal.FiscalModel"/>
 		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
 		<mapping class="com.code.aon.fiscal.Mod347"/>
@@ -321,7 +319,6 @@
 		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemComposition"/>
-		<mapping class="com.code.aon.product.ItemSupplier"/>
 		<mapping class="com.code.aon.product.ItemTariff"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>

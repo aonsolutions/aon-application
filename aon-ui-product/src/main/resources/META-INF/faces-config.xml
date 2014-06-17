@@ -345,6 +345,27 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>itemCustomerChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>itemCustomer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryItem_item_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>itemSupplierChildListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.LinesControllerListener
@@ -358,7 +379,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>ItemSupplier_item_id</key>
+					<key>RegistryItem_item_id</key>
                     <value>id</value>
 				</map-entry>
 			</map-entries>
@@ -600,6 +621,68 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ ITEM CUSTOMER ************* -->
+	<managed-bean>
+		<managed-bean-name>itemCustomer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemCustomerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemCustomer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryItem_type</key>
+					<value>1</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryItem_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>item.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{itemCustomerControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemCustomerControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemCustomerControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ ITEM SUPPLIER ************* -->
 	<managed-bean>
 		<managed-bean-name>itemSupplier</managed-bean-name>
@@ -607,15 +690,24 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.product.ItemSupplier</value>
+			<value>com.code.aon.registry.RegistryItem</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>itemSupplier</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryItem_type</key>
+					<value>2</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ItemSupplier_priority</value>
+			<value>RegistryItem_priority</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>

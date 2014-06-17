@@ -29,7 +29,7 @@ public class ClausulasModel extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		try {
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
 			readPdfFields();

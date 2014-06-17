@@ -32,6 +32,7 @@ public interface ICommonMessages {
 	String DOMAIN_CHANGE = "aon_domain_change";
 	String DATE = "aon_date";
 	String DATE_PATTERN = "aon_date_pattern";
+	String DATE2_PATTERN = "aon_date2_pattern";
 	String DAY = "aon_day";
 	String DECIMAL_2_PATTERN = "aon_decimal2_pattern";
 	String DOCUMENT = "aon_document";

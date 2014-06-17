@@ -16,8 +16,6 @@ public class SalaryDraft extends SalaryPreview {
 		
 	}
 	
-	
-	
 	public static class Event implements Serializable {
 		public static enum Type {
 			ERROR, WARNING, INFO, DEBUG
@@ -72,7 +70,7 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	private boolean hasDbSalary;
-
+	
 
 	private String enterpriseName;
 	private String enterpriseAddress;
@@ -85,6 +83,7 @@ public class SalaryDraft extends SalaryPreview {
 	private String employeeQuoteGroup;
 	private String employeeAgreementCategory;
 	private Date employeeSeniorityDate;
+	private String community;
 
 	private Double cgcBase;
 	private Double dbGgcBase;
@@ -460,7 +459,15 @@ public class SalaryDraft extends SalaryPreview {
 	public Double getProrationBase() {
 		return prorationBase;
 	}
-
+	
+	public String getCommunity() {
+		return community;
+	}
+	
+	public void setCommunity(String community) {
+		this.community = community;
+	}
+	
 	public void setProrationBase(Double prorationBase) {
 		this.prorationBase = prorationBase;
 	}
@@ -697,5 +704,6 @@ public class SalaryDraft extends SalaryPreview {
 	public void setHasDbSalary(boolean hasDbSalary) {
 		this.hasDbSalary = hasDbSalary;
 	}
-
+	
+	
 }

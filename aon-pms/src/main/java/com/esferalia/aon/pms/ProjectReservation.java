@@ -28,6 +28,7 @@ import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
+import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -51,6 +52,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private boolean forceCalculateTotals;
 	private boolean forceRefreshBooking;
 	private double vatPercent;
+	private double realDiscountPercent;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 	private Set<Invoice> invoices = new HashSet<Invoice>();
@@ -84,6 +86,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setVatPercent(double vatPercent) {
 		this.vatPercent = vatPercent;
+	}
+
+	@Transient
+	public double getRealDiscountPercent() {
+		return realDiscountPercent;
+	}
+	public void setRealDiscountPercent(double realDiscountPercent) {
+		this.realDiscountPercent = CommonUtil.round(realDiscountPercent, 6);
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
@@ -166,6 +176,16 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public boolean isInvoiced() {
 		return getStatus() == ReservationStatus.INVOICED;
+	}
+
+	@Transient
+	public Customer getCustomer() {
+    	if (getBookingHolder() == BookingHolder.AGENCY && getAgency() != null && getAgency().getId() != null) {
+    		return getAgency();
+    	} else if (getBookingHolder() == BookingHolder.COMPANY && getCompany() != null && getCompany().getId() != null) {
+    		return getCompany();
+    	}
+    	return getHotelReservation().getCustomer();
 	}
 
 	@Transient

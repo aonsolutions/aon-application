@@ -9,9 +9,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
@@ -100,37 +103,41 @@ public class CustomerCourseController extends LinesController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<Integer> getCourseList() throws ManagerBeanException {
-		IController controller = FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
-		Serializable id = controller.getManagerBean().getId(controller.getTo());
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID), id);
-		criteria.addEqualExpression(getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseStatus.ACTIVE );  
-		criteria.addEqualExpression(getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_STATUS), CourseAlumnStatus.ACTIVE );
-		String courseId = getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ID);
-		return getManagerBean().getList(new ProjectionList(Projection.property(courseId)), criteria);
-	}
-	
 	public IControllerListener getCourseFilter() {
 		if ( this.courseFilter == null ) {
-			this.courseFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {
-						String courseId = controller.getFieldName(IEntityAlias.COURSE_ID);
-						for( Integer id : getCourseList() ) {
-							controller.getCriteria().addNotEqualExpression(courseId, id);	
-						}
-					} catch (ManagerBeanException e) {
-						throw new ControllerListenerException(e);
-					} 
-				}		
-			};
-		}
+			this.courseFilter = new CourseFilter();		}
 		return this.courseFilter;
 	}	
 
+	private static class CourseFilter extends ControllerAdapter {
+
+		@SuppressWarnings("unchecked")
+		private List<Integer> getCourseList() throws ManagerBeanException {
+			IController controller = FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
+			Serializable id = controller.getManagerBean().getId(controller.getTo());
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID), id);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseStatus.ACTIVE );  
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_STATUS), CourseAlumnStatus.ACTIVE );
+			String courseId = bean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ID);
+			return bean.getList(new ProjectionList(Projection.property(courseId)), criteria);
+		}
+				
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {
+				String courseId = controller.getFieldName(IEntityAlias.COURSE_ID);
+				for( Integer id : getCourseList() ) {
+					controller.getCriteria().addNotEqualExpression(courseId, id);	
+				}
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e);
+			} 
+		}		
+		
+	}
+	
 }

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 
@@ -70,9 +73,11 @@ public class ContractPdfWriter implements Serializable  {
 	}
 	
 	public void loadNewPdf(ContractModel model, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
-		loadNewPdf(model.toString(), contract, contrataParams);
+		List<IContrataParams> list = new LinkedList<IContrataParams>();
+		list.add(contrataParams);
+		loadNewPdf(model.toString(), contract, list);
 	}
-	public void loadNewPdf(String document, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
+	public void loadNewPdf(String document, Contract contract, List<IContrataParams> contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(document);
 		if(pdfDocument == null) {

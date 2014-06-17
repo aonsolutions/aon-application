@@ -5,8 +5,11 @@ import com.google.gwt.ajaxloader.client.Properties;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -25,6 +28,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDrawOptions;
 import com.google.gwt.visualization.client.Selectable;
@@ -47,7 +51,8 @@ import com.google.gwt.visualization.client.visualizations.Visualization;
  *      > TimeLine Chart Visualization Reference</a>
  */
 public class TimeLineChart extends Visualization<TimeLineChart.Options>
-		implements HasScrollHandlers, HasMouseOverHandlers, HasClickHandlers, HasContextMenuHandlers, Selectable {
+		implements HasMouseOverHandlers, HasClickHandlers,
+		HasContextMenuHandlers, Selectable {
 	/**
 	 * Options for drawing the chart.
 	 */
@@ -69,16 +74,16 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			}
 
 			public final native void setColor(String color) /*-{
-				this.color = color;
-			}-*/;
+															this.color = color;
+															}-*/;
 
 			public final native void setFontName(String fontName) /*-{
-				this.fontName = fontName;
-			}-*/;
+																	this.fontName = fontName;
+																	}-*/;
 
 			public final native void setFontSize(String fontSize) /*-{
-				this.fontSize = fontSize;
-			}-*/;
+																	this.fontSize = fontSize;
+																	}-*/;
 		}
 
 		public static class RowLabelStyle extends Properties {
@@ -91,20 +96,20 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			}
 
 			public final native void setTextAlign(String align) /*-{
-				this.align = align;
-			}-*/;
+																this.align = align;
+																}-*/;
 
 			public final native void setColor(String color) /*-{
-				this.color = color;
-			}-*/;
+															this.color = color;
+															}-*/;
 
 			public final native void setFontName(String fontName) /*-{
-				this.fontName = fontName;
-			}-*/;
+																	this.fontName = fontName;
+																	}-*/;
 
 			public final native void setFontSize(String fontSize) /*-{
-				this.fontSize = fontSize;
-			}-*/;
+																	this.fontSize = fontSize;
+																	}-*/;
 		}
 
 		public static class Timeline extends Properties {
@@ -117,76 +122,76 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 			}
 
 			public final native void setBarLabelStyle(Object labelStyle) /*-{
-				this.barLabelStyle = labelStyle;
-			}-*/;
+																			this.barLabelStyle = labelStyle;
+																			}-*/;
 
 			public final native void setColorByRowLabel(boolean colorByRowLabel) /*-{
-				this.colorByRowLabel = colorByRowLabel;
-			}-*/;
+																					this.colorByRowLabel = colorByRowLabel;
+																					}-*/;
 
 			public final native void setGroupByRowLabel(boolean groupByRowLabel) /*-{
-				this.groupByRowLabel = groupByRowLabel;
-			}-*/;
+																					this.groupByRowLabel = groupByRowLabel;
+																					}-*/;
 
 			public final native void setRowLabelStyle(Object rowLabelStyle) /*-{
-				this.rowLabelStyle = rowLabelStyle;
-			}-*/;
+																			this.rowLabelStyle = rowLabelStyle;
+																			}-*/;
 
 			public final native void setShowRowLabels(boolean showRowLabels) /*-{
-				this.showRowLabels = showRowLabels;
-			}-*/;
+																				this.showRowLabels = showRowLabels;
+																				}-*/;
 
 			public final native void setShowBarLabels(boolean showBarLabels) /*-{
-				this.showBarLabels = showBarLabels;
-			}-*/;
+																				this.showBarLabels = showBarLabels;
+																				}-*/;
 
 			public final native void setSingleColor(String singleColor) /*-{
-				this.singleColor = singleColor;
-			}-*/;
+																		this.singleColor = singleColor;
+																		}-*/;
 		}
 
 		protected Options() {
 		}
 
 		public final native void setTimeline(Timeline timeline) /*-{
-			this.timeline = timeline;
-		}-*/;
+																this.timeline = timeline;
+																}-*/;
 
 		public final native void setAvoidOverlappingGridLines(boolean avoidOver) /*-{
-			this.avoidOverlappingGridLines = avoidOver;
-		}-*/;
+																					this.avoidOverlappingGridLines = avoidOver;
+																					}-*/;
 
 		public final native void setBackgroundColor(String color) /*-{
-			this.backgroundColor = color;
-		}-*/;
+																	this.backgroundColor = color;
+																	}-*/;
 
 		public final native void setColors(JsArrayString col0rs) /*-{
-			this.colors = col0rs;
-		}-*/;
+																	this.colors = col0rs;
+																	}-*/;
 
 		public final void setColors(String... colors) {
 			setColors(ArrayHelper.toJsArrayString(colors));
 		}
 
 		public final native void setEnableInteractivity(boolean enable) /*-{
-			this.enableInteractivity = enable;
-		}-*/;
+																		this.enableInteractivity = enable;
+																		}-*/;
 
 		public final native void setForceIFrame(boolean force) /*-{
-			this.forceIFrame = force;
-		}-*/;
+																this.forceIFrame = force;
+																}-*/;
 
 		public final native void setHeight(int height) /*-{
-			this.height = height;
-		}-*/;
+														this.height = height;
+														}-*/;
 
 		public final native void setWidth(int width) /*-{
-			this.width = width;
-		}-*/;
+														this.width = width;
+														}-*/;
 
 		public final native void setTitle(String title) /*-{
-			this.title = title;
-		}-*/;
+														this.title = title;
+														}-*/;
 	}
 
 	public static final String PACKAGE = "timeline";
@@ -197,22 +202,6 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 
 	public TimeLineChart(AbstractDataTable data, Options options) {
 		super(data, options);
-	}
-
-	public final void addOnMouseOutHandler(OnMouseOutHandler handler) {
-		Handler.addHandler(this, "onmouseout", handler);
-	}
-
-	public final void addOnMouseOverHandler(OnMouseOverHandler handler) {
-		Handler.addHandler(this, "onmouseover", handler);
-	}
-
-	public final void addReadyHandler(ReadyHandler handler) {
-		Handler.addHandler(this, "ready", handler);
-	}
-
-	public final void addStateChangeHandler(StateChangeHandler handler) {
-		Handler.addHandler(this, "statechange", handler);
 	}
 
 	public void addSelectHandler(SelectHandler handler) {
@@ -227,6 +216,35 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		return Selection.getSelections(this);
 	}
 
+	public int getVerticalScrollPosition(Element el) {
+		return el.getScrollTop();
+	}
+
+	public int getMaximumVerticalScrollPosition(Element el) {
+		return el.getScrollHeight() - el.getClientHeight();
+	}
+
+	public final void addStateChangeHandler(StateChangeHandler handler) {
+		Handler.addHandler(this, "statechange", handler);
+	}
+
+	public final void addReadyHandler(ReadyHandler handler) {
+		Handler.addHandler(this, "ready", handler);
+	}
+
+	public final void addOnMouseOutHandler(OnMouseOutHandler handler) {
+		Handler.addHandler(this, BrowserEvents.MOUSEOUT, handler);
+	}
+
+	public final void addOnMouseOverHandler(OnMouseOverHandler handler) {
+		
+		Handler.addHandler(this, BrowserEvents.MOUSEOVER, handler);
+	}
+
+	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+		return addHandler(handler, MouseMoveEvent.getType());
+	}
+
 	/**
 	 * Returns the current state of the {@link TimeLineChart}, serialized to a
 	 * JSON string. To assign this state to the chart, assign this string to the
@@ -238,6 +256,7 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 	 *         {@link TimeLineChart.Options#setState(String)} or a statechange
 	 *         event has not yet fired.
 	 */
+	//@formatter:off
 	public final native String getState() /*-{
 		var jso = this.@com.google.gwt.visualization.client.visualizations.Visualization::getJso()();
 
@@ -249,46 +268,53 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		}
 		return null;
 	}-*/;
+	//@formatter:on
 
-	// ------------------------------------------------------ HasScrollHandlers
-	@Override
-	public HandlerRegistration addScrollHandler(ScrollHandler handler) {
-		return addHandler(handler, ScrollEvent.getType());
-	}
 
 	// --------------------------------------------------- HasMouseOverHandlers
+
+	@Override
 	public HandlerRegistration addMouseOverHandler(
 			com.google.gwt.event.dom.client.MouseOverHandler handler) {
 		return addHandler(handler, MouseOverEvent.getType());
 	};
-	
+
+	// ------------------------------------------------------ HasClickHandlers
+
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return addHandler(handler, ClickEvent.getType());
 	}
-	
-	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
-		return addHandler(handler, MouseMoveEvent.getType());
-	}
-	
+
+	// ------------------------------------------------------ HasClickHandlers
+
 	@Override
 	public HandlerRegistration addContextMenuHandler(ContextMenuHandler handler) {
 		return addHandler(handler, ContextMenuEvent.getType());
 	}
 
-	@Override
-	protected native JavaScriptObject createJso(Element parent) /*-{
-		return new $wnd.google.visualization.Timeline(parent);
+	// -------------------------------------------------------------- Protected
 
-	}-*/;
+	// ---------------------------------------------------------- Visualization
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		initScrollHandler();
 		initEventHandlers();
 	}
 
+	//@formatter:off
+	@Override
+	protected native JavaScriptObject createJso(Element parent) 
+	/*-{
+		return new $wnd.google.visualization.Timeline(parent);
+	}-*/;
+	//@formatter:on
+
+	// --------------------------------------------------------------- Private
+	/**
+	 * From now was unused. Not works properly and raises an exception with IE.
+	 */
 	private void initScrollHandler() {
 
 		Element el = getElement();
@@ -318,12 +344,11 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 
 	private void initEventHandlers() {
 
-		
 		Element el = getElement();
-		for ( int i = 0 ; i < el.getChildCount(); i++)
-			sinkEvents(Element.as(el.getChild(i)), Event.ONCLICK | Event.ONMOUSEOVER
-					| Event.ONMOUSEMOVE |Event.ONCONTEXTMENU);
-		
+		for (int i = 0; i < el.getChildCount(); i++)
+			sinkEvents(Element.as(el.getChild(i)), Event.ONCLICK
+					| Event.ONMOUSEOVER | Event.ONMOUSEMOVE
+					| Event.ONCONTEXTMENU);
 
 		DOM.setEventListener(el, new EventListener() {
 
@@ -332,23 +357,28 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 				DomEvent.fireNativeEvent(event, TimeLineChart.this);
 			}
 		});
-	}
-	
 
-	private void sinkEvents(Element el, int eventBits){
-		
-		Event.sinkEvents(el, eventBits);
-		
-		for ( int i = 0 ; i < el.getChildCount(); i++)
+	}
+
+	private void sinkEvents(Element el, int eventBits) {
+		try {
+			Event.sinkEvents(el, eventBits);
+		} catch (Exception e) {
+		}
+
+		// fix for IE. <iframe> elements childCount porperty always returns 0.
+		if (IFrameElement.is(el)) {
+			// replace <iframe> element by it's <html> element.
+			el = IFrameElement.as(el).getContentDocument().getDocumentElement();
+			try {
+				Event.sinkEvents(el, eventBits);
+			} catch (Exception e) {
+			}
+		}
+
+		for (int i = 0; i < el.getChildCount(); i++)
 			sinkEvents(Element.as(el.getChild(i)), eventBits);
-		
-	}
-	
-	public int getVerticalScrollPosition(Element el) {
-		return el.getScrollTop();
+
 	}
 
-	public int getMaximumVerticalScrollPosition(Element el) {
-		return el.getScrollHeight() - el.getClientHeight();
-	}
 }

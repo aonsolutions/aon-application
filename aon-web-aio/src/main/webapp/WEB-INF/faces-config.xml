@@ -216,6 +216,7 @@
 			<!--  aon.ui.product -->
 			<value>#{itemAlternativeChildListener}</value>				
 			<value>#{itemCompositionChildListener}</value>				
+			<value>#{itemCustomerChildListener}</value>
 			<value>#{itemSupplierChildListener}</value>
 			<value>#{itemTariffChildListener}</value>
 			<value>#{itemCatalogueChildListener}</value>

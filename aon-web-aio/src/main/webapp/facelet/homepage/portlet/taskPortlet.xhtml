@@ -47,6 +47,19 @@
 					<aon:outputText value="#{desktop.taskInfo.expiredPendingGroupTasks}" style="color:red;"
 						rendered="#{desktop.taskInfo.expiredPendingGroupTasks gt 0}"/>
 				</aon:div>
+				
+				<!-- GOOGLE TASK -->
+				<c:if test="#{googleDrive.google}">
+					<aon:outputText value="&#160;" styleClass="aon-icon-google-task" style="padding-left: 15px;"/>
+					<aon:commandLink id="googleTask-sync" actionListener="#{googleTask.sync}">			
+						<aon:outputText value="#{bundle.google_task}" />
+					</aon:commandLink>
+					<aon:div styleClass="aon-text-right">
+					
+					</aon:div>
+				</c:if>
+				
+				
 			</aon:panelGrid>
 		</aon:div>
 	</aon:div>

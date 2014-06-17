@@ -17,13 +17,16 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -49,6 +52,8 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -58,11 +63,14 @@ import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -74,11 +82,13 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
 	
-	private static final String SALARY_PATTERN = "Nomina {0} ({1,date,dd.MM.yyyy}-{2,date,dd.MM.yyyy})";
+	private static final String SALARY_PATTERN = "{0} {1} ({2,date,dd.MM.yyyy}-{3,date,dd.MM.yyyy})";
 	
 	private static final String SALARIES_ZIP_NAME = "nominas";
 
 	private static final String SALARY_COST_FILE_NAME = "costes_empresa";
+
+	private static final String TP_CONTRACT_HOURS_FILE_NAME = "horas_contratos_tp";
 	
 	private List<SelectItem> availableWorkPlaces;
 	
@@ -89,20 +99,50 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	private String[] types;
 	
 	private boolean includeEnterpriseCost;
-	
-	private Month month;
+
+	private boolean includeTPhours;
 	
 	private Integer year;
+	
+	private Month month;
+
+	private Integer fromDay;
+
+	private Integer toDay;
 
 	private Set<Integer> checks = new HashSet<Integer>();
 
-	
+
+	public boolean isIncludeTPhours() {
+		return includeTPhours;
+	}
+
+	public void setIncludeTPhours(boolean includeTPhours) {
+		this.includeTPhours = includeTPhours;
+	}
+
 	public boolean isIncludeEnterpriseCost() {
 		return includeEnterpriseCost;
 	}
 
 	public void setIncludeEnterpriseCost(boolean includeEnterpriseCost) {
 		this.includeEnterpriseCost = includeEnterpriseCost;
+	}
+
+	public Integer getFromDay() {
+		return fromDay;
+	}
+
+	public void setFromDay(Integer fromDay) {
+		this.fromDay = fromDay;
+	}
+
+	public Integer getToDay() {
+		return toDay;
+	}
+
+	public void setToDay(Integer toDay) {
+		this.toDay = toDay;
 	}
 
 	public Month getMonth() {
@@ -161,6 +201,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
 		setIncludeEnterpriseCost(false);
+		setIncludeTPhours(false);
 		loadWorkPlaces();
 		this.resetCriteria();
 		clearFilters();
@@ -225,7 +266,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		String id = this.getFieldName(IEntityAlias.SALARY_ID);
 		ProjectionList pl = new ProjectionList( Projection.property(id) );
 		List<Integer> list = this.getManagerBean().getList(pl, this.getCriteria());
-		checks.clear();
+		clearChecked();
 		checks.addAll( list );
 	}
 
@@ -288,6 +329,67 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			this.showWorkPlaces = true;
 		}
 	}	
+	
+	public boolean isContainsPartialTime(){
+		try {
+			String id = this.getFieldName(IEntityAlias.SALARY_CONTRACT_ID);
+			ProjectionList pl = new ProjectionList( Projection.property(id) );
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			List<Integer> list = this.getManagerBean().getList(pl, criteria);
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria = new Criteria();
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), list);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
+			Expression exp1 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"2%\"");
+			Expression exp2 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"3%\"");
+			Expression exp3 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"5%\"");
+			criteria.addExpression( ExpressionUtilities.getOrExpression(ExpressionUtilities.getOrExpression(exp1, exp2), exp3) );
+			return bean.getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
+	public boolean isContainsSalary(){
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
+	public boolean isContainsExtra(){
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.EXTRA);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
+	public boolean isContainsSettle(){
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
+	public boolean isContainsDelay(){
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.DELAY);
+			return this.getManagerBean().getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
 
 	@Override
 	public Collection<ITransferObject> getCollection() {
@@ -304,15 +406,32 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			throws ManagerBeanException {
 		IManagerBean bean = this.getManagerBean();
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
+		Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String type = parameters.get("reportType");
+		if (type == null) {
+			LOGGER.warn("Empty reportType!");
+			type = "SALARY";
+		}
+		for( Integer id : checks ) {
+			ITransferObject to = bean.get(id);
+			if(((Salary)to).getType()==SalaryType.valueOf(type)){
+				l.add( to );
+			}
+		}
+		return l;
+	}
+	
+	private Collection<ITransferObject> getSelectedAllSalaries() throws ManagerBeanException {
+		IManagerBean bean = this.getManagerBean();
+		List<ITransferObject> l = new LinkedList<ITransferObject>();
 		for( Integer id : checks ) {
 			l.add( bean.get(id) );
 		}
-		return l;
+		return l;		
 	}
 
 	public String onPrint() throws ManagerBeanException {
 		ReportManager reportManager = new ReportManager();
-		obtainSalaryTemplate();
 		reportManager.setReportKey(obtainSalaryTemplate());
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( this );
@@ -321,16 +440,26 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	
 	private String obtainSalaryTemplate() throws ManagerBeanException{
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		Company company = companyController.obtainCompany();
-		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		try {
-			controller.select(null, company.getId());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
+		Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String type = parameters.get("reportType");
+		if (type == null) {
+			LOGGER.warn("Empty reportType!");
+			type = "SALARY";
 		}
-		EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
-		return enterpriseParams.getParameter("PAY_REPORT_salary_PAY").getExpression();
+		if(SalaryType.valueOf(type) == SalaryType.SETTLE){
+			return IPayrollConstants.SETTLE_REPORT;
+		} else {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			Company company = companyController.obtainCompany();
+			EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+			try {
+				controller.select(null, company.getId());
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+			return enterpriseParams.getParameter("PAY_REPORT_salary_PAY").getExpression();
+		}
 	}
 
 	private String obtainSalarySendingEmail() throws ManagerBeanException{
@@ -346,10 +475,11 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return enterpriseParams.getParameter("PAY_salarySending_email_PAY").getExpression();
 	}
 	
-	private void writeSalariesZip( File file, Collection<Salary> collection ) throws IOException, ReportException, ManagerBeanException {
+	private void writeSalariesZip( File file, Collection<ITransferObject> collection ) throws IOException, ReportException, ManagerBeanException {
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		for (Salary salary : collection) {
+		for (ITransferObject to : collection) {
+			Salary salary = (Salary) to;
 			String fileName = this.getFileName(salary) + "." + MimeType.MIME_PDF.getExtension();
        		zipOut.putNextEntry(new ZipEntry(fileName));
        		this.writeReport(salary, zipOut);
@@ -358,7 +488,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		IOUtils.closeQuietly(zipOut);
 	}
 	
-	private AonFile getSalariesZipFile( Collection<Salary> salaries ) throws IOException, ReportException, ManagerBeanException {
+	private AonFile getSalariesZipFile( Collection<ITransferObject> salaries ) throws IOException, ReportException, ManagerBeanException {
 		File file = File.createTempFile( SALARIES_ZIP_NAME, "." + MimeType.MIME_ZIP.getExtension() );
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		writeSalariesZip( file, salaries );
@@ -380,12 +510,20 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return aonFile;
 	}
 
-	@SuppressWarnings("unchecked")
+	private AonFile getTPContractHoursFile( ) throws IOException, ReportException {
+		File file = File.createTempFile( TP_CONTRACT_HOURS_FILE_NAME, "." + MimeType.MIME_PDF.getExtension() );
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		writeTPContractHoursReport(new BufferedOutputStream( new FileOutputStream(file) ));
+		IOUtils.closeQuietly(out);
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);	
+		aonFile.setFileName( TP_CONTRACT_HOURS_FILE_NAME + "." + MimeType.MIME_PDF.getExtension() );
+		return aonFile;
+	}
+
 	public void onSendByEmail( ActionEvent event ) {
 		try {
-			Collection<?> list = getCollection();
-			Collection<Salary> salaries = (Collection<Salary>) list;
-			
+			Collection<ITransferObject> salaries = getSelectedAllSalaries();
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 			if (mailConfig.getMailAccountCount() > 0) {
 				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
@@ -395,8 +533,12 @@ public class SalaryPrintController extends BasicController implements ICollectio
 				setRecipients(messageController);
 				
 				messageController.addAttachment( getSalariesZipFile(salaries) );
+				
 				if(isIncludeEnterpriseCost()){
 					messageController.addAttachment( getSalaryCostFile() );
+				}
+				if(isIncludeTPhours()){
+					messageController.addAttachment( getTPContractHoursFile() );
 				}
 				messageController.setShowNewMessageWindow(true);
 			} else {
@@ -415,14 +557,15 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		return MessageFormat.format(message, enterprise.getRegistry().getFullName() );
 	}
 	
-	private String getEmailContent( Collection<Salary> salaries ) {
+	private String getEmailContent( Collection<ITransferObject> salaries ) {
 		StringBuffer body = new StringBuffer();
 		body.append( "<html><head>" );
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
 		body.append(AonUtil.getMessage(SALARY_EMAIL_BODY_HEADER) );
-		for( Salary salary : salaries ) {
+		for( ITransferObject to : salaries ) {
+			Salary salary = (Salary) to;
 			body.append( "<ul>" );
 			String message = AonUtil.getMessage(SALARY_EMAIL_BODY_LINE);
 			String line = MessageFormat.format(message, salary.getContract().getPerson().getFullName(), salary.getIssueDate() );
@@ -463,11 +606,91 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		reportManager.setCollectionProvider( salaryExpense );
 		reportManager.execute( out, COST_REPORT );
 	}
+
+	private String writeTPContractHoursReport( OutputStream out ) throws ReportException {
+		ReportManager reportManager = new ReportManager();
+		reportManager.setOutputFormat(OutputFormat.PDF);
+		reportManager.setCollectionProvider( new PartialContractProvider() );
+		return reportManager.execute( out, CONTRACT_MONTHLY_HOURS );
+	}
+	
+	public String onExecuteTPContractHoursReport(){
+		OutputStream out = null;
+		try {
+			out = DownloadUtil.initDownload(DownloadUtil.getResponse(), CONTRACT_MONTHLY_HOURS, OutputFormat.PDF.getMimeType2());
+			return writeTPContractHoursReport( out );
+		} catch (IOException e) {
+			return null;
+		} catch (ReportException e) {
+			return null;
+		} finally {
+			DownloadUtil.finishDownload(DownloadUtil.getResponse(), out);
+		}
+	}
 	
 	
 	private String getFileName( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
-		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
+		return MessageFormat.format(SALARY_PATTERN, salary.getType().getName(AonUtil.getCurrentLocale()), name, salary.getStartDate(), salary.getEndDate());
+	}
+	
+	public class PartialContractProvider implements ICollectionProvider {
+				
+		@Override
+		public Collection<ITransferObject> getCollection() {
+			try {
+				return getCollection(false);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return null;
+		}
+
+		@Override
+		public Collection<ITransferObject> getCollection(boolean forceRefresh)
+				throws ManagerBeanException {
+			
+			List<Integer> salaryContractIdList = null;
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+				String id = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID);
+				ProjectionList pl = new ProjectionList( Projection.property(id) );
+				Criteria criteria = new Criteria();
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_ID), checks);
+				salaryContractIdList = bean.getList(pl, criteria);
+			} catch (ManagerBeanException e) {
+				return Collections.emptyList();	
+			}
+			List<Integer> contractIdList = null;
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+				String id = bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID);
+				ProjectionList pl = new ProjectionList( Projection.property(id) );
+				Criteria criteria = new Criteria();
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), salaryContractIdList);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
+				Expression exp1 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"2%\"");
+				Expression exp2 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"3%\"");
+				Expression exp3 = ExpressionUtilities.getLikeExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION), "\"5%\"");
+				criteria.addExpression( ExpressionUtilities.getOrExpression(ExpressionUtilities.getOrExpression(exp1, exp2), exp3) );
+				contractIdList = bean.getList(pl, criteria);
+			} catch (ManagerBeanException e) {
+				return Collections.emptyList();	
+			}
+			
+			List<ITransferObject> l = new LinkedList<ITransferObject>();
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_ID), checks);
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contractIdList);
+			bean.getList(criteria);
+			
+			for( ITransferObject to : bean.getList(criteria) ) {
+				l.add( to );
+			}
+			return l;
+		}
+		
 	}
 	
 }

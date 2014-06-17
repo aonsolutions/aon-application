@@ -9,6 +9,14 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGrid id="transformDataTable" columns="2" style="width: 100%;">
+	
+		<aon:outputLabel for="transformContrata_sourceContractSepeId"
+			rendered="#{empty transformContrata.params.sourceContractSepeId}"
+			value="Codigo contrato origen" />
+		<aon:inputText id="transformContrata_sourceContractSepeId"
+			required="#{true}" size="30" maxlength="30"
+			rendered="#{empty transformContrata.params.sourceContractSepeId}"
+			value="#{transformContrata.params.sourceContractSepeId}" />
 
 		<!--  
 		<aon:outputLabel for="transformContrata_contractCode"

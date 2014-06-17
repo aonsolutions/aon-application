@@ -71,6 +71,10 @@ public class ProjectReservationPermission implements Serializable {
 		return getRoleManager().isAdmin();
 	}
 
+	private boolean isRoleManager() {
+		return getRoleManager().isAccountingManager();
+	}
+
 	private boolean isRoleConfig() {
 		return getRoleManager().isConfig();
 	}
@@ -220,7 +224,7 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isReservationCodeEditable() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive();
+		return isRoleManager() || (roleAllowed && reservation.isActive());
 	}
 
 	public boolean isReservationDatesEditable() throws ManagerBeanException {

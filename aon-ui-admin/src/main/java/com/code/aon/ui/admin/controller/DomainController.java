@@ -557,30 +557,13 @@ public class DomainController extends BasicController {
 
 	public IControllerListener getParentDomainFilter() {
 		if ( this.parentDomainFilter == null ) {
-			this.parentDomainFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						controller.getCriteria().setSkipDomainFilter(true);
-						String parent = controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT);
-						controller.getCriteria().addEqualExpression(parent, Boolean.TRUE);
-						String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
-						controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
-						String idAlias = controller.getFieldName(IEntityAlias.DOMAIN_ID);
-						controller.getCriteria().addNotEqualExpression(idAlias, DomainManager.getCurrentDomain());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering offer", e);
-					}
-				}
-			};
+			this.parentDomainFilter = new ParentDomainFilter();
 		}
 		return this.parentDomainFilter;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Integer> getOEMDomains() throws ManagerBeanException {
+	private static List<Integer> getOEMDomains() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);	
 		Criteria criteria = new Criteria();
 		criteria.setSkipDomainFilter(true);
@@ -593,28 +576,7 @@ public class DomainController extends BasicController {
 
 	public IControllerListener getOEMDomainFilter() {
 		if ( this.OEMDomainFilter == null ) {
-			this.OEMDomainFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						controller.getCriteria().setSkipDomainFilter(true);
-						String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
-						controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
-						
-						String idAlias = controller.getFieldName(IEntityAlias.DOMAIN_ID);
-						List<Integer> oemDomains = getOEMDomains();
-						if (! oemDomains.isEmpty() ) {
-							controller.getCriteria().addInExpression(idAlias, oemDomains);	
-						} else {
-							controller.getCriteria().addNullExpression(idAlias);
-						}					
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering offer", e);
-					}
-				}
-			};
+			this.OEMDomainFilter = new OEMDomainFilter();
 		}
 		return this.OEMDomainFilter;
 	}
@@ -989,5 +951,51 @@ public class DomainController extends BasicController {
 		attach.setMimeType(MimeType.MIME_PDF);
 		DownloadUtil.downloadAttachment(attach);
 	}
+
+	private static class ParentDomainFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().setSkipDomainFilter(true);
+				String parent = controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT);
+				controller.getCriteria().addEqualExpression(parent, Boolean.TRUE);
+				String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
+				controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
+				String idAlias = controller.getFieldName(IEntityAlias.DOMAIN_ID);
+				controller.getCriteria().addNotEqualExpression(idAlias, DomainManager.getCurrentDomain());
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering offer", e);
+			}
+		}
+		
+	}
 	
+	private static class OEMDomainFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().setSkipDomainFilter(true);
+				String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
+				controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
+				
+				String idAlias = controller.getFieldName(IEntityAlias.DOMAIN_ID);
+				List<Integer> oemDomains = DomainController.getOEMDomains();
+				if (! oemDomains.isEmpty() ) {
+					controller.getCriteria().addInExpression(idAlias, oemDomains);	
+				} else {
+					controller.getCriteria().addNullExpression(idAlias);
+				}					
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering offer", e);
+			}
+		}
+
+	}
+		
 }

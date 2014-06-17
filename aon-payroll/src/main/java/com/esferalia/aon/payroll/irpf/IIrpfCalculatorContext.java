@@ -2,6 +2,8 @@ package com.esferalia.aon.payroll.irpf;
 
 import java.math.BigDecimal;
 
+import com.code.aon.config.enumeration.Administration;
+
 public interface IIrpfCalculatorContext {
 
 
@@ -218,7 +220,7 @@ public interface IIrpfCalculatorContext {
 	}
 
 	boolean next();
-
+	
 	// ------------------------------------------------ TipoRetenedorEntrada2013
 	String getRetenedorNif();
 

@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -507,7 +506,7 @@ public class SalaryDraftObject implements IContextProvider {
 				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
 						salaryDraft);
 	}
-
+	
 	// ------------------------------------------
 	//
 	//
@@ -530,10 +529,20 @@ public class SalaryDraftObject implements IContextProvider {
 		this.draftStartDate = draftStartDate;
 		this.draftEndDate = draftEndDate;
 	}
+	
+	
 
 	// ------------------------------------------
 	// Undo & Redo Support
 	//
+
+	public String getCommunity() {
+		return salaryDraft.getCommunity();
+	}
+
+	public void setCommunity(String community) {
+		salaryDraft.setCommunity(community);
+	}
 
 	public Payment addDraftPayment(Payment payment) {
 		Payment oldPayment = salaryDraft.addDraftPayment(payment);

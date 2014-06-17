@@ -11,12 +11,14 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.ITariffable;
+import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationRoomDB;
 
 @Entity
 @Table(name="project_reservation_room")
-public class ProjectReservationRoom extends ProjectReservationRoomDB implements IAuditable {
+public class ProjectReservationRoom extends ProjectReservationRoomDB implements IAuditable, ITariffable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -27,6 +29,11 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB implements 
 
 	public ProjectReservationRoom() {
 		setForceRefreshBooking(false);
+	}
+
+	@Transient
+	public Registry getRegistry() {
+		return getProjectReservation().getCustomer().getRegistry();
 	}
 
 	@Transient

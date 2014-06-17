@@ -43,21 +43,25 @@ public class QuestionController extends BasicController {
 
 	public IControllerListener getNotInfoListener() {
 		if ( notInfoListener == null ) {
-			notInfoListener = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {
-						String alias = controller.getFieldName(IEntityAlias.QUESTION_TYPE);
-						controller.getCriteria().addNotEqualExpression(alias, QuestionType.INFO);
-					} catch (ManagerBeanException e) {
-						throw new ControllerListenerException(e);
-					} 
-				}		
-			};
+			notInfoListener = new NotInfoFilter();
 		}
 		return notInfoListener;
+	}
+	
+	private static class NotInfoFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {
+				String alias = controller.getFieldName(IEntityAlias.QUESTION_TYPE);
+				controller.getCriteria().addNotEqualExpression(alias, QuestionType.INFO);
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e);
+			} 
+		}		
+		
 	}
 	
 }

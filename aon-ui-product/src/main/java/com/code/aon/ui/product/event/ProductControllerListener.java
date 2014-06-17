@@ -23,6 +23,7 @@ import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.product.controller.ProductController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductControllerListener extends ControllerAdapter implements IItemConstants {
@@ -72,6 +73,9 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 			if (! controller.isShowDetail() ) {
 				controller.acceptItem(null);
 			}
+			if (! product.isInventoriable() ) {
+				removeStocks(product);
+			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
@@ -92,12 +96,8 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Product product = (Product) event.getController().getTo();
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), product.getId());
-			for( ITransferObject to : itemBean.getList(criteria) ) {
-				itemBean.remove( to );
-			}
+			removeStocks(product);			
+			removeItems(product);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -166,5 +166,23 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 			}
 		}
 	}		
+
+	private void removeItems( Product product ) throws ManagerBeanException {
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), product.getId());
+		for( ITransferObject to : itemBean.getList(criteria) ) {
+			itemBean.remove( to );
+		}		
+	}
+
+	private void removeStocks( Product product ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Stock.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("Stock.item.product.id", product.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			bean.remove( to );
+		}		
+	}
 	
 }

@@ -5,7 +5,6 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -31,18 +30,14 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		if (invoiceDetail.getQuantity() == 0) {
 			invoiceDetail.setQuantity(1);
 		}
+		Customer customer = null;
 		if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
-			Tariff tariff;
 			try {
-				Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
-				tariff = customer.getTariff();
+				customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
 			} catch (ManagerBeanException e) {
-				tariff = null;
 			}
-			invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), tariff));
-		} else {
-			invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail));
 		}
+		invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), customer));
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
@@ -54,18 +49,14 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setQuantity(quantity);
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
+			Customer customer = null;
 			if (invoice.getRegistry() != null && invoice.getRegistry().getId() != null) {
-				Tariff tariff;
 				try {
-					Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
-					tariff = customer.getTariff();
+					customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
 				} catch (ManagerBeanException e) {
-					tariff = null;
 				}
-				invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), tariff));
-			} else {
-				invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail));
 			}
+			invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), customer));
 		} else {
 			invoiceDetail.setPrice(0);
 		}

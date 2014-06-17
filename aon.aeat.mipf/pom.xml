@@ -15,8 +15,8 @@
 	</properties>
 	
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.aeat.mipf</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.aeat.mipf</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon.aeat.mipf</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon.aeat.mipf</connection>
 	</scm>
 	<build>
 		<finalName>aon-aio</finalName>

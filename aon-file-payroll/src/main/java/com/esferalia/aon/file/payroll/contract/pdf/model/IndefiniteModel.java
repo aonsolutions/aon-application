@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +15,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldIndefinite;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
@@ -33,7 +35,7 @@ public class IndefiniteModel extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
 		try {
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
@@ -43,7 +45,7 @@ public class IndefiniteModel extends AbstractContractModel {
 			getReader().selectPages(range);
 			readPdfFields();
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams;
+			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 
@@ -514,8 +516,11 @@ public class IndefiniteModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()))){
 					setPdfFieldValue(PdfFieldIndefinite.OPT17_SEPE_MUNICIPALITY.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()));
 				}				
-				// TODO: complete this
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_TRANSFORM_DATE.getValue(),"");
+				// TODO: transform date
+				ContrataTransformacionesParams transformParams = (ContrataTransformacionesParams) contrataParams.get(1);
+				if(transformParams.getFechaInicio()!=null){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_TRANSFORM_DATE.getValue(),dateFormatter.format(transformParams.getFechaInicio()));
+				}
 				
 				
 //				String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_TRANSFORMATION_TO.toString());
@@ -527,15 +532,18 @@ public class IndefiniteModel extends AbstractContractModel {
 //					}
 //				}
 				if(code == ContractCode.C309 || code == ContractCode.C339 || code == ContractCode.C389){
-					setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME.getValue(), "true");
-				} else {
 					setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME_DISCONTINUOUS.getValue(), "true");
+				} else {
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_IS_FULL_TIME.getValue(), "true");
 				}
 				
-				String contractCode = getContractDataMap(contract, null, null, false).get(ContextVariable.TC2.getName());
-				if(StringUtils.isNotBlank(contractCode)){
-					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT.getValue(),ContractCode.getContractCodeByValue(contractCode).getName(getLocale()));
-				}
+				// TODO source contract code
+//				String contractCode = getContractDataMap(contract, null, null, false).get(ContextVariable.TC2.getName());
+//				ContractCode sourceContractCode = transformParams.getSourceContractCode();
+//				if(sourceContractCode!=null){
+//					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT.getValue(),sourceContractCode.getName(getLocale()));
+//				}
+				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT.getValue(),"TEMPORAL");
 				
 				dateFormatter.applyPattern("dd/MM/yyyy");
 				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_START_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
@@ -547,9 +555,14 @@ public class IndefiniteModel extends AbstractContractModel {
 				dateFormatter.applyPattern("dd/MM/yyyy");
 				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
 				
-				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(ContractVariable.SEPE_CONTRACT_ID.getValue()))){
+				// TODO source contract sepe id
+				if(StringUtils.isNotBlank(transformParams.getSourceContractSepeId())){
+					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_ID.getValue(),transformParams.getSourceContractSepeId());
+				} else 
+					if(StringUtils.isNotBlank(getContractInfoMap(contract).get(ContractVariable.SEPE_CONTRACT_ID.getValue()))){
 					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_ID.getValue(),getContractInfoMap(contract).get(ContractVariable.SEPE_CONTRACT_ID.getValue()));
 				}
+				
 			}
 			
 		} catch (IOException e) {

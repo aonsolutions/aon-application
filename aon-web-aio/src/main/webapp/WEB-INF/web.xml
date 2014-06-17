@@ -173,6 +173,23 @@
 	
 	
 	<servlet>
+		<servlet-name>OAuth2Servlet</servlet-name>
+		<servlet-class>com.code.aon.google.apis.servlet.GoogleAuthorizationCodeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuth2Servlet</servlet-name>
+		<url-pattern>/oauth2/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>OAuth2CallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.google.apis.servlet.GoogleAuthorizationCodeCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuth2CallbackServlet</servlet-name>
+		<url-pattern>/oauth2callback/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>Fiscal Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.fiscal.server.FiscalServiceImpl</servlet-class>
 	</servlet>

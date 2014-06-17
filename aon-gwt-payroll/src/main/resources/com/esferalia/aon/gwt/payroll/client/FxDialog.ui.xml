@@ -175,7 +175,7 @@
 
 						<tr class="aon-width-all aon-height-all">
 							<td colspan="3" class="aon-width-all aon-height-all">
-								<g:TextArea ui:field="expressionTextArea"
+								<aon:ExpressionArea ui:field="expressionTextArea"
 									styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}" />
 							</td>
 						</tr>

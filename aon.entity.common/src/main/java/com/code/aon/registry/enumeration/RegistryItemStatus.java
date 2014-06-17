@@ -5,22 +5,10 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-/**
- * Enummeration to identify the different status of an TargetItem.
- * 
- * @author Consulting & Development. Aimar Tellitu - 21-jul-2008
- * @since 1.0
- * @version 1.0
- */
 public enum RegistryItemStatus implements IResourceable {
 
-	/** ACTIVE. */
 	ACTIVE,
-    
-	/** INTERESTED. */
 	INTERESTED,
-    
-    /** REFUSED. */
 	REFUSED;
     
     /** Message key prefix. */

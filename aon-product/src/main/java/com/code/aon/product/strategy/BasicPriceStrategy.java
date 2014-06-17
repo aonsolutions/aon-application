@@ -27,7 +27,12 @@ import com.code.aon.product.ItemTariff;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryItemStatus;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class BasicPriceStrategy implements IPriceStrategy, Serializable {
@@ -35,6 +40,19 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicPriceStrategy.class.getName());
+
+	public double getUnitPurchasePrice(ICalculable calc) {
+		double purchasePrice = 0;
+		if (calc.getItem() != null && calc.getItem().getId() != null) {
+			purchasePrice = calc.getItem().getPurchasePrice();
+		}
+		return purchasePrice;
+	}
+
+	public double getUnitPurchasePrice(ICalculable calc, Date date, ITariffable iTariffable) {
+		double purchasePrice = getUnitPrice(calc, date, iTariffable, RegistryMode.SUPPLIER);
+		return (purchasePrice > 0) ? purchasePrice : getUnitPurchasePrice(calc);
+	}
 
 	public double getUnitPrice(ICalculable calc) {
 		double price = 0;
@@ -44,61 +62,86 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		return price;
 	}
 
-	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff) {
+	public double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable) {
+		double price = getUnitPrice(calc, date, iTariffable, RegistryMode.CUSTOMER);
+		return (price > 0) ? price : getUnitPrice(calc);
+	}
+
+	private double getUnitPrice(ICalculable calc, Date date, ITariffable iTariffable, RegistryMode rMode) {
+		Registry registry = iTariffable.getRegistry();
+		Tariff tariff = iTariffable.getTariff();
 		try {
-			if (calc.getItem() != null && calc.getItem().getId() != null && tariff != null && tariff.getId() != null) {
-				IManagerBean tariffCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
-				IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
-				IManagerBean catalogueCategoryBean = BeanManager.getManagerBean(CatalogueCategory.class);
-
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_TARIFF_ID), tariff.getId());
-				criteria.addLessThanOrEqualExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), date);
-				Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE), date);
-				Expression nullExpr = ExpressionUtilities.getNullExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE));
-				criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
-				criteria.addOrder(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), false);
-				for (ITransferObject ito : tariffCatalogueBean.getList(criteria)) {
-					TariffCatalogue tariffCatalogue = (TariffCatalogue)ito;
-
-					criteria = new Criteria();
-					criteria.addEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
-					criteria.addLessThanOrEqualExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
-					criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), false);
-					for (ITransferObject itr : catalogueItemBean.getList(criteria, 0, 1)) {
-						CatalogueItem catalogueItem = (CatalogueItem)itr;
-						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
-						return (catalogueItem.getPrice() > 0)?catalogueItem.getPrice():getUnitPrice(calc);
-					}
-
-					criteria = new Criteria();
-					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
-					criteria.addLessThanOrEqualExpression(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
-					criteria.addOrder(catalogueCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
-					for (ITransferObject itr : catalogueCategoryBean.getList(criteria, 0, 1)) {
-						CatalogueCategory catalogueCategory = (CatalogueCategory)itr;
-						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
-						return getUnitPrice(calc);
+			if (calc.getItem() != null && calc.getItem().getId() != null && iTariffable != null) {
+				if (registry != null && registry.getId() != null) {
+					IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), calc.getItem().getId());
+					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), registry.getId());
+					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
+					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), rMode);
+					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
+					for (ITransferObject itr : rItemBean.getList(criteria)) {
+						RegistryItem rItem = (RegistryItem)itr;
+						calc.getDiscountExpression().setDiscountExpr(rItem.getDiscountExpression().getDiscountExpr());
+						return rItem.getPrice();
 					}
 				}
+				if (tariff != null && tariff.getId() != null) {
+					IManagerBean tCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
+					IManagerBean cItemBean = BeanManager.getManagerBean(CatalogueItem.class);
+					IManagerBean cCategoryBean = BeanManager.getManagerBean(CatalogueCategory.class);
 
-				IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), calc.getItem().getId());
-				criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
-				for (ITransferObject itr : itemTariffBean.getList(criteria)) {
-					ItemTariff itemTariff = (ItemTariff)itr;
-					return itemTariff.getPrice();
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_TARIFF_ID), tariff.getId());
+					criteria.addLessThanOrEqualExpression(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), date);
+					Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE), date);
+					Expression nullExpr = ExpressionUtilities.getNullExpression(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE));
+					criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
+					criteria.addOrder(tCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), false);
+					for (ITransferObject ito : tCatalogueBean.getList(criteria)) {
+						TariffCatalogue tCatalogue = (TariffCatalogue)ito;
+
+						criteria = new Criteria();
+						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), tCatalogue.getCatalogue().getId());
+						criteria.addEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
+						criteria.addLessThanOrEqualExpression(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
+						criteria.addOrder(cItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_QUANTITY), false);
+						for (ITransferObject itr : cItemBean.getList(criteria, 0, 1)) {
+							CatalogueItem catalogueItem = (CatalogueItem)itr;
+							calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
+							return catalogueItem.getPrice();
+						}
+
+						criteria = new Criteria();
+						criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tCatalogue.getCatalogue().getId());
+						criteria.addEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
+						criteria.addLessThanOrEqualExpression(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
+						criteria.addOrder(cCategoryBean.getFieldName(IEntityAlias.CATALOGUE_CATEGORY_QUANTITY), false);
+						for (ITransferObject itr : cCategoryBean.getList(criteria, 0, 1)) {
+							CatalogueCategory catalogueCategory = (CatalogueCategory)itr;
+							calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
+							return 0;
+						}
+					}
+
+					if (rMode == RegistryMode.CUSTOMER) {
+						IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
+						criteria = new Criteria();
+						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), calc.getItem().getId());
+						criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
+						for (ITransferObject itr : itemTariffBean.getList(criteria)) {
+							ItemTariff itemTariff = (ItemTariff)itr;
+							return itemTariff.getPrice();
+						}
+					}
+
+					calc.getDiscountExpression().setDiscountExpr(Double.toString(tariff.getDiscount()));
 				}
-
-				calc.getDiscountExpression().setDiscountExpr(Double.toString(tariff.getDiscount()));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining unitPrice for tariff = " + tariff.getName(), e);
 		}
-		return getUnitPrice(calc);
+		return 0;
 	}
 	
 	public double getBasePrice(ICalculable calc) {

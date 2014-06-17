@@ -5,12 +5,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +26,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
@@ -47,6 +53,7 @@ import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -1272,6 +1279,89 @@ public class ContractUtils implements Serializable {
 			DatabaseUtil.closeQuietly(conn);
 		}
 		return null;
+	}
+	
+	public static String getMonthName(Date date, Locale locale){
+		return Month.getMonthByValue(CommonUtil.getMonth(date)).getName(locale);
+	}
+	
+	public static Double getContractTotalMonthHours(Integer salaryId){
+		Double total = new Double(0.0);
+		for(MonthHours mh: getContractMonthHours(salaryId)){
+			if(mh.getHours()!=null){
+				total += mh.getHours();
+			}
+			if(mh.getExtraHours()!=null){
+				total += mh.getExtraHours();
+			}
+		}
+		return total;
+	}
+	
+	public static List<MonthHours> getContractMonthHours(Integer salaryId){
+		List<MonthHours> list = new LinkedList<MonthHours>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Salary salary = (Salary) bean.get(salaryId);
+			Calendar endDate = Calendar.getInstance();
+			endDate.setTime(salary.getEndDate());
+			endDate.set(Calendar.DAY_OF_MONTH, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+			Calendar date = Calendar.getInstance();
+			date.setTime(salary.getEndDate());
+			date.set(Calendar.DAY_OF_MONTH, date.getActualMinimum(Calendar.DAY_OF_MONTH));
+			
+			Map<String, String> map = SEPEUtils.getInstance().getContractDataMap(salary.getContract());
+			Double monday = NumberUtils.toDouble(map.get(ContextVariable.MONDAY_HOURS.getName()));
+			Double tuesday = NumberUtils.toDouble(map.get(ContextVariable.TUESDAY_HOURS.getName()));
+			Double wednesday = NumberUtils.toDouble(map.get(ContextVariable.WEDNESDAY_HOURS.getName()));
+			Double thursday = NumberUtils.toDouble(map.get(ContextVariable.THURSDAY_HOURS.getName()));
+			Double friday = NumberUtils.toDouble(map.get(ContextVariable.FRIDAY_HOURS.getName()));
+			Double saturday = NumberUtils.toDouble(map.get(ContextVariable.SATURDAY_HOURS.getName()));
+			Double sunday = NumberUtils.toDouble(map.get(ContextVariable.SUNDAY_HOURS.getName()));
+			
+			while(!date.after(endDate)){
+				if(date.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
+					list.add(new MonthHours(monday, null));
+				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY){
+					list.add(new MonthHours(tuesday, null));
+				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY){
+					list.add(new MonthHours(wednesday, null));
+				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY){
+					list.add(new MonthHours(thursday, null));
+				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY){
+					list.add(new MonthHours(friday, null));
+				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
+					list.add(new MonthHours(saturday, null));
+				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+					list.add(new MonthHours(sunday, null));
+				}
+				date.add(Calendar.DAY_OF_MONTH, 1);
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return list;
+	}
+
+	public static class MonthHours {
+		private Double hours;
+		private Double extraHours;
+		public MonthHours (Double hours, Double extraHours){
+			this.hours = hours;
+			this.extraHours = extraHours;
+		}
+		public Double getHours() {
+			return hours;
+		}
+		public void setHours(Double hours) {
+			this.hours = hours;
+		}
+		public Double getExtraHours() {
+			return extraHours;
+		}
+		public void setExtraHours(Double extraHours) {
+			this.extraHours = extraHours;
+		}
 	}
 	
 }

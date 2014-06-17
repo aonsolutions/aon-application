@@ -47,36 +47,7 @@ public class DivertController extends BasicController {
 	
 	public IControllerListener getDivertedReservationFilter() {
 		if ( this.divertFilter == null ) {
-			this.divertFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelSearched(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						for(Integer i: getPendingReservationDiverts()){
-							controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), i);
-						}
-						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
-						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-						if(! AonUtil.getRoleManager().isSaleOperator()){
-							controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
-						}
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering reservation", e);
-					}
-				}
-				private List<Integer> getPendingReservationDiverts() throws ManagerBeanException {
-					List<Integer> list = new LinkedList<Integer>();
-					IManagerBean bean = BeanManager.getManagerBean(ProjectReservationDivert.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_STATUS), ReservationDivertStatus.PENDING);
-					for(ITransferObject to: bean.getList(criteria)){
-						ProjectReservationDivert d = (ProjectReservationDivert) to;
-						list.add(d.getProjectReservation().getId());
-					}
-					return list;
-				}
-			};
+			this.divertFilter = new DivertFilter();
 		}
 		return this.divertFilter;
 	}
@@ -99,6 +70,39 @@ public class DivertController extends BasicController {
 	private Integer getWorkPlaceScopeToExclude() {
 		// Id del ambito de hoteles externos
 		return 107;
+	}
+
+	private static class DivertFilter extends ControllerAdapter {
+
+		@Override
+		public void beforeModelSearched(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				for(Integer i: getPendingReservationDiverts()){
+					controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), i);
+				}
+				controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
+				controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+				if(! AonUtil.getRoleManager().isSaleOperator()){
+					controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering reservation", e);
+			}
+		}
+		private List<Integer> getPendingReservationDiverts() throws ManagerBeanException {
+			List<Integer> list = new LinkedList<Integer>();
+			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationDivert.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_STATUS), ReservationDivertStatus.PENDING);
+			for(ITransferObject to: bean.getList(criteria)){
+				ProjectReservationDivert d = (ProjectReservationDivert) to;
+				list.add(d.getProjectReservation().getId());
+			}
+			return list;
+		}
+		
 	}
 	
 }

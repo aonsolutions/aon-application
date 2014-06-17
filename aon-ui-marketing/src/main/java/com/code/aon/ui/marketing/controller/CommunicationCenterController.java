@@ -930,25 +930,33 @@ public class CommunicationCenterController extends DataScrollerState implements 
 
 	public IControllerListener getProjectCommercialListener() {
 		if ( this.projectCommercialListener == null ) {
-			this.projectCommercialListener = new ControllerAdapter() {
-				@Override
-				public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
-					ProjectCommercialSearchListener pcsl = (ProjectCommercialSearchListener) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME);
-					pcsl.setTarget(getTarget());
-				}
-
-				@Override
-				public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-					RichLookupBean lookup = (RichLookupBean) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_LOOKUP_NAME);
-					ProjectCommercial pc = (ProjectCommercial) lookup.getTo();
-					pc.setStatusDate(new Date());
-					pc.setSource(ProjectSource.CALL_CENTER);
-					pc.setTarget(getTarget());
-				}
-
-			};			
+			this.projectCommercialListener = new ProjectCommercialFilter();
 		}
 		return this.projectCommercialListener;
+	}
+
+	private static class ProjectCommercialFilter extends ControllerAdapter {
+
+		public Target getTarget() {
+			CommunicationCenterController ccc = (CommunicationCenterController) AonUtil.getRegisteredBean(COMMUNICATION_CENTER_CONTROLLER_NAME);
+			return ccc.getTarget();
+		}
+		
+		@Override
+		public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
+			ProjectCommercialSearchListener pcsl = (ProjectCommercialSearchListener) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME);
+			pcsl.setTarget(getTarget());
+		}
+
+		@Override
+		public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+			RichLookupBean lookup = (RichLookupBean) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_LOOKUP_NAME);
+			ProjectCommercial pc = (ProjectCommercial) lookup.getTo();
+			pc.setStatusDate(new Date());
+			pc.setSource(ProjectSource.CALL_CENTER);
+			pc.setTarget(getTarget());
+		}
+
 	}
 	
 }

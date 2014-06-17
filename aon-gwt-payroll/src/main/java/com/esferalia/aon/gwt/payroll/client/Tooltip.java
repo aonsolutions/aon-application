@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.DischargeCause;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -30,10 +33,14 @@ import com.google.gwt.user.datepicker.client.DateBox;
 public class Tooltip extends DecoratedPopupPanel {
 
 	interface Style extends CssResource {
-
 		@ClassName("legend-icon")
 		String legendIcon();
-
+	}
+	
+	interface Listener {
+		
+		void onStartDateChangeEvent(ValueChangeEvent<Date> event);
+		void onEndDateChangeEvent(ValueChangeEvent<Date> event);
 	}
 
 	private static TooltipUiBinder uiBinder = GWT.create(TooltipUiBinder.class);
@@ -87,7 +94,7 @@ public class Tooltip extends DecoratedPopupPanel {
 	InlineLabel causeEndLabel;
 
 	@UiField
-	DateBox fromDateBox;
+	DateBox endDateBox;
 
 	@UiField
 	DateBox startLeaveDateBox;
@@ -103,11 +110,15 @@ public class Tooltip extends DecoratedPopupPanel {
 	@UiField Label endDate;
 	@UiField Label typeDischarge;
 	
+	private List<Listener> listeners;
+	private int contractId;
+	private int leaveId;
 	private final String ACTIVE = "Activo";
 
 	private Date startContract;
 	private Date endContract;
-	private Date contractStartDate;
+	
+	private boolean changes;
 	
 	private int dischargeCause;
 
@@ -119,15 +130,16 @@ public class Tooltip extends DecoratedPopupPanel {
 		setGlassEnabled(false);
 		setStyleName(AON.AON_TOOLTIP);
 		add(uiBinder.createAndBindUi(this));
-
+		listeners = new ArrayList<Tooltip.Listener>();
+		changes = false;
 		startLeaveDateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		startLeaveDateBox.setWidth("6em");
-
-		fromDateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
-		fromDateBox.setWidth("6em");
-
+	
+		endDateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
+		endDateBox.setWidth("6em");				
+		
+		loadTypeListBox();
 		setAutoHideEnabled(true);
-
 	}
 
 	protected void onPreviewNativeEvent(final NativePreviewEvent event) {
@@ -137,7 +149,6 @@ public class Tooltip extends DecoratedPopupPanel {
 		case Event.ONKEYDOWN:
 
 			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-
 				hide();
 			}
 
@@ -182,7 +193,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		
 		alta.setVisible(false);
 		endDateLabel.setVisible(false);
-		fromDateBox.setVisible(false);
+		endDateBox.setVisible(false);
 		causeEndLabel.setVisible(false);
 		typeDischargeListBox.setVisible(false);
 		
@@ -200,15 +211,14 @@ public class Tooltip extends DecoratedPopupPanel {
 		typeDischarge.setVisible(false);
 		
 		startLeaveDateBox.getTextBox().setReadOnly(true);
-		fromDateBox.getTextBox().setReadOnly(true);
+		endDateBox.getTextBox().setReadOnly(true);
 		
 		startDateLabel.setText("Fecha");
 		startLeaveDateBox.setValue(getStartContract());
 		causeStartLabel.setText("Motivo");
-		typeLeaveListBox.setItemSelected(0, true);
-		
+		typeDischargeListBox.setItemSelected(getDischargeCause(), true);
 		endDateLabel.setText("Fecha");
-		fromDateBox.setValue(getEndContract());
+		endDateBox.setValue(getEndContract());
 		causeEndLabel.setText("Motivo");
 		
 		showToolTip(clientX, clientY);		
@@ -221,7 +231,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		startLeaveDateBox.setVisible(false);
 		typeLeaveListBox.setVisible(false);
 		typeDischargeListBox.setVisible(false);
-		fromDateBox.setVisible(false);
+		endDateBox.setVisible(false);
 		
 		causeStartLabel.setVisible(false);
 		typeLeave.setVisible(false);
@@ -267,35 +277,60 @@ public class Tooltip extends DecoratedPopupPanel {
 			Window.alert("Error " + ex.getStackTrace() + " " + ex.getMessage());
 		}
 	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
 
 	// ------------------------------------------------------------- UiHandlers
 
 	@UiHandler("startLeaveDateBox")
 	void onValueChangeStartDateBox(ValueChangeEvent<Date> event) {
-
+		
+		for (Listener listener : listeners)
+			listener.onStartDateChangeEvent(event);
+		changes = true;
 	}
 
-	@UiHandler("fromDateBox")
+	@UiHandler("endDateBox")
 	void onValueChangeFromDateBox(ValueChangeEvent<Date> event) {
-
+		for(Listener listener : listeners)
+			listener.onEndDateChangeEvent(event);
+		changes = true;
 	}
-
+	
+	@UiHandler("typeLeaveListBox")
+	void onChangeEventTypeLeave(ChangeEvent event) {
+		changes = true;
+	}
+	
+	@UiHandler("typeDischargeListBox")
+	void onChangeEventTypeDischarge(ChangeEvent event) {
+		changes = true;
+	}
+	
+	
 	private boolean accept = false;
 
 	@UiHandler("acceptButton")
 	void onAcceptClick(ClickEvent event) {
 		
 		if(startLeaveDateBox.getValue() == null) {
-			startLeaveDateBox.setFocus(true);
-		}
-		else if(typeLeaveListBox.getSelectedIndex() == 0) {
-			typeLeaveListBox.setFocus(true);
-		}
-		else {
-			accept = true;
+			accept = false;
 			hide();
 		}
-
+		
+		if(typeLeaveListBox.getSelectedIndex() == 0) {
+			typeLeaveListBox.setFocus(true);
+			return;
+		}
+		
+		accept = changes;
+		hide ();		
 	}
 
 	public boolean isAccept() {
@@ -303,24 +338,18 @@ public class Tooltip extends DecoratedPopupPanel {
 	}
 
 	public Date getFromDateBoxValue() {
-		return fromDateBox.getValue();
+		return endDateBox.getValue();
 	}
 
 	public int getTypeLeaveListBox() {
 		
 		//Because my firts position is '-'
-
 		return typeLeaveListBox.getSelectedIndex() - 1;
 	}
 
 	public int getTypeDischargeListBox() {
 		
-		if(typeDischargeListBox.getSelectedIndex() == 0) {
-			return -1;
-		}
-		else {
-			return typeDischargeListBox.getSelectedIndex() - 1;
-		}		
+		return typeDischargeListBox.getSelectedIndex() - 1;	
 	}
 
 	public Date getStartDateBoxValue() {
@@ -340,18 +369,50 @@ public class Tooltip extends DecoratedPopupPanel {
 	public void setSocialSecurity(String pSocialSecurity) {
 		socialSecurityNum.setText(pSocialSecurity);
 	}
-
+	
+	public void setContractId(int contractId) {
+		this.contractId = contractId;
+	}
+	
+	public int getContractId() {
+		return this.contractId;
+	}
+	
+	public void setLeaveId(int leaveId) {
+		this.leaveId = leaveId;
+	}
+	
+	public int getLeaveId() {
+		return this.leaveId;
+	}
+	
 	public void setStatus(String pStatus) {
 		
-		typeLeaveListBox.addItem("-");
-
-		for (ITDataPerson.Type type : Type.values()) {
-
-			typeLeaveListBox.addItem(type.getDescription());
-		}
-		typeLeaveListBox.setItemSelected(0, false);
+		if(pStatus.equals(ACTIVE)) 					
+			typeLeaveListBox.setSelectedIndex(0);
 		
+		else {
+			
+			int index = getPosTypeListBox(pStatus);
+			typeLeaveListBox.setItemSelected(index, true);			
+		}
 		statusLabel.setText(pStatus);
+	}
+	
+	private int getPosTypeListBox(String pStatus) {
+		
+		int index = 0;		
+		
+		if(pStatus.equals(ACTIVE))
+			return 0;
+		
+		for( int x = 0; x < typeLeaveListBox.getItemCount(); x ++) {
+			 
+			if( typeLeaveListBox.getItemText(x).equals(pStatus))
+				index = x;
+		}
+		return index;	
+		
 	}
 
 	public void setColor(String background) {
@@ -399,27 +460,33 @@ public class Tooltip extends DecoratedPopupPanel {
 			
 	}
 
-	public void setContractStartDate(Date pContractStart) {
-		contractStartDate = pContractStart;
-	}
-
-	public void setDischargeCause(int pDischargeCause) {
+	public void setDischargeCause(Integer pDischargeCause) {
 		
-		this.dischargeCause = pDischargeCause;
-		
-		typeDischargeListBox.addItem("-");
-
-		for (ITDataPerson.DischargeCause cause : DischargeCause.values()) {
-			typeDischargeListBox.addItem(cause.getDescription());
-		}		
-		typeDischargeListBox.setItemSelected(pDischargeCause, true);
+		if(pDischargeCause == null) {
+			this.dischargeCause = 0;
+		}
+		if(pDischargeCause < 0) {
+			this.dischargeCause = 0;
+		}
+		else {
+			this.dischargeCause = pDischargeCause + 1;
+		}
 	}
 	
-	public int getDischargeCause() {
+	private int getDischargeCause() {		
+		return this.dischargeCause;
+	}
+	
+	private void loadTypeListBox() {
+		typeDischargeListBox.addItem("-");
+		for (ITDataPerson.DischargeCause cause : DischargeCause.values()) {
+			typeDischargeListBox.addItem(cause.getDescription());
+		}
 		
-		if(dischargeCause <= 0) 
-			return 0;		
-		else 
-			return typeDischargeListBox.getSelectedIndex() - 1;		
+		typeLeaveListBox.addItem("-");
+		for (ITDataPerson.Type type : Type.values()) {
+			typeLeaveListBox.addItem(type.getDescription());
+		}
+		
 	}
 }

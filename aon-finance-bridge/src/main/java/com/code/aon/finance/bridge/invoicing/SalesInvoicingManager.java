@@ -3,6 +3,8 @@ package com.code.aon.finance.bridge.invoicing;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -80,6 +82,7 @@ public class SalesInvoicingManager {
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(sales.getScope());
+		invoice.setComments(StringUtils.isNotBlank(sales.getPurchaseReference())?"Ref. compra: "+sales.getPurchaseReference():null);
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);

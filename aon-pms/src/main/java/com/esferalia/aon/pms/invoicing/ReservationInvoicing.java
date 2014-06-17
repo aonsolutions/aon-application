@@ -440,7 +440,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					reservationServiceDetail.setProjectReservationRoomDetail(obtainRoomDetailByDate(reservationInvoiceTo.getRoom(), date));
 					reservationServiceDetail.setEffectiveDate(date);
 					reservationServiceDetail.setQuantity(service.getQuantity());
-					reservationServiceDetail.setPrice(strategy.getUnitPrice(reservationServiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
+					reservationServiceDetail.setPrice(strategy.getUnitPrice(reservationServiceDetail, date, reservationInvoiceTo.getHotel().getCustomer()));
 					reservationServiceDetail.setTaxableBase(strategy.getBasePrice(reservationServiceDetail));
 					reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.insert(reservationServiceDetail);
 				}
@@ -453,7 +453,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				invoiceDetail.setDescription(obtainDetailDescription(date, reservationInvoiceTo.getRoom(), service.getItem()));
 				invoiceDetail.setQuantity(service.getQuantity());
 				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
+				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, date, reservationInvoiceTo.getHotel().getCustomer()));
 				invoiceDetail.setSource((reservation != null) ? InvoiceSource.RESERVATION : InvoiceSource.DIRECT_INVOICE);
 				invoiceDetail.setSourceId((reservation != null) ? reservationServiceDetail.getId() : null);
 				invoiceDetail.setTaxableBase(strategy.getBasePrice(invoiceDetail));

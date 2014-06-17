@@ -27,16 +27,21 @@
 	<table-filter match-name="enterprise_agreement" exclude="true" />
     <table-filter match-name="fs_renting" exclude="true" />
 	<table-filter match-name="fs_renting_detail" exclude="true" />
+    <table-filter match-name="fs_batch" exclude="true" />
+	<table-filter match-name="fs_batch_detail" exclude="true" />
+    <table-filter match-name="message_content" exclude="true" />
+	<table-filter match-name="message_log" exclude="true" />
 	
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
 	<!--  *********************************** -->
 	<table-filter match-name="db_version" exclude="true" />
+	<table-filter match-name="domain_gserviceaccount" exclude="true" />
 
-    <table-filter match-name="booking" exclude="true" />
-    <table-filter match-name="fs_model180" exclude="true" />
+    	<table-filter match-name="booking" exclude="true" />
+    	<table-filter match-name="fs_model180" exclude="true" />
 	<table-filter match-name="fs_model180_detail" exclude="true" />
-    <table-filter match-name="fs_model190" exclude="true" />
+    	<table-filter match-name="fs_model190" exclude="true" />
 	<table-filter match-name="fs_model190_detail" exclude="true" />
 	<table-filter match-name="fs_model390" exclude="true" />
 	
@@ -908,10 +913,6 @@
 		</foreign-key>
 	</table>
 	
-	<table name="item_supplier">
-		<column name="priority" type="java.lang.Integer" />
-	</table>
-	
 	<table name="item_tariff">
 		<column name="type" type="com.code.aon.product.enumeration.ItemTariffType" />
 	</table>
@@ -1370,6 +1371,9 @@
 	</table>
 	    
 	<table name="ritem" class="com.esferalia.aon.entity.master.RegistryItem" >
+		<column name="type" type="com.code.aon.registry.enumeration.RegistryMode"/>
+		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
+		<column name="priority" type="java.lang.Integer" />
 		<column name="status" type="com.code.aon.registry.enumeration.RegistryItemStatus"/>
 	</table>
     

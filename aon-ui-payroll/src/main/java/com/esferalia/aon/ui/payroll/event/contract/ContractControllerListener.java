@@ -118,6 +118,8 @@ public class ContractControllerListener extends ControllerAdapter{
 		if(controller.isTransformedContract()){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize((Contract) controller.getTo());
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize((Contract) controller.getTo());
 		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize((Contract) controller.getTo());
@@ -131,14 +133,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize((Contract) controller.getTo());
 		
-//		ContractContext ctx;
-//		try {
-//			ctx = new ContractContext(DatabaseUtil.getConnection(AonUtil.getDomainName()));
-//			ctx.load(((Contract) controller.getTo()).getId());
-//		} catch (AonConnectionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 
 	@Override

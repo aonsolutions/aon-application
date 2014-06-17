@@ -6,7 +6,6 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENG
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
@@ -39,7 +39,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -89,9 +88,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVisibility;
@@ -128,6 +127,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
+
+	private static Map<String, String> IRPF_ICONS = new HashMap<String, String>() {
+		{
+			put("01", AON.AON_ICON_ARABA);
+			put("48", AON.AON_ICON_BIZKAIA);
+			put("20", AON.AON_ICON_GIPUZKOA);
+			put("31", AON.AON_ICON_NAVARRA);
+		}
+	};
 
 	private static Map<Scope, String> SCOPE_DESCRIPTIONS = new HashMap<Scope, String>() {
 		{
@@ -961,17 +969,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// --------------------------------------------------------------------
 		@Override
 		public void onAccept(DeductionDialog dialog) {
-			
+
 			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
 			item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getDeductionExpression());
-			
-			if ( item.getType() == Deduction.Type.EMBARGO)
+
+			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(item);
 			else
 				salaryDraftObject.addDraftDeduction(item);
-			
+
 			salaryDraftObject.calculate(SalaryDraft.this);
 
 		}
@@ -1008,12 +1016,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		void onDescriptionChange(Deduction item, String description) {
 			item.setScope(Scope.SALARY);
 			item.setDescription(description);
-			
-			if ( item.getType() == Deduction.Type.EMBARGO)
+
+			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(item);
 			else
 				salaryDraftObject.addDraftDeduction(item);
-			
+
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
@@ -1021,17 +1029,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		void onExpressionChange(Deduction item, String expression) {
 			item.setScope(Scope.SALARY);
 			item.setExpression(expression);
-			
-			if ( item.getType() == Deduction.Type.EMBARGO)
+
+			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(item);
 			else
 				salaryDraftObject.addDraftDeduction(item);
-			
+
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 	}
-	
-	
+
 	abstract class NewItemHandler<T extends Item> extends
 			DefaultSuggestionDisplay {
 
@@ -1197,7 +1204,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			deduction.setStartDate(salaryDraftObject.getEndDate());
 			deduction.setStartDate(salaryDraftObject.getStartDate());
 
-			if ( item.getType() == Deduction.Type.EMBARGO)
+			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(deduction);
 			else
 				salaryDraftObject.addDraftDeduction(deduction);
@@ -1221,11 +1228,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			deduction.setConceptId(concept != null ? concept.getId() : null);
 			deduction.setName(concept != null ? concept.getName() : null);
 
-			if ( deduction.getType() == Deduction.Type.EMBARGO)
+			if (deduction.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(deduction);
 			else
 				salaryDraftObject.addDraftDeduction(deduction);
-			
+
 			calculate(deduction);
 		}
 
@@ -2684,24 +2691,25 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			paymentsTable.setHTML(row, 1, "&nbsp;");
 		else
 			paymentsTable.setWidget(row, 1, labelWidget);
-
+		
 		TextBox descriptionBox = new TextBox();
-		enable(descriptionBox, isEditable);
+		enable(descriptionBox, isEditable  );
 		descriptionBox.setText(item.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 		handler.setDescriptionWidget(descriptionBox);
-
-		TextBox amountBox = new TextBox();
-		enable(amountBox, isEditable);
+		
+		String expression = item.getExpression();
+		boolean isReadOnly = SpecialExpresion.isReadOnly(expression); 
+		TextBox amountBox = new ExpressionBox();
+		enable(amountBox, isEditable && !isReadOnly );
 		String amount = format(item.getAmount());
 		amountBox.setText(amount != null ? amount : item.getExpression());
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
 		amountBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		handler.setExpressionWidget(amountBox);
-
 		contentAssistManager.addValueBox(amountBox);
 
 		InlineLabel dbAmountLabel = new InlineLabel();
@@ -2727,7 +2735,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		addDbWidget(dbWidget);
 
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
-
 
 		paymentsTable.setHTML(row, isDeduction ? 3 : 4, "&nbsp;");
 
@@ -3485,7 +3492,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		} else {
 			int bonusCount = salaryDraftObject.getBonuses().size();
 			hideCosts(costsBeforeRow - (costsCount + bonusCount));
-			
+
 			int bonusBeforeRow = paymentsTable.getRowCount()
 					- (2 /* new line */+ 1 /* blanks line */);
 			hideBonus(bonusBeforeRow - (bonusCount));
@@ -3674,8 +3681,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		if (isSystemVariable(irpfPercentVar)) {
+			
+			
+			String irpfIcon = IRPF_ICONS.get(salaryDraftObject.getCommunity());
+			
+
 			Button aeatButton = getSystemVarButton(irpfPercentVar,
-					AON.AON_ICON_AET);
+					irpfIcon != null ? irpfIcon : AON.AON_ICON_AET );
+
 			aeatButton.setEnabled(false);
 			irpfPercentPanel.add(aeatButton);
 		} else {

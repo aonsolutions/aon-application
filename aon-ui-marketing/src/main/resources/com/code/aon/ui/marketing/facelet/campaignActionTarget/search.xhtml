@@ -29,6 +29,7 @@
 
 							<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{targetSearch.action}" />
+								<ui:param name="lookupInputSuggestSize" value="60"/>
 								<ui:param name="lookupControllerListener" value="#{campaignActionTarget.actionFilter}" />
 							</ui:include>					
 

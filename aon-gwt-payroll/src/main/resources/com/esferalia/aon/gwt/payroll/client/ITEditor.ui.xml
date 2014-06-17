@@ -30,6 +30,7 @@
 			margin-right : 16px;
 			margin-bottom : 10px;
 		}
+
 		@sprite .redoButton {
 			gwt-image: 'redo';
 			background-position: left center;
@@ -69,6 +70,14 @@
 			background-position: left center;
 		}
 
+		@sprite .error-icon {
+			width: auto; 
+			height: auto;
+			color: orange;
+			gwt-image: '_error';
+			padding-left: 14px;
+		}
+
 		@sprite .redoButton {
 			gwt-image: 'redo';
 			background-position: left center;
@@ -83,6 +92,7 @@
 	
 	<ui:image field='fx' src='fx.png' />
 	<ui:image field='aet' src='aet.png' />
+	<ui:image field='_error' src='_error.png' />
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	

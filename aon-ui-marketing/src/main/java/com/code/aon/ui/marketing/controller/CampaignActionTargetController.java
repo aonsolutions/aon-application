@@ -158,21 +158,7 @@ public class CampaignActionTargetController extends LinesController {
 	
 	public IControllerListener getActionFilter() {
 		if ( this.actionFilter == null ) {
-			this.actionFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						IController actionController = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
-						MarketingAction action = (MarketingAction) actionController.getTo();
-						String alias = controller.getFieldName(IEntityAlias.MARKETING_ACTION_ID);
-						controller.getCriteria().addNotEqualExpression(alias, action.getId());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering action", e);
-					}
-				}
-			};
+			this.actionFilter = new ActionFilter();
 		}
 		return this.actionFilter;
 	}
@@ -251,6 +237,24 @@ public class CampaignActionTargetController extends LinesController {
 		} finally {
 			session.close();
 		}
+	}
+
+	private static class ActionFilter extends ControllerAdapter {
+		
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				IController actionController = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+				MarketingAction action = (MarketingAction) actionController.getTo();
+				String alias = controller.getFieldName(IEntityAlias.MARKETING_ACTION_ID);
+				controller.getCriteria().addNotEqualExpression(alias, action.getId());
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering action", e);
+			}
+		}
+		
 	}
 	
 }

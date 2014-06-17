@@ -1,16 +1,27 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ITDataObject {
+	
+	interface CallculateCallback {		
+		void onCalculateSuccess(ITDataObject object);		
+		void onCalculateFailure(Throwable throwable);
+	}
 
 	abstract private class UndoableEdit<T> implements Undoable {
 
@@ -40,6 +51,40 @@ public class ITDataObject {
 
 		abstract void removeIT(T t);
 	}
+	
+	private class UndoableInsertEdit extends UndoableEdit<ITDataPerson> {
+
+		public UndoableInsertEdit(ITDataPerson oldT, ITDataPerson newT) {
+			super(oldT, newT);
+		}
+
+		@Override
+		void addIT(ITDataPerson t) {
+			saveInserts(t);
+		}
+
+		@Override
+		void removeIT(ITDataPerson t) {
+			removeSaveInserts(t);
+		}
+	}
+	
+	private class UndoableDeleteEdit extends UndoableEdit<ITDataPerson> {
+
+		public UndoableDeleteEdit(ITDataPerson oldT, ITDataPerson newT) {
+			super(oldT, newT);
+		}
+
+		@Override
+		void addIT(ITDataPerson t) {
+			saveDeletes(t);		
+		}
+
+		@Override
+		void removeIT(ITDataPerson t) {			
+			removeSaveDeletes(t);
+		}
+	}
 
 	private class UndoableUpdateEdit extends UndoableEdit<ITDataPerson> {
 
@@ -49,51 +94,41 @@ public class ITDataObject {
 
 		@Override
 		void addIT(ITDataPerson t) {
-			itData.setLeaveItem(t);
+			saveUpdates(t);
 		}
 
 		@Override
 		void removeIT(ITDataPerson t) {
-			itData.removeLeaveItem(t);
+			removeSaveUpdates(t);
 		}
 	}
 	
-	private class UndoableRemoveEdit extends UndoableEdit<ITDataPerson> {
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts;
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates;
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes;
 
-		public UndoableRemoveEdit(ITDataPerson oldT, ITDataPerson newT) {
-			super(oldT, newT);			
-		}
-		
-		@Override
-		void addIT(ITDataPerson t) {
-			itData.setLeaveItem(t);						
-		}
-		@Override
-		void removeIT(ITDataPerson t) {
-			itData.removeLeaveItem(t);			
-		}
-		
-	}
 
 	private UndoManager<UndoableEdit<?>> undoManager;
 	private EmployeesServiceAsync employeesService;
-	private Map<Integer, ITDataPerson> undoableMap;
-	private Map<Integer, ITDataPerson> update;
-	private int workplaceId;	
+	private int workplaceId;
 	private ITData itData;
-	
+
 	public ITDataObject(Integer workplace,
-			EmployeesServiceAsync employeesService) {		
+			EmployeesServiceAsync employeesService) {
 		this.workplaceId = workplace;
-		this.employeesService = employeesService;		
+		this.employeesService = employeesService;
 		this.undoManager = new UndoManager<UndoableEdit<?>>();
-		this.update = new LinkedHashMap<Integer, ITDataPerson>();
-		this.undoableMap = new LinkedHashMap<Integer, ITDataPerson>();
 		
+		this.inserts = new LinkedHashMap<Integer, 
+				LinkedHashMap<Integer, ITDataPerson>>();
+		this.deletes = new LinkedHashMap<Integer, 
+				LinkedHashMap<Integer, ITDataPerson>>();
+		this.updates = new LinkedHashMap<Integer, 
+				LinkedHashMap<Integer, ITDataPerson>>();
 	}
 
 	// ------------------------------------------
-	// Undo & Redo Support
+	
 
 	public Map<Integer, Employee> getEmployees() {
 		return itData.getEmployees();
@@ -104,13 +139,264 @@ public class ITDataObject {
 	}
 
 	public Map<Integer, ITDataPerson> getDataIts(int contractId) {
-		return itData.getDataIts(contractId);
+		
+		Map<Integer,ITDataPerson> map = new LinkedHashMap<Integer, ITDataPerson>();
+		map.putAll(itData.getDataIts(contractId));
+		map.putAll(getSaveInserts(contractId));		
+		map.putAll(getSaveUpdates(contractId));
+		map.keySet().removeAll(getSaveDeletes(contractId).keySet());
+		sortMap(map);
+		 
+		return map;
+		
 	}
 
 	// ------------------------------------------
 	// UndoManager delegates
 	// ------------------------------------------
+	
+	// ------------------------------------------
+	
+	public void addLeaveItem(ITDataPerson newItem) {
+		ITDataPerson oldItem = saveInserts(newItem);
+		undoManager.add(new UndoableInsertEdit(oldItem, newItem));		
+	}
+	
+	private ITDataPerson saveInserts(ITDataPerson object) {		
+		return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);		
+	}
+	
+	private ITDataPerson removeSaveInserts(ITDataPerson object) {
+		return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
+	}
+	
+	public void removeLeaveItem(int contractId, int leaveId) {
+		
+		ITDataPerson newItem = getDataIts(contractId).get(leaveId);
+		ITDataPerson oldItem = saveDeletes(newItem);
+		
+		undoManager.add(new UndoableDeleteEdit(oldItem, newItem));
+		
+	}
+	
+	private ITDataPerson saveDeletes(ITDataPerson object) {
+		
+		if(object.getContractLeaveId() < 0) 
+			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());		
+		else {			
+			return getSaveDeletes(object.getContractId()).put(object.getContractLeaveId(), object);
+		}
+	}
+	
+	private ITDataPerson removeSaveDeletes(ITDataPerson object) {
+		if(object.getContractLeaveId() < 0) 
+			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
+		else
+			return getSaveDeletes(object.getContractId()).remove(object.getContractLeaveId());	
+	}
+	
+	public void updateLeaveItem(ITDataPerson newItem) {
+		ITDataPerson oldItem = saveUpdates(newItem);		
+		undoManager.add(new UndoableUpdateEdit(oldItem, newItem));		
+	}
+	
+	private ITDataPerson saveUpdates(ITDataPerson object) {		
+		
+		if(object.getContractLeaveId() < 0)
+			return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);			
+		else 
+			return getSaveUpdates(object.getContractId()).put(object.getContractLeaveId(), object);
+				
+	}
+	
+	private ITDataPerson removeSaveUpdates(ITDataPerson object) {
+		
+		if(object.getContractLeaveId() < 0) {
+			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
+		}
+		else {
+			return getSaveUpdates(object.getContractId()).remove(object.getContractLeaveId());
+		}		
+	}
+	
+	private void clearDrafts() {		
+		inserts.clear();
+		updates.clear();
+		deletes.clear();
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getInserts() {		
+		return Collections.unmodifiableMap(inserts);
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getUpdates() {		
+		return Collections.unmodifiableMap(updates);
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getDeletes() {		
+		return Collections.unmodifiableMap(deletes);
+	}
+	
+	
+	//---------------------------------------------------------
+	
+	private Map<Integer, ITDataPerson> getSaveInserts(int id) {
+		if(inserts.containsKey(id) == false) {
+			inserts.put(id, new LinkedHashMap<Integer, ITDataPerson>());
+		}
+		return inserts.get(id);
+	}
+	
+	
+	private Map<Integer, ITDataPerson> getSaveDeletes(int id) {
+		if(deletes.containsKey(id) == false) {
+			deletes.put(id, new LinkedHashMap<Integer, ITDataPerson>());
+		}
+		return deletes.get(id);
+	}
+	
+	private Map<Integer, ITDataPerson> getSaveUpdates(int id) {
+		if(updates.containsKey(id) == false) {
+			updates.put(id, new LinkedHashMap<Integer, ITDataPerson>());
+		}
+		return updates.get(id);
+	}
+	
+	public boolean isCorrectStartDateLeave (int contractId, int leaveId, Date startDate) {
+		
+		Map<Integer, ITDataPerson> map = getDataIts(contractId);
+		
+		for (ITDataPerson iterator : map.values()) {
+			if(leaveId == iterator.getContractLeaveId())
+				continue;
+			if (leaveId != iterator.getContractLeaveId()
+					&& (DateUtils.compare(startDate, iterator.getLeaveStartDate()) > 0)
+					&& (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0))
+				return false;
+		}
+		
+		return true;
+		
+		
+	}
+	
+	public boolean isCorrectEndDateLeave (int contractId, int leaveId, 
+			Date startDate, Date endDate) {
+		
+	Map<Integer, ITDataPerson> map = getDataIts(contractId);
+		
+		for (ITDataPerson iterator : map.values()) {
+			
+			if(leaveId == iterator.getContractLeaveId())
+				continue;
+			if ( (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0)
+					&& (DateUtils.compare(endDate, iterator.getLeaveEndDate()) < 0)
+					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) > 0)
+					&& (DateUtils.compare(endDate, iterator.getLeaveStartDate()) < 0)
+					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0)
+					&& (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	public void load(final AsyncCallback<ITDataObject> cb) {
+		if (itData != null) {
+			cb.onSuccess(ITDataObject.this);
 
+		} else {
+			getWorkplaceITData(cb);
+		}
+	}
+
+	private void getWorkplaceITData(final AsyncCallback<ITDataObject> cb) {
+		employeesService.getWorkplaceITData(workplaceId,
+				new AsyncCallback<ITData>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						cb.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(ITData itData) {
+						ITDataObject.this.itData = itData;		
+						cb.onSuccess(ITDataObject.this);
+					}
+				});
+	}
+
+	public void save(final CallculateCallback callback) {
+		
+		employeesService.saveITDataPerson(inserts, deletes, updates, new AsyncCallback<ITData>() {
+			
+			@Override
+			public void onSuccess(ITData result) {
+				
+				undoManager.discardAll();
+				clearDrafts();
+				
+				employeesService.saveITDataPerson(inserts, deletes, updates,  
+						new AsyncCallback<ITData>() {
+					
+					@Override
+					public void onSuccess(ITData result) {
+						ITDataObject.this.itData = result;
+						callback.onCalculateSuccess(ITDataObject.this);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);						
+					}					
+				});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onCalculateFailure(caught);				
+			}			
+		});		
+	}
+
+	// ------------------------------------------
+	
+	@SuppressWarnings("unchecked")
+	private void sortMap(Map<Integer, ITDataPerson> map) {
+
+		List<ITDataPerson> sortedList = new LinkedList<ITDataPerson>();
+		@SuppressWarnings("rawtypes")
+		Iterator it = map.entrySet().iterator();
+
+		while (it.hasNext()) {
+
+			Map.Entry<Integer, ITDataPerson> e = (Map.Entry<Integer, ITDataPerson>) it.next();
+			sortedList.add(e.getValue());
+		}
+
+	
+		Collections.sort(sortedList, new Comparator<ITDataPerson>() {
+
+			@Override
+			public int compare(ITDataPerson o1, ITDataPerson o2) {
+				
+				return o1.getLeaveStartDate().compareTo(o2.getLeaveStartDate());
+			}
+		});
+
+		map.clear();
+
+		for (int x = 0; x < sortedList.size(); x++) {
+
+			map.put(sortedList.get(x).getContractLeaveId(), sortedList.get(x));
+		}
+
+	}
+	
+	// ------------------------------------------
+	// Undo & Redo Support
+	// ------------------------------------------
+	
 	public void redo() {
 		undoManager.redo();
 	}
@@ -144,62 +430,6 @@ public class ITDataObject {
 	}
 
 	// ------------------------------------------
-
-	public void addLeaveItem(ITDataPerson newItObject) {
-		ITDataPerson oldData = itData.setLeaveItem(newItObject);
-		setUndoableUpdateEdit(oldData, newItObject);
-		
-	}
-
-	public void removeLeaveItem(ITDataPerson newItObject) {
-		ITDataPerson oldData = itData.removeLeaveItem(newItObject);
-		setUndoableRemoveEdit(oldData, newItObject);		
-	}
-
-	public void updateItem(ITDataPerson newItObject) {		
-		ITDataPerson oldData = itData.setLeaveItem(newItObject);
-		setUndoableUpdateEdit(oldData, newItObject);		
-	}
-	
-	private void setUndoableUpdateEdit(ITDataPerson oldData, ITDataPerson newData) {
-		undoManager.add(new UndoableUpdateEdit(oldData, newData));
-	}
-	
-	private void setUndoableRemoveEdit(ITDataPerson oldData, ITDataPerson newData) {
-		undoManager.add(new UndoableRemoveEdit(oldData, newData));
-	}
-
-	public void load(final AsyncCallback<ITDataObject> cb) {
-		if (itData != null) {
-			cb.onSuccess(ITDataObject.this);
-
-		} else {
-
-			getWorkplaceITData(cb);
-		}
-	}
-
-	private void getWorkplaceITData(final AsyncCallback<ITDataObject> cb) {
-		employeesService.getWorkplaceITData(workplaceId,
-				new AsyncCallback<ITData>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						cb.onFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(ITData itData) {
-						ITDataObject.this.itData = itData;
-						cb.onSuccess(ITDataObject.this);
-					}
-				});
-	}
-
-	// ------------------------------------------
-	
-	
-	
-	// ------------------------------------------ Undoable control
 
 
 }

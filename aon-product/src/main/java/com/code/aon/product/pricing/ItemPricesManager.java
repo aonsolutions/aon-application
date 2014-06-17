@@ -19,37 +19,51 @@ public class ItemPricesManager implements Serializable {
 				if (item.getProfitPercent() == 0) {
 					item.setProfitPercent(getProfit(purchasePrice, item.getPrice()));
 				} else {
-					item.setPrice(getPrice(purchasePrice, item.getProfitPercent()));
+					item.setPrice(getPrice(purchasePrice, item.getProfitPercent(), false));
 				}
 			}
+			item.setSalesProfitPercent(getSalesProfit(item.getPurchasePrice(), item.getPrice()));
 		} else {
 			item.setPurchasePrice(0);
-			item.setProfitPercent(0);
 		}
 	}
 
 	public void onProfitChanged(IPriceable priceable, Object value) {
 		if (value != null && !value.toString().equals("")) {
-			double profit = CommonUtil.round(((Double)value).doubleValue(), 3);
-			priceable.setPrice(getPrice(priceable.getProfitablePrice(), profit));
+			if (priceable.getProfitablePrice() != 0) {
+				double profit = CommonUtil.round(((Double)value).doubleValue(), 3);
+				priceable.setPrice(getPrice(priceable.getProfitablePrice(), profit, false));
+				priceable.setSalesProfitPercent(getSalesProfit(priceable.getProfitablePrice(), priceable.getPrice()));
+			}
 		} else {
 			priceable.setProfitPercent(0);
-			if (priceable.getProfitablePrice() != 0) {
-				priceable.setPrice(priceable.getProfitablePrice());
-			}
 		}
 	}
 
-	private double getPrice(double profitablePrice, double profit) {
+	private double getPrice(double profitablePrice, double profit, boolean overSales) {
 		double price = 0;
-		for (int i=2; i<=4; i++) {
-			price = CommonUtil.round(profitablePrice * (1 + profit / 100), i);
-			if (profit == CommonUtil.round((price / profitablePrice - 1) * 100, 3)) {
-				return price;
-			} else {
-				price = CommonUtil.floor(profitablePrice * (1 + profit / 100), i);
+		if (!overSales) {
+			for (int i=2; i<=4; i++) {
+				price = CommonUtil.round(profitablePrice * (1 + profit / 100), i);
 				if (profit == CommonUtil.round((price / profitablePrice - 1) * 100, 3)) {
 					return price;
+				} else {
+					price = CommonUtil.floor(profitablePrice * (1 + profit / 100), i);
+					if (profit == CommonUtil.round((price / profitablePrice - 1) * 100, 3)) {
+						return price;
+					}
+				}
+			}
+		} else {
+			for (int i=2; i<=4; i++) {
+				price = CommonUtil.round(profitablePrice / (1 - profit / 100), i);
+				if (profit == CommonUtil.round(1 - profitablePrice / price * 100, 3)) {
+					return price;
+				} else {
+					price = CommonUtil.floor(profitablePrice / (1 - profit / 100), i);
+					if (profit == CommonUtil.round(1 - profitablePrice / price * 100, 3)) {
+						return price;
+					}
 				}
 			}
 		}
@@ -59,22 +73,31 @@ public class ItemPricesManager implements Serializable {
 	public void onPriceChanged(IPriceable priceable, Object value) {
 		if (value != null && !value.toString().equals("")) {
 			double price = CommonUtil.round(((Double)value).doubleValue(), 4);
-			if (price == 0) {
-				priceable.setProfitPercent(0);
-			} else {
-				priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), price));
-			}
+			priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), price));
+			priceable.setSalesProfitPercent(getSalesProfit(priceable.getProfitablePrice(), priceable.getPrice()));
 		} else {
 			priceable.setPrice(0);
-			priceable.setProfitPercent(0);
 		}
 	}
 
 	private double getProfit(double purchasePrice, double price) {
-		if (purchasePrice == 0) {
-			return 0;
+		return (purchasePrice == 0) ? 0 : CommonUtil.round((price / purchasePrice - 1) * 100, 3);
+	}
+
+	public double getSalesProfit(double purchasePrice, double price) {
+		return (price == 0) ? 0 : CommonUtil.round((1 - purchasePrice / price) * 100, 3);
+	}
+
+	public void onSalesProfitChanged(IPriceable priceable, Object value) {
+		if (value != null && !value.toString().equals("")) {
+			if (priceable.getProfitablePrice() != 0) {
+				double salesProfit = CommonUtil.round(((Double)value).doubleValue(), 3);
+				priceable.setPrice(getPrice(priceable.getProfitablePrice(), salesProfit, true));
+				priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), priceable.getPrice()));
+			}
+		} else {
+			priceable.setSalesProfitPercent(0);
 		}
-		return CommonUtil.round((price / purchasePrice - 1) * 100, 3);
 	}
 
 	public void onSalesPriceChanged(IPriceable priceable, Object value) {
@@ -84,18 +107,13 @@ public class ItemPricesManager implements Serializable {
 	public void onSalesPriceChanged(IPriceable priceable, Object value, boolean calculateProfit) {
 		if (value != null && !value.toString().equals("")) {
 			double salesPrice = CommonUtil.round(((Double)value).doubleValue());
-			if (salesPrice == 0) {
-				priceable.setPrice(0);
-				priceable.setProfitPercent(0);
-			} else {
-				priceable.setPrice(getPrice(priceable, salesPrice, 2));
-				if (calculateProfit) {
-					priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), priceable.getPrice()));
-				}
+			priceable.setPrice(getPrice(priceable, salesPrice, 2));
+			if (calculateProfit) {
+				priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), priceable.getPrice()));
+				priceable.setSalesProfitPercent(getSalesProfit(priceable.getProfitablePrice(), priceable.getPrice()));
 			}
 		} else {
-			priceable.setPrice(0);
-			priceable.setProfitPercent(0);
+			priceable.setSalesPrice(0);
 		}
 	}
 

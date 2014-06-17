@@ -11,10 +11,12 @@ import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Result;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -63,20 +65,20 @@ public class Payment extends ResizeComposite {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private class ExpressionTextBox extends TextBox implements BlurHandler,
+	private class MyExpressionBox extends ExpressionBox implements BlurHandler,
 			FocusHandler, AsyncCallback<List<Result>> {
 
 		private String result;
 		private String expression;
 
-		private ExpressionTextBox parent;
-		private ExpressionTextBox childs[];
+		private MyExpressionBox parent;
+		private MyExpressionBox childs[];
 
-		public ExpressionTextBox(ExpressionTextBox... childs) {
+		public MyExpressionBox(MyExpressionBox... childs) {
 			addBlurHandler(this);
 			addFocusHandler(this);
 			this.childs = childs;
-			for (ExpressionTextBox child : childs)
+			for (MyExpressionBox child : childs)
 				child.parent = this;
 		}
 
@@ -147,7 +149,7 @@ public class Payment extends ResizeComposite {
 		void eval(boolean fire) {
 			contextProvider.eval(getParentExpression() + expression, EMPTY_VARS,this);
 			if (fire) {
-				for (ExpressionTextBox child : childs) {
+				for (MyExpressionBox child : childs) {
 					child.eval(fire);
 				}
 			}
@@ -179,6 +181,23 @@ public class Payment extends ResizeComposite {
 			return buffer.toString();
 		}
 
+		void enable(boolean enabled) {
+
+			if (isEnabled() == enabled)
+				return;
+
+			setEnabled(enabled);
+
+			if (!enabled) {
+				getElement().getStyle().setColor("inherit");
+				getElement().getStyle().setBackgroundColor("inherit");
+				getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+			} else {
+				getElement().getStyle().clearColor();
+				getElement().getStyle().clearBackgroundColor();
+				getElement().getStyle().clearBorderStyle();
+			}
+		}
 	}
 
 	@UiField
@@ -202,7 +221,7 @@ public class Payment extends ResizeComposite {
 	Button resetDescriptionButton;
 
 	@UiField(provided = true)
-	ExpressionTextBox paymentTextBox;
+	MyExpressionBox paymentTextBox;
 	@UiField
 	Button resetPaymentButton;
 	@UiField
@@ -219,12 +238,12 @@ public class Payment extends ResizeComposite {
 	@UiField
 	Button fxTaxButton;
 	@UiField(provided = true)
-	ExpressionTextBox taxTextBox;
+	MyExpressionBox taxTextBox;
 
 	@UiField
 	Button fxQuoteButton;
 	@UiField(provided = true)
-	ExpressionTextBox quoteTextBox;
+	MyExpressionBox quoteTextBox;
 
 	private NumberFormat numberFormat;
 	private IContextProvider contextProvider;
@@ -266,12 +285,13 @@ public class Payment extends ResizeComposite {
 	}
 
 	public String getExpression() {
-		return ((ExpressionTextBox) paymentTextBox).getExpression();
+		return ((MyExpressionBox) paymentTextBox).getExpression();
 	}
 
 	public void setExpression(String payment) {
 		paymentTextBox.setExpression(payment);
 		showOrHideResetPaymentButton();
+		paymentTextBox.enable(!SpecialExpresion.isReadOnly(payment));
 	}
 
 	public String getIrpfExpression() {
@@ -286,6 +306,7 @@ public class Payment extends ResizeComposite {
 		onTaxListBoxChange(null);
 		taxTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetTaxButton();
+		taxTextBox.enable(!SpecialExpresion.isReadOnly(expression));
 	}
 
 	public String getQuoteExpression() {
@@ -299,6 +320,7 @@ public class Payment extends ResizeComposite {
 		onQuoteListBoxChange(null);
 		quoteTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetQuoteButton();
+		quoteTextBox.enable(!SpecialExpresion.isReadOnly(expression));
 	}
 
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {
@@ -458,17 +480,17 @@ public class Payment extends ResizeComposite {
 
 	@UiHandler("fxPaymentButton")
 	void onFxPaymentButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox) paymentTextBox);
+		showFxDialog((MyExpressionBox) paymentTextBox);
 	}
 
 	@UiHandler("fxTaxButton")
 	void onFxTaxButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox) taxTextBox);
+		showFxDialog((MyExpressionBox) taxTextBox);
 	}
 
 	@UiHandler("fxQuoteButton")
 	void onFxQuoteButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox) quoteTextBox);
+		showFxDialog((MyExpressionBox) quoteTextBox);
 	}
 
 	// ------------------------------------------
@@ -502,10 +524,10 @@ public class Payment extends ResizeComposite {
 
 	private void initProvided() {
 
-		taxTextBox = new ExpressionTextBox(); // TODO : UiBinder
-		quoteTextBox = new ExpressionTextBox(); // TODO : UiBinder
-		paymentTextBox = new ExpressionTextBox((ExpressionTextBox) taxTextBox,
-				(ExpressionTextBox) quoteTextBox); // TODO : UiBinder
+		taxTextBox = new MyExpressionBox(); // TODO : UiBinder
+		quoteTextBox = new MyExpressionBox(); // TODO : UiBinder
+		paymentTextBox = new MyExpressionBox((MyExpressionBox) taxTextBox,
+				(MyExpressionBox) quoteTextBox); // TODO : UiBinder
 
 		conceptSuggestOracle = new MultiWordSuggestOracle();
 		descriptionSuggestOracle = new MultiWordSuggestOracle();
@@ -569,7 +591,7 @@ public class Payment extends ResizeComposite {
 
 	}
 
-	private void showFxDialog(final ExpressionTextBox textBox) {
+	private void showFxDialog(final MyExpressionBox textBox) {
 		final FxDialog fxDialog = new FxDialog(contextProvider);
 		fxDialog.setExpression(textBox.getExpression());
 		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
@@ -631,7 +653,7 @@ public class Payment extends ResizeComposite {
 	private void showOrHideResetPaymentButton() {
 		resetPaymentButton.setVisible(concept != null
 				&& !StringUtils.equals(concept.getExpression(),
-						((ExpressionTextBox) paymentTextBox).expression));
+						((MyExpressionBox) paymentTextBox).expression));
 	}
 
 	private void enableCustomTax(boolean enabled) {

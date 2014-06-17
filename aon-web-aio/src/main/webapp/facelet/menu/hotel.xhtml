@@ -140,6 +140,12 @@
 										</aon:commandLink>
 									</aon:div>				
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchase-hotel" 
+											action="purchase_search-hotel"
+											actionListener="#{purchase.onEditSearch}"
+											value="#{bundle.purchase_check_module}" />
+									</aon:div>																	
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchasePrint-hotel" 
 											action="purchasePrint_search-hotel"
 											actionListener="#{purchasePrint.onEditSearch}"

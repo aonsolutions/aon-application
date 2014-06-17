@@ -42,7 +42,7 @@ public class CustomerFeeCompositeListener extends ControllerAdapter {
 	private double obtainCompositionItemPrice(CustomerFee customerFee, ItemComposition composition, IPriceStrategy priceStrategy) {
 		double price = 0;
 		if (composition.getItem().getProduct().isCompositionPrice()) {
-			price = priceStrategy.getUnitPrice(customerFee, customerFee.getInitialDate(), customerFee.getCustomer().getTariff());
+			price = priceStrategy.getUnitPrice(customerFee, customerFee.getInitialDate(), customerFee.getCustomer());
 		}
 		return price;
 	}

@@ -20,6 +20,7 @@ public class DeliveryDetailCompositeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
+		Delivery delivery = (Delivery)controller.getMasterController().getTo();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
 		if (deliveryDetail.getItem().getProduct().isComposition()) {
 			double quantity = deliveryDetail.getQuantity();
@@ -30,7 +31,7 @@ public class DeliveryDetailCompositeListener extends ControllerAdapter {
 					deliveryDetail.setItem(composition.getCompositionItem());
 					deliveryDetail.setDescription(composition.getDescription());
 					deliveryDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
-					deliveryDetail.setPrice(obtainCompositionItemPrice(deliveryDetail, composition, controller.getPriceStrategy()));
+					deliveryDetail.setPrice(obtainCompositionItemPrice(deliveryDetail, delivery, composition, controller.getPriceStrategy()));
 					deliveryDetail.setDiscountExpression(obtainCompositionDiscount(deliveryDetail, composition));
 					deliveryDetail = (DeliveryDetail)controller.getManagerBean().insert(deliveryDetail);
 				}
@@ -40,11 +41,10 @@ public class DeliveryDetailCompositeListener extends ControllerAdapter {
 		}
 	}
 
-	private double obtainCompositionItemPrice(DeliveryDetail deliveryDetail, ItemComposition composition, IPriceStrategy priceStrategy) {
+	private double obtainCompositionItemPrice(DeliveryDetail deliveryDetail, Delivery delivery, ItemComposition composition, IPriceStrategy priceStrategy) {
 		double price = 0;
 		if (composition.getItem().getProduct().isCompositionPrice()) {
-			Delivery delivery = deliveryDetail.getDelivery();
-			price = priceStrategy.getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer().getTariff());
+			price = priceStrategy.getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer());
 		}
 		return price;
 	}

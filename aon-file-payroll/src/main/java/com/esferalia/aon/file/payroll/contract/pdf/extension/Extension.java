@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.common.BeanManager;
@@ -61,7 +62,7 @@ public class Extension extends AbstractContractExtension {
 	}
 	
 	@Override
-	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams params) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> params) throws UnsupportedContractDocumentException{
 		// TODO
 		
 		try {
@@ -71,7 +72,7 @@ public class Extension extends AbstractContractExtension {
 			
 			readPdfFields(reader);
 			
-			ContrataProrrogaParams prorrogaParams = (ContrataProrrogaParams) params;
+			ContrataProrrogaParams prorrogaParams = (ContrataProrrogaParams) params.get(0);
 			
 			super.loadPdfCommonFields(contract, params);
 			

@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
@@ -1082,10 +1081,12 @@ public class ContrataReader {
 	private void completeDatosAdicionalesTransformacion(
 			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSADICIONALESTRANSFORMACIONTYPE datosadicionalestransformacion, ContrataTransformacionesParams params) {
 		// TODO 
-		datosadicionalestransformacion.getCODIGOCOLECTIVOREDUCCION();
-		if(datosadicionalestransformacion.getINDDISCAPACIDAD()!=null){
-			params.setIndDiscapacidad(TEJINDIS.getEnumByValue(datosadicionalestransformacion.getINDDISCAPACIDAD()));
+		if(datosadicionalestransformacion!=null){
+			datosadicionalestransformacion.getCODIGOCOLECTIVOREDUCCION();
+			if(datosadicionalestransformacion.getINDDISCAPACIDAD()!=null){
+				params.setIndDiscapacidad(TEJINDIS.getEnumByValue(datosadicionalestransformacion.getINDDISCAPACIDAD()));
 //			params.setDisabilityData(true);
+			}
 		}
 	}
 
@@ -1105,8 +1106,14 @@ public class ContrataReader {
 		// TODO 
 		
 		if(datosgeneralestransformacion != null){
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 			
-//			datosgeneralestransformacion.getFECHAINICIO()
+			try {
+				params.setFechaInicio( formatter.parse(datosgeneralestransformacion.getFECHAINICIO()) );
+			} catch (ParseException e) {
+				// nada
+			}
+			
 //			datosgeneralestransformacion.getFECHATERMINOREAL()
 //			datosgeneralestransformacion.getINDICADORDISCONTINUIDAD()
 //			datosgeneralestransformacion.getMUNICIPIOCT()
@@ -1123,11 +1130,9 @@ public class ContrataReader {
 		// TODO 
 		
 		if(datoscontrato != null){
-			
-//			datoscontrato.getCLAVECONTRATO()
+			params.setSourceContractSepeId(datoscontrato.getCLAVECONTRATO());
 //			datoscontrato.getFECHAINICIOCTO()
 //			datoscontrato.getIDENTIFICADORPFISICA()
-			
 		}
 	}
 

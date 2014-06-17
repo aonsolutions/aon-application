@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+	
+	<c:if test="#{googleDrive.google}">
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:div styleClass="aon-portlet-title-buttons">
+				<aon:commandLink id="googleDrive-reset" actionListener="#{googleDrive.onUpload}" action="google_drive_form">
+						<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+				</aon:commandLink>
+			</aon:div>
+			<aon:commandLink id="googleDrive-search" actionListener="#{googleDrive.onSearch}" action="google_drive_list">
+				<aon:outputText value="#{bundle.google_drive}" styleClass="aon-portlet-title-text aon-icon aon-icon-google-drive"/>
+			</aon:commandLink>	
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+
+			<aon:dataTable id="googleDriveFilesList"
+				value="#{googleDrive.files}" var="file" rows="5"
+				columnClasses="aon-table-portlet-column"
+				rowClasses="aon-table-portlet-row"
+				styleClass="aon-width-170 aon-table-portlet">
+				
+				 
+				<aon:column>
+					
+					<!--  Iconos de los archivos de Google Drive -->
+					
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/pdf'}" styleClass="aon-icon-google-drive-pdf" style="padding-left: 15px;"/>
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/msword'}" styleClass="aon-icon-google-drive-word" style="padding-left: 15px;"/>
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'image/*'}" styleClass="aon-icon-google-drive-image" style="padding-left: 15px;"/>
+					
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.folder'}" styleClass="aon-icon-google-drive-folder" style="padding-left: 15px;"/>
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.document'}" styleClass="aon-icon-google-drive-docs" style="padding-left: 15px;" />
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.drawing'}" styleClass="aon-icon-google-drive-drawing" style="padding-left: 15px;"/>
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.form'}" styleClass="aon-icon-google-drive-form" style="padding-left: 15px;"/>
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.spreadsheet'}" styleClass="aon-icon-google-drive-calc" style="padding-left: 15px;"/>
+					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.presentation'}" styleClass="aon-icon-google-drive-presentation" style="padding-left: 15px;"/>
+					
+					
+					
+					<aon:outputText value="&#160;" rendered="#{file.mimetype ne 'application/vnd.google-apps.document' and
+																file.mimetype ne 'application/vnd.google-apps.folder' and
+																file.mimetype eq 'application/pdf' and
+																file.mimetype eq 'application/msword' and
+																file.mimetype eq 'image/*' and
+																file.mimetype ne 'application/vnd.google-apps.drawing' and
+																file.mimetype ne 'application/vnd.google-apps.form' and
+																file.mimetype ne 'application/vnd.google-apps.presentation' and
+																file.mimetype ne 'application/vnd.google-apps.spreadsheet'}" styleClass="aon-icon-google-drive-unknown" style="padding-left: 15px;" />
+					
+				</aon:column>
+				
+				<aon:column>
+				
+					<!--  Titulo de los archivos de Google Drive -->
+					
+					<h:outputLink target="_blank" value="#{file.url}" >		
+						<aon:outputText value="#{file.description}" style="text-align=right;"/>	
+					</h:outputLink>
+				
+				</aon:column>
+				
+				<aon:column>
+				
+					<!--  Icono de descarga del archivo de Drive -->
+
+					<!--  aon:commandLink id="googleDrive-download" actionListener="#googleDrive.fileDownloaded" >
+						<f:param name="id" value="#{file.id}" />
+						<aon:outputText value="&#160;" styleClass="aon-icon-file-download" style="padding-left: 15px;"/>
+					</aon:commandLink-->
+							
+					<a4j:htmlCommandLink target="_blank"
+							rendered="#{file.mimetype ne 'application/vnd.google-apps.document' and
+									file.mimetype ne 'application/vnd.google-apps.drawing' and
+									file.mimetype ne 'application/vnd.google-apps.form' and
+									file.mimetype ne 'application/vnd.google-apps.spreadsheet' and
+									file.mimetype ne 'application/vnd.google-apps.presentation' and
+									file.mimetype ne 'application/vnd.google-apps.folder'}"
+							actionListener="#{googleDrive.fileDownloaded}"
+							styleClass="aon-icon aon-icon-mail-save"
+							title="#{bundle.aon_fileupload_download}">
+							<aon:outputText value="&#160;" />
+							<f:param name="id" value="#{file.id}" />
+					</a4j:htmlCommandLink>
+					
+					<a4j:htmlCommandLink target="_blank"
+							rendered="#{file.mimetype eq 'application/vnd.google-apps.document' or
+									file.mimetype eq 'application/vnd.google-apps.drawing' or
+									file.mimetype eq 'application/vnd.google-apps.form' or
+									file.mimetype eq 'application/vnd.google-apps.spreadsheet' or
+									file.mimetype eq 'application/vnd.google-apps.presentation' or
+									file.mimetype eq 'application/vnd.google-apps.folder'}"
+							onclick="alert('Este tipo de archivo no se puede descargar. Acceda a google drive para visualizarlo')"
+							styleClass="aon-icon aon-icon-mail-save-black-white"
+							title="#{bundle.aon_fileupload_download}">
+							<aon:outputText value="&#160;" /> 
+							<f:param name="id" value="#{file.id}" />
+					</a4j:htmlCommandLink>
+					
+					
+			
+					<aon:commandLink id="googleDrive-delete" actionListener="#{googleDrive.onDelete}">		
+						<aon:outputText value="&#160;" styleClass="aon-icon-delete" style="padding-left: 15px;" />
+						<f:param name="id" value="#{file.id}" />
+					</aon:commandLink>
+					
+				</aon:column>			
+
+			</aon:dataTable>
+
+		</aon:div>
+	</aon:div>
+	</c:if>
+</ui:composition>

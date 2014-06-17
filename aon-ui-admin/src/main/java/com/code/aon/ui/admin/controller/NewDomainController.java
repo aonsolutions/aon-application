@@ -369,33 +369,7 @@ public class NewDomainController implements Serializable {
 	
 	public IControllerListener getTemplateDomainFilter() {
 		if ( this.templateDomainFilter == null ) {
-			this.templateDomainFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						controller.getCriteria().setSkipDomainFilter(true);						
-						if ( parentDomain != null ) {
-							if ( AonUtil.getRoleManager().isSysAdmin() ) {
-								String management = controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT);
-								controller.getCriteria().addEqualExpression(management, Boolean.FALSE);
-							} else {
-								String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
-								controller.getCriteria().addEqualExpression(parent, parentDomain.getId());	
-							}							
-						} else {
-							controller.getCriteria().addNullExpression("Domain.parent");
-						}
-						String type = controller.getFieldName(IEntityAlias.DOMAIN_TYPE);
-						controller.getCriteria().addNotEqualExpression(type, DomainType.ADMIN);
-						String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
-						controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering domain", e);
-					}
-				}
-			};
+			this.templateDomainFilter = new TemplateDomainFilter(parentDomain);
 		}
 		return this.templateDomainFilter;
 	}
@@ -406,6 +380,42 @@ public class NewDomainController implements Serializable {
 
 	public void onChangedEnableHeredity( ActionEvent event ) {
 		setLoadDefaultValuesEnabled(true);
+	}
+	
+	private static class TemplateDomainFilter extends ControllerAdapter {
+		
+		private Domain parentDomain;
+		
+		public TemplateDomainFilter(Domain parentDomain) {
+			this.parentDomain = parentDomain;
+		}
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				controller.getCriteria().setSkipDomainFilter(true);						
+				if ( parentDomain != null ) {
+					if ( AonUtil.getRoleManager().isSysAdmin() ) {
+						String management = controller.getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT);
+						controller.getCriteria().addEqualExpression(management, Boolean.FALSE);
+					} else {
+						String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
+						controller.getCriteria().addEqualExpression(parent, parentDomain.getId());	
+					}							
+				} else {
+					controller.getCriteria().addNullExpression("Domain.parent");
+				}
+				String type = controller.getFieldName(IEntityAlias.DOMAIN_TYPE);
+				controller.getCriteria().addNotEqualExpression(type, DomainType.ADMIN);
+				String active = controller.getFieldName(IEntityAlias.DOMAIN_ACTIVE);
+				controller.getCriteria().addEqualExpression(active, Boolean.TRUE);
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering domain", e);
+			}
+		}
+		
 	}
 	
 }

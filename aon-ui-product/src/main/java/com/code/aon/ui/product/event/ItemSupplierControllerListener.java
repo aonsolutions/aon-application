@@ -5,9 +5,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.ItemSupplier;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -21,10 +22,11 @@ public class ItemSupplierControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		ItemSupplierController controller = (ItemSupplierController)event.getController();
-		ItemSupplier itemSupplier = (ItemSupplier)controller.getTo();
+		RegistryItem registryItem = (RegistryItem)controller.getTo();
 
 		try {
-			itemSupplier.setPriority(calculateNextPriority((Item)controller.getMasterController().getTo()));
+			registryItem.setType(RegistryMode.SUPPLIER);
+			registryItem.setPriority(calculateNextPriority((Item)controller.getMasterController().getTo()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -36,11 +38,12 @@ public class ItemSupplierControllerListener extends ControllerAdapter {
 	}
 
 	private	Integer calculateNextPriority(Item item) throws ManagerBeanException {
-		IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
+		IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
-		Projection projection = Projection.max(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
-		Object value = itemSupplierBean.getUniqueResult(projection, criteria);
+		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID), item.getId());
+		criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
+		Projection projection = Projection.max(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
+		Object value = rItemBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 

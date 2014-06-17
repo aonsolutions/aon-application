@@ -18,6 +18,8 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private String sourceContractSepeId;
+	private ContractCode sourceContractCode;
 	private ITransformacionType transformContract;
 	private ContractCode transformCode;
 	private Date fechaInicio;
@@ -25,6 +27,22 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	private String indicadorDiscontinuidad;
 	
 	
+	public String getSourceContractSepeId() {
+		return sourceContractSepeId;
+	}
+
+	public void setSourceContractSepeId(String sourceContractSepeId) {
+		this.sourceContractSepeId = sourceContractSepeId;
+	}
+
+	public ContractCode getSourceContractCode() {
+		return sourceContractCode;
+	}
+
+	public void setSourceContractCode(ContractCode sourceContractCode) {
+		this.sourceContractCode = sourceContractCode;
+	}
+
 	public String getIndicadorDiscontinuidad() {
 		return indicadorDiscontinuidad;
 	}

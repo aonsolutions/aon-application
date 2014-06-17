@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -15,11 +16,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
@@ -83,8 +84,10 @@ public class ContrataTransformacionesHandler implements IContrataHandler, Serial
 		else {
 			ContrataReader reader = new ContrataReader();
 			this.params = (ContrataTransformacionesParams) reader.readFile( new ByteArrayInputStream(attach.getData()) );
+			if(StringUtils.isBlank(params.getSourceContractSepeId())){
+				params.setSourceContractSepeId( SEPEUtils.getInstance().getContractInfoMap(contract).get(ContractVariable.SEPE_CONTRACT_ID.getValue()) );
+			}
 		}
-		
 	}
 	
 	private CNO obtainCno(String expression) {

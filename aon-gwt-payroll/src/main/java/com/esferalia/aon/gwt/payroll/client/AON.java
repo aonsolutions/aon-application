@@ -70,6 +70,12 @@ public class AON {
 	public static final String AON_ICON_ACCEPT = "aon-icon-accept";
 	public static final String AON_ICON_INE = "aon-icon-ine";
 	public static final String AON_ICON_AET = "aon-icon-aet";
+	
+	public static final String AON_ICON_ARABA = "aon-icon-araba";
+	public static final String AON_ICON_BIZKAIA = "aon-icon-bizkaia";
+	public static final String AON_ICON_NAVARRA = "aon-icon-navarra";
+	public static final String AON_ICON_GIPUZKOA = "aon-icon-gipuzkoa";
+	
 	public static final String AON_ICON_WORKPLACE = "aon-icon-workplace";
 	public static final String AON_ICON_EMPLOYEE = "aon-icon-employee";
 	public static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";

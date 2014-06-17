@@ -6,14 +6,16 @@ import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.connection.ConnectionProvider;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +54,23 @@ public class HibernateBlobManager implements IBlobManager {
 		return table.name();
 	}
 	
-	private Connection getConnection() throws AonConnectionException {
-		String serverName = HttpServletRequestValve.getServerName();
-		AonDataSource ds = AonDataSource.getInstance();
-		return ds.getConnection(serverName);		
+	private Connection getConnection( IBlobObject bo ) throws AonConnectionException, SQLException {
+		Connection connection = null;
+		String serverName = null;
+		if ( HttpServletRequestValve.getHttpServletRequest() != null ) {
+			serverName = HttpServletRequestValve.getServerName();	
+		}
+		if (! StringUtils.isEmpty(serverName) ) {
+			AonDataSource ds = AonDataSource.getInstance();
+			connection = ds.getConnection(serverName);					
+		} else {
+			String factoryName = HibernateUtil.getSessionFactoryName(bo.getClass().getName());
+			SessionFactoryImplementor session = (SessionFactoryImplementor) HibernateUtil.getSessionFactory(factoryName);
+			ConnectionProvider connectionProvider = session.getConnectionProvider();
+			connection = connectionProvider.getConnection();
+		}
+		connection.setAutoCommit(true);
+		return connection;
 	}
 
 	public byte[] getBLOB(String table, IBlobObject bo, String property) {
@@ -64,7 +79,7 @@ public class HibernateBlobManager implements IBlobManager {
 		PreparedStatement pstmt = null;
 		String query = "SELECT " + getPropertyColumn(bo, property) + " FROM " + table + " WHERE id = ?";
 		try {
-			connection = getConnection();
+			connection = getConnection(bo);
 			pstmt = connection.prepareStatement(query);
 			pstmt.setObject(1, bo.getReference());
 			rs = pstmt.executeQuery();
@@ -138,7 +153,7 @@ public class HibernateBlobManager implements IBlobManager {
 		}
 		query.append( "WHERE id = ?;");
 		try {
-			connection = getConnection();
+			connection = getConnection(bo);
 			pstmt = connection.prepareStatement(query.toString());
 			for(int i = 0; i < properties.length; i++) {
 				Integer size = getPropertySize(bo, properties[i]);

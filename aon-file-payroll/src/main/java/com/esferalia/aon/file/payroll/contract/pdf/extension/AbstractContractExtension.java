@@ -326,9 +326,9 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		}
 	}
 	
-	public void loadPdfCommonFields(Contract contract, IContrataParams contrataParams) throws ManagerBeanException{
+	public void loadPdfCommonFields(Contract contract, List<IContrataParams> contrataParams) throws ManagerBeanException{
 		
-		ContrataProrrogaParams params = (ContrataProrrogaParams) contrataParams;
+		ContrataProrrogaParams params = (ContrataProrrogaParams) contrataParams.get(0);
 		
 		/* 
 		 * Contract enterprise fields

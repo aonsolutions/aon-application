@@ -663,7 +663,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void onIrpf(IrpfOutcome irpfOutcome) {
-		// TODO Auto-generated method stub
+		salaryDraft.setCommunity(irpfOutcome.getComunidadAutonoma());
 	}
 
 	@Override

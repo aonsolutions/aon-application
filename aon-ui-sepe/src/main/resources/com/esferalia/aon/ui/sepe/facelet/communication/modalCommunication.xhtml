@@ -36,7 +36,7 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 
-								<c:if test="#{contractContrata.communicationAvailable}">
+								<c:if test="#{controller.communicationAvailable}">
 									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalToolbar.xhtml" />
 									<aon:div style="width:99%">
 										<aon:div rendered="#{controller.communicationIdReceived or controller.communicationResponseReceived}">
@@ -46,7 +46,7 @@
 									</aon:div>
 								</c:if>
 								
-								<c:if test="#{!contractContrata.communicationAvailable}">
+								<c:if test="#{!controller.communicationAvailable}">
 									<aon:outputText style="color:red;padding-left:18px;" styleClass="aon-icon-wrong"
 										value="Tipo de contrato sin implementación para comunicaciones con Contrat@." />
 								</c:if>

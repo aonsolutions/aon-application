@@ -4,7 +4,6 @@ import static com.code.aon.ui.common.ICommonMessages.INVOICE_SALES;
 import static com.code.aon.ui.common.ICommonMessages.LINE;
 import static com.code.aon.ui.common.ICommonMessages.TRANSFERED_TO;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
@@ -19,7 +18,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -92,10 +90,8 @@ public class OfferDetailController extends LinesController implements ICommercia
 				offerDetail.setQuantity(1);
 			}
 
-			Date date = offerDetail.getOffer().getIssueDate();
-			OfferController master = (OfferController)getMasterController();
-			Tariff tariff = ((Offer)master.getTo()).getTariff();
-			price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
+			Offer offer = (Offer)getMasterController().getTo();
+			price = getPriceStrategy().getUnitPrice(offerDetail, offer.getDate(), offer.getTarget());
 		}
 		offerDetail.setPrice(price);
 	}	
@@ -107,10 +103,8 @@ public class OfferDetailController extends LinesController implements ICommercia
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 				offerDetail.setQuantity((Double)event.getNewValue());
 	
-				Date date = offerDetail.getOffer().getIssueDate();
-				OfferController master = (OfferController)getMasterController();
-				Tariff tariff = ((Offer)master.getTo()).getTariff();
-				price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
+				Offer offer = (Offer)getMasterController().getTo();
+				price = getPriceStrategy().getUnitPrice(offerDetail, offer.getDate(), offer.getTarget());
 			}
 			offerDetail.setPrice(price);
 		}

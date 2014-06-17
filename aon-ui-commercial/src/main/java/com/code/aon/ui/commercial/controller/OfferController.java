@@ -382,7 +382,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Target target = (Target)event.getNewValue();
 			getOffer().setTarget(target);
-			getOffer().setTariff(target.getTariff());
 			loadAddresses(target.getId());
 			loadProjects(target.getId());
 			loadCommercial(target.getId());
@@ -528,7 +527,6 @@ public class OfferController extends BasicController implements ISignatureContro
 			Iterator<?> iterator = bean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				RegistrySupplier registrySupplier = (RegistrySupplier)iterator.next();
-				offer.setTariff(registrySupplier.getTariff());
 				offer.setPayMethod(registrySupplier.getPayMethod());
 				offer.setNumberOfPayments(registrySupplier.getNumberOfPayments());
 				offer.setDaysToFirstPayment(registrySupplier.getDaysToFirstPayment());

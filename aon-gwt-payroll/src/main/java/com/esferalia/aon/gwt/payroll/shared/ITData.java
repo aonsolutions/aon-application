@@ -27,8 +27,6 @@ public class ITData implements Serializable{
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> dataIts;	
 	private List<Integer> contracts;
 	
-	
-	
 	public static class UnmodifiableEmployee extends Employee {
 
 		public UnmodifiableEmployee() {
@@ -162,10 +160,8 @@ public class ITData implements Serializable{
 		if(dataIts.containsKey(contractId) == false) {	
 			
 			dataIts.put(contractId, new LinkedHashMap<Integer, ITDataPerson>());
-		}
-		
-		dataIts.get(contractId).put(contractLeaveId, new UnmodifiableITDataPerson(itDataPerson));
-		
+		}		
+		dataIts.get(contractId).put(contractLeaveId, new UnmodifiableITDataPerson(itDataPerson));		
 	}
 	
 	public Map<Integer, ITDataPerson> getDataIts(int contractId) {
@@ -177,6 +173,10 @@ public class ITData implements Serializable{
 		
 		return Collections.unmodifiableMap(dataIts.get(contractId));
 		
+	}
+	
+	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getITs() {
+		return Collections.unmodifiableMap(dataIts);
 	}
 
 	public void yearsExistContracts(Date pMin, Date pMax) {
@@ -206,39 +206,25 @@ public class ITData implements Serializable{
 		return oldData;
 	}
 	
-	public ITDataPerson addLeaveItem(ITDataPerson itDataPerson) {	
-		
+	public ITDataPerson addLeaveItem(ITDataPerson itDataPerson) {		
 		LinkedHashMap<Integer, ITDataPerson> add = dataIts.get(itDataPerson.getContractId());		
 		ITDataPerson oldData = add.put(itDataPerson.getContractLeaveId(), itDataPerson);		
 		sortMap(add);
-		return oldData;
-		
+		return oldData;		
 	}
 	
-	public ITDataPerson removeLeaveItem(ITDataPerson itDataPerson) {
-		
+	public ITDataPerson removeLeaveItem(ITDataPerson itDataPerson) {		
 		LinkedHashMap<Integer, ITDataPerson> remove = dataIts.get(itDataPerson.getContractId());
 		ITDataPerson oldData = remove.remove(itDataPerson.getContractLeaveId());		
 		sortMap(remove);
-		return oldData;
-			
+		return oldData;			
 	}
 	
-/*	public ITDataPerson updateItem(ITDataPerson itDataPerson) {
-		
-		int contractId = itDataPerson.getContractId();
-		int leaveId = itDataPerson.getContractLeaveId();
-		
-		LinkedHashMap<Integer, ITDataPerson> update = dataIts.get(contractId);		
-		ITDataPerson oldData = update.put(leaveId, itDataPerson);
-		sortMap(update);
-		return oldData;
-	}*/
-	
+	@SuppressWarnings("unchecked")
 	public void sortMap(Map<Integer, ITDataPerson> map) {
 
 		List<ITDataPerson> sortedList = new LinkedList<ITDataPerson>();
-		Iterator it = map.entrySet().iterator();
+		Iterator<?> it = map.entrySet().iterator();
 
 		while (it.hasNext()) {
 

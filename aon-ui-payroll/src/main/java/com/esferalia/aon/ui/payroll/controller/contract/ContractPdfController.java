@@ -91,7 +91,7 @@ public class ContractPdfController implements Serializable {
 	private ContractAttachment contractPdfDraft;	
 	private String backAction;
 	private ContractAttachmentType documentType;
-	private IContrataParams contrataParams;
+	private List<IContrataParams> contrataParams;
 	
 	private boolean showDocumentGenerationWindow;
 	private boolean readOnly;
@@ -224,10 +224,10 @@ public class ContractPdfController implements Serializable {
 	public ContractAttachmentType getExtensionPdfType(){
 		return ContractAttachmentType.EXTENSION_DOC_DRAFT;
 	}
-	public IContrataParams getContrataParams() {
+	public List<IContrataParams> getContrataParams() {
 		return contrataParams;
 	}
-	public void setContrataParams(IContrataParams contrataParams) {
+	public void setContrataParams(List<IContrataParams> contrataParams) {
 		this.contrataParams = contrataParams;
 	}
 	private void initialize() {
@@ -366,6 +366,7 @@ public class ContractPdfController implements Serializable {
 			throw new AbortProcessingException(msg);
 		}
 		
+		setContrataParams(new LinkedList<IContrataParams>());
 		ContrataController contrataController = null;
 		if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
@@ -380,12 +381,27 @@ public class ContractPdfController implements Serializable {
 		contrataController.onContrataDataShow(null);
 		
 		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
-			setContrataParams(contrataController.getHandler().getParams());
+			getContrataParams().add(contrataController.getHandler().getParams());
+//			setContrataParams(contrataController.getHandler().getParams());
 		} else {
 			setContrataParams(null);
 		}
+		
+		if(isTransformedContract(code)){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize(getContract());
+			contrataController.onContrataDataShow(null);
+			getContrataParams().add(contrataController.getHandler().getParams());
+		}
+		
+		
 		loadPdfDocument(forceRefresh);
 	}
+	
+	private boolean isTransformedContract(ContractCode contractCode) {
+		return ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, contractCode.getValue());
+	}
+	
 	
 	private void loadPdfDocument(boolean forceRefresh) throws UnsupportedContractDocumentException, IOException{
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT){

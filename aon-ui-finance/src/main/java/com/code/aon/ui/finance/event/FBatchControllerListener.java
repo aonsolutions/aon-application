@@ -46,7 +46,6 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.setPayment(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.calculateBankDate(fBatch.getIssueDate());
 		fBatchController.setAebOutput(null);
 		try {
 			fBatchController.loadAvailableFinances();
@@ -65,7 +64,6 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.calculateBankDate(fBatch.getIssueDate());
 		fBatchController.setAebOutput(null);
 		try {
 			fBatchController.loadAvailableFinances();
@@ -99,7 +97,6 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
         FBatchController fBatchController = (FBatchController)event.getController();
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.calculateBankDate(fBatch.getIssueDate());
 		fBatchController.setAebOutput(null);
 		try {
 			fBatchController.loadAvailableFinances();

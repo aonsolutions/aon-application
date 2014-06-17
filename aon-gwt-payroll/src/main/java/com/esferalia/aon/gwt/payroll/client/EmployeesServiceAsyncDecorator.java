@@ -4,6 +4,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -381,14 +382,16 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getChanges(agreement,
 				new AsyncCallbackWrapper<SortedSet<Date>>(callback));
 	}
-
+	
 	@Override
-	public void saveITDataPerson(ITDataPerson dataPerson,
-			AsyncCallback<Void> callback) throws IllegalArgumentException {
-		// TODO Apéndice de método generado automáticamente
-
+	public void saveITDataPerson(Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes, 
+			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates,
+			AsyncCallback<ITData> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveITDataPerson(inserts, deletes, updates, 
+				new AsyncCallbackWrapper<ITData>(callback));		
 	}
-
 	// ------------------------------------------------- GPSReportsServiceAsync
 	@Override
 	public void getA3Report(Date month, int[] workplaces,

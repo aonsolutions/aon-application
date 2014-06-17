@@ -1,6 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.DATE2_PATTERN;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -76,18 +76,18 @@ public class PosFinanceController extends FinanceListController implements IFina
 
 	private FinanceBatch createFinanceBatch() {
 		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
-		String date = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN)).format(new Date());
-		String hotel = searchListener.getWorkPlace().getDescription();
+		String date = new SimpleDateFormat(AonUtil.getMessage(DATE2_PATTERN)).format(new Date());
 		String payMethod = searchListener.getPayMethod().getName();
-		if ((hotel+payMethod).length() > 20) {
+		String hotel = searchListener.getWorkPlace().getDescription();
+		if ((payMethod + hotel).length() > 22) {
 			if (payMethod.length() > 8) {
 				payMethod = payMethod.substring(0, 8);
 			}
-			hotel = StringUtils.substring(hotel, 0, 20 - payMethod.length());
+			hotel = StringUtils.substring(hotel, 0, 22 - payMethod.length());
 		}
 
 		FinanceBatch fBatch = new FinanceBatch();
-		fBatch.setDescription(date + " " + hotel + " " + payMethod);
+		fBatch.setDescription(date + " " + payMethod + " " + hotel);
 		fBatch.setIssueDate(new Date());
 		return fBatch;
 	}
@@ -102,8 +102,9 @@ public class PosFinanceController extends FinanceListController implements IFina
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
+			String id = StringUtils.leftPad("(" + fBatch.getId() + ")", 6, "0");
 			String amount = new DecimalFormat("000,000.00\u20AC").format(fBatch.getFinanceBatchTotalAmount());
-			SelectItem item = new SelectItem(fBatch, amount + " - " + fBatch.getDescription() + " (" + fBatch.getId() + ")");
+			SelectItem item = new SelectItem(fBatch, id + " " + amount + " " + fBatch.getDescription());
 			fBatchList.add(item);
 		}
 		return fBatchList;

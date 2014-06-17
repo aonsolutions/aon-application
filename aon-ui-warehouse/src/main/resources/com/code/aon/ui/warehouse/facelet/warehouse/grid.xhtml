@@ -22,11 +22,10 @@
 					<ui:decorate 
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 						<ui:param name="controller" value="#{warehouse}" />
-						<ui:param name="columnClasses" 
-							value="aon-editDataTable-textColumn aon-width-400,aon-editDataTable-textColumn aon-width-auto" />
 
 						<ui:define name="columns">
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-400"
+								alias="Warehouse.name" >
 								<f:facet name="header">
 									<aon:outputLabel for="Warehouse_name"
 										value="#{bundle.aon_module_warehouse}" />
@@ -43,7 +42,8 @@
 								</f:facet>
 							</aon:column>
 
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
+								alias="Warehouse.workPlace.description" >
 								<f:facet name="header">
 									<aon:outputLabel for="Warehouse_workPlace"
 										value="#{bundle.purchase_workplace}" />

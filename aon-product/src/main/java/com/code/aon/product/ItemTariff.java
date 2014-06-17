@@ -10,6 +10,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.pricing.IPriceable;
+import com.code.aon.product.pricing.ItemPricesManager;
 import com.esferalia.aon.entity.master.ItemTariffDB;
 
 @Entity
@@ -20,7 +21,7 @@ public class ItemTariff extends ItemTariffDB implements IPriceable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void setProfitPercent(double profitPercent) {
-		super.setProfitPercent( CommonUtil.round(profitPercent, 3));
+		super.setProfitPercent(CommonUtil.round(profitPercent, 3));
 	}
 
     public void setPrice(double price) {
@@ -44,6 +45,17 @@ public class ItemTariff extends ItemTariffDB implements IPriceable {
 	}
 
 	@Transient
+	public double getSalesProfitPercent() {
+		return 0;
+	}
+	public double getSalesProfitPercent(double purchasePrice, double price) {
+		ItemPricesManager pricesManager = new ItemPricesManager();
+		return pricesManager.getSalesProfit(purchasePrice, price);
+	}
+	public void setSalesProfitPercent(double salesProfitPercent) {
+	}
+
+	@Transient
 	public double getSalesPrice() {
 		return getSalesPrice(this.getPrice());
 	}
@@ -64,4 +76,5 @@ public class ItemTariff extends ItemTariffDB implements IPriceable {
 	public Tax getRetention() {
 		return (getItem().getProduct().isWithholding()) ? getItem().getProduct().getRetention() : null;
 	}
+
 }

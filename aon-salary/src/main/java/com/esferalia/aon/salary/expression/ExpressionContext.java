@@ -518,10 +518,7 @@ public class ExpressionContext {
 				throwExpressionException(e);
 				throw new UndefinedVariablesException(getUndefinedProperty(e,
 						bindings));
-			} /*
-			 * catch (RemoveVariableError e) { throw new
-			 * UndefinedVariablesException(e.getName()); }
-			 */catch (UnresolveablePropertyException e) {
+			} catch (UnresolveablePropertyException e) {
 				throw new UndefinedVariablesException(e.getName());
 			} catch (ExpressionExceptionWrapper e) {
 				throw e.getExpressionException();
