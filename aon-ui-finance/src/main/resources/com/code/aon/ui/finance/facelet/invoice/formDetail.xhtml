@@ -154,8 +154,8 @@
 										valueChangeListener="#{controller.onQuantityChanged}"
 										ajaxSingle="true" reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 										required="true" size="5" focus="InvoiceDetail_price-New" />
-									<aon:outputText id="Invoice_totalDetailQuantity" 
-										value="#{controller.masterController.totalDetailQuantity}" rendered="#{!formNew}">
+									<aon:outputText id="Invoice_totalQuantity" 
+										value="#{invoiceController.toInvoiceTotalQuantity}" rendered="#{!formNew}">
 										<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 									</aon:outputText>
 								</aon:div>

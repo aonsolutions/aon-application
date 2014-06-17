@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
+import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_UNRECORD_INVOICE_WARNING;
@@ -579,20 +580,46 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return true;
 	}
 
-	public double getTaxableBase(){
+	public double getToInvoiceTotalQuantity() {
+		return getInvoiceTotalQuantity(getInvoice());
+	}
+
+	public double getInvoiceTotalQuantity() throws ManagerBeanException {
+		Invoice invoice = (Invoice)this.getModel().getRowData();
+		return getInvoiceTotalQuantity(invoice);
+	}
+
+	private double getInvoiceTotalQuantity(Invoice invoice) {
+		double totalQuantity = 0;
+		try {
+			IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_QUANTITY));
+			Object value = detailBean.getUniqueResult(projection, criteria);
+			totalQuantity = (value != null) ? ((Double)value) : 0;
+		} catch (ManagerBeanException ex) {
+			String msg = AonUtil.getMessage(CALCULATE_INVOICE_QUANTITY_ERROR_KEY) + ". " + ex.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
+		}
+		return totalQuantity;
+	}
+
+	public double getTaxableBase() {
 		return getPriceStrategy().getTaxableBase((ICalculableContainer)getTo());
 	}
 
-	public double getVatQuota(){
+	public double getVatQuota() {
 		return getPriceStrategy().getTotalVatQuota((ICalculableContainer)getTo(), (ITaxInfo)getTo());
 	}
 
-	public double getRetentionQuota(){
+	public double getRetentionQuota() {
 		return getPriceStrategy().getTotalRetentionQuota((ICalculableContainer)getTo(), (ITaxInfo)getTo());
 	}
 
 	public double getToInvoiceTotalPrice() {
-		return getInvoiceTotalPrice((Invoice)getInvoice());
+		return getInvoiceTotalPrice(getInvoice());
 	}
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
@@ -623,20 +650,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return CommonUtil.round(financeTotal);
 	}
 	
-	public double getTotalDetailQuantity(){
-		try {
-			IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), ((Invoice)this.getTo()).getId());
-			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_QUANTITY));
-			Object value = detailBean.getUniqueResult(projection, criteria);
-			return (value != null) ? ((Double)value) : 0;
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
-		}
-		return 0;
-	}
-
 	public boolean isRemovable() {
 		InvoiceDetailController invoiceDetailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
 		return (invoiceDetailController.getTo() == null && !isReadOnly());
@@ -665,7 +678,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		invoiceDetailController.onSearch(null);
 	}
 
-	public void generateFinances(ActionEvent event) throws ManagerBeanException{
+	public void generateFinances(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
 		try {
 			IController invoiceFinanceController = FormUtil.getController(invoiceFinanceControllerName);
