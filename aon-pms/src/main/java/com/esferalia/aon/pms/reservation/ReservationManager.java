@@ -209,7 +209,7 @@ public class ReservationManager implements IReservationConstants {
 			double agencyCommissionAmount = getReservationUtils().obtainAgencyCommissionAmount(agencyInfo);
 			calculateCommission = agencyCommissionAmount != 0 && getReservationUtils().isAgencyCommission(agency);
 			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
-			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, null);
+			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, SOLRES);
 			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
 			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
