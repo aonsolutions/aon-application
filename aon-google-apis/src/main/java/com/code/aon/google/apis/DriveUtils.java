@@ -415,8 +415,6 @@ public class DriveUtils  {
 
 		if(checkTypes(rattach)){
 			
-			System.out.println("holaaa");
-
 			Vector<String> emails=DatabaseSync.getEmails(rattach.getId(),domain);
 			Vector<String> pemails=DatabaseSync.getPersonEmails(rattach.getId(),domain);
 			if(rattach.getDriveId()==null){
@@ -450,9 +448,25 @@ public class DriveUtils  {
 		}
 	}
 	
+	
+	public static File sync(Rattach rattach,Vector<String> emails,DomainGserviceaccount d) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
+		serviceInitialize(d);
+		File file=null;
+		if(checkTypes(rattach)){
+			if(rattach.getDriveId()==null){
+				file= insertFile(rattach,new Vector<String>(),emails);
+			}
+			else{
+				File fileAux = getFile(rattach.getDriveId());
+				if(!fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(rattach.getData()))){
+					file= updateFile(rattach);
+				}	
+			}
+		}
+		return file;
+	}
+	
 	public static void synchronize(Integer id, String domain) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
-		
-		
 		serviceInitialize(DatabaseSync.getServiceAccount(domain));
 		Rattach rattach=DatabaseSync.getFile(id,domain); 
 		
