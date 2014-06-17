@@ -295,7 +295,7 @@ public class DriveUtils  {
 		
 		
 
-		
+		file.setShared(true);
 		file.setTitle(rattach.getDescription());
 		file.setMimeType(t.getName());
 		//file.setAppDataContents(true);// Indica que es un archivo de la aplicación, por lo tanto, el usuario no podrá borrar el archivo.
@@ -334,42 +334,21 @@ public class DriveUtils  {
 	    }
 	}
 	
-	private static File insertFile(Rattach rattach,Vector<String> emails) throws SQLException, AonConnectionException, IOException {
+	private static File insertFile(Rattach rattach,Vector<String> emails,Vector<String> pemails) throws SQLException, AonConnectionException, IOException {
 	    // File's metadata.
 	    File file = newFile(rattach);
 	    
-	    Permission p=new Permission();
-		p.setValue("aibanezdegau004@gmail.com");
-		p.setType("user");//user || group || domain || anyone
-		p.setRole("reader");//owner || reader || writer || commenter
-		
-		
-		file.setShared(true);
-		
-		
-		
 	    // File's content.
 	    java.io.File fileContent = Utils.InputStreamToFile(rattach);
 	    FileContent mediaContent = new FileContent(file.getMimeType(), fileContent);
 	  
 	    try {
 	      file = client.files().insert(file, mediaContent).execute();
-	      Permission permission=client.permissions().insert(file.getId(), p).execute();
+	      setPermissions(file.getId(),emails,pemails);
+	      
+	      System.out.println("Subido archivo: " + file.getTitle());
 	      //Dar permisos al archivo
-	      System.out.println(emails.size());
-		 for (int i=0;i<emails.size();i++) {
-			System.out.println(emails.get(i));
-			  
-			 	/*Permission p=new Permission();
-			  p.setValue(string);
-			  p.setType("user");//user || group || domain || anyone
-			  p.setRole("reader");//owner || reader || writer || commenter
-			  p.setEmailAddress(string);
-		  		
-			  Permission permission=client.permissions().insert(file.getId(), p).execute();
-		  */
-		  }
-	      System.out.println(file.getId());
+	
 	      return file;
 	    } catch (IOException e) {
 	      System.out.println("An error occured: " + e);
@@ -377,8 +356,48 @@ public class DriveUtils  {
 	    }
 	  }
 	
+	public static void setTypes(Vector<RegistryAttachmentType> types2){
+		int i=0;
+		for (RegistryAttachmentType type : types2) {
+			int aux=type.ordinal();
+			types[i]= Integer.toString(aux);
+			i++;
+		}
+		
+		
+	}
+	
+    public static void setPermissions(String fileId,Vector<String> emails,Vector<String> pemails) throws IOException{
+   	 	
+    	for (int i=0;i<emails.size();i++) {			  
+    		Permission p=new Permission();
+   	 		p.setValue(emails.get(i));
+   	 		p.setType("user");//user || group || domain || anyone
+   	 		p.setRole("reader");//owner || reader || writer || commenter		  		
+   	 		client.permissions().insert(fileId, p).execute();
+    	}
+   	 	for (int j=0;j<pemails.size();j++) {			  
+	 		Permission p2=new Permission();
+	 		p2.setValue(emails.get(j));
+	 		p2.setType("user");//user || group || domain || anyone
+	 		p2.setRole("reader");//owner || reader || writer || commenter		  		
+		  	client.permissions().insert(fileId, p2).execute();
+   	 	}
+
+    }
+
+	
 	/*********************** Sincronizar BD a Google Drive ***************************/
 	
+    public static boolean checkTypes(Rattach rattach){
+    	boolean bool=false;
+
+    	for (String type : types) {
+			if (rattach.getType()==Integer.parseInt(type))
+				bool=true;
+		}
+    	return bool;
+    }
 	public static boolean checkType(Rattach rattach, Vector<RegistryAttachmentType> types){
 		boolean bool=false;
 		short type = rattach.getType();
@@ -392,15 +411,19 @@ public class DriveUtils  {
 		return bool;
 	}
 	
-	public static void sync(Rattach rattach,String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, NoSuchAlgorithmException{
-		System.out.println(checkType(rattach,types));
-		if(checkType(rattach,types)){
-			Vector<String> emails=DatabaseSync.getEmails(domain);
+	public static void sync(Rattach rattach,String domain) throws SQLException, AonConnectionException, IOException, NoSuchAlgorithmException{
+
+		if(checkTypes(rattach)){
+			
+			System.out.println("holaaa");
+
+			Vector<String> emails=DatabaseSync.getEmails(rattach.getId(),domain);
+			Vector<String> pemails=DatabaseSync.getPersonEmails(rattach.getId(),domain);
 			if(rattach.getDriveId()==null){
 				InputStream i =DatabaseSync.getData(rattach.getId(),domain);
 				rattach.setData(i);
 				System.out.println(i+"   "+rattach.getId());
-				File file= insertFile(rattach,emails);
+				File file= insertFile(rattach,emails,pemails);
 				if(file!=null){
 					DatabaseSync.addDriveId(file.getId(),rattach.getId(),domain);
 					//DatabaseSync.deleteBlob(rattach.getId(),domain);
@@ -427,34 +450,34 @@ public class DriveUtils  {
 		}
 	}
 	
-	public static void synchronize(Integer id, String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
+	public static void synchronize(Integer id, String domain) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
 		
 		
 		serviceInitialize(DatabaseSync.getServiceAccount(domain));
 		Rattach rattach=DatabaseSync.getFile(id,domain); 
 		
-		sync(rattach,domain,types);
+		sync(rattach,domain);
 	}
 	
-	public static void synchronize(String domain,Vector<RegistryAttachmentType> types) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
+	public static void synchronize(String domain) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
 		DriveData dd=DatabaseSync.getDomainFiles(domain);
 		
 		serviceInitialize(dd.getGservice());
-			
+			System.out.println(dd.getRattachs().size());
 		if(dd.getRattachs()!=null && dd.getRattachs().size()>0){
 			for(int j=0;j<dd.getRattachs().size();j++){
-				sync(dd.getRattachs().get(j),domain,types);
+				sync(dd.getRattachs().get(j),domain);
 			}
 		}	
 		
 	}
 	
-	public static void synchronize(Vector<RegistryAttachmentType> types) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
 		
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
 		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
 				
-			synchronize(key,types);
+			synchronize(key);
 		}
 		
 	}
@@ -498,29 +521,31 @@ public class DriveUtils  {
 	IOException, ServletException, SQLException, AonConnectionException {
 		
 			parse(args);
-			
 		
-			String domain = "audibal.aonsolutions.net";
+			if (domains==null || domains.length==0){
+				synchronize();
+			}
+			else{
+				for (String string : domains) {
+					synchronize(string);
+				}
+			}
 			
+			/*String domain2="clividerm-exem.aibanez.net";
 			
+
+			String domain="audibal.aonsolutions.net";
 			
-			Vector<RegistryAttachmentType> types= new Vector<RegistryAttachmentType>();
-			//types.add(RegistryAttachmentType.DOCUMENT);
-			types.add(RegistryAttachmentType.MARKETING_TEMPLATE);
-			/*types.add(RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
-			
-			types.add(RegistryAttachmentType.ENTERPRISE_CONTRACT_CLAUSES);
-			*/
-			
-			synchronize(domain,types);
-			
-			
-			
-			
-			
-			DomainGserviceaccount d=DatabaseSync.getServiceAccount(domain);
-			serviceInitialize(d);
+			//synchronize(domain);
+			Vector<String> pemails=DatabaseSync.getPersonEmails(10000, domain2);
+			Vector<String> emails=DatabaseSync.getEmails(365 , domain);
+			for (String string : emails) {
+				System.out.print(string);
+			}
 			DriveData dd=DatabaseSync.getDomainFiles(domain);
+			
+			serviceInitialize(dd.getGservice());
+			
 			for(int j=0;j<dd.getRattachs().size();j++){
 				String id = dd.getRattachs().get(j).getDriveId();
 				if(id!=null){
@@ -532,7 +557,7 @@ public class DriveUtils  {
 					
 				}
 			}
-			
+			*/
 			
 			
 		

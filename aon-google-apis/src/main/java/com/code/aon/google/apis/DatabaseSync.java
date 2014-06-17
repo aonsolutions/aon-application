@@ -29,12 +29,14 @@ import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.google.sql.SQLConstants.DomainGserviceaccountColumns;
 import com.esferalia.aon.google.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.google.sql.SQLConstants.MailAccountColumns;
+import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.ProjectColumns;
 import com.esferalia.aon.google.sql.SQLConstants.ProjectCommercialColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RmediaColumns;
 import com.esferalia.aon.google.sql.SQLConstants.TaskColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
+import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserWorkgroupColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RattachColumns;
 
@@ -96,7 +98,6 @@ public class DatabaseSync {
 			Connection connection = null;
 			PreparedStatement stmt = null;
 			try {
-
 				String sql = "SELECT RM.value FROM (" + SQLConstants.DOMAIN
 						+ " AS D inner join " + SQLConstants.ENTERPRISE
 						+ " AS E ON D." + DomainColumns.ID + "= E."
@@ -1434,25 +1435,25 @@ public class DatabaseSync {
 		
 	}
 	
-	public static Vector<String> getEmails(String key) throws SQLException{
+	public static Vector<String> getEmails(int id,String key) throws SQLException{
 		
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
 			String sql = "SELECT DISTINCT MA."+MailAccountColumns.EMAIL
-					+" FROM ("+SQLConstants.RATTACH+" AS R inner join "+SQLConstants.MAIL_ACCOUNT
-					+" AS MA ON MA."+MailAccountColumns.DOMAIN+"= R."+RattachColumns.DOMAIN+") inner join "
-					+SQLConstants.DOMAIN+" AS D ON D."+DomainColumns.ID+"=R."+RattachColumns.DOMAIN
-					+" WHERE D."+DomainColumns.NAME+"= ? OR D."+DomainColumns.PARENT+" IN (SELECT "+DomainColumns.ID+
-																							" FROM "+SQLConstants.DOMAIN+
-																							" wHERE "+DomainColumns.NAME+" = ?)";
+					+" FROM "+SQLConstants.RATTACH+" AS R inner join "+SQLConstants.ENTERPRISE+" AS E ON ( E."
+					+EnterpriseColumns.REGISTRY+"= R."+RattachColumns.REGISTRY+") inner join "+SQLConstants.MAIL_ACCOUNT
+					+" AS MA ON ( MA."+MailAccountColumns.DOMAIN+"= E."+EnterpriseColumns.DOMAIN+") inner join "
+					+SQLConstants.USER_SCOPE+" AS US ON (US."+UserScopeColumns.USER_ID+"=MA."+MailAccountColumns.USER_ID
+					+") WHERE R."+RattachColumns.ID+"= ? AND (R."+RattachColumns.SCOPE+" IS NULL OR R."+RattachColumns.SCOPE
+					+"= US."+UserScopeColumns.SCOPE+")";
 																
 			
 			connection = getConnection(key);
 			stmt = connection.prepareStatement(sql);
-			stmt.setString(1, key);
-			stmt.setString(2, key);
+			stmt.setInt(1, id);
+
 			rs = stmt.executeQuery();
 			
 			
@@ -1460,6 +1461,46 @@ public class DatabaseSync {
 
 			while (rs.next()){
 				String email=rs.getString(MailAccountColumns.EMAIL);
+	
+				emails.add(email);	
+			}
+			
+			return emails;
+			
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+public static Vector<String> getPersonEmails(int id, String key) throws SQLException{
+		
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT DISTINCT RM."+RmediaColumns.VALUE
+					+" FROM "+SQLConstants.RATTACH+" AS R inner join "+SQLConstants.PERSON+" AS P ON ( P."
+					+PersonColumns.REGISTRY+"= R."+RattachColumns.REGISTRY+") inner join "+SQLConstants.RMEDIA
+					+" AS RM ON ( RM."+RmediaColumns.REGISTRY+"= P."+PersonColumns.REGISTRY
+					+") WHERE R."+RattachColumns.ID+"= ? AND RM."+RmediaColumns.MEDIA+"= ? ";
+																
+			
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, id);
+			stmt.setInt(2,4);
+			rs = stmt.executeQuery();
+			
+			
+			Vector<String> emails = new Vector<String>();
+
+			while (rs.next()){
+				String email=rs.getString(RmediaColumns.VALUE);
 	
 				emails.add(email);	
 			}
