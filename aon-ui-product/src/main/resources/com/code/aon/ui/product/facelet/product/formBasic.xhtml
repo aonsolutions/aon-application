@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputLabel for="Product_code" value="#{bundle.aon_id}" />
@@ -83,8 +84,10 @@
 			<c:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:selectBooleanCheckbox id="Product_inventoriable"
 					value="#{controller.to.inventoriable}"
-					disabled="#{controller.to.composition}"
+					disabled="#{controller.to.composition or controller.onStock}"
 					ajaxSingle="true" reRender="itemCheckValues" />
+				<rich:toolTip value="#{bundle.warehouse_product_with_stock}"
+					rendered="#{controller.onStock}" />											
 				<aon:outputLabel for="Product_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_inventoriable}" />
 			</c:if>

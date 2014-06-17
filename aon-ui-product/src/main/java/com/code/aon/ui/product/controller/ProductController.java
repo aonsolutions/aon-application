@@ -11,7 +11,11 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
@@ -24,10 +28,13 @@ import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductController extends BasicController {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
+	
 	private boolean showNewItemWindow;
 	
 	private Item item;
@@ -211,6 +218,20 @@ public class ProductController extends BasicController {
 	public String getLabelDetail3() {
 		Product product = (Product) getTo();
 		return product.getCategory().getDetail3();
+	}
+	
+	public boolean isOnStock() {
+		Product product = (Product) getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Stock.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression("Stock.item.product.id", product.getId());
+			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.STOCK_QUANTITY), 0.0);
+			return bean.getCount(criteria) > 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return false;
 	}
 	
 }

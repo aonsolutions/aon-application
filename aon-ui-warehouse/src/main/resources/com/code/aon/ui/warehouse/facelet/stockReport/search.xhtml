@@ -33,6 +33,7 @@
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{stockReport.item}" />
 						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="skipSearchButton" value="#{false}" />
 					</ui:include>
 
 					<aon:outputLabel for="Stock_quantity" value="#{bundle.aon_quantity}" />
