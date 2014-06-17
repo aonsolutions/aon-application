@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,11 +10,9 @@ import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.DischargeCause;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -40,8 +39,8 @@ public class Tooltip extends DecoratedPopupPanel {
 	
 	interface Listener {
 		
-		void onStartDateChangeEvent();
-		void onEndDateChangeEvent();
+		void onStartDateChangeEvent(ValueChangeEvent<Date> event);
+		void onEndDateChangeEvent(ValueChangeEvent<Date> event);
 	}
 
 	private static TooltipUiBinder uiBinder = GWT.create(TooltipUiBinder.class);
@@ -112,7 +111,8 @@ public class Tooltip extends DecoratedPopupPanel {
 	@UiField Label typeDischarge;
 	
 	private List<Listener> listeners;
-	
+	private int contractId;
+	private int leaveId;
 	private final String ACTIVE = "Activo";
 
 	private Date startContract;
@@ -130,6 +130,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		setGlassEnabled(false);
 		setStyleName(AON.AON_TOOLTIP);
 		add(uiBinder.createAndBindUi(this));
+		listeners = new ArrayList<Tooltip.Listener>();
 		changes = false;
 		startLeaveDateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		startLeaveDateBox.setWidth("6em");
@@ -139,41 +140,6 @@ public class Tooltip extends DecoratedPopupPanel {
 		
 		loadTypeListBox();
 		setAutoHideEnabled(true);
-		
-		startLeaveDateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				changes = true;
-				
-			}
-		});
-		
-		endDateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				changes = true;
-				
-			}
-		});
-		
-		typeLeaveListBox.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				changes = true;				
-			}
-		});
-
-		typeDischargeListBox.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				changes = true;
-				
-			}
-		});
 	}
 
 	protected void onPreviewNativeEvent(final NativePreviewEvent event) {
@@ -183,7 +149,6 @@ public class Tooltip extends DecoratedPopupPanel {
 		case Event.ONKEYDOWN:
 
 			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-
 				hide();
 			}
 
@@ -251,7 +216,6 @@ public class Tooltip extends DecoratedPopupPanel {
 		startDateLabel.setText("Fecha");
 		startLeaveDateBox.setValue(getStartContract());
 		causeStartLabel.setText("Motivo");
-	//	typeLeaveListBox.setItemSelected(0, true);
 		typeDischargeListBox.setItemSelected(getDischargeCause(), true);
 		endDateLabel.setText("Fecha");
 		endDateBox.setValue(getEndContract());
@@ -326,22 +290,38 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	@UiHandler("startLeaveDateBox")
 	void onValueChangeStartDateBox(ValueChangeEvent<Date> event) {
-
+		
+		for (Listener listener : listeners)
+			listener.onStartDateChangeEvent(event);
+		changes = true;
 	}
 
 	@UiHandler("endDateBox")
 	void onValueChangeFromDateBox(ValueChangeEvent<Date> event) {
-
+		for(Listener listener : listeners)
+			listener.onEndDateChangeEvent(event);
+		changes = true;
 	}
-
+	
+	@UiHandler("typeLeaveListBox")
+	void onChangeEventTypeLeave(ChangeEvent event) {
+		changes = true;
+	}
+	
+	@UiHandler("typeDischargeListBox")
+	void onChangeEventTypeDischarge(ChangeEvent event) {
+		changes = true;
+	}
+	
+	
 	private boolean accept = false;
 
 	@UiHandler("acceptButton")
-	void onAcceptClick(ClickEvent event) {			
+	void onAcceptClick(ClickEvent event) {
 		
 		if(startLeaveDateBox.getValue() == null) {
-			startLeaveDateBox.getTextBox().setFocus(true);
-			return;
+			accept = false;
+			hide();
 		}
 		
 		if(typeLeaveListBox.getSelectedIndex() == 0) {
@@ -389,7 +369,23 @@ public class Tooltip extends DecoratedPopupPanel {
 	public void setSocialSecurity(String pSocialSecurity) {
 		socialSecurityNum.setText(pSocialSecurity);
 	}
-
+	
+	public void setContractId(int contractId) {
+		this.contractId = contractId;
+	}
+	
+	public int getContractId() {
+		return this.contractId;
+	}
+	
+	public void setLeaveId(int leaveId) {
+		this.leaveId = leaveId;
+	}
+	
+	public int getLeaveId() {
+		return this.leaveId;
+	}
+	
 	public void setStatus(String pStatus) {
 		
 		if(pStatus.equals(ACTIVE)) 					

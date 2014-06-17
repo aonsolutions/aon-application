@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -9,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ITDataObject {
@@ -259,6 +260,45 @@ public class ITDataObject {
 			updates.put(id, new LinkedHashMap<Integer, ITDataPerson>());
 		}
 		return updates.get(id);
+	}
+	
+	public boolean isCorrectStartDateLeave (int contractId, int leaveId, Date startDate) {
+		
+		Map<Integer, ITDataPerson> map = getDataIts(contractId);
+		
+		for (ITDataPerson iterator : map.values()) {
+			if(leaveId == iterator.getContractLeaveId())
+				continue;
+			if (leaveId != iterator.getContractLeaveId()
+					&& (DateUtils.compare(startDate, iterator.getLeaveStartDate()) > 0)
+					&& (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0))
+				return false;
+		}
+		
+		return true;
+		
+		
+	}
+	
+	public boolean isCorrectEndDateLeave (int contractId, int leaveId, 
+			Date startDate, Date endDate) {
+		
+	Map<Integer, ITDataPerson> map = getDataIts(contractId);
+		
+		for (ITDataPerson iterator : map.values()) {
+			
+			if(leaveId == iterator.getContractLeaveId())
+				continue;
+			if ( (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0)
+					&& (DateUtils.compare(endDate, iterator.getLeaveEndDate()) < 0)
+					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) > 0)
+					&& (DateUtils.compare(endDate, iterator.getLeaveStartDate()) < 0)
+					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0)
+					&& (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0))
+				return false;
+		}
+		
+		return true;
 	}
 	
 	public void load(final AsyncCallback<ITDataObject> cb) {

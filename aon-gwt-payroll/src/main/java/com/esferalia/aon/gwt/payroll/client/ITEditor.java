@@ -36,6 +36,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -76,6 +77,9 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		@ClassName("legend-caption")
 		String legendCaption();
+
+		@ClassName("error-icon")
+		String errorIcon();
 
 	}
 
@@ -171,13 +175,13 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				if (cadenaTooltip == null)
 					return;
 
-				if (tooltip.isShowing() == false &&
-						popupPanel.isShowing() == false) {
+				if (tooltip.isShowing() == false
+						&& popupPanel.isShowing() == false) {
 					evalTooltip();
 				}
 
 			} catch (Throwable ex) {
-				Window.alert("Error [onMouseOver] : " + ex.getMessage());
+				// Window.alert("Error [onMouseOver] : " + ex.getMessage());
 			} finally {
 				event.stopPropagation();
 			}
@@ -188,7 +192,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 			Element el = Element.as(event.getNativeEvent().getEventTarget());
 
-			String cadena = el.getPropertyJSO("logicalname").toString();			
+			String cadena = el.getPropertyJSO("logicalname").toString();
 
 			try {
 
@@ -213,7 +217,72 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			}
 		}
 	}
-	
+
+	private class testDatePicker implements Tooltip.Listener {
+		private Tooltip tooltip;
+		private int contractId;
+		private int leaveId;
+
+		public testDatePicker(Tooltip tooltip) {
+			this.tooltip = tooltip;
+			this.contractId = tooltip.getContractId();
+			this.leaveId = tooltip.getLeaveId();
+			this.tooltip.addListener(this);
+		}
+
+		@Override
+		public void onStartDateChangeEvent(ValueChangeEvent<Date> event) {
+
+			Date startDate = event.getValue();
+			boolean correct = dataObject.isCorrectStartDateLeave(contractId,
+					leaveId, startDate);
+
+			if (correct == false) {
+				tooltip.startLeaveDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.startLeaveDateBox
+						.setTitle("Baja existente en el per\u00EDodo indicado");
+			} else {
+				tooltip.startLeaveDateBox.removeStyleName(style.errorIcon());
+				tooltip.startLeaveDateBox.setTitle("");
+			}
+			evalButton();
+		}
+
+		@Override
+		public void onEndDateChangeEvent(ValueChangeEvent<Date> event) {
+			
+			Date endDate = tooltip.getFromDateBoxValue();
+			Date startDate = tooltip.getStartDateBoxValue();
+			
+			boolean correct = dataObject.isCorrectEndDateLeave(contractId, leaveId, 
+					startDate, endDate);
+			
+			if(correct == false) {
+				tooltip.endDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.endDateBox.setTitle("Baja existente en el per\u00EDodo indicado");				
+			}
+			else {
+				tooltip.endDateBox.removeStyleName(style.errorIcon());
+				tooltip.endDateBox.setTitle("");								
+			}
+			evalButton();
+		}
+
+		// ESTA MAL
+		private void evalButton() {
+			if (tooltip.startLeaveDateBox.getStyleName().contains(
+					style.errorIcon())
+					|| tooltip.endDateBox.getStyleName().contains(
+							style.errorIcon()))
+				tooltip.acceptButton.setEnabled(false);
+			else
+				tooltip.acceptButton.setEnabled(true);
+		}
+		
+		
+
+	}
+
 	class LeaveContextMenu extends ContextMenu {
 
 		DeleteContractCommand deleteContract;
@@ -245,7 +314,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				dataObject.removeLeaveItem(contractId, leaveId);
 				reloadTimeline();
 			} catch (Exception ex) {
-
 			}
 		}
 	}
@@ -282,11 +350,16 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				try {
+
 					AbstractDataTable dataTable = createTable();
+
 					Options options = createOptions(dataTable);
+
 					timelineChart = new TimeLineChart(dataTable, options);
 					if (ifNull == false) {
+
 						timelinePanel.setWidget(timelineChart);
+
 						new MouseEventsHandlers(timelineChart);
 					} else {
 						timelinePanel.clear();
@@ -421,7 +494,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 							startYear) < 0))
 				continue;
 
-			Type type = itDataPerson.getType();			
+			Type type = itDataPerson.getType();
 			Date leaveEndAux = itDataPerson.getLeaveEndDate();
 
 			if (leaveEndAux == null) {
@@ -508,10 +581,10 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		posCell = Integer.parseInt(element.substring(auxX, auxY));
 
-	} 
+	}
 
 	protected boolean isLeaveEmployee(String pElement) {
-		
+
 		String cadena = pElement;
 
 		if (cadena.contains("\"vR\":") && cadena.contains("\"uR\":")
@@ -530,6 +603,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		String fullName = data.getFullName(posColumn, posCell);
 		String dni = data.getDocument(posColumn, posCell);
 		String segSocial = data.getSocialSecurity(posColumn, posCell);
+		int contractId = data.getContractId(posColumn, posCell);
+		int leaveId = data.getContractLeaveId(posColumn, posCell);
 		String estado = data.getStatus(posColumn, posCell);
 		Date startDate = data.getStartDate(posColumn, posCell);
 		String formatStartDate = format.format(startDate);
@@ -545,13 +620,14 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		int dischargeCause = data.getDischargeCause(posColumn, posCell);
 		int typeTooltip = data.getTypeTooltip(posColumn, posCell);
-		
 
 		tooltip = new Tooltip();
 
 		tooltip.setFullName(fullName);
 		tooltip.setDNI(dni);
 		tooltip.setSocialSecurity(segSocial);
+		tooltip.setContractId(contractId);
+		tooltip.setLeaveId(leaveId);
 		tooltip.setColor(getColor(estado));
 		tooltip.setStatus(estado);
 		tooltip.setWorkPeriod(formatStartDate, formatEndDate);
@@ -591,7 +667,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			final int clientX, final int clientY) {
 
 		tooltip.showContractActiveTooltip(clientX, clientY);
-
+		new testDatePicker(tooltip);
 		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
 
 			@Override
@@ -647,7 +723,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	protected void showLeaveActiveTooltip(final Tooltip tooltip,
 			final int clientX, final int clientY) {
 		tooltip.showLeaveActiveTooltip(clientX, clientY);
-		
+		new testDatePicker(tooltip);
 		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
 
 			@Override
@@ -686,8 +762,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				}
 			}
 		});
-	}	
-	
+	}
+
 	class EmployeeContextMenu extends ContextMenu {
 
 		AddContractCommand addContract;
@@ -1240,12 +1316,12 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			}
 
 			public final native int getvR() /*-{
-				return this.vR;
-			}-*/;
+											return this.vR;
+											}-*/;
 
 			public final native int getuR() /*-{
-				return this.uR;
-			}-*/;
+											return this.uR;
+											}-*/;
 
 		}
 
@@ -1253,12 +1329,12 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		}
 
 		public final native String getType() /*-{
-			return this.type;
-		}-*/;
+												return this.type;
+												}-*/;
 
 		public final native JsData getData() /*-{
-			return this.data;
-		}-*/;
+												return this.data;
+												}-*/;
 	}
 
 	private static String getLogicalName(Element el, int x, int y) {
