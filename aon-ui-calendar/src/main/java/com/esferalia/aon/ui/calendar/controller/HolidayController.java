@@ -63,6 +63,8 @@ public class HolidayController extends BasicController {
 	}
 
 	private static class ExcludeCurrentHolidayFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

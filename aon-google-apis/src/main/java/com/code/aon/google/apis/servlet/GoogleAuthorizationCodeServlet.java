@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.code.aon.AonVersion;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
 
@@ -15,6 +16,8 @@ import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizatio
 
 public class GoogleAuthorizationCodeServlet extends
 		AbstractAuthorizationCodeServlet {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	protected String getRedirectUri(HttpServletRequest req)

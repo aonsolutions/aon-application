@@ -115,6 +115,8 @@ public class NewsletterController extends BasicController {
 	}
 
 	private static class ImagesFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private List<MimeType> getImageMimeTypes() {
 			List<MimeType> list = new LinkedList<MimeType>();

@@ -235,6 +235,8 @@ public class CalendarController extends BasicController {
 	}
 
 	private static class ExcludeCurrentCalendarFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

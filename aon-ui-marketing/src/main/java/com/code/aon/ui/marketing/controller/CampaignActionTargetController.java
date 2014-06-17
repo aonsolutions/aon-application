@@ -241,6 +241,8 @@ public class CampaignActionTargetController extends LinesController {
 
 	private static class ActionFilter extends ControllerAdapter {
 		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)
 				throws ControllerListenerException {

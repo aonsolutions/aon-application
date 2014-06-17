@@ -222,6 +222,8 @@ public class ContractLeaveController extends BasicController {
 	}
 
 	private static class ContractFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

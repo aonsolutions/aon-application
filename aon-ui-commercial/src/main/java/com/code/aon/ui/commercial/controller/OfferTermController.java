@@ -68,6 +68,8 @@ public class OfferTermController extends LinesController {
 
 	private static class TermsFilter extends ControllerAdapter {
 		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		public boolean isGeneral() {
 			OfferTermController oft = (OfferTermController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_TERM_GENERAL_CONTROLLER_NAME);
 			return oft.isGeneral();

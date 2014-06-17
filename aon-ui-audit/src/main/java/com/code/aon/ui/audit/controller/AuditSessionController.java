@@ -117,6 +117,8 @@ public class AuditSessionController extends BasicController {
 	}	
 
 	private static class DomainsFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

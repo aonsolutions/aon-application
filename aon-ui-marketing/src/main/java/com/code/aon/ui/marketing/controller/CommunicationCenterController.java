@@ -937,6 +937,8 @@ public class CommunicationCenterController extends DataScrollerState implements 
 
 	private static class ProjectCommercialFilter extends ControllerAdapter {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		public Target getTarget() {
 			CommunicationCenterController ccc = (CommunicationCenterController) AonUtil.getRegisteredBean(COMMUNICATION_CENTER_CONTROLLER_NAME);
 			return ccc.getTarget();

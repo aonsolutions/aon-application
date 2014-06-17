@@ -1,8 +1,13 @@
 package com.code.aon.google.apis;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.google.api.services.plus.model.Comment.Actor.Image;
 
-public class DriveFile{
+public class DriveFile implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String url, description,mimetype,id;
 	

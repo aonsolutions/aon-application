@@ -441,6 +441,8 @@ public class ProposalController extends BasicController {
 	}
 	
 	private static class DepartmentItemFilter  extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private List<ITransferObject> getWorkplaceDepartments(Proposal proposal){
 			return ProposalController.getWorkplaceDepartments(proposal.getWorkPlace(), proposal.getDepartment(), true);

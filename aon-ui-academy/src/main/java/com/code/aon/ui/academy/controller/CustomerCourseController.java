@@ -110,6 +110,8 @@ public class CustomerCourseController extends LinesController {
 	}	
 
 	private static class CourseFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@SuppressWarnings("unchecked")
 		private List<Integer> getCourseList() throws ManagerBeanException {

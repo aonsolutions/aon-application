@@ -384,6 +384,8 @@ public class NewDomainController implements Serializable {
 	
 	private static class TemplateDomainFilter extends ControllerAdapter {
 		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Domain parentDomain;
 		
 		public TemplateDomainFilter(Domain parentDomain) {

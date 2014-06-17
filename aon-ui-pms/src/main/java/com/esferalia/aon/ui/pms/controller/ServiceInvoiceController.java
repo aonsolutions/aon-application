@@ -656,6 +656,8 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	}
 
 	private static class CurrentReservationFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelSearched(ControllerEvent event)

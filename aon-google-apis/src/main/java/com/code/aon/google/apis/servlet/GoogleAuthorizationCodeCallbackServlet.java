@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.AonVersion;
 import com.code.aon.google.apis.DriveUtils;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
@@ -24,6 +25,8 @@ import com.google.api.services.tasks.Tasks.TasksOperations;
 
 public class GoogleAuthorizationCodeCallbackServlet extends
 		AbstractAuthorizationCodeCallbackServlet {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static String email;
 	public static String pass;

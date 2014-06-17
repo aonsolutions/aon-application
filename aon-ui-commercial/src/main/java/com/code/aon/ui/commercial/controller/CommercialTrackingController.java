@@ -289,6 +289,8 @@ public class CommercialTrackingController extends BasicController {
 	}
 
 	private static class OfferFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

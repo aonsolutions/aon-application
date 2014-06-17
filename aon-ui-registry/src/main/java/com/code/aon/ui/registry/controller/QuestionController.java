@@ -49,6 +49,8 @@ public class QuestionController extends BasicController {
 	}
 	
 	private static class NotInfoFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

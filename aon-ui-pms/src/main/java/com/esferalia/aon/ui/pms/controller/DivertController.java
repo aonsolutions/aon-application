@@ -73,6 +73,8 @@ public class DivertController extends BasicController {
 	}
 
 	private static class DivertFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelSearched(ControllerEvent event)
