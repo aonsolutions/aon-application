@@ -2,6 +2,7 @@ package com.code.aon.ui.company.controller;
 
 import static com.code.aon.common.enumeration.AppParam.APP_FPAYMENT_TEMPLATE_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_ADDRESS_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_HEADER_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_INTERNET_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
@@ -116,6 +117,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printRecordData;
 	
 	private SaleInvoiceTemplate saleInvoiceTemplate;
+
+	private boolean printDiscountPriceApplied;
 	
 	private boolean printLogo;
 	
@@ -719,6 +722,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		return saleInvoiceTemplate==null?INVOICE_PRINT_REPORT_KEY:saleInvoiceTemplate.getValue().replaceFirst(SALE_INVOICE_REPORT_KEY, INVOICE_PRINT_REPORT_KEY);
 	}
 	
+	public boolean isPrintDiscountPriceApplied() {
+		return printDiscountPriceApplied;
+	}
+
+	public void setPrintDiscountPriceApplied(boolean printDiscountPriceApplied) {
+		this.printDiscountPriceApplied = printDiscountPriceApplied;
+	}
+
 	public boolean isPrintLogo() {
 		return printLogo;
 	}
@@ -817,6 +828,10 @@ public class CompanyParentController extends BasicController implements ICompany
 		return (value == null?null:SaleInvoiceTemplate.getEnumByValue(value));
 	}
 
+	public boolean obtainPrintDiscountPriceApplied() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_DISCOUNT_PRICE_APPLIED);
+	}
+	
 	public FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException {
 		String value = AppParamUtil.getValue(APP_FPAYMENT_TEMPLATE_PARAM);
 		return (value == null?null:FinancePaymentTemplate.getEnumByValue(value));
