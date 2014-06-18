@@ -291,6 +291,11 @@ public class SQLExtraSalaryCalculatorContext implements
 	}
 	
 	@Override
+	public Object getObject(String table, String column) {
+		return ctx.getObject(table, column);
+	}
+	
+	@Override
 	public IListener getListener() {
 		return ctx.getListener();
 	}

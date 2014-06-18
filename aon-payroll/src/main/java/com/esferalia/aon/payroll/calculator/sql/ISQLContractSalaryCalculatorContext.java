@@ -25,6 +25,8 @@ public interface ISQLContractSalaryCalculatorContext extends
 
 	Integer getInt(String table, String column);
 
+	Object getObject(String table, String column);
+
 	boolean next() throws SQLException, ExpressionException;
 	/*
 	ISalaryCalculatorContext getLiquidCalculatorContext(
