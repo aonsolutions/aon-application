@@ -147,6 +147,7 @@ public class SalaryDraft extends SalaryPreview {
 		clearBonuses();
 		clearPayments();
 		clearDeductions();
+		clearEmbargos();
 	}
 
 	public void clearDb() {
@@ -208,7 +209,7 @@ public class SalaryDraft extends SalaryPreview {
 	}
 	
 	public void addEmbargo(Deduction embargo) {
-		deductions.add(embargo);
+		embargos.add(embargo);
 	}
 	
 	public Deduction addDraftDeduction(Deduction deduction) {

@@ -398,9 +398,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		IContractEmbargo contractEmbargo = (IContractEmbargo) iembargo;
 
-		Deduction embargo = newDeduction(contractEmbargo);
+		Deduction embargo = newEmbargo(contractEmbargo);
 		// override by calculated...
-		embargo.setName(iembargo.getName());
+		//embargo.setName(iembargo.getName());
 		embargo.setAmount(amount);
 		embargo.setDescription(description);
 		embargo.setType(Deduction.Type.EMBARGO);
@@ -736,6 +736,21 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		deduction.setType(getDeductionType(contractDeduction.getType()));
 
 		return deduction;
+	}
+
+	private Deduction newEmbargo(IContractEmbargo contractEmbargo) {
+
+		Deduction embargo = new Deduction();
+
+		embargo.setId(contractEmbargo.getId());
+		embargo.setEndDate(contractEmbargo.getEndDate());
+		embargo.setStartDate(contractEmbargo.getStartDate());
+		embargo.setExpression(contractEmbargo.getExpression());
+		embargo.setScope(getScope(contractEmbargo.getScope()));
+		embargo.setDescription(contractEmbargo.getDescription());
+		embargo.setType(getDeductionType(contractEmbargo.getType()));
+
+		return embargo;
 	}
 
 	private Payment newPayment(IContractPayment contractPayment) {
