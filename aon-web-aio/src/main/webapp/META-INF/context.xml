@@ -4,4 +4,10 @@
 		roleClassNames="com.code.aon.jaas.auth.SimpleGroup" 
 		useContextClassLoader="false" 
 		userClassNames="com.code.aon.jaas.auth.AuthPrincipal"/>
+	<Manager
+		className="de.javakaffee.web.msm.MemcachedBackupSessionManager"
+		memcachedNodes="n1:localhost:11211"
+		requestUriIgnorePattern="(.*/aon-aio/testServlet.*|.*\.(ico|png|gif|jpg|css|js|logo)$)"
+		transcoderFactoryClass="de.javakaffee.web.msm.JavaSerializationTranscoderFactory">
+ 	</Manager>   		
 </Context>
