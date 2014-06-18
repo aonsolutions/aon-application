@@ -867,29 +867,11 @@
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
-		    		<groupId>de.javakaffee.msm</groupId>
-		    		<artifactId>memcached-session-manager</artifactId>
-		    		<version>1.8.2</version>
-		    		<scope>compile</scope>
-				</dependency>
-				<dependency>
-		    		<groupId>de.javakaffee.msm</groupId>
-		    		<artifactId>memcached-session-manager-tc6</artifactId>
-		    		<version>1.8.2</version>
-		    		<scope>compile</scope>
-				</dependency>
-				<dependency>
 					<groupId>com.qzindustries</groupId>
 					<artifactId>qz-print</artifactId>
 					<version>1.8.0</version>
 					<scope>compile</scope>
 				</dependency>								
-				<dependency>
-		    		<groupId>net.spy</groupId>
-		    		<artifactId>spymemcached</artifactId>
-		    		<version>2.11.1</version>
-		    		<scope>compile</scope>
-				</dependency>				
 			</dependencies>
 
 			<build>
@@ -952,8 +934,6 @@
 															<exclude>**/mchange-commons-java*.jar</exclude>
 															<exclude>**/commons-lang*.jar</exclude>
 															<exclude>**/commons-dbutils*.jar</exclude>
-															<exclude>**/memcached-session-manager*.jar</exclude>
-															<exclude>**/spymemcached*.jar</exclude>
 															<exclude>**/qz-print*.jar</exclude>
 														</excludes>
 													</source>
@@ -1020,9 +1000,6 @@
 														<include>com.mchange:mchange-commons-java:0.2.3.3</include>
 														<include>commons-lang:commons-lang:2.5</include>
 														<include>commons-dbutils:commons-dbutils:1.5</include>
-														<include>de.javakaffee.msm:memcached-session-manager:1.8.2</include>
-														<include>de.javakaffee.msm:memcached-session-manager-tc6:1.8.2</include>
-														<include>net.spy:spymemcached:2.11.1</include>
 													</includes>
 												</dependency>
 												<sources>

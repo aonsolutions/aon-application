@@ -40,30 +40,30 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>spy</groupId>
+      <groupId>net.spy</groupId>
       <artifactId>spymemcached</artifactId>
-      <version>2.8.1</version>
+      <version>2.11.1</version>
       <scope>runtime</scope>
       <optional>false</optional>
     </dependency>
     <dependency>
       <groupId>de.javakaffee.msm</groupId>
       <artifactId>memcached-session-manager</artifactId>
-      <version>1.8.1</version>
+      <version>1.8.2</version>
       <scope>runtime</scope>
       <optional>false</optional>
     </dependency>
     <dependency>
       <groupId>de.javakaffee.msm</groupId>
       <artifactId>memcached-session-manager-tc6</artifactId>
-      <version>1.8.1</version>
+      <version>1.8.2</version>
       <scope>runtime</scope>
       <optional>false</optional>
     </dependency>
     <dependency>
       <groupId>de.javakaffee.msm</groupId>
       <artifactId>msm-kryo-serializer</artifactId>
-      <version>1.8.1</version>
+      <version>1.8.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -139,9 +139,9 @@
                   <directory>/usr/share/tomcat6/lib</directory>
                   <dependency>
                     <includes>
-                      <include>spy:spymemcached:2.8.1</include>
-                      <include>de.javakaffee.msm:memcached-session-manager:1.8.1</include>
-                      <include>de.javakaffee.msm:memcached-session-manager-tc6:1.8.1</include>
+                      <include>net.spy:spymemcached:2.11.1</include>
+                      <include>de.javakaffee.msm:memcached-session-manager:1.8.2</include>
+                      <include>de.javakaffee.msm:memcached-session-manager-tc6:1.8.2</include>
                     </includes>
                   </dependency>
                 </mapping>
@@ -158,7 +158,7 @@
                       <include>com.googlecode:kryo:1.04</include>
                       <include>com.googlecode:minlog:1.2</include>
                       <include>de.javakaffee:kryo-serializers:0.11</include>
-                      <include>de.javakaffee.msm:msm-kryo-serializer:1.8.1</include>
+                      <include>de.javakaffee.msm:msm-kryo-serializer:1.8.2</include>
                     </includes>
                   </dependency>
                 </mapping>
