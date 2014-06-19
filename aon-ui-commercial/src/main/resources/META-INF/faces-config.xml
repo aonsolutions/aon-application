@@ -74,7 +74,6 @@
 				</value-class>
 				<value>#{projectCommercialControllerListener}</value>
 				<value>#{projectCommercialSearch}</value>
-				<value>#{googleCalendarSynchronizer}</value>
 				<value>#{projectCommercialScopeListener}</value>
 				<value>#{projectCommercialTrackingListener}</value>
 				<value>#{projectCommercialAttachChildListener}</value>
@@ -270,6 +269,7 @@
 				<value>#{commercialTrackingSearch}</value>
 				<value>#{commercialTrackingListener}</value>
 				<value>#{commercialTrackingScopeListener}</value>
+				<value>#{googleCalendarSynchronizer}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
