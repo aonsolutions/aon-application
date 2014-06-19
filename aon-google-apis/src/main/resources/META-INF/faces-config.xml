@@ -17,6 +17,17 @@
 		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>googleTask</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.google.apis.controller.GoogleTaskController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>google_task</value>
+		</managed-property>
+	</managed-bean>
 	
 	<!-- =================== Favorite ================= -->	
 	<navigation-rule>

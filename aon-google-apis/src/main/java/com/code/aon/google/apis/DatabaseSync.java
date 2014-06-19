@@ -1263,7 +1263,7 @@ public class DatabaseSync {
 		}
 	}
 	
-	public static InputStream getData(int id,String key) throws SQLException{
+	public static InputStream getFileData(int id,String key) throws SQLException{
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
