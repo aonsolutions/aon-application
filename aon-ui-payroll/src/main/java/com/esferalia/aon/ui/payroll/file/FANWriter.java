@@ -1553,8 +1553,9 @@ public class FANWriter {
 				createEDTCa55Segment(emp);
 				createEDTCa56Segment(emp);
 				createEDTCa57Segment(emp);
+				emp.getEdtSegment("EDTCA60");
+				createEDTCa80Segment(ccc, emp);
 				createEDTCa60Segment(emp);
-				createEDTCa80Segment(emp);
 				createEDTCa90Segment(emp);
 				
 				emp.getEdt().remove("EDTTT10");
@@ -1682,9 +1683,64 @@ public class FANWriter {
 	private void createEDTCa90Segment(EMP emp) {
 		// TODO 90 Recargo de mora
 	}
-	private void createEDTCa80Segment(EMP emp) {
-		// TODO 80 Bonificación INEM formación continua
+	
+	/**
+	 * 80 Bonificación INEM formación continua
+	 * @param ccc
+	 * @param emp
+	 */
+	private void createEDTCa80Segment(EnterpriseCCC ccc, EMP emp) {
+		if(liquidationType==LiquidationType.L00){
+			Double amount = 0.0;
+			try {
+				amount = obtainContinuousFormationTotal(ccc);
+				amount = CommonUtil.round(amount, 2);
+			} catch (SQLException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			} catch (AonConnectionException e) {
+				String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+				AonUtil.addErrorMessage(msg);
+			}
+			
+			if(amount != 0){
+				EDT edt = emp.getEdtSegment("EDTCA80");
+				edt.setTipoElemento("CA");
+				edt.setClave(80);
+				edt.setBase(0);
+				edt.setIndicadorFactorTipo(" ");
+				edt.setParteEnteraTipo(null);
+				edt.setParteDecimalFactorTipo(null);
+				edt.setImporte((new Double(amount*100)).intValue());
+			}
+		} 
 	}
+		
+	private Double obtainContinuousFormationTotal(EnterpriseCCC ccc) throws AonConnectionException, SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			// TODO 
+			String select = "SELECT sum(expression) FROM contract_bonus";
+			select += " WHERE contract in ( SELECT id FROM contract WHERE enterprise_ccc = " + ccc.getId() + " )";
+			select += " AND start_date <= '" + dateFormatter.format(getStartDate()) + "'"; 
+			select += " AND end_date IS NULL"; 
+			select += " OR (end_date >= '" + dateFormatter.format(getStartDate()) + "'"; 
+			select += " AND end_date <= '" + dateFormatter.format(getEndDate())+"')";
+			select += " AND bonus_concept in (";
+			select += "SELECT id FROM bonus_concept WHERE type = " + BonusType.CONTINUOUS_FORMATION.ordinal();
+			select += " );";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDouble(1);
+			return 0.0;
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+	}
+		
 	/**
 	 *  60 Suma de bonificaciones, subvenciones y compensaciones
 	 * @param emp

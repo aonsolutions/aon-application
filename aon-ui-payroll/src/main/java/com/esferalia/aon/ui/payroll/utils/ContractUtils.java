@@ -29,7 +29,6 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
@@ -956,17 +955,6 @@ public class ContractUtils {
 		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
-		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
-			params.setWeekHours( Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())) );
-			if( params.getWeekDayHours()[0]==null && params.getWeekDayHours()[1]==null && params.getWeekDayHours()[2]==null && params.getWeekDayHours()[3]==null
-					&& params.getWeekDayHours()[4]==null && params.getWeekDayHours()[5]==null && params.getWeekDayHours()[6]==null ){
-				params.getWeekDayHours()[0] = CommonUtil.round(params.getWeekHours()/5);
-				params.getWeekDayHours()[1] = CommonUtil.round(params.getWeekHours()/5);
-				params.getWeekDayHours()[2] = CommonUtil.round(params.getWeekHours()/5);
-				params.getWeekDayHours()[3] = CommonUtil.round(params.getWeekHours()/5);
-				params.getWeekDayHours()[4] = CommonUtil.round(params.getWeekHours()/5);
-			}
-		}
 		if(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())!=null){
 			params.setCollectivePeculiarityQuote(T54.getEnumByValue(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())));
 		}
@@ -976,6 +964,8 @@ public class ContractUtils {
 		if(map.get("DIAS_PREAVISO")!=null){
 			params.setSuspensionCause(TLDCAUSS.getEnumByValue(map.get(ContextVariable.CONTRACT_END_CODE.getName())));
 		}
+		
+		// PART-TIME 
 		if(map.get(ContextVariable.MONDAY_HOURS.getName())!=null){
 			params.getWeekDayHours()[0] = (Double.parseDouble(map.get(ContextVariable.MONDAY_HOURS.getName())));
 		}
@@ -996,6 +986,17 @@ public class ContractUtils {
 		}
 		if(map.get(ContextVariable.SUNDAY_HOURS.getName())!=null){
 			params.getWeekDayHours()[6] = (Double.parseDouble(map.get(ContextVariable.SUNDAY_HOURS.getName())));
+		}
+		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
+			params.setWeekHours( Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())) );
+			if( params.getWeekDayHours()[0]==null && params.getWeekDayHours()[1]==null && params.getWeekDayHours()[2]==null && params.getWeekDayHours()[3]==null
+					&& params.getWeekDayHours()[4]==null && params.getWeekDayHours()[5]==null && params.getWeekDayHours()[6]==null ){
+				params.getWeekDayHours()[0] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[1] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[2] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[3] = CommonUtil.round(params.getWeekHours()/5);
+				params.getWeekDayHours()[4] = CommonUtil.round(params.getWeekHours()/5);
+			}
 		}
 	}
 	
