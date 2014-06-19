@@ -34,8 +34,8 @@
 					
 					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/pdf'}" styleClass="aon-icon-google-drive-pdf" style="padding-left: 15px;"/>
 					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/msword'}" styleClass="aon-icon-google-drive-word" style="padding-left: 15px;"/>
-					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'image/*'}" styleClass="aon-icon-google-drive-image" style="padding-left: 15px;"/>
-					
+					<!--  <aon:outputText value="&#160;" rendered="#{file.mimetype eq 'image/*'}" styleClass="aon-icon-google-drive-image" style="padding-left: 15px;"/>
+					-->
 					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.folder'}" styleClass="aon-icon-google-drive-folder" style="padding-left: 15px;"/>
 					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.document'}" styleClass="aon-icon-google-drive-docs" style="padding-left: 15px;" />
 					<aon:outputText value="&#160;" rendered="#{file.mimetype eq 'application/vnd.google-apps.drawing'}" styleClass="aon-icon-google-drive-drawing" style="padding-left: 15px;"/>
@@ -47,9 +47,9 @@
 					
 					<aon:outputText value="&#160;" rendered="#{file.mimetype ne 'application/vnd.google-apps.document' and
 																file.mimetype ne 'application/vnd.google-apps.folder' and
-																file.mimetype eq 'application/pdf' and
-																file.mimetype eq 'application/msword' and
-																file.mimetype eq 'image/*' and
+																file.mimetype ne 'application/pdf' and
+																file.mimetype ne 'application/msword' and
+																file.mimetype ne 'image/*' and
 																file.mimetype ne 'application/vnd.google-apps.drawing' and
 																file.mimetype ne 'application/vnd.google-apps.form' and
 																file.mimetype ne 'application/vnd.google-apps.presentation' and

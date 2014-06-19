@@ -49,7 +49,7 @@
 				</aon:div>
 				
 				<!-- GOOGLE TASK -->
-				<c:if test="#{googleDrive.google}">
+				<c:if test="#{googleTask.google}">
 					<aon:outputText value="&#160;" styleClass="aon-icon-google-task" style="padding-left: 15px;"/>
 					<aon:commandLink id="googleTask-sync" actionListener="#{googleTask.sync}">			
 						<aon:outputText value="#{bundle.google_task}" />
