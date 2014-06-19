@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -17,6 +19,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -41,6 +44,10 @@ public class Cost extends ResizeComposite {
 			.getFormat(PredefinedFormat.YEAR_MONTH);
 
 	interface Binder extends UiBinder<Widget, Cost> {
+	}
+	
+	static interface Listener {
+		void onPublish(CostDocuments documents);
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -125,6 +132,8 @@ public class Cost extends ResizeComposite {
 	MenuItem settleMenuItem;
 	@UiField
 	MenuItem delayMenuItem;
+	@UiField
+	MenuItem publishMenuItem;
 
 	@UiField
 	CheckBox salaryCheckBox;
@@ -145,6 +154,8 @@ public class Cost extends ResizeComposite {
 	private int zoom = DEFAULT_ZOOM;
 
 	private CostDocuments costDocuments;
+	
+	private List<Listener> listeners;
 
 	public Cost() {
 
@@ -172,7 +183,6 @@ public class Cost extends ResizeComposite {
 				document.print();
 			}
 		});
-
 		printMenuItem.setCommand(new Command() {
 
 			@Override
@@ -208,6 +218,13 @@ public class Cost extends ResizeComposite {
 				getAsHTML();
 			}
 		});
+		
+		publishMenuItem.setScheduledCommand( new ScheduledCommand() {
+			@Override
+			public void execute() {
+				onPublish(costDocuments);
+			}
+		});
 
 		new TypeCommand(salaryMenuItem, Salary.Type.SALARY);
 		new TypeCommand(extraMenuItem, Salary.Type.EXTRA);
@@ -218,6 +235,8 @@ public class Cost extends ResizeComposite {
 		new TypeValueChangeHandler(extraCheckBox, Salary.Type.EXTRA);
 		new TypeValueChangeHandler(settleCheckBox, Salary.Type.SETTLE);
 		new TypeValueChangeHandler(delayCheckBox, Salary.Type.DELAY);
+		
+		listeners = new LinkedList<Listener>(); 
 
 	}
 
@@ -235,6 +254,22 @@ public class Cost extends ResizeComposite {
 		this.costDocuments = costDocuments;
 		onCostDocumentsChanged();
 	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	@UiHandler("publishButton")
+	void onPublisButtonClick(ClickEvent event) {
+		onPublish(costDocuments);
+	}
+	
+	
+	void onPublish(CostDocuments documents) {
+		for (Listener listener : listeners)
+			listener.onPublish(documents);
+	}
+	
 
 	private void getAsHTML() {
 		costDocuments.getAsHTML(zoom, new AsyncCallback<String>() {

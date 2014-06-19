@@ -166,13 +166,6 @@ try {
 											</label>
 										</td>
 										<td class="aon-login-box-right">
-											<c:url value="/openid_auth" var="google_signin_url">
-											  <c:param name="endpoint" value="https://www.google.com/accounts/o8/id" />
-											</c:url>
-											<a id="google-signin" href="${google_signin_url}" target="_blank" onClick="self.name='padre';window.open(this.href, this.target, 'width=600,height=800'); return false;" >
-												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/gmail.png"/>
-											</a>
-
 											<c:url value="/oauth2" var="google_oauth2_url">
 											</c:url>
 											<a id="google-oauth2" href="${google_oauth2_url}" target="_blank" onClick="self.name='padre';window.open(this.href, this.target, 'width=600,height=800'); return false;" >

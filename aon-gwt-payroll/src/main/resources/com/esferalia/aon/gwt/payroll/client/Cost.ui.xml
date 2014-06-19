@@ -32,6 +32,7 @@
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
 							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
+							<g:MenuItem ui:field="publishMenuItem" text="Publicar..." />
 						</g:MenuBar>
 					</g:MenuItem>
 					<g:MenuItem ui:field="viewMenuItem" text="Ver">
@@ -67,6 +68,7 @@
 									styleName='aon-finding-toolbar-item aon-icon-excel' text="Excel" />
 								<g:Button ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
+								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
 								<g:ListBox ui:field='dateListBox' styleName='' />
 								<!-- g:ListBox ui:field='endDateBox' styleName='' / -->
 								
