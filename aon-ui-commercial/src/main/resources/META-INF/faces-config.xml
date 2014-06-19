@@ -74,6 +74,7 @@
 				</value-class>
 				<value>#{projectCommercialControllerListener}</value>
 				<value>#{projectCommercialSearch}</value>
+				<value>#{googleCalendarSynchronizer}</value>
 				<value>#{projectCommercialScopeListener}</value>
 				<value>#{projectCommercialTrackingListener}</value>
 				<value>#{projectCommercialAttachChildListener}</value>
@@ -93,6 +94,14 @@
 		<managed-bean-name>projectCommercialSearch</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.commercial.event.ProjectCommercialSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>googleCalendarSynchronizer</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.GoogleCalendarSynchronizer
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
