@@ -32,8 +32,6 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -80,7 +78,9 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		@ClassName("error-icon")
 		String errorIcon();
-
+		
+		@ClassName("warn-icon")
+		String warnIcon();
 	}
 
 	interface Binder extends UiBinder<Widget, ITEditor> {
@@ -191,84 +191,140 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		public void onContextMenu(ContextMenuEvent event) {
 
 			Element el = Element.as(event.getNativeEvent().getEventTarget());
-
-			String cadena = el.getPropertyJSO("logicalname").toString();
-
-			try {
-
-				if (isLeaveEmployee(cadena)) {
-					popupPanel = new PopupPanel(true);
-					new LeaveContextMenu();
+			mouseClientX = event.getNativeEvent().getClientX();
+			mouseClientY = event.getNativeEvent().getClientY();
+			String cadena = getLogicalName(el, mouseClientX, mouseClientY);			
+			if(cadena == null)
+				return;
+			try {				
+				if (isLeaveEmployee(cadena)) {					
+					popupPanel = new PopupPanel(true);					
+					new LeaveContextMenu();					
 					popupPanel.setPopupPosition(event.getNativeEvent()
-							.getClientX(), event.getNativeEvent().getClientY());
-
-					popupPanel.show();
+							.getClientX(), event.getNativeEvent().getClientY());					
+					popupPanel.show();					
 					if (tooltipCallback.isRunning())
 						tooltipCallback.cancel();
-				}
-
+					}
 			} catch (Throwable ex) {
-				Window.alert("Error [onMouseOver] : " + ex.getMessage());
-
+				//Window.alert("Error [onMouseOver] : " + ex.getMessage());
 			} finally {
 				event.preventDefault();
 				event.stopPropagation();
 				event.getNativeEvent();
 			}
 		}
+	}	
+	
+	class LeaveContextMenu extends ContextMenu {
+		DeleteContractCommand deleteContract;
+		public LeaveContextMenu() {
+			MenuBar popupMenuBar = new MenuBar(true);
+			MenuItem add = addItem("Eliminar Baja",
+					deleteContract = new DeleteContractCommand(),
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+			popupMenuBar.addItem(add);
+			popupMenuBar.setVisible(true);
+			popupPanel.add(popupMenuBar);
+		}
 	}
 
-	private class testDatePicker implements Tooltip.Listener {
+	class DeleteContractCommand implements ScheduledCommand {
+		@Override
+		public void execute() {
+			try {
+				popupPanel.hide();				
+				int contractId = data.getContractId(posColumn, posCell);				
+				int leaveId = data.getContractLeaveId(posColumn, posCell);				
+				dataObject.removeLeaveItem(contractId, leaveId);				
+				reloadTimeline();
+			} catch (Exception ex) {
+			}
+		}
+	}
+	
+	private int decremental = 0;
+
+	private class TooltipController implements Tooltip.Listener, CloseHandler<PopupPanel> {
+		
+		private static final String UPDATE = "UPDATE";
+		private static final String INTERVAL = "Intervalo de fechas no correcto";
+		private static final String LEAVE_EXIST = "Baja existente en el per\u00EDodo indicado";
 		private Tooltip tooltip;
+		private String action;
 		private int contractId;
 		private int leaveId;
 
-		public testDatePicker(Tooltip tooltip) {
+		public TooltipController(Tooltip tooltip, String action) {			
 			this.tooltip = tooltip;
+			this.action = action;
 			this.contractId = tooltip.getContractId();
 			this.leaveId = tooltip.getLeaveId();
+			this.tooltip.addCloseHandler(this);
 			this.tooltip.addListener(this);
 		}
 
 		@Override
 		public void onStartDateChangeEvent(ValueChangeEvent<Date> event) {
 
-			Date startDate = event.getValue();
+			initStyles();
+			Date startDate = tooltip.startLeaveDateBox.getValue();
+			Date endDate = tooltip.endDateBox.getValue();
+			
+			if(DateUtils.compare(startDate, endDate) > 0) {
+				tooltip.startLeaveDateBox.setStyleName(style.warnIcon(), true);
+				tooltip.startLeaveDateBox.setTitle(INTERVAL);
+				tooltip.acceptButton.setEnabled(false);
+				return;
+			}		
+			
 			boolean correct = dataObject.isCorrectStartDateLeave(contractId,
 					leaveId, startDate);
 
 			if (correct == false) {
 				tooltip.startLeaveDateBox.setStyleName(style.errorIcon(), true);
-				tooltip.startLeaveDateBox
-						.setTitle("Baja existente en el per\u00EDodo indicado");
-			} else {
-				tooltip.startLeaveDateBox.removeStyleName(style.errorIcon());
-				tooltip.startLeaveDateBox.setTitle("");
-			}
+				tooltip.startLeaveDateBox.setTitle(LEAVE_EXIST);
+			} 
+			
 			evalButton();
 		}
 
 		@Override
 		public void onEndDateChangeEvent(ValueChangeEvent<Date> event) {
 			
+			initStyles();
+			
 			Date endDate = tooltip.getFromDateBoxValue();
-			Date startDate = tooltip.getStartDateBoxValue();
+			Date startDate = tooltip.getStartDateBoxValue();			
+			
+			if(DateUtils.compare(startDate, endDate) > 0) {
+				tooltip.startLeaveDateBox.setStyleName(style.warnIcon(), true);
+				tooltip.startLeaveDateBox.setTitle(INTERVAL);
+				tooltip.acceptButton.setEnabled(false);
+				return;
+			}
 			
 			boolean correct = dataObject.isCorrectEndDateLeave(contractId, leaveId, 
 					startDate, endDate);
 			
 			if(correct == false) {
 				tooltip.endDateBox.setStyleName(style.errorIcon(), true);
-				tooltip.endDateBox.setTitle("Baja existente en el per\u00EDodo indicado");				
-			}
-			else {
-				tooltip.endDateBox.removeStyleName(style.errorIcon());
-				tooltip.endDateBox.setTitle("");								
+				tooltip.endDateBox.setTitle(LEAVE_EXIST);				
 			}
 			evalButton();
 		}
+		
+		private void initStyles() {
+			
+			tooltip.startLeaveDateBox.removeStyleName(style.errorIcon());
+			tooltip.endDateBox.removeStyleName(style.errorIcon());
+			tooltip.startLeaveDateBox.removeStyleName(style.warnIcon());
+			tooltip.endDateBox.removeStyleName(style.warnIcon());
+			tooltip.startLeaveDateBox.setTitle("");
+			tooltip.endDateBox.setTitle("");
+			tooltip.acceptButton.setEnabled(true);			
+		}
 
-		// ESTA MAL
 		private void evalButton() {
 			if (tooltip.startLeaveDateBox.getStyleName().contains(
 					style.errorIcon())
@@ -278,51 +334,53 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			else
 				tooltip.acceptButton.setEnabled(true);
 		}
-		
-		
-
-	}
-
-	class LeaveContextMenu extends ContextMenu {
-
-		DeleteContractCommand deleteContract;
-
-		public LeaveContextMenu() {
-
-			MenuBar popupMenuBar = new MenuBar(true);
-
-			MenuItem add = addItem("Eliminar Baja",
-					deleteContract = new DeleteContractCommand(),
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-
-			popupMenuBar.addItem(add);
-			popupMenuBar.setVisible(true);
-			popupPanel.add(popupMenuBar);
-		}
-	}
-
-	class DeleteContractCommand implements ScheduledCommand {
 
 		@Override
-		public void execute() {
-
-			try {
-				popupPanel.hide();
-
-				int contractId = data.getContractId(posColumn, posCell);
-				int leaveId = data.getContractLeaveId(posColumn, posCell);
-				dataObject.removeLeaveItem(contractId, leaveId);
+		public void onClose(CloseEvent<PopupPanel> event) {
+			if(tooltip.isAccept()) {
+				
+				int leaveType = tooltip.getTypeLeaveListBox();								
+				int dischargeCause = tooltip.getTypeDischargeListBox();
+				Date startDate = tooltip.getStartDateBoxValue();
+				Date endDate = getNextEndDate(tooltip.getFromDateBoxValue());
+				
+				ITDataPerson newDataPerson = new ITDataPerson();
+				newDataPerson.setContractId(tooltip.getContractId());
+				newDataPerson.setLeaveStartDate(startDate);
+				newDataPerson.setLeaveEndDate(endDate);
+				newDataPerson.setDischarge_cause(dischargeCause);
+				newDataPerson.setNumType(leaveType);
+				newDataPerson.setType(getEnumConstant(
+						ITDataPerson.Type.class, leaveType));				
+				if(action.equals(UPDATE)) {
+					newDataPerson.setContractLeaveId(tooltip.getLeaveId());
+					dataObject.updateLeaveItem(newDataPerson);
+				}
+				else {
+					newDataPerson.setContractLeaveId(--decremental);
+					dataObject.addLeaveItem(newDataPerson);
+				}
+				
 				reloadTimeline();
-			} catch (Exception ex) {
+			}			
+		}
+		
+		private Date getNextEndDate(Date endDate) {
+			
+			if(endDate == null) {				
+				try {
+					endDate = data.getStartDate(posColumn, posCell + 1);
+				}catch(Exception ex){}				
 			}
+			
+			return endDate;
 		}
 	}
-
+	
 	@Override
 	public void setTitle(String title) {
 		super.setTitle(title);
 		titleLabel.setText(title);
-
 	}
 
 	public final void setITEditor(final ITDataObject dataObject) {
@@ -350,12 +408,11 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				try {
-
-					AbstractDataTable dataTable = createTable();
-
-					Options options = createOptions(dataTable);
-
+					data = new DataTableWrapper();
+					AbstractDataTable dataTable = createTable();					 
+					Options options = createOptions(dataTable);					
 					timelineChart = new TimeLineChart(dataTable, options);
+					
 					if (ifNull == false) {
 
 						timelinePanel.setWidget(timelineChart);
@@ -586,10 +643,9 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	protected boolean isLeaveEmployee(String pElement) {
 
 		String cadena = pElement;
-
+		getPosStatusEmployee(pElement);
 		if (cadena.contains("\"vR\":") && cadena.contains("\"uR\":")
-				&& data.isActive(posColumn, posCell) == false) {
-			getPosStatusEmployee(pElement);
+				&& data.isActive(posColumn, posCell) == false) {			
 			return true;
 		} else {
 			return false;
@@ -656,8 +712,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		}
 	}
 
-	private int decremental = 0;
-
 	protected void showLeaveEndedTooltip(Tooltip tooltip, final int clientX,
 			final int clientY) {
 		tooltip.showLeaveEndedTooltip(clientX, clientY);
@@ -667,51 +721,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			final int clientX, final int clientY) {
 
 		tooltip.showContractActiveTooltip(clientX, clientY);
-		new testDatePicker(tooltip);
-		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
-
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-
-				try {
-
-					if (tooltip.isAccept()) {
-
-						Date leaveStartDate = tooltip.getStartDateBoxValue();
-						Date leaveEndDate = tooltip.getFromDateBoxValue();
-
-						try {
-							if (leaveEndDate == null) {
-								leaveEndDate = data.getStartDate(posColumn,
-										posCell + 1);
-							}
-						} catch (Exception ex) {
-						}
-
-						int leaveType = tooltip.getTypeLeaveListBox();
-						int contractId = data.getContractId(posColumn, posCell);
-
-						ITDataPerson newData = new ITDataPerson();
-						newData.setContractId(contractId);
-						newData.setContractLeaveId(--decremental);
-						newData.setNumType(leaveType);
-						newData.setType(getEnumConstant(
-								ITDataPerson.Type.class, leaveType));
-						newData.setDischarge_cause(tooltip
-								.getTypeDischargeListBox());
-						newData.setLeaveStartDate(leaveStartDate);
-						newData.setLeaveEndDate(leaveEndDate);
-
-						dataObject.addLeaveItem(newData);
-						reloadTimeline();
-					}
-
-				} catch (Throwable ex) {
-
-				}
-			}
-		});
-
+		new TooltipController(tooltip, "INSERT");
 	}
 
 	protected void showContractEndedTooltip(Tooltip tooltip, final int clientX,
@@ -723,45 +733,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	protected void showLeaveActiveTooltip(final Tooltip tooltip,
 			final int clientX, final int clientY) {
 		tooltip.showLeaveActiveTooltip(clientX, clientY);
-		new testDatePicker(tooltip);
-		tooltip.addCloseHandler(new CloseHandler<PopupPanel>() {
-
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-
-				if (tooltip.isAccept()) {
-
-					try {
-
-						int leaveType = tooltip.getTypeLeaveListBox();
-						int contractId = data.getContractId(posColumn, posCell);
-						int leaveId = data.getContractLeaveId(posColumn,
-								posCell);
-						int dischargeCause = tooltip.getTypeDischargeListBox();
-
-						Date leaveEndDate = tooltip.getFromDateBoxValue();
-						Date leaveStartDate = tooltip.getStartDateBoxValue();
-
-						ITDataPerson newDataPerson = new ITDataPerson();
-
-						newDataPerson.setContractId(contractId);
-						newDataPerson.setContractLeaveId(leaveId);
-						newDataPerson.setLeaveStartDate(leaveStartDate);
-						newDataPerson.setLeaveEndDate(leaveEndDate);
-						newDataPerson.setDischarge_cause(dischargeCause);
-						newDataPerson.setNumType(leaveType);
-						newDataPerson.setType(getEnumConstant(
-								ITDataPerson.Type.class, leaveType));
-						dataObject.updateLeaveItem(newDataPerson);
-						reloadTimeline();
-
-					} catch (Exception ex) {
-						Window.alert(ex.getMessage() + " " + ex.getCause()
-								+ " " + ex.getStackTrace());
-					}
-				}
-			}
-		});
+		new TooltipController(tooltip, "UPDATE");
 	}
 
 	class EmployeeContextMenu extends ContextMenu {
@@ -837,7 +809,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		undoButton.setEnabled(dataObject.canUndo());
 		redoButton.setEnabled(dataObject.canRedo());
 
-		saveButton.setEnabled(dataObject.canUndo());
+		saveButton.setEnabled(dataObject.saveActive());
 
 	}
 
@@ -987,10 +959,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	}
 
 	@Override
-	public void onCalculateFailure(Throwable throwable) {
-		// TODO Apéndice de método generado automáticamente
+	public void onCalculateFailure(Throwable throwable) {		
 		Window.alert(throwable.getMessage());
-
 	}
 
 	// ---------------------------------------------------------------- Library

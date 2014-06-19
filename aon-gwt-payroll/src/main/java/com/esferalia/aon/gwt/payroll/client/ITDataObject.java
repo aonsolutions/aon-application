@@ -77,12 +77,12 @@ public class ITDataObject {
 
 		@Override
 		void addIT(ITDataPerson t) {
-			saveDeletes(t);		
+			removeSaveDeletes(t);			
 		}
 
 		@Override
 		void removeIT(ITDataPerson t) {			
-			removeSaveDeletes(t);
+			saveDeletes(t);		
 		}
 	}
 
@@ -103,9 +103,12 @@ public class ITDataObject {
 		}
 	}
 	
-	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts;
-	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates;
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts;	
+	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> updates;	
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes;
+	
+	private int contador;
+	
 
 
 	private UndoManager<UndoableEdit<?>> undoManager;
@@ -125,6 +128,8 @@ public class ITDataObject {
 				LinkedHashMap<Integer, ITDataPerson>>();
 		this.updates = new LinkedHashMap<Integer, 
 				LinkedHashMap<Integer, ITDataPerson>>();
+		
+		this.contador = 0;
 	}
 
 	// ------------------------------------------
@@ -162,37 +167,45 @@ public class ITDataObject {
 		undoManager.add(new UndoableInsertEdit(oldItem, newItem));		
 	}
 	
-	private ITDataPerson saveInserts(ITDataPerson object) {		
+	private ITDataPerson saveInserts(ITDataPerson object) {
+		contador++;
 		return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);		
 	}
 	
 	private ITDataPerson removeSaveInserts(ITDataPerson object) {
+		--contador;
 		return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
 	}
 	
-	public void removeLeaveItem(int contractId, int leaveId) {
-		
+	public void removeLeaveItem(int contractId, int leaveId) {		
 		ITDataPerson newItem = getDataIts(contractId).get(leaveId);
 		ITDataPerson oldItem = saveDeletes(newItem);
-		
-		undoManager.add(new UndoableDeleteEdit(oldItem, newItem));
-		
+		undoManager.add(new UndoableDeleteEdit(oldItem, newItem));		
 	}
 	
 	private ITDataPerson saveDeletes(ITDataPerson object) {
 		
-		if(object.getContractLeaveId() < 0) 
-			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());		
-		else {			
+		if(object.getContractLeaveId() < 0) {
+			--contador;
+			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
+		}
+					
+		else {
+			++contador;
 			return getSaveDeletes(object.getContractId()).put(object.getContractLeaveId(), object);
 		}
 	}
 	
 	private ITDataPerson removeSaveDeletes(ITDataPerson object) {
-		if(object.getContractLeaveId() < 0) 
-			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
-		else
-			return getSaveDeletes(object.getContractId()).remove(object.getContractLeaveId());	
+		if(object.getContractLeaveId() < 0) {
+			++contador;
+			return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);
+		}
+			
+		else {
+			--contador;
+			return getSaveDeletes(object.getContractId()).remove(object.getContractLeaveId());
+		}				
 	}
 	
 	public void updateLeaveItem(ITDataPerson newItem) {
@@ -202,19 +215,25 @@ public class ITDataObject {
 	
 	private ITDataPerson saveUpdates(ITDataPerson object) {		
 		
-		if(object.getContractLeaveId() < 0)
-			return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);			
-		else 
+		if(object.getContractLeaveId() < 0) {
+			++contador;
+			return getSaveInserts(object.getContractId()).put(object.getContractLeaveId(), object);
+		}
+						
+		else {
+			++contador;
 			return getSaveUpdates(object.getContractId()).put(object.getContractLeaveId(), object);
-				
+		}				
 	}
 	
 	private ITDataPerson removeSaveUpdates(ITDataPerson object) {
 		
 		if(object.getContractLeaveId() < 0) {
+			--contador;
 			return getSaveInserts(object.getContractId()).remove(object.getContractLeaveId());
 		}
-		else {
+		else {	
+			--contador;
 			return getSaveUpdates(object.getContractId()).remove(object.getContractLeaveId());
 		}		
 	}
@@ -223,6 +242,7 @@ public class ITDataObject {
 		inserts.clear();
 		updates.clear();
 		deletes.clear();
+		contador = 0;
 	}
 	
 	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getInserts() {		
@@ -247,7 +267,6 @@ public class ITDataObject {
 		return inserts.get(id);
 	}
 	
-	
 	private Map<Integer, ITDataPerson> getSaveDeletes(int id) {
 		if(deletes.containsKey(id) == false) {
 			deletes.put(id, new LinkedHashMap<Integer, ITDataPerson>());
@@ -269,8 +288,10 @@ public class ITDataObject {
 		for (ITDataPerson iterator : map.values()) {
 			if(leaveId == iterator.getContractLeaveId())
 				continue;
-			if (leaveId != iterator.getContractLeaveId()
-					&& (DateUtils.compare(startDate, iterator.getLeaveStartDate()) > 0)
+			Date contractStart = getEmployees().get(iterator.getContractId()).getStartDate();
+			if(DateUtils.compare(startDate, contractStart)  < 0)
+				return false;
+			if ((DateUtils.compare(startDate, iterator.getLeaveStartDate()) > 0)
 					&& (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0))
 				return false;
 		}
@@ -289,6 +310,11 @@ public class ITDataObject {
 			
 			if(leaveId == iterator.getContractLeaveId())
 				continue;
+			
+			Date contractStart = getEmployees().get(iterator.getContractId()).getStartDate();
+			if(DateUtils.compare(startDate, contractStart)  < 0)
+				return false;
+			
 			if ( (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0)
 					&& (DateUtils.compare(endDate, iterator.getLeaveEndDate()) < 0)
 					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) > 0)
@@ -322,6 +348,7 @@ public class ITDataObject {
 					public void onSuccess(ITData itData) {
 						ITDataObject.this.itData = itData;		
 						cb.onSuccess(ITDataObject.this);
+						contador = 0;
 					}
 				});
 	}
@@ -335,7 +362,6 @@ public class ITDataObject {
 				
 				undoManager.discardAll();
 				clearDrafts();
-				
 				employeesService.saveITDataPerson(inserts, deletes, updates,  
 						new AsyncCallback<ITData>() {
 					
@@ -427,6 +453,10 @@ public class ITDataObject {
 
 	public void removeListener(Listener listener) {
 		undoManager.removeListener(listener);
+	}
+	
+	public final boolean saveActive() {
+		return contador > 0;
 	}
 
 	// ------------------------------------------

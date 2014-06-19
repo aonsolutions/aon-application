@@ -77,6 +77,14 @@
 			gwt-image: '_error';
 			padding-left: 14px;
 		}
+		
+		@sprite .warn-icon {
+			width: auto; 
+			height: auto;
+			color: orange;
+			gwt-image: 'warn';
+			padding-left: 14px;
+		}
 
 		@sprite .redoButton {
 			gwt-image: 'redo';
@@ -93,6 +101,7 @@
 	<ui:image field='fx' src='fx.png' />
 	<ui:image field='aet' src='aet.png' />
 	<ui:image field='_error' src='_error.png' />
+	<ui:image field='warn' src='warn.png' />
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	
