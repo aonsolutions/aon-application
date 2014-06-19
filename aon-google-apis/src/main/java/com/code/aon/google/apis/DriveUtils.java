@@ -378,7 +378,7 @@ public class DriveUtils  {
     	}
    	 	for (int j=0;j<pemails.size();j++) {			  
 	 		Permission p2=new Permission();
-	 		p2.setValue(emails.get(j));
+	 		p2.setValue(pemails.get(j));
 	 		p2.setType("user");//user || group || domain || anyone
 	 		p2.setRole("reader");//owner || reader || writer || commenter		  		
 		  	client.permissions().insert(fileId, p2).execute();
@@ -452,16 +452,14 @@ public class DriveUtils  {
 	public static File sync(Rattach rattach,Vector<String> emails,DomainGserviceaccount d) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException{
 		serviceInitialize(d);
 		File file=null;
-		if(checkTypes(rattach)){
-			if(rattach.getDriveId()==null){
-				file= insertFile(rattach,new Vector<String>(),emails);
-			}
-			else{
-				File fileAux = getFile(rattach.getDriveId());
-				if(!fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(rattach.getData()))){
-					file= updateFile(rattach);
-				}	
-			}
+		if(rattach.getDriveId()==null){
+			file= insertFile(rattach,new Vector<String>(),emails);
+		}
+		else{
+			File fileAux = getFile(rattach.getDriveId());
+			if(!fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(rattach.getData()))){
+				file= updateFile(rattach);
+			}	
 		}
 		return file;
 	}
@@ -578,7 +576,7 @@ public class DriveUtils  {
 	
 			
 	}
-	private static String types [];
+	private static String types [] = {};
 	private static String domains[];
 	
 	private static void parse(String  args []) {
