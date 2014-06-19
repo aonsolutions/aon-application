@@ -659,7 +659,9 @@ public class ContractController extends BasicController {
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
 			}
-			loadWorkplaceAgreement(null);
+			if(getAgreement()==null || getAgreement().getId()==null){
+				loadWorkplaceAgreement(null);
+			}
 		}
 	}
 
@@ -1990,18 +1992,7 @@ public class ContractController extends BasicController {
 			}
 			weekHours = total;
 		}
-		public Double getPartiallityCoef(){
-			Contract contract = (Contract) ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo();
-			try {
-				List<ITimedResult<Object>> result = contract.getSalaryCalculatorContext(new Date(), new Date(), new Date()).getExpressionContext().eval("COEFICIENTE_PARCIALIDAD", new Date(), new Date());
-				return (Double) result.get(0).getValue();
-			} catch (SalaryException e) {
-				// nada
-			} catch (ExpressionException e) {
-				// nada
-			}
-			return null;
-		}
+		
 		
 		public T54 getCollectivePeculiarityQuote() {
 			return collectivePeculiarityQuote;

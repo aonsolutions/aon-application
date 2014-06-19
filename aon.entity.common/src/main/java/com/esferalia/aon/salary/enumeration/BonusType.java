@@ -134,6 +134,14 @@ public enum BonusType implements IResourceable {
 		public void accept(BonusTypeVisitor visitor) {
 			visitor.visitReductionFlatRateRdl032014(this);
 		}
+	},
+	
+	CONTINUOUS_FORMATION
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitContinuousFormation(this);
+		}
 	}
 	
 	;

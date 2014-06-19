@@ -106,6 +106,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -178,6 +179,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -205,6 +207,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -423,6 +426,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -475,6 +479,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
@@ -503,6 +508,7 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+			<param id="printDiscountPriceApplied" value="#{company.isPrintDiscountPriceApplied}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
