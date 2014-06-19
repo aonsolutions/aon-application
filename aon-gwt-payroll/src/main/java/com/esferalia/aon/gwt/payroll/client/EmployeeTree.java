@@ -11,10 +11,7 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
-
-import org.eclipse.jdt.internal.compiler.IErrorHandlingPolicy;
 
 import com.esferalia.aon.gwt.payroll.client.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.payroll.client.ResultsPanel.ClearEvent;
@@ -34,7 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
