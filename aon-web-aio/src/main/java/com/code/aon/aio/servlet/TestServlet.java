@@ -60,7 +60,13 @@ public class TestServlet extends HttpServlet {
 		if (! util.isStarted() ) {
 			util.init(host);
 		}
-		LOGGER.info("TestServlet: ("+domainId+") response time : " + (new Date().getTime() - start.getTime()) + "Ms.");		
+		long duration = new Date().getTime() - start.getTime();
+		String message = "TestServlet: ("+domainId+") response time : " + duration + "Ms.";
+		if ( duration > 5 ) {
+			LOGGER.info(message);
+		} else {
+			LOGGER.debug(message);
+		}			
 	}
 	
 
