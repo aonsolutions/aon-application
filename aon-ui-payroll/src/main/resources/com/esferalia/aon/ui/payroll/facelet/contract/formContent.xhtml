@@ -312,6 +312,7 @@
 						size="2" maxlength="5"
 						actionListener="#{contract.params.reloadTotalWeekHours}"
 						reRender="partially-week-day-hours"
+						focus="tuesday_hours"
 						value="#{contract.params.weekDayHours[0]}" >
 						<f:validateDoubleRange minimum="0" maximum="23.59" />
 					</aon:inputText>
@@ -324,6 +325,7 @@
 						size="2" maxlength="5"
 						actionListener="#{contract.params.reloadTotalWeekHours}"
 						reRender="partially-week-day-hours"
+						focus="wednesday_hours"
 						value="#{contract.params.weekDayHours[1]}" >
 						<f:validateDoubleRange minimum="0" maximum="23.59" />
 					</aon:inputText>
@@ -336,6 +338,7 @@
 						size="2" maxlength="5"
 						actionListener="#{contract.params.reloadTotalWeekHours}"
 						reRender="partially-week-day-hours"
+						focus="thursday_hours"
 						value="#{contract.params.weekDayHours[2]}" >
 						<f:validateDoubleRange minimum="0" maximum="23.59" />
 					</aon:inputText>
@@ -348,6 +351,7 @@
 						size="2" maxlength="5"
 						actionListener="#{contract.params.reloadTotalWeekHours}"
 						reRender="partially-week-day-hours"
+						focus="friday_hours"
 						value="#{contract.params.weekDayHours[3]}" >
 						<f:validateDoubleRange minimum="0" maximum="23.59" />
 					</aon:inputText>
@@ -360,6 +364,7 @@
 						size="2" maxlength="5"
 						actionListener="#{contract.params.reloadTotalWeekHours}"
 						reRender="partially-week-day-hours"
+						focus="saturday_hours"
 						value="#{contract.params.weekDayHours[4]}" >
 						<f:validateDoubleRange minimum="0" maximum="23.59" />
 					</aon:inputText>
@@ -372,6 +377,7 @@
 						size="2" maxlength="5"
 						actionListener="#{contract.params.reloadTotalWeekHours}"
 						reRender="partially-week-day-hours"
+						focus="sunday_hours"
 						value="#{contract.params.weekDayHours[5]}" >
 						<f:validateDoubleRange minimum="0" maximum="23.59" />
 					</aon:inputText>
@@ -390,18 +396,10 @@
 					<aon:outputText value="#{contract.params.weekDayHours[6]}" 
 						rendered="#{contract.readOnly}" />
 					
-					<aon:div style="display:inline;">
+					<aon:div style="display:inline;" id="week-hours">
 						<aon:outputText value="(" styleClass="aon-margin-left" />
 						<aon:outputText value="#{contract.params.weekHours}" id="workingWeekHours" />
 						<aon:outputText  value="horas semanales" styleClass="aon-margin-left" />
-						<aon:outputText value=")" />
-					</aon:div>
-
-					<aon:div style="display:inline;"
-						rendered="#{contract.params.partiallityCoef != null}" >
-						<aon:outputText value="(" styleClass="aon-margin-left" />
-						<aon:outputText value="Coef.TP:" />
-						<aon:outputText value="#{contract.params.partiallityCoef}" styleClass="aon-margin-left"/>
 						<aon:outputText value=")" />
 					</aon:div>
 					

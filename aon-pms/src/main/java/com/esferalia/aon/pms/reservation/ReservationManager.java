@@ -61,6 +61,7 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.SQLBooking;
+import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class ReservationManager implements IReservationConstants {
 
@@ -521,6 +522,8 @@ public class ReservationManager implements IReservationConstants {
 			SQLBooking.insert(connection, reservationRoom);
 		} catch (Throwable ex) {
 			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
+		} finally {
+			SQLUtils.closeQuietly(connection);
 		}
 
 		return reservationRoom;
@@ -627,6 +630,8 @@ public class ReservationManager implements IReservationConstants {
 			throw ex;
 		} catch (Throwable ex) {
 			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
+		} finally {
+			SQLUtils.closeQuietly(connection);
 		}
 	}
 
@@ -682,6 +687,8 @@ public class ReservationManager implements IReservationConstants {
 			throw ex;
 		} catch (Throwable ex) {
 			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
+		} finally {
+			SQLUtils.closeQuietly(connection);
 		}
 	}
 

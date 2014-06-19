@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.35.0
+# Version: 7.36.1
 # Created by: girazu
-# Creation Date: 04/06/2014 17:30
+# Creation Date: 17/06/2014 16:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -57,22 +57,6 @@ CREATE TABLE `domain` (
   CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_DOMAIN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
-
-#
-# Structure for the `domain_gserviceaccount` table : 
-#
-
-CREATE TABLE `domain_gserviceaccount` (
-  `client_id` varchar(100) COLLATE latin1_spanish_ci NOT NULL,
-  `email_address` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `public_key` varchar(45) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `private_key` mediumblob,
-  `client_secret` mediumblob,
-  `domain` int(4) DEFAULT NULL,
-  PRIMARY KEY (`client_id`),
-  KEY `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN_IDX` (`domain`),
-  CONSTRAINT `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 #
 # Structure for the `academic_year` table : 
@@ -2317,8 +2301,8 @@ CREATE TABLE `rattach` (
   `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
-  `drive_id` VARCHAR(45) NULL,
-  `dparent_id` VARCHAR(45) NULL,   
+  `drive_id` varchar(45) collate latin1_spanish_ci default NULL,
+  `dparent_id` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_RATTACH_SCOPE` (`scope`),
   KEY `IDX_RATTACH_CATEGORY` (`category`),
@@ -3845,6 +3829,22 @@ CREATE TABLE `domain_application_module` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modulos de las Aplicaciones del Dominio';
 
 #
+# Structure for the `domain_gserviceaccount` table : 
+#
+
+CREATE TABLE `domain_gserviceaccount` (
+  `client_id` varchar(100) collate latin1_spanish_ci NOT NULL,
+  `email_address` varchar(100) collate latin1_spanish_ci default NULL,
+  `public_key` varchar(45) collate latin1_spanish_ci default NULL,
+  `private_key` mediumblob,
+  `client_secret` mediumblob,
+  `domain` int(4) default NULL,
+  PRIMARY KEY  (`client_id`),
+  KEY `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN_IDX` (`domain`),
+  CONSTRAINT `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
+#
 # Structure for the `enterprise_data` table : 
 #
 
@@ -4408,7 +4408,6 @@ CREATE TABLE `fs_model_detail` (
   CONSTRAINT `FK_FS_MODEL_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_MODEL_DETAIL_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Declaraciones Fiscales';
-
 
 #
 # Structure for the `fs_vat` table : 

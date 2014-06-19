@@ -253,6 +253,7 @@ public interface ICommonMessages {
 	String VALIDATE_FINANCES_GENERATION_ERROR_KEY = "finance_validate_finances_generation_error";
 	String GENERATE_FINANCES_ERROR_KEY = "finance_generate_finances_error";
 	String CALCULATE_FINANCES_AMOUNT_ERROR_KEY = "finance_calculate_finances_amount_error";
+	String CALCULATE_INVOICE_QUANTITY_ERROR_KEY = "finance_calculate_invoice_quantity_error";
 	String EMPTY_INVOICE_LIST_ERROR_KEY = "finance_empty_invoice_list_error";
 	String UNABLE_RECORD_INACCURACY_ERROR_KEY = "finance_unable_record_inaccuracy_error";
 	String UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY = "finance_unable_record_no_amortization_error";

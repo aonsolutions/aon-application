@@ -30,6 +30,7 @@ import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
+import com.esferalia.aon.payroll.calculator.HierarchyIterator;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -124,6 +125,27 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 			return id == null || ids.add(payment.getId());
 		}
 
+	}
+
+	static class DraftHierarchyEmbargos<T extends IContractEmbargo> extends HierarchyIterator<T> {
+
+		private Set<Integer> ids = new HashSet<Integer>();
+
+		public DraftHierarchyEmbargos(Iterator<T>... childs) {
+			super(childs);
+		}
+
+		@Override
+		protected T next(T e) {
+			Integer id = e.getId();
+			// Not it's not tricky. Remember we use Set, and Set's
+			// add methos return true if this Set not already contain
+			// the specified element ( id )
+			if (ids.add(id))
+				return e;
+			else
+				return null;
+		}
 	}
 
 	static class DraftHierarchyDeductions<T extends IContractDeduction> extends HierarchyDeductions<T> {
@@ -232,7 +254,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 	@Override
 	public Collection<IContractEmbargo> getContractEmbargos()
 			throws AonException {
-		return new DraftHierarchyDeductions<IContractEmbargo>(getDraftEmbargos().iterator(),
+		return new DraftHierarchyEmbargos<IContractEmbargo>(getDraftEmbargos().iterator(),
 				super.getContractEmbargos().iterator());
 	}
 

@@ -36,10 +36,10 @@
 					<aon:outputLabel value="#{bundle.finance_sale_invoice_management_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width:350px">
-					<aon:outputLabel for="Company_invoice_template"
+					<aon:outputLabel for="Sale_invoice_template"
 						value="#{bundle.company_saleInvoice_template}" />
 					<c:if test="#{!company.customReportTemplate}">
-						<aon:selectOneMenu id="Company_invoice_template"
+						<aon:selectOneMenu id="Sale_invoice_template"
 							value="#{company.saleInvoiceTemplate}" >
 								<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
 						</aon:selectOneMenu>
@@ -48,6 +48,10 @@
 						<aon:outputText id="Company_invoice_template"
 							value="#{bundle.company_custom_template}" />
 					</c:if>
+					<aon:outputLabel for="Sale_invoice_discountInPrice"
+						value="#{bundle.company_invoice_discountInPrice}" />
+					<aon:selectBooleanCheckbox id="Sale_invoice_discountInPrice"
+						value="#{company.printDiscountPriceApplied}" />
 				</aon:panelGrid>
 			</aon:panel>
 			

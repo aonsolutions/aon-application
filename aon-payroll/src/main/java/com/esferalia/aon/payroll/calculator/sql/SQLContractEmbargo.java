@@ -82,7 +82,7 @@ public class SQLContractEmbargo
 
 	@Override
 	public ExpressionScope getScope() {
-		throw new UnsupportedOperationException();
+		return ExpressionScope.CONTRACT;
 	}
 
 

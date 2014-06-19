@@ -768,9 +768,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	private Double resolveEmbargo(ExpressionContext ctx,
 			IContractEmbargo embargo, Date start, Date end)
 			throws ExpressionException {
-
-		List<ITimedResult<Double>> results = ctx.addExpression(embargo, start,
-				end, Double.class);
+		
+		List<ITimedResult<Double>> results = ctx.eval(embargo.getExpression(), start, end, Double.class);
 
 		Double total = 0.00;
 

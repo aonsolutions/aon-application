@@ -35,6 +35,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintHeader(companyController.obtainPrintHeader());
 			companyController.setPrintRecordData(companyController.obtainPrintRecordData());
 			companyController.setSaleInvoiceTemplate(companyController.obtainSaleInvoiceTemplate());
+			companyController.setPrintDiscountPriceApplied(companyController.obtainPrintDiscountPriceApplied());
 			companyController.setPrintLogo(companyController.obtainPrintLogo());
 			companyController.setPrintName(companyController.obtainPrintName());
 			companyController.setPrintNif(companyController.obtainPrintNif());
@@ -73,6 +74,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		AppParamUtil.insertParameter(APP_PRINT_HEADER_PARAM, companyController.isPrintHeader());
 		AppParamUtil.insertParameter(APP_PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
 		updateParam(APP_SALE_INVOICE_TEMPLATE_PARAM, companyController.getSaleInvoiceTemplate());
+		AppParamUtil.insertParameter(AppParam.APP_PRINT_DISCOUNT_PRICE_APPLIED, companyController.isPrintDiscountPriceApplied());
 		AppParamUtil.insertParameter(APP_PRINT_LOGO_PARAM, companyController.isPrintLogo());
 		updateParam(APP_PRINT_NAME_PARAM, companyController.getPrintName());
 		updateParam(APP_PRINT_NIF_PARAM, companyController.getPrintNif());

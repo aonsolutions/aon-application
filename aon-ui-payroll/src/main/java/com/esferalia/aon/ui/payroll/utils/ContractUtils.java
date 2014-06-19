@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +30,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
@@ -62,6 +63,7 @@ import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -1131,6 +1133,11 @@ public class ContractUtils implements Serializable {
 				Agreement agreement = null;
 				if(!list.isEmpty()){
 					agreement = (list.get(0)==null)?null:((PayrollWorkPlace)list.get(0)).getAgreement();
+				}
+				if(agreement==null){
+					EnterpriseParamsController params = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+					params.loadParameters();
+					agreement = params.getAgreement();
 				}
 				if(agreement!=null){
 					return agreement;

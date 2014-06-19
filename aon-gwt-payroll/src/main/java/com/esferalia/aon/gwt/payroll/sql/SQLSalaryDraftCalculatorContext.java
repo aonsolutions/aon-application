@@ -52,6 +52,11 @@ public class SQLSalaryDraftCalculatorContext extends
 	public Integer getInt(String table, String column) {
 		return ctx.getInt(table, column);
 	}
+	
+	@Override
+	public Object getObject(String table, String column) {
+		return ctx.getObject(table, column);
+	}
 
 	@Override
 	public boolean next() throws SQLException, ExpressionException {

@@ -77,7 +77,7 @@ public class GoogleAuthorizationServletUtils {
 	public static String getAuth2CallbackUri(HttpServletRequest req)
 			throws ServletException, IOException {
 		GenericUrl url = new GenericUrl(req.getRequestURL().toString());
-		url.setRawPath("/aon-aio/oauth2callback");
+		url.setRawPath("/oauth2callback");
 
 		return url.build();
 	}

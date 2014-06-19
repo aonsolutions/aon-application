@@ -25,8 +25,6 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 				return 1; // p0 > p1
 			else if ( id1 < 0 && id0 >= 0)
 				return -1; // p0 < p1
-			else 
-				return Math.abs(id0) - Math.abs(id1); // p0 - p1  
 
 		E type0 = p0.getType();
 		E type1 = p1.getType();
@@ -39,7 +37,9 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		if (compareTo != 0) {
 			return compareTo;
 		}
-
+		if ( id0 != null && id1 != null)
+			return Math.abs(id0) - Math.abs(id1); // p0 - p1
+			
 		String description0 = p0.getDescription();
 		String description1 = p1.getDescription();
 		if (description0 == null) {

@@ -20,6 +20,9 @@ public interface ICompanyController extends IController {
 	
 	SaleInvoiceTemplate getSaleInvoiceTemplate();
 	void setSaleInvoiceTemplate(SaleInvoiceTemplate saleInvoiceTemplate);
+
+	boolean isPrintDiscountPriceApplied();
+	void setPrintDiscountPriceApplied(boolean PrintDiscountPriceApplied);
 	
 	FinancePaymentTemplate getFinancePaymentTemplate();
 	void setFinancePaymentTemplate(FinancePaymentTemplate FinancePaymentTemplate);
@@ -54,6 +57,7 @@ public interface ICompanyController extends IController {
 	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
 	SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException;
+	boolean obtainPrintDiscountPriceApplied() throws ManagerBeanException;
 	FinancePaymentTemplate obtainFinancePaymentTemplate() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	ReportPrintOption obtainPrintName() throws ManagerBeanException;

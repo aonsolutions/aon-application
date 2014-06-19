@@ -267,6 +267,20 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return ctx.getString(tableLabel, columnLabel);
 		}
 
+		public <T extends Enum<?>> T get(String tableLabel, String columnLabel,
+				Class<T> clazz) {
+			Object obj = ctx.getObject(tableLabel, columnLabel);
+			if (obj == null)
+				return null;
+			int ordinal = (Integer) obj;
+			if (ordinal < 0)
+				return null;
+			T constants[] = clazz.getEnumConstants();
+			if (ordinal > constants.length)
+				return null;
+			return clazz.getEnumConstants()[ordinal];
+		}
+
 		private Collection<IContractPayment> explode(
 				Collection<IContractPayment> payments) {
 			List<Period> periods = getPeriods();
@@ -461,7 +475,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private PreparedStatement ascendantsStmt;
 	private PreparedStatement descendantsStmt;
-	
+
 	private Connection connection;
 
 	private IrpfContractSalaryCalculatorContext salaryCalculatorContext;
@@ -546,18 +560,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	}
 
 	public Administration getEconomicAgreement() {
-		Integer value = salaryCalculatorContext.getInt(SQLConstants.WORKPLACE,
-				WorkplaceColumns.ECONOMICAGREEMENT);
-		if ( value == null )
-			return null;
-		if ( value < 0 )
-			return null;
-		Administration values[] = Administration.values();
-		if ( value >= values.length)
-			return null;
-		return values[value];
+		return salaryCalculatorContext.get(SQLConstants.WORKPLACE,
+				WorkplaceColumns.ECONOMICAGREEMENT, Administration.class);
 	}
-	
+
 	public Date getChargeDate() {
 		return salaryCalculatorContext.getChargeDate();
 	}

@@ -33,5 +33,7 @@ public interface BonusTypeVisitor {
 	void visitReductionFarmerUnemployment(BonusType bonusType);
 	
 	void visitReductionFlatRateRdl032014(BonusType bonusType);
+	
+	void visitContinuousFormation(BonusType bonusType);
 
 }
