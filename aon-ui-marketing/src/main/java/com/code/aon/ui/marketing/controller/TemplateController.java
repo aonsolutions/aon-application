@@ -69,9 +69,13 @@ public class TemplateController extends BasicController {
 			sb.append("background-color:");
 			sb.append(template.getBackgroundColor());	
 		}
-		sb.append("\">" +
-			"<table style=\"margin: 0 auto;\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">" +
-			"<tbody><tr><td align=\"center\">");		
+		sb.append("\">");
+		sb.append("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: 0 auto");
+		if ( !nullTemplate && !StringUtils.isEmpty(template.getWidth()) ) {
+			sb.append(";width: ").append(template.getWidth());			
+		}		
+		sb.append(";\">");
+		sb.append("<tbody><tr><td align=\"center\">");		
 		if (! nullTemplate ) {
 			RegistryAttachment ht = template.getHeaderTemplate();
 			if ( ht != null && ht.getId()!=null && (ht.getSize() > 0) ) {
