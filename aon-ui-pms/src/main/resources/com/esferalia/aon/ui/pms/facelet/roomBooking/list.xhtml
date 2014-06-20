@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
@@ -70,7 +71,7 @@
 									<aon:outputText value="&#160;" />
 								</rich:column>
 								
-								<rich:column colspan="6">
+								<rich:column colspan="#{controller.showCancelled ? '7' : '6'}">
 									<aon:outputText value="#{bundle.report_rooms}" />
 								</rich:column>
 								
@@ -97,63 +98,72 @@
 							</aon:outputText>
 						</aon:column>	
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckin}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckout}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_occupation}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_free}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomFree}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.pms_blocked}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBlocked}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<c:if test="#{controller.showCancelled}">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.pms_cancelled}" />
+								</f:facet>
+								<aon:outputText value="#{to.roomCancelled}" />
+							</aon:column>				
+						</c:if>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomTotal}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestCheckin}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestCheckout}" />
 						</aon:column>				
 	
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_module_hotel}" />
 							</f:facet>

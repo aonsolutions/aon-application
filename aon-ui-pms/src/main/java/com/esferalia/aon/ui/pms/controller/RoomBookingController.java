@@ -30,6 +30,7 @@ import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
@@ -41,6 +42,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 	private Customer agency;
 	private Date fromDate;
 	private Date toDate;
+	private boolean showCancelled;
 
 	private List<DayBooking> bookingList;
 
@@ -77,6 +79,13 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 	}
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+
+	public boolean isShowCancelled() {
+		return showCancelled;
+	}
+	public void setShowCancelled(boolean showCancelled) {
+		this.showCancelled = showCancelled;
 	}
 
 	public List<DayBooking> getBookingList() {
@@ -116,9 +125,9 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		PreparedStatement bookingStmt = null;
 		ResultSet bookingRs = null;
 		try {
-			initializeBookingList();
-
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			initializeBookingList(connection);
+
 			bookingStmt = connection.prepareStatement(getRoomBookingSQL());
 			SQLUtils.setDate(bookingStmt, 1, getFromDate());
 			SQLUtils.setDate(bookingStmt, 2, getToDate());
@@ -150,10 +159,14 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 							dayBooking.setRoomBusy(dayBooking.getRoomBusy() + rooms);
 							dayBooking.setGuestTotal(dayBooking.getGuestTotal() + guests);
 						} else {
-							dayBooking.setRoomBlocked(rooms);
+							dayBooking.setRoomBlocked(dayBooking.getRoomBlocked() + rooms);
 						}
 					}
 				}
+			}
+
+			if (showCancelled) {
+				includeCancelledRooms(connection);
 			}
 		} catch (ManagerBeanException e) {
 			try {
@@ -174,14 +187,12 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		}
 	}
 	
-	private void initializeBookingList() throws AonSQLException {
+	private void initializeBookingList(Connection connection) throws AonSQLException {
 		setBookingList(new LinkedList<DayBooking>());
 
-		Connection connection = null;
 		PreparedStatement totalStmt = null;
 		ResultSet totalRs = null;
 		try {
-			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			totalStmt = connection.prepareStatement(getRoomTotalSQL());
 			totalRs = totalStmt.executeQuery();
 			while (totalRs.next()) {
@@ -196,15 +207,44 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 				}
 			}
 		} catch (Throwable e) {
-			try {
-				connection.rollback();
-			} catch (SQLException ex) {
-			}
 			throw new AonSQLException(e);
 		} finally {
 			SQLUtils.closeQuietly(totalRs);
 			SQLUtils.closeQuietly(totalStmt);
-			SQLUtils.closeQuietly(connection);
+		}
+	}
+
+	private void includeCancelledRooms(Connection connection) throws AonSQLException {
+		PreparedStatement cancelledStmt = null;
+		ResultSet cancelledRs = null;
+		try {
+			cancelledStmt = connection.prepareStatement(getRoomCancelledSQL());
+			SQLUtils.setDate(cancelledStmt, 1, getFromDate());
+			SQLUtils.setDate(cancelledStmt, 2, getToDate());
+			cancelledRs = cancelledStmt.executeQuery();
+			while (cancelledRs.next()) {
+				String hotel = cancelledRs.getString(HOTEL);
+				Date startDate = cancelledRs.getDate(START_DATE);
+				startDate = startDate.before(getFromDate()) ? DateUtils.truncate(getFromDate(), Calendar.DATE) : startDate;
+				Date endDate = cancelledRs.getDate(END_DATE);
+				endDate = endDate.after(getToDate()) ? DateUtils.truncate(getToDate(), Calendar.DATE) : DateUtils.addDays(endDate, -1);
+				int rooms = cancelledRs.getInt(ROOMS);
+				for (Date date=DateUtils.truncate(startDate, Calendar.DATE); !date.after(endDate); date=DateUtils.addDays(date, 1)) {
+					DayBooking dayBooking = new DayBooking();
+					dayBooking.setHotel(hotel);
+					dayBooking.setDate(date);
+					int index = getBookingList().indexOf(dayBooking);
+					if (index >= 0) {
+						dayBooking = getBookingList().get(index);
+						dayBooking.setRoomCancelled(dayBooking.getRoomCancelled() + rooms);
+					}
+				}
+			}
+		} catch (Throwable e) {
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(cancelledRs);
+			SQLUtils.closeQuietly(cancelledStmt);
 		}
 	}
 
@@ -267,6 +307,32 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		return stmt.toString();
 	}
 
+	private String getRoomCancelledSQL() throws ManagerBeanException {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT W.description AS " + HOTEL + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
+		stmt.append(", COUNT(*) AS " + ROOMS);
+		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, hotel as H, workplace AS W");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
+		stmt.append(" AND PR.status = " + ReservationStatus.CANCELLED.ordinal());
+		stmt.append(" AND PR.project = PRR.project_reservation");
+		stmt.append(" AND PR.hotel = H.id");
+		stmt.append(" AND H.active = 1");
+		stmt.append(" AND H.workplace = W.id");
+		stmt.append(" AND PR.hotel IN (" + getHotelIds() + ")");
+		stmt.append(" AND PR.end_date > ?");
+		stmt.append(" AND PR.start_date <= ?");
+		if (getAgency() != null && getAgency().getId() != null) {
+			stmt.append(" AND PR.agency = " + getAgency().getId());
+		}
+		if (getItem() != null && getItem().getId() != null) {
+			stmt.append(" AND PRR.item = " + getItem().getId());
+		}
+		stmt.append(" GROUP BY W.description, PR.start_date, PR.end_date");
+		stmt.append(" ORDER BY " + HOTEL + "," + START_DATE + "," + END_DATE);
+
+		return stmt.toString();
+	}
+
 	private String getHotelIds() throws ManagerBeanException {
 		String hotelIds = "";
 		if (getHotel() != null) {
@@ -296,6 +362,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		private Integer roomCheckout;
 		private Integer roomBusy;
 		private Integer roomBlocked;
+		private Integer roomCancelled;
 		private Integer roomTotal;
 		private Integer guestCheckin;
 		private Integer guestCheckout;
@@ -306,6 +373,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 			roomCheckout = 0;
 			roomBusy = 0;
 			roomBlocked = 0;
+			roomCancelled = 0;
 			roomTotal = 0;
 			guestCheckin = 0;
 			guestCheckout = 0;
@@ -352,6 +420,13 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		}
 		public void setRoomBlocked(Integer roomBlocked) {
 			this.roomBlocked = roomBlocked;
+		}
+
+		public Integer getRoomCancelled() {
+			return roomCancelled;
+		}
+		public void setRoomCancelled(Integer roomCancelled) {
+			this.roomCancelled = roomCancelled;
 		}
 
 		public Integer getRoomTotal() {
