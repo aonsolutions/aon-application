@@ -51,9 +51,14 @@ public class TestServlet extends HttpServlet {
 			DatabaseUtil.closeQuietly(c);
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
-			LOGGER.info("TestServlet: ("+domainId+") response time : " + (new Date().getTime() - start.getTime()) + "Ms.");
 		}
-		
+		long duration = new Date().getTime() - start.getTime();
+		String message = "TestServlet: ("+domainId+") response time : " + duration + "Ms.";
+		if ( duration > 30 ) {
+			LOGGER.info(message);
+		} else {
+			LOGGER.debug(message);
+		}			
 	}
 	
 
