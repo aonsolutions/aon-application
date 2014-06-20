@@ -25,6 +25,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -245,15 +246,20 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	
 	private int decremental = 0;
 
-	private class TooltipController implements Tooltip.Listener, CloseHandler<PopupPanel> {
+	private class TooltipController	implements Tooltip.Listener, CloseHandler<PopupPanel> {
 		
 		private static final String UPDATE = "UPDATE";
 		private static final String INTERVAL = "Intervalo de fechas no correcto";
 		private static final String LEAVE_EXIST = "Baja existente en el per\u00EDodo indicado";
+		private static final String OUT_PERIOD = "Baja fuera del periodo de contrato";
+		
 		private Tooltip tooltip;
 		private String action;
 		private int contractId;
 		private int leaveId;
+		
+		private Date startContract;
+		private Date endContract;
 
 		public TooltipController(Tooltip tooltip, String action) {			
 			this.tooltip = tooltip;
@@ -261,22 +267,26 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			this.contractId = tooltip.getContractId();
 			this.leaveId = tooltip.getLeaveId();
 			this.tooltip.addCloseHandler(this);
-			this.tooltip.addListener(this);
+			this.tooltip.addListener(this);			
+			this.startContract = dataObject.getEmployees().get(contractId).getStartDate();
+			this.endContract = dataObject.getEmployees().get(contractId).getEndDate();
 		}
 
 		@Override
 		public void onStartDateChangeEvent(ValueChangeEvent<Date> event) {
-
-			initStyles();
-			Date startDate = tooltip.startLeaveDateBox.getValue();
-			Date endDate = tooltip.endDateBox.getValue();
 			
-			if(DateUtils.compare(startDate, endDate) > 0) {
-				tooltip.startLeaveDateBox.setStyleName(style.warnIcon(), true);
-				tooltip.startLeaveDateBox.setTitle(INTERVAL);
+			Date startDate = event.getValue();		
+			
+			if(getEndDateBoxError() == false)
+				initStyles();			
+			
+			if( DateUtils.compare(startDate, startContract) < 0 || DateUtils.compare(startDate, endContract) > 0){
+				tooltip.startLeaveDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.startLeaveDateBox.setTitle(OUT_PERIOD);
 				tooltip.acceptButton.setEnabled(false);
 				return;
-			}		
+				
+			}			
 			
 			boolean correct = dataObject.isCorrectStartDateLeave(contractId,
 					leaveId, startDate);
@@ -284,22 +294,25 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			if (correct == false) {
 				tooltip.startLeaveDateBox.setStyleName(style.errorIcon(), true);
 				tooltip.startLeaveDateBox.setTitle(LEAVE_EXIST);
-			} 
+				tooltip.acceptButton.setEnabled(false);
+				return;
+			}	
 			
-			evalButton();
+			initStyles();
 		}
 
 		@Override
-		public void onEndDateChangeEvent(ValueChangeEvent<Date> event) {
+		public void onEndDateChangeEvent(ValueChangeEvent<Date> event) {		
 			
-			initStyles();
+			Date endDate = event.getValue();
+			Date startDate = tooltip.getStartDateBoxValue();
 			
-			Date endDate = tooltip.getFromDateBoxValue();
-			Date startDate = tooltip.getStartDateBoxValue();			
+			if(getStartDateBoxError() == false) 
+				initStyles();			
 			
-			if(DateUtils.compare(startDate, endDate) > 0) {
-				tooltip.startLeaveDateBox.setStyleName(style.warnIcon(), true);
-				tooltip.startLeaveDateBox.setTitle(INTERVAL);
+			if(DateUtils.compare(endDate, startContract) < 0 || DateUtils.compare(endDate, endContract) > 0) {
+				tooltip.endDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.startLeaveDateBox.setTitle(OUT_PERIOD);
 				tooltip.acceptButton.setEnabled(false);
 				return;
 			}
@@ -309,31 +322,46 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			
 			if(correct == false) {
 				tooltip.endDateBox.setStyleName(style.errorIcon(), true);
-				tooltip.endDateBox.setTitle(LEAVE_EXIST);				
+				tooltip.endDateBox.setTitle(LEAVE_EXIST);
+				tooltip.acceptButton.setEnabled(false);
+				return;
 			}
-			evalButton();
+			
+			initStyles();
 		}
 		
-		private void initStyles() {
+		private boolean getStartDateBoxError() {
+			return tooltip.startLeaveDateBox.getStyleName().contains(style.errorIcon())
+					|| tooltip.startLeaveDateBox.getStyleName().contains(style.warnIcon());
+		}
+		
+		private boolean getEndDateBoxError() {
+			return tooltip.endDateBox.getStyleName().contains(style.errorIcon())
+					|| tooltip.endDateBox.getStyleName().contains(style.warnIcon());
+		}
+		
+		@Override
+		public void onAcceptButtonClickEvent(ClickEvent event) {			
 			
-			tooltip.startLeaveDateBox.removeStyleName(style.errorIcon());
-			tooltip.endDateBox.removeStyleName(style.errorIcon());
-			tooltip.startLeaveDateBox.removeStyleName(style.warnIcon());
-			tooltip.endDateBox.removeStyleName(style.warnIcon());
-			tooltip.startLeaveDateBox.setTitle("");
-			tooltip.endDateBox.setTitle("");
-			tooltip.acceptButton.setEnabled(true);			
-		}
-
-		private void evalButton() {
-			if (tooltip.startLeaveDateBox.getStyleName().contains(
-					style.errorIcon())
-					|| tooltip.endDateBox.getStyleName().contains(
-							style.errorIcon()))
-				tooltip.acceptButton.setEnabled(false);
-			else
-				tooltip.acceptButton.setEnabled(true);
-		}
+			if(tooltip.typeLeaveListBox.getSelectedIndex() == 0) {
+				tooltip.typeLeaveListBox.setFocus(true);
+				return;
+			}
+			
+			Date startDate = tooltip.getStartDateBoxValue();
+			Date endDate = tooltip.getFromDateBoxValue();
+			
+			if(DateUtils.compare(startDate, endDate) > 0) {
+				tooltip.startLeaveDateBox.setStyleName(style.warnIcon(), true);
+				tooltip.endDateBox.setStyleName(style.warnIcon(), true);
+				tooltip.startLeaveDateBox.setTitle(INTERVAL);
+				tooltip.endDateBox.setTitle(INTERVAL);
+				return;
+			}
+			
+			tooltip.setAccept(true);
+			tooltip.hide();
+		}	
 
 		@Override
 		public void onClose(CloseEvent<PopupPanel> event) {
@@ -374,6 +402,17 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			}
 			
 			return endDate;
+		}
+		
+		
+		private void initStyles() {			
+			tooltip.startLeaveDateBox.removeStyleName(style.errorIcon());
+			tooltip.endDateBox.removeStyleName(style.errorIcon());
+			tooltip.startLeaveDateBox.removeStyleName(style.warnIcon());
+			tooltip.endDateBox.removeStyleName(style.warnIcon());
+			tooltip.startLeaveDateBox.setTitle("");
+			tooltip.endDateBox.setTitle("");
+			tooltip.acceptButton.setEnabled(true);									
 		}
 	}
 	
