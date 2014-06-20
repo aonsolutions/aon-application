@@ -20,7 +20,6 @@ CREATE TABLE `domain_gserviceaccount` (
 
 ALTER TABLE `rattach` ADD COLUMN `drive_id` VARCHAR(45) NULL  AFTER `attach_date` , ADD COLUMN `dparent_id` VARCHAR(45) NULL  AFTER `drive_id` ;
 
-ALTER TABLE `task` ADD COLUMN `gtask_id` VARCHAR(100) NULL DEFAULT NULL  AFTER `repeat_period` , ADD COLUMN `gtasklist_id` VARCHAR(100) NULL  AFTER `gtask_id` ;
 
 
 UPDATE `db_version` SET `version_number` = '7.36.0';
