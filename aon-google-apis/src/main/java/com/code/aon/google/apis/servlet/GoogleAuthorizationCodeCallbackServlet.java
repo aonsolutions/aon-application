@@ -65,6 +65,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		System.out.println(drive);
 		tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
+		req.getSession().setAttribute("Tasks", tasks);
 		
 		email = oauth2.userinfo().v2().me().get().execute().getEmail();
 		

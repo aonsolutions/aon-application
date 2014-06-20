@@ -26,5 +26,10 @@ public class SalaryEmbargo extends SalaryEmbargoDB implements ISalaryItem<Deduct
 	public DeductionType getType() {
 		return DeductionType.OTHER;
 	}
+
+	@Transient
+	public String getExpression() {
+		return null;
+	}
 		
 }

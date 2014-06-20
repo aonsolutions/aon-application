@@ -54,7 +54,8 @@ public class SEPA34_14XmlWriter {
 	
 	private void updateMaster( Master master, Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
 		master.setId(createId(company, fBatch, true));
-		String companyId = createIdentification(company.getDocumentCountry(), company.getDocument());
+		String suffix = fBatch.getRegistryBank().getSufix();
+		String companyId = createIdentification(company.getDocumentCountry(), suffix, company.getDocument());
 		master.setCompanyId(companyId);
 		RegistryBank companyRBank = fBatch.getRegistryBank();		
 		Account account = master.getAccount();
@@ -111,12 +112,16 @@ public class SEPA34_14XmlWriter {
 		return sb.toString();
 	}
 	
-	public static String createIdentification( Country country, String document ) {
+	public static String createIdentification( Country country, String suffix, String document ) {
 		BankAccount ba = new BankAccount();
 		ba.setCountry(country);
 		ba.setBban1(document);
 		String controlDigit = ba.calculateIbanControlDigit();
-		return country.getValue() + controlDigit + StringUtils.leftPad(document, 12 ,'0');
+		String _suffix = "000";
+		if (! StringUtils.isEmpty(suffix)) {
+			_suffix = StringUtils.leftPad(suffix, 3 ,'0');
+		}
+		return country.getValue() + controlDigit + _suffix + StringUtils.leftPad(document, 9 ,'0');
 	}
 
 	public static Address getAddress( IAddress iAddress ) {

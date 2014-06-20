@@ -626,12 +626,13 @@ public class CalendarUtils {
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
 		for (String key : domains.keySet()) { // recorre todos los dominios de la BD
 			
-			DomainGserviceaccount g = DatabaseSync.getServiceAccount(key);
-			System.out.println(key+" : "+g.getClientId());
-			if(g.getClientId()!=null){
-				Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
-				Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
-				for(int j=0;j<companies.size();j++){
+		
+			Vector<Domain> companies = getDomain(key);//Obtiene todos los dominios del dominio padre
+			Map<Integer,Vector<CommercialTracking>> map= getCommercialTrackingAll(key);// Obtiene todos los eventos(CommercialTracking) de la BD
+			for(int j=0;j<companies.size();j++){
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(companies.get(j).getName());
+				System.out.println(companies.get(j).getName()+" : "+g.getClientId());
+				if(g.getClientId()!=null){
 					serviceInitialize(g);
 					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
 					Vector<CommercialTracking> eventsBD = map.get(companies.get(j).getId());
@@ -664,7 +665,7 @@ public class CalendarUtils {
 						}
 					}	
 				}						
-			}	
+			}
 		}
 	}
 	/**

@@ -62,12 +62,12 @@ public class TestServlet extends HttpServlet {
 		}
 		long duration = new Date().getTime() - start.getTime();
 		String message = "TestServlet: ("+domainId+") response time : " + duration + "Ms.";
-		if ( duration > 5 ) {
+		if ( duration > 50 ) {
 			LOGGER.info(message);
 		} else {
 			LOGGER.debug(message);
 		}			
 	}
-	
+
 
 }

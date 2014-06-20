@@ -258,7 +258,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 			String className = map.get(key).getClass().getName();
 			if (isRemovable(key, className)) {
 				map.remove(key);
-				LOGGER.info("Element removed from session: [ key: {}, value class: {} ]", key, className);
+				LOGGER.debug("Element removed from session: [ key: {}, value class: {} ]", key, className);
 			}
 		}
 		this.onEditSearch(null);

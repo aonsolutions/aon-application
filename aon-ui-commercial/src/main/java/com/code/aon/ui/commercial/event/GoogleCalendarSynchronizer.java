@@ -1,4 +1,4 @@
-package com.code.aon.ui.commercial.event;
+package com.code.aon.ui.commercial.event	;
 
 
 import java.io.IOException;
@@ -26,10 +26,12 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
+
 		String domain= AonUtil.getDomainName();
+		
 		try {
 			
-			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(getDomainID().toString()));
+			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(domain));
 			CommercialTracking tracking = getCommercialTracking(event);
 			Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
 			CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
@@ -60,7 +62,7 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		super.afterBeanAdded(event);
 		String domain=AonUtil.getDomainName();
 		try {
-			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(getDomainID().toString()));
+			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(domain));
 			CommercialTracking tracking = getCommercialTracking(event);
 			Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
 			CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
@@ -89,10 +91,11 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		// TODO Apéndice de método generado automáticamente
+
 		super.afterBeanRemoved(event);
 		String domain=AonUtil.getDomainName();
 		try {
-			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(getDomainID().toString()));
+			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(domain));
 			CommercialTracking tracking = getCommercialTracking(event);
 			Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);			
 			CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());

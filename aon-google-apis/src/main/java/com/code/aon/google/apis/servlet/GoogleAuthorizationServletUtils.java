@@ -56,7 +56,7 @@ public class GoogleAuthorizationServletUtils {
 	public static AuthorizationCodeFlow newFlow() throws IOException {
 		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(),
 				JSON_FACTORY, getClientCredential(),
-				Arrays.asList (DriveScopes.DRIVE,DriveScopes.DRIVE_APPDATA, Oauth2Scopes.USERINFO_EMAIL))
+				Arrays.asList (DriveScopes.DRIVE,DriveScopes.DRIVE_APPDATA, Oauth2Scopes.USERINFO_EMAIL, TasksScopes.TASKS))
 					.setAccessType("online")
 					.setApprovalPrompt("auto")
 					.build();

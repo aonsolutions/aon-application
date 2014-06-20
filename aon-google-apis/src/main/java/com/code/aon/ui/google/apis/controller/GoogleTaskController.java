@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.google.apis.TaskUtils;
@@ -13,6 +14,8 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.tasks.Tasks;
 
 public class GoogleTaskController {
+	
+	private String beanName;
 	
 	public boolean google= isGoogle();
 	
@@ -29,10 +32,18 @@ public class GoogleTaskController {
 		else return false;
 	}
 	
-	public void sync() throws SQLException, AonConnectionException, IOException{
+	public void sync(ActionEvent event) throws SQLException, AonConnectionException, IOException{
 		
 		TaskUtils.synchronize(getClientSession());
 		
+	}
+	
+	public String getBeanName() {
+		return beanName;
+	}
+	
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
 	}
 
 }

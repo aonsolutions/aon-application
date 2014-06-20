@@ -58,7 +58,7 @@ public class SEPA19_14CoreXmlWriter {
 		presenter.setAccount(account);
 		
 		Orderer orderer = lot.getOrderer();
-		String id = SEPA34_14XmlWriter.createIdentification(company.getDocumentCountry(), company.getDocument());
+		String id = SEPA34_14XmlWriter.createIdentification(company.getDocumentCountry(), presenter.getSufix(), company.getDocument());
 		orderer.setId(id);
 		Address address = SEPA34_14XmlWriter.getAddress(company.getDefaultAddress());
 		orderer.setSEPAAddress(address);	

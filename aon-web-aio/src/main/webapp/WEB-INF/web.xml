@@ -139,6 +139,14 @@
 		<servlet-name>Caculate Servlet</servlet-name>
 		<url-pattern>/aon_gwt_payroll/calculate</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>Share Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.payroll.server.ShareServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Share Servlet</servlet-name>
+		<url-pattern>/aon_gwt_payroll/share</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>TemplatePreview</servlet-name>

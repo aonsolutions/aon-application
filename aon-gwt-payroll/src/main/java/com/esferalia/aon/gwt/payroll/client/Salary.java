@@ -1,9 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.client.Cost.Listener;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -35,6 +38,10 @@ public class Salary extends ResizeComposite {
 	interface Binder extends UiBinder<Widget, Salary> {
 	}
 
+	static interface Listener {
+		void onPublis(SalaryDocuments documents);
+	}
+
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
@@ -47,6 +54,8 @@ public class Salary extends ResizeComposite {
 
 	@UiField
 	MenuItem printMenuItem;
+	@UiField
+	MenuItem publishMenuItem;
 	@UiField
 	MenuItem downloadMenuItem;
 
@@ -63,6 +72,8 @@ public class Salary extends ResizeComposite {
 	private int zoom = DEFAULT_ZOOM;
 
 	private SalaryDocuments salaryDocuments;
+
+	private List<Listener> listeners;
 
 	private List<com.esferalia.aon.gwt.payroll.shared.Salary> salaries;
 	private List<com.esferalia.aon.gwt.payroll.shared.Salary.Type> types;
@@ -107,6 +118,16 @@ public class Salary extends ResizeComposite {
 			}
 		});
 
+		publishMenuItem.setScheduledCommand(new ScheduledCommand() {
+
+			@Override
+			public void execute() {
+				onPublish(salaryDocuments);
+			}
+		});
+
+		listeners = new LinkedList<Listener>();
+
 	}
 
 	public void hideDeleteButton() {
@@ -117,6 +138,12 @@ public class Salary extends ResizeComposite {
 		this.salaryDocuments = salaryDocuments;
 		onSalaryDocumentsChanged();
 	}
+
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	// ------------------------------------------------------------------------
 
 	@UiHandler("deleteButton")
 	void onDeleteButton(ClickEvent e) {
@@ -139,6 +166,18 @@ public class Salary extends ResizeComposite {
 		onSalaryTypeChanged();
 	}
 
+	@UiHandler("publishButton")
+	void onPublishButtonClicked(ClickEvent e) {
+		onPublish(salaryDocuments);
+	}
+
+	// ------------------------------------------------------------------------
+	void onPublish(SalaryDocuments documents) {
+		for (Listener listener : listeners)
+			listener.onPublis(salaryDocuments);
+	}
+
+	// ------------------------------------------------------------------------
 	private void print() {
 		salaryDocuments.print();
 	}
@@ -155,7 +194,7 @@ public class Salary extends ResizeComposite {
 				Window.alert(caught.getMessage());
 			}
 		});
-		
+
 	}
 
 	private void download() {
@@ -250,16 +289,15 @@ public class Salary extends ResizeComposite {
 
 		dateListBox.setSelectedIndex(index);
 	}
-	
-	private com.esferalia.aon.gwt.payroll.shared.Salary.Type getSelectedType(){
-		return types
-				.get(salaryTypeListBox.getSelectedIndex());
+
+	private com.esferalia.aon.gwt.payroll.shared.Salary.Type getSelectedType() {
+		return types.get(salaryTypeListBox.getSelectedIndex());
 	}
-	
+
 	private void selectNewestSalary(
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type type) {
 		List<com.esferalia.aon.gwt.payroll.shared.Salary> salaries = getSalaries();
-		for (int i = salaries.size()-1; i >= 0; i--)
+		for (int i = salaries.size() - 1; i >= 0; i--)
 			if (salaries.get(i).getType() == type)
 				salaryDocuments.setCurrentIndex(i);
 

@@ -418,7 +418,7 @@ public class DriveUtils  {
 			Vector<String> emails=DatabaseSync.getEmails(rattach.getId(),domain);
 			Vector<String> pemails=DatabaseSync.getPersonEmails(rattach.getId(),domain);
 			if(rattach.getDriveId()==null){
-				InputStream i =DatabaseSync.getData(rattach.getId(),domain);
+				InputStream i =DatabaseSync.getFileData(rattach.getId(),domain);
 				rattach.setData(i);
 				System.out.println(i+"   "+rattach.getId());
 				File file= insertFile(rattach,emails,pemails);
@@ -428,14 +428,14 @@ public class DriveUtils  {
 				}
 			}
 			else{
-				InputStream is =DatabaseSync.getData(rattach.getId(),domain);
+				InputStream is =DatabaseSync.getFileData(rattach.getId(),domain);
 				rattach.setData(is);
 				File fileAux = getFile(rattach.getDriveId());
 				
 				System.out.println("MD5 --> "+fileAux.getMd5Checksum()+"  :  "+ CheckSum.getMD5Checksum(is));
 				
 				if(!fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(is))){
-					InputStream i =DatabaseSync.getData(rattach.getId(),domain);
+					InputStream i =DatabaseSync.getFileData(rattach.getId(),domain);
 					rattach.setData(i);
 					System.out.println(i+"   "+rattach.getId());
 					File file= updateFile(rattach);

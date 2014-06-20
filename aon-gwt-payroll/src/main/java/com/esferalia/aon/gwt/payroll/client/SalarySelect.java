@@ -22,6 +22,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -239,6 +240,7 @@ public class SalarySelect extends Composite {
 
 				Date startDate = SalarySelect.getStartDate(extra, issueDate);
 				Date endDate = SalarySelect.getEndDate(extra, issueDate);
+				
 				SalarySelect.this.salaryPreview.setStartDate(startDate);
 				SalarySelect.this.salaryPreview.setEndDate(endDate);
 				SalarySelect.this.salaryPreview.setIssueDate(issueDate);
@@ -316,8 +318,10 @@ public class SalarySelect extends Composite {
 
 			@Override
 			public Void visitExtra(Type type) {
+				try {
 				monthListBox.setVisible(false);
 				dateListBox.setVisible(true);
+				
 				if (settleDatesProvider.hasDataDisplay(dateListBox))
 					settleDatesProvider.removeDataDisplay(dateListBox);
 				if (!extrasDatesProvider.hasDataDisplay(dateListBox))
@@ -339,6 +343,9 @@ public class SalarySelect extends Composite {
 						dateListBox.setSelected(issueDate, true);
 					}
 				});
+				} catch ( Throwable t ){
+					Window.alert(t.getMessage());
+				}
 
 				return null;
 			}
@@ -421,6 +428,7 @@ public class SalarySelect extends Composite {
 	}
 
 	private List<Date> getSettleDates(int start, int length) {
+
 		Employee employee = salaryPreview.getEmployee();
 		Date contractEndDate = employee.getEndDate();
 

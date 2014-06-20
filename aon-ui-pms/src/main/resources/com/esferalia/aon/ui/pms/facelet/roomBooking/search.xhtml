@@ -72,6 +72,14 @@
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</aon:div>
 
+						<aon:outputText value="&#160;"/>
+						<aon:div>
+							<aon:selectBooleanCheckbox for="RoomBooking_showCancelled" 
+								value="#{roomBooking.showCancelled}" />
+							<aon:outputLabel for="RoomBooking_showCancelled"
+								value="#{bundle.pms_show_cancelled_rooms}"/>
+						</aon:div>
+
 						<aon:outputText value="&#160;" />
 						<aon:commandButton id="search" ignoreDupResponses="true"
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"

@@ -11,7 +11,6 @@ import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.payroll.client.MinimizePanel.MinimizeEvent;
@@ -28,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -42,7 +42,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -66,7 +65,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class EmployeeTree implements EntryPoint, Employees.Listener,
-		MetaData.Listener {
+		MetaData.Listener, Cost.Listener, Salary.Listener {
 
 	static final byte SAVE_OPTION = 0x01;
 	static final byte OVERWRITE_OPTION = 0x02;
@@ -74,6 +73,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static final int RESULTS_LIMIT = 100;
 
+	static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
 	static DateTimeFormat DATE_FORMAT = DateTimeFormat
@@ -671,6 +671,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private Workplace workplace;
 	private Enterprise enterprise;
 
+	private ShareResultsGrid shareResultsGrid;
+	private ListDataProvider<JsShareResult> shareResultsProvider;
+
 	/**
 	 * This method constructs the application user interface by instantiating
 	 * controls and hooking up event handler.
@@ -722,9 +725,71 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		enterpriseContextMenu = new EnterpriseContextMenu();
 		workplaceContextMenu = new WorkplaceContextMenu();
 
+		cost.addListener(this);
+		salary.addListener(this);
+
+		shareResultsGrid = new ShareResultsGrid();
+		shareResultsProvider = new ListDataProvider<JsShareResult>();
+		shareResultsProvider.addDataDisplay(shareResultsGrid);
+
 		singlenton = this;
 
 		export2JS();
+
+	}
+
+	// --------------------------------------------------- Cost.Listener methods
+
+	@Override
+	public void onPublish(CostDocuments documents) {
+		class Callback implements AsyncCallback<JsShareResult> {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(JsShareResult result) {
+				shareResultsProvider.getList().add(result);
+			}
+		}
+
+		shareResultsProvider.getList().clear();
+		resultsPanel.setWidget(shareResultsGrid);
+
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = documents.getCosts()
+				.get(documents.getCurrentIndex());
+		share(cost, new Callback());
+
+		showResultsPanel();
+
+	}
+
+	// ------------------------------------------------- Salary.Listener methods
+
+	@Override
+	public void onPublis(SalaryDocuments documents) {
+		class Callback implements AsyncCallback<JsShareResult> {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(JsShareResult result) {
+				shareResultsProvider.getList().add(result);
+			}
+		}
+
+		shareResultsProvider.getList().clear();
+		resultsPanel.setWidget(shareResultsGrid);
+
+		com.esferalia.aon.gwt.payroll.shared.Salary salary = documents.getSalaries()
+				.get(documents.getCurrentIndex());
+		share(salary, new Callback());
+		showResultsPanel();
 
 	}
 
@@ -988,7 +1053,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			}
 
 			private JsSalaryResult read(String text) {
-				for (int begin = loaded ; begin < text.length() ; begin++ ) {
+				for (int begin = loaded; begin < text.length(); begin++) {
 					if (text.charAt(begin) == '{') {
 						loaded = findEnd(text, begin + 1) + 1;
 						String json = text.substring(begin, loaded);
@@ -1013,6 +1078,101 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		});
 
 		xhr.send(requestDataBuffer.toString());
+	}
+
+	private static <T extends HasId<?>> void share(
+			com.esferalia.aon.gwt.payroll.shared.Salary salary,
+			final AsyncCallback<JsShareResult> callback) {
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer.append("&" + ShareService.SALARY + "="
+				+ salary.getId());
+
+		// Send request to server and catch any errors.
+		share(requestDataBuffer.toString(), callback);
+
+	}
+
+	private static <T extends HasId<?>> void share(
+			com.esferalia.aon.gwt.payroll.shared.Cost cost,
+			final AsyncCallback<JsShareResult> callback) {
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer.append("&" + ShareService.MONTH + "="
+				+ cost.getMonth());
+		requestDataBuffer
+				.append("&" + ShareService.YEAR + "=" + cost.getYear());
+		int workplaceId = cost.getWorkplaceId();
+		if (workplaceId != 0)
+			requestDataBuffer.append("&" + ShareService.WORKPLACE + "="
+					+ workplaceId);
+		else
+			requestDataBuffer.append("&" + ShareService.ENTERPRISE + "="
+					+ cost.getEnterpriseId());
+
+		// Send request to server and catch any errors.
+		share(requestDataBuffer.toString(), callback);
+	}
+
+	private static void share(String requestData,
+			final AsyncCallback<JsShareResult> callback) {
+		// Send request to server and catch any errors.
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", SHARE_URL);
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+
+			private int loaded = 0;
+
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+
+				if (state == XMLHttpRequest.LOADING
+						|| state == XMLHttpRequest.DONE) {
+
+					String text = xhr.getResponseText();
+
+					try {
+						for (JsShareResult result = read(text); text != null; result = read(text))
+							callback.onSuccess(result);
+					} catch (IndexOutOfBoundsException e) {
+					}
+				}
+
+			}
+
+			private JsShareResult read(String text) {
+				for (int begin = loaded; begin < text.length(); begin++) {
+					if (text.charAt(begin) == '{') {
+						loaded = findEnd(text, begin + 1) + 1;
+						String json = text.substring(begin, loaded);
+						return JsonUtils.safeEval(json);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+
+			private int findEnd(String text, int start) {
+				for (int end = start; end < text.length(); end++) {
+					switch (text.charAt(end)) {
+					case '}':
+						return end;
+					case '{':
+						end = findEnd(text, end + 1);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+
+		});
+
+		xhr.send(requestData);
+
 	}
 
 	private static void viewResults() {
