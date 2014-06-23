@@ -4,7 +4,7 @@
   <parent>
     <artifactId>aon.parent</artifactId>
     <groupId>com.code.aon</groupId>
-    <version>7.35.4-SNAPSHOT-SNAPSHOT-SNAPSHOT</version>
+    <version>7.35.5-SNAPSHOT-SNAPSHOT-SNAPSHOT</version>
   </parent>
   <artifactId>aon.util.gps</artifactId>
   <packaging>pom</packaging>
