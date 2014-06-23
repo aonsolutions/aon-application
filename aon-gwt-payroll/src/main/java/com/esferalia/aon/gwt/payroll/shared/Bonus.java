@@ -24,7 +24,9 @@ public class Bonus extends Item<Bonus.Type> {
 		REDUCTION_RIGHT_CONTRACT,
 		REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT,
 		REDUCTION_FARMER_COMMON_CONTINGENCY,
-		REDUCTION_FARMER_UNEMPLOYMENT
+		REDUCTION_FARMER_UNEMPLOYMENT,
+		REDUCTION_FLAT_RATE_RDL03_2014,
+		CONTINUOUS_FORMATION
 		;
 
 		public String getDescription() {
@@ -48,6 +50,8 @@ public class Bonus extends Item<Bonus.Type> {
 				put(REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT, "Reducci\u00f3n contingencias comunes excepto I.T. (R.D.L. 16/2001) ");
 				put(REDUCTION_FARMER_COMMON_CONTINGENCY, "Reducciones SEA Contingencias comunes - (Sistema Especial Agrario)");
 				put(REDUCTION_FARMER_UNEMPLOYMENT, "Reducciones SEA Desempleo - (Sistema Especial Agrario)");
+				put(REDUCTION_FLAT_RATE_RDL03_2014, "Reducci\u00f3n contingencias comunes mediante Tarifa Plana (R.D.L. 3/2014)");
+				put(CONTINUOUS_FORMATION, "Bonificaci\u00f3n INEM formaci\u00f3n continua");
 			}
 		};
 	}

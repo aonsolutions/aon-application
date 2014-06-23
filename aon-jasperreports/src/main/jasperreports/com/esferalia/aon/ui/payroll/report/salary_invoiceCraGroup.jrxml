@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_invoiceCraGroup" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -515,7 +515,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="250" splitType="Stretch">
+		<band height="332" splitType="Stretch">
 			<componentElement>
 				<reportElement key="payment_table" style="table" positionType="Float" mode="Transparent" x="8" y="13" width="540" height="26" isRemoveLineWhenBlank="true"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -725,7 +725,7 @@
 				</jr:table>
 			</componentElement>
 			<staticText>
-				<reportElement positionType="Float" x="98" y="65" width="270" height="13" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="98" y="65" width="270" height="13">
 					<printWhenExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getAmount() != 0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">
@@ -749,7 +749,7 @@
 				<text><![CDATA[Otras deducciones]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="98" y="78" width="270" height="13" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="98" y="78" width="270" height="13">
 					<printWhenExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getAmount() != 0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">
@@ -773,7 +773,7 @@
 				<textFieldExpression><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getAdvancePayment().getAmount())]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="98" y="104" width="270" height="13" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="98" y="104" width="270" height="13">
 					<printWhenExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getAmount() != 0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">
@@ -822,7 +822,7 @@
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="98" y="143" width="270" height="13" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$F{salary}.getInKindIrpfBase()!=null && $F{salary}.getInKindIrpfBase()!=0.00]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{irpfInKind}!=0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">
 					<bottomPen lineWidth="0.0"/>
@@ -917,7 +917,7 @@
 				<textFieldExpression><![CDATA[CommonUtil.round($F{salary}.getDeductions().getUnemployment().getAmount()/$F{salary}.getProfessionalBase()*100)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="98" y="130" width="270" height="13" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="98" y="130" width="270" height="13">
 					<printWhenExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">
@@ -977,7 +977,7 @@
 				<textFieldExpression><![CDATA[$F{salary}.getDeductions().getOther().getAmount() == 0.00 ? null : new Double($F{salary}.getDeductions().getOther().getAmount())]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="98" y="117" width="270" height="13" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="98" y="117" width="270" height="13">
 					<printWhenExpression><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getAmount() != 0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">
@@ -1027,7 +1027,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></textFieldEx
 				<text><![CDATA[Anticipos]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="98" y="91" width="270" height="13" isRemoveLineWhenBlank="true">
+				<reportElement positionType="Float" x="98" y="91" width="270" height="13">
 					<printWhenExpression><![CDATA[$F{salary}.getDeductions().getJobTraining().getAmount() != 0.00]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="10">

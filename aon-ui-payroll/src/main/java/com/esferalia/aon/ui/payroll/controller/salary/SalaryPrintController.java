@@ -288,7 +288,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		criteria.addEqualExpression(alias, enterprise.getId());		
 	}
 
-	public boolean isRowChecked() throws ManagerBeanException {
+	public boolean getRowChecked() throws ManagerBeanException {
 		Salary to = (Salary) this.getModel().getRowData();
 		return checks.contains(to.getId());
 	}

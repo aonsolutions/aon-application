@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="240"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -834,7 +834,7 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></textFieldEx
 				<textField pattern="" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="49" y="57" width="12" height="13">
 						<printWhenExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency() != null &&
-$F{salary}.getDeductions().getCommonContingency().getAmount() != 0.00 ]]></printWhenExpression>
+$F{salary}.getDeductions().getCommonContingency().getAmount() != 0.00]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<bottomPen lineWidth="0.0"/>
