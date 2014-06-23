@@ -21,9 +21,27 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailControllerListener.class.getName());
 
 	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		InventoryDetail inventoryDetail = (InventoryDetail)event.getController().getTo();
+		inventoryDetail.setActualQuantity(inventoryDetail.getRealQuantity());
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		InventoryDetail inventoryDetail = (InventoryDetail)event.getController().getTo();
+		updateStock(inventoryDetail);
+	}
+
+	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InventoryDetail inventoryDetail = (InventoryDetail)event.getController().getTo();
-		try {
+		updateStock(inventoryDetail);
+	}
+
+	private void updateStock( InventoryDetail inventoryDetail ) throws ControllerListenerException {
+		try {		
 			double quantity = inventoryDetail.getRealQuantity();
 			Double q = new Double(quantity);
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
@@ -35,15 +53,17 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 				Stock stock = (Stock) stockListIter.next();
 				stock.setQuantity(q);
 				stockBean.update(stock);
-			}else{
+			} else {
 				Stock stock = new Stock();
 				stock.setItem(inventoryDetail.getItem());
 				stock.setQuantity(q);
 				stock.setWarehouse(inventoryDetail.getInventory().getWarehouse());
 				stockBean.insert(stock);
-			}
+			}		
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Exception removing InventoryDetails", e);
+			LOGGER.error("Exception update stock of InventoryDetail", e);
+			throw new ControllerListenerException(e);
 		}
 	}
+	
 }

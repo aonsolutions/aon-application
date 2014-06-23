@@ -10,17 +10,29 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Brand;
+import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.warehouse.Inventory;
+import com.code.aon.warehouse.InventoryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InventoryDetailController extends LinesController implements ICollectionProvider {
@@ -35,6 +47,8 @@ public class InventoryDetailController extends LinesController implements IColle
 	private Brand brand;
 	private String code;
 	private String description;
+	
+	private ItemFilter itemFilter;
 	
 	public boolean isShowSearchPanel() {
 		return showSearchPanel;
@@ -140,4 +154,57 @@ public class InventoryDetailController extends LinesController implements IColle
 		}
 		return Collections.emptyList();
 	}
+	
+	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
+		InventoryDetail id = (InventoryDetail) getTo();
+		if (event.getNewValue() != null) {
+			Item item = (Item)event.getNewValue();
+			id.setCost(item.getPurchasePrice());
+		} else {
+			id.setCost(0);
+		}
+	}		
+
+	public IControllerListener getItemFilter() {
+		if ( this.itemFilter == null ) {
+			this.itemFilter = new ItemFilter();
+		}		
+		Inventory inventory = (Inventory) getMasterController().getTo();
+		this.itemFilter.setInventory(inventory.getId());
+		return this.itemFilter;
+	}	
+	
+	private static class ItemFilter extends ControllerAdapter {
+		
+		private Integer inventory;
+		
+		public void setInventory(Integer inventory) {
+			this.inventory = inventory;
+		}
+
+		@SuppressWarnings("unchecked")
+		private List<Integer> getInventoryItems() throws ManagerBeanException {
+			IManagerBean bean = BeanManager.getManagerBean(InventoryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_DETAIL_INVENTORY_ID), inventory);
+			ProjectionList projectionList = new ProjectionList(Projection.property(bean.getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_ID)));
+			return bean.getList(projectionList, criteria);
+		}
+
+		@Override
+		public void beforeModelInitialized(ControllerEvent event)
+				throws ControllerListenerException {
+			IController controller = event.getController();
+			try {					
+				String idAlias = controller.getFieldName(IEntityAlias.ITEM_ID);
+				for( Integer id : getInventoryItems() ) {
+					controller.getCriteria().addNotEqualExpression(idAlias, id);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error filtering items", e);
+			}
+		}
+
+	}
+
 }

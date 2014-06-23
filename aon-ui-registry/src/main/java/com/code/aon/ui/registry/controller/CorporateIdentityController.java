@@ -9,6 +9,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -117,6 +119,16 @@ public class CorporateIdentityController extends RegistryAttachController {
 	@Override
 	protected int getDefaultPageLimit() {
 		return AonUtil.getConfigurationController().getPageLimit();
+	}	
+	
+	@Override
+	public String initialAction() {
+		String initialAction = super.initialAction();
+		if ((!AonUtil.getRoleManager().isDocumentManager()) && StringUtils.equals(initialAction, formAction()) ) {
+			onCancel(null);
+			initialAction = listAction();			
+		}
+		return initialAction;
 	}	
 	
 }
