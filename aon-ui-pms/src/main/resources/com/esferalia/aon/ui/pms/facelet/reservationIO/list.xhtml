@@ -161,9 +161,19 @@
 							<aon:outputText value="#{to.mealPlan}" />
 						</aon:column>
 	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.total}" rendered="#{to.guestHolder}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+							<aon:outputText value="#{bundle.pms_credit}" rendered="#{to.agencyHolder}" />
+						</aon:column>
+
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_number_abr}" />
+								<aon:outputLabel value="#{bundle.aon_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.reservation}" />
 						</aon:column>
@@ -211,16 +221,6 @@
 							<aon:outputText value="#{to.code}" />
 						</aon:column>
 						
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_amount}" />
-							</f:facet>
-							<aon:outputText value="#{to.total}" rendered="#{to.guestHolder}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-							<aon:outputText value="#{bundle.pms_credit}" rendered="#{to.agencyHolder}" />
-						</aon:column>
-
 					</ui:define>
 				</ui:decorate>
 
