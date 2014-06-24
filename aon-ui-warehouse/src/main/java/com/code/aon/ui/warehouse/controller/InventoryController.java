@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
@@ -7,15 +8,19 @@ import javax.faces.event.ActionEvent;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
@@ -34,6 +39,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class InventoryController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryController.class.getName());
 	
 	private Warehouse warehouse; 
 
@@ -54,6 +61,7 @@ public class InventoryController extends BasicController {
 	}
 
 	public void onClosing(ActionEvent event) {
+		dateValidation();
 		try {
 			closeInventary();
 		} catch (Exception e) {
@@ -137,7 +145,22 @@ public class InventoryController extends BasicController {
 			HibernateUtil.setBeginTransaction(true);
 		}
 	}
+
+	private void dateValidation() {
+		Date date = ((Inventory)this.getTo()).getInventoryDate();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Inventory.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_WAREHOUSE_ID), getWarehouse().getId());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_INVENTORY_DATE), date);
+			if ( bean.getCount(criteria) > 0 ) {
+				String message = AonUtil.getMessage(ICommonMessages.WAREHOUSE_INVENTORY_DATE_ERROR);
+				AonUtil.addErrorMessage(message);
+				throw new AbortProcessingException(message);					
+			}
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}	
 	
 }
-
-

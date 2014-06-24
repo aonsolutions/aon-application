@@ -1018,7 +1018,7 @@ public class DatabaseSync {
 	 * @throws SQLException
 	 * @throws AonConnectionException
 	 */
-	public static Vector<Task> getTask() throws SQLException, AonConnectionException{
+	public static Vector<Task> getTask(String domain, String username) throws SQLException, AonConnectionException{
 		
 		ResultSet rs = null;
 		Connection connection = null;
@@ -1031,9 +1031,9 @@ public class DatabaseSync {
 					+" = U." + UserColumns.REGISTRY
 					+" WHERE U." + UserColumns.LOGIN + "=?";
 			
-			connection = getConnection("demo.aonsolutions.net");// CONSEGUIR EL DOMINIO DE LA CONEXIÓN!!!!!!!!
+			connection = getConnection(domain);// CONSEGUIR EL DOMINIO DE LA CONEXIÓN!!!!!!!!
 			stmt = connection.prepareStatement(sql);
-			stmt.setString(1, "ander");// CONSEGUIR EL USERNAME DE LA CONEXIÓN!!!!!!!!
+			stmt.setString(1, username);// CONSEGUIR EL USERNAME DE LA CONEXIÓN!!!!!!!!
 			rs = stmt.executeQuery();
 			
 			Vector<Task> tasks = new Vector<Task>();
@@ -1057,6 +1057,8 @@ public class DatabaseSync {
 				task.setStatus(rs.getShort(TaskColumns.STATUS));
 				task.setTaskHolder(rs.getInt(TaskColumns.TASK_HOLDER));
 				task.setWorkgroup(rs.getInt(TaskColumns.WORKGROUP));
+				task.setGtaskId(rs.getString(TaskColumns.GTASK_ID));
+				task.setGtasklistId(rs.getString(TaskColumns.GTASKLIST_ID));
 				tasks.add(task);
 			}
 			return tasks;
@@ -1078,7 +1080,7 @@ public class DatabaseSync {
 	 * @throws SQLException
 	 * @throws AonConnectionException
 	 */
-	public static Project getProjectTask(Integer taskId) throws SQLException, AonConnectionException{
+	public static Project getProjectTask(String domain,Integer taskId) throws SQLException, AonConnectionException{
 		
 		ResultSet rs = null;
 		Connection connection = null;
@@ -1091,7 +1093,7 @@ public class DatabaseSync {
 					+" = P." + ProjectColumns.ID
 					+" WHERE T." + TaskColumns.ID + "=?";
 			
-			connection = getConnection("demo.aonsolutions.net");// CONSEGUIR EL DOMINIO DE LA CONEXIÓN!!!!!!!!
+			connection = getConnection(domain);// CONSEGUIR EL DOMINIO DE LA CONEXIÓN!!!!!!!!
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, taskId);
 			rs = stmt.executeQuery();
@@ -1128,6 +1130,61 @@ public class DatabaseSync {
 	}
 	
 	
+public static void addTaskId(String taskId,int id, String domain) throws SQLException, AonConnectionException {
+		
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+			String sql = "UPDATE " + SQLConstants.TASK
+					+" SET "+TaskColumns.GTASK_ID+ "= ? "
+					+" WHERE "+TaskColumns.ID+" = ?";
+			
+			
+			connection = getConnection(domain);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, taskId);
+			stmt.setLong(2, id);
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
+
+	public static void addTaskListId(String taskListId,int id, String domain) throws SQLException, AonConnectionException {
+		
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+			String sql = "UPDATE " + SQLConstants.TASK
+					+" SET "+TaskColumns.GTASKLIST_ID + "= ? "
+					+ "WHERE "+TaskColumns.ID+" = ?";
+			
+			
+			connection = getConnection(domain);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, taskListId);
+			stmt.setLong(2, id);
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
 	// ------------------------------------------ GOOGLE DRIVE
 	
 	public static Vector<Rattach> getFiles(String key) throws SQLException{

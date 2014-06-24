@@ -41,6 +41,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		
 		void onStartDateChangeEvent(ValueChangeEvent<Date> event);
 		void onEndDateChangeEvent(ValueChangeEvent<Date> event);
+		void onAcceptButtonClickEvent(ClickEvent event);
 	}
 
 	private static TooltipUiBinder uiBinder = GWT.create(TooltipUiBinder.class);
@@ -287,7 +288,7 @@ public class Tooltip extends DecoratedPopupPanel {
 	}
 
 	// ------------------------------------------------------------- UiHandlers
-
+	
 	@UiHandler("startLeaveDateBox")
 	void onValueChangeStartDateBox(ValueChangeEvent<Date> event) {
 		
@@ -319,7 +320,10 @@ public class Tooltip extends DecoratedPopupPanel {
 	@UiHandler("acceptButton")
 	void onAcceptClick(ClickEvent event) {
 		
-		if(startLeaveDateBox.getValue() == null) {
+		for (Listener listener : listeners)
+			listener.onAcceptButtonClickEvent(event);
+		
+	/*	if(startLeaveDateBox.getValue() == null) {
 			accept = false;
 			hide();
 		}
@@ -330,11 +334,15 @@ public class Tooltip extends DecoratedPopupPanel {
 		}
 		
 		accept = changes;
-		hide ();		
+		hide ();	*/	
 	}
 
 	public boolean isAccept() {
 		return accept;
+	}
+	
+	public void setAccept(boolean accept) {
+		this.accept = accept;
 	}
 
 	public Date getFromDateBoxValue() {

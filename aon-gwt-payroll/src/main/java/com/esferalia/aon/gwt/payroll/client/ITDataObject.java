@@ -288,17 +288,12 @@ public class ITDataObject {
 		for (ITDataPerson iterator : map.values()) {
 			if(leaveId == iterator.getContractLeaveId())
 				continue;
-			Date contractStart = getEmployees().get(iterator.getContractId()).getStartDate();
-			if(DateUtils.compare(startDate, contractStart)  < 0)
-				return false;
+			
 			if ((DateUtils.compare(startDate, iterator.getLeaveStartDate()) > 0)
 					&& (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0))
 				return false;
-		}
-		
-		return true;
-		
-		
+		}		
+		return true;		
 	}
 	
 	public boolean isCorrectEndDateLeave (int contractId, int leaveId, 
@@ -311,10 +306,6 @@ public class ITDataObject {
 			if(leaveId == iterator.getContractLeaveId())
 				continue;
 			
-			Date contractStart = getEmployees().get(iterator.getContractId()).getStartDate();
-			if(DateUtils.compare(startDate, contractStart)  < 0)
-				return false;
-			
 			if ( (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0)
 					&& (DateUtils.compare(endDate, iterator.getLeaveEndDate()) < 0)
 					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) > 0)
@@ -322,10 +313,11 @@ public class ITDataObject {
 					|| (DateUtils.compare(startDate, iterator.getLeaveEndDate()) < 0)
 					&& (DateUtils.compare(endDate, iterator.getLeaveStartDate()) > 0))
 				return false;
-		}
-		
+		}		
 		return true;
 	}
+	
+	
 	
 	public void load(final AsyncCallback<ITDataObject> cb) {
 		if (itData != null) {

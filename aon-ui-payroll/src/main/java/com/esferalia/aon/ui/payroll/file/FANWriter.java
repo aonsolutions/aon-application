@@ -1557,9 +1557,13 @@ public class FANWriter implements Serializable {
 				createEDTCa55Segment(emp);
 				createEDTCa56Segment(emp);
 				createEDTCa57Segment(emp);
+				
 				emp.getEdtSegment("EDTCA60");
 				createEDTCa80Segment(ccc, emp);
 				createEDTCa60Segment(emp);
+				if(emp.getEdtSegment("EDTCA60").getImporte()==null){
+					emp.getEdt().remove("EDTCA60");
+				}
 				createEDTCa90Segment(emp);
 				
 				emp.getEdt().remove("EDTTT10");

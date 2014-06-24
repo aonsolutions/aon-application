@@ -136,7 +136,12 @@ public class LinesController extends BasicController {
 	private void updateJoinProperty(ITransferObject masterTO, String masterProperty,
 			ITransferObject lineTo, String lineProperty) throws ManagerBeanException {
 		try {
-			Object masterPropertyValue = PropertyUtils.getProperty(masterTO, masterProperty);
+			Object masterPropertyValue = null;
+			if ( "this".equals(masterProperty) ) {
+				masterPropertyValue = masterTO;
+			} else {
+				masterPropertyValue = PropertyUtils.getProperty(masterTO, masterProperty);
+			}
 			PropertyUtils.setProperty(lineTo, lineProperty, masterPropertyValue);
 		} catch (IllegalAccessException e) {
 			throw new ManagerBeanException(e.getMessage(), e);

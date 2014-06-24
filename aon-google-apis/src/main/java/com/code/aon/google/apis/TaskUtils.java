@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.google.apis.servlet.GoogleAuthorizationCodeCallbackServlet;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Project;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.util.DateTime;
@@ -155,7 +156,7 @@ public class TaskUtils {
 	
 	
 	private static Credential credential;	
-	private static com.google.api.services.tasks.Tasks client;
+	//private static com.google.api.services.tasks.Tasks client;
 	
 	/**
 	 * 
@@ -170,7 +171,7 @@ public class TaskUtils {
 		//		getHttpTransport(), getJsonFactory(), credential)
 		//		.setApplicationName("AON SOLUTIONS").build();
 		
-		client=GoogleAuthorizationCodeCallbackServlet.tasks;
+		//client=GoogleAuthorizationCodeCallbackServlet.tasks;
 	}
 	
 	
@@ -290,13 +291,18 @@ public class TaskUtils {
 	 * @throws AonConnectionException
 	 * @throws IOException
 	 */
-	public static void synchronize(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
-		Vector<com.esferalia.aon.google.sql.AbstractSQL.Task> tasksBD = getTask();
+	public static void synchronizeOld(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
+		
+		System.out.println(client);
+		String domain= AonUtil.getDomainName();
+		String username=AonUtil.getAuthPrincipal().getShortName();
+		System.out.println(domain+"  "+username);
+		Vector<com.esferalia.aon.google.sql.AbstractSQL.Task> tasksBD = getTask(domain, username);
 		TaskList taskList = null;
 		int aux = -1;
 		int aux2 = -1;
 		for(int i= 0; i<tasksBD.size();i++){
-			Project project = getProjectTask(tasksBD.get(i).getId());
+			Project project = getProjectTask(domain,tasksBD.get(i).getId());
 			TaskLists taskLists = Search.taskListsort(client.tasklists().list().execute());
 			aux = Search.searchProject(project,taskLists, taskLists.getItems().size());
 			if (aux ==-1 ){
@@ -308,8 +314,13 @@ public class TaskUtils {
 					tasks = Search.tasksort(tasks);
 					aux2 = Search.searchTask(tasksBD.get(i),tasks,tasks.getItems().size());
 				}
-				if (aux2==-1) addTask(newTask(tasksBD.get(i)), taskList,client);
+				System.out.println(aux2);
+				if (aux2==-1){
+					Task t=addTask(newTask(tasksBD.get(i)), taskList,client);
+					System.out.println(t.getId());
+				}
 				else updateTask(tasks.getItems().get(aux2), taskList,client);
+				
 			}
 			else{
 				com.google.api.services.tasks.model.Tasks tasks= client.tasks().list(taskLists.getItems().get(aux).getId()).execute();
@@ -322,5 +333,60 @@ public class TaskUtils {
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	public static TaskList getTaskList(com.google.api.services.tasks.Tasks client,String id) throws IOException{
+		
+		return client.tasklists().get(id).execute();
+	}
+	
+	/**
+	 * 
+	 * @throws SQLException
+	 * @throws AonConnectionException
+	 * @throws IOException
+	 */
+	public static void synchronize(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
+		String domain= AonUtil.getDomainName();
+		String username=AonUtil.getAuthPrincipal().getShortName();
+
+		Vector<com.esferalia.aon.google.sql.AbstractSQL.Task> tasksBD = getTask(domain, username);
+		TaskList taskList = null;
+		for(int i= 0; i<tasksBD.size();i++){
+			Project project = getProjectTask(domain,tasksBD.get(i).getId());
+			com.esferalia.aon.google.sql.AbstractSQL.Task taskBD=tasksBD.get(i);
+			if (taskBD.getGtasklistId() == null){
+				taskList = addTaskList(newTaskList(project),client);
+				
+				System.out.println("------------------new TaskList ----------------");
+				System.out.println("ID: "+taskList.getId());
+				System.out.println("Title: "+taskList.getTitle());
+				DatabaseSync.addTaskListId(taskList.getId(),taskBD.getId(),domain);
+			}
+			else{
+				taskList = getTaskList(client,taskBD.getGtasklistId());
+			}
+			
+			if(taskBD.getGtaskId()== null){
+				Task t=addTask(newTask(taskBD),taskList,client);
+
+				System.out.println("------------------new Task ----------------");
+				System.out.println("ID: "+t.getId());
+				System.out.println("Title: "+t.getTitle());
+				DatabaseSync.addTaskId(t.getId(), taskBD.getId(), domain);
+				System.out.println("holaa");
+			}
+			else{
+				updateTask(newTask(taskBD), taskList,client);
+			}
+			
+			System.out.println("holaaa");
+		}
+	}
+	
 	
 }

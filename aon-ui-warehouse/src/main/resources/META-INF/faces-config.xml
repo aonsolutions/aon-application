@@ -147,8 +147,8 @@
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>id</key>
-					<value>inventory.id</value>
+					<key>this</key>
+					<value>inventory</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -223,7 +223,7 @@
 	<!-- ************ STOCK ************* -->
 	<managed-bean>
 		<managed-bean-name>stock</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.warehouse.controller.StockController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>

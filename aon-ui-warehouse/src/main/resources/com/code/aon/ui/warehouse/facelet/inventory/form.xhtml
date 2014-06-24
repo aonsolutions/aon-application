@@ -54,22 +54,23 @@
 
 				<aon:div styleClass="aon-padding-bottom">
 					<aon:panelGrid columns="8" style="width:100%;"
-						columnClasses=" aon-panelGrid-odd aon-width-80
-								,aon-panelGrid-even aon-width-50
+						columnClasses="aon-panelGrid-odd aon-width-80
+								,aon-panelGrid-even aon-width-80
 								,aon-panelGrid-odd aon-width-80
 								,aon-panelGrid-even aon-width-80
 								,aon-panelGrid-odd aon-width-80
 								,aon-panelGrid-even aon-width-250
 								,aon-panelGrid-odd aon-width-80
 								,aon-panelGrid-even aon-width-auto">
-						<aon:outputText value="#{bundle.aon_id}" />
-						<aon:outputText value="#{inventory.to.id}"/>
 
 						<aon:outputText value="#{bundle.aon_date}" />
 						<aon:outputText value="#{inventory.to.inventoryDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								type="both" timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
+						
+						<aon:outputText value="#{bundle.aon_status}" />
+						<aon:outputText value="#{(inventory.to.closed)?(bundle.aon_closed):(bundle.aon_opened)}" />
 						
 						<aon:outputText value="#{bundle.aon_module_warehouse}" />
 						<aon:outputText value="#{inventory.to.warehouse.name}"/>
@@ -81,79 +82,114 @@
 	
 				<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/productSearch.xhtml" />
 
-				<aon:div layout="none" id="inventoryDetailDiv" >
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-						<ui:param name="controller" value="#{inventoryDetail}" />				
-						<ui:param name="skipResetButton" value="true" />
-						<ui:param name="skipRemoveButton" value="true" />
-						<ui:param name="showNote" value="true" />
-						<ui:param name="showDataTable" value="#{inventoryDetail.model.rowCount > 0}" />
-						
-						<ui:define name="columns">
-							<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />					
-						
-							<aon:column alias="InventoryDetail.item.product.code"
-								styleClass="aon-editDataTable-textColumn aon-width-150">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_id}" />
-								</f:facet>
-								<aon:outputText value="#{to.item.product.code}" />
-							</aon:column>
-			
-							<aon:column alias="InventoryDetail.item.product.name"
-								styleClass="aon-editDataTable-textColumn aon-width-auto">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_product}" />
-								</f:facet>
-								<aon:div>
-									<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
-								</aon:div>
-							</aon:column>
-							
-							<aon:column alias="InventoryDetail.realQuantity"
-								styleClass="aon-editDataTable-numberColumn aon-width-100">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.warehouse_inventory}" />
-								</f:facet>
-								<aon:div>
-									<aon:outputText value="#{to.realQuantity}" rendered="#{to.id!=inventoryDetail.to.id}">
-										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
-									</aon:outputText>
-									<aon:inputText rendered="#{to.id==inventoryDetail.to.id}"
-										value="#{inventoryDetail.to.realQuantity}" required="true" />
-								</aon:div>
-							</aon:column>
+				<aon:methodParam name="resetActionListener" value="#{inventoryDetail.onReset}" type="actionListener" />
+				<aon:methodParam name="resetAction" value="" />													
+				<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+					<ui:param name="controller" value="#{inventoryDetail}" />				
+					<ui:param name="skipRemoveButton" value="true" />
+					<ui:param name="skipResetButton" value="#{inventory.to.closed}" />
+					<ui:param name="skipLineEdition" value="#{inventory.to.closed}" />
+					<ui:param name="showNote" value="true" />
+					<ui:param name="showDataTable" value="#{inventoryDetail.model.rowCount > 0}" />
+					
+					<ui:define name="columns">					
+					
+						<aon:column alias="InventoryDetail.item.product.code"
+							styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText id="InventoryDetail_item_product_code"
+								value="#{to.item.product.code}" />
+							<f:facet name="footer">
+								<aon:outputText id="InventoryDetail_item_product_code-New"
+									rendered="#{formNew}"
+									value="#{controller.to.item.product.code}" />
+							</f:facet>
+						</aon:column>
 		
-							<aon:column alias="InventoryDetail.cost"
-								styleClass="aon-editDataTable-numberColumn aon-width-100">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_cost}"	/>
-								</f:facet>
-								<aon:div>
-									<aon:outputText value="#{to.cost}" rendered="#{to.id!=inventoryDetail.to.id}">
-										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
-									</aon:outputText>
-									<aon:outputText value="#{inventoryDetail.to.cost}" rendered="#{to.id==inventoryDetail.to.id}">
-										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
-									</aon:outputText>
-								</aon:div>
-							</aon:column>
-		
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_total}" />
-								</f:facet>
-								<aon:div>
-									<aon:outputText value="#{to.costAmount}">
-										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
-									</aon:outputText>
-								</aon:div>
-							</aon:column>
+						<aon:column alias="InventoryDetail.item.product.name"
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_product}" />
+							</f:facet>
+							<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
+							<f:facet name="footer">
+								<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{controller.to.item}" />
+									<ui:param name="idRequired" value="#{true}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupRendered" value="#{formNew}" />
+									<ui:param name="lookupReRender" 
+										value="InventoryDetail_item_product_code-New,InventoryDetail_realQuantity-New,
+										InventoryDetail_cost-New,InventoryDetail_costAmount-New" />
+									<ui:param name="lookupControllerListener"
+										value="#{controller.itemFilter}" />										
+									<aon:methodParam name="lookupChangeListener"
+										value="#{controller.onItemChanged}" type="lookupChangeListener" />										
+								</ui:include>
+							</f:facet>								
+						</aon:column>
 						
-						</ui:define>
-					</ui:decorate>
-				</aon:div>
+						<aon:column alias="InventoryDetail.realQuantity"
+							styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.warehouse_inventory}" />
+							</f:facet>
+							<aon:outputText value="#{to.realQuantity}" rendered="#{to.id!=inventoryDetail.to.id}">
+								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+							</aon:outputText>
+							<aon:inputText id="InventoryDetail_realQuantity" rendered="#{formEdit}"
+								ajaxSingle="true" reRender="InventoryDetail_costAmount"
+								value="#{controller.to.realQuantity}" required="true" />
+							<f:facet name="footer">
+								<aon:inputText id="InventoryDetail_realQuantity-New" rendered="#{formNew}"
+									ajaxSingle="true" reRender="InventoryDetail_costAmount-New"
+									value="#{controller.to.realQuantity}" required="true" />
+							</f:facet>									
+						</aon:column>
+	
+						<aon:column alias="InventoryDetail.cost"
+							styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_cost}"	/>
+							</f:facet>
+							<aon:outputText value="#{to.cost}" rendered="#{to.id!=inventoryDetail.to.id}">
+								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+							</aon:outputText>
+							<aon:outputText id="InventoryDetail_cost"
+								value="#{controller.to.cost}" rendered="#{formEdit}">
+								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+							</aon:outputText>
+							<f:facet name="footer">
+								<aon:outputText id="InventoryDetail_cost-New"
+									value="#{controller.to.cost}" rendered="#{formNew}">
+									<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+								</aon:outputText>
+							</f:facet>									
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{to.costAmount}">
+								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+							</aon:outputText>							
+							<f:facet name="footer">
+								<aon:outputText id="InventoryDetail_costAmount-New"
+									value="#{controller.to.costAmount}" rendered="#{formNew}">
+									<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+								</aon:outputText>
+							</f:facet>
+						</aon:column>
+					
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 	</ui:define>
 </ui:composition>					

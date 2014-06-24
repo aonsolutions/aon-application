@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.36.1
+# Version: 7.36.2
 # Created by: girazu
-# Creation Date: 17/06/2014 16:30
+# Creation Date: 23/06/2014 18:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3525,6 +3525,8 @@ CREATE TABLE `task` (
   `sender` int(4) default NULL COMMENT 'Remitente de la Tarea',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Tarea',
   `repeat_period` tinyint(2) default '0' COMMENT 'Periodo de repeticion de la Tarea',
+  `gtask_id` varchar(100) collate latin1_spanish_ci default NULL,
+  `gtasklist_id` varchar(100) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_TASK_ACTIVITY_TYPE` (`activity_type`),
   KEY `IDX_TASK_PROJECT` (`project`),
@@ -7487,7 +7489,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.36.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.36.2');
 
 COMMIT;
 
