@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
@@ -23,6 +24,9 @@ import com.google.api.services.calendar.model.Events;
 
 
 public class GoogleCalendarSynchronizer extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
