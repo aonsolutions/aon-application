@@ -224,10 +224,13 @@ try {
 										    		MessageFormat mf = new MessageFormat( value );
 										    		out.print( mf.format(new Object[]{customize.getApplicationVersion()}) ); 
 										    		%>
+										    		<c:if test="${customize.buildDate != null}">
+										    			 (<%= customize.getBuildDate() %>)
+										    		</c:if>
 									    		</div>
 											</c:if>
 											<div>
-												DB Vers: <%= du.getCurrentVersion() %>	
+												<%=customize.getBundle().getString("aon_about_db_version")%> <%= du.getCurrentVersion() %>
 								    		</div>
 								    	</c:if>
 									</div>
