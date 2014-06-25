@@ -25,7 +25,7 @@
 					<aon:outputLabel for="Stock_warehouse_id"
 						value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="Stock_warehouse_id"
-						reRender="Stock_beforeInventory,Stock_afterInventory"
+						reRender="Stock_beforeInventory,Stock_afterInventory,reportButtons"
 						actionListener="#{controller.onWarehouseChanged}"
 						value="#{controller.warehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
