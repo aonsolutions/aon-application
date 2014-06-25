@@ -1,8 +1,13 @@
 package com.code.aon.finance.invoicing;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ProgressionInvoicingFeedBack implements IInvoicingFeedBack {
+import com.code.aon.AonVersion;
+
+public class ProgressionInvoicingFeedBack implements IInvoicingFeedBack, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int currentRow;
 	private int rowCount;

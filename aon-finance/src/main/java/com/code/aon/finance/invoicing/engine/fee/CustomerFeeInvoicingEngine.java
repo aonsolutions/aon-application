@@ -1,5 +1,6 @@
 package com.code.aon.finance.invoicing.engine.fee;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -36,7 +38,9 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
+public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private IInvoicingDAO invoicingDAO;
 	private IInvoicingFeedBack invoicingFeedBack;

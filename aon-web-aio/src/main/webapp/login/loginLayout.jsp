@@ -230,7 +230,7 @@ try {
 									    		</div>
 											</c:if>
 											<div>
-												<%=customize.getBundle().getString("aon_about_db_version")%> <%= du.getCurrentVersion() %>
+												<%=commonBundle.getString("aon_about_db_version")%> <%= du.getCurrentVersion() %>
 								    		</div>
 								    	</c:if>
 									</div>

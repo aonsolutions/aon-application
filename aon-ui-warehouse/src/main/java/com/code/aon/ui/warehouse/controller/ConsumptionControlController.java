@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -31,7 +33,9 @@ import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ConsumptionControlController implements ICollectionProvider {
+public class ConsumptionControlController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String INCOME_DETAIL_INCOME_ISSUE_TIME = "IncomeDetail.income.issueTime";
 
