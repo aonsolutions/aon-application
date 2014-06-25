@@ -583,6 +583,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ CONSUMPTION CONTROL ************* -->
+	<managed-bean>
+		<managed-bean-name>consumptionControl</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.warehouse.controller.ConsumptionControlController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ****** WAREHOUSE TRANSFER ****** -->
 	<managed-bean>
@@ -798,13 +804,16 @@
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/warehouseTransfer/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-   	<!-- ************************ WAREHOUSE *************************** -->	
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>orderProposal_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/orderProposal/search.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
+		<navigation-case>
+			<from-outcome>consumptionControl_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/consumptionControl/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 	
 </faces-config>

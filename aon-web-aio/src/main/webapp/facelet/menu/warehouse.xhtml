@@ -123,6 +123,13 @@
 										actionListener="#{stockReport.onReportByItemValued}"
 										value="#{bundle.warehouse_stock_by_item_valued_module}" />
 								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="consumptionControl" 
+										action="consumptionControl_search"
+										actionListener="#{consumptionControl.onEditSearch}"
+										value="#{bundle.warehouse_consumption_control}" />
+								</aon:div>														
 							</aon:div>
 						</aon:panelGrid>
 
