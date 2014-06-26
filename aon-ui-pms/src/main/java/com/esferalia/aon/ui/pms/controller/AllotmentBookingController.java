@@ -174,10 +174,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		PreparedStatement agencyBreakdownStmt = null;
 		ResultSet agencyBreakdownRs = null;
 		try {
-			initializeAgencyList();
-			initializeBookingList();
-
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			initializeBookingList(connection);
+			initializeAgencyList();
+
 			bookingStmt = connection.prepareStatement(getRoomBookingSQL());
 			SQLUtils.setDate(bookingStmt, 1, getFromDate());
 			SQLUtils.setDate(bookingStmt, 2, getToDate());
@@ -344,14 +344,12 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		agencyBreakdownMap = new HashMap<String, AgencyBreakdown>();
 	}
 
-	private void initializeBookingList() throws AonSQLException {
+	private void initializeBookingList(Connection connection) throws AonSQLException {
 		setBookingList(new LinkedList<DayBooking>());
 
-		Connection connection = null;
 		PreparedStatement totalStmt = null;
 		ResultSet totalRs = null;
 		try {
-			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			totalStmt = connection.prepareStatement(getRoomTotalSQL());
 			totalRs = totalStmt.executeQuery();
 			while (totalRs.next()) {
@@ -366,15 +364,10 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 				}
 			}
 		} catch (Throwable e) {
-			try {
-				connection.rollback();
-			} catch (SQLException ex) {
-			}
 			throw new AonSQLException(e);
 		} finally {
 			SQLUtils.closeQuietly(totalRs);
 			SQLUtils.closeQuietly(totalStmt);
-			SQLUtils.closeQuietly(connection);
 		}
 	}
 
