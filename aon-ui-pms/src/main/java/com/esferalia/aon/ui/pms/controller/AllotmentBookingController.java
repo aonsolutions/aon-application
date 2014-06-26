@@ -50,36 +50,57 @@ import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class AllotmentBookingController extends DataScrollerState implements ISQLConstants {
 
-	private Hotel hotel;
-	private Customer agency;
-	private InvoicingGroup agencyGroup;
+	private Hotel[] hotels;
+	private Customer[] agencies;
+	private InvoicingGroup[] agencyGroups;
 	private Date fromDate;
 	private Date toDate;
 	private Integer breakdownType;
-	private String[] agencies;
+	private String[] agencyList;
 	private Map<String, AgencyBreakdown> agencyBreakdownMap;
 
 	private List<DayBooking> bookingList;
 
-	public Hotel getHotel() {
-		return hotel;
+	public Hotel[] getHotels() {
+		return hotels;
 	}
-	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
+	public void setHotels(Hotel[] hotels) {
+		this.hotels = hotels;
+	}
+	public String getHotelNames() {
+		String hotelNames = "";
+		for (Hotel hotel : getHotels()) {
+			hotelNames += hotel.getWorkPlace().getDescription() + "; ";
+		}
+		return StringUtils.removeEnd(hotelNames, "; ");
 	}
 
-	public Customer getAgency() {
-		return agency;
+	public Customer[] getAgencies() {
+		return agencies;
 	}
-	public void setAgency(Customer agency) {
-		this.agency = agency;
+	public void setAgencies(Customer[] agencies) {
+		this.agencies = agencies;
+	}
+	public String getAgencyNames() {
+		String agencyNames = "";
+		for (Customer agency : getAgencies()) {
+			agencyNames += agency.getRegistry().getFullName() + "; ";
+		}
+		return StringUtils.removeEnd(agencyNames, "; ");
 	}
 
-	public InvoicingGroup getAgencyGroup() {
-		return agencyGroup;
+	public InvoicingGroup[] getAgencyGroups() {
+		return agencyGroups;
 	}
-	public void setAgencyGroup(InvoicingGroup agencyGroup) {
-		this.agencyGroup = agencyGroup;
+	public void setAgencyGroups(InvoicingGroup[] agencyGroups) {
+		this.agencyGroups = agencyGroups;
+	}
+	public String getAgencyGroupNames() {
+		String agencyGroupNames = "";
+		for (InvoicingGroup agencyGroup : getAgencyGroups()) {
+			agencyGroupNames += agencyGroup.getDescription() + "; ";
+		}
+		return StringUtils.removeEnd(agencyGroupNames, "; ");
 	}
 
 	public Date getFromDate() {
@@ -103,11 +124,11 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		this.breakdownType = breakdownType;
 	}
 
-	public String[] getAgencies() {
-		return agencies;
+	public String[] getAgencyList() {
+		return agencyList;
 	}
-	public void setAgencies(String[] agencies) {
-		this.agencies = agencies;
+	public void setAgencyList(String[] agencyList) {
+		this.agencyList = agencyList;
 	}
 
 	public Map<String, AgencyBreakdown> getAgencyBreakdownMap() {
@@ -125,15 +146,11 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	}
 
 	public void onInit(ActionEvent event) {
-		setHotel(null);
-		setAgency(null);
-		setAgencyGroup(null);
-		if (getFromDate() == null) {
-			setFromDate(new Date());
-		}
-		if (getToDate() == null) {
-			setToDate(DateUtils.addWeeks(new Date(), 2));
-		}
+		setHotels(null);
+		setAgencies(null);
+		setAgencyGroups(null);
+		setFromDate(new Date());
+		setToDate(DateUtils.addWeeks(new Date(), 2));
 		setBreakdownType(null);
 	}
 	
@@ -219,8 +236,8 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 					}
 				}
 
-				if (!ArrayUtils.contains(agencies, agency) && isRequestedAgency(agency)) {
-					agencies = (String[])ArrayUtils.add(agencies, agency);
+				if (!ArrayUtils.contains(agencyList, agency) && isRequestedAgency(agency)) {
+					agencyList = (String[])ArrayUtils.add(agencyList, agency);
 					agencyBreakdownMap.put(agency, new AgencyBreakdown());
 				}
 			}
@@ -323,7 +340,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	}
 	
 	private void initializeAgencyList() {
-		agencies = ArrayUtils.EMPTY_STRING_ARRAY;
+		agencyList = ArrayUtils.EMPTY_STRING_ARRAY;
 		agencyBreakdownMap = new HashMap<String, AgencyBreakdown>();
 	}
 
@@ -468,26 +485,34 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 
 	private String getHotelIds() throws ManagerBeanException {
 		String hotelIds = "";
-		if (getHotel() != null) {
-			hotelIds = getHotel().getId().toString();
+		if (ArrayUtils.isNotEmpty(getHotels())) {
+			for (Hotel hotel : getHotels()) {
+				hotelIds += hotel.getId() + ",";
+			}
 		} else {
 			PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 			hotelIds = StringUtils.join(collectionsController.getCurrentUserHotelIds(), ",");
 		}
-		return hotelIds;
+		return StringUtils.removeEnd(hotelIds, ",");
 	}
 
-	private boolean isRequestedAgency(String agency) {
-		if ((getAgency() != null && getAgency().getId() != null) || (getAgencyGroup() != null && getAgencyGroup().getId() != null)) {
-			if (getAgency() != null && getAgency().getId() != null) {
-				String alias = StringUtils.isEmpty(getAgency().getRegistry().getAlias()) ? getAgency().getRegistry().getName() : getAgency().getRegistry().getAlias();
-				return agency.equals(alias);
+	private boolean isRequestedAgency(String agencyName) {
+		if (ArrayUtils.isNotEmpty(getAgencies()) || ArrayUtils.isNotEmpty(getAgencyGroups())) {
+			for (Customer agency : getAgencies()) {
+				String alias = StringUtils.isEmpty(agency.getRegistry().getAlias()) ? agency.getRegistry().getName() : agency.getRegistry().getAlias();
+				if (agencyName.equals(alias)) {
+					return true;
+				}
 			}
-			if (getAgencyGroup() != null && getAgencyGroup().getId() != null) {
-				return agency.equals(getAgencyGroup().getDescription());
+			for (InvoicingGroup agencyGroup : getAgencyGroups()) {
+				if (agencyName.equals(agencyGroup.getDescription())) {
+					return true;
+				}
 			}
+		} else {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	private boolean isRoomTypeBreakdown() {
@@ -527,7 +552,7 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 				if (dayBooking.getRoomFreePotential() < 0) {
 					paintCell(report, freePotentialCell, HSSFColor.RED.index);
 				}
-				for (String agency : agencies) {
+				for (String agency : agencyList) {
 					DayAgencyBooking agencyBooking = dayBooking.getAgencyBookingMap().get(agency);
 					report.exportColumn(metadata.getColumns().get(10), (agencyBooking != null) ? agencyBooking.getRoomAllotment() : null);
 					HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(11), (agencyBooking != null) ? agencyBooking.getRoomBusy() : null);
@@ -588,13 +613,13 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 		cellFont.setColor(HSSFColor.BLUE.index);
 	    cellStyleBlue.setFont(cellFont);
-		for (int i=0, from=10, to=10; i<agencies.length; i++, from=to) {
-			report.addHeaderCell(agencies[i], 0, cellStyleBlue);
+		for (int i=0, from=10, to=10; i<agencyList.length; i++, from=to) {
+			report.addHeaderCell(agencyList[i], 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
 			to = to + 3;
-			if (agencyBreakdownMap.containsKey(agencies[i])) {
-				for (int j=0; j<agencyBreakdownMap.get(agencies[i]).getBreakdowns().size(); j++) {
+			if (agencyBreakdownMap.containsKey(agencyList[i])) {
+				for (int j=0; j<agencyBreakdownMap.get(agencyList[i]).getBreakdowns().size(); j++) {
 					report.addHeaderCell("", 0, cellStyleBlue);
 					to++;
 				}
@@ -613,12 +638,12 @@ public class AllotmentBookingController extends DataScrollerState implements ISQ
 		metadata.getColumns().add(new ReportColumnMetadata("roomAvailable", Types.INTEGER, "DISP.", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBusyPotential", Types.INTEGER, "OCUP.", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomFreePotential", Types.INTEGER, "LIBRE", 30));
-		for (int i=0; i<agencies.length; i++) {
+		for (int i=0; i<agencyList.length; i++) {
 			metadata.getColumns().add(new ReportColumnMetadata("agencyAllotment", Types.INTEGER, "CUPO", 30));
 			metadata.getColumns().add(new ReportColumnMetadata("agencyBusy", Types.INTEGER, "OCUP.", 30));
-			if (agencyBreakdownMap.containsKey(agencies[i])) {
-				for (int j=0; j<agencyBreakdownMap.get(agencies[i]).getBreakdowns().size(); j++) {
-					String breakdown = agencyBreakdownMap.get(agencies[i]).getBreakdowns().get(j);
+			if (agencyBreakdownMap.containsKey(agencyList[i])) {
+				for (int j=0; j<agencyBreakdownMap.get(agencyList[i]).getBreakdowns().size(); j++) {
+					String breakdown = agencyBreakdownMap.get(agencyList[i]).getBreakdowns().get(j);
 					metadata.getColumns().add(new ReportColumnMetadata("agencyBusy_" + breakdown, Types.INTEGER, breakdown, 30));
 				}
 			}

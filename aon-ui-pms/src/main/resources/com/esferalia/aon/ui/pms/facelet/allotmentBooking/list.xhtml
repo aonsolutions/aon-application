@@ -20,7 +20,6 @@
 						styleClass="aon-finding-toolbar-item aon-icon-search" 
 						value="#{bundle.aon_search}" 
 						action="allotmentBooking_search"
-						actionListener="#{allotmentBooking.onInit}"
 						accesskey="#{bundle.aon_key_search}" />
 					<aon:htmlCommandLink id="allotmentBooking-excel-report"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
@@ -34,17 +33,23 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
-					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic"
+						rendered="#{!empty allotmentBooking.hotels}" />
 					<aon:outputText styleClass="aon-margin-left aon-bold"
-						value="#{(allotmentBooking.hotel!=null and allotmentBooking.hotel.id!=null) ? (allotmentBooking.hotel.workPlace.description) : ('-')}" />
+						value="#{allotmentBooking.hotelNames}"
+						rendered="#{!empty allotmentBooking.hotels}" />
 
-					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-margin-left aon-italic"/>
+					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-margin-left aon-italic"
+						rendered="#{!empty allotmentBooking.agencies}" />
 					<aon:outputText styleClass="aon-margin-left aon-bold"
-						value="#{(allotmentBooking.agency!=null and allotmentBooking.agency.id!=null) ? (allotmentBooking.agency.registry.fullName) : ('-')}" />
+						value="#{allotmentBooking.agencyNames}"
+						rendered="#{!empty allotmentBooking.agencies}" />
 
-					<aon:outputText value="#{bundle.aon_group}:" styleClass="aon-margin-left aon-italic"/>
+					<aon:outputText value="#{bundle.aon_group}:" styleClass="aon-margin-left aon-italic"
+						rendered="#{!empty allotmentBooking.agencyGroups}" />
 					<aon:outputText styleClass="aon-margin-left aon-bold"
-						value="#{(allotmentBooking.agencyGroup!=null and allotmentBooking.agencyGroup.id!=null) ? (allotmentBooking.agencyGroup.description) : ('-')}" />
+						value="#{allotmentBooking.agencyGroupNames}" 
+						rendered="#{!empty allotmentBooking.agencyGroups}" />
 				</aon:panel>
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -67,7 +72,7 @@
 									<aon:outputText value="Potencial" />
 								</rich:column>
 
-								<c:forEach items="#{allotmentBooking.agencies}" var="agency">
+								<c:forEach items="#{allotmentBooking.agencyList}" var="agency">
 									<rich:column colspan="#{allotmentBooking.agencyBreakdownMap[agency].breakdownsSize}">
 										<aon:outputText style="color:blue; font-size:0.8em;"
 											value="#{agency}">
@@ -152,7 +157,7 @@
 								value="#{to.roomFreePotential}" />
 						</aon:column>				
 
-						<c:forEach items="#{allotmentBooking.agencies}" var="agency" varStatus="agencyIdx" begin="0" step="1">
+						<c:forEach items="#{allotmentBooking.agencyList}" var="agency" varStatus="agencyIdx" begin="0" step="1">
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
  								<f:facet name="header">
