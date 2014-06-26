@@ -33,6 +33,7 @@ import com.code.aon.config.TariffAddInfo;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
@@ -542,19 +543,10 @@ public class ReservationUtils implements IReservationConstants {
 				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context.toUpperCase());
 				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), code);
 				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
-				RegistryAddInfo rAddInfo = null;
 				for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-					rAddInfo = (RegistryAddInfo)ito;
-					break;
-				}
-
-				if (rAddInfo != null) {
-					IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-					criteria = new Criteria();
-					criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), rAddInfo.getRegistry().getId());
-					criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_DOMAIN), domain);
-					for (ITransferObject ito : customerBean.getList(criteria)) {
-						return (Customer)ito;
+					Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(((RegistryAddInfo)ito).getRegistry().getId());
+					if (customer != null && customer.getDomain() == domain && customer.getStatus() == CustomerStatus.ACTIVE) {
+						return customer;
 					}
 				}
 			}
