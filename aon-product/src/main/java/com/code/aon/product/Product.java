@@ -80,9 +80,18 @@ public class Product extends ProductDB {
 				ProductTag pt = (ProductTag) to;
 				tags.add(pt.getTag().getName());
 			}
-			return StringUtils.join(tags, ", ");
+			return StringUtils.join(tags, "| ");
 		}
 		return null;
+	}	
+
+	@Transient
+	public String getFullName() throws ManagerBeanException {
+		String tags = getTagList();
+		if (! StringUtils.isEmpty(tags)) {
+			return getName() + " (" + tags + ")";
+		}
+		return getName();
 	}	
 	
 }

@@ -302,7 +302,8 @@
 		<collection provider="#{consumptionControl}" forceRefresh="false"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />			
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="printHeaders" value="#{consumptionControl.isPrintHeader}" />			
 			<param id="inventoryBefore" value="#{consumptionControl.getInventoryBefore}" />
 			<param id="inventoryAfter" value="#{consumptionControl.getInventoryAfter}" />
 		</params>

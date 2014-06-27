@@ -24,6 +24,8 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Inventory;
@@ -45,6 +47,7 @@ public class ConsumptionControlController implements ICollectionProvider {
 	private List<Inventory> inventories;
 	private Inventory inventoryBefore;
 	private Inventory inventoryAfter;
+	private boolean printHeader;
 	
 	public Warehouse getWarehouse() {
 		return warehouse;
@@ -102,11 +105,11 @@ public class ConsumptionControlController implements ICollectionProvider {
 	public void onWarehouseChanged(ActionEvent event) {
 		try {
 			inventories = getInventories(getWarehouse());
-			beforeInventories = getList(inventories, 0, inventories.size()-1);
-			afterInventories = getList(inventories, 1, inventories.size());
+			beforeInventories = getList(inventories, 1, inventories.size());
+			afterInventories = getList(inventories, 0, inventories.size()-1);
 			if ( inventories.size() == 2 ) {
-				setInventoryBefore(inventories.get(0));
-				setInventoryAfter(inventories.get(1));
+				setInventoryAfter(inventories.get(0));
+				setInventoryBefore(inventories.get(1));
 			}
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error(e.getMessage(), e);
@@ -114,22 +117,22 @@ public class ConsumptionControlController implements ICollectionProvider {
 	}
 
 	public void onInventoryBeforeChanged(ActionEvent event) {
-		int index = Math.max(inventories.indexOf(inventoryBefore), 0);
-		afterInventories = getList(inventories, index+1, inventories.size());
+		int index = Math.max(inventories.indexOf(inventoryBefore), inventories.size());
+		afterInventories = getList(inventories, 0, index);
 		if ( afterInventories.size() == 1 ) {
 			Inventory inventory = (Inventory) afterInventories.get(0).getValue();
 			setInventoryAfter(inventory);
-		} else if ( inventories.indexOf(inventoryAfter) < (index+1) ) {
-			setInventoryAfter(null);
 		}
 	}
-
+	
 	public void onInventoryAfterChanged(ActionEvent event) {
-		int index = Math.max(inventories.indexOf(inventoryAfter), inventories.size());
-		beforeInventories = getList(inventories, 0, index);
+		int index = Math.max(inventories.indexOf(inventoryAfter), 0);
+		beforeInventories = getList(inventories, index+1, inventories.size());
 		if ( beforeInventories.size() == 1 ) {
 			Inventory inventory = (Inventory) beforeInventories.get(0).getValue();
 			setInventoryBefore(inventory);
+		} else if ( inventories.indexOf(inventoryBefore) < (index+1) ) {
+			setInventoryBefore(null);
 		}		
 	}
 	
@@ -151,7 +154,7 @@ public class ConsumptionControlController implements ICollectionProvider {
 		IManagerBean bean = BeanManager.getManagerBean(Inventory.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_WAREHOUSE_ID), warehouse.getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.INVENTORY_INVENTORY_DATE));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.INVENTORY_INVENTORY_DATE), false);
 		return (List) bean.getList(criteria);
 	}
 	
@@ -217,6 +220,15 @@ public class ConsumptionControlController implements ICollectionProvider {
 		fill(inventoryBefore, true, map);
 		fill(inventoryAfter, false, map);
 		return map.values();
+	}
+	
+	public boolean isPrintHeader() {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		return controller.isPrintHeader() && this.printHeader;
+	}
+
+	public void setPrintHeader(boolean printHeader) {
+		this.printHeader = printHeader;
 	}
 
 	public static class Consumption {

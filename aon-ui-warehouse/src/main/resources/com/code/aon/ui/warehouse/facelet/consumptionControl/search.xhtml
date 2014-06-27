@@ -32,16 +32,6 @@
 						<f:selectItems value="#{controller.warehouses}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Stock_beforeInventory"
-						value="#{bundle.warehouse_inventory_before}" />
-					<aon:selectOneMenu id="Stock_beforeInventory"
-						reRender="Stock_afterInventory,reportButtons"
-						actionListener="#{controller.onInventoryBeforeChanged}"
-						value="#{controller.inventoryBefore}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{controller.beforeInventories}" />
-					</aon:selectOneMenu>
-
 					<aon:outputLabel for="Stock_afterInventory"
 						value="#{bundle.warehouse_inventory_after}" />
 					<aon:selectOneMenu id="Stock_afterInventory"
@@ -50,6 +40,16 @@
 						value="#{controller.inventoryAfter}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{controller.afterInventories}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Stock_beforeInventory"
+						value="#{bundle.warehouse_inventory_before}" />
+					<aon:selectOneMenu id="Stock_beforeInventory"
+						reRender="Stock_afterInventory,reportButtons"
+						actionListener="#{controller.onInventoryBeforeChanged}"
+						value="#{controller.inventoryBefore}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{controller.beforeInventories}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText value="" />
@@ -66,6 +66,8 @@
 									styleClass="aon-icon-commandButton aon-icon-pdf">
 									<f:param name="reportKey" value="consumptionControl" />
 									<f:param name="outputFormat" value="PDF" />
+									<f:setPropertyActionListener
+										target="#{controller.printHeader}" value="#{true}" />									
 								</aon:htmlCommandLink>
 							</aon:div>
 						</aon:div>
@@ -80,6 +82,8 @@
 									styleClass="aon-icon-commandButton aon-icon-excel">
 									<f:param name="reportKey" value="consumptionControl" />
 									<f:param name="outputFormat" value="MS Excel" />
+									<f:setPropertyActionListener
+										target="#{controller.printHeader}" value="#{false}" />									
 								</aon:htmlCommandLink>
 							</aon:div>
 						</aon:div>
