@@ -12,7 +12,6 @@ public class Mod200ConstantsValidation {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
-	
 	private static final int PAGE08 = 8;
 	private static final int PAGE09 = 9;
 	private static final int PAGE10 = 10;
@@ -31,6 +30,7 @@ public class Mod200ConstantsValidation {
 	private static final String MSG6 = "\"Deducción aplicada en esta liquidación\" mayor que \"Deducción pendiente\"";
 	
 	public static List<ValidationMessage> ERROR_EXPRESSION_LIST = new LinkedList<ValidationMessage>();
+	/*	
 	
 	static {
 		// if (TRUE) --> ERROR
@@ -376,4 +376,5 @@ public class Mod200ConstantsValidation {
 
 
 	}
+*/	
 }

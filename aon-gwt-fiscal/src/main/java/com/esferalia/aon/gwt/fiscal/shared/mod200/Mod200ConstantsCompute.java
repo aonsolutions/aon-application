@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Mod200ConstantsCompute {
-	
 	public static Map<String,String> COMPUTE_EXPRESSION_MAP = new HashMap<String,String>();
+/*	
 	
 	static {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA101.toString(),"BA102 + BA111 + BA115 + BA118 + BA126 + BA134 + BA135");
@@ -157,14 +157,14 @@ public class Mod200ConstantsCompute {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN571.toString(),"BN121 + BN125 + BN129");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN133.toString(),"BN122 + BN126 + BN130");
 				
-/*		
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN103.toString(),
-				"(C0017 || C0017 || C0012 || C0057 || (C0013 && LQ562 >= LQ556) || (C0019 && C0030) || (C0019 && C0047))"
-						+ "?(BN103)"
-						+ ":((C0013)"
-							+ "?(LQ562 / (LQ556 * 100))"
-							+ ": (LQ562 / (LQ552 x 100)))");
-*/		
+		
+//		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN103.toString(),
+//				"(C0017 || C0017 || C0012 || C0057 || (C0013 && LQ562 >= LQ556) || (C0019 && C0030) || (C0019 && C0047))"
+//						+ "?(BN103)"
+//						+ ":((C0013)"
+//							+ "?(LQ562 / (LQ556 * 100))"
+//							+ ": (LQ562 / (LQ552 x 100)))");
+		
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN582.toString(),"LQ562 - (BN567 + BN568 + BN563 + BN566 + BN576 + BN569 + BN570 + BN571 + BN564 + BN572 + BN573 + BN575 + BN577 + BN581)");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN585.toString(),"BN836 + BN839 + BN933 + BN298 + BN091 + BN005 + BN032 + BN023 + BN041 + BN139 + BN142 + BN189");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN584.toString(),"BN750 + BN753 + BN756 + BN759 + BN762 + BN745");
@@ -181,6 +181,7 @@ public class Mod200ConstantsCompute {
 				+"BN867 + BN940 + BN192 + BN614 + BN257 + BN038 + BN045 + BN529 + BN145 + BN148 + BN853");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN592.toString(), 
 				"BN582 - (BN583 + BN585 + BN584 + BN588 + BN082 + BN565 + BN590 + BN399)");
+
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN599.toString(),
 				"C0028?(TR625 / 100 * (BN592 - BN595 - BN596 - BN597 - BN408 -BN150)):(BN592 - BN595 - BN596 - BN597 - BN408 -BN150)");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BN600.toString(),
@@ -202,6 +203,7 @@ public class Mod200ConstantsCompute {
 //		COMPUTE_EXPRESSION_MAP.put(Mod200Key.ID004.toString(),"ID001 + ID002 + ID003");
 //		COMPUTE_EXPRESSION_MAP.put(Mod200Key.ID014.toString(),"ID005 + ID006 + ID007 + ID008 + ID009 + ID010 + ID011 + ID012 + ID013");
 	}
+*/		
 
 }
 

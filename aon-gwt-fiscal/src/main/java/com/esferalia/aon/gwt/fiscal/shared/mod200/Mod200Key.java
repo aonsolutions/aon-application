@@ -77,7 +77,7 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,C0053(new String[]{null,null,null,null,"039"},"Balance y ECPN. Normal")
 	,C0054(new String[]{null,null,null,null,"039"},"Balance y ECPN. Abreviado")
 	,C0055(new String[]{null,null,null,null,"039"},"Balance y ECPN. PYMES")
-
+/*
 	,BA101(new String[]{null,null,null,null,"101"},"ACTIVO NO CORRIENTE (N, A, P)")
 	,BA102(new String[]{null,null,null,null,"102"},"Inmovilizado intangible (N, A, P)")
 	,BA103(new String[]{null,null,null,null,"103"},"Desarrollo (N)")
@@ -751,7 +751,7 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,D0368(new String[]{null,null,null,null,"368"},"Subvenciones p\u00FAblicas incluidas en el resultado del ejercicio, no integrables en la base imponible")
 	,D0414(new String[]{null,null,null,null,"414"},"Otras correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias")
 	,D0418(new String[]{null,null,null,null,"418"},"Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias")
-	
+*/	
 	,LQ578(new String[]{null,null,null,null,"578"},"Base imponible de actividades o rentas que tributen en r\u00E9gimen general")
 	,LQ579(new String[]{null,null,null,null,"579"},"Base imponible derivada de la aplicaci\u00F3n del r\u00E9gimen especial")
 	,LQ550(new String[]{null,null,null,null,"550"},"Base imponible antes de la compensaci\u00F3n de bases imponibles negativas")
@@ -1361,7 +1361,7 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,BN620(new String[]{null,null,null,null,"620"},"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (D. Forales / Navarra)")
 	,BN621(new String[]{null,null,null,null,"621"},"L\u00EDquido a ingresar o a devolver (Estado)")
 	,BN622(new String[]{null,null,null,null,"622"},"L\u00EDquido a ingresar o a devolver (D. Forales / Navarra)")
-	
+/*	
 	,ID650(new String[]{null,null,null,null,"650"},"P\u00E9rdidas y ganancias")
 	,ID651(new String[]{null,null,null,null,"651"},"Remanente")
 	,ID652(new String[]{null,null,null,null,"652"},"Reservas")
@@ -1484,6 +1484,7 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,TR496(new String[]{null,null,null,null,"496"},"Líquido a ingresar o a devolver. BIZKAIA")
 	,TR497(new String[]{null,null,null,null,"497"},"Líquido a ingresar o a devolver. NAVARRA")
 	,TR622(new String[]{null,null,null,null,"622"},"Líquido a ingresar o a devolver. TOTAL")
+*/	
 	;
 	
 	private  String[] codes;

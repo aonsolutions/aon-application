@@ -16,7 +16,6 @@
 	<extend-property name="locale" values="es_ES" />
 
 	<set-property-fallback name="locale" value="es_ES" />
-
 	<set-property name="user.agent" value="gecko1_8" />
 	<extend-property name="user.agent" values="safari" />
 	<extend-property name="user.agent" values="ie6" />

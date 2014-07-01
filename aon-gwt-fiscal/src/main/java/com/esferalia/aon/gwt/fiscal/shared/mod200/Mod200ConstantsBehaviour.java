@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Mod200ConstantsBehaviour {
-	
 	public static Map<String,Boolean[]> BEHAVIOUR_KEYS_MAP = new HashMap<String, Boolean[]>();
+	/*	
 
 	static {
 		// Elemento 0 ---> isTitle?
@@ -452,11 +452,12 @@ public class Mod200ConstantsBehaviour {
 		
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN582.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN592.toString(),new Boolean[]{TRUE,FALSE});
+
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN599.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN611.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN621.toString(),new Boolean[]{TRUE,FALSE});
 
 	}
-
+*/
 }
 
