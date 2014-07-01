@@ -529,6 +529,26 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		}
 		
 	}
+	
+	public void undoContractExtension() {
+		if( isProrrogaFile() ){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+				if(getGeneratedFile()!=null && getGeneratedFile().getId()!=null){
+					bean.remove(getGeneratedFile().getId());
+				}
+				if(getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null){
+					bean.remove(getCommunicationIdFile().getId());
+				}
+				if(getResponseFile()!=null && getResponseFile().getId()!=null){
+					bean.remove(getResponseFile().getId());
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Imposible borrar los datos de la prorroga (ficheros SEPE). (" +e.getMessage() + ")";
+				throw new AbortProcessingException(msg,e);
+			}
+		}
+	}
 
 	public boolean validateContrataData() {
 		if(getContract()!=null && getBatch()==null){

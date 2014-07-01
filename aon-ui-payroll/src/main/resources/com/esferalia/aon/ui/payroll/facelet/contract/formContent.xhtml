@@ -78,6 +78,10 @@
 		<aon:div rendered="#{!contract.params.retaQuote}">
 			<aon:div rendered="#{contract.extendedContract}">
 				<aon:outputText value="Contrato prorrogado" />
+				<aon:commandButton value="&#160;" title="Eliminar prórroga"
+					styleClass="aon-finding-toolbar-item aon-icon-rubber aon-finding-toolbar-item-no-border aon-margin-left"
+					actionListener="#{contract.onUndoContractExtension}" 
+					reRender="contractForm" ajaxSingle="true" />
 			</aon:div>
 			<c:if test="#{contract.new}" >
 				<aon:selectOneMenu id="Contract_contractCode" required="true"

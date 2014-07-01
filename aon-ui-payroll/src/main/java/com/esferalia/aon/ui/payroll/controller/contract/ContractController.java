@@ -92,9 +92,6 @@ import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
-import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
@@ -1167,6 +1164,25 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public void onUndoContractExtension(ActionEvent event){
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		contrataController.undoContractExtension();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+			ContractInfo info = SEPEUtils.getInstance().getContractInfoMap((Contract)this.getTo(), null, null).get(ContractVariable.SEPE_EXTENSION.getValue());
+			if(info!=null && info.getId()!=null){
+				bean.remove(info.getId());
+			}
+			info = SEPEUtils.getInstance().getContractInfoMap((Contract)this.getTo(), null, null).get(ContractVariable.SEPE_EXTENSION_ID.getValue());
+			if(info!=null && info.getId()!=null){
+				bean.remove(info.getId());
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible borrar los datos de la prorroga (INFO). (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
 	public List<SelectItem> getSepeStatuses(){
 		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
 		SelectItem item = new SelectItem(ContractSepeStatus.PENDING, "Pendiente");
@@ -1772,20 +1788,23 @@ public class ContractController extends BasicController {
 		private Double weekHours;
 		
 		private Double[] weekDayHours = new Double[7];
-//		private Double mondayHours;
-//		private Double tuesdayHours;
-//		private Double wednesdayHours;
-//		private Double thursdayHours;
-//		private Double fridayHours;
-//		private Double saturdayHours;
-//		private Double sundayHours;
-		
+
 		
 		private TLDCAUSS suspensionCause;
 		private String contractEndCode;
 		private String contractEndDescription;
 		private Integer settleAdvanceNoticeDays;
 		
+		private String sepeContractId;
+		
+		
+		
+		public String getSepeContractId() {
+			return sepeContractId;
+		}
+		public void setSepeContractId(String sepeContractId) {
+			this.sepeContractId = sepeContractId;
+		}
 		public ContractInfo getSepeStatusInfo() {
 			return sepeStatusInfo;
 		}
