@@ -200,6 +200,9 @@ public class ReservationManager implements IReservationConstants {
 			String operationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
 			Date checkIn = reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime();
 			Date checkOut = reservationType.getResGlobalInfo().getTimeSpan().getEnd().getTime();
+			if (DateUtils.truncate(checkIn, Calendar.DATE).before(DateUtils.truncate(new Date(), Calendar.DATE))) {
+				throw new ReservationException("Invalid Check-in Date", reservationCrsCode, 381);
+			}
 			SourceType sellerSource = findPosSource(posType.getSourceArray(), CRO_SOURCE);
 			ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, SOLRES);
 			if (agencyInfo == null) {
