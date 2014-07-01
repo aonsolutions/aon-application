@@ -196,6 +196,15 @@
 		<servlet-name>OAuth2CallbackServlet</servlet-name>
 		<url-pattern>/oauth2callback/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Common Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.common.server.CommonServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Common Servlet</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Common</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>Fiscal Servlet</servlet-name>
@@ -204,6 +213,15 @@
 	<servlet-mapping>
 		<servlet-name>Fiscal Servlet</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Fiscal</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Mod200 Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod200ServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mod200 Servlet</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Mod200</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

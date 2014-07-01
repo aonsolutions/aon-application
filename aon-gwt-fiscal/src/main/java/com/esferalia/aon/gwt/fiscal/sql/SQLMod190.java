@@ -10,11 +10,12 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IrpfData;
 import com.esferalia.aon.gwt.fiscal.shared.IrpfResult;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
-import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;

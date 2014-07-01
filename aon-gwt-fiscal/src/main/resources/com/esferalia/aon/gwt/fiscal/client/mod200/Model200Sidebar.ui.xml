@@ -1,0 +1,94 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:ScrollPanel styleName="{aonResources.css.aonLinkPanel}">
+		<g:FlowPanel styleName="{aonResources.css.aonLinkContainer}">
+			<g:FocusPanel ui:field='linkPage00' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.identification}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage01' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.administratorList}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			
+			<g:FocusPanel ui:field='linkPage02' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.participations}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			
+			<g:FocusPanel ui:field='linkPage03' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.balanceActivo}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage04' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.balancePasivo}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage05' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.pyg}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage06' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.patrimonioIngresos}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage07' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.patrimonioCambios}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage08' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.liquidacionI}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+
+			<g:FocusPanel ui:field='linkPage09' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.liquidacionII}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			
+			<g:FocusPanel ui:field='linkPage10' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.liquidacionIII}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			<g:FocusPanel ui:field='linkPage11' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.liquidacionIV}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			<g:FocusPanel ui:field='linkPage12' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.incomeDistribution}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			<g:FocusPanel ui:field='linkPage13' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.deducibleLimitation}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+		</g:FlowPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

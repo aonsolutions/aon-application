@@ -2,13 +2,13 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
-import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.fiscal.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.fiscal.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.Address;
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.google.gwt.core.client.GWT;

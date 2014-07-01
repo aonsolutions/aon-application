@@ -1,0 +1,124 @@
+package com.esferalia.aon.accounting.mining.sql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.esferalia.aon.accounting.mining.shared.AccMiningException;
+import com.esferalia.aon.accounting.mining.shared.AccMiningParameters;
+import com.esferalia.aon.accounting.mining.shared.AccountBalance;
+import com.esferalia.aon.accounting.mining.shared.AccountingPeriod;
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.sql.SQLUtils;
+
+public class SQLAccounting {
+
+	//@formatter:off
+	private static final String SELECT_PERIOD = 
+			"SELECT id,initiation_date,deadline,status"
+			+" FROM account_period"
+			+" WHERE domain = ?"
+			+" AND name = ?";
+	private static final String SELECT = "SELECT SUBSTRING(a.code,1,4) acc, SUM(aed.debit), SUM(aed.credit)" 
+			+" FROM account_entry ae" 
+			+" INNER JOIN account_entry_detail aed on aed.account_entry = ae.id" 
+			+" INNER JOIN account a on aed.account = a.id" 
+			+" where ae.domain = ? "
+			+" AND ae.entry_date BETWEEN ? AND ?"
+			+" AND ae.entry_type != 1"
+			+" AND ("
+			+" 	    (ae.entry_type = 2 AND SUBSTRING(a.code,1,1) NOT IN ('6','7'))"
+			+"	 OR (ae.entry_type NOT IN (1,2) )"
+			+"	  )"
+			+" GROUP BY acc";
+	//@formatter:on
+
+	public static AccountingPeriod getPeriod(int domain,int year, Connection conn)
+			throws AonSQLException {
+		String select = SELECT_PERIOD;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			stmt.setInt(1, domain);
+			stmt.setString(2, Integer.toString(year));
+			rs = stmt.executeQuery();
+			AccountingPeriod period = new AccountingPeriod();
+			while (rs.next()) {
+				period.setId(rs.getInt(1));
+				period.setStart(rs.getDate(2));
+				period.setEnd(rs.getDate(3));
+				period.setClosed( rs.getInt(4) == 4);
+			}
+			return period;
+		} catch (Throwable e) {
+			throw new AonSQLException(e);
+		} finally {
+			SQLUtils.closeQuietly(rs);
+			SQLUtils.closeQuietly(stmt);
+		}
+	}
+
+	public static synchronized Map<String, AccountBalance> getAccountBalances(Connection conn, AccMiningParameters params) throws AccMiningException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement(SELECT);
+			ps.setInt(1, params.getDomain());
+			ps.setDate(2, new java.sql.Date(params.getStartDate().getTime()));
+			ps.setDate(3, new java.sql.Date(params.getEndDate().getTime()));
+			rs = ps.executeQuery();
+			Map<String, AccountBalance> map = new HashMap<String, AccountBalance>();
+			String account = null;
+			double debit;
+			double credit;
+			while (rs.next()) {
+				debit = rs.getDouble(2);
+				credit = rs.getDouble(3);
+				account = rs.getString(1);
+				putAccountBalance(map,account.substring(0,1), debit,credit);
+				putAccountBalance(map,account.substring(0,2), debit,credit);
+				putAccountBalance(map,account.substring(0,3), debit,credit);
+				putAccountBalance(map,account, debit,credit);
+			}
+			return map;
+		} catch (SQLException e) {
+			throw new AccMiningException(e.getMessage(),e); 
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+		}
+	}
+
+	private static void putAccountBalance(Map<String, AccountBalance> map,String account,double debit, double credit) {
+		if (map.containsKey(account)) {
+			AccountBalance ac = map.get(account);
+			ac.add(debit, credit);
+		} else {
+			map.put(account, new AccountBalance(debit,credit));	
+		}
+	}
+    
+    public static void closeQuietly(PreparedStatement ps) {
+		if (ps != null) {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+    
+    public static void closeQuietly(ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+	
+}

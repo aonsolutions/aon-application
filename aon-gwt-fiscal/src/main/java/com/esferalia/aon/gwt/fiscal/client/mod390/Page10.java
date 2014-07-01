@@ -1,9 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
-import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;

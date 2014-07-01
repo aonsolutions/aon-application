@@ -2,21 +2,21 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.ArrayList;
 
-import com.esferalia.aon.gwt.fiscal.client.DialogMessages;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
+import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
+import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.fiscal.client.css.AonCellTable;
-import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
-import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
@@ -66,7 +66,7 @@ public class Model390 extends MainEntryPoint {
 
 	private Mod390 mod390;
 	private FiscalServiceAsync fiscalService;
-	private final static FiscalMessages MSG = GWT.create(FiscalMessages.class);
+	private final static CommonMessages MSG = GWT.create(CommonMessages.class);
 	private final static AonResources RESOURCES = GWT.create(AonResources.class);
 
 	@UiField

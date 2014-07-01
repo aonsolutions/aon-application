@@ -134,6 +134,7 @@
 		<module>aon-ui-sepe</module>
 
 		<!-- GWT MODULES -->
+		<module>aon-gwt-common</module>
 		<module>aon-gwt-visualization</module>
 		<module>aon-gwt-payroll</module>
 		<module>aon-gwt-fiscal</module>
@@ -150,7 +151,8 @@
 		<module>aon-file-payroll</module>
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
-
+		<module>aon-accounting-mining</module>
+		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>
 

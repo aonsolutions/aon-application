@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -35,7 +36,7 @@ public class AeatTest {
 			+ "                                                  "
 			+ "                                                  ";
 
-	public static void main(String[] args) throws IOException,
+	public static void main1(String[] args) throws IOException,
 			NoSuchAlgorithmException, KeyManagementException {
 		testPrint();
 	}

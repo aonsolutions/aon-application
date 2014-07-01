@@ -10,7 +10,8 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;

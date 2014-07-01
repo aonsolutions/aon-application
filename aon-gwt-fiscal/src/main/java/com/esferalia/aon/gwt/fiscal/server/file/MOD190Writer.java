@@ -16,8 +16,8 @@ import com.code.aon.file.tax.model.MOD190.Deponent;
 import com.code.aon.file.tax.model.MOD190.MOD190;
 import com.code.aon.file.tax.model.MOD190.MOD190Format;
 import com.code.aon.file.tax.model.MOD190.Receiver;
-import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
 

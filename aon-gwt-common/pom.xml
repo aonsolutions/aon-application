@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>7.36-SNAPSHOT</version>
+	</parent>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.gwt.common</artifactId>
+	<name>AON GWT COMMON</name>
+	<description>AON GWT COMMON</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.jaas</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-dbutils</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.master.jooq</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>7.0.42</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

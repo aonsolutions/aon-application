@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;

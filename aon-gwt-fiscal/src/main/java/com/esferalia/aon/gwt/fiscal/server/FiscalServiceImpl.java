@@ -1,16 +1,25 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.rollback;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
+
+import com.code.aon.accounting.util.AccountingUtil;
+import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.shared.FiscalParameters;
+import com.esferalia.aon.gwt.common.sql.SQLAppParams;
+import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.server.Activities.Type1Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.Type2Activities;
@@ -19,9 +28,7 @@ import com.esferalia.aon.gwt.fiscal.server.Activities.Type4Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.Type7Activities;
 import com.esferalia.aon.gwt.fiscal.server.Activities.TypeActivity;
 import com.esferalia.aon.gwt.fiscal.shared.Activity;
-import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
@@ -36,8 +43,6 @@ import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod180;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
-import com.esferalia.aon.gwt.fiscal.sql.SQLParams;
-import com.esferalia.aon.gwt.fiscal.sql.SQLUtils;
 
 /**
  * The server side implementation of the RPC service.
@@ -54,18 +59,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 		FiscalParameters fiscalParams = null;
 		try {
 			conn = getConnection();
-			disableAutoCommit(conn);
-			fiscalParams = SQLParams.getFiscalParameters(domain, conn);
-			commit(conn);
+			DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+			fiscalParams = SQLAppParams.getFiscalParameters(dsl,domain);
 			return fiscalParams;
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
 		} catch (Throwable e) {
-			rollback(conn);
 			throw new AonSQLException(e);
 		} finally {
-			enableAutoCommit(conn);
 			SQLUtils.closeQuietly(conn);
 		}
 	}
