@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="contractSearch">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="Impresion / eMail de Nominas" />
+				<ui:param name="controller" value="#{salaryPrint}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+			</ui:include>
+			
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{salaryPrint}" />
+				<ui:define name="searchContent">
+					
+					
+					<!--  
+				<aon:outputLabel value="#{bundle.payroll_salary_period}" />
+				<h:panelGrid columns="6" >
+					<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}" >
+						<f:selectItems value="#{commonCollections.months}"  />
+						<a4j:support event="onchange" reRender="searchPanel" ajaxSingle="true" />
+					</aon:selectOneMenu>
+					<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
+		   				inputSize="4" minValue="2013" maxValue="2020">
+		   			</rich:inputNumberSpinner>
+					-->
+					<!--  
+					<aon:outputText value="del" />
+					<rich:inputNumberSpinner value="#{salaryPrint.year}"
+		   				inputSize="2" minValue="2013" maxValue="2020">
+		   			</rich:inputNumberSpinner>
+					<aon:outputText value="al" />
+					<rich:inputNumberSpinner  value="#{salaryPrint.year}"
+		   				inputSize="2" minValue="2013" maxValue="2020">
+		   			</rich:inputNumberSpinner>
+				</h:panelGrid>
+					-->
+				
+				<aon:outputLabel value="#{bundle.payroll_salary_period}" />
+				<aon:div>
+					<aon:outputLabel value="#{bundle.aon_date_from}" styleClass="aon-italic"/>
+					<aon:selectInputDate id="Salary_fromDate"
+						value="#{salaryPrint.fromDate}" 
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+					<aon:outputLabel value="#{bundle.aon_date_to}" styleClass="aon-italic"/>
+					<aon:selectInputDate id="Salary_toDate"
+						value="#{salaryPrint.toDate}" 
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</aon:div>
+					
+				<aon:outputLabel for="Salary_type"
+					value="#{bundle.aon_type}" />
+				<aon:selectManyCheckbox id="Salary_type"
+					value="#{salaryPrint.types}" >
+					<f:selectItem itemLabel="Nómina" itemValue="SALARY" />
+					<f:selectItem itemLabel="Extra" itemValue="EXTRA" />
+					<f:selectItem itemLabel="Finiquito" itemValue="SETTLE" />
+					<f:selectItem itemLabel="Atraso" itemValue="DELAY" />
+				</aon:selectManyCheckbox>
+					
+				<c:if test="#{salaryPrint.showWorkPlaces}">
+					<aon:outputLabel for="Salary_contract_workPlace_id"
+						value="#{bundle.payroll_workplace}" />
+					<aon:selectOneMenu id="Salary_contract_workPlace_id"
+						value="#{salaryPrint.workPlace}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{salaryPrint.availableWorkPlaces}" />
+					</aon:selectOneMenu>		
+					<!-- add more minus buttons -->	
+				</c:if>
+					
+				</ui:define>
+			</ui:decorate>
+			
+		</aon:form>
+		
+	</ui:define>
+</ui:composition>

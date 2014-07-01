@@ -47,6 +47,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	private boolean showSalaryExpenseWindow;
 	private Month month;
 	private Integer year;
+	private Date startDate;
+	private Date endDate;
 	private List<ISalary> list;
 	private boolean expenseDraft;
 	private Integer activeEmployeeCount;
@@ -93,6 +95,25 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 
 	public void setMonth(Month month) {
 		this.month = month;
+		populateMonth();
+	}
+
+	private void populateMonth() {
+		if(startDate==null){
+			startDate = new Date();
+		}
+		if(endDate==null){
+			endDate = new Date();
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		cal.set(Calendar.MONTH, this.month.getValue());
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		startDate = cal.getTime();
+		cal.setTime(endDate);
+		cal.set(Calendar.MONTH, this.month.getValue());
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		endDate = cal.getTime();
 	}
 
 	public Integer getYear() {
@@ -104,21 +125,49 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 
 	public void setYear(Integer year) {
 		this.year = year;
+		populateYear();
 	}
 	
+	private void populateYear() {
+		if(startDate==null){
+			startDate = new Date();
+		}
+		if(endDate==null){
+			endDate = new Date();
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		cal.set(Calendar.YEAR, this.year);
+		startDate = cal.getTime();
+		cal.setTime(endDate);
+		cal.set(Calendar.YEAR, this.year);
+		endDate = cal.getTime();
+	}
+
 	private Date getStartDate(){
-		GregorianCalendar cal= new GregorianCalendar();
-		cal.set(getYear(), getMonth().getValue(), 1);
-		return cal.getTime();
-	}
-	private Date getEndDate(){
-		GregorianCalendar cal= new GregorianCalendar();
-		cal.set(Calendar.YEAR, getYear());
-		cal.set(Calendar.MONTH, getMonth().getValue());
-		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-		return cal.getTime();
+//		GregorianCalendar cal= new GregorianCalendar();
+//		cal.set(getYear(), getMonth().getValue(), 1);
+//		return cal.getTime();
+		return startDate;
 	}
 	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	private Date getEndDate(){
+//		GregorianCalendar cal= new GregorianCalendar();
+//		cal.set(Calendar.YEAR, getYear());
+//		cal.set(Calendar.MONTH, getMonth().getValue());
+//		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+//		return cal.getTime();
+		return endDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public List<ISalary> getList() {
 		return list;
 	}
@@ -162,6 +211,7 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
 			alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 			criteria.addLessThanOrEqualExpression(alias, getEndDate());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 			setList(new LinkedList<ISalary>());

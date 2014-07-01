@@ -2712,6 +2712,10 @@
 	<!-- ************* SALARY PRINT ************* -->
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>salaryPrint_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryPrint/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>salaryPrint_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryPrint/list.xhtml</to-view-id>
 		</navigation-case>
