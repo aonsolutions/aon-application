@@ -23,14 +23,6 @@
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
 	<!--  ************** -->
-	<table-filter match-name="instructor" exclude="true" />
-	<table-filter match-name="enterprise_agreement" exclude="true" />
-    <table-filter match-name="fs_renting" exclude="true" />
-	<table-filter match-name="fs_renting_detail" exclude="true" />
-    <table-filter match-name="fs_batch" exclude="true" />
-	<table-filter match-name="fs_batch_detail" exclude="true" />
-    <table-filter match-name="message_content" exclude="true" />
-	<table-filter match-name="message_log" exclude="true" />
 	
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
@@ -38,11 +30,14 @@
 	<table-filter match-name="db_version" exclude="true" />
 	<table-filter match-name="domain_gserviceaccount" exclude="true" />
 
-    	<table-filter match-name="booking" exclude="true" />
-    	<table-filter match-name="fs_model180" exclude="true" />
+   	<table-filter match-name="booking" exclude="true" />
+   	<table-filter match-name="fs_model180" exclude="true" />
 	<table-filter match-name="fs_model180_detail" exclude="true" />
-    	<table-filter match-name="fs_model190" exclude="true" />
+   	<table-filter match-name="fs_model190" exclude="true" />
 	<table-filter match-name="fs_model190_detail" exclude="true" />
+   	<table-filter match-name="fs_model200" exclude="true" />
+	<table-filter match-name="fs_model200_detail" exclude="true" />
+	<table-filter match-name="fs_model200_registry" exclude="true" />
 	<table-filter match-name="fs_model390" exclude="true" />
 	
 	<!--  ***************** -->
