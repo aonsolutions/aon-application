@@ -127,18 +127,18 @@ public class Page08 extends PageAbs {
 		Widget ui = page8Binder.createAndBindUi(this);
 		initWidget(ui);
 		
-//		getInputs().put(Mod200Key.LQ500, c500);
-//		getInputs().put(Mod200Key.LQ301, c301);
-//		getInputs().put(Mod200Key.LQ302, c302);
-//		getInputs().put(Mod200Key.LQ501, c501);
-//		getInputs().put(Mod200Key.I0417, c417);
-//		getInputs().put(Mod200Key.D0418, c418);
-//		getLabels().put(Mod200Key.LQ500, c500Label);
-//		getLabels().put(Mod200Key.LQ301, c301Label);
-//		getLabels().put(Mod200Key.LQ302, c302Label);
-//		getLabels().put(Mod200Key.LQ501, c501Label);
-//		getLabels().put(Mod200Key.I0417, c417Label);
-//		getLabels().put(Mod200Key.D0418, c418Label);
+		getInputs().put(Mod200Key.LQ500, c500);
+		getInputs().put(Mod200Key.LQ301, c301);
+		getInputs().put(Mod200Key.LQ302, c302);
+		getInputs().put(Mod200Key.LQ501, c501);
+		getInputs().put(Mod200Key.I0417, c417);
+		getInputs().put(Mod200Key.D0418, c418);
+		getLabels().put(Mod200Key.LQ500, c500Label);
+		getLabels().put(Mod200Key.LQ301, c301Label);
+		getLabels().put(Mod200Key.LQ302, c302Label);
+		getLabels().put(Mod200Key.LQ501, c501Label);
+		getLabels().put(Mod200Key.I0417, c417Label);
+		getLabels().put(Mod200Key.D0418, c418Label);
 	}
 	
 	private void addKeyColumn() {
@@ -301,30 +301,30 @@ public class Page08 extends PageAbs {
 	}
 	
 	
-//	@UiHandler("c500")
-//	public void onChangeC500(ChangeEvent event) {
-//		onChange(Mod200Key.LQ500, c500);
-//	}
-//	@UiHandler("c301")
-//	public void onChangeC301(ChangeEvent event) {
-//		onChange(Mod200Key.LQ301, c301);
-//	}
-//	@UiHandler("c302")
-//	public void onChangeC302(ChangeEvent event) {
-//		onChange(Mod200Key.LQ302, c302);
-//	}
-//	@UiHandler("c501")
-//	public void onChangeC501(ChangeEvent event) {
-//		onChange(Mod200Key.LQ501, c501);
-//	}
-//	@UiHandler("c417")
-//	public void onChangeC417(ChangeEvent event) {
-//		onChange(Mod200Key.I0417, c417);
-//	}
-//	@UiHandler("c418")
-//	public void onChangeC418(ChangeEvent event) {
-//		onChange(Mod200Key.D0418, c418);
-//	}
+	@UiHandler("c500")
+	public void onChangeC500(ChangeEvent event) {
+		onChange(Mod200Key.LQ500, c500);
+	}
+	@UiHandler("c301")
+	public void onChangeC301(ChangeEvent event) {
+		onChange(Mod200Key.LQ301, c301);
+	}
+	@UiHandler("c302")
+	public void onChangeC302(ChangeEvent event) {
+		onChange(Mod200Key.LQ302, c302);
+	}
+	@UiHandler("c501")
+	public void onChangeC501(ChangeEvent event) {
+		onChange(Mod200Key.LQ501, c501);
+	}
+	@UiHandler("c417")
+	public void onChangeC417(ChangeEvent event) {
+		onChange(Mod200Key.I0417, c417);
+	}
+	@UiHandler("c418")
+	public void onChangeC418(ChangeEvent event) {
+		onChange(Mod200Key.D0418, c418);
+	}
 	
 	private void onChange(Mod200Key key, DoubleTextBox text) {
 		if (!text.isValidValue()) {

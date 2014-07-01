@@ -5,8 +5,7 @@ import java.util.Map;
 
 public class Mod200ConstantsCompute {
 	public static Map<String,String> COMPUTE_EXPRESSION_MAP = new HashMap<String,String>();
-/*	
-	
+
 	static {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA101.toString(),"BA102 + BA111 + BA115 + BA118 + BA126 + BA134 + BA135");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA102.toString(),"BA103 + BA104 + BA105 + BA106 + BA107 + BA108 + BA109 + BA700 + BA701 + BA110");
@@ -203,7 +202,6 @@ public class Mod200ConstantsCompute {
 //		COMPUTE_EXPRESSION_MAP.put(Mod200Key.ID004.toString(),"ID001 + ID002 + ID003");
 //		COMPUTE_EXPRESSION_MAP.put(Mod200Key.ID014.toString(),"ID005 + ID006 + ID007 + ID008 + ID009 + ID010 + ID011 + ID012 + ID013");
 	}
-*/		
 
 }
 

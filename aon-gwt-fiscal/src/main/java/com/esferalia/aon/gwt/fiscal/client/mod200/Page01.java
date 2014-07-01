@@ -73,7 +73,10 @@ public class Page01 extends PageAbs {
 
 	public void dump(Mod200Object mod200Object) {
 		this.mod200Object = mod200Object;
-		dataProvider = new ListDataProvider<CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
+		
+		dataProvider = this.mod200Object.getMod200().getAdministrators() == null
+				?new ListDataProvider<CompanyAdministrator>()
+				:new ListDataProvider<CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
 		dataProvider.addDataDisplay(table1);
 		table1.redraw();
 	}

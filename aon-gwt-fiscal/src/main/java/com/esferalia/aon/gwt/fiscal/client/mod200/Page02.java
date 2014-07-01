@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.TabSelectionCell;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Country;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
+import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -114,11 +115,16 @@ public class Page02 extends PageAbs {
 
 	public void dump(Mod200Object mod200Object) {
 		this.mod200Object = mod200Object;
-		dataProviderIn = new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsIn());
+		dataProviderIn = this.mod200Object.getMod200().getParticipationsIn() == null
+			?new ListDataProvider<CompanyParticipation>()
+			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsIn());
+
 		dataProviderIn.addDataDisplay(tableIn);
 		tableIn.redraw();
 
-		dataProviderOut = new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
+		dataProviderOut = this.mod200Object.getMod200().getParticipationsOut() == null
+			?new ListDataProvider<CompanyParticipation>()
+			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
 		dataProviderOut.addDataDisplay(tableOut);
 		tableOut.redraw();
 	}

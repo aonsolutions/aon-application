@@ -30,7 +30,6 @@ public class Mod200ConstantsValidation {
 	private static final String MSG6 = "\"Deducción aplicada en esta liquidación\" mayor que \"Deducción pendiente\"";
 	
 	public static List<ValidationMessage> ERROR_EXPRESSION_LIST = new LinkedList<ValidationMessage>();
-	/*	
 	
 	static {
 		// if (TRUE) --> ERROR
@@ -376,5 +375,4 @@ public class Mod200ConstantsValidation {
 
 
 	}
-*/	
 }

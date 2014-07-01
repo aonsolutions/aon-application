@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class Mod200ConstantsInitialization {
 	public static Map<String,String> INITIALIZE_EXPRESSION_MAP = new HashMap<String,String>();
-/*	
 	
 	static {
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA103.toString(),"sd({201})-sa({2801,2901})");
@@ -181,6 +180,5 @@ public class Mod200ConstantsInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0352.toString(),"sa({921})+sd({821})");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0353.toString(),"sa({8301})+sd({836,837})");
 	}
-*/
 }
 

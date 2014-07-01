@@ -14,9 +14,7 @@ public enum Mod200CorrectionKey implements Serializable, IsSerializable {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
-	 C0001(null,null,"Diferencias entre amortizaci\u00F3n contable y fiscal (arts. 11.1 y 11.4 L.I.S.)");
-	 
-/*
+
 	 C0001(Mod200Key.I0303,Mod200Key.D0304,"Diferencias entre amortizaci\u00F3n contable y fiscal (arts. 11.1 y 11.4 L.I.S.)")
 	,C0002(Mod200Key.I0504,Mod200Key.D0505,"0% importe gastos de amortiz. contable (excluidas emp. reducida dimensi\u00F3n) (art. 7 Ley 16/2012)")
 	,C0003(Mod200Key.I0305,Mod200Key.D0306,"Amortizaci\u00F3n de inmovilizado afecto a actividades de investigaci\u00F3n y desarrollo (art. 11.2.c) L.I.S.)")
@@ -88,7 +86,6 @@ public enum Mod200CorrectionKey implements Serializable, IsSerializable {
 	,C0069(Mod200Key.I0413,Mod200Key.D0414,"Otras correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias")
 	
 	;
-*/
 	 
     private String description;
     private Mod200Key increase;

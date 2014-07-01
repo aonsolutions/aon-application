@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class Mod200ConstantsActivation {
 	public static Map<String,String> ACTIVE_EXPRESSION_MAP = new HashMap<String,String>();
-/*
 
 	static {
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.BA101.toString(),"C0050 || C0051 || C0052");
@@ -575,6 +574,5 @@ public class Mod200ConstantsActivation {
 		
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.BN399.toString(),"C0047");
 	};
-*/	
 }
 
