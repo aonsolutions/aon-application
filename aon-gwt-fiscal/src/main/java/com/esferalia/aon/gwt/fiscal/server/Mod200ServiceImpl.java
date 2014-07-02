@@ -159,38 +159,26 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		ctx.setAccounts( SQLAccounting.getAccountBalances(conn, getParams(conn,mod200)) );
 		ctx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
+		addBalanceCharacters(ctx,mod200);
 		DoubleVariable dv = null;
-		for (Mod200Key key : Mod200Key.values() ) {
-			
-			Object o = ctx.get(key.toString());
-			if (o instanceof Double && ((Double) o != 0)) {
-				dv = new DoubleVariable( key );
-				dv.setValue( (Double) o );
+		for (String stringKey : INITIALIZE_EXPRESSION_MAP.keySet()) {
+			Mod200Key k = Mod200Key.valueOf(stringKey.toString());
+			String expression = INITIALIZE_EXPRESSION_MAP.get(stringKey);
+			ctx.put(stringKey, 0.0 );
+			Object ret = ctx.evaluateExpression(stringKey,expression);
+			ctx.put(stringKey, ret );
+			if (ret instanceof Double ) {
+				dv = new DoubleVariable( k );
+				dv.setValue( (Double) ret );
 				mod200.addVariable( dv );
 			} 
-			if (o instanceof Boolean) {
-				dv = new DoubleVariable( key );
-				dv.setValue((Boolean) o);
+			if (ret instanceof Boolean) {
+				dv = new DoubleVariable( k );
+				dv.setValue((Boolean) ret );
 				mod200.addVariable( dv );
 			}
-		}
-		
-		AccMiningMVELContext ctx2 = new AccMiningMVELContext( ACCEPTER );
-		ctx2.setExpressionMap(COMPUTE_EXPRESSION_MAP);
-		for (DoubleVariable dv2 : mod200.getKeysMap().values()) {
-			ctx2.put(dv2.getKey().toString(), dv2.getValue());
-		}
-		addCharacters(ctx2,mod200);
-		DoubleVariable v = null;
-		for (Mod200Key key : Mod200Key.values() ) {
-			Object ret = ctx2.get( key.toString() );
-			if (ret instanceof Double) {
-				Double calculated = (Double) ret; 
-				v = new DoubleVariable( key );
-				v.setValue( calculated );
-				mod200.addVariable(v);
-			}
-		}
+		}		
+		calculate(mod200,false);
 		initializeActiveMap(mod200);
 	}
 	
@@ -230,15 +218,19 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	@Override
 	public Mod200 calculate(Mod200 mod200) throws AonSQLException {
+		return calculate(mod200,true);
+	}
+
+	private Mod200 calculate(Mod200 mod200, boolean addToDraft) throws AonSQLException {
 		try {
 			AccMiningMVELContext ctx = new AccMiningMVELContext( ACCEPTER );
 			ctx.setExpressionMap(COMPUTE_EXPRESSION_MAP);
 			for (DoubleVariable dv : mod200.getKeysMap().values()) {
-				if (!COMPUTE_EXPRESSION_MAP.containsKey(dv.getKey().toString())) {
-					ctx.put(dv.getKey().toString(), dv.getValue());
-				}
+				ctx.put(dv.getKey().toString(), dv.getValue());
 			}
 			addCharacters(ctx,mod200);
+			addBalanceCharacters(ctx,mod200);
+			
 			DoubleVariable d = null;
 			for (Mod200Key key : mod200.getDraftMap().keySet() ) {
 				d = mod200.getDraftMap().get(key);
@@ -248,26 +240,66 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			}
 			
 			DoubleVariable v = null;
-			for (Mod200Key key : Mod200Key.values() ) {
-				if (COMPUTE_EXPRESSION_MAP.containsKey(key.toString())) {
-					Object ret = ctx.get( key.toString() );
-					if (ret instanceof Double) {
-						Double calculated = (Double) ret; 
-						Mod200Key k = Mod200Key.valueOf(key.toString());
-						DoubleVariable existingVariable = mod200.getVariable(k);
-						if ( existingVariable == null || !AonUtil.equals( existingVariable.getValue() , calculated ) ) {
-							v = new DoubleVariable( k );
-							v.setValue( calculated );
-							mod200.addDraftVariable(v);
+			for (String stringKey : COMPUTE_EXPRESSION_MAP.keySet()) {
+				Mod200Key k = Mod200Key.valueOf(stringKey.toString());
+				String expression = COMPUTE_EXPRESSION_MAP.get(stringKey);
+				DoubleVariable existingVariable = mod200.getVariable(k);
+				if ( existingVariable == null ) {
+					existingVariable = new DoubleVariable( k );
+					existingVariable.setValue( 0.0 );
+				}
+				ctx.put(stringKey, existingVariable.getValue());
+
+				Object ret = ctx.evaluateExpression(stringKey,expression);
+				
+				if (ret instanceof Double) {
+					Double calculated = (Double) ret;
+					ctx.put(stringKey, calculated);
+					if ( !AonUtil.equals( existingVariable.getValue() , calculated ) ) {
+						v = new DoubleVariable( k );
+						v.setValue( calculated );
+						if (addToDraft) {
+							mod200.addDraftVariable(v);	
+						} else {
+							mod200.addVariable(v);
 						}
+						
 					}
 				}
 			}
+//			for (Mod200Key key : Mod200Key.values() ) {
+//				if (COMPUTE_EXPRESSION_MAP.containsKey(key.toString())) {
+//					Object ret = ctx.get( key.toString() );
+//					if (ret instanceof Double) {
+//						Double calculated = (Double) ret; 
+//						Mod200Key k = Mod200Key.valueOf(key.toString());
+//						DoubleVariable existingVariable = mod200.getVariable(k);
+//						if ( existingVariable == null || !AonUtil.equals( existingVariable.getValue() , calculated ) ) {
+//							System.out.println( "DRAFT : " + k.toString() + " [" +
+//									((existingVariable == null)?"null":existingVariable.getValue())
+//									+ "] [" + calculated);
+//							v = new DoubleVariable( k );
+//							v.setValue( calculated );
+//							mod200.addDraftVariable(v);
+//						}
+//					}
+//				}
+//			}
 			return mod200;
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new AonSQLException(e);
 		}
+	}
+
+	private void addBalanceCharacters(AccMiningMVELContext ctx, Mod200 mod200) {
+		ctx.put(Mod200Key.C0050.toString(), mod200.getBalanceType() == BalanceType.NORMAL);
+		ctx.put(Mod200Key.C0051.toString(), mod200.getBalanceType() == BalanceType.ABREVIADO);
+		ctx.put(Mod200Key.C0052.toString(), mod200.getBalanceType() == BalanceType.PYMES);
+
+		ctx.put(Mod200Key.C0053.toString(), mod200.getPygType() == BalanceType.NORMAL);
+		ctx.put(Mod200Key.C0054.toString(), mod200.getPygType() == BalanceType.ABREVIADO);
+		ctx.put(Mod200Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
 	private void addCharacters(AccMiningMVELContext ctx, Mod200 mod200) {
@@ -331,7 +363,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		mod200.setMessages(null);	
 		List<ValidationMessage> list = new LinkedList<ValidationMessage>();
 		for (ValidationMessage validation : ERROR_EXPRESSION_LIST) {
-			Boolean error = (Boolean) ctx.evaluateExpression(validation.getExpression());
+			Boolean error = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
 			if (error) {
 				list.add(validation);
 			}

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.mvel2.MVEL;
 
@@ -18,6 +19,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	private Map<String, Object> context;
 	private Map<String, String> expressionMap;
 	private IAccMiningKeyAccept resolver;
+	private Stack<String> stack = new Stack<String>();
 	
 	public AccMiningMVELContext( IAccMiningKeyAccept resolver) {
 		this.context = new HashMap<String, Object>();
@@ -70,7 +72,8 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	public Object get(Object keyObject) {
 		String key = (String) keyObject;
 		Object obj = null;
-		if (this.context.containsKey(key)) {
+		if (this.context.containsKey(key) 
+			&& (!expressionMap.containsKey(key) || stack.contains(key))) {
 			obj = this.context.get(key);
 		} else {
 			obj = evaluate(key);
@@ -83,7 +86,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 			String exp = expressionMap.get(key);
 			Object ret = null;
 			if (AccMiningUtils.isNotEmpty(exp)) {
-				ret = MVEL.eval( exp , this , this);
+				ret =  mvelEval(key,exp);
 			}
 			if (ret != null) {
 				put(key, ret);
@@ -92,8 +95,16 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		}
 		return new Double(0);
 	}
-	public Object evaluateExpression(String expression) {
-		return MVEL.eval( expression , this , this);
+	public Object evaluateExpression(String key,String expression) {
+		return mvelEval(key,expression);
+	}
+	private Object mvelEval(String key,String expression) {
+		try {
+			stack.push(key);
+			return MVEL.eval( expression , this , this);
+		} finally {
+			stack.pop();
+		}
 	}
 
 	@Override

@@ -405,10 +405,9 @@ public class Model200 extends MainEntryPoint {
 						if (d != null) {
 							d.setFocus(true);
 						}
-						Label l = page.getLabels().get(msg.getKey());
+						BoxLabel l = page.getLabels().get(msg.getKey());
 						if (l != null) {
-							l.addStyleName(RESOURCES.css().aonMod200BoxError());
-							l.setTitle(msg.getMessage());
+							l.addErrorState(msg.getMessage());
 						}
 					}
 				}

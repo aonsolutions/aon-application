@@ -126,8 +126,7 @@ public class Page09 extends PageAbs {
 					boolean disabled = behaviour != null && behaviour[1];
 	
 					FlowPanel panel = new FlowPanel();
-					Label code = new Label(k.getCode( mod200Object.getAdministration() ));
-					code.setStyleName(RESOURCES.css().aonMod200Box());
+					BoxLabel code = new BoxLabel(k.getCode( mod200Object.getAdministration() ));
 					panel.add(code);
 					getLabels().put(k, code);
 					

@@ -5,14 +5,14 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF
+	// ï¿½ --> \u00C1 ï¿½ --> \u00E1
+	// ï¿½ --> \u00C9 ï¿½ --> \u00E9
+	// ï¿½ --> \u00CD ï¿½ --> \u00ED
+	// ï¿½ --> \u00D3 ï¿½ --> \u00F3
+	// ï¿½ --> \u00DA ï¿½ --> \u00FA
+	// ï¿½ --> \u00D1 ï¿½ --> \u00F1
+	// ï¿½ --> \u00AA ï¿½ --> \u00BA
+	// ï¿½ --> \u00BF
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
 	String integerPattern();
@@ -1162,4 +1162,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pendiente por insuficiencia de cuota")
 	String pendingDueToQuota();
 	
+	@DefaultMessage("Personal fijo")
+	String fixedPersonal();
+
+	@DefaultMessage("Personal no fijo")
+	String nonFixedPersonal();
+
 }

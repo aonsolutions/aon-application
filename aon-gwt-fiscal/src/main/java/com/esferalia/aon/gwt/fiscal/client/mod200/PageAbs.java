@@ -24,7 +24,7 @@ public abstract class PageAbs extends ResizeComposite {
 	protected Mod200Object mod200Object;
 
 	private Map<Mod200Key, DoubleTextBox> inputs = new HashMap<Mod200Key, DoubleTextBox>();
-	private Map<Mod200Key, Label> labels = new HashMap<Mod200Key, Label>();
+	private Map<Mod200Key, BoxLabel> labels = new HashMap<Mod200Key, BoxLabel>();
 
 	@UiField
 	Panel basePanel;
@@ -52,9 +52,8 @@ public abstract class PageAbs extends ResizeComposite {
 						input.addStyleName(RESOURCES.css().aonChanged());
 					}
 					if (labels.containsKey(key)) {
-						Label label = labels.get(key);
-						label.removeStyleName(RESOURCES.css().aonMod200BoxError());
-						label.setTitle(null);
+						BoxLabel label = labels.get(key);
+						label.removeErrorState();
 					}
 				}
 			}
@@ -66,7 +65,7 @@ public abstract class PageAbs extends ResizeComposite {
 	public Map<Mod200Key, DoubleTextBox> getInputs() {
 		return inputs;
 	}
-	public Map<Mod200Key, Label> getLabels() {
+	public Map<Mod200Key, BoxLabel> getLabels() {
 		return labels;
 	}
 	
@@ -87,8 +86,7 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().setStyleName(row, 0, RESOURCES.css().aonMod200BorderBottom());
 		
 		FlowPanel panel = new FlowPanel();
-		Label code = new Label(key.getCode( mod200Object.getAdministration() ));
-		code.setStyleName(RESOURCES.css().aonMod200Box());
+		BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
 		panel.add(code);
 		getLabels().put(key, code);
 		

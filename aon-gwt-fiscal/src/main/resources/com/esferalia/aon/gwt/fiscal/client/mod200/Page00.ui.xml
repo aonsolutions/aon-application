@@ -133,6 +133,27 @@
 											</g:ListBox>
 										</td>
 									</tr>
+									<tr>
+										<td>
+										</td>
+										<td colspan="3">
+											<g:CheckBox ui:field="c061"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<g:Label text="{msg.fixedPersonal}"/>
+										</td>
+										<td>
+											<aon:DoubleTextBox ui:field="c041"/>
+										</td>
+										<td>
+											<g:Label text="{msg.nonFixedPersonal}"/>
+										</td>
+										<td>
+											<aon:DoubleTextBox ui:field="c042"/>
+										</td>
+									</tr>
 								</table>
 							</div>
 						</div>

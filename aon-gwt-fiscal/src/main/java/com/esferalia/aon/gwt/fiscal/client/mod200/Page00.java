@@ -12,6 +12,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.CNAE;
@@ -31,7 +32,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -118,7 +118,12 @@ public class Page00 extends PageAbs {
 	ListBox balanceSheetType;
 	@UiField
 	ListBox profitAndLossType;
-	
+	@UiField
+	CheckBox c061;
+	@UiField
+	DoubleTextBox c041;
+	@UiField
+	DoubleTextBox c042;
 	
 	public Page00() {
 		
@@ -143,6 +148,7 @@ public class Page00 extends PageAbs {
 		charactersTable3 = new FlexTable();
 		Widget ui = page1Binder.createAndBindUi(this);
 		initWidget(ui);
+		
 		initializeTable();
 	}
 
@@ -160,6 +166,20 @@ public class Page00 extends PageAbs {
 		balanceSheetType.setSelectedIndex(index);
 		index = this.mod200Object.getMod200().getPygType().ordinal();
 		profitAndLossType.setSelectedIndex(index);
+		DoubleVariable dv = this.mod200Object.getMod200().getKeysMap().get(Mod200Key.C0041);
+		Double value = 0.0;
+		if (dv != null) {
+			value = dv.getValue();
+		}
+		c041.setValue(value);
+		
+		dv = this.mod200Object.getMod200().getKeysMap().get(Mod200Key.C0042);
+		value = 0.0;
+		if (dv != null) {
+			value = dv.getValue();
+		}
+		c042.setValue(value);
+		
 		for (CheckBox check : inputs.values()) {
 			check.setValue(false);
 		}
@@ -178,6 +198,9 @@ public class Page00 extends PageAbs {
 	}
 	
 	protected void initializeTable() {
+		c061.setText(Mod200Key.C0061.getDescription());
+		inputs.put(Mod200Key.C0061, c061);
+		
 		int row = 0;
 		row = initializeBlock(charactersTable1,row, DECLARATION_CHARATERS_BLOCK1);
 		row = initializeBlock(charactersTable2,row, DECLARATION_CHARATERS_BLOCK2);
@@ -195,8 +218,7 @@ public class Page00 extends PageAbs {
 				mustAdd = 0;
 				colOffset = 0;
 			}
-			Label code = new Label(key.getCode( adm ));
-			code.setStyleName(RESOURCES.css().aonMod200Box());
+			BoxLabel code = new BoxLabel( key.getCode( adm ) );
 			table.setWidget(row, colOffset, code);
 
 			CheckBox check = new CheckBox(key.getDescription());
@@ -280,6 +302,10 @@ public class Page00 extends PageAbs {
 			obj.getMod200().addVariable(bv);
 		}
 		
+		bv = new DoubleVariable( Mod200Key.C0061 );
+		bv.setValue( c061.getValue() );
+		obj.getMod200().addVariable(bv);
+		
 		bv = new DoubleVariable( Mod200Key.C0050 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.NORMAL));
 		obj.getMod200().addVariable(bv);
@@ -303,15 +329,25 @@ public class Page00 extends PageAbs {
 		bv = new DoubleVariable( Mod200Key.C0055 );
 		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.PYMES));
 		obj.getMod200().addVariable(bv);
+		
+		bv = new DoubleVariable( Mod200Key.C0041 );
+		bv.setValue( c041.getDoubleValue() );
+		obj.getMod200().addVariable(bv);
+
+		bv = new DoubleVariable( Mod200Key.C0042 );
+		bv.setValue( c042.getDoubleValue() );
+		obj.getMod200().addVariable(bv);
+		
 	}
 
-	protected void enableCharacters( boolean disable) {
-		periodType.setEnabled(disable);
-		balanceSheetType.setEnabled(disable);
-		profitAndLossType.setEnabled(disable);
+	protected void enableCharacters( boolean enabled) {
+		periodType.setEnabled(enabled);
+		balanceSheetType.setEnabled(enabled);
+		profitAndLossType.setEnabled(enabled);
 		for (CheckBox check : inputs.values()) {
-			check.setEnabled(disable);
+			check.setEnabled(enabled);
 		}
+		c061.setEnabled(enabled);
 	}
 
 }

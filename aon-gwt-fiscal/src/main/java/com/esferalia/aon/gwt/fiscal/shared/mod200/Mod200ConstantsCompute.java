@@ -1,17 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.shared.mod200;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Mod200ConstantsCompute {
-	public static Map<String,String> COMPUTE_EXPRESSION_MAP = new HashMap<String,String>();
+	public static Map<String,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<String,String>();
 
 	static {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA101.toString(),"BA102 + BA111 + BA115 + BA118 + BA126 + BA134 + BA135");
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA102.toString(),"BA103 + BA104 + BA105 + BA106 + BA107 + BA108 + BA109 + BA700 + BA701 + BA110");
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA111.toString(),"BA112 + BA113 + BA114");
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA115.toString(),"BA116 + BA117");
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA118.toString(),"BA119+BA120+BA121+BA122+BA123+BA124+BA125");
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA102.toString(),"C0050"
+				+ "?BA103 + BA104 + BA105 + BA106 + BA107 + BA108 + BA109 + BA700 + BA701"
+				+ ":BA106 + BA110");
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA111.toString(),"C0050?(BA112 + BA113 + BA114):BA111");
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA115.toString(),"C0050?(BA116 + BA117):BA115");
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA118.toString(),"C0050? BA119+BA120+BA121+BA122+BA123+BA124 : BA119+BA125");
+
+
+//----------------------------		
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA126.toString(),"BA127+BA128+BA129+BA130+BA131+BA132+BA133");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA136.toString(),"BA137 + BA138 + BA149 + BA160 + BA168 + BA176 + BA177");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BA138.toString(),"BA139+BA140+BA141+BA142+BA143+BA144+BA145+BA146+BA147+BA148");

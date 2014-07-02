@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:soci='urn:import:com.esferalia.aon.gwt.fiscal.client.mod200'
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
@@ -27,7 +28,7 @@
 							<g:Label text="Resultado de la cuenta de perdidas y ganancias"/>
 						</td>
 						<td>
-							<g:Label ui:field="c500Label" text="500" styleName="{aonResources.css.aonMod200Box}"/>
+							<soci:BoxLabel ui:field="c500Label" text="500"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c500" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
@@ -39,13 +40,13 @@
 							<g:Label text="Correcciones por Impuesto sobre Sociedades"/>
 						</td>
 						<td>
-							<g:Label ui:field="c301Label" text="301" styleName="{aonResources.css.aonMod200Box}"/>
+							<soci:BoxLabel ui:field="c301Label" text="301"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c301"/>
 						</td>
 						<td>
-							<g:Label ui:field="c302Label" text="302" styleName="{aonResources.css.aonMod200Box}"/>
+							<soci:BoxLabel ui:field="c302Label" text="302"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c302"/>
@@ -57,7 +58,7 @@
 							<g:Label text="Resultado de la cuenta de perdidas y ganancias antes de Impuestos de Sociedades"/>
 						</td>
 						<td>
-							<g:Label ui:field="c501Label" text="501" styleName="{aonResources.css.aonMod200Box}"/>
+							<soci:BoxLabel ui:field="c501Label" text="501"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c501" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
@@ -122,13 +123,13 @@
 							<g:Label text="Total correcciones al resultado de la cuenta de perdidas y ganancias"/>
 						</td>
 						<td>
-							<g:Label ui:field="c417Label" text="417" styleName="{aonResources.css.aonMod200Box}"/>
+							<soci:BoxLabel ui:field="c417Label" text="417"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c417" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
 						</td>
 						<td>
-							<g:Label ui:field="c418Label" text="418" styleName="{aonResources.css.aonMod200Box}"/>
+							<soci:BoxLabel ui:field="c418Label" text="418"/>
 						</td>
 						<td>
 							<aon:DoubleTextBox ui:field="c418" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>

@@ -29,7 +29,6 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -49,27 +48,27 @@ public class Page08 extends PageAbs {
 	private NoSelectionModel<Mod200Correction> model;	
 	
 	@UiField
-	Label c500Label;
+	BoxLabel c500Label;
 	@UiField
 	DoubleTextBox c500;
 	@UiField
-	Label c301Label;
+	BoxLabel c301Label;
 	@UiField
 	DoubleTextBox c301;
 	@UiField
-	Label c302Label;
+	BoxLabel c302Label;
 	@UiField
 	DoubleTextBox c302;
 	@UiField
-	Label c501Label;
+	BoxLabel c501Label;
 	@UiField
 	DoubleTextBox c501;
 	@UiField
-	Label c417Label;
+	BoxLabel c417Label;
 	@UiField
 	DoubleTextBox c417;
 	@UiField
-	Label c418Label;
+	BoxLabel c418Label;
 	@UiField
 	DoubleTextBox c418;
 	

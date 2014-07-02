@@ -75,6 +75,9 @@ public class Mod200ConstantsDescription {
 		DESCRIPTION_MAP.put(Mod200Key.C0053.toString(),"Balance y ECPN. Normal");
 		DESCRIPTION_MAP.put(Mod200Key.C0054.toString(),"Balance y ECPN. Abreviado");
 		DESCRIPTION_MAP.put(Mod200Key.C0055.toString(),"Balance y ECPN. PYMES");
+		DESCRIPTION_MAP.put(Mod200Key.C0061.toString(),"Estados de cuentas de Instituciones de inversi\u00F3n colectiva"); 
+		DESCRIPTION_MAP.put(Mod200Key.C0041.toString(),"Personal fijo");
+		DESCRIPTION_MAP.put(Mod200Key.C0042.toString(),"Personal no fijo");
 	}
 	
 	static {

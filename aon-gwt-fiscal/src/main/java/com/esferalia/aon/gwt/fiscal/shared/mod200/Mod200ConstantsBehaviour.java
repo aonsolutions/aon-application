@@ -13,10 +13,11 @@ public class Mod200ConstantsBehaviour {
 		// Elemento 0 ---> isTitle?
 		// Elemento 1 ---> isDisabled?
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA101.toString(),new Boolean[]{TRUE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA102.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA102.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA111.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA115.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA118.toString(),new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA118.toString(),new Boolean[]{TRUE,TRUE});
+//---------------------------------		
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA126.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA134.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BA135.toString(),new Boolean[]{TRUE,FALSE});

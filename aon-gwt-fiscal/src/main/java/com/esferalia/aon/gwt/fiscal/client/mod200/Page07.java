@@ -149,8 +149,7 @@ public class Page07 extends PageAbs {
 				panel.setStyleName(RESOURCES.css().aonNowrap());
 				final Mod200Key key = KEYS[keyIndex];
 				if (key != null) {
-					Label code = new Label(key.getCode( mod200Object.getAdministration() ));
-					code.setStyleName(RESOURCES.css().aonMod200Box());
+					BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
 					panel.add(code);
 					getLabels().put(key, code);
 					
