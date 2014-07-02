@@ -66,7 +66,7 @@ public class LazyExpressionVariable implements IExpressionVariable<Object> {
 
 	private void addExpression() {
 		try {
-			ctx.addVariable(expression.getName(), null, period.getStart(), period.getEnd());
+			ctx.setVariable(expression.getName(), null, period.getStart(), period.getEnd());
 			ctx.addExpression(expression, period.getStart(), period.getEnd());
 		} catch (ExpressionException e) {
 			throw new ExpressionExceptionWrapper(e);

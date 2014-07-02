@@ -348,7 +348,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 			ExpressionContext agreementCtx = getAgreementExpressionContext();
 			ITimedVariable<?> agreementVar = agreementCtx.getVariable(var.getName(), start, end);
 			if ( agreementVar != null ) {
-				ctx.addVariable(var.getName(), agreementVar );
+				ctx.putVariable(var.getName(), agreementVar );
 				return;
 			}
 		} 

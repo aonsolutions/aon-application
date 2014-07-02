@@ -19,8 +19,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GROSS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
@@ -33,6 +31,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_MONTHS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_WEEKS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
@@ -46,13 +45,13 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_BENEFITS_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_WEEKS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,6 +64,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +77,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
+import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -108,6 +109,7 @@ import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.UndefinedTotalPaymentException;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
@@ -132,6 +134,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -331,16 +334,43 @@ public class SQLContractSalaryCalculatorContext implements
 			SQLContractSalaryCalculatorContext {
 
 		public SQLNoItContractSalaryCalculatorContext(Connection connection,
-				Date startDate, Date endDate, Date issueDate, Criteria criteria)
+				final Date startDate, final Date endDate, Date issueDate,
+				Criteria criteria, final int start, final int end)
 				throws SQLException, ExpressionException {
 
 			super(connection, startDate, endDate, issueDate, criteria);
+
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
 				@Override
-				public void loadContractLevae(ResultSet rs,
+				public void loadContractLeave(Date leaveStart, Date leaveEnd,
+						long parentDays, LeaveType type, Double dailyRegBase,
 						ExpressionContext exprCtx) throws SQLException,
 						ExpressionException {
+
+					final long leaveDays = CommonUtil.getDaysBetweenDates(
+							leaveStart, leaveEnd) + 1;
+
+					if (start > 0 && start < leaveDays) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(leaveStart);
+						calendar.add(Calendar.DATE, start - 1);
+
+						super.loadContractLeave(leaveStart, calendar.getTime(),
+								parentDays, type, dailyRegBase, exprCtx);
+
+					}
+
+					if (end < leaveDays) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(leaveStart);
+						calendar.add(Calendar.DATE, end + 1);
+
+						parentDays += end;
+
+						super.loadContractLeave(calendar.getTime(), leaveEnd,
+								parentDays, type, dailyRegBase, exprCtx);
+					}
 				}
 			};
 		}
@@ -358,6 +388,17 @@ public class SQLContractSalaryCalculatorContext implements
 					guarentee));
 		}
 
+		@Override
+		public Object guarantee(double guarentee, int start)
+				throws ExpressionException {
+			return this.guarantee(guarentee);
+		}
+
+		@Override
+		public Object guarantee(double guarentee, int start, int end)
+				throws ExpressionException {
+			return this.guarantee(guarentee);
+		}
 	}
 
 	/**
@@ -1129,7 +1170,7 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 
 	public <T> void addVariable(String name, T t) {
-		this.contractExpressionContext.addVariable(name, t,
+		this.contractExpressionContext.setVariable(name, t,
 				this.contractStartDate, this.contractEndDate);
 	}
 
@@ -1144,6 +1185,27 @@ public class SQLContractSalaryCalculatorContext implements
 
 	public static java.sql.Date toSqlDate(Date date) {
 		return new java.sql.Date(date.getTime());
+	}
+
+	public static Object guaranteee(double guarentee)
+			throws ExpressionException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(ContextVariable.GUARANTEE,
+						"SELF.guarantee");
+			}
+		};
+	}
+
+	public static Object guaranteee(double guarentee, int start)
+			throws ExpressionException {
+		return guaranteee(guarentee);
+	}
+
+	public static Object guaranteee(double guarentee, int start, int end)
+			throws ExpressionException {
+		return guaranteee(guarentee);
 	}
 
 	public Connection getConnection() {
@@ -1375,6 +1437,16 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 
 	public Object guarantee(double guarentee) throws ExpressionException {
+		return guarantee(guarentee, 1, Integer.MAX_VALUE);
+	}
+
+	public Object guarantee(double guarentee, int start)
+			throws ExpressionException {
+		return guarantee(guarentee, start, Integer.MAX_VALUE);
+	}
+
+	public Object guarantee(double guarentee, int start, int end)
+			throws ExpressionException {
 
 		if (leaveLoader.isEmpty())
 			throw new UndefinedContextVariablesException(
@@ -1386,7 +1458,8 @@ public class SQLContractSalaryCalculatorContext implements
 				+ ContractColumns.ID, getId());
 
 		ISalaryCalculatorContext ctx = getNoItCalculatorContext(connection,
-				startDate, endDate, issueDate, contractCriteria);
+				startDate, endDate, issueDate, contractCriteria, start - 1,
+				end - 1);
 
 		ContractSalaryCalculator calculator = new OnlyPaymentContractSalaryCalculator();
 		calculator.setSalaryBuilder(new SalaryBuilder());
@@ -1398,10 +1471,33 @@ public class SQLContractSalaryCalculatorContext implements
 			if (e.guarentee == guarentee)
 				throw new ContextFunctions.UselessGuaranteeException(guarentee);
 			if (e.guarentee < guarentee)
-				throw new ContextFunctions.UselessGuaranteeException(e.guarentee, guarentee);
+				throw new ContextFunctions.UselessGuaranteeException(
+						e.guarentee, guarentee);
 
-			return e.guarentee - guarentee;
+			// Gets PREST. IT for GTZDO periods.
+			double prestIt = 0.00;
+			List<ITimedVariable<Object>> leaves = ctx.getExpressionContext()
+					.getVariables(LEAVE_DAYS.getName(), ctx.getStartDate(),
+							ctx.getEndDate());
+			Date guaranteeStart = ctx.getStartDate();
+			for (ITimedVariable<Object> leave : leaves) {
+				Period leavePeriod = leave.getPeriod();
+				Date leaveStart = leavePeriod.getStart();
+				if (leaveStart.compareTo(guaranteeStart) > 0)
+					prestIt += getDayDoubleVariable(PREST_IT.getName(),
+							guaranteeStart, prev(leaveStart));
+
+				guaranteeStart = next(leavePeriod.getEnd());
+			}
+			if (guaranteeStart.compareTo(ctx.getEndDate()) <= 0)
+				prestIt += getDayDoubleVariable(PREST_IT.getName(),
+						guaranteeStart, ctx.getEndDate());
+
+			return e.guarentee - guarentee - prestIt;
+
 		} catch (SalaryException e) {
+			throw new RuntimeException(e);
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		return 0.00;
@@ -1430,7 +1526,7 @@ public class SQLContractSalaryCalculatorContext implements
 					// TODO: Warning a bit tricky.
 					ExpressionContext expressionCtx = SQLContractSalaryCalculatorContext.this
 							.getExpressionContext();
-					expressionCtx.addVariable(
+					expressionCtx.putVariable(
 							ContextVariable.IRPF_PERCENT,
 							ctx.getExpressionContext().getVariable(
 									ContextVariable.IRPF_PERCENT, startDate,
@@ -1449,11 +1545,11 @@ public class SQLContractSalaryCalculatorContext implements
 
 	protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
 			Connection conn, Date startDate, Date endDate, Date issueDate,
-			Criteria criteria) {
+			Criteria criteria, int start, int end) {
 		SQLContractSalaryCalculatorContext ctx;
 		try {
 			ctx = new SQLNoItContractSalaryCalculatorContext(conn, startDate,
-					endDate, issueDate, criteria);
+					endDate, issueDate, criteria, start, end);
 			ctx.next();
 			return ctx;
 		} catch (ExpressionException e) {
@@ -1480,11 +1576,12 @@ public class SQLContractSalaryCalculatorContext implements
 				@Override
 				protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
 						Connection conn, Date startDate, Date endDate,
-						Date issueDate, Criteria criteria) {
+						Date issueDate, Criteria criteria, int start, int end) {
 					SQLContractSalaryCalculatorContext ctx;
 					try {
 						ctx = new SQLNoItContractSalaryCalculatorContext(conn,
-								startDate, endDate, issueDate, criteria) {
+								startDate, endDate, issueDate, criteria, start,
+								end) {
 
 							public Object liquid(double liquid)
 									throws ExpressionException, SQLException,
@@ -1947,19 +2044,37 @@ public class SQLContractSalaryCalculatorContext implements
 		return value != null ? value : 0.00;
 	}
 
+	private double getDoubleVariable(String name, Date start, Date end) {
+		Double value = this.contractExpressionContext.getVariable(name, start,
+				end, Double.class);
+		return value != null ? value : 0.00;
+	}
+
+	private double getDayDoubleVariable(String name, Date start, Date end) {
+		List<ITimedVariable<Double>> vars = this.contractExpressionContext
+				.getVariables(name);
+		
+		
+		double sum = 0.00;
+		Period p = new Period(start, end);
+		for (ITimedVariable<Double> var : vars) {
+			Period period = var.getPeriod();
+			Period intersect = period.intersect(p);
+			if ( intersect == null ) 
+				continue;
+			
+			
+			Double value = var.getValue(period) ;
+			if (value != null)
+				sum += value / days(period) * days(intersect);
+		}
+
+		return sum;
+	}
+
 	private boolean containsVariable(Object name) {
 		return this.contractExpressionContext.containsVariable(name,
 				this.contractStartDate, this.contractEndDate);
-	}
-
-	private double getTotalBenefitsIt() {
-		double totalBenefitsIt = 0.00;
-
-		totalBenefitsIt += getDoubleVariable("ECEMP");
-		totalBenefitsIt += getDoubleVariable("ECSS");
-		totalBenefitsIt += getDoubleVariable("ATEP");
-
-		return totalBenefitsIt;
 	}
 
 	protected double getGuarenteed() {
@@ -2069,36 +2184,36 @@ public class SQLContractSalaryCalculatorContext implements
 
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
-		this.implicitExpressionContext.addVariable(SALARY,
+		this.implicitExpressionContext.setVariable(SALARY,
 				salaryType == SalaryType.SALARY, startDate, endDate);
-		this.implicitExpressionContext.addVariable(SETTLE,
+		this.implicitExpressionContext.setVariable(SETTLE,
 				salaryType == SalaryType.SETTLE, startDate, endDate);
-		this.implicitExpressionContext.addVariable(DELAY,
+		this.implicitExpressionContext.setVariable(DELAY,
 				salaryType == SalaryType.DELAY, startDate, endDate);
-		this.implicitExpressionContext.addVariable(EXTRA_PAY,
+		this.implicitExpressionContext.setVariable(EXTRA_PAY,
 				salaryType == SalaryType.EXTRA, startDate, endDate);
 
-		this.implicitExpressionContext.addVariable(CONTRACT_START,
+		this.implicitExpressionContext.setVariable(CONTRACT_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE),
 				startDate, endDate);
-		this.implicitExpressionContext.addVariable(
+		this.implicitExpressionContext.setVariable(
 				CONTRACT_END,
 				salaryType == SalaryType.SETTLE ? contractEndDate : getDate(
 						SQLConstants.CONTRACT, ContractColumns.END_DATE),
 				startDate, endDate);
 
-		this.implicitExpressionContext.addVariable(IRPF_PERCENT, irpf);
+		this.implicitExpressionContext.putVariable(IRPF_PERCENT, irpf);
 
-		this.implicitExpressionContext.addVariable(START, start);
-		this.implicitExpressionContext.addVariable(END, end);
+		this.implicitExpressionContext.putVariable(START, start);
+		this.implicitExpressionContext.putVariable(END, end);
 
-		this.implicitExpressionContext.addVariable(WORKED_DAYS, workedDays);
-		this.implicitExpressionContext.addVariable(WORKED_WEEKS, workedWeeks);
-		this.implicitExpressionContext.addVariable(QUOTE_DAYS, workedDays);
+		this.implicitExpressionContext.putVariable(WORKED_DAYS, workedDays);
+		this.implicitExpressionContext.putVariable(WORKED_WEEKS, workedWeeks);
+		this.implicitExpressionContext.putVariable(QUOTE_DAYS, workedDays);
 
-		this.implicitExpressionContext.addVariable(SALARY_DAYS, salaryDays);
+		this.implicitExpressionContext.putVariable(SALARY_DAYS, salaryDays);
 
-		this.implicitExpressionContext.addVariable(SENIORITY,
+		this.implicitExpressionContext.putVariable(SENIORITY,
 				new LazyTimedVariable<Integer>() {
 					@Override
 					public Integer create() {
@@ -2106,7 +2221,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(SALARY_MONTHS,
+		this.implicitExpressionContext.putVariable(SALARY_MONTHS,
 				new ActiveTimedVariable<Double>() {
 					@Override
 					public Double getValue(Period period) {
@@ -2114,7 +2229,7 @@ public class SQLContractSalaryCalculatorContext implements
 								period.getEnd());
 					};
 				});
-		this.implicitExpressionContext.addVariable(SALARY_WEEKS,
+		this.implicitExpressionContext.putVariable(SALARY_WEEKS,
 				new ActiveTimedVariable<Double>() {
 					@Override
 					public Double getValue(Period period) {
@@ -2123,16 +2238,16 @@ public class SQLContractSalaryCalculatorContext implements
 					};
 				});
 
-		this.implicitExpressionContext.addVariable(PAY_DAYS, extraDays);
+		this.implicitExpressionContext.putVariable(PAY_DAYS, extraDays);
 
-		this.implicitExpressionContext.addVariable(PAY_MONTHS,
+		this.implicitExpressionContext.putVariable(PAY_MONTHS,
 				new LazyTimedVariable<Double>() {
 					@Override
 					public Double create() {
 						return getExtraMonths();
 					}
 				});
-		this.implicitExpressionContext.addVariable(PAY_WEEKS,
+		this.implicitExpressionContext.putVariable(PAY_WEEKS,
 				new LazyTimedVariable<Double>() {
 					@Override
 					public Double create() {
@@ -2140,16 +2255,16 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(SALARY_HOURS,
+		this.implicitExpressionContext.putVariable(SALARY_HOURS,
 				new LazyTimedVariable<Double>() {
 					@Override
 					public Double create() {
 						return getSalaryHours();
 					}
 				});
-		this.implicitExpressionContext.addVariable(BONUS_DAYS, bonusDays);
+		this.implicitExpressionContext.putVariable(BONUS_DAYS, bonusDays);
 
-		this.implicitExpressionContext.addVariable(INDEFINITE,
+		this.implicitExpressionContext.putVariable(INDEFINITE,
 				new LazyTimedVariable<Boolean>() {
 					@Override
 					public Boolean create() {
@@ -2157,7 +2272,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(FULL_TIME,
+		this.implicitExpressionContext.putVariable(FULL_TIME,
 				new LazyTimedVariable<Boolean>() {
 					@Override
 					public Boolean create() {
@@ -2165,7 +2280,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(ASSIMILATED,
+		this.implicitExpressionContext.putVariable(ASSIMILATED,
 				new LazyTimedVariable<Boolean>() {
 					@Override
 					public Boolean create() {
@@ -2173,7 +2288,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(MORE_THAN_65,
+		this.implicitExpressionContext.putVariable(MORE_THAN_65,
 				new LazyTimedVariable<Boolean>() {
 					@Override
 					public Boolean create() {
@@ -2181,7 +2296,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(SHORT_CONTRACT,
+		this.implicitExpressionContext.putVariable(SHORT_CONTRACT,
 				new LazyTimedVariable<Boolean>() {
 					@Override
 					public Boolean create() {
@@ -2189,7 +2304,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(IT_RATE,
+		this.implicitExpressionContext.putVariable(IT_RATE,
 				new LazyTimedVariable<Double>() {
 					@Override
 					public Double create() {
@@ -2197,7 +2312,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(IMS_RATE,
+		this.implicitExpressionContext.putVariable(IMS_RATE,
 				new LazyTimedVariable<Double>() {
 					@Override
 					public Double create() {
@@ -2205,7 +2320,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(BONUS_AGE,
+		this.implicitExpressionContext.putVariable(BONUS_AGE,
 				new LazyTimedVariable<Integer>() {
 					@Override
 					public Integer create() {
@@ -2214,7 +2329,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(BONUS_START,
+		this.implicitExpressionContext.putVariable(BONUS_START,
 				new LazyTimedVariable<String>() {
 					@Override
 					public String create() {
@@ -2223,7 +2338,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable(WORKED_YEARS,
+		this.implicitExpressionContext.putVariable(WORKED_YEARS,
 				new ActiveTimedExpressionVariable<Double>(WORKED_YEARS.name(),
 						ExpressionScope.CONTRACT) {
 					@Override
@@ -2232,7 +2347,7 @@ public class SQLContractSalaryCalculatorContext implements
 								period.getEnd());
 					}
 				});
-		this.implicitExpressionContext.addVariable("DIAS_PREAVISO",
+		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
 				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO",
 						ExpressionScope.CONTRACT) {
 					@Override
@@ -2241,7 +2356,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable("SALARIO_DIA",
+		this.implicitExpressionContext.putVariable("SALARIO_DIA",
 				new LazyTimedExpressionVariable<Double>("SALARIO_DIA",
 						ExpressionScope.CONTRACT) {
 					@Override
@@ -2256,7 +2371,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				});
 
-		this.implicitExpressionContext.addVariable("SALARIO_VARIABLE_DIA",
+		this.implicitExpressionContext.putVariable("SALARIO_VARIABLE_DIA",
 				new LazyTimedExpressionVariable<Double>("SALARIO_VARIABLE_DIA",
 						ExpressionScope.CONTRACT) {
 					@Override
@@ -2275,9 +2390,9 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext = new ExpressionContext(
 				this.implicitExpressionContext, this);
 
-		this.contractExpressionContext.addVariable(CONTEXT,
+		this.contractExpressionContext.setVariable(CONTEXT,
 				contractExpressionContext, startDate, endDate);
-		this.contractExpressionContext.addVariable(SELF, this, startDate,
+		this.contractExpressionContext.setVariable(SELF, this, startDate,
 				endDate);
 
 		loadExpression(this.contractExpressionContext, BR,
@@ -2294,13 +2409,24 @@ public class SQLContractSalaryCalculatorContext implements
 				"def(x){ SELF.system(x)};", this.startDate, this.endDate);
 		loadExpression(this.contractExpressionContext, AGREEMENT,
 				"def(x){ SELF.agreement(x)};", this.startDate, this.endDate);
-		loadExpression(this.contractExpressionContext, GUARANTEE,
-				"def(x){ SELF.guarantee(x)};", this.startDate, this.endDate);
+
+		try {
+			Method guarantee = SQLContractSalaryCalculatorContext.class
+					.getMethod("guaranteee", double.class);
+			this.contractExpressionContext.setVariable(GUARANTEE,
+					new MethodStub(guarantee), this.startDate, this.endDate);
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		if (!containsVariable(ACTUAL_DAYS)) {
 			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de
 			// querys adicionales...)
-			this.contractExpressionContext.addVariable(ACTUAL_DAYS,
+			this.contractExpressionContext.putVariable(ACTUAL_DAYS,
 					new LazyTimedVariable<Double>() {
 						@Override
 						public Double create() {
@@ -2308,45 +2434,6 @@ public class SQLContractSalaryCalculatorContext implements
 						}
 					});
 		}
-
-		long leaveDays = leaveLoader.getLeavesDays(period);
-
-		this.contractExpressionContext.addVariable(LEAVE_DAYS, leaveDays,
-				this.startDate, this.endDate);
-
-		if (leaveDays == 0) {
-			this.contractExpressionContext.addVariable(GUARANTEED_DAYS, 0,
-					this.startDate, this.endDate);
-			return;
-		} // Si no hay bajas...
-
-		/*
-		 * long guarenteedDays = leaveLoader.getCommonDiseaseDays(period) +
-		 * leaveLoader.getProfessionalDiseaseDays(period);
-		 * 
-		 * this.contractExpressionContext.addVariable(GUARANTEED_DAYS,
-		 * guarenteedDays, this.startDate, this.endDate );
-		 */
-
-		this.contractExpressionContext.addVariable(GUARANTEED_DAYS,
-				guarenteedDays);
-
-		double guaranteed = getGuarenteed();
-
-		this.contractExpressionContext.addVariable(GUARANTEED, guaranteed,
-				this.startDate, this.endDate);
-
-		if (guaranteed == 0.00) {
-			return;
-		}
-
-		this.contractExpressionContext.addVariable(TOTAL_BENEFITS_IT,
-				new LazyTimedVariable<Double>() {
-					@Override
-					public Double create() {
-						return getTotalBenefitsIt();
-					}
-				});
 
 	}
 
@@ -2450,18 +2537,18 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {
 
-		ctx.addVariable(MALE, Gender.MALE.ordinal(), contractStartDate,
+		ctx.setVariable(MALE, Gender.MALE.ordinal(), contractStartDate,
 				contractEndDate);
-		ctx.addVariable(FEMALE, Gender.FEMALE.ordinal(), contractStartDate,
+		ctx.setVariable(FEMALE, Gender.FEMALE.ordinal(), contractStartDate,
 				contractEndDate);
 		Integer gender = getInt(SQLConstants.PERSON, PersonColumns.GENDER);
 		if (gender != null) {
-			ctx.addVariable(GENDER, gender, contractStartDate, contractEndDate);
+			ctx.setVariable(GENDER, gender, contractStartDate, contractEndDate);
 		}
 		Date birthDate = getDate(SQLConstants.PERSON, PersonColumns.BIRTH_DATE);
 		if (birthDate != null) {
 			int age = getYears(birthDate, contractStartDate);
-			ctx.addVariable(AGE, age, contractStartDate, contractEndDate);
+			ctx.setVariable(AGE, age, contractStartDate, contractEndDate);
 		}
 
 	}
@@ -2655,6 +2742,25 @@ public class SQLContractSalaryCalculatorContext implements
 			if (stmt != null)
 				stmt.close();
 		}
+	}
+
+	protected static Date prev(Date date) {
+		return addDays2Date(date, -1);
+	}
+
+	protected static Date next(Date date) {
+		return addDays2Date(date, 1);
+	}
+
+	protected static Date addDays2Date(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, days);
+		return calendar.getTime();
+	}
+
+	protected static long days(Period p) {
+		return CommonUtil.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 	}
 
 }

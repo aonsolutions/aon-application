@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DateUtils;
 
 public class Variables implements Comparator<ITimedVariable<?>> {
 
@@ -21,13 +22,13 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 
 	public static class NotFoundVariableError extends Error {
-		
+
 		private String variableName;
-		
+
 		public NotFoundVariableError(String variableName) {
 			this.variableName = variableName;
 		}
-		
+
 		public String getVariableName() {
 			return variableName;
 		}
@@ -58,7 +59,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		@Override
 		public boolean containsKey(Object key) {
-			return Variables.this.containsKey((String)key, this.period);
+			return Variables.this.containsKey((String) key, this.period);
 		}
 
 		@Override
@@ -151,8 +152,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 		this.notFoundHandler = notFoundHandler;
 	}
-	
-	public int size(){
+
+	public int size() {
 		return vars.size();
 	}
 
@@ -331,6 +332,41 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return ret;
 
 	}
+
+	public <T> List<ITimedVariable<T>> getVariables(String name) {
+		List<ITimedVariable<?>> values = get(name);
+		if (values == null)
+			return Collections.emptyList();
+
+		List<ITimedVariable<T>> ret = new ArrayList<ITimedVariable<T>>();
+
+		for (ITimedVariable<?> var : values)
+			ret.add((ITimedVariable<T>) var);
+
+		return ret;
+
+	}
+
+	public <T> List<ITimedVariable<T>> getVariables(String name, Period p) {
+		List<ITimedVariable<?>> values = get(name);
+		if (values == null)
+			return Collections.emptyList();
+
+		List<ITimedVariable<T>> ret = new ArrayList<ITimedVariable<T>>();
+
+		for (ITimedVariable<?> var : values) {
+			Period intersect = var.getPeriod().intersect(p);
+			if (intersect == null)
+				continue;
+
+			ret.add(new WrapTimedVariable<T>(intersect, (ITimedVariable<T>) var));
+		}
+
+		return ret;
+
+	}
+
+
 	protected Variables getSnapshot(Set<String> variables) {
 
 		Variables snapshot = new Variables();

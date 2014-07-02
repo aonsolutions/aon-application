@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class ExpressionContext {
 			List<ITimedResult<Object>> results = context.eval(
 					expression.getExpression(), start, end);
 			for (ITimedResult<Object> result : results)
-				context.addVariable(expression.getName(), result);
+				context.putVariable(expression.getName(), result);
 		}
 	}
 
@@ -212,7 +213,7 @@ public class ExpressionContext {
 
 	}
 
-	public static Set<String> getVariables(String script) {
+	public static Set<String> getVarNames(String script) {
 		Set<String> names = new HashSet<String>();
 		Matcher matcher = VARIABLE_PATTERN.matcher(script);
 		while (matcher.find()) {
@@ -337,14 +338,14 @@ public class ExpressionContext {
 		throw new UnsupportedOperationException();
 	}
 
-	public void addVariable(Object name, ITimedVariable<?> timedVariable) {
+	public void putVariable(Object name, ITimedVariable<?> timedVariable) {
 		variables.put(name.toString(), timedVariable);
 	}
 
-	public void addVariable(Object name, Object value, Date start, Date end) {
+	public void setVariable(Object name, Object value, Date start, Date end) {
 		ITimedVariable<Object> timedObject = new TimedObject<Object>(value,
 				start, end);
-		this.addVariable(name.toString(), timedObject);
+		this.putVariable(name.toString(), timedObject);
 	}
 
 	public boolean isDef(Object name) {
@@ -357,6 +358,14 @@ public class ExpressionContext {
 
 	public ITimedVariable<?> getVariable(Object name, Date start, Date end) {
 		return variables.getVariable(name.toString(), new Period(start, end));
+	}
+
+	public <T> List<ITimedVariable<T>> getVariables(Object name) {
+		return variables.getVariables(name.toString());
+	}
+
+	public <T> List<ITimedVariable<T>> getVariables(Object name, Date start, Date end) {
+		return variables.getVariables(name.toString(), new Period(start, end));
 	}
 
 	public <T> T getVariable(Object name, Date start, Date end, Class<T> toType) {
@@ -376,11 +385,12 @@ public class ExpressionContext {
 			List<ITimedResult<T>> values = this
 					.eval(script, start, end, toType);
 			if (name != null) {
+				
 				for (ITimedResult<T> obj : values) {
 					IExpressionVariable<T> var = new ExpressionVariable<T>(
 							obj.getValue(), obj.getPeriod(), expression,
 							obj.getContext());
-					this.addVariable(name, var);
+					this.putVariable(name, var);
 				}
 			}
 			return values;
@@ -388,7 +398,7 @@ public class ExpressionContext {
 			Period period = new Period(start, end);
 			RemovedExpressionVariable<T> var = new RemovedExpressionVariable<T>(
 					name, period, expression);
-			this.addVariable(name, var);
+			this.putVariable(name, var);
 			return Collections.singletonList((ITimedResult<T>) var);
 		}
 	}
@@ -402,12 +412,12 @@ public class ExpressionContext {
 		if ( StringUtils.isBlank(script) )
 			inputs =  Collections.emptySet(); 
 		else
-			inputs =  getVariables(script);
+			inputs =  getVarNames(script);
 		
 		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
 		for (PeriodMap periodMap : bindings) {
 			Period period = periodMap.getPeriod();
-			addVariable(expression.getName(), new LazyExpressionVariable(this,
+			putVariable(expression.getName(), new LazyExpressionVariable(this,
 					expression, period.getStart(), period.getEnd()));
 		}
 
@@ -423,7 +433,7 @@ public class ExpressionContext {
 		if (script == null) {
 			return Collections.emptyList();
 		}
-		Set<String> inputs = getVariables(script);
+		Set<String> inputs = getVarNames(script);
 		List<PeriodMap> bindingsList = variables
 				.getBindings(inputs, start, end);
 		try {
@@ -546,12 +556,12 @@ public class ExpressionContext {
 
 		Date epoch = new Date(0); // January 1, 1970, 00:00:00
 
-		addVariable(VariableName.THIS, this, epoch, null);
+		setVariable(VariableName.THIS, this, epoch, null);
 
 		for (Method method : ExpressionContext.class.getDeclaredMethods()) {
 			ContextMethod implicit = method.getAnnotation(ContextMethod.class);
 			if (implicit != null)
-				addVariable(implicit.name(), method, epoch, null);
+				setVariable(implicit.name(), method, epoch, null);
 		}
 	}
 
@@ -589,5 +599,8 @@ public class ExpressionContext {
 				return false;
 		return true;
 	}
+	
+	// ------------------------------------------------------------------------
+	
 
 }

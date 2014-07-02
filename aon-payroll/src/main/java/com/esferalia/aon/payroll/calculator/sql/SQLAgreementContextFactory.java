@@ -159,7 +159,7 @@ public class SQLAgreementContextFactory implements
 				} catch (Exception e) {
 					DeferredExpressionVariable<Object> variable = new DeferredExpressionVariable<Object>(
 							start, end, expr);
-					context.addVariable(expr.getName(), variable);
+					context.putVariable(expr.getName(), variable);
 				}
 			}
 		} finally {
@@ -198,7 +198,7 @@ public class SQLAgreementContextFactory implements
 		AonFunctions.load(systemExpressionContext, startDate, endDate);
 
 		Long yearDays = getYearDays(startDate, endDate);
-		systemExpressionContext.addVariable(YEAR_DAYS, yearDays, startDate,
+		systemExpressionContext.setVariable(YEAR_DAYS, yearDays, startDate,
 				endDate);
 
 		/*
@@ -210,9 +210,9 @@ public class SQLAgreementContextFactory implements
 
 		loadSystemData(connection, startDate, endDate, systemExpressionContext);
 
-		systemExpressionContext.addVariable(SALARY_START, startDate, startDate,
+		systemExpressionContext.setVariable(SALARY_START, startDate, startDate,
 				endDate);
-		systemExpressionContext.addVariable(SALARY_END, endDate, startDate,
+		systemExpressionContext.setVariable(SALARY_END, endDate, startDate,
 				endDate);
 
 		ExcelFunctions.load(systemExpressionContext, startDate, endDate);
@@ -239,7 +239,7 @@ public class SQLAgreementContextFactory implements
 			startCalendar.set(Calendar.DAY_OF_MONTH, monthDays);
 			Date monthEnd = startCalendar.getTime();
 
-			ctx.addVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
+			ctx.setVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
 
 			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
 			startCalendar.add(Calendar.MONTH, 1);
@@ -272,7 +272,7 @@ public class SQLAgreementContextFactory implements
 				} catch (Exception e) {
 					DeferredExpressionVariable<Object> variable = new DeferredExpressionVariable<Object>(
 							start, end, expr);
-					expressionCtx.addVariable(expr.getName(), variable);
+					expressionCtx.putVariable(expr.getName(), variable);
 				}
 			}
 		} finally {

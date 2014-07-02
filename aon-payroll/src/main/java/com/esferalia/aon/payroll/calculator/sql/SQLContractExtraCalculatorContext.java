@@ -115,7 +115,7 @@ public class SQLContractExtraCalculatorContext extends
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 			Period month = monthDays.getPeriod();
 			Number days = (Number) monthDays.getValue( month);
-			ctx.addVariable(ContextVariable.MONTH_DAYS, days.doubleValue() * months, month.getStart(), month.getEnd() );
+			ctx.setVariable(ContextVariable.MONTH_DAYS, days.doubleValue() * months, month.getStart(), month.getEnd() );
 		}
 
 	}

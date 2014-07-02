@@ -3865,12 +3865,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						@Override
 						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
 								Connection conn, Date startDate, Date endDate,
-								Date issueDate, Criteria criteria) {
+								Date issueDate, Criteria criteria, int start, int end) {
 							ISQLContractSalaryCalculatorContext draftCtx;
 							try {
 								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
 										conn, startDate, endDate, issueDate,
-										criteria);
+										criteria, start, end );
 								draftCtx = new SQLSalaryDraftCalculatorContext(
 										draft, sqlCtx);
 								draftCtx.next();
@@ -3962,12 +3962,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			@Override
 			protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
 					Connection conn, Date startDate, Date endDate,
-					Date issueDate, Criteria criteria) {
+					Date issueDate, Criteria criteria, int start, int end) {
 
 				ISQLContractSalaryCalculatorContext draftCtx;
 				try {
 					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
-							conn, startDate, endDate, issueDate, criteria);
+							conn, startDate, endDate, issueDate, criteria, start, end);
 					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
 							sqlCtx);
 					draftCtx.next();
@@ -4413,7 +4413,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				errors = 0;
 				for (ITimedResult<Object> result : results) {
 					var.setValue(result.getValue());
-					ctx.addVariable(var.getName(), result);
+					ctx.putVariable(var.getName(), result);
 					// System.out.println(var.getName() + " = " +
 					// var.getValue());
 				}
