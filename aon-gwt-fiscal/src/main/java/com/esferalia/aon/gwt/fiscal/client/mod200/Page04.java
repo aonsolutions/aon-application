@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsBehaviour.BEHAVIOUR_KEYS_MAP;
+
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Constants;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
@@ -36,5 +39,14 @@ public class Page04 extends PageAbs {
 			}
 		}
 	}
+	
+	protected boolean isDisabled(Mod200Key key) {
+		if (key == Mod200Key.BA138 && mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL) {
+			return true;
+		}
+		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
+		return behaviour != null && behaviour[1];
+	}
+	
 	
 }

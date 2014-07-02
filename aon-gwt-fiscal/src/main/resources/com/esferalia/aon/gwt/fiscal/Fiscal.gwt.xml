@@ -3,15 +3,12 @@
 
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
-
 	<inherits name="com.google.gwt.i18n.I18N" />
 
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />
 
 	<!-- English language, independent of country -->
-	<!-- extend-property name="locale" values="en"/ -->
-
 	<!-- Spanish in Spain -->
 	<extend-property name="locale" values="es_ES" />
 
@@ -23,8 +20,7 @@
 	<extend-property name="user.agent" values="opera" />
 	<extend-property name="user.agent" values="ie9" />
 
-	<set-configuration-property name="locale.useragent"
-		value="Y" />
+	<set-configuration-property name="locale.useragent" value="Y" />
 
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->

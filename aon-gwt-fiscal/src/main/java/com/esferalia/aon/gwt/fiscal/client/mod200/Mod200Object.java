@@ -191,6 +191,9 @@ public class Mod200Object implements Serializable, IsSerializable {
 	
 	public void doubleValueChanged(Mod200Key key, double value) {
 		DoubleVariable oldVar = getMod200().getKey(key);
+		if (oldVar == null) {
+			oldVar = new DoubleVariable(key);
+		}
 		DoubleVariable newVar = oldVar.clone();
 		newVar.setValue( value );
 		UndoableVariableEdit eve = new UndoableVariableEdit(oldVar, newVar);

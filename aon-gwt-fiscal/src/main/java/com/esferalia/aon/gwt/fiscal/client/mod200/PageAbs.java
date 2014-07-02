@@ -74,9 +74,8 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected int paintKey(FlexTable tab,final Mod200Key key,int row) {
-		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
-		boolean title = behaviour != null && behaviour[0]; 
-		boolean disabled = behaviour != null && behaviour[1];
+		boolean title = isTitle(key);
+		boolean disabled = isDisabled(key);
 		
 		Label desc = new Label(key.getDescription() );
 		if (title) {
@@ -115,6 +114,16 @@ public abstract class PageAbs extends ResizeComposite {
 		tab.getFlexCellFormatter().addStyleName(row, 1, RESOURCES.css().aonTextRight());
 		tab.getFlexCellFormatter().addStyleName(row, 1, RESOURCES.css().aonNowrap());
 		return ++row;
+	}
+
+	protected boolean isDisabled(Mod200Key key) {
+		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
+		return behaviour != null && behaviour[1];
+	}
+
+	protected boolean isTitle(Mod200Key key) {
+		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
+		return (behaviour != null && behaviour[0]); 
 	}
 
 	protected abstract void initializeTable();

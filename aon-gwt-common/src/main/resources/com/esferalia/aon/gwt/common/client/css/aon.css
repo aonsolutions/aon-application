@@ -230,7 +230,8 @@
 @sprite .aon-changed {
 	width: auto;
 	height: auto;
-	gwt-image: "aonChanged" ; 
+	gwt-image: "aonChanged" ;
+	background-color: transparent; 
 }
 @sprite .aon-input-error {
 	color: red !important;
@@ -313,7 +314,7 @@
     background-color: #880000;
 }	
 
-input[type="checkbox"]:disabled + label{
+input:disabled + label{
   color: #CCC;
 }
 
