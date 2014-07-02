@@ -48,7 +48,7 @@ public class SystemPaymentVariableHandler extends AbstractVariableHandler {
 			getUndefinedVariablesModel().setWrappedData(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
 				dataList = new LinkedList<IVariableData>();
-				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
+				Set<String> vl = ExpressionContext.getVarNames(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
 				List<IVariableData> undefined = new LinkedList<IVariableData>();
 				if(!vl.isEmpty()){
 					for(String s: vl){
