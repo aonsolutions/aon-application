@@ -158,21 +158,18 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	class MouseEventsHandlers implements MouseOverHandler, ContextMenuHandler {
 
 		public MouseEventsHandlers(TimeLineChart timelineChart) {
-			timelineChart.addMouseOverHandler(this);
+			timelineChart.addMouseOverHandler(this);			
 			timelineChart.addContextMenuHandler(this);
 		}
 
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
-			try {
+			try {				
 				Element el = Element
-						.as(event.getNativeEvent().getEventTarget());
-
+						.as(event.getNativeEvent().getEventTarget());				
 				mouseClientX = event.getClientX();
-				mouseClientY = event.getClientY();
-
+				mouseClientY = event.getClientY();				
 				cadenaTooltip = getLogicalName(el, mouseClientX, mouseClientY);
-
 				if (cadenaTooltip == null)
 					return;
 
@@ -426,7 +423,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		dataObject.load(new AsyncCallback<ITDataObject>() {
 
 			@Override
-			public void onSuccess(ITDataObject dataObject) {
+			public void onSuccess(ITDataObject dataObject) {				
 				ITEditor.this.dataObject = dataObject;
 				dataObject.addListener(new UndoListener());
 				initDateListBox();
@@ -442,20 +439,17 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		});
 	}
 
-	private final void printTimelineChart() {
-
+	private final void printTimelineChart() {		
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				try {
-					data = new DataTableWrapper();
+					data = new DataTableWrapper();					
 					AbstractDataTable dataTable = createTable();					 
 					Options options = createOptions(dataTable);					
 					timelineChart = new TimeLineChart(dataTable, options);
 					
 					if (ifNull == false) {
-
-						timelinePanel.setWidget(timelineChart);
-
+						timelinePanel.setWidget(timelineChart);						
 						new MouseEventsHandlers(timelineChart);
 					} else {
 						timelinePanel.clear();
@@ -667,12 +661,12 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 	private void getPosStatusEmployee(String element) {
 
-		int auxX = element.indexOf("vR\":") + 4;
-		int auxY = element.indexOf("uR\":") - 2;
+		int auxX = element.indexOf("VL\":") + 4;
+		int auxY = element.indexOf("UL\":") - 2;
 
 		posColumn = Integer.parseInt(cadenaTooltip.substring(auxX, auxY));
 
-		auxX = element.indexOf("uR\":") + 4;
+		auxX = element.indexOf("UL\":") + 4;
 		auxY = element.indexOf("}}");
 
 		posCell = Integer.parseInt(element.substring(auxX, auxY));
@@ -683,7 +677,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		String cadena = pElement;
 		getPosStatusEmployee(pElement);
-		if (cadena.contains("\"vR\":") && cadena.contains("\"uR\":")
+		if (cadena.contains("\"VL\":") && cadena.contains("\"UL\":")
 				&& data.isActive(posColumn, posCell) == false) {			
 			return true;
 		} else {
@@ -830,7 +824,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			if (cadenaTooltip.contains("axis")) {
 				// Click sobre el Mes. De momento no hago nada
 			}
-			if (cadenaTooltip.contains("\"vR\":")) {
+			if (cadenaTooltip.contains("\"VL\":")) {
 				// Click en tipo de contrato
 				tratarContrato(cadenaTooltip);
 			}

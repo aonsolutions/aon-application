@@ -108,8 +108,6 @@ public class ITDataObject {
 	private Map<Integer, LinkedHashMap<Integer, ITDataPerson>> deletes;
 	
 	private int contador;
-	
-
 
 	private UndoManager<UndoableEdit<?>> undoManager;
 	private EmployeesServiceAsync employeesService;
