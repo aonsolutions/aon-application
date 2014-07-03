@@ -42,6 +42,8 @@ public class Page05 extends PageAbs {
 		if (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL) {
 			if (key == Mod200Key.PG255
 			  ||key == Mod200Key.PG260
+			  ||key == Mod200Key.PG279
+			  ||key == Mod200Key.PG309
 			 ) {
 				return true;
 			}

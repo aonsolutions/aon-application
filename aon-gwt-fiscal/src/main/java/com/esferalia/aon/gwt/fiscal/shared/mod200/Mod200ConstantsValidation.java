@@ -15,10 +15,10 @@ public class Mod200ConstantsValidation {
 	private static final int PAGE03 = 3;
 	private static final int PAGE04 = 4;
 
-	private static final String ERROR001 = 
-			"'Total activo' y 'Total patrimonio neto y pasivo' deben ser iguales.";
-	private static final String ERROR002 =
-			"No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
+	private static final String ERROR001 = "'"+Mod200Key.BA180.getDescription()+"' y '"
+			+Mod200Key.BP252.getDescription()+"' deben ser iguales.";
+	private static final String ERROR002 = "No se han cumplimentado datos en el "
+			+ "Balance (Activo, patrimonio neto y pasivo).";
 	private static final String ERROR003 =
 			"Verifique el signo de la clave: ";
 	private static final String ERROR005 =
