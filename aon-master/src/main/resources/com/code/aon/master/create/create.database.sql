@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.36.3
+# Version: 7.36.4
 # Created by: ecastellano
-# Creation Date: 30/06/2014 18:00
+# Creation Date: 2/07/2014 18:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4396,7 +4396,7 @@ CREATE TABLE `fs_model200_detail` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `fs_model200` int(4) NOT NULL COMMENT 'Identificador del modelo 200',
-  `key` varchar(4) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Clave Casilla',
+  `key` varchar(5) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Clave Casilla',
   `value` double(15,3) DEFAULT NULL COMMENT 'Valor de la casilla',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DETAIL_DOMAIN` (`domain`),
@@ -7566,7 +7566,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.36.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.36.4');
 
 COMMIT;
 
