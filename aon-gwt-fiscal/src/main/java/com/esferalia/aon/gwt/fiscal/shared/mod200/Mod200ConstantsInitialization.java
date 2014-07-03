@@ -180,21 +180,26 @@ public class Mod200ConstantsInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.PG323.toString(),"sap({666,667,673,675})");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.PG326.toString(),"sap({6301,638,6300,633})");
 	}
-	static { 
-		
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0337.toString(),"sab({900,991,992})+sdb({800,89})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0339.toString(),"sab({910})+sdb({810})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0340.toString(),"sab({94})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0341.toString(),"sab({95})+sdb({85})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0342.toString(),"sab({900})+sdb({860})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0343.toString(),"sab({920})+sdb({820})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0344.toString(),"sab({8301,834,835,838})+sdb({8300,833})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0347.toString(),"sab({902,993,994})+sdb({802})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0349.toString(),"sab({912})+sdb({812})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0350.toString(),"sdb({84})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0351.toString(),"sab({902})+sdb({862})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0352.toString(),"sab({921})+sdb({821})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0353.toString(),"sab({8301})+sdb({836,837})");
+	
+	static { //ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO DE INGRESOS Y GASTOS RECONOCIDOS EN EL EJERCICIO
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0336.toString(),"C0051?sab({900,991,992})+sdb({800,89}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0337.toString(),"C0050?sab({900,991,992})+sdb({800,89}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0339.toString(),"C0050 || C0051?sab({910})+sdb({810}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0340.toString(),"C0050 || C0051?sab({94}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0341.toString(),"C0050 || C0051?sab({95})+sdb({85}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0342.toString(),"C0050 || C0051?sab({900})+sdb({860}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0343.toString(),"C0050 || C0051?sab({920})+sdb({820}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0344.toString(),"C0050 || C0051?sab({8301,834,835,838})+sdb({8300,833}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0346.toString(),"C0051?sab({902,993,994})+sdb({802}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0347.toString(),"C0050?sab({902,993,994})+sdb({802}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0349.toString(),"C0050 || C0051?sab({912})+sdb({812}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0350.toString(),"C0050 || C0051?sdb({84}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0351.toString(),"C0050 || C0051?sab({902})+sdb({862}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0352.toString(),"C0050 || C0051?sab({921})+sdb({821}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0353.toString(),"C0050 || C0051?sab({8301})+sdb({836,837}):0.0");
+	}
+	
+	static {		
 	}
 }
 

@@ -313,7 +313,7 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,PG327(327)
 	,PG328(328)
 	,PG500(500)
-	
+	//ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO DE INGRESOS Y GASTOS RECONOCIDOS EN EL EJERCICIO
 	,T0500(500)
 	,T0336(336)
 	,T0337(337)
@@ -335,6 +335,7 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,T0353(353)
 	,T0354(354)
 	,T0355(355)
+	// -------------------------------------------
 	,TC001(380)
 	,TC002(381)
 	,TC003(382)

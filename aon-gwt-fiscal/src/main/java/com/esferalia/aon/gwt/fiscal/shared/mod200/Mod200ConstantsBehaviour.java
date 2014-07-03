@@ -102,8 +102,8 @@ public class Mod200ConstantsBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.PG328.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.PG500.toString(),new Boolean[]{TRUE,TRUE});
 	}
-	static {
-		
+	
+	static { //ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO DE INGRESOS Y GASTOS RECONOCIDOS EN EL EJERCICIO
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.T0500.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.T0336.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.T0339.toString(),new Boolean[]{TRUE,FALSE});
@@ -121,6 +121,9 @@ public class Mod200ConstantsBehaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.T0353.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.T0354.toString(),new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.T0355.toString(),new Boolean[]{TRUE,TRUE});
+	}
+
+	static { 	
 		
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.TC001.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.TC002.toString(),new Boolean[]{TRUE,FALSE});
