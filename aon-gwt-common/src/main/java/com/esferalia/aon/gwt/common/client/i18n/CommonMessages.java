@@ -5,14 +5,14 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// � --> \u00C1 � --> \u00E1
-	// � --> \u00C9 � --> \u00E9
-	// � --> \u00CD � --> \u00ED
-	// � --> \u00D3 � --> \u00F3
-	// � --> \u00DA � --> \u00FA
-	// � --> \u00D1 � --> \u00F1
-	// � --> \u00AA � --> \u00BA
-	// � --> \u00BF
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
 	String integerPattern();
@@ -1167,5 +1167,8 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Personal no fijo")
 	String nonFixedPersonal();
+
+	@DefaultMessage("La validaci\u00F3n no ha generado ning\u00FAn mensaje.")
+	String noValidationMessages();
 
 }

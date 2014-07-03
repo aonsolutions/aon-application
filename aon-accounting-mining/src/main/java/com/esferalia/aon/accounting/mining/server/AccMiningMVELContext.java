@@ -12,6 +12,7 @@ import org.mvel2.MVEL;
 import com.esferalia.aon.accounting.mining.shared.AccMiningException;
 import com.esferalia.aon.accounting.mining.shared.AccMiningUtils;
 import com.esferalia.aon.accounting.mining.shared.AccountBalance;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 
 public class AccMiningMVELContext implements Map<String, Object> {
 
@@ -157,7 +158,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sa(int ... accounts  ) throws AccMiningException {
+	public double sab(int ... accounts  ) throws AccMiningException {
 		return getCreditBalance(accounts);
 	}
 
@@ -167,8 +168,8 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double saPositivo(int ... accounts) throws AccMiningException {
-		double d = sa(accounts); 
+	public double sabPositivo(int ... accounts) throws AccMiningException {
+		double d = sab(accounts); 
 		return d>0?d:0;
 	}
 	
@@ -178,7 +179,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sa(int account) throws AccMiningException {
+	public double sab(int account) throws AccMiningException {
 		return getCreditBalance(new int[]{account});
 	}
 	
@@ -188,8 +189,8 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double saPositivo(int account) throws AccMiningException {
-		double d = sa(account); 
+	public double sabPositivo(int account) throws AccMiningException {
+		double d = sab(account); 
 		return d>0?d:0;
 	}
 
@@ -199,7 +200,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sd(int ... accounts  ) throws AccMiningException {
+	public double sdb(int ... accounts  ) throws AccMiningException {
 		return getDebitBalance(accounts);
 	}
 	/**
@@ -208,8 +209,8 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double sdPositivo(int ... accounts) throws AccMiningException {
-		double d = sd(accounts); 
+	public double sdbPositivo(int ... accounts) throws AccMiningException {
+		double d = sdb(accounts); 
 		return d>0?d:0;
 	}
 	/**
@@ -218,7 +219,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return
 	 * @throws AccMiningException
 	 */
-	public double sd(int account) throws AccMiningException {
+	public double sdb(int account) throws AccMiningException {
 		return getDebitBalance(new int[]{account});
 	}
 	/**
@@ -227,9 +228,99 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	 * @return El dato si es positivo, en otro caso cero.
 	 * @throws AccMiningException
 	 */
-	public double sdPositivo(int account) throws AccMiningException {
-		double d = sd(account); 
+	public double sdbPositivo(int account) throws AccMiningException {
+		double d = sdb(account); 
 		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AccMiningException
+	 */
+	public double sap(int ... accounts  ) throws AccMiningException {
+		return getCreditPyG(accounts);
+	}
+
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AccMiningException
+	 */
+	public double sapPositivo(int ... accounts) throws AccMiningException {
+		double d = sap(accounts); 
+		return d>0?d:0;
+	}
+	
+	/**
+	 * Saldo Acreedor (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AccMiningException
+	 */
+	public double sap(int account) throws AccMiningException {
+		return getCreditPyG(new int[]{account});
+	}
+	
+	/**
+	 * Saldo Acreedor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AccMiningException
+	 */
+	public double sapPositivo(int account) throws AccMiningException {
+		double d = sap(account); 
+		return d>0?d:0;
+	}
+
+	/**
+	 * Saldo Deudor (Debe - Haber) del sumatorio de las cuentas indicadas en <i>accounts</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AccMiningException
+	 */
+	public double sdp(int ... accounts  ) throws AccMiningException {
+		return getDebitPyG(accounts);
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AccMiningException
+	 */
+	public double sdpPositivo(int ... accounts) throws AccMiningException {
+		double d = sdp(accounts); 
+		return d>0?d:0;
+	}
+	/**
+	 * Saldo Deudor (Debe - Haber) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return
+	 * @throws AccMiningException
+	 */
+	public double sdp(int account) throws AccMiningException {
+		return getDebitPyG(new int[]{account});
+	}
+	/**
+	 * Saldo Deudor Positivo (Haber - Debe) de la cuenta indicada en <i>account</i> antes del asiento de explotación.
+	 * @param accounts
+	 * @return El dato si es positivo, en otro caso cero.
+	 * @throws AccMiningException
+	 */
+	public double sdpPositivo(int account) throws AccMiningException {
+		double d = sdp(account); 
+		return d>0?d:0;
+	}
+	/**
+	 * Redondeo a dos decimales.
+	 * @param value
+	 * @return El dato a redondear.
+	 * @throws AccMiningException
+	 */
+	public double round(double value) throws AccMiningException {
+		return AonUtil.round(value); 
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -258,4 +349,27 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		return d;
 	}
 	
+	private double getCreditPyG(int ... accounts  ) throws AccMiningException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getCreditPyG();
+			}
+		}
+		return d;
+	}
+	
+	private double getDebitPyG(int ... accounts ) throws AccMiningException {
+		double d = 0.0;
+		for (int account : accounts) {
+			String acc = Integer.toString(account);
+			if (this.accounts.containsKey(acc)) {
+				AccountBalance ab = this.accounts.get(acc);
+				d = d + ab.getDebitPyG();
+			}
+		}
+		return d;
+	}
 }

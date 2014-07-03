@@ -9,7 +9,7 @@ import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsActivati
 import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTERS_KEYS;
 import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCompute.COMPUTE_EXPRESSION_MAP;
 import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsInitialization.INITIALIZE_EXPRESSION_MAP;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsValidation.ERROR_EXPRESSION_LIST;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsValidation.VALIDATION_EXPRESSION_LIST;
 
 import java.sql.Connection;
 import java.util.LinkedList;
@@ -249,7 +249,6 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 					existingVariable.setValue( 0.0 );
 				}
 				ctx.put(stringKey, existingVariable.getValue());
-
 				Object ret = ctx.evaluateExpression(stringKey,expression);
 				
 				if (ret instanceof Double) {
@@ -362,9 +361,9 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		}
 		mod200.setMessages(null);	
 		List<ValidationMessage> list = new LinkedList<ValidationMessage>();
-		for (ValidationMessage validation : ERROR_EXPRESSION_LIST) {
-			Boolean error = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
-			if (error) {
+		for (ValidationMessage validation : VALIDATION_EXPRESSION_LIST) {
+			Boolean valid = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
+			if (!valid) {
 				list.add(validation);
 			}
 		}

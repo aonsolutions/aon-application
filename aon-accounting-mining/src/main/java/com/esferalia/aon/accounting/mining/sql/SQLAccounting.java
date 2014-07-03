@@ -22,18 +22,14 @@ public class SQLAccounting {
 			+" FROM account_period"
 			+" WHERE domain = ?"
 			+" AND name = ?";
-	private static final String SELECT = "SELECT SUBSTRING(a.code,1,4) acc, SUM(aed.debit), SUM(aed.credit)" 
+	private static final String SELECT = "SELECT ae.entry_type,SUBSTRING(a.code,1,4) acc, SUM(aed.debit), SUM(aed.credit)" 
 			+" FROM account_entry ae" 
 			+" INNER JOIN account_entry_detail aed on aed.account_entry = ae.id" 
 			+" INNER JOIN account a on aed.account = a.id" 
 			+" where ae.domain = ? "
 			+" AND ae.entry_date BETWEEN ? AND ?"
 			+" AND ae.entry_type != 1"
-			+" AND ("
-			+" 	    (ae.entry_type = 2 AND SUBSTRING(a.code,1,1) NOT IN ('6','7'))"
-			+"	 OR (ae.entry_type NOT IN (1,2) )"
-			+"	  )"
-			+" GROUP BY acc";
+			+" GROUP BY ae.entry_type,acc";
 	//@formatter:on
 
 	public static AccountingPeriod getPeriod(int domain,int year, Connection conn)
@@ -73,17 +69,19 @@ public class SQLAccounting {
 			ps.setDate(3, new java.sql.Date(params.getEndDate().getTime()));
 			rs = ps.executeQuery();
 			Map<String, AccountBalance> map = new HashMap<String, AccountBalance>();
+			int type;
 			String account = null;
 			double debit;
 			double credit;
 			while (rs.next()) {
-				debit = rs.getDouble(2);
-				credit = rs.getDouble(3);
-				account = rs.getString(1);
-				putAccountBalance(map,account.substring(0,1), debit,credit);
-				putAccountBalance(map,account.substring(0,2), debit,credit);
-				putAccountBalance(map,account.substring(0,3), debit,credit);
-				putAccountBalance(map,account, debit,credit);
+				type = rs.getInt(1);
+				account = rs.getString(2);
+				debit = rs.getDouble(3);
+				credit = rs.getDouble(4);
+				putAccountBalance(map,type,account.substring(0,1), debit,credit);
+				putAccountBalance(map,type,account.substring(0,2), debit,credit);
+				putAccountBalance(map,type,account.substring(0,3), debit,credit);
+				putAccountBalance(map,type,account, debit,credit);
 			}
 			return map;
 		} catch (SQLException e) {
@@ -94,12 +92,12 @@ public class SQLAccounting {
 		}
 	}
 
-	private static void putAccountBalance(Map<String, AccountBalance> map,String account,double debit, double credit) {
+	private static void putAccountBalance(Map<String, AccountBalance> map,int type, String account,double debit, double credit) {
 		if (map.containsKey(account)) {
 			AccountBalance ac = map.get(account);
-			ac.add(debit, credit);
+			ac.add(type,debit, credit);
 		} else {
-			map.put(account, new AccountBalance(debit,credit));	
+			map.put(account, new AccountBalance(type,debit,credit));	
 		}
 	}
     

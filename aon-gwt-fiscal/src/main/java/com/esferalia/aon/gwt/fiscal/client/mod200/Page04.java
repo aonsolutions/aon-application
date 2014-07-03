@@ -41,12 +41,18 @@ public class Page04 extends PageAbs {
 	}
 	
 	protected boolean isDisabled(Mod200Key key) {
-		if (key == Mod200Key.BA138 && mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL) {
-			return true;
+		if (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL) {
+			if (key == Mod200Key.BP191 
+ 			 || key == Mod200Key.BP195
+			 || key == Mod200Key.BP202 
+			 || key == Mod200Key.BP211
+			 || key == Mod200Key.BP230
+			 || key == Mod200Key.BP240
+			 ) {
+				return true;
+			}
 		}
 		Boolean[] behaviour = BEHAVIOUR_KEYS_MAP.get(key.toString());
 		return behaviour != null && behaviour[1];
 	}
-	
-	
 }

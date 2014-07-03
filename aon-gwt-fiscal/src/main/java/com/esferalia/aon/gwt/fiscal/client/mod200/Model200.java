@@ -298,6 +298,8 @@ public class Model200 extends MainEntryPoint {
 				if (result.getMessages() != null && !result.getMessages().isEmpty()) {
 					deckPanel.errorPage.addErrorMsg( result.getMessages() );
 					deckPanel.pagesPanel.showWidget(deckPanel.pagesPanel.getWidgetIndex(deckPanel.errorPage));
+				} else {
+					Window.alert(MSG.noValidationMessages() );
 				}
 			}
 
