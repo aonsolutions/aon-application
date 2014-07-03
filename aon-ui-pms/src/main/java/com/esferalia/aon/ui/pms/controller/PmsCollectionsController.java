@@ -114,15 +114,35 @@ public class PmsCollectionsController {
 	}
 	
 	public List<SelectItem> getAgencies() throws ManagerBeanException {
-		return getCustomerList(true);
+		List<SelectItem> agencies = new LinkedList<SelectItem>();
+		for (ITransferObject ito : getCustomerList(true)) {
+			Customer agency = (Customer)ito;
+			SelectItem agencyItem = new SelectItem(agency, agency.getRegistry().getFullName());
+			agencies.add(agencyItem);
+		}
+		return agencies;
+	}
+
+	public List<Integer> getAgencyIds() throws ManagerBeanException {
+		List<Integer> list = new LinkedList<Integer>();
+		for (ITransferObject ito: getCustomerList(true)) {
+			Customer agency = (Customer)ito;
+			list.add(agency.getId());
+		}
+		return list;
 	}
 
 	public List<SelectItem> getCompanies() throws ManagerBeanException {
-		return getCustomerList(false);
+		List<SelectItem> companies = new LinkedList<SelectItem>();
+		for (ITransferObject ito : getCustomerList(false)) {
+			Customer company = (Customer)ito;
+			SelectItem companyItem = new SelectItem(company, company.getRegistry().getFullName());
+			companies.add(companyItem);
+		}
+		return companies;
 	}
 
-	private List<SelectItem> getCustomerList(boolean agency) throws ManagerBeanException {
-		List<SelectItem> customers = new LinkedList<SelectItem>();
+	private List<ITransferObject> getCustomerList(boolean agency) throws ManagerBeanException {
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
@@ -137,22 +157,12 @@ public class PmsCollectionsController {
 		}
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, customerBean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID));
 		criteria.addOrder(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_NAME));
-		for (ITransferObject ito : customerBean.getList(criteria)) {
-			Customer customer = (Customer)ito;
-			SelectItem customerItem = new SelectItem(customer, customer.getRegistry().getFullName());
-			customers.add(customerItem);
-		}
-		return customers;
+		return customerBean.getList(criteria);
 	}
 
 	public List<SelectItem> getAgencyGroups() throws ManagerBeanException {
 		List<SelectItem> groups = new LinkedList<SelectItem>();
-		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
-		UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_SCOPE_ID));
-		criteria.addOrder(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_DESCRIPTION));
-		for (ITransferObject ito : invoicingGroupBean.getList(criteria)) {
+		for (ITransferObject ito : getAgencyGroupList()) {
 			InvoicingGroup invoicingGroup = (InvoicingGroup)ito;
 			SelectItem groupItem = new SelectItem(invoicingGroup, invoicingGroup.getDescription());
 			groups.add(groupItem);
@@ -166,6 +176,24 @@ public class PmsCollectionsController {
 		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_SCOPE_ID));
 		return invoicingGroupBean.getCount(criteria);
+	}
+
+	private List<ITransferObject> getAgencyGroupList() throws ManagerBeanException {
+		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_SCOPE_ID));
+		criteria.addOrder(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_DESCRIPTION));
+		return invoicingGroupBean.getList(criteria);
+	}
+
+	public List<Integer> getAgencyGroupIds() throws ManagerBeanException {
+		List<Integer> list = new LinkedList<Integer>();
+		for (ITransferObject ito: getAgencyGroupList()) {
+			InvoicingGroup agencyGroup = (InvoicingGroup)ito;
+			list.add(agencyGroup.getId());
+		}
+		return list;
 	}
 
 	public List<SelectItem> getAllotmentAgencies() throws ManagerBeanException {

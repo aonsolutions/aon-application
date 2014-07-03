@@ -311,7 +311,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT W.description AS " + HOTEL + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		stmt.append(", COUNT(*) AS " + ROOMS);
-		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, hotel as H, workplace AS W");
+		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, hotel AS H, workplace AS W");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
 		stmt.append(" AND PR.status = " + ReservationStatus.CANCELLED.ordinal());
 		stmt.append(" AND PR.project = PRR.project_reservation");

@@ -168,7 +168,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		stmt.append("SELECT PR.project AS " + RESERVATION + ", PR.code AS " + CODE + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		stmt.append(", PR.check_status AS " + CHECK_STATUS + ", PR.status AS " + STATUS + ", PR.booking_holder AS " + HOLDER + ", PR.total AS " + TOTAL);
 		stmt.append(", PR.comments AS " + COMMENTS + ", B.stay_date AS " + STAY_DATE + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN);
-		stmt.append(", IFNULL(R.alias, R.name) AS " + AGENCY + ", P.code AS " + ROOM_CODE + ", P.name AS " + ROOM_TYPE);
+		stmt.append(", IF(R.alias IS NOT NULL AND R.alias != '', R.alias, R.name) AS " + AGENCY + ", P.code AS " + ROOM_CODE + ", P.name AS " + ROOM_TYPE);
 		stmt.append(", (SELECT CONCAT(PRG.name, ' ', PRG.surname) FROM project_reservation_guest AS PRG");
 		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + GUEST);
 		stmt.append(", (SELECT A.name FROM project_reservation_room_detail AS PRRD, asset_activity AS AA, asset AS A");
