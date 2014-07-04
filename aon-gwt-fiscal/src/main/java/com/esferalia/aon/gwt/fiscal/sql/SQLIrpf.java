@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.IrpfData;
 import com.esferalia.aon.gwt.fiscal.shared.IrpfResult;
 import com.esferalia.aon.payroll.sql.SQLConstants;

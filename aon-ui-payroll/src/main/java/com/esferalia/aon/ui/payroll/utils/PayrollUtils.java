@@ -194,11 +194,11 @@ public class PayrollUtils {
 		}
 	}
 	public Set<String> getPaymentVariableList(ContractPayment payment){
-		Set<String> vl = ExpressionContext.getVariables(StringUtils.isBlank(payment.getExpression())?payment.getPaymentConcept().getExpression():payment.getExpression());
+		Set<String> vl = ExpressionContext.getVarNames(StringUtils.isBlank(payment.getExpression())?payment.getPaymentConcept().getExpression():payment.getExpression());
 		return vl;
 	}
 	public Set<String> getPaymentVariableList(AgreementPayment payment){
-		Set<String> vl = ExpressionContext.getVariables(StringUtils.isBlank(payment.getExpression())?payment.getPaymentConcept().getExpression():payment.getExpression());
+		Set<String> vl = ExpressionContext.getVarNames(StringUtils.isBlank(payment.getExpression())?payment.getPaymentConcept().getExpression():payment.getExpression());
 		return vl;
 	}
 	

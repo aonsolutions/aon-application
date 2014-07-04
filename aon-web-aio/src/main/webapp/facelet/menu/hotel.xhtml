@@ -276,7 +276,13 @@
 									<aon:commandLink id="roomBooking" 
 										action="roomBooking_search"
 										actionListener="#{roomBooking.onInit}"
-										value="#{bundle.report_booking_list}" />
+										value="#{bundle.pms_room_booking_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="agencyBooking" 
+										action="agencyBooking_search"
+										actionListener="#{agencyBooking.onInit}"
+										value="#{bundle.pms_agency_booking_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="emptyRoomList"

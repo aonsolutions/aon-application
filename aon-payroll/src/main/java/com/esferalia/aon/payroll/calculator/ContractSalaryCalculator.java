@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+
+import net.sf.cglib.transform.impl.AddDelegateTransformer;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -43,6 +46,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVa
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
@@ -174,14 +178,14 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
 		Double totalDeduction = fillDeductions(contractSalaryCalculatorContext);
 
-		expressionContext.addVariable(TOTAL_LIQUID, totalPayment
+		expressionContext.setVariable(TOTAL_LIQUID, totalPayment
 				- totalDeduction, start, end);
 		Double totalEmbargos = fillEmbargos(contractSalaryCalculatorContext);
 
 		salaryBuilder.setTotalDeduction(totalDeduction + totalEmbargos);
 
 		Double totalCost = fillCosts(contractSalaryCalculatorContext);
-		expressionContext.addVariable(ENTERPRISE_QUOTA, totalCost, start, end);
+		expressionContext.setVariable(ENTERPRISE_QUOTA, totalCost, start, end);
 		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
 
 		Double totalEnterprise = totalCost - totalBonus;
@@ -305,7 +309,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				undefPayment.onUndefinedData(this);
 
 			double totalPayment = taxCalculator.getTotalPayment();
-			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start,
+			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start,
 					end);
 
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
@@ -318,7 +322,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				}
 			}
 			totalPayment = taxCalculator.getTotalPayment();
-			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start,
+			expressionContext.setVariable(TOTAL_PAYMENT, totalPayment, start,
 					end);
 
 			salaryBuilder.setTotalPayment(totalPayment);
@@ -330,7 +334,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			Date irpfDate = ctx.getIrpfDate();
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase());
 			salaryBuilder.setInkindIrpfBase(taxCalculator.getInKindIrpfBase());
-			expressionContext.addVariable(IRPF_BASE,
+			expressionContext.setVariable(IRPF_BASE,
 					taxCalculator.getIrpfBase(), irpfDate, irpfDate);
 
 			double rawCgcbase = quoteCalculator.getRawCgcBase();
@@ -344,7 +348,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			}
 			salaryBuilder.setCgcBase(cgcBase);
 			double cgcBaseVar = cgcBase - quoteCalculator.getMaternityBase();
-			expressionContext.addVariable(CGC_BASE, cgcBaseVar, start, end);
+			expressionContext.setVariable(CGC_BASE, cgcBaseVar, start, end);
 			// System.out.printf("CGC_BASE=%.3f \r\n", cgcBaseVar);
 
 			double cgpBase = quoteCalculator.getRawCgpBase();
@@ -355,15 +359,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			}
 			salaryBuilder.setCgpBase(cgpBase);
 			double cgpBaseVar = cgpBase - quoteCalculator.getMaternityBase();
-			expressionContext.addVariable(CGP_BASE, cgpBaseVar, start, end);
+			expressionContext.setVariable(CGP_BASE, cgpBaseVar, start, end);
 
 			salaryBuilder.setNonHExtraBase(quoteCalculator
 					.getNonStructuralBase());
-			expressionContext.addVariable(NON_STRUCTURAL_OVERTIME_BASE,
+			expressionContext.setVariable(NON_STRUCTURAL_OVERTIME_BASE,
 					quoteCalculator.getNonStructuralBase(), start, end);
 
 			salaryBuilder.setHExtraBase(quoteCalculator.getStructuralBase());
-			expressionContext.addVariable(STRUCTURAL_OVERTIME_BASE,
+			expressionContext.setVariable(STRUCTURAL_OVERTIME_BASE,
 					quoteCalculator.getStructuralBase(), start, end);
 
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
@@ -454,7 +458,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			salaryBuilder.setTotalIrpf(totalIrpf);
 			salaryBuilder.setSocialSecurityContributions(ssContributions);
-			expressionContext.addVariable(EMPLOYEE_QUOTA, ssContributions,
+			expressionContext.setVariable(EMPLOYEE_QUOTA, ssContributions,
 					start, end);
 
 			salaryBuilder.setTotalDeduction(totalDeduction);
@@ -490,7 +494,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
 
 				double left = contractEmbargo.getAmount();
-				expressionContext.addVariable(EMBARGO_PAID, left, embargoStart,
+				expressionContext.setVariable(EMBARGO_PAID, left, embargoStart,
 						embargoEnd);
 				try {
 					double embargo = resolveEmbargo(expressionContext,
@@ -657,34 +661,55 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			return; // TODO : must be done in context ?
 		}
 
-		try {
+		String name = contractPayment.getName();
 
-			List<ITimedResult<Double>> results = expressionContext
-					.addExpression(contractPayment, paymentStart, paymentEnd,
-							Double.class);
+		try {
+			List<ITimedResult<Double>> results = expressionContext.eval(
+					contractPayment.getExpression(), paymentStart, paymentEnd,
+					Double.class);
 
 			for (ITimedResult<Double> result : results) {
 
-				Date amountStart = result.getPeriod().getStart();
-				Date amountEnd = result.getPeriod().getEnd();
+				Date resultStart = result.getPeriod().getStart();
+				Date resultEnd = result.getPeriod().getEnd();
 
-				Double valueDouble = result.getValue();
-				double value = valueDouble != null ? valueDouble : 0.00;
+				Double resultDouble = result.getValue();
+				double resultValue = resultDouble != null ? resultDouble : 0.00;
 
-				expressionContext.addVariable(ALL, value, amountStart,
-						amountEnd);
+				if (!StringUtils.isEmpty(name)) {
+					Date valueStart = resultStart;
+					List<ITimedVariable<Double>> prevs = expressionContext
+							.getVariables(name, resultStart, resultEnd);
+					for (ITimedVariable<Double> prev : prevs) {
+						Date prevStart = prev.getPeriod().getStart();
+						Date prevEnd = prev.getPeriod().getEnd();
+						Double prevValue = prev.getValue(prev.getPeriod());
+						if (valueStart.compareTo(prevStart) < 0)
+							expressionContext.setVariable(name, resultValue,
+									valueStart, prev(prevStart));
+						expressionContext.setVariable(name, resultValue
+								+ prevValue, prevStart, prevEnd);
+						valueStart = next(prevEnd);
+					}
+					if (valueStart.compareTo(resultEnd) <= 0) 
+						expressionContext.setVariable(name, resultValue,
+								valueStart, resultEnd);
+				} // end-if: 
+
+				expressionContext.setVariable(ALL, resultValue, resultStart,
+						resultEnd);
 
 				Double quote = quoteCalculator.quote(contractPayment,
-						amountStart, amountEnd, value);
+						resultStart, resultEnd, resultValue);
 
 				try {
 					Double tax = taxCalculator.tax(contractPayment,
-							amountStart, amountEnd, chargeDate, value);
+							resultStart, resultEnd, chargeDate, resultValue);
 					String description = null;
 					try {
 						description = expressionContext.evalTemplate(
-								contractPayment.getDescription(), amountStart,
-								amountEnd);
+								contractPayment.getDescription(), resultStart,
+								resultEnd);
 						// TODO ¿ Append period to description ?
 						// description = getDescriptionPeriod(description,
 						// paymentStart, paymentEnd, amountStart,
@@ -692,9 +717,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					} catch (Exception e) {
 						// TODO : Log ???
 					}
-					salaryBuilder.addPayment(value, quote, tax, description,
-							amountStart, amountEnd, contractPayment,
-							result.getContext());
+					salaryBuilder.addPayment(resultValue, quote, tax,
+							description, resultStart, resultEnd,
+							contractPayment, result.getContext());
 
 				} catch (NotNowException e) {
 					salaryBuilder.addZeroPayment(quote, 0.00, contractPayment,
@@ -703,6 +728,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				}
 
 			}
+
 			// quoteCalculator.quote(contractPayment, paymentStart,
 			// paymentEnd, total);
 
@@ -768,8 +794,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	private Double resolveEmbargo(ExpressionContext ctx,
 			IContractEmbargo embargo, Date start, Date end)
 			throws ExpressionException {
-		
-		List<ITimedResult<Double>> results = ctx.eval(embargo.getExpression(), start, end, Double.class);
+
+		List<ITimedResult<Double>> results = ctx.eval(embargo.getExpression(),
+				start, end, Double.class);
 
 		Double total = 0.00;
 
@@ -898,5 +925,20 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	}
 
 	// ------------------------------------------------------------------------
+
+	private static Date prev(Date date) {
+		return addDays2Date(date, -1);
+	}
+
+	private static Date next(Date date) {
+		return addDays2Date(date, 1);
+	}
+
+	private static Date addDays2Date(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, days);
+		return calendar.getTime();
+	}
 
 }

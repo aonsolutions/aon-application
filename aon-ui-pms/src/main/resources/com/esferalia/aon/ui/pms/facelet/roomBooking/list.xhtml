@@ -12,7 +12,7 @@
 		<aon:form id="roomBookingList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.report_booking_list}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_room_booking_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 
 				<ui:define name="additionalToolbarContent">
@@ -20,7 +20,6 @@
 						styleClass="aon-finding-toolbar-item aon-icon-search" 
 						value="#{bundle.aon_search}" 
 						action="roomBooking_search"
-						actionListener="#{roomBooking.onInit}"
 						accesskey="#{bundle.aon_key_search}" />
 					<aon:htmlCommandLink id="roomBooking-excel-report"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
@@ -40,23 +39,24 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
-					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic"
+						rendered="#{!empty roomBooking.hotels}" />
 					<aon:outputText styleClass="aon-margin-left aon-bold"
-						value="#{(roomBooking.hotel!=null and roomBooking.hotel.id!=null) ? (roomBooking.hotel.workPlace.description) : ('-')}" />
+						value="#{roomBooking.hotelNames}"
+						rendered="#{!empty roomBooking.hotels}" />
 
-					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-margin-left aon-italic"/>
+					<aon:outputText value="#{bundle.pms_room_type}:" styleClass="aon-margin-left aon-italic"
+						rendered="#{!empty roomBooking.items}" />
 					<aon:outputText styleClass="aon-margin-left aon-bold"
-						value="#{(roomBooking.agency!=null and roomBooking.agency.id!=null) ? (roomBooking.agency.registry.fullName) : ('-')}" />
+						value="#{roomBooking.itemNames}"
+						rendered="#{!empty roomBooking.items}" />
 
-					<aon:outputText value="#{bundle.pms_room_type}:" styleClass="aon-margin-left aon-italic"/>
-					<aon:div style="display: inline;">
-						<aon:outputText styleClass="aon-margin-left aon-bold"
-							value="#{roomBooking.item.product.code} - #{roomBooking.item.product.name}"
-							rendered="#{(roomBooking.item!=null and roomBooking.item.id!=null)}" />
-						<aon:outputText styleClass="aon-margin-left aon-bold"
-							value="-"
-							rendered="#{roomBooking.item==null or roomBooking.item.id==null}" />
-					</aon:div>
+					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-margin-left aon-italic"
+						rendered="#{!empty roomBooking.agencies}" />
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{roomBooking.agencyNames}"
+						rendered="#{!empty roomBooking.agencies}" />
+
 				</aon:panel>
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -133,21 +133,23 @@
 							<aon:outputText value="#{to.roomBlocked}" />
 						</aon:column>				
 	
-						<c:if test="#{controller.showCancelled}">
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.pms_cancelled}" />
-								</f:facet>
-								<aon:outputText value="#{to.roomCancelled}" />
-							</aon:column>				
-						</c:if>
-	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomTotal}" />
 						</aon:column>				
+	
+						<c:if test="#{controller.showCancelled}">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.pms_cancelled}"
+									style="color: red;" />
+								</f:facet>
+								<aon:outputText value="#{to.roomCancelled}"
+									style="#{(to.roomCancelled > 0) ? ('color: red;') : ('')}" />
+							</aon:column>				
+						</c:if>
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">

@@ -1,8 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.widget;
 
-import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
-import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.SimpliedRegimeActivity;
 import com.google.gwt.core.client.GWT;

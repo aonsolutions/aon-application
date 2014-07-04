@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.rollback;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -34,10 +34,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
-import com.esferalia.aon.gwt.fiscal.sql.SQLUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod390 Print", urlPatterns = { "/aon_gwt_fiscal/Model390Print" })

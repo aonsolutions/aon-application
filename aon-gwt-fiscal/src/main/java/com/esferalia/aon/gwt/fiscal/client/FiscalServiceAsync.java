@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
@@ -85,5 +85,6 @@ public interface FiscalServiceAsync {
 	void saveMod390(Mod390 mod390, AsyncCallback<Mod390> callback);
 
 	void deleteMod390(Mod390 mod390, AsyncCallback<Void> callback);
+	
 
 }

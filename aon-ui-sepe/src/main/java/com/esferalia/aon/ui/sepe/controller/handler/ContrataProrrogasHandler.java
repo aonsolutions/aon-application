@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.code.aon.AonVersion;
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -14,6 +16,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -21,8 +24,6 @@ import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 public class ContrataProrrogasHandler implements IContrataHandler, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private static final String AVAILABLE_CONTRACT_CODE_COMMUNICATION = "";
 	
 	private Contract contract;
 
@@ -52,7 +53,7 @@ public class ContrataProrrogasHandler implements IContrataHandler, Serializable 
 	@Override
 	public boolean isCommunicationAvailable(){
 		if(getContractCode()!=null){
-			return AVAILABLE_CONTRACT_CODE_COMMUNICATION.contains(getContractCode().getValue());
+			return ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, getContractCode().getValue());
 		}
 		return false;
 	}

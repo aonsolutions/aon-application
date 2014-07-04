@@ -1733,11 +1733,11 @@ public class FANWriter implements Serializable {
 			String select = "SELECT sum(expression) FROM contract_bonus";
 			select += " WHERE contract in ( SELECT id FROM contract WHERE enterprise_ccc = " + ccc.getId() + " )";
 			select += " AND start_date <= '" + dateFormatter.format(getStartDate()) + "'"; 
-			select += " AND end_date IS NULL"; 
+			select += " AND (end_date IS NULL"; 
 			select += " OR (end_date >= '" + dateFormatter.format(getStartDate()) + "'"; 
-			select += " AND end_date <= '" + dateFormatter.format(getEndDate())+"')";
+			select += " AND end_date <= '" + dateFormatter.format(getEndDate())+"'))";
 			select += " AND bonus_concept in (";
-			select += "SELECT id FROM bonus_concept WHERE type = " + BonusType.CONTINUOUS_FORMATION.ordinal();
+			select += " SELECT id FROM bonus_concept WHERE type = " + BonusType.CONTINUOUS_FORMATION.ordinal();
 			select += " );";
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();

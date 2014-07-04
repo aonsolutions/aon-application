@@ -35,7 +35,7 @@ public class AonConstants {
 			if ( variable != null ) {
 				ContextVariable contextVariable = variable.value();
 				try {
-					context.addVariable(contextVariable, field.get(null), startDate, endDate);
+					context.setVariable(contextVariable, field.get(null), startDate, endDate);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

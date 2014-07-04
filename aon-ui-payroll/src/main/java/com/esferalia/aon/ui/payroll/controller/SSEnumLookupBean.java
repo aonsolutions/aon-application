@@ -1,6 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -36,7 +38,17 @@ public class SSEnumLookupBean implements Serializable {
 
 	public void setCode(String code) {
 		this.code = code;
-//		setSsEnum(ssEnum)
+	}
+
+	public String getDescription() {
+		if(description==null && getSsEnum()!=null){
+			description = getSsEnum().getDescription();
+		}
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public ISSEnum getSsEnum() {
@@ -47,8 +59,10 @@ public class SSEnumLookupBean implements Serializable {
 		this.ssEnum = ssEnum;
 		if(ssEnum!=null){
 			code = ssEnum.getCode();
+			description = ssEnum.getDescription();
 		} else {
 			code = null;
+			description = null;
 		}
 	}
 
@@ -97,7 +111,7 @@ public class SSEnumLookupBean implements Serializable {
 	public void loadEnumByCode(ActionEvent event) {
 		ContractController controller = (ContractController) FormUtil.getController("contract");
 		try {
-			Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase());
+			Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase().replaceAll("-", ""));
 			for (Object obj : clazz.getEnumConstants()) {
 				ISSEnum enumeration = (ISSEnum) obj;
 				if(enumeration.getCode().equals(code)){
@@ -123,6 +137,26 @@ public class SSEnumLookupBean implements Serializable {
 		}
 		
 		setShowEnumLookupWindow(false);
+	}
+
+	public List<ISSEnum> autocomplete(Object suggest) {
+		String pref = (String) suggest;
+		ArrayList<ISSEnum> result = new ArrayList<ISSEnum>();
+		try {
+			Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase().replaceAll("-", ""));
+			for (Object obj : clazz.getEnumConstants()) {
+				ISSEnum enumeration = (ISSEnum) obj;
+				if ( ((enumeration.getDescription() != null 
+						&& (enumeration.getDescription().toLowerCase().contains(pref.toLowerCase()) 
+						|| enumeration.getCode().toLowerCase().contains(pref.toLowerCase())))
+						|| "".equals(pref)) ) {
+					result.add(enumeration);
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			// nothing to do
+		}
+		return result;
 	}
 	
 	

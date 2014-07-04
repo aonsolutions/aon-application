@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.fiscal.client.DialogMessages;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
+import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
-import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
-import com.esferalia.aon.gwt.fiscal.client.widget.DoubleTextBox;
-import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
@@ -41,9 +42,9 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 	private static final Page5Binder page5Binder = GWT
 			.create(Page5Binder.class);
 
-	private static final AonResources RESOURCES = GWT
-			.create(AonResources.class);
-	private static final FiscalMessages MSG = GWT.create(FiscalMessages.class);
+	private static final AonResources RESOURCES = GWT.create(AonResources.class);
+	private static final CommonMessages MSG = GWT.create(CommonMessages.class);
+	private static final FiscalMessages FISCAL_MSG = GWT.create(FiscalMessages.class);
 	private static final NumberFormat FMT = NumberFormat.getFormat(
 			MSG.decimalPattern(), MSG.currencyCode());
 	private FiscalServiceAsync fiscalService;
@@ -173,7 +174,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 					if (oddRow) {
 						fmt.addStyleName(x, y,RESOURCES.css().aonBackgroundDisabled() );	
 					}
-					Label label = new Label(MSG.mod390DetailKey(det.getKey()));
+					Label label = new Label(FISCAL_MSG.mod390DetailKey(det.getKey()));
 					table.setWidget(x, y, label);
 					++y;
 				}

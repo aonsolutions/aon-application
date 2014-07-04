@@ -102,7 +102,7 @@ public class ExcelFunctions {
 			if ( variable != null ) {
 				ContextVariable contextVariable = variable.value();
 				MethodStub methodStub = new MethodStub(method);
-				context.addVariable(contextVariable, methodStub, startDate, endDate);
+				context.setVariable(contextVariable, methodStub, startDate, endDate);
 			}
 		}
 	}

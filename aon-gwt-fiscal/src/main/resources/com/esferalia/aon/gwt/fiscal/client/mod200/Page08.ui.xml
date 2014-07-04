@@ -1,0 +1,144 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:soci='urn:import:com.esferalia.aon.gwt.fiscal.client.mod200'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonMod200Container}">
+		<div class="{aonResources.css.aonGroup}">
+			<div class="{aonResources.css.aonGroupTitle}">
+				<g:InlineLabel text="{msg.corrections}" />
+			</div>
+			<div class="{aonResources.css.aonGroupBody}">
+				<table class="aon-width-all">
+				 	<colgroup>
+				 		<col width="auto"/>
+				 		<col width="40px"/>
+				 		<col width="150px"/>
+				 		<col width="40px"/>
+				 		<col width="150px"/>
+				 		<col width="40px"/>
+				 	</colgroup>
+					<tr>
+						<td colspan="3" class="{aonResources.css.aonMod200BorderBottom}">
+							<g:Label text="Resultado de la cuenta de perdidas y ganancias"/>
+						</td>
+						<td>
+							<soci:BoxLabel ui:field="c500Label" text="500"/>
+						</td>
+						<td>
+							<aon:DoubleTextBox ui:field="c500" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
+						</td>
+						<td>&#160;</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonMod200BorderBottom}">
+							<g:Label text="Correcciones por Impuesto sobre Sociedades"/>
+						</td>
+						<td>
+							<soci:BoxLabel ui:field="c301Label" text="301"/>
+						</td>
+						<td>
+							<aon:DoubleTextBox ui:field="c301"/>
+						</td>
+						<td>
+							<soci:BoxLabel ui:field="c302Label" text="302"/>
+						</td>
+						<td>
+							<aon:DoubleTextBox ui:field="c302"/>
+						</td>
+						<td>&#160;</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="{aonResources.css.aonMod200BorderBottom}">
+							<g:Label text="Resultado de la cuenta de perdidas y ganancias antes de Impuestos de Sociedades"/>
+						</td>
+						<td>
+							<soci:BoxLabel ui:field="c501Label" text="501"/>
+						</td>
+						<td>
+							<aon:DoubleTextBox ui:field="c501" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
+						</td>
+						<td>&#160;</td>
+					</tr>
+				</table>
+		
+				<table class="aon-width-all {aonResources.css.aonMarginTop}">
+				 	<colgroup>
+				 		<col width="auto"/>
+				 		<col width="40px"/>
+				 		<col width="150px"/>
+				 		<col width="40px"/>
+				 		<col width="150px"/>
+				 		<col width="40px"/>
+				 	</colgroup>
+					<tr>
+						<td>&#160;</td>
+						<td>&#160;</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<g:Label text="{msg.increase}" styleName="{aonResources.css.aonBold}"/>
+						</td>
+						<td>&#160;</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<g:Label text="{msg.decrease}" styleName="{aonResources.css.aonBold}"/>
+						</td>
+						<td>&#160;</td>
+					</tr>
+					<tr>
+						<td>
+							<g:ListBox ui:field="correctionType" width="400px"/>
+						</td>
+						<td>&#160;</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleTextBox ui:field="increase"/>
+						</td>
+						<td>&#160;</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleTextBox ui:field="decrease"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<g:Button ui:field="newCorrection"
+								styleName="aon-icon-reset {aonResources.css.aonBorderNone}">
+								&#160;
+							</g:Button>
+						</td>
+					</tr>
+				</table>
+				<cell:CellTable ui:field="correctionTable"/>
+				<table class="aon-width-all {aonResources.css.aonMarginTop}">
+				 	<colgroup>
+				 		<col width="auto"/>
+				 		<col width="40px"/>
+				 		<col width="150px"/>
+				 		<col width="40px"/>
+				 		<col width="150px"/>
+				 		<col width="40px"/>
+				 	</colgroup>
+					<tr>
+						<td class="{aonResources.css.aonMod200BorderBottom}">
+							<g:Label text="Total correcciones al resultado de la cuenta de perdidas y ganancias"/>
+						</td>
+						<td>
+							<soci:BoxLabel ui:field="c417Label" text="417"/>
+						</td>
+						<td>
+							<aon:DoubleTextBox ui:field="c417" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
+						</td>
+						<td>
+							<soci:BoxLabel ui:field="c418Label" text="418"/>
+						</td>
+						<td>
+							<aon:DoubleTextBox ui:field="c418" enabled="false" changeDisplayStyleName="{aonResources.css.aonValueChanged}"/>
+						</td>
+						<td>&#160;</td>
+					</tr>
+				</table>
+				<g:FlexTable ui:field="table" width="100%" styleName="{aonResources.css.aonMarginTop}" />
+			</div>
+		</div>				
+	</g:HTMLPanel>
+</ui:UiBinder>

@@ -13,8 +13,8 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -35,40 +35,60 @@ import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
-import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class RoomBookingController extends DataScrollerState implements ICollectionProvider, ISQLConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private Hotel hotel;
-	private Item item;
-	private Customer agency;
+	private Hotel[] hotels;
+	private Item[] items;
+	private Customer[] agencies;
 	private Date fromDate;
 	private Date toDate;
 	private boolean showCancelled;
 
 	private List<DayBooking> bookingList;
 
-	public Hotel getHotel() {
-		return hotel;
+	public Hotel[] getHotels() {
+		return hotels;
 	}
-	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
+	public void setHotels(Hotel[] hotels) {
+		this.hotels = hotels;
+	}
+	public String getHotelNames() {
+		String hotelNames = "";
+		for (Hotel hotel : getHotels()) {
+			hotelNames += hotel.getWorkPlace().getDescription() + "; ";
+		}
+		return StringUtils.removeEnd(hotelNames, "; ");
 	}
 
-	public Item getItem() {
-		return item;
+	public Item[] getItems() {
+		return items;
 	}
-	public void setItem(Item item) {
-		this.item = item;
+	public void setItems(Item[] items) {
+		this.items = items;
+	}
+	public String getItemNames() {
+		String itemNames = "";
+		for (Item item : getItems()) {
+			itemNames += item.getFullName() + "; ";
+		}
+		return StringUtils.removeEnd(itemNames, "; ");
 	}
 
-	public Customer getAgency() {
-		return agency;
+	public Customer[] getAgencies() {
+		return agencies;
 	}
-	public void setAgency(Customer agency) {
-		this.agency = agency;
+	public void setAgencies(Customer[] agencies) {
+		this.agencies = agencies;
+	}
+	public String getAgencyNames() {
+		String agencyNames = "";
+		for (Customer agency : getAgencies()) {
+			agencyNames += agency.getRegistry().getFullName() + "; ";
+		}
+		return StringUtils.removeEnd(agencyNames, "; ");
 	}
 
 	public Date getFromDate() {
@@ -100,21 +120,14 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 	}
 
 	public void onInit(ActionEvent event) {
-		setHotel(null);
-		setItem(null);
-		setAgency(null);
-		if (getFromDate() == null) {
-			setFromDate(new Date());
-		}
-		if (getToDate() == null) {
-			setToDate(DateUtils.addWeeks(new Date(), 2));
-		}
+		setHotels(null);
+		setItems(null);
+		setAgencies(null);
+		setFromDate(new Date());
+		setToDate(DateUtils.addWeeks(new Date(), 2));
+		setShowCancelled(false);
 	}
 	
-	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
-		return PmsUtils.getRoomItems(getHotel());
-	}
-
 	public void onSearch(ActionEvent event) {
 		try {
 			buildBookingList();
@@ -262,8 +275,8 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		stmt.append(" AND H.active = 1");
 		stmt.append(" AND H.workplace = W.id");
 		stmt.append(" AND R.hotel IN (" + getHotelIds() + ")");
-		if (getItem() != null && getItem().getId() != null) {
-			stmt.append(" AND R.item = " + getItem().getId());
+		if (ArrayUtils.isNotEmpty(getItems())) {
+			stmt.append(" AND R.item IN (" + getItemIds() + ")");
 		}
 		stmt.append(" GROUP BY W.description");
 		stmt.append(" ORDER BY " + HOTEL);
@@ -282,11 +295,11 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		stmt.append(" AND H.workplace = W.id");
 		stmt.append(" AND B.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND B.stay_date BETWEEN ? AND ?");
-		if (getAgency() != null && getAgency().getId() != null) {
-			stmt.append(" AND B.agency = " + getAgency().getId());
+		if (ArrayUtils.isNotEmpty(getItems())) {
+			stmt.append(" AND B.item IN (" + getItemIds() + ")");
 		}
-		if (getItem() != null && getItem().getId() != null) {
-			stmt.append(" AND B.item = " + getItem().getId());
+		if (ArrayUtils.isNotEmpty(getAgencies())) {
+			stmt.append(" AND B.agency IN (" + getAgencyIds() + ")");
 		}
 		stmt.append(" GROUP BY W.description, B.stay_date, B.stay_type");
 		stmt.append(" UNION ");
@@ -302,8 +315,8 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		stmt.append(" AND AA.asset = R.asset");
 		stmt.append(" AND AA.status <> " + ActivityStatus.BUSY.getValue());
 		stmt.append(" AND AA.date BETWEEN ? AND ?");
-		if (getItem() != null && getItem().getId() != null) {
-			stmt.append(" AND R.item = " + getItem().getId());
+		if (ArrayUtils.isNotEmpty(getItems())) {
+			stmt.append(" AND R.item IN (" + getItemIds() + ")");
 		}
 		stmt.append(" GROUP BY W.description, AA.date");
 		stmt.append(" ORDER BY " + HOTEL + "," + STAY_DATE + "," + STAY_TYPE);
@@ -315,7 +328,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT W.description AS " + HOTEL + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		stmt.append(", COUNT(*) AS " + ROOMS);
-		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, hotel as H, workplace AS W");
+		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, hotel AS H, workplace AS W");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
 		stmt.append(" AND PR.status = " + ReservationStatus.CANCELLED.ordinal());
 		stmt.append(" AND PR.project = PRR.project_reservation");
@@ -325,11 +338,11 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		stmt.append(" AND PR.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND PR.end_date > ?");
 		stmt.append(" AND PR.start_date <= ?");
-		if (getAgency() != null && getAgency().getId() != null) {
-			stmt.append(" AND PR.agency = " + getAgency().getId());
+		if (ArrayUtils.isNotEmpty(getItems())) {
+			stmt.append(" AND PRR.item IN (" + getItemIds() + ")");
 		}
-		if (getItem() != null && getItem().getId() != null) {
-			stmt.append(" AND PRR.item = " + getItem().getId());
+		if (ArrayUtils.isNotEmpty(getAgencies())) {
+			stmt.append(" AND PR.agency IN (" + getAgencyIds() + ")");
 		}
 		stmt.append(" GROUP BY W.description, PR.start_date, PR.end_date");
 		stmt.append(" ORDER BY " + HOTEL + "," + START_DATE + "," + END_DATE);
@@ -339,13 +352,35 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 
 	private String getHotelIds() throws ManagerBeanException {
 		String hotelIds = "";
-		if (getHotel() != null) {
-			hotelIds = getHotel().getId().toString();
+		if (ArrayUtils.isNotEmpty(getHotels())) {
+			for (Hotel hotel : getHotels()) {
+				hotelIds += hotel.getId() + ",";
+			}
 		} else {
 			PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 			hotelIds = StringUtils.join(collectionsController.getCurrentUserHotelIds(), ",");
 		}
-		return hotelIds;
+		return StringUtils.removeEnd(hotelIds, ",");
+	}
+
+	private String getItemIds() throws ManagerBeanException {
+		String itemIds = "";
+		if (ArrayUtils.isNotEmpty(getItems())) {
+			for (Item item : getItems()) {
+				itemIds += item.getId() + ",";
+			}
+		}
+		return StringUtils.removeEnd(itemIds, ",");
+	}
+
+	private String getAgencyIds() throws ManagerBeanException {
+		String agencyIds = "";
+		if (ArrayUtils.isNotEmpty(getAgencies())) {
+			for (Customer agency : getAgencies()) {
+				agencyIds += agency.getId() + ",";
+			}
+		}
+		return StringUtils.removeEnd(agencyIds, ",");
 	}
 
 	@SuppressWarnings("rawtypes")

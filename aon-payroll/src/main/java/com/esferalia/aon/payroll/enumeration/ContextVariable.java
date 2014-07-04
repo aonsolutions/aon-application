@@ -42,7 +42,6 @@ public enum ContextVariable implements IResourceable{
 	QUOTE_DAYS("DIAS_COTIZADOS", VariableType.INTEGER, false),
 	ACTUAL_DAYS("DIAS_EFECTIVOS", VariableType.INTEGER, false),
 	LEAVE_DAYS("DIAS_IT", VariableType.INTEGER, false),
-	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER, false),
 	SPECIAL_DAYS("DIAS_ESPECIALES", VariableType.INTEGER, false),
 	PATERNITY_DAYS("DIAS_PATERNIDAD", VariableType.INTEGER, false),
 	MATERNITY_DAYS("DIAS_MATERNIDAD", VariableType.INTEGER, false),
@@ -137,7 +136,6 @@ public enum ContextVariable implements IResourceable{
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
 	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
-	TOTAL_BENEFITS_IT("TOTAL_PRESTACIONES_IT", VariableType.DOUBLE),
 	
 	// Régimenes, cotizacion 
 	MORE_THAN_65("MAYOR_65", VariableType.BOOLEAN, false),
@@ -210,6 +208,8 @@ public enum ContextVariable implements IResourceable{
 	OBJECTIVE("PROCEDENTE", VariableType.UNKNOWN),
 	CONTRACT_COMPLETE("FIN", VariableType.UNKNOWN),
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
+	
+	PREST_IT("PREST_IT", VariableType.DOUBLE)
 
 
 	;

@@ -237,7 +237,7 @@ public abstract class QuoteCalculator {
 			String name = payment.getName();
 			if (!StringUtils.isBlank(name)) {
 				bases.put(name, quote);
-				context.addVariable(String.format("BASE_%s", name), quote,
+				context.setVariable(String.format("BASE_%s", name), quote,
 						start, end);
 				// System.out.printf("%s : %f [[%TF..%TF][%f] %s, %s  \r\n",
 				// name, quote, start, end, amount, payment.getDescription(),

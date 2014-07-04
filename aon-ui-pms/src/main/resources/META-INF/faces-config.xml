@@ -1107,6 +1107,17 @@
 		</managed-property>						
 	</managed-bean>
 	
+	<!-- ************* AGENCY BOOKING *********************** -->
+	<managed-bean>
+		<managed-bean-name>agencyBooking</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AgencyBookingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>		
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agencyBooking</value>
+		</managed-property>						
+	</managed-bean>
+	
 	<!-- ************* ALLOTMENT BOOKING ******************** -->
 	<managed-bean>
 		<managed-bean-name>allotmentBooking</managed-bean-name>
@@ -1506,6 +1517,18 @@
 		<navigation-case>
 			<from-outcome>roomBooking_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBooking/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- ============= Agency Booking ======================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>agencyBooking_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/agencyBooking/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>agencyBooking_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/agencyBooking/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

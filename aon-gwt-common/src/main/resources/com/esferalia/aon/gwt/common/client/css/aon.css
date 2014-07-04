@@ -1,0 +1,366 @@
+@def mod200BackgroundColor #DDDDDD;	
+@def mod200SelectedBackgroundColor #BBBBBB;	
+
+/*
+	//#FFE0B2
+	//#FFC266
+*/
+
+.aon-width-all {
+	width: 100%;
+}
+.aon-clickable {
+	cursor: pointer;
+}
+
+.aon-group {
+    border: 1px solid #CCCCCC;
+    margin: 1em 0;
+    padding: 0 0 0.5em;
+}
+
+.aon-group-title {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 0 none;
+    display: inline;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 0 0.5em 2px;
+    position: relative;
+    top: -1em;
+}
+
+.aon-group-body {
+    color: #4B4B4B;
+    font-family: "arial","lucida Grande","Trebuchet MS",sans-serif;
+    font-size: 12px;
+    padding: 0 1em;
+}
+
+.aon-dataTable{
+	width:100%;		
+	font-family:arial,verdana, "sans serif";
+	border:#ccc 1px solid;
+	border-collapse:collapse;
+}
+
+.aon-dataTable td{
+	padding-top:1px;
+	padding-bottom:1px;
+	padding-left:0.5em;
+	padding-right:0.5em;	
+	border:#ccc 1px solid;
+}
+.aon-nowrap {
+	white-space: nowrap;
+}
+.aon-margin{
+	margin: 1em;
+}
+.aon-margin-top{
+	margin-top: 1em;
+}
+.aon-margin-left{
+	margin-left: 1em;
+}
+.aon-bold {
+	font-weight: bold;
+}
+.aon-text-center {
+	text-align: center;
+}
+.aon-text-left {
+	text-align: left;
+}
+.aon-text-right {
+	text-align: right;
+}
+.aon-vertical-align-middle{
+	vertical-align: middle;
+}
+.aon-simple-border {
+	border: solid #CCC 1px;
+}
+.aon-border-none {
+	border: none;
+}
+.aon-background-disabled {
+	background-color: #EEE;
+}
+.aon-font-small {
+	font-size: 0.8em;
+}
+.aon-padding {
+	padding: 1em;
+}
+.aon-padding-left {
+	padding-left: 1em;
+}
+.aon-padding-right{
+	padding-right: 1em;
+}
+.aon-border-bottom  {
+	border-bottom: solid #999 1px;
+}
+.aon-padding2 {
+	padding: 2px;
+}
+
+.aon-editDataTable-iconColumn {
+	padding: 0;
+	width: 14px;
+	text-align: center;
+}
+
+.aon-editDataTable-textColumn {
+	text-align: left;
+}
+
+.aon-editDataTable-numberColumn {
+	text-align: right;
+}
+
+.aon-textBox-error {
+	border: 1px solid red !important;
+}
+.aon-link-panel {
+	padding: 0px 0px 1.5em 1.5em;
+}
+.aon-link-container {
+	width: 98%;
+	height: 100%;
+	margin-left: 3px;
+	margin-top: 5px;
+}
+.aon-link-item{
+	background-color: mod200BackgroundColor;
+	cursor: pointer;
+    margin-bottom: 2px;
+    padding: 3px 0;
+}
+.aon-link-item:hover{
+	background-color: mod200SelectedBackgroundColor;
+}
+.aon-link-item-selected {
+    margin-bottom: 2px;
+    padding: 3px 0;
+	background-color: mod200SelectedBackgroundColor;
+}
+.aon-link-number{
+	border-top: solid #CCC .5px;
+	border-left: solid #BBB 2px;
+	border-bottom: solid #BBB 2px;
+	width: 20px;
+	margin-left: 10px;
+	text-align: center;
+}
+.aon-link-description{
+	text-align: right;
+	font-size: 1.1em;
+	padding-right: 20px;
+	padding-left: 5px;
+}
+@sprite .aon-link-list-item{
+	gwt-image: "aonListData";
+    color: #000000;
+    font-size: 0.9em;
+    height: auto;
+    overflow: hidden;
+    padding-left: 15px;
+    padding-right: 20px;
+    text-transform: uppercase;
+    width: auto;
+}
+
+@sprite .aon-list-data {
+	gwt-image: "aonListData";
+	background-position:   left 6px;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-color: transparent;
+    border-bottom: 1px solid #DDDDDD;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding-left: 15px;
+    white-space: nowrap;	
+}
+@sprite .aon-icon-delete {
+	gwt-image: "aonIconDelete";
+}
+@sprite .aon-icon-enterprise {
+	gwt-image: "aonIconEnterprise";
+}
+
+@sprite .aon-table-row-link {
+	gwt-image: "aonIconRowSelector";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: center left;
+	background-attachment: scroll;
+	margin: 0;
+	padding: 0 0 0 14px;
+}
+
+@sprite .aon-icon-trash  {
+	gwt-image: "aonIconTrash";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: center left;
+	background-attachment: scroll;
+	margin: 0;
+	padding: 0 0 0 14px;
+}
+
+@sprite .aon-timer {
+	gwt-image: "aonTimer";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-attachment: scroll;
+	height: 150px;
+	width: 250px;
+	padding-left: 160px;
+	padding-top: 20px;
+	font-weight: bold;
+	vertical-align: middle;
+	color: #003399;
+	border: solid #003399 1px;
+}
+@sprite .aon-changed {
+	width: auto;
+	height: auto;
+	gwt-image: "aonChanged" ;
+	background-color: transparent; 
+}
+@sprite .aon-input-error {
+	color: red !important;
+	width: auto;
+	height: auto;
+	gwt-image: "aonInputError" ; 
+}
+
+@sprite .aon-icon-aeat{
+	gwt-image: "aonAeat";
+	background-color: transparent;
+	background-attachment: scroll;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+.aon-icon-commandButton{
+	padding:0 0 0 16px;
+	text-align:left;
+	border:0px;
+	width:auto;
+   	overflow:visible;
+   	cursor:pointer;   	
+}
+
+.aon-page-header {
+	background-color: #999;
+	color: white;
+	font-weight: bold;
+	font-size: 1.1em;
+	padding-left: 25px;
+	margin-bottom: 10px;
+}
+
+.aon-value-changed {
+	color: #897820;
+	font-weight: bold;
+	text-shadow: 0.1em 0.1em 0.2em #9E945E;
+}
+
+
+.aon-mod200-title {
+	background-color: mod200BackgroundColor; 
+	border: 1px solid #FFFFFF;
+	padding-bottom: 4px;
+}
+.aon-mod200-year {
+	background-color: mod200BackgroundColor; 
+	border: 1px solid #FFFFFF; 
+	font-size: 16px; 
+	font-weight: bold;	
+}
+.aon-mod200-model {
+	background-color: mod200BackgroundColor; 
+	border: 1px solid #FFFFFF; 
+	font-size: 14px;
+}
+
+
+.aon-mod200-header {
+	background-color: mod200BackgroundColor;
+	color: black;
+	font-weight: bold;
+	font-size: 1.2em;
+	padding-left: 25px;
+	margin-bottom: 10px;
+}
+.aon-mod200-box {
+    border: 0.5px solid mod200SelectedBackgroundColor;
+    color: mod200SelectedBackgroundColor;
+    font-family: monospace Courier !important;
+    font-size: 0.9em;
+    padding: 2px 2px 2px 3px;
+    text-align: center;
+    display: inline;
+}	
+.aon-mod200-box-error {
+    border: 0.5px solid #880000;
+    color: white;
+    background-color: #880000;
+}	
+
+input:disabled + label{
+  color: #CCC;
+}
+
+.aon-mod200-checkbox {
+    display: inline-block;
+    font-size: 0.9em;
+    line-height: 1em;
+    margin-top: 0.2em;
+}
+.aon-mod200-checkbox input{
+    float: left;
+    margin-right: 0.4em;	
+}
+
+.aon-mod200-border-bottom {
+	border-bottom: 0.5px solid mod200SelectedBackgroundColor;
+}
+
+.aon-mod200-container{
+	width: 100%;	
+}
+
+.aon-mod200-margin-left{
+	margin-left: 3px;
+}
+.aon-mod200-padding-left{
+	padding-left: 8px;
+}
+
+.aon-mod200-padding-right {
+	padding-right: 50px;
+}
+.aon-mod200-rotate-text {
+    transform: rotate(270deg);
+}
+
+.aon-mod200-scroll-table-wrapper {
+	overflow-x: auto;
+}
+
+.aon-mod200-scroll-table-wrapper td:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 200px;
+}
+.aon-mod200-inner-group-body {
+	background-color: #f0f0f0;
+}

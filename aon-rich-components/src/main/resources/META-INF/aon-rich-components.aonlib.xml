@@ -112,7 +112,7 @@
 
 	<component localName="inputTextarea">
     	<attribute name="styleClass" value="aon-inputTextarea" />
-    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
+    	<attribute name="disabledStyleClass" value="aon-inputTextarea-disabled" />			
 	</component>
 
 	<component localName="inputRichText">

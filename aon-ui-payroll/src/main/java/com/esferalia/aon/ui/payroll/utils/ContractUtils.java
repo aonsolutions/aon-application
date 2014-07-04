@@ -480,43 +480,21 @@ public class ContractUtils implements Serializable {
 			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			if(params.getSepeContractId()!=null){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.SEPE_CONTRACT_ID.getValue() );
+				info.setExpression(params.getSepeContractId());
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
-//		
-//		try {
-//			if(params.getMondayHours()!=null){
-//				info = new ContractInfo();
-//				info.setContract(contract);
-//				info.setStartDate(contract.getStartDate());
-//				info.setEndDate(contract.getEndDate());
-//				info.setName( ContractVariable.HOURS_M.getValue() );
-//				info.setExpression("\"" + params.getContractModelOption() + "\"");
-//				bean.insert(info);
-//			}
-//			if(params.getTuesdayHours()!=null){
-//				
-//			}
-//			if(params.getWednesdayHours()!=null){
-//				
-//			}
-//			if(params.getThursdayHours()!=null){
-//				
-//			}
-//			if(params.getFridayHours()!=null){
-//				
-//			}
-//			if(params.getSaturdayHours()!=null){
-//				
-//			}
-//			if(params.getSundayHours()!=null){
-//				
-//			}
-//		} catch (ManagerBeanException e) {
-//			String msg = "Error al grabar las horas del contrato. (" +e.getMessage() + ")";
-//			AonUtil.addErrorMessage(msg);
-//		}
-//		
-		
-	
 	}
 	
 	public void insertContractInfo(Contract contract, String name, String expression) throws ManagerBeanException {
@@ -916,6 +894,25 @@ public class ContractUtils implements Serializable {
 			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			ContractInfo sepeContractId = obtainContractInfo(contract, ContractVariable.SEPE_CONTRACT_ID.getValue());
+			if(params.getSepeContractId()!=null){
+				info = sepeContractId!=null?sepeContractId:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.SEPE_CONTRACT_ID.getValue() );
+				info.setExpression("\"" + params.getSepeContractId() + "\"");
+				bean.insertOrUpdate(info);
+			} else {
+				if(sepeContractId != null){
+					bean.remove(sepeContractId);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el codigo de contrato de SEPE. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
 		try {
 			if(params.getSsStatusInfo()!=null){
@@ -1029,7 +1026,6 @@ public class ContractUtils implements Serializable {
 			}
 		}
 		
-		
 		Map<String, ContractInfo> infoMap = SEPEUtils.getInstance().getContractInfoMap(contract, contract.getStartDate(), contract.getEndDate());
 		if(map.get(ContractVariable.SEPE_CONTRACT.getValue())!=null){
 			params.setSepeStatusInfo(infoMap.get(ContractVariable.SEPE_CONTRACT.getValue()));
@@ -1053,6 +1049,10 @@ public class ContractUtils implements Serializable {
 			ssStatus.setExpression(ContractSsStatus.PENDING.getValue());
 			params.setSsStatusInfo(ssStatus);
 		} 
+		
+		if(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue())!=null){
+			params.setSepeContractId( map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()) );
+		}
 	}
 	
 	public void loadContractBonuses(Contract contract, ContractParams params) throws ManagerBeanException {

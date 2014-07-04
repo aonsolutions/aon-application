@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.widget;
 
 import java.util.ArrayList;
 
-import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -40,7 +40,7 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 			.create(EnterpriseSuggestBoxBinder.class);
 
 	private FiscalServiceAsync fiscalService;
-	private final FiscalMessages msg = GWT.create(FiscalMessages.class);
+	private final CommonMessages msg = GWT.create(CommonMessages.class);
 
 	Integer enterpriseId;
 	Integer domainId;

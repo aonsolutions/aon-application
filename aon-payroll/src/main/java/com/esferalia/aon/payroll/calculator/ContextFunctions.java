@@ -352,7 +352,7 @@ public class ContextFunctions {
 
 			MethodStub removeStub = new MethodStub(remove);
 
-			context.addVariable(ContextVariable.REMOVE, removeStub, startDate,
+			context.setVariable(ContextVariable.REMOVE, removeStub, startDate,
 					endDate);
 
 		} catch (SecurityException e) {
@@ -374,7 +374,7 @@ public class ContextFunctions {
 
 			MethodStub monthsStub = new MethodStub(months);
 
-			context.addVariable(MONTHS_IMPL, monthsStub, startDate, endDate);
+			context.setVariable(MONTHS_IMPL, monthsStub, startDate, endDate);
 
 			String functionScript = String.format(
 					"%s = def (days) { %s(%s, %s, days) };", MONTHS,
@@ -397,7 +397,7 @@ public class ContextFunctions {
 
 			MethodStub warningStub = new MethodStub(warning);
 
-			context.addVariable(WARNING, warningStub, startDate, endDate);
+			context.setVariable(WARNING, warningStub, startDate, endDate);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
 		}
@@ -413,7 +413,7 @@ public class ContextFunctions {
 
 			MethodStub warningStub = new MethodStub(check);
 
-			context.addVariable(CHECK, warningStub, startDate, endDate);
+			context.setVariable(CHECK, warningStub, startDate, endDate);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
 		}
@@ -429,7 +429,7 @@ public class ContextFunctions {
 
 			MethodStub warningStub = new MethodStub(checkVar);
 
-			context.addVariable(ContextVariable.CHECK_VAR, warningStub,
+			context.setVariable(ContextVariable.CHECK_VAR, warningStub,
 					startDate, endDate);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
@@ -443,7 +443,7 @@ public class ContextFunctions {
 					String.class, String.class, ExpressionContext.class);
 
 			MethodStub isDefStub = new MethodStub(isDef);
-			context.addVariable("ISDEF", isDefStub, startDate, endDate);
+			context.setVariable("ISDEF", isDefStub, startDate, endDate);
 			String functionScript = String.format(
 					"%s = def(variable, msg) { ISDEF(variable, msg, %s) };",
 					ContextVariable.ISDEF, ContextVariable.CONTEXT);
@@ -460,7 +460,7 @@ public class ContextFunctions {
 			Method isDef = ContextFunctions.class.getMethod("excess",
 					Double.class, ExpressionContext.class);
 			MethodStub excessStub = new MethodStub(isDef);
-			context.addVariable("_EXCESS", excessStub, startDate, endDate);
+			context.setVariable("_EXCESS", excessStub, startDate, endDate);
 			String functionScript = String.format(
 					"%s = def(amount){ _EXCESS(amount, %s) };",
 					ContextVariable.EXCESS, ContextVariable.CONTEXT);
@@ -473,29 +473,29 @@ public class ContextFunctions {
 	private static void loadSeniorityFunction(ExpressionContext context,
 			Date startDate, Date endDate) throws ExpressionException {
 		try {
-			context.addVariable(ContextVariable.YEAR, Years.ONE, startDate,
+			context.setVariable(ContextVariable.YEAR, Years.ONE, startDate,
 					endDate);
-			context.addVariable(ContextVariable.TWO, Years.TWO, startDate,
+			context.setVariable(ContextVariable.TWO, Years.TWO, startDate,
 					endDate);
-			context.addVariable(ContextVariable.THREE, Years.THREE, startDate,
+			context.setVariable(ContextVariable.THREE, Years.THREE, startDate,
 					endDate);
-			context.addVariable(ContextVariable.FOUR, Years.FOUR, startDate,
+			context.setVariable(ContextVariable.FOUR, Years.FOUR, startDate,
 					endDate);
-			context.addVariable(ContextVariable.FIVE, Years.FIVE, startDate,
+			context.setVariable(ContextVariable.FIVE, Years.FIVE, startDate,
 					endDate);
-			context.addVariable(ContextVariable.SIX, Years.SIX, startDate,
+			context.setVariable(ContextVariable.SIX, Years.SIX, startDate,
 					endDate);
-			context.addVariable(ContextVariable.SEVEN, Years.SEVEN, startDate,
+			context.setVariable(ContextVariable.SEVEN, Years.SEVEN, startDate,
 					endDate);
 
 			Method old = ContextFunctions.class.getMethod("old",
 					ExpressionContext.class, Double.class, Integer.class);
 			MethodStub oldStub = new MethodStub(old);
-			context.addVariable(_OLD, oldStub, startDate, endDate);
+			context.setVariable(_OLD, oldStub, startDate, endDate);
 
 			Method seniority = ContextFunctions.class.getMethod("seniority");
 			MethodStub seniorStub = new MethodStub(seniority);
-			context.addVariable(ContextVariable.OLD, seniorStub, startDate,
+			context.setVariable(ContextVariable.OLD, seniorStub, startDate,
 					endDate);
 
 		} catch (SecurityException e) {

@@ -13,10 +13,13 @@
 	
 		<aon:form id="salaryPrintList">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="Impresion / eMail de Nominas" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
-				<ui:define name="toolbarContent">
+				<ui:param name="controller" value="#{salaryPrint}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				
+				
+				<ui:define name="additionalToolbarContent">
 					<aon:div style="display:inline-block; width: 30px;"
 						rendered="#{!salaryPrint.selectionEmpty}" >
 						<rich:dropDownMenu id="emailDropDown" event="onmouseover"
@@ -95,10 +98,16 @@
 								value="Costes de empresa"
 								actionListener="#{enterprise.onSelectFirst}"
 								action="#{report.onExecute}">
+								<!--  
 								<f:setPropertyActionListener
 									target="#{salaryExpense.year}" value="#{salaryPrint.year}" />
 								<f:setPropertyActionListener
 									target="#{salaryExpense.month}" value="#{salaryPrint.month}" />
+								-->
+								<f:setPropertyActionListener
+									target="#{salaryExpense.startDate}" value="#{salaryPrint.fromDate}" />
+								<f:setPropertyActionListener
+									target="#{salaryExpense.endDate}" value="#{salaryPrint.toDate}" />
 								<f:param name="reportKey" value="salaryExpenseReport" />
 								<f:param name="outputFormat" value="PDF" />
 							</aon:htmlCommandLink>	
@@ -119,70 +128,7 @@
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
-				<a4j:region id="searchPanel">
-					<aon:panelCollapsible 
-						label="#{bundle.payroll_data_filter}"
-						headerClass="aon-panelGrid-search-info" 
-						bodyClass="aon-panelGrid-search"
-						value="#{true}" >
-						<aon:panelGrid columns="2">
-						
-							<aon:outputLabel value="#{bundle.payroll_salary_period}" />
-							<h:panelGrid columns="6" >
-								<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}" >
-									<f:selectItems value="#{commonCollections.months}"  />
-								<!--  
-									<a4j:support event="onchange" reRender="searchPanel" ajaxSingle="true" />
-								-->
-								</aon:selectOneMenu>
-								<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
-					   				inputSize="4" minValue="2013" maxValue="2020">
-					   			</rich:inputNumberSpinner>
-								<!--  
-								<aon:outputText value="del" />
-								<rich:inputNumberSpinner value="#{salaryPrint.year}"
-					   				inputSize="2" minValue="2013" maxValue="2020">
-					   			</rich:inputNumberSpinner>
-								<aon:outputText value="al" />
-								<rich:inputNumberSpinner  value="#{salaryPrint.year}"
-					   				inputSize="2" minValue="2013" maxValue="2020">
-					   			</rich:inputNumberSpinner>
-								-->
-							</h:panelGrid>
-							
-							<aon:outputLabel for="Salary_type"
-								value="#{bundle.aon_type}" />
-							<aon:selectManyCheckbox id="Salary_type"
-								value="#{salaryPrint.types}" >
-								<f:selectItem itemLabel="Nómina" itemValue="SALARY" />
-								<f:selectItem itemLabel="Extra" itemValue="EXTRA" />
-								<f:selectItem itemLabel="Finiquito" itemValue="SETTLE" />
-								<f:selectItem itemLabel="Atraso" itemValue="DELAY" />
-							</aon:selectManyCheckbox>
-							
-							<c:if test="#{salaryPrint.showWorkPlaces}">
-								<aon:outputLabel for="Salary_contract_workPlace_id"
-									value="#{bundle.payroll_workplace}" />
-								<aon:selectOneMenu id="Salary_contract_workPlace_id"
-									value="#{salaryPrint.workPlace}">
-									<f:selectItem itemLabel="-" value="#{null}" />
-									<f:selectItems value="#{salaryPrint.availableWorkPlaces}" />
-								</aon:selectOneMenu>		
-								<!-- add more minus buttons -->	
-							</c:if>
-										
-							<aon:outputText value="&#160;" />
-							<aon:commandButton id="filterSearch"
-								value="#{bundle.aon_search}" status="aonStatus"
-								reRender="salaryPrintList"
-								actionListener="#{salaryPrint.onFilter}"
-								requestDelay="100"
-								styleClass="aon-icon-rubber aon-search-lookup-button">
-							</aon:commandButton>
-						</aon:panelGrid>
-					</aon:panelCollapsible>
-				</a4j:region>
-
+				
 				<aon:div id="salaryPrintDataDiv">
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 						<ui:param name="controller" value="#{salaryPrint}" />
@@ -196,7 +142,7 @@
 										<aon:commandButton styleClass="aon-icon-commandButton aon-icon-checkAll"
 											title="#{bundle.aon_check_all}"
 											value="&#160;"
-											reRender="salaryPrintDataDiv,aonToolbar"
+											reRender="salaryPrintList"
 											actionListener="#{salaryPrint.checkAll}"
 											ajaxSingle="true" 
 											onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -204,7 +150,7 @@
 										<aon:commandButton styleClass="aon-icon-commandButton aon-icon-checkNone"
 											title="#{bundle.aon_uncheck_all}"
 											value="&#160;"
-											reRender="salaryPrintDataDiv,aonToolbar"
+											reRender="salaryPrintList"
 											actionListener="#{salaryPrint.checkNone}"
 											ajaxSingle="true" 
 											onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -213,7 +159,7 @@
 								</f:facet>
 								<aon:selectBooleanCheckbox
 										value="#{salaryPrint.rowChecked}" >
-									<a4j:support event="onclick" reRender="aonToolbar" ajaxSingle="true" />
+									<a4j:support event="onclick" reRender="salaryPrintList" ajaxSingle="true" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 							

@@ -10,9 +10,9 @@
 	<aon:panelGrid columns="2" id="peculiar_quote_collective_panel" style="width:920px;"
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 		
-		<aon:outputText value="#{bundle.payroll_collective_peculiarity_quote}" />
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{contract.params.collectivePeculiarityQuote}" />
+			<ui:param name="lookupLabel" value="#{bundle.payroll_collective_peculiarity_quote}" />
 			<ui:param name="enumName" value="T-54" />
 		</ui:include>
 		

@@ -249,7 +249,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		public boolean next() throws SQLException, ExpressionException {
 			boolean next = ctx.next();
-			ctx.getExpressionContext().addVariable(
+			ctx.getExpressionContext().setVariable(
 					ContextVariable.IRPF_PERCENT, 0, ctx.getStartDate(),
 					ctx.getEndDate());
 			return next;

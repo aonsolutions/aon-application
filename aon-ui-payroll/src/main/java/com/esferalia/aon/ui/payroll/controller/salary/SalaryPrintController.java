@@ -14,10 +14,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,12 +48,15 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -102,13 +110,9 @@ public class SalaryPrintController extends BasicController implements ICollectio
 
 	private boolean includeTPhours;
 	
-	private Integer year;
+	private Date fromDate;
 	
-	private Month month;
-
-	private Integer fromDay;
-
-	private Integer toDay;
+	private Date toDate;
 
 	private Set<Integer> checks = new HashSet<Integer>();
 
@@ -129,36 +133,20 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.includeEnterpriseCost = includeEnterpriseCost;
 	}
 
-	public Integer getFromDay() {
-		return fromDay;
+	public Date getFromDate() {
+		return fromDate;
 	}
 
-	public void setFromDay(Integer fromDay) {
-		this.fromDay = fromDay;
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
 	}
 
-	public Integer getToDay() {
-		return toDay;
+	public Date getToDate() {
+		return toDate;
 	}
 
-	public void setToDay(Integer toDay) {
-		this.toDay = toDay;
-	}
-
-	public Month getMonth() {
-		return month;
-	}
-
-	public void setMonth(Month month) {
-		this.month = month;
-	}
-
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
 	}
 
 	public WorkPlace getWorkPlace() {
@@ -215,30 +203,37 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.initializeModel();
 	}
 	
+	@Override
+	public void onSearch(ActionEvent arg0) {
+		try {
+			onFilter(arg0);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("No se ha podido procesar la búsqueda.");
+			throw new AbortProcessingException(e);
+		}
+	}
+	
 	public void onFilter( ActionEvent event ) throws ManagerBeanException {
 		resetCriteria();
 		Criteria criteria = this.getCriteria();
-		if(this.month!=null && this.year!=null){
+		if(this.fromDate!=null){
 			Calendar from = Calendar.getInstance();
-			from.set(Calendar.YEAR, this.year);
-			from.set(Calendar.MONTH, this.month.getValue());
-			from.set(Calendar.DAY_OF_MONTH, from.getActualMinimum(Calendar.DAY_OF_MONTH));
+			from.setTime(fromDate);
 			from.set(Calendar.HOUR_OF_DAY, 0);
 			from.set(Calendar.MINUTE, 0);
 			from.set(Calendar.SECOND, 0);
 			from.set(Calendar.MILLISECOND, 0);
+			criteria.addGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.SALARY_END_DATE), from.getTime());
+		}
+		if(this.toDate!=null){
 			Calendar to = Calendar.getInstance();
-			to.set(Calendar.YEAR, this.year);
-			to.set(Calendar.MONTH, this.month.getValue());
+			to.setTime(toDate);
 			to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
 			to.set(Calendar.HOUR_OF_DAY, 23);
 			to.set(Calendar.MINUTE, 59);
 			to.set(Calendar.SECOND, 59);
 			to.set(Calendar.MILLISECOND, 59);
-			String alias = this.getFieldName(IEntityAlias.SALARY_END_DATE);
-			criteria.addGreaterThanOrEqualExpression(alias, from.getTime());
-			alias = this.getFieldName(IEntityAlias.SALARY_END_DATE);
-			criteria.addLessThanOrEqualExpression(alias, to.getTime());
+			criteria.addLessThanOrEqualExpression(this.getFieldName(IEntityAlias.SALARY_END_DATE), to.getTime());
 		}
 		if(getTypes()!=null && getTypes().length>0){
 			String alias = this.getFieldName(IEntityAlias.SALARY_TYPE);			
@@ -275,13 +270,59 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	}
 
 	private void clearFilters() {
-		Calendar cal = Calendar.getInstance();
-		this.year = cal.get(Calendar.YEAR);
-		this.month = Month.getMonthByValue(cal.get(Calendar.MONTH)-1);
+		this.fromDate = new Date();
+		this.toDate = new Date();
 		this.workPlace = null;
 		this.types = null;
+		Date lastSalaryDate = null;
+		try {
+			lastSalaryDate = obtainLastSalaryDate();
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTime(new Date());
+			startCal.set(Calendar.HOUR_OF_DAY, 0);
+			startCal.set(Calendar.MINUTE, 0);
+			startCal.set(Calendar.SECOND, 0);
+			if(lastSalaryDate!=null){
+				startCal.set(Calendar.YEAR, CommonUtil.getYear(lastSalaryDate));
+				startCal.set(Calendar.MONTH, CommonUtil.getMonth(lastSalaryDate));
+			}
+			startCal.set(Calendar.DAY_OF_MONTH, 1);
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(new Date());
+			endCal.set(Calendar.HOUR_OF_DAY, 0);
+			endCal.set(Calendar.MINUTE, 0);
+			endCal.set(Calendar.SECOND, 0);
+			if(lastSalaryDate!=null){
+				endCal.set(Calendar.YEAR, CommonUtil.getYear(lastSalaryDate));
+				endCal.set(Calendar.MONTH, CommonUtil.getMonth(lastSalaryDate));
+			}
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			this.fromDate = startCal.getTime();
+			this.toDate = endCal.getTime();
+		} catch (AonConnectionException e) {
+			// NADA. no se precarga ningun periodo 
+		} catch (SQLException e) {
+			// NADA. no se precarga ningun periodo 
+		}
 	}
 	
+	private Date obtainLastSalaryDate() throws AonConnectionException, SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT max(end_date) FROM salary";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain() + " ;";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDate(1);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
+
 	private void resetCriteria() throws ManagerBeanException {
 		Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
 		clearChecked();
@@ -597,9 +638,12 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	}
 
 	private void writeEnterpriseCostReport( OutputStream out ) throws ReportException {
+		// TODO 
 		SalaryExpenseController salaryExpense = new SalaryExpenseController();
-		salaryExpense.setYear(getYear());
-		salaryExpense.setMonth(getMonth());
+//		salaryExpense.setYear(getYear());
+//		salaryExpense.setMonth(getMonth());
+		salaryExpense.setStartDate(getFromDate());
+		salaryExpense.setEndDate(getToDate());
 		
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);

@@ -84,18 +84,26 @@ public class ComponentManager {
 		return HTML.STYLE_CLASS_ATTR;
 	}
 	
+	private String getDisabledStyleClass( Tag tag, FaceletContext ctx, UIComponent c ) {
+		String disabledClass = null;
+		TagAttribute disabledClassTag = FaceletUtil.getAttribute(tag, DISABLED_STYLE_CLASS);
+		if ( disabledClassTag != null ) {
+			disabledClass = disabledClassTag.getValue();
+		} else {
+			disabledClass = (String) FaceletUtil.getProperty(ctx.getFacesContext(), c, DISABLED_STYLE_CLASS);
+		}
+		return disabledClass;
+	}
+	
 	private void updateDisabledStyleClass(Tag tag, FaceletContext ctx, UIComponent c) {
+		String disabledClass = getDisabledStyleClass(tag, ctx, c);
 		TagAttribute disabled = FaceletUtil.getAttribute(tag, HTML.DISABLED_ATTR);
-		if ( (disabled != null) && disabled.getBoolean(ctx) ) {
-			String disabledClass = null;
-			TagAttribute disabledClassTag = FaceletUtil.getAttribute(tag, DISABLED_STYLE_CLASS);
-			if ( disabledClassTag != null ) {
-				disabledClass = disabledClassTag.getValue();
-			} else {
-				disabledClass = (String) FaceletUtil.getProperty(ctx.getFacesContext(), c, DISABLED_STYLE_CLASS);
-			}
-			if (! StringUtils.isBlank(disabledClass) ) {
+		if ( disabled != null && ! StringUtils.isBlank(disabledClass) ) {
+			if ( disabled.getBoolean(ctx) ) {
 				FaceletUtil.addStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
+			} else {
+				String styleClass = StringUtils.substringBeforeLast(disabledClass, "-disabled");
+				FaceletUtil.replaceStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass, styleClass);
 			}
 		}
 	}		
@@ -114,11 +122,13 @@ public class ComponentManager {
 				attribute.update( tag, ctx, component );
 			}
 		}
-		updateDisabledStyleClass(tag, ctx, component);
 	}
 	
 	public void onComponentCreated(FaceletContext ctx, UIComponent component, UIComponent parent) {
 		updateComponent(ctx, component, parent);
 	}
-	
+
+	public void onComponentPopulated(Tag tag, FaceletContext ctx, UIComponent component, UIComponent parent) {
+		updateDisabledStyleClass(tag, ctx, component);
+	}
 }

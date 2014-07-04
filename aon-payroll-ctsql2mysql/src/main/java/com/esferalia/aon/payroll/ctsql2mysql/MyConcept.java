@@ -119,7 +119,11 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 					return String.format("%%1$s * %s / %s", 
 							WORKED_WEEKS , PAY_WEEKS );
 				}
-
+/*
+				
+				COMENTADO POR EUKE, la variable GUARANTEED_DAYS ha 
+				desaparecido y no se cual es la alternativa.
+				
 				if ( garilt == 100.0 ) {
 					if ( "M".equalsIgnoreCase(redExt)) {
 						return String.format("%%1$s * %s ( %s + %s ) / %s", 
@@ -128,6 +132,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 					return String.format("%%1$s * ( %s + %s ) / %s", 
 							QUOTE_DAYS, GUARANTEED_DAYS , PAY_DAYS );
 				}
+*/
 				if ( "M".equalsIgnoreCase(redExt)) {
 					return String.format("%%1$s * %s ( %s ) / %s", 
 							MONTHS, QUOTE_DAYS , PAY_MONTHS);

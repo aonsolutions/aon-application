@@ -1,7 +1,5 @@
 package com.code.aon.faces.component.util;
 
-import static com.code.aon.faces.controller.IRichConstants.LABELS_MAP;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,7 +19,6 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.NodeSelectedEvent;
@@ -200,6 +197,16 @@ public class FaceletUtil {
 			newValue = StringUtils.join(newList, ' ');
 		}
 		UIComponentTagUtils.setStringProperty(ctx, c, attribute, newValue);
+	}
+
+	public static void replaceStyleClass( FacesContext ctx, UIComponent c, String attribute, String oldValue, String newValue ) {
+		String current = ObjectUtils.toString( getProperty(ctx, c, attribute) );
+		if (! StringUtils.isEmpty(current) && StringUtils.contains(current, oldValue) ) {
+			List<String> newList = updateList(current, oldValue, " ", false);
+			newList.add(newValue);
+			String newStyleClass = StringUtils.join(newList, ' ');
+			UIComponentTagUtils.setStringProperty(ctx, c, attribute, newStyleClass);				
+		}
 	}
 	
 	public static boolean isRendered( FaceletContext ctx, Tag tag ) {
