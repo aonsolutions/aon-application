@@ -76,53 +76,61 @@ public class SQLMod200 {
 	private static void insertAdministrator(Connection conn, DSLContext dsl,Mod200 mod200) {
 		List<FsModel200RegistryRecord> list = new LinkedList<FsModel200RegistryRecord>();
 		FsModel200RegistryRecord detail = null;
-		for ( CompanyAdministrator ca : mod200.getAdministrators() ) {
-			detail = new FsModel200RegistryRecord();
-			detail.setFsModel200(mod200.getId());
-			detail.setDomain(mod200.getDomain());
-			detail.setDocument(ca.getDocument());
-			detail.setName(ca.getName());
-			detail.setRepresentative( (byte) (ca.isRepresentative()?1:0) );
-			detail.setProvince( (byte) ca.getProvince() );
-			detail.setType((byte) 0);
-			list.add(detail);
+		if (mod200.getAdministrators() != null) {
+			for ( CompanyAdministrator ca : mod200.getAdministrators() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setDocument(ca.getDocument());
+				detail.setName(ca.getName());
+				detail.setRepresentative( (byte) (ca.isRepresentative()?1:0) );
+				detail.setProvince( (byte) ca.getProvince() );
+				detail.setType((byte) 0);
+				list.add(detail);
+			}
 		}
-		for ( CompanyParticipation cp : mod200.getParticipationsOut() ) {
-			detail = new FsModel200RegistryRecord();
-			detail.setFsModel200(mod200.getId());
-			detail.setDomain(mod200.getDomain());
-			detail.setDocument(cp.getDocument());
-			detail.setName(cp.getName());
-			detail.setProvince( (byte) cp.getProvince() );
-			detail.setType((byte) 1);
-			detail.setPercent(cp.getPercent());
-			detail.setNominalValue(cp.getNominalValue());
-			detail.setBookValue(cp.getBookValue());
-			detail.setIncomes(cp.getIncomes());
-			detail.setAValue(cp.getaValue());
-			detail.setBValue(cp.getbValue());
-			detail.setCValue(cp.getcValue());
-			detail.setDValue(cp.getdValue());
-			detail.setCapital(cp.getCapital());
-			detail.setReserve(cp.getReserve());
-			detail.setOtherAmounts(cp.getOtherAmounts());
-			detail.setResult(cp.getResult());
-			list.add(detail);
+		if (mod200.getParticipationsOut() != null) {
+			for ( CompanyParticipation cp : mod200.getParticipationsOut() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setDocument(cp.getDocument());
+				detail.setName(cp.getName());
+				detail.setProvince( (byte) cp.getProvince() );
+				detail.setType((byte) 1);
+				detail.setPercent(cp.getPercent());
+				detail.setNominalValue(cp.getNominalValue());
+				detail.setBookValue(cp.getBookValue());
+				detail.setIncomes(cp.getIncomes());
+				detail.setAValue(cp.getaValue());
+				detail.setBValue(cp.getbValue());
+				detail.setCValue(cp.getcValue());
+				detail.setDValue(cp.getdValue());
+				detail.setCapital(cp.getCapital());
+				detail.setReserve(cp.getReserve());
+				detail.setOtherAmounts(cp.getOtherAmounts());
+				detail.setResult(cp.getResult());
+				list.add(detail);
+			}
 		}
-		for ( CompanyParticipation cp : mod200.getParticipationsIn() ) {
-			detail = new FsModel200RegistryRecord();
-			detail.setFsModel200(mod200.getId());
-			detail.setDomain(mod200.getDomain());
-			detail.setDocument(cp.getDocument());
-			detail.setName(cp.getName());
-			detail.setProvince( (byte) cp.getProvince() );
-			detail.setType((byte) 2);
-			detail.setRepresentative( (byte) (cp.isRepresentative()?1:0) );
-			detail.setPercent(cp.getPercent());
-			detail.setNominalValue(cp.getNominalValue());
-			list.add(detail);
+		if (mod200.getParticipationsIn() != null) {
+			for ( CompanyParticipation cp : mod200.getParticipationsIn() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setDocument(cp.getDocument());
+				detail.setName(cp.getName());
+				detail.setProvince( (byte) cp.getProvince() );
+				detail.setType((byte) 2);
+				detail.setRepresentative( (byte) (cp.isRepresentative()?1:0) );
+				detail.setPercent(cp.getPercent());
+				detail.setNominalValue(cp.getNominalValue());
+				list.add(detail);
+			}
 		}
-		dsl.batchStore(list).execute();
+		if (!list.isEmpty()) {
+			dsl.batchStore(list).execute();
+		}
 	}
 
 	private static void insertDetail(Connection conn,DSLContext dsl, Mod200 mod200) throws AonSQLException {

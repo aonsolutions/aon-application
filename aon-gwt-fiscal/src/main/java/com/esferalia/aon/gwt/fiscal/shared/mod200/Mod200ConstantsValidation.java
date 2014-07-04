@@ -14,6 +14,7 @@ public class Mod200ConstantsValidation {
 	// ¿ --> \u00BF
 	private static final int PAGE03 = 3;
 	private static final int PAGE04 = 4;
+	private static final int PAGE07 = 7;
 
 	private static final String ERROR001 = "'"+Mod200Key.BA180.getDescription()+"' y '"
 			+Mod200Key.BP252.getDescription()+"' deben ser iguales.";
@@ -46,7 +47,7 @@ public class Mod200ConstantsValidation {
 	public static List<ValidationMessage> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage>();
 	
 	// La condición debe cumplirse.
-	static {	//BALANCE: ACTIVO, PATRIMONIO Y PASIVO.
+	static {	
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE03,Mod200Key.BA180
 				,ERROR001
 				,"round(BA180) == round(BP252)"));
@@ -69,6 +70,82 @@ public class Mod200ConstantsValidation {
 				,ERROR005
 				,"(C0003 || C0004 || C0024 || C0025 || C0036 || C0061)? true "
 					+ ": round(BP199) == round(LQ500)"));
+		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC534
+				,ERROR003 + Mod200Key.TC534.toString()
+				,"round(TC534) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC535
+				,ERROR003 + Mod200Key.TC535.toString()
+				,"round(TC535) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC536
+				,ERROR003 + Mod200Key.TC536.toString()
+				,"round(TC536) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC537
+				,ERROR003 + Mod200Key.TC537.toString()
+				,"round(TC537) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC538
+				,ERROR003 + Mod200Key.TC538.toString()
+				,"round(TC538) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC539
+				,ERROR003 + Mod200Key.TC539.toString()
+				,"round(TC539) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC540
+				,ERROR003 + Mod200Key.TC540.toString()
+				,"round(TC540) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC541
+				,ERROR003 + Mod200Key.TC541.toString()
+				,"round(TC541) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC542
+				,ERROR003 + Mod200Key.TC542.toString()
+				,"round(TC542) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC543
+				,ERROR003 + Mod200Key.TC543.toString()
+				,"round(TC543) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC544
+				,ERROR003 + Mod200Key.TC544.toString()
+				,"round(TC544) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC545
+				,ERROR003 + Mod200Key.TC545.toString()
+				,"round(TC545) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC546
+				,ERROR003 + Mod200Key.TC546.toString()
+				,"round(TC546) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC562
+				,ERROR003 + Mod200Key.TC562.toString()
+				,"round(TC562) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC563
+				,ERROR003 + Mod200Key.TC563.toString()
+				,"round(TC563) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC564
+				,ERROR003 + Mod200Key.TC564.toString()
+				,"round(TC564) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC565
+				,ERROR003 + Mod200Key.TC565.toString()
+				,"round(TC565) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC566
+				,ERROR003 + Mod200Key.TC566.toString()
+				,"round(TC566) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC567
+				,ERROR003 + Mod200Key.TC567.toString()
+				,"round(TC567) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC568
+				,ERROR003 + Mod200Key.TC568.toString()
+				,"round(TC568) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC569
+				,ERROR003 + Mod200Key.TC569.toString()
+				,"round(TC569) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC570
+				,ERROR003 + Mod200Key.TC570.toString()
+				,"round(TC570) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC571
+				,ERROR003 + Mod200Key.TC571.toString()
+				,"round(TC571) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC572
+				,ERROR003 + Mod200Key.TC572.toString()
+				,"round(TC572) <= 0.0"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC574
+				,ERROR003 + Mod200Key.TC574.toString()
+				,"round(TC574) <= 0.0"));
 	}
 /*	
 	static {
