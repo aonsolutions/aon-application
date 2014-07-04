@@ -312,7 +312,7 @@ public class Mod200ConstantsCharacter {
 		CHARACTER_ALSO_CHECK_MAP.put(Mod200Key.C0025,new Mod200Key[] {Mod200Key.C0058});
 		CHARACTER_ALSO_CHECK_MAP.put(Mod200Key.C0047,new Mod200Key[] {Mod200Key.C0028});
 		CHARACTER_ALSO_CHECK_MAP.put(Mod200Key.C0049,new Mod200Key[] {Mod200Key.C0047,Mod200Key.C0028});
-		CHARACTER_ALSO_CHECK_MAP.put(Mod200Key.C0058,new Mod200Key[] {Mod200Key.C0025});
+	//	CHARACTER_ALSO_CHECK_MAP.put(Mod200Key.C0058,new Mod200Key[] {Mod200Key.C0025});
 	}
 	
 }

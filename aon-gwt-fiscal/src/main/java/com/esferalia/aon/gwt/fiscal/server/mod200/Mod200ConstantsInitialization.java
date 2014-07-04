@@ -1,7 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod200;
+package com.esferalia.aon.gwt.fiscal.server.mod200;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class Mod200ConstantsInitialization {
 	public static Map<String,String> INITIALIZE_EXPRESSION_MAP = new LinkedHashMap<String,String>();
@@ -199,7 +201,5 @@ public class Mod200ConstantsInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.T0353.toString(),"C0050 || C0051?sab({8301})+sdb({836,837}):0.0");
 	}
 	
-	static {		
-	}
 }
 

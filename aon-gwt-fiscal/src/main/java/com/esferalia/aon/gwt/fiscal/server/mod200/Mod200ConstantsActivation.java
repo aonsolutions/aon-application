@@ -1,7 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod200;
+package com.esferalia.aon.gwt.fiscal.server.mod200;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class Mod200ConstantsActivation {
 	public static Map<String,String> ACTIVE_EXPRESSION_MAP = new HashMap<String,String>();

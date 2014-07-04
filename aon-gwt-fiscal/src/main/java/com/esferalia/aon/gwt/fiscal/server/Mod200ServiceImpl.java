@@ -5,11 +5,11 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsActivation.ACTIVE_EXPRESSION_MAP;
+import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200ConstantsValidation.VALIDATION_EXPRESSION_LIST;
+import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200ConstantsActivation.ACTIVE_EXPRESSION_MAP;
+import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200ConstantsCompute.COMPUTE_EXPRESSION_MAP;
+import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200ConstantsInitialization.INITIALIZE_EXPRESSION_MAP;
 import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTERS_KEYS;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCompute.COMPUTE_EXPRESSION_MAP;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsInitialization.INITIALIZE_EXPRESSION_MAP;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsValidation.VALIDATION_EXPRESSION_LIST;
 
 import java.sql.Connection;
 import java.util.LinkedList;

@@ -172,6 +172,7 @@ public class Model200 extends MainEntryPoint {
 					initializeButton.setVisible(true);
 					saveButton.setVisible(false);
 					removeButton.setVisible(false);
+					validateButton.setVisible(false);
 					calculateCheck.setValue(mod200.isAuthomaticCalculation());
 					calculateCheck.setVisible(false);
 					calculateButton.setVisible(false);
@@ -188,6 +189,7 @@ public class Model200 extends MainEntryPoint {
 				initializeButton.setVisible(false);
 				saveButton.setVisible(false);
 				removeButton.setVisible(false);
+				validateButton.setVisible(false);
 				calculateButton.setVisible(false);
 				calculateCheck.setValue(mod200.isAuthomaticCalculation());
 				calculateCheck.setVisible(false);
@@ -419,6 +421,7 @@ public class Model200 extends MainEntryPoint {
 		initializeButton.setVisible(false);
 		saveButton.setVisible(true);
 		removeButton.setVisible(true);
+		validateButton.setVisible(true);
 		calculateCheck.setVisible(true);
 		calculateButton.setVisible(!calculateCheck.getValue());
 		

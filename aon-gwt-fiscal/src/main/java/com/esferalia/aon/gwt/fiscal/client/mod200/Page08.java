@@ -88,10 +88,6 @@ public class Page08 extends PageAbs {
 	public Page08() {
 		super();
 		correctionType = new ListBox();
-		correctionType.addItem("--------------");
-		for (Mod200CorrectionKey key : Mod200CorrectionKey.values()) {
-			correctionType.addItem(key.getDescription());	
-		}
 		
 		CellTable.Resources aonTableStyle = GWT.create(AonCellTable.class);
 		correctionTable = new CellTable<Mod200Correction>(1,aonTableStyle);
@@ -158,7 +154,7 @@ public class Page08 extends PageAbs {
 				new TextCell()) {
 			@Override
 			public String getValue(Mod200Correction mc) {
-				return mc.getKey().getIncrease().getCode(mod200Object.getAdministration());
+				return mc.getKey().isIncreaseEnabled()?mc.getKey().getIncrease().getCode(mod200Object.getAdministration()):null;
 			}
 		};
 		correctionTable.addColumn(increaseBoxColumn, "");
@@ -172,7 +168,7 @@ public class Page08 extends PageAbs {
 				new TextCell()) {
 			@Override
 			public String getValue(Mod200Correction mc) {
-				return mc.getIncrease() == null?"":DoubleTextBox.FMT.format(mc.getIncrease());
+				return mc.getKey().isIncreaseEnabled()?DoubleTextBox.FMT.format(mc.getIncrease()):null;
 			}
 		};
 		correctionTable.addColumn(increaseColumn, MSG.increase());
@@ -185,7 +181,7 @@ public class Page08 extends PageAbs {
 				new TextCell()) {
 			@Override
 			public String getValue(Mod200Correction mc) {
-				return mc.getKey().getDecrease().getCode(mod200Object.getAdministration());
+				return mc.getKey().isDecreaseEnabled()?mc.getKey().getDecrease().getCode(mod200Object.getAdministration()):null;
 			}
 		};
 		correctionTable.addColumn(decreaseBoxColumn, "");
@@ -198,7 +194,7 @@ public class Page08 extends PageAbs {
 				new TextCell()) {
 			@Override
 			public String getValue(Mod200Correction mc) {
-				return mc.getDecrease() == null?"":DoubleTextBox.FMT.format(mc.getDecrease());
+				return mc.getKey().isDecreaseEnabled()?DoubleTextBox.FMT.format(mc.getDecrease()):null;
 			}
 		};
 		correctionTable.addColumn(decreaseColumn, MSG.decrease());
@@ -287,10 +283,11 @@ public class Page08 extends PageAbs {
 		if (correctionType.getSelectedIndex() != 0) {
 			Mod200CorrectionKey key = Mod200CorrectionKey.values()[correctionType.getSelectedIndex() - 1];
 			increase.setEnabled(key.isIncreaseEnabled());
-			decrease.setEnabled(key.isIncreaseEnabled());
+			decrease.setEnabled(key.isDecreaseEnabled());
 			if (key.isIncreaseEnabled()) {
 				increase.setFocus(true);	
-			} else if (key.isDecreaseEnabled()) {
+			} 
+			if (key.isDecreaseEnabled()) {
 				decrease.setFocus(true);
 			}
 		} else {
@@ -338,6 +335,18 @@ public class Page08 extends PageAbs {
 	protected void initializeTable() {
 		
 		Mod200 mod200 = this.mod200Object.getMod200();
+		for (int i = 0; i < correctionType.getItemCount(); i++) {
+			correctionType.removeItem(i);	
+		}
+		correctionType.addItem("--------------");
+		for (Mod200CorrectionKey key : Mod200CorrectionKey.values()) {
+			correctionType.addItem(
+			  (key.isIncreaseEnabled()?key.getIncrease().getCode(mod200Object.getAdministration()):"")
+			  + " " + (key.isDecreaseEnabled()?key.getDecrease().getCode(mod200Object.getAdministration()):"")
+			  + " "+ key.getDescription()
+			);	
+		}
+		
 		for (Mod200Key key : getInputs().keySet() ) {
 			DoubleVariable d = mod200.getKey(key);
 			if (d != null && d.getValue() != null) {
