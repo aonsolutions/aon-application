@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.PMS_DIRECT_CUSTOMER;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -226,6 +228,9 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 				String hotel = agencyBookingRs.getString(HOTEL);
 				Date stayDate = agencyBookingRs.getDate(STAY_DATE);
 				String agency = agencyBookingRs.getString(AGENCY);
+				if (agency == null) {
+					agency = AonUtil.getMessage(PMS_DIRECT_CUSTOMER);
+				}
 				String agencyGroup = agencyBookingRs.getString(AGENCY_GROUP);
 				if (isGroupAgencies() && StringUtils.isNotBlank(agencyGroup)) {
 					agency = agencyGroup;
@@ -267,6 +272,9 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 				Date endDate = agencyCancelledRs.getDate(END_DATE);
 				endDate = endDate.after(getToDate()) ? DateUtils.truncate(getToDate(), Calendar.DATE) : DateUtils.addDays(endDate, -1);
 				String agency = agencyCancelledRs.getString(AGENCY);
+				if (agency == null) {
+					agency = AonUtil.getMessage(PMS_DIRECT_CUSTOMER);
+				}
 				String agencyGroup = agencyCancelledRs.getString(AGENCY_GROUP);
 				if (isGroupAgencies() && StringUtils.isNotBlank(agencyGroup)) {
 					agency = agencyGroup;
@@ -398,23 +406,21 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		stmt.append("SELECT W.description AS " + HOTEL + ", B.stay_date AS " + STAY_DATE);
 		stmt.append(", IF(R.alias IS NOT NULL AND R.alias != '', R.alias, R.name) AS " + AGENCY + ", IG.description AS " + AGENCY_GROUP);
 		stmt.append(", COUNT(DISTINCT B.id) AS " + ROOMS);
-		stmt.append(" FROM booking AS B, hotel AS H, workplace AS W, project_reservation_room AS PRR, project_reservation AS PR, registry AS R");
+		stmt.append(" FROM booking AS B");
+		stmt.append(" LEFT JOIN hotel AS H ON B.hotel = H.id AND H.active = 1");
+		stmt.append(" LEFT JOIN workplace AS W ON H.workplace = W.id");
+		stmt.append(" LEFT JOIN project_reservation_room AS PRR ON B.project_reservation_room = PRR.id");
+		stmt.append(" LEFT JOIN project_reservation AS PR ON PRR.project_reservation = PR.project");
+		stmt.append(" LEFT JOIN registry AS R ON B.agency = R.id");
 		stmt.append(" LEFT JOIN customer AS C ON R.id = C.registry");
 		stmt.append(" LEFT JOIN invoicing_group AS IG ON C.invoicing_group = IG.id"); 
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
-		stmt.append(" AND B.hotel = H.id");
-		stmt.append(" AND H.active = 1");
-		stmt.append(" AND H.workplace = W.id");
-		stmt.append(" AND B.project_reservation_room = PRR.id");
-		stmt.append(" AND PRR.project_reservation = PR.project");
-		stmt.append(" AND B.agency = R.id");
 		stmt.append(" AND B.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND B.stay_date BETWEEN ? AND ?");
 		stmt.append(" AND B.stay_type IN (0,2)");
-		stmt.append(" AND B.agency IS NOT NULL");
 		if (ArrayUtils.isNotEmpty(getAgencies()) || ArrayUtils.isEmpty(getAgencyGroups())) {
-			String group = ArrayUtils.isNotEmpty(getAgencies()) && ArrayUtils.isEmpty(getAgencyGroups()) ? "" : "(";
-			stmt.append(" AND " + group + "B.agency IN (" + getAgencyIds() + ")");
+			String prefix = ArrayUtils.isEmpty(getAgencies()) ? "(B.agency IS NULL OR " : ArrayUtils.isNotEmpty(getAgencyGroups()) ? "(" : "";
+			stmt.append(" AND " + prefix + "B.agency IN (" + getAgencyIds() + ")");
 		}
 		if (ArrayUtils.isEmpty(getAgencies()) || ArrayUtils.isNotEmpty(getAgencyGroups())) {
 			if (ArrayUtils.isEmpty(getAgencies()) && ArrayUtils.isNotEmpty(getAgencyGroups())) {
@@ -437,23 +443,21 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		stmt.append("SELECT W.description AS " + HOTEL + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		stmt.append(", IF(R.alias IS NOT NULL AND R.alias != '', R.alias, R.name) AS " + AGENCY + ", IG.description AS " + AGENCY_GROUP);
 		stmt.append(", COUNT(DISTINCT PRR.id) AS " + ROOMS);
-		stmt.append(" FROM project_reservation AS PR, project_reservation_room AS PRR, hotel AS H, workplace AS W, registry AS R");
+		stmt.append(" FROM project_reservation AS PR");
+		stmt.append(" LEFT JOIN project_reservation_room AS PRR ON PR.project = PRR.project_reservation");
+		stmt.append(" LEFT JOIN hotel AS H ON PR.hotel = H.id AND H.active = 1");
+		stmt.append(" LEFT JOIN workplace AS W ON H.workplace = W.id");
+		stmt.append(" LEFT JOIN registry AS R ON PR.agency = R.id");
 		stmt.append(" LEFT JOIN customer AS C ON R.id = C.registry");
 		stmt.append(" LEFT JOIN invoicing_group AS IG ON C.invoicing_group = IG.id");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("PR.domain"));
 		stmt.append(" AND PR.status = " + ReservationStatus.CANCELLED.ordinal());
-		stmt.append(" AND PR.project = PRR.project_reservation");
-		stmt.append(" AND PR.hotel = H.id");
-		stmt.append(" AND H.active = 1");
-		stmt.append(" AND H.workplace = W.id");
-		stmt.append(" AND R.id = PR.agency");
 		stmt.append(" AND PR.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND PR.end_date > ?");
 		stmt.append(" AND PR.start_date <= ?");
-		stmt.append(" AND PR.agency IS NOT NULL");
 		if (ArrayUtils.isNotEmpty(getAgencies()) || ArrayUtils.isEmpty(getAgencyGroups())) {
-			String group = ArrayUtils.isNotEmpty(getAgencies()) && ArrayUtils.isEmpty(getAgencyGroups()) ? "" : "(";
-			stmt.append(" AND " + group + "PR.agency IN (" + getAgencyIds() + ")");
+			String prefix = ArrayUtils.isEmpty(getAgencies()) ? "(PR.agency IS NULL OR " : ArrayUtils.isNotEmpty(getAgencyGroups()) ? "(" : "";
+			stmt.append(" AND " + prefix + "PR.agency IN (" + getAgencyIds() + ")");
 		}
 		if (ArrayUtils.isEmpty(getAgencies()) || ArrayUtils.isNotEmpty(getAgencyGroups())) {
 			if (ArrayUtils.isEmpty(getAgencies()) && ArrayUtils.isNotEmpty(getAgencyGroups())) {
@@ -468,6 +472,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		stmt.append(" GROUP BY W.description, PR.start_date, PR.end_date, PR.agency, IG.description");
 		stmt.append(" ORDER BY " + HOTEL + "," + START_DATE + "," + END_DATE + "," + AGENCY + "," + AGENCY_GROUP);
 
+System.out.println(stmt.toString());
 		return stmt.toString();
 	}
 
