@@ -280,6 +280,7 @@ public class Mod200ConstantsActivation {
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ556.toString(),"C0013");
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ559.toString(),"C0015");
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ520.toString(),"C0012");
+		
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ522.toString(),"C0012");
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ523.toString(),"C0012");
 		

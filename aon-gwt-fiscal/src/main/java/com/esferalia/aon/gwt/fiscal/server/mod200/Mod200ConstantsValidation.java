@@ -18,28 +18,22 @@ public class Mod200ConstantsValidation {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 	
-	/*	
-	private static final String MSG1 = "Correcciones al resultado de la cuenta de "
-			+ "p\u00E9rdidas y ganancias no compatible con determinados caracteres de la declaraci\u00F3n";
-	private static final String MSG2 = "Las casillas 301 y 302 (Correcciones por Impuesto sobre "
-			+ "Sociedades. Aumentos o Disminuciones) no son v\u00E1lidas con lo indicado en la "
-			+ "casilla 326 (PyG - Impuesto sobre beneficios)";
-	private static final String MSG3 = "La compensaci\u00F3n aplicada en la presente liquidaci\u00F3n, es "
-			+ "mayor que lo definido como pendiente de ejercicio anteriores.";
-	private static final String MSG4 = "No admite valores negativos.";
-	private static final String MSG5 = "Si existen deducciones por doble imposici\u00F3n pendientes de "
-			+ "aplicar no podr\u00E1n aplicarse ni las bonificaciones del art\u00EDculo 76 de la Ley "
-			+ "19/1994, ni las deducciones por inversiones";
-	private static final String MSG6 = "\"Deducción aplicada en esta liquidación\" mayor que \"Deducción pendiente\"";
-*/	
-	
-	
 	private static final int PAGE03 = 3;
 	private static final int PAGE04 = 4;
 	private static final int PAGE07 = 7;
 	private static final int PAGE08 = 8;
+	private static final int PAGE09 = 9;
 
 	private static final String EMPTY_BALANCE_MSG = "No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
+
+	private static final String EQUAL_GREATER_MSG = "\"{0}\" debe ser mayor o igual que \"{1}\".";
+	private static final String EQUAL_GREATER_EXP = "round({0}) >= round({1})";
+
+	private static final String EQUAL_LESS_MSG = "\"{0}\" debe ser menor o igual que \"{1}\".";
+	private static final String EQUAL_LESS_EXP = "round({0}) <= round({1})";
+
+	private static final String EQUAL_LESS_FACTOR_MSG = "\"{0}\" debe ser menor o igual que el {2} por \"{1}\".";
+	private static final String EQUAL_LESS_FACTOR_EXP = "round({0}) <= round({1} * {2})";
 
 	private static final String MUST_EQUAL_MSG = "\"{0}\" y \"{1}\" deben ser iguales.";
 	private static final String MUST_EQUAL_EXP = "round({0}) == round({1})";
@@ -48,8 +42,8 @@ public class Mod200ConstantsValidation {
 	private static final String MUST_NEGATIVE_EXP = "round({0}) <= 0.0";
 	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
 	
-	private static final String INV_CORRECTION_MSG = "Correcci\u00F3n \"{0}\" no v\u00E1lida sin el caracter \"{1}\".";
-	private static final String INV_CORRECTION_EXP = "round({0}) == 0.0 || (round({0}) > 0.0 && {1})";
+	private static final String INV_BOX_MSG = "Casilla \"{0}\" no v\u00E1lida sin el caracter \"{1}\".";
+	private static final String INV_BOX_EXP = "round({0}) == 0.0 || (round({0}) > 0.0 && {1})";
 	
 	private static final String INCOMPATIBLE_MSG = "Casilla \"{0}\" incompatible con \"{1}\"";
 
@@ -193,128 +187,128 @@ public class Mod200ConstantsValidation {
 				,MessageFormat.format(MUST_POSITIVE_EXP,Mod200Key.D0418.toString())));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0391
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0391.getDescription(),Mod200Key.C0001.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0391.toString(),Mod200Key.C0001.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0391.getDescription(),Mod200Key.C0001.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0391.toString(),Mod200Key.C0001.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0392
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0392.getDescription(),Mod200Key.C0001.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0392.toString(),Mod200Key.C0001.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0392.getDescription(),Mod200Key.C0001.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0392.toString(),Mod200Key.C0001.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0389
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0392.getDescription(),Mod200Key.C0002.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0392.toString(),Mod200Key.C0002.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0392.getDescription(),Mod200Key.C0002.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0392.toString(),Mod200Key.C0002.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0390
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0390.getDescription(),Mod200Key.C0002.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0390.toString(),Mod200Key.C0002.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0390.getDescription(),Mod200Key.C0002.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0390.toString(),Mod200Key.C0002.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0371
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0371.getDescription(),Mod200Key.C0003.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0371.toString(),Mod200Key.C0003.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0371.getDescription(),Mod200Key.C0003.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0371.toString(),Mod200Key.C0003.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0311
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0311.getDescription(),Mod200Key.C0006.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0311.toString(),Mod200Key.C0006.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0311.getDescription(),Mod200Key.C0006.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0311.toString(),Mod200Key.C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0313
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0313.getDescription(),Mod200Key.C0006.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0313.toString(),Mod200Key.C0006.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0313.getDescription(),Mod200Key.C0006.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0313.toString(),Mod200Key.C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0323
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0323.getDescription(),Mod200Key.C0006.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0323.toString(),Mod200Key.C0006.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0323.getDescription(),Mod200Key.C0006.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0323.toString(),Mod200Key.C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0312
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0312.getDescription(),Mod200Key.C0006.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0312.toString(),Mod200Key.C0006.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0312.getDescription(),Mod200Key.C0006.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0312.toString(),Mod200Key.C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0314
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0314.getDescription(),Mod200Key.C0006.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0314.toString(),Mod200Key.C0006.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0314.getDescription(),Mod200Key.C0006.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0314.toString(),Mod200Key.C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0324
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0324.getDescription(),Mod200Key.C0006.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0324.toString(),Mod200Key.C0006.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0324.getDescription(),Mod200Key.C0006.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0324.toString(),Mod200Key.C0006.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0387
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0387.getDescription(),Mod200Key.C0007.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0387.toString(),Mod200Key.C0007.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0387.getDescription(),Mod200Key.C0007.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0387.toString(),Mod200Key.C0007.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0388
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0388.getDescription(),Mod200Key.C0007.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0388.toString(),Mod200Key.C0007.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0388.getDescription(),Mod200Key.C0007.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0388.toString(),Mod200Key.C0007.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0396
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0396.getDescription(),Mod200Key.C0005.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0396.toString(),Mod200Key.C0005.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0396.getDescription(),Mod200Key.C0005.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0396.toString(),Mod200Key.C0005.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0385
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0385.getDescription(),Mod200Key.C0011.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0385.toString(),Mod200Key.C0011.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0385.getDescription(),Mod200Key.C0011.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0385.toString(),Mod200Key.C0011.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0386
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0386.getDescription(),Mod200Key.C0011.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0386.toString(),Mod200Key.C0011.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0386.getDescription(),Mod200Key.C0011.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0386.toString(),Mod200Key.C0011.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0397
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0397.getDescription(),Mod200Key.C0022.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0397.toString(),Mod200Key.C0022.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0397.getDescription(),Mod200Key.C0022.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0397.toString(),Mod200Key.C0022.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0398
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0398.getDescription(),Mod200Key.C0022.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0398.toString(),Mod200Key.C0022.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0398.getDescription(),Mod200Key.C0022.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0398.toString(),Mod200Key.C0022.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0373
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0373.getDescription(),Mod200Key.C0024.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0373.toString(),Mod200Key.C0024.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0373.getDescription(),Mod200Key.C0024.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0373.toString(),Mod200Key.C0024.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0374
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0374.getDescription(),Mod200Key.C0024.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0374.toString(),Mod200Key.C0024.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0374.getDescription(),Mod200Key.C0024.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0374.toString(),Mod200Key.C0024.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0403
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0403.getDescription(),Mod200Key.C0029.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0403.toString(),Mod200Key.C0029.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0403.getDescription(),Mod200Key.C0029.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0403.toString(),Mod200Key.C0029.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0404
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0404.getDescription(),Mod200Key.C0029.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0404.toString(),Mod200Key.C0029.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0404.getDescription(),Mod200Key.C0029.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0404.toString(),Mod200Key.C0029.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0383
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0383.getDescription(),Mod200Key.C0034.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0383.toString(),Mod200Key.C0034.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0383.getDescription(),Mod200Key.C0034.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0383.toString(),Mod200Key.C0034.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0384
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0384.getDescription(),Mod200Key.C0034.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0384.toString(),Mod200Key.C0034.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0384.getDescription(),Mod200Key.C0034.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0384.toString(),Mod200Key.C0034.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0368
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0368.getDescription(),Mod200Key.C0036.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0368.toString(),Mod200Key.C0036.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0368.getDescription(),Mod200Key.C0036.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0368.toString(),Mod200Key.C0036.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0409
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0409.getDescription(),Mod200Key.C0046.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0409.toString(),Mod200Key.C0046.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0409.getDescription(),Mod200Key.C0046.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0409.toString(),Mod200Key.C0046.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0410
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0410.getDescription(),Mod200Key.C0046.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0410.toString(),Mod200Key.C0046.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0410.getDescription(),Mod200Key.C0046.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0410.toString(),Mod200Key.C0046.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0411
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0411.getDescription(),Mod200Key.C0047.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.I0411.toString(),Mod200Key.C0047.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0411.getDescription(),Mod200Key.C0047.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.I0411.toString(),Mod200Key.C0047.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0412
-				,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0412.getDescription(),Mod200Key.C0047.getDescription())
-				,MessageFormat.format(INV_CORRECTION_EXP,Mod200Key.D0412.toString(),Mod200Key.C0047.toString())));
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0412.getDescription(),Mod200Key.C0047.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.D0412.toString(),Mod200Key.C0047.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0400
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0400.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0400.getDescription(),
 				  Mod200Key.C0017.getDescription()+"\" ni \"" 
 				+ Mod200Key.C0018.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0019.getDescription())
 			,"round(D0400) == 0.0 || (round(D0400) > 0.0 && (C0017 || C0018 || C0019))"));
 
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0379
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0379.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0379.getDescription(),
 				Mod200Key.C0020.getDescription()+"\" ni \"" 
 				+ Mod200Key.C0035.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0037.getDescription())
 			,"round(I0379) == 0.0 || (round(I0379) > 0.0 && (C0020 || C0035 || C0037))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0380
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0380.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0380.getDescription(),
 				Mod200Key.C0020.getDescription()+"\" ni \"" 
 				+ Mod200Key.C0035.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0037.getDescription())
 			,"round(D0380) == 0.0 || (round(D0380) > 0.0 && (C0020 || C0035 || C0037))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0377
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0377.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0377.getDescription(),
 				Mod200Key.C0031.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0032.getDescription())
 			,"round(I0377) == 0.0 || (round(I0377) > 0.0 && (C0031 || C0032))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0378
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0378.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0378.getDescription(),
 				Mod200Key.C0031.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0032.getDescription())
 			,"round(D0378) == 0.0 || (round(D0378) > 0.0 && (C0031 || C0032))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0381
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.I0381.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.I0381.getDescription(),
 				Mod200Key.C0033.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0034.getDescription())
 			,"round(I0381) == 0.0 || (round(I0381) > 0.0 && (C0033 || C0034))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0382
-			,MessageFormat.format(INV_CORRECTION_MSG,Mod200Key.D0382.getDescription(),
+			,MessageFormat.format(INV_BOX_MSG,Mod200Key.D0382.getDescription(),
 				Mod200Key.C0033.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0034.getDescription())
 			,"round(D0382) == 0.0 || (round(D0382) > 0.0 && (C0033 || C0034))"));
@@ -361,63 +355,148 @@ public class Mod200ConstantsValidation {
 							+ "?((round(PG500) + (round(BP197)<0?round(BP197):0.0) - round(LQ326)) < 0)"
 							+ ":true)"
 						+ ":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0400
+				, "Sólo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
+				+ "han sido excedentes después de deducir las pérdidas de ejercicios anteriores"
+				,"round(D0400) != 0.0"
+						+ "?(C0051"
+							+ "?((round(PG500) + (round(BP195)<0?round(BP195):0.0) - round(LQ326)) < 0)"
+							+ ":true)"
+						+ ":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0404
+				,"Revise importe disminuciones RIC"
+				,"round(D0404) == 0.0 || round(D0404) >= round((LQ650 * 0.90))"));
 	}
+	
+	static {	// PAGE 09
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ578
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.LQ578.getDescription(),Mod200Key.C0022.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.LQ578.toString(),Mod200Key.C0022.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ579
+				,MessageFormat.format(INV_BOX_MSG,Mod200Key.LQ579.getDescription(),Mod200Key.C0022.getDescription())
+				,MessageFormat.format(INV_BOX_EXP,Mod200Key.LQ579.toString(),Mod200Key.C0022.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ631
+				,MessageFormat.format(EQUAL_GREATER_MSG,Mod200Key.LQ631.getDescription(),Mod200Key.LQ632.getDescription())
+				,MessageFormat.format(EQUAL_GREATER_EXP,Mod200Key.LQ631.toString(),Mod200Key.LQ632.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ552
+				,Mod200Key.LQ552.getDescription() + " debe ser cero con el caracter \"" + Mod200Key.C0027.getDescription() + "\" marcado"
+				,"C0027?LQ552==0:true"));
+		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ641
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ641.getDescription(),Mod200Key.LQ640.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ641.toString(),Mod200Key.LQ640.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ644
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ644.getDescription(),Mod200Key.LQ643.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ644.toString(),Mod200Key.LQ643.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ647
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ647.getDescription(),Mod200Key.LQ646.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ647.toString(),Mod200Key.LQ646.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ650
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ650.getDescription(),Mod200Key.LQ649.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ650.toString(),Mod200Key.LQ649.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ653
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ653.getDescription(),Mod200Key.LQ652.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ653.toString(),Mod200Key.LQ652.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ656
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ656.getDescription(),Mod200Key.LQ655.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ656.toString(),Mod200Key.LQ655.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ659
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ659.getDescription(),Mod200Key.LQ658.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ659.toString(),Mod200Key.LQ658.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ662
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ662.getDescription(),Mod200Key.LQ661.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ662.toString(),Mod200Key.LQ661.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ665
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ665.getDescription(),Mod200Key.LQ664.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ665.toString(),Mod200Key.LQ664.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ668
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ668.getDescription(),Mod200Key.LQ667.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ668.toString(),Mod200Key.LQ667.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ747
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ747.getDescription(),Mod200Key.LQ743.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ747.toString(),Mod200Key.LQ743.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ276
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ276.getDescription(),Mod200Key.LQ275.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ276.toString(),Mod200Key.LQ275.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ609
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ609.getDescription(),Mod200Key.LQ608.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ609.toString(),Mod200Key.LQ608.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ705
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ705.getDescription(),Mod200Key.LQ704.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ705.toString(),Mod200Key.LQ704.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ014
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ014.getDescription(),Mod200Key.LQ013.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ014.toString(),Mod200Key.LQ013.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ726
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ726.getDescription(),Mod200Key.LQ725.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ726.toString(),Mod200Key.LQ725.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ535
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ535.getDescription(),Mod200Key.LQ534.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ535.toString(),Mod200Key.LQ534.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ547
+				,MessageFormat.format(EQUAL_LESS_MSG,Mod200Key.LQ547.getDescription(),Mod200Key.LQ670.getDescription())
+				,"C0034?true:"+MessageFormat.format(EQUAL_LESS_EXP,Mod200Key.LQ547.toString(),Mod200Key.LQ670.toString())));
+
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ641
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ641.getDescription(),Mod200Key.LQ640.getDescription(),"0.25")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ641.toString(),Mod200Key.LQ640.toString(),"0.25")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ644
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ644.getDescription(),Mod200Key.LQ643.getDescription(),"0.25")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ644.toString(),Mod200Key.LQ643.toString(),"0.25")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ647
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ647.getDescription(),Mod200Key.LQ646.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ647.toString(),Mod200Key.LQ646.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ650
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ650.getDescription(),Mod200Key.LQ649.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ650.toString(),Mod200Key.LQ649.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ653
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ653.getDescription(),Mod200Key.LQ652.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ653.toString(),Mod200Key.LQ652.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ656
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ656.getDescription(),Mod200Key.LQ655.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ656.toString(),Mod200Key.LQ655.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ659
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ659.getDescription(),Mod200Key.LQ658.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ659.toString(),Mod200Key.LQ658.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ662
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ662.getDescription(),Mod200Key.LQ661.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ662.toString(),Mod200Key.LQ661.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ665
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ665.getDescription(),Mod200Key.LQ664.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ665.toString(),Mod200Key.LQ664.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ668
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ668.getDescription(),Mod200Key.LQ667.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ668.toString(),Mod200Key.LQ667.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ747
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ747.getDescription(),Mod200Key.LQ743.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ747.toString(),Mod200Key.LQ743.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ276
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ276.getDescription(),Mod200Key.LQ275.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ276.toString(),Mod200Key.LQ275.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ609
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ609.getDescription(),Mod200Key.LQ608.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ609.toString(),Mod200Key.LQ608.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ705
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ705.getDescription(),Mod200Key.LQ704.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ705.toString(),Mod200Key.LQ704.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ014
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ014.getDescription(),Mod200Key.LQ013.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ014.toString(),Mod200Key.LQ013.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ726
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ726.getDescription(),Mod200Key.LQ725.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ726.toString(),Mod200Key.LQ725.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ535
+				,MessageFormat.format(EQUAL_LESS_FACTOR_MSG,Mod200Key.LQ535.getDescription(),Mod200Key.LQ534.getDescription(),"0.50")
+				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,Mod200Key.LQ535.toString(),Mod200Key.LQ534.toString(),"0.50")+":true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ553
+				,"La suma de las casillas \""+Mod200Key.LQ553.getDescription()+"\" y \""+Mod200Key.LQ554.getDescription()+"\" debe ser igual que \""+Mod200Key.LQ552.getDescription()+"\""	
+				,"(C0017 || C0018 || C0019)?LQ552 == (LQ553 + LQ554):true"));				
+	}
+	
+	
 /*	
 	static {
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ641
-				,MSG3
-				, "LQ641 > LQ640")); 
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ644
-				,MSG3
-				,"LQ644 > LQ643"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ647
-				,MSG3
-				,"LQ647 > LQ646"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ650
-				,MSG3
-				,"LQ650 > LQ649"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ653
-				,MSG3
-				,"LQ653 > LQ652"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ656
-				,MSG3
-				,"LQ656 > LQ655"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ659
-				,MSG3
-				,"LQ659 > LQ658"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ662
-				,MSG3
-				,"LQ662 > LQ661"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ665
-				,MSG3
-				,"LQ665 > LQ664"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ668
-				,MSG3
-				,"LQ668 > LQ667"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ747
-				,MSG3
-				,"LQ747 > LQ743"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ276
-				,MSG3
-				,"LQ276 > LQ275"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ609
-				,MSG3
-				,"LQ609 > LQ608"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ705
-				,MSG3
-				,"LQ705 > LQ704"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ014
-				,MSG3
-				,"LQ014 > LQ013"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ726
-				,MSG3
-				,"LQ726 > LQ725"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ535
-				,MSG3
-				,"LQ535 > LQ534"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ547
-				,MSG3
-				,"LQ547 > LQ670"));
+				
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,Mod200Key.BN567
 				,MSG4
 				,"BN567 < 0"));
@@ -549,4 +628,9 @@ public class Mod200ConstantsValidation {
 				,"BN737 > BN736"));
 	}
 */
+	public static void main(String[] args) {
+		for (ValidationMessage vm : VALIDATION_EXPRESSION_LIST) {
+			System.out.println(vm.getExpression());
+		}
+	}
 }

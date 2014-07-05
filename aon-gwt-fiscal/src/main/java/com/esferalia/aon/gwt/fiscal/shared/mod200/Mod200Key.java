@@ -750,6 +750,12 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,D0418(418)
 	,LQ578(578)
 	,LQ579(579)
+	
+	,LQ0N1("0N1")
+	,LQ630(630)
+	,LQ631(631)
+	,LQ632(632)
+	
 	,LQ550(550)
 	,LQ547(547)
 	,LQ552(552)
@@ -1455,12 +1461,17 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	,TR622(622)
 	;
 	
-	private  int code;
+	private String code;
 
 	private Mod200Key(int code) {
+		this(Integer.toString(code));
+	}
+	
+	private Mod200Key(String code) {
 		this.code = code;
 	}
-	private int getCode() {
+	
+	private String getCode() {
 		return this.code;
 	}
 	public String getDescription() {
@@ -1468,8 +1479,9 @@ public enum Mod200Key implements Serializable, IsSerializable {
 	}
 
 	public String getCode(Administration adm) {
-		return Integer.toString(getCode());
+		return getCode();
 	}
+	
 	public static void main(String[] args) {
 		for (Mod200Key key : Mod200Key.values()) {
 			if (key.toString().startsWith("TC")) {

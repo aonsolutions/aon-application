@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 
-public enum Mod200CompensationKey implements Serializable, IsSerializable {
+public enum Mod200BNLQ547Key implements Serializable, IsSerializable, IMod200KeysProvider  {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -32,7 +32,7 @@ public enum Mod200CompensationKey implements Serializable, IsSerializable {
 	,C0015(Mod200Key.LQ013,Mod200Key.LQ014,Mod200Key.LQ015,"Compensaci\u00F3n de base a\u00F1o 2011")
 	,C0016(Mod200Key.LQ725,Mod200Key.LQ726,Mod200Key.LQ727,"Compensaci\u00F3n de base a\u00F1o 2012")
 	,C0017(Mod200Key.LQ534,Mod200Key.LQ535,Mod200Key.LQ536,"Compensaci\u00F3n de base a\u00F1o 2013")
-	,C0018(Mod200Key.LQ670,Mod200Key.LQ547,Mod200Key.LQ671,"Total")
+	,C0018(Mod200Key.LQ670,null           ,Mod200Key.LQ671,"Total")
 	;
 	 
     private String description;
@@ -41,7 +41,7 @@ public enum Mod200CompensationKey implements Serializable, IsSerializable {
     private Mod200Key futurePendind;
     private Mod200Key[] keys;
 
-	private Mod200CompensationKey(Mod200Key previousPendind,
+	private Mod200BNLQ547Key(Mod200Key previousPendind,
 			Mod200Key current, Mod200Key futurePendind, String description) {
 		this.previousPendind = previousPendind;
 		this.current = current;
@@ -63,6 +63,8 @@ public enum Mod200CompensationKey implements Serializable, IsSerializable {
 	public Mod200Key getFuturePendind() {
 		return futurePendind;
 	}
+	
+	@Override
 	public Mod200Key[] getKeys() {
 		return keys; 
 	}

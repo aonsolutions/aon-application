@@ -489,6 +489,12 @@ public class Mod200ConstantsDescription {
 	static {
 		DESCRIPTION_MAP.put(Mod200Key.LQ578.toString(),"Base imponible de actividades o rentas que tributen en r\u00E9gimen general");
 		DESCRIPTION_MAP.put(Mod200Key.LQ579.toString(),"Base imponible derivada de la aplicaci\u00F3n del r\u00E9gimen especial");
+		
+		DESCRIPTION_MAP.put(Mod200Key.LQ0N1.toString(),"N\u00BA de buques a los que se aplica el r\u00E9gimen");
+		DESCRIPTION_MAP.put(Mod200Key.LQ630.toString(),"Base imponible resultante de aplicar la escala del apartado 1 del art. 125 L.I.S");
+		DESCRIPTION_MAP.put(Mod200Key.LQ631.toString(),"Importe de rentas generadas en transmisiones de buques (reserva, diferencia entre la amortizaci\u00F3n fiscal y la contable)");
+		DESCRIPTION_MAP.put(Mod200Key.LQ632.toString(),"Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores (a compensar \u00FAnicamente con la casilla 631)");
+		
 		DESCRIPTION_MAP.put(Mod200Key.LQ550.toString(),"Base imponible antes de la compensaci\u00F3n de bases imponibles negativas");
 		DESCRIPTION_MAP.put(Mod200Key.LQ547.toString(),"Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores");
 		DESCRIPTION_MAP.put(Mod200Key.LQ552.toString(),"Base imponible");

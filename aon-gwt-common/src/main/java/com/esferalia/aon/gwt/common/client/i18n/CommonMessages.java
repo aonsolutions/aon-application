@@ -5,14 +5,15 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// √Å --> \u00C1 √° --> \u00E1
-	// √â --> \u00C9 √© --> \u00E9
-	// √ç --> \u00CD √≠ --> \u00ED
-	// √ì --> \u00D3 √≥ --> \u00F3
-	// √ö --> \u00DA √∫ --> \u00FA
-	// √ë --> \u00D1 √± --> \u00F1
-	// ¬™ --> \u00AA ¬∫ --> \u00BA
-	// ¬ø --> \u00BF
+	// ¡ --> \u00C1 · --> \u00E1
+	// … --> \u00C9 È --> \u00E9
+	// Õ --> \u00CD Ì --> \u00ED
+	// ” --> \u00D3 Û --> \u00F3
+	// ⁄ --> \u00DA ˙ --> \u00FA
+	// — --> \u00D1 Ò --> \u00F1
+	// ∫ --> \u00AA ™ --> \u00BA
+	// ø --> \u00BF
+	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
 	String integerPattern();
@@ -1101,7 +1102,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Mensaje")
 	String errorMessage();
 	
-	@DefaultMessage("P√°gina")
+	@DefaultMessage("P\u00E1gina")
 	String page();
 
 	@DefaultMessage("Casilla")
@@ -1122,38 +1123,38 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pendiente de aplicaci\u00F3n en periodos futuros")
 	String futurePending();
 	
-	@DefaultMessage("Deducciones doble imposici√≥n interna")
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna")
 	String doubleContributionNational();
-	@DefaultMessage("Deducciones doble imposici√≥n interna ejerc. anteriores")
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna ejerc. anteriores")
 	String doubleContributionNationalPrevious();
-	@DefaultMessage("Deducciones doble imposici√≥n interna 2013")
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna 2013")
 	String doubleContributionNational2013();
 	
-	@DefaultMessage("Deducci√≥n pendiente/generada")
+	@DefaultMessage("Deducci\u00F3n pendiente/generada")
 	String pendingDeduction();
 	
 	@DefaultMessage("Tipo gravamen")
 	String taxType();
 	
-	@DefaultMessage("2013 deducci√≥n pendiente")
+	@DefaultMessage("2013 deducci\u00F3n pendiente")
 	String pendingDeduction2013();
 	
-	@DefaultMessage("Deducci√≥n aplicada en esta liquidaci√≥n")
+	@DefaultMessage("Deducci\u00F3n aplicada en esta liquidaci\u00F3n")
 	String appliedDeduction();
 	
-	@DefaultMessage("Deducci√≥n pendiente per√≠odos futuros")
+	@DefaultMessage("Deducci\u00F3n pendiente per\u00EDodos futuros")
 	String futureDeduction();
 	
-	@DefaultMessage("Deducciones doble imposici√≥n internacional ejerc. anteriores")
+	@DefaultMessage("Deducciones doble imposici\u00F3n internacional ejerc. anteriores")
 	String doubleContributionInternationalPrevious();
 	
-	@DefaultMessage("Deducciones doble imposici√≥n internacional 2013")
+	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2013")
 	String doubleContributionInternational2013();
 	
-	@DefaultMessage("Deducci√≥n generada")
+	@DefaultMessage("Deducci\u00F3n generada")
 	String generatedDeduction();
 	
-	@DefaultMessage("Deducci√≥n reducida")
+	@DefaultMessage("Deducci\u00F3n reducida")
 	String reducedDeduction();
 	
 	@DefaultMessage("Importe deducible en cuota")
