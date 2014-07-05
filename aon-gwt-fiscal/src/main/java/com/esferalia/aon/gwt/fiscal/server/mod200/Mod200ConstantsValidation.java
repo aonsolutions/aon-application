@@ -39,28 +39,39 @@ public class Mod200ConstantsValidation {
 	private static final int PAGE07 = 7;
 	private static final int PAGE08 = 8;
 
+	private static final String EMPTY_BALANCE_MSG = "No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
+
 	private static final String MUST_EQUAL_MSG = "\"{0}\" y \"{1}\" deben ser iguales.";
 	private static final String MUST_EQUAL_EXP = "round({0}) == round({1})";
-	private static final String EMPTY_BALANCE_MSG = "No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
+	
 	private static final String CHECK_SIGN_MSG = "Verifique el signo de la clave: \"{0}\"";
 	private static final String MUST_NEGATIVE_EXP = "round({0}) <= 0.0";
 	private static final String MUST_POSITIVE_EXP = "round({0}) >= 0.0";
 	
 	private static final String INV_CORRECTION_MSG = "Correcci\u00F3n \"{0}\" no v\u00E1lida sin el caracter \"{1}\".";
 	private static final String INV_CORRECTION_EXP = "round({0}) == 0.0 || (round({0}) > 0.0 && {1})";
+	
+	private static final String INCOMPATIBLE_MSG = "Casilla \"{0}\" incompatible con \"{1}\"";
 
-	
-	
 	public static List<ValidationMessage> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage>();
+
+	//	**************************************************************************************
+	//	**************************************************************************************
+	//								LA CONDICIÓN DEBE CUMPLIRSE.
+	//	**************************************************************************************
+	//	**************************************************************************************
 	
-	// La condición debe cumplirse.
-	static {	
+	static {	// PAGE 03	
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE03,Mod200Key.BA180
 				,MessageFormat.format(MUST_EQUAL_MSG,Mod200Key.BA180.getDescription(),Mod200Key.BP252.getDescription())
 				,MessageFormat.format(MUST_EQUAL_EXP,Mod200Key.BA180.toString(),Mod200Key.BP252.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE03,Mod200Key.BA180
 				,EMPTY_BALANCE_MSG
 				,"round(BA180) != 0.0 && round(BP252) != 0.0"));
+	}
+
+	
+	static { // PAGE 04	
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE04,Mod200Key.BP189
 				,MessageFormat.format(CHECK_SIGN_MSG,Mod200Key.BP189.getDescription())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,Mod200Key.BP189.toString())));
@@ -76,7 +87,10 @@ public class Mod200ConstantsValidation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE04,Mod200Key.BP199
 				,MessageFormat.format(MUST_EQUAL_MSG,Mod200Key.BP199.getDescription(),Mod200Key.LQ500.getDescription())
 				,"(C0003 || C0004 || C0024 || C0025 || C0036 || C0061)? true : round(BP199) == round(LQ500)"));
-		
+	}
+
+	
+	static { // PAGE 07	
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC534
 				,MessageFormat.format(CHECK_SIGN_MSG,Mod200Key.TC534.getDescription())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,Mod200Key.TC534.toString())));
@@ -152,6 +166,10 @@ public class Mod200ConstantsValidation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,Mod200Key.TC574
 				,MessageFormat.format(CHECK_SIGN_MSG,Mod200Key.TC574.getDescription())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,Mod200Key.TC574.toString())));
+	}
+
+	
+	static { // PAGE 08
 		
 		for (Mod200CorrectionKey ck : Mod200CorrectionKey.values()) {
 			Mod200Key key = ck.getIncrease();
@@ -300,28 +318,52 @@ public class Mod200ConstantsValidation {
 				Mod200Key.C0033.getDescription()+"\" \"ni \"" 
 				+ Mod200Key.C0034.getDescription())
 			,"round(D0382) == 0.0 || (round(D0382) > 0.0 && (C0033 || C0034))"));
+		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ301
+			,MessageFormat.format(INCOMPATIBLE_MSG,Mod200Key.LQ301.getDescription(),Mod200Key.PG326.getDescription())
+			,"!(round(PG326) >= 0.0 && round(LQ301) != 0.0)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ301
+				,MessageFormat.format(MUST_EQUAL_MSG,Mod200Key.LQ302.getDescription(),Mod200Key.PG326.getDescription())
+				,"!(round(PG326) >= 0.0 && round(LQ302) != round(PG326))"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ301
+				,MessageFormat.format(INCOMPATIBLE_MSG,Mod200Key.LQ302.getDescription(),Mod200Key.PG326.getDescription())
+				,"!(round(PG326) < 0.0 && round(LQ302) != 0.0)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ301
+				,MessageFormat.format(MUST_EQUAL_MSG,Mod200Key.LQ301.getDescription(),Mod200Key.PG326.getDescription())
+				,"!(round(PG326) < 0.0 && round(LQ301) != round(PG326))"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ302
+				,"No pueden tener contenido simult\u00E1neamente las dos casillas correspondientes a aumentos y disminuciones del Impuesto sobre Sociedades."
+				,"!(round(LQ301) > 0 && round(LQ302) > 0)"));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0504
+//				,"Confirme la procedencia del ajuste consignado en las claves 504 y/o 505"
+//				,"(C0006 || C0056) && (round(I0504) != 0 || round(D0505) != 0)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0369
+				,MessageFormat.format(INCOMPATIBLE_MSG,Mod200Key.I0369.getDescription()
+					,Mod200Key.C0013.getDescription() +"\" y/o \"" + Mod200Key.C0014.getDescription())
+				,"round(I0369) != 0.0?(C0013 || C0014):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0370
+				,MessageFormat.format(INCOMPATIBLE_MSG,Mod200Key.D0370.getDescription()
+					,Mod200Key.C0013.getDescription() +"\" y/o \"" + Mod200Key.C0014.getDescription())
+				,"round(D0370) != 0.0?(C0013 || C0014):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.I0256
+				,MessageFormat.format(INCOMPATIBLE_MSG,Mod200Key.I0256.getDescription()
+					,Mod200Key.C0013.getDescription() +"\" y/o \"" + Mod200Key.C0014.getDescription())
+				,"round(I0256) != 0.0?(C0013 || C0014):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0278
+				,MessageFormat.format(INCOMPATIBLE_MSG,Mod200Key.D0278.getDescription()
+					,Mod200Key.C0013.getDescription() +"\" y/o \"" + Mod200Key.C0014.getDescription())
+				,"round(D0278) != 0.0?(C0013 || C0014):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.D0400
+				, "Sólo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
+				+ "han sido excedentes después de deducir las pérdidas de ejercicios anteriores"
+				,"round(D0400) != 0.0"
+						+ "?(C0050"
+							+ "?((round(PG500) + (round(BP197)<0?round(BP197):0.0) - round(LQ326)) < 0)"
+							+ ":true)"
+						+ ":true"));
 	}
 /*	
 	static {
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ301
-				,MSG2
-				,"(PG326 >= 0 && LQ301 != 0)"));
-		
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ302
-				,MSG2
-				,"(PG326 >= 0 && LQ302 != PG326)"));
-		
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ302
-				,MSG2
-				,"(PG326 < 0 && LQ302 != 0)"));
-
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ301
-				,MSG2
-				,"(PG326 < 0 && LQ301 != PG326)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,Mod200Key.LQ302
-				,"No pueden tener contenido simult\u00E1neamente las dos casillas correspondientes a aumentos y disminuciones del Impuesto sobre Sociedades."
-				,"(LQ301 > 0 && LQ302 > 0)"));
-
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,Mod200Key.LQ641
 				,MSG3
 				, "LQ641 > LQ640")); 

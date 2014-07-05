@@ -311,6 +311,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	@Override
 	public Mod200 save(Mod200 mod200) throws AonSQLException {
+		// mod200.listDraftVariables();
 		Connection conn = null;
 		try {
 			conn = getConnection();
