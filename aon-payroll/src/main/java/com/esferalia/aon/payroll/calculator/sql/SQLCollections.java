@@ -11,9 +11,13 @@ import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.ISystemCost;
+import com.esferalia.aon.payroll.calculator.ISystemDeduction;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.SimpleContractDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
+import com.esferalia.aon.payroll.calculator.SimpleSystemCost;
+import com.esferalia.aon.payroll.calculator.SimpleSystemDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleSystemPayment;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -61,6 +65,23 @@ public class SQLCollections {
 		return contractPaymentList;
 	}
 	
+	public static Collection<ISystemDeduction> systemDeductionsCollection(ResultSet rs) 
+	throws SQLException {
+		SQLContractDeduction sqlSystemDeductions = 
+			new SQLContractDeduction(rs);
+		List<ISystemDeduction> systemDeductionList = 
+			new ArrayList<ISystemDeduction>();
+		
+		for (IContractDeduction sqlSystemDeduction : sqlSystemDeductions) {
+			SimpleSystemDeduction systemDeduction = 
+				new SimpleSystemDeduction(sqlSystemDeduction);
+
+			systemDeductionList.add(systemDeduction);
+		}
+		
+		return systemDeductionList;
+	}
+	
 	public static Collection<IContractDeduction> deductionsCollection(ResultSet rs) 
 	throws SQLException {
 		SQLContractDeduction sqlContractDeductions = 
@@ -76,6 +97,23 @@ public class SQLCollections {
 		}
 		
 		return contractDeductionList;
+	}
+
+	public static Collection<ISystemCost> systemCostsCollection(ResultSet rs) 
+	throws SQLException {
+		SQLContractCost sqlContractCosts = 
+			new SQLContractCost(rs);
+		List<ISystemCost> systemCostList = 
+			new ArrayList<ISystemCost>();
+		
+		for (IContractCost sqlContractCost : sqlContractCosts) {
+			SimpleSystemCost systemCost = 
+				new SimpleSystemCost(sqlContractCost);
+
+			systemCostList.add(systemCost);
+		}
+		
+		return systemCostList;
 	}
 
 	public static Collection<IContractCost> costsCollection(ResultSet rs) 
