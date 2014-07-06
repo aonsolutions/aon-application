@@ -133,14 +133,14 @@
 												<include>${project.artifactId}-${project.version}.jar</include>
 											</includes>
 										</source>
-									  <!--softlinkSource>
-										  <location>${project.artifactId}-${project.version}.jar</location>
-										  <destination>${project.artifactId}.jar</destination>
-									  </softlinkSource-->
+										<softlinkSource>
+											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+											<destination>${project.artifactId}.jar</destination>
+
+										</softlinkSource>
 									</sources>
+
 								</mapping>
-
-
 								<mapping>
 									<sources>
 										<source>
@@ -156,11 +156,12 @@
 									<directory>/usr/share/aon-master/bin</directory>
 								</mapping>
 
-								<!-- 
 								<mapping>
+									<!-- 
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
+									-->
 									<directory>/etc/cron.daily</directory>
 									<sources>
 										<softlinkSource>
@@ -169,7 +170,6 @@
 										</softlinkSource>
 									</sources>
 								</mapping>
-								-->
 								
 							</mappings>
 
