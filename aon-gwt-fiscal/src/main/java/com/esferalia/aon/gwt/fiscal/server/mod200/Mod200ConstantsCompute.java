@@ -233,33 +233,15 @@ public class Mod200ConstantsCompute {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ671.toString(),"LQ670 - LQ547");
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ552.toString(),"LQ550 - LQ547");
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ558.toString(),"computeLQ558()");		
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ562.toString(),"computeLQ562()");
 		
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ558.toString(),
-				"(C0001?10.0"
-			    + ":(C0002?25.0"
-			     + ":(C0003?1.0"
-			      + ":(C0004?1.0"
-			       + ":(C0005?25.0"
-			        + ":((C0006 && !C0034)?25.0"
-			         + ":((C0006 &&  C0034)?35.0"
-			          + ":((C0006 &&  C056)?20.0"
-			           + ":(C0012?30.0"
-			            + ":(C0015?4.0"
-			             + ":(C0017?20.0"
-			              + ":(C0018?20.0"
-			               + ":(C0034?35.0"
-			                + ":(C0036?25.0"
-			                 + ":(C0038?30.0"
-			                  + ":(C0046?30.0"
-			                   + ":(C0048?0.0"
-			                    + ":(C0056?20.0"
-			                     + ":(C0057?20.0"
-			                      + ":(C0058?25.0"
-			                       + ":(C0063?15.0:30.0)"
-			                      + "))))))))))))))))))))");
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ562.toString(),"LQ552<=0?0.0"
-				+ ":(C0006?(round(LQ552)<=300000?(LQ552*25/100):((300000*25/100)+(LQ552-300000)*30/100)"
-				+ "):(LQ552 * LQ558 / 100))");
+//		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LQ562.toString(),"LQ552<=0?0.0"
+//				+ ":(C0006?(round(LQ552)<=300000?round((LQ552*25/100):((300000*25/100)+(LQ552-300000)*30/100)))"
+//				+ ":(C0015?round((LQ559 * LQ558 / 100) + (LQ552 - LQ559) * 30 / 100)"
+//				+ ":(C0012?(round(LQ520 * LQ558 /100)):true"
+//				+ ":(C0057?(round(LQ552-LQ552) > 0?(round((LQ552-LQ552)* LQ558 /100)):(0.0) ):true"
+//				+ ":(LQ552 * LQ558 / 100)))))");
 
 		
 		

@@ -21,7 +21,6 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.util.AccountingUtil;
-import com.esferalia.aon.accounting.mining.server.AccMiningMVELContext;
 import com.esferalia.aon.accounting.mining.server.IAccMiningKeyAccept;
 import com.esferalia.aon.accounting.mining.shared.AccMiningException;
 import com.esferalia.aon.accounting.mining.shared.AccMiningParameters;
@@ -39,6 +38,7 @@ import com.esferalia.aon.gwt.common.sql.SQLAppParams;
 import com.esferalia.aon.gwt.common.sql.SQLCompany;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.client.Mod200Service;
+import com.esferalia.aon.gwt.fiscal.server.mod200.Mod200MVELContext;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
@@ -155,7 +155,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			mod200.setParticipationsOut(new LinkedList<CompanyParticipation>());
 		}
 
-		AccMiningMVELContext ctx = new AccMiningMVELContext( ACCEPTER );
+		Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
 		ctx.setAccounts( SQLAccounting.getAccountBalances(conn, getParams(conn,mod200)) );
 		ctx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
@@ -184,7 +184,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	
 	
 	private void initializeActiveMap(Mod200 mod200) {
-		AccMiningMVELContext ctx = new AccMiningMVELContext( ACCEPTER );
+		Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
 		ctx.setExpressionMap(ACTIVE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
 		for (Mod200Key key : Mod200Key.values() ) {
@@ -223,7 +223,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	private Mod200 calculate(Mod200 mod200, boolean addToDraft) throws AonSQLException {
 		try {
-			AccMiningMVELContext ctx = new AccMiningMVELContext( ACCEPTER );
+			Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
 			ctx.setExpressionMap(COMPUTE_EXPRESSION_MAP);
 			for (DoubleVariable dv : mod200.getKeysMap().values()) {
 				ctx.put(dv.getKey().toString(), dv.getValue());
@@ -291,7 +291,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		}
 	}
 
-	private void addBalanceCharacters(AccMiningMVELContext ctx, Mod200 mod200) {
+	private void addBalanceCharacters(Mod200MVELContext ctx, Mod200 mod200) {
 		ctx.put(Mod200Key.C0050.toString(), mod200.getBalanceType() == BalanceType.NORMAL);
 		ctx.put(Mod200Key.C0051.toString(), mod200.getBalanceType() == BalanceType.ABREVIADO);
 		ctx.put(Mod200Key.C0052.toString(), mod200.getBalanceType() == BalanceType.PYMES);
@@ -301,7 +301,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		ctx.put(Mod200Key.C0055.toString(), mod200.getPygType() == BalanceType.PYMES);
 	}
 
-	private void addCharacters(AccMiningMVELContext ctx, Mod200 mod200) {
+	private void addCharacters(Mod200MVELContext ctx, Mod200 mod200) {
 		for (Mod200Key key : CHARACTERS_KEYS) {
 			ctx.put(key.toString(), 
 					(mod200.getKeysMap().containsKey(key) 
@@ -350,7 +350,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	@Override
 	public Mod200 validate(Mod200 mod200) throws AonSQLException {
-		AccMiningMVELContext ctx = new AccMiningMVELContext( ACCEPTER );
+		Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
 		for (DoubleVariable dv : mod200.getKeysMap().values()) {
 			ctx.put(dv.getKey().toString(), dv.getValue());
 		}

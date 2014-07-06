@@ -81,7 +81,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		}
 		return obj;
 	}
-
+    
 	public Object evaluate(String key) {
 		if (expressionMap != null) {
 			String exp = expressionMap.get(key);
