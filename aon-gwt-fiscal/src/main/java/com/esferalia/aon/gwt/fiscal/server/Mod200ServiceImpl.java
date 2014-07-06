@@ -155,7 +155,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			mod200.setParticipationsOut(new LinkedList<CompanyParticipation>());
 		}
 
-		Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
+		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
 		ctx.setAccounts( SQLAccounting.getAccountBalances(conn, getParams(conn,mod200)) );
 		ctx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
@@ -184,7 +184,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	
 	
 	private void initializeActiveMap(Mod200 mod200) {
-		Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
+		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
 		ctx.setExpressionMap(ACTIVE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
 		for (Mod200Key key : Mod200Key.values() ) {
@@ -223,7 +223,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	private Mod200 calculate(Mod200 mod200, boolean addToDraft) throws AonSQLException {
 		try {
-			Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
+			Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
 			ctx.setExpressionMap(COMPUTE_EXPRESSION_MAP);
 			for (DoubleVariable dv : mod200.getKeysMap().values()) {
 				ctx.put(dv.getKey().toString(), dv.getValue());
@@ -350,7 +350,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	@Override
 	public Mod200 validate(Mod200 mod200) throws AonSQLException {
-		Mod200MVELContext ctx = new Mod200MVELContext( ACCEPTER );
+		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
 		for (DoubleVariable dv : mod200.getKeysMap().values()) {
 			ctx.put(dv.getKey().toString(), dv.getValue());
 		}
