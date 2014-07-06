@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsBehaviour.BEHAVIOUR_KEYS_MAP;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Behaviour.BEHAVIOUR_KEYS_MAP;
 
 import java.util.HashMap;
 import java.util.Map;

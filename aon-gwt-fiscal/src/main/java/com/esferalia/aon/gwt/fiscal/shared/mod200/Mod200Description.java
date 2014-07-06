@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.shared.mod200;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Mod200ConstantsDescription {
+public class Mod200Description {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -500,6 +500,30 @@ public class Mod200ConstantsDescription {
 		DESCRIPTION_MAP.put(Mod200Key.LQ552.toString(),"Base imponible");
 		DESCRIPTION_MAP.put(Mod200Key.LQ553.toString(),"Resultados cooperativos");
 		DESCRIPTION_MAP.put(Mod200Key.LQ554.toString(),"Resultados extracooperativos");
+		
+		DESCRIPTION_MAP.put(Mod200Key.CP0C1.toString(),"1. Ingresos computables");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E1.toString(),"1. Ingresos computables");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C2.toString(),"2. Gastos espec\u00EDficos");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E2.toString(),"2. Gastos espec\u00EDficos");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C3.toString(),"3. Gastos generales imputados");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E3.toString(),"3. Gastos generales imputados");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C4.toString(),"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E4.toString(),"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E5.toString(),"5. Incrementos y disminuciones patrimoniales");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C6.toString(),"6. Resultado (1 - 2 - 3 - 4 + 5)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E6.toString(),"6. Resultado (1 - 2 - 3 - 4 + 5)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C7.toString(),"7. Aumentos (ajustes positivos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E7.toString(),"7. Aumentos (ajustes positivos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C8.toString(),"8. Disminuciones (ajustes negativos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E8.toString(),"8. Disminuciones (ajustes negativos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C9.toString(),"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E9.toString(),"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)");
+		DESCRIPTION_MAP.put(Mod200Key.CPC10.toString(),"10. Reserva para inversiones en Canarias (Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod200Key.CPC11.toString(),"11. Factor de agotamiento");
+		DESCRIPTION_MAP.put(Mod200Key.CPE11.toString(),"11. Factor de agotamiento");
+		DESCRIPTION_MAP.put(Mod200Key.CPC12.toString(),"12. Base imponible (6 + 7 - 8 - 9 + 10 + 11)");
+		DESCRIPTION_MAP.put(Mod200Key.CPE12.toString(),"12. Base imponible (6 + 7 - 8 - 9 + 10 + 11)");
+		
 		DESCRIPTION_MAP.put(Mod200Key.LQ555.toString(),"Socios residentes");
 		DESCRIPTION_MAP.put(Mod200Key.LQ556.toString(),"Socios no residentes");
 		DESCRIPTION_MAP.put(Mod200Key.LQ559.toString(),"Base imponible a tipo de gravamen especial");

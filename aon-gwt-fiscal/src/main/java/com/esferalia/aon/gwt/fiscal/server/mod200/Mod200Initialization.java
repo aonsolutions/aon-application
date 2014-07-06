@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
-public class Mod200ConstantsInitialization {
+public class Mod200Initialization {
 	public static Map<String,String> INITIALIZE_EXPRESSION_MAP = new LinkedHashMap<String,String>();
 	
 	static { // BALANCE: ACTIVO

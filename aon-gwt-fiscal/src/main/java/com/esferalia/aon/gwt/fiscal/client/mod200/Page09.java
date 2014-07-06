@@ -2,8 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200BNLQ547Key;
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200BNLQ579Key;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200BN547Key;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200BN554Key;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200BN561Key;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200BN579Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Constants;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.google.gwt.core.client.GWT;
@@ -23,6 +25,10 @@ public class Page09 extends PageAbs {
 		 MSG.previousPending()
 		,MSG.current()
 		,MSG.futurePending()		
+	};
+	private static final String[] HEADERS_1 = new String[]{""
+		,MSG.cooperativeResult()
+	 	,MSG.extraCooperativeResult()
 	};
 
 	public Page09() {
@@ -44,13 +50,21 @@ public class Page09 extends PageAbs {
 		for (Mod200Key key : Mod200Constants.LIQUIDATION_II_KEYS) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(key,row);
+				if (key == Mod200Key.LQ554) {
+					row = paintKeyBreakdown(table,row,MSG.cooperativeRegime()
+							,Mod200BN554Key.values(),HEADERS_1);
+				}
+				if (key == Mod200Key.LQ561) {
+					row = paintKeyBreakdown(table,row,Mod200Key.LQ561.getDescription()
+							,Mod200BN561Key.values(),HEADERS_2);
+				}
 				if (key == Mod200Key.LQ579) {
 					row = paintKeyBreakdown(table,row,Mod200Key.LQ579.getDescription()
-							,Mod200BNLQ579Key.values(),null);
+							,Mod200BN579Key.values(),null);
 				}
 				if (key == Mod200Key.LQ547) {
 					row = paintKeyBreakdown(table,row,Mod200Key.LQ547.getDescription()
-							,Mod200BNLQ547Key.values(),HEADERS_2);
+							,Mod200BN547Key.values(),HEADERS_2);
 				}
 			}
 		}

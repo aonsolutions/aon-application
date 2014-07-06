@@ -1,32 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.server.mod200;
 
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0001;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0002;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0003;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0004;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0005;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0006;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0012;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0015;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0017;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0018;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0030;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0034;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0036;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0038;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0046;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0047;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0048;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0049;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0056;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0057;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0058;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.C0063;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.LQ520;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.LQ552;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.LQ558;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.LQ559;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.LQ562;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key.*;
 
 import com.esferalia.aon.accounting.mining.server.AccMiningMVELContext;
 import com.esferalia.aon.accounting.mining.server.IAccMiningKeyAccept;
@@ -98,12 +72,22 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 	}
 		
 	public double computeLQ562() throws AccMiningException {
+		double lq521 = round(getValue(LQ521));
 		double lq552 = round(getValue(LQ552));
 		double lq558 = round(getValue(LQ558));
 		double lq559 = round(getValue(LQ559));
 		
 		if (lq552 <= 0) return 0;
-		
+		if (isChecked(C0006) && isChecked(C0022) && (isChecked(C0056) || isChecked(C0063))) {
+			return getValue(LQ562);
+		}
+		if (isChecked(C0063)) {
+			if (lq552<=getLimit()){
+				return round( lq552*15/100);			
+			} else {
+				return (getLimit()*15/100) + (lq552 - getLimit())*20/100;				
+			}
+		}
 		if (isChecked(C0006)) {
 			if (lq552<=getLimit()){
 				return round( lq552*25/100);			
@@ -111,8 +95,22 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 				return (getLimit()*25/100) + (lq552 - getLimit())*30/100;				
 			}
 		}
+		if (isChecked(C0056)) {
+			if (lq552<=getLimit()){
+				return round( lq552*20/100);			
+			} else {
+				return (getLimit()*20/100) + (lq552 - getLimit())*25/100;				
+			}
+		}
 		
 		if (isChecked(C0015)) {
+			if (isChecked(C0057)) {
+				if (round(lq552 - lq559 - lq521) > 0) {
+					return round((lq559 * lq558 / 100) + (lq552 - lq559 - lq521) * 30 / 100);	
+				} else {
+					return round((lq559 * lq558 / 100));
+				}
+			}
 			return round((lq559 * lq558 / 100) + (lq552 - lq559) * 30 / 100);
 		}
 		
@@ -127,12 +125,19 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 		}
 		
 		if (isChecked(C0057)) {
-			double lq521 = round(getValue(Mod200Key.LQ521));
 			if (round(lq552-lq521) > 0) {
 				return round((lq552 -lq521)* lq558 /100);
 			}
 			return 0;
 		}
+		
+		if (isChecked(C0056)) {
+			if (round(lq552-lq521) > 0) {
+				return round((lq552 -lq521)* lq558 /100);
+			}
+			return 0;
+		}
+		
 		return round(lq552 * lq558 / 100);
 	}
 	

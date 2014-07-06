@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
-public class Mod200ConstantsActivation {
+public class Mod200Activation {
 	public static Map<String,String> ACTIVE_EXPRESSION_MAP = new HashMap<String,String>();
 
 	static { // BALANCE: ACTIVO
@@ -278,7 +278,10 @@ public class Mod200ConstantsActivation {
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ554.toString(),"C0017 || C0018 || C0019");
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ555.toString(),"C0013");
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ556.toString(),"C0013");
-		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ559.toString(),"C0015");
+		
+		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ560.toString(),"C0017 || C0018 || C0019");
+		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ561.toString(),"C0017 || C0018 || C0019");
+		
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ520.toString(),"C0012");
 		
 		ACTIVE_EXPRESSION_MAP.put(Mod200Key.LQ522.toString(),"C0012");

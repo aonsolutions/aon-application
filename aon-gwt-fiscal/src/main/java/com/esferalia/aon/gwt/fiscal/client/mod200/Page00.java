@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTERS_KEYS;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.Map;

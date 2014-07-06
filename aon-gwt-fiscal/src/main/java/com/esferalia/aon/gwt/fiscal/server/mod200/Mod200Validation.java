@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200CorrectionKey;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.ValidationMessage;
 
-public class Mod200ConstantsValidation {
+public class Mod200Validation {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -491,8 +491,56 @@ public class Mod200ConstantsValidation {
 				,"(C0017 || C0018 || C0019)?LQ552 == (LQ553 + LQ554):true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ559
 				,"La casilla \""+LQ559.getDescription()+"\" debe ser mayor igual que cero y menor o igual que la casilla \""+LQ552.getDescription()+"\""
-				,"(C0015?0.0 <= round(LQ559) && round(LQ559) <= round(LQ552):true"));
-		
+				,"C0015?(0.0 <= round(LQ559) && round(LQ559) <= round(LQ552)):true"));
+
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ674
+				,"\"674\" debe ser mayor que \"673\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ673.toString(),LQ674.toString()))); 
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ677
+				,"\"677\" debe ser mayor que \"676\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ676.toString(),LQ677.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ680
+				,"\"680\" debe ser mayor que \"679\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ679.toString(),LQ680.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ683
+				,"\"683\" debe ser mayor que \"682\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ682.toString(),LQ683.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ686
+				,"\"686\" debe ser mayor que \"685\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ685.toString(),LQ686.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ689
+				,"\"689\" debe ser mayor que \"688\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ688.toString(),LQ689.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ692
+				,"\"692\" debe ser mayor que \"691\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ691.toString(),LQ692.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ099
+				,"\"099\" debe ser mayor que \"059\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ059.toString(),LQ099.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ018
+				,"\"018\" debe ser mayor que \"017\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ017.toString(),LQ018.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ773
+				,"\"773\" debe ser mayor que \"772\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ772.toString(),LQ773.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ908
+				,"\"908\" debe ser mayor que \"907\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ907.toString(),LQ908.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ911
+				,"\"911\" debe ser mayor que \"910\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ910.toString(),LQ911.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ936
+				,"\"936\" debe ser mayor que \"935\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ935.toString(),LQ936.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ515
+				,"\"515\" debe ser mayor que \"587\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ587.toString(),LQ515.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ280
+				,"\"280\" debe ser mayor que \"279\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ279.toString(),LQ280.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ624
+				,"\"624\" debe ser mayor que \"623\"" 
+				,MessageFormat.format(EQUAL_GREATER_EXP,LQ623.toString(),LQ624.toString())));
 	}
 	
 	

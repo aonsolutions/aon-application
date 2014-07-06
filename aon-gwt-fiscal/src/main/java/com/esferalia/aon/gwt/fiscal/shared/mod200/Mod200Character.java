@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.shared.mod200;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Mod200ConstantsCharacter {
+public class Mod200Character {
 	
 	public static Map<Mod200Key,Mod200Key[]> CHARACTER_INCOMPATIBILITY_MAP = new HashMap<Mod200Key,Mod200Key[]>();
 	public static Map<Mod200Key,Mod200Key[]> CHARACTER_ALSO_CHECK_MAP = new HashMap<Mod200Key,Mod200Key[]>();

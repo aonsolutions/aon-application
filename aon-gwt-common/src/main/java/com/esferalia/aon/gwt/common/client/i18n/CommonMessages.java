@@ -1171,5 +1171,15 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("La validaci\u00F3n no ha generado ning\u00FAn mensaje.")
 	String noValidationMessages();
+	
+	
+	@DefaultMessage("R\u00E9gimen de cooperativas. Determinaci\u00F3n de la base imponible")
+	String cooperativeRegime();
+	
+	@DefaultMessage("Resultados cooperativos")
+	String cooperativeResult();
+
+	@DefaultMessage("Resultados extracooperativos")
+	String extraCooperativeResult();
 
 }
