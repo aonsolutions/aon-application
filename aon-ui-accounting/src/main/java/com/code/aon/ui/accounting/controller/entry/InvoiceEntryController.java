@@ -87,6 +87,8 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -330,6 +332,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public void onReset(ActionEvent event) {
 		try {
+			getSaleInvoiceController().initSeries(false);
 			reset();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -1500,10 +1503,21 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		return getAllBanks().size();
 	}
 	
+	private SaleInvoiceController getSaleInvoiceController() {
+		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
+	}			
+	
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		String series = (String) event.getNewValue();
-		seriesChanged(series);
+		if ( getSaleInvoiceController().isNumberEditable() ) {
+			String series = (String) event.getNewValue();
+			seriesChanged(series);			
+		}
 	}
+	
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		seriesChanged(getHeader().getSeries());		
+	}			
+	
 	private void seriesChanged( String series ) throws ManagerBeanException {
 		int number = obtainMaxNumber(series);
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel(series);

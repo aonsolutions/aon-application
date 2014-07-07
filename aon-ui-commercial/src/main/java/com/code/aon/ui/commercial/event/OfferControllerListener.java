@@ -32,17 +32,19 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		OfferController controller = (OfferController)event.getController();
+		Offer offer = (Offer) controller.getTo();
 		try {
-			((Offer)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
-			((Offer)controller.getTo()).setStatus(OfferStatus.PENDING);
+			offer.setSecurityLevel(SecurityLevel.OFFICIAL);
+			offer.setStatus(OfferStatus.PENDING);
 			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			((Offer)controller.getTo()).setWorkPlace(workPlace);
-			((Offer)controller.getTo()).setScope(workPlace.getScope());
-			((Offer)controller.getTo()).setType(OfferType.NORMAL);
+			offer.setWorkPlace(workPlace);
+			offer.setScope(workPlace.getScope());
+			offer.setType(OfferType.NORMAL);
 			controller.setAddresses(null);
 			controller.setProjects(null);
 			controller.setDefaultPayMethod(null);
 			controller.resetOfferPayMethod();
+			controller.initSeries();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

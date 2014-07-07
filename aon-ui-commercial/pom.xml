@@ -102,6 +102,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.finance</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
@@ -109,6 +115,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.project</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>				
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.sales</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>				

@@ -36,17 +36,19 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		DeliveryController controller = (DeliveryController)event.getController();
+		Delivery delivery = (Delivery)controller.getTo(); 
 		try {
-			((Delivery)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
-			((Delivery)controller.getTo()).setStatus(DeliveryStatus.PENDING);
+			delivery.setSecurityLevel(SecurityLevel.OFFICIAL);
+			delivery.setStatus(DeliveryStatus.PENDING);
 			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			((Delivery)controller.getTo()).setWorkPlace(workPlace);
-			((Delivery)controller.getTo()).setScope(workPlace.getScope());
+			delivery.setWorkPlace(workPlace);
+			delivery.setScope(workPlace.getScope());
 			controller.setAddresses(null);
 			controller.setProjects(null);
 	        controller.setWarehouse(controller.obtainWarehouse((Delivery)controller.getTo()));
 			controller.setDefaultPayMethod(null);
 			controller.resetDeliveryPayMethod();
+			controller.initSeries();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

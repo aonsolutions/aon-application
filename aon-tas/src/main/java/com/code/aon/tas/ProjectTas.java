@@ -49,7 +49,11 @@ public class ProjectTas extends ProjectTasDB implements IHeaderObject, IProject 
     	return SecurityLevel.OFFICIAL;
     }
 
-    @Transient
+    @Override
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+	}
+
+	@Transient
     public boolean isOfferLinked() throws ManagerBeanException {
     	IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
     	Criteria criteria = new Criteria();

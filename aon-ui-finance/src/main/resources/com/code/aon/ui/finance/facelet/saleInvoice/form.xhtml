@@ -169,36 +169,23 @@
 					<aon:outputLabel for="Invoice_number"
 						value="#{bundle.aon_invoice_number}" />
 					<aon:div>
-						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div id="InvoiceReferenceCodeDiv">
-								<aon:selectOneMenu id="Invoice_series"
-									value="#{saleInvoice.to.series}" 
-									rendered="#{saleInvoice.seriesValid and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
-									valueChangeListener="#{saleInvoice.onSeriesChanged}"
-									reRender="Invoice_number,Invoice_securityLevel">
-									<f:selectItem itemLabel=" " value="#{null}" />
-									<f:selectItems value="#{saleInvoice.rectifier ? configCollections.rectificationSeriesIds : configCollections.invoiceSeriesIds}" />
-								</aon:selectOneMenu>
-								<aon:inputText id="Invoice_series-input"
-									value="#{saleInvoice.to.series}" 
-									rendered="#{!saleInvoice.seriesValid and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
-									size="5" />
-								<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
-									value="#{saleInvoice.to.number}" 
-									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
-									required="true" size="7" />
-								<aon:commandButton value="&#160;"
-									title="#{bundle.finance_invoice_find_next_number}"
-									styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
-		 							style="aon-margin-left aon-margin-right" 
-									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
-									actionListener="#{saleInvoice.onFindNextFreeNumber}"
-									reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
-								</aon:commandButton>															
-								<aon:outputText styleClass="aon-bold aon-margin-right"
-									value="#{saleInvoice.to.referenceCode}"
-									rendered="#{saleInvoice.readOnly or saleInvoiceFinance.model.rowCount > 0}" />
-							</aon:div>
+						<aon:panelGrid columns="2" columnClasses="aon-width-200, aon-width-auto">
+							<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+								<ui:param name="controller" value="#{saleInvoice}" />
+								<ui:param name="skipSeriesLabel" value="#{true}" />
+								<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
+								<ui:param name="sfc_seriesValid" value="#{saleInvoice.seriesValid}" />
+								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}" />								
+								<ui:define name="additionalSeriesContent">
+									<aon:commandButton id="invoiceNextNumber" 
+										title="#{bundle.finance_invoice_find_next_number}"
+										styleClass="aon-icon-commandButton aon-icon-ambito"
+										rendered="#{sfc_editable}" value="&#160;"
+										actionListener="#{saleInvoice.onFindNextFreeNumber}"
+										reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
+									</aon:commandButton>															
+								</ui:define>
+							</ui:decorate>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"

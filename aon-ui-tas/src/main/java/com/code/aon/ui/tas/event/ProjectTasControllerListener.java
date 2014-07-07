@@ -11,6 +11,12 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.tas.controller.ProjectTasController;
 
 public class ProjectTasControllerListener extends ControllerAdapter {
+	
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		ProjectTasController controller = (ProjectTasController)event.getController();
+		controller.initSeries();
+	}
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {

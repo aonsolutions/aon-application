@@ -60,15 +60,15 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<aon:outputLabel for="Sales_deliverySeries"
-											value="#{bundle.aon_series}" />
-										<aon:selectOneMenu id="Sales_deliverySeries"
-											value="#{orderServer.deliverySeries}"
-											valueChangeListener="#{orderServer.onDeliverySeriesChanged}" 
-											reRender="Sales_deliveryNumber">
-											<f:selectItem itemLabel=" " itemValue="#{null}" />
-											<f:selectItems value="#{configCollections.deliverySeriesIds}" />
-										</aon:selectOneMenu>
+										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+											<ui:param name="controller" value="#{delivery}" />
+											<ui:param name="skipNumberInput" value="#{true}" />
+											<ui:param name="sfc_aliasPreffix" value="Sales_delivery" />
+											<ui:param name="sfc_editable" value="#{true}" />
+											<ui:param name="sfc_seriesProperty" value="#{orderServer.deliverySeries}" />
+											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+												value="" />	
+										</ui:include>
 
 										<aon:outputLabel for="Sales_deliveryDate"
 											value="#{bundle.aon_date}" />
