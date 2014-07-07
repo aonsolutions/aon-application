@@ -25,12 +25,18 @@ public class Mod200Validation {
 	private static final int PAGE07 = 7;
 	private static final int PAGE08 = 8;
 	private static final int PAGE09 = 9;
+	private static final int PAGE10 = 10;
+	private static final int PAGE12 = 12;
+	private static final int PAGE13 = 13;
 
 	private static final String EMPTY_BALANCE_MSG = "No se han cumplimentado datos en el Balance (Activo, patrimonio neto y pasivo).";
 
+	private static final String EQUAL_MSG = "\"{0}\" debe igual que \"{1}\".";
+	private static final String EQUAL_EXP = "round({0}) == round({1})";
+
 	private static final String EQUAL_GREATER_MSG = "\"{0}\" debe ser mayor o igual que \"{1}\".";
 	private static final String EQUAL_GREATER_EXP = "round({0}) >= round({1})";
-
+	
 	private static final String EQUAL_LESS_MSG = "\"{0}\" debe ser menor o igual que \"{1}\".";
 	private static final String EQUAL_LESS_EXP = "round({0}) <= round({1})";
 
@@ -48,6 +54,11 @@ public class Mod200Validation {
 	private static final String INV_BOX_EXP = "round({0}) == 0.0 || (round({0}) > 0.0 && {1})";
 	
 	private static final String INCOMPATIBLE_MSG = "Casilla \"{0}\" incompatible con \"{1}\"";
+	
+	private static final String MSG_581 = "Si existen deducciones por doble imposici\u00F3n pendientes "
+			+ "de aplicar no podr\u00E1n aplicarse ni las bonificaciones del art\u00EDculo 76 de la Ley "
+			+ "19/1994, ni las deducciones por inversiones";
+	
 
 	public static List<ValidationMessage> VALIDATION_EXPRESSION_LIST = new LinkedList<ValidationMessage>();
 
@@ -346,16 +357,16 @@ public class Mod200Validation {
 					,C0013.getDescription() +"\" y/o \"" + C0014.getDescription())
 				,"round(D0278) != 0.0?(C0013 || C0014):true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,D0400
-				, "Sólo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
-				+ "han sido excedentes después de deducir las pérdidas de ejercicios anteriores"
+				, "S\u00F3lo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
+				+ "han sido excedentes despu\u00E9s de deducir las p\u00E9rdidas de ejercicios anteriores"
 				,"round(D0400) != 0.0"
 						+ "?(C0050"
 							+ "?((round(PG500) + (round(BP197)<0?round(BP197):0.0) - round(LQ326)) < 0)"
 							+ ":true)"
 						+ ":true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,D0400
-				, "Sólo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
-				+ "han sido excedentes después de deducir las pérdidas de ejercicios anteriores"
+				, "S\u00F3lo se puede dotar Fondo de Reserva Obligatorio si los resultados del ejercicio "
+				+ "han sido excedentes despu\u00E9s de deducir las p\u00E9rdidas de ejercicios anteriores"
 				,"round(D0400) != 0.0"
 						+ "?(C0051"
 							+ "?((round(PG500) + (round(BP195)<0?round(BP195):0.0) - round(LQ326)) < 0)"
@@ -494,190 +505,362 @@ public class Mod200Validation {
 				,"C0015?(0.0 <= round(LQ559) && round(LQ559) <= round(LQ552)):true"));
 
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ674
-				,"\"674\" debe ser mayor que \"673\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"673","674")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ673.toString(),LQ674.toString()))); 
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ677
-				,"\"677\" debe ser mayor que \"676\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"676","677")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ676.toString(),LQ677.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ680
-				,"\"680\" debe ser mayor que \"679\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"679","680")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ679.toString(),LQ680.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ683
-				,"\"683\" debe ser mayor que \"682\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"682","683")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ682.toString(),LQ683.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ686
-				,"\"686\" debe ser mayor que \"685\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"685","686")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ685.toString(),LQ686.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ689
-				,"\"689\" debe ser mayor que \"688\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"688","689")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ688.toString(),LQ689.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ692
-				,"\"692\" debe ser mayor que \"691\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"691","692")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ691.toString(),LQ692.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ099
-				,"\"099\" debe ser mayor que \"059\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"059","099")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ059.toString(),LQ099.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ018
-				,"\"018\" debe ser mayor que \"017\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"017","018")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ017.toString(),LQ018.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ773
-				,"\"773\" debe ser mayor que \"772\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"772","773")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ772.toString(),LQ773.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ908
-				,"\"908\" debe ser mayor que \"907\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"907","908")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ907.toString(),LQ908.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ911
-				,"\"911\" debe ser mayor que \"910\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"910","911")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ910.toString(),LQ911.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ936
-				,"\"936\" debe ser mayor que \"935\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"935","936")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ935.toString(),LQ936.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ515
-				,"\"515\" debe ser mayor que \"587\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"587","515")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ587.toString(),LQ515.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ280
-				,"\"280\" debe ser mayor que \"279\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"279","280")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ279.toString(),LQ280.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ624
-				,"\"624\" debe ser mayor que \"623\"" 
+				,MessageFormat.format(EQUAL_GREATER_MSG,"623","624")
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ623.toString(),LQ624.toString())));
 	}
 	
-	
-/*	
-	static {
-				
+	static {// PAGE 10
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN567
-				,MSG4
-				,"BN567 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN567.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN567.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN568
-				,MSG4
-				,"BN568 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN568.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN568.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN563
-				,MSG4
-				,"BN563 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN563.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN563.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN566
-				,MSG4
-				,"BN566 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN566.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN566.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN576
-				,MSG4
-				,"BN576 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN576.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN576.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN569
-				,MSG4
-				,"BN569 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN569.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN569.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN570
-				,MSG4
-				,"BN570 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN570.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN570.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN571
-				,MSG4
-				,"BN571 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN571.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN571.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN572
-				,MSG4
-				,"BN572 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN572.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN572.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN573
-				,MSG4
-				,"BN573 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN573.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN573.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN575
-				,MSG4
-				,"BN575 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN575.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN575.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN577
-				,MSG4
-				,"BN577 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN577.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN577.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN581
-				,MSG4
-				,"BN581 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN581.toString(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN581.toString(),"0")));
+
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN582
-				,"'"+BN582.getDescription() +  "' mayor que '" + LQ562.getDescription()+"'"
-				,"BN582>LQ562"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN567
-				, BN567.getDescription() + " mayor que el 50 por 100 de " + LQ562.getDescription()
-				,"BN567 > (LQ562 / 2)"));
+				,MessageFormat.format(EQUAL_LESS_MSG,BN582.getDescription(),LQ562.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN582.toString(),LQ562.toString())));
+
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN563
-				,BN563.getDescription() + " no procede. Caracter '" + C0029.getDescription() + "' no marcado." 
-				,"BN563 > 0 && !C0029"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN563.getDescription(),C0029.getDescription())
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN563.toString(),C0029.toString())));
+		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN566
-				,BN566.getDescription() + " no procede. Caracter '" 
-				+ C0017.getDescription() + "' o '"+C0018.getDescription()+"' no marcado." 
-				,"BN566 > 0 && !(C0017 || C0018)"));
+				,BN566.getDescription() + " no procede. Caracter '" + C0017.getDescription() + "' o '"+C0018.getDescription()+"' no marcado." 
+				,"(BN566 == 0.0) || (BN566 > 0 && (C0017 || C0018))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN576
-				,BN576.getDescription() + " no procede. Caracter '" 
-				+ C0038.getDescription() +"' no marcado." 
-				,"BN576 > 0 && !C0038"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN576.getDescription(),C0038.getDescription())
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN576.toString(),C0038.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN575
-				,BN575.getDescription() + " no procede. Caracter '" 
-				+ C0007.getDescription() +"' no marcado." 
-				,"BN575 > 0 && !C0007"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN575.getDescription(),C0007.getDescription())
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN575.toString(),C0007.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN581
-				,BN581.getDescription() + " no procede. Caracter '" 
-				+ C0015.getDescription() +"' no marcado." 
-				,"BN581 > 0 && !C0015"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN581
-				,MSG5
-				,"BN581 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN583
-				,MSG5
-				,"BN583 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN585
-				,MSG5
-				,"BN585 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN584
-				,MSG5
-				,"BN584 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN588
-				,MSG5
-				,"BN588 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN590
-				,MSG5
-				,"BN590 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN082
-				,MSG5
-				,"BN082 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN565
-				,"No puede aplicarse la clave [565] mientras existan saldos pendientes "
-				+ "de aplicación de deducciones por doble imposición o de deducciones "
-				+ "del capítulo IV Título VI de la Ley del Impuesto"
-				,"(BN565 != 0 && (BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0))"
-				+ "|| (BN565 != 0 && BN832 > 0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN585
-				,"Deducción art. 42 L.I.S. Y 36 TER LEY 43/95 (Clave 585)"
-				,"BN585 < BN582"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN592
-				,"Cuota líquida menor que cero"
-				,"BN592 < 0"));
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN581.getDescription(),C0015.getDescription())
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN581.toString(),C0015.toString())));
+		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN581,MSG_581
+				,"BN581 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN583,MSG_581
+				,"BN583 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN585,MSG_581
+				,"BN585 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN584,MSG_581
+				,"BN584 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN588,MSG_581
+				,"BN588 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN590,MSG_581
+				,"BN590 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN082,MSG_581
+				,"BN082 != 0?(BN118 > 0 || BN133 > 0 || BN162 > 0 || BN174 > 0):true"));
 
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN697
-				,MSG6	
-				,"BN697 > BN696")); 
-			
+				,MessageFormat.format(EQUAL_LESS_MSG,BN697.getDescription(),BN696.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN697.toString(),BN696.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN847
-				,MSG6	
-				,"BN847 > BN846"));
-				
+				,MessageFormat.format(EQUAL_LESS_MSG,BN847.getDescription(),BN846.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN847.toString(),BN846.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN283
-				,MSG6	
-				,"BN283 > BN282"));
-				
+				,MessageFormat.format(EQUAL_LESS_MSG,BN283.getDescription(),BN282.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN283.toString(),BN282.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN703
-				,MSG6	
-				,"BN703 > BN702"));
-				
+				,MessageFormat.format(EQUAL_LESS_MSG,BN703.getDescription(),BN702.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN703.toString(),BN702.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN187
-				,MSG6	
-				,"BN187 > BN071"));
-				
+				,MessageFormat.format(EQUAL_LESS_MSG,BN187.getDescription(),BN071.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN187.toString(),BN071.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN026
-				,MSG6	
-				,"BN026 > BN025"));
-				
+				,MessageFormat.format(EQUAL_LESS_MSG,BN026.getDescription(),BN025.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN026.toString(),BN025.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN715
-				,MSG6	
-				,"BN715 > BN714"));
-				
+				,MessageFormat.format(EQUAL_LESS_MSG,BN715.getDescription(),BN714.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN715.toString(),BN714.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN737
-				,MSG6	
-				,"BN737 > BN736"));
+				,MessageFormat.format(EQUAL_LESS_MSG,BN737.getDescription(),BN736.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN737.toString(),BN736.toString())));
+	
+		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN712
+				,MessageFormat.format(EQUAL_LESS_MSG,BN712.getDescription(),BN711.getDescription()) 
+				,MessageFormat.format(EQUAL_LESS_EXP,BN712.toString(),BN711.toString()))); 
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN638
+				,MessageFormat.format(EQUAL_LESS_MSG,BN638.getDescription(),BN637.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN638.toString(),BN637.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN894
+				,MessageFormat.format(EQUAL_LESS_MSG,BN894.getDescription(),BN849.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN894.toString(),BN849.toString()))); 
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN286
+				,MessageFormat.format(EQUAL_LESS_MSG,BN286.getDescription(),BN285.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN286.toString(),BN285.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN826
+				,MessageFormat.format(EQUAL_LESS_MSG,BN826.getDescription(),BN825.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN826.toString(),BN825.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN002
+				,MessageFormat.format(EQUAL_LESS_MSG,BN002.getDescription(),BN001.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN002.toString(),BN001.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN029
+				,MessageFormat.format(EQUAL_LESS_MSG,BN029.getDescription(),BN028.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN029.toString(),BN028.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN718
+				,MessageFormat.format(EQUAL_LESS_MSG,BN718.getDescription(),BN717.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN718.toString(),BN717.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN723
+				,MessageFormat.format(EQUAL_LESS_MSG,BN723.getDescription(),BN722.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN723.toString(),BN722.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN741
+				,MessageFormat.format(EQUAL_LESS_MSG,BN741.getDescription(),BN740.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN741.toString(),BN740.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN136
+				,MessageFormat.format(EQUAL_LESS_MSG,BN136.getDescription(),BN135.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN136.toString(),BN135.toString())));
+
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN585
+				,MessageFormat.format(EQUAL_LESS_MSG,BN585.getDescription(),BN582.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,BN585.toString(),BN582.toString())));
+
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE10,BN592
+				,MessageFormat.format(EQUAL_GREATER_MSG,BN592.getDescription(),"0")
+				,MessageFormat.format(EQUAL_GREATER_EXP,BN592.toString(),"0")));
 	}
-*/
+
+	static {	// PAGE 11
+	}
+
+	static {	// PAGE 12
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID653
+				,MessageFormat.format(EQUAL_MSG,ID653.getDescription() + " (653)",ID666.getDescription()+ "(655)")
+				,MessageFormat.format(EQUAL_EXP,ID653.toString(),ID666.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID650
+				,MessageFormat.format(CHECK_SIGN_MSG,ID650.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID650.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID651
+				,MessageFormat.format(CHECK_SIGN_MSG,ID651.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID651.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID652
+				,MessageFormat.format(CHECK_SIGN_MSG,ID652.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID652.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID666
+				,MessageFormat.format(CHECK_SIGN_MSG,ID666.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID666.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID654
+				,MessageFormat.format(CHECK_SIGN_MSG,ID654.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID654.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID655
+				,MessageFormat.format(CHECK_SIGN_MSG,ID655.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID655.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID656
+				,MessageFormat.format(CHECK_SIGN_MSG,ID656.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID656.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID658
+				,MessageFormat.format(CHECK_SIGN_MSG,ID658.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID658.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID659
+				,MessageFormat.format(CHECK_SIGN_MSG,ID659.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID659.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID660
+				,MessageFormat.format(CHECK_SIGN_MSG,ID660.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID660.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID662
+				,MessageFormat.format(CHECK_SIGN_MSG,ID662.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID662.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID664
+				,MessageFormat.format(CHECK_SIGN_MSG,ID664.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID664.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID665
+				,MessageFormat.format(CHECK_SIGN_MSG,ID665.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,ID665.toString())));
+	}
+
+	static { // PAGE 13 		
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM259
+				,"La casilla 259 debe ser menor o igual que la suma de las casillas 043 y 049" 
+				,"LM259 <= (LM043+LM049)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM254
+				,MessageFormat.format(EQUAL_LESS_MSG,LM254.getDescription(),LM253.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM254.toString(),LM253.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM255
+				,MessageFormat.format(EQUAL_LESS_MSG,LM255.getDescription(),LM253.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM255.toString(),LM253.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM260
+				,MessageFormat.format(EQUAL_LESS_MSG,LM260.getDescription(),LM259.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM260.toString(),LM259.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM049
+				,MessageFormat.format(CHECK_SIGN_MSG,LM049.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM049.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM249
+				,MessageFormat.format(CHECK_SIGN_MSG,LM249.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM249.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM252
+				,MessageFormat.format(CHECK_SIGN_MSG,LM252.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM252.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM253
+				,MessageFormat.format(CHECK_SIGN_MSG,LM253.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM253.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM254
+				,MessageFormat.format(CHECK_SIGN_MSG,LM254.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM254.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM255
+				,MessageFormat.format(CHECK_SIGN_MSG,LM255.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM255.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM258
+				,MessageFormat.format(CHECK_SIGN_MSG,LM258.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM258.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM259
+				,MessageFormat.format(CHECK_SIGN_MSG,LM259.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM259.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM260
+				,MessageFormat.format(CHECK_SIGN_MSG,LM260.getDescription())
+				,MessageFormat.format(MUST_POSITIVE_EXP,LM260.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM175 
+				,MessageFormat.format(EQUAL_MSG,LM175.getDescription() + " (175)",PG296.getDescription()+ "(PYG - 296)")
+				,MessageFormat.format(EQUAL_EXP,LM175.toString(),PG296.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM176 
+				,MessageFormat.format(EQUAL_MSG,LM176.getDescription() + " (176)",PG284.getDescription()+ "(PYG - 284)")
+				,MessageFormat.format(EQUAL_EXP,LM176.toString(),PG284.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM177 
+				,MessageFormat.format(EQUAL_MSG,LM177.getDescription() + " (177)",PG285.getDescription()+ "(PYG - 285)")
+				,MessageFormat.format(EQUAL_EXP,LM177.toString(),PG285.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM178 
+				,MessageFormat.format(EQUAL_MSG,LM178.getDescription() + " (178)",PG287.getDescription()+ "(PYG - 287)")
+				,MessageFormat.format(EQUAL_EXP,LM178.toString(),PG287.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM179 
+				,MessageFormat.format(EQUAL_LESS_MSG,LM179.getDescription() + " (179)",PG298.getDescription()+ "(PYG - 298)")
+				,MessageFormat.format(EQUAL_LESS_EXP,LM179.toString(),PG298.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM254
+				,"\"" + LM254.getDescription() +"\" debe ser menor o igual que la suma de \"" 
+				+ LM043.getDescription() + "\" y \""
+				+ LM049.getDescription() + "\"" 
+				,"LM254<=LM043+LM049"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM254
+				,"Si el importe de la casilla 254 es menor que la suma de los importes de las "
+				+ "casillas 043 + 049, dicho importe debe ser igual al de la casilla 253" 
+				,"LM254<(LM043+LM049)?LM254==LM253:true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM255
+				,"El importe de la casilla 255 debe ser igual a la diferencia "
+				+ "de las casillas 253 menos 254" 
+				,"LM255==(LM253-LM254)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM255
+				,"Si el importe de la casilla 255 es mayor que cero, la casilla 258 debe ser cero" 
+				,"LM255>0?LM258==0:true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM255
+				,"Si el importe de la casilla 043 es mayor que la suma de las casillas 254 y 258, la casilla 049 debe ser cero" 
+				,"(LM254+LM258)<=LM043?LM049==0:true"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM255 
+				,MessageFormat.format(EQUAL_LESS_MSG,LM255.getDescription() 
+				+ " (255)",Mod200CorrectionKey.C0040.getDescription()+ " (Correcciones Contables - 363)")
+				,MessageFormat.format(EQUAL_LESS_EXP,LM255.toString(),I0363.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM258 
+				,MessageFormat.format(EQUAL_LESS_MSG,LM258.getDescription() 
+				+ " (258)",Mod200CorrectionKey.C0040.getDescription()+ "(Correcciones Contables - 364)")
+				,MessageFormat.format(EQUAL_LESS_EXP,LM258.toString(),D0364.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM970
+				,MessageFormat.format(EQUAL_LESS_MSG,LM970.getDescription(),LM969.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM970.toString(),LM969.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM262
+				,MessageFormat.format(EQUAL_LESS_MSG,LM262.getDescription(),LM261.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM262.toString(),LM261.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM265
+				,MessageFormat.format(EQUAL_LESS_MSG,LM265.getDescription(),LM264.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM265.toString(),LM264.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM266
+				,"Compruebe los gastos financieros pendientes de deducir. " 
+				+MessageFormat.format(MUST_EQUAL_MSG,LM266.getDescription(),LM255.getDescription())
+				,MessageFormat.format(MUST_EQUAL_EXP,LM266.toString(),LM255.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM258
+				,"Compruebe los gastos financieros pendientes de deducir de per\u00EDodos "
+				+ "anteriores aplicados en esta liquidaci\u00F3n, claves 258, 970 y 262" 
+				,"LM258==(LM970+LM262)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM522
+				,MessageFormat.format(EQUAL_LESS_MSG,LM522.getDescription(),LM503.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM522.toString(),LM503.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM271
+				,MessageFormat.format(EQUAL_LESS_MSG,LM271.getDescription(),LM270.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM271.toString(),LM270.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM274
+				,MessageFormat.format(EQUAL_LESS_MSG,LM274.getDescription(),LM273.getDescription())
+				,MessageFormat.format(EQUAL_LESS_EXP,LM274.toString(),LM273.toString())));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE13,LM537
+				,"Compruebe el importe pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado"
+				,"LM537==(LM043+LM049)-LM254-LM258"));
+	}
+
 	public static void main(String[] args) {
 		for (ValidationMessage vm : VALIDATION_EXPRESSION_LIST) {
 			System.out.println(vm.getExpression());

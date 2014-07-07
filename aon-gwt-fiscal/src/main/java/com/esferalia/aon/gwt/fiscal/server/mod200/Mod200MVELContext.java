@@ -12,7 +12,10 @@ import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class Mod200MVELContext extends AccMiningMVELContext {
 	
-	private Mod200 mod200;  
+	private static final int LIM_1 = 300000;
+	private static final int LIM_2 = 1000000;
+	
+	private Mod200 mod200;
 	
 	public Mod200MVELContext(Mod200 mod200,IAccMiningKeyAccept resolver) {
 		super(resolver);
@@ -67,8 +70,8 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0018) ) return 20.0;
 		return 30.0;
 	}
-	private double getLimit() {
-		return AonUtil.round(300000 * getDays() / 365);	
+	private double getLimit(int limit) {
+		return AonUtil.round(limit * getDays() / 365);	
 	}
 		
 	public double computeLQ562() throws AccMiningException {
@@ -82,24 +85,24 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 			return getValue(LQ562);
 		}
 		if (isChecked(C0063)) {
-			if (lq552<=getLimit()){
+			if (lq552<=getLimit(LIM_1)){
 				return round( lq552*15/100);			
 			} else {
-				return (getLimit()*15/100) + (lq552 - getLimit())*20/100;				
+				return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
 			}
 		}
 		if (isChecked(C0006)) {
-			if (lq552<=getLimit()){
+			if (lq552<=getLimit(LIM_1)){
 				return round( lq552*25/100);			
 			} else {
-				return (getLimit()*25/100) + (lq552 - getLimit())*30/100;				
+				return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*30/100;				
 			}
 		}
 		if (isChecked(C0056)) {
-			if (lq552<=getLimit()){
+			if (lq552<=getLimit(LIM_1)){
 				return round( lq552*20/100);			
 			} else {
-				return (getLimit()*20/100) + (lq552 - getLimit())*25/100;				
+				return (getLimit(LIM_1)*20/100) + (lq552 - getLimit(LIM_1))*25/100;				
 			}
 		}
 		
@@ -139,6 +142,21 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 		}
 		
 		return round(lq552 * lq558 / 100);
+	}
+	
+	public double computeLM043() throws AccMiningException {
+		double lm175 = round(getValue(LM175));
+		double lm176 = round(getValue(LM176));
+		double lm177 = round(getValue(LM177));
+		double lm178 = round(getValue(LM178));
+		double lm179 = round(getValue(LM179));
+		double lm253 = round(getValue(LM253));
+		double lm258 = round(getValue(LM258));
+		double lm043 = round( (lm175-lm176-lm177-lm178+lm179) * 0.30); 
+		if ( (lm253 + lm258) >= getLimit(LIM_2)) {
+			 return lm043>getLimit(LIM_2)?lm043:getLimit(LIM_2);
+		}
+		return lm043>(lm253 + lm258)?lm043:(lm253 + lm258);
 	}
 	
 }

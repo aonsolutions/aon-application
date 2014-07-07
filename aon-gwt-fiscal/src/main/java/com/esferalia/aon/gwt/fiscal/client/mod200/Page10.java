@@ -76,51 +76,55 @@ public class Page10 extends PageAbs {
 	protected void initializeTable() {
 		int row = 0;
 		for (final Mod200Key key : Mod200Constants.LIQUIDATION_III_KEYS_1) {
-			row = paintKey(table,key,row);
-			if (key == Mod200Key.BN570) {
-				row = paintKeyBreakdown(table,row,MSG.doubleContributionNationalPrevious()
-						,Mod200BN570Key.values(),HEADERS_1);
-			} 
-			if (key == Mod200Key.BN571) {
-				row = paintKeyBreakdown(table,row,MSG.doubleContributionNational2013()
-						,Mod200BN571Key.values(),HEADERS_2);
-			} 
-			if (key == Mod200Key.BN572) {
-				row = paintKeyBreakdown(table,row,MSG.doubleContributionInternationalPrevious()
-						,Mod200BN572Key.values(),HEADERS_1);
-			} 
-			if (key == Mod200Key.BN573) {
-				row = paintKeyBreakdown(table,row,MSG.doubleContributionInternational2013()
-						,Mod200BN573Key.values(),HEADERS_2);
-			} 
+			if (mod200Object.isVisible(key)) {
+				row = paintKey(table,key,row);
+				if (key == Mod200Key.BN570) {
+					row = paintKeyBreakdown(table,row,MSG.doubleContributionNationalPrevious()
+							,Mod200BN570Key.values(),HEADERS_1);
+				} 
+				if (key == Mod200Key.BN571) {
+					row = paintKeyBreakdown(table,row,MSG.doubleContributionNational2013()
+							,Mod200BN571Key.values(),HEADERS_2);
+				} 
+				if (key == Mod200Key.BN572) {
+					row = paintKeyBreakdown(table,row,MSG.doubleContributionInternationalPrevious()
+							,Mod200BN572Key.values(),HEADERS_1);
+				} 
+				if (key == Mod200Key.BN573) {
+					row = paintKeyBreakdown(table,row,MSG.doubleContributionInternational2013()
+							,Mod200BN573Key.values(),HEADERS_2);
+				}
+			}
 		}
 		row = 0;
 		for (final Mod200Key key : Mod200Constants.LIQUIDATION_III_KEYS_2) {
 			row = paintKey(table1,key,row);
-			if (key == Mod200Key.BN585) {
-				row = paintKeyBreakdown(table1,row,Mod200Key.BN585.getDescription()
-						,Mod200BN585Key.values(),HEADERS_3);
-			} 
-			if (key == Mod200Key.BN584) {
-				row = paintKeyBreakdown(table1,row,Mod200Key.BN584.getDescription()
-						,Mod200BN584Key.values(),HEADERS_3);
-			} 
-			if (key == Mod200Key.BN588) {
-				row = paintKeyBreakdown(table1,row,Mod200Key.BN588.getDescription()
-						,Mod200BN588Key.values(),HEADERS_3);
-			} 
-			if (key == Mod200Key.BN082) {
-				row = paintKeyBreakdown(table1,row,Mod200Key.BN082.getDescription()
-						,Mod200BN082Key.values(),HEADERS_4);
-			} 
-			if (key == Mod200Key.BN565) {
-				row = paintKeyBreakdown(table1,row,Mod200Key.BN082.getDescription()
-						,Mod200BN565Key.values(),HEADERS_3);
-			} 
-			if (key == Mod200Key.BN590) {
-				row = paintKeyBreakdown(table1,row,Mod200Key.BN590.getDescription()
-						,Mod200BN590Key.values(),HEADERS_3);
-			} 
+			if (mod200Object.isVisible(key)) {
+				if (key == Mod200Key.BN585) {
+					row = paintKeyBreakdown(table1,row,Mod200Key.BN585.getDescription()
+							,Mod200BN585Key.values(),HEADERS_3);
+				} 
+				if (key == Mod200Key.BN584) {
+					row = paintKeyBreakdown(table1,row,Mod200Key.BN584.getDescription()
+							,Mod200BN584Key.values(),HEADERS_3);
+				} 
+				if (key == Mod200Key.BN588) {
+					row = paintKeyBreakdown(table1,row,Mod200Key.BN588.getDescription()
+							,Mod200BN588Key.values(),HEADERS_3);
+				} 
+				if (key == Mod200Key.BN082) {
+					row = paintKeyBreakdown(table1,row,Mod200Key.BN082.getDescription()
+							,Mod200BN082Key.values(),HEADERS_4);
+				} 
+				if (key == Mod200Key.BN565) {
+					row = paintKeyBreakdown(table1,row,Mod200Key.BN082.getDescription()
+							,Mod200BN565Key.values(),HEADERS_3);
+				} 
+				if (key == Mod200Key.BN590) {
+					row = paintKeyBreakdown(table1,row,Mod200Key.BN590.getDescription()
+							,Mod200BN590Key.values(),HEADERS_3);
+				}
+			}
 		}
 	}
 	

@@ -83,21 +83,23 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 	protected int paintKey(FlexTable tab,final Mod200Key key,int row) {
-		boolean title = isTitle(key);
-		boolean disabled = isDisabled(key);
-		
 		Label desc = new Label(key.getDescription() );
-		if (title) {
+		if (isTitle(key)) {
 			desc.setStyleName(RESOURCES.css().aonBold());
 		}
 		tab.setWidget(row, 0, desc);
 		tab.getFlexCellFormatter().setStyleName(row, 0, RESOURCES.css().aonMod200BorderBottom());
+		paintKeyField(tab,key,row,1);	
+		return ++row;
+	}
+	protected void paintKeyField(FlexTable tab,final Mod200Key key,int row, int col) {
+		boolean disabled = isDisabled(key);
 		
 		FlowPanel panel = new FlowPanel();
 		BoxLabel code = new BoxLabel(key.getCode( mod200Object.getAdministration() ));
 		panel.add(code);
 		getLabels().put(key, code);
-		
+
 		final DoubleTextBox text = new DoubleTextBox();
 		text.addChangeHandler(new ChangeHandler() {
 			@Override
@@ -116,13 +118,12 @@ public abstract class PageAbs extends ResizeComposite {
 		panel.add(text);
 		
 		getInputs().put(key, text);
-		if (!title) {
+		if (!isTitle(key)) {
 			panel.addStyleName(RESOURCES.css().aonMod200PaddingRight());
 		}
-		tab.setWidget(row, 1, panel);
-		tab.getFlexCellFormatter().addStyleName(row, 1, RESOURCES.css().aonTextRight());
-		tab.getFlexCellFormatter().addStyleName(row, 1, RESOURCES.css().aonNowrap());
-		return ++row;
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, RESOURCES.css().aonTextRight());
+		tab.getFlexCellFormatter().addStyleName(row, col, RESOURCES.css().aonNowrap());
 	}
 
 	protected boolean isDisabled(Mod200Key key) {

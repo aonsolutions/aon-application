@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 
-public enum Mod200BN579Key implements Serializable, IsSerializable, IMod200KeysProvider  {
+public enum Mod200LQ579Key implements Serializable, IsSerializable, IMod200KeysProvider  {
 	 C0001(Mod200Key.LQ0N1,Mod200Key.LQ0N1.getDescription())
 	,C0002(Mod200Key.LQ630,Mod200Key.LQ630.getDescription())
 	,C0003(Mod200Key.LQ631,Mod200Key.LQ631.getDescription())
@@ -16,7 +16,7 @@ public enum Mod200BN579Key implements Serializable, IsSerializable, IMod200KeysP
     private Mod200Key key;
     private Mod200Key[] keys;
 
-	private Mod200BN579Key(Mod200Key key, String description) {
+	private Mod200LQ579Key(Mod200Key key, String description) {
 		this.key = key;
 		this.description = description;
 		keys = new Mod200Key[]{key};

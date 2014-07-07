@@ -14,7 +14,26 @@
 				<g:InlineLabel text="{msg.incomeDistribution}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				<g:FlexTable ui:field="table"/>
+				
+				
+	 			<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.distributionBases}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<g:FlexTable ui:field="table"/>
+					</div>
+				</div>
+
+	 			<div class="{aonResources.css.aonGroup}">
+					<div class="{aonResources.css.aonGroupTitle}">
+						<g:InlineLabel text="{msg.aplication}" />
+					</div>
+					<div class="{aonResources.css.aonGroupBody}">
+						<g:FlexTable ui:field="table1"/>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 		

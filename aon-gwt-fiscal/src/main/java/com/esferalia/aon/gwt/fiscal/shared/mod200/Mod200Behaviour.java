@@ -315,10 +315,41 @@ public class Mod200Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN582.toString(),new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN592.toString(),new Boolean[]{TRUE,FALSE});
 
-		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN599.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN611.toString(),new Boolean[]{TRUE,FALSE});
-		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN621.toString(),new Boolean[]{TRUE,FALSE});
-
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN599.toString(),new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN600.toString(),new Boolean[]{TRUE,TRUE});
+		
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN611.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN612.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN621.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.BN622.toString(),new Boolean[]{FALSE,TRUE});
 	}
+	
+	static { // APLICACIÓN DE RESULTADOS
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.ID650.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.ID653.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.ID666.toString(),new Boolean[]{FALSE,TRUE});
+	}
+
+	static { // LIMITACIÓN EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS.	
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM253.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM259.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM043.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM971.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM263.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM266.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM267.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM268.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM269.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM523.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM272.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM537.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM538.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM539.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM546.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM344.toString(),new Boolean[]{FALSE,TRUE});
+	}
+
+
+	
 }
 

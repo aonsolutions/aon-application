@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 
-public enum Mod200BN547Key implements Serializable, IsSerializable, IMod200KeysProvider  {
+public enum Mod200LQ547Key implements Serializable, IsSerializable, IMod200KeysProvider  {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -41,7 +41,7 @@ public enum Mod200BN547Key implements Serializable, IsSerializable, IMod200KeysP
     private Mod200Key futurePendind;
     private Mod200Key[] keys;
 
-	private Mod200BN547Key(Mod200Key previousPendind,
+	private Mod200LQ547Key(Mod200Key previousPendind,
 			Mod200Key current, Mod200Key futurePendind, String description) {
 		this.previousPendind = previousPendind;
 		this.current = current;
