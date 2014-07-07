@@ -5,17 +5,21 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Validation.VALIDATION_EXPRESSION_LIST;
 import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Activation.ACTIVE_EXPRESSION_MAP;
 import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Compute.COMPUTE_EXPRESSION_MAP;
 import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Initialization.INITIALIZE_EXPRESSION_MAP;
+import static com.esferalia.aon.gwt.fiscal.server.mod200.Mod200Validation.VALIDATION_EXPRESSION_LIST;
 import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTERS_KEYS;
 
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -39,6 +43,8 @@ import com.esferalia.aon.gwt.common.sql.SQLCompany;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.client.Mod200Service;
 import com.esferalia.aon.gwt.fiscal.server.mod200.Mod200MVELContext;
+import com.esferalia.aon.gwt.fiscal.server.mod200.xml.MOD2002013;
+import com.esferalia.aon.gwt.fiscal.server.mod200.xml.Mod200toMOD2002013;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
@@ -373,6 +379,22 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		}
 		return mod200;
 	}
+	
+	@Override
+	public String dumpAEAT(Mod200 mod200) throws AonSQLException {
+		try {
+			MOD2002013 mod = Mod200toMOD2002013.getMOD2002013(mod200);
+			StringWriter writer = new StringWriter();
+			JAXBContext context = JAXBContext.newInstance(MOD2002013.class);
+			Marshaller um = context.createMarshaller();
+			um.setProperty("jaxb.encoding", "ISO-8859-1");
+			um.marshal(mod,writer);
+			return writer.toString();
+		} catch (JAXBException e) {
+			throw new AonSQLException(e.getMessage(),e);
+		}				
+	}
+	
 /*
 	private void dumpMod200(Mod200 mod200) {
 		System.out.println();

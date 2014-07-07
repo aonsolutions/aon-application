@@ -152,7 +152,7 @@ public class Mod200MVELContext extends AccMiningMVELContext {
 		double lm179 = round(getValue(LM179));
 		double lm253 = round(getValue(LM253));
 		double lm258 = round(getValue(LM258));
-		double lm043 = round( (lm175-lm176-lm177-lm178+lm179) * 0.30); 
+		double lm043 = round( (lm175+lm176+lm177+lm178+lm179) * 0.30); 
 		if ( (lm253 + lm258) >= getLimit(LIM_2)) {
 			 return lm043>getLimit(LIM_2)?lm043:getLimit(LIM_2);
 		}

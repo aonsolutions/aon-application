@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.server.mod200;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Constants;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class Mod200Compute {
@@ -59,7 +58,7 @@ public class Mod200Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BP239.toString(),"C0050"
 				+ "?BP240+BP243+BP244+BP245+BP246+BP247+BP248"
 				+ ":BP240+BP249");
-		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BP240.toString(),"C0050?BP241+BP242:BP240");
+		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BP240.toString(),"BP241+BP242:BP240");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.BP252.toString(),"BP185+BP210+BP228");
 	}
 	
@@ -370,13 +369,6 @@ public class Mod200Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LM539.toString(),"(!C0009 && !C0010 && !C0024 && !C0025)?LM271+LM274+LM522:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LM546.toString(),"(!C0009 && !C0010 && !C0024 && !C0025)?LM272+LM537+LM523:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod200Key.LM344.toString(),"(!C0009 && !C0010 && !C0024 && !C0025)?LM173+LM227+LM291:0.0");
-	}
-	public static void main(String[] args) {
-		int row = 0;
-		for (int i = 0; i < Mod200Constants.DEDUCIBLE_LIMITATION_KEYS_2.length; i++) {
-			System.out.println( i + "---->"+(i+1)%3);
-		}
-		
 	}
 	
 }

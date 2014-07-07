@@ -253,4 +253,18 @@ public class Mod200Object implements Serializable, IsSerializable {
 		});
 	}
 	
+	public void dumpAEAT(final AsyncCallback<String> callback) {
+		mod200Service.dumpAEAT(mod200, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
 }

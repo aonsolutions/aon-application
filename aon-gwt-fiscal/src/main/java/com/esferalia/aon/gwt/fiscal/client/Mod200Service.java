@@ -20,5 +20,7 @@ public interface Mod200Service extends RemoteService {
 
 	Mod200 delete(Mod200 mod200) throws AonSQLException;
 
+	String dumpAEAT(Mod200 mod200) throws AonSQLException;
+
 	
 }
