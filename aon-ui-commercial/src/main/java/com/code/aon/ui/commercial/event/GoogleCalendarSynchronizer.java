@@ -18,6 +18,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.google.apis.*;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.Events;
 
@@ -30,15 +31,18 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		String domain= AonUtil.getDomainName();
 		
 		try {
+			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			if (g.getClientId() != null){
+				CalendarUtils.serviceInitialize(g);
+				CommercialTracking tracking = getCommercialTracking(event);
+				Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
+				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
+				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
+				int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
+				CalendarUtils.modifyEvent(events.getItems().get(j).getId(),DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain), calendars.getItems().get(i).getId(),domain);
+			}
 			
-			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(domain));
-			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
-			CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
-			int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-			Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
-			int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
-			CalendarUtils.modifyEvent(events.getItems().get(j),DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain), calendars.getItems().get(i).getId(),domain);
 		} catch (SQLException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
@@ -62,15 +66,19 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		super.afterBeanAdded(event);
 		String domain=AonUtil.getDomainName();
 		try {
-			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(domain));
-			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
-			CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
-			int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-			if(i==-1){
-				CalendarUtils.newCalendar(company, domain);
+			
+			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			if (g.getClientId() != null){
+				CalendarUtils.serviceInitialize(g);
+				CommercialTracking tracking = getCommercialTracking(event);
+				Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);
+				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
+				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+				if(i==-1){
+					CalendarUtils.newCalendar(domain);
+				}
+				CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
 			}
-			CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
 		} catch (SQLException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
@@ -95,14 +103,18 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 		super.afterBeanRemoved(event);
 		String domain=AonUtil.getDomainName();
 		try {
-			CalendarUtils.serviceInitialize(DatabaseSync.getServiceAccount(domain));
-			CommercialTracking tracking = getCommercialTracking(event);
-			Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);			
-			CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
-			int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
-			Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
-			int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
-			CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
+			
+			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			if (g.getClientId() != null){
+				CalendarUtils.serviceInitialize(g);
+				CommercialTracking tracking = getCommercialTracking(event);
+				Domain company = DatabaseSync.getDomainName(tracking.getId(),domain);			
+				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
+				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
+				Events events=CalendarUtils.Quicksort.eventsSort(CalendarUtils.getEvents(calendars.getItems().get(i).getId()));
+				int j=CalendarUtils.searchEvents(events, tracking.getId(), events.getItems().size());
+				CalendarUtils.removeEvent(calendars.getItems().get(i).getId(), events.getItems().get(j).getId());
+			}
 		} catch (SQLException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
