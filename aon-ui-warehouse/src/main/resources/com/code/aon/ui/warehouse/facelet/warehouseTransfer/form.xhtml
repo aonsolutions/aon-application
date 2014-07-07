@@ -24,22 +24,9 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
 
-
-
-					<aon:outputLabel for="WarehouseTransfer_series"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
-					<aon:div>
-						<aon:selectOneMenu id="WarehouseTransfer_series" 
-							value="#{warehouseTransfer.to.series}"
-							valueChangeListener="#{warehouseTransfer.onSeriesChanged}" 
-							reRender="WarehouseTransfer_number">
-							<f:selectItem itemLabel=" " itemValue="#{null}" />
-							<f:selectItems value="#{configCollections.deliverySeriesIds}" />
-						</aon:selectOneMenu>
-						<aon:inputText id="WarehouseTransfer_number" styleClass="aon-margin-left aon-inputText" 
-							value="#{warehouseTransfer.to.number}" 
-							required="true" size="7" />
- 					</aon:div>
+					<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+						<ui:param name="controller" value="#{warehouseTransfer}" />
+					</ui:include>
 
 					<aon:outputLabel for="WarehouseTransfer_issueTime" value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="WarehouseTransfer_issueTime"

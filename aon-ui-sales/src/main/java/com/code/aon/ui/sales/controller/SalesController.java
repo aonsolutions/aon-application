@@ -23,12 +23,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.BankUtil;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
@@ -36,7 +34,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.SalesInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -53,7 +50,12 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -62,13 +64,15 @@ import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.DeliveryController;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SalesController extends BasicController implements ISalesConstants {
+public class SalesController extends HeaderObjectController implements ISalesConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -350,19 +354,6 @@ public class SalesController extends BasicController implements ISalesConstants 
 		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Sales)this.getTo()).setNumber(number);
-			((Sales)this.getTo()).setSecurityLevel(securityLevel);
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
@@ -543,22 +534,37 @@ public class SalesController extends BasicController implements ISalesConstants 
 		accept(event);
 	}
 
+	protected DeliveryController getDeliveryController() {
+		return (DeliveryController) AonUtil.getRegisteredBean(IWarehouseConstants.DELIVERY_CONTROLLER_NAME);
+	}
+	
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
-		Sales to = (Sales)this.getTo();
+		Sales to = (Sales) this.getTo();
+		getDeliveryController().initSeries(false);
 		setDeliverySeries(SeriesUtil.ensureDeliverySeries(to.getSeries()));
-		setDeliveryNumber(obtainMaxDeliveryNumber(getDeliverySeries()));
+		setDeliveryNumber(0);
 		setDeliveryDate(new Date());
 		setDeliveryWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
 	}
 
 	public void onDeliverySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setDeliveryNumber(obtainMaxDeliveryNumber((String)event.getNewValue()));
+		if ( getDeliveryController().isNumberEditable() ) {			
+			updateDeliveryNumber((String)event.getNewValue());	
+		}
 	}
 
-	private int obtainMaxDeliveryNumber(String seriesId) {
-		return SeriesNumberUtil.obtainNumber(seriesId, "Delivery");
+	protected int obtainMaxDeliveryNumber(String seriesId) {
+		return getDeliveryController().obtainMaxNumber(seriesId);
 	}
-
+		
+	private void updateDeliveryNumber(String seriesId) {
+		setDeliveryNumber(obtainMaxDeliveryNumber(seriesId));
+	}	
+	
+	public void onDeliveryNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateDeliveryNumber(getDeliverySeries());		
+	}
+	
 	private Warehouse obtainDeliveryWarehouse(WorkPlace workPlace) throws ManagerBeanException {
 		if (workPlace != null) {
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
@@ -575,6 +581,9 @@ public class SalesController extends BasicController implements ISalesConstants 
 	public void onDelivery(ActionEvent event) {
 		try {
 			Sales to = (Sales)this.getTo();
+	        if(getDeliveryNumber() == 0) {
+	        	updateDeliveryNumber(getDeliverySeries());
+			}					
 			DeliveryManager deliveryManager = new DeliveryManager();
 			Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse());
 
@@ -591,26 +600,40 @@ public class SalesController extends BasicController implements ISalesConstants 
 		}
 	}
 
+	private SaleInvoiceController getSaleInvoiceController() {
+		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
+	}		
+	
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
+		SaleInvoiceController controller = getSaleInvoiceController();
+		controller.onCancel(event);
+		controller.initSeries(false);
 		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
-		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
+		setInvoiceNumber(0);
 		setInvoiceDate(new Date());
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setInvoiceNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+		if ( getSaleInvoiceController().isNumberEditable() ) {			
+			updateInvoiceNumber((String)event.getNewValue());	
+		}
 	}
+	
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateInvoiceNumber(getInvoiceSeries());		
+	}		
 
-	private int obtainMaxInvoiceNumber(String seriesId) {
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	private void updateInvoiceNumber(String seriesId) {
+		setInvoiceNumber(getSaleInvoiceController().obtainMaxNumber(seriesId));
 	}
 
 	public void onInvoice(ActionEvent event) {
 		try {
 			Sales to = (Sales)this.getTo();
+	        if(getInvoiceNumber() == 0) {
+	        	updateInvoiceNumber(getInvoiceSeries());
+			}													
 			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
 			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
@@ -750,4 +773,10 @@ public class SalesController extends BasicController implements ISalesConstants 
 		this.select(event, returnSourceSales);
 	}
 
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getSalesSeriesIds();
+	}
+	
 }

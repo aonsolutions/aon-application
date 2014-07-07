@@ -13,7 +13,9 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -46,6 +48,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.finance.util.print.TicketPrinter;
 import com.code.aon.ui.form.FormUtil;
@@ -73,7 +77,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	private boolean showPrintTicketWindow;
 	private boolean giftTicket;
 	private String recoverSeries;
-	private Integer recoverNumber;
+	private int recoverNumber;
 
 	public PosInvoiceController() {
 		setInvoiceAddressControllerName(POS_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -145,11 +149,11 @@ public class PosInvoiceController extends SaleInvoiceController {
 		this.recoverSeries = recoverSeries;
 	}
 
-	public Integer getRecoverNumber() {
+	public int getRecoverNumber() {
 		return recoverNumber;
 	}
 
-	public void setRecoverNumber(Integer recoverNumber) {
+	public void setRecoverNumber(int recoverNumber) {
 		this.recoverNumber = recoverNumber;
 	}
 
@@ -538,8 +542,23 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public void onShowRecoverTicket(ActionEvent event) {
-		setRecoverSeries(null);
-		setRecoverNumber(null);
+		setRecoverSeries(initSeries(false));
+		setRecoverNumber(0);
+		setNumberEditable(true);
+	}
+
+	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if ( isNumberEditable() ) {			
+			updateInvoiceNumber((String)event.getNewValue());	
+		}
+	}
+	
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateInvoiceNumber(getRecoverSeries());		
+	}		
+
+	private void updateInvoiceNumber(String seriesId) {
+		setRecoverNumber(obtainMaxNumber(seriesId));
 	}
 
 	public void onRecoverTicket(ActionEvent event) {
@@ -643,7 +662,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 			Invoice returnInvoice = new Invoice();
 			returnInvoice.setProject(invoice.getProject());
 			returnInvoice.setSeries(invoice.getSeries());
-			returnInvoice.setNumber(obtainMaxInvoiceNumber(invoice.getSeries()));
+			returnInvoice.setNumber(obtainMaxNumber(invoice.getSeries()));
 			returnInvoice.setRegistry(invoice.getRegistry());
 			returnInvoice.setRegistryDocument(invoice.getRegistryDocument());
 			returnInvoice.setRegistryDocumentType(invoice.getRegistryDocumentType());
@@ -721,6 +740,12 @@ public class PosInvoiceController extends SaleInvoiceController {
 			String msg = AonUtil.addErrorMessageFromBundle(POS_ERROR_PRINT_TICKET);
 			throw new AbortProcessingException(msg);
 		}
+	}
+
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getPosSeriesIds();
 	}
 	
 }

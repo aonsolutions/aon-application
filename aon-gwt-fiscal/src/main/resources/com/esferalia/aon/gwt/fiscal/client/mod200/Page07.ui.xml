@@ -13,7 +13,7 @@
 					<g:InlineLabel text="{msg.patrimonioCambios}"/>
 				</div>
 				<div class="{aonResources.css.aonGroupBody}">
-					<div class="{aonResources.css.aonMod200ScrollTableWrapper}">	
+					<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonMod200ScrollTableWrapper}">	
 						<g:FlexTable ui:field="table"/>
 					</div>
 				</div>

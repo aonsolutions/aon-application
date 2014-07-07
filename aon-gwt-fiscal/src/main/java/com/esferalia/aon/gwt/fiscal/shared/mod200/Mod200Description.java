@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.shared.mod200;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Mod200ConstantsDescription {
+public class Mod200Description {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
 	// Í --> \u00CD í --> \u00ED
@@ -489,11 +489,41 @@ public class Mod200ConstantsDescription {
 	static {
 		DESCRIPTION_MAP.put(Mod200Key.LQ578.toString(),"Base imponible de actividades o rentas que tributen en r\u00E9gimen general");
 		DESCRIPTION_MAP.put(Mod200Key.LQ579.toString(),"Base imponible derivada de la aplicaci\u00F3n del r\u00E9gimen especial");
+		
+		DESCRIPTION_MAP.put(Mod200Key.LQ0N1.toString(),"N\u00BA de buques a los que se aplica el r\u00E9gimen");
+		DESCRIPTION_MAP.put(Mod200Key.LQ630.toString(),"Base imponible resultante de aplicar la escala del apartado 1 del art. 125 L.I.S");
+		DESCRIPTION_MAP.put(Mod200Key.LQ631.toString(),"Importe de rentas generadas en transmisiones de buques (reserva, diferencia entre la amortizaci\u00F3n fiscal y la contable)");
+		DESCRIPTION_MAP.put(Mod200Key.LQ632.toString(),"Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores (a compensar \u00FAnicamente con la casilla 631)");
+		
 		DESCRIPTION_MAP.put(Mod200Key.LQ550.toString(),"Base imponible antes de la compensaci\u00F3n de bases imponibles negativas");
 		DESCRIPTION_MAP.put(Mod200Key.LQ547.toString(),"Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores");
 		DESCRIPTION_MAP.put(Mod200Key.LQ552.toString(),"Base imponible");
 		DESCRIPTION_MAP.put(Mod200Key.LQ553.toString(),"Resultados cooperativos");
 		DESCRIPTION_MAP.put(Mod200Key.LQ554.toString(),"Resultados extracooperativos");
+		
+		DESCRIPTION_MAP.put(Mod200Key.CP0C1.toString(),"1. Ingresos computables");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E1.toString(),"1. Ingresos computables");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C2.toString(),"2. Gastos espec\u00EDficos");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E2.toString(),"2. Gastos espec\u00EDficos");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C3.toString(),"3. Gastos generales imputados");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E3.toString(),"3. Gastos generales imputados");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C4.toString(),"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E4.toString(),"4. Gastos Fondo de Educaci\u00F3n y Promoci\u00F3n");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E5.toString(),"5. Incrementos y disminuciones patrimoniales");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C6.toString(),"6. Resultado (1 - 2 - 3 - 4 + 5)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E6.toString(),"6. Resultado (1 - 2 - 3 - 4 + 5)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C7.toString(),"7. Aumentos (ajustes positivos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E7.toString(),"7. Aumentos (ajustes positivos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C8.toString(),"8. Disminuciones (ajustes negativos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E8.toString(),"8. Disminuciones (ajustes negativos)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0C9.toString(),"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)");
+		DESCRIPTION_MAP.put(Mod200Key.CP0E9.toString(),"9. 50% Dotaci\u00F3n obligatoria F.R.O. (art. 16.5 Ley 20/1990)");
+		DESCRIPTION_MAP.put(Mod200Key.CPC10.toString(),"10. Reserva para inversiones en Canarias (Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod200Key.CPC11.toString(),"11. Factor de agotamiento");
+		DESCRIPTION_MAP.put(Mod200Key.CPE11.toString(),"11. Factor de agotamiento");
+		DESCRIPTION_MAP.put(Mod200Key.CPC12.toString(),"12. Base imponible (6 + 7 - 8 - 9 + 10 + 11)");
+		DESCRIPTION_MAP.put(Mod200Key.CPE12.toString(),"12. Base imponible (6 + 7 - 8 - 9 + 10 + 11)");
+		
 		DESCRIPTION_MAP.put(Mod200Key.LQ555.toString(),"Socios residentes");
 		DESCRIPTION_MAP.put(Mod200Key.LQ556.toString(),"Socios no residentes");
 		DESCRIPTION_MAP.put(Mod200Key.LQ559.toString(),"Base imponible a tipo de gravamen especial");
@@ -1057,24 +1087,24 @@ public class Mod200ConstantsDescription {
 		DESCRIPTION_MAP.put(Mod200Key.BN150.toString(),"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (D.A. 22a L.I.S.)");
 		DESCRIPTION_MAP.put(Mod200Key.BN599.toString(),"Cuota del ejercicio a ingresar o a devolver (Estado)");
 		DESCRIPTION_MAP.put(Mod200Key.BN600.toString(),"Cuota del ejercicio a ingresar o a devolver (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN601.toString(),"1er pago fraccionado (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN602.toString(),"1er pago fraccionado (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN603.toString(),"2o pago fraccionado (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN604.toString(),"2o pago fraccionado (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN605.toString(),"3er pago fraccionado (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN606.toString(),"3er pago fraccionado (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN611.toString(),"Cuota diferencial (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN612.toString(),"Cuota diferencial (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN615.toString(),"Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN616.toString(),"Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN633.toString(),"Incremento por incumplimiento de requisitos SOCIMI (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN642.toString(),"Incremento por incumplimiento de requisitos SOCIMI (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN617.toString(),"Intereses de demora (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN618.toString(),"Intereses de demora (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN619.toString(),"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN620.toString(),"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod200Key.BN621.toString(),"L\u00EDquido a ingresar o a devolver (Estado)");
-		DESCRIPTION_MAP.put(Mod200Key.BN622.toString(),"L\u00EDquido a ingresar o a devolver (D. Forales / Navarra)");
+		DESCRIPTION_MAP.put(Mod200Key.BN601.toString(),"1er pago fraccionado");
+		DESCRIPTION_MAP.put(Mod200Key.BN602.toString(),"1er pago fraccionado");
+		DESCRIPTION_MAP.put(Mod200Key.BN603.toString(),"2o pago fraccionado");
+		DESCRIPTION_MAP.put(Mod200Key.BN604.toString(),"2o pago fraccionado");
+		DESCRIPTION_MAP.put(Mod200Key.BN605.toString(),"3er pago fraccionado");
+		DESCRIPTION_MAP.put(Mod200Key.BN606.toString(),"3er pago fraccionado");
+		DESCRIPTION_MAP.put(Mod200Key.BN611.toString(),"Cuota diferencial");
+		DESCRIPTION_MAP.put(Mod200Key.BN612.toString(),"Cuota diferencial");
+		DESCRIPTION_MAP.put(Mod200Key.BN615.toString(),"Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores");
+		DESCRIPTION_MAP.put(Mod200Key.BN616.toString(),"Incremento por p\u00E9rdida beneficios fiscales per\u00EDodos anteriores");
+		DESCRIPTION_MAP.put(Mod200Key.BN633.toString(),"Incremento por incumplimiento de requisitos SOCIMI");
+		DESCRIPTION_MAP.put(Mod200Key.BN642.toString(),"Incremento por incumplimiento de requisitos SOCIMI");
+		DESCRIPTION_MAP.put(Mod200Key.BN617.toString(),"Intereses de demora");
+		DESCRIPTION_MAP.put(Mod200Key.BN618.toString(),"Intereses de demora");
+		DESCRIPTION_MAP.put(Mod200Key.BN619.toString(),"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria");
+		DESCRIPTION_MAP.put(Mod200Key.BN620.toString(),"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria");
+		DESCRIPTION_MAP.put(Mod200Key.BN621.toString(),"L\u00EDquido a ingresar o a devolver");
+		DESCRIPTION_MAP.put(Mod200Key.BN622.toString(),"L\u00EDquido a ingresar o a devolver");
 	}
 	
 	static {
@@ -1110,27 +1140,27 @@ public class Mod200ConstantsDescription {
 		DESCRIPTION_MAP.put(Mod200Key.LM258.toString(),"m). Gastos financieros netos pendientes de deducir de periodos anteriores aplicados");
 		DESCRIPTION_MAP.put(Mod200Key.LM259.toString(),"n). Total gastos financieros netos deducibles en el per\u00EDodo (= [k + m], < = [f + g])");
 		DESCRIPTION_MAP.put(Mod200Key.LM260.toString(),"\u00F1). Total gastos financieros deducibles en el per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM969.toString(),"2012 - Importe generado. Pendiente de aplicaci\u00F3n a principio del per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM970.toString(),"2012 - Aplicado en esta liquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod200Key.LM971.toString(),"2012 - Pendiente de aplicaci\u00F3n en per\u00EDodos futuros");
-		DESCRIPTION_MAP.put(Mod200Key.LM261.toString(),"2013 (*) - Importe generado. Pendiente de aplicaci\u00F3n a principio del per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM262.toString(),"2013 (*) - Aplicado en esta liquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod200Key.LM263.toString(),"2013 (*) - Pendiente de aplicaci\u00F3n en per\u00EDodos futuros");
-		DESCRIPTION_MAP.put(Mod200Key.LM264.toString(),"2013 (**) - Importe generado. Pendiente de aplicaci\u00F3n a principio del per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM265.toString(),"2013 (**) - Aplicado en esta liquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod200Key.LM266.toString(),"2013 (**) - Pendiente de aplicaci\u00F3n en per\u00EDodos futuros");
+		DESCRIPTION_MAP.put(Mod200Key.LM969.toString(),"2012");
+		DESCRIPTION_MAP.put(Mod200Key.LM970.toString(),"2012");
+		DESCRIPTION_MAP.put(Mod200Key.LM971.toString(),"2012");
+		DESCRIPTION_MAP.put(Mod200Key.LM261.toString(),"2013 (*)");
+		DESCRIPTION_MAP.put(Mod200Key.LM262.toString(),"2013 (*)");
+		DESCRIPTION_MAP.put(Mod200Key.LM263.toString(),"2013 (*)");
+		DESCRIPTION_MAP.put(Mod200Key.LM264.toString(),"2013 (**)");
+		DESCRIPTION_MAP.put(Mod200Key.LM265.toString(),"2013 (**)");
+		DESCRIPTION_MAP.put(Mod200Key.LM266.toString(),"2013 (**)");
 		DESCRIPTION_MAP.put(Mod200Key.LM267.toString(),"Total");
 		DESCRIPTION_MAP.put(Mod200Key.LM268.toString(),"Total");
 		DESCRIPTION_MAP.put(Mod200Key.LM269.toString(),"Total");
-		DESCRIPTION_MAP.put(Mod200Key.LM503.toString(),"2012 - Importe generado. Pendiente de aplicaci\u00F3n a principio del per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM522.toString(),"2012 - Aplicado en esta liquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod200Key.LM523.toString(),"2012 - Pendiente de aplicaci\u00F3n en per\u00EDodos futuros");
-		DESCRIPTION_MAP.put(Mod200Key.LM270.toString(),"2013 (*) - Importe generado. Pendiente de aplicaci\u00F3n a principio del per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM271.toString(),"2013 (*) - Aplicado en esta liquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod200Key.LM272.toString(),"2013 (*) - Pendiente de aplicaci\u00F3n en per\u00EDodos futuros");
-		DESCRIPTION_MAP.put(Mod200Key.LM273.toString(),"2013 (**) - Importe generado. Pendiente de aplicaci\u00F3n a principio del per\u00EDodo");
-		DESCRIPTION_MAP.put(Mod200Key.LM274.toString(),"2013 (**) - Aplicado en esta liquidaci\u00F3n");
-		DESCRIPTION_MAP.put(Mod200Key.LM537.toString(),"2013 (**) - Pendiente de aplicaci\u00F3n en per\u00EDodos futuros");
+		DESCRIPTION_MAP.put(Mod200Key.LM503.toString(),"2012");
+		DESCRIPTION_MAP.put(Mod200Key.LM522.toString(),"2012");
+		DESCRIPTION_MAP.put(Mod200Key.LM523.toString(),"2012");
+		DESCRIPTION_MAP.put(Mod200Key.LM270.toString(),"2013 (*)");
+		DESCRIPTION_MAP.put(Mod200Key.LM271.toString(),"2013 (*)");
+		DESCRIPTION_MAP.put(Mod200Key.LM272.toString(),"2013 (*)");
+		DESCRIPTION_MAP.put(Mod200Key.LM273.toString(),"2013 (**)");
+		DESCRIPTION_MAP.put(Mod200Key.LM274.toString(),"2013 (**)");
+		DESCRIPTION_MAP.put(Mod200Key.LM537.toString(),"2013 (**)");
 		DESCRIPTION_MAP.put(Mod200Key.LM538.toString(),"Total");
 		DESCRIPTION_MAP.put(Mod200Key.LM539.toString(),"Total");
 		DESCRIPTION_MAP.put(Mod200Key.LM546.toString(),"Total");

@@ -36,16 +36,18 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		PurchaseController controller = (PurchaseController)event.getController();
+		Purchase purchase = (Purchase) controller.getTo();
 		try {
-			((Purchase)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
-			((Purchase)controller.getTo()).setStatus(PurchaseStatus.PENDING);
+			purchase.setSecurityLevel(SecurityLevel.OFFICIAL);
+			purchase.setStatus(PurchaseStatus.PENDING);
 			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			((Purchase)controller.getTo()).setWorkPlace(workPlace);
-			((Purchase)controller.getTo()).setScope(workPlace.getScope());
-			((Purchase)controller.getTo()).setDocumentType(PurchaseDocumentType.NORMAL);
+			purchase.setWorkPlace(workPlace);
+			purchase.setScope(workPlace.getScope());
+			purchase.setDocumentType(PurchaseDocumentType.NORMAL);
 			controller.setAddresses(null);
 			controller.setDefaultPayMethod(null);
 			controller.resetPurchasePayMethod();
+			controller.initSeries();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

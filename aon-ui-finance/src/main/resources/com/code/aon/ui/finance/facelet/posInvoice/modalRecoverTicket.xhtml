@@ -10,9 +10,9 @@
 
 	<aon:panelGroup id="showRecoverTicketWindow">
 		<c:if test="#{invoiceController.showRecoverTicketWindow}">
-			<rich:modalPanel id="recoverTicketModalPanel" minHeight="200"
-				minWidth="420" rendered="#{invoiceController.showRecoverTicketWindow}"
-				showWhenRendered="true" zindex="90">
+			<rich:modalPanel id="recoverTicketModalPanel" 
+				minHeight="200" minWidth="420" zindex="90"
+				showWhenRendered="#{invoiceController.showRecoverTicketWindow}">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText 
@@ -57,20 +57,20 @@
 									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+									<aon:panelGrid id="menuGrid" columns="2" style="width: 100%;">
 
-										<aon:outputLabel for="Invoice_number" value="#{bundle.aon_invoice_number}" />
-										<aon:div>
-											<aon:selectOneMenu id="Invoice_series"
-												value="#{invoiceController.recoverSeries}">
-												<f:selectItems value="#{configCollections.posSeriesIds}" />
-											</aon:selectOneMenu>
-											<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold"
-												value="/" />
-											<aon:inputText id="Invoice_number" 
-												value="#{invoiceController.recoverNumber}" 
-												required="true" size="7" maxlength="10" />
-										</aon:div>
+										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+											<ui:param name="controller" value="#{invoiceController}" />
+											<ui:param name="sfc_label" value="#{bundle.aon_invoice_number}" />
+											<ui:param name="sfc_editable" value="#{true}" />
+											<ui:param name="sfc_seriesRequired" value="#{false}" />
+											<ui:param name="sfc_seriesProperty" value="#{invoiceController.recoverSeries}" />
+											<ui:param name="sfc_numberProperty" value="#{invoiceController.recoverNumber}" />
+											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+												value="#{offer.onInvoiceSeriesChanged}" />	
+											<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+												value="#{offer.onInvoiceNumberEditable}" />
+										</ui:include>
 
 									</aon:panelGrid>
 								</aon:div>

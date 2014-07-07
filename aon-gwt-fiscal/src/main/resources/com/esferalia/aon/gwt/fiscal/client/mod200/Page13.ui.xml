@@ -23,7 +23,7 @@
 				<g:InlineLabel text="{msg.deducibleLimitationPending}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				
+				<g:FlexTable ui:field="table1"/>
 			</div>
 		</div>
 
@@ -32,7 +32,7 @@
 				<g:InlineLabel text="{msg.pendingAddinngs}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				
+				<g:FlexTable ui:field="table2"/>
 			</div>
 		</div>
 
@@ -41,7 +41,7 @@
 				<g:InlineLabel text="{msg.damageAmount}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
-				
+				<g:FlexTable ui:field="table3"/>
 			</div>
 		</div>
 

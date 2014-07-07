@@ -37,6 +37,10 @@ public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObj
     public Date getDate() {
     	return getIssueTime();
     }
+    
+    @Override
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+	}
 
 	@Override
 	@Transient

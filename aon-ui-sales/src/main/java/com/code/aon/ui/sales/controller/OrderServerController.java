@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.ui.form.FormUtil;
@@ -135,7 +134,7 @@ public class OrderServerController extends SalesController {
 	}
 	
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
-		setDeliverySeries(null);
+		setDeliverySeries(getDeliveryController().initSeries(false));
 		setDeliveryNumber(0);
 		setDeliveryDate(null);
 		setSalesDateCheck(true);
@@ -147,7 +146,7 @@ public class OrderServerController extends SalesController {
 			List<Integer> deliveryIds = new LinkedList<Integer>();
 			DeliveryManager deliveryManager = new DeliveryManager();
 			for(Sales sales: checks){
-				int number = SeriesNumberUtil.obtainNumber(getDeliverySeries(), "Delivery");
+				int number = obtainMaxDeliveryNumber(getDeliverySeries());
 				Date date = isSalesDateCheck()?sales.getDate():getDeliveryDate(); 
 				Delivery delivery = deliveryManager.salesDelivery(sales, getDeliverySeries(), number, date, getDeliveryWarehouse());
 				deliveryIds.add(delivery.getId());

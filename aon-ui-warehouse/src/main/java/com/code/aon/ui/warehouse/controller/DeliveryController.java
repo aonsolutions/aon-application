@@ -22,20 +22,17 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.BankUtil;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -52,7 +49,12 @@ import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -66,7 +68,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DeliveryController extends BasicController implements IWarehouseConstants {
+public class DeliveryController extends HeaderObjectController implements IWarehouseConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -259,19 +261,6 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	public String getInvoiceCode() throws ManagerBeanException {
 		Invoice invoice = getInvoice();
 		return (invoice != null) ? invoice.getReferenceCode() : null;
-	}
-
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Delivery)this.getTo()).setNumber(number);
-			((Delivery)this.getTo()).setSecurityLevel(securityLevel);
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
 	}
 
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
@@ -517,26 +506,40 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
+	
+	private SaleInvoiceController getSaleInvoiceController() {
+		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
+	}		
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
+		SaleInvoiceController controller = getSaleInvoiceController();
+		controller.onCancel(event);
+		controller.initSeries(false);
 		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
-		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
+		setInvoiceNumber(0);
 		setInvoiceDate(new Date());
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setInvoiceNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+		if ( getSaleInvoiceController().isNumberEditable() ) {			
+			updateInvoiceNumber((String)event.getNewValue());	
+		}
 	}
+	
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateInvoiceNumber(getInvoiceSeries());		
+	}		
 
-	private int obtainMaxInvoiceNumber(String seriesId) {
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	private void updateInvoiceNumber(String seriesId) {
+		setInvoiceNumber(getSaleInvoiceController().obtainMaxNumber(seriesId));
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
+        if(getInvoiceNumber() == 0) {
+        	updateInvoiceNumber(getInvoiceSeries());
+		}															
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
@@ -609,4 +612,10 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		return minutes;
 	}
 
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getDeliverySeriesIds();
+	}
+	
 }

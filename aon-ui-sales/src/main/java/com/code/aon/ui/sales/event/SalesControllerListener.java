@@ -46,17 +46,19 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		SalesController controller = (SalesController)event.getController();
+		Sales sales = (Sales) controller.getTo();
 		try {
-			((Sales)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
-			((Sales)controller.getTo()).setStatus(SalesStatus.PENDING);
+			sales.setSecurityLevel(SecurityLevel.OFFICIAL);
+			sales.setStatus(SalesStatus.PENDING);
 			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			((Sales)controller.getTo()).setWorkPlace(workPlace);
-			((Sales)controller.getTo()).setScope(workPlace.getScope());
-			((Sales)controller.getTo()).setDocumentType(DocumentType.NORMAL);
+			sales.setWorkPlace(workPlace);
+			sales.setScope(workPlace.getScope());
+			sales.setDocumentType(DocumentType.NORMAL);
 			controller.setAddresses(null);
 			controller.setProjects(null);
 			controller.setDefaultPayMethod(null);
 			controller.resetSalesPayMethod();
+			controller.initSeries();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

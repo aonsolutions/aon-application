@@ -23,6 +23,16 @@ public class SeriesUtil {
 		return null;
 	}
 
+	public static synchronized String ensureOfferSeries(String seriesCode) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesCode)) {
+			Series series = SeriesUtil.getSeries(seriesCode);
+			if (series != null && series.isOffer()) {
+				return series.getCode();
+			}
+		}
+		return null;
+	}
+	
 	public static synchronized String ensureDeliverySeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);

@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +17,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
@@ -95,17 +93,6 @@ public class SaleInvoiceController extends InvoiceController {
 	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
 		return (StringUtils.isEmpty(seriesCode)) ? true : SeriesUtil.isSeriesActive(seriesCode) && seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
-	}
-
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		getInvoice().setNumber(obtainMaxNumber((String)event.getNewValue()));
-		getInvoice().setSecurityLevel(SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue()));
-	}
-
-	private int obtainMaxNumber(String seriesId)  {
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-    	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
 	public void onFindNextFreeNumber(ActionEvent event) throws ManagerBeanException {

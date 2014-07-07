@@ -60,21 +60,17 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<aon:outputLabel for="Delivery_invoiceSeries"
-											value="#{bundle.aon_series}" />
-										<aon:selectOneMenu id="Delivery_invoiceSeries"
-											value="#{delivery.invoiceSeries}"
-											valueChangeListener="#{delivery.onInvoiceSeriesChanged}" 
-											reRender="Delivery_invoiceNumber">
-											<f:selectItem itemLabel=" " itemValue="#{null}" />
-											<f:selectItems value="#{configCollections.invoiceSeriesIds}" />
-										</aon:selectOneMenu>
-
-										<aon:outputLabel for="Delivery_invoiceNumber"
-											value="#{bundle.aon_number}" />
-										<aon:inputText id="Delivery_invoiceNumber"
-											value="#{delivery.invoiceNumber}"
-											required="true" size="7" />
+										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+											<ui:param name="controller" value="#{saleInvoice}" />
+											<ui:param name="sfc_aliasPreffix" value="Delivery_invoice" />
+											<ui:param name="sfc_editable" value="#{true}" />
+											<ui:param name="sfc_seriesProperty" value="#{delivery.invoiceSeries}" />
+											<ui:param name="sfc_numberProperty" value="#{delivery.invoiceNumber}" />
+											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+												value="#{delivery.onInvoiceSeriesChanged}" />	
+											<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+												value="#{delivery.onInvoiceNumberEditable}" />
+										</ui:include>
 
 										<aon:outputLabel for="Delivery_invoiceDate"
 											value="#{bundle.aon_date}" />

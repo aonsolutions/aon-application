@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsBehaviour.BEHAVIOUR_KEYS_MAP;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Behaviour.BEHAVIOUR_KEYS_MAP;
 
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Constants;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;

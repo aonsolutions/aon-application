@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialActivity;
@@ -79,6 +80,134 @@ public class DatabaseSync {
 	
 	// ------------------------------------------ GOOGLE CALENDAR
 	
+	
+	public static Domain getDomain1(String key) throws SQLException{
+		
+			ResultSet rs = null;
+			Connection connection = null;
+			PreparedStatement stmt = null;
+			try {
+				String sql="SELECT *"
+						+" FROM "+SQLConstants.DOMAIN
+						+" WHERE "+DomainColumns.NAME+"= ?";
+				
+				connection = getConnection(key);
+				stmt = connection.prepareStatement(sql);
+				stmt.setString(1, key);
+				rs = stmt.executeQuery();
+				rs.next();
+				
+				Domain domain = new Domain();
+				domain.setId(rs.getInt(DomainColumns.ID));
+				domain.setName(rs.getString(DomainColumns.NAME));
+				domain.setDescription(rs.getString(DomainColumns.DESCRIPTION));
+				
+				return domain;
+				
+			} finally {
+				if (rs != null)
+					rs.close();
+				if (stmt != null)
+					stmt.close();
+				if (connection != null)
+					connection.close();
+			}
+		
+		
+		
+	}
+	
+public static void setEventId(String eventId,int id, String domain) throws SQLException, AonConnectionException {
+		
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+			String sql = "UPDATE " + SQLConstants.COMMERCIAL_TRACKING
+					+" SET "+CommercialTrackingColumns.EVENTID + "= ? "
+					+ "WHERE "+CommercialTrackingColumns.ID+" = ?";
+			
+			
+			connection = getConnection(domain);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, eventId);
+			stmt.setLong(2, id);
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
+	
+	public static Vector<CommercialTracking> getCommercialTrackingKey(String key) throws SQLException, AonConnectionException {
+
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+
+			String sql = "SELECT CT.*"+ " FROM "
+					+ SQLConstants.COMMERCIAL_TRACKING +" AS CT INNER JOIN "
+					+SQLConstants.DOMAIN+ " AS D ON D."+DomainColumns.ID+"= CT."+CommercialTrackingColumns.DOMAIN
+					+" WHERE "+DomainColumns.NAME+"= ?";
+
+			connection = getConnection(key);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, key);
+			rs = stmt.executeQuery();
+
+			Vector<CommercialTracking> cts = new Vector<CommercialTracking>();
+			while (rs.next()) {
+				CommercialTracking commercialTracking = new CommercialTracking();
+				commercialTracking.setId(rs
+						.getInt(CommercialTrackingColumns.ID));
+				commercialTracking.setDomain(rs
+						.getInt(CommercialTrackingColumns.DOMAIN));
+				commercialTracking.setDate(rs
+						.getTimestamp(CommercialTrackingColumns.DATE));
+				commercialTracking.setSeller(rs
+						.getInt(CommercialTrackingColumns.SELLER));
+				commercialTracking.setProjectCommercial(rs
+						.getInt(CommercialTrackingColumns.PROJECT_COMMERCIAL));
+				commercialTracking.setActivity(rs
+						.getInt(CommercialTrackingColumns.ACTIVITY));
+				commercialTracking.setComments(rs
+						.getString(CommercialTrackingColumns.COMMENTS));
+				commercialTracking.setStatus((short) rs
+						.getInt(CommercialTrackingColumns.STATUS));
+				commercialTracking
+						.setNextCommercialTracking(rs
+								.getInt(CommercialTrackingColumns.NEXT_COMMERCIAL_TRACKING));
+				commercialTracking.setEndDate(rs
+						.getTimestamp(CommercialTrackingColumns.END_DATE));
+				commercialTracking.setOffer(rs
+						.getInt(CommercialTrackingColumns.OFFER));
+				commercialTracking.setAllDay(rs
+						.getBoolean(CommercialTrackingColumns.ALLDAY));
+				commercialTracking.setLocation(rs
+						.getString(CommercialTrackingColumns.LOCATION));
+				commercialTracking.setEventId(rs
+						.getString(CommercialTrackingColumns.EVENTID));
+			
+				cts.add(commercialTracking);
+			}
+
+			return cts;
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
 	/**
 	 * getEnterpriseEmail(int id,String domain), Busca el email de la empresa en
 	 * la BD.
@@ -797,7 +926,7 @@ public class DatabaseSync {
 
 			rs = stmt.executeQuery();
 		
-			DomainGserviceaccount dgserviceaccount= new DomainGserviceaccount();
+			DomainGserviceaccount dgserviceaccount=new DomainGserviceaccount();
 			
 			if (rs.next()) {
 			
@@ -1604,5 +1733,43 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 		
 	}
 
+	
+	private String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
+		
+		
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+		String sql="SELECT U.login"
+				+ " FROM "+SQLConstants.USER+" AS U inner join "+SQLConstants.MAIL_ACCOUNT+" AS MA ON U."+ UserColumns.ID+" = "+
+				"MA."+ MailAccountColumns.USER_ID +"inner join "+SQLConstants.DOMAIN +"AS D ON D."+DomainColumns.ID+"=U."+UserColumns.DOMAIN
+				+ " WHERE MA."+MailAccountColumns.EMAIL+"=? AND D."+DomainColumns.NAME+" = ?";
+
+		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+		
+		Util util = new Util(connectionInfo);
+		util.createMetadataConnection();
+		com.code.aon.jaas.auth.spi.db.Domain domain = util.getDomain(domainName);
+		connection = connectionInfo.getDomainConnection(domain.getDataBaseName());
+		
+		stmt = connection.prepareStatement(sql);
+		stmt.setString(1,email);
+		stmt.setString(2, domainName);
+		rs = stmt.executeQuery();
+		
+		return rs.next() ? rs.getString("login") : null;
+		
+		}finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
 	
 }

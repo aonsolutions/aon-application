@@ -391,6 +391,7 @@ public interface ICommonMessages {
 	String PAYROLL_IRPF = "payroll_irpf";
 	String PAYROLL_TRAINING_CENTER_DIRECT_DEBIT = "payroll_trainingCenter_directDebit";	
 	
+	String PMS_DIRECT_CUSTOMER = "pms_direct_customer";
 	String PMS_SERVICES = "pms_services";
 	String PMS_DEPOSITS = "pms_deposits";
 	String PMS_DAMAGES = "pms_damages";	

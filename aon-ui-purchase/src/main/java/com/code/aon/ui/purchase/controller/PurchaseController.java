@@ -28,13 +28,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.BankUtil;
-import com.code.aon.config.util.SeriesNumberUtil;
-import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -58,6 +55,9 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -73,7 +73,7 @@ import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PurchaseController extends BasicController implements IPurchaseConstants, IEmailable {
+public class PurchaseController extends HeaderObjectController implements IPurchaseConstants, IEmailable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -712,21 +712,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		}
 		return false;
 	}
-	
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		String series = (String) event.getNewValue();
-		int number = obtainMaxNumber(series);
-		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel(series);
-		if (this.getTo() != null) {
-			Purchase purchase = (Purchase) this.getTo();
-			purchase.setNumber(number);
-			purchase.setSecurityLevel(securityLevel);
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
 
 	/*
 	 * 
@@ -739,4 +724,10 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		}
 	}	
 
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getSalesSeriesIds();
+	}
+	
 }

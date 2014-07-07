@@ -40,7 +40,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -67,6 +66,9 @@ import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.ExtendedPageDataModel;
@@ -78,7 +80,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceController extends BasicController implements ISignatureController, IFinanceConstants {
+public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -109,6 +111,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private boolean showPaymentDataInListView;
 	private String rectificationSeries;
 	private int rectificationNumber;
+	private boolean rectificationNumberEditable;
 	private Date rectificationDate;
 	private String rectificationCause;
 	private boolean rectificationSettleFinance;
@@ -458,6 +461,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public void setRectificationNumber(int rectificationNumber) {
 		this.rectificationNumber = rectificationNumber;
 	}
+	
+	public boolean isRectificationNumberEditable() {
+		return rectificationNumberEditable;
+	}
+
+	public void setRectificationNumberEditable(boolean rectificationNumberEditable) {
+		this.rectificationNumberEditable = rectificationNumberEditable;
+	}
 
 	public Date getRectificationDate() {
 		return rectificationDate;
@@ -484,25 +495,40 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public void onRectificationShow(ActionEvent event) throws ManagerBeanException {
+		setRectificationNumberEditable(false);
 		setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
-		setRectificationNumber(obtainMaxInvoiceNumber(getRectificationSeries()));
+		setRectificationNumber(0);
 		setRectificationDate(new Date());
 		setRectificationCause(null);
 		setRectificationSettleFinance(true);
 	}
 
 	public void onRectificationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setRectificationNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+		if ( isRectificationNumberEditable() ) {
+			updateRectificationNumber((String)event.getNewValue());
+		}
 	}
+	
+	public void onRectificationNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateRectificationNumber(getRectificationSeries());		
+	}			
+	
+	private void updateRectificationNumber(String seriesId) {
+		setRectificationNumber(obtainMaxNumber(seriesId));
+	}	
 
-	protected int obtainMaxInvoiceNumber(String seriesId) {
+	@Override
+	protected Criteria getSeriesCriteria() {
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+    	return criteria;
 	}
 
 	public void onRectify(ActionEvent event) throws ManagerBeanException {
 		RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
+		if ( getRectificationNumber() == 0 ) {
+			updateRectificationNumber(getRectificationSeries());
+		}
 		Invoice rectifier = rectificationManager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
 																	getRectificationCause(), getRectificationSettleFinance());
 
@@ -1157,6 +1183,21 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+	}
+
+	@Override
+	protected String getTableName() {
+		return super.getPojoShortName();
+	}
+
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		if ( (getInvoice() != null) && isRectifier() ) {
+			return ccc.getRectificationSeriesIds();
+		} else {
+			return ccc.getInvoiceSeriesIds();
 		}
 	}
 	

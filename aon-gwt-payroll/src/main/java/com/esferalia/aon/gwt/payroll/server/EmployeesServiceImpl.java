@@ -17,6 +17,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.USER_SCOPE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 
 import java.io.ByteArrayInputStream;
@@ -177,6 +178,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryEmbargoColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
@@ -2737,23 +2739,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
+			String sql = "SELECT * " 
+					+ " FROM " + REGISTRY + ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "
-					+ PAYROLL_WORKPLACE + " ON ( " + WORKPLACE + "."
-					+ WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
-					+ PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN "
-					+ AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
-					+ PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT
-					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY
-					+ "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY
-					+ "." + RegistryColumns.ID + " = " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY + " ORDER BY " + " UPPER("
-					+ WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
+					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "+ PAYROLL_WORKPLACE 
+						+ " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
+					+ PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN " + AGREEMENT 
+						+ " ON ( " + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT + "." + AgreementColumns.ID + " )" 
+					+ " WHERE " + REGISTRY + "." + RegistryColumns.ID + " = ?" 
+					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "."+ EnterpriseColumns.REGISTRY 
+					+ " AND " +  WORKPLACE + "." + WorkplaceColumns.SCOPE + " IN ( SELECT "+UserScopeColumns.SCOPE+" FROM "+USER_SCOPE+" WHERE "+UserScopeColumns.USER_ID+" = ? )" 
+					+ " ORDER BY " + " UPPER(" + WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
+
+			stmt.setInt(2, userID);
 
 			rs = stmt.executeQuery();
 

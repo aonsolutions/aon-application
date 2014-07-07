@@ -12,7 +12,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,19 +29,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.BankUtil;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
@@ -67,16 +63,25 @@ import com.code.aon.tas.TasItem;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.sales.controller.ISalesConstants;
+import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
+import com.code.aon.ui.tas.controller.ITasConstants;
+import com.code.aon.ui.tas.controller.ProjectTasController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class OfferController extends BasicController implements ISignatureController, ICommercialConstants {
+public class OfferController extends HeaderObjectController implements ISignatureController, ICommercialConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -363,21 +368,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		return offerDetailBean.getCount(criteria) > 0;
 	}
 
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		String series = (String) event.getNewValue();
-		int number = obtainMaxNumber(series);
-		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel( series );
-		Offer offer = getOffer();
-		if (offer != null) {
-			offer.setNumber(number);
-			offer.setSecurityLevel(securityLevel);
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Target target = (Target)event.getNewValue();
@@ -613,14 +603,21 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onOfferCopyShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setOfferSeries(to.getSeries());
-		setOfferNumber(obtainMaxNumber(to.getSeries()));
+		initSeries(false);
+		setOfferSeries(SeriesUtil.ensureOfferSeries(to.getSeries()));
+		setOfferNumber(0);
 		setOfferTarget(to.getTarget());
 		setOfferDate(new Date());
 	}
 
+	public void onOfferNumberEditable(ActionEvent event) throws ManagerBeanException {
+		setOfferNumber(obtainMaxNumber(getOfferSeries()));		
+	}
+	
 	public void onOfferCopySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setOfferNumber(obtainMaxNumber((String)event.getNewValue()));
+		if ( isNumberEditable() ) {
+			setOfferNumber(obtainMaxNumber((String)event.getNewValue()));	
+		}
 	}
 
 	public void offerCopyTargetData(LookupChangeEvent event) throws ManagerBeanException {
@@ -632,6 +629,9 @@ public class OfferController extends BasicController implements ISignatureContro
 	
 	public void onCopy(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
+        if(getOfferNumber() == 0) {
+        	onOfferNumberEditable(event);
+		}		
 		this.getManagerBean().restoreNullSubPOJOs(to);
 		OfferImportManager manager = new OfferImportManager();
 		Offer offer = manager.copyOffer(to, getOfferSeries(), getOfferNumber(), getOfferTarget(), getOfferDate());
@@ -642,25 +642,39 @@ public class OfferController extends BasicController implements ISignatureContro
 		this.getModel().setRowIndex(0);
 		this.onSelect(event);
 	}
+	
+	private SalesController getSalesController() {
+		return (SalesController) AonUtil.getRegisteredBean(ISalesConstants.SALES_CONTROLLER_NAME);
+	}	
 
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
+		getSalesController().initSeries(false);
 		setSalesSeries(SeriesUtil.ensureSalesSeries(to.getSeries()));
-		setSalesNumber(obtainMaxSalesNumber(getSalesSeries()));
+		setSalesNumber(0);
 		setSalesDate(new Date());
 	}
 
 	public void onSalesSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setSalesNumber(obtainMaxSalesNumber((String)event.getNewValue()));
+		if ( getSalesController().isNumberEditable() ) {			
+			updateSalesNumber((String)event.getNewValue());	
+		}
 	}
 
-	private int obtainMaxSalesNumber(String seriesId) {
-		return SeriesNumberUtil.obtainNumber(seriesId, "Sales");
+	private void updateSalesNumber(String seriesId) {
+		setSalesNumber(getSalesController().obtainMaxNumber(seriesId));
 	}
 
+	public void onSalesNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateSalesNumber(getSalesSeries());		
+	}
+	
 	public void onSales(ActionEvent event) {
 		try {
 			Offer to = getOffer();
+	        if(getSalesNumber() == 0) {
+	        	updateSalesNumber(getSalesSeries());
+			}								
 			SalesManager salesManager = new SalesManager();
 			Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
 			IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
@@ -676,26 +690,40 @@ public class OfferController extends BasicController implements ISignatureContro
 		}
 	}
 
+	private SaleInvoiceController getSaleInvoiceController() {
+		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
+	}		
+	
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
+		SaleInvoiceController controller = getSaleInvoiceController();
+		controller.onCancel(event);
+		controller.initSeries(false);
 		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
-		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
+		setInvoiceNumber(0);
 		setInvoiceDate(new Date());
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setInvoiceNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+		if ( getSaleInvoiceController().isNumberEditable() ) {			
+			updateInvoiceNumber((String)event.getNewValue());	
+		}
 	}
+	
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateInvoiceNumber(getInvoiceSeries());		
+	}		
 
-	private int obtainMaxInvoiceNumber(String seriesId) {
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	private void updateInvoiceNumber(String seriesId) {
+		setInvoiceNumber(getSaleInvoiceController().obtainMaxNumber(seriesId));
 	}
 
 	public void onInvoice(ActionEvent event)  {
 		try {
 			Offer to = getOffer();
+	        if(getInvoiceNumber() == 0) {
+	        	updateInvoiceNumber(getInvoiceSeries());
+			}													
 			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
 			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
@@ -742,24 +770,38 @@ public class OfferController extends BasicController implements ISignatureContro
 		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
+	private ProjectTasController getProjectTasController() {
+		return (ProjectTasController) AonUtil.getRegisteredBean(ITasConstants.PROJECT_TAS_CONTROLLER_NAME);
+	}		
+	
 	public void onProjectTasShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
+		getProjectTasController().initSeries(false);
 		setProjectTasSeries(SeriesUtil.ensureProjectTasSeries(to.getSeries()));
-		setProjectTasNumber(obtainMaxProjectTasNumber(getProjectTasSeries()));
+		setProjectTasNumber(0);
 		setProjectTasDate(new Date());
 		setProjectTasItem((TasItem)BeanManager.getManagerBean(TasItem.class).createNewTo());
 	}
 
 	public void onProjectTasSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		setProjectTasNumber(obtainMaxProjectTasNumber((String)event.getNewValue()));
+		if ( getProjectTasController().isNumberEditable() ) {			
+			updateProjectTasNumber((String)event.getNewValue());	
+		}
 	}
 
-	private int obtainMaxProjectTasNumber(String seriesId) {
-		return SeriesNumberUtil.obtainNumber(seriesId, "ProjectTas");
+	private void updateProjectTasNumber(String seriesId) {
+		setProjectTasNumber(getProjectTasController().obtainMaxNumber(seriesId));
 	}
+	
+	public void onProjectTasNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateProjectTasNumber(getProjectTasSeries());		
+	}	
 
 	public void onProjectTas(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
+        if(getProjectTasNumber() == 0) {
+        	updateProjectTasNumber(getProjectTasSeries());
+		}										
 		ProjectTasManager tasManager = new ProjectTasManager();
 		ProjectTas projectTas = tasManager.projectTas(to, getProjectTasSeries(), getProjectTasNumber(), getProjectTasDate(), getProjectTasItem());
 
@@ -928,6 +970,12 @@ public class OfferController extends BasicController implements ISignatureContro
 			}
 		}
 		return OFFER_CONTROLLER_NAME;
+	}
+	
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getOfferSeriesIds();
 	}
 	
 }

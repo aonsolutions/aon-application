@@ -102,21 +102,11 @@
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div>
-								<aon:selectOneMenu id="Sales_series" 
-									value="#{sales.to.series}" rendered="#{sales.new}"
-									valueChangeListener="#{sales.onSeriesChanged}" 
-									reRender="Sales_number,Sales_securityLevel">
-									<f:selectItem itemLabel=" " itemValue="#{null}" />
-									<f:selectItems value="#{configCollections.salesSeriesIds}" />
-								</aon:selectOneMenu>
-								<aon:inputText id="Sales_number" styleClass="aon-margin-left" 
-									value="#{sales.to.number}" rendered="#{sales.new}" 
-									required="true" size="7" />
-								<aon:outputText styleClass="aon-bold aon-margin-right"
-									value="#{sales.to.referenceCode}"
-									rendered="#{!sales.new}" />
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+								<ui:param name="controller" value="#{sales}" />
+								<ui:param name="seriesChangedReRender" value="Sales_securityLevel" />
+								<ui:param name="skipSeriesLabel" value="#{true}" />
+							</ui:include>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Sales_securityLevel"
@@ -206,7 +196,7 @@
 							styleClass="aon-margin-left aon-italic"
 							value="#{bundle.sales_purchase_reference}: " />
 						<aon:inputText id="Sales_purchaseReference"
-							value="#{sales.to.purchaseReference}" size="30" />
+							value="#{sales.to.purchaseReference}" size="30" maxlength="32" />
  					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">

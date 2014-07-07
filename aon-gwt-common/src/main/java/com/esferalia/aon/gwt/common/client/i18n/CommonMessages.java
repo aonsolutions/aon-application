@@ -5,14 +5,15 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF
+	// � --> \u00C1 � --> \u00E1
+	// � --> \u00C9 � --> \u00E9
+	// � --> \u00CD � --> \u00ED
+	// � --> \u00D3 � --> \u00F3
+	// � --> \u00DA � --> \u00FA
+	// � --> \u00D1 � --> \u00F1
+	// � --> \u00AA � --> \u00BA
+	// � --> \u00BF
+	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
 	String integerPattern();
@@ -1101,7 +1102,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Mensaje")
 	String errorMessage();
 	
-	@DefaultMessage("Página")
+	@DefaultMessage("P\u00E1gina")
 	String page();
 
 	@DefaultMessage("Casilla")
@@ -1122,38 +1123,38 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pendiente de aplicaci\u00F3n en periodos futuros")
 	String futurePending();
 	
-	@DefaultMessage("Deducciones doble imposición interna")
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna")
 	String doubleContributionNational();
-	@DefaultMessage("Deducciones doble imposición interna ejerc. anteriores")
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna ejerc. anteriores")
 	String doubleContributionNationalPrevious();
-	@DefaultMessage("Deducciones doble imposición interna 2013")
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna 2013")
 	String doubleContributionNational2013();
 	
-	@DefaultMessage("Deducción pendiente/generada")
+	@DefaultMessage("Deducci\u00F3n pendiente/generada")
 	String pendingDeduction();
 	
 	@DefaultMessage("Tipo gravamen")
 	String taxType();
 	
-	@DefaultMessage("2013 deducción pendiente")
+	@DefaultMessage("2013 deducci\u00F3n pendiente")
 	String pendingDeduction2013();
 	
-	@DefaultMessage("Deducción aplicada en esta liquidación")
+	@DefaultMessage("Deducci\u00F3n aplicada en esta liquidaci\u00F3n")
 	String appliedDeduction();
 	
-	@DefaultMessage("Deducción pendiente períodos futuros")
+	@DefaultMessage("Deducci\u00F3n pendiente per\u00EDodos futuros")
 	String futureDeduction();
 	
-	@DefaultMessage("Deducciones doble imposición internacional ejerc. anteriores")
+	@DefaultMessage("Deducciones doble imposici\u00F3n internacional ejerc. anteriores")
 	String doubleContributionInternationalPrevious();
 	
-	@DefaultMessage("Deducciones doble imposición internacional 2013")
+	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2013")
 	String doubleContributionInternational2013();
 	
-	@DefaultMessage("Deducción generada")
+	@DefaultMessage("Deducci\u00F3n generada")
 	String generatedDeduction();
 	
-	@DefaultMessage("Deducción reducida")
+	@DefaultMessage("Deducci\u00F3n reducida")
 	String reducedDeduction();
 	
 	@DefaultMessage("Importe deducible en cuota")
@@ -1170,5 +1171,20 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("La validaci\u00F3n no ha generado ning\u00FAn mensaje.")
 	String noValidationMessages();
+	
+	
+	@DefaultMessage("R\u00E9gimen de cooperativas. Determinaci\u00F3n de la base imponible")
+	String cooperativeRegime();
+	
+	@DefaultMessage("Resultados cooperativos")
+	String cooperativeResult();
 
+	@DefaultMessage("Resultados extracooperativos")
+	String extraCooperativeResult();
+
+	@DefaultMessage("Bases de reparto")
+	String distributionBases();
+	
+	@DefaultMessage("Aplicaci\u00F3n")
+	String aplication();
 }

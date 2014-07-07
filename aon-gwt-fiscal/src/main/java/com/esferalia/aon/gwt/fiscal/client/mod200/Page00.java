@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTERS_KEYS;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTER_ALSO_CHECK_MAP;
-import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200ConstantsCharacter.CHARACTER_INCOMPATIBILITY_MAP;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTERS_KEYS;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTER_ALSO_CHECK_MAP;
+import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACTER_INCOMPATIBILITY_MAP;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -220,13 +221,24 @@ public class Page00 extends PageAbs {
 			}
 			BoxLabel code = new BoxLabel( key.getCode( adm ) );
 			table.setWidget(row, colOffset, code);
-
-			CheckBox check = new CheckBox(key.getDescription());
+			final CheckBox check = new CheckBox(key.getDescription());
 			check.addClickHandler(new ClickHandler() {
-				
 				@Override
 				public void onClick(ClickEvent event) {
-					changeAvailability(key); 
+					if (key == Mod200Key.C0003
+						|| key == Mod200Key.C0004
+						|| key == Mod200Key.C0024
+						|| key == Mod200Key.C0025
+						|| key == Mod200Key.C0036
+						|| key == Mod200Key.C0058
+						|| key == Mod200Key.C0061) {
+						Window.alert("La declaraci\u00F3n para el caracter '" +
+								key.getDescription()+ "' no se encuentra disponible");
+						check.setValue(false);						
+					} else {
+						changeAvailability(key); 
+					}
+						
 				}
 
 			});
@@ -245,10 +257,10 @@ public class Page00 extends PageAbs {
 			for (Mod200Key incompatible : CHARACTER_INCOMPATIBILITY_MAP.get(key)) {
 				CheckBox check = inputs.get(incompatible);
 				if (check != null) {
+					check.setEnabled(!enabled);
 					if (enabled) {
 						check.setValue(!enabled);
 					}
-					check.setEnabled(!enabled);
 				}
 			}
 		}

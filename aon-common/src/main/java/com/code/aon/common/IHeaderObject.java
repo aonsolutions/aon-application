@@ -47,6 +47,13 @@ public interface IHeaderObject {
 	 * @return The security level.
 	 */
 	public SecurityLevel getSecurityLevel();
+
+	/**
+	 * Assign the security level.
+	 * 
+	 * @return The security level.
+	 */
+	public void setSecurityLevel(SecurityLevel securityLevel);
 	
     /**
      * Gets the reference code.

@@ -6,7 +6,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Page11 extends PageAbs {
@@ -23,38 +22,62 @@ public class Page11 extends PageAbs {
 	@UiField(provided = true)
 	FlexTable table2;
 	
-	private FlexTable[] tables;
-	private Mod200Key[][] keys;
-
 	public Page11() {
 		super();
 		table1 = new FlexTable();
 		table2 = new FlexTable();
-
-		tables = new FlexTable[]{table,table1,table2};
-		keys = new Mod200Key[][]{Mod200Constants.LIQUIDATION_IV_KEYS_1
-				,Mod200Constants.LIQUIDATION_IV_KEYS_2,Mod200Constants.LIQUIDATION_IV_KEYS_3};
-		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
 	
 	@Override
 	protected void initializeTable() {
-		for (int i = 0; i < tables.length; i++) {
-			FlexTable tab = tables[i];
-			
-			tab.setWidth("100%");
-			tab.setCellSpacing(0);
-			
-			ColumnFormatter cf = tab.getColumnFormatter();
-			cf.setWidth(0, "auto");
-			cf.setWidth(1, "250px");
-			int row = 0;
-			for (final Mod200Key key : keys[i]) {
-				row = paintKey(tab,key,row);
+		table.setWidth("100%");
+		table.setCellSpacing(0);
+		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().setWidth(1, "250px");
+		
+		int row = 0;
+		for (final Mod200Key key : Mod200Constants.LIQUIDATION_IV_KEYS_1) {
+			if (mod200Object.isVisible(key)) {
+				row = paintKey(table,key,row);
 			}
 		}
+		
+		table1.setWidth("100%");
+		table1.setCellSpacing(0);
+		table1.getColumnFormatter().setWidth(0, "auto");
+		table1.getColumnFormatter().setWidth(1, "250px");
+		table1.getColumnFormatter().setWidth(2, "250px");
+		row = 0;
+		for (int i = 0; i < Mod200Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
+			Mod200Key key = Mod200Constants.LIQUIDATION_IV_KEYS_2[i];
+			if (mod200Object.isVisible(key)) {
+				if ((i+1)%2 == 0) {
+					paintKeyField(table1,key,row,2);
+				} else {
+					row = paintKey(table1,key,row);	
+				}
+			}
+		}
+
+		table2.setWidth("100%");
+		table2.setCellSpacing(0);
+		table2.getColumnFormatter().setWidth(0, "auto");
+		table2.getColumnFormatter().setWidth(1, "250px");
+		table2.getColumnFormatter().setWidth(2, "250px");
+		row = 0;
+		for (int i = 0; i < Mod200Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
+			Mod200Key key = Mod200Constants.LIQUIDATION_IV_KEYS_3[i];
+			if (mod200Object.isVisible(key)) {
+				if ((i+1)%2 == 0) {
+					paintKeyField(table2,key,row,2);
+				} else {
+					row = paintKey(table2,key,row);	
+				}
+			}
+		}
+
 		
 	}
 

@@ -1,9 +1,9 @@
 package com.code.aon.ui.tas.controller;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.AonVersion;
@@ -11,31 +11,21 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.stat.controller.ProjectStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProjectTasController extends BasicController implements ITasConstants {
+public class ProjectTasController extends HeaderObjectController implements ITasConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		if (getTo() != null) {
-			((ProjectTas)getTo()).setNumber(number);
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
 
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
 		ProjectTas projectTas = ((ProjectTas)getTo());
@@ -92,4 +82,10 @@ public class ProjectTasController extends BasicController implements ITasConstan
 		statController.initializeProjectData();
 	}
 
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getTasSeriesIds();
+	}
+	
 }

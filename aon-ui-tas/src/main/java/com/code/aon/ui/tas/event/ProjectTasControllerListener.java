@@ -14,6 +14,12 @@ import com.code.aon.ui.tas.controller.ProjectTasController;
 public class ProjectTasControllerListener extends ControllerAdapter {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		ProjectTasController controller = (ProjectTasController)event.getController();
+		controller.initSeries();
+	}
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {

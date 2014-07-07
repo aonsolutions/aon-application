@@ -103,21 +103,12 @@
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div id="purchaseStatusDiv" >
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div>
-								<aon:selectOneMenu id="Purchase_series" 
-									value="#{purchase.to.series}" rendered="#{purchase.new}"
-									valueChangeListener="#{purchase.onSeriesChanged}" 
-									reRender="Purchase_number,Purchase_securityLevel">
-									<f:selectItem itemLabel=" " itemValue="#{null}" />
-									<f:selectItems value="#{configCollections.salesSeriesIds}" />
-								</aon:selectOneMenu>									
-								<aon:inputText id="Purchase_number" styleClass="aon-margin-left" 
-									value="#{purchase.to.number}" rendered="#{purchase.new}"
-									required="true" size="7" />
-								<aon:outputText styleClass="aon-bold aon-margin-right"
-									value="#{purchase.to.referenceCode}"
-									rendered="#{!purchase.new}" />
-							</aon:div>
+						
+							<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+								<ui:param name="controller" value="#{purchase}" />
+								<ui:param name="seriesChangedReRender" value="Purchase_securityLevel" />
+								<ui:param name="skipSeriesLabel" value="#{true}" />
+							</ui:include>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Purchase_securityLevel"

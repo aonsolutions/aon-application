@@ -130,41 +130,30 @@
 							</aon:div>
 						</aon:div>
 
-						<aon:outputLabel for="Account_invoice_series"
-							rendered="#{invoiceEntry.sales and invoiceEntry.new}"
-							value="#{bundle.aon_series}/#{bundle.aon_number}" />
-						<aon:outputLabel for="Account_invoice_seriesI"
-							rendered="#{invoiceEntry.sales and !invoiceEntry.new}"
-							value="#{bundle.aon_series}/#{bundle.aon_number}" />
-						<aon:outputLabel for="Account_invoice_referenceCode"
-							rendered="#{!invoiceEntry.sales}"
-							value="#{bundle.aon_invoice_number}" />
-						<aon:div>
-							<aon:selectOneMenu id="Account_invoice_series"
-								rendered="#{invoiceEntry.sales}"
-								disabled="#{invoiceEntry.newDetail or invoiceEntry.finances.rowCount!=0}"
-								valueChangeListener="#{invoiceEntry.onSeriesChanged}"
-								reRender="Account_invoice_number"
-								value="#{invoiceEntry.header.series}">
-								<f:selectItem itemValue="#{null}" itemLabel=" " />
-								<f:selectItems value="#{configCollections.invoiceSeriesIds}" />
-							</aon:selectOneMenu>
-							<aon:inputText id="Account_invoice_number"
-								style="margin-left: 5px; margin-bottom: 2px;"
-								rendered="#{invoiceEntry.sales}" required="true"
-								disabled="#{invoiceEntry.newDetail or invoiceEntry.finances.rowCount!=0}"
-								value="#{invoiceEntry.header.number}" size="7" maxlength="7">
-								<f:validateLength maximum="7" />
-							</aon:inputText>
-
-							<aon:inputText id="Account_invoice_referenceCode"
-								rendered="#{!invoiceEntry.sales}" required="true"
+						<c:if test="#{invoiceEntry.sales}">
+							<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+								<ui:param name="controller" value="#{saleInvoice}" />
+								<ui:param name="sfc_aliasPreffix" value="Account_invoice_" />
+								<ui:param name="sfc_editable" value="#{true}" />
+								<ui:param name="sfc_disabled" value="#{invoiceEntry.newDetail or invoiceEntry.finances.rowCount!=0}" />
+								<ui:param name="sfc_seriesProperty" value="#{invoiceEntry.header.series}" />
+								<ui:param name="sfc_numberProperty" value="#{invoiceEntry.header.number}" />
+								<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+									value="#{invoiceEntry.onSeriesChanged}" />	
+								<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+									value="#{invoiceEntry.onInvoiceNumberEditable}" />
+							</ui:include>
+						</c:if>
+						<c:if test="#{!invoiceEntry.sales}">
+							<aon:outputLabel for="Account_invoice_referenceCode"
+								value="#{bundle.aon_invoice_number}" />
+							<aon:inputText id="Account_invoice_referenceCode" required="true"
 								disabled="#{invoiceEntry.newDetail or invoiceEntry.finances.rowCount!=0}"
 								value="#{invoiceEntry.header.referenceCode}" size="25"
 								maxlength="25" onblur="toUpperCase(this);">
 								<f:validateLength maximum="32" />
-							</aon:inputText>
-						</aon:div>
+							</aon:inputText>								
+						</c:if>
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
 							value="#{bundle.aon_financial_year}" />

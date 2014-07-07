@@ -36,6 +36,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.loadAddresses(null);
 			invoiceController.loadProjects(null);
 			invoiceController.setFinanceGenerationMode(0);
+			invoiceController.initSeries();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -49,6 +50,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 
 			invoiceController.loadAddresses(invoice.getRegistry().getId());
 			invoiceController.loadProjects(invoice.getRegistry().getId());
+			invoiceController.initSeries(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

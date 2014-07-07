@@ -255,4 +255,10 @@ public class Mod200 implements Serializable, IsSerializable {
 		}
 		return new Double(0);
 	}
+	public void listDraftVariables() {
+		for (DoubleVariable dv : getDraftMap().values()) {
+			System.out.println(dv.getKey() + " --> " + dv.getValue() );
+		}
+		
+	}
 }

@@ -72,21 +72,12 @@
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div>
-								<aon:selectOneMenu id="Delivery_series" 
-									value="#{delivery.to.series}" rendered="#{delivery.new}"
-									valueChangeListener="#{delivery.onSeriesChanged}" 
-									reRender="Delivery_number,Delivery_securityLevel">
-									<f:selectItem itemLabel=" " itemValue="#{null}" />
-									<f:selectItems value="#{configCollections.deliverySeriesIds}" />
-								</aon:selectOneMenu>
-								<aon:inputText id="Delivery_number" styleClass="aon-margin-left" 
-									value="#{delivery.to.number}" rendered="#{delivery.new}" 
-									required="true" size="7" />
-								<aon:outputText styleClass="aon-bold aon-margin-right"
-									value="#{delivery.to.referenceCode}"
-									rendered="#{!delivery.new}" />
-							</aon:div>
+						
+							<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+								<ui:param name="controller" value="#{delivery}" />
+								<ui:param name="seriesChangedReRender" value="Delivery_securityLevel" />
+								<ui:param name="skipSeriesLabel" value="#{true}" />
+							</ui:include>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Delivery_securityLevel"

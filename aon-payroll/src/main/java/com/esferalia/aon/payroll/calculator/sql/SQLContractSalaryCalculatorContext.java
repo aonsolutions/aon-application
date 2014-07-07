@@ -64,7 +64,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +101,8 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.ISystemCost;
+import com.esferalia.aon.payroll.calculator.ISystemDeduction;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
@@ -166,6 +167,9 @@ public class SQLContractSalaryCalculatorContext implements
 	public static final String CLOSE_BRACKET = ")";
 
 	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+
+	private static final SSRegimeType SS_REGIMES[] = SSRegimeType.class
+			.getEnumConstants();
 
 	//@formatter:off
 	private static final String MAIN_SQL = "SELECT * "
@@ -247,10 +251,9 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final String SYSTEM_COST_SQL = "SELECT *"
 			+ " FROM system_cost" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )"
-			+ " AND system_cost.domain = ? ";
+			+ " AND system_cost.domain <= 0 ";
 
-	private static final String SYSTEM_DEDUCTION_SQL = "SELECT *"
-			+ ", "
+	private static final String SYSTEM_DEDUCTION_SQL = "SELECT *" + ", "
 			+ ExpressionScope.SYSTEM.ordinal()
 			+ " AS "
 			+ SQLContractDeduction.SCOPE_ALIAS
@@ -259,10 +262,9 @@ public class SQLContractSalaryCalculatorContext implements
 												// puede ser NULL
 			+ "	ON deduction_concept = deduction_concept.id"
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )" + " AND system_deduction.domain = ? ";
+			+ " OR end_date >= ? )" + " AND system_deduction.domain <= 0 ";
 
-	private static final String SYSTEM_PAYMENT_SQL = "SELECT *"
-			+ ", "
+	private static final String SYSTEM_PAYMENT_SQL = "SELECT *" + ", "
 			+ ExpressionScope.SYSTEM.ordinal()
 			+ " AS "
 			+ SQLContractPayment.SCOPE_ALIAS
@@ -271,14 +273,9 @@ public class SQLContractSalaryCalculatorContext implements
 			+ " LEFT JOIN  payment_concept" // LEFT JOIN: payment_concept puede
 											// ser NULL
 			+ "	ON payment_concept = payment_concept.id"
-			+ " WHERE start_date <= ? "
-			+ " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )"
-			+ " AND "
-			+ SQLContractPayment.PAYMENT_ALIAS
-			+ ".domain IN ( "
-			+ StringUtils.repeat("?", ",",
-					SSRegimeType.class.getEnumConstants().length) + ") ";
+			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
+			+ " OR end_date >= ? )" + " AND "
+			+ SQLContractPayment.PAYMENT_ALIAS + ".domain <= 0 ";
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data"
 			+ " WHERE contract = ? " + "AND start_date <= ? "
@@ -586,8 +583,8 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private Date contractStartDate;
 	private Date contractEndDate;
-	private Collection<IContractCost> systemCosts;
-	private Collection<IContractDeduction> systemDeductions;
+	private Collection<ISystemCost> systemCosts;
+	private Collection<ISystemDeduction> systemDeductions;
 	private Collection<ISystemPayment> systemPayments;
 
 	private SQLCnae2009 cnae2009;
@@ -853,10 +850,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public SSRegimeType getSSRegime() {
-		int ordinal = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME); // 'ss_regime'
-																				// is
-																				// NOT
-																				// NULL
+		int ordinal = getInt(SQLConstants.CONTRACT, ContractColumns.SS_REGIME);
 		return SSRegimeType.values()[ordinal];
 	}
 
@@ -939,7 +933,7 @@ public class SQLContractSalaryCalculatorContext implements
 			// this.systemPayments.iterator());
 
 			return new CompositePayments(this.sqlContractPayment,
-					getAgreementPayments(), getSystemPayments());
+					getAgreementPayments(), getSSRegimePayments());
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -956,7 +950,8 @@ public class SQLContractSalaryCalculatorContext implements
 			ResultSet rs = deductionStmt.executeQuery();
 			this.sqlContractDeduction.setResultSet(rs);
 			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(
-					this.sqlContractDeduction, this.systemDeductions.iterator());
+					this.sqlContractDeduction, getCCCDeductions().iterator(),
+					getSSRegimeDeductions().iterator());
 			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);
@@ -982,7 +977,8 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public Collection<IContractCost> getContractCosts() throws AonException {
-		return this.systemCosts;
+		return new HierarchyDeductions(getCCCCosts().iterator(),
+				getSSRegimeCosts().iterator());
 	}
 
 	@Override
@@ -1056,6 +1052,12 @@ public class SQLContractSalaryCalculatorContext implements
 		Object cna2009 = getObject(SQLConstants.ENTERPRISE_ACTIVITY,
 				EnterpriseActivityColumns.CNAE2009);
 		return cna2009 != null ? (Integer) cna2009 : null;
+	}
+
+	public CCCType getCCCType() {
+		int ordinal = getInt(SQLConstants.ENTERPRISE_CCC,
+				EnterpriseCccColumns.TYPE);
+		return CCCType.values()[ordinal];
 	}
 
 	public boolean next() throws SQLException, ExpressionException {
@@ -1340,12 +1342,41 @@ public class SQLContractSalaryCalculatorContext implements
 		return agreementExpressionContexts.get(agreementAndLevel);
 	}
 
-	private Collection<IContractPayment> getSystemPayments()
+	private Collection<IContractCost> getCCCCosts()
+			throws AonException {
+		List<IContractCost> costs = new ArrayList<IContractCost>(
+				systemPayments.size());
+		CCCType cccType = getCCCType();
+		for (ISystemCost systemCost : systemCosts) {
+			if (filter(systemCost, cccType)) {
+				costs.add(systemCost);
+			}
+		}
+		return costs;
+
+	}
+
+	private Collection<IContractCost> getSSRegimeCosts()
+			throws AonException {
+		List<IContractCost> costs = new ArrayList<IContractCost>(
+				systemCosts.size());
+		SSRegimeType ssRegime = getSSRegime();
+		for (ISystemCost systemCost : systemCosts) {
+			if (filter(systemCost, ssRegime)) {
+				costs.add(systemCost);
+			}
+		}
+		return costs;
+
+	}
+
+	private Collection<IContractPayment> getCCCPayments()
 			throws AonException {
 		List<IContractPayment> payments = new ArrayList<IContractPayment>(
 				systemPayments.size());
+		CCCType cccType = getCCCType();
 		for (ISystemPayment systemPayment : systemPayments) {
-			if (filter(systemPayment)) {
+			if (filter(systemPayment, cccType)) {
 				payments.add(systemPayment);
 			}
 		}
@@ -1353,8 +1384,71 @@ public class SQLContractSalaryCalculatorContext implements
 
 	}
 
-	private boolean filter(ISystemPayment systemPayment) {
-		return systemPayment.getDomain() == (-1) * getSSRegime().ordinal();
+	private Collection<IContractPayment> getSSRegimePayments()
+			throws AonException {
+		List<IContractPayment> payments = new ArrayList<IContractPayment>(
+				systemPayments.size());
+		SSRegimeType ssRegime = getSSRegime();
+		for (ISystemPayment systemPayment : systemPayments) {
+			if (filter(systemPayment, ssRegime)) {
+				payments.add(systemPayment);
+			}
+		}
+		return payments;
+
+	}
+
+	private Collection<IContractDeduction> getCCCDeductions()
+			throws AonException {
+		List<IContractDeduction> deductions = new ArrayList<IContractDeduction>(
+				systemDeductions.size());
+		CCCType cccType = getCCCType();
+		for (ISystemDeduction systemDeduction : systemDeductions) {
+			if (filter(systemDeduction, cccType)) {
+				deductions.add(systemDeduction);
+			}
+		}
+		return deductions;
+
+	}
+
+	private Collection<IContractDeduction> getSSRegimeDeductions()
+			throws AonException {
+		List<IContractDeduction> deductions = new ArrayList<IContractDeduction>(
+				systemDeductions.size());
+		SSRegimeType ssRegime = getSSRegime();
+		for (ISystemDeduction systemDeduction : systemDeductions) {
+			if (filter(systemDeduction, ssRegime)) {
+				deductions.add(systemDeduction);
+			}
+		}
+		return deductions;
+
+	}
+
+	private boolean filter(ISystemCost systemCost, CCCType cccType) {
+		return systemCost.getDomain() == (-1) * (cccType.ordinal() + 100);
+	}
+
+	private boolean filter(ISystemCost systemCost, SSRegimeType ssRegime) {
+		return systemCost.getDomain() == (-1) * ssRegime.ordinal();
+	}
+
+	private boolean filter(ISystemPayment systemPayment, SSRegimeType ssRegime) {
+		return systemPayment.getDomain() == (-1) * ssRegime.ordinal();
+	}
+
+	private boolean filter(ISystemPayment systemPayment, CCCType cccType) {
+		return systemPayment.getDomain() == (-1) * (cccType.ordinal() + 100);
+	}
+
+	private boolean filter(ISystemDeduction systemDeduction,
+			SSRegimeType ssRegime) {
+		return systemDeduction.getDomain() == (-1) * ssRegime.ordinal();
+	}
+
+	private boolean filter(ISystemDeduction systemDeduction, CCCType cccType) {
+		return systemDeduction.getDomain() == (-1) * (cccType.ordinal() + 100);
 	}
 
 	/*
@@ -2056,18 +2150,16 @@ public class SQLContractSalaryCalculatorContext implements
 	private double getDayDoubleVariable(String name, Date start, Date end) {
 		List<ITimedVariable<Double>> vars = this.contractExpressionContext
 				.getVariables(name);
-		
-		
+
 		double sum = 0.00;
 		Period p = new Period(start, end);
 		for (ITimedVariable<Double> var : vars) {
 			Period period = var.getPeriod();
 			Period intersect = period.intersect(p);
-			if ( intersect == null ) 
+			if (intersect == null)
 				continue;
-			
-			
-			Double value = var.getValue(period) ;
+
+			Double value = var.getValue(period);
 			if (value != null)
 				sum += value / days(period) * days(intersect);
 		}
@@ -2580,9 +2672,8 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
-			systemCosts = SQLCollections.costsCollection(rs);
+			systemCosts = SQLCollections.systemCostsCollection(rs);
 		} finally {
 			if (rs != null)
 				rs.close();
@@ -2601,9 +2692,9 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
+
 			rs = stmt.executeQuery();
-			systemDeductions = SQLCollections.deductionsCollection(rs);
+			systemDeductions = SQLCollections.systemDeductionsCollection(rs);
 		} finally {
 			if (rs != null)
 				rs.close();
@@ -2625,10 +2716,6 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-
-			for (int i = 0; i < SSRegimeType.class.getEnumConstants().length; i++) {
-				stmt.setInt(i + 3, i * (-1));
-			}
 
 			rs = stmt.executeQuery();
 			systemPayments = SQLCollections.systemPaymentsCollection(rs);

@@ -10,9 +10,9 @@
 
 	<aon:panelGroup id="showOfferCopyWindow">
 		<c:if test="#{offer.showOfferCopyWindow}">
-			<rich:modalPanel id="offerCopyModalPanel" minHeight="240"
-				minWidth="520" rendered="#{offer.showOfferCopyWindow}"
-				showWhenRendered="true" zindex="90">
+			<rich:modalPanel id="offerCopyModalPanel" 
+				minWidth="740" minHeight="240" zindex="90"
+				showWhenRendered="#{offer.showOfferCopyWindow}">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.commercial_offer_copy}" />
@@ -60,21 +60,17 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" style="width: 80%;">
 
-										<aon:outputLabel for="Offer_offerSeries"
-											value="#{bundle.aon_series}" />
-										<aon:selectOneMenu id="Offer_offerSeries"
-											value="#{offer.offerSeries}"
-											valueChangeListener="#{offer.onOfferCopySeriesChanged}" 
-											reRender="Offer_offerNumber">
-											<f:selectItem itemLabel=" " itemValue="#{null}" />
-											<f:selectItems value="#{configCollections.offerSeriesIds}" />
-										</aon:selectOneMenu>
-
-										<aon:outputLabel for="Offer_offerNumber"
-											value="#{bundle.aon_number}" />
-										<aon:inputText id="Offer_offerNumber"
-											value="#{offer.offerNumber}"
-											required="true" size="7" />
+										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+											<ui:param name="controller" value="#{offer}" />
+											<ui:param name="sfc_aliasPreffix" value="Offer_offer" />
+											<ui:param name="sfc_editable" value="#{true}" />
+											<ui:param name="sfc_seriesProperty" value="#{offer.offerSeries}" />
+											<ui:param name="sfc_numberProperty" value="#{offer.offerNumber}" />
+											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+												value="#{offer.onOfferCopySeriesChanged}" />	
+											<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+												value="#{offer.onOfferNumberEditable}" />
+										</ui:include>
 
 										<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 											<ui:param name="lookupTo" value="#{offer.offerTarget}" />
