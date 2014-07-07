@@ -22,9 +22,6 @@ ALTER TABLE `rattach` ADD COLUMN `drive_id` VARCHAR(45) NULL  AFTER `attach_date
 
 
 
-
-ALTER TABLE `commercial_tracking` ADD COLUMN `eventId` VARCHAR(45) NULL  AFTER `location` ;
-
 UPDATE `db_version` SET `version_number` = '7.36.0';
 
 SET FOREIGN_KEY_CHECKS=1;
