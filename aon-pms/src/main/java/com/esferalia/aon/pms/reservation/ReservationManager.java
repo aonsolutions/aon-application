@@ -484,7 +484,8 @@ public class ReservationManager implements IReservationConstants {
 				}
 			}
 
-			if (totalServices == CommonUtil.round(reservation.getTotal() + totalDiscount)) {
+			//Tendria que ser cero, pero se admite un error de +- 1 centimo por error de redondeo en los calculos de Idiso al enviar la Reserva.
+			if (Math.abs(CommonUtil.round(totalServices - reservation.getTotal() - totalDiscount)) <= 0.1) {
 				discountPercent = (1 - reservation.getTotal() / totalServices) * 100;
 			} else {
 				if (calculateCommission) {
