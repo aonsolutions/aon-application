@@ -43,7 +43,7 @@
 							<aon:selectManyListbox id="RoomBooking_items"
 								style="width:250px;"
 								value="#{roomBooking.items}" size="10">
-								<f:selectItems value="#{pmsCollections.roomItems}" />
+								<f:selectItems value="#{roomBooking.hotelRoomItems}" />
 							</aon:selectManyListbox>
 							<aon:outputLabel for="RoomBooking_agencies" 
 								value="#{bundle.report_agency}" />

@@ -13,6 +13,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +34,7 @@ import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class RoomBookingController extends DataScrollerState implements ICollectionProvider, ISQLConstants {
 
@@ -123,7 +125,11 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		setToDate(DateUtils.addWeeks(new Date(), 2));
 		setShowCancelled(false);
 	}
-	
+
+	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
+		return PmsUtils.getCurrentUserHotelRoomItems();
+	}
+
 	public void onSearch(ActionEvent event) {
 		try {
 			buildBookingList();
