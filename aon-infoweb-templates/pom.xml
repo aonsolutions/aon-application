@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>7.36</version>
+    <version>7.37-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -18,8 +18,8 @@
   </properties>
 
   <scm>
-    <developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/7.36.x/aon-infoweb-templates</developerConnection>
-    <connection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/7.36.x/aon-infoweb-templates</connection>
+    <developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-infoweb-templates</developerConnection>
+    <connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-infoweb-templates</connection>
   </scm>
 
   <build>
