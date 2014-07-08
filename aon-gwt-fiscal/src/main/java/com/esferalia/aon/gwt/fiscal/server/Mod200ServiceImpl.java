@@ -394,8 +394,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			throw new AonSQLException(e.getMessage(),e);
 		}				
 	}
-	
-/*
+/*	
 	private void dumpMod200(Mod200 mod200) {
 		System.out.println();
 		System.out.println("***********************************************************");
@@ -465,10 +464,6 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			}
 		}
 		System.out.println("\t------------------------------");
-		for (Mod200Key key : mod200.getCharacterMap().keySet()) {
-			System.out.println(key.toString() + " ........................ " + mod200.getCharacterMap().get(key).getValue()); 
-		}
-		System.out.println("\t------------------------------");
 		for (Mod200Key key : mod200.getDraftMap().keySet()) {
 			System.out.println(key.toString() + " ........................ " + mod200.getDraftMap().get(key).getValue()); 
 		}
@@ -487,6 +482,6 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		System.out.println("***********************************************************");
 		System.out.println();
 	}
-*/	
+*/
 }
 	

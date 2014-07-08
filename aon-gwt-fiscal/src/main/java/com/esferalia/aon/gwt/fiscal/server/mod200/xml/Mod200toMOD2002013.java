@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server.mod200.xml;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
@@ -112,7 +113,7 @@ public class Mod200toMOD2002013 {
 	    pagina04.setT177(getKey(mod200,Mod200Key.BA177));
 	    pagina04.setT178(getKey(mod200,Mod200Key.BA178));
 	    pagina04.setT179(getKey(mod200,Mod200Key.BA179));
-	    pagina04.setT180(getKey(mod200,Mod200Key.BA180));
+//	    pagina04.setT180(getKey(mod200,Mod200Key.BA180));
 		return pagina04;
 	}
 
@@ -526,10 +527,15 @@ public class Mod200toMOD2002013 {
 	    pagina11.setT741(getKey(mod200,Mod200Key.TC741));
 		return pagina11;
 	}
-
 	private static BigDecimal getKey(Mod200 mod200, Mod200Key key) {
+		return getKey(mod200, key, 2);
+	}
+	
+	private static BigDecimal getKey(Mod200 mod200, Mod200Key key,int scale) {
 		DoubleVariable dv = mod200.getVariable(key);
 		Double value = dv==null?null:AonUtil.round(dv.getValue());
-		return (value == null || value == 0.0)?null:new BigDecimal(value);
+		return (value == null || value == 0.0)
+			?null
+			:new BigDecimal(Double.toString(value)).setScale(scale,RoundingMode.HALF_UP);
 	}
 }
