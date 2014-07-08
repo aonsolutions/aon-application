@@ -310,14 +310,12 @@ public class Model200 extends MainEntryPoint {
 
 		@Override
 		public void onSuccess(Mod200 result) {
-			// TODO. after save.
 			popup.hide();
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			popup.hide();
-			raiseException(caught);
 		}
 		
 	}
@@ -373,7 +371,6 @@ public class Model200 extends MainEntryPoint {
 		popup.center();
 		callback.setPopup(popup);
 		deckPanel.page00.populate(mod200);
-
 		mod200.initializeMod200(new AsyncCallback<Mod200>() {
 			@Override
 			public void onSuccess(Mod200 result) {
