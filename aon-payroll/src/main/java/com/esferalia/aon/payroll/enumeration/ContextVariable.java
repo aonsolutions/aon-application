@@ -37,7 +37,6 @@ public enum ContextVariable implements IResourceable{
 	CONTRACT_DAYS("DIAS_CANONTRATO", VariableType.INTEGER, false),
 	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER, false),
 	PAY_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
-	EXTRA_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
 	BONUS_DAYS("DIAS_BONIFICACION", VariableType.INTEGER, false),
 	QUOTE_DAYS("DIAS_COTIZADOS", VariableType.INTEGER, false),
 	ACTUAL_DAYS("DIAS_EFECTIVOS", VariableType.INTEGER, false),

@@ -101,7 +101,7 @@ public abstract class TaxCalculator {
 			
 			
 			PaymentType paymentType = contractPayment.getType();
-			paymentType.accept(new PaymentTypeVisitor() {
+			PaymentTypeVisitor typeVisitor = new PaymentTypeVisitor() {
 				
 				
 				@Override
@@ -127,8 +127,12 @@ public abstract class TaxCalculator {
 					DefaultTaxCalculator.this.totalPayment += amount;
 					DefaultTaxCalculator.this.irpfBase += tax;
 				}
-			});
-			
+			};			
+			try {
+				paymentType.accept(typeVisitor);
+			} catch ( NullPointerException e) {
+				typeVisitor.visitOther(PaymentType.CRA_0001);
+			}
 			return tax;
 		}
 	}
