@@ -9,7 +9,9 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.google.apis.TaskUtils;
+import com.code.aon.google.apis.sessionInfo.SessionInfo;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.ui.util.AonUtil;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.tasks.Tasks;
 
@@ -20,10 +22,10 @@ public class GoogleTaskController {
 	public boolean google= isGoogle();
 	
 	public Tasks getClientSession(){
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExternalContext ec = ctx.getExternalContext();
-		Object session=((HttpSession) ec.getSession(false)).getAttribute("Tasks");
-		Tasks tasks=(Tasks)session;
+		String domain= AonUtil.getDomainName();
+		String username=AonUtil.getAuthPrincipal().getShortName();
+		Tasks tasks= SessionInfo.table.get(domain).getUsers().get(username).getTasks();
+		System.out.println("TASKS:   --- ---- -"+tasks);
 		return tasks;
 	}
 	
