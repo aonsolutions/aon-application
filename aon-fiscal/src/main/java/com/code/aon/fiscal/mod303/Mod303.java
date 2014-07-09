@@ -129,7 +129,6 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 				if (info.getType() == FiscalActivityInfoType.INFO) {
 					if (info.getInfoKey() == FiscalActivityInfoKey.A03) {
 						seasonDays = info.getDoubleValue();
-						System.out.println("seasonDays ...: " + seasonDays); 
 					}
 				}else if (info.getType() == FiscalActivityInfoType.VAT_MODULE) {
 					detail = new FiscalModelDetail();
@@ -179,13 +178,12 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 									detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "ZA");
 									detail.setAccumulatedAmount(seasonDays);
 									addDetail(detail);
-
-									detail = new FiscalModelDetail();
-							    	detail.setFiscalModel(getHeader());
-									detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "ZD");
-									detail.setAccumulatedAmount(seasonDays);
-									addDetail(detail);
 								}
+								detail = new FiscalModelDetail();
+						    	detail.setFiscalModel(getHeader());
+								detail.setType(Mod303Key.ACTIVITIES_PREFIX + ac + "ZD");
+								detail.setAccumulatedAmount(seasonDays>0?seasonDays:90);
+								addDetail(detail);
 							} else if (info.getInfoKey() == FiscalActivityInfoKey.V05) {
 								detail = new FiscalModelDetail();
 						    	detail.setFiscalModel(getHeader());
@@ -510,5 +508,4 @@ public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
 		}
 		return 0.0;
 	}
-	
 }
