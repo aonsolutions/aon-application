@@ -87,6 +87,11 @@ public interface ICommonMessages {
 	String PROFIT = "aon_profit";
 	String PURCHASES = "aon_purchases";
 	String QUANTITY_PATTERN = "aon_quantity_pattern";
+	String REFERENCE_ACTION_TARGET = "aon_reference_action_target";
+	String REFERENCE_OFFER = "aon_reference_offer";
+	String REFERENCE_PROJECT_COMMERCIAL = "aon_reference_project_commercial";
+	String REFERENCE_PROJECT_TAS = "aon_reference_project_tas";
+	String REFERENCE_SURVEY_RESPONSE = "aon_reference_survey_response";
 	String REMARK = "aon_remark";
 	String RETURN = "aon_return";
 	String RETENTION = "aon_retention";
@@ -218,6 +223,8 @@ public interface ICommonMessages {
 	String COMMERCIAL_OFFER_EMAIL_SUBJECT = "commercial_offer_email_subject";
 	String COMMERCIAL_OFFER_EMAIL_BODY = "commercial_offer_email_body";
 	String COMMERCIAL_COMMISSION_DATES_ERROR = "commercial_commission_dates_error";	
+	String COMMERCIAL_TARGET_NO_REMOVE = "commercial_target_no_remove";
+	String COMMERCIAL_TARGET_IS_CUSTOMER = "commercial_target_is_customer";
 	
 	String COMPANY_LOGO_MAX_SIZE_ERROR = "company_logo_max_size_error";
 	String COMPANY_SIGNATURE_MAX_SIZE_ERROR = "company_signature_max_size_error"; 
