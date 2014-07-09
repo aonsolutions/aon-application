@@ -168,7 +168,7 @@ try {
 										<td class="aon-login-box-right">
 											<c:url value="/oauth2" var="google_oauth2_url">
 											</c:url>
-											<a id="google-oauth2" href="${google_oauth2_url}" target="_blank" onClick="self.name='padre';window.open(this.href, this.target, 'width=600,height=800'); return false;" >
+											<a id="google-oauth2" href="${google_oauth2_url}" target="_blank" onClick="self.name='<%=domainName%>';window.open(this.href, this.target, 'width=600,height=800'); return false;" >
 												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/google.png"/>
 											</a>
 																					
