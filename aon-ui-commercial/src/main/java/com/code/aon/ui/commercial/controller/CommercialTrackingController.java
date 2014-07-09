@@ -284,6 +284,16 @@ public class CommercialTrackingController extends BasicController {
             throw new AbortProcessingException(e.getMessage(), e);
         }			
 	}
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		if ( getBackAction() != null ) {
+			onBackActionListener(event);
+		}
+	}
+
+
 
 	private static class OfferFilter extends ControllerAdapter {
 
