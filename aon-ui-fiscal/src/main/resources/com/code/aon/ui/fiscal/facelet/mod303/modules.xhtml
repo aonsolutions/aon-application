@@ -119,7 +119,9 @@
 				
 				<aon:div>
 					<aon:outputText value="#{controller.modZDKey}" />
-					<aon:div styleClass="aon-italic" style="font-weight: normal; padding-left: 20px;">
+					<aon:div styleClass="aon-italic"
+						rendered="#{controller.modZ.amount != 0}" 
+						style="font-weight: normal; padding-left: 20px;">
 						<aon:outputText value="#{controller.modZAKey}" />
 						<aon:outputText value="&#160;:&#160;" />
 						<aon:outputText value="#{controller.modZA.accumulatedAmount}">
@@ -127,9 +129,6 @@
 						</aon:outputText>
 					</aon:div>
 				</aon:div>
-				<!-- 
-				controller.declaration.map[controller.modZAKey].resultAmount
-				 -->
 				<aon:inputText value="#{controller.modZD.accumulatedAmount}"
 					 required="true" size="8">
 					 <a4j:support event="onchange" reRender="modulesGridContainer"
