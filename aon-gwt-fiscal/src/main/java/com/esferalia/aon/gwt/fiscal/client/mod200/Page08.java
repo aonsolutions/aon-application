@@ -145,7 +145,6 @@ public class Page08 extends PageAbs {
 			}
 		};
 		correctionTable.addColumn(keyColumn, MSG.correctionType());
-		correctionTable.setColumnWidth(keyColumn, "auto");
 		keyColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 

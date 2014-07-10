@@ -34,7 +34,6 @@ public class Page11 extends PageAbs {
 	protected void initializeTable() {
 		table.setWidth("100%");
 		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(0, "auto");
 		table.getColumnFormatter().setWidth(1, "250px");
 		
 		int row = 0;
@@ -46,7 +45,6 @@ public class Page11 extends PageAbs {
 		
 		table1.setWidth("100%");
 		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(0, "auto");
 		table1.getColumnFormatter().setWidth(1, "250px");
 		table1.getColumnFormatter().setWidth(2, "250px");
 		row = 0;
@@ -63,7 +61,6 @@ public class Page11 extends PageAbs {
 
 		table2.setWidth("100%");
 		table2.setCellSpacing(0);
-		table2.getColumnFormatter().setWidth(0, "auto");
 		table2.getColumnFormatter().setWidth(1, "250px");
 		table2.getColumnFormatter().setWidth(2, "250px");
 		row = 0;

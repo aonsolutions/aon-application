@@ -140,7 +140,6 @@ public class ErrorPage extends ResizeComposite {
 			
 		};
 		table.addColumn(col,MSG.message());
-		table.setColumnWidth(col, "auto");
 		col.setCellStyleNames("aon-icon-error aon-padding-left");
 	}
 

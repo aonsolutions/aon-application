@@ -64,11 +64,9 @@ public class Page10 extends PageAbs {
 		initWidget(ui);
 		table.setWidth("100%");
 		table.setCellSpacing(0);
-		table.getColumnFormatter().setWidth(0, "auto");
 		table.getColumnFormatter().setWidth(1, "250px");
 		table1.setWidth("100%");
 		table1.setCellSpacing(0);
-		table1.getColumnFormatter().setWidth(0, "auto");
 		table1.getColumnFormatter().setWidth(1, "250px");
 	}
 	
