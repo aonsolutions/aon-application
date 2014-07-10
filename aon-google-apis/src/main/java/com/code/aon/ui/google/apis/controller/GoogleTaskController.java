@@ -30,8 +30,9 @@ public class GoogleTaskController {
 	}
 	
 	public boolean isGoogle(){
-		if(getClientSession()!=null) return true;
-		else return false;
+		return false;
+//		if(getClientSession()!=null) return true;
+//		else return false;
 	}
 	
 	public void sync(ActionEvent event) throws SQLException, AonConnectionException, IOException{

@@ -47,8 +47,9 @@ public class GoogleDriveController {
 	}
 	
 	public boolean isGoogle(){
-		if(getClientSession()!=null) return true;
-		else return false;
+		return false;
+//		if(getClientSession()!=null) return true;
+//		else return false;
 	}
 	
 	public DriveFile [] getFiles() throws IOException{
