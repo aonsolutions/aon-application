@@ -283,7 +283,6 @@ public class Page00 extends PageAbs {
 		cf.setWidth(2, "35px");
 		cf.setWidth(3, "300px");
 		cf.setWidth(4, "35px");
-		cf.setWidth(5, "auto");
 	}
 	
 	@UiHandler("showCnae")

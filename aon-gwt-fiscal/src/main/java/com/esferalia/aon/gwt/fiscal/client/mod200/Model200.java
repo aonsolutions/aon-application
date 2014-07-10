@@ -42,7 +42,7 @@ public class Model200 extends MainEntryPoint {
 	}
 
 	interface DeleteButtonTemplate extends SafeHtmlTemplates {
-		@Template("<input type=\"button\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
+		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-delete\" style=\"border: medium none !important;\">")
 		SafeHtml render(String option);
 	}
 	static class DeleteButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
@@ -66,7 +66,7 @@ public class Model200 extends MainEntryPoint {
 	}
 
 	interface NavigateButtonTemplate extends SafeHtmlTemplates {
-		@Template("<input type=\"button\" class=\"aon-icon-go\" style=\"border: medium none !important;\">")
+		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-go\" style=\"border: medium none !important;\">")
 		SafeHtml render(String option);
 	}
 	static class NavigateButtonSafeHtmlTemplates implements SafeHtmlRenderer<String> {
@@ -120,6 +120,8 @@ public class Model200 extends MainEntryPoint {
 	Button calculateButton;
 	@UiField
 	Button aeatAccountingFileButton;
+//	@UiField
+//	Button aeatFileButton;
 	@UiField
 	CheckBox calculateCheck;
 	
@@ -190,6 +192,7 @@ public class Model200 extends MainEntryPoint {
 					calculateCheck.setVisible(false);
 					calculateButton.setVisible(false);
 					aeatAccountingFileButton.setVisible(false);
+//					aeatFileButton.setVisible(false);
 					deckPanel.page00.enableCharacters( true );
 				} else {
 					dump();
@@ -207,6 +210,7 @@ public class Model200 extends MainEntryPoint {
 				validateButton.setVisible(false);
 				calculateButton.setVisible(false);
 				aeatAccountingFileButton.setVisible(false);
+//				aeatFileButton.setVisible(false);
 				calculateCheck.setValue(mod200.isAuthomaticCalculation());
 				calculateCheck.setVisible(false);
 				
@@ -215,7 +219,6 @@ public class Model200 extends MainEntryPoint {
 	}
 
 	protected void raiseException(Throwable t) {
-		// TODO. más elegancia.
 		deckPanel.pagesPanel.showWidget(deckPanel.pagesPanel.getWidgetIndex(deckPanel.errorPage));
 		deckPanel.errorPage.addErrorMsg(t);
 	}
@@ -253,6 +256,20 @@ public class Model200 extends MainEntryPoint {
 		mod200Hidden.setValue(String.valueOf(mod200.getMod200().getId()));
 		diskForm.submit();
 	}
+
+//	@UiHandler("aeatFileButton")
+//	void onAeatFileButtonClick(ClickEvent event) {
+//		Window.alert(
+//				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
+//				+ "con los datos de la declaraci\u00F3, para su \n"
+//				+ "presentaci\u00F3n en la web de la Agencia Tributaria.\n\n"
+//				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+//				+ "El fichero se genera a partir de los datos guardados.");
+//		diskForm.setAction(GWT.getHostPageBaseURL()
+//				+ "/aon_gwt_fiscal/Model200File");
+//		mod200Hidden.setValue(String.valueOf(mod200.getMod200().getId()));
+//		diskForm.submit();
+//	}
 
 	@UiHandler("calculateButton")
 	void onCalculateButtonClick(ClickEvent event) {
@@ -452,7 +469,7 @@ public class Model200 extends MainEntryPoint {
 		calculateCheck.setVisible(true);
 		calculateButton.setVisible(!calculateCheck.getValue());
 		aeatAccountingFileButton.setVisible(true);
-		
+//		aeatFileButton.setVisible(true);
 		deckPanel.page00.enableCharacters( false );
 	}
 	
