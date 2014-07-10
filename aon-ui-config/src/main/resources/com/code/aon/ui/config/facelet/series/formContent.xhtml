@@ -9,8 +9,9 @@
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:valueParam name="sfc_label" default="#{bundle.aon_series}/#{bundle.aon_number}" />
 	<aon:valueParam name="sfc_aliasPreffix" default="#{controller.pojoShortName}" />
+	<aon:valueParam name="sfc_label" default="#{bundle.aon_series}/#{bundle.aon_number}" />
+	<aon:valueParam name="sfc_div" default="#{sfc_aliasPreffix}_seriesNumberDiv" />
 	<aon:valueParam name="sfc_editable" default="#{controller.new}" />
 	<aon:valueParam name="sfc_disabled" default="#{false}" />
 	<aon:valueParam name="sfc_seriesCodes" default="#{controller.seriesCodes}" />
@@ -20,6 +21,7 @@
 	<aon:valueParam name="sfc_seriesProperty" default="#{controller.to.series}" />
 	<aon:valueParam name="sfc_numberProperty" default="#{controller.to.number}" />
 	<aon:valueParam name="sfc_numberEditable" default="#{controller.numberEditable}" />
+	<aon:valueParam name="sfc_numberReset" default="#{true}" />
 	<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
 		default="#{controller.onSeriesChanged}" />
 	<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
@@ -28,7 +30,7 @@
 	<c:if test="#{!skipSeriesLabel}">
 		<aon:outputLabel for="#{sfc_aliasPreffix}_number" value="#{sfc_label}" />
 	</c:if>
-	<aon:div id="#{sfc_aliasPreffix}_seriesNumberDiv">
+	<aon:div id="#{sfc_div}">
 		<a4j:region>
 			<c:if test="#{sfc_editable}">
 				<c:if test="#{sfc_seriesValid and (sfc_seriesCodesLength > 0)}">
@@ -36,9 +38,9 @@
 						value="#{sfc_seriesProperty}" required="#{sfc_seriesRequired}"
 						disabled="#{sfc_disabled}"
 						valueChangeListener="#{sfc_onSeriesChanged}"
-						reRender="#{sfc_aliasPreffix}_number#{(seriesChangedReRender != null)?',':''}#{seriesChangedReRender}">
-						<c:if test="#{!sfc_seriesRequired or (sfc_seriesCodesLength > 1)}">
-							<f:selectItem itemLabel=" " itemValue="#{null}" />
+						reRender="#{sfc_aliasPreffix}_series,#{sfc_aliasPreffix}_numberDiv#{(seriesChangedReRender != null)?',':''}#{seriesChangedReRender}">
+						<c:if test="#{(!sfc_seriesRequired or (sfc_seriesCodesLength > 1)) and (sfc_seriesProperty==null)}">
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						</c:if>
 						<f:selectItems value="#{sfc_seriesCodes}" />
 					</aon:selectOneMenu>
@@ -48,25 +50,34 @@
 						value="#{sfc_seriesProperty}" size="5" maxlength="5" />
 				</c:if>			
 				<c:if test="#{!skipNumberInput}">
-					<aon:div layout="inline" styleClass="aon-margin-left">
-						<aon:inputText id="#{sfc_aliasPreffix}_number"
-							value="#{sfc_numberProperty}"
-							required="true" size="7" maxlength="7"					
-							disabled="#{!sfc_numberEditable or sfc_disabled}" />
+					<aon:div id="#{sfc_aliasPreffix}_numberDiv"
+						layout="inline" styleClass="aon-margin-left">
+						<c:if test="#{sfc_numberEditable or (sfc_numberProperty != 0)}">
+							<aon:inputText id="#{sfc_aliasPreffix}_number"
+								value="#{sfc_numberProperty}"
+								required="true" size="6" maxlength="10"					
+								disabled="#{!sfc_numberEditable or sfc_disabled}" />
+						</c:if>
+						<c:if test="#{!sfc_numberEditable and (sfc_numberProperty == 0)}">
+							<aon:inputText id="#{sfc_aliasPreffix}_number"
+								size="6" maxlength="10" disabled="true" />
+						</c:if>
 					</aon:div>
 					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-						reRender="#{sfc_aliasPreffix}_seriesNumberDiv"
-						rendered="#{sfc_numberEditable}" >
-						<f:setPropertyActionListener
-							target="#{sfc_numberProperty}" value="#{0}" />
+						reRender="#{sfc_div}"
+						rendered="#{sfc_numberEditable}" ajaxSingle="true" >
+						<c:if test="#{sfc_numberReset}">
+							<f:setPropertyActionListener
+								target="#{sfc_numberProperty}" value="#{0}" />
+						</c:if>
 						<f:setPropertyActionListener
 							target="#{sfc_numberEditable}" value="#{false}" />
 					</aon:commandButton>
 					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-						reRender="#{sfc_aliasPreffix}_seriesNumberDiv"
+						reRender="#{sfc_div}"
 						focus="#{sfc_aliasPreffix}_number"
 						actionListener="#{sfc_onNumberEditable}"
-						rendered="#{!sfc_numberEditable}" >
+						rendered="#{!sfc_numberEditable}" ajaxSingle="true" >
 						<f:setPropertyActionListener
 							target="#{sfc_numberEditable}" value="#{true}" />
 					</aon:commandButton>

@@ -172,10 +172,12 @@
 						<aon:panelGrid columns="2" columnClasses="aon-width-200, aon-width-auto">
 							<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
 								<ui:param name="controller" value="#{saleInvoice}" />
+								<ui:param name="sfc_div" value="InvoiceReferenceCodeDiv" />
 								<ui:param name="skipSeriesLabel" value="#{true}" />
 								<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
 								<ui:param name="sfc_seriesValid" value="#{saleInvoice.seriesValid}" />
-								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}" />								
+								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}" />
+								<ui:param name="sfc_numberReset" value="#{saleInvoice.new}" />								
 								<ui:define name="additionalSeriesContent">
 									<aon:commandButton id="invoiceNextNumber" 
 										title="#{bundle.finance_invoice_find_next_number}"

@@ -1,7 +1,6 @@
 package com.code.aon.ui.config.event;
 
-import com.code.aon.common.IHeaderObject;
-import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -12,27 +11,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  */
 public class HeaderControllerListener extends ControllerAdapter {
 	
-	/** The table. */
-	private String table;
-
-	/**
-	 * Gets the table.
-	 * 
-	 * @return the table
-	 */
-	public String getTable() {
-		return table;
-	}
-
-	/**
-	 * Sets the table.
-	 * 
-	 * @param table the table
-	 */
-	public void setTable(String table) {
-		this.table = table;
-	}
-
 	/**
 	 * Obtains the series and the next number to use
 	 * 
@@ -42,10 +20,14 @@ public class HeaderControllerListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		IHeaderObject header = (IHeaderObject)event.getController().getTo();
-        if(header.getNumber() == 0) {
-        	header.setNumber(SeriesNumberUtil.obtainNumber(header.getSeries(), this.table));
-		}
+		HeaderObjectController controller = (HeaderObjectController) event.getController();
+		controller.updateSeriesNumber();
     }
 
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		HeaderObjectController controller = (HeaderObjectController) event.getController();
+		controller.updateSeriesNumber();
+	}	
+	
 }

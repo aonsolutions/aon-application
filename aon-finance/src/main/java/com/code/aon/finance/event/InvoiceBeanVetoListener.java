@@ -49,7 +49,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (invoice.isSales()) {
 			checkNumber(invoice);
 			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
-			if (!StringUtils.isEmpty(invoice.getSeries())) {
+			if (!StringUtils.isBlank(invoice.getSeries())) {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
 			invoice.setReferenceCode(referenceCode);
@@ -97,7 +97,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (invoice.isSales()) {
 				checkNumber(invoice);
 				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
-				if (!StringUtils.isEmpty(invoice.getSeries())) {
+				if (!StringUtils.isBlank(invoice.getSeries())) {
 					referenceCode = invoice.getSeries() + "/" + referenceCode;
 				}
 				invoice.setReferenceCode(referenceCode);
@@ -148,7 +148,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	private void checkNumber(Invoice invoice) throws ManagerBeanVetoListenerException {
 		String andSeries = "";
-		if (StringUtils.isEmpty(invoice.getSeries())) {
+		if (StringUtils.isBlank(invoice.getSeries())) {
 			andSeries = "AND (invoice.series IS NULL OR invoice.series = '') ";
 		} else {
 			andSeries = "AND invoice.series = '" + invoice.getSeries() + "' ";

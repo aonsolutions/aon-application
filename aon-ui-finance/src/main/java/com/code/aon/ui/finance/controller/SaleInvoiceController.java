@@ -271,5 +271,12 @@ public class SaleInvoiceController extends InvoiceController {
 		signer.setReportKey(companyController.getSaleInvoiceTemplateValue());
 		return signer;
 	}
+
+	@Override
+	public void accept(ActionEvent event) {
+		String series = getInvoice().getSeries();
+		super.accept(event);
+		getInvoice().setSeries(series);
+	}
 	
 }

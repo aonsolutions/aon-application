@@ -2,6 +2,7 @@ package com.code.aon.config.util;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -67,7 +68,7 @@ public class SeriesNumberUtil {
 		String hqlQuery = 
 			"SELECT MAX(" + table.toLowerCase() + ".number)"
 				+ " FROM " + table + " " + table.toLowerCase()
-				+ " WHERE "	+ table.toLowerCase() + ".series " + ((series==null) ? "IS NULL" : " = '" + series + "'")
+				+ " WHERE "	+ table.toLowerCase() + ".series " + (StringUtils.isBlank(series) ? "IS NULL" : " = '" + series + "'")
 				+ " AND "	+ DomainManager.getSQLWhereClause(table.toLowerCase() + ".domain");
 		if (criteria != null) {
 			hqlQuery = CriteriaUtilities.toSQLString(criteria, hqlQuery);
