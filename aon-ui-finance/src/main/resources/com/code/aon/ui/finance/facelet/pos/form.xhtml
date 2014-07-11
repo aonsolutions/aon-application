@@ -20,7 +20,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid columns="2" styleClass="aon-width-half">
+				<aon:panelGrid id="posPanel" columns="2" styleClass="aon-width-half">
 
 					<aon:outputLabel for="Pos_workPlace" value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Pos_workPlace"
@@ -95,6 +95,25 @@
 							<f:validateDoubleRange minimum="3" />
 						</aon:inputText>
 					</aon:div>
+
+					<c:if test="#{actionDenied.moduleEnabled['hotel']}">
+						<aon:outputLabel for="Pos_invoiceable" value="#{bundle.pms_invoiceable}" />
+						<aon:selectOneRadio id="Pos_invoiceable" value="#{pos.to.invoiceable}" >
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+							<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
+						</aon:selectOneRadio>
+
+						<aon:outputLabel for="Item_id" value="#{bundle.aon_product} #{bundle.finance_invoice}"
+							rendered="#{pos.to.invoiceable}" />
+						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{pos.to.itemInvoice}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="lookupRendered" value="#{pos.to.invoiceable}" />
+						</ui:include>
+					</c:if>
 
 					<aon:outputLabel for="Pos_active" value="#{bundle.aon_status}" />
 					<aon:selectOneRadio id="Pos_active"
@@ -247,6 +266,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		
 	</ui:define>
 </ui:composition>

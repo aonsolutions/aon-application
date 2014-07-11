@@ -1,17 +1,24 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DATE_FROM;
+import static com.code.aon.ui.common.ICommonMessages.DATE_TO;
+import static com.code.aon.ui.common.ICommonMessages.TICKET;
+
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.Shift;
+import com.code.aon.finance.invoicing.PosInvoicing;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -19,6 +26,8 @@ import com.code.aon.ui.util.AonUtil;
 public class PosClosingController implements IFinanceConstants {
 
 	private PosShift posShift;
+	private String fromTicket;
+	private String toTicket;
 	private CashCalculator calculator;
 
 	public PosShift getPosShift() {
@@ -27,6 +36,22 @@ public class PosClosingController implements IFinanceConstants {
 
 	public void setPosShift(PosShift posShift) {
 		this.posShift = posShift;
+	}
+	
+	public String getFromTicket() {
+		return fromTicket;
+	}
+
+	public void setFromTicket(String fromTicket) {
+		this.fromTicket = fromTicket;
+	}
+	
+	public String getToTicket() {
+		return toTicket;
+	}
+
+	public void setToTicket(String toTicket) {
+		this.toTicket = toTicket;
 	}
 	
 	public CashCalculator getCalculator() {
@@ -40,7 +65,9 @@ public class PosClosingController implements IFinanceConstants {
 		this.calculator = calculator;
 	}
 
-    public void onLoad(ActionEvent event) {
+    public void onLoad(ActionEvent event) {    	
+    	setFromTicket(null);
+    	setToTicket(null);
     	setPosShift(PosUtils.getUserPosShift());
     	if (getPosShift() == null || getPosShift().getId() == null) {
 			String msg = "No hay ninguna Caja abierta por el Usuario.";
@@ -83,9 +110,21 @@ public class PosClosingController implements IFinanceConstants {
 		}
 
 		try {
+			String ticketInfo = AonUtil.getMessage(TICKET) + " " + 
+								AonUtil.getMessage(DATE_FROM) + ": " + getFromTicket() + " " + 
+								AonUtil.getMessage(DATE_TO) + ": " + getToTicket();
+			getPosShift().setRemarks(ticketInfo + "\n" + getPosShift().getRemarks());
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
+
+			if (getPosShift().getPos().isInvoiceable()) {
+                PosInvoicing posInvoicing = new PosInvoicing();
+                Invoice invoice = posInvoicing.completeInvoice(getPosShift(), ticketInfo);
+
+        		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
+        		entryWriter.recordAndUpdateInvoice(invoice);
+            }
 		} catch (ManagerBeanException ex) {
-			String msg = "Error en el proceso de Cierre de Caja.";
+			String msg = "Error en el proceso de Cierre de Caja. " + ex.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
