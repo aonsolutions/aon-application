@@ -18,9 +18,7 @@
 						value="&#160;" style="padding-top:2px;padding-bottom:2px;"
 						styleClass="aon-icon-portlet aon-icon-category aon-margin-right" 
 						actionListener="#{domainPrint.onEditSearch}"
-						action="domainPrint_search">
-						<aon:actionListener method="#{domainPrint.onSearch}" />
-					</aon:commandLink> 
+						action="domainPrint_search" />
 					<c:if test="#{aonRole.admin}">
 						<aon:commandLink id="newDomainDesktop" 
 							title="#{bundle.admin_new_domain}"
