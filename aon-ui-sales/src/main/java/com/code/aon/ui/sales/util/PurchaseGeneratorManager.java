@@ -38,6 +38,7 @@ import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
+import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.BasicController;
@@ -309,13 +310,17 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 		purchase.setPurchaseReference(sales.getPurchaseReference());
 		purchase.setDiscountExpression(sales.getDiscountExpression());
 		purchase.setIssueDate(new Date());
-		purchase.setDocumentType(PurchaseDocumentType.NORMAL);
 		purchase.setSecurityLevel(sales.getSecurityLevel());
 		purchase.setStatus(PurchaseStatus.PENDING);
 		purchase.setComments(sales.getComments());
 		if(StringUtils.isNotBlank(sales.getPurchaseReference())){
 			String message = AonUtil.getMessage(SALES_TO_PURCHASE);
 			purchase.setRemarks(message + ": " +  sales.getPurchaseReference());
+		}
+		if(sales.getDocumentType()==DocumentType.NORMAL){
+			purchase.setDocumentType(PurchaseDocumentType.NORMAL);
+		} else if(sales.getDocumentType()==DocumentType.ITEM_RETURN){
+			purchase.setDocumentType(PurchaseDocumentType.ITEM_RETURN);
 		}
 		purchase.setEmailCommunication(false);
 		purchase.setConfidential(sales.isConfidential());

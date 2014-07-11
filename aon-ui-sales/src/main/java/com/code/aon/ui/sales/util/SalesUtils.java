@@ -170,6 +170,7 @@ public class SalesUtils {
 		detail.setOfferDetail(offerDetail);
 		detail.setTransfered(transfered);
 		
+		bean.restoreNullSubPOJOs(detail);
 		bean.insert(detail);
 	}
 	
