@@ -40,16 +40,18 @@ public class GoogleDriveController {
 	public boolean google= isGoogle();
 	
 	public Drive getClientSession(){
+		Drive drive=null;
 		String domain= AonUtil.getDomainName();
 		String username=AonUtil.getAuthPrincipal().getShortName();
-		Drive drive= SessionInfo.table.get(domain).getUsers().get(username).getDrive();
+		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
+			drive= SessionInfo.table.get(domain).getUsers().get(username).getDrive();
+		}
 		return drive;
 	}
 	
 	public boolean isGoogle(){
-		return false;
-//		if(getClientSession()!=null) return true;
-//		else return false;
+		if(getClientSession()!=null) return true;
+		else return false;
 	}
 	
 	public DriveFile [] getFiles() throws IOException{

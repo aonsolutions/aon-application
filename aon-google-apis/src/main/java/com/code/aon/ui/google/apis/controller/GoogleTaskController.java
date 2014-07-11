@@ -22,17 +22,18 @@ public class GoogleTaskController {
 	public boolean google= isGoogle();
 	
 	public Tasks getClientSession(){
+		Tasks tasks=null;
 		String domain= AonUtil.getDomainName();
 		String username=AonUtil.getAuthPrincipal().getShortName();
-		Tasks tasks= SessionInfo.table.get(domain).getUsers().get(username).getTasks();
-		System.out.println("TASKS:   --- ---- -"+tasks);
+		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
+			tasks= SessionInfo.table.get(domain).getUsers().get(username).getTasks();
+		}
 		return tasks;
 	}
 	
 	public boolean isGoogle(){
-		return false;
-//		if(getClientSession()!=null) return true;
-//		else return false;
+		if(getClientSession()!=null) return true;
+		else return false;
 	}
 	
 	public void sync(ActionEvent event) throws SQLException, AonConnectionException, IOException{

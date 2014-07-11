@@ -41,9 +41,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 
 	public static String pass;
 	
-	public static Drive drive;
-	public static Tasks tasks;
-	public static Oauth2 oauth2;
+
 	
 	public static String getUsername(String email) {
 		return "OpenID_Email=" + email;
@@ -68,15 +66,15 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		String username = null;
 		String key = req.getParameter("state");
 		
-		oauth2 = new Oauth2.Builder(getHttpTransport(), getJsonFactory(), credential)
+		Oauth2 oauth2 = new Oauth2.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
 		
-		drive = new Drive.Builder(getHttpTransport(), getJsonFactory(), credential)
+		Drive drive = new Drive.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
 		
 		
 		System.out.println(drive);
-		tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
+		Tasks tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
 				
 		String email = oauth2.userinfo().v2().me().get().execute().getEmail();
