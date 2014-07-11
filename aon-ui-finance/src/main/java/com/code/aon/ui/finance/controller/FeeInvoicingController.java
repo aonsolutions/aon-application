@@ -10,6 +10,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
@@ -91,12 +93,21 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		}
 		return feedBack;
 	}
+	
+	private SaleInvoiceController getSaleInvoiceController() {
+		return (SaleInvoiceController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME);
+	}			
 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		InvoicingParameters params = new InvoicingParameters();
 		params.initializeParams();
 		params.setScopes(UserUtils.getInstance().getCurrentUserScopes());
-		params.setInvoiceNumber(obtainMaxNumber(null));
+		SaleInvoiceController controller = getSaleInvoiceController();
+		controller.onCancel(event);
+		Series series = SeriesUtil.getSeries(controller.initSeries(false));
+		params.setInvoiceSeries(series);
+		params.setConfidential(isSeriesConfidential(series));
+		params.setInvoiceNumber(0);
 		params.setInvoiceDate(new Date());
 		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
 		setParams(params);
@@ -112,10 +123,20 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Series series = (Series) event.getNewValue();
-		getParams().setInvoiceNumber(obtainMaxNumber(series));
+		if ( getSaleInvoiceController().isNumberEditable() ) {
+			updateInvoiceNumber(series);
+		}
 		getParams().setConfidential(isSeriesConfidential(series));
 	}
 
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateInvoiceNumber(getParams().getInvoiceSeries());		
+	}			
+	
+	private void updateInvoiceNumber(Series series) throws ManagerBeanException {
+		getParams().setInvoiceNumber(obtainMaxNumber(series));
+	}
+	
 	private int obtainMaxNumber(Series series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
@@ -132,10 +153,16 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		}
 		return 1;
 	}
+	
+	private void updateSeries() {
+        if ( StringUtils.isBlank(getParams().getInvoiceSeries().getCode()) ) {
+        	getParams().setInvoiceSeries(null);
+        }
+	}	
 
 	private boolean isSeriesConfidential(Series series) {
 		if (series != null) {
-			return (series.getSecurityLevel() == SecurityLevel.CONFIDENTIAL) ? true : false;
+			return (series.getSecurityLevel() == SecurityLevel.CONFIDENTIAL);
 		}
 		return false;
 	}
@@ -157,6 +184,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 			getEngine().setHibernateSession(HibernateUtil.getSession(sessionName));
 			
 			HibernateUtil.beginTransaction(sessionName);
+			updateSeries();
 			getEngine().invoice(getParams());
 			HibernateUtil.commitTransaction(sessionName);
 

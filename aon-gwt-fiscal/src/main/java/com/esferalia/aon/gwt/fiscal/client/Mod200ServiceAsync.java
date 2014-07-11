@@ -20,5 +20,7 @@ public interface Mod200ServiceAsync {
 
 	void delete(Mod200 mod200, AsyncCallback<Mod200> callback);
 
+	void dumpAEAT(Mod200 mod200, AsyncCallback<String> callback);
+
 
 }

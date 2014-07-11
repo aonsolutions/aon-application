@@ -368,7 +368,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 		SecurityLevel securityLevel = (header != null && getHeader().getSecurityLevel() != null) ? getHeader().getSecurityLevel() : SecurityLevel.OFFICIAL;
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(AppParam.ACC_DEFAULT_INVOICE_SERIES);
-		String series = (header != null && !StringUtils.isEmpty(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
+		String series = (header != null && !StringUtils.isBlank(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
 		ApplicationParameter taxParam = c.getParameter(AppParam.ACC_DEFAULT_VAT_PERCENT);
 		Double taxPercent = null;
 		Double surPercent = null;
@@ -1119,7 +1119,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 		invoice.setIssueDate(getHeader().getDate());
 		invoice.setTaxDate(getHeader().getTaxDate());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
-			invoice.setSeries(getHeader().getSeries());
+			if ( StringUtils.isBlank(getHeader().getSeries()) ) {
+				invoice.setSeries(null);
+			} else {
+				invoice.setSeries(getHeader().getSeries());				
+			}
 			if (getHeader().getNumber() == 0) {
 				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader()
 						.getType()));
@@ -1148,7 +1152,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 
 	private String obtainReferenceCode(String series, int number) {
     	String referenceCode = StringUtils.leftPad(Integer.toString(number), 6, "0");
-		if (!StringUtils.isEmpty(series)) {
+		if (!StringUtils.isBlank(series)) {
 			referenceCode = series + "/" + referenceCode;
 		}
 		return referenceCode;

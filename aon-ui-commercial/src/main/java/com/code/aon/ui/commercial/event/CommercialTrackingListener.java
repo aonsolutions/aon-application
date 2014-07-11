@@ -88,6 +88,26 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
+		CommercialTracking ct = (CommercialTracking) controller.getTo();
+		try {
+			CommercialTracking previous = getPrevious(controller, ct);
+			if ( previous != null ) {
+				if ( (ct.getNext() != null) && (ct.getNext().getId() != null) ) {
+					previous.setNext(ct.getNext());	
+				} else {
+					previous.setNext(null);
+				}
+				controller.getManagerBean().update(previous);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
 
 	private void init( CommercialTrackingController controller ) {
 		controller.setNext( new CommercialTracking() );
@@ -117,6 +137,11 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	}
 	
 	private void updatePreviousAction( CommercialTrackingController controller, CommercialTracking ct ) throws ManagerBeanException {
+		CommercialTracking previous = getPrevious(controller, ct);
+		controller.setPrevious( previous );
+	}
+	
+	private CommercialTracking getPrevious( CommercialTrackingController controller, CommercialTracking ct ) throws ManagerBeanException {
 		CommercialTracking previous = null;
 		Criteria criteria = new Criteria();
 		String alias = controller.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_NEXT_ID);
@@ -125,7 +150,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		if (! list.isEmpty()) {
 			previous = (CommercialTracking) list.get(0);
 		}
-		controller.setPrevious( previous );
+		return previous;
 	}
 	
 	private void updateClosed( CommercialTrackingController controller ) {

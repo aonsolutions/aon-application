@@ -28,7 +28,6 @@ public class Page05 extends PageAbs {
 		table.setCellSpacing(0);
 		
 		ColumnFormatter cf = table.getColumnFormatter();
-		cf.setWidth(0, "auto");
 		cf.setWidth(1, "250px");
 
 		int row = 0;

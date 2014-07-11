@@ -1187,4 +1187,7 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Aplicaci\u00F3n")
 	String aplication();
+	
+	@DefaultMessage("Exportar datos contables")
+	String aeatAccountingFile();
 }

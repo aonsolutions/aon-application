@@ -40,19 +40,16 @@ public class OpenIDLoginModule extends LoginModule {
 	
 	@Override
 	protected Principal createIdentity(String username) throws Exception {
-		String name = username;
-		if (StringUtils.contains(name, OPENID_EMAIL )) {
-			String email = StringUtils.substringAfter(name,
+		if (StringUtils.contains(username, OPENID_EMAIL )) {
+			String email = StringUtils.substringAfter(username,
 					OPENID_EMAIL );
-			name = getUserName(email, domain);	
-			if ( name == null ) {
+			username = getUserName(email, domain);	
+			if ( username == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_6", email);
 			}
 		}
 		
-
-		
-		return super.createIdentity(name);
+		return super.createIdentity(username);
 	}
 
 	@Override
@@ -94,9 +91,11 @@ public class OpenIDLoginModule extends LoginModule {
 		PreparedStatement stmt = null;
 		try {
 			
+			
+		
 		String sql="SELECT U.login"
-				+ " FROM user AS U inner join mail_account AS MA ON U.id = MA.user_id"
-				+ " WHERE MA.email=?";
+				+ " FROM user AS U inner join mail_account AS MA ON (U.id = MA.user_id) inner join domain AS D ON (D.id=U.domain)"
+				+ " WHERE MA.email=? AND D.name = ?";
 
 		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
 		
@@ -104,21 +103,24 @@ public class OpenIDLoginModule extends LoginModule {
 		util.createMetadataConnection();
 		Domain domain = util.getDomain(domainName);
 		connection = connectionInfo.getDomainConnection(domain.getDataBaseName());
-		
+	
 		stmt = connection.prepareStatement(sql);
 		stmt.setString(1,email);
+		stmt.setString(2, domainName);
 		rs = stmt.executeQuery();
 		
 		return rs.next() ? rs.getString("login") : null;
 		
 		}finally {
+		
 			if (rs != null)
 				rs.close();
-			if (stmt != null)
-				stmt.close();
 			if (connection != null)
 				connection.close();
+			if (stmt != null)
+				stmt.close();
 		}
 		
 	}
+
 }

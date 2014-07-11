@@ -37,6 +37,9 @@
 							<g:Button ui:field='calculateButton'
 								styleName='aon-finding-toolbar-item aon-icon-calc' text="{msg.calculateAction}" />
 							<g:CheckBox ui:field='calculateCheck' text="{msg.authomaticCalculation}"/>
+							<g:Button ui:field='aeatAccountingFileButton'
+								styleName='aon-finding-toolbar-item aon-icon-aeat-bw' text="{msg.aeatAccountingFile}" />
+							<g:FlowPanel ui:field="formContainer"/>
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>

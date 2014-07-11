@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -611,12 +612,12 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	}
 
 	public void onOfferNumberEditable(ActionEvent event) throws ManagerBeanException {
-		setOfferNumber(obtainMaxNumber(getOfferSeries()));		
+		updateOfferNumber(getOfferSeries());		
 	}
 	
 	public void onOfferCopySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if ( isNumberEditable() ) {
-			setOfferNumber(obtainMaxNumber((String)event.getNewValue()));	
+			updateOfferNumber((String)event.getNewValue());	
 		}
 	}
 
@@ -627,10 +628,17 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		}
 	}
 	
+	private void updateOfferNumber(String seriesId) {
+		setOfferNumber(obtainMaxNumber(seriesId));
+	}	
+	
 	public void onCopy(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-        if(getOfferNumber() == 0) {
-        	onOfferNumberEditable(event);
+        if ( StringUtils.isBlank(getOfferSeries()) ) {
+        	setOfferSeries(null);
+        }		
+        if (getOfferNumber() == 0) {
+        	updateOfferNumber(getOfferSeries());
 		}		
 		this.getManagerBean().restoreNullSubPOJOs(to);
 		OfferImportManager manager = new OfferImportManager();
@@ -672,6 +680,9 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	public void onSales(ActionEvent event) {
 		try {
 			Offer to = getOffer();
+	        if ( StringUtils.isBlank(getSalesSeries()) ) {
+	        	setSalesSeries(null);
+	        }			
 	        if(getSalesNumber() == 0) {
 	        	updateSalesNumber(getSalesSeries());
 			}								
@@ -721,6 +732,9 @@ public class OfferController extends HeaderObjectController implements ISignatur
 	public void onInvoice(ActionEvent event)  {
 		try {
 			Offer to = getOffer();
+	        if ( StringUtils.isBlank(getInvoiceSeries()) ) {
+	        	setInvoiceSeries(null);
+	        }			
 	        if(getInvoiceNumber() == 0) {
 	        	updateInvoiceNumber(getInvoiceSeries());
 			}													
@@ -799,6 +813,9 @@ public class OfferController extends HeaderObjectController implements ISignatur
 
 	public void onProjectTas(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
+        if ( StringUtils.isBlank(getProjectTasSeries()) ) {
+        	setProjectTasSeries(null);
+        }		
         if(getProjectTasNumber() == 0) {
         	updateProjectTasNumber(getProjectTasSeries());
 		}										

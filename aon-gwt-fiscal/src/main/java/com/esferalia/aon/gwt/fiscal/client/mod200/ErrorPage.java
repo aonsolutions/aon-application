@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.IValidationMessageSelectioinHandler;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.ValidationMessage;
@@ -82,14 +83,23 @@ public class ErrorPage extends ResizeComposite {
 		addMessage(msg);
 	}
 	public void addErrorMsg(Throwable t) {
-		addMessage((t.getCause() != null)?t.getCause().getMessage():t.getMessage());
+		String msg = (t.getCause() != null)?t.getCause().getMessage():t.getMessage();
+		if (AonUtil.isEmpty(msg)) {
+			msg = t.getMessage();
+		}
+		if (AonUtil.isEmpty(msg)) {
+			msg = "Se ha producido un error inesperado. ";
+					
+		}
+		addMessage(msg);
 	}
 	private void addMessage(String message) {
 		addMessage(new ValidationMessage(-1,null,message,null));
 	}
+	
 	private void addMessage(ValidationMessage msg) {
 		dataProvider.getList().add(msg);
-		table.setPageSize(table.getPageSize() + 1 );
+		table.setPageSize( dataProvider.getList().size() );
 		table.redraw();		    		
 	}
 	
@@ -112,8 +122,7 @@ public class ErrorPage extends ResizeComposite {
 
 			@Override
 			public String getValue(ValidationMessage errorMessage) {
-				// TODO ADM.
-				return errorMessage.getKey().getCode( Administration.COMMON_TERRITORY);
+				return errorMessage.getKey() != null? errorMessage.getKey().getCode( Administration.COMMON_TERRITORY) : ""; 
 			}
 			
 		};
@@ -131,7 +140,6 @@ public class ErrorPage extends ResizeComposite {
 			
 		};
 		table.addColumn(col,MSG.message());
-		table.setColumnWidth(col, "auto");
 		col.setCellStyleNames("aon-icon-error aon-padding-left");
 	}
 

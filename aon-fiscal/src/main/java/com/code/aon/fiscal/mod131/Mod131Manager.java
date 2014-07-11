@@ -156,7 +156,8 @@ public class Mod131Manager extends FiscalModelManager {
 	//		a cuenta que, habiendo sido practicados sobre las contraprestaciones procedentes de las 
 	//		actividades económicas en estimación objetiva cuyos rendimientos están sujetos a retención o 
 	//		ingreso a cuenta, correspondan al trimestre a que se refiere el pago fraccionado.
-			mod131.ensureDetail(Mod131Key.C08).addAccumulatedAmount(getC08(conn,dateFrom,dateTo));		
+			Date periodStart = fiscalModel.getPeriod().getStartDate(fiscalModel.getYear());
+			mod131.ensureDetail(Mod131Key.C08).addAccumulatedAmount(getC08(conn,periodStart,dateTo));		
 	
 	//		Casilla 09. Podrán cumplimentar esta casilla únicamente los contribuyentes que tengan 
 	//		derecho a la deducción por obtención de rendimientos de actividades económicas a efectos

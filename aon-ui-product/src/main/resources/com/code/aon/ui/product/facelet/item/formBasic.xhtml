@@ -9,7 +9,7 @@
 	<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
 	<aon:div>
 		<aon:inputText id="Item_product_code" 
-			value="#{controller.to.product.code}" size="20" maxlength="15" 
+			value="#{controller.to.product.code}" required="true" size="20" maxlength="15" 
 			onblur="toUpperCase(this);" />
 
 		<c:if test="#{aonConfiguration.bean.product.showBarcode}">

@@ -27,6 +27,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_MONTHS;
@@ -66,6 +67,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -253,7 +255,8 @@ public class SQLContractSalaryCalculatorContext implements
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )"
 			+ " AND system_cost.domain <= 0 ";
 
-	private static final String SYSTEM_DEDUCTION_SQL = "SELECT *" + ", "
+	private static final String SYSTEM_DEDUCTION_SQL = "SELECT *"
+			+ ", "
 			+ ExpressionScope.SYSTEM.ordinal()
 			+ " AS "
 			+ SQLContractDeduction.SCOPE_ALIAS
@@ -264,7 +267,8 @@ public class SQLContractSalaryCalculatorContext implements
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
 			+ " OR end_date >= ? )" + " AND system_deduction.domain <= 0 ";
 
-	private static final String SYSTEM_PAYMENT_SQL = "SELECT *" + ", "
+	private static final String SYSTEM_PAYMENT_SQL = "SELECT *"
+			+ ", "
 			+ ExpressionScope.SYSTEM.ordinal()
 			+ " AS "
 			+ SQLContractPayment.SCOPE_ALIAS
@@ -315,7 +319,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	}
 
-	static class GuarenteeException extends SalaryException {
+	protected static class GuarenteeException extends SalaryException {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -328,6 +332,27 @@ public class SQLContractSalaryCalculatorContext implements
 		public double getGuarentee() {
 			return guarentee;
 		}
+	}
+
+	private static class ExtraDays implements ITimedVariable<Number> {
+
+		private ITimedVariable<Number> monthDays;
+
+		public ExtraDays(ITimedVariable<Number> monthDays) {
+			this.monthDays = monthDays;
+		}
+
+		@Override
+		public Period getPeriod() {
+			return monthDays.getPeriod();
+		}
+
+		@Override
+		public Number getValue(Period period) {
+			Number value = monthDays.getValue(period);
+			return value != null ? value.doubleValue() * 12 : null;
+		}
+
 	}
 
 	protected static class SQLNoItContractSalaryCalculatorContext extends
@@ -1342,8 +1367,7 @@ public class SQLContractSalaryCalculatorContext implements
 		return agreementExpressionContexts.get(agreementAndLevel);
 	}
 
-	private Collection<IContractCost> getCCCCosts()
-			throws AonException {
+	private Collection<IContractCost> getCCCCosts() throws AonException {
 		List<IContractCost> costs = new ArrayList<IContractCost>(
 				systemPayments.size());
 		CCCType cccType = getCCCType();
@@ -1356,8 +1380,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	}
 
-	private Collection<IContractCost> getSSRegimeCosts()
-			throws AonException {
+	private Collection<IContractCost> getSSRegimeCosts() throws AonException {
 		List<IContractCost> costs = new ArrayList<IContractCost>(
 				systemCosts.size());
 		SSRegimeType ssRegime = getSSRegime();
@@ -1370,8 +1393,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	}
 
-	private Collection<IContractPayment> getCCCPayments()
-			throws AonException {
+	private Collection<IContractPayment> getCCCPayments() throws AonException {
 		List<IContractPayment> payments = new ArrayList<IContractPayment>(
 				systemPayments.size());
 		CCCType cccType = getCCCType();
@@ -1961,23 +1983,6 @@ public class SQLContractSalaryCalculatorContext implements
 		return Math.ceil(workedWeeks);
 	}
 
-	private double getExtraDays() {
-		Long availableDays = getAvailableDays(startDate, endDate);
-		return availableDays;
-	}
-
-	private double getExtraWeeks() {
-		double extraDays = getExtraDays();
-		double extraWeeks = extraDays * 52 / 365;
-		return Math.round(extraWeeks);
-	}
-
-	private double getExtraMonths() {
-		double extraDays = getExtraDays();
-		double extraMonths = extraDays * 12 / 365;
-		return Math.max(1, Math.round(extraMonths));
-	}
-
 	private double getSalaryDays(Date start, Date end) {
 		Long availableDays = getAvailableDays(start, end);
 		return availableDays;
@@ -2184,6 +2189,10 @@ public class SQLContractSalaryCalculatorContext implements
 
 		return guarenteed;
 	}
+	
+	protected ITimedVariable<Number> getExtraDays(ITimedVariable<Number> monthDays) {
+		return new ExtraDays(monthDays);
+	}
 
 	/*
 	 * Inicializa el contexto dentro del cual se calcularán ejecutarán las
@@ -2204,13 +2213,6 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 
 		Period period = new Period(startDate, endDate);
-
-		LazyTimedVariable<Double> extraDays = new LazyTimedVariable<Double>() {
-			@Override
-			public Double create() {
-				return getExtraDays();
-			}
-		};
 
 		ActiveTimedVariable<Double> salaryDays = new ActiveTimedVariable<Double>() {
 			@Override
@@ -2333,22 +2335,10 @@ public class SQLContractSalaryCalculatorContext implements
 					};
 				});
 
-		this.implicitExpressionContext.putVariable(PAY_DAYS, extraDays);
-
-		this.implicitExpressionContext.putVariable(PAY_MONTHS,
-				new LazyTimedVariable<Double>() {
-					@Override
-					public Double create() {
-						return getExtraMonths();
-					}
-				});
-		this.implicitExpressionContext.putVariable(PAY_WEEKS,
-				new LazyTimedVariable<Double>() {
-					@Override
-					public Double create() {
-						return getExtraWeeks();
-					}
-				});
+		List<ITimedVariable<Number>> monthDays = this.implicitExpressionContext
+				.getVariables(MONTH_DAYS);
+		for (ITimedVariable<Number> monthDay : monthDays)
+			this.implicitExpressionContext.putVariable(PAY_DAYS, getExtraDays(monthDay));
 
 		this.implicitExpressionContext.putVariable(SALARY_HOURS,
 				new LazyTimedVariable<Double>() {

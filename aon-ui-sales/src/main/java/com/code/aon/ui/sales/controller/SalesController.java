@@ -581,6 +581,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void onDelivery(ActionEvent event) {
 		try {
 			Sales to = (Sales)this.getTo();
+	        if ( StringUtils.isBlank(getDeliverySeries()) ) {
+	        	setDeliverySeries(null);
+	        }			
 	        if(getDeliveryNumber() == 0) {
 	        	updateDeliveryNumber(getDeliverySeries());
 			}					
@@ -631,6 +634,9 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void onInvoice(ActionEvent event) {
 		try {
 			Sales to = (Sales)this.getTo();
+	        if ( StringUtils.isBlank(getInvoiceSeries()) ) {
+	        	setInvoiceSeries(null);
+	        }			
 	        if(getInvoiceNumber() == 0) {
 	        	updateInvoiceNumber(getInvoiceSeries());
 			}													

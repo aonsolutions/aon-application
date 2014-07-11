@@ -323,17 +323,17 @@ public class Mod200Validation {
 			,"round(D0382) == 0.0 || (round(D0382) > 0.0 && (C0033 || C0034))"));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ301
-			,MessageFormat.format(INCOMPATIBLE_MSG,LQ301.getDescription(),PG326.getDescription())
-			,"!(round(PG326) >= 0.0 && round(LQ301) != 0.0)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ301
-				,MessageFormat.format(MUST_EQUAL_MSG,LQ302.getDescription(),PG326.getDescription())
-				,"!(round(PG326) >= 0.0 && round(LQ302) != round(PG326))"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ301
-				,MessageFormat.format(INCOMPATIBLE_MSG,LQ302.getDescription(),PG326.getDescription())
-				,"!(round(PG326) < 0.0 && round(LQ302) != 0.0)"));
+				,MessageFormat.format(INCOMPATIBLE_MSG,LQ301.getDescription(),PG326.getDescription())
+				,"!(round(PG326) >= 0.0 && round(LQ301) != 0.0)"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ301
 				,MessageFormat.format(MUST_EQUAL_MSG,LQ301.getDescription(),PG326.getDescription())
 				,"!(round(PG326) < 0.0 && round(LQ301) != round(PG326))"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ302
+				,MessageFormat.format(MUST_EQUAL_MSG,LQ302.getDescription(),PG326.getDescription())
+				,"!(round(PG326) >= 0.0 && round(LQ302) != round(PG326))"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ302
+				,MessageFormat.format(INCOMPATIBLE_MSG,LQ302.getDescription(),PG326.getDescription())
+				,"!(round(PG326) < 0.0 && round(LQ302) != 0.0)"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ302
 				,"No pueden tener contenido simult\u00E1neamente las dos casillas correspondientes a aumentos y disminuciones del Impuesto sobre Sociedades."
 				,"!(round(LQ301) > 0 && round(LQ302) > 0)"));
@@ -705,7 +705,7 @@ public class Mod200Validation {
 
 	static {	// PAGE 12
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID653
-				,MessageFormat.format(EQUAL_MSG,ID653.getDescription() + " (653)",ID666.getDescription()+ "(655)")
+				,MessageFormat.format(EQUAL_MSG,ID653.getDescription() + " (653)",ID666.getDescription()+ "(666)")
 				,MessageFormat.format(EQUAL_EXP,ID653.toString(),ID666.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE12,ID650
 				,MessageFormat.format(CHECK_SIGN_MSG,ID650.getDescription())

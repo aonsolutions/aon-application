@@ -1941,7 +1941,12 @@ public class AgreementDraft extends ResizeComposite implements
 
 		formatPaymentRow(row);
 		Payment payment = agreementDraftObject.newDraftPayment();
+
+		payment.setIrpfExpression("_P");
+		payment.setQuoteExpression("_P");
+		payment.setType(Payment.Type.DEFAULT);
 		payment.setSalaryType(Salary.Type.SALARY);
+		
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
 		paymentEditor.setEditButton(newButton);
 		paymentEditor.setExpressionTextBox(expressionBox);

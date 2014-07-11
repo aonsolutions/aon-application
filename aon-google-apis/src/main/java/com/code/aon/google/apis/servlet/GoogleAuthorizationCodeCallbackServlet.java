@@ -7,6 +7,10 @@ import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.g
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,89 +18,107 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.AonVersion;
-import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.sessionInfo.SessionInfo;
+import com.code.aon.google.apis.sessionInfo.SessionUserInfo;
+import com.code.aon.jaas.auth.spi.db.Domain;
+import com.code.aon.jaas.auth.spi.db.Util;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.pool.ConnectionInfo;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.tasks.Tasks;
-import com.google.api.services.tasks.Tasks.TasksOperations;
+
 
 public class GoogleAuthorizationCodeCallbackServlet extends
 		AbstractAuthorizationCodeCallbackServlet {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	public static String email;
 	public static String pass;
 	
-	public static Drive drive;
-	public static Tasks tasks;
-	public static Oauth2 oauth2;
+
 	
-	public static String getUsername() {
-		return "OpenID_Email=" + 
-	GoogleAuthorizationCodeCallbackServlet.email;
+	public static String getUsername(String email) {
+		return "OpenID_Email=" + email;
 	}
 
 	public static String getPassword() {
 		return 	pass;
 
 	}
-
+	public String getBDUsername(String email,String key) throws AonConnectionException, SQLException{
+		String username = getUserName(email, key);
+		return username;
+	}
+	
+	
 	@Override
 	protected void onSuccess(HttpServletRequest req, HttpServletResponse resp,
 			Credential credential) throws ServletException, IOException {
 		
 		super.onSuccess(req, resp, credential);
 		
-		//CalendarUtils.initialize(req);
-		//CalendarUtils.addCalendaar(new Calendar());
+		String username = null;
+		String key = req.getParameter("state");
 		
-		
-		oauth2 = new Oauth2.Builder(getHttpTransport(), getJsonFactory(), credential)
+		Oauth2 oauth2 = new Oauth2.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
 		
-		drive = new Drive.Builder(getHttpTransport(), getJsonFactory(), credential)
+		Drive drive = new Drive.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
-		req.getSession().setAttribute("Drive", drive);
+		
 		
 		System.out.println(drive);
-		tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
+		Tasks tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
-		req.getSession().setAttribute("Tasks", tasks);
-		
-		email = oauth2.userinfo().v2().me().get().execute().getEmail();
-		
+				
+		String email = oauth2.userinfo().v2().me().get().execute().getEmail();
 		System.out.println("EMAIL = " + email );
+		
+		try {
+			username = getBDUsername(email,key);
+			
+			if ( username != null ) {
+			
+				SessionUserInfo su = new SessionUserInfo();
+			
+				su.setUsername(username);
+				su.setGmail(email);
+				su.setDrive(drive);
+				su.setOAuth2(oauth2);
+				su.setTasks(tasks);
+				su.setDomain(key);
+			
+				if(!SessionInfo.table.get(key).getUsers().containsKey(username)){
+					SessionInfo.table.get(key).getUsers().put(username, su);
+				}				
+			}
+
+			
+		} catch (AonConnectionException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		}
 		
 		pass = PasswordGenerator.getPassword(
 				PasswordGenerator.MINUSCULAS
 				+ PasswordGenerator.MAYUSCULAS
 				+ PasswordGenerator.ESPECIALES, 10);
-				
+		
+		credential.getClientAuthentication().toString();
 		RequestDispatcher dispatcher = getServletContext()
 				.getRequestDispatcher("/login/popupclose.jsp");
-		req.setAttribute("username", getUsername());
+		req.setAttribute("name", key);
+		req.setAttribute("act",SessionInfo.table.get(key).getAction()); 
+		req.setAttribute("username", getUsername(email));
 		req.setAttribute("password", getPassword());
 		dispatcher.forward(req, resp);
-		
-		
-		//DriveUtils.initialize();
-		
-		//DriveUtils.get();
-		
-		/*TaskUtils.initialize(req);
-		try {
-			TaskUtils.synchronize();
-		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
-		}*/
 		
 	}
 	
@@ -104,8 +126,11 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 	@Override
 	protected String getRedirectUri(HttpServletRequest req)
 			throws ServletException, IOException {
+		
 		return getAuth2CallbackUri(req);
 	}
+	
+	
 
 	@Override
 	protected String getUserId(HttpServletRequest req) throws ServletException,
@@ -151,6 +176,60 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 
 			return pswd;
 		}
+	}
+	
+	private String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
+		
+		
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+			
+		
+		String sql="SELECT U.login"
+				+ " FROM user AS U inner join mail_account AS MA ON (U.id = MA.user_id) inner join domain AS D ON (D.id=U.domain)"
+				+ " WHERE MA.email=? AND D.name = ?";
+
+		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+		
+		Util util = new Util(connectionInfo);
+		util.createMetadataConnection();
+		Domain domain = util.getDomain(domainName);
+		connection = connectionInfo.getDomainConnection(domain.getDataBaseName());
+		/*
+		DSLContext dslContext= DSL.using(connection, JooqSettings.getDefaultSettings());
+		
+		Result<Record1<String>> username = dslContext.select(USER.LOGIN)
+			.from(USER)
+			.join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
+			.join(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
+			.where(MAIL_ACCOUNT.EMAIL.eq(email).and(DOMAIN.NAME.eq(domainName))).fetch();
+		
+		String a= username.format();
+		
+		System.out.println(a);
+		
+		return a;
+		*/
+		stmt = connection.prepareStatement(sql);
+		stmt.setString(1,email);
+		stmt.setString(2, domainName);
+		rs = stmt.executeQuery();
+		
+		return rs.next() ? rs.getString("login") : null;
+		
+		}finally {
+		
+			if (rs != null)
+				rs.close();
+			if (connection != null)
+				connection.close();
+			if (stmt != null)
+				stmt.close();
+		}
+		
 	}
 	
 }

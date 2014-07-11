@@ -4,14 +4,14 @@
 <head>
      <script type="text/javascript">
      	function login(){
-     		document.forms['openid-form-login'].submit();
+     		var form=document.forms['openid-form-login'].submit();
      		close();
      	}
      </script>
 </head>
 <body onload="javascript:login()" >
 	<div style="display:none">
-		<form id="openid-form-login" target="padre" method="post" action="j_security_check"
+		<form id="openid-form-login" target="${name}" method="post" action="${act}"  
 		onSubmit>
 								
 			<input type="text" id="j_username" name="j_username" value="${username}"/>

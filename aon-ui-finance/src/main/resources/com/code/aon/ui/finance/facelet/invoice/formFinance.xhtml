@@ -38,6 +38,7 @@
 					<ui:param name="skipLineEdition" value="#{true}" />
 					<ui:param name="skipRemoveButton" value="#{(invoiceController.readOnly and controller.model.rowCount > 1) or financeController.to.advance}" />
 					<ui:param name="removeButtonReRender" value="menuExt,InvoiceReferenceCodeDiv" />
+					<ui:param name="newSaveButtonReRender" value="menuExt,InvoiceReferenceCodeDiv" />
 					<ui:define name="beginFormListContent">
 						<aon:commandLink id="#{dataTableId}-selectButton"
 							styleClass="aon-table-row-link" value="&#160;"

@@ -153,7 +153,6 @@ public class Page02 extends PageAbs {
 			}
 		};
 		tableIn.addColumn(descriptionColumn, MSG.companyName());
-		tableIn.setColumnWidth(descriptionColumn, "auto");
 		descriptionColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 
@@ -282,7 +281,6 @@ public class Page02 extends PageAbs {
 			}
 		};
 		tableOut.addColumn(descriptionColumn, MSG.companyName());
-		tableOut.setColumnWidth(descriptionColumn, "auto");
 		descriptionColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 	

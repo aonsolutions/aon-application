@@ -187,16 +187,6 @@ public class DriveUtils  {
 	//private static Credential credential;	
 	private static Drive client;
 	
-	public static void initialize() throws IOException,ServletException {
-		//credential = newFlow().loadCredential(getPrincipalShortName(req));/**HttpServletRequest req**/
-		
-		//client = new Drive.Builder(getHttpTransport(), getJsonFactory(), credential)
-		//	.setApplicationName("AON SOLUTIONS").build();
-		
-		client=GoogleAuthorizationCodeCallbackServlet.drive;
-		
-
-	}
 	
 	public static Drive serviceInitialize(DomainGserviceaccount d) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
 				

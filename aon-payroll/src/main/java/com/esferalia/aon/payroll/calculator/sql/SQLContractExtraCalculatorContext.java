@@ -89,6 +89,12 @@ public class SQLContractExtraCalculatorContext extends
 	}
 	
 	
+	@Override
+	protected ITimedVariable<Number> getExtraDays(
+			ITimedVariable<Number> monthDays) {
+		return monthDays;
+	}
+	
 	// -------------------------------------------------------------------------
 
 	private int getChargeMonth() {

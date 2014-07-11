@@ -56,4 +56,11 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 				new AsyncCallbackWrapper<Mod200>(callback));
 	}
 
+	@Override
+	public void dumpAEAT(Mod200 mod200, AsyncCallback<String> callback) {
+		AON.start();
+		mod200ServiceAsync.dumpAEAT(mod200,
+				new AsyncCallbackWrapper<String>(callback));
+	}
+
 }

@@ -97,7 +97,7 @@ public class VatTaxManager implements Serializable {
 	private void initializeListForOnlyDeclaration(List<VatTaxDetail> list) {
 		initializeList(list);
 		VatTaxKey[] keys = new VatTaxKey[] {VatTaxKey.A1,VatTaxKey.A3,VatTaxKey.A31,VatTaxKey.A4,VatTaxKey.CP,VatTaxKey.GT,VatTaxKey.BI};
-		double[] percents = new double[] {4,8,21};
+		double[] percents = new double[] {4,10,21};
 		VatTaxDetail detail;
 		for (VatTaxKey key : keys) {
 			for (double percent : percents) {

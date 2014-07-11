@@ -52,7 +52,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
-			+" AND fm.document < ? "
+			+" AND fm.document = ? "
 			+" AND fmd.type = ? ";
 	
 	private static String SELECT_15 = "SELECT " 
@@ -64,7 +64,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
-			+" AND fm.document < ? "
+			+" AND fm.document = ? "
 			+" AND fmd.type = ? ";
 
 	private static String SELECT_05_1 = "SELECT " 
@@ -76,7 +76,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
-			+" AND fm.document < ? "
+			+" AND fm.document = ? "
 			+" AND fmd.type = ? ";
 
 	private static String SELECT_05_2 = "SELECT " 
@@ -88,7 +88,7 @@ public class Mod130Manager extends FiscalModelManager {
 			+" AND fm.administration = ? "
 			+" AND fm.year = ? "
 			+" AND fm.period < ? "
-			+" AND fm.document < ? "
+			+" AND fm.document = ? "
 			+" AND fmd.type = ? ";
 	
 

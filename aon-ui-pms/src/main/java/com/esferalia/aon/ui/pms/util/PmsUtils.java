@@ -11,6 +11,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -28,6 +30,24 @@ public class PmsUtils implements IPmsConstants {
 		}
 		PmsCollectionsController pmsCollections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 		return pmsCollections.getRoomItems();
+	}
+
+	public static List<SelectItem> getCurrentUserHotelRoomItems() throws ManagerBeanException {
+		List<SelectItem> roomItems = new LinkedList<SelectItem>();
+		PmsCollectionsController pmsCollections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), pmsCollections.getCurrentUserHotelIds());
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
+		criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_NAME));
+		ProjectionList projectionList = new ProjectionList(Projection.group(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_ID)));
+		for (Object obj : roomBean.getList(projectionList, criteria)) {
+			Item item = (Item)itemBean.get((Integer)obj);
+			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+			roomItems.add(roomItem);
+		}
+		return roomItems;
 	}
 
 	public static List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {

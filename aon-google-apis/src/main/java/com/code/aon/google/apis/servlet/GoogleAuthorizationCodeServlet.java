@@ -7,9 +7,13 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.AonVersion;
+import com.code.aon.google.apis.sessionInfo.SessionEnterpriseInfo;
+import com.code.aon.google.apis.sessionInfo.SessionInfo;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
 
 
@@ -19,9 +23,37 @@ public class GoogleAuthorizationCodeServlet extends
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	
+	public static String name;
+	public static String act;
+	
+	public static String getName(){
+		return name;
+	}
+	
+	public static String getAct(){
+		return act;
+	}
+	
+	
 	@Override
 	protected String getRedirectUri(HttpServletRequest req)
 			throws ServletException, IOException {
+		String key = req.getServerName();
+		String action= req.getScheme()+"://"+key+":"+req.getServerPort()+req.getContextPath()+"/j_security_check"; 
+		name=key;
+		act=action;
+		if (!SessionInfo.table.containsKey(key)){
+			SessionEnterpriseInfo se = new SessionEnterpriseInfo();
+			se.setAction(action);
+			se.setDomain(key);
+			SessionInfo.table.put(key, se);
+		}
+		else {
+			SessionInfo.table.get(key).setDomain(key);
+			SessionInfo.table.get(key).setAction(action);
+		}
+		
 		return getAuth2CallbackUri(req);
 	}
 
@@ -36,4 +68,18 @@ public class GoogleAuthorizationCodeServlet extends
 			IOException {
 		return newFlow();		
 	}
+
+	@Override
+	protected void onAuthorization(HttpServletRequest req,
+			HttpServletResponse resp,
+			AuthorizationCodeRequestUrl authorizationUrl)
+			throws ServletException, IOException {
+		
+		authorizationUrl.setState(req.getServerName()+"");
+		// TODO Apéndice de método generado automáticamente
+		super.onAuthorization(req, resp, authorizationUrl);
+	}
+	
 }
+
+

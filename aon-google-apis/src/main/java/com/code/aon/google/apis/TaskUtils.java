@@ -291,7 +291,7 @@ public class TaskUtils {
 	 * @throws AonConnectionException
 	 * @throws IOException
 	 */
-	public static void synchronizeOld(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
+	/*public static void synchronizeOld(com.google.api.services.tasks.Tasks client) throws SQLException, AonConnectionException, IOException{
 		
 		System.out.println(client);
 		String domain= AonUtil.getDomainName();
@@ -332,7 +332,7 @@ public class TaskUtils {
 				else updateTask(tasks.getItems().get(aux2), taskLists.getItems().get(aux),client);
 			}
 		}
-	}
+	}*/
 	
 	
 	

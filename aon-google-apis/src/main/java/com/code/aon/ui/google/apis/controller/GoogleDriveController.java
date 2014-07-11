@@ -21,6 +21,8 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.sessionInfo.SessionInfo;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
@@ -40,10 +42,12 @@ public class GoogleDriveController implements Serializable {
 	public boolean google= isGoogle();
 	
 	public Drive getClientSession(){
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExternalContext ec = ctx.getExternalContext();
-		Object session=((HttpSession) ec.getSession(false)).getAttribute("Drive");
-		Drive drive=(Drive)session;
+		Drive drive=null;
+		String domain= AonUtil.getDomainName();
+		String username=AonUtil.getAuthPrincipal().getShortName();
+		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
+			drive= SessionInfo.table.get(domain).getUsers().get(username).getDrive();
+		}
 		return drive;
 	}
 	

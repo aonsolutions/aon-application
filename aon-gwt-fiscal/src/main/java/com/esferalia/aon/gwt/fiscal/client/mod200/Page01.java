@@ -116,7 +116,6 @@ public class Page01 extends PageAbs {
 		    }
 		});		
 		table1.addColumn(col, MSG.companyName());
-		table1.setColumnWidth(col, "auto");
 		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 

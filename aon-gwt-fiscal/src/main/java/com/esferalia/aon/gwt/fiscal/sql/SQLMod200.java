@@ -190,13 +190,16 @@ public class SQLMod200 {
 		return mod200;
 	}
 
-	public static Mod200 get(Connection conn, int domain, int year) {
+	public static Mod200 getById(int id, Connection conn) {
 		DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
 		FsModel200Record record = dsl
 				.selectFrom(FS_MODEL200)
-				.where(FS_MODEL200.DOMAIN.equal(domain))
-				.and(FS_MODEL200.YEAR.equal(year))
+				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
+		return populateMod200(dsl,record);
+	}
+
+	private static Mod200 populateMod200(DSLContext dsl, FsModel200Record record) {
 		Mod200 mod200 = null;
 		if (record != null) {
 			mod200 = getMod200(record);
@@ -204,6 +207,16 @@ public class SQLMod200 {
 			fillRegistryLists(mod200,dsl);
 		}
 		return mod200;
+	}
+
+	public static Mod200 get(Connection conn, int domain, int year) {
+		DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+		FsModel200Record record = dsl
+				.selectFrom(FS_MODEL200)
+				.where(FS_MODEL200.DOMAIN.equal(domain))
+				.and(FS_MODEL200.YEAR.equal(year))
+				.fetchOne();
+		return populateMod200(dsl,record);
 	}
 
 	private static void fillDetail(Mod200 mod200,DSLContext dsl) {
@@ -318,6 +331,6 @@ public class SQLMod200 {
 		mod200.setParticipationsIn(participationsIn);
 		mod200.setParticipationsOut(participationsOut);
 	}
-	
+
 
 }

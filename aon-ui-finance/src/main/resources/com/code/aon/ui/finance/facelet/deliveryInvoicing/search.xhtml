@@ -110,21 +110,20 @@
 						<aon:outputText value="#{bundle.finance_invoice_data}" />
 					</f:facet>
 					<aon:panelGrid columns="2">
-						<aon:outputLabel for="Invoice_series"
-							value="#{bundle.aon_series}/#{bundle.aon_number}" />
-						<aon:div>
-							<aon:selectOneMenu id="Invoice_series"
-								value="#{deliveryInvoicing.params.invoiceSeries}"
-								valueChangeListener="#{deliveryInvoicing.onInvoiceSeriesChanged}"
-								reRender="Invoice_number,Invoicing_Confidential">
-								<f:selectItem itemLabel=" " value="#{null}"/>
-								<f:selectItems value="#{configCollections.invoiceSeries}" />
-							</aon:selectOneMenu>
-							<aon:inputText id="Invoice_number" required="true"
-								 styleClass="aon-margin-left"
-								value="#{deliveryInvoicing.params.invoiceNumber}" size="7" />
-						</aon:div>
-	
+					
+						<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+							<ui:param name="controller" value="#{saleInvoice}" />
+							<ui:param name="sfc_seriesCodes" value="#{configCollections.invoiceSeries}" />
+							<ui:param name="seriesChangedReRender" value="Invoicing_Confidential" />
+							<ui:param name="sfc_editable" value="#{true}" />
+							<ui:param name="sfc_seriesProperty" value="#{deliveryInvoicing.params.invoiceSeries}" />
+							<ui:param name="sfc_numberProperty" value="#{deliveryInvoicing.params.invoiceNumber}" />
+							<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
+								value="#{deliveryInvoicing.onInvoiceSeriesChanged}" />	
+							<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
+								value="#{deliveryInvoicing.onInvoiceNumberEditable}" />
+						</ui:include>
+
 						<aon:outputLabel for="Invoice_date"
 							value="#{bundle.aon_date}" />
 						<aon:selectInputDate id="Invoice_date"

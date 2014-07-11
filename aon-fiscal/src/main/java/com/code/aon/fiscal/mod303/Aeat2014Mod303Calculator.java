@@ -20,56 +20,92 @@ public class Aeat2014Mod303Calculator extends FiscalModelDetailCalculator implem
 	public void calculate(Mod303 mod303) throws AonException {
 		calculateDetails(mod303.getDetails());
 		
-		double z1 = mod303.ensureAmount( Mod303Key.CAC1_Z);
-		if (z1 > 0.0) {
+		if (mod303.getDetail(Mod303Key.CAC1) != null) {
+			double z1 = mod303.ensureAmount( Mod303Key.CAC1_Z);
+			double zd1 = mod303.ensureAmount( Mod303Key.CAC1_ZD);
+			double za1 = 0;
+			if (z1 == 0) {
+				z1 = 1;
+				za1 = 90;
+				if (zd1 == 0) {
+					zd1 = 90;
+				}
+			} else {
+				za1 = mod303.ensureAmount( Mod303Key.CAC1_ZA);
+			}
 			double c1 = mod303.ensureAmount( Mod303Key.CAC1_C);
 			double d1 = mod303.ensureAmount( Mod303Key.CAC1_D);
 			double e1 = mod303.ensureAmount( Mod303Key.CAC1_E);
-			double za1 = mod303.ensureAmount( Mod303Key.CAC1_ZA);
-			double zd1 = mod303.ensureAmount( Mod303Key.CAC1_ZD);
 			double f1 = CommonUtil.round( (c1 - d1) * e1 / 100 );
 			f1 = CommonUtil.round(f1 * z1 );
 			f1 = CommonUtil.round( f1 * zd1 / za1 );
-			mod303.getDetail( Mod303Key.CAC1_F ).setAmount( f1 );			
+			mod303.getDetail( Mod303Key.CAC1_F ).setAmount( f1 );
 		}
 		
-		double z2 = mod303.ensureAmount( Mod303Key.CAC2_Z);
-		if (z2 > 0.0) {
+		if (mod303.getDetail(Mod303Key.CAC2) != null) {
+			double z2 = mod303.ensureAmount( Mod303Key.CAC2_Z);
+			double za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
+			double zd2 = mod303.ensureAmount( Mod303Key.CAC2_ZD);
+			if (z2 == 0) {
+				z2 = 1;
+				za2 = 90;
+				if (zd2 == 0) {
+					zd2 = 90;
+				}
+			} else {
+				za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
+			}
 			double c2 = mod303.ensureAmount( Mod303Key.CAC2_C);
 			double d2 = mod303.ensureAmount( Mod303Key.CAC2_D);
 			double e2 = mod303.ensureAmount( Mod303Key.CAC2_E);
-			double za2 = mod303.ensureAmount( Mod303Key.CAC2_ZA);
-			double zd2 = mod303.ensureAmount( Mod303Key.CAC2_ZD);
 			double f2 = CommonUtil.round( (c2 - d2) * e2 / 100 );
 			f2 = CommonUtil.round(f2 * z2 );
 			f2 = CommonUtil.round( f2 * zd2 / za2 );
-			mod303.getDetail( Mod303Key.CAC2_F ).setAmount( f2 );			
+			mod303.getDetail( Mod303Key.CAC2_F ).setAmount( f2 );
 		}
 		
-		double z3 = mod303.ensureAmount( Mod303Key.CAC3_Z);
-		if (z3 > 0.0) {
+		if (mod303.getDetail(Mod303Key.CAC3) != null) {
+			double z3 = mod303.ensureAmount( Mod303Key.CAC3_Z);
+			double za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
+			double zd3 = mod303.ensureAmount( Mod303Key.CAC3_ZD);
+			if (z3 == 0) {
+				z3 = 1;
+				za3 = 90;
+				if (zd3 == 0) {
+					zd3 = 90;
+				}
+			} else {
+				za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
+			}
 			double c3 = mod303.ensureAmount( Mod303Key.CAC3_C);
 			double d3 = mod303.ensureAmount( Mod303Key.CAC3_D);
 			double e3 = mod303.ensureAmount( Mod303Key.CAC3_E);
-			double za3 = mod303.ensureAmount( Mod303Key.CAC3_ZA);
-			double zd3 = mod303.ensureAmount( Mod303Key.CAC3_ZD);
 			double f3 = CommonUtil.round( (c3 - d3) * e3 / 100 );
 			f3 = CommonUtil.round(f3 * z3 );
 			f3 = CommonUtil.round( f3 * zd3 / za3 );
-			mod303.getDetail( Mod303Key.CAC3_F ).setAmount( f3 );			
+			mod303.getDetail( Mod303Key.CAC3_F ).setAmount( f3 );
 		}
-
-		double z4 = mod303.ensureAmount( Mod303Key.CAC4_Z);
-		if (z4 > 0.0) {
+		
+		if (mod303.getDetail(Mod303Key.CAC4) != null) {
+			double z4 = mod303.ensureAmount( Mod303Key.CAC4_Z);
+			double za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
+			double zd4 = mod303.ensureAmount( Mod303Key.CAC4_ZD);
+			if (z4 == 0) {
+				z4 = 1;
+				za4 = 90;
+				if (zd4 == 0) {
+					zd4 = 90;
+				}
+			} else {
+				za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
+			}
 			double c4 = mod303.ensureAmount( Mod303Key.CAC4_C);
 			double d4 = mod303.ensureAmount( Mod303Key.CAC4_D);
 			double e4 = mod303.ensureAmount( Mod303Key.CAC4_E);
-			double za4 = mod303.ensureAmount( Mod303Key.CAC4_ZA);
-			double zd4 = mod303.ensureAmount( Mod303Key.CAC4_ZD);
 			double f4 = CommonUtil.round( (c4 - d4) * e4 / 100 );
 			f4 = CommonUtil.round(f4 * z4 );
 			f4 = CommonUtil.round( f4 * zd4 / za4 );
-			mod303.getDetail( Mod303Key.CAC4_F ).setAmount( f4 );			
+			mod303.getDetail( Mod303Key.CAC4_F ).setAmount( f4 );
 		}
 
 		double c47 = 0.0;

@@ -42,10 +42,7 @@ public class FormUtil {
 		return null;
 	}
 
-	private static void _remove( Class<? extends ITransferObject> _class, Serializable id, boolean skipDomain, String[] aliases ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(_class);
-		Criteria criteria = new Criteria();
-		criteria.setSkipDomainFilter(skipDomain);
+	private static void addAliases( IManagerBean bean, Serializable id, Criteria criteria, String[] aliases ) throws ManagerBeanException {
 		if (! ArrayUtils.isEmpty(aliases) ) {
 			Expression exp = null;
 			for( String alias : aliases ) {
@@ -57,7 +54,14 @@ public class FormUtil {
 				}
 			}
 			criteria.addExpression(exp);			
-		}
+		}		
+	}
+	
+	private static void _remove( Class<? extends ITransferObject> _class, Serializable id, boolean skipDomain, String[] aliases ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(_class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(skipDomain);
+		addAliases(bean, id, criteria, aliases);
 		for( ITransferObject to : bean.getList(criteria) ) {
 			bean.remove(to);
 		}	
@@ -69,6 +73,22 @@ public class FormUtil {
 
 	public static void remove( Class<? extends ITransferObject> _class, Serializable id, String ... aliases ) throws ManagerBeanException {
 		_remove( _class, id, false, aliases );
+	}
+
+	private static boolean _hasReferences( Class<? extends ITransferObject> _class, Serializable id, boolean skipDomain, String[] aliases ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(_class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(skipDomain);
+		addAliases(bean, id, criteria, aliases);
+		return bean.getCount(criteria) > 0;
+	}
+
+	public static boolean hasReferences( Class<? extends ITransferObject> _class, Serializable id, boolean skipDomain, String ... aliases ) throws ManagerBeanException {
+		return _hasReferences( _class, id, skipDomain, aliases );
+	}
+
+	public static boolean hasReferences( Class<? extends ITransferObject> _class, Serializable id, String ... aliases ) throws ManagerBeanException {
+		return _hasReferences( _class, id, false, aliases );
 	}
 	
 }

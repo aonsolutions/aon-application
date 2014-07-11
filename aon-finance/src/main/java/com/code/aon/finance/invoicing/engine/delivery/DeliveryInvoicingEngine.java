@@ -335,7 +335,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 		while (true) {
 			Criteria criteria = new Criteria();
 			String seriesAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES);
-			if (series == null || StringUtils.isEmpty(series.getCode())) {
+			if (series == null || StringUtils.isBlank(series.getCode())) {
 				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
 				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, "");
 				criteria.addExpression(ExpressionUtilities.getOrExpression(nullExpr, blankExpr));

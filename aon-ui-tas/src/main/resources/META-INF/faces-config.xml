@@ -257,10 +257,6 @@
 		<managed-bean-name>projectTasHeaderControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>table</property-name>
-			<value>ProjectTas</value>
-		</managed-property>
 	</managed-bean>
 
 	<!--  **** TAS PRINTERS **** -->

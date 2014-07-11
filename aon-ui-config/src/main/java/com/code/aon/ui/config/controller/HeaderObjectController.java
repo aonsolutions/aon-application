@@ -85,8 +85,10 @@ public abstract class HeaderObjectController extends BasicController {
 
 	public void onNumberEditable(ActionEvent event) {
 		IHeaderObject ho = getHeaderObject();
-		int number = obtainMaxNumber(ho.getSeries());
-		ho.setNumber(number);
+		if ( ho.getNumber() == 0 ) {
+			int number = obtainMaxNumber(ho.getSeries());
+			ho.setNumber(number);			
+		}
 	}	
 
 	public void initSeries() {
@@ -111,6 +113,17 @@ public abstract class HeaderObjectController extends BasicController {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return seriesCode;
+	}
+	
+	public void updateSeriesNumber() {
+		IHeaderObject ho = getHeaderObject();
+        if ( StringUtils.isBlank(ho.getSeries()) ) {
+        	ho.setSeries(null);
+        }
+        if(ho.getNumber() == 0) {
+        	ho.setNumber(obtainMaxNumber(ho.getSeries()));
+		}
+		
 	}
 	
 }
