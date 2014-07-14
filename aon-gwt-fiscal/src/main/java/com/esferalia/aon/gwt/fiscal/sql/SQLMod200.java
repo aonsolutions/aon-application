@@ -72,6 +72,11 @@ public class SQLMod200 {
 			 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
 			 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
 					 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
+			 .set(FS_MODEL200.RESULT_TYPE,mod200.getResultType())
+			 .set(FS_MODEL200.DEV_TYPE,mod200.getDevType())
+			 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
+			 .set(FS_MODEL200.AMOUNT,mod200.getAmount())
+			 .set(FS_MODEL200.IBAN,mod200.getIban())
 			 .set(FS_MODEL200.COMMENTS,mod200.getComments())
 			 .returning()
 			 .fetchOne();
@@ -210,6 +215,11 @@ public class SQLMod200 {
 		 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
 		 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
 				 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
+		 .set(FS_MODEL200.RESULT_TYPE,mod200.getResultType())
+		 .set(FS_MODEL200.DEV_TYPE,mod200.getDevType())
+		 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
+		 .set(FS_MODEL200.AMOUNT,mod200.getAmount())
+		 .set(FS_MODEL200.IBAN,mod200.getIban())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		deleteDetail(conn, dsl, mod200);
@@ -314,6 +324,11 @@ public class SQLMod200 {
 		secretary.setIrnr(record.getIrnr());
 		mod200.setSecretary(secretary);
 		mod200.setComments(record.getComments());
+		mod200.setResultType(record.getResultType());
+		mod200.setDevType(record.getDevType());
+		mod200.setPayType(record.getPayType());
+		mod200.setAmount(record.getAmount());
+		mod200.setIban(record.getIban());
 		return mod200;
 	}
 

@@ -57,7 +57,7 @@ public class Mod200 implements Serializable, IsSerializable {
 	private String resultType;
 	private String devType;
 	private String payType;
-	private double amount;
+	private Double amount;
 	private String iban;
 
 	private String comments;
@@ -258,10 +258,10 @@ public class Mod200 implements Serializable, IsSerializable {
 	public void setPayType(String payType) {
 		this.payType = payType;
 	}
-	public double getAmount() {
+	public Double getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
 	public String getIban() {
