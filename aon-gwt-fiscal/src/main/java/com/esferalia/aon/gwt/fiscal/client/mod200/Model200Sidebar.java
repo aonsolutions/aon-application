@@ -49,6 +49,8 @@ public class Model200Sidebar extends ResizeComposite {
 	FocusPanel linkPage12;
 	@UiField
 	FocusPanel linkPage13;
+	@UiField
+	FocusPanel linkPage14;
 
 	public Model200Sidebar() {
 		Widget ui = BINDER.createAndBindUi(this);
@@ -60,7 +62,7 @@ public class Model200Sidebar extends ResizeComposite {
 				 linkPage00,linkPage01,linkPage02,linkPage03
 				,linkPage04,linkPage05,linkPage06,linkPage07
 				,linkPage08,linkPage09,linkPage10,linkPage11
-				,linkPage12,linkPage13
+				,linkPage12,linkPage13,linkPage14
 					};	
 		for (Panel p : linkPanels) {
 			p.setStyleName(RESOURCES.css().aonLinkItem());
@@ -84,7 +86,7 @@ public class Model200Sidebar extends ResizeComposite {
 				 linkPage00,linkPage01,linkPage02,linkPage03
 				,linkPage04,linkPage05,linkPage06,linkPage07
 				,linkPage08,linkPage09,linkPage10,linkPage11
-				,linkPage12,linkPage13
+				,linkPage12,linkPage13,linkPage14
 					};	
 		for (Panel p : linkPanels) {
 			p.setVisible(visible);

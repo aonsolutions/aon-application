@@ -89,6 +89,11 @@
 					<g:InlineLabel text="{msg.deducibleLimitation}" />
 				</g:FlowPanel>
 			</g:FocusPanel>
+			<g:FocusPanel ui:field='linkPage14' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.idDocument}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
 		</g:FlowPanel>
 	</g:ScrollPanel>
 </ui:UiBinder>

@@ -4390,6 +4390,11 @@ CREATE TABLE `fs_model200` (
   `secretary_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del secretario',
   `secretary_name` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del secretario',
   `irnr` date DEFAULT NULL COMMENT 'Fecha IRNR',
+  `result_type` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT '(D) Devolucion, (I) Ingreso, (C) Cuota cero',
+  `dev_type` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT '(R) Renuncia, (T) Transferencia',
+  `pay_type` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT '(E) Efectivo, (A) Adeudo',
+  `amount` double(15,3) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `iban` varchar(34) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'IBAN',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
@@ -7578,7 +7583,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.37.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.37.2');
 
 COMMIT;
 

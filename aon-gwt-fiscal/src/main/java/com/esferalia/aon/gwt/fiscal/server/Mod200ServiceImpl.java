@@ -281,6 +281,24 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 					}
 				}
 			}
+			v = mod200.getKey(Mod200Key.BN621);
+			mod200.setResultType(null);
+			if (v.getValue() == 0) {
+				mod200.setResultType("C");
+				mod200.setDevType(AonUtil.isEmpty(mod200.getDevType())?"T":mod200.getDevType());
+				mod200.setAmount( v.getValue() );
+				mod200.setPayType(null);
+			} else if (v.getValue() < 0) {
+				mod200.setResultType("D");
+				mod200.setAmount( AonUtil.round( v.getValue() * -1));
+				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"A":mod200.getPayType());
+				mod200.setDevType(null);
+			} else {
+				mod200.setResultType("I");
+				mod200.setAmount( v.getValue() );
+				mod200.setDevType(null);
+				mod200.setPayType(null);
+			}
 			return mod200;
 		} catch (Throwable e) {
 			e.printStackTrace();

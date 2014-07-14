@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.file.tax.FileTaxUtil;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
@@ -97,7 +98,7 @@ public class Mod200File {
 	}
 
 	public String getName() {
-		return getMod200().getEnterpriseName();
+		return FileTaxUtil.changeInvalidCharacters(getMod200().getEnterpriseName());
 	}
 
 	public String getPhone1() {
@@ -216,8 +217,30 @@ public class Mod200File {
 	public double getSum2(){
 		return 0.0;
 	}
+	
+	public String getDevType() {
+		return ("D".equals(getMod200().getResultType()))?getMod200().getDevType():" ";
+	}
+	public double getDevAmount() {
+		return ("D".equals(getMod200().getResultType()))?getMod200().getAmount():0.0;
+	}
+	public String getDevIban() {
+		return ("D".equals(getMod200().getResultType()))?getMod200().getIban():" ";
+	}
 
-
+	public String getPayType() {
+		return ("I".equals(getMod200().getResultType()))?getMod200().getPayType():" ";
+	}
+	public double getPayAmount() {
+		return ("I".equals(getMod200().getResultType()))?getMod200().getAmount():0.0;
+	}
+	public String getPayIban() {
+		return ("I".equals(getMod200().getResultType()))?getMod200().getIban():" ";
+	}
+	public String getZeroQuota() {
+		return ("C".equals(getMod200().getResultType()))?"1":"0";
+	}
+	
 	public Map<String, Double> getKeys() {
 		if (keys == null) {
 			keys = new Map<String, Double>() {

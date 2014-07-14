@@ -186,7 +186,5 @@ public class Mod200Constants {
 		 Mod200Key.LM173,Mod200Key.LM227,Mod200Key.LM291,Mod200Key.LM344
 		,Mod200Key.LM393
 	};
-
-	
 }
 

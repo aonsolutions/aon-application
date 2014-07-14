@@ -445,6 +445,8 @@ public class Model200 extends MainEntryPoint {
 		sidebar.addListener(sidebar.linkPage12, deckPanel.pagesPanel, deckPanel.page12);
 		sidebar.linkPage13.setVisible(true);
 		sidebar.addListener(sidebar.linkPage13, deckPanel.pagesPanel, deckPanel.page13);
+		sidebar.linkPage14.setVisible(true);
+		sidebar.addListener(sidebar.linkPage14, deckPanel.pagesPanel, deckPanel.page14);
 		
 		deckPanel.errorPage.addSelectionListener( new IValidationMessageSelectioinHandler() {
 			

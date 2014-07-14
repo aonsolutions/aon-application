@@ -54,6 +54,12 @@ public class Mod200 implements Serializable, IsSerializable {
 	private List<CompanyParticipation> participationsIn;
 	private List<CompanyParticipation> participationsOut;
 	
+	private String resultType;
+	private String devType;
+	private String payType;
+	private double amount;
+	private String iban;
+
 	private String comments;
 	
 	private EnumMap<Mod200Key,DoubleVariable> keysMap = new EnumMap<Mod200Key,DoubleVariable>(Mod200Key.class);
@@ -233,6 +239,39 @@ public class Mod200 implements Serializable, IsSerializable {
 	}
 	public EnumMap<Mod200Key, Boolean> getVisibleMap() {
 		return visibleMap;
+	}
+	public String getResultType() {
+		return resultType;
+	}
+	public void setResultType(String resultType) {
+		this.resultType = resultType;
+	}
+	public String getDevType() {
+		return devType;
+	}
+	public void setDevType(String devType) {
+		this.devType = devType;
+	}
+	public String getPayType() {
+		return payType;
+	}
+	public void setPayType(String payType) {
+		this.payType = payType;
+	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+	public String getIban() {
+		return iban;
+	}
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+	public void setVisibleMap(EnumMap<Mod200Key, Boolean> visibleMap) {
+		this.visibleMap = visibleMap;
 	}
 	public String getComments() {
 		return comments;
