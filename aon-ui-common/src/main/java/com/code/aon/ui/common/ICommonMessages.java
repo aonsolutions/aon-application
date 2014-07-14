@@ -31,6 +31,8 @@ public interface ICommonMessages {
 	String CUSTOMER = "aon_customer";
 	String DOMAIN_CHANGE = "aon_domain_change";
 	String DATE = "aon_date";
+	String DATE_FROM = "aon_date_from";
+	String DATE_TO = "aon_date_to";
 	String DATE_PATTERN = "aon_date_pattern";
 	String DATE2_PATTERN = "aon_date2_pattern";
 	String DAY = "aon_day";
@@ -126,6 +128,7 @@ public interface ICommonMessages {
 	String TARGET = "aon_target";
 	String TARGET_ADVERTISING = "target_advertising";
 	String TAXABLE_BASE = "aon_taxable_base";
+	String TICKET = "aon_ticket";
 	String TIME_2_PATTERN = "aon_time2_pattern";
 	String TIMESTAMP_PATTERN = "aon_timestamp_pattern";
 	String TIMESTAMP_2_PATTERN = "aon_timestamp2_pattern";

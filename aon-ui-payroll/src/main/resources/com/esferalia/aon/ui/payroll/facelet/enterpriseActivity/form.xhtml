@@ -33,10 +33,19 @@
 		
 			<aon:outputLabel for="EnterpriseActivity_quoteRegime"
 				value="#{bundle.payroll_activity_quoteRegime}" />
-			<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
-				value="#{enterpriseActivity.to.type}">
-				<f:selectItems value="#{payrollCollections.ssRegimes}" />
-			</aon:selectOneMenu>
+			<c:if test="#{enterpriseActivity.new}">
+				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
+					value="#{enterpriseActivity.to.type}">
+					<f:selectItems value="#{payrollCollections.availableSsRegimes}" />
+				</aon:selectOneMenu>
+			</c:if>
+			<c:if test="#{!enterpriseActivity.new}">
+				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
+					disabled="#{true}"
+					value="#{enterpriseActivity.to.type}">
+					<f:selectItems value="#{payrollCollections.ssRegimes}" />
+				</aon:selectOneMenu>
+			</c:if>
 			
 			<ui:include src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{enterpriseActivity.to.cnae2009}" />

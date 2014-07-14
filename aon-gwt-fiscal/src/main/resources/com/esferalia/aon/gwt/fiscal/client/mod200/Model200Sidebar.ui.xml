@@ -17,7 +17,7 @@
 
 			<g:FocusPanel ui:field='linkPage01' styleName="{aonResources.css.aonLinkItem}">
 				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
-					<g:InlineLabel text="{msg.administratorList}" />
+					<g:InlineLabel text="{msg.administratorPage}" />
 				</g:FlowPanel>
 			</g:FocusPanel>
 			
@@ -87,6 +87,11 @@
 			<g:FocusPanel ui:field='linkPage13' styleName="{aonResources.css.aonLinkItem}">
 				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
 					<g:InlineLabel text="{msg.deducibleLimitation}" />
+				</g:FlowPanel>
+			</g:FocusPanel>
+			<g:FocusPanel ui:field='linkPage14' styleName="{aonResources.css.aonLinkItem}">
+				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
+					<g:InlineLabel text="{msg.idDocument}" />
 				</g:FlowPanel>
 			</g:FocusPanel>
 		</g:FlowPanel>

@@ -198,6 +198,7 @@
 					disabled="#{empty contract.to.endDate}"
 					rendered="#{true}" ajaxSingle="true"
 					reRender="showCertificadosCommunicationWindow"
+					actionListener="#{contract.onCertificadosCommunicationShow}"
 					iconClass="aon-icon-sepe-certificados" >
 					<f:setPropertyActionListener
 						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />

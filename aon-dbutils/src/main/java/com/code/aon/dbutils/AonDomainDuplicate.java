@@ -143,8 +143,8 @@ public class AonDomainDuplicate implements Constants {
 		for (ColumnInfo ci : t.getColumns()) {
 			if ( ci.isFkColummn() ) {
 				if (t.getName().equals(ci.getFkTableName()) ) {
-					String updateStmt = "UPDATE " + t.getName() + " SET " + ci.getName() + " =  ? WHERE " + t.getPkColumn().getName() + "=?";
-					String selectStmt = "SELECT * FROM " + t.getName() + " WHERE domain = " + newDomain;
+					String updateStmt = "UPDATE " + t.getStrictName() + " SET " + ci.getStrictName() + " =  ? WHERE " + t.getPkColumn().getStrictName() + "=?";
+					String selectStmt = "SELECT * FROM " + t.getStrictName() + " WHERE domain = " + newDomain;
 					PreparedStatement update = null;
 					PreparedStatement select = null;
 					ResultSet rs = null;
@@ -213,12 +213,12 @@ public class AonDomainDuplicate implements Constants {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if ( air.getColumn().equals(ci) ) {
 							TableInfo fkTable = air.getReferencedTable(rs);
-							if (fkTable != null) {
+							if ((fkTable != null) && !TableUtil.isEmptyString(value)) {
 								Integer valueInteger = getInteger(value);
-								value = getReferenceValue(t, valueInteger, ci.getName(), fkTable.getName());
+								value = getReferenceValue(t, valueInteger, ci.getName(), fkTable.getName());	
 								if (value == null) {
 									value = -1;	
-								}								
+								}																	
 							}
 						}
 					}

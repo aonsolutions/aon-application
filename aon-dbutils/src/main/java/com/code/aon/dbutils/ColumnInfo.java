@@ -71,6 +71,10 @@ public class ColumnInfo implements Constants {
 	public String getName() {
 		return name;
 	}
+	
+	public String getStrictName() {
+		return TableUtil.getStrictName(name);
+	}	
 
 	public int getType() {
 		return type;

@@ -1120,6 +1120,9 @@
 	
 	<table name="pos">
 		<column name="display_mode" type="com.code.aon.finance.enumeration.PosDisplayMode"/>
+		<foreign-key constraint-name="FK_POS_ITEM_INVOICE">
+			<many-to-one property="itemInvoice" />
+		</foreign-key>
 	</table>
 		
 	<table name="pos_shift">

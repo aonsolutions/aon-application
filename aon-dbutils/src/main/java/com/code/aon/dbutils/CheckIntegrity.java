@@ -93,13 +93,13 @@ public class CheckIntegrity implements Constants {
 		sb.append( "SELECT ");
 		String pk = "id";
 		if ( (table != null) && (table.getPkColumn() != null) ) {
-			pk = table.getPkColumn().getName();
+			pk = table.getPkColumn().getStrictName();
 		}
 		sb.append( pk );
 		if ( domainColumn ) {
 			sb.append( ", domain");
 		}
-		sb.append(" FROM ").append(table.getName()).append(" WHERE ");
+		sb.append(" FROM ").append(table.getStrictName()).append(" WHERE ");
 		sb.append( pk ).append(" = ").append(value).append(";");
 		return sb.toString();
 	}
@@ -211,7 +211,7 @@ public class CheckIntegrity implements Constants {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if (air.getColumnName().equals(ci.getName())) {
 							TableInfo fkTable = air.getReferencedTable(rs);
-							if (fkTable != null) {
+							if ((fkTable != null) && !TableUtil.isEmptyString(value)) {
 								Integer fkId = getInteger(value);
 								checkId( fkTable, fkId, domainId );
 							}

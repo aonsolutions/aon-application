@@ -21,8 +21,6 @@ public class TableInfo implements Constants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TableInfo.class);
 	
-	private final static char TABLE_BOUNDARY = '`';
-	
 	private String name;
 	private ColumnInfo[] columns;
 	private int insertColumnsNumber;
@@ -126,7 +124,7 @@ public class TableInfo implements Constants {
 	}
 
 	public String getStrictName() {
-		return TABLE_BOUNDARY + name + TABLE_BOUNDARY;
+		return TableUtil.getStrictName(name);
 	}
 	
 	public ColumnInfo[] getColumns() {
@@ -145,11 +143,16 @@ public class TableInfo implements Constants {
 		}
 		return null;
 	}
-
+	
 	public String[] getColumnNames() {
+		return getColumnNames(false);
+	}
+
+	public String[] getColumnNames( boolean strict ) {
 		String[] columnNames = new String[this.columns.length];		
 		for( int i = 0; i < columnNames.length; i++ ) {
-			columnNames[i] = this.columns[i].getName();
+			ColumnInfo ci = this.columns[i];
+			columnNames[i] = (strict) ? ci.getStrictName() : ci.getName();
 		}
 		return columnNames;			
 	}
@@ -167,8 +170,9 @@ public class TableInfo implements Constants {
 	public String[] getInsertColumnNames() {
 		String[] columnNames = new String[this.insertColumnsNumber];
 		for( int i = 0, n = 0; i < columns.length; i++ ) {
-			if (! columns[i].isAutoIncrement() ) {
-				columnNames[n++] = columns[i].getName();
+			ColumnInfo ci = this.columns[i];
+			if (! ci.isAutoIncrement() ) {
+				columnNames[n++] = ci.getStrictName();
 			}
 		}
 		return columnNames;			
@@ -219,7 +223,7 @@ public class TableInfo implements Constants {
 		buf.append(getStrictName());
 		buf.append(" (");
 		if ( allColumns ) {
-			buf.append(StringUtils.join(getColumnNames(), ","));	
+			buf.append(StringUtils.join(getColumnNames(true), ","));	
 		} else {
 			buf.append(StringUtils.join(getInsertColumnNames(), ","));
 		}
@@ -247,11 +251,11 @@ public class TableInfo implements Constants {
 				ColumnInfo ci = this.columns[i];
 				if ( ci.getType() == Types.LONGVARBINARY) {
 					buf.append("CONVERT(");
-					buf.append(ci.getName());
+					buf.append(ci.getStrictName());
 					buf.append(" using latin1) as ");
 					buf.append(ci.getName());
 				} else {
-					buf.append(ci.getName());
+					buf.append(ci.getStrictName());
 				}
 				if (i+1 < columns.length ) {
 					buf.append(',');
@@ -264,9 +268,9 @@ public class TableInfo implements Constants {
 		buf.append(getStrictName());
 		buf.append(" WHERE ");
 		if ( DOMAIN_TABLE_NAME.equals(getName()) ) {
-			buf.append( getPkColumn().getName() );	
+			buf.append( getPkColumn().getStrictName() );	
 		} else {
-			buf.append( DOMAIN_COLUMN_NAME );
+			buf.append( TableUtil.getStrictName(DOMAIN_COLUMN_NAME) );
 		}
 		if ( domains.length == 1 ) {
 			buf.append(" = ");
@@ -280,7 +284,7 @@ public class TableInfo implements Constants {
 			buf.append(" AND ").append(where);
 		}
 		buf.append( " order by ");
-		buf.append( getPkColumn().getName() );
+		buf.append( getPkColumn().getStrictName() );
 		return buf.toString();
 	}
 
@@ -383,8 +387,8 @@ public class TableInfo implements Constants {
 		StringBuffer sb = new StringBuffer();
 		sb.append("LOCK TABLES ").append(getStrictName()).append(" WRITE");
 		if ( this.actionReference ) {
-			sb.append(", ").append(TABLE_BOUNDARY).append(ACTION_TABLE_NAME);
-			sb.append(TABLE_BOUNDARY).append(" READ");
+			sb.append(", ").append(TableUtil.getStrictName(ACTION_TABLE_NAME));
+			sb.append(" READ");
 		}
 		return sb.append(";").toString();
 	}

@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.shared.Address;
-import com.esferalia.aon.gwt.fiscal.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -122,7 +122,8 @@ public class Page4 extends ResizeComposite {
 			name1.setValue(m390.getLegalRepr1().getName());
 			document1.setValue(m390.getLegalRepr1().getDocument());
 			notary1.setValue(m390.getLegalRepr1().getNotary());
-			Date date = notaryDate1.getFormat().parse(notaryDate1, m390.getLegalRepr1().getNotaryDate(), false);
+//			Date date = notaryDate1.getFormat().parse(notaryDate1, m390.getLegalRepr1().getNotaryDate(), false);
+			Date date = m390.getLegalRepr1().getNotaryDate();
 			notaryDate1.setValue(date);
 		} else {
 			name1.setValue(null);
@@ -134,7 +135,8 @@ public class Page4 extends ResizeComposite {
 			name2.setValue(m390.getLegalRepr2().getName());
 			document2.setValue(m390.getLegalRepr2().getDocument());
 			notary2.setValue(m390.getLegalRepr2().getNotary());
-			Date date = notaryDate2.getFormat().parse(notaryDate2, m390.getLegalRepr2().getNotaryDate(), false);
+//			Date date = notaryDate2.getFormat().parse(notaryDate2, m390.getLegalRepr2().getNotaryDate(), false);
+			Date date = m390.getLegalRepr2().getNotaryDate();
 			notaryDate2.setValue(date);
 		} else {
 			name2.setValue(null);
@@ -146,7 +148,8 @@ public class Page4 extends ResizeComposite {
 			name3.setValue(m390.getLegalRepr3().getName());
 			document3.setValue(m390.getLegalRepr3().getDocument());
 			notary3.setValue(m390.getLegalRepr3().getNotary());
-			Date date = notaryDate3.getFormat().parse(notaryDate3, m390.getLegalRepr3().getNotaryDate(), false);
+//			Date date = notaryDate3.getFormat().parse(notaryDate3, m390.getLegalRepr3().getNotaryDate(), false);
+			Date date = m390.getLegalRepr3().getNotaryDate();
 			notaryDate3.setValue(date);
 		} else {
 			name3.setValue(null);
@@ -177,7 +180,8 @@ public class Page4 extends ResizeComposite {
 			legalRepr.setDocument(document1.getValue());
 			legalRepr.setName(name1.getValue());
 			legalRepr.setNotary(notary1.getValue());
-			legalRepr.setNotaryDate(notaryDate1.format());
+//			legalRepr.setNotaryDate(notaryDate1.format());
+			legalRepr.setNotaryDate(notaryDate1.getValue());
 			mod390.setLegalRepr1(legalRepr);
 			
 		}
@@ -186,7 +190,8 @@ public class Page4 extends ResizeComposite {
 			legalRepr.setDocument(document2.getValue());
 			legalRepr.setName(name2.getValue());
 			legalRepr.setNotary(notary2.getValue());
-			legalRepr.setNotaryDate(notaryDate2.format());
+//			legalRepr.setNotaryDate(notaryDate2.format());
+			legalRepr.setNotaryDate(notaryDate2.getValue());
 			mod390.setLegalRepr2(legalRepr);
 		}
 		if (!AonUtil.isEmpty( document3.getValue() ) ) {
@@ -194,7 +199,8 @@ public class Page4 extends ResizeComposite {
 			legalRepr.setDocument(document3.getValue());
 			legalRepr.setName(name3.getValue());
 			legalRepr.setNotary(notary3.getValue());
-			legalRepr.setNotaryDate(notaryDate3.format());
+//			legalRepr.setNotaryDate(notaryDate3.format());
+			legalRepr.setNotaryDate(notaryDate3.getValue());
 			mod390.setLegalRepr3(legalRepr);
 		}
 	}

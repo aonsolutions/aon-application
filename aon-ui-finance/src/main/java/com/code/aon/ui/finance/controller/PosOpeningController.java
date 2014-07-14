@@ -23,6 +23,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.Shift;
+import com.code.aon.finance.invoicing.PosInvoicing;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.PosUtils;
@@ -140,6 +141,11 @@ public class PosOpeningController implements Serializable {
 		try {
 			getPosShift().setInitialAmount(getPosShift().getAmount());
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
+
+            if (getPosShift().getPos().isInvoiceable()) {
+                PosInvoicing posInvoicing = new PosInvoicing();
+    			posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
+            }
 		} catch (ManagerBeanException ex) {
 			String msg = "Error en el proceso de Apertura de Caja.";
 			AonUtil.addErrorMessage(msg);

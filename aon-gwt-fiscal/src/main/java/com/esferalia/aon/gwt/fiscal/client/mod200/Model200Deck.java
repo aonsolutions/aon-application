@@ -45,6 +45,8 @@ public class Model200Deck extends ResizeComposite {
 	Page12 page12;
 	@UiField
 	Page13 page13;
+	@UiField
+	Page14 page14;
 	
 	@UiField
 	ErrorPage errorPage;
@@ -70,11 +72,12 @@ public class Model200Deck extends ResizeComposite {
 		page11.dump(mod200);
 		page12.dump(mod200);
 		page13.dump(mod200);
+		page14.dump(mod200);
 	}
 	
 	public Widget getPage(int i) {
 		Widget[] pages = new Widget[]{page00,page01,page02,page03,page04,page05
-				,page06,page07,page08,page09,page10,page11,page12,page13}; 
+				,page06,page07,page08,page09,page10,page11,page12,page13,page14}; 
 		return pages[i];
 	}
 	

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
@@ -277,8 +278,11 @@ public class TemporaryModel extends AbstractContractModel {
 			
 			dateFormatter.applyPattern("dd/MM/yyyy");
 			setPdfFieldValue(PdfFieldTemporary.START_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
+			String[] optionalEndDateCodes = {"401", "501", "410", "510", "403", "503", "540", "980", "990"};
 			if(contract.getEndDate()!=null){
 				setPdfFieldValue(PdfFieldTemporary.END_DATE.getValue(), dateFormatter.format(contract.getEndDate()));
+			} else if(ArrayUtils.contains(optionalEndDateCodes, code.getValue())) {
+				setPdfFieldValue(PdfFieldTemporary.END_DATE.getValue(), "fin de obra");
 			}
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.TRIAL_DURATION.toString()))){

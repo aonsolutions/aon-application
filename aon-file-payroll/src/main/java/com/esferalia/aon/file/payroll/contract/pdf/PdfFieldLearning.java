@@ -104,6 +104,8 @@ public enum PdfFieldLearning implements IContractFieldName{
 	EMPLOYEE_OPT2,
 	EMPLOYEE_OPT3,
 	EMPLOYEE_OPT4,
+	EMPLOYEE_OPT(EMPLOYEE_OPT1,EMPLOYEE_OPT2,EMPLOYEE_OPT3,EMPLOYEE_OPT4),
+	
 	
 	ACTIVITY_EMPLOYEE_PROFFESION,
 	CNO1,
@@ -308,7 +310,13 @@ public enum PdfFieldLearning implements IContractFieldName{
 	
 	private boolean overridable;
 	private boolean check;
+	private PdfFieldLearning[] compositeValues;
 	
+	private PdfFieldLearning() {
+	}
+	private PdfFieldLearning(PdfFieldLearning... compositeValues) {
+		this.compositeValues = compositeValues;
+	}
 	private PdfFieldLearning(boolean... values) {
 		this.overridable = (ArrayUtils.getLength(values)>0)?values[0]:false;		
 		this.check= (ArrayUtils.getLength(values)>1)?values[1]:false;
@@ -316,16 +324,15 @@ public enum PdfFieldLearning implements IContractFieldName{
 	
 	@Override
 	public boolean isOverridable(){
-		return overridable;
+		return overridable || compositeValues!=null;
 	}
 	@Override
 	public boolean isCheck(){
-		return check;
+		return check || compositeValues!=null;
 	}
 	@Override
 	public boolean isCommonValue(){
 		return !this.toString().matches("OPT\\d+_\\w+");
-		
 	}
 	@Override
 	public String getValue(){
@@ -333,7 +340,7 @@ public enum PdfFieldLearning implements IContractFieldName{
 	}
 	@Override
 	public IContractFieldName[] getCompositeValues(){
-		return null;
+		return compositeValues;
 	}
 	
 }

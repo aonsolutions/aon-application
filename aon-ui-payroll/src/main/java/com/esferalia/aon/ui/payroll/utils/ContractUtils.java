@@ -1329,19 +1329,19 @@ public class ContractUtils implements Serializable {
 			
 			while(!date.after(endDate)){
 				if(date.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
-					list.add(new MonthHours(monday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?monday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY){
-					list.add(new MonthHours(tuesday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?tuesday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY){
-					list.add(new MonthHours(wednesday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?wednesday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY){
-					list.add(new MonthHours(thursday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?thursday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY){
-					list.add(new MonthHours(friday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?friday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
-					list.add(new MonthHours(saturday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?saturday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
-					list.add(new MonthHours(sunday, null));
+					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?sunday:0, null));
 				}
 				date.add(Calendar.DAY_OF_MONTH, 1);
 			}
@@ -1349,6 +1349,11 @@ public class ContractUtils implements Serializable {
 			// do nothing ...
 		}
 		return list;
+	}
+	
+	private static boolean isContractEffectiveDate(Contract contract, Date date){
+		return (date.after(contract.getStartDate()) || date.equals(contract.getStartDate())) 
+				&& (contract.getEndDate()==null || date.before(contract.getEndDate()) || date.equals(contract.getEndDate())) ;
 	}
 
 	public static class MonthHours {

@@ -2,7 +2,6 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -17,9 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
@@ -39,14 +36,6 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		}
 		completeHandicap();
 	}
-
-	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		Date date = obtainStartDate();
-		((IrpfData) getController().getTo()).setStartDate(date);
-		((IrpfData) getController().getTo()).setIssueDate(date);
-	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
@@ -58,17 +47,17 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		completeHandicap();
 	}
 	
-	@Override
-	public void afterBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		updatePreviousData(true);
-	}
-	
-	@Override
-	public void beforeBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		updatePreviousData(false);
-	}
+//	@Override
+//	public void afterBeanAdded(ControllerEvent event)
+//			throws ControllerListenerException {
+//		updatePreviousData(true);
+//	}
+//	
+//	@Override
+//	public void beforeBeanRemoved(ControllerEvent event)
+//			throws ControllerListenerException {
+//		updatePreviousData(false);
+//	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
@@ -76,31 +65,33 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		completeHandicap();
 	}
 	
-	private void updatePreviousData(boolean closeDate) {
-		try {
-			if(getController().getRowCount()>1){
-				IrpfData data = (IrpfData) getController().getTo();
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID), data.getContract().getId());
-				criteria.addOrder(getController().getFieldName(IEntityAlias.IRPF_DATA_START_DATE), false);
-				List<ITransferObject>  list = getController().getManagerBean().getList(criteria);
-				IrpfData preData = (IrpfData) list.get(1);
-				if(closeDate){
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(data.getStartDate());
-					cal.add(Calendar.DAY_OF_MONTH, -1);
-					preData.setEndDate(cal.getTime());
-				} else {
-					preData.setEndDate(null);
-				}
-				getController().getManagerBean().update(preData);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al finalizar el modelo anterior";
-			LOGGER.error(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
+	
+	
+//	private void updatePreviousData(boolean closeDate) {
+//		try {
+////			if(getController().getRowCount()>1){
+//			IrpfData data = (IrpfData) getController().getTo();
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(getController().getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID), data.getContract().getId());
+//			criteria.addOrder(getController().getFieldName(IEntityAlias.IRPF_DATA_START_DATE), false);
+//			List<ITransferObject>  list = getController().getManagerBean().getList(criteria);
+//			IrpfData preData = (IrpfData) list.get(1);
+//			if(closeDate){
+//				Calendar cal = Calendar.getInstance();
+//				cal.setTime(data.getStartDate());
+//				cal.add(Calendar.DAY_OF_MONTH, -1);
+//				preData.setEndDate(cal.getTime());
+//			} else {
+//				preData.setEndDate(null);
+//			}
+//			getController().getManagerBean().update(preData);
+////			}
+//		} catch (ManagerBeanException e) {
+//			String msg = "Error al finalizar el modelo anterior";
+//			LOGGER.error(msg);
+//			throw new AbortProcessingException(msg);
+//		}
+//	}
 
 	private void completeHandicap() {
 		IrpfDataController controller = (IrpfDataController) getController();
@@ -117,23 +108,10 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		} else if(controller.getDisabilityLevel()==DisabilityLevel.GT_EQ_65){
 			data.setDisabilityLevel(DisabilityLevel.GT_EQ_65);
 			data.setDependence(false);
+		} else {
+			data.setDisabilityLevel(null);
+			data.setDependence(false);
 		}
-	}
-	
-	private Date obtainStartDate() {
-		try {
-			if(this.getController().getRowCount()==0){
-				 Contract contract =  (Contract) ((IrpfDataController)this.getController()).getMasterController().getTo();
-				 return contract.getStartDate();
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.error(msg);
-			LOGGER.error(e.getMessage());
-		}
-		return new Date();
 	}
 	
 }

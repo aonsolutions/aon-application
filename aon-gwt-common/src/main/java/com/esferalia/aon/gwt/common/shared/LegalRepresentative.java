@@ -1,6 +1,7 @@
-package com.esferalia.aon.gwt.fiscal.shared;
+package com.esferalia.aon.gwt.common.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -9,7 +10,7 @@ public class LegalRepresentative implements Serializable, IsSerializable {
 
 	private String name;
 	private String document;
-	private String notaryDate;
+	private Date notaryDate;
 	private String notary;
 	
 	public String getName() {
@@ -24,10 +25,10 @@ public class LegalRepresentative implements Serializable, IsSerializable {
 	public void setDocument(String document) {
 		this.document = document;
 	}
-	public String getNotaryDate() {
+	public Date getNotaryDate() {
 		return notaryDate;
 	}
-	public void setNotaryDate(String notaryDate) {
+	public void setNotaryDate(Date notaryDate) {
 		this.notaryDate = notaryDate;
 	}
 	public String getNotary() {

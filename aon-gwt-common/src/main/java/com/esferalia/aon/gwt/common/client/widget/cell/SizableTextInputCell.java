@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.common.client.widget.cell;
 
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;

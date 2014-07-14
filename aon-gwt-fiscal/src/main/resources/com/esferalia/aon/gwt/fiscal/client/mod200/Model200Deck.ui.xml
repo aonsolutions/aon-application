@@ -24,6 +24,7 @@
 			<soci:Page11 ui:field="page11" />
 			<soci:Page12 ui:field="page12" />
 			<soci:Page13 ui:field="page13" />
+			<soci:Page14 ui:field="page14" />
 			
 			<soci:ErrorPage ui:field="errorPage" />
 		</g:DeckPanel>

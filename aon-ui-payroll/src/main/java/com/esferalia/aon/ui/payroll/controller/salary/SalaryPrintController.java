@@ -725,6 +725,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			List<ITransferObject> l = new LinkedList<ITransferObject>();
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_ID), checks);
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contractIdList);
 			bean.getList(criteria);

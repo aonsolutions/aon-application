@@ -306,7 +306,7 @@ public class AonDomainDump implements Constants {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if (air.getColumnName().equals(ci.getName())) {
 							TableInfo fkTable = air.getReferencedTable(rs);
-							if (fkTable != null) {
+							if ((fkTable != null) && !TableUtil.isEmptyString(value)) {
 								Integer valueInteger = getInteger(value);
 								String newValue = getReferenceValue(t, valueInteger, ci, fkTable.getName());
 								values[i] = (newValue == null) ? "-1" : newValue;

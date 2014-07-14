@@ -123,9 +123,9 @@ import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
 public class ContrataReader {
 	
-	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
-	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
-	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
+	private final static String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
+	private final static String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
+	private final static String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
 	
 	private IContrataParams params;
 	
@@ -166,6 +166,41 @@ public class ContrataReader {
 	}
 	
 
+	static final JAXBContext contratoContext = initContratoContext();
+	static final JAXBContext transformacionContext = initTransformacionContext();
+	static final JAXBContext prorrogaContext = initProrrogaContext();
+
+    private static JAXBContext initContratoContext() {
+        try {
+			return JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
+		} catch (JAXBException e) {
+			String msg = "Error al obtener el contexto de Contrat@ para contratos";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.toString());
+		}
+		return null;
+    }
+    private static JAXBContext initTransformacionContext() {
+    	try {
+			return JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
+		} catch (JAXBException e) {
+			String msg = "Error al obtener el contexto de Contrat@ para transformaciones";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.toString());
+		}
+		return null;
+    }
+    private static JAXBContext initProrrogaContext() {
+    	try {
+			return JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
+		} catch (JAXBException e) {
+			String msg = "Error al obtener el contexto de Contrat@ para prorrogas";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.toString());
+		}
+		return null;
+    }
+	
 	public IContrataParams readFile(InputStream input) throws ManagerBeanException, IOException{
 		
 		processContractDocumentType(input);
@@ -176,26 +211,21 @@ public class ContrataReader {
 			setTransformaciones(null);
 			setProrrogas(null);
 			if( isContratoFile ){
-				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_CONTRATOS_MODEL_PATH);
-				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+				Unmarshaller unmarshaller = contratoContext.createUnmarshaller();
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				contratos = (CONTRATOS) unmarshaller.unmarshal(input);
 				IContratoType contratoType = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 				this.params = new ContrataContratoParams();
 				completeContratosParams(contratoType, (ContrataContratoParams) params);
 			} else if( isTransformacionFile ) {
-				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
-				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-//				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
+				Unmarshaller unmarshaller = transformacionContext.createUnmarshaller();
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
 				ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
 				this.params = new ContrataTransformacionesParams();
 				completeTransformacionesParams(transformacionType, (ContrataTransformacionesParams) params);
 			} else if( isProrrogaFile ) {
-				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_PRORROGAS_MODEL_PATH);
-				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-//				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
+				Unmarshaller unmarshaller = prorrogaContext.createUnmarshaller();
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				prorrogas = (PRORROGAS) unmarshaller.unmarshal(input);
 				PRORROGATIPOTYPE prorrogaType = (PRORROGATIPOTYPE) prorrogas.getPRORROGATIPO().get(0);
@@ -208,7 +238,6 @@ public class ContrataReader {
 			String msg = "Error al obtener los datos de Contrat@";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.toString());
-//			throw new AbortProcessingException(msg, e);
 		} finally {
 			input.close();
 		}

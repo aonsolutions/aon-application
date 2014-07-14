@@ -5,14 +5,14 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// � --> \u00C1 � --> \u00E1
-	// � --> \u00C9 � --> \u00E9
-	// � --> \u00CD � --> \u00ED
-	// � --> \u00D3 � --> \u00F3
-	// � --> \u00DA � --> \u00FA
-	// � --> \u00D1 � --> \u00F1
-	// � --> \u00AA � --> \u00BA
-	// � --> \u00BF
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// º --> \u00AA ª --> \u00BA
+	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -151,6 +151,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Hasta")
 	String until();
+
+	@DefaultMessage("Fecha")
+	String date();
 
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
@@ -483,6 +486,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos del representante")
 	String representativeData();
 
+	@DefaultMessage("Datos de los representantes legales")
+	String legalRepresentativeData();
+	
+	@DefaultMessage("Datos del Secretario del Consejo o persona que cumple las funciones en el \u00F3rgano que sustituye a dicho Consejo. Declarante o representante.")
+	String secretaryData();
+
 	@DefaultMessage("PERSONAS F\u00CDSICAS Y ENTIDADES SIN PERSONALIDAD JUR\u00CDDICA")
 	String nonLegalEntities();
 
@@ -494,6 +503,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Notar\u00EDa")
 	String notary();
+	
+	@DefaultMessage("Fecha Notar\u00EDa")
+	String notaryDate();
 
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen general")
 	String generalRegimeOperations();
@@ -782,6 +794,9 @@ public interface CommonMessages extends Messages {
 			"NO_RESIDENTE", "No residente" })
 	String provinceName(@Select Province province);
 
+	@DefaultMessage("Datos de secretario, representantes y administradores")
+	String administratorPage();
+
 	@DefaultMessage("Relaci\u00F3n de administradores")
 	String administratorList();
 
@@ -1024,6 +1039,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("3.- Ejercicio econ\u00F3mico de duraci\u00F3n inferior a 12 meses.")
 	String periodType3();
 		
+	@DefaultMessage("Liquidaci\u00F3n")
+	String liquidacion();
 	@DefaultMessage("Liquidaci\u00F3n (I)")
 	String liquidacionI();
 	@DefaultMessage("Liquidaci\u00F3n (II)")
@@ -1190,4 +1207,45 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Exportar datos contables")
 	String aeatAccountingFile();
+
+	@DefaultMessage("Datos de Grupo Fiscal")
+	String fiscalGroupLabel();
+
+	@DefaultMessage("Numero de Grupo Fiscal")
+	String fiscalGroup();
+
+	@DefaultMessage("NIF de la sociedad dominante")
+	String dominantDocument();
+	
+	@DefaultMessage("Documento de ingreso o Devoluci\u00F3n")
+	String idDocument();
+
+	@DefaultMessage("Devoluci\u00F3n")
+	String payBack();
+
+	@DefaultMessage("Ingreso")
+	String deposit();
+
+	@DefaultMessage("Cuota cero")
+	String zeroQuota();
+
+	@DefaultMessage("Renuncia a la devoluci\u00F3n")
+	String payBackRefuse();
+	
+	@DefaultMessage("Devoluci\u00F3n por transferencia")
+	String payBackTransfer();
+	
+	@DefaultMessage("Forma de pago")
+	String paymentType();
+	
+	@DefaultMessage("En efectivo")
+	String cash();
+	
+	@DefaultMessage("E.C. Adeudo en cuenta")
+	String directDebit();
+	
+	@DefaultMessage("I.B.A.N.")
+	String iban();
+	
+	
 }

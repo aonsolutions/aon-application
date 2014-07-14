@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;

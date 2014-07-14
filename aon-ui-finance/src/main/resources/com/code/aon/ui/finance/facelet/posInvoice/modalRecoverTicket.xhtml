@@ -16,7 +16,7 @@
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText 
-							value="#{bundle.finance_pos_seller_label}" />
+							value="#{bundle.finance_pos_recover}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -66,10 +66,10 @@
 											<ui:param name="sfc_seriesRequired" value="#{false}" />
 											<ui:param name="sfc_seriesProperty" value="#{invoiceController.recoverSeries}" />
 											<ui:param name="sfc_numberProperty" value="#{invoiceController.recoverNumber}" />
-											<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
-												value="#{offer.onInvoiceSeriesChanged}" />	
-											<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
-												value="#{offer.onInvoiceNumberEditable}" />
+											<aon:methodParam name="sfc_onSeriesChanged"
+												value="" type="valueChangeListener" />	
+											<aon:methodParam name="sfc_onNumberEditable"
+												value="" type="actionListener" />
 										</ui:include>
 
 									</aon:panelGrid>

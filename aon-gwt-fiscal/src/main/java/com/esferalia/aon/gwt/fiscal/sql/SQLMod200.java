@@ -18,6 +18,8 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
+import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
@@ -64,6 +66,12 @@ public class SQLMod200 {
 					 null:new java.sql.Date(mod200.getPeriodStart().getTime()))
 			 .set(FS_MODEL200.PERIOD_END, mod200.getPeriodEnd()==null?
 					 null:new java.sql.Date(mod200.getPeriodEnd().getTime()))
+			 .set(FS_MODEL200.FISCAL_GROUP,mod200.getFiscalGroup())
+			 .set(FS_MODEL200.DOMINANT_DOCUMENT,mod200.getDominantDocument())
+			 .set(FS_MODEL200.SECRETARY_DOCUMENT,mod200.getSecretary()==null?null:mod200.getSecretary().getDocument())
+			 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
+			 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
+					 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
 			 .set(FS_MODEL200.COMMENTS,mod200.getComments())
 			 .returning()
 			 .fetchOne();
@@ -128,6 +136,19 @@ public class SQLMod200 {
 				list.add(detail);
 			}
 		}
+		if (mod200.getRepresentatives() != null) {
+			for ( LegalRepresentative lr : mod200.getRepresentatives() ) {
+				detail = new FsModel200RegistryRecord();
+				detail.setFsModel200(mod200.getId());
+				detail.setDomain(mod200.getDomain());
+				detail.setDocument(lr.getDocument());
+				detail.setNotary(lr.getNotary());
+				detail.setNotaryDate( lr.getNotaryDate()==null?null:new java.sql.Date( lr.getNotaryDate().getTime() ) );
+				detail.setName(lr.getName());
+				detail.setType((byte) 3);
+				list.add(detail);
+			}
+		}
 		if (!list.isEmpty()) {
 			dsl.batchStore(list).execute();
 		}
@@ -183,10 +204,18 @@ public class SQLMod200 {
 		 .set(FS_MODEL200.PERIOD_END, mod200.getPeriodEnd()==null?
 				 null:new java.sql.Date(mod200.getPeriodEnd().getTime()))
 		 .set(FS_MODEL200.COMMENTS,mod200.getComments())
+		 .set(FS_MODEL200.FISCAL_GROUP,mod200.getFiscalGroup())
+		 .set(FS_MODEL200.DOMINANT_DOCUMENT,mod200.getDominantDocument())
+		 .set(FS_MODEL200.SECRETARY_DOCUMENT,mod200.getSecretary()==null?null:mod200.getSecretary().getDocument())
+		 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
+		 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
+				 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		deleteDetail(conn, dsl, mod200);
 		insertDetail(conn, dsl, mod200);
+		deleteRegistry(conn, dsl, mod200);
+		insertAdministrator(conn, dsl, mod200);
 		return mod200;
 	}
 
@@ -277,6 +306,14 @@ public class SQLMod200 {
 		mod200.setPeriodType(record.getPeriodType());
 		mod200.setReceipt(record.getReceipt());
 		mod200.setComments(record.getComments());
+		mod200.setFiscalGroup(record.getFiscalGroup());
+		mod200.setDominantDocument(record.getDominantDocument());
+		Secretary secretary = new Secretary();
+		secretary.setDocument(record.getSecretaryDocument());
+		secretary.setName(record.getSecretaryName());
+		secretary.setIrnr(record.getIrnr());
+		mod200.setSecretary(secretary);
+		mod200.setComments(record.getComments());
 		return mod200;
 	}
 
@@ -284,12 +321,14 @@ public class SQLMod200 {
 		List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
 		List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
 		List<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
+		List<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
 		Result<FsModel200RegistryRecord> res = 
 				dsl.selectFrom(FS_MODEL200_REGISTRY)
 			 	.where(	FS_MODEL200_REGISTRY.FS_MODEL200.equal(mod200.getId()))
 			 	.fetch();
 		CompanyAdministrator ca = null;
 		CompanyParticipation cp = null;
+		LegalRepresentative lr  = null;
 		for (FsModel200RegistryRecord reg : res) {
 			if (reg.getType() == 0) {
 				ca = new CompanyAdministrator();
@@ -316,7 +355,7 @@ public class SQLMod200 {
 				cp.setOtherAmounts(reg.getOtherAmounts());
 				cp.setResult(reg.getResult());
 				participationsOut.add(cp);
-			} else {
+			} if (reg.getType() == 2) {
 				cp = new CompanyParticipation();					
 				cp.setDocument(reg.getDocument());
 				cp.setName(reg.getName());
@@ -325,11 +364,19 @@ public class SQLMod200 {
 				cp.setPercent(reg.getPercent());
 				cp.setNominalValue(reg.getNominalValue());
 				participationsIn.add(cp);
+			} if (reg.getType() == 3) {
+				lr = new LegalRepresentative();					
+				lr.setDocument(reg.getDocument());
+				lr.setName(reg.getName());
+				lr.setNotary(reg.getNotary());
+				lr.setNotaryDate(reg.getNotaryDate());
+				representatives.add(lr);
 			}
 		}
 		mod200.setAdministrators(administrators);
 		mod200.setParticipationsIn(participationsIn);
 		mod200.setParticipationsOut(participationsOut);
+		mod200.setRepresentatives(representatives);
 	}
 
 

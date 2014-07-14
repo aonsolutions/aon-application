@@ -32,6 +32,7 @@ public class GenericLinesFiller extends AbstractLinesFiller {
 					try {
 						valueOfProperty = PropertyUtils.getProperty(properties.get(component.getBean()), component.getProperty());
 					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 					String valueDetail = component.getBean()+" "+component.getProperty()+" "+valueOfProperty;
 					String detail = "OBJECT:"+component.getName()+" VALUE:"+valueDetail;

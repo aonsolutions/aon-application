@@ -390,10 +390,18 @@ public class PayrollCollectionsController implements Serializable {
 		return occupationTypes;
 	}
 	
+	public List<SelectItem> getAvailableSsRegimes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+				.getLocale();
+		LinkedList<SelectItem> ssRegimes = new LinkedList<SelectItem>();
+		ssRegimes.add(new SelectItem(SSRegimeType.GENERAL, SSRegimeType.GENERAL.getName(locale)));
+		return ssRegimes;
+	}
+	
 	public List<SelectItem> getSsRegimes() {
 		if (ssRegimes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-			.getLocale();
+					.getLocale();
 			ssRegimes = new LinkedList<SelectItem>();
 			SSRegimeType[] models = SSRegimeType.values();
 			for (SSRegimeType ss : models) {

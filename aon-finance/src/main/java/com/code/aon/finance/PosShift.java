@@ -50,7 +50,7 @@ public class PosShift extends PosShiftDB {
 	
 	@Transient
 	public Map<PayMethod, double[]> getTotalShiftCountMap() {
-		if (totalShiftCountMap == null) {
+		if (totalShiftCountMap == null || totalShiftCountMap.size() == 0) {
 			totalShiftCountMap = calculateTotalShiftCountMap();
 		}
 		return totalShiftCountMap;
