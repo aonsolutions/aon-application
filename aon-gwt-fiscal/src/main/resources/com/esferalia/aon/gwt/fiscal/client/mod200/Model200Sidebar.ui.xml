@@ -17,7 +17,7 @@
 
 			<g:FocusPanel ui:field='linkPage01' styleName="{aonResources.css.aonLinkItem}">
 				<g:FlowPanel styleName="{aonResources.css.aonLinkListItem}">
-					<g:InlineLabel text="{msg.administratorList}" />
+					<g:InlineLabel text="{msg.administratorPage}" />
 				</g:FlowPanel>
 			</g:FocusPanel>
 			

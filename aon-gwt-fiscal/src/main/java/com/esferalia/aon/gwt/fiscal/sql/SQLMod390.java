@@ -7,6 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +32,7 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Administraciones;
@@ -64,7 +68,6 @@ import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Address;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.esferalia.aon.gwt.fiscal.shared.FarmerRegimeActivity;
-import com.esferalia.aon.gwt.fiscal.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
@@ -81,6 +84,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.InvoiceTaxColumns;
 
 public class SQLMod390 {
 	// private static Logger LOGGER = Logger.getLogger(SQLMod390.class.getName());
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	//@formatter:off
 	private static final String MOD390_SELECT_BY_DOMAIN = "SELECT "
@@ -986,7 +990,7 @@ public class SQLMod390 {
 		}
 	}
 
-	private static void populate(Mod390 mod390, AEATIVA2013 iva) {
+	private static void populate(Mod390 mod390, AEATIVA2013 iva) throws ParseException {
 		DatIdent datIdent = iva.getDatIdent();
 		if ( !mod390.isLegalEntity() ) {
 			TipoPersonaFisica tpf = datIdent.getPersFisica();
@@ -1087,7 +1091,13 @@ public class SQLMod390 {
 				lg.setDocument(trj.getNIF());
 				lg.setName(trj.getNombre());
 				lg.setNotary(trj.getNotaria());
-				lg.setNotaryDate(trj.getFechaPoder());
+				
+				// lg.setNotaryDate(trj.getFechaPoder());
+				String fec = trj.getFechaPoder();
+				
+				lg.setNotaryDate( fec==null?null: DATE_FORMAT.parse(fec) );
+
+				
 				if (i == 1) {
 					mod390.setLegalRepr1(lg);
 				} else if (i == 2) {

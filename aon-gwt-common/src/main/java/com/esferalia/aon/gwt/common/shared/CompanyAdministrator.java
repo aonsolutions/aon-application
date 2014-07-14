@@ -72,4 +72,18 @@ public class CompanyAdministrator implements Serializable, IsSerializable {
 	public void setProvince(int province) {
 		this.province = province;
 	}
+	
+	public String getEntity() {
+		if (AonUtil.isEmpty(document)) {
+			return null;
+		}
+		return DocumentUtil.isEntity(document)?"J":"F";
+	}
+	public String getProvinceStr() {
+		String p = Integer.toString(province);
+		return AonUtil.leftPad(p, 2, "0"); 
+	}
+	public String getRepresenStr() {
+		return isRepresentative()?"1":"0"; 
+	}
 }

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.common.client.widget.cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;

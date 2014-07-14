@@ -4385,6 +4385,11 @@ CREATE TABLE `fs_model200` (
   `period_type` tinyint(1) NOT NULL default '0' COMMENT 'Tipo de periodo',
   `period_start` date NOT NULL COMMENT 'Inicio periodo',
   `period_end` date NOT NULL COMMENT 'Fin periodo',
+  `fiscal_group` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de grupo fiscal',
+  `dominant_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF de la entidad dominante',
+  `secretary_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del secretario',
+  `secretary_name` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del secretario',
+  `irnr` date DEFAULT NULL COMMENT 'Fecha IRNR',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
@@ -4436,6 +4441,8 @@ CREATE TABLE `fs_model200_registry` (
   `reserve` double(15,3) default NULL COMMENT 'Reservas',
   `other_amounts` double(15,3) default NULL COMMENT 'Otras partidas',
   `result` double(15,3) default NULL COMMENT 'Resultado del ultimo ejercicio',
+  `notary` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Notaria',
+  `notary_date` date DEFAULT NULL COMMENT 'Fecha Notaria',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_REGISTRY_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_REGISTRY_FS_MODEL200` (`fs_model200`),
@@ -7571,7 +7578,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.37.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.37.1');
 
 COMMIT;
 

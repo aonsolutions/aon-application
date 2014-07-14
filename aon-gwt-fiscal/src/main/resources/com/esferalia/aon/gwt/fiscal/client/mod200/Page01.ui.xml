@@ -9,6 +9,84 @@
 
 	<g:HTMLPanel styleName="{aonResources.css.aonMod200Container}">
 		<g:HTMLPanel ui:field="basePanel" styleName="aon-width-all">
+
+			<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.secretaryData}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table class="aon-width-all aon-margin-bottom">
+						<tr>
+							<td style="width: 100px;">
+								<g:Label text="{msg.document}"  />	
+							</td>
+							<td style="width: 130px;">
+								<aon:DocumentTextBox ui:field="secretaryDocument"/>	
+							</td>
+							<td style="width: 100px;">
+								<g:Label text="{msg.name}"  />	
+							</td>
+							<td>
+								<g:TextBox ui:field="secretaryName" visibleLength="40"/>
+							</td>
+							<td style="width: 100px;">
+								<g:Label text="{msg.date}"  />	
+							</td>
+							<td>
+								<aon:DateBoxEx  ui:field="irnr"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>				
+
+			<g:HTMLPanel ui:field="fiscalGroupPanel" styleName="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.fiscalGroupLabel}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table class="aon-width-all aon-margin-bottom">
+						<tr>
+							<td style="width: 250px;">
+								<g:Label text="{msg.fiscalGroup}"  />	
+							</td>
+							<td>
+								<g:TextBox ui:field="fiscalGroup" visibleLength="8" maxLength="7"/>
+							</td>
+							<td style="width: 250px;">
+								<g:Label text="{msg.dominantDocument}"  />	
+							</td>
+							<td>
+								<aon:DocumentTextBox ui:field="dominantDocument"/>	
+							</td>
+						</tr>
+					</table>
+				</div>
+			</g:HTMLPanel>				
+
+			<div class="{aonResources.css.aonGroup}">
+				<div class="{aonResources.css.aonGroupTitle}">
+					<g:InlineLabel text="{msg.legalRepresentativeData}" />
+				</div>
+				<div class="{aonResources.css.aonGroupBody}">
+					<table class="aon-width-all aon-margin-bottom">
+						<tr>
+							<td>
+								<cell:CellTable ui:field="table1"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<g:Button ui:field="newLegalRepresentative"
+									styleName="aon-icon-reset {aonResources.css.aonBorderNone}">
+									&#160;
+								</g:Button>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>				
+
 			<div class="{aonResources.css.aonGroup}">
 				<div class="{aonResources.css.aonGroupTitle}">
 					<g:InlineLabel text="{msg.administratorList}" />
@@ -17,7 +95,7 @@
 					<table class="aon-width-all aon-margin-bottom">
 						<tr>
 							<td>
-								<cell:CellTable ui:field="table1"/>
+								<cell:CellTable ui:field="table2"/>
 							</td>
 						</tr>
 						<tr>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.Administraciones;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos;
 import com.esferalia.aon.gwt.fiscal.server.mod390.AEATIVA2013.DatEstadisticos.Conjunta;
@@ -67,7 +68,6 @@ import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Address;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.esferalia.aon.gwt.fiscal.shared.FarmerRegimeActivity;
-import com.esferalia.aon.gwt.fiscal.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.shared.SimpliedRegimeActivity;
@@ -380,7 +380,8 @@ public class Mod390toAEATIVA2013 {
 				trj.setNIF(toUppercase(lr.getDocument()));
 				trj.setNombre(toUppercase(lr.getName()));
 				trj.setNotaria(toUppercase(lr.getNotary()));
-				trj.setFechaPoder(lr.getNotaryDate());
+				// TODO
+				trj.setFechaPoder( lr.getNotaryDate().toString() );
 				list.add(trj);
 			}
 		}

@@ -286,6 +286,15 @@
 		<servlet-name>Mod200 Accounting File</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Model200AccountingFile</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Mod200 File</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod200File</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mod200 File</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Model200File</url-pattern>
+	</servlet-mapping>
 	
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>

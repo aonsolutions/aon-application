@@ -152,6 +152,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Hasta")
 	String until();
 
+	@DefaultMessage("Fecha")
+	String date();
+
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
@@ -483,6 +486,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos del representante")
 	String representativeData();
 
+	@DefaultMessage("Datos de los representantes legales")
+	String legalRepresentativeData();
+	
+	@DefaultMessage("Datos del Secretario del Consejo o persona que cumple las funciones en el \u00F3rgano que sustituye a dicho Consejo. Declarante o representante.")
+	String secretaryData();
+
 	@DefaultMessage("PERSONAS F\u00CDSICAS Y ENTIDADES SIN PERSONALIDAD JUR\u00CDDICA")
 	String nonLegalEntities();
 
@@ -494,6 +503,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Notar\u00EDa")
 	String notary();
+	
+	@DefaultMessage("Fecha Notar\u00EDa")
+	String notaryDate();
 
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen general")
 	String generalRegimeOperations();
@@ -781,6 +793,9 @@ public interface CommonMessages extends Messages {
 
 			"NO_RESIDENTE", "No residente" })
 	String provinceName(@Select Province province);
+
+	@DefaultMessage("Datos de secretario, representantes y administradores")
+	String administratorPage();
 
 	@DefaultMessage("Relaci\u00F3n de administradores")
 	String administratorList();
@@ -1190,4 +1205,14 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Exportar datos contables")
 	String aeatAccountingFile();
+
+	@DefaultMessage("Datos de Grupo Fiscal")
+	String fiscalGroupLabel();
+
+	@DefaultMessage("Numero de Grupo Fiscal")
+	String fiscalGroup();
+
+	@DefaultMessage("NIF de la sociedad dominante")
+	String dominantDocument();
+
 }

@@ -33,7 +33,7 @@ public class SQLCompany {
 		return company;
 	}
 	
-	public static List<CompanyAdministrator> getAdministrators(DSLContext ctx,int domain) throws AonSQLException {
+	public static List<CompanyAdministrator> getDirStaff(DSLContext ctx,int domain) throws AonSQLException {
 		List<Record6<String,String,Byte,Byte,Double,Double>> record = 
 			ctx.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
 				.from(COMPANY)

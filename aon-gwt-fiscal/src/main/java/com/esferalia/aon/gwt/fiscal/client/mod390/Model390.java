@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.esferalia.aon.gwt.common.shared.DocumentUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
@@ -524,7 +524,7 @@ public class Model390 extends MainEntryPoint {
 			if (AonUtil.isEmpty(m390.getDocument())) {
 				throw new IllegalArgumentException(MSG.requiredField(" Apart. 0: " + MSG.document()));
 			}
-			if (!DocumentTextBox.isValid(m390.getDocument())) {
+			if (!DocumentUtil.isValid(m390.getDocument())) {
 				throw new IllegalArgumentException("El NIF/DNI no es correcto");
 			}
 			if (AonUtil.isEmpty(m390.getName())) {
@@ -551,22 +551,22 @@ public class Model390 extends MainEntryPoint {
 			if (AonUtil.isEmpty(m390.getAddress().getRdocument())) {
 				throw new IllegalArgumentException("Para personas f\u00EDsicas, el NIF/DNI del representante es obligatorio. (Apartado 4)");
 			}
-			if (!DocumentTextBox.isValid(m390.getAddress().getRdocument())) {
+			if (!DocumentUtil.isValid(m390.getAddress().getRdocument())) {
 				throw new IllegalArgumentException("El NIF/DNI del representante no es correcto. (Apartado 4)");
 			}
 		} else {
 			if (m390.getLegalRepr1() != null) {
-				if (!DocumentTextBox.isValid(m390.getLegalRepr1().getDocument())) {
+				if (!DocumentUtil.isValid(m390.getLegalRepr1().getDocument())) {
 					throw new IllegalArgumentException("El NIF del primer representante para personas jurídicas no es correcto. (Apartado 4)");
 				}
 			}
 			if (m390.getLegalRepr2() != null) {
-				if (!DocumentTextBox.isValid(m390.getLegalRepr2().getDocument())) {
+				if (!DocumentUtil.isValid(m390.getLegalRepr2().getDocument())) {
 					throw new IllegalArgumentException("El NIF del segundo representante para personas jurídicas no es correcto. (Apartado 4)");
 				}
 			}
 			if (m390.getLegalRepr3() != null) {
-				if (!DocumentTextBox.isValid(m390.getLegalRepr3().getDocument())) {
+				if (!DocumentUtil.isValid(m390.getLegalRepr3().getDocument())) {
 					throw new IllegalArgumentException("El NIF del tercer representante para personas jurídicas no es correcto. (Apartado 4)");
 				}
 			}

@@ -605,9 +605,6 @@ public class SQLMod180 {
 			
 			invoiceStmt = conn.prepareStatement(SELECT_INVOICE,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			System.out.println( "Domain ..: " + mod180.getDomain());
-			System.out.println( "First ...: " + firstDay);
-			System.out.println( "Last ....: " + lastDay);
 			invoiceStmt.setInt(1, mod180.getDomain());
 			invoiceStmt.setDate(2, new java.sql.Date(firstDay.getTime()));
 			invoiceStmt.setDate(3, new java.sql.Date(lastDay.getTime()));
@@ -622,8 +619,6 @@ public class SQLMod180 {
 				detail.setPerception(invoiceRs.getDouble(InvoiceTaxColumns.BASE));
 				detail.setRetention(invoiceRs.getDouble(InvoiceTaxColumns.QUOTA));
 				detail.setPercent(invoiceRs.getDouble(InvoiceTaxColumns.PERCENTAGE));
-				System.out.println( "Perception..: " + detail.getPerception());
-				System.out.println( "Retention...: " + detail.getRetention());
 				int registryId = invoiceRs.getInt(InvoiceColumns.REGISTRY);
 				geozoneStmt.setInt(1, registryId);
 				geozoneRs = geozoneStmt.executeQuery();

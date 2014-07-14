@@ -5,9 +5,12 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
+import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
@@ -39,9 +42,14 @@ public class Mod200 implements Serializable, IsSerializable {
 	private String enterprisePhone1;
 	private String enterprisePhone2;
 	
+	private String fiscalGroup;
+	private String dominantDocument;
+	
 	private BalanceType balanceType;
 	private BalanceType pygType;
 	
+	private Secretary secretary;
+	private List<LegalRepresentative> representatives;
 	private List<CompanyAdministrator> administrators;
 	private List<CompanyParticipation> participationsIn;
 	private List<CompanyParticipation> participationsOut;
@@ -150,6 +158,18 @@ public class Mod200 implements Serializable, IsSerializable {
 	public void setEnterprisePhone2(String enterprisePhone2) {
 		this.enterprisePhone2 = enterprisePhone2;
 	}
+	public String getFiscalGroup() {
+		return fiscalGroup;
+	}
+	public void setFiscalGroup(String fiscalGroup) {
+		this.fiscalGroup = fiscalGroup;
+	}
+	public String getDominantDocument() {
+		return dominantDocument;
+	}
+	public void setDominantDocument(String dominantDocument) {
+		this.dominantDocument = dominantDocument;
+	}
 	public BalanceType getBalanceType() {
 		return balanceType;
 	}
@@ -169,7 +189,18 @@ public class Mod200 implements Serializable, IsSerializable {
 	public void setPygType(int index) {
 		this.pygType = BalanceType.values()[index];
 	}
-	
+	public Secretary getSecretary() {
+		return secretary;
+	}
+	public void setSecretary(Secretary secretary) {
+		this.secretary = secretary;
+	}
+	public List<LegalRepresentative> getRepresentatives() {
+		return representatives;
+	}
+	public void setRepresentatives(List<LegalRepresentative> representatives) {
+		this.representatives = representatives;
+	}
 	public List<CompanyAdministrator> getAdministrators() {
 		return administrators;
 	}
@@ -217,6 +248,10 @@ public class Mod200 implements Serializable, IsSerializable {
 	}
 	public DoubleVariable getKey(Mod200Key key) {
 		return keysMap.get(key);
+	}
+	public boolean isChecked(Mod200Key key) {
+		DoubleVariable dv = keysMap.get(key); 
+		return dv != null && (AonUtil.round(dv.getValue()) == 1.0);
 	}
 	
 	public void addVariable(DoubleVariable t) {

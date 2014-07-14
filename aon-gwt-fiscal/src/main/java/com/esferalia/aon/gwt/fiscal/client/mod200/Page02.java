@@ -7,12 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.gwt.common.client.widget.SizableTextInputCell;
-import com.esferalia.aon.gwt.common.client.widget.TabCheckboxCell;
-import com.esferalia.aon.gwt.common.client.widget.TabSelectionCell;
+import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
+import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
+import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Country;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
-import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;

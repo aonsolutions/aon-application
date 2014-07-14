@@ -3,20 +3,27 @@ package com.esferalia.aon.gwt.fiscal.client.mod200;
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.MSG;
 import static com.esferalia.aon.gwt.fiscal.client.mod200.Model200.RESOURCES;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.client.widget.SizableTextInputCell;
-import com.esferalia.aon.gwt.common.client.widget.TabCheckboxCell;
-import com.esferalia.aon.gwt.common.client.widget.TabSelectionCell;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
+import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
+import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
+import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.DeleteButtonSafeHtmlTemplates;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,6 +36,8 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
@@ -40,32 +49,62 @@ public class Page01 extends PageAbs {
 			.create(Page1Binder.class);
 
 	private Mod200Object mod200Object;
-	private ListDataProvider<CompanyAdministrator> dataProvider;
 
+	private ListDataProvider<LegalRepresentative> dataProvider1;
 	@UiField(provided = true)
-	CellTable<CompanyAdministrator> table1;
+	CellTable<LegalRepresentative> table1;
+
+	private ListDataProvider<CompanyAdministrator> dataProvider2;
+	@UiField(provided = true)
+	CellTable<CompanyAdministrator> table2;
+
+	@UiField
+	DocumentTextBox secretaryDocument;
+	@UiField
+	TextBox secretaryName;
+	@UiField
+	DateBoxEx irnr;
+
+	@UiField
+	Panel fiscalGroupPanel;
+	@UiField
+	TextBox fiscalGroup;
+	@UiField
+	DocumentTextBox dominantDocument;
 	
+	@UiField
+	Button newLegalRepresentative;
 	@UiField
 	Button newAdministrator;
 
 	public Page01() {
 
 		CellTable.Resources tableStyle = GWT.create(Mod200CellTable.class);
-		table1 = new CellTable<CompanyAdministrator>(50,tableStyle);
 		
+		table1 = new CellTable<LegalRepresentative>(50,tableStyle);
 		table1.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		table1.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-
 		table1.setEmptyTableWidget(new HTML(MSG.noData()));
-		dataProvider = new ListDataProvider<CompanyAdministrator>();
-		dataProvider.addDataDisplay(table1);
+		dataProvider1 = new ListDataProvider<LegalRepresentative>();
+		dataProvider1.addDataDisplay(table1);
+		addLegalDocumentColumn();
+		addLegalNameColumn();
+		addLegalNotaryColumn();
+		addLegalNotaryDateColumn();
+		addLegalRemoveColumn();
 
-		addDocumentColumn();
-		addRepresentativeColumn();
-		addDescriptionColumn();
-		addResidenceColumn();
-		addProvinceColumn();
-		addRemoveColumn();
+		table2 = new CellTable<CompanyAdministrator>(50,tableStyle);
+		table2.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+		table2.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		table2.setEmptyTableWidget(new HTML(MSG.noData()));
+		dataProvider2 = new ListDataProvider<CompanyAdministrator>();
+		dataProvider2.addDataDisplay(table2);
+		addAdmDocumentColumn();
+		addAdmRepresentativeColumn();
+		addAdmNameColumn();
+		addAdmResidenceColumn();
+		addAdmProvinceColumn();
+		addAdmRemoveColumn();
 		
 		Widget ui = page1Binder.createAndBindUi(this);
 		initWidget(ui);
@@ -74,14 +113,169 @@ public class Page01 extends PageAbs {
 	public void dump(Mod200Object mod200Object) {
 		this.mod200Object = mod200Object;
 		
-		dataProvider = this.mod200Object.getMod200().getAdministrators() == null
-				?new ListDataProvider<CompanyAdministrator>()
-				:new ListDataProvider<CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
-		dataProvider.addDataDisplay(table1);
+		dataProvider1 = new ListDataProvider<LegalRepresentative>(this.mod200Object.getMod200().getRepresentatives());
+		dataProvider1.addDataDisplay(table1);
 		table1.redraw();
+
+		dataProvider2 = new ListDataProvider<CompanyAdministrator>(this.mod200Object.getMod200().getAdministrators());
+		dataProvider2.addDataDisplay(table2);
+		table2.redraw();
+		
+//		fiscalGroupPanel.setVisible( this.mod200Object.getMod200().isChecked(Mod200Key.C0009) 
+//								  || this.mod200Object.getMod200().isChecked(Mod200Key.C0010));	
+		
+		this.fiscalGroup.setValue( this.mod200Object.getMod200().getFiscalGroup());
+		this.dominantDocument.setValue(this.mod200Object.getMod200().getDominantDocument());
+
+		Secretary secretary = this.mod200Object.getMod200().getSecretary();
+		if (secretary != null) {
+			this.secretaryDocument.setValue(secretary.getDocument());
+			this.secretaryName.setValue(secretary.getName());
+			this.irnr.setValue(secretary.getIrnr());
+		} else {
+			this.secretaryDocument.setValue(null);
+			this.secretaryName.setValue(null);
+			this.irnr.setValue(null);
+		}
+		
+	}
+	public void populate(Mod200Object obj) {
+		Secretary secretary = this.mod200Object.getMod200().getSecretary();
+		if (secretary == null) {
+			secretary = new Secretary();
+			this.mod200Object.getMod200().setSecretary(secretary);	
+		}
+		secretary.setDocument(this.secretaryDocument.getValue());
+		secretary.setName(this.secretaryName.getValue());
+		secretary.setIrnr(this.irnr.getValue());
+		
+		this.mod200Object.getMod200().setFiscalGroup(this.fiscalGroup.getValue());
+		this.mod200Object.getMod200().setDominantDocument(this.dominantDocument.getValue());
+
+	}
+	
+	private void addLegalDocumentColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(8);
+		Column<LegalRepresentative, String> col = new Column<LegalRepresentative, String>(
+				input) {
+			@Override
+			public String getValue(LegalRepresentative lr) {
+				return lr.getDocument();
+			}
+		};
+		
+		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
+		    public void update(int index, LegalRepresentative lr, String value) {
+		    	dataProvider1.getList().get(index).setDocument(value);
+		    }
+		});		
+		table1.addColumn(col, MSG.document());
+		col.setCellStyleNames(RESOURCES.css().aonTextCenter());
+		table1.setColumnWidth(col, 100, Unit.PX);
+	}
+	
+	private void addLegalNameColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(40);
+		Column<LegalRepresentative, String> col = new Column<LegalRepresentative, String>(
+				input) {
+			@Override
+			public String getValue(LegalRepresentative lr) {
+				return lr.getName();
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
+		    public void update(int index, LegalRepresentative lr, String value) {
+		    	dataProvider1.getList().get(index).setName(value);
+		    }
+		});		
+		table1.addColumn(col, MSG.companyName());
+		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 
-	private void addDocumentColumn() {
+	private void addLegalNotaryColumn() {
+		SizableTextInputCell input = new SizableTextInputCell(25);
+		Column<LegalRepresentative, String> col = new Column<LegalRepresentative, String>(
+				input) {
+			@Override
+			public String getValue(LegalRepresentative lr) {
+				return lr.getName();
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
+		    public void update(int index, LegalRepresentative lr, String value) {
+		    	dataProvider1.getList().get(index).setNotary(value);
+		    }
+		});		
+		table1.addColumn(col, MSG.notary());
+		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
+		table1.setColumnWidth(col, 150, Unit.PX);
+	}
+
+	private void addLegalNotaryDateColumn() {
+		final DateTimeFormat format = DateTimeFormat.getFormat( "dd/MM/yyyy" );
+		SizableTextInputCell input = new SizableTextInputCell(10);
+		Column<LegalRepresentative, String> col = new Column<LegalRepresentative, String>(
+				input) {
+			@Override
+			public String getValue(LegalRepresentative lr) {
+				return (lr.getNotaryDate() == null)?null:
+					format.format(lr.getNotaryDate());
+			}
+		};
+		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
+		    public void update(int index, LegalRepresentative lr, String value) {
+		    	Date notaryDate = null;
+		    	if (AonUtil.isNotEmpty(value)) {
+		    		try {
+		    			notaryDate = format.parse(value);
+		    		} catch (IllegalArgumentException ex) {
+		    			Window.alert("Formato de fecha incorrecto (dd/MM/yyyy)");
+		    		}
+		    	}
+		    	dataProvider1.getList().get(index).setNotaryDate(notaryDate);
+		    }
+		});		
+		table1.addColumn(col, MSG.notaryDate());
+		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
+		table1.setColumnWidth(col, 100, Unit.PX);
+	}
+
+	private void addLegalRemoveColumn() {
+		
+		ButtonCell removeButton = new ButtonCell( new DeleteButtonSafeHtmlTemplates())  {
+			  @Override
+			  public void render(Context context, SafeHtml data, SafeHtmlBuilder sb) {
+			    if (data != null) {
+			      sb.append(data);
+			    }
+			  }
+		};
+		Column<LegalRepresentative,String> col = new Column<LegalRepresentative,String>(removeButton) {
+		  public String getValue(LegalRepresentative object) {
+		    return MSG.deleteAction();
+		  }
+		};
+		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
+		    public void update(int index, LegalRepresentative lr, String value) {
+		    	if (Window.confirm(MSG.confirmDeleteAction())) {
+		    		dataProvider1.getList().remove(index);
+		    		table1.redraw();
+		    	}
+		    }
+		});		
+		table1.addColumn(col);
+		table1.setColumnWidth(col, 20, Unit.PX);
+		col.setCellStyleNames(RESOURCES.css().aonTextCenter());
+	}
+
+	@UiHandler("newLegalRepresentative")
+	void onNewLegalRepresentative(ClickEvent event) {
+		dataProvider1.getList().add(new LegalRepresentative());
+		table1.redraw();		    		
+	}
+	
+
+	private void addAdmDocumentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
 		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
 				input) {
@@ -93,15 +287,15 @@ public class Page01 extends PageAbs {
 		
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
-		    	dataProvider.getList().get(index).setDocument(ca.getDocument());
+		    	dataProvider2.getList().get(index).setDocument(value);
 		    }
 		});		
-		table1.addColumn(col, MSG.document());
+		table2.addColumn(col, MSG.document());
 		col.setCellStyleNames(RESOURCES.css().aonTextCenter());
-		table1.setColumnWidth(col, 100, Unit.PX);
+		table2.setColumnWidth(col, 100, Unit.PX);
 	}
 
-	private void addDescriptionColumn() {
+	private void addAdmNameColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(40);
 		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
 				input) {
@@ -112,14 +306,14 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
-		    	dataProvider.getList().get(index).setName(ca.getName());
+		    	dataProvider2.getList().get(index).setName(value);
 		    }
 		});		
-		table1.addColumn(col, MSG.companyName());
+		table2.addColumn(col, MSG.companyName());
 		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 
-	private void addRepresentativeColumn() {
+	private void addAdmRepresentativeColumn() {
 		Column<CompanyAdministrator, Boolean> col = new Column<CompanyAdministrator, Boolean>(
 				new TabCheckboxCell()) {
 			@Override
@@ -129,15 +323,15 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, Boolean>() {
 		    public void update(int index, CompanyAdministrator ca, Boolean value) {
-		    	dataProvider.getList().get(index).setRepresentative(ca.isRepresentative());
+		    	dataProvider2.getList().get(index).setRepresentative(value);
 		    }
 		});		
-		table1.addColumn(col, "Rpte.");
-		table1.setColumnWidth(col, 20, Unit.PX);
+		table2.addColumn(col, "Rpte.");
+		table2.setColumnWidth(col, 20, Unit.PX);
 		col.setCellStyleNames(RESOURCES.css().aonTextCenter());
 	}
 
-	private void addResidenceColumn() {
+	private void addAdmResidenceColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(20);
 		Column<CompanyAdministrator, String> col = new Column<CompanyAdministrator, String>(
 				input) {
@@ -148,16 +342,16 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
-		    	dataProvider.getList().get(index).setResidence(ca.getResidence());
+		    	dataProvider2.getList().get(index).setResidence(value);
 		    }
 		});		
-		table1.addColumn(col, MSG.fiscalAddress());
-		table1.setColumnWidth(col, 200, Unit.PX);
+		table2.addColumn(col, MSG.fiscalAddress());
+		table2.setColumnWidth(col, 200, Unit.PX);
 		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 
-	private void addProvinceColumn() {
-		List<String> options = new LinkedList<String>();
+	private void addAdmProvinceColumn() {
+		final List<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
 			options.add( MSG.provinceName(prov) );
 		}
@@ -171,21 +365,25 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
-		    	dataProvider.getList().get(index).setProvince(ca.getProvince());
+		    	Province p = null;
+		    	if (AonUtil.isNotEmpty(value)) {
+		    		p = Province.values()[options.indexOf(value)]; 
+		    	}
+		    	dataProvider2.getList().get(index).setProvince(p==null?0:p.ordinal());
 		    }
 		});		
-		table1.addColumn(col, MSG.province());
-		table1.setColumnWidth(col, 100, Unit.PX);
+		table2.addColumn(col, MSG.province());
+		table2.setColumnWidth(col, 100, Unit.PX);
 		col.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
 	
 	@UiHandler("newAdministrator")
 	void onNewAdministrator(ClickEvent event) {
-		dataProvider.getList().add(new CompanyAdministrator());
-		table1.redraw();		    		
+		dataProvider2.getList().add(new CompanyAdministrator());
+		table2.redraw();		    		
 	}
 	
-	private void addRemoveColumn() {
+	private void addAdmRemoveColumn() {
 		
 		ButtonCell removeButton = new ButtonCell( new DeleteButtonSafeHtmlTemplates())  {
 			  @Override
@@ -203,13 +401,13 @@ public class Page01 extends PageAbs {
 		col.setFieldUpdater(new FieldUpdater<CompanyAdministrator, String>() {
 		    public void update(int index, CompanyAdministrator ca, String value) {
 		    	if (Window.confirm(MSG.confirmDeleteAction())) {
-		    		dataProvider.getList().remove(index);
-		    		table1.redraw();
+		    		dataProvider2.getList().remove(index);
+		    		table2.redraw();
 		    	}
 		    }
 		});		
-		table1.addColumn(col);
-		table1.setColumnWidth(col, 20, Unit.PX);
+		table2.addColumn(col);
+		table2.setColumnWidth(col, 20, Unit.PX);
 		col.setCellStyleNames(RESOURCES.css().aonTextCenter());
 	}
 
@@ -218,6 +416,3 @@ public class Page01 extends PageAbs {
 	}
 	
 }
-
-/*
-*/

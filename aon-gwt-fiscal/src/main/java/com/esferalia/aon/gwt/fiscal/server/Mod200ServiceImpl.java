@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
+import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.sql.SQLAppParams;
 import com.esferalia.aon.gwt.common.sql.SQLCompany;
 import com.esferalia.aon.gwt.common.sql.SQLUtils;
@@ -137,10 +138,11 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 
 	private void initializeMod200(Mod200 mod200,DSLContext dsl, Connection conn) throws AonSQLException, AccMiningException {
-		List<CompanyAdministrator> adms = SQLCompany.getAdministrators(dsl, mod200.getDomain());
+		List<CompanyAdministrator> adms = SQLCompany.getDirStaff(dsl, mod200.getDomain());
 		if ( adms != null && adms.size() > 0 ) {
 			List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
 			List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
+			List<LegalRepresentative> legalRepresentative = new LinkedList<LegalRepresentative>();
 			for (CompanyAdministrator ca : adms ) {
 				if (ca.isAdministrator()) {
 					administrators.add(ca);
@@ -155,10 +157,17 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 					cp.setRepresentative(ca.isRepresentative());
 					participationsIn.add(cp);		
 				}
+				if (ca.isRepresentative()) {
+					LegalRepresentative lr = new LegalRepresentative();
+					lr.setDocument(ca.getDocument());
+					lr.setName(ca.getName());
+					legalRepresentative.add(lr);		
+				}
 			}
 			mod200.setAdministrators(administrators);
 			mod200.setParticipationsIn(participationsIn);
 			mod200.setParticipationsOut(new LinkedList<CompanyParticipation>());
+			mod200.setRepresentatives(legalRepresentative);
 		}
 
 		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
@@ -272,24 +281,6 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 					}
 				}
 			}
-//			for (Mod200Key key : Mod200Key.values() ) {
-//				if (COMPUTE_EXPRESSION_MAP.containsKey(key.toString())) {
-//					Object ret = ctx.get( key.toString() );
-//					if (ret instanceof Double) {
-//						Double calculated = (Double) ret; 
-//						Mod200Key k = Mod200Key.valueOf(key.toString());
-//						DoubleVariable existingVariable = mod200.getVariable(k);
-//						if ( existingVariable == null || !AonUtil.equals( existingVariable.getValue() , calculated ) ) {
-//							System.out.println( "DRAFT : " + k.toString() + " [" +
-//									((existingVariable == null)?"null":existingVariable.getValue())
-//									+ "] [" + calculated);
-//							v = new DoubleVariable( k );
-//							v.setValue( calculated );
-//							mod200.addDraftVariable(v);
-//						}
-//					}
-//				}
-//			}
 			return mod200;
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -317,7 +308,6 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 
 	@Override
 	public Mod200 save(Mod200 mod200) throws AonSQLException {
-		// mod200.listDraftVariables();
 		Connection conn = null;
 		try {
 			conn = getConnection();
