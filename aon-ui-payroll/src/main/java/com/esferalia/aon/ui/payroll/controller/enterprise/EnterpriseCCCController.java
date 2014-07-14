@@ -9,6 +9,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -51,7 +53,7 @@ public class EnterpriseCCCController extends LinesController {
 	
 	public void onChangeCcc(ActionEvent event){
 		EnterpriseCCC ccc = (EnterpriseCCC) this.getTo();
-		if(ccc.isValidSSNumber()){
+		if(ccc!=null && StringUtils.isNotBlank(ccc.getCcc()) && StringUtils.length(ccc.getCcc())>1){
 			ccc.setGeozone(getGeoZoneByValue(ccc.getCcc()));
 		}
 	}

@@ -36,51 +36,43 @@
 			
 			<aon:div styleClass="aon-scroll-area" style="padding-bottom:1px;" >
 
-				<aon:panelGrid columns="4" dir="true" width="100%">
+				<aon:panelGrid rendered="#{!irpfData.new}" columns="4" dir="true" width="100%">
 					<aon:outputLabel value="#{bundle.payroll_salary_employee}" />
-					<aon:outputText value="#{contract.to.person.registry.fullName}" />
+					<aon:outputText value="#{irpfData.to.contract.person.registry.fullName}" />
 
 					<aon:outputLabel value="#{bundle.aon_document}" />
-					<aon:outputText value="#{contract.to.person.registry.document}" />
+					<aon:outputText value="#{irpfData.to.contract.person.registry.document}" />
 				</aon:panelGrid>
 			
 				<aon:panelGrid id="irpfDataContent" columns="2" 
 					width="100%" style="margin-top:10px;">
-			
+					
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{irpfData.to.contract}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{irpfData.new}" />
+						<ui:param name="lookupReRender" value="IrpfData_validity" />
+						<aon:methodParam name="lookupChangeListener" 
+							value="#{irpfData.onContractChange}" type="lookupChangeListener" />
+					</ui:include>
+					
 					<aon:outputLabel value="#{bundle.payroll_irpfData_validity}" />
-					<c:if test="#{irpfData.new}" >
-						<aon:div>
-							<aon:outputLabel for="irpfData_startDate" value="#{bundle.aon_date_from}:" styleClass="aon-italic"/>
-							<aon:selectInputDate id="irpfData_startDate"
-								required="#{true}" 
-								value="#{irpfData.to.startDate}" 
-								inputSize="10" renderAsPopup="true" enableManualInput="true"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}" />
-							
-							<aon:outputLabel for="irpfData_endDate" value="#{bundle.aon_date_to}:" styleClass="aon-italic aon-margin-left"/>
-							<aon:selectInputDate id="irpfData_endDate" 
-								value="#{irpfData.to.endDate}" 
-								inputSize="10" renderAsPopup="true" enableManualInput="true"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}" />
-						</aon:div>
-					</c:if>
-					<c:if test="#{!irpfData.new}" >
-						<aon:div>
-							<aon:outputText value="#{bundle.aon_date_from}:" styleClass="aon-italic"/>
-							<aon:outputText value="#{irpfData.to.startDate}" style="margin-left: 5px;">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							
-							<aon:outputText value="#{bundle.aon_date_to}:" styleClass="aon-italic aon-margin-left"/>
-							<aon:outputText value="#{irpfData.to.endDate}" style="margin-left: 5px;">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:div>
-					</c:if>
+					<aon:div id="IrpfData_validity">
+						<aon:outputLabel for="irpfData_startDate" value="#{bundle.aon_date_from}:" styleClass="aon-italic"/>
+						<aon:selectInputDate id="irpfData_startDate"
+							required="#{true}" 
+							value="#{irpfData.to.startDate}" 
+							inputSize="10" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+						
+						<aon:outputLabel for="irpfData_endDate" value="#{bundle.aon_date_to}:" styleClass="aon-italic aon-margin-left"/>
+						<aon:selectInputDate id="irpfData_endDate" 
+							value="#{irpfData.to.endDate}" 
+							inputSize="10" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:div>
 					
 					<aon:outputLabel for="irpfData_fiscal_exclusion"
 						value="#{bundle.payroll_irpfData_fiscal_exclusion}" />
@@ -169,6 +161,8 @@
 			</aon:div>
 
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
 
 	</ui:define>
 

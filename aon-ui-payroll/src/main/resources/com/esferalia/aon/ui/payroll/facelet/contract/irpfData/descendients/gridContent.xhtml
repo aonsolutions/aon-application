@@ -18,12 +18,12 @@
 		<rich:inputNumberSpinner id="IrpfDataDescendients_birthYear" required="true"
 			rendered="#{formEdit}" 
 			value="#{to.birthYear}" 
-			inputSize="4" minValue="1900" maxValue="2020" />
+			inputSize="4" minValue="1950" maxValue="#{irpfData.currentYear}" />
 		<f:facet name="footer">
 			<rich:inputNumberSpinner id="IrpfDataDescendients_birthYear-New" required="true"
 				rendered="#{formNew}" 
 				value="#{controller.to.birthYear}" 
-				inputSize="4" minValue="1900" maxValue="2020" />
+				inputSize="4" minValue="1950" maxValue="#{irpfData.currentYear}" />
 		</f:facet>
 	</aon:column>
 
@@ -37,12 +37,12 @@
 		<rich:inputNumberSpinner id="IrpfDataDescendients_adoptionYear"
 			rendered="#{formEdit}" 
 			value="#{to.adoptionYear}" 
-			inputSize="4" minValue="1900" maxValue="2020" />
+			inputSize="4" minValue="1950" maxValue="#{irpfData.currentYear}" />
 		<f:facet name="footer">
 			<rich:inputNumberSpinner id="IrpfDataDescendients_adoptionYear-New"
 				rendered="#{formNew}" 
 				value="#{controller.to.adoptionYear}" 
-				inputSize="4" minValue="1900" maxValue="2020" />
+				inputSize="4" minValue="1950" maxValue="#{irpfData.currentYear}" />
 		</f:facet>
 	</aon:column>
 
@@ -67,7 +67,7 @@
 		</f:facet>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataDescendients_dependence"
 				value="#{bundle.payroll_irpfData_dependence}" />
@@ -80,7 +80,7 @@
 		</f:facet>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataDescendients_uniqueParent"
 				value="#{bundle.payroll_irpfData_uniqueParent}" />

@@ -89,6 +89,7 @@ import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
+import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
@@ -99,6 +100,7 @@ import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.CertificadosCollectionsController;
+import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -960,6 +962,13 @@ public class ContractController extends BasicController {
 		this.selectedTab = selectedTab;
 	}
 	
+	public void onCertificadosCommunicationShow(ActionEvent event){
+		if(getParams().getSuspensionCause()!=null){
+			CertificadosController certificados = (CertificadosController) AonUtil.getRegisteredBean("contractCertificados");
+			certificados.setSuspensionCause(SuspensionCause.valueOf("C"+Integer.parseInt(getParams().getSuspensionCause().getCode())));
+		}
+	}
+	
 	public void onContrataExtensionShow(ActionEvent event){
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
@@ -1142,25 +1151,27 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onChangeEndDate(ActionEvent event){
-		Calendar startCal = Calendar.getInstance();
-		startCal.setTime(((Contract)this.getTo()).getStartDate());
-		startCal.set(Calendar.HOUR_OF_DAY, 0);  
-		startCal.set(Calendar.MINUTE, 0);  
-		startCal.set(Calendar.SECOND, 0);  
-		startCal.set(Calendar.MILLISECOND, 0);  
-		Calendar endCal = Calendar.getInstance();
-		endCal.setTime(((Contract)this.getTo()).getEndDate());
-		endCal.set(Calendar.HOUR_OF_DAY, 0);  
-		endCal.set(Calendar.MINUTE, 0);  
-		endCal.set(Calendar.SECOND, 0);  
-		endCal.set(Calendar.MILLISECOND, 0);  
-		
 		if(((Contract)this.getTo()).getEndDate()==null){
 			getParams().setSuspensionCause(null);
-		} else if(endCal.before(startCal)){
-			((Contract)this.getTo()).setEndDate(null);
-			getParams().setSuspensionCause(null);
-			AonUtil.addErrorMessage("La fecha fin no puede ser anterior a la fecha inicio.");
+		} else {
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTime(((Contract)this.getTo()).getStartDate());
+			startCal.set(Calendar.HOUR_OF_DAY, 0);  
+			startCal.set(Calendar.MINUTE, 0);  
+			startCal.set(Calendar.SECOND, 0);  
+			startCal.set(Calendar.MILLISECOND, 0);  
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(((Contract)this.getTo()).getEndDate());
+			endCal.set(Calendar.HOUR_OF_DAY, 0);  
+			endCal.set(Calendar.MINUTE, 0);  
+			endCal.set(Calendar.SECOND, 0);  
+			endCal.set(Calendar.MILLISECOND, 0);  
+			
+			if(endCal.before(startCal)){
+				((Contract)this.getTo()).setEndDate(null);
+				getParams().setSuspensionCause(null);
+				AonUtil.addErrorMessage("La fecha fin no puede ser anterior a la fecha inicio.");
+			}
 		}
 	}
 	

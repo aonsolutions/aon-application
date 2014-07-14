@@ -12,6 +12,7 @@
 
 		<aon:panelGrid columns="2" width="100%">
 
+<!--  
 			<aon:outputLabel for="irpfData_annualRemuneration"
 				value="#{bundle.payroll_irpfData_annualRemuneration}" />
 			<aon:inputText id="irpfData_annualRemuneration" 
@@ -41,7 +42,6 @@
 				<f:validateDoubleRange />
 			</aon:inputText>
 
-<!--  
 			<aon:outputLabel for="irpfData_ceuta_melilla_data"
 				value="#{bundle.payroll_irpfData_ceuta_melilla_data}" />
 			<aon:inputText id="irpfData_ceuta_melilla_data" 
@@ -72,11 +72,18 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.payroll_irpfData_deductHomeLoan}" />
 			</f:facet>
-			<aon:selectOneRadio id="irpfData_deductHomeLoan" layout="pageDirection" 
-				value="#{irpfData.to.deductHomeLoan}" >
-				<f:selectItem itemLabel="#{bundle.payroll_irpfData_deductHomeLoan_check1}" itemValue="#{irpfData.deductHomeLoanAfter}"  />
-				<f:selectItem itemLabel="#{bundle.payroll_irpfData_deductHomeLoan_check2}" itemValue="#{irpfData.deductHomeLoanBefore}"  />
-			</aon:selectOneRadio>
+			
+			<aon:div>
+				<aon:selectBooleanCheckbox id="irpfData_deductHomeLoan" value="#{irpfData.deductHomeLoan}" />
+				<aon:outputLabel for="irpfData_deductHomeLoan" 
+					value="Si está Vd. efectuando pagos por préstamos destinados a la adquisición o rehabilitación de su vivienda habitual por los que vaya a tener derecho a deducción por inversión en vivienda habitual en el IRPF
+					y la cuantía total de sus retribuciones íntegras en concepto de rendimientos del trabajo procedentes de todos sus pagadores es inferior a 33.007,20 euros anuales, marque con una 'X' esta casilla" />
+			</aon:div>
+			
+			<aon:div>
+				<aon:outputText value="(sólo podrán cumplimentar este apartado los contribuyentes que hayan adquirido su vivienda habitual, o hayan satisfecho cantidades por obras de rehabilitación de la misma, antes del 1 de enero de 2013.)" />
+			</aon:div>
+			
 		</aon:panel>
 		
 	</aon:div>

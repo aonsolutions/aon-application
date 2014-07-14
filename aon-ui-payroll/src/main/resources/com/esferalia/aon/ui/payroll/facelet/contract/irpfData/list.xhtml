@@ -10,27 +10,79 @@
 	<ui:define name="content">
 		<aon:form id="irpfDataList">
 
-			<aon:methodParam name="searchAction" value="irpfData_search" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.payroll_model_145_module}" />
-				<ui:param name="controller" value="#{contract}" />
-				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="controller" value="#{irpfData}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-
-				<aon:methodParam name="rowSelectorAction" value="irpfData_form" />
-				<aon:methodParam name="rowSelectorActionListener" value="#{irpfData.onSelectContract}" type="actionListener" />
 				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{contract}" />
+					<ui:param name="controller" value="#{irpfData}" />
 					
 					<ui:define name="columns">
 					
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/listBasic.xhtml" >
-							<ui:param name="skipEnterpriseColumn" value="true" />
-						</ui:include>
+						<aon:column alias="IrpfData.contract.person.firstSurname,IrpfData.contract.person.registry.name" 
+							styleClass="aon-editDataTable-textColumn aon-width-600">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_contract}" />
+							</f:facet>
+							<aon:div styleClass="aon-nowrap aon-width-all">
+								<aon:div style="display:inline;">
+									<aon:outputText value="#{to.contract.person.fullName}"/>
+								</aon:div>
+								<aon:panelGroup styleClass="aon-margin-left aon-float-right">
+									<aon:outputText value="#{irpfData.rowContractCode}"
+										title="#{irpfData.rowContractCode}" >
+										<aon:abbreviateConverter maxWidth="40" />
+									</aon:outputText>
+									<aon:div styleClass="aon-margin-left aon-width-100" style="display:inline;">
+										<aon:outputText value="#{bundle.aon_date_from}" />
+										<aon:outputText value="#{to.contract.startDate}" styleClass="aon-margin-left">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>		
+									</aon:div>
+									<aon:div styleClass="aon-margin-left aon-width-100" style="display:inline;">
+										<aon:outputText rendered="#{not empty to.contract.endDate}" 
+											value="#{bundle.aon_date_to}" />
+										<aon:outputText value="#{to.contract.endDate}" styleClass="aon-margin-left">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>		
+									</aon:div>
+								</aon:panelGroup>
+							</aon:div>
+						</aon:column>
+						
+						<aon:column alias="IrpfData.startDate" 
+							styleClass="aon-editDataTable-dateColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_start_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+						</aon:column>
+					
+						<aon:column alias="IrpfData.endDate" 
+							styleClass="aon-editDataTable-dateColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_end_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+						</aon:column>
 						
 					</ui:define>
 				</ui:decorate>

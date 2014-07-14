@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseData;
 import com.code.aon.ql.Criteria;
@@ -93,7 +94,7 @@ public class EnterpriseParamsController {
 		parameters = new TreeMap<String, EnterpriseData>();
 		IManagerBean managerBean = BeanManager.getManagerBean(EnterpriseData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), getEnterprise().getId());
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_DOMAIN), DomainManager.getCurrentDomain());
 		List<ITransferObject> list = managerBean.getList(criteria);
 		Iterator<ITransferObject> iter = list.iterator();
 		while (iter.hasNext()) {
@@ -135,7 +136,7 @@ public class EnterpriseParamsController {
 	}
 	
 	
-	//TODO necesario mientras el convenio este dentro del proyecto payroll 
+	// AGREEMENT 
 	private EnterpriseData agreementData;
 	private Agreement agreement;
 	private static final String AGREEMENT = "agreement";
@@ -162,6 +163,13 @@ public class EnterpriseParamsController {
 			getAgreementData().setExpression(id);
 			IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
 			bean.insertOrUpdate(getAgreementData());
+		} else if(getAgreementData()!=null && getAgreementData().getExpression()!=null && (getAgreement()==null || getAgreement().getId()==null)){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
+				bean.remove(getAgreementData().getId());
+			} catch (NumberFormatException e) {
+				// nada
+			}
 		}
 	}
 

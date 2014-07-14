@@ -370,7 +370,9 @@ public class CertificadosController implements ISepeHandler{
 		batch.setEnterprise(contract.getWorkPlace().getEnterprise());
 		Certifica2BatchDetail detail = new Certifica2BatchDetail();
 		detail.setContract(contract);
-//		detail.setSuspensionCause(getSuspensionCause());
+		if(detail.getSuspensionCause()==null){
+			detail.setSuspensionCause(getSuspensionCause());
+		}
 		list.add(detail);
 		try {
 			File file = writer.createFile(batch, list);
@@ -558,9 +560,9 @@ public class CertificadosController implements ISepeHandler{
 		ContractAttachment resultAttach = (ContractAttachment) obtainCertificadosAttach(type);
 		if(resultAttach==null){
 			resultAttach = new ContractAttachment();
-			if(type == ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID){
+			if(type == ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID){
 				resultAttach.setDescription("ID comunicacion Certific@2");
-			} else if(type == ContractAttachmentType.SEPE_CONTRACT_RESPONSE){
+			} else if(type == ContractAttachmentType.SEPE_CERTIFICADOS_RESPONSE){
 				resultAttach.setDescription("Respuesta Certifica@2");
 			}
 			resultAttach.setContract(getContract());
@@ -588,7 +590,7 @@ public class CertificadosController implements ISepeHandler{
 			ContractAttachment attach = (ContractAttachment) bean.insertOrUpdate(resultAttach);
 			if(type == ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID){
 				setCommunicationIdFile(attach);
-			} else if(type == ContractAttachmentType.SEPE_CONTRACT_RESPONSE){
+			} else if(type == ContractAttachmentType.SEPE_CERTIFICADOS_RESPONSE){
 				setResponseFile(attach);
 			}
 		} catch (ManagerBeanException e) {

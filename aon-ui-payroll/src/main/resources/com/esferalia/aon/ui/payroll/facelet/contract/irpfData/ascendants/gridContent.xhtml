@@ -18,12 +18,12 @@
 		<rich:inputNumberSpinner id="IrpfDataAscendants_birthYear" required="true"
 			rendered="#{formEdit}" 
 			value="#{to.birthYear}" 
-			inputSize="4" minValue="1900" maxValue="2020" />
+			inputSize="4" minValue="1920" maxValue="#{irpfData.currentYear}" />
 		<f:facet name="footer">
 			<rich:inputNumberSpinner id="IrpfDataAscendants_birthYear-New" required="true"
 				rendered="#{formNew}" 
 				value="#{controller.to.birthYear}" 
-				inputSize="4" minValue="1900" maxValue="2020" />
+				inputSize="4" minValue="1920" maxValue="#{irpfData.currentYear}" />
 		</f:facet>
 	</aon:column>
 	
@@ -48,7 +48,7 @@
 		</f:facet>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataAscendants_dependence"
 				value="#{bundle.payroll_irpfData_dependence}" />
@@ -61,7 +61,7 @@
 		</f:facet>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataAscendants_anotherDescendient"
 				value="#{bundle.payroll_irpfData_anotherDescendient}" />
