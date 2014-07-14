@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 public class TableUtil implements Constants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TableUtil.class);
+	
+	private static final char MYSQL_NAME_BOUNDARY = '`';
 
 	private static final String DATE_EMPTY_VALUE = "0000-00-00";
 
@@ -192,7 +194,7 @@ public class TableUtil implements Constants {
 	private static void updateBaseId(Connection connection, Integer[] domains, TableInfo ti) throws SQLException {
 		String searchColumn = ti.isDomainTable() ? "id" : "domain";
 		Integer[] _domains = ti.getDomains(connection, domains);
-		String sentence = "SELECT MIN(" + ti.getPkColumn().getName() + ") FROM " + ti.getName() +
+		String sentence = "SELECT MIN(" + ti.getPkColumn().getStrictName() + ") FROM " + ti.getStrictName() +
 				" WHERE " + searchColumn + " IN (" + StringUtils.join(_domains, ",") + ")"; 
 		Statement s = null;
 		ResultSet rs = null;
@@ -542,5 +544,16 @@ public class TableUtil implements Constants {
 		}
 		return sb.toString();
 	}
+	
+	public static boolean isEmptyString(Object value) {
+		if (value instanceof String) {
+			return StringUtils.isBlank((String)value);
+		}
+		return false;
+	}	
+
+	public static String getStrictName( String name ) {
+		return MYSQL_NAME_BOUNDARY + name + MYSQL_NAME_BOUNDARY;
+	}	
 	
 }

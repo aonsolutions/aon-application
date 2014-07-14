@@ -133,7 +133,7 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 	private int obtainMaxNumber(Series series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		if (series == null) {
+		if ((series == null) ||StringUtils.isBlank(series.getCode()) ) {
 			criteria.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 		} else {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), series.getCode());
@@ -148,7 +148,8 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 	}
 
 	private void updateSeries() {
-        if ( StringUtils.isBlank(getParams().getInvoiceSeries().getCode()) ) {
+		Series series = getParams().getInvoiceSeries();
+        if ( (series!=null) && StringUtils.isBlank(series.getCode()) ) {
         	getParams().setInvoiceSeries(null);
         }
 	}	
