@@ -534,6 +534,9 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
+        if ( StringUtils.isBlank(getInvoiceSeries()) ) {
+        	setInvoiceSeries(null);
+        }
         if(getInvoiceNumber() == 0) {
         	updateInvoiceNumber(getInvoiceSeries());
 		}															

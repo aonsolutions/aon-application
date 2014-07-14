@@ -328,10 +328,6 @@
 		<managed-bean-name>deliveryHeaderControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>table</property-name>
-			<value>Delivery</value>
-		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
@@ -622,10 +618,6 @@
 		<managed-bean-name>warehouseTransferHeaderControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>table</property-name>
-			<value>WarehouseTransfer</value>
-		</managed-property>
 	</managed-bean>
 
 	<managed-bean>

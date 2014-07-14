@@ -155,7 +155,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public String getRecoverInvoiceCode() {
-		return ((getRecoverSeries() != null) ? getRecoverSeries() + "/" : "") + StringUtils.leftPad(Integer.toString(getRecoverNumber()), 6, "0");
+		return ((!StringUtils.isBlank(getRecoverSeries())) ? getRecoverSeries() + "/" : "") + StringUtils.leftPad(Integer.toString(getRecoverNumber()), 6, "0");
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
@@ -544,26 +544,12 @@ public class PosInvoiceController extends SaleInvoiceController {
 		setNumberEditable(true);
 	}
 
-	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		if ( isNumberEditable() ) {			
-			updateInvoiceNumber((String)event.getNewValue());	
-		}
-	}
-	
-	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
-		updateInvoiceNumber(getRecoverSeries());		
-	}		
-
-	private void updateInvoiceNumber(String seriesId) {
-		setRecoverNumber(obtainMaxNumber(seriesId));
-	}
-
 	public void onRecoverTicket(ActionEvent event) {
 		try {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_SHIFT_POS_ID), getPosShift().getPos().getId());
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
-			if (getRecoverSeries() == null) {
+			if ( StringUtils.isBlank(getRecoverSeries()) ) {
 				criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_SERIES));
 			} else {
 				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_SERIES), getRecoverSeries());
