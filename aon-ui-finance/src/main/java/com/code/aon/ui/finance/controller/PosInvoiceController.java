@@ -544,6 +544,20 @@ public class PosInvoiceController extends SaleInvoiceController {
 		setNumberEditable(true);
 	}
 
+	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if ( isNumberEditable() ) {			
+			updateInvoiceNumber((String)event.getNewValue());	
+		}
+	}
+	
+	public void onInvoiceNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateInvoiceNumber(getRecoverSeries());		
+	}		
+
+	private void updateInvoiceNumber(String seriesId) {
+		setRecoverNumber(obtainMaxNumber(seriesId));
+	}
+
 	public void onRecoverTicket(ActionEvent event) {
 		try {
 			Criteria criteria = new Criteria();

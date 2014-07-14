@@ -48,19 +48,11 @@
 						value="#{sfc_seriesProperty}" size="5" maxlength="5" />
 				</c:if>			
 				<c:if test="#{!skipNumberInput}">
-					<aon:div id="#{sfc_aliasPreffix}_numberDiv"
-						layout="inline" styleClass="aon-margin-left">
-						<c:if test="#{sfc_numberEditable or (sfc_numberProperty != 0)}">
-							<aon:inputText id="#{sfc_aliasPreffix}_number"
-								value="#{sfc_numberProperty}"
-								required="true" size="6" maxlength="10"					
-								disabled="#{!sfc_numberEditable or sfc_disabled}" />
-						</c:if>
-						<c:if test="#{!sfc_numberEditable and (sfc_numberProperty == 0)}">
-							<aon:inputText id="#{sfc_aliasPreffix}_number"
-								value=" &lt;Auto&gt;"
-								size="6" maxlength="10" disabled="true" />
-						</c:if>
+					<aon:div layout="inline" styleClass="aon-margin-left">
+						<aon:inputText id="#{sfc_aliasPreffix}_number"
+							value="#{sfc_numberProperty}"
+							required="true" size="7" maxlength="7"					
+							disabled="#{!sfc_numberEditable or sfc_disabled}" />
 					</aon:div>
 					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 						reRender="#{sfc_aliasPreffix}_seriesNumberDiv"
