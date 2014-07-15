@@ -55,6 +55,9 @@
 .aon-nowrap {
 	white-space: nowrap;
 }
+.aon-inline {
+	display: inline;
+}
 .aon-margin{
 	margin: 1em;
 }

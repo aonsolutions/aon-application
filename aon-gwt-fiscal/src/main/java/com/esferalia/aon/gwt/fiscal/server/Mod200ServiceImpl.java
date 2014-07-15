@@ -140,12 +140,9 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	private void initializeMod200(Mod200 mod200,DSLContext dsl, Connection conn) throws AonSQLException, AccMiningException {
 		List<CompanyAdministrator> adms = SQLCompany.getDirStaff(dsl, mod200.getDomain());
 		if ( adms != null && adms.size() > 0 ) {
-			List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
-			List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
-			List<LegalRepresentative> legalRepresentative = new LinkedList<LegalRepresentative>();
 			for (CompanyAdministrator ca : adms ) {
 				if (ca.isAdministrator()) {
-					administrators.add(ca);
+					mod200.getAdministrators().add(ca);
 				}
 				if (ca.isShareholder()) {
 					CompanyParticipation cp = new CompanyParticipation();
@@ -155,19 +152,15 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 					cp.setPercent(ca.getPercent());
 					cp.setNominalValue(ca.getNominalValue());
 					cp.setRepresentative(ca.isRepresentative());
-					participationsIn.add(cp);		
+					mod200.getParticipationsIn().add(cp);		
 				}
 				if (ca.isRepresentative()) {
 					LegalRepresentative lr = new LegalRepresentative();
 					lr.setDocument(ca.getDocument());
 					lr.setName(ca.getName());
-					legalRepresentative.add(lr);		
+					mod200.getRepresentatives().add(lr);		
 				}
-			}
-			mod200.setAdministrators(administrators);
-			mod200.setParticipationsIn(participationsIn);
-			mod200.setParticipationsOut(new LinkedList<CompanyParticipation>());
-			mod200.setRepresentatives(legalRepresentative);
+																							}
 		}
 
 		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );

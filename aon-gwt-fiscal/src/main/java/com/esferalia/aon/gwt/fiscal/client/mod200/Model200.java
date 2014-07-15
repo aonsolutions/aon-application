@@ -123,6 +123,8 @@ public class Model200 extends MainEntryPoint {
 	@UiField
 	Button aeatFileButton;
 	@UiField
+	Button aeatPrintButton;
+	@UiField
 	CheckBox calculateCheck;
 	
 	@UiField
@@ -193,6 +195,7 @@ public class Model200 extends MainEntryPoint {
 					calculateButton.setVisible(false);
 					aeatAccountingFileButton.setVisible(false);
 					aeatFileButton.setVisible(false);
+					aeatPrintButton.setVisible(false);
 					deckPanel.page00.enableCharacters( true );
 				} else {
 					dump();
@@ -211,6 +214,7 @@ public class Model200 extends MainEntryPoint {
 				calculateButton.setVisible(false);
 				aeatAccountingFileButton.setVisible(false);
 				aeatFileButton.setVisible(false);
+				aeatPrintButton.setVisible(false);
 				calculateCheck.setValue(mod200.isAuthomaticCalculation());
 				calculateCheck.setVisible(false);
 				
@@ -261,12 +265,26 @@ public class Model200 extends MainEntryPoint {
 	void onAeatFileButtonClick(ClickEvent event) {
 		Window.alert(
 				  "Se va a proceder a la generaci\u00F3n de un fichero\n"
-				+ "con los datos de la declaraci\u00F3, para su \n"
+				+ "con los datos de la declaraci\u00F3n, para su \n"
 				+ "presentaci\u00F3n en la web de la Agencia Tributaria.\n\n"
 				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
 				+ "El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model200File");
+		mod200Hidden.setValue(String.valueOf(mod200.getMod200().getId()));
+		diskForm.submit();
+	}
+
+	@UiHandler("aeatPrintButton")
+	void onAeatPrintButtonClick(ClickEvent event) {
+		Window.alert(
+				  "Se va a proceder a la validaci\u00F3n en los servidores de la \n"
+				+ "Agencia Tributaria. En el caso de validaci\u00F3n correcta,la Agencia \n"
+				+ "Tributaria devolver\u00E1 un documento PDF borrador con la declarai\u00F3n\n\n"
+				+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
+				+ "La petici\u00F3n se genera a partir de los datos guardados.");
+		diskForm.setAction(GWT.getHostPageBaseURL()
+				+ "/aon_gwt_fiscal/Model200Print");
 		mod200Hidden.setValue(String.valueOf(mod200.getMod200().getId()));
 		diskForm.submit();
 	}
@@ -475,9 +493,10 @@ public class Model200 extends MainEntryPoint {
 		removeButton.setVisible(true);
 		validateButton.setVisible(true);
 		calculateCheck.setVisible(true);
-		calculateButton.setVisible(!calculateCheck.getValue());
+		calculateButton.setVisible(!calculateCheck.isVisible());
 		aeatAccountingFileButton.setVisible(true);
 		aeatFileButton.setVisible(true);
+		aeatPrintButton.setVisible(true);
 		deckPanel.page00.enableCharacters( false );
 	}
 	

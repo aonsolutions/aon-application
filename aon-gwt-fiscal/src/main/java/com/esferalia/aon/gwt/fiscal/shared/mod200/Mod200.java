@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.shared.mod200;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.shared.AonUtil;
@@ -48,11 +49,11 @@ public class Mod200 implements Serializable, IsSerializable {
 	private BalanceType balanceType;
 	private BalanceType pygType;
 	
-	private Secretary secretary;
-	private List<LegalRepresentative> representatives;
-	private List<CompanyAdministrator> administrators;
-	private List<CompanyParticipation> participationsIn;
-	private List<CompanyParticipation> participationsOut;
+	private Secretary secretary = new Secretary();
+	private List<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
+	private List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
+	private List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
+	private List<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
 	
 	private String resultType;
 	private String devType;

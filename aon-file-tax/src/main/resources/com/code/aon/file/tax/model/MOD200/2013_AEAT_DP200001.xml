@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <register name="DP200001">
-	<field name="CTE1" value="&lt;T200010>" format="AlphaNumeric" pattern="X(9)" />
-	<field name="free0" value=" " format="Alphabetic" pattern="X" />
-	<field name="startDate" value="bean" bean="MOD200" property="startDate" format="AlphaNumeric" pattern="X(8)" />
-	<field name="endDate" value="bean" bean="MOD200" property="endDate" format="AlphaNumeric" pattern="X(8)" />
-	<field name="periodType" value="bean" bean="MOD200" property="periodType" format="Numeric" pattern="9" />
-	<field name="cnae" value="bean" bean="MOD200" property="cnae" format="Numeric" pattern="9(4)" />
-	<field name="document" value="bean" bean="MOD200" property="document" format="AlphaNumeric" pattern="X(9)" />
-	<field name="name" value="bean" bean="MOD200" property="name" format="AlphaNumeric" pattern="X(40)" />
-	<field name="phone1" value="bean" bean="MOD200" property="phone1" format="AlphaNumeric" pattern="X(9)" />
-	<field name="phone2" value="bean" bean="MOD200" property="phone2" format="AlphaNumeric" pattern="X(9)" />
-	<field name="year" value="bean" bean="MOD200" property="year" format="Numeric" pattern="9(4)" />
+	<field name="CTE1"       value="&lt;T200010>"                             format="AlphaNumeric" pattern="X(9)" />
+	<field name="free0"      value=" "                                        format="Alphabetic"   pattern="X" />
+	<field name="startDate"  value="bean" bean="MOD200" property="startDate"  format="AlphaNumeric" pattern="X(8)" />
+	<field name="endDate"    value="bean" bean="MOD200" property="endDate"    format="AlphaNumeric" pattern="X(8)" />
+	<field name="periodType" value="bean" bean="MOD200" property="periodType" format="Numeric"      pattern="9" />
+	<field name="cnae"       value="bean" bean="MOD200" property="cnae"       format="Numeric"      pattern="9(4)" />
+	<field name="document"   value="bean" bean="MOD200" property="document"   format="AlphaNumeric" pattern="X(9)" />
+	<field name="name"       value="bean" bean="MOD200" property="name"       format="AlphaNumeric" pattern="X(40)" />
+	<field name="phone1"     value="bean" bean="MOD200" property="phone1"     format="AlphaNumeric" pattern="X(9)" />
+	<field name="phone2"     value="bean" bean="MOD200" property="phone2"     format="AlphaNumeric" pattern="X(9)" />
+	<field name="year"       value="bean" bean="MOD200" property="year"       format="Numeric"      pattern="9(4)" />
 	
 	<field name="C0001" value="bean" bean="MOD200" property="keys(C0001)" format="Numeric" pattern="9" />
 	<field name="C0002" value="bean" bean="MOD200" property="keys(C0002)" format="Numeric" pattern="9" />
@@ -99,8 +99,8 @@
 	<field name="free1" value=" " format="Alphabetic" pattern="X(21)" />
 	<field name="free2" value=" " format="Alphabetic" pattern="X(20)" />
 	<field name="free3" value=" " format="Alphabetic" pattern="X(50)" />
-	<field name="free4" value=" " format="Alphabetic" pattern="X(9)" />
-	<field name="free4" value=" " format="Alphabetic" pattern="X(9)" />
+	<field name="free4" value="0" format="Numeric"    pattern="9(9)" />
+	<field name="free4" value="0" format="Numeric"    pattern="9(9)" />
 	<field name="free3" value=" " format="Alphabetic" pattern="X(50)" />
 	<field name="free3" value=" " format="Alphabetic" pattern="X(13)" />
 	<field name="CTE2" value="&lt;/T200010>" format="AlphaNumeric" pattern="X(10)" />

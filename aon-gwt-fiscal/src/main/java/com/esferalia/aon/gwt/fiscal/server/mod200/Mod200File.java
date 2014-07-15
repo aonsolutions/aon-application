@@ -31,7 +31,6 @@ public class Mod200File {
 	private Mod200 mod200;
 	private Map<String,Double> keys;
 	
-	private String pages;
 	private Secretary secretary;
 	private List<LegalRepresentative> legalRepresentatives;	 
 	
@@ -102,10 +101,16 @@ public class Mod200File {
 	}
 
 	public String getPhone1() {
+		if (AonUtil.isEmpty(getMod200().getEnterprisePhone1())) {
+			return "000000000";
+		}
 		return getMod200().getEnterprisePhone1();
 	}
 
 	public String getPhone2() {
+		if (AonUtil.isEmpty(getMod200().getEnterprisePhone2())) {
+			return "000000000";
+		}
 		return getMod200().getEnterprisePhone2();
 	}
 	
@@ -121,7 +126,10 @@ public class Mod200File {
 		return getMod200().isComplementary()?1:0;
 	}
 	public String getComplementaryReceipt() {
-		return AonUtil.leftPad(getMod200().getComplementaryReceipt(), 13, AonUtil.DOT);
+		String cr = getMod200().getComplementaryReceipt();
+		if (AonUtil.isEmpty(cr)) cr = AonUtil.EMPTY;
+		cr = AonUtil.leftPad(cr, 13, "0"); 
+		return cr;
 	}
 	public String getFiscalGroup() {
 		return getMod200().getFiscalGroup();
@@ -317,9 +325,44 @@ public class Mod200File {
 		return keys;
 	}
 	
+	/**
+	 * Vector de páginas. Para su cumplimentación se debe indicar de forma
+	 * secuencial las páginas que forman parte de esta declaración. Cada página
+	 * se indicará con 3 digitos. Después de la última página se pondrá el
+	 * identificador "FIN". Por ejemplo, en un fichero que contenga una página
+	 * 1, dos 2, una 3, una 4, una 5, una 6, una 7, una 8, una 9, una 10, una
+	 * 11, una 12, una 13, una 14, una 15, una 16, una 17, una 18, una 18 bis,
+	 * dos 19, una DID debería rellenarse el vector con el siguiente
+	 * contenido:01002002003004005006007008009010011012013014015016017018018
+	 * B190190DIDFIN (y el resto a blancos hasta completar las 600 posiciones)
+	 * 
+	 * @return
+	 */
 	public String getPages() {
-		return pages;
+		return "001"
+//			  +"002"
+//			  +"003"
+//			  +"004"
+//			  +"005"
+//			  +"006"
+//			  +"007"
+//			  +"008"
+//			  +"009"
+//			  +"010"
+//			  +"011"
+//			  +"012"
+//			  +"013"
+//			  +"014"
+//			  +"015"
+//			  +"016"
+//			  +"017"
+//			  +"018"
+//			  +"18B"
+//			  +"024"
+//			  +"DID"
+			  +"FIN";
 	}
+
 	public Secretary getSecretary() {
 		return secretary;
 	}

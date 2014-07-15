@@ -85,7 +85,7 @@ public class Mod200toMOD2002013 {
 
 	private static TipoPagina04 getPagina04(Mod200 mod200) {
 		TipoPagina04 pagina04 = new TipoPagina04();
-	    pagina04.setT150(getKey(mod200,Mod200Key.BA150));
+//	    pagina04.setT150(getKey(mod200,Mod200Key.BA150));
 	    pagina04.setT151(getKey(mod200,Mod200Key.BA151));
 	    pagina04.setT152(getKey(mod200,Mod200Key.BA152));
 	    pagina04.setT153(getKey(mod200,Mod200Key.BA153));

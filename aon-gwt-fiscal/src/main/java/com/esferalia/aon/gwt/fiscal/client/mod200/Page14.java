@@ -192,7 +192,7 @@ public class Page14 extends PageAbs {
 			mod200Object.getMod200().setResultType("I");
 			mod200Object.getMod200().setDevType(null);
 			mod200Object.getMod200().setPayType(payTypeE.getValue()?"E":"A");
-			mod200Object.getMod200().setIban(ibanD.getValue());
+			mod200Object.getMod200().setIban(ibanP.getValue());
 		}
 	}
 

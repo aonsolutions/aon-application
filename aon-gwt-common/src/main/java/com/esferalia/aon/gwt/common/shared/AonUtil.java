@@ -42,12 +42,140 @@ public class AonUtil {
 		}
 		return str.indexOf(searchChar) >= 0;
 	}
-
+	
+	
+	/*
+	 *  	*********************************		
+	 *		COMMONS LANG STRING UTILS METHODS
+	 * 		*********************************
+	 */
+	
+	
+    /**
+     * <p>Removes control characters (char &lt;= 32) from both
+     * ends of this String, handling <code>null</code> by returning
+     * <code>null</code>.</p>
+     *
+     * <p>The String is trimmed using {@link String#trim()}.
+     * Trim removes start and end characters &lt;= 32.
+     * To strip whitespace use {@link #strip(String)}.</p>
+     *
+     * <p>To trim your choice of characters, use the
+     * {@link #strip(String, String)} methods.</p>
+     *
+     * <pre>
+     * StringUtils.trim(null)          = null
+     * StringUtils.trim("")            = ""
+     * StringUtils.trim("     ")       = ""
+     * StringUtils.trim("abc")         = "abc"
+     * StringUtils.trim("    abc    ") = "abc"
+     * </pre>
+     *
+     * @param str  the String to be trimmed, may be null
+     * @return the trimmed string, <code>null</code> if null String input
+     */
 	public static String trim(String str) {
 		return str == null ? null : str.trim();
 	}
 
-	public static String substringBefore(String str, String separator) {
+    /**
+     * <p>Gets a substring from the specified String avoiding exceptions.</p>
+     *
+     * <p>A negative start position can be used to start/end <code>n</code>
+     * characters from the end of the String.</p>
+     *
+     * <p>The returned substring starts with the character in the <code>start</code>
+     * position and ends before the <code>end</code> position. All position counting is
+     * zero-based -- i.e., to start at the beginning of the string use
+     * <code>start = 0</code>. Negative start and end positions can be used to
+     * specify offsets relative to the end of the String.</p>
+     *
+     * <p>If <code>start</code> is not strictly to the left of <code>end</code>, ""
+     * is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substring(null, *, *)    = null
+     * StringUtils.substring("", * ,  *)    = "";
+     * StringUtils.substring("abc", 0, 2)   = "ab"
+     * StringUtils.substring("abc", 2, 0)   = ""
+     * StringUtils.substring("abc", 2, 4)   = "c"
+     * StringUtils.substring("abc", 4, 6)   = ""
+     * StringUtils.substring("abc", 2, 2)   = ""
+     * StringUtils.substring("abc", -2, -1) = "b"
+     * StringUtils.substring("abc", -4, 2)  = "ab"
+     * </pre>
+     *
+     * @param str  the String to get the substring from, may be null
+     * @param start  the position to start from, negative means
+     *  count back from the end of the String by this many characters
+     * @param end  the position to end at (exclusive), negative means
+     *  count back from the end of the String by this many characters
+     * @return substring from start position to end positon,
+     *  <code>null</code> if null String input
+     */
+    public static String substring(String str, int start, int end) {
+        if (str == null) {
+            return null;
+        }
+
+        // handle negatives
+        if (end < 0) {
+            end = str.length() + end; // remember end is negative
+        }
+        if (start < 0) {
+            start = str.length() + start; // remember start is negative
+        }
+
+        // check length next
+        if (end > str.length()) {
+            end = str.length();
+        }
+
+        // if start is greater than end, return ""
+        if (start > end) {
+            return EMPTY;
+        }
+
+        if (start < 0) {
+            start = 0;
+        }
+        if (end < 0) {
+            end = 0;
+        }
+
+        return str.substring(start, end);
+    }
+
+    // SubStringAfter/SubStringBefore
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Gets the substring before the first occurrence of a separator.
+     * The separator is not returned.</p>
+     *
+     * <p>A <code>null</code> string input will return <code>null</code>.
+     * An empty ("") string input will return the empty string.
+     * A <code>null</code> separator will return the input string.</p>
+     *
+     * <p>If nothing is found, the string input is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substringBefore(null, *)      = null
+     * StringUtils.substringBefore("", *)        = ""
+     * StringUtils.substringBefore("abc", "a")   = ""
+     * StringUtils.substringBefore("abcba", "b") = "a"
+     * StringUtils.substringBefore("abc", "c")   = "ab"
+     * StringUtils.substringBefore("abc", "d")   = "abc"
+     * StringUtils.substringBefore("abc", "")    = ""
+     * StringUtils.substringBefore("abc", null)  = "abc"
+     * </pre>
+     *
+     * @param str  the String to get a substring from, may be null
+     * @param separator  the String to search for, may be null
+     * @return the substring before the first occurrence of the separator,
+     *  <code>null</code> if null String input
+     * @since 2.0
+     */
+    public static String substringBefore(String str, String separator) {
 		if (isEmpty(str) || separator == null) {
 			return str;
 		}
@@ -61,6 +189,34 @@ public class AonUtil {
 		return str.substring(0, pos);
 	}
 
+    /**
+     * <p>Gets the substring after the first occurrence of a separator.
+     * The separator is not returned.</p>
+     *
+     * <p>A <code>null</code> string input will return <code>null</code>.
+     * An empty ("") string input will return the empty string.
+     * A <code>null</code> separator will return the empty string if the
+     * input string is not <code>null</code>.</p>
+     *
+     * <p>If nothing is found, the empty string is returned.</p>
+     *
+     * <pre>
+     * StringUtils.substringAfter(null, *)      = null
+     * StringUtils.substringAfter("", *)        = ""
+     * StringUtils.substringAfter(*, null)      = ""
+     * StringUtils.substringAfter("abc", "a")   = "bc"
+     * StringUtils.substringAfter("abcba", "b") = "cba"
+     * StringUtils.substringAfter("abc", "c")   = ""
+     * StringUtils.substringAfter("abc", "d")   = ""
+     * StringUtils.substringAfter("abc", "")    = "abc"
+     * </pre>
+     *
+     * @param str  the String to get a substring from, may be null
+     * @param separator  the String to search for, may be null
+     * @return the substring after the first occurrence of the separator,
+     *  <code>null</code> if null String input
+     * @since 2.0
+     */
 	public static String substringAfter(String str, String separator) {
 		if (isEmpty(str)) {
 			return str;
