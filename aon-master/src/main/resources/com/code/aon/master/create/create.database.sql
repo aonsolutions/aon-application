@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.37.0
+# Version: 7.37.4
 # Created by: girazu
-# Creation Date: 08/07/2014 15:45
+# Creation Date: 15/07/2014 13:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -628,6 +628,19 @@ CREATE TABLE `account_entry_fbatch` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Remesas';
 
 #
+# Structure for the `department` table : 
+#
+
+CREATE TABLE `department` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del Departamento',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_DEPARTMENT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_DEPARTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
+
+#
 # Structure for the `brand` table : 
 #
 
@@ -747,19 +760,6 @@ CREATE TABLE `item` (
   CONSTRAINT `FK_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
-
-#
-# Structure for the `department` table : 
-#
-
-CREATE TABLE `department` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del Departamento',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_DEPARTMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_DEPARTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
 # Structure for the `pos` table : 
@@ -2928,6 +2928,7 @@ CREATE TABLE `contract_attach` (
   `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
   `attach_date` datetime default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_ATTACH_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_ATTACH_SCOPE` (`scope`),
@@ -4385,16 +4386,16 @@ CREATE TABLE `fs_model200` (
   `period_type` tinyint(1) NOT NULL default '0' COMMENT 'Tipo de periodo',
   `period_start` date NOT NULL COMMENT 'Inicio periodo',
   `period_end` date NOT NULL COMMENT 'Fin periodo',
-  `fiscal_group` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de grupo fiscal',
-  `dominant_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF de la entidad dominante',
-  `secretary_document` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del secretario',
-  `secretary_name` varchar(25) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF del secretario',
-  `irnr` date DEFAULT NULL COMMENT 'Fecha IRNR',
-  `result_type` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT '(D) Devolucion, (I) Ingreso, (C) Cuota cero',
-  `dev_type` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT '(R) Renuncia, (T) Transferencia',
-  `pay_type` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT '(E) Efectivo, (A) Adeudo',
-  `amount` double(15,3) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
-  `iban` varchar(34) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'IBAN',
+  `fiscal_group` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'Numero de grupo fiscal',
+  `dominant_document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF de la entidad dominante',
+  `secretary_document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF del secretario',
+  `secretary_name` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'NIF del secretario',
+  `irnr` date default NULL COMMENT 'Fecha IRNR',
+  `result_type` varchar(1) collate latin1_spanish_ci default NULL COMMENT '(D) Devolucion, (I) Ingreso, (C) Cuota cero',
+  `dev_type` varchar(1) collate latin1_spanish_ci default NULL COMMENT '(R) Renuncia, (T) Transferencia',
+  `pay_type` varchar(1) collate latin1_spanish_ci default NULL COMMENT '(E) Efectivo, (A) Adeudo',
+  `amount` double(15,3) default NULL COMMENT 'Importe',
+  `iban` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
@@ -4446,8 +4447,8 @@ CREATE TABLE `fs_model200_registry` (
   `reserve` double(15,3) default NULL COMMENT 'Reservas',
   `other_amounts` double(15,3) default NULL COMMENT 'Otras partidas',
   `result` double(15,3) default NULL COMMENT 'Resultado del ultimo ejercicio',
-  `notary` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Notaria',
-  `notary_date` date DEFAULT NULL COMMENT 'Fecha Notaria',
+  `notary` varchar(20) collate latin1_spanish_ci default NULL COMMENT 'Notaria',
+  `notary_date` date default NULL COMMENT 'Fecha Notaria',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_REGISTRY_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_REGISTRY_FS_MODEL200` (`fs_model200`),
@@ -4683,6 +4684,7 @@ CREATE TABLE `iattach` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_IATTACH_ITEM` (`item`),
   KEY `IDX_IATTACH_DOMAIN` (`domain`),
@@ -4987,6 +4989,7 @@ CREATE TABLE `invoice_attach` (
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Archivo Adjunto',
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_ATTACH_INVOICE` (`invoice`),
   KEY `IDX_INVOICE_ATTACH_DOMAIN` (`domain`),
@@ -5808,6 +5811,7 @@ CREATE TABLE `offer_attach` (
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_OFFER_ATTACH_OFFER` (`offer`),
   KEY `IDX_OFFER_ATTACH_DOMAIN` (`domain`),
@@ -5868,6 +5872,7 @@ CREATE TABLE `payroll_batch_attach` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
   `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_PAYROLL_BATCH_ATTACH_DOMAIN` (`domain`),
   KEY `IDX_PAYROLL_BATCH_ATTACH_SCOPE` (`scope`),
@@ -6157,6 +6162,7 @@ CREATE TABLE `project_attach` (
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_ATTACH_DOMAIN` (`domain`),
   KEY `IDX_PROJECT_ATTACH_PROJECT` (`project`),
@@ -7022,6 +7028,7 @@ CREATE TABLE `sepe_batch_attach` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
   `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `driveId` varchar(45) collate latin1_spanish_ci default NULL,
   PRIMARY KEY  (`id`),
   KEY `IDX_SEPE_BATCH_ATTACH_SCOPE` (`scope`),
   KEY `IDX_SEPE_BATCH_ATTACH_DOMAIN` (`domain`),
@@ -7583,7 +7590,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.37.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.37.4');
 
 COMMIT;
 
