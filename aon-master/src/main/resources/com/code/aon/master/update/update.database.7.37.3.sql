@@ -2,6 +2,9 @@
 # Created by: rtrepiana
 # Creation Date: 14/07/2014 
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
+BEGIN;
 
 INSERT INTO system_payment 
 ( domain, type, payment_concept, irpf_expression, quote_expression, start_date, month, end_date, salary_type , expression, description ) 
@@ -21,9 +24,9 @@ REPLACE(expression, '== PROCEDENTE', '== CAMBIO_CONDICIONES'), 'INDEMNIZACION PO
  FROM system_payment WHERE description='INDEMNIZACION POR DESPIDO POR CAUSAS OBJETIVAS');
 
 
-
-
 UPDATE `db_version` SET `version_number` = '7.37.4';
 
 
+COMMIT;
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=1;
