@@ -720,10 +720,13 @@ public class SalaryDraftObject implements IContextProvider {
 	private List<Payment> getTopPayments(Payment payment) {
 
 
-		String name = payment.getName();
 		
 		List<Payment> twins = new LinkedList<Payment>();
 		twins.add(payment);
+		
+		String name = payment.getName();
+		if ( StringUtils.isBlank(name))
+			return twins;
 
 		for (Payment p : salaryDraft.getPayments()) {
 			if (p.getScope().compareTo(Scope.AGREEMENT) > 0)
