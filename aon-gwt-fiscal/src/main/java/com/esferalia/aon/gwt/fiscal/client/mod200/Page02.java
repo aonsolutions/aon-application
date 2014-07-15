@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
+import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Country;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Province;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
@@ -137,6 +138,11 @@ public class Page02 extends PageAbs {
 				return object.getDocument();
 			}
 		};
+		documentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	dataProviderIn.getList().get(index).setDocument(value);
+		    }
+		});		
 		tableIn.addColumn(documentColumn, MSG.document());
 		documentColumn.setCellStyleNames(RESOURCES.css().aonTextCenter());
 		tableIn.setColumnWidth(documentColumn, 100, Unit.PX);
@@ -151,6 +157,11 @@ public class Page02 extends PageAbs {
 				return ca.getName();
 			}
 		};
+		descriptionColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	dataProviderIn.getList().get(index).setName(value);
+		    }
+		});		
 		tableIn.addColumn(descriptionColumn, MSG.companyName());
 		descriptionColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
@@ -163,13 +174,18 @@ public class Page02 extends PageAbs {
 				return ca.isRepresentative();
 			}
 		};
+		representativeColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, Boolean>() {
+		    public void update(int index, CompanyParticipation cp, Boolean value) {
+		    	dataProviderIn.getList().get(index).setRepresentative(value);
+		    }
+		});		
 		tableIn.addColumn(representativeColumn, "Rpte.");
 		tableIn.setColumnWidth(representativeColumn, 30, Unit.PX);
 		representativeColumn.setCellStyleNames(RESOURCES.css().aonTextCenter());
 	}
 
 	private void addInProvinceColumn() {
-		List<String> options = new LinkedList<String>();
+		final List<String> options = new LinkedList<String>();
 		for (Province prov : Province.values()) {
 			options.add( MSG.provinceName(prov) );
 		}
@@ -192,6 +208,15 @@ public class Page02 extends PageAbs {
 				return name;
 			}
 		};
+		provinceColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	Province p = null;
+		    	if (AonUtil.isNotEmpty(value)) {
+		    		p = Province.values()[options.indexOf(value)]; 
+		    	}
+		    	dataProviderIn.getList().get(index).setProvince(p==null?0:p.ordinal());
+		    }
+		});		
 		tableIn.addColumn(provinceColumn, MSG.province());
 		tableIn.setColumnWidth(provinceColumn, 150, Unit.PX);
 		provinceColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
@@ -206,6 +231,16 @@ public class Page02 extends PageAbs {
 				return Double.toString( ca.getPercent() );
 			}
 		};
+		percentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		dataProviderIn.getList().get(index).setPercent(p);
+		    	} catch (NumberFormatException e) {
+		    		Window.alert("Porcentaje no v\u00E1lido.");
+		    	}
+		    }
+		});		
 		tableIn.addColumn(percentColumn, "%");
 		tableIn.setColumnWidth(percentColumn, 50, Unit.PX);
 		percentColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
@@ -220,6 +255,16 @@ public class Page02 extends PageAbs {
 				return Double.toString( ca.getNominalValue() );
 			}
 		};
+		nominalValueColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		dataProviderIn.getList().get(index).setNominalValue(p);
+		    	} catch (NumberFormatException e) {
+		    		Window.alert("Porcentaje no v\u00E1lido.");
+		    	}
+		    }
+		});		
 		tableIn.addColumn(nominalValueColumn, MSG.nominalValue());
 		tableIn.setColumnWidth(nominalValueColumn, 120, Unit.PX);
 		nominalValueColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
@@ -266,6 +311,11 @@ public class Page02 extends PageAbs {
 				return object.getDocument();
 			}
 		};
+		documentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	dataProviderOut.getList().get(index).setDocument(value);
+		    }
+		});		
 		tableOut.addColumn(documentColumn, MSG.document());
 		documentColumn.setCellStyleNames(RESOURCES.css().aonTextCenter());
 		tableOut.setColumnWidth(documentColumn, 100, Unit.PX);
@@ -279,6 +329,11 @@ public class Page02 extends PageAbs {
 				return ca.getName();
 			}
 		};
+		descriptionColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	dataProviderOut.getList().get(index).setName(value);
+		    }
+		});		
 		tableOut.addColumn(descriptionColumn, MSG.companyName());
 		descriptionColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
 	}
@@ -291,6 +346,16 @@ public class Page02 extends PageAbs {
 				return Double.toString( ca.getPercent() );
 			}
 		};
+		percentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		dataProviderOut.getList().get(index).setPercent(p);
+		    	} catch (NumberFormatException e) {
+		    		Window.alert("Porcentaje no v\u00E1lido.");
+		    	}
+		    }
+		});		
 		tableOut.addColumn(percentColumn, "%");
 		tableOut.setColumnWidth(percentColumn, 50, Unit.PX);
 		percentColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
@@ -304,6 +369,16 @@ public class Page02 extends PageAbs {
 				return Double.toString( ca.getNominalValue() );
 			}
 		};
+		nominalValueColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
+		    public void update(int index, CompanyParticipation cp, String value) {
+		    	try {
+		    		double p = Double.parseDouble(value);
+		    		dataProviderOut.getList().get(index).setNominalValue(p);
+		    	} catch (NumberFormatException e) {
+		    		Window.alert("Porcentaje no v\u00E1lido.");
+		    	}
+		    }
+		});		
 		tableOut.addColumn(nominalValueColumn, MSG.nominalValue());
 		tableOut.setColumnWidth(nominalValueColumn, 80, Unit.PX);
 		nominalValueColumn.setCellStyleNames(RESOURCES.css().aonTextLeft());
@@ -348,5 +423,19 @@ public class Page02 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 	}
-	
+
+	public void populate(Mod200Object obj) {
+		List<CompanyParticipation> listIn = new LinkedList<CompanyParticipation>();
+		for (CompanyParticipation cp : dataProviderIn.getList()) {
+			listIn.add(cp);
+		}
+		this.mod200Object.getMod200().setParticipationsIn(listIn);
+		
+		List<CompanyParticipation> listOut = new LinkedList<CompanyParticipation>();
+		for (CompanyParticipation cp : dataProviderOut.getList()) {
+			listOut.add(cp);
+		}
+		this.mod200Object.getMod200().setParticipationsOut(listOut);
+	}
+
 }

@@ -302,7 +302,7 @@ public class Page00 extends PageAbs {
 		obj.getMod200().setEnterprisePhone2(phone2.getValue());
 		obj.getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
 		obj.getMod200().setPeriodStart( periodStart.getValue() );
-		obj.getMod200().setPeriodStart( periodEnd.getValue() );
+		obj.getMod200().setPeriodEnd( periodEnd.getValue() );
 		obj.getMod200().setBalanceType( balanceSheetType.getSelectedIndex() );
 		obj.getMod200().setPygType( profitAndLossType.getSelectedIndex() );
 		obj.getMod200().setCnae(cnae.getValue());

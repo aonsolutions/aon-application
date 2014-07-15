@@ -62,7 +62,7 @@ public class MOD200  extends AbstractFileFiller{
 			createLine("DP200017",properties);
 			createLine("DP200018",properties);
 			createLine("DP200018B",properties);
-			createLine("DP200024",properties);
+//			createLine("DP200024",properties);
 			createLine("DP200DID",properties);
 			createLine("DP200000_END",properties);
 

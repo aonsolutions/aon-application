@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-	 	<div class="{aonResources.css.aonGroup}">
+	 	<g:HTMLPanel ui:field="devPanel" styleName="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
 				<g:InlineLabel text="{msg.payBack}" />
 			</div>
@@ -32,9 +32,9 @@
 				<g:InlineLabel text="{msg.iban}" styleName="{aonResources.css.aonMarginLeft}"/>
 				<aon:IbanTextBox ui:field="ibanD" styleName="{aonResources.css.aonMarginLeft}"/>
 			</div>
-		</div>
+		</g:HTMLPanel>
 
-	 	<div class="{aonResources.css.aonGroup}">
+	 	<g:HTMLPanel ui:field="payPanel" styleName="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
 				<g:InlineLabel text="{msg.deposit}" />
 			</div>
@@ -48,17 +48,17 @@
 				<g:InlineLabel text="{msg.iban}" styleName="{aonResources.css.aonMarginLeft}"/>
 				<aon:IbanTextBox ui:field="ibanP" styleName="{aonResources.css.aonMarginLeft}"/>
 			</div>
-		</div>
+		</g:HTMLPanel>
 
 
-	 	<div class="{aonResources.css.aonGroup}">
+	 	<g:HTMLPanel ui:field="zeroPanel" styleName="{aonResources.css.aonGroup}">
 			<div class="{aonResources.css.aonGroupTitle}">
 				<g:InlineLabel text="{msg.zeroQuota}" />
 			</div>
 			<div class="{aonResources.css.aonGroupBody}">
 				<g:CheckBox ui:field="zeroQuota" text="{msg.zeroQuota}"/>
 			</div>
-		</div>
+		</g:HTMLPanel>
 	
 	</g:HTMLPanel>
 </ui:UiBinder>

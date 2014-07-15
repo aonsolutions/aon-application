@@ -57,7 +57,7 @@ public class SQLMod200 {
 			 .set(FS_MODEL200.ADMINISTRATION, (byte) mod200.getAdministration())
 			 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 			 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
-			 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?0:1) )
+			 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
 			 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
 			 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
 			 .set(FS_MODEL200.CNAE,mod200.getCnae())
@@ -72,6 +72,11 @@ public class SQLMod200 {
 			 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
 			 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
 					 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
+			 .set(FS_MODEL200.RESULT_TYPE,mod200.getResultType())
+			 .set(FS_MODEL200.DEV_TYPE,mod200.getDevType())
+			 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
+			 .set(FS_MODEL200.AMOUNT,mod200.getAmount())
+			 .set(FS_MODEL200.IBAN,mod200.getIban())
 			 .set(FS_MODEL200.COMMENTS,mod200.getComments())
 			 .returning()
 			 .fetchOne();
@@ -194,7 +199,7 @@ public class SQLMod200 {
 		 .set(FS_MODEL200.ADMINISTRATION, (byte) mod200.getAdministration())
 		 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 		 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
-		 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?0:1) )
+		 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
 		 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
 		 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
 		 .set(FS_MODEL200.CNAE,mod200.getCnae())
@@ -210,6 +215,11 @@ public class SQLMod200 {
 		 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
 		 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
 				 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
+		 .set(FS_MODEL200.RESULT_TYPE,mod200.getResultType())
+		 .set(FS_MODEL200.DEV_TYPE,mod200.getDevType())
+		 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
+		 .set(FS_MODEL200.AMOUNT,mod200.getAmount())
+		 .set(FS_MODEL200.IBAN,mod200.getIban())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		deleteDetail(conn, dsl, mod200);
@@ -314,14 +324,15 @@ public class SQLMod200 {
 		secretary.setIrnr(record.getIrnr());
 		mod200.setSecretary(secretary);
 		mod200.setComments(record.getComments());
+		mod200.setResultType(record.getResultType());
+		mod200.setDevType(record.getDevType());
+		mod200.setPayType(record.getPayType());
+		mod200.setAmount(record.getAmount());
+		mod200.setIban(record.getIban());
 		return mod200;
 	}
 
 	private static void fillRegistryLists(Mod200 mod200, DSLContext dsl) {
-		List<CompanyAdministrator> administrators = new LinkedList<CompanyAdministrator>();
-		List<CompanyParticipation> participationsIn = new LinkedList<CompanyParticipation>();
-		List<CompanyParticipation> participationsOut = new LinkedList<CompanyParticipation>();
-		List<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();
 		Result<FsModel200RegistryRecord> res = 
 				dsl.selectFrom(FS_MODEL200_REGISTRY)
 			 	.where(	FS_MODEL200_REGISTRY.FS_MODEL200.equal(mod200.getId()))
@@ -336,7 +347,7 @@ public class SQLMod200 {
 				ca.setName( reg.getName());
 				ca.setRepresentative( reg.getRepresentative() == 1 );
 				ca.setProvince( reg.getProvince() );
-				administrators.add(ca);
+				mod200.getAdministrators().add(ca);
 			} else if (reg.getType() == 1) {
 				cp = new CompanyParticipation();
 				cp.setDocument(reg.getDocument());
@@ -354,7 +365,7 @@ public class SQLMod200 {
 				cp.setReserve(reg.getReserve());
 				cp.setOtherAmounts(reg.getOtherAmounts());
 				cp.setResult(reg.getResult());
-				participationsOut.add(cp);
+				mod200.getParticipationsOut().add(cp);
 			} if (reg.getType() == 2) {
 				cp = new CompanyParticipation();					
 				cp.setDocument(reg.getDocument());
@@ -363,20 +374,16 @@ public class SQLMod200 {
 				cp.setRepresentative( reg.getRepresentative() == 1 );
 				cp.setPercent(reg.getPercent());
 				cp.setNominalValue(reg.getNominalValue());
-				participationsIn.add(cp);
+				mod200.getParticipationsIn().add(cp);
 			} if (reg.getType() == 3) {
 				lr = new LegalRepresentative();					
 				lr.setDocument(reg.getDocument());
 				lr.setName(reg.getName());
 				lr.setNotary(reg.getNotary());
 				lr.setNotaryDate(reg.getNotaryDate());
-				representatives.add(lr);
+				mod200.getRepresentatives().add(lr);
 			}
 		}
-		mod200.setAdministrators(administrators);
-		mod200.setParticipationsIn(participationsIn);
-		mod200.setParticipationsOut(participationsOut);
-		mod200.setRepresentatives(representatives);
 	}
 
 

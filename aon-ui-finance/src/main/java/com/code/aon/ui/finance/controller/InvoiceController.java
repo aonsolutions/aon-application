@@ -520,7 +520,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	@Override
 	protected Criteria getSeriesCriteria() {
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(getTableName().toLowerCase()+".type", getInvoice().getType().ordinal());    	
+    	InvoiceType type = (getInvoice() != null) ? getInvoice().getType() : InvoiceType.SALES;
+    	criteria.addEqualExpression(getTableName().toLowerCase()+".type", type.ordinal());    	
     	return criteria;
 	}
 

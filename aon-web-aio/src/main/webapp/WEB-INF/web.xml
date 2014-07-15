@@ -296,6 +296,15 @@
 		<url-pattern>/aon_gwt_fiscal/Model200File</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>Mod200 File Print</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod200Print</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mod200 File Print</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Model200Print</url-pattern>
+	</servlet-mapping>
+	
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See

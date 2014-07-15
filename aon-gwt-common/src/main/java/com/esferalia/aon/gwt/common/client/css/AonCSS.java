@@ -40,6 +40,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-nowrap")
     String aonNowrap();
 	
+	@ClassName("aon-inline")
+    String aonInline();
+	
 	@ClassName("aon-text-center")
     String aonTextCenter();
 
