@@ -322,6 +322,7 @@ public class Model200 extends MainEntryPoint {
 	private void populatePages(Mod200Object mod2002) {
 		deckPanel.page00.populate(mod200);
 		deckPanel.page01.populate(mod200);
+		deckPanel.page02.populate(mod200);
 		deckPanel.page14.populate(mod200);
 	}
 

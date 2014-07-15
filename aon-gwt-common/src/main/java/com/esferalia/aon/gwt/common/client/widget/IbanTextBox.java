@@ -12,17 +12,16 @@ import com.google.gwt.user.client.ui.TextBox;
 public class IbanTextBox extends SimplePanel {
 	
 	private static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
-	private static final String DEFAULT_COUNTRY = "ES";  
 	
-	TextBox country = new TextBox();
 	TextBox iban1 = new TextBox();
 	TextBox iban2 = new TextBox();
 	TextBox iban3 = new TextBox();
 	TextBox iban4 = new TextBox();
 	TextBox iban5 = new TextBox();
+	TextBox iban6 = new TextBox();
 	
 	private TextBox[] textBoxes = new TextBox[]{
-			iban1,iban2,iban3,iban4,iban5};
+			iban1,iban2,iban3,iban4,iban5,iban6};
 	
 	public IbanTextBox() {
 		super( DOM.createSpan());
@@ -30,10 +29,6 @@ public class IbanTextBox extends SimplePanel {
 		panel.addStyleName(AON_RESOURCES.css().aonNowrap());
 		panel.addStyleName(AON_RESOURCES.css().aonInline());
 		this.add(panel);
-		country.setValue(DEFAULT_COUNTRY);
-		country.setMaxLength(2);
-		country.setVisibleLength(2);
-		panel.add(country);
 		for (TextBox textBox : textBoxes ) {
 			textBox.addStyleName(AON_RESOURCES.css().aonMarginLeft());
 			textBox.setMaxLength(4);
@@ -43,18 +38,17 @@ public class IbanTextBox extends SimplePanel {
 	}
 	
 	public String getValue() {
-		return country.getValue() + iban1.getValue()
-			 + iban2.getValue() + iban3.getValue()
-			 + iban4.getValue() + iban5.getValue();
+		return iban1.getValue() + iban2.getValue() + iban3.getValue()
+			 + iban4.getValue() + iban5.getValue() + iban6.getValue();
 	}
 	
 	public void setValue(String value) {
-		country.setValue(AonUtil.substring(value, 0,2));
-		iban1.setValue( AonUtil.substring(value, 2,6));
-		iban2.setValue( AonUtil.substring(value, 6,10));
-		iban3.setValue( AonUtil.substring(value, 10,14));
-		iban4.setValue( AonUtil.substring(value, 14,18));
-		iban5.setValue( AonUtil.substring(value, 18,22));
+		iban1.setValue( AonUtil.substring(value, 0,4));
+		iban2.setValue( AonUtil.substring(value, 4,8));
+		iban3.setValue( AonUtil.substring(value, 8,12));
+		iban4.setValue( AonUtil.substring(value, 12,16));
+		iban5.setValue( AonUtil.substring(value, 16,20));
+		iban6.setValue( AonUtil.substring(value, 20,24));
 	}
 	
 	

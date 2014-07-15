@@ -348,5 +348,19 @@ public class Page02 extends PageAbs {
 	@Override
 	protected void initializeTable() {
 	}
-	
+
+	public void populate(Mod200Object obj) {
+		List<CompanyParticipation> listIn = new LinkedList<CompanyParticipation>();
+		for (CompanyParticipation cp : dataProviderIn.getList()) {
+			listIn.add(cp);
+		}
+		this.mod200Object.getMod200().setParticipationsIn(listIn);
+		
+		List<CompanyParticipation> listOut = new LinkedList<CompanyParticipation>();
+		for (CompanyParticipation cp : dataProviderOut.getList()) {
+			listOut.add(cp);
+		}
+		this.mod200Object.getMod200().setParticipationsOut(listOut);
+	}
+
 }

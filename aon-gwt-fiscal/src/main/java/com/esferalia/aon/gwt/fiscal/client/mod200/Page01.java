@@ -151,7 +151,18 @@ public class Page01 extends PageAbs {
 		
 		this.mod200Object.getMod200().setFiscalGroup(this.fiscalGroup.getValue());
 		this.mod200Object.getMod200().setDominantDocument(this.dominantDocument.getValue());
-
+		
+		List<LegalRepresentative> list1 = new LinkedList<LegalRepresentative>();
+		for (LegalRepresentative lr : dataProvider1.getList()) {
+			list1.add(lr);
+		}
+		this.mod200Object.getMod200().setRepresentatives(list1);
+		
+		List<CompanyAdministrator> list2 = new LinkedList<CompanyAdministrator>();
+		for (CompanyAdministrator cp : dataProvider2.getList()) {
+			list2.add(cp);
+		}
+		this.mod200Object.getMod200().setAdministrators(list2);
 	}
 	
 	private void addLegalDocumentColumn() {

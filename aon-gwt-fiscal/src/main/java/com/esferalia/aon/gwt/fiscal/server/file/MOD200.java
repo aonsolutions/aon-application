@@ -44,26 +44,26 @@ public class MOD200  extends AbstractFileFiller{
 			
 			createLine("DP200000_START",properties);
 			createLine("DP200001",properties);
-//			createLine("DP200002",properties);
-//			createLine("DP200003",properties);
-//			createLine("DP200004",properties);
-//			createLine("DP200005",properties);
-//			createLine("DP200006",properties);
-//			createLine("DP200007",properties);
-//			createLine("DP200008",properties);
-//			createLine("DP200009",properties);
-//			createLine("DP200010",properties);
-//			createLine("DP200011",properties);
-//			createLine("DP200012",properties);
-//			createLine("DP200013",properties);
-//			createLine("DP200014",properties);
-//			createLine("DP200015",properties);
-//			createLine("DP200016",properties);
-//			createLine("DP200017",properties);
-//			createLine("DP200018",properties);
-//			createLine("DP200018B",properties);
+			createLine("DP200002",properties);
+			createLine("DP200003",properties);
+			createLine("DP200004",properties);
+			createLine("DP200005",properties);
+			createLine("DP200006",properties);
+			createLine("DP200007",properties);
+			createLine("DP200008",properties);
+			createLine("DP200009",properties);
+			createLine("DP200010",properties);
+			createLine("DP200011",properties);
+			createLine("DP200012",properties);
+			createLine("DP200013",properties);
+			createLine("DP200014",properties);
+			createLine("DP200015",properties);
+			createLine("DP200016",properties);
+			createLine("DP200017",properties);
+			createLine("DP200018",properties);
+			createLine("DP200018B",properties);
 //			createLine("DP200024",properties);
-//			createLine("DP200DID",properties);
+			createLine("DP200DID",properties);
 			createLine("DP200000_END",properties);
 
 		} catch (Exception ex) {
