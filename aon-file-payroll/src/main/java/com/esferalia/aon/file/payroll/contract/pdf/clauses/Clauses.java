@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
@@ -14,6 +15,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public class Clauses extends AbstractContractClauses {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String CLAUSES_NAME = "AdditionalClauses";
 	

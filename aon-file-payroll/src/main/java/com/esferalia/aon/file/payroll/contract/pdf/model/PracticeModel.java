@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.model;
 import java.io.IOException;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -16,6 +17,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public class PracticeModel extends AbstractContractModel {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String MODEL_NAME = "Practicas";
 	

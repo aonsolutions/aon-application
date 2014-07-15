@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.Classpath;
@@ -24,6 +25,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public abstract class AbstractContractModel implements IContractPdfDocument {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String CONTRACT_DOCUMENT_PATH = "com/esferalia/aon/file/payroll/contract/modelPdf/";
 	public final static String CONTRACT_CLAUSES_PATH = "com/esferalia/aon/file/payroll/contract/clausesPdf/";

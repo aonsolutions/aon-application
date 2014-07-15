@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.RegistryAddress;
@@ -29,6 +30,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public class TemporaryModel extends AbstractContractModel {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String MODEL_NAME = "Temporal";
 	

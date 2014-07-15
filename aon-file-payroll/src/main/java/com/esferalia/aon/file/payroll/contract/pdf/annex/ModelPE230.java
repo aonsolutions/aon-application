@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -42,6 +43,8 @@ import com.lowagie.text.pdf.PdfStamper;
 
 
 public class ModelPE230 extends AbstractAnnexModel {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	// HEADER FIELDS
 	public final static String PE230_CP_NO = "m1";

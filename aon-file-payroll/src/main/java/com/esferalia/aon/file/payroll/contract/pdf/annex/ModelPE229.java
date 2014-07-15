@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -23,6 +24,7 @@ import com.lowagie.text.pdf.PdfStamper;
 
 public class ModelPE229 extends AbstractAnnexModel {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String MODEL_NAME = "PE229";
 	

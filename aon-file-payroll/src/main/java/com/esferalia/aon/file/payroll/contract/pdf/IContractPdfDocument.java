@@ -1,5 +1,6 @@
 package com.esferalia.aon.file.payroll.contract.pdf;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -11,7 +12,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 
-public interface IContractPdfDocument {
+public interface IContractPdfDocument extends Serializable {
 	
 	String MUNICIPALITIES_BUNDLE_BASE_NAME = "com.code.aon.common.i18n.municipalities";
 	

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
@@ -26,6 +27,8 @@ import com.lowagie.text.pdf.PdfStamper;
 
 
 public abstract class AbstractContractClauses implements IContractPdfDocument {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/* 
 	 * Enterprise fields

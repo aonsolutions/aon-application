@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -35,6 +36,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public class Extension extends AbstractContractExtension {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	final static String PE191_PREVIOUS_CONTRACT_MODEL = "modelocont";
 	final static String PE191_RD = "rdcont";
