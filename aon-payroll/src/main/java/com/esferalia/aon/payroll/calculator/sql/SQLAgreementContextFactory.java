@@ -240,7 +240,7 @@ public class SQLAgreementContextFactory implements
 			Date monthEnd = startCalendar.getTime();
 
 			ctx.setVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
-
+			
 			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
 			startCalendar.add(Calendar.MONTH, 1);
 		}

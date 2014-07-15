@@ -23,10 +23,13 @@ import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
@@ -35,7 +38,6 @@ import org.jooq.InsertSetStep;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.AccountEntryDetail;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
@@ -44,6 +46,7 @@ import com.esferalia.aon.jooq.tables.records.SalaryEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.salary.ISalary;
@@ -78,6 +81,8 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	private Variables variables;
 
+	private SalaryPaymentRecord prevPayment;
+
 	public JooqSalaryBuilder(Connection connection) {
 		this(DSL.using(connection, JooqCommon.getDefaultSettings()));
 	}
@@ -85,6 +90,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public JooqSalaryBuilder(DSLContext dslContext) {
 		this.dslContext = dslContext;
 		this.variables = new Variables(null);
+		this.prevPayment = new SalaryPaymentRecord();
 	}
 
 	@Override
@@ -259,10 +265,11 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public void setIrpfBase(Double irpfBase) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase);
 	}
-	
+
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE, inkindIrpfBase);
+		insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE,
+				inkindIrpfBase);
 	}
 
 	@Override
@@ -328,7 +335,7 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 				.set(SALARY_EMBARGO.DESCRIPTION, description);
 
 	}
-	
+
 	@Override
 	public void addZeroEmbargo(Integer id, IDeduction embargo,
 			Map<String, ITimedVariable<?>> context) {
@@ -374,9 +381,18 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public void addPayment(Double amount, Double quote, Double tax,
 			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
+		InsertSetStep<SalaryPaymentRecord> insertPayment;
 
-		InsertSetStep<SalaryPaymentRecord> insertPayment = insertMorePayment == null ? dslContext
-				.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
+		if (isSiblingOfPrevious(payment)) {
+			insertPayment = insertMorePayment;
+			tax += prevPayment.getIrpf();
+			quote += prevPayment.getQuote();
+			amount += prevPayment.getAmount();
+		} else {
+			insertPayment = insertMorePayment == null ? dslContext
+					.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
+			prevPayment.setId(((IContractPayment) payment).getId());
+		}
 
 		PaymentType type = payment.getType();
 
@@ -391,13 +407,18 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 				.set(SALARY_PAYMENT.TYPE,
 						type != null ? (byte) type.ordinal() : null);
 
+		prevPayment.setIrpf(quote);
+		prevPayment.setQuote(quote);
+		prevPayment.setAmount(amount);
+
 		putContext(context);
 	}
 
 	@Override
 	public void addZeroPayment(Double quote, Double tax, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		addPayment(0.00, quote, tax, payment.getDescription(), null, null, payment, context);
+		addPayment(0.00, quote, tax, payment.getDescription(), null, null,
+				payment, context);
 	}
 
 	@Override
@@ -522,6 +543,19 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 
 	}
 
+	/**
+	 * 
+	 * @param payment
+	 * @return true if this Builder did not already insert the specified
+	 *         payment.
+	 */
+	private boolean isSiblingOfPrevious(IPayment payment) {
+		return (prevPayment.getId() != null)
+				&& (((IContractPayment) payment).getId() != null)
+				&& ((IContractPayment) payment).getId().equals(
+						prevPayment.getId());
+	}
+
 	// ------------------------------------------------------------------------
 
 	private static java.sql.Date toSqlDate(Date date) {
@@ -587,6 +621,9 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	// ------------------------------------------------------------------------
 
 	public static void main(String[] args) throws Exception {
+
+		if (true)
+			return;
 
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = DriverManager

@@ -1572,10 +1572,15 @@ public class SQLContractSalaryCalculatorContext implements
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 				+ ContractColumns.ID, getId());
-
-		ISalaryCalculatorContext ctx = getNoItCalculatorContext(connection,
+		ISalaryCalculatorContext ctx = null;
+		try {
+			ctx = getNoItCalculatorContext(connection,
 				startDate, endDate, issueDate, contractCriteria, start - 1,
 				end - 1);
+		} catch ( RuntimeException e ){
+			e.printStackTrace();
+			throw e;
+		}
 
 		ContractSalaryCalculator calculator = new OnlyPaymentContractSalaryCalculator();
 		calculator.setSalaryBuilder(new SalaryBuilder());

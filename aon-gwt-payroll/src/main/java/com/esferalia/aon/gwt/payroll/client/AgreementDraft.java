@@ -92,9 +92,12 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -609,7 +612,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private class PaymentEditor {
 		Payment payment;
 		TextBox expressionBox;
-		TextBox descriptionBox;
+		ValueBoxBase<String> descriptionBox;
 		TypeListBox<Payment.Type> typeListBox;
 		TypeListBox<Salary.Type> salaryTypeListBox;
 
@@ -771,7 +774,7 @@ public class AgreementDraft extends ResizeComposite implements
 					});
 		}
 
-		void setDescriptionSuggestBox(SuggestBox suggestBox) {
+		void setDescriptionSuggestBox(final SuggestBox suggestBox) {
 			suggestBox
 					.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 
@@ -803,6 +806,23 @@ public class AgreementDraft extends ResizeComposite implements
 								typeListBox.setSelected(payment.getType());
 								expressionBox.setFocus(true);
 							}
+
+						}
+					});
+			this.descriptionBox = suggestBox.getValueBox();
+			this.descriptionBox
+					.addValueChangeHandler(new ValueChangeHandler<String>() {
+						@Override
+						public void onValueChange(ValueChangeEvent<String> event) {
+							if (((DefaultSuggestionDisplay) suggestBox
+									.getSuggestionDisplay())
+									.isSuggestionListShowing())
+								return;
+							payment.setDescription(event.getValue());
+							AgreementDraft.this.agreementDraftObject
+									.addDraftPayment(payment);
+							AgreementDraft.this
+									.calculate(getExpressionFocusCallback());
 
 						}
 					});
@@ -864,15 +884,16 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private class ContextProvider implements IContextProvider {
-		
+
 		@Override
 		public boolean isEditable(String name) {
-			for ( Payment payment: AgreementDraft.this.agreementDraftObject.getPayments())
-				if ( StringUtils.equals(payment.getName(), name))
+			for (Payment payment : AgreementDraft.this.agreementDraftObject
+					.getPayments())
+				if (StringUtils.equals(payment.getName(), name))
 					return false;
 			return true;
 		}
-		
+
 		@Override
 		public void getContext(AsyncCallback<ContextDescriptor> callback) {
 			AgreementDraft.this.agreementDraftObject.getContext(
@@ -971,7 +992,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private List<IFocusableEditor> salaryTableEditors;
 
 	private ContextProvider contextProvider;
-	
+
 	private ContentAsistManager contentAssistManager;
 
 	public AgreementDraft() {
@@ -1053,7 +1074,7 @@ public class AgreementDraft extends ResizeComposite implements
 		extraEditors.addAll(dumpExtras(extraPayments));
 		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(),
 				extraPayments));
-		
+
 		loadContentAssistManager();
 	}
 
@@ -1842,7 +1863,6 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
 
-
 		if (isDraftPayment(payment)) {
 			paymentsTable.getRowFormatter().addStyleName(row,
 					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
@@ -1923,6 +1943,7 @@ public class AgreementDraft extends ResizeComposite implements
 		SuggestBox descriptionSuggest = new SuggestBox(
 				paymentDescriptionOracle, descriptionBox,
 				paymentSuggestionDisplay);
+		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionSuggest);
 
@@ -1946,13 +1967,13 @@ public class AgreementDraft extends ResizeComposite implements
 		payment.setQuoteExpression("_P");
 		payment.setType(Payment.Type.DEFAULT);
 		payment.setSalaryType(Salary.Type.SALARY);
-		
+
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
 		paymentEditor.setEditButton(newButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
-		paymentEditor.setDescriptionTextBox(descriptionBox);
+		//paymentEditor.setDescriptionTextBox(descriptionBox);
 		paymentEditor.setDescriptionSuggestBox(descriptionSuggest);
 
 		return paymentEditor;
@@ -2754,15 +2775,15 @@ public class AgreementDraft extends ResizeComposite implements
 		return ValueBox.wrap(Document.get().createTextInputElement(),
 				YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
 	}
-	
+
 	private void loadContentAssistManager() {
-		
+
 		class ProposalsLoader implements AsyncCallback<ContextDescriptor> {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -2772,9 +2793,8 @@ public class AgreementDraft extends ResizeComposite implements
 			}
 
 		}
-		
+
 		agreementDraftObject.getContext(0, new ProposalsLoader());
 	}
-	
-	
+
 }

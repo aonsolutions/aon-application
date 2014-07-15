@@ -20,10 +20,14 @@ public class AonConstants {
 	public static DismissalType UNFAIR = DismissalType.UNFAIR;
 	@Variable(ContextVariable.OBJECTIVE)
 	public static DismissalType OBJECTIVE = DismissalType.OBJECTIVE;
-	@Variable(ContextVariable.CONTRACT_COMPLETE)
+	@Variable(ContextVariable.WORK_COMPLETE)
 	public static DismissalType WORK_END = DismissalType.WORK_END;
+	@Variable(ContextVariable.TEMP_COMPLETE)
+	public static DismissalType TEMP_END_ = DismissalType.TEMP_END;
+	@Variable(ContextVariable.CONTRACT_COMPLETE)
+	public static DismissalType DEFINITE_END = DismissalType.DEFINITE_END;
 	@Variable(ContextVariable.CONDITIONS_CHANGE)
-	public static DismissalType CONDITIONS_CHANGE = DismissalType.OBJECTIVE;
+	public static DismissalType CONDITIONS_CHANGE = DismissalType.CONDITIONS_CHANGE;
 	
 	
 	// ------------------------------------------------------------------------

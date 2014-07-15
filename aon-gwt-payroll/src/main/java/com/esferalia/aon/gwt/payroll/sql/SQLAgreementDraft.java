@@ -23,6 +23,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -464,7 +465,7 @@ public class SQLAgreementDraft {
 		for (Payment payment : draft.getDraftPayments()) {
 			if (!isRemove(payment)) {
 				// Warning, we update payment id, it's a potential risk.
-				int paymentId = insertPayment(conn, domainId, draft.getId(),
+				int paymentId = __insertPayment(conn, domainId, draft.getId(),
 						payment);
 				syncExtra(draft.getDraftExtras(), payment.getId(), paymentId);
 				payment.setId(paymentId);
@@ -539,7 +540,7 @@ public class SQLAgreementDraft {
 			if (payment.getId() < 0) {
 				if (!isRemove(payment)) {
 					// Warning, we update payment id, it's a potential risk.
-					int paymentId = insertPayment(conn, domainId,
+					int paymentId = __insertPayment(conn, domainId,
 							draft.getId(), payment);
 					syncExtra(draft.getDraftExtras(), payment.getId(),
 							paymentId);
@@ -973,7 +974,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static int insertPayment(Connection conn, Integer domainId,
+	private static int __insertPayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -1070,7 +1071,7 @@ public class SQLAgreementDraft {
 		if (subPeriods.size() == 0) {
 			// New payment overrides completely previous payment. So we need
 			// only a single SQL UPADTE with new values.
-			updatePayment(conn, payment);
+			__updatePayment(conn, payment);
 			return;
 		}
 
@@ -1078,14 +1079,14 @@ public class SQLAgreementDraft {
 		if (firstPeriod.equals(dbPeriod)) {
 			// New payment doesn't override previous payment. So we need only
 			// a single SQL INSERT with new values.
-			insertPayment(conn, domainId, agreementId, payment);
+			__insertPayment(conn, domainId, agreementId, payment);
 			return;
 		}
 
 		// Update previous payment with new limits.
 		updatePayment(conn, payment.getId(), firstPeriod);
 		// Insert new payment.
-		insertPayment(conn, domainId, agreementId, payment);
+		__insertPayment(conn, domainId, agreementId, payment);
 
 		if (subPeriods.size() > 1)
 			copyPayment(conn, payment.getId(), subPeriods.get(1));
@@ -1104,7 +1105,7 @@ public class SQLAgreementDraft {
 
 		if (subPeriods.size() == 0) {
 			// New payment overrides completely previous payment. So delete it.
-			removePayment(conn, payment.getId());
+			__removePayment(conn, payment.getId());
 			return;
 		}
 
@@ -1251,7 +1252,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void updatePayment(Connection conn, Payment payment)
+	private static void __updatePayment(Connection conn, Payment payment)
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
@@ -1338,7 +1339,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void removePayment(Connection conn, Integer paymentId)
+	private static void __removePayment(Connection conn, Integer paymentId)
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {

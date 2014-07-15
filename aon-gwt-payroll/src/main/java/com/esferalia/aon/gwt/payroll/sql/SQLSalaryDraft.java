@@ -285,7 +285,7 @@ public class SQLSalaryDraft {
 					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = CATEGORY."
 					+ AgreementLevelCategoryColumns.ID + " AND CATEGORY."
 					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
-					+ " = LEVEL." + AgreementLevelDataColumns.ID + " AND DATA."
+					+ " = DATA." + AgreementLevelDataColumns.AGREEMENT_LEVEL + " AND DATA."
 					+ AgreementLevelDataColumns.NAME + " =  ? " + " AND DATA."
 					+ AgreementLevelDataColumns.START_DATE + " <= ? "
 					+ " AND ( DATA." + AgreementLevelDataColumns.END_DATE
@@ -329,6 +329,8 @@ public class SQLSalaryDraft {
 			queryStmt.setDate(3, SQLUtils.date2sql(variable.getEndDate()));
 			queryStmt.setDate(4, SQLUtils.date2sql(variable.getStartDate()));
 
+			rs = queryStmt.executeQuery();
+			
 			return rs.next();
 
 		} finally {

@@ -304,6 +304,9 @@ public class SQLExtraSalaryCalculatorContext implements
 	public void setListener(IListener listener) {
 		ctx.setListener(listener);
 	}
+	// ------------------------------------------------------------------------
+	
+	
 	
 	// ------------------------------------------------------------------------
 	

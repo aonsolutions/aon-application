@@ -7,6 +7,7 @@ import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection
 import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.rollback;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.DOMAIN;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_DATA;
@@ -17,6 +18,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.USER;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER_SCOPE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 
@@ -77,8 +79,9 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
+import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
-import com.esferalia.aon.gwt.payroll.client.ITDataObject;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
@@ -109,7 +112,6 @@ import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
-import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -141,6 +143,7 @@ import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.A3Line;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.FTELine;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.HolidayLine;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.Report;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
@@ -150,7 +153,6 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorC
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
@@ -212,6 +214,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService, StatisticsService {
 
 	public static final String REMOVE = "REMOVE()";
+	
 
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
 		{
@@ -838,7 +841,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			releaseFacesContext();
 		}
 	}
-	
+
 	@Override
 	public void saveITDataPerson(
 			Map<Integer, LinkedHashMap<Integer, ITDataPerson>> inserts,
@@ -852,21 +855,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			disableAutoCommit(conn);
 			SQLITData.save(conn, getDomainID(), inserts, deletes, updates);
 			commit(conn);
-		}catch(SQLException ex) {
+		} catch (SQLException ex) {
 			rollback(conn);
 			ex.printStackTrace();
 		} finally {
 			enableAutoCommit(conn);
-			if(conn != null) {
+			if (conn != null) {
 				try {
 					conn.close();
-				}catch(SQLException ex){					
+				} catch (SQLException ex) {
 				}
 			}
 			releaseFacesContext();
 		}
-	}	
-		
+	}
+
 	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
@@ -2739,18 +2742,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " 
-					+ " FROM " + REGISTRY + ", " + ENTERPRISE
+			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "+ PAYROLL_WORKPLACE 
-						+ " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
-					+ PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN " + AGREEMENT 
-						+ " ON ( " + PAYROLL_WORKPLACE + "." + PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT + "." + AgreementColumns.ID + " )" 
-					+ " WHERE " + REGISTRY + "." + RegistryColumns.ID + " = ?" 
-					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "."+ EnterpriseColumns.REGISTRY 
-					+ " AND " +  WORKPLACE + "." + WorkplaceColumns.SCOPE + " IN ( SELECT "+UserScopeColumns.SCOPE+" FROM "+USER_SCOPE+" WHERE "+UserScopeColumns.USER_ID+" = ? )" 
-					+ " ORDER BY " + " UPPER(" + WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
+					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "
+					+ PAYROLL_WORKPLACE + " ON ( " + WORKPLACE + "."
+					+ WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
+					+ PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN "
+					+ AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
+					+ PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT
+					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY
+					+ "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY
+					+ "." + RegistryColumns.ID + " = " + ENTERPRISE + "."
+					+ EnterpriseColumns.REGISTRY + " AND " + WORKPLACE + "."
+					+ WorkplaceColumns.SCOPE + " IN ( SELECT "
+					+ UserScopeColumns.SCOPE + " FROM " + USER_SCOPE
+					+ " WHERE " + UserScopeColumns.USER_ID + " = ? "
+					+ " UNION SELECT scope.id FROM scope INNER JOIN " + DOMAIN
+					+ " ON ( scope.domain = " + DOMAIN + "." + DomainColumns.ID
+					+ " ) INNER JOIN " + USER + " ON ( " + DOMAIN + "."
+					+ DomainColumns.PARENT + " = " + USER + "."
+					+ UserColumns.DOMAIN + " ) )" + " ORDER BY " + " UPPER("
+					+ WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
@@ -3075,14 +3088,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws SQLException {
 		SQLSalaryDraft.removeSalary(conn, draft);
 
-		SQLSalaryBuilder sqlSalaryBuilder = new SQLSalaryBuilder(conn);
-		sqlSalaryBuilder.setListener(new SalaryBuilderListener());
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
+		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CompositeSalaryBuilder<ISalaryBuilder> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalaryBuilder>(
-				salaryDraftBuilder, sqlSalaryBuilder);
-		sqlSalaryBuilder.begin();
-		calculate(draft, compositeSalaryBuilder, salaryDraftBuilder);
-		sqlSalaryBuilder.commit();
+				salaryDraftBuilder, jooqSalaryBuilder);
+
+		boolean autocommit = false;
+		try {
+			autocommit = conn.getAutoCommit();
+			conn.setAutoCommit(false);
+			calculate(draft, compositeSalaryBuilder, salaryDraftBuilder);
+			jooqSalaryBuilder.execute();
+			conn.commit();
+		} finally {
+			conn.setAutoCommit(autocommit);
+		}
 
 		try {
 			ISalary dbSalary = getDBSalary(draft);
@@ -3867,12 +3888,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						@Override
 						protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
 								Connection conn, Date startDate, Date endDate,
-								Date issueDate, Criteria criteria, int start, int end) {
+								Date issueDate, Criteria criteria, int start,
+								int end) {
 							ISQLContractSalaryCalculatorContext draftCtx;
 							try {
 								SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
 										conn, startDate, endDate, issueDate,
-										criteria, start, end );
+										criteria, start, end);
 								draftCtx = new SQLSalaryDraftCalculatorContext(
 										draft, sqlCtx);
 								draftCtx.next();
@@ -3969,7 +3991,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				ISQLContractSalaryCalculatorContext draftCtx;
 				try {
 					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
-							conn, startDate, endDate, issueDate, criteria, start, end);
+							conn, startDate, endDate, issueDate, criteria,
+							start, end);
 					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
 							sqlCtx);
 					draftCtx.next();
