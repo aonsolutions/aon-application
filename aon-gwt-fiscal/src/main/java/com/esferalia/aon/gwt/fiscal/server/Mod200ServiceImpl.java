@@ -276,10 +276,10 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			}
 			v = mod200.getKey(Mod200Key.BN621);
 			mod200.setResultType(null);
-			if (v.getValue() == 0) {
+			if (v == null || v.getValue() == 0) {
 				mod200.setResultType("C");
 				mod200.setDevType(AonUtil.isEmpty(mod200.getDevType())?"T":mod200.getDevType());
-				mod200.setAmount( v.getValue() );
+				mod200.setAmount( 0.0 );
 				mod200.setPayType(null);
 			} else if (v.getValue() < 0) {
 				mod200.setResultType("D");
