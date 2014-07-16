@@ -182,9 +182,9 @@ public class Mod200File {
 		return getCompanyAdministrator(5);
 	}
 	
-	private CompanyParticipation getCompanyParticipation(List<CompanyParticipation> participationsOut, int index) {
-		if (getMod200().getParticipationsOut() != null && getMod200().getParticipationsOut().size() > index) {
-			return getMod200().getParticipationsOut().get(index);
+	private CompanyParticipation getCompanyParticipation(List<CompanyParticipation> list, int index) {
+		if (list != null && list.size() > index) {
+			return list.get(index);
 		}
 		return EMPTY_COMPANY_PARTICIPATION;
 	}

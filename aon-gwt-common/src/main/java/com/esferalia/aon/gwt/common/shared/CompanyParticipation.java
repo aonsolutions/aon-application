@@ -163,7 +163,7 @@ public class CompanyParticipation implements Serializable, IsSerializable {
 	}
 	public String getProvinceStr() {
 		String p = Integer.toString(province);
-		return AonUtil.leftPad(p, 2, "0"); 
+		return AonUtil.isEmpty(getDocument())?null:AonUtil.leftPad(p, 2, "0");
 	}
 	public String getRepresenStr() {
 		return isRepresentative()?"1":"0"; 

@@ -48,7 +48,7 @@
 	<field name="LQ559" value="bean" bean="MOD200" property="keys(LQ559)" format="DefNumeric"   pattern="S9(14)V9(2)" />
 	<field name="LQ520" value="bean" bean="MOD200" property="keys(LQ520)" format="DefNumeric"   pattern="S9(14)V9(2)" />
 	<field name="LQ521" value="bean" bean="MOD200" property="keys(LQ521)" format="DefNumeric"   pattern="S9(14)V9(2)" />
-	<field name="LQ558" value="bean" bean="MOD200" property="keys(LQ558)" format="DefNumeric"   pattern="S9(2)V9(2)" />
+	<field name="LQ558" value="bean" bean="MOD200" property="keys(LQ558)" format="DefNumeric"   pattern="9(2)V9(2)" />
 	<field name="LQ560" value="bean" bean="MOD200" property="keys(LQ560)" format="DefNumeric"   pattern="S9(14)V9(2)" />
 	<field name="LQ561" value="bean" bean="MOD200" property="keys(LQ561)" format="DefNumeric"   pattern="S9(14)V9(2)" />
 	<field name="LQ562" value="bean" bean="MOD200" property="keys(LQ562)" format="DefNumeric"   pattern="S9(14)V9(2)" />

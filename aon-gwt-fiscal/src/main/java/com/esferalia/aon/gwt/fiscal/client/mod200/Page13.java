@@ -58,9 +58,9 @@ public class Page13 extends PageAbs {
 				if (col == 1) {
 					row = paintKey(table1,key,row);
 				} if (col == 2) { 
-					paintKeyField(table1,key,row,1);
+					paintKeyField(table1,key,row-1,2);
 				} if (col == 0) {
-					paintKeyField(table1,key,row,2);
+					paintKeyField(table1,key,row-1,3);
 				} 
 			}
 		}
@@ -78,9 +78,9 @@ public class Page13 extends PageAbs {
 				if (col == 1) {
 					row = paintKey(table2,key,row);
 				} if (col == 2) { 
-					paintKeyField(table2,key,row,1);
+					paintKeyField(table2,key,row-1,2);
 				} if (col == 0) {
-					paintKeyField(table2,key,row,2);
+					paintKeyField(table2,key,row-1,3);
 				} 
 			}
 		}
