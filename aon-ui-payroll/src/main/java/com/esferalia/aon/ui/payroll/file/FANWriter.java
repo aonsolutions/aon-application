@@ -1857,7 +1857,8 @@ public class FANWriter {
 			String select = "SELECT sum(amount) FROM salary_cost";
 			select += " WHERE type in (" + DeductionType.UNEMPLOYMENT.ordinal() + ", " + DeductionType.JOB_TRAINING.ordinal() + ", " + DeductionType.FOGASA.ordinal() + ")";
 			select += " AND salary in (";
-			select += "SELECT id FROM salary WHERE domain = " + ccc.getDomain()
+			select += " SELECT id FROM salary WHERE domain = " + ccc.getDomain()
+					+ " AND ccc = '" + ccc.getCcc() + "'"
 					+ " AND type = " + salaryType.ordinal() + ""
 					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
 					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
