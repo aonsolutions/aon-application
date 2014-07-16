@@ -19,6 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.google.apis.*;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.Events;
 
@@ -75,9 +76,13 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 				CalendarList calendars = CalendarUtils.Quicksort.calendarsSort(CalendarUtils.getCalendars());
 				int i=CalendarUtils.searchCalendars(calendars, company.getName(), calendars.getItems().size() );
 				if(i==-1){
-					CalendarUtils.newCalendar(domain);
+					Calendar calendar =CalendarUtils.newCalendar(domain);
+					CalendarUtils.addEvent(calendar.getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+
 				}
-				CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+				else{
+					CalendarUtils.addEvent(calendars.getItems().get(i).getId(), CalendarUtils.newEvent(DatabaseSync.getCommercialTrackingOne(tracking.getId(), domain),domain));
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Bloque catch generado automáticamente
