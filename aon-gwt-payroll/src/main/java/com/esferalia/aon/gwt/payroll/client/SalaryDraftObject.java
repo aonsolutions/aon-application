@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -65,38 +65,26 @@ public class SalaryDraftObject implements IContextProvider {
 		abstract void removeDraft(T t);
 	}
 
-	private class CompositeUndoableEdit<T> extends UndoableEdit<T> {
+	private class CompositeUndoableEdit implements Undoable {
 
-		private Collection<UndoableEdit<T>> edits;
+		private Collection<UndoableEdit<?>> edits;
 
-		public CompositeUndoableEdit(Collection<UndoableEdit<T>> edits) {
-			super(null,null);
+		public CompositeUndoableEdit(Collection<UndoableEdit<?>> edits) {
 			this.edits = edits;
 		}
 
 		@Override
 		public void redo() {
-			for (UndoableEdit<T> edit : edits)
+			for (UndoableEdit<?> edit : edits)
 				edit.redo();
 		}
 
 		@Override
 		public void undo() {
-			for (UndoableEdit<T> edit : edits)
+			for (UndoableEdit<?> edit : edits)
 				edit.undo();
 		}
 
-		@Override
-		void addDraft(T t) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		void removeDraft(T t) {
-			// TODO Auto-generated method stub
-			
-		}
 
 	}
 
@@ -177,7 +165,7 @@ public class SalaryDraftObject implements IContextProvider {
 	private Date draftStartDate;
 
 	private SalaryDraft salaryDraft;
-	private UndoManager<UndoableEdit<?>> undoManager;
+	private UndoManager<Undoable> undoManager;
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -185,7 +173,7 @@ public class SalaryDraftObject implements IContextProvider {
 			EmployeesServiceAsync employeesServiceAsync) {
 		this.salaryDraft = salaryDraft;
 		this.employeesServiceAsync = employeesServiceAsync;
-		this.undoManager = new UndoManager<UndoableEdit<?>>();
+		this.undoManager = new UndoManager<Undoable>();
 	}
 
 	// ------------------------------------------------------------------------
@@ -581,7 +569,6 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public void addDraftPayment(Payment payment) {
 		List<Payment> payments = new LinkedList<Payment>();
-		payments.add(payment);
 		payments.addAll(getTopPayments(payment));
 		addDraftPayments(payments);
 		//Payment oldPayment = salaryDraft.addDraftPayment(payment);
@@ -749,10 +736,10 @@ public class SalaryDraftObject implements IContextProvider {
 	}
 
 	private void addDraftPayments(Collection<Payment> payments) {
-		List<UndoablePaymentEdit> edits = new LinkedList<UndoablePaymentEdit>();
+		List<UndoableEdit<?>> edits = new LinkedList<UndoableEdit<?>>();
 		for (Payment payment : payments) {
-			Payment old = salaryDraft.addDraftPayment(payment);
-			edits.add(new UndoablePaymentEdit(old, payment));
+			Payment oldPayment = salaryDraft.addDraftPayment(payment);
+			edits.add(new UndoablePaymentEdit(oldPayment, payment));
 		}
 		undoManager.add(new CompositeUndoableEdit(edits));
 	}
