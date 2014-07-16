@@ -5,10 +5,13 @@ import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -95,6 +98,23 @@ public class ReservationRequestController extends BasicController implements IPm
 			}
 		}
 		return agencyUser;
+	}
+
+	public List<SelectItem> getStartDates() {
+		List<SelectItem> startDates = new LinkedList<SelectItem>();
+		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+		Date yesterday = DateUtils.addDays(today, -1);
+		startDates.add(new SelectItem(yesterday, new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN)).format(yesterday)));
+		startDates.add(new SelectItem(today, new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN)).format(today)));
+		return startDates;
+	}
+
+	public void onStartDateChanged(ValueChangeEvent event) {
+		ReservationRequest request = (ReservationRequest)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			request.setStartDate((Date)event.getNewValue());
+		}
+		request.setEndDate(DateUtils.addDays(request.getStartDate(), getNights()));
 	}
 
 	public void onStartDateChanged(ActionEvent event) {
