@@ -1,10 +1,15 @@
 package com.esferalia.aon.salary.payment;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
-public class PaymentsFactoryContext implements IPaymentsFactoryContext{
+public class PaymentsFactoryContext implements IPaymentsFactoryContext, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ISalaryProxy salaryProxy;
 	private ISalary  currentSalary;
