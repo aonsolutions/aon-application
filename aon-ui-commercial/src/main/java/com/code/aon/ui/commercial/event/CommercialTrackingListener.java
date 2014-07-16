@@ -2,10 +2,13 @@ package com.code.aon.ui.commercial.event;
 
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -127,9 +130,12 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	private void updateProbability( CommercialTrackingController controller ) throws ManagerBeanException {
 		CommercialTracking ct = (CommercialTracking) controller.getTo();
 		Integer probability = ct.getActivity().getProbability();
-		if ( probability!=null && probability>0 ) {
+		if ( probability!=null && probability>0 && !ObjectUtils.equals(probability, ct.getProject()) ) {
+			IManagerBean bean = BeanManager.getManagerBean(ProjectCommercial.class);
 			ct.getProject().setProbability(probability);
-			BeanManager.getManagerBean(ProjectCommercial.class).update(ct.getProject());
+			bean.restoreNullSubPOJOs(ct.getProject());
+			bean.update(ct.getProject());
+			bean.initializePOJO(ct.getProject());
 		}
 	}
 	
