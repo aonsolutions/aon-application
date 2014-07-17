@@ -111,9 +111,11 @@ public class PosClosingController implements IFinanceConstants {
 
 		try {
 			String ticketInfo = AonUtil.getMessage(TICKET) + " " + 
-								AonUtil.getMessage(DATE_FROM) + ": " + getFromTicket() + " " + 
-								AonUtil.getMessage(DATE_TO) + ": " + getToTicket();
-			getPosShift().setRemarks(ticketInfo + "\n" + getPosShift().getRemarks());
+									AonUtil.getMessage(DATE_FROM) + ": " + getFromTicket() + " " + 
+									AonUtil.getMessage(DATE_TO) + ": " + getToTicket();
+			if (getPosShift().getPos().isInvoiceable()) {
+				getPosShift().setRemarks(ticketInfo + "\n" + getPosShift().getRemarks());
+			}
 			setPosShift((PosShift)BeanManager.getManagerBean(PosShift.class).insertOrUpdate(getPosShift()));
 
 			if (getPosShift().getPos().isInvoiceable()) {
