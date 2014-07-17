@@ -389,16 +389,16 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 			financeStmt = connection.prepareStatement(getFinanceSQL());
 			int i = 0;
 			if (getIssueDateFrom() != null) {
-				SQLUtils.setDate(financeStmt, i++, getIssueDateFrom());
+				SQLUtils.setDate(financeStmt, ++i, getIssueDateFrom());
 			}
 			if (getIssueDateTo() != null) {
-				SQLUtils.setDate(financeStmt, i++, getIssueDateTo());
+				SQLUtils.setDate(financeStmt, ++i, getIssueDateTo());
 			}
 			if (getDueDateFrom() != null) {
-				SQLUtils.setDate(financeStmt, i++, getDueDateFrom());
+				SQLUtils.setDate(financeStmt, ++i, getDueDateFrom());
 			}
 			if (getDueDateTo() != null) {
-				SQLUtils.setDate(financeStmt, i++, getDueDateTo());
+				SQLUtils.setDate(financeStmt, ++i, getDueDateTo());
 			}
 			financeRs = financeStmt.executeQuery();
 			while (financeRs.next()) {
@@ -506,6 +506,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		}
 		stmt.append(" ORDER BY " + DUE_DATE + ", " + REFERENCE_CODE);
 
+System.out.println(stmt.toString());
 		return stmt.toString();
 	}
 
