@@ -27,7 +27,7 @@
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='initializeButton'
-								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.saveAction}" />
+								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.continueAction}" />
 							<g:Button ui:field='saveButton'
 								styleName='aon-finding-toolbar-item aon-icon-accept' text="{msg.saveAction}" />
 							<g:Button ui:field='removeButton'

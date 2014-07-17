@@ -41,7 +41,7 @@
 			<div class="{aonResources.css.aonGroupBody}">
 				<div>
 					<g:RadioButton ui:field="payTypeE" name="devTypeButton" text="{msg.cash}"/>
-					<g:RadioButton ui:field="payTypeA" name="devTypeButton" text="{msg.directDebit}"/>
+					<g:RadioButton ui:field="payTypeU" name="devTypeButton" text="{msg.directDebit}"/>
 				</div>
 				<g:InlineLabel text="{msg.amount}"/>
 				<aon:DoubleTextBox ui:field="amountP" enabled="false" styleName="{aonResources.css.aonMarginLeft}"/>
