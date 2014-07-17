@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
@@ -17,6 +18,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.jooq.tables.ContractPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.payroll.calculator.jooq.JooqCommon;
 
@@ -51,10 +53,43 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		dslContext.delete(AGREEMENT_PAYMENT)
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 
-		if (payment.getConceptId() != null && payment.getConceptId() < 0)
+		if (payment.getConceptId() != null && payment.getConceptId() < 0){
+			int conceptId = payment.getConceptId();
+			//@formatter:on
+			dslContext.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.TYPE, (byte)payment.getType().ordinal())
+			.where(CONTRACT_PAYMENT.TYPE.isNull()
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+			.execute();
+			dslContext.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.DESCRIPTION, payment.getDescription())
+			.where(CONTRACT_PAYMENT.DESCRIPTION.isNull()
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+			.execute();
+			dslContext.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.EXPRESSION, payment.getExpression())
+			.where(CONTRACT_PAYMENT.EXPRESSION.isNull()
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+			.execute();
+			dslContext.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
+			.where(CONTRACT_PAYMENT.IRPF_EXPRESSION.isNull()
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+			.execute();
+			dslContext.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
+			.where(CONTRACT_PAYMENT.QUOTE_EXPRESSION.isNull()
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+			.execute();
+			dslContext.update(CONTRACT_PAYMENT)
+			.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, (Integer)null)
+			.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId))
+			.execute();
+			//@formatter:off
 			dslContext.delete(PAYMENT_CONCEPT)
 					.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
 					.execute();
+		}
 	}
 
 	public static int insertPayment(Connection conn, Integer domainId,
@@ -89,7 +124,6 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			Payment payment) throws SQLException {
 
 		//@formatter:off
-		InsertSetMoreStep<AgreementPaymentRecord> insertSetMoreStep =
 		dslContext.insertInto(AGREEMENT_PAYMENT)
 		.set(AGREEMENT_PAYMENT.ID, paymentId )
 		.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
@@ -100,17 +134,11 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
 		.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
 		.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte)payment.getSalaryType().ordinal())
-		.set(AGREEMENT_PAYMENT.START_DATE, new java.sql.Date( payment.getStartDate().getTime()));
-		
-		if ( payment.getMonth() != null )
-			insertSetMoreStep = insertSetMoreStep.set(AGREEMENT_PAYMENT.MONTH, payment.getMonth().byteValue() );
-		if ( payment.getType() != null )
-			insertSetMoreStep = insertSetMoreStep.set(AGREEMENT_PAYMENT.TYPE, (byte)payment.getType().ordinal() );
-		if ( payment.getEndDate() != null )
-			insertSetMoreStep = insertSetMoreStep.set(AGREEMENT_PAYMENT.END_DATE, new java.sql.Date( payment.getEndDate().getTime()) );
-		
-		insertSetMoreStep.execute();
-		
+		.set(AGREEMENT_PAYMENT.START_DATE, new java.sql.Date( payment.getStartDate().getTime()))
+		.set(AGREEMENT_PAYMENT.MONTH, payment.getMonth() != null ? payment.getMonth().byteValue(): null )
+		.set(AGREEMENT_PAYMENT.TYPE, payment.getType() != null ? (byte)payment.getType().ordinal(): null )
+		.set(AGREEMENT_PAYMENT.END_DATE, payment.getEndDate() != null ? new java.sql.Date( payment.getEndDate().getTime()): null )
+		.execute();
 		//@formatter:on
 
 	}
@@ -129,6 +157,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.set(AGREEMENT_PAYMENT.MONTH, payment.getMonth() != null ? payment.getMonth().byteValue() : null )
 		.set(AGREEMENT_PAYMENT.TYPE, payment.getType() != null ? (byte)payment.getType().ordinal() : null )
 		.set(AGREEMENT_PAYMENT.END_DATE, payment.getEndDate() != null ? new java.sql.Date( payment.getEndDate().getTime()): null)
+		.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
 		.execute()
 		;
 		//@formatter:on
@@ -183,7 +212,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.set(PAYMENT_CONCEPT.ID, conceptId)
 		.set(PAYMENT_CONCEPT.DOMAIN, domainId)
 		.set(PAYMENT_CONCEPT.TYPE, (byte) type.ordinal())
-		.set(PAYMENT_CONCEPT.CODE, String.format("_%d", conceptId ))
+		.set(PAYMENT_CONCEPT.CODE, String.format("__%d", Math.abs(conceptId) ))
 		.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
 		.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
 		.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())

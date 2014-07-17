@@ -84,6 +84,7 @@ import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
+import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -1091,7 +1092,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			int domainId = getDomainID();
 
-			List<Payment> paymentConcepts = getPaymentConcepts(conn, domainId,
+			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(conn, domainId,
 					getParentDomainID());
 			List<Payment> employeePayments = Collections.emptyList();
 			/* getEmployeePayments(conn, employeeId); */
@@ -1886,157 +1887,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	// Note that below methods can be moved to another place safely.
 
-	private static List<Payment> getPaymentConcepts(Connection connection,
-			Integer domainId, Integer parentDomainId) throws SQLException {
 
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		try {
-
-			String sql = "SELECT " + PAYMENT_CONCEPT + ".* " + " FROM "
-					+ PAYMENT_CONCEPT + " WHERE "
-					+ PaymentConceptColumns.DOMAIN + " IN ( ?, ?, ? )";
-
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, 0);
-			stmt.setInt(2, domainId);
-
-			if (parentDomainId != null)
-				stmt.setInt(3, parentDomainId);
-			else
-				stmt.setNull(3, Types.INTEGER);
-
-			rs = stmt.executeQuery();
-
-			List<Payment> paymentConcepts = new LinkedList<Payment>();
-			while (rs.next()) {
-				Payment paymentConcept = new Payment();
-
-				paymentConcept.setId(rs.getInt(PaymentConceptColumns.ID));
-				paymentConcept
-						.setName(rs.getString(PaymentConceptColumns.CODE));
-				paymentConcept.setType(getPaymentType(rs
-						.getInt(PaymentConceptColumns.TYPE)));
-				paymentConcept.setExpression(rs
-						.getString(PaymentConceptColumns.EXPRESSION));
-				paymentConcept.setIrpfExpression(rs
-						.getString(PaymentConceptColumns.IRPF_EXPRESSION));
-				paymentConcept.setQuoteExpression(rs
-						.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
-				paymentConcept.setDescription(rs
-						.getString(PaymentConceptColumns.DESCRIPTION));
-
-				paymentConcepts.add(paymentConcept);
-			}
-
-			return paymentConcepts;
-
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				rs.close();
-			}
-		}
-	}
-
-	private static List<Payment> getEmployeePayments(Connection connection,
-			int employeeId) throws SQLException {
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		try {
-
-			String sql = "SELECT *  FROM " + SQLConstants.CONTRACT_PAYMENT
-					+ " WHERE " + ContractPaymentColumns.CONTRACT + " =  ? "
-					+ " AND " + ContractPaymentColumns.PAYMENT_CONCEPT
-					+ " IS NULL ";
-
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, employeeId);
-			rs = stmt.executeQuery();
-
-			List<Payment> paymentConcepts = new LinkedList<Payment>();
-			while (rs.next()) {
-				Payment paymentConcept = new Payment();
-
-				paymentConcept.setScope(Scope.CONTRACT);
-
-				paymentConcept.setType(getPaymentType(rs
-						.getInt(ContractPaymentColumns.TYPE)));
-				paymentConcept.setExpression(rs
-						.getString(ContractPaymentColumns.EXPRESSION));
-				paymentConcept.setIrpfExpression(rs
-						.getString(ContractPaymentColumns.IRPF_EXPRESSION));
-				paymentConcept.setQuoteExpression(rs
-						.getString(ContractPaymentColumns.QUOTE_EXPRESSION));
-				paymentConcept.setDescription(rs
-						.getString(ContractPaymentColumns.DESCRIPTION));
-
-				paymentConcepts.add(paymentConcept);
-			}
-
-			return paymentConcepts;
-
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				rs.close();
-			}
-		}
-	}
-
-	private static List<Payment> getEnterprisePayments(Connection connection,
-			int domainId) throws SQLException {
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		try {
-
-			String sql = "SELECT *  FROM " + SQLConstants.CONTRACT_PAYMENT
-					+ " WHERE " + ContractPaymentColumns.DOMAIN + " =  ? "
-					+ " AND " + ContractPaymentColumns.PAYMENT_CONCEPT
-					+ " IS NULL ";
-
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, domainId);
-			rs = stmt.executeQuery();
-
-			List<Payment> paymentConcepts = new LinkedList<Payment>();
-			while (rs.next()) {
-				Payment paymentConcept = new Payment();
-
-				paymentConcept.setType(getPaymentType(rs
-						.getInt(ContractPaymentColumns.TYPE)));
-				paymentConcept.setExpression(rs
-						.getString(ContractPaymentColumns.EXPRESSION));
-				paymentConcept.setIrpfExpression(rs
-						.getString(ContractPaymentColumns.IRPF_EXPRESSION));
-				paymentConcept.setQuoteExpression(rs
-						.getString(ContractPaymentColumns.QUOTE_EXPRESSION));
-				paymentConcept.setDescription(rs
-						.getString(ContractPaymentColumns.DESCRIPTION));
-
-				paymentConcepts.add(paymentConcept);
-			}
-
-			return paymentConcepts;
-
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				rs.close();
-			}
-		}
-	}
 
 	private ICollectionProvider getSalariesProvider(Cost cost,
 			SalaryType types[]) throws ManagerBeanException {
