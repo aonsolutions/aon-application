@@ -131,6 +131,10 @@ public class SQLAgreementDraft {
 				payment.setName(rs.getString(SQLConstants.PAYMENT_CONCEPT + "."
 						+ PaymentConceptColumns.CODE));
 
+				payment.setConceptId(getInteger(rs,
+						SQLConstants.PAYMENT_CONCEPT + "."
+								+ PaymentConceptColumns.ID));
+
 				payments.add(payment);
 			}
 
@@ -465,8 +469,8 @@ public class SQLAgreementDraft {
 		for (Payment payment : draft.getDraftPayments()) {
 			if (!isRemove(payment)) {
 				// Warning, we update payment id, it's a potential risk.
-				int paymentId = __insertPayment(conn, domainId, draft.getId(),
-						payment);
+				int paymentId = JooqAgreement.insertPayment(conn, domainId,
+						draft.getId(), payment);
 				syncExtra(draft.getDraftExtras(), payment.getId(), paymentId);
 				payment.setId(paymentId);
 			}
@@ -540,7 +544,7 @@ public class SQLAgreementDraft {
 			if (payment.getId() < 0) {
 				if (!isRemove(payment)) {
 					// Warning, we update payment id, it's a potential risk.
-					int paymentId = __insertPayment(conn, domainId,
+					int paymentId = JooqAgreement.insertPayment(conn, domainId,
 							draft.getId(), payment);
 					syncExtra(draft.getDraftExtras(), payment.getId(),
 							paymentId);
@@ -1071,7 +1075,7 @@ public class SQLAgreementDraft {
 		if (subPeriods.size() == 0) {
 			// New payment overrides completely previous payment. So we need
 			// only a single SQL UPADTE with new values.
-			__updatePayment(conn, payment);
+			JooqAgreement.updatePayment(conn, payment);
 			return;
 		}
 
@@ -1079,14 +1083,14 @@ public class SQLAgreementDraft {
 		if (firstPeriod.equals(dbPeriod)) {
 			// New payment doesn't override previous payment. So we need only
 			// a single SQL INSERT with new values.
-			__insertPayment(conn, domainId, agreementId, payment);
+			JooqAgreement.insertPayment(conn, domainId, agreementId, payment);
 			return;
 		}
 
 		// Update previous payment with new limits.
 		updatePayment(conn, payment.getId(), firstPeriod);
 		// Insert new payment.
-		__insertPayment(conn, domainId, agreementId, payment);
+		JooqAgreement.insertPayment(conn, domainId, agreementId, payment);
 
 		if (subPeriods.size() > 1)
 			copyPayment(conn, payment.getId(), subPeriods.get(1));
@@ -1105,7 +1109,7 @@ public class SQLAgreementDraft {
 
 		if (subPeriods.size() == 0) {
 			// New payment overrides completely previous payment. So delete it.
-			__removePayment(conn, payment.getId());
+			JooqAgreement.removePayment(conn, payment);
 			return;
 		}
 

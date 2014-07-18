@@ -13,6 +13,7 @@ import static com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Character.CHARACT
 
 import java.io.StringWriter;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
+import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
@@ -270,11 +272,10 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 						} else {
 							mod200.addVariable(v);
 						}
-						
 					}
 				}
 			}
-			v = mod200.getKey(Mod200Key.BN621);
+			v = mod200.getVariable(Mod200Key.BN621);
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
 				mod200.setResultType("C");
@@ -284,7 +285,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			} else if (v.getValue() < 0) {
 				mod200.setResultType("D");
 				mod200.setAmount( AonUtil.round( v.getValue() * -1));
-				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"A":mod200.getPayType());
+				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"U":mod200.getPayType());
 				mod200.setDevType(null);
 			} else {
 				mod200.setResultType("I");
@@ -395,6 +396,27 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			throw new AonSQLException(e.getMessage(),e);
 		}				
 	}
+	
+	@Override
+	public ArrayList<CompanyBank> getCompanyBanks(int enterprise) throws AonSQLException {
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			DSLContext dsl = DSL.using(conn, AccountingUtil.getDefaultSettings());
+			ArrayList<CompanyBank> list = SQLCompany.getBanks(dsl, enterprise);
+			commit(conn);
+			return list;
+		} catch (Throwable e) {
+			e.printStackTrace();
+			rollback(conn);
+			throw new AonSQLException(e.getMessage(),e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
+		}
+	}
+	
 /*	
 	private void dumpMod200(Mod200 mod200) {
 		System.out.println();

@@ -12,7 +12,9 @@
 .aon-clickable {
 	cursor: pointer;
 }
-
+.aon-italic {
+	font-style: italic;
+}
 .aon-group {
     border: 1px solid #CCCCCC;
     margin: 1em 0;

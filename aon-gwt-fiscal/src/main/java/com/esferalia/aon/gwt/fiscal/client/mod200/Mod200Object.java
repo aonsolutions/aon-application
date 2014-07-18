@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.client.mod200;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.UndoManager;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
+import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.fiscal.client.Mod200ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
@@ -258,6 +260,21 @@ public class Mod200Object implements Serializable, IsSerializable {
 			
 			@Override
 			public void onSuccess(String result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+
+	public void getCompanyBanks(final AsyncCallback<ArrayList<CompanyBank>> callback) {
+		mod200Service.getCompanyBanks(mod200.getEnterprise(), new AsyncCallback<ArrayList<CompanyBank>>() {
+			
+			@Override
+			public void onSuccess(ArrayList<CompanyBank> result) {
 				callback.onSuccess(result);
 			}
 			

@@ -243,8 +243,11 @@ public class Mod131Manager extends FiscalModelManager {
 				c03 = mod131.getDetail( Mod131Key.C03 ).getAmount();
 				double c05 = mod131.getDetail( Mod131Key.C05 ).getAmount();
 	
-				if (c01 > 0 && c05 > 0 ) { // no resultará aplicable cuando el contribuyente realice simultáneamente   
-				   						   // actividades agrícolas y actividades distintas de éstas.
+				if (c01 > 0 && c05 > 0 ) { 
+					// no resultará aplicable cuando el contribuyente realice 
+					// simultáneamente actividades agrícolas y actividades 
+					// distintas de éstas.
+				} else {	
 					c12 = CommonUtil.round(c01 * 0.5 / 100);
 					if (c03 > 0 ) {
 						c12 = CommonUtil.round(c03 * 2 / 100);

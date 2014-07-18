@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.ArrayList;
+
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -21,6 +24,8 @@ public interface Mod200Service extends RemoteService {
 	Mod200 delete(Mod200 mod200) throws AonSQLException;
 
 	String dumpAEAT(Mod200 mod200) throws AonSQLException;
+
+	ArrayList<CompanyBank> getCompanyBanks(int enterprise) throws AonSQLException;
 
 	
 }

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -348,7 +349,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainID = getDomainID();
 			Integer parentDomainID = getParentDomainID();
 
-			return getPaymentConcepts(connection, offset, limit, domainID,
+			return JooqPayments.getPaymentConcepts(connection, offset, limit, domainID,
 					parentDomainID);
 
 		} catch (SQLException e) {
@@ -966,62 +967,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static List<Payment> getPaymentConcepts(Connection connection,
-			int offset, int limit, Integer domainID, Integer parentDomainID)
-			throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-		try {
-			//@formatter:off
-			stmt = connection.prepareStatement("SELECT *" + 
-					" FROM " + SQLConstants.PAYMENT_CONCEPT + 
-					" WHERE " + PaymentConceptColumns.DOMAIN + " =  ? " + 
-					" OR " + PaymentConceptColumns.DOMAIN + " = ? " + 
-					(parentDomainID != null ? " OR " + PaymentConceptColumns.DOMAIN + " = ? " : "") + 
-					" ORDER BY " + PaymentConceptColumns.TYPE 
-					//+ ", " +  PaymentConceptColumns.DESCRIPTION 
-					);
-			//@formatter:on
-
-			stmt.setInt(1, domainID);
-			stmt.setInt(2, SQLPayrollConstants.DOMAIN_ZERO);
-			if (parentDomainID != null)
-				stmt.setInt(3, parentDomainID);
-
-			List<Payment> payments = new LinkedList<Payment>();
-
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				Payment payment = new Payment();
-
-				payment.setId(rs.getInt(PaymentConceptColumns.ID));
-				payment.setDomainId(rs.getInt(PaymentConceptColumns.DOMAIN));
-				payment.setName(rs.getString(PaymentConceptColumns.CODE));
-				payment.setDescription(rs
-						.getString(PaymentConceptColumns.DESCRIPTION));
-				payment.setExpression(rs
-						.getString(PaymentConceptColumns.EXPRESSION));
-				payment.setIrpfExpression(rs
-						.getString(PaymentConceptColumns.IRPF_EXPRESSION));
-				payment.setQuoteExpression(rs
-						.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
-				payment.setType(SQLUtils.getType(
-						rs.getObject(PaymentConceptColumns.TYPE),
-						Payment.Type.class));
-
-				payments.add(payment);
-
-			}
-
-			return payments;
-
-		} finally {
-			if (rs != null)
-				rs.close();
-			if (stmt != null)
-				stmt.close();
-		}
-	}
 
 	private static List<Deduction> getDeductionConcepts(Connection connection,
 			int offset, int limit, Integer domainID, Integer parentDomainID)
