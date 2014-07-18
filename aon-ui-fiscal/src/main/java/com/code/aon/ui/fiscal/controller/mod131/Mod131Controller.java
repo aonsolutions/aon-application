@@ -8,17 +8,28 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD131.MOD131Format;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
+import com.code.aon.fiscal.mod131.Mod131;
+import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD131Writer;
 import com.code.aon.ui.util.AonUtil;
 
 public class Mod131Controller extends FiscalModelController {
 	
+	@Override
+	public void initialize() throws AonException {
+		super.initialize();
+		Mod131 mod131 = (Mod131) getDeclaration();
+		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+		mod131.setPermanentAddressChanges(fiscalParams.isPermanentAddressChanges());
+	}
+
 	@Override
 	protected FiscalModelType getModelType() {
 		return 	FiscalModelType.M131;
