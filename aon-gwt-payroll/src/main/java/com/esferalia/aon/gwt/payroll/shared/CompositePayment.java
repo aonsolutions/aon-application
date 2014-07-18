@@ -41,7 +41,7 @@ public class CompositePayment extends Payment {
 			if (child.dbAmount != null)
 				totalDbAmount = totalDbAmount == null ? child.dbAmount
 						: totalDbAmount + child.dbAmount;
-		return totalDbAmount;
+		return totalDbAmount != null ? totalDbAmount : super.getDbAmount();
 	}
 
 	@Override

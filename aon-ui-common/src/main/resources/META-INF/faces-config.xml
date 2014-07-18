@@ -43,6 +43,13 @@
 		<converter-class>com.code.aon.ui.common.converter.ByteArrayConverter</converter-class>
 	</converter>
 	
+   	<!-- ************* DATE CONVERTER ***************** -->	
+	<converter>
+		<description>Conversor para convertir String a un Date.</description>
+		<converter-id>aon.DateConverter</converter-id>
+		<converter-class>com.code.aon.ui.common.converter.DateConverter</converter-class>
+	</converter>
+	
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>
 		<managed-bean-name>timeZoneController</managed-bean-name>

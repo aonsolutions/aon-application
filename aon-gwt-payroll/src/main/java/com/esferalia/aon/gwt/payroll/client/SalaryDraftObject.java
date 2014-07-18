@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
@@ -19,7 +20,9 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -60,6 +63,29 @@ public class SalaryDraftObject implements IContextProvider {
 		abstract void addDraft(T t);
 
 		abstract void removeDraft(T t);
+	}
+
+	private class CompositeUndoableEdit implements Undoable {
+
+		private Collection<UndoableEdit<?>> edits;
+
+		public CompositeUndoableEdit(Collection<UndoableEdit<?>> edits) {
+			this.edits = edits;
+		}
+
+		@Override
+		public void redo() {
+			for (UndoableEdit<?> edit : edits)
+				edit.redo();
+		}
+
+		@Override
+		public void undo() {
+			for (UndoableEdit<?> edit : edits)
+				edit.undo();
+		}
+
+
 	}
 
 	class UndoableVariableEdit extends UndoableEdit<Variable> {
@@ -139,7 +165,7 @@ public class SalaryDraftObject implements IContextProvider {
 	private Date draftStartDate;
 
 	private SalaryDraft salaryDraft;
-	private UndoManager<UndoableEdit<?>> undoManager;
+	private UndoManager<Undoable> undoManager;
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -147,7 +173,7 @@ public class SalaryDraftObject implements IContextProvider {
 			EmployeesServiceAsync employeesServiceAsync) {
 		this.salaryDraft = salaryDraft;
 		this.employeesServiceAsync = employeesServiceAsync;
-		this.undoManager = new UndoManager<UndoableEdit<?>>();
+		this.undoManager = new UndoManager<Undoable>();
 	}
 
 	// ------------------------------------------------------------------------
@@ -351,12 +377,11 @@ public class SalaryDraftObject implements IContextProvider {
 	public List<Deduction> getDeductions() {
 		return salaryDraft.getDeductions();
 	}
-	
+
 	public List<Deduction> getEmbargos() {
 		return salaryDraft.getEmbargos();
 	}
-	
-	
+
 	public List<Variable> getContext() {
 		return salaryDraft.getContext();
 	}
@@ -506,7 +531,7 @@ public class SalaryDraftObject implements IContextProvider {
 				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
 						salaryDraft);
 	}
-	
+
 	// ------------------------------------------
 	//
 	//
@@ -529,8 +554,6 @@ public class SalaryDraftObject implements IContextProvider {
 		this.draftStartDate = draftStartDate;
 		this.draftEndDate = draftEndDate;
 	}
-	
-	
 
 	// ------------------------------------------
 	// Undo & Redo Support
@@ -544,10 +567,13 @@ public class SalaryDraftObject implements IContextProvider {
 		salaryDraft.setCommunity(community);
 	}
 
-	public Payment addDraftPayment(Payment payment) {
-		Payment oldPayment = salaryDraft.addDraftPayment(payment);
-		undoManager.add(new UndoablePaymentEdit(oldPayment, payment));
-		return oldPayment;
+	public void addDraftPayment(Payment payment) {
+		List<Payment> payments = new LinkedList<Payment>();
+		payments.addAll(getTopPayments(payment));
+		addDraftPayments(payments);
+		//Payment oldPayment = salaryDraft.addDraftPayment(payment);
+		//undoManager.add(new UndoablePaymentEdit(oldPayment, payment));
+		//return oldPayment;
 	}
 
 	public Deduction addDraftDeduction(Deduction deduction) {
@@ -678,6 +704,47 @@ public class SalaryDraftObject implements IContextProvider {
 		return draft;
 	}
 
+	private List<Payment> getTopPayments(Payment payment) {
+
+
+		
+		List<Payment> twins = new LinkedList<Payment>();
+		twins.add(payment);
+		
+		String name = payment.getName();
+		if ( StringUtils.isBlank(name))
+			return twins;
+
+		for (Payment p : salaryDraft.getPayments()) {
+			if (p.getScope().compareTo(Scope.AGREEMENT) > 0)
+				continue;
+			if (StringUtils.equals(name, p.getName()))
+				twins.add(p);
+		}
+		
+		for( Variable var : salaryDraft.getContext() ) {
+			if (!( var instanceof UndefinedPaymentVariable ))
+				continue;
+			if (var.getScope().compareTo(Scope.AGREEMENT) > 0)
+				continue;
+			Payment p = ((UndefinedPaymentVariable)var).getPayment();
+			if (StringUtils.equals(name, p.getName()))
+				twins.add(p);
+		}
+		
+		return twins;
+	}
+
+	private void addDraftPayments(Collection<Payment> payments) {
+		List<UndoableEdit<?>> edits = new LinkedList<UndoableEdit<?>>();
+		for (Payment payment : payments) {
+			Payment oldPayment = salaryDraft.addDraftPayment(payment);
+			edits.add(new UndoablePaymentEdit(oldPayment, payment));
+		}
+		undoManager.add(new CompositeUndoableEdit(edits));
+	}
+
+
 	// ------------------------------------------------------------------------
 	//
 
@@ -749,6 +816,5 @@ public class SalaryDraftObject implements IContextProvider {
 				return var;
 		return null;
 	}
-	
-	
+
 }

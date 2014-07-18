@@ -348,7 +348,7 @@
 	
 	<context-param>
 		<param-name>com.code.aon.checkSerialization</param-name>
-		<param-value>false</param-value>
+		<param-value>true</param-value>
 	</context-param>	
 
 	<!-- JSF SUN-RI CONFIGURATION -->

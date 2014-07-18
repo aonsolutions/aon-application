@@ -114,6 +114,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cancelar")
 	String cancelAction();
 	
+	@DefaultMessage("Continuar")
+	String continueAction();
+	
 	@DefaultMessage("Ir")
 	String goAction();
 
@@ -1241,7 +1244,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("En efectivo")
 	String cash();
 	
-	@DefaultMessage("E.C. Adeudo en cuenta")
+	@DefaultMessage("Domicialición")
 	String directDebit();
 	
 	@DefaultMessage("I.B.A.N.")

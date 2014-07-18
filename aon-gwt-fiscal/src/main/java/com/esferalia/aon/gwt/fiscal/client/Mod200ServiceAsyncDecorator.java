@@ -1,7 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.ArrayList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -61,6 +64,12 @@ public class Mod200ServiceAsyncDecorator implements Mod200ServiceAsync {
 		AON.start();
 		mod200ServiceAsync.dumpAEAT(mod200,
 				new AsyncCallbackWrapper<String>(callback));
+	}
+
+	public void getCompanyBanks(int enterprise,AsyncCallback<ArrayList<CompanyBank>> callback) {
+		AON.start();
+		mod200ServiceAsync.getCompanyBanks(enterprise,
+				new AsyncCallbackWrapper<ArrayList<CompanyBank>>(callback));
 	}
 
 }

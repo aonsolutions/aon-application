@@ -20,6 +20,8 @@ import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.SimpleSystemCost;
 import com.esferalia.aon.payroll.calculator.SimpleSystemDeduction;
 import com.esferalia.aon.payroll.calculator.SimpleSystemPayment;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemCostColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -76,7 +78,7 @@ public class SQLCollections {
 		for (IContractDeduction sqlSystemDeduction : sqlSystemDeductions) {
 			SimpleSystemDeduction systemDeduction = 
 				new SimpleSystemDeduction(sqlSystemDeduction);
-
+			systemDeduction.setDomain(rs.getInt(SystemDeductionColumns.DOMAIN));
 			systemDeductionList.add(systemDeduction);
 		}
 		
@@ -110,6 +112,7 @@ public class SQLCollections {
 		for (IContractCost sqlContractCost : sqlContractCosts) {
 			SimpleSystemCost systemCost = 
 				new SimpleSystemCost(sqlContractCost);
+			systemCost.setDomain(rs.getInt(SystemCostColumns.DOMAIN));
 
 			systemCostList.add(systemCost);
 		}

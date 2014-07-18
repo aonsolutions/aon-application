@@ -488,8 +488,11 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	}
 
 	public double getSalesTotalPrice() throws ManagerBeanException {
-		Sales sales = (Sales)this.getModel().getRowData();
-		return getSalesTotalPrice(sales);
+		if ( getModel().isRowAvailable() ) {
+			Sales sales = (Sales)this.getModel().getRowData();
+			return getSalesTotalPrice(sales);			
+		}
+		return 0.0;
 	}
 	
 	public double getSalesTotalPrice(Sales sales) throws ManagerBeanException {

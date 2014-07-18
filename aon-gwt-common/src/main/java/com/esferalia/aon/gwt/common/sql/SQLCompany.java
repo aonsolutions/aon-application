@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.common.sql;
 
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.jooq.Record6;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.Company;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
+import com.esferalia.aon.gwt.common.shared.CompanyBank;
 
 public class SQLCompany {
 	
@@ -54,5 +57,24 @@ public class SQLCompany {
 		return list;
 	}
 		
+	public static ArrayList<CompanyBank> getBanks(DSLContext ctx,int enterprise) throws AonSQLException {
+		List<Record3<String,String,String>> record = 
+			ctx.select(RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
+				.from(COMPANY)
+				.join(RBANK).on( COMPANY.REGISTRY.equal(RBANK.REGISTRY) )
+				.where(COMPANY.REGISTRY.equal(enterprise))
+				.and(RBANK.ACTIVE.equal((byte) 1))
+				.fetch();
+		ArrayList<CompanyBank> list = new ArrayList<CompanyBank>(); 
+		for (Record3<String,String,String> rec : record) {
+			CompanyBank cb = new CompanyBank();
+			cb.setBankAccount(rec.getValue(RBANK.BANK_ACCOUNT) );
+			cb.setBic(rec.getValue(RBANK.BIC) );
+			cb.setBic(rec.getValue(RBANK.BIC) );
+			cb.setAlias(rec.getValue(RBANK.ALIAS) );
+			list.add(cb);
+		}
+		return list;
+	}
 
 }

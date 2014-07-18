@@ -158,7 +158,7 @@ public class SQLContractLeaveLoader {
 
 			Object dailyRegBase = rs
 					.getObject(ContractLeaveColumns.DAILY_REG_BASE);
-			loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+			loadContractLeave(start, end, parentDays, type,
 					(Double) dailyRegBase, exprCtx);
 		}
 	}
@@ -194,8 +194,8 @@ public class SQLContractLeaveLoader {
 				for (DaysRange range : RANGES) {
 					long days = range.getDays(parentDays, leaveDays);
 					
-					if ( days == 0 )
-						continue;
+					//if ( days == 0 )
+					//	continue;
 					
 					String name = range
 							.getName(ContextVariable.COMMON_DISEASE_DAYS);

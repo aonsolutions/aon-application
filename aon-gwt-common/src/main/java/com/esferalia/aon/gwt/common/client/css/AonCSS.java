@@ -7,6 +7,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-width-all")
 	String aonWidthAll();
 
+	@ClassName("aon-italic")
+	String aonItalic();
+
 	@ClassName("aon-group")
 	String aonGroup();
 

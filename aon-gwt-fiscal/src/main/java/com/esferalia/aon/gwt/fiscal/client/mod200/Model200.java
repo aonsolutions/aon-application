@@ -188,6 +188,7 @@ public class Model200 extends MainEntryPoint {
 					sidebar.setVisibleLinks( false );
 					
 					initializeButton.setVisible(true);
+					
 					saveButton.setVisible(false);
 					removeButton.setVisible(false);
 					validateButton.setVisible(false);
@@ -196,6 +197,7 @@ public class Model200 extends MainEntryPoint {
 					aeatAccountingFileButton.setVisible(false);
 					aeatFileButton.setVisible(false);
 					aeatPrintButton.setVisible(false);
+					
 					deckPanel.page00.enableCharacters( true );
 				} else {
 					dump();
@@ -231,7 +233,29 @@ public class Model200 extends MainEntryPoint {
 	// Buttons
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
-		save(new PopupAsyncCallback());
+		PopupAsyncCallback callback = new PopupAsyncCallback(){
+			@Override
+			public void onSuccess(Mod200 result) {
+				super.onSuccess(result);
+				refreshButtonsVisibility();
+			}
+		};
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(MSG.processing());
+		label.addStyleName(RESOURCES.css().aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		callback.setPopup(popup);
+		populatePages(mod200);
+		try {
+			mod200.save(callback);
+		} catch (IllegalArgumentException e) {
+			refreshButtonsVisibility();
+			popup.hide();
+			DialogMessages.alertErrorWidget(e.getMessage()).center();
+		}
 	}
 	// Buttons
 	@UiHandler("removeButton")
@@ -299,24 +323,6 @@ public class Model200 extends MainEntryPoint {
 		calculateButton.setVisible(!calculateCheck.getValue());
 		if (calculateCheck.getValue())
 			mod200.calculate();
-	}
-	
-	private void save(PopupAsyncCallback callback) {
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(MSG.processing());
-		label.addStyleName(RESOURCES.css().aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		callback.setPopup(popup);
-		populatePages(mod200);
-		try {
-			mod200.save(callback);
-		} catch (IllegalArgumentException e) {
-			popup.hide();
-			DialogMessages.alertErrorWidget(e.getMessage()).center();
-		}
 	}
 	
 	private void populatePages(Mod200Object mod2002) {
@@ -489,16 +495,23 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 		
+		refreshButtonsVisibility();
+		
+		
+		deckPanel.page00.enableCharacters( false );
+	}
+
+	private void refreshButtonsVisibility() {
 		initializeButton.setVisible(false);
 		saveButton.setVisible(true);
-		removeButton.setVisible(true);
+		removeButton.setVisible(mod200.getMod200().getId() != null);
 		validateButton.setVisible(true);
 		calculateCheck.setVisible(true);
 		calculateButton.setVisible(!calculateCheck.isVisible());
-		aeatAccountingFileButton.setVisible(true);
-		aeatFileButton.setVisible(true);
-		aeatPrintButton.setVisible(true);
-		deckPanel.page00.enableCharacters( false );
+		
+		aeatAccountingFileButton.setVisible(mod200.getMod200().getId() != null);
+		aeatFileButton.setVisible(mod200.getMod200().getId() != null);
+		aeatPrintButton.setVisible(mod200.getMod200().getId() != null);
 	}
 	
 }

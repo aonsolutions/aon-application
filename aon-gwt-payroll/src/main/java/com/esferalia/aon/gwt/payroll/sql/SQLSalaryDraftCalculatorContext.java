@@ -57,7 +57,9 @@ public class SQLSalaryDraftCalculatorContext extends
 	public Object getObject(String table, String column) {
 		return ctx.getObject(table, column);
 	}
-
+	
+	
+	
 	@Override
 	public boolean next() throws SQLException, ExpressionException {
 		boolean next = ctx.next();

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Set;
 
 import net.sf.cglib.transform.impl.AddDelegateTransformer;
@@ -136,6 +137,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		}
 
 	}
+	
 
 	private IListener listener;
 	private ISalaryBuilder salaryBuilder;
@@ -225,6 +227,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				ctx.getEndDate()) + 1;
 		salaryBuilder.setTimeUnits((int) days);
 		salaryBuilder.setType(ctx.getSalaryType());
+
 	}
 
 	protected Double fillPayments(IContractSalaryCalculatorContext ctx)
@@ -249,10 +252,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			LinkedList<UndefPayment> undefTotalPayments = new LinkedList<UndefPayment>();
 
+			HashSet<String> alreadyDefined = new HashSet<String>();
 			for (IContractPayment contractPayment : contractPayments) {
 				try {
 					resolvePayment(contractPayment, start, end, chargeDate,
 							expressionContext, taxCalculator, quoteCalculator);
+					alreadyDefined.add(contractPayment.getName());
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments
 							.add(new UndefPayment(contractPayment, e));
@@ -270,17 +275,24 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				}
 				paymentsVars.add(contractPayment.getName());
 			}
-
+			
+			HashSet<String> willBeDefined = new HashSet<String>();
+			
 			for (ListIterator<UndefPayment> listIterator = undefPayments
 					.listIterator(); listIterator.hasNext();) {
 				UndefPayment undefPayment = listIterator.next();
-				if (undefPayment.willBeDefined(paymentsVars))
+				if (undefPayment.willBeDefined(paymentsVars)) {
+					willBeDefined.addAll(paymentsVars);
 					continue;
+				}
 				// clean undefined ...
 				listIterator.remove();
 				undefPayment.onUndefinedData(this);
 				paymentsVars.remove(undefPayment.getName());
 			}
+			// Many payments can share same variable...
+			paymentsVars.addAll(willBeDefined);
+			paymentsVars.addAll(alreadyDefined);
 
 			int undefined = 0;
 			while (undefPayments.size() > 0) {
@@ -288,12 +300,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				try {
 					resolvePayment(undefPayment, start, end, chargeDate,
 							expressionContext, taxCalculator, quoteCalculator);
-
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
 				} catch (UndefinedContextVariablesException e) {
 					paymentsVars.remove(undefPayment.getName());
 				} catch (UndefinedVariablesException e) {
+
 					if (undefPayment.willBeDefined(paymentsVars)) {
 						undefPayments.add(undefPayment);
 						if (++undefined >= undefPayments.size())
@@ -678,23 +690,30 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 				if (!StringUtils.isEmpty(name)) {
 					Date valueStart = resultStart;
-					List<ITimedVariable<Double>> prevs = expressionContext
+					List<ITimedVariable<Number>> prevs = expressionContext
 							.getVariables(name, resultStart, resultEnd);
-					for (ITimedVariable<Double> prev : prevs) {
+					for (ITimedVariable<Number> prev : prevs) {
 						Date prevStart = prev.getPeriod().getStart();
 						Date prevEnd = prev.getPeriod().getEnd();
-						Double prevValue = prev.getValue(prev.getPeriod());
-						if (valueStart.compareTo(prevStart) < 0)
-							expressionContext.setVariable(name, resultValue,
-									valueStart, prev(prevStart));
-						expressionContext.setVariable(name, resultValue
-								+ prevValue, prevStart, prevEnd);
-						valueStart = next(prevEnd);
+						try {
+							Number prevValue = prev.getValue(prev.getPeriod());
+							if (valueStart.compareTo(prevStart) < 0)
+								expressionContext.setVariable(name,
+										resultValue, valueStart,
+										prev(prevStart));
+							expressionContext.setVariable(name, resultValue
+									+ prevValue.doubleValue(), prevStart,
+									prevEnd);
+							valueStart = next(prevEnd);
+						} catch (Exception e) {
+							System.err.println(String.format("ERROR [%s]: %s",
+									name, e.getLocalizedMessage()));
+						}
 					}
-					if (valueStart.compareTo(resultEnd) <= 0) 
+					if (valueStart.compareTo(resultEnd) <= 0)
 						expressionContext.setVariable(name, resultValue,
 								valueStart, resultEnd);
-				} // end-if: 
+				} // end-if:
 
 				expressionContext.setVariable(ALL, resultValue, resultStart,
 						resultEnd);
