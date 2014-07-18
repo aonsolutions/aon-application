@@ -70,7 +70,7 @@ public class MailingManager {
 		return list;
 	}
 	
-	private static void generateMailing(List<MailData> list, OutputStream out) throws IOException {
+	public static void generateMailing(List<MailData> list, OutputStream out) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
 		
 		writer.write(parseStructure());

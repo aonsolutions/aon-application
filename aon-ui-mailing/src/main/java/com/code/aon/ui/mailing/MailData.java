@@ -43,10 +43,7 @@ public class MailData {
 
     	RegistryAddress rAddress = registry.getDefaultAddress();
     	if (rAddress != null) {
-        	address = "";
-        	address += parseValue(rAddress.getAddress());
-        	address += parseValue(rAddress.getAddress2());
-        	address += parseValue(rAddress.getAddress3());
+        	address = rAddress.getFullAddress();
         	this.city = parseValue(rAddress.getCity());
         	this.zip = parseValue(rAddress.getZip());
         	if (rAddress.getGeozone() != null) {

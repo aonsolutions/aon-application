@@ -65,6 +65,12 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="courseAbsenceTemplateList" />
 					</aon:htmlCommandLink>
+
+					<aon:htmlCommandLink id="mailing"
+						value="#{bundle.marketing_mailing}" target="_blank"
+						actionListener="#{course.onGenerateTargetMailing}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 
