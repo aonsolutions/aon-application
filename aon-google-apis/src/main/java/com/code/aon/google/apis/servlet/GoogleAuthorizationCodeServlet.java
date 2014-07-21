@@ -9,8 +9,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.SessionEnterpriseInfo;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
@@ -50,6 +52,7 @@ public class GoogleAuthorizationCodeServlet extends
 			SessionInfo.table.get(key).setDomain(key);
 			SessionInfo.table.get(key).setAction(action);
 		}
+
 		
 		return getAuth2CallbackUri(req);
 	}
@@ -72,7 +75,14 @@ public class GoogleAuthorizationCodeServlet extends
 			AuthorizationCodeRequestUrl authorizationUrl)
 			throws ServletException, IOException {
 		
-		authorizationUrl.setState(req.getServerName()+"");
+		String pass = Utils.PasswordGenerator.getPassword(
+				Utils.PasswordGenerator.MINUSCULAS
+				+ Utils.PasswordGenerator.MAYUSCULAS
+				+ Utils.PasswordGenerator.NUMEROS, 10);
+		
+		authorizationUrl.setState(req.getServerName()+"&"+pass);
+		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		request.getSession().setAttribute("Oauth2callback.state", pass);
 		// TODO Apéndice de método generado automáticamente
 		super.onAuthorization(req, resp, authorizationUrl);
 	}

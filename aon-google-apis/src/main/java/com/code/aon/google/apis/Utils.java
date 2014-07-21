@@ -17,10 +17,52 @@ import com.google.api.services.drive.model.FileList;
 
 public class Utils{
 	
+	public static class PasswordGenerator {
+
+		public static final String NUMEROS = "0123456789";
+
+		public static final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+		public static final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
+
+		//public static final String ESPECIALES = "Ò—";
+
+		//
+		public static String getPinNumber() {
+			return getPassword(NUMEROS, 4);
+		}
+
+		public static String getPassword() {
+			return getPassword(8);
+		}
+
+		public static String getPassword(int length) {
+			return getPassword(NUMEROS + MAYUSCULAS + MINUSCULAS, length);
+		}
+
+		public static String getPassword(String key, int length) {
+			String pswd = "";
+
+			for (int i = 0; i < length; i++) {
+				pswd += key.charAt((int) (Math.random() * key.length()));
+			}
+
+			return pswd;
+		}
+	}
 	
 	public static File InputStreamToFile(Rattach rattach) throws IOException{
 		byte[] data = IOUtils.toByteArray(rattach.getData());
 		File aux = new File("/tmp/" + rattach.getDescription() );
+		if(!aux.isDirectory())
+		org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
+		return aux;
+		
+	}
+	
+	public static File InputStreamToFile(FileInfo fileInfo) throws IOException{
+		byte[] data = IOUtils.toByteArray(fileInfo.getData());
+		File aux = new File("/tmp/" + fileInfo.getTitle() );
 		if(!aux.isDirectory())
 		org.apache.commons.io.FileUtils.writeByteArrayToFile(aux, data);
 		return aux;
