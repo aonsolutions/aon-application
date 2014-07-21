@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.google.apis.TaskUtils;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 import com.google.api.services.drive.Drive;
@@ -22,25 +24,40 @@ public class GoogleTaskController {
 	public boolean google= isGoogle();
 	
 	public Tasks getClientSession(){
+		
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExternalContext ec = ctx.getExternalContext();
+		Object session=((HttpSession) ec.getSession(false)).getAttribute("Oauth2callback.email");
+		String email= (String) session;
+		
 		Tasks tasks=null;
 		String domain= AonUtil.getDomainName();
 		String username=AonUtil.getAuthPrincipal().getShortName();
 		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
-			tasks= SessionInfo.table.get(domain).getUsers().get(username).getTasks();
+			tasks= SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email).getTasks();
 		}
 		return tasks;
 	}
 	
 	public boolean isGoogle(){
-		if(getClientSession()!=null) return true;
-		else return false;
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExternalContext ec = ctx.getExternalContext();
+		Object session=((HttpSession) ec.getSession(false)).getAttribute("isGoogle");
+		
+		/*HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		Object session = (HttpSession) request.getSession().getAttribute("isGoogle");*/
+		if (session == null) return false;
+		return (Boolean) session;
+		
+		/*if(getClientSession()!=null) return true;
+		else return false;*/
 	}
 	
 	public void sync(ActionEvent event) throws SQLException, AonConnectionException, IOException{
 		
 		TaskUtils.synchronize(getClientSession());
 		
-	}
+ 	}
 	
 	public String getBeanName() {
 		return beanName;

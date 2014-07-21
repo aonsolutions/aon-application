@@ -9,6 +9,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -20,6 +21,7 @@ import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.google.api.services.drive.Drive;
@@ -41,17 +43,32 @@ public class GoogleDriveController {
 	
 	public Drive getClientSession(){
 		Drive drive=null;
+		
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExternalContext ec = ctx.getExternalContext();
+		Object session=((HttpSession) ec.getSession(false)).getAttribute("Oauth2callback.email");
+		String email= (String) session;
+		
 		String domain= AonUtil.getDomainName();
 		String username=AonUtil.getAuthPrincipal().getShortName();
 		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
-			drive= SessionInfo.table.get(domain).getUsers().get(username).getDrive();
+			drive= SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email).getDrive();
 		}
 		return drive;
 	}
 	
 	public boolean isGoogle(){
-		if(getClientSession()!=null) return true;
+		/*HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+		Object session = (HttpSession) request.getSession().getAttribute("isGoogle");
+		*/
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExternalContext ec = ctx.getExternalContext();
+		Object session=((HttpSession) ec.getSession(false)).getAttribute("isGoogle");
+		if (session == null) return false;
+		return (Boolean) session;
+		/*if(getClientSession()!=null) return true;
 		else return false;
+		*/
 	}
 	
 	public DriveFile [] getFiles() throws IOException{
