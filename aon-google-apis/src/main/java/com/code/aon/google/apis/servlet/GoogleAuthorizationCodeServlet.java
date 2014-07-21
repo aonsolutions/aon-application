@@ -1,7 +1,9 @@
 package com.code.aon.google.apis.servlet;
 
 
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.*;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getAuth2CallbackUri;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
+import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
 
 import java.io.IOException;
 
@@ -12,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.SessionEnterpriseInfo;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
-import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
@@ -81,8 +82,7 @@ public class GoogleAuthorizationCodeServlet extends
 				+ Utils.PasswordGenerator.NUMEROS, 10);
 		
 		authorizationUrl.setState(req.getServerName()+"&"+pass);
-		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
-		request.getSession().setAttribute("Oauth2callback.state", pass);
+		req.getSession().setAttribute("Oauth2callback.state", pass);
 		// TODO Apéndice de método generado automáticamente
 		super.onAuthorization(req, resp, authorizationUrl);
 	}
