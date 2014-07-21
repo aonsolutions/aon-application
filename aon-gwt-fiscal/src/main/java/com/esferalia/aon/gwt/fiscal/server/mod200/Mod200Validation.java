@@ -328,7 +328,7 @@ public class Mod200Validation {
 				,"!(round(PG326) >= 0.0 && round(LQ301) != 0.0)"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ301
 				,MessageFormat.format(MUST_EQUAL_MSG,LQ301.getDescription(),PG326.getDescription())
-				,"!(round(PG326) < 0.0 && round(LQ301) != round(PG326))"));
+				,"!(round(PG326) < 0.0 && round(LQ301) != round(PG326 * -1))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ302
 				,MessageFormat.format(MUST_EQUAL_MSG,LQ302.getDescription(),PG326.getDescription())
 				,"!(round(PG326) >= 0.0 && round(LQ302) != round(PG326))"));

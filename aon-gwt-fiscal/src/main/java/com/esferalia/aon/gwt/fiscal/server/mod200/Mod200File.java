@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.shared.Secretary;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 
 public class Mod200File {
 	
@@ -339,15 +340,18 @@ public class Mod200File {
 	 * @return
 	 */
 	public String getPages() {
-		return "010"
-			  +"020"
-			  +"030"
-			  +"040"
-			  +"050"
-			  +"060"
-			  +"070"
-			  +"080"
-			  +"090"
+		String pages = "010"
+				  +"020"
+				  +"030"
+				  +"040"
+				  +"050"
+				  +"060"
+				  +"070"
+				  +"080"; 
+		if (getMod200().getBalanceType() != BalanceType.PYMES) {
+			pages = pages +"090"; 	
+		}
+		pages = pages 
 			  +"100"
 			  +"110"
 			  +"120"
@@ -361,6 +365,8 @@ public class Mod200File {
 //			  +"240"
 			  +"DID"
 			  +"FIN";
+		return pages; 
+		
 	}
 
 	public Secretary getSecretary() {
