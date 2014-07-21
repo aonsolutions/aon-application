@@ -84,6 +84,7 @@ import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
 import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
@@ -360,11 +361,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return getEmployees(conn, workplaceId, fromDate, pattern, offset,
+			return JooqEmployees.getEmployees(conn, workplaceId, fromDate, pattern, offset,
 					limit);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} catch (com.code.aon.ql.util.ExpressionException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -2189,76 +2188,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static List<Employee> getEmployees(Connection connection,
-			Integer workplaceId, Date endDate, String pattern, int offset,
-			int limit) throws SQLException,
-			com.code.aon.ql.util.ExpressionException {
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		try {
-
-			String sql = "SELECT * " + " FROM " + CONTRACT + " ," + PERSON
-					+ " WHERE " + ContractColumns.PERSON + " = "
-					+ PersonColumns.REGISTRY + " AND "
-					+ ContractColumns.WORKPLACE + " = ? " + " AND ( "
-					+ ContractColumns.END_DATE + " IS NULL  " + " OR "
-					+ ContractColumns.END_DATE + " >= ? )";
-			if (pattern != null) {
-				/*
-				 * Criteria surnameCriteria = new Criteria();
-				 * surnameCriteria.addExpression(ExpressionUtilities
-				 * .getExpression(pattern, PersonColumns.FIRST_SURNAME)); sql =
-				 * CriteriaUtilities.toSQLString(surnameCriteria, sql);
-				 */
-				sql += " AND CONCAT(" + PersonColumns.FIRST_SURNAME + ","
-						+ PersonColumns.SECOND_SURNAME + ","
-						+ PersonColumns.NAME + ") LIKE '%" + pattern + "%'";
-
-			}
-
-			sql += " ORDER BY " + PersonColumns.FIRST_SURNAME + " ,"
-					+ PersonColumns.SECOND_SURNAME + " ," + PersonColumns.NAME
-					+ " ," + ContractColumns.START_DATE + " DESC "
-					+ " LIMIT ?, ? ";
-
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, workplaceId);
-
-			stmt.setDate(2, new java.sql.Date(endDate.getTime()));
-
-			stmt.setInt(3, offset);
-			stmt.setInt(4, limit);
-
-			rs = stmt.executeQuery();
-
-			List<Employee> employees = new LinkedList<Employee>();
-			while (rs.next()) {
-				Employee employee = new Employee();
-				employee.setId(rs.getInt(ContractColumns.ID));
-				employee.setStartDate(rs.getDate(ContractColumns.START_DATE));
-				employee.setEndDate(rs.getDate(ContractColumns.END_DATE));
-
-				employee.setPerson(rs.getInt(PersonColumns.REGISTRY));
-				employee.setName(rs.getString(PersonColumns.NAME));
-				employee.setFirstSurname(rs
-						.getString(PersonColumns.FIRST_SURNAME));
-				employee.setSecondSurName(rs
-						.getString(PersonColumns.SECOND_SURNAME));
-				employees.add(employee);
-			}
-
-			return employees;
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				rs.close();
-			}
-		}
-	}
 
 	private static List<Cost> getEnterpriseCosts(Connection connection,
 			Integer enterpriseId) throws SQLException {

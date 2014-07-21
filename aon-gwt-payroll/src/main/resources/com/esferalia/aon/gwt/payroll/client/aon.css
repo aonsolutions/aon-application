@@ -50,6 +50,10 @@
 	gwt-image: "ine" ; 
 }
 
+@sprite .aon-icon-blank {
+	gwt-image: "blank" ; 
+}
+
 @sprite .aon-icon-lamp {
 	gwt-image: "lamp" ; 
 }
@@ -180,6 +184,15 @@
 
 .aon-dataTable-cell-highlight-top {
 	border-bottom-color: #d3c061 !important;
+}
+
+.aon-dataTable-row-current {
+	box-shadow: -3px 1px 3px 1px #999999;
+}
+
+.aon-dataTable-row-current td * {
+	border-color: #777777;
+	font-weight: bold !important;
 }
 
 .aon-dataTable-row-highlight {

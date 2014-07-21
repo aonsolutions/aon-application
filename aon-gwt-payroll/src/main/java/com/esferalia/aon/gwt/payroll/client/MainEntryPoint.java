@@ -55,7 +55,10 @@ public class MainEntryPoint implements EntryPoint {
 
 		ImageResource fx();
 
+
 		ImageResource lamp();
+
+		ImageResource blank();
 
 		ImageResource expand();
 		

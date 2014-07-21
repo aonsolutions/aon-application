@@ -53,38 +53,46 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		dslContext.delete(AGREEMENT_PAYMENT)
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 
-		if (payment.getConceptId() != null && payment.getConceptId() < 0){
+		if (payment.getConceptId() != null && payment.getConceptId() < 0) {
 			int conceptId = payment.getConceptId();
-			//@formatter:on
+			// @formatter:on
+			dslContext
+					.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.TYPE,
+							(byte) payment.getType().ordinal())
+					.where(CONTRACT_PAYMENT.TYPE.isNull().and(
+							CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+					.execute();
+			dslContext
+					.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.DESCRIPTION, payment.getDescription())
+					.where(CONTRACT_PAYMENT.DESCRIPTION.isNull().and(
+							CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+					.execute();
+			dslContext
+					.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.EXPRESSION, payment.getExpression())
+					.where(CONTRACT_PAYMENT.EXPRESSION.isNull().and(
+							CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+					.execute();
+			dslContext
+					.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.IRPF_EXPRESSION,
+							payment.getIrpfExpression())
+					.where(CONTRACT_PAYMENT.IRPF_EXPRESSION.isNull().and(
+							CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+					.execute();
+			dslContext
+					.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION,
+							payment.getQuoteExpression())
+					.where(CONTRACT_PAYMENT.QUOTE_EXPRESSION.isNull().and(
+							CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
+					.execute();
 			dslContext.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.TYPE, (byte)payment.getType().ordinal())
-			.where(CONTRACT_PAYMENT.TYPE.isNull()
-			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
-			.execute();
-			dslContext.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.DESCRIPTION, payment.getDescription())
-			.where(CONTRACT_PAYMENT.DESCRIPTION.isNull()
-			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
-			.execute();
-			dslContext.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.EXPRESSION, payment.getExpression())
-			.where(CONTRACT_PAYMENT.EXPRESSION.isNull()
-			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
-			.execute();
-			dslContext.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
-			.where(CONTRACT_PAYMENT.IRPF_EXPRESSION.isNull()
-			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
-			.execute();
-			dslContext.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
-			.where(CONTRACT_PAYMENT.QUOTE_EXPRESSION.isNull()
-			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId)))
-			.execute();
-			dslContext.update(CONTRACT_PAYMENT)
-			.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, (Integer)null)
-			.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId))
-			.execute();
+					.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, (Integer) null)
+					.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId))
+					.execute();
 			//@formatter:off
 			dslContext.delete(PAYMENT_CONCEPT)
 					.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
@@ -106,7 +114,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		if (payment.getConceptId() == null) {
 			int min = min(dslContext, PAYMENT_CONCEPT.getIdentity());
 			int conceptId = Math.min(-1, min - 1);
-			insertPaymentConcept(dslContext, domainId, conceptId, payment);
+			insertPaymentConcept(dslContext, domainId, paymentId, conceptId, payment);
 			insertAgreementPayment(dslContext, domainId, agreementId,
 					conceptId, paymentId, payment.getSalaryType(),
 					payment.getMonth(), payment.getStartDate(),
@@ -202,8 +210,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	}
 
 	private static void insertPaymentConcept(DSLContext dslContext,
-			Integer domainId, Integer conceptId, Payment payment)
-			throws SQLException {
+			Integer domainId, Integer paymentId, Integer conceptId,
+			Payment payment) throws SQLException {
 
 		Payment.Type type = payment.getType();
 
@@ -212,7 +220,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.set(PAYMENT_CONCEPT.ID, conceptId)
 		.set(PAYMENT_CONCEPT.DOMAIN, domainId)
 		.set(PAYMENT_CONCEPT.TYPE, (byte) type.ordinal())
-		.set(PAYMENT_CONCEPT.CODE, String.format("__%d", Math.abs(conceptId) ))
+		.set(PAYMENT_CONCEPT.CODE, String.format("__%d", Math.abs(paymentId) ))
 		.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
 		.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
 		.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())

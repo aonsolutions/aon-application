@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.Category;
+import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.CollectionUtils;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
@@ -99,6 +101,8 @@ public class Employees extends ResizeComposite implements
 		void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument);
 
 		void onEventsDraftSelected(EventsDraftObject eventsDraftObject);
+
+		void onCategoryDraftSelected(CategoryDraftObject agreementDraftObject);
 
 		void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject);
 
@@ -322,17 +326,24 @@ public class Employees extends ResizeComposite implements
 							new DecimalEventMetaData("ATRASOS", MONTH),
 							new DecimalEventMetaData("ANTICIPOS", MONTH),
 							new DecimalEventMetaData("EMBARGOS", MONTH),
-							new DecimalEventMetaData("LTA",
-									"D\u00EDas Libres Trabajados canjeados por Alojamiento", MONTH),
+							new DecimalEventMetaData(
+									"LTA",
+									"D\u00EDas Libres Trabajados canjeados por Alojamiento",
+									MONTH),
 							new DecimalEventMetaData("CLT",
 									"Coste d\u00EDa Libre Trabajado", MONTH),
-							new DecimalEventMetaData("CD",
-									"Coste Diario del trabajador (jornada 8 horas)", MONTH),
+							new DecimalEventMetaData(
+									"CD",
+									"Coste Diario del trabajador (jornada 8 horas)",
+									MONTH),
 							new BooleanEventMetaData("LTR",
-									"D\u00EDas Libres Trabajados Recuperables", MONTH),
-							new DecimalEventMetaData("HFD",
-									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo", MONTH),
-							new EventMetaData("OBSERVACIONES", MONTH));
+									"D\u00EDas Libres Trabajados Recuperables",
+									MONTH),
+							new DecimalEventMetaData(
+									"HFD",
+									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo",
+									MONTH), new EventMetaData("OBSERVACIONES",
+									MONTH));
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),
@@ -482,6 +493,8 @@ public class Employees extends ResizeComposite implements
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
 		} else if (userObject instanceof EventsDraftObject) {
 			onEventsDraftSelected((EventsDraftObject) userObject);
+		} else if (userObject instanceof CategoryDraftObject) {
+			onCategoryDraftSelected((CategoryDraftObject) userObject);
 		} else if (userObject instanceof AgreementDraftObject) {
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
 		}
@@ -922,7 +935,6 @@ public class Employees extends ResizeComposite implements
 
 	}
 
-
 	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		for (Listener listener : listeners) {
 			listener.onDocumentsSelected(docs);
@@ -974,6 +986,13 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
+	private void onCategoryDraftSelected(
+			CategoryDraftObject categoryDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onCategoryDraftSelected(categoryDraftObject);
+		}
+	}
+
 	private void onAgreementDraftSelected(
 			AgreementDraftObject agreementDraftObject) {
 		for (Listener listener : listeners) {
@@ -1008,24 +1027,6 @@ public class Employees extends ResizeComposite implements
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
-				/*
-				TreeItem salaryPreviewItem = addImageItem(employeeItem,
-						"Preliminar", images.preview());
-						
-				SalaryPreview salaryPreview = new SalaryPreview();
-				salaryPreview.setEmployee(employee);
-
-
-
-				salaryPreview.setStartDate(startDate);
-				salaryPreview.setEndDate(endDate);
-				salaryPreview.setIssueDate(issueDate);
-				salaryPreview.setType(Salary.Type.SALARY);
-
-				SalaryPreviewDocument salaryPreviewDocument = new SalaryPreviewDocument(
-						salaryPreview, employeesService);
-				salaryPreviewItem.setUserObject(salaryPreviewDocument);
-				*/
 				Date salaryDate = DateUtils.before(
 						DateUtils.after(new Date(), employee.getStartDate()),
 						employee.getEndDate());
@@ -1046,9 +1047,37 @@ public class Employees extends ResizeComposite implements
 						salaryDraft, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
 
-				// Agencia Tributaria
-				addImageItem(employeeItem,
-						"Regularizaciones", images.aet());
+				// A.E.T
+				addImageItem(employeeItem, "Regularizaciones", images.aet());
+
+				Category category = employee.getCategory();
+				
+				// Agreement Category
+				if ( category == null  )
+					continue;
+				
+				Agreement agreement = category.getAgreement();
+				Agreement workplaceAgreement = ((Workplace) workplaceItem
+						.getUserObject()).getAgreement();
+				
+				if ( workplaceAgreement != null && 
+						workplaceAgreement.getId() == agreement.getId() )
+					continue;
+
+				TreeItem categoryItem = addImageItem(employeeItem,
+						category.getLevel() + ". " + category.getDescription(),
+						images.agreement());
+
+				CategoryDraft categoryDraft = new CategoryDraft();
+				categoryDraft.setId(agreement.getId());
+				categoryDraft.setLevelId(category.getLevelId());
+				categoryDraft.setDescription(agreement.getDescription());
+				categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+				categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+				CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
+						categoryDraft, employeesService);
+				categoryItem.setUserObject(categoryDraftObject);
+				
 			}
 
 			added++;
