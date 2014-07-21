@@ -9,28 +9,19 @@ import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSet
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
-import org.jooq.InsertSetMoreStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.jooq.tables.AgreementExtra;
-import com.esferalia.aon.jooq.tables.ContractPayment;
-import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
-import com.esferalia.aon.payroll.calculator.jooq.JooqCommon;
-import com.google.gwt.i18n.shared.DateTimeFormat;
-import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
