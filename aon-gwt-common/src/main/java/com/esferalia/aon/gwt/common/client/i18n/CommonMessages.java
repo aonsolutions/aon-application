@@ -1249,6 +1249,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("I.B.A.N.")
 	String iban();
-	
+
+	@DefaultMessage("Fecha I.R.N.R.")
+	String irnrDate();
+
 	
 }

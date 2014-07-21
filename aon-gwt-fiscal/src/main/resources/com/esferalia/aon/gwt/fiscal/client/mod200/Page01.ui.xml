@@ -30,7 +30,7 @@
 								<g:TextBox ui:field="secretaryName" visibleLength="40"/>
 							</td>
 							<td style="width: 100px;">
-								<g:Label text="{msg.date}"  />	
+								<g:Label text="{msg.irnrDate}"  />	
 							</td>
 							<td>
 								<aon:DateBoxEx  ui:field="irnr"/>

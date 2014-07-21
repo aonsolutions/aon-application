@@ -24,6 +24,10 @@ public class ValidationMessage implements Serializable, IsSerializable {
 		this.expression = expression;
 	}
 
+	public ValidationMessage(int page, String message) {
+		this(page,null,message,null);
+	}
+
 	public String getMessage() {
 		return message;
 	}

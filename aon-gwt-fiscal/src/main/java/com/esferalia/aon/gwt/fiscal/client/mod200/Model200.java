@@ -400,6 +400,7 @@ public class Model200 extends MainEntryPoint {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		callback.setPopup(popup);
+		populatePages(mod200);
 		mod200.validate(callback);
 	}
 	
