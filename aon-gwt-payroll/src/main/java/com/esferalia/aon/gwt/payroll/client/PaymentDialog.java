@@ -110,6 +110,10 @@ public class PaymentDialog extends CustomDialog {
 		payment.setNumberFormat(numberFormat);
 	}
 	
+	public void setEnabledMonthListBox(boolean enabled) {
+		payment.setEnabledMonthListBox(enabled);
+	}
+
 	public void show(Callback cb) {
 		this.cb = cb;
 		super.show();

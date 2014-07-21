@@ -649,6 +649,7 @@ public class AgreementDraft extends ResizeComposite implements
 					dialog.setPaymentExpression(payment.getExpression()); //
 					dialog.setIrpfExpression(payment.getIrpfExpression());
 					dialog.setQuoteExpression(payment.getQuoteExpression());
+					dialog.setEnabledMonthListBox(!isExtraPayment(payment));
 
 					dialog.center();
 					dialog.show(this);
@@ -698,7 +699,8 @@ public class AgreementDraft extends ResizeComposite implements
 							.getSelected());
 					AgreementDraft.this.agreementDraftObject
 							.addDraftPayment(payment);
-					AgreementDraft.this.calculate(getDescriptionFocusCallback());
+					AgreementDraft.this
+							.calculate(getDescriptionFocusCallback());
 				}
 			});
 		}
@@ -1191,17 +1193,16 @@ public class AgreementDraft extends ResizeComposite implements
 
 		});
 	}
-	
 
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
-	
+
 	public AgreementDraftObject getAgreementDraftObject() {
 		return agreementDraftObject;
 	}
-	
-	protected Widget createWidget4Level (Level level, LevelEditor levelEditor){
+
+	protected Widget createWidget4Level(Level level, LevelEditor levelEditor) {
 		TextBox descriptionTextBox = new TextBox();
 		descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionTextBox.setText(level.getDescription());
@@ -1210,9 +1211,10 @@ public class AgreementDraft extends ResizeComposite implements
 		return descriptionTextBox;
 	}
 
-	protected void formatRow (Level level, int row, RowFormatter formatter){
+	protected void formatRow(Level level, int row, RowFormatter formatter) {
 	}
-		// ------------------------------------------------------------------------
+
+	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
 
@@ -1332,9 +1334,9 @@ public class AgreementDraft extends ResizeComposite implements
 
 			LevelEditor levelEditor = new LevelEditor(level);
 			Widget levelWidget = createWidget4Level(level, levelEditor);
-			
+
 			hide(levelWidget, level.getId() == 0);
-			
+
 			salaryTable.setWidget(row, 0, levelWidget);
 
 			cellFormatter.addStyleName(row, 0, AON.AON_BOLD);
@@ -1343,7 +1345,7 @@ public class AgreementDraft extends ResizeComposite implements
 				changedLevelsRows.add(row);
 				rowFormatter.addStyleName(row, style.highlight());
 			}
-			
+
 			formatRow(level, row, rowFormatter);
 
 			int index = (row - 1) * cols;
@@ -1992,7 +1994,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
-		//paymentEditor.setDescriptionTextBox(descriptionBox);
+		// paymentEditor.setDescriptionTextBox(descriptionBox);
 		paymentEditor.setDescriptionSuggestBox(descriptionSuggest);
 
 		return paymentEditor;
@@ -2224,6 +2226,16 @@ public class AgreementDraft extends ResizeComposite implements
 				payments.add(payment);
 
 		return payments;
+	}
+
+	private boolean isExtraPayment(Payment payment) {
+
+		for (Extra extra : agreementDraftObject.getExtras())
+			if (extra.getPaymentId() != null
+					&& extra.getPaymentId().equals(payment.getId()))
+				return true;
+
+		return false;
 	}
 
 	private Date parseExtraDate(String text) {

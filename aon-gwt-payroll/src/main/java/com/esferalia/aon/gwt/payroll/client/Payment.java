@@ -405,7 +405,11 @@ public class Payment extends ResizeComposite {
 		else
 			el.getStyle().setDisplay(Display.NONE);
 	}
-
+	
+	public void setEnabledMonthListBox(boolean enabled){
+		monthListBox.setEnabled(enabled);
+	}
+	
 	// ------------------------------------------
 	// Protected members
 	// ------------------------------------------

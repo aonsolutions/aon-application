@@ -478,7 +478,7 @@ public class SQLAgreementDraft {
 
 		for (Extra extra : draft.getDraftExtras()) {
 			if (isRemove(extra)) {
-				insertExtra(conn, domainId, draft.getId(), extra);
+				JooqAgreement.insertExtra(conn, domainId, draft.getId(), extra);
 			}
 		}
 	}
@@ -563,13 +563,13 @@ public class SQLAgreementDraft {
 		for (Extra extra : draft.getDraftExtras()) {
 			if (extra.getId() < 0) {
 				if (!isRemove(extra)) {
-					insertExtra(conn, domainId, draft.getId(), extra);
+					JooqAgreement.insertExtra(conn, domainId, draft.getId(), extra);
 				}
 			} else {
 				if (!isRemove(extra)) {
-					updateExtra(conn, domainId, draft.getId(), extra);
+					JooqAgreement.updateExtra(conn, extra);
 				} else {
-					removeExtra(conn, extra.getId());
+					JooqAgreement.removeExtra(conn, extra.getId());
 				}
 			}
 
@@ -636,7 +636,7 @@ public class SQLAgreementDraft {
 		}
 	}
 
-	private static void insertExtra(Connection conn, Integer domainId,
+	private static void __insertExtra(Connection conn, Integer domainId,
 			Integer agreementId, Extra extra) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
@@ -674,7 +674,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void updateExtra(Connection conn, Integer domainId,
+	private static void __updateExtra(Connection conn, Integer domainId,
 			Integer agreementId, Extra extra) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
@@ -706,7 +706,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void removeExtra(Connection conn, Integer extraId)
+	private static void __removeExtra(Connection conn, Integer extraId)
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
