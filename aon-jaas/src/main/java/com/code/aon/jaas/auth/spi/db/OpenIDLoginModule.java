@@ -12,6 +12,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -40,13 +41,33 @@ public class OpenIDLoginModule extends LoginModule {
 	
 	@Override
 	protected Principal createIdentity(String username) throws Exception {
+		
 		if (StringUtils.contains(username, OPENID_EMAIL )) {
-			String email = StringUtils.substringAfter(username,
+			String emailAux = StringUtils.substringAfter(username,
 					OPENID_EMAIL );
+			int pos = emailAux.indexOf("&");
+			
+			
+			String email = emailAux.substring(0, pos);
+			HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+			String pass = (String) request.getSession().getAttribute("Oauth2callback.state");
+			
+			if(!emailAux.substring(pos+1).equals(pass)){
+				throw new AuthenticationLoginException( "aon_login_err_7", email);
+
+			}
+
 			username = getUserName(email, domain);	
+
+			
 			if ( username == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_6", email);
 			}
+			
+			
+			request.getSession().setAttribute("Oauth2callback.email", email);
+			request.getSession().setAttribute("isGoogle", true);
+		
 		}
 		
 		return super.createIdentity(username);
@@ -58,9 +79,14 @@ public class OpenIDLoginModule extends LoginModule {
 		String[] info = getUsernameAndPassword();
 		if (StringUtils.contains(info[0], OPENID_EMAIL )) {
 			try {
-				String user = getUserName(StringUtils.substringAfter(info[0],
-						OPENID_EMAIL ),domain);
+				String userAux = StringUtils.substringAfter(info[0],
+						OPENID_EMAIL );
 
+				int pos = userAux.indexOf("&");
+				
+				
+				String user = getUserName(userAux.substring(0, pos),domain);
+				
 				if ( user == null ) {
 					throw new AuthenticationLoginException( "aon_login_err_6", StringUtils.substringAfter(info[0],
 							OPENID_EMAIL ));
