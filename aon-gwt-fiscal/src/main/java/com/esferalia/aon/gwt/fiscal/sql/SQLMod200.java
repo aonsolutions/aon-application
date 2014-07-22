@@ -164,11 +164,14 @@ public class SQLMod200 {
 	private static void insertDetail(Connection conn,DSLContext dsl, Mod200 mod200) throws AonSQLException {
 		List<FsModel200DetailRecord> list = new LinkedList<FsModel200DetailRecord>();
 		FsModel200DetailRecord detail = null;
-		for (DoubleVariable dv : mod200.getKeysMap().values() ){
-			if (mod200.getDraftMap().containsKey(dv.getKey())) {
-				dv = mod200.getDraftMap().get(dv.getKey());
+		for (Mod200Key k : Mod200Key.values()) {
+			DoubleVariable dv = null;	
+			if (mod200.getDraftMap().containsKey(k)) {
+				dv = mod200.getDraftMap().get(k);
+			} else {
+				dv = mod200.getKeysMap().get(k);
 			}
-			if (dv.getValue() != 0.0){
+			if (dv != null && dv.getValue() != 0.0){
 				detail = new FsModel200DetailRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
