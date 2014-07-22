@@ -1,5 +1,8 @@
 package com.code.aon.finance.event;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.enumeration.WithholdingType;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
@@ -234,21 +238,44 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	private void updateInvoiceTotals(Invoice invoice, boolean skipServiceProcess) throws ManagerBeanException {
 		if (invoice.isUpdateEnabled()) {
 			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
-			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
-			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
-			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
-
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice.setUpdateEnabled(false);
-			invoice.setTaxableBase(taxableBase);
-			invoice.setVatQuota(vatQuota);
-			invoice.setRetentionQuota(retentionQuota);
-			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
-
+			invoice.setTaxableBase(priceStrategy.getCalculatedTaxableBase(invoice));
+			invoice.setVatQuota(priceStrategy.getCalculatedTotalVatQuota(invoice, invoice));
+			invoice.setRetentionQuota(priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice));
+			invoice.setTotal(CommonUtil.round(invoice.getTaxableBase() + invoice.getVatQuota() - invoice.getRetentionQuota()));
 			if (!skipServiceProcess) {
-				invoice.setService(isServiceInvoice(invoice, taxableBase));	
+				invoice.setService(isServiceInvoice(invoice, invoice.getTaxableBase()));	
 			}
-			invoiceBean.update(invoice);
+
+			Connection connection = null;
+			PreparedStatement stmt = null;
+			try {
+    			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(invoice.getDomain()));
+    			stmt = connection.prepareStatement("UPDATE invoice SET service = ?, taxable_base = ?, vat_quota = ?, retention_quota = ?, total = ? WHERE id = ?");
+    			stmt.setInt(1, invoice.isService() ? 1 : 0);
+    			stmt.setDouble(2, invoice.getTaxableBase());
+    			stmt.setDouble(3, invoice.getVatQuota());
+    			stmt.setDouble(4, invoice.getRetentionQuota());
+    			stmt.setDouble(5, invoice.getTotal());
+    			stmt.setInt(6, invoice.getId());
+    			stmt.execute();
+			} catch (Throwable e) {
+				try {
+					connection.rollback();
+				} catch (SQLException ex) {
+				}
+				throw new ManagerBeanException(e.getMessage());
+			} finally {
+				try {
+					if (stmt != null) {
+						stmt.close();
+					}
+					if (connection != null) {
+						connection.close();
+					}
+				} catch (SQLException ex) {
+				}
+			}
 		}
 	}
 
