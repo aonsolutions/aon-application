@@ -103,8 +103,6 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).createNewTo());
 		PurchaseStatus[] defaultPurchaseStatus = {PurchaseStatus.PENDING};
 		setPurchaseStatuses(defaultPurchaseStatus);
-		PurchaseDocumentType[] defaultCosumentTypes = {PurchaseDocumentType.NORMAL};
-		setPurchaseDocumentTypes(defaultCosumentTypes);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setEmailCommunication(null);
