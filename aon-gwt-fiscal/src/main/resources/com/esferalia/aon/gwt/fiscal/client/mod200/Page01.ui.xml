@@ -27,7 +27,7 @@
 								<g:Label text="{msg.name}"  />	
 							</td>
 							<td>
-								<g:TextBox ui:field="secretaryName" visibleLength="40"/>
+								<g:TextBox ui:field="secretaryName" visibleLength="40" maxLength="25"/>
 							</td>
 							<td style="width: 100px;">
 								<g:Label text="{msg.irnrDate}"  />	

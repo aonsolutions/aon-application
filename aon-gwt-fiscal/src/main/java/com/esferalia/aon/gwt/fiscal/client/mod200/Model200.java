@@ -182,7 +182,8 @@ public class Model200 extends MainEntryPoint {
 			@Override
 			public void onSuccess(Mod200 result) {
 				if (result.getId() == null) {
-					deckPanel.page00.dump(mod200);
+					//deckPanel.page00.dump(mod200);
+					deckPanel.dump(mod200);
 					
 					deckPanel.pagesPanel.showWidget(deckPanel.pagesPanel.getWidgetIndex(deckPanel.page00));
 					sidebar.setVisibleLinks( false );
