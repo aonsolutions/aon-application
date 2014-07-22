@@ -5,6 +5,7 @@
 
 	<g:HTMLPanel  tag="span">
 		<g:ListBox ui:field="typeListBox"/>
+		<aon:MonthListBox ui:field="fromMonthListBox" visible="false" />
 		<aon:MonthListBox ui:field="monthListBox"/>
 		<aon:DateListBox ui:field="dateListBox" visible="false"/>
 	</g:HTMLPanel>

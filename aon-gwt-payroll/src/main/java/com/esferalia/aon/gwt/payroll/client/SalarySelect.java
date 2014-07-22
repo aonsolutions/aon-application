@@ -87,6 +87,8 @@ public class SalarySelect extends Composite {
 	DateListBox dateListBox;
 	@UiField
 	MonthListBox monthListBox;
+	@UiField
+	MonthListBox fromMonthListBox;
 
 	private List<Extra> extras;
 	private List<Listener> listeners;
@@ -138,11 +140,17 @@ public class SalarySelect extends Composite {
 		fireOnChange();
 	}
 
+	@UiHandler("fromMonthListBox")
+	void onFromMonthListBoxChanged(ChangeEvent event) {
+		syncSalarySelectDates();
+		fireOnChange();
+	}
+
 	@UiHandler("typeListBox")
 	void onTypeListBoxChanged(ChangeEvent event) {
 		Type type = getSelectedType();
-		salaryPreview.setType(type);
 		syncDateListBox(type);
+		salaryPreview.setType(type);
 		syncSalarySelectDates();
 		fireOnChange();
 	}
@@ -165,7 +173,7 @@ public class SalarySelect extends Composite {
 
 		typeListBox.addItem(Salary.Type.SETTLE.getDescription(),
 				Salary.Type.SETTLE.name());
-		
+
 		typeListBox.addItem(Salary.Type.NOT_ENJOYED_VACATIONS.getDescription(),
 				Salary.Type.NOT_ENJOYED_VACATIONS.name());
 
@@ -179,7 +187,7 @@ public class SalarySelect extends Composite {
 		} else {
 			if (extraIndex < 0)
 				typeListBox.insertItem(Salary.Type.EXTRA.getDescription(),
-						Salary.Type.EXTRA.name(),1);
+						Salary.Type.EXTRA.name(), 1);
 		}
 	}
 
@@ -240,7 +248,7 @@ public class SalarySelect extends Composite {
 
 				Date startDate = SalarySelect.getStartDate(extra, issueDate);
 				Date endDate = SalarySelect.getEndDate(extra, issueDate);
-				
+
 				SalarySelect.this.salaryPreview.setStartDate(startDate);
 				SalarySelect.this.salaryPreview.setEndDate(endDate);
 				SalarySelect.this.salaryPreview.setIssueDate(issueDate);
@@ -272,9 +280,9 @@ public class SalarySelect extends Composite {
 			@Override
 			public Void visitDelay(Type type) {
 				Date month = monthListBox.getSelectedMonth();
-				Employee employee = salaryPreview.getEmployee();
-				Date startDate = employee.getStartDate();
+				Date fromMonth = fromMonthListBox.getSelectedMonth();
 				Date endDate = DateUtils.getLastDayOfMonth(month);
+				Date startDate = DateUtils.getFirstDayOfMonth(fromMonth);
 
 				SalarySelect.this.salaryPreview.setStartDate(startDate);
 				SalarySelect.this.salaryPreview.setEndDate(endDate);
@@ -307,6 +315,7 @@ public class SalarySelect extends Composite {
 			public Void visitSalary(Type type) {
 
 				dateListBox.setVisible(false);
+				fromMonthListBox.setVisible(false);
 				monthListBox.setVisible(true);
 
 				monthListBox.setFirstMonth(contractStartDate);
@@ -319,31 +328,32 @@ public class SalarySelect extends Composite {
 			@Override
 			public Void visitExtra(Type type) {
 				try {
-				monthListBox.setVisible(false);
-				dateListBox.setVisible(true);
-				
-				if (settleDatesProvider.hasDataDisplay(dateListBox))
-					settleDatesProvider.removeDataDisplay(dateListBox);
-				if (!extrasDatesProvider.hasDataDisplay(dateListBox))
-					extrasDatesProvider.addDataDisplay(dateListBox);
+					monthListBox.setVisible(false);
+					fromMonthListBox.setVisible(false);
+					dateListBox.setVisible(true);
 
-				final Date issueDate = SalarySelect.this.salaryPreview
-						.getIssueDate();
-				int index = getIndexOfExtra(issueDate);
+					if (settleDatesProvider.hasDataDisplay(dateListBox))
+						settleDatesProvider.removeDataDisplay(dateListBox);
+					if (!extrasDatesProvider.hasDataDisplay(dateListBox))
+						extrasDatesProvider.addDataDisplay(dateListBox);
 
-				int length = dateListBox.getPageSize();
-				int start = Math.max(0, index - length / 2);
+					final Date issueDate = SalarySelect.this.salaryPreview
+							.getIssueDate();
+					int index = getIndexOfExtra(issueDate);
 
-				dateListBox.setVisibleRangeAndClearData(
-						new Range(start, length), true);
+					int length = dateListBox.getPageSize();
+					int start = Math.max(0, index - length / 2);
 
-				Scheduler.get().scheduleFinally(new ScheduledCommand() {
-					@Override
-					public void execute() {
-						dateListBox.setSelected(issueDate, true);
-					}
-				});
-				} catch ( Throwable t ){
+					dateListBox.setVisibleRangeAndClearData(new Range(start,
+							length), true);
+
+					Scheduler.get().scheduleFinally(new ScheduledCommand() {
+						@Override
+						public void execute() {
+							dateListBox.setSelected(issueDate, true);
+						}
+					});
+				} catch (Throwable t) {
 					Window.alert(t.getMessage());
 				}
 
@@ -353,6 +363,7 @@ public class SalarySelect extends Composite {
 			@Override
 			public Void visitSettle(Type type) {
 				monthListBox.setVisible(false);
+				fromMonthListBox.setVisible(false);
 				dateListBox.setVisible(true);
 				if (extrasDatesProvider.hasDataDisplay(dateListBox))
 					extrasDatesProvider.removeDataDisplay(dateListBox);
@@ -384,11 +395,23 @@ public class SalarySelect extends Composite {
 			public Void visitDelay(Type type) {
 
 				dateListBox.setVisible(false);
+				fromMonthListBox.setVisible(true);
 				monthListBox.setVisible(true);
-
-				monthListBox.setFirstMonth(contractStartDate);
+				
+				Date draftStartDate  = null;
+				if ( salaryPreview.getType() == type )
+					draftStartDate = CalendarUtil.copyDate(salaryPreview
+						.getStartDate());
+				else 
+					draftStartDate = max(contractStartDate, DateUtils.getFirstDayOfYear(draftEndDate)); 
+					
+				monthListBox.setFirstMonth(draftStartDate);
 				monthListBox.setLastMonth(new Date());
 				monthListBox.setSelectedMonth(draftEndDate);
+
+				fromMonthListBox.setFirstMonth(contractStartDate);
+				fromMonthListBox.setLastMonth(draftEndDate);
+				fromMonthListBox.setSelectedMonth(draftStartDate);
 
 				return null;
 
@@ -411,6 +434,7 @@ public class SalarySelect extends Composite {
 			}
 		}
 	}
+
 
 	private int getOffsetFirstExtra() {
 		Employee employee = salaryPreview.getEmployee();
@@ -564,5 +588,12 @@ public class SalarySelect extends Composite {
 	private static Date parseExtraDate(String text, Date date) {
 		return AgreementDraft.parseExtraDate(text, date);
 	}
+	
+	private static Date max(Date a, Date b) {
+		return a.compareTo(b) >= 0 ? a : b;
+	}
 
+	private static Date min(Date a, Date b) {
+		return a.compareTo(b) <= 0 ? a : b;
+	}
 }
