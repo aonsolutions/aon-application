@@ -22,6 +22,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TextAreaElement;
+import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -39,6 +40,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasEnabled;
@@ -132,7 +135,7 @@ public class FxDialog extends CustomDialog {
 
 		@Override
 		public void run() {
-			String expression = expressionTextArea.getText();
+			String expression = getVisibleTextArea().getText();
 			if (StringUtils.isEmpty(expression)) {
 				cleanError();
 				cleanResult();
@@ -220,6 +223,38 @@ public class FxDialog extends CustomDialog {
 			return null;
 		}
 	}
+	
+	private interface IEditState {
+		void change();
+	}
+	
+	
+	
+	private class UserEditState implements IEditState{
+		
+
+		@Override
+		public void change() {
+			expressionTextArea.setText(expressionArea.getText());
+			setVisibleTextArea(expressionTextArea);
+			editButton.removeStyleName(AON.AON_ICON_EDIT_ADD);
+			editButton.addStyleName(AON.AON_ICON_EDIT_END);
+			FxDialog.this.editState = new AdminEditState();
+		}
+	}
+
+	private class AdminEditState implements IEditState{
+		
+		
+		@Override
+		public void change() {
+			expressionArea.setText(expressionTextArea.getText());
+			setVisibleTextArea(expressionArea);
+			editButton.removeStyleName(AON.AON_ICON_EDIT_END);
+			editButton.addStyleName(AON.AON_ICON_EDIT_ADD);
+			FxDialog.this.editState = new UserEditState();
+		}
+	}
 
 	@UiField
 	Style style;
@@ -246,16 +281,25 @@ public class FxDialog extends CustomDialog {
 	InlineHTML descriptionLabel;
 
 	@UiField
+	TextArea expressionArea;
+	@UiField
 	TextArea expressionTextArea;
+	@UiField
+	DeckPanel expressionDeckPanel;
 
+	@UiField
+	Button editButton;
 	@UiField
 	Button cancelButton;
 	@UiField
 	Button acceptButton;
+	
 
 	List<Variable> vars;
 
 	private boolean accepted;
+	
+	private IEditState editState;
 
 	private IContextProvider contextProvider;
 	private ContextDescriptor contextDescriptor;
@@ -279,7 +323,10 @@ public class FxDialog extends CustomDialog {
 		this.expressionCallback = new ExpressionCallback();
 
 		this.contentManager = new ContentAsistManager();
-		contentManager.addValueBox(expressionTextArea);
+		contentManager.addValueBox(expressionArea);
+		
+		setVisibleTextArea(expressionArea);
+		editState = new UserEditState();
 
 	}
 
@@ -295,11 +342,11 @@ public class FxDialog extends CustomDialog {
 	}
 
 	public void setExpression(String expression) {
-		expressionTextArea.setText(expression);
+		getVisibleTextArea().setText(expression);
 	}
 
 	public String getExpression() {
-		return expressionTextArea.getText();
+		return getVisibleTextArea().getText();
 	}
 
 	public List<Variable> getVariables() {
@@ -317,6 +364,11 @@ public class FxDialog extends CustomDialog {
 	void onAcceptButtonClick(ClickEvent event) {
 		accepted = true;
 		hide();
+	}
+
+	@UiHandler("editButton")
+	void onEditButtonClick(ClickEvent event) {
+		editState.change();
 	}
 
 	@UiHandler("categoryListBox")
@@ -355,23 +407,24 @@ public class FxDialog extends CustomDialog {
 		int index = functionListBox.getSelectedIndex();
 		String varName = functionListBox.getItemText(index);
 		VariableDescriptor var = contextDescriptor.get(varName);
-		int curPos = expressionTextArea.getCursorPos();
-		String expression = expressionTextArea.getText();
+		int curPos = getVisibleTextArea().getCursorPos();
+		String expression = getVisibleTextArea().getText();
 		StringBuffer expressionBuffer = new StringBuffer(expression);
 		expressionBuffer.insert(curPos, varName + var.getSyntax());
-		expressionTextArea.setValue(expressionBuffer.toString());
+		getVisibleTextArea().setValue(expressionBuffer.toString());
 		onExpressionKeyUp(null);
 		evalExpression(0); // eval now ???
+		
 	}
 
-	@UiHandler("expressionTextArea")
+	@UiHandler({"expressionArea","expressionTextArea"})
 	void onExpressionKeyUp(KeyUpEvent event) {
 		evalExpression(1000);
 	}
 
-	@UiHandler("expressionTextArea")
+	@UiHandler({"expressionArea","expressionTextArea"})
 	void onExpressionChange(ChangeEvent event) {
-		String expression = expressionTextArea.getValue();
+		String expression = getVisibleTextArea().getValue();
 		if (StringUtils.isBlank(expression))
 			return;
 		if (expression.length() > EXPRESSION_MAX_LENGTH) {
@@ -501,7 +554,15 @@ public class FxDialog extends CustomDialog {
 		VariableDescriptor descriptor = contextDescriptor.get(name);
 		return descriptor != null ? descriptor.getDescription() : null;
 	}
-
+	
+	private void setVisibleTextArea(TextArea textArea) {
+		expressionDeckPanel.showWidget(expressionDeckPanel.getWidgetIndex(textArea));		
+	}
+	
+	private TextArea getVisibleTextArea(){
+		return (TextArea) expressionDeckPanel.getWidget(expressionDeckPanel.getVisibleWidget());
+	}
+	
 	// ---------------------------------------------------------------- Insight
 
 
