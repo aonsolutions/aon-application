@@ -57,6 +57,8 @@ public class SQLMod200 {
 			 .set(FS_MODEL200.ADMINISTRATION, (byte) mod200.getAdministration())
 			 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 			 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
+			 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
+			 .set(FS_MODEL200.PHONE2, mod200.getEnterprisePhone2())
 			 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
 			 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
 			 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
@@ -199,6 +201,8 @@ public class SQLMod200 {
 		 .set(FS_MODEL200.ADMINISTRATION, (byte) mod200.getAdministration())
 		 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 		 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
+		 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
+		 .set(FS_MODEL200.PHONE2, mod200.getEnterprisePhone2())
 		 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
 		 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
 		 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
@@ -308,6 +312,8 @@ public class SQLMod200 {
 		mod200.setEnterprise(record.getEnterprise());
 		mod200.setEnterpriseDocument(record.getDocument());
 		mod200.setEnterpriseName(record.getName());
+		mod200.setEnterprisePhone1(record.getPhone1());
+		mod200.setEnterprisePhone2(record.getPhone2());
 		mod200.setComplementary(record.getComplementary()==1);
 		mod200.setComplementaryReceipt(record.getComplementaryReceipt());
 		mod200.setCnae(record.getCnae());

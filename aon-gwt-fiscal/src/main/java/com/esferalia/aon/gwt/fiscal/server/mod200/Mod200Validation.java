@@ -19,7 +19,7 @@ public class Mod200Validation {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
-	
+
 	private static final int PAGE03 = 3;
 	private static final int PAGE04 = 4;
 	private static final int PAGE07 = 7;
@@ -99,44 +99,45 @@ public class Mod200Validation {
 	
 	static { // PAGE 07	
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC534
-				,MessageFormat.format(CHECK_SIGN_MSG,TC534.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC534.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC534.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC535
-				,MessageFormat.format(CHECK_SIGN_MSG,TC535.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC535.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC535.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC536
-				,MessageFormat.format(CHECK_SIGN_MSG,TC536.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC536.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC536.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC537
-				,MessageFormat.format(CHECK_SIGN_MSG,TC537.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC537.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC537.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC538
-				,MessageFormat.format(CHECK_SIGN_MSG,TC538.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC538.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC538.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC539
-				,MessageFormat.format(CHECK_SIGN_MSG,TC539.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC539.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC539.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC540
-				,MessageFormat.format(CHECK_SIGN_MSG,TC540.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC540.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC540.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC541
-				,MessageFormat.format(CHECK_SIGN_MSG,TC541.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC541.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC541.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC542
-				,MessageFormat.format(CHECK_SIGN_MSG,TC542.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC542.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC542.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC543
-				,MessageFormat.format(CHECK_SIGN_MSG,TC543.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC543.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC543.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC544
-				,MessageFormat.format(CHECK_SIGN_MSG,TC544.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC544.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC544.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC545
-				,MessageFormat.format(CHECK_SIGN_MSG,TC545.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC545.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC545.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC546
-				,MessageFormat.format(CHECK_SIGN_MSG,TC546.getDescription())
+				,MessageFormat.format(CHECK_SIGN_MSG,TC546.toString())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC546.toString())));
+		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE07,TC562
 				,MessageFormat.format(CHECK_SIGN_MSG,TC562.getDescription())
 				,MessageFormat.format(MUST_NEGATIVE_EXP,TC562.toString())));
@@ -327,7 +328,7 @@ public class Mod200Validation {
 				,"!(round(PG326) >= 0.0 && round(LQ301) != 0.0)"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ301
 				,MessageFormat.format(MUST_EQUAL_MSG,LQ301.getDescription(),PG326.getDescription())
-				,"!(round(PG326) < 0.0 && round(LQ301) != round(PG326))"));
+				,"!(round(PG326) < 0.0 && round(LQ301) != round(PG326 * -1))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE08,LQ302
 				,MessageFormat.format(MUST_EQUAL_MSG,LQ302.getDescription(),PG326.getDescription())
 				,"!(round(PG326) >= 0.0 && round(LQ302) != round(PG326))"));
@@ -861,9 +862,5 @@ public class Mod200Validation {
 				,"LM537==(LM043+LM049)-LM254-LM258"));
 	}
 
-	public static void main(String[] args) {
-		for (ValidationMessage vm : VALIDATION_EXPRESSION_LIST) {
-			System.out.println(vm.getExpression());
-		}
-	}
+	
 }

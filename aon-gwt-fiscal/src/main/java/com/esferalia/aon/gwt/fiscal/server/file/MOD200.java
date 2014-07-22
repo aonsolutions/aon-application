@@ -12,6 +12,8 @@ import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.esferalia.aon.gwt.fiscal.server.mod200.Mod200File;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 
 public class MOD200  extends AbstractFileFiller{
 
@@ -51,7 +53,9 @@ public class MOD200  extends AbstractFileFiller{
 			createLine("DP200006",properties);
 			createLine("DP200007",properties);
 			createLine("DP200008",properties);
-			createLine("DP200009",properties);
+			if (mod200File.getMod200().getBalanceType() != BalanceType.PYMES) {
+				createLine("DP200009",properties);
+			}
 			createLine("DP200010",properties);
 			createLine("DP200011",properties);
 			createLine("DP200012",properties);

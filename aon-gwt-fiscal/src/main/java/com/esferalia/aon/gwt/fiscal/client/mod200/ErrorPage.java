@@ -108,7 +108,7 @@ public class ErrorPage extends ResizeComposite {
 
 			@Override
 			public String getValue(ValidationMessage errorMessage) {
-				return errorMessage.getPage()>=0?Integer.toString(errorMessage.getPage()):"";
+				return errorMessage.getPage()>=0?Integer.toString(errorMessage.getPage()+1):"";
 			}
 			
 		};
