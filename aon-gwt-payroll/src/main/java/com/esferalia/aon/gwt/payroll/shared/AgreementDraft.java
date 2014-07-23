@@ -16,7 +16,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class AgreementDraft extends Agreement {
-
+	
 	public static class Level implements Serializable, HasId<Integer> {
 
 		private Integer id;
@@ -127,6 +127,13 @@ public class AgreementDraft extends Agreement {
 			return map.get(Key.make(level, var));
 		}
 		
+		public boolean contains(String var) {
+			for ( Key key : map.keySet() ) 
+				if ( key.var.equals(var) )
+					return true;
+			return false;
+		}
+
 		public boolean contains(int level, String var) {
 			return map.containsKey(Key.make(level, var));
 		}
@@ -267,7 +274,7 @@ public class AgreementDraft extends Agreement {
 	public void setVariables(Set<String> variables) {
 		this.variables = variables;
 	}
-
+	
 	public SalaryTable getSalaryTable() {
 		return salaryTable;
 	}
