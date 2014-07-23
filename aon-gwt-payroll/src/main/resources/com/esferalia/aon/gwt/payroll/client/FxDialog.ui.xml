@@ -7,6 +7,8 @@
 	.expression-TextArea {
 		padding: 0px;
 		min-height: 75px;
+		margin-left: 1px;
+		margin-bottom: 1px;
 	}
 	
 	.function-ListBox option {
@@ -175,8 +177,12 @@
 
 						<tr class="aon-width-all aon-height-all">
 							<td colspan="3" class="aon-width-all aon-height-all">
-								<aon:ExpressionArea ui:field="expressionTextArea"
-									styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}" />
+								<g:DeckPanel ui:field="expressionDeckPanel" styleName="aon-width-all aon-height-all"   >
+									<aon:ExpressionArea ui:field="expressionArea"
+										styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}" />
+									<g:TextArea  ui:field="expressionTextArea"
+										styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}" />
+								</g:DeckPanel>
 							</td>
 						</tr>
 					</table>
@@ -184,7 +190,10 @@
 			</tr>
 
 			<tr>
-				<td colspan="2" align="right">
+				<td align="left">
+					<g:Button ui:field="editButton" styleName="aon-editDataTable-button aon-icon-edit-add"/>
+				</td>
+				<td align="right">
 					<g:Button ui:field="cancelButton">Cancelar</g:Button>
 					<g:Button ui:field="acceptButton">Aceptar</g:Button>
 				</td>

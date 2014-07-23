@@ -74,6 +74,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("agreement.png")
 		ImageResource agreement();
+		
+		ImageResource blank();
+		
 	}
 
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {
@@ -249,7 +252,13 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	public void onSalaryDraftSelected(SalaryDraftObject salaryDraftDocument) {
 		// TODO Auto-generated method stub
 	}
-
+	
+	@Override
+	public void onCategoryDraftSelected(CategoryDraftObject agreementDraftObject) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void onAgreementDraftSelected(
 			AgreementDraftObject agreementDraftDocument) {

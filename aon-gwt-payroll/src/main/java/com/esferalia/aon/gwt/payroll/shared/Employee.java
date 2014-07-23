@@ -65,6 +65,8 @@ public class Employee implements Serializable, HasId<Integer> {
 	private Date endDate;
 
 	private String document;
+	
+	private Category category;
 
 	public Integer getId() {
 		return id;
@@ -156,6 +158,14 @@ public class Employee implements Serializable, HasId<Integer> {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public Category getCategory() {
+		return category;
+	}
+	
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	@Override

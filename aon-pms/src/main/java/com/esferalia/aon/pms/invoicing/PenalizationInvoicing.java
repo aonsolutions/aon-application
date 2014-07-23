@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -95,6 +96,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 
 	private void createInvoiceDetails(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		int line = 0;
+		double taxableBase = 0;
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
@@ -125,6 +127,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
 			invoiceDetailBean.insert(invoiceDetail);
+			taxableBase = CommonUtil.round(taxableBase + invoiceDetail.getTaxableBase(), 4);
 		}
 
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
@@ -135,9 +138,9 @@ public class PenalizationInvoicing implements IReservationConstants {
 		invoiceDetail.setDescription(obtainDetailDescription(reservationInvoiceTo.getEarlyCheckOutDate(), null, invoiceDetail.getItem().getProduct().getName()));
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-		invoiceDetail.setPrice(invoice.getTaxableBase() * (-1));
+		invoiceDetail.setPrice(taxableBase * (-1));
 		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		invoiceDetail.setTaxableBase(invoice.getTaxableBase() * (-1));
+		invoiceDetail.setTaxableBase(taxableBase * (-1));
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 		invoiceDetail.getInvoice().setUpdateEnabled(true);
 		invoiceDetailBean.insert(invoiceDetail);

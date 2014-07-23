@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.print.ReportFinanceBatch;
@@ -19,15 +20,14 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchPrinter.class.getName());
 	
-	@SuppressWarnings("unchecked")
 	public Collection<?> getCollection() {
 		List<ReportFinanceBatch> reportFBatchList = new LinkedList<ReportFinanceBatch>();
 		try {
 			FBatchController fBatchController = (FBatchController)FormUtil.getController(FINANCE_BATCH_CONTROLLER_NAME);
-			List<FinanceBatch> list= (List<FinanceBatch>) fBatchController.getModel().getWrappedData();
-			for (FinanceBatch fBatch : list ){
+			List<ITransferObject> list = fBatchController.getManagerBean().getList(fBatchController.getCriteria());
+			for (ITransferObject ito : list ){
 				ReportFinanceBatch rFBatch = new ReportFinanceBatch();
-				rFBatch.setFinanceBatch(fBatch);
+				rFBatch.setFinanceBatch((FinanceBatch)ito);
 				reportFBatchList.add(rFBatch);
 			}
 		} catch (ManagerBeanException e) {

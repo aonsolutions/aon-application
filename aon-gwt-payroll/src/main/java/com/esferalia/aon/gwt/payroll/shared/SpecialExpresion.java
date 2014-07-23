@@ -73,6 +73,16 @@ public class SpecialExpresion {
 		return parse(expression).isReadOnly();
 	}
 
+	public static boolean isSpecial(String expression) {
+		if (StringUtils.isBlank(expression))
+			return false;
+
+		RegExp regExp = RegExp.compile(PATTERN, "g");
+
+		MatchResult result = regExp.exec(expression);
+		return result != null;
+	}
+
 	private String input;
 	private int inputBeginIndex;
 	private int inputEndIndex;

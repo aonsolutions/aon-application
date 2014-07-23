@@ -332,7 +332,12 @@ public class Mod200Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.ID666.toString(),new Boolean[]{FALSE,TRUE});
 	}
 
-	static { // LIMITACIÓN EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS.	
+	static { // LIMITACIÓN EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS.
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM175.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM176.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM177.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM178.toString(),new Boolean[]{FALSE,TRUE});
+
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM253.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM259.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod200Key.LM043.toString(),new Boolean[]{FALSE,TRUE});

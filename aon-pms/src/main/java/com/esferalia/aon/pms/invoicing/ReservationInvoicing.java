@@ -287,6 +287,7 @@ public class ReservationInvoicing implements IReservationConstants {
 
 	private void createReservationDetails(Invoice invoice, ProjectReservation reservation, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
 		int line = 0;
+		double taxableBase = 0;
 
 		ReservationUtils reservationUtils = new ReservationUtils();
 		boolean isVatWrong = false;
@@ -355,6 +356,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
 			invoiceDetailBean.insert(invoiceDetail);
+			taxableBase = CommonUtil.round(taxableBase + invoiceDetail.getTaxableBase(), 4);
 		}
 
 		if (isVatWrong) {
@@ -392,7 +394,14 @@ public class ReservationInvoicing implements IReservationConstants {
 					}
 				}
 				invoiceDetail.getInvoice().setUpdateEnabled(true);
-				invoiceDetailBean.insert(invoiceDetail);
+				invoiceDetail = (InvoiceDetail)invoiceDetailBean.insert(invoiceDetail);
+				taxableBase = CommonUtil.round(taxableBase + invoiceDetail.getTaxableBase(), 4);
+
+				if (advancedAmount == reservation.getTotal() && taxableBase != 0 && taxableBase <= Math.abs(0.01)) {
+					invoiceDetail.setPrice(invoiceDetail.getPrice() + taxableBase);
+					invoiceDetail.setTaxableBase(invoiceDetail.getPrice() * (-1));
+					invoiceDetailBean.update(invoiceDetail);
+				}
 			}
 		}
 

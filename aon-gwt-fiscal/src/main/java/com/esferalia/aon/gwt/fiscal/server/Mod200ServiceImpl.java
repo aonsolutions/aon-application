@@ -36,9 +36,11 @@ import com.esferalia.aon.gwt.common.server.DateUtil;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
+import com.esferalia.aon.gwt.common.shared.CommonEnum.CNAE;
 import com.esferalia.aon.gwt.common.shared.CompanyAdministrator;
 import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.common.shared.CompanyParticipation;
+import com.esferalia.aon.gwt.common.shared.DocumentUtil;
 import com.esferalia.aon.gwt.common.shared.FiscalParameters;
 import com.esferalia.aon.gwt.common.shared.LegalRepresentative;
 import com.esferalia.aon.gwt.common.sql.SQLAppParams;
@@ -58,7 +60,9 @@ import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 Servlet", urlPatterns = { "/aon_gwt_fiscal/Mod200" })
 public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200Service {
-
+	private static final int PAGE00 = 0;
+	private static final int PAGE01 = 1;
+	
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
 		@Override
@@ -357,32 +361,6 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	}
 
 	@Override
-	public Mod200 validate(Mod200 mod200) throws AonSQLException {
-		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
-		for (DoubleVariable dv : mod200.getKeysMap().values()) {
-			ctx.put(dv.getKey().toString(), dv.getValue());
-		}
-		addCharacters(ctx,mod200);
-		DoubleVariable d = null;
-		for (Mod200Key key : mod200.getDraftMap().keySet() ) {
-			d = mod200.getDraftMap().get(key);
-			ctx.put(key.toString(), d.getValue());
-		}
-		mod200.setMessages(null);	
-		List<ValidationMessage> list = new LinkedList<ValidationMessage>();
-		for (ValidationMessage validation : VALIDATION_EXPRESSION_LIST) {
-			Boolean valid = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
-			if (!valid) {
-				list.add(validation);
-			}
-		}
-		if (list.size() > 0) {
-			mod200.setMessages(list);	
-		}
-		return mod200;
-	}
-	
-	@Override
 	public String dumpAEAT(Mod200 mod200) throws AonSQLException {
 		try {
 			MOD2002013 mod = Mod200toMOD2002013.getMOD2002013(mod200);
@@ -417,94 +395,110 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		}
 	}
 	
-/*	
-	private void dumpMod200(Mod200 mod200) {
-		System.out.println();
-		System.out.println("***********************************************************");
-		System.out.println("[START]");
-		System.out.println("***********************************************************");
-		System.out.println("Id..:"+mod200.getId());
-		System.out.println("Domain..:"+mod200.getDomain());
-		System.out.println("Year..:"+mod200.getYear());
-		System.out.println("Administration..:"+mod200.getAdministration());
-		System.out.println("Enterprise..:"+mod200.getEnterprise());
-		System.out.println("EnterpriseDocument..:"+mod200.getEnterpriseDocument());
-		System.out.println("EnterpriseName..:"+mod200.getEnterpriseName());
-		System.out.println("EnterprisePhone1..:"+mod200.getEnterprisePhone1());
-		System.out.println("EnterprisePhone2..:"+mod200.getEnterprisePhone2());
-		System.out.println("BalanceType..:"+mod200.getBalanceType());
-		System.out.println("PygType..:"+mod200.getPygType());
-		System.out.println("\t------------------------------");
-		if (mod200.getAdministrators() != null) {
-			for (CompanyAdministrator ca : mod200.getAdministrators()) {
-				System.out.println("Administrator");
-				System.out.println("Document..:"+ca.getDocument());
-				System.out.println("Name..:"+ca.getName());
-				System.out.println("Shareholder..:"+ca.isShareholder());
-				System.out.println("Representative..:"+ca.isRepresentative());
-				System.out.println("Administrator..:"+ca.isAdministrator());
-				System.out.println("Percent..:"+ca.getPercent());
-				System.out.println("NominalValue..:"+ca.getNominalValue());
-				System.out.println("Residence..:"+ca.getResidence());
-				System.out.println("Province..:"+ca.getProvince());
-				System.out.println();
+	@Override
+	public Mod200 validate(Mod200 mod200) throws AonSQLException {
+		List<ValidationMessage> list = new LinkedList<ValidationMessage>();
+		validateDocument(list,mod200);
+		validateCNAE(list,mod200);
+		validateSecretary(list,mod200);
+		validateRepresentatives(list,mod200);
+		validateAdministrators(list,mod200);
+		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
+		for (DoubleVariable dv : mod200.getKeysMap().values()) {
+			ctx.put(dv.getKey().toString(), dv.getValue());
+		}
+		addCharacters(ctx,mod200);
+		DoubleVariable d = null;
+		for (Mod200Key key : mod200.getDraftMap().keySet() ) {
+			d = mod200.getDraftMap().get(key);
+			ctx.put(key.toString(), d.getValue());
+		}
+		mod200.setMessages(null);	
+		for (ValidationMessage validation : VALIDATION_EXPRESSION_LIST) {
+			Boolean valid = (Boolean) ctx.evaluateExpression(validation.getKey().toString(),validation.getExpression());
+			if (!valid) {
+				list.add(validation);
 			}
 		}
-		System.out.println("\t------------------------------");
-		if (mod200.getParticipationsIn() != null) {
-			for (CompanyParticipation cp : mod200.getParticipationsIn()) {
-				System.out.println("Participation IN");
-				System.out.println("\tDocument..:"+cp.getDocument());
-				System.out.println("\tName..:"+cp.getName());
-				System.out.println("\tProvince..:"+cp.getProvince());
-				System.out.println("\tRepresentative..:"+cp.isRepresentative());
-				System.out.println("\tPercent..:"+cp.getPercent());
-				System.out.println("\tNominalValue..:"+cp.getNominalValue());
-				System.out.println();
-			}
+		if (list.size() > 0) {
+			mod200.setMessages(list);	
 		}
-		System.out.println("\t------------------------------");
-		if (mod200.getParticipationsOut() != null) {
-			for (CompanyParticipation cp : mod200.getParticipationsOut()) {
-				System.out.println("Participation OUT");
-				System.out.println("\tDocument..:"+cp.getDocument());
-				System.out.println("\tName..:"+cp.getName());
-				System.out.println("\tProvince..:"+cp.getProvince());
-				System.out.println("\tRepresentative..:"+cp.isRepresentative());
-				System.out.println("\tPercent..:"+cp.getPercent());
-				System.out.println("\tNominalValue..:"+cp.getNominalValue());
-				System.out.println("\tbookValue..:"+cp.getBookValue() );
-				System.out.println("\tincomes..:"+cp.getIncomes() );
-				System.out.println("\taValue..:"+cp.getaValue() );
-				System.out.println("\tbValue..:"+cp.getbValue() );
-				System.out.println("\tcValue..:"+cp.getcValue() );
-				System.out.println("\tdValue..:"+cp.getdValue() );
-				System.out.println("\tcapital..:"+cp.getCapital() ); 
-				System.out.println("\treserve..:"+cp.getReserve() );
-				System.out.println("\totherAmounts..:"+cp.getOtherAmounts() );
-				System.out.println("\tresult..:"+cp.getResult() );
-				System.out.println();
-			}
-		}
-		System.out.println("\t------------------------------");
-		for (Mod200Key key : mod200.getDraftMap().keySet()) {
-			System.out.println(key.toString() + " ........................ " + mod200.getDraftMap().get(key).getValue()); 
-		}
-		System.out.println("\t------------------------------");
-		
-		System.out.println("\t------------------------------");
-		for (Mod200Key key : mod200.getKeysMap().keySet()) {
-			System.out.println(key.toString() + " ........................ " + mod200.getKeysMap().get(key).getValue()); 
-		}
-		System.out.println("\t------------------------------");
-		
-		
-		System.out.println("Comments..:"+mod200.getComments());
-		System.out.println("***********************************************************");
-		System.out.println("[END]");
-		System.out.println("***********************************************************");
-		System.out.println();
+		return mod200;
 	}
-*/
+
+	private void validateDocument(List<ValidationMessage> list, Mod200 mod200) {
+		if (!DocumentUtil.isValid(mod200.getEnterpriseDocument())) {
+			list.add(new ValidationMessage(PAGE00,"NIF de la declaraci\u00F3n incorrecto."));
+		}
+		
+	}
+	private void validateCNAE(List<ValidationMessage> list, Mod200 mod200) {
+		if (AonUtil.isEmpty(mod200.getCnae())) {
+			list.add(new ValidationMessage(PAGE00,"Rellene el CNAE de la empresa."));
+		} else if (CNAE.valueOfCode(mod200.getCnae()) == null) {
+			list.add(new ValidationMessage(PAGE00,"CNAE de la empresa, no válido."));	
+		}
+	}
+	private void validateAdministrators(List<ValidationMessage> list,Mod200 mod200) {
+		if (mod200.getAdministrators() == null || mod200.getAdministrators().size() == 0 ) {
+			list.add(new ValidationMessage(PAGE01,"Debe rellenar al menos un administrador."));
+		} else {
+			for (int i = 0; i < mod200.getAdministrators().size(); i++ ) {
+				CompanyAdministrator ca = mod200.getAdministrators().get(i); 
+				if (!DocumentUtil.isValid(ca.getDocument())) {
+					list.add(new ValidationMessage(PAGE01,"NIF del administrador nº "+(i+1) +" incorrecto ["+ca.getDocument()+"]"));		
+				}
+				if (AonUtil.isEmpty(ca.getName())) {
+					list.add(new ValidationMessage(PAGE01,"Falta nombre del administrador nº "+(i+1) +". ["+ca.getDocument()+"]"));
+				}
+			}
+		}
+		
+	}
+	private void validateSecretary(List<ValidationMessage> list, Mod200 mod200) {
+		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			if (mod200.getSecretary() == null) {
+				list.add(new ValidationMessage(PAGE01,"Para personas jur\u00EDdicas, debe rellenar los datos del secretario"));
+			} else {
+				if (!DocumentUtil.isValid(mod200.getSecretary().getDocument())) {
+					list.add(new ValidationMessage(PAGE01,"NIF del secretario incorrecto."));
+				}
+				if ( AonUtil.isEmpty(mod200.getSecretary().getName())) {
+					list.add(new ValidationMessage(PAGE01,"Falta nombre del secretario."));
+				} else if (mod200.getSecretary().getName().length() > 25) {
+					list.add(new ValidationMessage(PAGE01,"Longitud excedida en el nombre del secretario. Debe limitarse a 25 caracteres."));	
+				}
+				if (mod200.getSecretary().getIrnr() == null && (mod200.isChecked(Mod200Key.C0021) || mod200.isChecked(Mod200Key.C0046)) ) {
+					list.add(new ValidationMessage(PAGE01,"Falta fecha IRNR."));
+				}
+			}
+		}
+	}
+
+	private void validateRepresentatives(List<ValidationMessage> list,Mod200 mod200) {
+		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			if (mod200.getRepresentatives() == null || mod200.getRepresentatives().size() == 0 ) {
+				list.add(new ValidationMessage(PAGE01,"Para personas jur\u00EDdicas, debe rellenar al menos un representante."));
+			} else {
+				for (int i = 0; i < mod200.getRepresentatives().size(); i++ ) {
+					LegalRepresentative lr = mod200.getRepresentatives().get(i); 
+					if (!DocumentUtil.isValid(lr.getDocument())) {
+						list.add(new ValidationMessage(PAGE01,"NIF del representante legal nº "+(i+1) +" incorrecto ["+lr.getDocument()+"]"));		
+					}
+					if (AonUtil.isEmpty(lr.getName())) {
+						list.add(new ValidationMessage(PAGE01,"Falta nombre del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					}
+					if (AonUtil.isEmpty(lr.getNotary())) {
+						list.add(new ValidationMessage(PAGE01,"Falta el dato de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					} else if (lr.getNotary().length() > 20) {
+						list.add(new ValidationMessage(PAGE01,"Longitud excedida en la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]. Debe limitarse a 20 caracteres."));	
+					}
+					if (lr.getNotaryDate() == null) {
+						list.add(new ValidationMessage(PAGE01,"Falta el dato fecha de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
+
 }
-	

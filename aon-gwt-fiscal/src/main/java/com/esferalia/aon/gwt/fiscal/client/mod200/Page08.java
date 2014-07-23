@@ -360,9 +360,11 @@ public class Page08 extends PageAbs {
 		
 		for (Mod200Key key : getInputs().keySet() ) {
 			DoubleVariable d = mod200.getKey(key);
+			Double value = 0.0;
 			if (d != null && d.getValue() != null) {
-				getInputs().get(key).setText( DoubleTextBox.FMT.format(d.getValue()));
+				value = d.getValue();
 			}
+			getInputs().get(key).setText( DoubleTextBox.FMT.format(value));
 		}
 		for (Mod200CorrectionKey key : Mod200CorrectionKey.values()) {
 			Mod200Correction mc = null;

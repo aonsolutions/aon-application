@@ -4379,6 +4379,8 @@ CREATE TABLE `fs_model200` (
   `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
   `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `phone1` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono 1',
+  `phone2` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono 2',
   `complementary` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion complementaria',
   `receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion',
   `complementary_receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion sustituida',
@@ -7590,7 +7592,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.37.4');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.37.7');
 
 COMMIT;
 

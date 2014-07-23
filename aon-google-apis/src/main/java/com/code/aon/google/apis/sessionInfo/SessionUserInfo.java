@@ -2,61 +2,36 @@ package com.code.aon.google.apis.sessionInfo;
 
 
 
+import java.util.Hashtable;
+
 import com.google.api.services.drive.Drive;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.tasks.Tasks;
 
 public class SessionUserInfo {
-
+	
 	private  String domain;
 	private  String username;
-	private	 String gmail;
-	private  Oauth2 oauth2;
-	private  Drive drive;
-	private  Tasks tasks;
-	
+	private  Boolean isGoogleSession;
+	private  Hashtable<String,GoogleUser> googleUsers = new Hashtable<String, GoogleUser>();
 	public SessionUserInfo(){
 		
 	}
 	
-	public Oauth2 getOAuth2(){
-		return oauth2;
-	}
-	
-	public void setOAuth2(Oauth2 oauth2){
-		this.oauth2=oauth2;
+	public Hashtable<String, GoogleUser> getGoogleUsers(){
+		return googleUsers;
 	}
 
-	public Drive getDrive(){
-		return drive;
-	}
-
-	public void setDrive(Drive drive){
-		this.drive= drive;
+	public void setGoogleUsers(Hashtable<String, GoogleUser> googleUsers){
+		this.googleUsers=googleUsers;
 	}
 	
-	public Tasks getTasks(){
-		return tasks;
-	}
-	
-	public void setTasks(Tasks tasks){
-		this.tasks= tasks;
-	}
-
 	public String getUsername(){
 		return username;
 	}
 	
 	public void setUsername(String username){
 		this.username= username;
-	}
-
-	public String getGmail(){
-		return gmail;
-	}
-	
-	public void setGmail(String gmail){
-		this.gmail= gmail;
 	}
 	
 	public String getDomain(){
@@ -67,4 +42,11 @@ public class SessionUserInfo {
 		this.domain= domain;
 	}
 	
+	public Boolean getIsGoogleSession(){
+		return isGoogleSession;
+	}
+	
+	public void setIsGoogleSession(Boolean isGoogleSession){
+		this.isGoogleSession= isGoogleSession;
+	}
 }

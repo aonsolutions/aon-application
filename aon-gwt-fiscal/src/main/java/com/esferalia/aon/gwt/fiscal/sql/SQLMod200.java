@@ -57,6 +57,8 @@ public class SQLMod200 {
 			 .set(FS_MODEL200.ADMINISTRATION, (byte) mod200.getAdministration())
 			 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 			 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
+			 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
+			 .set(FS_MODEL200.PHONE2, mod200.getEnterprisePhone2())
 			 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
 			 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
 			 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
@@ -162,11 +164,14 @@ public class SQLMod200 {
 	private static void insertDetail(Connection conn,DSLContext dsl, Mod200 mod200) throws AonSQLException {
 		List<FsModel200DetailRecord> list = new LinkedList<FsModel200DetailRecord>();
 		FsModel200DetailRecord detail = null;
-		for (DoubleVariable dv : mod200.getKeysMap().values() ){
-			if (mod200.getDraftMap().containsKey(dv.getKey())) {
-				dv = mod200.getDraftMap().get(dv.getKey());
+		for (Mod200Key k : Mod200Key.values()) {
+			DoubleVariable dv = null;	
+			if (mod200.getDraftMap().containsKey(k)) {
+				dv = mod200.getDraftMap().get(k);
+			} else {
+				dv = mod200.getKeysMap().get(k);
 			}
-			if (dv.getValue() != 0.0){
+			if (dv != null && dv.getValue() != 0.0){
 				detail = new FsModel200DetailRecord();
 				detail.setFsModel200(mod200.getId());
 				detail.setDomain(mod200.getDomain());
@@ -199,6 +204,8 @@ public class SQLMod200 {
 		 .set(FS_MODEL200.ADMINISTRATION, (byte) mod200.getAdministration())
 		 .set(FS_MODEL200.DOCUMENT, mod200.getEnterpriseDocument())
 		 .set(FS_MODEL200.NAME, mod200.getEnterpriseName())
+		 .set(FS_MODEL200.PHONE1, mod200.getEnterprisePhone1())
+		 .set(FS_MODEL200.PHONE2, mod200.getEnterprisePhone2())
 		 .set(FS_MODEL200.COMPLEMENTARY, (byte) (mod200.isComplementary()?1:0) )
 		 .set(FS_MODEL200.RECEIPT,mod200.getReceipt())
 		 .set(FS_MODEL200.COMPLEMENTARY_RECEIPT,mod200.getComplementaryReceipt())
@@ -308,6 +315,8 @@ public class SQLMod200 {
 		mod200.setEnterprise(record.getEnterprise());
 		mod200.setEnterpriseDocument(record.getDocument());
 		mod200.setEnterpriseName(record.getName());
+		mod200.setEnterprisePhone1(record.getPhone1());
+		mod200.setEnterprisePhone2(record.getPhone2());
 		mod200.setComplementary(record.getComplementary()==1);
 		mod200.setComplementaryReceipt(record.getComplementaryReceipt());
 		mod200.setCnae(record.getCnae());

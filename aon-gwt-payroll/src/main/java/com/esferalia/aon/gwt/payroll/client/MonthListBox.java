@@ -16,6 +16,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -103,33 +104,34 @@ public class MonthListBox extends ComboBox<Date> {
 		new MonthProvider();
 	}
 
-	public void setSelectedMonth(final Date month) {
-
-		final int index = getIndex(month);
+	public void setSelectedMonth(final Date aMonth) {
+		final int index = getIndex(aMonth);
 		int length = getPageSize();
 		int start = Math.max(0, index - length / 2);
-
 		setVisibleRangeAndClearData(new Range(start, length), true);
 
+		setSelected(getMonth(index), true);
+		/*
 		Scheduler.get().scheduleFinally(new ScheduledCommand() {
 			@Override
 			public void execute() {
 				setSelected(getMonth(index), true);
 			}
-		});
+		});*/
 	}
+
 
 	public Date getSelectedMonth() {
 		return getSelected();
 	}
 
-	public void setLastMonth(Date lastMonth) {
-		this.lastMonth = lastMonth != null ? DateUtils
-				.getFirstDayOfMonth(lastMonth) : null;
+	public void setLastMonth(Date aMonth) {
+		this.lastMonth = aMonth != null ? DateUtils
+				.getFirstDayOfMonth(aMonth) : null;
 	}
 
-	public void setFirstMonth(Date firstMonth) {
-		this.firstMonth = DateUtils.getFirstDayOfMonth(firstMonth);
+	public void setFirstMonth(Date aMonth) {
+		this.firstMonth = DateUtils.getFirstDayOfMonth(aMonth);
 	}
 
 	public void setOldStyles(String oldStyles) {

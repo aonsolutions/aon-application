@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Hashtable;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,9 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.AonVersion;
+import com.code.aon.google.apis.Utils;
+import com.code.aon.google.apis.sessionInfo.GoogleUser;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
 import com.code.aon.google.apis.sessionInfo.SessionUserInfo;
 import com.code.aon.jaas.auth.spi.db.Domain;
+import com.code.aon.jaas.auth.spi.db.OpenIDLoginModule;
 import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
@@ -41,8 +45,8 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 	
 
 	
-	public static String getUsername(String email) {
-		return "OpenID_Email=" + email;
+	public static String getUsername(String email,String statepass) {
+		return "OpenID_Email=" + email+"&"+statepass;
 	}
 
 	public static String getPassword() {
@@ -60,9 +64,12 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			Credential credential) throws ServletException, IOException {
 		
 		super.onSuccess(req, resp, credential);
+
 		
 		String username = null;
-		String key = req.getParameter("state");
+		int pos=req.getParameter("state").indexOf("&");
+		String key = req.getParameter("state").substring(0, pos);
+		String statepass= req.getParameter("state").substring(pos+1); 
 		
 		Oauth2 oauth2 = new Oauth2.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
@@ -83,18 +90,36 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			
 			if ( username != null ) {
 			
+				GoogleUser gu = new GoogleUser();
+				gu.setDrive(drive);
+				gu.setGmail(email);
+				gu.setOAuth2(oauth2);
+				gu.setTasks(tasks);
+				
 				SessionUserInfo su = new SessionUserInfo();
 			
+				
 				su.setUsername(username);
-				su.setGmail(email);
-				su.setDrive(drive);
-				su.setOAuth2(oauth2);
-				su.setTasks(tasks);
+				//su.setGoogleUsers(new Hashtable<String, GoogleUser>());
+				
+				if (!su.getGoogleUsers().containsKey(email)){
+					su.getGoogleUsers().put(email, gu);
+				}
+				else{
+					su.getGoogleUsers().get(email).setDrive(drive);
+					su.getGoogleUsers().get(email).setOAuth2(oauth2);
+					su.getGoogleUsers().get(email).setTasks(tasks);
+				}
+				
 				su.setDomain(key);
+				su.setIsGoogleSession(true);
 			
 				if(!SessionInfo.table.get(key).getUsers().containsKey(username)){
 					SessionInfo.table.get(key).getUsers().put(username, su);
-				}				
+				}
+				else{
+					SessionInfo.table.get(key).getUsers().get(username).getGoogleUsers().put(email, gu);
+				}
 			}
 
 			
@@ -106,17 +131,17 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			e.printStackTrace();
 		}
 		
-		pass = PasswordGenerator.getPassword(
-				PasswordGenerator.MINUSCULAS
-				+ PasswordGenerator.MAYUSCULAS
-				+ PasswordGenerator.ESPECIALES, 10);
+		pass = Utils.PasswordGenerator.getPassword(
+				Utils.PasswordGenerator.MINUSCULAS
+				+ Utils.PasswordGenerator.MAYUSCULAS
+				+ Utils.PasswordGenerator.NUMEROS, 10);
 		
 		credential.getClientAuthentication().toString();
 		RequestDispatcher dispatcher = getServletContext()
 				.getRequestDispatcher("/login/popupclose.jsp");
 		req.setAttribute("name", key);
 		req.setAttribute("act",SessionInfo.table.get(key).getAction()); 
-		req.setAttribute("username", getUsername(email));
+		req.setAttribute("username", getUsername(email,statepass));
 		req.setAttribute("password", getPassword());
 		dispatcher.forward(req, resp);
 		
@@ -144,39 +169,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		return newFlow();
 	}
 	
-	public static class PasswordGenerator {
-
-		public static final String NUMEROS = "0123456789";
-
-		public static final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-		public static final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
-
-		public static final String ESPECIALES = "Ò—";
-
-		//
-		public static String getPinNumber() {
-			return getPassword(NUMEROS, 4);
-		}
-
-		public static String getPassword() {
-			return getPassword(8);
-		}
-
-		public static String getPassword(int length) {
-			return getPassword(NUMEROS + MAYUSCULAS + MINUSCULAS, length);
-		}
-
-		public static String getPassword(String key, int length) {
-			String pswd = "";
-
-			for (int i = 0; i < length; i++) {
-				pswd += key.charAt((int) (Math.random() * key.length()));
-			}
-
-			return pswd;
-		}
-	}
+	
 	
 	private String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
 		

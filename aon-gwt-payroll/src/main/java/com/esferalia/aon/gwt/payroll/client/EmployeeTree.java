@@ -656,6 +656,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
+	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
 	private BonusEditor bonusEditor;
 	private PaymentEditor paymentEditor;
@@ -711,6 +712,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		eventsDraft = new EventsDraft();
 		salaryDraft = new SalaryDraft();
 		salaryPreview = new SalaryPreview();
+		categoryDraft = new CategoryDraft();
 		agreementDraft = new AgreementDraft();
 		bonusEditor = new BonusEditor();
 		paymentEditor = new PaymentEditor();
@@ -920,7 +922,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeContextMenu.setEmployee(employee);
 		employeeContextMenu.show();
 	}
-
+	
+	@Override
+	public void onCategoryDraftSelected(CategoryDraftObject categoryDraftObject) {
+		employeeDetail.setWidget(categoryDraft);
+		categoryDraft.setCategoryDraftObject(categoryDraftObject);
+		
+	}
+	
 	@Override
 	public void onAgreementDraftSelected(
 			AgreementDraftObject agreementDraftObject) {

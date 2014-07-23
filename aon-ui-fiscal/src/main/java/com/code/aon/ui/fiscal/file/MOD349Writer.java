@@ -10,6 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
@@ -150,7 +151,11 @@ public class MOD349Writer implements IFinanceConstants{
 			op.setDocument(detail.getDocument()==null?null:detail.getDocument());
 			op.setName(detail.getName());
 			op.setKey(detail.getType().getValue());
-			op.setCountry(detail.getCountry()==null?null:detail.getCountry().getValue());
+			String c = null;
+			if (detail.getCountry()!=null) {
+				c= detail.getCountry() == Country.GR ? "EL" : detail.getCountry().getValue();
+			}
+			op.setCountry(c);
 			op.setAmount(detail.getAmount());
 			deponent.getOperators().add(op);
 		}

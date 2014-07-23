@@ -82,5 +82,6 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource itDatas();
 	
 	ImageResource gps();
+	
 
 }

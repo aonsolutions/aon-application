@@ -499,6 +499,12 @@ public class AgreementDraftObject {
 	}
 
 	// ------------------------------------------------------------------------
+	
+	protected AgreementDraft getAgreementDraft() {
+		return agreementDraft;
+	}
+
+	// ------------------------------------------------------------------------
 
 	Set<Level> getChangedLevels() {
 		if (oldAgreementDraft == null || oldAgreementDraft.getLevels() == null)
