@@ -26,6 +26,7 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.accounting.mining.server.IAccMiningKeyAccept;
 import com.esferalia.aon.accounting.mining.shared.AccMiningException;
 import com.esferalia.aon.accounting.mining.shared.AccMiningParameters;
@@ -283,19 +284,19 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
 				mod200.setResultType("C");
-				mod200.setDevType(AonUtil.isEmpty(mod200.getDevType())?"T":mod200.getDevType());
 				mod200.setAmount( 0.0 );
+				mod200.setDevType(null);
 				mod200.setPayType(null);
-			} else if (v.getValue() < 0) {
+			} else if (AonUtil.round(v.getValue()) < 0.0) {
 				mod200.setResultType("D");
 				mod200.setAmount( AonUtil.round( v.getValue() * -1));
-				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"U":mod200.getPayType());
-				mod200.setDevType(null);
+				mod200.setDevType(AonUtil.isEmpty(mod200.getDevType())?"R":mod200.getDevType());
+				mod200.setPayType(null);
 			} else {
 				mod200.setResultType("I");
 				mod200.setAmount( v.getValue() );
+				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"H":mod200.getPayType());
 				mod200.setDevType(null);
-				mod200.setPayType(null);
 			}
 			return mod200;
 		} catch (Throwable e) {

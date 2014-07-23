@@ -201,18 +201,20 @@ public class Page14 extends PageAbs {
 		
 		DoubleVariable dv =  mod200Object.getMod200().getVariable(Mod200Key.BN621);
 		Double value = dv==null?0.0:dv.getValue();
-		mod200Object.getMod200().setAmount(AonUtil.round(value));
 		if (AonUtil.round(value) == 0.0) {
+			mod200Object.getMod200().setAmount(AonUtil.round(value));
 			mod200Object.getMod200().setResultType("C");
 			mod200Object.getMod200().setDevType(null);	
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(null);
 		} else if (AonUtil.round(value) < 0.0) {
+			mod200Object.getMod200().setAmount(AonUtil.round(value * -1));
 			mod200Object.getMod200().setResultType("D");
 			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(ibanD.getValue());
 		} else {
+			mod200Object.getMod200().setAmount(AonUtil.round(value));
 			mod200Object.getMod200().setResultType("I");
 			mod200Object.getMod200().setDevType(null);
 			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");
