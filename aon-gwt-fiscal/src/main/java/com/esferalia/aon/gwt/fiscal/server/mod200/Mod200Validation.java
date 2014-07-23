@@ -388,9 +388,9 @@ public class Mod200Validation {
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ631
 				,MessageFormat.format(EQUAL_GREATER_MSG,LQ631.getDescription(),LQ632.getDescription())
 				,MessageFormat.format(EQUAL_GREATER_EXP,LQ631.toString(),LQ632.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ552
-				,LQ552.getDescription() + " debe ser cero con el caracter \"" + C0027.getDescription() + "\" marcado"
-				,"C0027?LQ552==0:true"));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ552
+//				,LQ552.getDescription() + " debe ser cero con el caracter \"" + C0027.getDescription() + "\" marcado"
+//				,"C0027?LQ552<=0:LQ552>0"));
 		
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage(PAGE09,LQ641
 				,MessageFormat.format(EQUAL_LESS_MSG,LQ641.getDescription(),LQ640.getDescription())

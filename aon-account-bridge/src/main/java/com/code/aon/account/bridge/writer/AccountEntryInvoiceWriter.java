@@ -174,7 +174,7 @@ public class AccountEntryInvoiceWriter {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		for (TaxBreakDown taxBreakDown : taxBreakDownList ) {
 			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), new Double(taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota()));
+				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota()));
 				insertInvoiceTaxAccount(invoice, taxBreakDown, false);
 			}
 		}
@@ -186,10 +186,10 @@ public class AccountEntryInvoiceWriter {
 		for (TaxBreakDown taxBreakDown : taxBreakDownList ) {
 			if (!taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
 				double amount = taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota();
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), new Double(amount));
+				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(amount));
 				insertInvoiceTaxAccount(invoice, taxBreakDown, false);
 				if (ignoreTaxFree) {
-					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), new Double(amount * (-1)));
+					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(amount * (-1)));
 					insertInvoiceTaxAccount(invoice, taxBreakDown, true);
 				}
 			}
@@ -215,10 +215,10 @@ public class AccountEntryInvoiceWriter {
 				Account account = (Account)iter.next();
 				double base = CommonUtil.round(basesPerAccount.get(account).doubleValue());
 				if (iter.hasNext()) {
-					basesPerAccount.put(account, new Double(base));
+					basesPerAccount.put(account, CommonUtil.round(base, 4));
 					diffBase = CommonUtil.round(diffBase - base);
 				} else {
-					basesPerAccount.put(account, new Double(diffBase));
+					basesPerAccount.put(account, CommonUtil.round(diffBase, 4));
 				}
 			}
 		}
@@ -248,7 +248,7 @@ public class AccountEntryInvoiceWriter {
 			}
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account)) ? basesPerAccount.get(account).doubleValue() : 0;
-			basesPerAccount.put(account, new Double(base));
+			basesPerAccount.put(account, CommonUtil.round(base, 4));
 			insertInvoiceDetailAccount(invoiceDetail, account);
 		}
 	}
