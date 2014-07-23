@@ -39,6 +39,7 @@ public class FiscalMatrix {
 		MODELS.add(new SelectItem(Model.M390_HF));
 		MODELS.add(new SelectItem(Model.M180));
 		MODELS.add(new SelectItem(Model.M190));
+		MODELS.add(new SelectItem(Model.M200));
 	}
 	private ModelManagerParams params;
 	private List<ModelConfig> list;
