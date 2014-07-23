@@ -214,6 +214,12 @@ public class Page01 extends PageAbs {
 		};
 		col.setFieldUpdater(new FieldUpdater<LegalRepresentative, String>() {
 		    public void update(int index, LegalRepresentative lr, String value) {
+		    	if (!AonUtil.isEmpty(value)) {
+		    		if (value.length() > 20) {
+		    			Window.alert("Este dato admite 20 caracteres de longitud");
+		    			value = AonUtil.substring(value, 0, 19);
+		    		}
+		    	}
 		    	dataProvider1.getList().get(index).setNotary(value);
 		    }
 		});		

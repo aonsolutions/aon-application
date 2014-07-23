@@ -458,13 +458,15 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	private void validateSecretary(List<ValidationMessage> list, Mod200 mod200) {
 		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getSecretary() == null) {
-				list.add(new ValidationMessage(PAGE01,"Para personas jurídicas, debe rellenar los datos del secretario"));
+				list.add(new ValidationMessage(PAGE01,"Para personas jur\u00EDdicas, debe rellenar los datos del secretario"));
 			} else {
 				if (!DocumentUtil.isValid(mod200.getSecretary().getDocument())) {
 					list.add(new ValidationMessage(PAGE01,"NIF del secretario incorrecto."));
 				}
 				if ( AonUtil.isEmpty(mod200.getSecretary().getName())) {
 					list.add(new ValidationMessage(PAGE01,"Falta nombre del secretario."));
+				} else if (mod200.getSecretary().getName().length() > 25) {
+					list.add(new ValidationMessage(PAGE01,"Longitud excedida en el nombre del secretario. Debe limitarse a 25 caracteres."));	
 				}
 				if (mod200.getSecretary().getIrnr() == null && (mod200.isChecked(Mod200Key.C0021) || mod200.isChecked(Mod200Key.C0046)) ) {
 					list.add(new ValidationMessage(PAGE01,"Falta fecha IRNR."));
@@ -476,7 +478,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	private void validateRepresentatives(List<ValidationMessage> list,Mod200 mod200) {
 		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getRepresentatives() == null || mod200.getRepresentatives().size() == 0 ) {
-				list.add(new ValidationMessage(PAGE01,"Para personas jurídicas, debe rellenar al menos un representante."));
+				list.add(new ValidationMessage(PAGE01,"Para personas jur\u00EDdicas, debe rellenar al menos un representante."));
 			} else {
 				for (int i = 0; i < mod200.getRepresentatives().size(); i++ ) {
 					LegalRepresentative lr = mod200.getRepresentatives().get(i); 
@@ -487,10 +489,12 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 						list.add(new ValidationMessage(PAGE01,"Falta nombre del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
 					}
 					if (AonUtil.isEmpty(lr.getNotary())) {
-						list.add(new ValidationMessage(PAGE01,"Falta el dato de la notaría del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+						list.add(new ValidationMessage(PAGE01,"Falta el dato de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+					} else if (lr.getNotary().length() > 20) {
+						list.add(new ValidationMessage(PAGE01,"Longitud excedida en la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]. Debe limitarse a 20 caracteres."));	
 					}
 					if (lr.getNotaryDate() == null) {
-						list.add(new ValidationMessage(PAGE01,"Falta el dato fecha de la notaría del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
+						list.add(new ValidationMessage(PAGE01,"Falta el dato fecha de la notar\u00EDa del representante legal nº "+(i+1) +". ["+lr.getDocument()+"]"));
 					}
 				}
 			}

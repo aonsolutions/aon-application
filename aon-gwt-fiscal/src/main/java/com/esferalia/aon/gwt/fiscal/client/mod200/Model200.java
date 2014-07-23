@@ -182,7 +182,8 @@ public class Model200 extends MainEntryPoint {
 			@Override
 			public void onSuccess(Mod200 result) {
 				if (result.getId() == null) {
-					deckPanel.page00.dump(mod200);
+					//deckPanel.page00.dump(mod200);
+					deckPanel.dump(mod200);
 					
 					deckPanel.pagesPanel.showWidget(deckPanel.pagesPanel.getWidgetIndex(deckPanel.page00));
 					sidebar.setVisibleLinks( false );
@@ -239,6 +240,13 @@ public class Model200 extends MainEntryPoint {
 				super.onSuccess(result);
 				refreshButtonsVisibility();
 			}
+			@Override
+			public void onFailure(Throwable caught) {
+				super.onFailure(caught);
+				Window.alert("No se han podido guardar los datos. \n"
+						+"Causa: \n" 
+						+ caught.getMessage());
+			}
 		};
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(MSG.processing());
@@ -267,6 +275,14 @@ public class Model200 extends MainEntryPoint {
 					super.onSuccess(result);
 					startModel();
 				}
+				@Override
+				public void onFailure(Throwable caught) {
+					super.onFailure(caught);
+					Window.alert("No se han podido borrar los datos. \n"
+							+"Causa: \n" 
+							+ caught.getMessage());
+				}
+				
 			});
 		}
 	}
