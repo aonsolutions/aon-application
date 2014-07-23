@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.Administration;
 import com.esferalia.aon.gwt.common.shared.CommonEnum.CNAE;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200.BalanceType;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.google.gwt.core.client.GWT;
@@ -107,6 +108,10 @@ public class Page00 extends PageAbs {
 	TextBox  phone1;
 	@UiField
 	TextBox  phone2;
+	@UiField
+	CheckBox complementary;
+	@UiField
+	TextBox  complementaryReceipt;
 	
 	@UiField(provided = true)
 	FlexTable charactersTable1;
@@ -159,6 +164,8 @@ public class Page00 extends PageAbs {
 		companyName.setValue(this.mod200Object.getMod200().getEnterpriseName());
 		phone1.setValue(this.mod200Object.getMod200().getEnterprisePhone1());
 		phone2.setValue(this.mod200Object.getMod200().getEnterprisePhone2());
+		complementary.setValue(this.mod200Object.getMod200().isComplementary());
+		complementaryReceipt.setValue(this.mod200Object.getMod200().getComplementaryReceipt());
 		periodType.setSelectedIndex(mod200Object.getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
 		periodStart.setValue(mod200Object.getMod200().getPeriodStart() );
@@ -196,6 +203,16 @@ public class Page00 extends PageAbs {
 			CNAE cnae = CNAE.valueOfCode(this.mod200Object.getMod200().getCnae());
 			cnaeLabel.setText(cnae==null?null:cnae.getDescription());	
 		}
+		this.mod200Object.register( new IMod200ChangeListener() {
+			
+			@Override
+			public void mod200Changed(Mod200 mod200) {
+				DoubleVariable sv = mod200.getVariable(Mod200Key.C0027);
+				if (sv != null && inputs.containsKey( Mod200Key.C0027 )) {
+					inputs.get( Mod200Key.C0027 ).setValue( AonUtil.equals(sv.getValue() , 1.0) );
+				}
+			}
+		});
 	}
 	
 	protected void initializeTable() {
@@ -300,6 +317,8 @@ public class Page00 extends PageAbs {
 		obj.getMod200().setEnterpriseName(companyName.getValue());
 		obj.getMod200().setEnterprisePhone1(phone1.getValue());
 		obj.getMod200().setEnterprisePhone2(phone2.getValue());
+		obj.getMod200().setComplementary(complementary.getValue());
+		obj.getMod200().setComplementaryReceipt(complementaryReceipt.getValue());
 		obj.getMod200().setPeriodType(periodType.getSelectedIndex() + 1 );
 		obj.getMod200().setPeriodStart( periodStart.getValue() );
 		obj.getMod200().setPeriodEnd( periodEnd.getValue() );

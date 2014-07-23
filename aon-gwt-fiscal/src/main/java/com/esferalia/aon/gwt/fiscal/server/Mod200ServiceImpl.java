@@ -398,6 +398,7 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	@Override
 	public Mod200 validate(Mod200 mod200) throws AonSQLException {
 		List<ValidationMessage> list = new LinkedList<ValidationMessage>();
+		validateComplementary(list,mod200);
 		validateDocument(list,mod200);
 		validateCNAE(list,mod200);
 		validateSecretary(list,mod200);
@@ -424,6 +425,24 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			mod200.setMessages(list);	
 		}
 		return mod200;
+	}
+
+	private void validateComplementary(List<ValidationMessage> list, Mod200 mod200) {
+		if (mod200.isComplementary() ) {
+			if (AonUtil.isEmpty(mod200.getComplementaryReceipt() )) {
+				list.add(new ValidationMessage(PAGE00,"Si marca Decl. Complementaria, debe indicar un n. de justificante anterior."));
+			} else {
+				if (mod200.getComplementaryReceipt().length() != 13) {
+					list.add(new ValidationMessage(PAGE00,"El n. de justificante anterior debe tener 13 caracteres."));
+				}
+				if (!mod200.getComplementaryReceipt().startsWith("200") && !mod200.getComplementaryReceipt().startsWith("206")) {
+					list.add(new ValidationMessage(PAGE00,"El n. de justificante anterior debe empezar por 200 o 206."));
+				}
+			}
+			
+		} else if (!mod200.isComplementary() && !AonUtil.isEmpty(mod200.getComplementaryReceipt())) {
+			list.add(new ValidationMessage(PAGE00,"Si no marca Decl. Complementaria, no debe indicar un n. de justificante anterior."));
+		}
 	}
 
 	private void validateDocument(List<ValidationMessage> list, Mod200 mod200) {
