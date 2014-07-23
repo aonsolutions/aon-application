@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
+import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 
@@ -84,6 +85,7 @@ public class ModelManager {
 			fillModel180(ctx,list,params);
 			fillModel190(ctx,list,params);
 			fillModel390(ctx,list,params);
+			fillModel200(ctx,list,params);
 		}
 		return list;
 	}
@@ -262,6 +264,27 @@ public class ModelManager {
 				byte adm = mod.getValue(FS_MODEL390.ADMINISTRATION);
 				byte st = mod.getValue(FS_MODEL390.STATUS);
 				putModelConfig(list,Model.M390,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
+			}
+		}
+	}
+
+	private void fillModel200(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
+		if (params.getModel() == null || params.getModel() == Model.M200 ) {
+			Result<Record4<Integer, Byte, Integer, String>> models = ctx
+					.select(FS_MODEL200.YEAR,FS_MODEL200.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
+					.from(FS_MODEL200)
+					.join(DOMAIN).onKey()
+					.where(FS_MODEL200.DOMAIN.equal(params.getMasterDomain()))
+						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+					.and(FS_MODEL200.YEAR.equal(params.getYear()))
+					.orderBy(FS_MODEL200.YEAR)
+					.fetch();
+			for (Record4<Integer, Byte, Integer, String> mod : models) {
+				String domainName = mod.getValue(DOMAIN.DESCRIPTION);
+				int domainId = mod.getValue(DOMAIN.ID);
+				byte adm = mod.getValue(FS_MODEL200.ADMINISTRATION);
+				byte st = 0;
+				putModelConfig(list,Model.M200,params.getYear(),Period.YEAR,st,adm,domainId,domainName,null,null);
 			}
 		}
 	}

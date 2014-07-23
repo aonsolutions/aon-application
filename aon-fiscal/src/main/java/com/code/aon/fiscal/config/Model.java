@@ -18,6 +18,7 @@ public enum Model {
 	M190("190",null),
 	M310("310",2013),
 	M311("311",2013),
+	M200("200",2013)
 	;
 
 	private String name;

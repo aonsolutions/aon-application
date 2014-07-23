@@ -166,7 +166,7 @@ public class Page14 extends PageAbs {
 			zeroPanel.setVisible(false);
 			devPanel.setVisible(true);
 			devTypeR.setValue("R".equals(mod200.getMod200().getDevType()));
-			devTypeT.setValue("T".equals(mod200.getMod200().getDevType()));
+			devTypeT.setValue("D".equals(mod200.getMod200().getDevType()));
 			ibanD.setValue(mod200.getMod200().getIban());
 			amountD.setValue( mod200.getMod200().getAmount() );	
 		} else if ("I".equals( mod200.getMod200().getResultType()) ) {
@@ -174,7 +174,7 @@ public class Page14 extends PageAbs {
 			zeroPanel.setVisible(false);
 			devPanel.setVisible(false);
 			payTypeU.setValue("U".equals(mod200.getMod200().getPayType()));
-			payTypeE.setValue("E".equals(mod200.getMod200().getPayType()));
+			payTypeE.setValue("H".equals(mod200.getMod200().getPayType()));
 			ibanP.setValue(mod200.getMod200().getIban());
 			amountP.setValue( mod200.getMod200().getAmount() );	
 		} else if ("C".equals( mod200.getMod200().getResultType()) ) {
@@ -197,13 +197,13 @@ public class Page14 extends PageAbs {
 			mod200Object.getMod200().setIban(null);
 		} else if (AonUtil.round(value) < 0.0) {
 			mod200Object.getMod200().setResultType("D");
-			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"T");
+			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(ibanD.getValue());
 		} else {
 			mod200Object.getMod200().setResultType("I");
 			mod200Object.getMod200().setDevType(null);
-			mod200Object.getMod200().setPayType(payTypeE.getValue()?"E":"U");
+			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");
 			mod200Object.getMod200().setIban(ibanP.getValue());
 		}
 	}
