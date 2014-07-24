@@ -42,8 +42,8 @@ public class Mod200Initialization {
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA140.toString(),"C0050?sdb({31,32})-sab({391,392}):0.0");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA143.toString(),"C0050?sdb({33,34})-sab({393,394}):0.0");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA146.toString(),"C0050?sdb({35})-sab({395}):0.0");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA147.toString(),"C0050?sdb({36})-sab({396})");
-		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA148.toString(),"C0050?sdb({407})");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA147.toString(),"C0050?sdb({36})-sab({396}):0.0");
+		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA148.toString(),"C0050?sdb({407}):0.0");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA151.toString(),"sdb({430,431,432,435,436})-sab({437,490,4935})");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA153.toString(),"C0050?sdb({433,434})-sab({4933,4934}):0.0");
 		INITIALIZE_EXPRESSION_MAP.put(Mod200Key.BA154.toString(),"C0050?sdb({44}):0.0");

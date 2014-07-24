@@ -26,7 +26,6 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.accounting.mining.server.IAccMiningKeyAccept;
 import com.esferalia.aon.accounting.mining.shared.AccMiningException;
 import com.esferalia.aon.accounting.mining.shared.AccMiningParameters;
@@ -63,6 +62,7 @@ import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
 public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200Service {
 	private static final int PAGE00 = 0;
 	private static final int PAGE01 = 1;
+	private static final int PAGE02 = 2;
 	
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
@@ -405,6 +405,8 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 		validateSecretary(list,mod200);
 		validateRepresentatives(list,mod200);
 		validateAdministrators(list,mod200);
+		validateParticipationsIn(list,mod200);
+		validateParticipationsOut(list,mod200);
 		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
 		for (DoubleVariable dv : mod200.getKeysMap().values()) {
 			ctx.put(dv.getKey().toString(), dv.getValue());
@@ -473,8 +475,8 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 				}
 			}
 		}
-		
 	}
+	
 	private void validateSecretary(List<ValidationMessage> list, Mod200 mod200) {
 		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getSecretary() == null) {
@@ -520,5 +522,47 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			}
 		}
 	}
-
+	
+	private void validateParticipationsIn(List<ValidationMessage> list,Mod200 mod200) {
+		 if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			 List<CompanyParticipation> participations = mod200.getParticipationsIn();
+			if (participations == null || participations.size() == 0) {
+				list.add(new ValidationMessage(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
+			} else {
+				for (int i = 0; i < participations.size(); i++ ) {
+					CompanyParticipation cp = participations.get(i); 
+					if (!DocumentUtil.isValid(cp.getDocument())) {
+						list.add(new ValidationMessage(PAGE02,"NIF de la participaci\u00F3n en la declarante nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
+					}
+					if (AonUtil.isEmpty(cp.getName())) {
+						list.add(new ValidationMessage(PAGE02,"Falta nombre de la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
+						list.add(new ValidationMessage(PAGE02,"Porcentaje no correcto en la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
+	
+	private void validateParticipationsOut(List<ValidationMessage> list,Mod200 mod200) {
+		 if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			 List<CompanyParticipation> participations = mod200.getParticipationsOut();
+			if (participations == null || participations.size() == 0) {
+			} else {
+				for (int i = 0; i < participations.size(); i++ ) {
+					CompanyParticipation cp = participations.get(i); 
+					if (!DocumentUtil.isValid(cp.getDocument())) {
+						list.add(new ValidationMessage(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
+					}
+					if (AonUtil.isEmpty(cp.getName())) {
+						list.add(new ValidationMessage(PAGE02,"Falta nombre de la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
+						list.add(new ValidationMessage(PAGE02,"Porcentaje no correcto en la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
 }
