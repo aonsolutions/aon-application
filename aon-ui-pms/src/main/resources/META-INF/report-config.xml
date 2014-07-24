@@ -91,9 +91,8 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="hotel" value="#{roomBooking.getHotel}" />
-			<param id="item" value="#{roomBooking.getItem}" />
-			<param id="agency" value="#{roomBooking.getAgency}" />
+			<param id="items" value="#{roomBooking.getItemNames}" />
+			<param id="agencies" value="#{roomBooking.getAgencyNames}" />
 			<param id="fromDate" value="#{roomBooking.getFromDate}" />
 			<param id="toDate" value="#{roomBooking.getToDate}" />
 			<param id="showCancelled" value="#{roomBooking.isShowCancelled}" />
