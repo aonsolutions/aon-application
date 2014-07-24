@@ -2042,6 +2042,19 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ TARGET DEDUPLICATION CONTROLLER ************** -->
+	<managed-bean>
+		<managed-bean-name>targetDeduplication</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.TargetDeduplicationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>targetDeduplication</value>
+		</managed-property>		
+	</managed-bean>	
+	
 	<!-- ************ OFFER LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>offerLookup</managed-bean-name>
@@ -2217,6 +2230,14 @@
 	    <navigation-case>
 	      <from-outcome>commissionCalculation</from-outcome>
 	      <to-view-id>/com/code/aon/ui/commercial/facelet/commissionCalculation/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>targetDeduplication_search</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/targetDeduplication/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>targetDeduplication_list</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/targetDeduplication/list.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>		
 

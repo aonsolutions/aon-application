@@ -32,6 +32,13 @@
 											actionListener="#{target.onEditSearch}"
 											value="#{bundle.commercial_target_module}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="targetDeduplication-marketing" 
+											action="targetDeduplication_search-marketing" 
+											actionListener="#{targetDeduplication.onEditSearch}"
+											value="#{bundle.commercial_target_deduplication_module}">
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>							
 							</aon:panelGrid>
 						</c:if>

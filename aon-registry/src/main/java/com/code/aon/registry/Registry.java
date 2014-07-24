@@ -200,34 +200,33 @@ public class Registry extends RegistryDB implements IRegistry{
 	
 	@Transient 
 	public String getPhones() throws ManagerBeanException{
-		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), getId());
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.FIXED_PHONE);
-		criteria.setSkipDomainFilter(true);
-		List<ITransferObject> list = rMediaBean.getList(criteria);
-		String phones = "";
-		for (ITransferObject to : list) {
-			RegistryMedia media = (RegistryMedia) to;
-			phones += media.getValue()+", ";
-		}
-		return (phones=="")?"":phones.substring(0, phones.length()-2);
+		return getList(MediaType.FIXED_PHONE);
 	}
 
 	@Transient 
 	public String getCellulars() throws ManagerBeanException{
+		return getList(MediaType.CELLULAR);
+	}
+
+	@Transient 
+	public String getEmails() throws ManagerBeanException{
+		return getList(MediaType.EMAIL);
+	}
+	
+	@Transient
+	private String getList( MediaType type ) throws ManagerBeanException {
 		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), getId());
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
+		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
 		criteria.setSkipDomainFilter(true);
 		List<ITransferObject> list = rMediaBean.getList(criteria);
-		String phones = "";
+		String values = "";
 		for (ITransferObject to : list) {
 			RegistryMedia media = (RegistryMedia) to;
-			phones += media.getValue()+", ";
+			values += media.getValue()+", ";
 		}
-		return (phones=="")?"":phones.substring(0, phones.length()-2);
+		return (values=="")?"":values.substring(0, values.length()-2);		
 	}
 	
 }

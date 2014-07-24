@@ -43,6 +43,7 @@ public interface ICommonMessages {
 	String DOCUMENT_MAX_SIZE_ERROR = "aon_document_max_size_error";	
 	String DOCUMENT_SIZE_MESSAGE = "aon_document_size_message";
 	String DUES = "aon_dues";
+	String EMAIL = "aon_email";
 	String ENTITY = "aon_entity";
 	String EXPENSE = "aon_expense";
 	String ERROR = "aon_error";
@@ -128,6 +129,7 @@ public interface ICommonMessages {
 	String TARGET = "aon_target";
 	String TARGET_ADVERTISING = "target_advertising";
 	String TAXABLE_BASE = "aon_taxable_base";
+	String TELEPHONE2 = "aon_telephone2";
 	String TICKET = "aon_ticket";
 	String TIME_2_PATTERN = "aon_time2_pattern";
 	String TIMESTAMP_PATTERN = "aon_timestamp_pattern";

@@ -95,6 +95,13 @@
 											value="#{bundle.commercial_target_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="targetDeduplication-commercial" 
+											action="targetDeduplication_search-commercial" 
+											actionListener="#{targetDeduplication.onEditSearch}"
+											value="#{bundle.commercial_target_deduplication_module}">
+										</aon:commandLink>
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="seller-commercial" 
 											action="seller_search-commercial" 
 											actionListener="#{seller.onEditSearch}"
