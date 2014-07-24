@@ -62,6 +62,7 @@ import com.esferalia.aon.gwt.fiscal.sql.SQLMod200;
 public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200Service {
 	private static final int PAGE00 = 0;
 	private static final int PAGE01 = 1;
+	private static final int PAGE02 = 2;
 	
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
@@ -283,19 +284,19 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			mod200.setResultType(null);
 			if (v == null || v.getValue() == 0) {
 				mod200.setResultType("C");
-				mod200.setDevType(AonUtil.isEmpty(mod200.getDevType())?"T":mod200.getDevType());
 				mod200.setAmount( 0.0 );
+				mod200.setDevType(null);
 				mod200.setPayType(null);
-			} else if (v.getValue() < 0) {
+			} else if (AonUtil.round(v.getValue()) < 0.0) {
 				mod200.setResultType("D");
 				mod200.setAmount( AonUtil.round( v.getValue() * -1));
-				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"U":mod200.getPayType());
-				mod200.setDevType(null);
+				mod200.setDevType(AonUtil.isEmpty(mod200.getDevType())?"R":mod200.getDevType());
+				mod200.setPayType(null);
 			} else {
 				mod200.setResultType("I");
 				mod200.setAmount( v.getValue() );
+				mod200.setPayType(AonUtil.isEmpty(mod200.getPayType())?"H":mod200.getPayType());
 				mod200.setDevType(null);
-				mod200.setPayType(null);
 			}
 			return mod200;
 		} catch (Throwable e) {
@@ -398,11 +399,14 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 	@Override
 	public Mod200 validate(Mod200 mod200) throws AonSQLException {
 		List<ValidationMessage> list = new LinkedList<ValidationMessage>();
+		validateComplementary(list,mod200);
 		validateDocument(list,mod200);
 		validateCNAE(list,mod200);
 		validateSecretary(list,mod200);
 		validateRepresentatives(list,mod200);
 		validateAdministrators(list,mod200);
+		validateParticipationsIn(list,mod200);
+		validateParticipationsOut(list,mod200);
 		Mod200MVELContext ctx = new Mod200MVELContext( mod200, ACCEPTER );
 		for (DoubleVariable dv : mod200.getKeysMap().values()) {
 			ctx.put(dv.getKey().toString(), dv.getValue());
@@ -424,6 +428,24 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			mod200.setMessages(list);	
 		}
 		return mod200;
+	}
+
+	private void validateComplementary(List<ValidationMessage> list, Mod200 mod200) {
+		if (mod200.isComplementary() ) {
+			if (AonUtil.isEmpty(mod200.getComplementaryReceipt() )) {
+				list.add(new ValidationMessage(PAGE00,"Si marca Decl. Complementaria, debe indicar un n. de justificante anterior."));
+			} else {
+				if (mod200.getComplementaryReceipt().length() != 13) {
+					list.add(new ValidationMessage(PAGE00,"El n. de justificante anterior debe tener 13 caracteres."));
+				}
+				if (!mod200.getComplementaryReceipt().startsWith("200") && !mod200.getComplementaryReceipt().startsWith("206")) {
+					list.add(new ValidationMessage(PAGE00,"El n. de justificante anterior debe empezar por 200 o 206."));
+				}
+			}
+			
+		} else if (!mod200.isComplementary() && !AonUtil.isEmpty(mod200.getComplementaryReceipt())) {
+			list.add(new ValidationMessage(PAGE00,"Si no marca Decl. Complementaria, no debe indicar un n. de justificante anterior."));
+		}
 	}
 
 	private void validateDocument(List<ValidationMessage> list, Mod200 mod200) {
@@ -453,8 +475,8 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 				}
 			}
 		}
-		
 	}
+	
 	private void validateSecretary(List<ValidationMessage> list, Mod200 mod200) {
 		if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
 			if (mod200.getSecretary() == null) {
@@ -500,5 +522,47 @@ public class Mod200ServiceImpl extends AonRemoteServiceServlet implements Mod200
 			}
 		}
 	}
-
+	
+	private void validateParticipationsIn(List<ValidationMessage> list,Mod200 mod200) {
+		 if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			 List<CompanyParticipation> participations = mod200.getParticipationsIn();
+			if (participations == null || participations.size() == 0) {
+				list.add(new ValidationMessage(PAGE02,"Para personas jur\u00EDdicas, debe rellenar los datos de participaci\u00F3n en la declarante"));
+			} else {
+				for (int i = 0; i < participations.size(); i++ ) {
+					CompanyParticipation cp = participations.get(i); 
+					if (!DocumentUtil.isValid(cp.getDocument())) {
+						list.add(new ValidationMessage(PAGE02,"NIF de la participaci\u00F3n en la declarante nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
+					}
+					if (AonUtil.isEmpty(cp.getName())) {
+						list.add(new ValidationMessage(PAGE02,"Falta nombre de la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
+						list.add(new ValidationMessage(PAGE02,"Porcentaje no correcto en la participaci\u00F3n en la declarante nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
+	
+	private void validateParticipationsOut(List<ValidationMessage> list,Mod200 mod200) {
+		 if (DocumentUtil.isEntity(mod200.getEnterpriseDocument())) {
+			 List<CompanyParticipation> participations = mod200.getParticipationsOut();
+			if (participations == null || participations.size() == 0) {
+			} else {
+				for (int i = 0; i < participations.size(); i++ ) {
+					CompanyParticipation cp = participations.get(i); 
+					if (!DocumentUtil.isValid(cp.getDocument())) {
+						list.add(new ValidationMessage(PAGE02,"NIF de la participaci\u00F3n de la declarante en otras nº "+(i+1) +" incorrecto ["+cp.getDocument()+"]"));		
+					}
+					if (AonUtil.isEmpty(cp.getName())) {
+						list.add(new ValidationMessage(PAGE02,"Falta nombre de la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+					if (cp.getPercent() < 0 || cp.getPercent() > 100) {
+						list.add(new ValidationMessage(PAGE02,"Porcentaje no correcto en la participaci\u00F3n de la declarante en otras nº "+(i+1) +". ["+cp.getDocument()+"]"));
+					}
+				}
+			}
+		}
+	}
 }

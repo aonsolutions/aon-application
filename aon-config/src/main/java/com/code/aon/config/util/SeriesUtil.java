@@ -26,7 +26,7 @@ public class SeriesUtil {
 	public static synchronized String ensureOfferSeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);
-			if (series != null && series.isOffer()) {
+			if (series != null && series.isActive() && series.isOffer()) {
 				return series.getCode();
 			}
 		}
@@ -36,7 +36,7 @@ public class SeriesUtil {
 	public static synchronized String ensureDeliverySeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);
-			if (series != null && series.isDelivery()) {
+			if (series != null && series.isActive() && series.isDelivery()) {
 				return series.getCode();
 			}
 		}
@@ -46,7 +46,7 @@ public class SeriesUtil {
 	public static synchronized String ensureSalesSeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);
-			if (series != null && series.isSales()) {
+			if (series != null && series.isActive() && series.isSales()) {
 				return series.getCode();
 			}
 		}
@@ -56,7 +56,7 @@ public class SeriesUtil {
 	public static synchronized String ensureInvoiceSeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);
-			if (series != null && series.isInvoice()) {
+			if (series != null && series.isActive() && series.isInvoice()) {
 				return series.getCode();
 			}
 		}
@@ -66,7 +66,7 @@ public class SeriesUtil {
 	public static synchronized String ensureProjectTasSeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);
-			if (series != null && series.isTas()) {
+			if (series != null && series.isActive() && series.isTas()) {
 				return series.getCode();
 			}
 		}
@@ -76,7 +76,7 @@ public class SeriesUtil {
 	public static synchronized String ensureRectificationSeries(String seriesCode) throws ManagerBeanException {
 		if (StringUtils.isNotEmpty(seriesCode)) {
 			Series series = SeriesUtil.getSeries(seriesCode);
-			if (series != null && series.isRectification()) {
+			if (series != null && series.isActive() && series.isRectification()) {
 				return series.getCode();
 			}
 		}

@@ -153,12 +153,18 @@
 		.monthListBox-old {
 			
 		}
+
+		@sprite .icon-view {
+			float: right;
+			gwt-image: 'view';
+		}
 	</ui:style>
 
 	<ui:image field='fx' src='fx.png' />
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	<ui:image field='warn' src='warn.png' />
+	<ui:image field='view' src='view.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />

@@ -86,19 +86,20 @@ import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.ValueBox;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -176,6 +177,9 @@ public class AgreementDraft extends ResizeComposite implements
 		String iconWarn();
 
 		String highlight();
+
+		@ClassName("icon-view")
+		String iconView();
 	}
 
 	interface Binder extends UiBinder<Widget, AgreementDraft> {
@@ -1243,6 +1247,14 @@ public class AgreementDraft extends ResizeComposite implements
 		agreementDraftObject.calculate(compositeCb);
 	}
 
+	private void reloadSalaryTable(){
+		clearSalaryTable();
+		salaryTableEditors.clear();
+		salaryTableEditors.addAll(dumpSalaryTable());
+		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
+		initSalaryTableFrozenColsAndRows();
+	}
+	
 	private void setDescription() {
 		// TODO: When null it will be desirable warn user.
 		String description = this.agreementDraftObject.getDescription();
@@ -1315,7 +1327,8 @@ public class AgreementDraft extends ResizeComposite implements
 																// space
 		col++;
 
-		salaryTable.setHTML(0, col, "&nbsp;");
+		// salaryTable.setHTML(0, col, "&nbsp;");
+		salaryTable.setWidget(0, col, getViewButton());
 
 		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
 		levels.addAll(agreementDraftObject.getLevels());
@@ -2387,9 +2400,23 @@ public class AgreementDraft extends ResizeComposite implements
 
 		Element th = cloneTR(flexTable.getRowFormatter().getElement(0));
 
+		int cols = th.getChildCount();
 		// remove all columns except last..
-		for (int i = th.getChildCount() - 2; i >= 0; i--) {
+		for (int i = cols - 2; i >= 0; i--) {
 			th.getChild(i).removeFromParent();
+		}
+
+		com.google.gwt.dom.client.Element clone = th.getFirstChildElement();
+
+		Element td = flexTable.getCellFormatter().getElement(0, cols - 1);
+		if (DOM.getChildCount(td) > 0) {
+			Element tdChild = DOM.getChild(td, 0);
+			Element cloneChild = DOM.getChild(clone, 0);
+			DOM.removeChild(td, tdChild);
+			DOM.removeChild(clone, cloneChild);
+			DOM.appendChild(clone, tdChild);
+			DOM.appendChild(td, cloneChild);
+
 		}
 
 		int width = flexTable.getCellFormatter()
@@ -2826,6 +2853,77 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 
 		agreementDraftObject.getContext(0, new ProposalsLoader());
+	}
+
+	private Button getViewButton() {
+		final Button viewButton = new Button();
+		viewButton.setStyleName(style.iconView());
+		viewButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+
+		class HideVariableCommad implements ScheduledCommand {
+			private String var;
+			private PopupPanel popup;
+
+			public HideVariableCommad(String var, PopupPanel popup) {
+				this.var = var;
+				this.popup = popup;
+			}
+
+			@Override
+			public void execute() {
+				agreementDraftObject.hideVariable(var);
+				reloadSalaryTable();
+				popup.hide();
+			}
+		}
+		class ShowVariableCommad implements ScheduledCommand {
+			private String var;
+			private PopupPanel popup;
+
+			public ShowVariableCommad(String var, PopupPanel popup) {
+				this.var = var;
+				this.popup = popup;
+			}
+
+			@Override
+			public void execute() {
+				agreementDraftObject.showVariable(var);
+				reloadSalaryTable();
+				popup.hide();
+			}
+		}
+
+		viewButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				final PopupPanel popup = new PopupPanel();
+				MenuBar menuBar = new MenuBar(true);
+
+				for (String var : agreementDraftObject.getVariables())
+					menuBar.addItem(var, new HideVariableCommad(var, popup))
+							.addStyleName("aon-MenuItemCheckYes");
+
+				for (String var : agreementDraftObject.getHiddenVariables())
+					menuBar.addItem(var, new ShowVariableCommad(var, popup));
+
+				popup.add(menuBar);
+				popup.setStyleName("gwt-MenuBarPopup");
+				popup.setAutoHideEnabled(true);
+
+				final int left = viewButton.getAbsoluteLeft();
+				final int top = viewButton.getAbsoluteTop()
+						+ viewButton.getOffsetHeight();
+				popup.setPopupPositionAndShow(new PositionCallback() {
+					@Override
+					public void setPosition(int offsetWidth, int offsetHeight) {
+						popup.setPopupPosition(left - offsetWidth, top);
+					}
+				});
+			}
+		});
+		return viewButton;
 	}
 
 }

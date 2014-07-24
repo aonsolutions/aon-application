@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.shared.AonUtil;
 import com.esferalia.aon.gwt.common.shared.CompanyBank;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.DoubleVariable;
+import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200;
 import com.esferalia.aon.gwt.fiscal.shared.mod200.Mod200Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -146,6 +147,18 @@ public class Page14 extends PageAbs {
 	public void dump(Mod200Object mod200) {
 		super.dump(mod200);
 		
+		this.mod200Object.register( new IMod200ChangeListener() {
+			
+			@Override
+			public void mod200Changed(Mod200 mod200) {
+				dumpPay(mod200);
+			}
+		});
+		
+		dumpPay(mod200.getMod200());
+	}
+	
+	private void dumpPay(Mod200 mod200) {
 		devTypeR.setValue(false);
 		devTypeT.setValue(false);
 		amountD.setValue(0.0);
@@ -156,51 +169,52 @@ public class Page14 extends PageAbs {
 		ibanP.setValue(null);
 		zeroQuota.setValue(false);
 		zeroQuota.setEnabled(false);
-		
-		if (AonUtil.isEmpty(mod200.getMod200().getResultType())) {
+		if (AonUtil.isEmpty(mod200.getResultType())) {
 			payPanel.setVisible(true);
 			zeroPanel.setVisible(true);
 			devPanel.setVisible(true);
-		} else if ("D".equals( mod200.getMod200().getResultType()) ) {
+		} else if ("D".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
 			zeroPanel.setVisible(false);
 			devPanel.setVisible(true);
-			devTypeR.setValue("R".equals(mod200.getMod200().getDevType()));
-			devTypeT.setValue("D".equals(mod200.getMod200().getDevType()));
-			ibanD.setValue(mod200.getMod200().getIban());
-			amountD.setValue( mod200.getMod200().getAmount() );	
-		} else if ("I".equals( mod200.getMod200().getResultType()) ) {
+			devTypeR.setValue("R".equals(mod200.getDevType()));
+			devTypeT.setValue("D".equals(mod200.getDevType()));
+			ibanD.setValue(mod200.getIban());
+			amountD.setValue( mod200.getAmount() );	
+		} else if ("I".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(true);
 			zeroPanel.setVisible(false);
 			devPanel.setVisible(false);
-			payTypeU.setValue("U".equals(mod200.getMod200().getPayType()));
-			payTypeE.setValue("H".equals(mod200.getMod200().getPayType()));
-			ibanP.setValue(mod200.getMod200().getIban());
-			amountP.setValue( mod200.getMod200().getAmount() );	
-		} else if ("C".equals( mod200.getMod200().getResultType()) ) {
+			payTypeU.setValue("U".equals(mod200.getPayType()));
+			payTypeE.setValue("H".equals(mod200.getPayType()));
+			ibanP.setValue(mod200.getIban());
+			amountP.setValue( mod200.getAmount() );	
+		} else if ("C".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
 			zeroPanel.setVisible(true);
 			devPanel.setVisible(false);
 			zeroQuota.setValue(true);
 		}
 	}
-	
+
 	public void populate(Mod200Object mod200Object) {
 		
 		DoubleVariable dv =  mod200Object.getMod200().getVariable(Mod200Key.BN621);
 		Double value = dv==null?0.0:dv.getValue();
-		mod200Object.getMod200().setAmount(AonUtil.round(value));
 		if (AonUtil.round(value) == 0.0) {
+			mod200Object.getMod200().setAmount(AonUtil.round(value));
 			mod200Object.getMod200().setResultType("C");
 			mod200Object.getMod200().setDevType(null);	
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(null);
 		} else if (AonUtil.round(value) < 0.0) {
+			mod200Object.getMod200().setAmount(AonUtil.round(value * -1));
 			mod200Object.getMod200().setResultType("D");
 			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(ibanD.getValue());
 		} else {
+			mod200Object.getMod200().setAmount(AonUtil.round(value));
 			mod200Object.getMod200().setResultType("I");
 			mod200Object.getMod200().setDevType(null);
 			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");

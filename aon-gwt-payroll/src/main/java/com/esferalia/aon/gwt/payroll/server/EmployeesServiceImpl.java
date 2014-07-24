@@ -2799,11 +2799,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					privateVariables.add(var);
 			}
 			variables.removeAll(privateVariables);
-
-			// Clean system variables.
+			
+			/* Clean system variables.
 			Set<String> systemVars = getSystemVariables(connection,
 					draft.getStartDate(), draft.getEndDate());
 			variables.removeAll(systemVars);
+			*/
 
 			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
 					draft.getId());

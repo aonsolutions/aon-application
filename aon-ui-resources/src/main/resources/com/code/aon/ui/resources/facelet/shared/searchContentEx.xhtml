@@ -27,7 +27,8 @@
 							title="#{bundle.aon_key_search_accelerator}"
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="#{searchAction}" actionListener="#{searchActionListener}"
-							reRender="#{searchReRender}" oncomplete="#{searchOnComplete}"
+							reRender="#{searchReRender}"
+							onclick="#{searchOnClick}" oncomplete="#{searchOnComplete}"
 							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
 							<c:if test="#{!skipAfterSearch}" >
 								<aon:actionListener method="#{afterSearchActionListener}" />

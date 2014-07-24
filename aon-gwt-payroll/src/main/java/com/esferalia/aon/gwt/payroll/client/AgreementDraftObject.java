@@ -11,12 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -24,8 +22,10 @@ import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -195,6 +195,7 @@ public class AgreementDraftObject {
 	private int nextDraftLevelId = 0;
 	private int nextDraftExtraId = 0;
 	private int nextDraftPaymentId = 0;
+	private Set<String> shownVariables;
 	private AgreementDraft agreementDraft;
 	private AgreementDraft oldAgreementDraft;
 	private UndoManager<Undoable> undoManager;
@@ -206,6 +207,7 @@ public class AgreementDraftObject {
 		this.agreementDraft = agreementDraft;
 		this.undoManager = new UndoManager<Undoable>();
 		this.employeesServiceAsync = employeesServiceAsync;
+		this.shownVariables = new HashSet<String>();
 	}
 
 	public Level newLevel() {
@@ -302,7 +304,27 @@ public class AgreementDraftObject {
 	}
 
 	public Set<String> getVariables() {
-		return agreementDraft.getVariables();
+		Set<String> vars = new HashSet<String>();
+		for ( String var: agreementDraft.getVariables())
+		if ( shownVariables.contains(var))
+				vars.add(var);
+		return vars;
+	}
+
+	public Set<String> getHiddenVariables() {
+		Set<String> hidden = new HashSet<String>();
+		for ( String var: agreementDraft.getVariables())
+		if ( !shownVariables.contains(var))
+				hidden.add(var);
+		return hidden;
+	}
+	
+	public void hideVariable(String variable) {
+		shownVariables.remove(variable);
+	}
+	
+	public void showVariable(String variable) {
+		shownVariables.add(variable);
 	}
 
 	public Variable getVariable(String var) {
@@ -459,7 +481,8 @@ public class AgreementDraftObject {
 					public void onSuccess(AgreementDraft newAgreementDraft) {
 						oldAgreementDraft = agreementDraft;
 						agreementDraft = newAgreementDraft;
-						callback.onCalculateSucces(AgreementDraftObject.this);
+						getSystemContext(callback, agreementDraft);
+						// callback.onCalculateSucces(AgreementDraftObject.this);
 					}
 
 				});
@@ -491,15 +514,15 @@ public class AgreementDraftObject {
 		employeesServiceAsync.getContext(agreementDraft, levelId, callback);
 	}
 
-	public void eval(String expression, int levelId,
-			List<Variable> vars , AsyncCallback<List<Result>> callback) {
+	public void eval(String expression, int levelId, List<Variable> vars,
+			AsyncCallback<List<Result>> callback) {
 
-		employeesServiceAsync.eval(expression, newAgreementDraft(agreementDraft, vars), levelId,
-				callback);
+		employeesServiceAsync.eval(expression,
+				newAgreementDraft(agreementDraft, vars), levelId, callback);
 	}
 
 	// ------------------------------------------------------------------------
-	
+
 	protected AgreementDraft getAgreementDraft() {
 		return agreementDraft;
 	}
@@ -532,6 +555,54 @@ public class AgreementDraftObject {
 		return changed;
 	}
 
+	// ------------------------------------------------------------------------
+
+	public void getSystemContext(final CalculateCallback callback,
+			final AgreementDraft agreementDraft) {
+
+		employeesServiceAsync.getContext(agreementDraft, -666,
+				new AsyncCallback<ContextDescriptor>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+					}
+
+					@Override
+					public void onSuccess(ContextDescriptor context) {
+						syncShowVariables(agreementDraft, context);
+						syncSalaryTable(agreementDraft, context);
+						callback.onCalculateSucces(AgreementDraftObject.this);
+					}
+
+				});
+	}
+
+	private void syncShowVariables(AgreementDraft agreementDraft, ContextDescriptor systemContext) {
+		Set<String> systemVars = systemContext.getVariables();
+		SalaryTable salaryTable = agreementDraft.getSalaryTable();
+		for (String var : agreementDraft.getVariables())
+			if (salaryTable.contains(var) || !systemVars.contains(var))
+				shownVariables.add(var);
+	}
+
+	private void syncSalaryTable(AgreementDraft agreementDraft, ContextDescriptor systemContext) {
+		SalaryTable salaryTable = agreementDraft.getSalaryTable();
+		for ( String name : systemContext.getVariables() ){
+			if ( !salaryTable.contains(0, name) ) { 
+				VariableDescriptor descriptor = systemContext.get(name);
+				StringVariable var = new StringVariable();
+				var.setName(name);
+				var.setScope(Scope.SYSTEM);
+				var.setValue(descriptor.getValue());
+				var.setExpression(descriptor.getSyntax());
+				var.setStartDate(agreementDraft.getStartDate());
+				var.setEndDate(agreementDraft.getEndDate());
+				salaryTable.put(0, var);
+			}
+		}
+	}
+	
 	private AgreementDraft newAgreementDraft(AgreementDraft src,
 			List<Variable> vars) {
 		AgreementDraft draft = new AgreementDraft();
@@ -549,13 +620,25 @@ public class AgreementDraftObject {
 
 		for (Variable var : vars)
 			draft.addDraftVariable(0, var);
-		
+
 		return draft;
 	}
 
-	private static Variable getVariable(String name, List<Variable> list){
+	// -------------------------------------------------- TODO: Common factor ?
+
+	private Set<String> split(String str) {
+		LinkedHashSet<String> categories = new LinkedHashSet<String>();
+		for (String category : str.split("\\W*,\\W*")) {
+			if (category.length() > 0)
+				categories.add(category);
+		}
+		return categories;
+	}
+
+	// -------------------------------------------------------------------------
+	private static Variable getVariable(String name, List<Variable> list) {
 		for (Variable var : list)
-			if ( name.equals(var.getName()))
+			if (name.equals(var.getName()))
 				return var;
 		return null;
 	}
@@ -567,8 +650,6 @@ public class AgreementDraftObject {
 		}
 		return map;
 	}
-
-	// -------------------------------------------------- TODO: Common factor ?
 
 	private static <T> boolean sameDate(Date d1, Date d2) {
 		if (d1 == d2)
@@ -589,15 +670,6 @@ public class AgreementDraftObject {
 				return false;
 		}
 		return true;
-	}
-
-	private Set<String> split(String str) {
-		LinkedHashSet<String> categories = new LinkedHashSet<String>();
-		for (String category : str.split("\\W*,\\W*")) {
-			if (category.length() > 0)
-				categories.add(category);
-		}
-		return categories;
 	}
 
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,

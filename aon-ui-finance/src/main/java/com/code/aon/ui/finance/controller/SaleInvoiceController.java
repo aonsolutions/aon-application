@@ -92,7 +92,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
-		return (StringUtils.isEmpty(seriesCode)) ? true : SeriesUtil.isSeriesActive(seriesCode) && seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
+		return (StringUtils.isEmpty(seriesCode)) ? true : seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
 	}
 
 	public void onFindNextFreeNumber(ActionEvent event) throws ManagerBeanException {

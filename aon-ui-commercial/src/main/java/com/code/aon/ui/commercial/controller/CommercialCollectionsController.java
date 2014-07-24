@@ -25,6 +25,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.commercial.enumeration.DeduplicationType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -56,6 +57,8 @@ public class CommercialCollectionsController implements Serializable {
 	private List<SelectItem> activities;
 	
 	private List<SelectItem> offerDetailCommissionStatuses;
+	
+	private List<SelectItem> deduplicationTypes;
 
 	
 	/**
@@ -260,6 +263,19 @@ public class CommercialCollectionsController implements Serializable {
 			commissions.add(item);
 		}
 		return commissions;
+	}
+
+	public List<SelectItem> getDeduplicationTypes() {
+		if ( deduplicationTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			deduplicationTypes = new LinkedList<SelectItem>();
+			for( DeduplicationType type : DeduplicationType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				deduplicationTypes.add(item);
+			}			
+		}
+		return deduplicationTypes;
 	}
 	
 }

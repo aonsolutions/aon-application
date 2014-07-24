@@ -185,6 +185,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("N. Decl. Sustituida")
 	String replacedReceipt();
 
+	@DefaultMessage("Decl. complementaria")
+	String complementary();
+
+	@DefaultMessage("N. justificante anterior")
+	String complementaryReceipt();
+
 	@DefaultMessage("Confidencial")
 	String confidential();
 

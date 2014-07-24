@@ -3,6 +3,8 @@ package com.esferalia.aon.entity.hibernate.tools;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
@@ -20,11 +22,23 @@ import com.code.aon.common.enumeration.IStringEnum;
 
 public class AonExporter extends GenericExporter{
 
-	public static Map<String, String> map;
-	
 	public static String ENTITY_PACKAGE = "com.esferalia.aon.entity.master";
 	public static String CLASS_SUFFIX= "DB";
 	
+	public static Map<String, String> map;
+	public static Map<String, List<String>> propertyMap;
+	
+	public Map<String,String> getMap() {
+		return map;
+	}
+
+	public Map<String,List<String>> getPropertyMap() {
+		if (propertyMap == null) {
+			propertyMap = new HashMap<String, List<String>>();
+		}
+		return propertyMap;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected void exportPersistentClass(Map additionalContext, POJOClass pojo) {
@@ -125,10 +139,6 @@ public class AonExporter extends GenericExporter{
 		return null;
 	}
 
-	public Map<String,String> getMap() {
-		return map;
-	}
-
 	@SuppressWarnings("rawtypes")
 	public boolean isStringEnum(Property property) {
 		try {
@@ -149,9 +159,23 @@ public class AonExporter extends GenericExporter{
 	
 	public boolean isRecursiveProperty(POJOClass pojo, Property property) {
 		if (property.getType().isEntityType()) {
-			String propertyClass = ClassUtils.getShortClassName(property.getType().getName()) + CLASS_SUFFIX;
 			String pojoClass = pojo.getDeclarationName();
-			return StringUtils.equals(propertyClass, pojoClass);
+			String propertyClass = ClassUtils.getShortClassName(property.getType().getName()) + CLASS_SUFFIX;
+			if (StringUtils.equals(pojoClass, propertyClass)) {
+				return true;
+			} else {
+				List<String> propertyList = getPropertyMap().containsKey(pojoClass) ? getPropertyMap().get(pojoClass) : new LinkedList<String>();
+				propertyList.add(propertyClass);
+				getPropertyMap().put(pojoClass, propertyList);
+
+				if (getPropertyMap().containsKey(propertyClass)) {
+					for (String subProperty : getPropertyMap().get(propertyClass)) {
+						if (StringUtils.equals(pojoClass, subProperty)) {
+							return true;
+						}
+					}
+				}
+			}
 		}
 		return false;
 	}

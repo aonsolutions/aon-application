@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +44,7 @@ import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -177,7 +177,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		setModel(new ListDataModel(getBookingList()));
+		setModel(new SerializableListDataModel(getBookingList()));
 	}
 	
 	private void buildBookingList() throws AonSQLException {

@@ -54,6 +54,25 @@
 												<g:TextBox ui:field="phone2" visibleLength="9" maxLength="9"/>
 											</td>
 										</tr>
+										<tr>
+											<td colspan="2">
+												<g:CheckBox ui:field="complementary" text="{msg.complementary}"/>
+											</td>
+											<td>
+												<g:Label text="{msg.complementaryReceipt}"/>
+											</td>
+											<td>
+												<g:TextBox ui:field="complementaryReceipt" visibleLength="13" maxLength="13"/>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+										</tr>
 									</tbody>								
 								</table>
 							</div>

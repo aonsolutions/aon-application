@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="138"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -11,9 +11,8 @@
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
-	<parameter name="hotel" class="com.esferalia.aon.pms.Hotel" isForPrompting="false"/>
-	<parameter name="item" class="com.code.aon.product.Item" isForPrompting="false"/>
-	<parameter name="agency" class="com.code.aon.customer.Customer" isForPrompting="false"/>
+	<parameter name="items" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="agencies" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="fromDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="toDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="showCancelled" class="java.lang.Boolean"/>
@@ -166,7 +165,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-1" x="0" y="0" width="50" height="17" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{agency}!=null && $P{agency}.getId()!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{agencies}!=null && $P{agencies}!=""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -187,7 +186,7 @@
 			</line>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-1" x="50" y="0" width="340" height="17" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{agency}!=null && $P{agency}.getId()!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{agencies}!=null && $P{agencies}!=""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -198,11 +197,11 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{agency}.getRegistry().getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{agencies}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-1" x="0" y="17" width="50" height="17" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{item}!=null && $P{item}.getId()!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{items}!=null && $P{items}!=""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -217,7 +216,7 @@
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-1" x="50" y="17" width="340" height="17" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{item}!=null && $P{item}.getId()!=null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{items}!=null && $P{items}!=""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -228,7 +227,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{item}.getProduct().getCode() + " - " + $P{item}.getProduct().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{items}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-44" mode="Opaque" x="125" y="65" width="50" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
