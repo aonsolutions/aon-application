@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.ConstantEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
@@ -30,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
-import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -66,7 +63,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
-import com.sun.star.xforms.InvalidDataOnSubmitException;
 
 public class Employees extends ResizeComposite implements
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem>, ScrollHandler,

@@ -271,15 +271,6 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				addLeaveIt(dataPerson, start, end, exprCtx);
 				
 			}
-								
-			/*if(dataPerson.getContractId() == draft.getEmployee().getId()
-					&& DateUtils.compare(start, draft.getEndDate()) < 0
-					&& DateUtils.compare(end, draft.getStartDate()) > 0) {
-			
-				addLeaveIt(dataPerson, start, end, exprCtx);
-				
-				
-			}*/
 		}
 	}
 	
