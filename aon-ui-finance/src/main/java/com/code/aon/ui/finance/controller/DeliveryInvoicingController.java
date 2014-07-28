@@ -101,6 +101,7 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 		Series series = SeriesUtil.getSeries(controller.initSeries(false));
 		params.setInvoiceSeries(series);
 		params.setConfidential(isSeriesConfidential(series));
+		params.setInvoiceNumber(0);
 		params.setInvoiceDate(new Date());
 		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
 		setParams(params);
@@ -147,10 +148,14 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 		return 1;
 	}
 
-	private void updateSeries() {
+	private void updateSeries() throws ManagerBeanException {
 		Series series = getParams().getInvoiceSeries();
         if ( (series!=null) && StringUtils.isBlank(series.getCode()) ) {
+        	series = null; 
         	getParams().setInvoiceSeries(null);
+        }
+        if ( getParams().getInvoiceNumber() == 0 ) {
+        	getParams().setInvoiceNumber(obtainMaxNumber(series));
         }
 	}	
 	
