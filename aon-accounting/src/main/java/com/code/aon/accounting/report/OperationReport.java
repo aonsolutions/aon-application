@@ -1,11 +1,16 @@
 package com.code.aon.accounting.report;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-public class OperationReport {
+import com.code.aon.AonVersion;
+
+public class OperationReport implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Integer id;
 	private Date entryDate;

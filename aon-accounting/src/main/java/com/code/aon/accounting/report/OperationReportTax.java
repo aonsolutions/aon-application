@@ -1,6 +1,13 @@
 package com.code.aon.accounting.report;
 
-public class OperationReportTax {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class OperationReportTax implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String taxType;
 	private Double percentage;
 	private Double base;
