@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -308,7 +309,9 @@ public class TargetDeduplicationController extends DataScrollerState {
 		}
 	}
 	
-	public class DeduplicationValues {
+	public static class DeduplicationValues implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private String value;
 		
@@ -365,7 +368,9 @@ public class TargetDeduplicationController extends DataScrollerState {
 		
 	}
 
-	public class DeduplicationEntry {
+	public static class DeduplicationEntry implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Target target;
 		

@@ -1,5 +1,7 @@
 package com.code.aon.ui.commercial.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
@@ -43,7 +45,7 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 		OfferDetailController controller = (OfferDetailController)event.getController();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
 
-		controller.setLongDescription( offerDetail.getDescription().length()>64 ? true : false);
+		controller.setLongDescription( StringUtils.length(offerDetail.getDescription())>64);
 	}
 
 	private	Integer calculateNextLine(Offer offer) throws ManagerBeanException {

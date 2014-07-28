@@ -76,7 +76,7 @@ public class RegistryAddress extends RegistryAddressDB implements IAddress {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(GeoZone.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEO_ZONE_CODE), this.getZip().substring(0,2));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEO_ZONE_CODE), StringUtils.substring(this.getZip(), 0, 2));
 				List<ITransferObject> list = bean.getList(criteria);
 				if( !list.isEmpty() ){
 					this.setGeozone((GeoZone) list.get(0));
