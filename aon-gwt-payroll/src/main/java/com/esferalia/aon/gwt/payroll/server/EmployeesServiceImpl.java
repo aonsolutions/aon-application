@@ -3818,7 +3818,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractNotEnjoyedCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractNotEnjoyedCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;
@@ -3840,7 +3840,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractSettleCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSettleCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;
@@ -3862,7 +3862,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractExtraCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractExtraCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;
@@ -3886,7 +3886,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ctx.setListener(listener);
 		ctx.next();
 
-		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
 		draftCtx.setListener(listener);
 		return draftCtx;

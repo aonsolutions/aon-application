@@ -67,7 +67,11 @@ public class ITDataPerson implements Serializable, Comparable {
 	private Date leaveEndDate;
 	private int discharge_cause;
 	
-	public ITDataPerson() {		
+	private String regBase;
+	
+	public ITDataPerson() {	
+		
+		setRegBase(null);
 		
 	}	
 
@@ -129,6 +133,14 @@ public class ITDataPerson implements Serializable, Comparable {
 	
 	public DischargeCause getDischargeCause() {
 		return this.discharge;
+	}
+	
+	public void setRegBase(String regBase) {
+		this.regBase = regBase;
+	}
+	
+	public String getRegBase() {
+		return this.regBase;
 	}
 
 	public int compareTo(Object o1) {		

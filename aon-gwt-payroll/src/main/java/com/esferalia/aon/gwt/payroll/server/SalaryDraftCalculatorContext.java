@@ -18,6 +18,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -26,7 +27,6 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
@@ -34,7 +34,8 @@ import com.esferalia.aon.payroll.calculator.HierarchyIterator;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -50,7 +51,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
-public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorContext>
+public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorContext>
 		extends DelegateContractSalaryCalculatorContext<T> {
 
 	static class DraftPayment extends ContractPayment {
@@ -207,6 +208,8 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		super(ctx);
 		this.draft = draft;
 		loadDraftContext(getExpressionContext());
+		loadDraftLeaves(getExpressionContext());
+	
 	}
 
 	protected void loadDraftContext(ExpressionContext exprCtx)
@@ -242,8 +245,66 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 			 */
 		}
 
-	}
+	}	
 
+	protected void loadDraftLeaves(ExpressionContext exprCtx)
+			throws ExpressionException{
+		
+		
+		Date ctxStartDate = resetTime(ctx.getStartDate());
+		Date ctxEndDate = resetTime(ctx.getEndDate());
+		
+		List<ITDataPerson> drafts = draft.getDraftLeaveIts();
+		
+		for(ITDataPerson dataPerson : drafts) {						
+						
+			Date leaveStartDate = resetTime(dataPerson.getLeaveStartDate());
+			Date leaveEndDate = resetTime(dataPerson.getLeaveEndDate());
+						
+			Date start = Period.max(ctxStartDate, leaveStartDate);
+			Date end = Period.min(ctxEndDate, leaveEndDate);
+			
+			if(dataPerson.getContractId() == draft.getEmployee().getId()
+					&& DateUtils.compare(start, dataPerson.getLeaveEndDate()) < 0
+					&& DateUtils.compare(end, dataPerson.getLeaveStartDate()) > 0) {
+				
+				addLeaveIt(dataPerson, start, end, exprCtx);
+				
+			}
+								
+			/*if(dataPerson.getContractId() == draft.getEmployee().getId()
+					&& DateUtils.compare(start, draft.getEndDate()) < 0
+					&& DateUtils.compare(end, draft.getStartDate()) > 0) {
+			
+				addLeaveIt(dataPerson, start, end, exprCtx);
+				
+				
+			}*/
+		}
+	}
+	
+	private void addLeaveIt (ITDataPerson person, Date startDate, Date endDate, ExpressionContext exprCtx) 
+			throws ExpressionException {
+			
+	//	long days = DateUtils.getDaysBetween(startDate, (endDate == null ? new Date()
+	//			: endDate)) + 1;
+		
+		long days = 0;
+		
+		if(DateUtils.compare(person.getLeaveStartDate(), ctx.getStartDate()) <  0) {
+			days = DateUtils.getDaysBetween(person.getLeaveStartDate(), 
+					DateUtils.getPrevDay(ctx.getStartDate()));
+		}
+		
+		LeaveType type = getLeaveType(person.getType());
+		
+		getCtx().loadContractLeave(startDate, endDate, days, type, person.getRegBase(), exprCtx);		
+	}
+	
+	private static LeaveType getLeaveType(ITDataPerson.Type type) {
+		return type != null ? LeaveType.values()[type.ordinal()] : null;
+	}
+	
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {

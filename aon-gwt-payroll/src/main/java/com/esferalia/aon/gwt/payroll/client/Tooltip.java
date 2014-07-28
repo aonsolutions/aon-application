@@ -11,13 +11,11 @@ import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -141,23 +139,6 @@ public class Tooltip extends DecoratedPopupPanel {
 		
 		loadTypeListBox();
 		setAutoHideEnabled(true);
-	}
-
-	protected void onPreviewNativeEvent(final NativePreviewEvent event) {
-		super.onPreviewNativeEvent(event);
-		switch (event.getTypeInt()) {
-
-		case Event.ONKEYDOWN:
-
-			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-				hide();
-			}
-
-			break;
-
-		default:
-			break;
-		}
 	}
 
 	public void showContractActiveTooltip(final int clientX, final int clientY) {

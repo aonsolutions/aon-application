@@ -367,7 +367,7 @@ public class SQLContractSalaryCalculatorContext implements
 				@Override
 				public void loadContractLeave(Date leaveStart, Date leaveEnd,
 						long parentDays, LeaveType type, Double dailyRegBase,
-						ExpressionContext exprCtx) throws SQLException,
+						ExpressionContext exprCtx) throws 
 						ExpressionException {
 
 					final long leaveDays = CommonUtil.getDaysBetweenDates(
@@ -743,6 +743,7 @@ public class SQLContractSalaryCalculatorContext implements
 				this.endDate);
 
 	}
+
 
 	@Override
 	public SalaryType getSalaryType() {
@@ -1255,6 +1256,20 @@ public class SQLContractSalaryCalculatorContext implements
 				contractCriteria);
 	}
 
+	public void loadContractLeave(Date leaveStart, Date leaveEnd,
+			long parentDays, LeaveType type, Double dailyRegBase,
+			ExpressionContext exprCtx) throws ExpressionException {
+		leaveLoader.loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+				dailyRegBase, exprCtx);
+	}
+	
+	public void loadContractLeave(Date leaveStart, Date leaveEnd,
+			long parentDays, LeaveType type, String dailyRegBase,
+			ExpressionContext exprCtx) throws ExpressionException {
+		leaveLoader.loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+				dailyRegBase, exprCtx);
+	}
+
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double x) {
 
 		Criteria contractCriteria = new Criteria();
@@ -1400,7 +1415,6 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		}
 		return payments;
-
 	}
 
 	private Collection<IContractPayment> getSSRegimePayments()
@@ -1442,7 +1456,6 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		}
 		return deductions;
-
 	}
 
 	private boolean filter(ISystemCost systemCost, CCCType cccType) {
@@ -2646,7 +2659,7 @@ public class SQLContractSalaryCalculatorContext implements
 		try {
 			cleaveStmt.setInt(1, getId());
 			rs = cleaveStmt.executeQuery();
-			leaveLoader.loadContractLevae(rs, ctx);
+			leaveLoader.loadContractLeave(rs, ctx);
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -2745,11 +2758,7 @@ public class SQLContractSalaryCalculatorContext implements
 			SalaryType type, Integer contractID) throws SQLException,
 			ExpressionException, SalaryException {
 		Date startDate = CommonUtil.getMonthFirstDay(date);
-
-		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(date);
-		endCalendar.add(Calendar.DAY_OF_MONTH, -1);
-		Date endDate = endCalendar.getTime();
+		Date endDate = CommonUtil.getMonthLastDay(date);
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "."
