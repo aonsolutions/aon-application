@@ -405,7 +405,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 		}
 
-		if (reservationInvoiceTo.isEarlyCheckOut() && reservationInvoiceTo.getPenaltyAmount() > 0) {
+		if (reservationInvoiceTo.isEarlyCheckOut()) {
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());
