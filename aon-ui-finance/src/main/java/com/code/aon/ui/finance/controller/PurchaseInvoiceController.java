@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.income.IncomeInvoicingEngine;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
@@ -47,6 +49,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 	private RegistryValidationManager vm;
 	private IncomeTransferManager incomeTransferManager;
 	private boolean showIncomeTransferWindow;
+	private boolean showIncomeFilterWindow;
 
 	public PurchaseInvoiceController() {
 		setInvoiceAddressControllerName(PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -106,7 +109,19 @@ public class PurchaseInvoiceController extends InvoiceController {
 		this.showIncomeTransferWindow = value;
 	}
 
+	public boolean isShowIncomeFilterWindow() {
+		return showIncomeFilterWindow;
+	}
+
+	public void setShowIncomeFilterWindow(boolean showIncomeFilterWindow) {
+		this.showIncomeFilterWindow = showIncomeFilterWindow;
+	}
+
 	public void onIncomeTransferShow(ActionEvent event) throws ManagerBeanException {
+		getIncomeTransferManager().setFilterParams(null);
+		loadIncomeTransferModel();
+	}
+	private void loadIncomeTransferModel() throws ManagerBeanException {
 		List<ITransferObject> invoicedIncomeList = new LinkedList<ITransferObject>();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -124,7 +139,7 @@ public class PurchaseInvoiceController extends InvoiceController {
 			}
 		}
 		getIncomeTransferManager().setInvoicedIncomeList(invoicedIncomeList);
-
+		
 		List<ITransferObject> incomeList = new LinkedList<ITransferObject>();
 		incomeList.addAll(invoicedIncomeList);
 		if (!isReadOnly()) {
@@ -133,11 +148,26 @@ public class PurchaseInvoiceController extends InvoiceController {
 			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_SUPPLIER_ID), getInvoice().getRegistry().getId());
 			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_STATUS), IncomeStatus.PENDING);
 			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+			if(getIncomeTransferManager().getFilterParams().getFromDate()!=null){
+				criteria.addGreaterThanOrEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_ISSUE_TIME), getIncomeTransferManager().getFilterParams().getFromDate());
+			}
+			if(getIncomeTransferManager().getFilterParams().getToDate()!=null){
+				criteria.addLessThanOrEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_ISSUE_TIME), getIncomeTransferManager().getFilterParams().getToDate());
+			}
+			if(StringUtils.isNotBlank(getIncomeTransferManager().getFilterParams().getReferenceCode())){
+				criteria.addExpression(ExpressionUtilities.getLikeExpression(
+						incomeBean.getFieldName(IEntityAlias.INCOME_REFERENCE_CODE), "%" + getIncomeTransferManager().getFilterParams().getReferenceCode() + "%"));
+			}
 			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_ISSUE_TIME));
 			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_REFERENCE_CODE));
 			incomeList.addAll(incomeBean.getList(criteria));
 		}
 		getIncomeTransferManager().setIncomeList(incomeList);
+	}
+	
+	public void onFilterTransferModel(ActionEvent event) throws ManagerBeanException {
+		getIncomeTransferManager().clearCheckedIncome();
+		loadIncomeTransferModel();
 	}
 
 	public void onIncomeTransfer(ActionEvent event) throws ManagerBeanException {

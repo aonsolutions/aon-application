@@ -114,7 +114,8 @@ public class IncomeManager {
 		}
 
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + purchaseDetail.getTransfered(), 3));
+		purchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getId());
+		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + incomeDetail.getQuantity(), 3));
 		purchaseDetail.setStatus((purchaseDetail.getQuantity() > purchaseDetail.getDelivered()) ? PurchaseDetailStatus.PARTIAL_SETTLED : PurchaseDetailStatus.SETTLED);
 		purchaseDetailBean.update(purchaseDetail);
 
