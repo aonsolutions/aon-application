@@ -248,15 +248,14 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}	
 
 	protected void loadDraftLeaves(ExpressionContext exprCtx)
-			throws ExpressionException{
-		
-		
+			throws ExpressionException{		
+
 		Date ctxStartDate = resetTime(ctx.getStartDate());
 		Date ctxEndDate = resetTime(ctx.getEndDate());
 		
 		List<ITDataPerson> drafts = draft.getDraftLeaveIts();
 		
-		for(ITDataPerson dataPerson : drafts) {						
+		for(ITDataPerson dataPerson : drafts) {			
 						
 			Date leaveStartDate = resetTime(dataPerson.getLeaveStartDate());
 			Date leaveEndDate = resetTime(dataPerson.getLeaveEndDate());
@@ -276,19 +275,17 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	
 	private void addLeaveIt (ITDataPerson person, Date startDate, Date endDate, ExpressionContext exprCtx) 
 			throws ExpressionException {
-			
-	//	long days = DateUtils.getDaysBetween(startDate, (endDate == null ? new Date()
-	//			: endDate)) + 1;
+					
+		Date leaveStartDate = resetTime(person.getLeaveStartDate());
+		Date preDayDraftStart = resetTime(DateUtils.getPrevDay(ctx.getStartDate()));
 		
-		long days = 0;
+		long days = DateUtils.getDaysBetween(leaveStartDate, preDayDraftStart);		
 		
-		if(DateUtils.compare(person.getLeaveStartDate(), ctx.getStartDate()) <  0) {
-			days = DateUtils.getDaysBetween(person.getLeaveStartDate(), 
-					DateUtils.getPrevDay(ctx.getStartDate()));
+		if(days < 0) {
+			days = 0;
 		}
 		
 		LeaveType type = getLeaveType(person.getType());
-		
 		getCtx().loadContractLeave(startDate, endDate, days, type, person.getRegBase(), exprCtx);		
 	}
 	
