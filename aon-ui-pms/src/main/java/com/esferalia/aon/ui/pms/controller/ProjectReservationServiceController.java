@@ -1,5 +1,9 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_END_DATE;
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +15,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -150,7 +156,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 			setServiceReservationRoom(null);
 			setServiceFromDate(reservationService.getProjectReservation().getStartDate());
-			setServiceToDate(reservationService.getProjectReservation().getEndDate());
+			setServiceToDate(DateUtils.addDays(reservationService.getProjectReservation().getEndDate(), -1));
 			setServiceQuantity(0);
 			setServicePrice(0);
 		} else {
@@ -199,6 +205,15 @@ public class ProjectReservationServiceController extends LinesController {
 			}
 		}
 		return reservationRoomList;
+	}
+
+	public List<SelectItem> getReservationDates() {
+		List<SelectItem> reservationDates = new LinkedList<SelectItem>();
+		ProjectReservation reservation = (ProjectReservation)getMasterController().getTo();
+		for (Date date = reservation.getStartDate(); date.before(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
+			reservationDates.add(new SelectItem(date, new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN)).format(date)));
+		}
+		return reservationDates;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
@@ -255,6 +270,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 	public void onAcceptReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
+		validateServiceDates();
 
 		ReservationUtils reservationUtils = new ReservationUtils();
 		boolean isNew = isNew();
@@ -275,6 +291,14 @@ public class ProjectReservationServiceController extends LinesController {
 		}
 
 		refreshReservationTotals();
+	}
+
+	private void validateServiceDates() {
+		if (getServiceFromDate().after(getServiceToDate())) {
+			String message = AonUtil.getMessage(CONFIG_INVALID_END_DATE);
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}
 	}
 
 	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {

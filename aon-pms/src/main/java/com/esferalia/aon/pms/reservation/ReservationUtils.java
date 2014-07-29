@@ -289,7 +289,7 @@ public class ReservationUtils implements IReservationConstants {
     													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
     	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
     	Date effectiveDate = fromDate;
-		while (effectiveDate.before(toDate)) {
+		while (!effectiveDate.after(toDate)) {
 			ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setEffectiveDate(effectiveDate);
