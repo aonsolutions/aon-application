@@ -72,12 +72,12 @@
 				</aon:outputText>
 				<aon:inputText id="ProposalDetail_quantity" rendered="#{formEdit}"
 					value="#{to.quantity}" required="true">
-						<f:validateDoubleRange minimum="0.0" />
+						<f:validateDoubleRange minimum="0.1" />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ProposalDetail_quantity-New" rendered="#{formNew}"
 						value="#{controller.to.quantity}" required="true">
-							<f:validateDoubleRange minimum="0.0" />
+							<f:validateDoubleRange minimum="0.1" />
 					</aon:inputText>
 				</f:facet>
 			</aon:column>
