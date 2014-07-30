@@ -507,8 +507,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail purchaseDetail = iterator.next();
-			if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() > 0)
-					|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() < 0)) {
+			if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0)
+					|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
 				IncomeManager incomeManager = new IncomeManager();
 				incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
 			}
