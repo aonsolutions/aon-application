@@ -35,6 +35,7 @@ public interface ICommonMessages {
 	String DATE_TO = "aon_date_to";
 	String DATE_PATTERN = "aon_date_pattern";
 	String DATE2_PATTERN = "aon_date2_pattern";
+	String DATE3_PATTERN = "aon_date3_pattern";
 	String DAY = "aon_day";
 	String DECIMAL_2_PATTERN = "aon_decimal2_pattern";
 	String DOCUMENT = "aon_document";
