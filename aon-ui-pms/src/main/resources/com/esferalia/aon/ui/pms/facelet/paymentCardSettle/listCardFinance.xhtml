@@ -53,16 +53,6 @@
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
-					</f:facet>
-					<aon:outputText value="#{to.financeDate}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-				</aon:column>
-
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_invoice_number}" />
@@ -88,99 +78,6 @@
 							<f:param value="#{to.rectificationInvoiceCode}" />
 						</aon:outputFormat>
 					</rich:toolTip>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-80">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.finance_payMethod}" />
-					</f:facet>
-					<aon:outputText value="#{to.payMethod}">
-						<aon:abbreviateConverter maxWidth="15" />
-					</aon:outputText>
-					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
-						rendered="#{to.payMethodLength > 15}">
-						<aon:outputText value="#{to.payMethod}" />
-					</rich:toolTip>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_reservation}" />
-					</f:facet>
-					<aon:commandLink id="reservationLink" immediate="true" 
-						styleClass="aon-dataTable-link"
-						title="#{bundle.aon_go}"
-						rendered="#{to.reservationId != null}" 
-						actionListener="#{paymentCardSettle.onLoadReservation}"
-						action="reservation_form">
-						<aon:outputText value="#{to.reservationId}" />
-					</aon:commandLink>
-					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout">
-						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
-							<aon:outputText value="#{bundle.report_checkin}:" />
-							<aon:outputText value="#{to.reservationStartDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-
-							<aon:outputText value="#{bundle.report_checkout}:" />
-							<aon:outputText value="#{to.reservationEndDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:panelGrid>
-					</rich:toolTip>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.report_reservation_code}" />
-					</f:facet>
-					<aon:outputText value="#{to.reservationCode}">
-						<aon:abbreviateConverter maxWidth="15" />
-					</aon:outputText>
-					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
-						rendered="#{to.reservationCodeLength > 15}">
-						<aon:outputText value="#{to.reservationCode}" />
-					</rich:toolTip>
-				</aon:column>
-
-				<c:if test="#{paymentCardSettle.agenciesSize > 1}">
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.report_agency}" />
-						</f:facet>
-						<aon:outputText value="#{to.agency}" />
-					</aon:column>
-				</c:if>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_module_hotel}" />
-					</f:facet>
-					<aon:outputText value="#{to.reservationHotel}">
-						<aon:abbreviateConverter maxWidth="#{paymentCardSettle.agenciesSize > 1 ? 20 : 30}" />
-					</aon:outputText>
-					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
-						rendered="#{paymentCardSettle.agenciesSize > 1 ? to.reservationHotelLength > 20 : to.reservationHotelLength > 30}">
-						<aon:outputText value="#{to.reservationHotel}" />
-					</rich:toolTip>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.report_guest}" />
-					</f:facet>
-					<aon:outputText value="#{to.reservationGuest}">
-						<aon:abbreviateConverter maxWidth="#{paymentCardSettle.agenciesSize > 1 ? 20 : 30}" />
-					</aon:outputText>
-					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
-						rendered="#{paymentCardSettle.agenciesSize > 1 ? to.reservationGuestLength > 20 : to.reservationGuestLength > 30}">
-						<aon:outputText value="#{to.reservationGuest}" />
-					</rich:toolTip>
-					<f:facet name="footer">
-						<aon:outputText value="#{bundle.stat_total}" />
-					</f:facet>
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
@@ -229,6 +126,106 @@
 							</aon:outputText>
 						</aon:div>
 					</f:facet>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_invoice_date_abbrv}" />
+					</f:facet>
+					<aon:outputText value="#{to.invoiceDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.report_reservation_code}" />
+					</f:facet>
+					<aon:outputText value="#{to.reservationCode}">
+						<aon:abbreviateConverter maxWidth="15" />
+					</aon:outputText>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
+						rendered="#{to.reservationCodeLength > 15}">
+						<aon:outputText value="#{to.reservationCode}" />
+					</rich:toolTip>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_reservation}" />
+					</f:facet>
+					<aon:commandLink id="reservationLink" immediate="true" 
+						styleClass="aon-dataTable-link"
+						title="#{bundle.aon_go}"
+						rendered="#{to.reservationId != null}" 
+						actionListener="#{paymentCardSettle.onLoadReservation}"
+						action="reservation_form">
+						<aon:outputText value="#{to.reservationId}" />
+					</aon:commandLink>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout">
+						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
+							<aon:outputText value="#{bundle.report_checkin}:" />
+							<aon:outputText value="#{to.reservationStartDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+
+							<aon:outputText value="#{bundle.report_checkout}:" />
+							<aon:outputText value="#{to.reservationEndDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:panelGrid>
+					</rich:toolTip>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-80">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_payMethod}" />
+					</f:facet>
+					<aon:outputText value="#{to.payMethod}">
+						<aon:abbreviateConverter maxWidth="15" />
+					</aon:outputText>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
+						rendered="#{to.payMethodLength > 15}">
+						<aon:outputText value="#{to.payMethod}" />
+					</rich:toolTip>
+				</aon:column>
+
+				<c:if test="#{paymentCardSettle.agenciesSize > 1}">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.report_agency}" />
+						</f:facet>
+						<aon:outputText value="#{to.agency}" />
+					</aon:column>
+				</c:if>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_module_hotel}" />
+					</f:facet>
+					<aon:outputText value="#{to.reservationHotel}">
+						<aon:abbreviateConverter maxWidth="#{paymentCardSettle.agenciesSize > 1 ? 20 : 30}" />
+					</aon:outputText>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
+						rendered="#{paymentCardSettle.agenciesSize > 1 ? to.reservationHotelLength > 20 : to.reservationHotelLength > 30}">
+						<aon:outputText value="#{to.reservationHotel}" />
+					</rich:toolTip>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.report_guest}" />
+					</f:facet>
+					<aon:outputText value="#{to.reservationGuest}">
+						<aon:abbreviateConverter maxWidth="#{paymentCardSettle.agenciesSize > 1 ? 20 : 30}" />
+					</aon:outputText>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout"
+						rendered="#{paymentCardSettle.agenciesSize > 1 ? to.reservationGuestLength > 20 : to.reservationGuestLength > 30}">
+						<aon:outputText value="#{to.reservationGuest}" />
+					</rich:toolTip>
 				</aon:column>
 			
 			</ui:define>
