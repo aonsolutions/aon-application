@@ -201,7 +201,8 @@ public class PurchaseTransferManager {
 		}
 		if( purchaseDetail.getTransfered()!=0 && !detailChecks.contains(purchaseDetail)){
 			detailChecks.add(purchaseDetail);
-		} else if( purchaseDetail.getTransfered()==0 && detailChecks.contains(purchaseDetail)){
+		} else if(Math.signum(purchaseDetail.getPendingQuantity()) != Math.signum(purchaseDetail.getTransfered()) 
+				&& purchaseDetail.getTransfered()!=0 && detailChecks.contains(purchaseDetail)){
 			detailChecks.remove(purchaseDetail);
 		}
 		purchaseDetail.setForcePendingQuantityCancel(false);
