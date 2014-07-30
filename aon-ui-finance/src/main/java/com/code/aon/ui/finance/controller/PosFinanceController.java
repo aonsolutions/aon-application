@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.DATE3_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -100,8 +101,8 @@ public class PosFinanceController extends FinanceListController implements IFina
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
 			String id = StringUtils.leftPad("(" + fBatch.getId() + ")", 6, "0");
-			String amount = new DecimalFormat("000,000.00\u20AC").format(fBatch.getFinanceBatchTotalAmount());
-			SelectItem item = new SelectItem(fBatch, id + " " + amount + " " + fBatch.getDescription());
+			String amount = new DecimalFormat(AonUtil.getMessage(PRICE_PATTERN)).format(fBatch.getFinanceBatchTotalAmount());
+			SelectItem item = new SelectItem(fBatch, id + " - " + fBatch.getDescription() + StringUtils.leftPad(amount, 50 - fBatch.getDescription().length()-amount.length(), "·") + "EUR.");
 			fBatchList.add(item);
 		}
 		return fBatchList;
