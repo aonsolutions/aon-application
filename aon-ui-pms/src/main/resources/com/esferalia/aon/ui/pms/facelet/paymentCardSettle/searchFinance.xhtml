@@ -71,7 +71,8 @@
 							styleClass="aon-finding-toolbar-item aon-search-minus"
 							value="&#160;" immediate="true"
 							actionListener="#{paymentCardSettle.onRemoveReferenceCode}"
-							reRender="FinanceSearchPanel">
+							reRender="FinanceSearchPanel"
+							focus="PaymentCardFinance_invoiceReferenceCode">
 							<f:param name="referenceCodeIdx" value="#{referenceCodeIdx}" />
 						</aon:commandButton>
 					</aon:panelGrid>
@@ -84,14 +85,16 @@
 			<aon:inputText id="PaymentCardFinance_invoiceReferenceCode"
 				value="#{paymentCardSettle.referenceCode}" size="23" >
 				<a4j:support event="onkeyup" ignoreDumpResponses="true" requestDelay="500" 
-					reRender="PaymentCardFinance_invoiceReferenceCode-Div" />
+					reRender="PaymentCardFinance_invoiceReferenceCode-Div"
+					focus="PaymentCardFinance_invoiceReferenceCode" />
 			</aon:inputText>
 			<aon:commandButton id="PaymentCardFinance_invoiceReferenceCode-add"
 				styleClass="aon-finding-toolbar-item aon-search-add"
 				value="&#160;" immediate="true"
 				rendered="#{not empty paymentCardSettle.referenceCode}"
 				actionListener="#{paymentCardSettle.onAddReferenceCode}"
-				reRender="FinanceSearchPanel" />
+				reRender="FinanceSearchPanel"
+				focus="PaymentCardFinance_invoiceReferenceCode" />
 		</aon:div>
 
 		<aon:outputLabel value="#{bundle.finance_invoice_date}" />
