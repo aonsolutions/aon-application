@@ -7,7 +7,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+	<aon:panelGrid id="FinanceSearchPanel"
+		columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 
 		<c:if test="#{!skipAgency}">
 			<aon:outputLabel value="&#160;" rendered="#{paymentCardSettle.agenciesSize > 0}" />
@@ -58,11 +59,40 @@
 			<f:selectItem itemLabel=" - " itemValue="#{null}" />
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
-
+		
+		<aon:outputLabel value="&#160;" rendered="#{paymentCardSettle.referenceCodesSize > 0}" />
+		<aon:div id="referencesCodesDiv" rendered="#{paymentCardSettle.referenceCodesSize > 0}">
+			<a4j:repeat value="#{paymentCardSettle.referenceCodes}" var="referenceCode" rowKeyVar="referenceCodeIdx">
+				<aon:div>
+					<aon:panelGrid columns="2" 	
+						columnClasses="aon-width-150,aon-width-auto">
+						<aon:outputText value="#{referenceCode}" />
+						<aon:commandButton id="PaymentCardFinance_invoiceReferenceCode-remove"
+							styleClass="aon-finding-toolbar-item aon-search-minus"
+							value="&#160;" immediate="true"
+							actionListener="#{paymentCardSettle.onRemoveReferenceCode}"
+							reRender="FinanceSearchPanel">
+							<f:param name="referenceCodeIdx" value="#{referenceCodeIdx}" />
+						</aon:commandButton>
+					</aon:panelGrid>
+				</aon:div>						
+			</a4j:repeat>
+		</aon:div>
 		<aon:outputLabel for="PaymentCardFinance_invoiceReferenceCode" 
 			value="#{bundle.aon_invoice_number}" />
-		<aon:inputText id="PaymentCardFinance_invoiceReferenceCode"
-			value="#{paymentCardSettle.referenceCode}" size="20" />
+		<aon:div id="PaymentCardFinance_invoiceReferenceCode-Div">
+			<aon:inputText id="PaymentCardFinance_invoiceReferenceCode"
+				value="#{paymentCardSettle.referenceCode}" size="23" >
+				<a4j:support event="onkeyup" ignoreDumpResponses="true" requestDelay="500" 
+					reRender="PaymentCardFinance_invoiceReferenceCode-Div" />
+			</aon:inputText>
+			<aon:commandButton id="PaymentCardFinance_invoiceReferenceCode-add"
+				styleClass="aon-finding-toolbar-item aon-search-add"
+				value="&#160;" immediate="true"
+				rendered="#{not empty paymentCardSettle.referenceCode}"
+				actionListener="#{paymentCardSettle.onAddReferenceCode}"
+				reRender="FinanceSearchPanel" />
+		</aon:div>
 
 		<aon:outputLabel value="#{bundle.finance_invoice_date}" />
 		<aon:div>
