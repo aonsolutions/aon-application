@@ -41,7 +41,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
 			dt.setTrackingDuration(new Double(1));
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
 			if (taskHolder == null) {
-				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+				String msg = "No existe un operario vinculado a la cuenta de acceso. Cree un operario y vincule la cuenta de acceso.";
 				throw new ControllerListenerException(msg);
 			}
 			dt.setTaskHolder( getGroupwareUtils().getCurrentTaskHolder() );
@@ -74,7 +74,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     			if (taskHolder == null) {
     				// No va a encontrar nada.
     				trackingController.getCriteria().addNullExpression(dailyTrackingBean.getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID));
-    				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+    				String msg = "No existe un operario vinculado a la cuenta de acceso. Cree un operario y vincule la cuenta de acceso.";
     				AonUtil.addErrorMessage(msg);
     			} else {
     				trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID), taskHolder.getId() );	

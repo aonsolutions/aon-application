@@ -205,7 +205,7 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 				// No va a encontrar nada.
 				criteria.addNullExpression(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID);
 				
-				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+				String msg = "No existe un operario vinculado a la cuenta de acceso. Cree un operario y vincule la cuenta de acceso.";
 				AonUtil.addErrorMessage(msg);
 				
 			} else {
