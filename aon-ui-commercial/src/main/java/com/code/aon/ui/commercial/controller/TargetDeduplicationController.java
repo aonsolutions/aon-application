@@ -1,31 +1,37 @@
 package com.code.aon.ui.commercial.controller;
 
-import java.util.Arrays;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.StopWatch;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
-import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.commercial.enumeration.DeduplicationType;
 import com.code.aon.ui.form.BasicController;
@@ -41,10 +47,32 @@ public class TargetDeduplicationController extends DataScrollerState {
 	private static final String MEDIA_VALUE = "Target.registry.medias.value";
 	
 	private DeduplicationType type;
+	private boolean showProgressBarWindow;
+	private boolean enabledProgressBar;
+	private int progressValue;
+	private int maxProgressValue;
+	private List<Integer> duplicateTargets;
+	private List<DeduplicationValues> deduplicationList;
+	
+	private Connection connection;
+	private DSLContext context;
 	
 	public void onEditSearch( ActionEvent event ) {
 		getTargetController().onEditSearch(event);
+		reset();
+	}
+	
+	private void reset() {
+		setShowProgressBarWindow(false);
 		setType(null);
+	}
+	
+	private void finish() {
+		if ( this.enabledProgressBar ) {
+			setModel(new ListDataModel(deduplicationList));		
+			this.progressValue = this.maxProgressValue+1;
+			this.enabledProgressBar = false;			
+		}
 	}
 
 	public DeduplicationType getType() {
@@ -55,14 +83,55 @@ public class TargetDeduplicationController extends DataScrollerState {
 		this.type = type;
 	}
 	
+	public boolean isShowProgressBarWindow() {
+		return showProgressBarWindow;
+	}
+
+	public void setShowProgressBarWindow(boolean showProgressBarWindow) {
+		this.showProgressBarWindow = showProgressBarWindow;
+	}
+	
+	public int getProgressValue() {
+		return progressValue;
+	}
+
+	public int getMaxProgressValue() {
+		return maxProgressValue;
+	}
+	
+	public boolean isEnabledProgressBar() {
+		return enabledProgressBar;
+	}
+	
+	public long getProgressValuePercent() {
+		long value = 0;
+		if ( this.maxProgressValue > 0 && this.progressValue > 0 ) {
+			value = Math.round((this.progressValue * 100.0)/this.maxProgressValue);
+		}
+		return value;
+	}
+	
+	public int getNumberOfDuplicates() {
+		return this.duplicateTargets.size();
+	}
+
+	public void onStopSearch( ActionEvent event ) {
+		setShowProgressBarWindow(false);
+		finish();
+	}
+	
+	public void onCloseProgressBarWindow( ActionEvent event ) {
+		setShowProgressBarWindow(false);
+	}
+
 	private TargetController getTargetController() {
 		return (TargetController) AonUtil.getRegisteredBean(ICommercialConstants.TARGET_CONTROLLER_NAME);
 	}
 	
-	private Criteria getTargetCriteria( TargetController controller, ActionEvent event ) throws ManagerBeanException {	
+	private Criteria getTargetCriteria( TargetController controller ) throws ManagerBeanException {	
 		Integer pageLimit = controller.getPageLimit();
 		controller.setPageLimit(0);
-		controller.onSearch(event);
+		controller.onSearch(null);
 		controller.setPageLimit(pageLimit);
 		Criteria criteria = controller.getCriteria();
 		criteria.setOrderByList(null);
@@ -88,10 +157,12 @@ public class TargetDeduplicationController extends DataScrollerState {
 				criteria.addEqualExpression(MEDIA_TYPE, MediaType.EMAIL);
 				criteria.addOrder(MEDIA_VALUE);
 				break;
-			case TELEPHONE:
-				Expression expr1 = ExpressionUtilities.getEqualExpression(MEDIA_TYPE, MediaType.FIXED_PHONE);
-				Expression expr2 = ExpressionUtilities.getEqualExpression(MEDIA_TYPE, MediaType.CELLULAR);
-				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			case FIXED_PHONE:
+				criteria.addEqualExpression(MEDIA_TYPE, MediaType.FIXED_PHONE);
+				criteria.addOrder(MEDIA_VALUE);
+				break;
+			case CELLULAR:
+				criteria.addEqualExpression(MEDIA_TYPE, MediaType.CELLULAR);
 				criteria.addOrder(MEDIA_VALUE);
 				break;
 		}
@@ -120,110 +191,140 @@ public class TargetDeduplicationController extends DataScrollerState {
 				criteria.addEqualExpression(MEDIA_TYPE, MediaType.EMAIL);
 				criteria.addEqualExpression(MEDIA_VALUE, value);
 				break;
-			case TELEPHONE:
-				Expression expr1 = ExpressionUtilities.getEqualExpression(MEDIA_TYPE, MediaType.FIXED_PHONE);
-				Expression expr2 = ExpressionUtilities.getEqualExpression(MEDIA_TYPE, MediaType.CELLULAR);
-				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));				
+			case FIXED_PHONE:
+				criteria.addEqualExpression(MEDIA_TYPE, MediaType.FIXED_PHONE);
+				criteria.addEqualExpression(MEDIA_VALUE, value);
+				break;
+			case CELLULAR:
+				criteria.addEqualExpression(MEDIA_TYPE, MediaType.CELLULAR);				
 				criteria.addEqualExpression(MEDIA_VALUE, value);
 				break;
 		}
 		return criteria;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private String[] getRegistryMedias(Registry registry, MediaType ... types) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
-		if ( types.length == 1 ) {
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), types[0]);	
-		} else {
-			criteria.addInExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), Arrays.asList(types));
-		}
-		ProjectionList pl = new ProjectionList(Projection.property(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_VALUE)));
-		List<String> list = bean.getList(pl, criteria);
-		if (!list.isEmpty()){
-			return list.toArray(new String[list.size()]);
-		}
-		return null;
+	private String[] getRegistryMedias(Integer id, MediaType type) {
+		String[] result = getContext().select(RMEDIA.VALUE).from(RMEDIA)
+				.where(RMEDIA.REGISTRY.eq(id), RMEDIA.MEDIA.eq((byte)type.ordinal()))
+				.fetchArray(RMEDIA.VALUE);
+		return result;
 	}	
 	
-	private String[] getValues( Registry registry ) throws ManagerBeanException {
+	private String getRegistryDocument( Integer id ) {
+		return getContext().select(REGISTRY.DOCUMENT).from(REGISTRY)
+				.where(REGISTRY.ID.eq(id))
+				.fetchOne(REGISTRY.DOCUMENT);
+	}	
+
+	private String getRegistryName( Integer id ) {
+		return getContext().select(REGISTRY.NAME).from(REGISTRY)
+				.where(REGISTRY.ID.eq(id))
+				.fetchOne(REGISTRY.NAME);
+	}	
+	
+	private String[] getValues( Integer id ) throws ManagerBeanException {
 		String[] values = null;
 		switch ( type ) {
 			case DOCUMENT:
-				if (! StringUtils.isBlank(registry.getDocument()) ) {
-					values = new String[]{registry.getDocument()};	
+				String document = getRegistryDocument(id);
+				if (! StringUtils.isBlank(document) ) {
+					values = new String[]{document};	
 				}
 				break;
 			case NAME:
-				if (! StringUtils.isBlank(registry.getName()) ) {
-					values = new String[]{registry.getName()};
+				String name = getRegistryName(id);
+				if (! StringUtils.isBlank(name) ) {
+					values = new String[]{name};
 				}
 				break;
 			case EMAIL:
-				values = getRegistryMedias(registry, MediaType.EMAIL);
+				values = getRegistryMedias(id, MediaType.EMAIL);
 				break;
-			case TELEPHONE:
-				values = getRegistryMedias(registry, MediaType.FIXED_PHONE, MediaType.CELLULAR);
+			case FIXED_PHONE:
+				values = getRegistryMedias(id, MediaType.FIXED_PHONE);
+				break;
+			case CELLULAR:
+				values = getRegistryMedias(id, MediaType.CELLULAR);
 				break;
 		}
 		return values;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<DeduplicationValues> findDuplicates( Integer id, IManagerBean bean, Criteria mainCriteria ) throws ManagerBeanException {
-		List<DeduplicationValues> entries = new LinkedList<DeduplicationValues>();
-		Target target = (Target) bean.get(id);
-		String[] values = getValues(target.getRegistry());
+	private void findDuplicates( Integer id, IManagerBean bean, Criteria mainCriteria ) throws ManagerBeanException {
+		String[] values = getValues(id);
 		if(! ArrayUtils.isEmpty(values) ) {
 			for( String value : values ) {
 				Criteria criteria = getDeduplicateCriteria(id, value, bean, mainCriteria);
 				List<Integer> list = bean.getList(getProjectionList(bean), criteria);
 				if (! list.isEmpty() ) {
-					DeduplicationValues entry = new DeduplicationValues(value, target);
+					duplicateTargets.addAll(list);
+					DeduplicationValues entry = new DeduplicationValues(value, id);
 					for( Integer duplicateId : list ) {
-						Target duplicateTarget = (Target) bean.get(duplicateId);
-						entry.addTarget(duplicateTarget);
+						entry.addTarget(duplicateId);
 					}
-					entries.add(entry);
+					deduplicationList.add(entry);
 				}
 			}			
 		}
-		return entries;
+	}
+	
+	public void onSearch( ActionEvent event ) throws ManagerBeanException {
+		this.progressValue = 0;
+		this.maxProgressValue = 0;
+		this.enabledProgressBar = true;
+		setModel(null);
+		setShowProgressBarWindow(true);
+		TargetController controller = getTargetController();
+		Criteria mainCriteria = getTargetCriteria(controller);
+		this.maxProgressValue = controller.getManagerBean().getCount(mainCriteria);
+		TargetDeduplicationThread thread = new TargetDeduplicationThread(this); 
+		thread.setTargetController(controller); 
+		thread.setCriteria(mainCriteria);
+		thread.start();
+	}
+	
+	private DSLContext getContext() {
+		if ( this.context == null ) {
+			try {
+				this.connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				this.context = DSL.using(connection, AccountingUtil.getDefaultSettings());
+			} catch (AonConnectionException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return this.context;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void onSearch( ActionEvent event ) {
-		List<Integer> duplicateTargets = new LinkedList<Integer>();
-		List<DeduplicationValues> deduplicationList = new LinkedList<DeduplicationValues>();
+	public void searchDuplicates(HttpServletRequest httpServletRequest, TargetController controller, Criteria mainCriteria ) {
+		this.duplicateTargets = new LinkedList<Integer>();
+		this.deduplicationList = new LinkedList<DeduplicationValues>();
 		try {
-			TargetController controller = getTargetController();
+			HttpServletRequestValve.setHttpServletRequest(httpServletRequest);
 			IManagerBean bean = controller.getManagerBean();
-			Criteria mainCriteria = getTargetCriteria(controller, event);
 			Criteria searchCriteria = getSearchCriteria(bean, mainCriteria);
 			List<Integer> list = bean.getList(getProjectionList(bean), searchCriteria);
-			StopWatch sw = new StopWatch();
-			sw.start();
 			LOGGER.info( "Targets deduplication: {}, {}", list.size(), searchCriteria);
 			for( Integer id : list ) {
 				if (! duplicateTargets.contains(id) ) {
-					List<DeduplicationValues> entries = findDuplicates(id, bean, mainCriteria);	
-					if (! entries.isEmpty()) {
-						deduplicationList.addAll(entries);
-						for( DeduplicationValues entry : entries ) {
-							entry.addDuplicates(duplicateTargets);
-						}
-					}
+					findDuplicates(id, bean, mainCriteria);	
+				}
+				this.progressValue++;
+				if (! isEnabledProgressBar() ) {
+					break;
 				}
 			}			
-			sw.stop();
-			LOGGER.info( "Tiempo: {}", sw.toString());
 		} catch ( ManagerBeanException e ) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
+		} finally {
+			HttpServletRequestValve.setHttpServletRequest(null);
+			DatabaseUtil.closeQuietly(connection);
+			this.connection = null;
+			this.context = null;
 		}
-		setModel(new ListDataModel(deduplicationList));
+		finish();
 	}
 	
 	private DeduplicationValues getCurrentDeduplicationValues() {
@@ -315,19 +416,19 @@ public class TargetDeduplicationController extends DataScrollerState {
 		
 		private DataModel model;
 
-		public DeduplicationValues(String value, Target target) {
+		public DeduplicationValues(String value, Integer id) {
 			this.value = value;
 			this.entries = new LinkedList<DeduplicationEntry>();
-			addTarget(target);
+			this.entries.add(new DeduplicationEntry(id));
 		}
 		
-		public void addTarget( Target target ) {
-			this.entries.add(new DeduplicationEntry(target));			
+		public void addTarget( Integer id ) {
+			this.entries.add(new DeduplicationEntry(id));			
 		}
 		
 		public void addDuplicates( List<Integer> list ) {
 			for( int i = 1; i < entries.size(); i++ ) {
-				list.add(entries.get(i).getRegistry().getId());
+				list.add(entries.get(i).getId());
 			}
 		}
 
@@ -364,22 +465,36 @@ public class TargetDeduplicationController extends DataScrollerState {
 
 	public class DeduplicationEntry {
 		
+		private Integer id;
+		
 		private Target target;
 		
-		public DeduplicationEntry(Target target) {
-			this.target = target;
+		public DeduplicationEntry(Integer id) {
+			this.id = id;
 		}
 		
 		public Target getTarget() {
+			if ( target == null ) {
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(Target.class);
+					this.target = (Target) bean.get(this.id);
+				} catch (ManagerBeanException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
 			return target;
+		}
+		
+		public Integer getId() {
+			return id;
 		}
 
 		public Registry getRegistry() {
-			return target.getRegistry();
+			return getTarget().getRegistry();
 		}
 		
 		public boolean isActive() {
-			return target.getStatus() == TargetStatus.ACTIVE;
+			return getTarget().getStatus() == TargetStatus.ACTIVE;
 		}
 		
 		public String getTelephones() throws ManagerBeanException {

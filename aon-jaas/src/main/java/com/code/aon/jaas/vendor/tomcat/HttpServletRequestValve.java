@@ -19,19 +19,23 @@ public class HttpServletRequestValve extends ValveBase {
 	public void invoke(Request request, Response response) throws IOException, ServletException {
 		try {
 			// Set the ThreadLocal
-			httpRequest.set(request.getRequest());
+			setHttpServletRequest(request.getRequest());
 
 			// Perform the request
 			getNext().invoke(request, response);
 		} finally {
 			// Unset the ThreadLocal
-			httpRequest.set(null);
+			setHttpServletRequest(null);
 		}
 	}
 
 	public static HttpServletRequest getHttpServletRequest() {
 		return HttpServletRequestValve.httpRequest.get();
 	}
+	
+	public static void setHttpServletRequest( HttpServletRequest request ) {
+		httpRequest.set(request);
+	}	
 
 	public static String getServerName() {
 		return IDN.toUnicode(getHttpServletRequest().getServerName());

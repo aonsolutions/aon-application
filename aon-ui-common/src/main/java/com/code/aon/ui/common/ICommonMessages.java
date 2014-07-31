@@ -55,6 +55,7 @@ public interface ICommonMessages {
 	String FILE_UPLOAD_ELEMENT = "aon_fileupload_element";
 	String FILE_UPLOAD_ERROR = "aon_fileUpload_error";
 	String FINANCIAL_YEAR = "aon_financial_year";
+	String FIXED_PHONE = "aon_fixed_phone";
 	String HOLDER = "aon_holder";
 	String HOME = "aon_home";
 	String ID = "aon_id";
@@ -130,7 +131,6 @@ public interface ICommonMessages {
 	String TARGET = "aon_target";
 	String TARGET_ADVERTISING = "target_advertising";
 	String TAXABLE_BASE = "aon_taxable_base";
-	String TELEPHONE2 = "aon_telephone2";
 	String TICKET = "aon_ticket";
 	String TIME_2_PATTERN = "aon_time2_pattern";
 	String TIMESTAMP_PATTERN = "aon_timestamp_pattern";

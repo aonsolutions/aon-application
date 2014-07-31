@@ -12,6 +12,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.jaas</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>	
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.pool</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
@@ -173,6 +179,12 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>coyote</artifactId>
+			<version>6.0.37</version>
+			<scope>provided</scope>
+		</dependency>		
 	</dependencies>
     <profiles>
       	<profile>
