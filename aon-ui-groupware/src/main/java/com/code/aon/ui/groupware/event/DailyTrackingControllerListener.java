@@ -38,7 +38,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
 			trackingController.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 			DailyTracking dt = (DailyTracking) trackingController.getTo(); 
 			dt.setTrackingDate(new Date());
-			dt.setTrackingDuration(new Double(1));
+			dt.setTrackingDuration(new Double(0));
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
 			if (taskHolder == null) {
 				String msg = "No existe un operario vinculado a la cuenta de acceso. Cree un operario y vincule la cuenta de acceso.";
