@@ -3773,7 +3773,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria,
-							start, end);
+							start, end);					
 					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
 							sqlCtx);
 					draftCtx.next();

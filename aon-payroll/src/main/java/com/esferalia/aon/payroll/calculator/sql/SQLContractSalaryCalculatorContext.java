@@ -30,8 +30,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_MONTHS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_WEEKS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
@@ -67,12 +65,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.locale.converters.DateLocaleConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -113,6 +111,7 @@ import com.esferalia.aon.payroll.calculator.UndefinedTotalPaymentException;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
@@ -172,7 +171,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final SSRegimeType SS_REGIMES[] = SSRegimeType.class
 			.getEnumConstants();
 
-	//@formatter:off
+	// @formatter:off
 	private static final String MAIN_SQL = "SELECT * "
 			+ " FROM contract"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
@@ -180,22 +179,37 @@ public class SQLContractSalaryCalculatorContext implements
 			+ " LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
 			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
 			+ ", person"
-			+ ", registry AS " + PERSON_REGISTRY
-			+ ", workplace" 
+			+ ", registry AS "
+			+ PERSON_REGISTRY
+			+ ", workplace"
 			+ " LEFT JOIN payroll_workplace ON (payroll_workplace.workplace = workplace.id)"
 			+ ", enterprise"
-			+ ", registry AS " + ENTERPRISE_REGISTRY
-			+ " LEFT JOIN customer ON (customer.registry = " + ENTERPRISE_REGISTRY + ".id)"
+			+ ", registry AS "
+			+ ENTERPRISE_REGISTRY
+			+ " LEFT JOIN customer ON (customer.registry = "
+			+ ENTERPRISE_REGISTRY
+			+ ".id)"
 			+ ", raddress"
-			+ " WHERE contract.person = person.registry" // INNER JOIN: person is NOT NULL
-			+ " AND person.registry = person_registry.id" // INNER JOIN: // registry is NOT NULL
-			+ " AND contract.workplace = workplace.id" // INNER JOIN: workplace is NOT NULL
-			+ " AND workplace.enterprise = enterprise.registry" // INNER JOIN: enterprise is NOT NULL
-			+ " AND enterprise.registry = enterprise_registry.id" // INNER JOIN: registry is NOT  NULL
-			+ " AND workplace.address = raddress.id" // INNER JOIN: address is NOT NULL
+			+ " WHERE contract.person = person.registry" // INNER JOIN: person
+															// is NOT NULL
+			+ " AND person.registry = person_registry.id" // INNER JOIN: //
+															// registry is NOT
+															// NULL
+			+ " AND contract.workplace = workplace.id" // INNER JOIN: workplace
+														// is NOT NULL
+			+ " AND workplace.enterprise = enterprise.registry" // INNER JOIN:
+																// enterprise is
+																// NOT NULL
+			+ " AND enterprise.registry = enterprise_registry.id" // INNER JOIN:
+																	// registry
+																	// is NOT
+																	// NULL
+			+ " AND workplace.address = raddress.id" // INNER JOIN: address is
+														// NOT NULL
 			+ " AND contract.start_date <= ? "
-			+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )" ;
-	//@formatter:on
+			+ " AND ( contract.end_date  IS NULL"
+			+ " OR contract.end_date >= ? )";
+	// @formatter:on
 
 	private static final String PAYMENT_SQL = "SELECT * "
 			+ ", "
@@ -367,8 +381,7 @@ public class SQLContractSalaryCalculatorContext implements
 				@Override
 				public void loadContractLeave(Date leaveStart, Date leaveEnd,
 						long parentDays, LeaveType type, Double dailyRegBase,
-						ExpressionContext exprCtx) throws 
-						ExpressionException {
+						ExpressionContext exprCtx) throws ExpressionException {
 
 					final long leaveDays = CommonUtil.getDaysBetweenDates(
 							leaveStart, leaveEnd) + 1;
@@ -743,7 +756,6 @@ public class SQLContractSalaryCalculatorContext implements
 				this.endDate);
 
 	}
-
 
 	@Override
 	public SalaryType getSalaryType() {
@@ -1262,7 +1274,7 @@ public class SQLContractSalaryCalculatorContext implements
 		leaveLoader.loadContractLeave(leaveStart, leaveEnd, parentDays, type,
 				dailyRegBase, exprCtx);
 	}
-	
+
 	public void loadContractLeave(Date leaveStart, Date leaveEnd,
 			long parentDays, LeaveType type, String dailyRegBase,
 			ExpressionContext exprCtx) throws ExpressionException {
@@ -1587,10 +1599,9 @@ public class SQLContractSalaryCalculatorContext implements
 				+ ContractColumns.ID, getId());
 		ISalaryCalculatorContext ctx = null;
 		try {
-			ctx = getNoItCalculatorContext(connection,
-				startDate, endDate, issueDate, contractCriteria, start - 1,
-				end - 1);
-		} catch ( RuntimeException e ){
+			ctx = getNoItCalculatorContext(connection, startDate, endDate,
+					issueDate, contractCriteria, start - 1, end - 1);
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 			throw e;
 		}
@@ -2204,8 +2215,9 @@ public class SQLContractSalaryCalculatorContext implements
 
 		return guarenteed;
 	}
-	
-	protected ITimedVariable<Number> getExtraDays(ITimedVariable<Number> monthDays) {
+
+	protected ITimedVariable<Number> getExtraDays(
+			ITimedVariable<Number> monthDays) {
 		return new ExtraDays(monthDays);
 	}
 
@@ -2353,7 +2365,8 @@ public class SQLContractSalaryCalculatorContext implements
 		List<ITimedVariable<Number>> monthDays = this.implicitExpressionContext
 				.getVariables(MONTH_DAYS);
 		for (ITimedVariable<Number> monthDay : monthDays)
-			this.implicitExpressionContext.putVariable(PAY_DAYS, getExtraDays(monthDay));
+			this.implicitExpressionContext.putVariable(PAY_DAYS,
+					getExtraDays(monthDay));
 
 		this.implicitExpressionContext.putVariable(SALARY_HOURS,
 				new LazyTimedVariable<Double>() {
@@ -2758,13 +2771,41 @@ public class SQLContractSalaryCalculatorContext implements
 			SalaryType type, Integer contractID) throws SQLException,
 			ExpressionException, SalaryException {
 		Date startDate = CommonUtil.getMonthFirstDay(date);
-		Date endDate = CommonUtil.getMonthLastDay(date);
+		// Date endDate = CommonUtil.getMonthLastDay(date)
+
+		Date endDate = new Date(date.getTime() - 86400000);
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "."
 				+ ContractColumns.ID, contractID);
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, criteria);
+				connection, startDate, endDate, endDate, criteria) {
+			@Override
+			public Collection<IContractDeduction> getContractDeductions()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractEmbargo> getContractEmbargos()
+					throws AonException {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractCost> getContractCosts()
+					throws AonException {
+				// TODO Apéndice de método generado automáticamente
+				return Collections.emptyList();
+			}
+
+			@Override
+			public Collection<IContractBonus> getContractBonus()
+					throws AonException {
+				// TODO Apéndice de método generado automáticamente
+				return Collections.emptyList();
+			}
+		};
 		if (!ctx.next())
 			return null;
 
@@ -2777,6 +2818,54 @@ public class SQLContractSalaryCalculatorContext implements
 
 	protected static ISalary getDbSalary(Connection connection, Date date,
 			SalaryType type, Integer contractID) throws SQLException {
+
+		LeaveType type_ = LeaveType.COMMON_DISEASE;
+		type_.accept(new LeaveTypeVisitor<Double>() {
+
+			@Override
+			public Double visitCommonDisease(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+			@Override
+			public Double visitOcupationalDisease(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+			@Override
+			public Double visitMaternity(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+			@Override
+			public Double visitPaternity(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+			@Override
+			public Double visitPregnacyRisk(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+			@Override
+			public Double visitBreastFeedingRisk(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+			@Override
+			public Double visitNonOcupationalDisease(LeaveType leaveType) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+
+		});
+
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {

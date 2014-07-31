@@ -263,12 +263,11 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			Date start = Period.max(ctxStartDate, leaveStartDate);
 			Date end = Period.min(ctxEndDate, leaveEndDate);
 			
-			if(dataPerson.getContractId() == draft.getEmployee().getId()
-					&& DateUtils.compare(start, dataPerson.getLeaveEndDate()) < 0
-					&& DateUtils.compare(end, dataPerson.getLeaveStartDate()) > 0) {
+			if (dataPerson.getContractId() == draft.getEmployee().getId()
+					&& DateUtils.compare(leaveStartDate, ctxEndDate) < 0
+					&& DateUtils.compare(leaveEndDate, ctxStartDate) > 0) {
 				
 				addLeaveIt(dataPerson, start, end, exprCtx);
-				
 			}
 		}
 	}
@@ -287,10 +286,6 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		
 		LeaveType type = getLeaveType(person.getType());
 		getCtx().loadContractLeave(startDate, endDate, days, type, person.getRegBase(), exprCtx);		
-	}
-	
-	private static LeaveType getLeaveType(ITDataPerson.Type type) {
-		return type != null ? LeaveType.values()[type.ordinal()] : null;
 	}
 	
 	@Override
@@ -474,6 +469,10 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	private static DeductionType getDeductionType(Deduction.Type type) {
 		return type != null ? DeductionType.values()[type.ordinal()] : null;
+	}
+	
+	private static LeaveType getLeaveType(ITDataPerson.Type type) {
+		return type != null ? LeaveType.values()[type.ordinal()] : null;
 	}
 
 }

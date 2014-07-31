@@ -16,7 +16,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
@@ -242,8 +241,8 @@ public class Tooltip extends DecoratedPopupPanel {
 					int popupX = clientX - offsetWidth / 3;
 					int popupY = clientY;
 
-					if (popupX + offsetWidth >= windowWidth)
-						popupX -= popupX + offsetWidth - windowWidth;
+					if (popupX + offsetWidth >= windowWidth - offsetWidth/2)
+						popupX -= popupX + offsetWidth*1.2 - windowWidth;
 
 					if (clientY + offsetHeight >= Window.getClientHeight()) {
 						popupY = popupY - offsetHeight;

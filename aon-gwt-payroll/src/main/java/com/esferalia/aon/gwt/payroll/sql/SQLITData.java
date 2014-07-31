@@ -147,8 +147,7 @@ public class SQLITData implements Serializable {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-	
+	}	
 	
 	
 	public static void insertContractLeave (Connection connection, Integer domain, ITDataPerson itData) {
@@ -228,6 +227,7 @@ public class SQLITData implements Serializable {
 					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.ID+", "
 					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.START_DATE+", "
 					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.END_DATE+", "
+					+ SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.DAILY_REG_BASE+", "
 					+" ifnull("+SQLConstants.CONTRACT_LEAVE+"."+ContractLeaveColumns.DISCHARGE_CAUSE+",-1) as discharge_cause"
 					
 					+ FROM
@@ -277,6 +277,7 @@ public class SQLITData implements Serializable {
 				Integer type = Integer.parseInt(rs.getString(SQLConstants.ContractLeaveColumns.TYPE));
 				Date startContractLeave = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
 				Date endContractLeave = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
+				String regBase = rs.getString(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.DAILY_REG_BASE);
 				int discharge_cause = Integer.parseInt(rs.getString(ContractLeaveColumns.DISCHARGE_CAUSE));
 				int contractLeave_id = rs.getInt(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.ID);
 				
@@ -303,6 +304,7 @@ public class SQLITData implements Serializable {
 					dataPerson.setLeaveEndDate(endContractLeave);
 					dataPerson.setDischarge_cause(discharge_cause);
 					dataPerson.setNumType(type);
+					dataPerson.setRegBase(regBase);
 					dataPerson.setType(getEnumConstant(ITDataPerson.Type.class, type));
 					
 					itData.setITData(contractId, contractLeave_id, dataPerson);								

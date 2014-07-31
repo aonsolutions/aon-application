@@ -2,17 +2,11 @@ package com.esferalia.aon.gwt.payroll.sql;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.ITData;
-import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractLeaveLoader;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 

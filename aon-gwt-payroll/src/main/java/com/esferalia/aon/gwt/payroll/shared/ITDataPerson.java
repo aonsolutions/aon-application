@@ -71,8 +71,6 @@ public class ITDataPerson implements Serializable, Comparable {
 	
 	public ITDataPerson() {	
 		
-		setRegBase(null);
-		
 	}	
 
 	public int getContractId() {

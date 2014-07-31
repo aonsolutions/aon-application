@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.SalaryDraft.NewItemHandler;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -80,12 +80,13 @@ public class ITDataObject {
 
 		@Override
 		void addIT(ITDataPerson t) {
-			removeSaveDeletes(t);
+			saveDeletes(t);
+			
 		}
 
 		@Override
 		void removeIT(ITDataPerson t) {
-			saveDeletes(t);
+			removeSaveDeletes(t);
 		}
 	}
 
@@ -181,9 +182,14 @@ public class ITDataObject {
 	}
 
 	public void removeLeaveItem(int contractId, int leaveId) {
-		ITDataPerson newItem = getDataIts(contractId).get(leaveId);
+		
+		ITDataPerson oldItem = getDataIts(contractId).get(leaveId);
+		ITDataPerson newItem = saveDeletes(oldItem);
+		undoManager.add(new UndoableDeleteEdit(newItem, oldItem));
+		
+	/*	ITDataPerson newItem = getDataIts(contractId).get(leaveId);
 		ITDataPerson oldItem = saveDeletes(newItem);
-		undoManager.add(new UndoableDeleteEdit(oldItem, newItem));
+		undoManager.add(new UndoableDeleteEdit(newItem, oldItem));*/
 	}
 
 	private ITDataPerson saveDeletes(ITDataPerson object) {
@@ -210,9 +216,10 @@ public class ITDataObject {
 		}
 
 		else {
-			--contador;	
+			--contador;
+			object.setRegBase(null);
 			return getSaveDeletes(object.getContractId()).remove(
-					object.getContractLeaveId());
+					object.getContractLeaveId());			
 		}
 	}
 
@@ -251,11 +258,11 @@ public class ITDataObject {
 	}
 
 	private void clearDrafts() {
-		inserts.clear();
-		updates.clear();
-		deletes.clear();
-		draftList.clear();
-		contador = 0;
+	
+		inserts.clear();		
+		updates.clear();		
+		deletes.clear();		
+		draftList.clear();		
 	}
 
 	public Map<Integer, LinkedHashMap<Integer, ITDataPerson>> getInserts() {
@@ -389,16 +396,16 @@ public class ITDataObject {
 
 					@Override
 					public void onSuccess(ITData result) {
-
+						contador = 0;
 						undoManager.discardAll();
 						clearDrafts();
 						employeesService.saveITDataPerson(inserts, deletes,
 								updates, new AsyncCallback<ITData>() {
 
 									@Override
-									public void onSuccess(ITData result) {
-										ITDataObject.this.itData = result;
-										callback.onCalculateSuccess(ITDataObject.this);
+									public void onSuccess(ITData result) {										
+										ITDataObject.this.itData = result;										
+										callback.onCalculateSuccess(ITDataObject.this);										
 									}
 
 									@Override
@@ -488,7 +495,7 @@ public class ITDataObject {
 	public final boolean saveActive() {
 		return contador > 0;
 	}
-
+	
 	// ------------------------------------------
 
 }
