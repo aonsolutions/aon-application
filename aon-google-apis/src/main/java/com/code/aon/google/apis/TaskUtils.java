@@ -1,10 +1,7 @@
 package com.code.aon.google.apis;
 
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getHttpTransport;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getJsonFactory;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
-import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
-import static com.code.aon.google.apis.DatabaseSync.*;
+import static com.code.aon.google.apis.DatabaseSync.getProjectTask;
+import static com.code.aon.google.apis.DatabaseSync.getTask;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,13 +12,14 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.code.aon.google.apis.servlet.GoogleAuthorizationCodeCallbackServlet;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.Project;
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.util.DateTime;
-import com.google.api.services.tasks.model.*;
+import com.google.api.services.tasks.model.Task;
+import com.google.api.services.tasks.model.TaskList;
+import com.google.api.services.tasks.model.TaskLists;
+import com.google.api.services.tasks.model.Tasks;
 
 /**
  * @author aibanez
@@ -155,7 +153,7 @@ public class TaskUtils {
 	}
 	
 	
-	private static Credential credential;	
+	//private static Credential credential;	
 	//private static com.google.api.services.tasks.Tasks client;
 	
 	/**

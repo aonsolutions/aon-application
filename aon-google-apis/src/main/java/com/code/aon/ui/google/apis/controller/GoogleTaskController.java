@@ -6,15 +6,12 @@ import java.sql.SQLException;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.google.apis.TaskUtils;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
-import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
-import com.google.api.services.drive.Drive;
 import com.google.api.services.tasks.Tasks;
 
 public class GoogleTaskController {

@@ -1,6 +1,7 @@
 package com.code.aon.google.apis.sessionInfo;
 
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.tasks.Tasks;
 
@@ -10,6 +11,7 @@ public class GoogleUser {
 	private  Oauth2 oauth2;
 	private  Drive drive;
 	private  Tasks tasks;
+	private  FileList fl;
 	
 	public GoogleUser() {
 		// TODO Apéndice de constructor generado automáticamente
@@ -46,4 +48,14 @@ public class GoogleUser {
 	public void setGmail(String gmail){
 		this.gmail= gmail;
 	}
+	
+	public FileList getFl(){
+		return fl;
+	}
+	
+	public void setFl(FileList fl){
+		this.fl= fl;
+	}
+	
+	
 }

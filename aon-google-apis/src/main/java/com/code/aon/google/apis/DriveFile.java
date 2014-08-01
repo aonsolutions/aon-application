@@ -1,6 +1,5 @@
 package com.code.aon.google.apis;
 
-import com.google.api.services.plus.model.Comment.Actor.Image;
 
 public class DriveFile{
 	

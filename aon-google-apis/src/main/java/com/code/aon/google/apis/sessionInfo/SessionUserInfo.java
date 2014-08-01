@@ -4,10 +4,6 @@ package com.code.aon.google.apis.sessionInfo;
 
 import java.util.Hashtable;
 
-import com.google.api.services.drive.Drive;
-import com.google.api.services.oauth2.Oauth2;
-import com.google.api.services.tasks.Tasks;
-
 public class SessionUserInfo {
 	
 	private  String domain;

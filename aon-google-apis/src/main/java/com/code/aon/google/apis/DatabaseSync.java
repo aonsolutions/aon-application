@@ -33,13 +33,13 @@ import com.esferalia.aon.google.sql.SQLConstants.MailAccountColumns;
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.ProjectColumns;
 import com.esferalia.aon.google.sql.SQLConstants.ProjectCommercialColumns;
+import com.esferalia.aon.google.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.google.sql.SQLConstants.RmediaColumns;
 import com.esferalia.aon.google.sql.SQLConstants.TaskColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserWorkgroupColumns;
-import com.esferalia.aon.google.sql.SQLConstants.RattachColumns;
 
 
 /**
@@ -1490,7 +1490,8 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 		PreparedStatement stmt = null;
 		try {
 			String sql = "SELECT RA."+RattachColumns.ID+",RA."+RattachColumns.MIMETYPE+",RA."+RattachColumns.DESCRIPTION+",RA."+RattachColumns.TYPE+",RA."
-								+RattachColumns.DRIVE_ID+",G.*, D."+DomainColumns.NAME
+								+RattachColumns.DRIVE_ID+",RA."
+								+RattachColumns.CATEGORY+",G.*, D."+DomainColumns.NAME
 					+ " FROM (" + SQLConstants.RATTACH +" AS RA inner join "+SQLConstants.DOMAIN+" AS D ON RA."+RattachColumns.DOMAIN+" = D."+DomainColumns.ID
 					+ ") inner join "+SQLConstants.DOMAIN_GSERVICEACCOUNT+" AS G ON (G."+DomainGserviceaccountColumns.DOMAIN+" = D."+DomainColumns.ID+" OR D."
 					+ DomainColumns.PARENT+" = G."+DomainGserviceaccountColumns.DOMAIN+") "
@@ -1506,21 +1507,31 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 			rs = stmt.executeQuery();
 			
 			
-			Vector<Rattach> rattachs = new Vector<Rattach>();
+			Vector<FileInfo> attachs = new Vector<FileInfo>();
 			DomainGserviceaccount dgserviceaccount= new DomainGserviceaccount();
 
 			while (rs.next()){
-				Rattach rattach= new Rattach();
+				FileInfo attach= new FileInfo();
 				//todos los atributos de la tabla... error en el proyecto aon.sql.google
-				rattach.setId(rs.getInt(RattachColumns.ID));
-				rattach.setDomain(rs.getInt(RattachColumns.DOMAIN));
-				rattach.setMimeType(rs.getShort(RattachColumns.MIMETYPE));
-				rattach.setDescription(rs.getString(RattachColumns.DESCRIPTION));
-				rattach.setType(rs.getShort(RattachColumns.TYPE));
-				rattach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
+				attach.setAonType("registry");
+				attach.setFileId(rs.getInt(RattachColumns.ID));
+				attach.setMimetype(rs.getShort(RattachColumns.MIMETYPE));
+				attach.setTitle(rs.getString(RattachColumns.DESCRIPTION));
+				attach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
 				
+				Rattach rattach= new Rattach();
+				rattach.setCategory(rs.getInt(RattachColumns.CATEGORY));
+				Integer i = (Integer) rs.getObject(RattachColumns.TYPE);
+				if(i==null){
+					attach.setType((short)-1);
+				}
+				else{
+					attach.setType(rs.getShort(RattachColumns.TYPE));
+				}
 				
-		
+				if (rattach.getCategory()==null) attach.setCategory(-1);
+				else attach.setCategory(rattach.getCategory());
+				
 				
 				dgserviceaccount.setClientId(rs.getString(DomainGserviceaccountColumns.CLIENT_ID));
 				dgserviceaccount.setClientSecret(rs.getAsciiStream(DomainGserviceaccountColumns.CLIENT_SECRET));
@@ -1529,13 +1540,14 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 				dgserviceaccount.setPublicKey(rs.getString(DomainGserviceaccountColumns.PUBLIC_KEY));
 				dgserviceaccount.setPrivateKey(rs.getAsciiStream(DomainGserviceaccountColumns.PRIVATE_KEY));
 				
-				rattachs.add(rattach);
+				attachs.add(attach);
 				
 				
 				
 			}
 			
-			DriveData dd=new DriveData(dgserviceaccount, rattachs);
+			
+			DriveData dd=new DriveData(dgserviceaccount, attachs);
 			return dd;
 			
 		} finally {
@@ -1573,16 +1585,16 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 		}
 	}
 	
-	public static void deleteDriveID(int id,String key) throws SQLException{
+	public static void deleteDriveID(String id,String key) throws SQLException{
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
 			String sql = "UPDATE "+ SQLConstants.RATTACH+" SET "+RattachColumns.DRIVE_ID+"=null "
-					+"WHERE "+RattachColumns.ID+" = ?";
+					+"WHERE "+RattachColumns.DRIVE_ID+" = ?";
 
 			connection = getConnection(key);
 			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, id);
+			stmt.setString(1, id);
 
 
 			stmt.executeUpdate();
@@ -1732,9 +1744,11 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 		}
 		
 	}
+	
+	
 
 	
-	private String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
+	public static String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
 		
 		
 		ResultSet rs = null;
@@ -1771,5 +1785,40 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 		}
 		
 	}
+
+
+
+	
+	
+	public static void delDriveId(String driveId, String domain ) throws SQLException, AonConnectionException {
+		
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			
+			String sql = "UPDATE " + SQLConstants.RATTACH
+					+" SET "+RattachColumns.DRIVE_ID + "= NULL "
+					+ "WHERE "+RattachColumns.DRIVE_ID+" = ?";
+
+			
+			
+			connection = getConnection(domain);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, driveId);
+			
+
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+		
+	}
+
+
 	
 }

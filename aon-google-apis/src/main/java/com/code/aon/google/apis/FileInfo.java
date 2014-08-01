@@ -15,7 +15,8 @@ import java.util.Vector;
 		private String title;
 		private short mimetype;
 		private int category;
-		private Vector<String> emails;
+		private Vector<String> emails= new Vector<String>();
+		private Boolean isNomina = false;
 		
 		public FileInfo() {
 			// TODO Apéndice de constructor generado automáticamente
@@ -103,5 +104,12 @@ import java.util.Vector;
 			this.emails=emails;
 		}
 
+		public Boolean getIsNomina(){
+			return isNomina;
+		}
+		
+		public void setIsNomina(Boolean isNomina){
+			this.isNomina=isNomina;
+		}
 	}
 
