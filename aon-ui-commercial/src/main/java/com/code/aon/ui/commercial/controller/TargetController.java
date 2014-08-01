@@ -58,6 +58,14 @@ public class TargetController extends RegistryController implements ICommonMessa
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	@Override
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		if ( getBackAction() != null ) {
+			onBackActionListener(event);
+		}
+	}	
+	
 	public String getAliasPreffix() {
 		return getPojoShortName();
 	}

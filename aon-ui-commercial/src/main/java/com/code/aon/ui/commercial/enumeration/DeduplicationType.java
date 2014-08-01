@@ -13,9 +13,11 @@ public enum DeduplicationType implements IResourceable {
 	
 	DOCUMENT(ICommonMessages.DOCUMENT),
 	
-	TELEPHONE(ICommonMessages.TELEPHONE2),
+	EMAIL(ICommonMessages.EMAIL),
 	
-	EMAIL(ICommonMessages.EMAIL);	
+	FIXED_PHONE(ICommonMessages.FIXED_PHONE),
+	
+	CELLULAR(ICommonMessages.CELLULAR);	
 	
 	private String messageKey;
 	

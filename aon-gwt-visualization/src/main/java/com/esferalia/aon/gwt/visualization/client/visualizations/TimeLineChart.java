@@ -9,7 +9,6 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.IFrameElement;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -17,16 +16,19 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasContextMenuHandlers;
+import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-import com.google.gwt.event.dom.client.HasScrollHandlers;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -52,7 +54,7 @@ import com.google.gwt.visualization.client.visualizations.Visualization;
  */
 public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		implements HasMouseOverHandlers, HasClickHandlers,
-		HasContextMenuHandlers, Selectable {
+		HasContextMenuHandlers, Selectable, HasKeyPressHandlers {
 	/**
 	 * Options for drawing the chart.
 	 */
@@ -236,9 +238,12 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 		Handler.addHandler(this, BrowserEvents.MOUSEOUT, handler);
 	}
 
-	public final void addOnMouseOverHandler(OnMouseOverHandler handler) {
-		
+	public final void addOnMouseOverHandler(OnMouseOverHandler handler) {		
 		Handler.addHandler(this, BrowserEvents.MOUSEOVER, handler);
+	}
+	
+	public final void addKeyPress(Handler handler) {
+		Handler.addHandler(this, BrowserEvents.KEYPRESS, handler);
 	}
 
 	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
@@ -292,6 +297,13 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 	public HandlerRegistration addContextMenuHandler(ContextMenuHandler handler) {
 		return addHandler(handler, ContextMenuEvent.getType());
 	}
+	
+	// ------------------------------------------------------ KeyPressHandlers
+	
+	@Override
+	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {		
+		return addHandler(handler, KeyPressEvent.getType());
+	}	
 
 	// -------------------------------------------------------------- Protected
 
@@ -305,8 +317,8 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 
 	//@formatter:off
 	@Override
-	protected native JavaScriptObject createJso(Element parent) 
-	/*-{
+	protected native JavaScriptObject createJso(Element parent)	
+	/*-{	   
 		return new $wnd.google.visualization.Timeline(parent);
 	}-*/;
 	//@formatter:on
@@ -316,54 +328,58 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 	 * From now was unused. Not works properly and raises an exception with IE.
 	 */
 	private void initScrollHandler() {
-
-		Element el = getElement();
-		while (DivElement.is(el)) {
-			el = el.getFirstChildElement();
-		}
-
-		if (el.getNextSibling() != null) {
-			el = el.getNextSiblingElement();
+		try {			
+			Element el = getElement();
 			while (DivElement.is(el)) {
 				el = el.getFirstChildElement();
 			}
-		}
 
-		for (; el != getElement(); el = el.getParentElement()) {
-			Event.sinkEvents(el, Event.ONSCROLL);
-		}
-
-		DOM.setEventListener(getElement(), new EventListener() {
-
-			@Override
-			public void onBrowserEvent(Event event) {
-				ScrollEvent.fireNativeEvent(event, TimeLineChart.this);
+			if (el.getNextSibling() != null) {
+				el = el.getNextSiblingElement();
+				while (DivElement.is(el)) {
+					el = el.getFirstChildElement();
+				}
 			}
-		});
-	}
+
+			for (; el != getElement(); el = el.getParentElement()) {
+				Event.sinkEvents(el, Event.ONSCROLL);
+			}
+
+			DOM.setEventListener(getElement(), new EventListener() {
+
+				@Override
+				public void onBrowserEvent(Event event) {
+					ScrollEvent.fireNativeEvent(event, TimeLineChart.this);
+				}
+			});
+		}catch(Exception ex) {			
+		}
+			}
 
 	private void initEventHandlers() {
+		try {
+			Element el = getElement();
+			for (int i = 0; i < el.getChildCount(); i++)
+				sinkEvents(Element.as(el.getChild(i)), Event.ONCLICK
+						| Event.ONMOUSEOVER | Event.ONMOUSEMOVE
+						| Event.ONCONTEXTMENU | Event.ONKEYPRESS | Event.ONKEYDOWN);
 
-		Element el = getElement();
-		for (int i = 0; i < el.getChildCount(); i++)
-			sinkEvents(Element.as(el.getChild(i)), Event.ONCLICK
-					| Event.ONMOUSEOVER | Event.ONMOUSEMOVE
-					| Event.ONCONTEXTMENU);
+			DOM.setEventListener(el, new EventListener() {
 
-		DOM.setEventListener(el, new EventListener() {
-
-			@Override
-			public void onBrowserEvent(Event event) {
-				DomEvent.fireNativeEvent(event, TimeLineChart.this);
-			}
-		});
-
+				@Override
+				public void onBrowserEvent(Event event) {
+					DomEvent.fireNativeEvent(event, TimeLineChart.this);
+				}
+			});
+		}catch(Exception ex) {			
+		}
 	}
 
 	private void sinkEvents(Element el, int eventBits) {
 		try {
 			Event.sinkEvents(el, eventBits);
 		} catch (Exception e) {
+			Window.alert(e.getMessage() + " " + e.getStackTrace());
 		}
 
 		// fix for IE. <iframe> elements childCount porperty always returns 0.
@@ -378,7 +394,6 @@ public class TimeLineChart extends Visualization<TimeLineChart.Options>
 
 		for (int i = 0; i < el.getChildCount(); i++)
 			sinkEvents(Element.as(el.getChild(i)), eventBits);
-
-	}
+		}
 
 }

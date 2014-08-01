@@ -25,7 +25,6 @@ public class HttpServletRequestValve extends ValveBase {
 		try {
 			// Set the ThreadLocal
 			setHttpServletRequest(request.getRequest());
-			
 
 			updateSession(request);
 			
@@ -60,10 +59,10 @@ public class HttpServletRequestValve extends ValveBase {
 	public static HttpServletRequest getHttpServletRequest() {
 		return HttpServletRequestValve.httpRequest.get();
 	}
-
+	
 	public static void setHttpServletRequest( HttpServletRequest request ) {
 		httpRequest.set(request);
-	}
+	}	
 	
 	public static String getServerName() {
 		return IDN.toUnicode(getHttpServletRequest().getServerName());

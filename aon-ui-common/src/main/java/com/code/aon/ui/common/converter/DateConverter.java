@@ -9,7 +9,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,26 +19,28 @@ public class DateConverter implements Converter {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DateConverter.class);
 
-	private String pattern = AonUtil.getMessage(DATE_PATTERN);
+	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
 
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
+		String result = null;
 		if (value != null) {
-			return new SimpleDateFormat(pattern).format(value);	
+			result = DATE_FORMAT.format(value);
 		}
-		return null;
+		return result;
 	}
 	
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
-		if (value != null) {
+		Object result = null;
+		if (! StringUtils.isEmpty(value)) {
 			try {
-				return DateUtils.parseDate(value, new String[]{pattern});
+				result = DATE_FORMAT.parse(value);
 			} catch (ParseException ex) {
 				LOGGER.error(ex.getMessage(), ex);
 			}
 		}
-		return null;
+		return result;
 	}	
 
 }

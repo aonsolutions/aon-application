@@ -67,6 +67,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 	private List<Customer> agencies;
 	private Customer agency;
 	private Hotel hotel;
+	private List<String> referenceCodes;
 	private String referenceCode;
 	private Date issueDateFrom;
 	private Date issueDateTo;
@@ -75,6 +76,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 	private PayMethod[] payMethods;
 	private Double amount;
 	private Integer reservationId;
+	private List<String> reservationCodes;
 	private String reservationCode;
 	private String guestName;
 	private String guestSurname;
@@ -140,6 +142,25 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		this.hotel = hotel;
 	}
 
+	public List<String> getReferenceCodes() {
+		if(referenceCodes == null){
+			referenceCodes = new LinkedList<String>();
+		}
+		return referenceCodes;
+	}
+	public void setReferenceCodes(List<String> referenceCodes) {
+		this.referenceCodes = referenceCodes;
+	}
+	public int getReferenceCodesSize() {
+		return getReferenceCodes().size();
+	}
+	private String getReferenceCodeList() {
+		List<String> codes = new LinkedList<String>();
+		for (String code : getReferenceCodes()) {
+			codes.add("'"+code+"'");
+		}
+		return StringUtils.join(codes, ",");
+	}
 	public String getReferenceCode() {
 		return referenceCode;
 	}
@@ -211,6 +232,26 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		this.reservationId = reservationId;
 	}
 
+	public List<String> getReservationCodes() {
+		if(reservationCodes == null){
+			reservationCodes = new LinkedList<String>();
+		}
+		return reservationCodes;
+	}
+	public void setReservationCodes(List<String> reservationCodes) {
+		this.reservationCodes = reservationCodes;
+	}
+	public int getReservationCodesSize() {
+		return getReservationCodes().size();
+	}
+	private String getReservationCodeList() {
+		List<String> codes = new LinkedList<String>();
+		for (String code : getReservationCodes()) {
+			codes.add("'"+code+"'");
+		}
+		return StringUtils.join(codes, ",");
+	}
+	
 	public String getReservationCode() {
 		return reservationCode;
 	}
@@ -320,6 +361,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		setAgencies(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setHotel(null);
+		setReferenceCodes(null);
 		setReferenceCode(null);
 		setIssueDateFrom(null);
 		setIssueDateTo(null);
@@ -328,6 +370,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		setPayMethods(null);
 		setAmount(null);
 		setReservationId(null);
+		setReservationCodes(null);
 		setReservationCode(null);
 		setGuestName(null);
 		setGuestSurname(null);
@@ -363,12 +406,44 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 			setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		}
 	}
+
+	public void onAddReferenceCode(ActionEvent event) {
+		if (!getReferenceCodes().contains(getReferenceCode())) {
+			getReferenceCodes().add(getReferenceCode());
+		}
+		setReferenceCode(null);
+	}
+	
+	public void onRemoveReferenceCode(ActionEvent event) throws ManagerBeanException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("referenceCodeIdx"));
+		getReferenceCodes().remove(index);
+	}
+
+	public void onAddReservationCode(ActionEvent event) {
+		if (!getReservationCodes().contains(getReservationCode())) {
+			getReservationCodes().add(getReservationCode());
+		}
+		setReservationCode(null);
+	}
+	
+	public void onRemoveReservationCode(ActionEvent event) throws ManagerBeanException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("reservationCodeIdx"));
+		getReservationCodes().remove(index);
+	}
 	
 	public void onSearch(ActionEvent event) {
 		setSelectedTab(PENDING_FINANCE_TAB);
 		try {
 			if (getAgency() != null && getAgency().getId() != null && !getAgencies().contains(getAgency())) {
 				getAgencies().add(getAgency());
+			}
+			if (StringUtils.isNotBlank(getReferenceCode()) && !getReferenceCodes().contains(getReferenceCode())) {
+				getReferenceCodes().add(getReferenceCode());
+			}
+			if (StringUtils.isNotBlank(getReservationCode()) && !getReservationCodes().contains(getReservationCode())) {
+				getReservationCodes().add(getReservationCode());
 			}
 			onSearchFinances();
 		} catch (AonSQLException e) {
@@ -468,8 +543,8 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		stmt.append(" AND I.service = 0");
 		stmt.append(" AND F.registry IN (" + getAgencyIds() + ")");
 		stmt.append(" AND H.id IN (" + getHotelIds() + ")");
-		if (StringUtils.isNotBlank(getReferenceCode())) {
-			stmt.append(" AND I.reference_code = '" + getReferenceCode() + "'");
+		if (getReferenceCodes()!=null && getReferenceCodes().size()>0) {
+			stmt.append(" AND I.reference_code IN (" + getReferenceCodeList() + ")");
 		}
 		if (getIssueDateFrom() != null) {
 			stmt.append(" AND I.issue_date >= ?");
@@ -495,8 +570,8 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		if (getReservationId() != null) {
 			stmt.append(" AND PR.project = " + getReservationId());
 		}
-		if (StringUtils.isNotBlank(getReservationCode())) {
-			stmt.append(" AND PR.code = '" + getReservationCode() + "'");
+		if (getReservationCodes()!=null && getReservationCodes().size()>0) {
+			stmt.append(" AND PR.code IN (" + getReservationCodeList() + ")");
 		}
 		if (StringUtils.isNotBlank(getGuestName())) {
 			stmt.append(" AND PRG.name LIKE '%" + getGuestName() + "%'");

@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
+import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -22,7 +23,6 @@ import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -164,13 +164,15 @@ public class SalaryDraftObject implements IContextProvider {
 	private Date draftEndDate;
 	private Date draftStartDate;
 
+	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
-	public SalaryDraftObject(SalaryDraft salaryDraft,
+	public SalaryDraftObject(SalaryDraft salaryDraft, ITDataObject dataObject,
 			EmployeesServiceAsync employeesServiceAsync) {
+		this.dataObject = dataObject;
 		this.salaryDraft = salaryDraft;
 		this.employeesServiceAsync = employeesServiceAsync;
 		this.undoManager = new UndoManager<Undoable>();
@@ -246,7 +248,9 @@ public class SalaryDraftObject implements IContextProvider {
 	public void calculate(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-		removeSalaryPart(salaryDraft);
+		removeSalaryPart(salaryDraft);		
+		
+		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
 
 		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
 				new AsyncCallback<SalaryDraft>() {
@@ -743,7 +747,10 @@ public class SalaryDraftObject implements IContextProvider {
 		}
 		undoManager.add(new CompositeUndoableEdit(edits));
 	}
-
+	
+	private List<ITDataPerson> getDrafLeaveIts() {
+		return dataObject.getDraftList(salaryDraft.getEmployee().getId());
+	}
 
 	// ------------------------------------------------------------------------
 	//

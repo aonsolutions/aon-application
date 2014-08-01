@@ -1,4 +1,4 @@
-package com.code.aon.ui.audit.session;
+package com.code.aon.ui.common.session;
 
 import java.util.Enumeration;
 import java.util.Hashtable;

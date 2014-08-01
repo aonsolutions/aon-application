@@ -70,7 +70,7 @@ public class DailyTrackingReportController implements ICollectionProvider, Seria
 			if (!isMonitor()) {
 				TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
 				if (taskHolder == null) {
-					String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+					String msg = "No existe un operario vinculado a la cuenta de acceso. Cree un operario y vincule la cuenta de acceso.";
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}

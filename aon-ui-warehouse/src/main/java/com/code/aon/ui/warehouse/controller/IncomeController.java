@@ -10,6 +10,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -68,6 +70,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private String invoiceRefCode;
 	private Date invoiceDate;
 	private boolean showConfirmWindow;
+	private boolean showPurchaseFilterWindow;
 	
 	public boolean isShowConfirmWindow() {
 		return showConfirmWindow;
@@ -76,6 +79,14 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		this.showConfirmWindow = showConfirmWindow;
 	}
 
+    public boolean isShowPurchaseFilterWindow() {
+		return showPurchaseFilterWindow;
+	}
+
+    public void setShowPurchaseFilterWindow(boolean showPurchaseFilterWindow) {
+		this.showPurchaseFilterWindow = showPurchaseFilterWindow;
+	}
+	
     public List<SelectItem> getAddresses() {
 		return addresses;
 	}
@@ -401,6 +412,10 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	}
 
 	public void onPurchaseTransferShow(ActionEvent event) throws ManagerBeanException {
+		getPurchaseTransferManager().setFilterParams(null);
+		loadPurchaseTransferModel();
+	}
+	private void loadPurchaseTransferModel() throws ManagerBeanException {
 		Income to = (Income)this.getTo();
 
 		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
@@ -412,6 +427,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
 			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
 		}
+		addFilterCriteria(criteria, purchaseBean);
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
 		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
@@ -425,11 +441,38 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
 			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
 			criteria.addNullExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS));
+			addFilterCriteria(criteria, purchaseBean);
 			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
 			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
 			criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
 			getPurchaseTransferManager().getPurchaseList().addAll(purchaseBean.getList(criteria));
 		}
+		getPurchaseTransferManager().setPurchaseModel(null);
+	}
+	
+	private void addFilterCriteria(Criteria criteria, IManagerBean purchaseBean) throws ManagerBeanException {
+		if(getPurchaseTransferManager().getFilterParams().getFromDate()!=null){
+			criteria.addGreaterThanOrEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE), getPurchaseTransferManager().getFilterParams().getFromDate());
+		}
+		if(getPurchaseTransferManager().getFilterParams().getToDate()!=null){
+			criteria.addLessThanOrEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE), getPurchaseTransferManager().getFilterParams().getToDate());
+		}
+		if(StringUtils.isNotBlank(getPurchaseTransferManager().getFilterParams().getSeries())){
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(
+					purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES), "%" + getPurchaseTransferManager().getFilterParams().getSeries() + "%"));
+		}
+		if(getPurchaseTransferManager().getFilterParams().getNumberFrom()!=null){
+			criteria.addGreaterThanOrEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER), getPurchaseTransferManager().getFilterParams().getNumberFrom());
+		}
+		if(getPurchaseTransferManager().getFilterParams().getNumberTo()!=null){
+			criteria.addLessThanOrEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER), getPurchaseTransferManager().getFilterParams().getNumberTo());
+		}
+	}
+	public void onFilterTransferModel(ActionEvent event) throws ManagerBeanException {
+		getPurchaseTransferManager().clearCheckedPurchase();
+		getPurchaseTransferManager().setDetailList(null);
+		getPurchaseTransferManager().setDetailModel(null);
+		loadPurchaseTransferModel();
 	}
 
 	public boolean isTransferedGreatherThanPending() {
@@ -467,8 +510,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail purchaseDetail = iterator.next();
-			if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() > 0)
-					|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() < 0)) {
+			if ((purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() >= 0)
+					|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() <= 0)) {
 				IncomeManager incomeManager = new IncomeManager();
 				incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
 			}

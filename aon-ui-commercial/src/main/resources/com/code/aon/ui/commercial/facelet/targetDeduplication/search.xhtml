@@ -18,8 +18,6 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="skipAfterSearch" value="#{true}" />
-				<ui:param name="searchOnClick" value="Richfaces.showModalPanel('waitProccess')" />
-				<ui:param name="searchOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />
 				<ui:define name="searchContent">
 
 					<aon:methodParam name="searchActionListener" value="#{targetDeduplication.onSearch}" type="actionListener" />
@@ -48,6 +46,5 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />			
 		<aon:lookupButtonPopup lookup="#{questionLookup}" />
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />	
 	</ui:define>
 </ui:composition>

@@ -1,6 +1,7 @@
 package com.code.aon.warehouse.bridge;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class IncomeTransferManager extends DataScrollerState {
 	private DataScrollerState detailState;
 	private List<ITransferObject> invoicedIncomeList;
 	private ArrayList<Income> incomeChecks= new ArrayList<Income>();
+	private FilterParams filterParams;
 
 	public IncomeTransferManager() {
 		setBeanName("incomeTransfer");
@@ -83,6 +85,17 @@ public class IncomeTransferManager extends DataScrollerState {
 		this.detailState = detailState;
 	}
 
+	public FilterParams getFilterParams() {
+		if(filterParams==null){
+			filterParams = new FilterParams();
+		}
+		return filterParams;
+	}
+
+	public void setFilterParams(FilterParams filterParams) {
+		this.filterParams = filterParams;
+	}
+
 	public List<ITransferObject> getInvoicedIncomeList() {
 		return invoicedIncomeList;
 	}
@@ -121,7 +134,7 @@ public class IncomeTransferManager extends DataScrollerState {
 		}
 		return detailList;
 	}
-
+	
 	/**
 	 * INCOME CHECK LIST CONTROL 
 	 */
@@ -179,5 +192,30 @@ public class IncomeTransferManager extends DataScrollerState {
 	public void checkNoneIncomes(ActionEvent event) {
 		clearCheckedIncome();
 	}
+	
+	public class FilterParams{
+		private Date fromDate;
+		private Date toDate;
+		private String referenceCode;
+		public String getReferenceCode() {
+			return referenceCode;
+		}
+		public Date getFromDate() {
+			return fromDate;
+		}
+		public void setFromDate(Date fromDate) {
+			this.fromDate = fromDate;
+		}
+		public Date getToDate() {
+			return toDate;
+		}
+		public void setToDate(Date toDate) {
+			this.toDate = toDate;
+		}
+		public void setReferenceCode(String referenceCode) {
+			this.referenceCode = referenceCode;
+		}
+	}
+		
 
 }

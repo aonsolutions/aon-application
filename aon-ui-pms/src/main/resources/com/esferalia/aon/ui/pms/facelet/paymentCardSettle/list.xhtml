@@ -62,12 +62,16 @@
 						value="#{paymentCardSettle.reservationId}"
 						rendered="#{not empty paymentCardSettle.reservationId}" />
 
-					<aon:outputText styleClass="aon-margin-left aon-italic" 
+					<aon:outputText styleClass="aon-margin-left aon-italic"
 						value="#{bundle.report_reservation_code}:"
-						rendered="#{not empty paymentCardSettle.reservationCode}" />
-					<aon:outputText styleClass="aon-margin-left aon-bold"
-						value="#{paymentCardSettle.reservationCode}"
-						rendered="#{not empty paymentCardSettle.reservationCode}" />
+						rendered="#{paymentCardSettle.reservationCodesSize > 0}" />
+					<a4j:repeat value="#{paymentCardSettle.reservationCodes}" var="reservationCode" rowKeyVar="reservationCodeIdx">
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="#{reservationCode}"
+							rendered="#{paymentCardSettle.reservationCodesSize > 0}" />
+						<aon:outputText value=","
+							rendered="#{paymentCardSettle.reservationCodesSize-1 > reservationCodeIdx}" />
+					</a4j:repeat>
 
 					<aon:outputText styleClass="aon-margin-left aon-italic" 
 						value="#{bundle.report_guest}:"

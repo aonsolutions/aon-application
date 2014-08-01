@@ -1,6 +1,5 @@
 package com.esferalia.aon.pms.event;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -47,7 +46,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     }
 
 	private void calculateReservationTotals(ReservationUtils reservationUtils, ProjectReservation reservation) throws ManagerBeanException {
-		if (StringUtils.isEmpty(reservation.getCrsCode()) || reservation.isForceCalculateTotals()) {
+		if (reservation.isForceCalculateTotals()) {
 			double taxableBase = reservationUtils.getReservationCalculatedTaxableBase(reservation);
 			double vatQuota = reservationUtils.getReservationCalculatedVatQuota(reservation);
 

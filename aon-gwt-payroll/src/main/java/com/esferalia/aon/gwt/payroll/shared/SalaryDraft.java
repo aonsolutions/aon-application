@@ -124,6 +124,8 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Deduction> draftDeductions;
 	private List<Deduction> draftEmbargos;
 	
+	private List<ITDataPerson> draftLeaveIts;
+	
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
 		events = new LinkedList<Event>();
@@ -137,6 +139,8 @@ public class SalaryDraft extends SalaryPreview {
 		draftPayments = new LinkedList<Payment>();
 		draftDeductions = new LinkedList<Deduction>();
 		draftEmbargos = new LinkedList<Deduction>();
+		
+		draftLeaveIts = new LinkedList<ITDataPerson>();
 	}
 
 	public void clear() {
@@ -168,6 +172,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftPayments.clear();
 		draftDeductions.clear();
 		draftEmbargos.clear();
+		draftLeaveIts.clear();
 	}
 	
 	
@@ -175,7 +180,8 @@ public class SalaryDraft extends SalaryPreview {
 		return  (draftContext.size() > 0) ||
 				(draftPayments.size() > 0) ||
 				(draftDeductions.size() > 0 )||
-				(draftEmbargos.size() > 0);
+				(draftEmbargos.size() > 0) ||
+				(draftLeaveIts.size() > 0);
 	}
 	
 	public void addPayment(Payment payment) {
@@ -254,7 +260,6 @@ public class SalaryDraft extends SalaryPreview {
 		return draftEmbargos.remove(embargo);
 	}
 	
-
 	public void addVariable(String name, Object value, Date startDate,
 			Date endDate) {
 		Variable var;
@@ -391,6 +396,14 @@ public class SalaryDraft extends SalaryPreview {
 	
 	public void setDraftEmbargos(List<Deduction> draftEmbargos) {
 		this.draftEmbargos = draftEmbargos;
+	}
+	
+	public void setDraftLeaveIts(List<ITDataPerson> draftLeaveIts) {
+		this.draftLeaveIts = draftLeaveIts;
+	}
+	
+	public List<ITDataPerson> getDraftLeaveIts() {
+		return draftLeaveIts;
 	}
 
 	public void clearContext() {

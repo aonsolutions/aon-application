@@ -2,6 +2,7 @@ package com.code.aon.purchase.bridge;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +16,17 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
+import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseTransferManager implements Serializable {
@@ -36,6 +41,8 @@ public class PurchaseTransferManager implements Serializable {
 	private DataModel detailModel;
 	private ArrayList<Purchase> purchaseChecks= new ArrayList<Purchase>();
 	private ArrayList<PurchaseDetail> detailChecks= new ArrayList<PurchaseDetail>();
+	private FilterParams filterParams;
+	private String massiveDiscountExpr;
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -89,10 +96,76 @@ public class PurchaseTransferManager implements Serializable {
 	public void setDetailModel(DataModel model) {
 		this.detailModel = model;
 	}
+	
+	public FilterParams getFilterParams() {
+		if(filterParams==null){
+			filterParams = new FilterParams();
+		}
+		return filterParams;
+	}
+
+	public void setFilterParams(FilterParams filterParams) {
+		this.filterParams = filterParams;
+	}
+	
+	public String getMassiveDiscountExpr() {
+		return massiveDiscountExpr;
+	}
+
+	public void setMassiveDiscountExpr(String massiveDiscountExpr) {
+		this.massiveDiscountExpr = massiveDiscountExpr;
+	}
 
 	public double getPurchaseTotalPrice() throws ManagerBeanException {
 		Purchase purchase = (Purchase)purchaseModel.getRowData();
 		return getPriceStrategy().getTotalPrice(purchase, purchase.getSupplier());
+	}
+
+	public int getPurchaseLinesCount() throws ManagerBeanException {
+		Purchase purchase = (Purchase)purchaseModel.getRowData();
+		IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+		Projection projection = Projection.rowCount();
+		Object value = detailBean.getUniqueResult(projection, criteria);
+		return (value != null) ? ((Integer)value) : 0;
+	}
+
+	public int getPurchasePendingLinesCount() throws ManagerBeanException {
+		Purchase purchase = (Purchase)purchaseModel.getRowData();
+		IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+		criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED);
+		Projection projection = Projection.rowCount();
+		Object value = detailBean.getUniqueResult(projection, criteria);
+		return (value != null) ? ((Integer)value) : 0;
+	}
+	
+	public double getTransferAmount() {
+		final PurchaseDetail detail = (PurchaseDetail) getDetailModel().getRowData();
+		return getPriceStrategy().getBasePrice(new ICalculable() {
+			@Override
+			public double getTaxes() throws ManagerBeanException {
+				return detail.getTaxes();
+			}
+			@Override
+			public double getQuantity() {
+				return detail.getTransfered();
+			}			
+			@Override
+			public double getPrice() {
+				return detail.getPrice();
+			}			
+			@Override
+			public Item getItem() {
+				return detail.getItem();
+			}			
+			@Override
+			public DiscountExpression getDiscountExpression() {
+				return detail.getDiscountExpression();
+			}
+		});
 	}
 
 	public void onSelectPurchase(ActionEvent event) {
@@ -132,7 +205,8 @@ public class PurchaseTransferManager implements Serializable {
 		}
 		if( purchaseDetail.getTransfered()!=0 && !detailChecks.contains(purchaseDetail)){
 			detailChecks.add(purchaseDetail);
-		} else if( purchaseDetail.getTransfered()==0 && detailChecks.contains(purchaseDetail)){
+		} else if(Math.signum(purchaseDetail.getPendingQuantity()) != Math.signum(purchaseDetail.getTransfered()) 
+				&& purchaseDetail.getTransfered()!=0 && detailChecks.contains(purchaseDetail)){
 			detailChecks.remove(purchaseDetail);
 		}
 		purchaseDetail.setForcePendingQuantityCancel(false);
@@ -302,12 +376,61 @@ public class PurchaseTransferManager implements Serializable {
 	}
 
 	/**
+	 * DISCOUT EXPRESSION
+	 */
+	
+	public void onApplyMassiveDiscount(ActionEvent event){
+		for(ITransferObject to: getDetailList()){
+			PurchaseDetail detail = (PurchaseDetail) to;
+			detail.getDiscountExpression().setDiscountExpr(getMassiveDiscountExpr());
+		}
+	}
+	
+	/**
 	 * PURCHASE DETAIL TO CLOSE CHECK LIST CONTROL
 	 */
 	
 	public void detailToCloseRowSelected(ActionEvent event){
 		PurchaseDetail detail = (PurchaseDetail)detailModel.getRowData();
 		detail.setForcePendingQuantityCancel(!detail.isForcePendingQuantityCancel());
+	}
+	
+	public class FilterParams{
+		private Date fromDate;
+		private Date toDate;
+		private String series;
+		private Integer numberFrom;
+		private Integer numberTo;
+		public Date getFromDate() {
+			return fromDate;
+		}
+		public void setFromDate(Date fromDate) {
+			this.fromDate = fromDate;
+		}
+		public Date getToDate() {
+			return toDate;
+		}
+		public void setToDate(Date toDate) {
+			this.toDate = toDate;
+		}
+		public String getSeries() {
+			return series;
+		}
+		public void setSeries(String series) {
+			this.series = series;
+		}
+		public Integer getNumberFrom() {
+			return numberFrom;
+		}
+		public void setNumberFrom(Integer numberFrom) {
+			this.numberFrom = numberFrom;
+		}
+		public Integer getNumberTo() {
+			return numberTo;
+		}
+		public void setNumberTo(Integer numberTo) {
+			this.numberTo = numberTo;
+		}
 	}
 	
 }

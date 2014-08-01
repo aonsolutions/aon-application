@@ -51,6 +51,13 @@
 										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 										actionListener="#{income.purchaseTransferManager.checkNonePurchases}" 
 										reRender="purchaseData,detailDataContainer" />	
+									<aon:commandButton id="purchaseTransfer-filter"
+										value="#{bundle.aon_filter}"
+										styleClass="aon-finding-toolbar-item aon-icon-search"
+										reRender="showPurchaseFilterWindow" >
+										<f:setPropertyActionListener target="#{income.showPurchaseFilterWindow}"
+											value="#{true}" />
+									</aon:commandButton>
 									<aon:commandButton id="purchaseTransfer-accept"
 										value="#{bundle.warehouse_income_to_transfer}"
 										rendered="#{income.purchaseTransferManager.purchaseModel.rowCount > 0}"
@@ -76,7 +83,8 @@
 									<aon:dataTable id="purchaseData" value="#{income.purchaseTransferManager.purchaseModel}"
 										var="to" rows="10" rendered="#{income.purchaseTransferManager.purchaseModel.rowCount > 0}"
 										columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-											aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
+											aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
+											aon-editDataTable-iconColumn">
 
 										<aon:column styleClass="#{income.purchaseTransferManager.selectedPurchaseId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
@@ -119,13 +127,23 @@
 												<aon:outputText value="#{bundle.aon_total}" />
 											</f:facet>
 											<aon:div>
-												<aon:outputText value="&#160;&#160;&#160;"
-													rendered="#{!to.served}" 
-													styleClass="aon-padding-right aon-icon-info" 
-													title="#{bundle.purchase_to_partially_served}" />
 												<aon:outputText value="#{income.purchaseTransferManager.purchaseTotalPrice}">
 													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 												</aon:outputText>
+												<aon:outputText value=" (" />
+												<aon:outputText value="#{income.purchaseTransferManager.purchaseLinesCount}"/>
+												<aon:outputText value=")" />
+											</aon:div>
+										</aon:column>
+
+										<aon:column styleClass="#{income.purchaseTransferManager.selectedPurchaseId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_pending}" />
+											</f:facet>
+											<aon:div>
+												<aon:outputText value=" (" />
+												<aon:outputText value="#{income.purchaseTransferManager.purchasePendingLinesCount}"/>
+												<aon:outputText value=")" />
 											</aon:div>
 										</aon:column>
 
@@ -146,13 +164,29 @@
 										rowCount="#{income.purchaseTransferManager.purchaseModel.rowCount}" />
 
 									<aon:div id="detailDataContainer">
+										<aon:div styleClass="aon-toolbar"
+											rendered="#{income.purchaseTransferManager.detailModel.rowCount > 0}">
+											<aon:div styleClass="aon-text-right">
+												<aon:outputLabel for="purchaseTransfer-massiveDiscountExpr" 
+													value="#{bundle.aon_discount_abrv}: "
+													styleClass="aon-margin-left" />
+												<aon:inputText id="purchaseTransfer-massiveDiscountExpr"
+													value="#{income.purchaseTransferManager.massiveDiscountExpr}" size="5" />
+												<aon:commandButton value="#{bundle.aon_apply_to_all}"
+													actionListener="#{income.purchaseTransferManager.onApplyMassiveDiscount}"
+													reRender="detailDataContainer"
+													styleClass="aon-finding-toolbar-item aon-icon-accept" />
+											</aon:div>
+										</aon:div>
+										
 										<aon:dataTable id="detailData" value="#{income.purchaseTransferManager.detailModel}"
 											var="to" rows="0" rendered="#{income.purchaseTransferManager.detailModel.rowCount > 0}"
 											columnClasses="aon-editDataTable-textColumn, 
 												aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
 												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-												aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+												aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+												aon-editDataTable-iconColumn">
 	
 											<aon:column>
 												<f:facet name="header">
@@ -201,9 +235,11 @@
 												<f:facet name="header">
 													<aon:outputLabel value="#{bundle.aon_discount_abrv}" />
 												</f:facet>
-												<aon:outputText value="#{to.discountExpression.discountExpr}">
-													<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
-												</aon:outputText>
+												<aon:inputText 
+													value="#{to.discountExpression.discountExpr}" size="4" >	
+													<a4j:support event="onchange" reRender="purchaseData,detailDataContainer" 
+														ajaxSingle="true" requestDelay="10" />
+												</aon:inputText>
 											</aon:column>
 	
 											<aon:column>
@@ -233,6 +269,14 @@
 													<a4j:support event="onchange" reRender="purchaseData,detailDataContainer" ajaxSingle="true" requestDelay="10"
 														actionListener="#{income.purchaseTransferManager.onTransferedChanged}" />
 												</aon:inputText>	
+											</aon:column>
+	
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_amount}" />
+												</f:facet>
+												<aon:inputText disabled="#{true}" size="4"
+													value="#{income.purchaseTransferManager.transferAmount}" />
 											</aon:column>
 	
 											<aon:column id="buttonColumn">

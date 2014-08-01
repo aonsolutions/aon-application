@@ -133,7 +133,7 @@ public class SQLContractLeaveLoader {
 		return getLeaveDays(p, COMMON_DISEASE);
 	}
 
-	public void loadContractLevae(ResultSet rs, final ExpressionContext exprCtx)
+	public void loadContractLeave(ResultSet rs, final ExpressionContext exprCtx)
 			throws SQLException, ExpressionException {
 		this.leaves.clear();
 
@@ -165,27 +165,32 @@ public class SQLContractLeaveLoader {
 
 	public void loadContractLeave(final Date leaveStart, final Date leaveEnd,
 			final long parentDays, final LeaveType type, Double dailyRegBase,
-			final ExpressionContext exprCtx) throws SQLException,
-			ExpressionException {
+			final ExpressionContext exprCtx) throws ExpressionException {
+		loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+				dailyRegBase != null ? dailyRegBase.toString() : null, exprCtx);
+	}
+
+	public void loadContractLeave(final Date leaveStart, final Date leaveEnd,
+			final long parentDays, final LeaveType type, String dailyRegBase,
+			final ExpressionContext exprCtx) throws ExpressionException {
 		final Date start = Period.max(leaveStart, startDate);
 		final Date end = Period.min(leaveEnd, endDate);
-		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1; 
+		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
 
 		exprCtx.setVariable(ContextVariable.IT_START, leaveStart, start, end);
 
+		ExpressionImpl exp = new ExpressionImpl();
+		exp.setName(ContextVariable.REGULATORY_BASE.getName());
 		if (dailyRegBase != null) {
-			exprCtx.setVariable(ContextVariable.REGULATORY_BASE, dailyRegBase,
-					start, end);
+			exp.setExpression(dailyRegBase);
 		} else {
-			ExpressionImpl exp = new ExpressionImpl();
-			exp.setName(ContextVariable.REGULATORY_BASE.getName());
 			exp.setExpression(String.format("%s(%s)", ContextVariable.BR,
 					ContextVariable.IT_START));
-			exprCtx.addExpression(exp, start, end);
 		}
+		exprCtx.addExpression(exp, start, end);
 
-		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays,
-				start, end);
+
+		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
 
 		type.accept(new LeaveTypeVisitor<Void>() {
 
@@ -193,23 +198,25 @@ public class SQLContractLeaveLoader {
 			public Void visitCommonDisease(LeaveType leaveType) {
 				for (DaysRange range : RANGES) {
 					long days = range.getDays(parentDays, leaveDays);
-					
-					//if ( days == 0 )
-					//	continue;
-					
+
+					// if ( days == 0 )
+					// continue;
+
 					String name = range
 							.getName(ContextVariable.COMMON_DISEASE_DAYS);
-					
+
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(leaveStart);
-					calendar.add(Calendar.DATE, (int)(range.start-1-parentDays));
-					Date rangeStart = Period.max(calendar.getTime(),start);
-					
+					calendar.add(Calendar.DATE,
+							(int) (range.start - 1 - parentDays));
+					Date rangeStart = Period.max(calendar.getTime(), start);
+
 					calendar.setTime(rangeStart);
-					calendar.add(Calendar.DATE, (int)days);
+					calendar.add(Calendar.DATE, (int) days);
 					Date rangeEnd = calendar.getTime();
 
-					exprCtx.setVariable(name, days, Period.max(rangeStart,start), rangeEnd);
+					exprCtx.setVariable(name, days,
+							Period.max(rangeStart, start), rangeEnd);
 				}
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );

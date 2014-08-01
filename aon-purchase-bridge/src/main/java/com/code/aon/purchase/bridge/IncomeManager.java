@@ -92,6 +92,9 @@ public class IncomeManager {
 	}
 
 	public IncomeDetail transferIncomeDetail(Income income, PurchaseDetail purchaseDetail, Warehouse warehouse) throws ManagerBeanException {
+		Double transferQuantity = purchaseDetail.getTransfered();
+		boolean forcePendingQuantityCancel = purchaseDetail.isForcePendingQuantityCancel();
+		
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		IncomeDetail incomeDetail = new IncomeDetail();
 		incomeDetail.setIncome(income);
@@ -103,7 +106,9 @@ public class IncomeManager {
 		incomeDetail.setPrice(purchaseDetail.getPrice());
 		incomeDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
 		incomeDetail.setPurchaseDetail(purchaseDetail);
-		incomeDetail = (IncomeDetail)incomeDetailBean.insert(incomeDetail);
+		if(transferQuantity!=0){
+			incomeDetail = (IncomeDetail)incomeDetailBean.insert(incomeDetail);
+		}
 
 		Project purchaseProject = purchaseDetail.getPurchase().getProject();
 		if ((income.getProject() == null || income.getProject().getId() == null) && purchaseProject != null && purchaseProject.getId() != null ) {
@@ -114,7 +119,9 @@ public class IncomeManager {
 		}
 
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + purchaseDetail.getTransfered(), 3));
+		purchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getId());
+		purchaseDetail.setForcePendingQuantityCancel(forcePendingQuantityCancel);
+		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + transferQuantity, 3));
 		purchaseDetail.setStatus((purchaseDetail.getQuantity() > purchaseDetail.getDelivered()) ? PurchaseDetailStatus.PARTIAL_SETTLED : PurchaseDetailStatus.SETTLED);
 		purchaseDetailBean.update(purchaseDetail);
 

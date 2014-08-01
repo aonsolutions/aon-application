@@ -352,7 +352,9 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalTransfer.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalFilter.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalConfirm.xhtml" >
 			<ui:param name="controller" value="#{income}" />
 		</ui:include>

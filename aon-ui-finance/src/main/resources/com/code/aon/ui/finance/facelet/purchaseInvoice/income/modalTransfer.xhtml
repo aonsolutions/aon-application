@@ -51,6 +51,13 @@
 										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 										actionListener="#{purchaseInvoice.incomeTransferManager.checkNoneIncomes}" 
 										reRender="incomeTransferData" />	
+									<aon:commandButton id="incomeTransfer-filter"
+										value="#{bundle.aon_filter}"
+										styleClass="aon-finding-toolbar-item aon-icon-search"
+										reRender="showIncomeFilterWindow" >
+										<f:setPropertyActionListener target="#{purchaseInvoice.showIncomeFilterWindow}"
+											value="#{true}" />
+									</aon:commandButton>	
 									<aon:commandButton id="incomeTransfer-accept"
 										value="#{bundle.finance_invoice_to_transfer}"
 										rendered="#{purchaseInvoice.incomeTransferManager.model.rowCount > 0}"

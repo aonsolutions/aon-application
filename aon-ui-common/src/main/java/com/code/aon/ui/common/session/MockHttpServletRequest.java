@@ -1,4 +1,4 @@
-package com.code.aon.ui.audit.session;
+package com.code.aon.ui.common.session;
 
 import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
@@ -28,6 +28,10 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	private AuthPrincipal userPrincipal;
 	
 	private HttpSession httpSession;
+
+	public MockHttpServletRequest( AuthPrincipal userPrincipal ) {
+		this.userPrincipal = userPrincipal;
+	}	
 	
 	public MockHttpServletRequest(ServletContext servletContext) {
 		this.servletContext = servletContext;

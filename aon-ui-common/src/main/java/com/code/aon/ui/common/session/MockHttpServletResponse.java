@@ -1,4 +1,4 @@
-package com.code.aon.ui.audit.session;
+package com.code.aon.ui.common.session;
 
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.ConstantEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DateField;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
@@ -30,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
-import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -1027,6 +1024,9 @@ public class Employees extends ResizeComposite implements
 			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
+				
+				ITDataObject dataObject = getITDataObject(workplaceItem);
+				
 				Date salaryDate = DateUtils.before(
 						DateUtils.after(new Date(), employee.getStartDate()),
 						employee.getEndDate());
@@ -1044,7 +1044,7 @@ public class Employees extends ResizeComposite implements
 				salaryDraft.setIssueDate(issueDate);
 				salaryDraft.setType(Type.SALARY);
 				SalaryDraftObject draftObject = new SalaryDraftObject(
-						salaryDraft, employeesService);
+						salaryDraft, dataObject, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
 
 				// A.E.T
@@ -1472,6 +1472,10 @@ public class Employees extends ResizeComposite implements
 		Date firsDayOfMonth = DateUtils.getFirstDayOfMonth();
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
 
+	}
+	
+	private static ITDataObject getITDataObject(TreeItem workplaceItem) {		
+		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
 	}
 
 }

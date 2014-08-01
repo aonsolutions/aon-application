@@ -154,11 +154,15 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		return 1;
 	}
 	
-	private void updateSeries() {
+	private void updateSeries() throws ManagerBeanException {
 		Series series = getParams().getInvoiceSeries();
         if ( (series!=null) && StringUtils.isBlank(series.getCode()) ) {
+        	series = null;
         	getParams().setInvoiceSeries(null);
         }
+        if ( getParams().getInvoiceNumber() == 0 ) {
+        	getParams().setInvoiceNumber(obtainMaxNumber(series));
+        }        
 	}	
 
 	private boolean isSeriesConfidential(Series series) {

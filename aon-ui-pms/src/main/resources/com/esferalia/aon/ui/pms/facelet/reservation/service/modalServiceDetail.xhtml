@@ -10,9 +10,9 @@
 
 	<aon:panelGroup id="showServiceDetailWindow">
 		<c:if test="#{controller.showServiceDetailWindow}">
-			<rich:modalPanel id="serviceDetailModalPanel" minHeight="240" minWidth="640" 
-				rendered="#{controller.showServiceDetailWindow}"
-				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+			<rich:modalPanel id="serviceDetailModalPanel" minHeight="240" minWidth="740" 
+				showWhenRendered="#{controller.showServiceDetailWindow}"
+				zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.pms_services}" />
@@ -102,17 +102,19 @@
 											<aon:outputLabel for="ProjectReservationService_fromDate" 
 												styleClass="aon-margin-right aon-italic"
 												value="#{bundle.aon_date_from}" />
-											<aon:selectInputDate id="ProjectReservationService_fromDate" 
-												value="#{controller.serviceFromDate}" required="true"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}" />
+											<aon:selectOneMenu id="ProjectReservationService_fromDate" 
+												value="#{controller.serviceFromDate}" style="width: 100px;"
+												required="true" converter="aon.DateConverter">
+												<f:selectItems value="#{controller.reservationDates}" />
+											</aon:selectOneMenu>
 											<aon:outputLabel for="ProjectReservationService_toDate" 
-												styleClass="aon-margin-right aon-italic"
+												styleClass="aon-margin-left aon-margin-right aon-italic"
 												value="#{bundle.aon_date_to}" />
-											<aon:selectInputDate id="ProjectReservationService_toDate" 
-												value="#{controller.serviceToDate}" required="true"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}" />
+											<aon:selectOneMenu id="ProjectReservationService_toDate" 
+												value="#{controller.serviceToDate}" style="width: 100px;"
+												required="true" converter="aon.DateConverter">
+												<f:selectItems value="#{controller.reservationDates}" />
+											</aon:selectOneMenu>
 										</aon:div>
 
 										<aon:outputLabel for="Item_id" 

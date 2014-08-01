@@ -228,7 +228,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 				invoice = getInvoicingDAO().insertInvoice(invoice);
 				getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
 
-				number++;
+				number = invoice.getNumber() + 1;
 				detailLine = 0;
 				previousDelivery = delivery;
 			}

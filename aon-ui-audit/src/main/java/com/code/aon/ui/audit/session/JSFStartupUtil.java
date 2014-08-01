@@ -42,6 +42,8 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
+import com.code.aon.ui.common.session.MockHttpServletRequest;
+import com.code.aon.ui.common.session.MockHttpServletResponse;
 import com.sun.facelets.FaceletFactory;
 import com.sun.facelets.FaceletViewHandler;
 
