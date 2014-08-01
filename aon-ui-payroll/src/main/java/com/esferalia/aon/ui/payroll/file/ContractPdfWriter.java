@@ -75,7 +75,7 @@ public class ContractPdfWriter {
 	}
 	public void loadNewPdf(String document, Contract contract, List<IContrataParams> contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
-		pdfDocument = factory.createContractDocument(document);
+		pdfDocument = factory.createContractDocument(contract, document);
 		if(pdfDocument == null) {
 			String msg = "Documento incorrecto. No se ha podido hallar la factoria correspondiente a este tipo de documento";
 			AonUtil.addErrorMessage(msg);
@@ -92,7 +92,7 @@ public class ContractPdfWriter {
 	}
 	public void loadExistingPdf(String document, ContractAttachment contractPdfDraft) throws UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
-		pdfDocument = factory.createContractDocument(document);
+		pdfDocument = factory.createContractDocument(contractPdfDraft.getContract(), document);
 		if(pdfDocument == null) {
 			String msg = "Documento incorrecto. No se ha podido hallar la factoria correspondiente a este tipo de documento";
 			AonUtil.addErrorMessage(msg);

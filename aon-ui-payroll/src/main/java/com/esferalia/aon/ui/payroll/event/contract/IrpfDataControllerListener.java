@@ -1,21 +1,12 @@
 package com.esferalia.aon.ui.payroll.event.contract;
 
 
-import java.util.Calendar;
-import java.util.List;
-
-import javax.faces.event.AbortProcessingException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
@@ -31,6 +22,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		if(data.getFamilySituation()!=FamilySituation.MARRIED){
 			data.setSpouseDocument(null);
 		}
+		data.setIssueDate(data.getStartDate());
 		completeHandicap();
 	}
 	
@@ -44,51 +36,11 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		completeHandicap();
 	}
 	
-//	@Override
-//	public void afterBeanAdded(ControllerEvent event)
-//			throws ControllerListenerException {
-//		updatePreviousData(true);
-//	}
-//	
-//	@Override
-//	public void beforeBeanRemoved(ControllerEvent event)
-//			throws ControllerListenerException {
-//		updatePreviousData(false);
-//	}
-	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		completeHandicap();
 	}
-	
-	
-	
-//	private void updatePreviousData(boolean closeDate) {
-//		try {
-////			if(getController().getRowCount()>1){
-//			IrpfData data = (IrpfData) getController().getTo();
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(getController().getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID), data.getContract().getId());
-//			criteria.addOrder(getController().getFieldName(IEntityAlias.IRPF_DATA_START_DATE), false);
-//			List<ITransferObject>  list = getController().getManagerBean().getList(criteria);
-//			IrpfData preData = (IrpfData) list.get(1);
-//			if(closeDate){
-//				Calendar cal = Calendar.getInstance();
-//				cal.setTime(data.getStartDate());
-//				cal.add(Calendar.DAY_OF_MONTH, -1);
-//				preData.setEndDate(cal.getTime());
-//			} else {
-//				preData.setEndDate(null);
-//			}
-//			getController().getManagerBean().update(preData);
-////			}
-//		} catch (ManagerBeanException e) {
-//			String msg = "Error al finalizar el modelo anterior";
-//			LOGGER.error(msg);
-//			throw new AbortProcessingException(msg);
-//		}
-//	}
 
 	private void completeHandicap() {
 		IrpfDataController controller = (IrpfDataController) getController();

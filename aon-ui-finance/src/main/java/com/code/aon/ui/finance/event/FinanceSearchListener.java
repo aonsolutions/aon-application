@@ -26,7 +26,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	private Registry registry;
 	private RegistryBank registryBank;
 	private PayMethod[] payMethods;
-	private boolean noInvoice;
+	private boolean nullInvoice;
 	
 	public Registry getRegistry() {
 		return registry;
@@ -44,12 +44,12 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		this.registryBank = registryBank;
 	}
 
-	public boolean isNoInvoice() {
-		return noInvoice;
+	public boolean isNullInvoice() {
+		return nullInvoice;
 	}
 
-	public void setNoInvoice(boolean noInvoice) {
-		this.noInvoice = noInvoice;
+	public void setNullInvoice(boolean nullInvoice) {
+		this.nullInvoice = nullInvoice;
 	}
 
 	public PayMethod[] getPayMethods() {
@@ -94,7 +94,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setRegistryBank((RegistryBank)BeanManager.getManagerBean(RegistryBank.class).createNewTo());
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
-		setNoInvoice(false);
+		setNullInvoice(false);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 			String payMethod = getController().resolveAlias(IEntityAlias.FINANCE_PAY_METHOD_ID);
 			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
 		}
-		if(isNoInvoice()){
+		if(isNullInvoice()){
 			criteria.addNullExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_ID));
 		}
 		super.completeCriteria(criteria);

@@ -9,25 +9,26 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.TemporaryModel;
+import com.esferalia.aon.payroll.Contract;
 
 
 public class ContractPdfFactory {
 	
 	
-	public IContractPdfDocument createContractDocument(String document) {
+	public IContractPdfDocument createContractDocument(Contract contract, String document) {
 		// CONTRACT DOCUMENT
 		if (document.equals(LearningModel.MODEL_NAME)) {
-			return new LearningModel();
+			return new LearningModel(contract);
 		} else if (document.equals(PracticeModel.MODEL_NAME)) {
-			return new PracticeModel();
+			return new PracticeModel(contract);
 		} else if (document.equals(TemporaryModel.MODEL_NAME)) {
-			return new TemporaryModel();
+			return new TemporaryModel(contract);
 		} else if (document.equals(IndefiniteModel.MODEL_NAME)) {
-			return new IndefiniteModel();
+			return new IndefiniteModel(contract);
 		}		
 		// CLAUSES DOCUMENT
 		if (document.equals(ClausulasModel.MODEL_NAME)) {
-			return new ClausulasModel();
+			return new ClausulasModel(contract);
 		} 
 		
 		// BASIC COPY DOCUMENT

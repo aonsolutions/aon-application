@@ -737,6 +737,21 @@ public class ContrataReader {
 				params.setCampaignYear(datos.getDATOSCAMPAÑAS().substring(datos.getDATOSCAMPAÑAS().length()-4, datos.getDATOSCAMPAÑAS().length()));
 				params.setCanpaignData(true);
 			}
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+			try {
+				if(datos.getFECHAINICIO()!=null){
+					params.setStartDate(formatter.parse(datos.getFECHAINICIO()));
+				}
+			} catch (ParseException e) {
+				// nada
+			}
+			try {
+				if(datos.getFECHATERMINO()!=null){
+					params.setEndDate(formatter.parse(datos.getFECHATERMINO()));
+				}
+			} catch (ParseException e) {
+				// nada
+			}
 		}
 	}
 	private void completeDatosMedidasFomento(DATOSMEDIDASFOMENTOTYPE datos, ContrataContratoParams params) {

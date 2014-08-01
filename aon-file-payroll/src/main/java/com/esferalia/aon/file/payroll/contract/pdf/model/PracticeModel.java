@@ -19,7 +19,8 @@ public class PracticeModel extends AbstractContractModel {
 	
 	public final static String MODEL_NAME = "Practicas";
 	
-	public PracticeModel(){
+	public PracticeModel(Contract contract){
+		super.contract = contract;
 		super.documentName = MODEL_NAME;
 	}
 	
@@ -28,12 +29,12 @@ public class PracticeModel extends AbstractContractModel {
 		
 		// TODO
 		try {
-			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
-			String range = "1-3";
-			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
-			range += ","+modelOption.getPageNumber();
-			getReader().selectPages(range);
-			readPdfFields();
+			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
+//			String range = "1-3";
+//			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
+//			range += ","+modelOption.getPageNumber();
+//			reader.selectPages(range);
+			readPdfFields(reader);
 			
 			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			

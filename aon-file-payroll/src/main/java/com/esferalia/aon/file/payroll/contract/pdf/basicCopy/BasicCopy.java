@@ -32,8 +32,8 @@ public class BasicCopy extends AbstractContractBasicCopy {
 		
 		
 		try {
-			setReader(new PdfReader(getContractBasicCopyUrl(documentName+".pdf")));
-			readPdfFields();
+			PdfReader reader = new PdfReader(getContractBasicCopyUrl(documentName+".pdf"));
+			readPdfFields(reader);
 //			super.loadPdfCommonFields(contract);
 
 			ContrataContratoParams params = (ContrataContratoParams) contrataParams.get(0);

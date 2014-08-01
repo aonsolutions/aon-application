@@ -1117,6 +1117,8 @@ public class FANWriter {
 //		S Pensionista incapacidad permanente de la S.S.
 //		P Pensionista incapacidad permanente clases pasivas
 		
+//		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.HANDICAP_INDICATOR.getName());
+//		return o!=null && !o.isEmpty()?o:null;
 		return null;
 	}
 	private String getQuoteMode(Contract contract) {
@@ -1155,10 +1157,14 @@ public class FANWriter {
 	}
 	private Integer getBonificationReduction(Contract contract) {
 		// TODO getBonificationReduction
-//		1 Reducción minima
-//		2 Reducción media
-//		3 Reducción máxima
-//		4 Importe total sin reducción
+//		1	Reducción mínima *
+//		2	Reducción media
+//		3	Reducción máxima
+//		4	Importe total sin reducción
+//		5	Tarifa plana minima (RDL 3/2014).
+//		6	Tarifa plana media (RDL 3/2014)
+//		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.HANDICAP_INDICATOR.getName());
+//		return o!=null && !o.isEmpty()?Integer.parseInt(o):null;
 		return null;
 	}
 	private Integer getSpecifics(Contract contract) {
@@ -1209,6 +1215,27 @@ public class FANWriter {
 	 * @return
 	 */
 	private Integer getContractDischargeDays(Contract contract) {
+		String code = getContractCode(contract).getValue();
+		if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
+			getSalaryBonuses(getSalary(contract, SalaryType.SALARY));
+			boolean match = false;
+			for(ITransferObject to: getSalaryBonuses(getSalary(contract, SalaryType.SALARY))){
+				ContractBonus bonus = (ContractBonus) to;
+				if(bonus.getBonusConcept().getType()==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+					match = true;
+				}
+			}
+			if(match){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(getStartDate());
+				Date startDate = contract.getStartDate().after(getStartDate()) && contract.getStartDate().before(getEndDate())?contract.getStartDate(): getStartDate(); 
+				try {
+					return (int)CommonUtil.getDaysBetweenDates(startDate, getEndDate(), true);
+				} catch (IllegalArgumentException e) {
+					// nada  
+				}
+			}
+		}
 		// TODO 
 		return null;
 	}
@@ -1592,21 +1619,19 @@ public class FANWriter {
 		amount += ((emp.getEdt().containsKey("EDTTT10") && emp.getEdtSegment("EDTTT10").getImporte()!=null)?emp.getEdtSegment("EDTTT10").getImporte():0);
 		amount += ((emp.getEdt().containsKey("EDTTT20") && emp.getEdtSegment("EDTTT20").getImporte()!=null)?emp.getEdtSegment("EDTTT20").getImporte():0);
 		amount += ((emp.getEdt().containsKey("EDTTT30") && emp.getEdtSegment("EDTTT30").getImporte()!=null)?emp.getEdtSegment("EDTTT30").getImporte():0);
-		if(amount != 0){
-			EDT edt = emp.getEdtSegment("EDTTT"+(amount<0?"92":"91"));
-			edt.setTipoElemento("TT");
-			edt.setClave(amount<0?92:91);
-			edt.setCalificadorClave(null);
-			edt.setBase(null);
-			edt.setIndicadorFactorTipo(" ");
-			edt.setParteEnteraTipo(0);
-			edt.setParteDecimalFactorTipo(0);
-			edt.setSigno(" ");
-			if(amount<0){
-				amount += (emp.getEdt().containsKey("EDTCA90")?emp.getEdtSegment("EDTCA90").getImporte():0);
-			}
-			edt.setImporte(amount);
+		EDT edt = emp.getEdtSegment("EDTTT"+(amount<0?"92":"91"));
+		edt.setTipoElemento("TT");
+		edt.setClave(amount<0?92:91);
+		edt.setCalificadorClave(null);
+		edt.setBase(null);
+		edt.setIndicadorFactorTipo(" ");
+		edt.setParteEnteraTipo(0);
+		edt.setParteDecimalFactorTipo(0);
+		edt.setSigno(" ");
+		if(amount<0){
+			amount += (emp.getEdt().containsKey("EDTCA90")?emp.getEdtSegment("EDTCA90").getImporte():0);
 		}
+		edt.setImporte(amount);
 	}
 	/**
 	 *  30 Liquido otras cotizaciones
@@ -1618,18 +1643,16 @@ public class FANWriter {
 		amount += (emp.getEdt().containsKey("EDTCA57")?emp.getEdtSegment("EDTCA57").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTCA60")&&emp.getEdtSegment("EDTCA60").getImporte()!=null?emp.getEdtSegment("EDTCA60").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTCD24")?emp.getEdtSegment("EDTCD24").getImporte():0);
-		if(amount != 0){
-			EDT edt = emp.getEdtSegment("EDTTT30");
-			edt.setTipoElemento("TT");
-			edt.setClave(30);
-			edt.setCalificadorClave(null);
-			edt.setBase(null);
-			edt.setIndicadorFactorTipo(" ");
-			edt.setParteEnteraTipo(0);
-			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte(amount);
-			edt.setSigno(amount<0?"-":" ");
-		}
+		EDT edt = emp.getEdtSegment("EDTTT30");
+		edt.setTipoElemento("TT");
+		edt.setClave(30);
+		edt.setCalificadorClave(null);
+		edt.setBase(null);
+		edt.setIndicadorFactorTipo(" ");
+		edt.setParteEnteraTipo(0);
+		edt.setParteDecimalFactorTipo(0);
+		edt.setImporte(amount);
+		edt.setSigno(amount<0?"-":" ");
 	}
 	/**
 	 * 20 Liquido accidentes de trabajo y enfermedad profesional
@@ -1638,18 +1661,16 @@ public class FANWriter {
 		Integer amount = 0; 
 		amount += (emp.getEdt().containsKey("EDTCA30")&&emp.getEdtSegment("EDTCA30").getImporte()!=null?emp.getEdtSegment("EDTCA30").getImporte():0); 
 		amount -= (emp.getEdt().containsKey("EDTCD03")?emp.getEdtSegment("EDTCD03").getImporte():0);
-//		if(amount != 0){
-			EDT edt = emp.getEdtSegment("EDTTT20");
-			edt.setTipoElemento("TT");
-			edt.setClave(20);
-			edt.setCalificadorClave(null);
-			edt.setBase(null);
-			edt.setIndicadorFactorTipo(" ");
-			edt.setParteEnteraTipo(0);
-			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte(amount);
-			edt.setSigno(amount<0?"-":" ");
-//		}
+		EDT edt = emp.getEdtSegment("EDTTT20");
+		edt.setTipoElemento("TT");
+		edt.setClave(20);
+		edt.setCalificadorClave(null);
+		edt.setBase(null);
+		edt.setIndicadorFactorTipo(" ");
+		edt.setParteEnteraTipo(0);
+		edt.setParteDecimalFactorTipo(0);
+		edt.setImporte(amount);
+		edt.setSigno(amount<0?"-":" ");
 	}
 	/**
 	 * 10 Liquido contingencias generales
@@ -1666,18 +1687,16 @@ public class FANWriter {
 		amount -= (emp.getEdt().containsKey("EDTCA22")?emp.getEdtSegment("EDTCA22").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTBA10")?emp.getEdtSegment("EDTBA10").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTBA11")?emp.getEdtSegment("EDTBA11").getImporte():0);
-		if(amount != 0){
-			EDT edt = emp.getEdtSegment("EDTTT10");
-			edt.setTipoElemento("TT");
-			edt.setClave(10);
-			edt.setCalificadorClave(null);
-			edt.setBase(0);
-			edt.setIndicadorFactorTipo(null);
-			edt.setParteEnteraTipo(0);
-			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte(amount);
-			edt.setSigno(amount<0?"-":" ");
-		}
+		EDT edt = emp.getEdtSegment("EDTTT10");
+		edt.setTipoElemento("TT");
+		edt.setClave(10);
+		edt.setCalificadorClave(null);
+		edt.setBase(0);
+		edt.setIndicadorFactorTipo(null);
+		edt.setParteEnteraTipo(0);
+		edt.setParteDecimalFactorTipo(0);
+		edt.setImporte(amount);
+		edt.setSigno(amount<0?"-":" ");
 	}
 	
 	

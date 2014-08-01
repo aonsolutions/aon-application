@@ -37,7 +37,6 @@ import com.lowagie.text.pdf.PdfStamper;
 
 public class PdfModelHandler {
 	
-	private PdfReader reader;
 	private Double documentWidth;
 	private Double documentHeight;
 	private Integer numberOfDocumentPages;
@@ -83,15 +82,8 @@ public class PdfModelHandler {
 		this.numberOfDocumentPages = numberOfDocumentPages;
 	}
 	
-	public PdfReader getReader() {
-		return reader;
-	}
-
-	public void setReader(PdfReader reader) {
-		this.reader = reader;
-	}
 	
-	public byte[] buildPdf(boolean readOnly) {
+	public byte[] buildPdf(PdfReader reader, boolean readOnly) {
 		try {
 			setDocumentWidth((double)reader.getPageSize(1).getWidth());
 			setDocumentHeight((double)reader.getPageSize(1).getHeight());
@@ -169,7 +161,7 @@ public class PdfModelHandler {
 	}
 	
 	
-	public void readPdfFields() throws IOException{
+	public void readPdfFields(PdfReader reader) throws IOException{
 		setDocumentWidth((double)reader.getPageSize(1).getWidth());
 		setDocumentHeight((double)reader.getPageSize(1).getHeight());
 		setNumberOfDocumentPages(reader.getNumberOfPages());

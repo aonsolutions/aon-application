@@ -293,6 +293,29 @@ public class SSCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T53.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T53CodeList;
+
+	public List<SelectItem> getT53CodeList() {
+		if (T53CodeList == null) {
+			T53CodeList = new LinkedList<SelectItem>();
+			T53[] el = T53.values();
+			for (T53 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T53CodeList.add(item);
+				}
+			}
+		}
+		return T53CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T54.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -311,6 +334,29 @@ public class SSCollectionsController {
 			}
 		}
 		return T54CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T55.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T55CodeList;
+
+	public List<SelectItem> getT55CodeList() {
+		if (T55CodeList == null) {
+			T55CodeList = new LinkedList<SelectItem>();
+			T55[] el = T55.values();
+			for (T55 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T55CodeList.add(item);
+				}
+			}
+		}
+		return T55CodeList;
 	}
 
 	/** 

@@ -16,10 +16,12 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.PdfModelHandler;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.lowagie.text.pdf.PdfReader;
 
 
@@ -27,6 +29,8 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	
 	public final static String CONTRACT_DOCUMENT_PATH = "com/esferalia/aon/file/payroll/contract/modelPdf/";
 	public final static String CONTRACT_CLAUSES_PATH = "com/esferalia/aon/file/payroll/contract/clausesPdf/";
+	
+	protected Contract contract;
 	
 	private PdfModelHandler handler;
 	
@@ -86,14 +90,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		getHandler().setNumberOfDocumentPages(numberOfDocumentPages);
 	}
 	
-	public PdfReader getReader() {
-		return getHandler().getReader();
-	}
-
-	public void setReader(PdfReader reader) {
-		getHandler().setReader(reader);
-	}
-
 	@Override
 	public String getDocumentPath(){
 		// CONTRACT DOCUMENT
@@ -110,7 +106,16 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	
 	@Override
 	public byte[] buildPdf(boolean readOnly) {
-		return getHandler().buildPdf(readOnly);
+		try {
+			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
+			String range = "1-3";
+			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
+			range += ","+modelOption.getPageNumber();
+			reader.selectPages(range);
+			return getHandler().buildPdf(reader, readOnly);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
@@ -127,7 +132,12 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		readPdfFields();
 	}
 	protected void readPdfFields() throws IOException{
-		getHandler().readPdfFields();
+		PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
+		String range = "1-3";
+		ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
+		range += ","+modelOption.getPageNumber();
+		reader.selectPages(range);
+		getHandler().readPdfFields(reader);
 	}
 	
 	protected void setPdfFieldValue(String name, String value){

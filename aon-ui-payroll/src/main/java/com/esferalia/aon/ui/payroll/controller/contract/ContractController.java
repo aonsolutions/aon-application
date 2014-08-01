@@ -57,6 +57,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
+import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.payroll.Agreement;
@@ -92,7 +93,10 @@ import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
+import com.esferalia.aon.payroll.enumeration.ss.T53;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.payroll.enumeration.ss.T55;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
@@ -424,6 +428,26 @@ public class ContractController extends BasicController {
 	public boolean isTrainingCourseDefined(){
 		Map<String, String> map = getContractUtils().getContractInfoMap((Contract) this.getTo());
 		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
+	}
+	
+	public boolean isPartialTimeReductionBonus(){
+		boolean indicatorRequired = false;
+		for(ITransferObject to: this.getParams().getBonuses()){
+			ContractBonus bonus = (ContractBonus) to;
+			if(bonus.getBonusConcept().getType()==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+				indicatorRequired = true;
+			}
+		}
+		return isPartiallyTimeContract() && indicatorRequired;
+	}
+	
+	public boolean isShowDisabilityIndicator(){
+		if(this.getParams().getContractCode()!=null){
+			return this.getParams().getContractCode() == ContractCode.C130 || this.getParams().getContractCode() == ContractCode.C230
+					|| this.getParams().getContractCode() == ContractCode.C330 || this.getParams().getContractCode() == ContractCode.C430
+					|| this.getParams().getContractCode() == ContractCode.C530;
+		}
+		return false;
 	}
 	
 	public ContractSsStatus getModelSsStatus(){
@@ -1192,6 +1216,19 @@ public class ContractController extends BasicController {
 			String msg = "Imposible borrar los datos de la prorroga (INFO). (" +e.getMessage() + ")";
 			throw new AbortProcessingException(msg,e);
 		}
+		try {
+			Contract contract = (Contract) this.getTo();
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize(contract);
+			contrataController.onContrataDataShow(null);
+			Date endDate = ((ContrataContratoParams)contrataController.getParams()).getEndDate();
+			contract.setEndDate(endDate);
+			this.getManagerBean().restoreNullSubPOJOs(contract);
+			this.getManagerBean().update(contract);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible restaurar la fecha final del contrato";
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	
 	public List<SelectItem> getSepeStatuses(){
@@ -1786,6 +1823,8 @@ public class ContractController extends BasicController {
 		private List<ITransferObject> bonuses;
 		private DataModel bonusModel;
 		private T54 collectivePeculiarityQuote;
+		private T53 partialTimeReductionIndicator;
+		private T55 disabilityIndicator;
 		
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
@@ -2029,6 +2068,18 @@ public class ContractController extends BasicController {
 		}
 		public void setCollectivePeculiarityQuote(T54 collectivePeculiarityQuote) {
 			this.collectivePeculiarityQuote = collectivePeculiarityQuote;
+		}
+		public T53 getPartialTimeReductionIndicator() {
+			return partialTimeReductionIndicator;
+		}
+		public void setPartialTimeReductionIndicator(T53 partialTimeReductionIndicator) {
+			this.partialTimeReductionIndicator = partialTimeReductionIndicator;
+		}
+		public T55 getDisabilityIndicator() {
+			return disabilityIndicator;
+		}
+		public void setDisabilityIndicator(T55 disabilityIndicator) {
+			this.disabilityIndicator = disabilityIndicator;
 		}
 		public TLDCAUSS getSuspensionCause() {
 			return suspensionCause;
