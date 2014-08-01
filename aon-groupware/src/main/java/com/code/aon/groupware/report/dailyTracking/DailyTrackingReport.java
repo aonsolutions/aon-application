@@ -13,6 +13,8 @@ public class DailyTrackingReport {
 	private String userName;
 	private Date date;
 	private Double duration;
+	private int hours;
+	private int minutes;
 	private Double cost;
 	private Integer jobTypeId;
 	private String jobTypeDescription;
@@ -26,6 +28,7 @@ public class DailyTrackingReport {
 	private String projectTypeDescription;
 	private String comments;
 	
+	
 	public DailyTrackingReport(Integer id, Integer userId, String userName, Date date,
 			Double duration,Double cost, Integer jobTypeId, String jobTypeDescription, Integer registryId,
 			String registryName,Integer projectId, String projectName, Integer activityTypeId,
@@ -34,7 +37,7 @@ public class DailyTrackingReport {
 		this.userId = userId;
 		this.userName = userName;
 		this.date = date;
-		this.duration = duration;
+		setDuration(duration);
 		this.cost = cost;
 		this.jobTypeId = jobTypeId;
 		this.jobTypeDescription = jobTypeDescription;
@@ -54,7 +57,7 @@ public class DailyTrackingReport {
 			String registryName) {
 		this.userId = userId;
 		this.userName = userName;
-		this.duration = duration;
+		setDuration(duration);
 		this.jobTypeId = jobTypeId;
 		this.jobTypeDescription = jobTypeDescription;
 		this.registryId = registryId;
@@ -94,8 +97,30 @@ public class DailyTrackingReport {
 	}
 	public void setDuration(Double duration) {
 		this.duration = duration;
+		setHours(0);
+		setMinutes(0);
+		if (duration != null) {
+			setHours( (int) duration.doubleValue()  );
+			double minutes = (duration % 1);
+			minutes =  minutes * 60; 
+			setMinutes( (int) CommonUtil.round(minutes,0));
+		}
+	}
+	
+	public int getHours() {
+		return hours;
+	}
+	public void setHours(int hours) {
+		this.hours = hours;
 	}
 
+	public int getMinutes() {
+		return minutes;
+	}
+	public void setMinutes(int minutes) {
+		this.minutes = minutes;
+	}
+	
 	public Double getCost() {
 		return cost;
 	}
