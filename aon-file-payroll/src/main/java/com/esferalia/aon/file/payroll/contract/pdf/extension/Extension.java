@@ -20,9 +20,8 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
-import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldIndefinite;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
@@ -76,16 +75,14 @@ public class Extension extends AbstractContractExtension {
 		// TODO
 		
 		try {
-			setReader(new PdfReader(getContractExtensionUrl(documentName+".pdf")));
-			
-//			PdfReader reader = new PdfReader(getContractExtensionUrl(documentName+".pdf"));
+			PdfReader reader = new PdfReader(getContractExtensionUrl(documentName+".pdf"));
+			readPdfFields(reader);
+
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			Map<String, String>  map = getContractInfoMap(contract);
 			
-//			readPdfFields(reader);
-			readPdfFields();
-			
-			ContrataProrrogaParams prorrogaParams = (ContrataProrrogaParams) params.get(0);
+			ContrataContratoParams contratoParams = (ContrataContratoParams) params.get(0);
+			ContrataProrrogaParams prorrogaParams = (ContrataProrrogaParams) params.get(1);
 			
 			super.loadPdfCommonFields(contract, params);
 			
@@ -211,12 +208,11 @@ public class Extension extends AbstractContractExtension {
 				setPdfFieldValue(EMPLOYEE_BIRTH_DATE,formatter.format(contract.getPerson().getBirthDate()));
 			}
 			setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
-			// TODO contrataContatoParams is required for this
-//			if(params!=null && params.getNivelFormativo()!=null){
-//				setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,params.getNivelFormativo().getDescription());
-//				setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,params.getNivelFormativo().getCode().substring(0, 1));
-//				setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,params.getNivelFormativo().getCode().substring(1, 2));
-//			}
+			if(contratoParams!=null && contratoParams.getNivelFormativo()!=null){
+				setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,contratoParams.getNivelFormativo().getDescription());
+				setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,contratoParams.getNivelFormativo().getCode().substring(0, 1));
+				setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,contratoParams.getNivelFormativo().getCode().substring(1, 2));
+			}
 			try {
 				setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
 				setPdfFieldValue(EMPLOYEE_COUNTRY_CODE1,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));
@@ -270,7 +266,7 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_EXTENSION_MONTH_COUNT).setValue(extensionDurationInMonths.toString());
 			
 			getPdfFieldsMap().get(PE191_CONTRACT_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
-			Integer contractDurationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
+			Integer contractDurationInMonths = getMonthsBetweenDates(contratoParams.getStartDate(), contratoParams.getEndDate());
 			getPdfFieldsMap().get(PE191_CONTRACT_MONTH_COUNT).setValue(contractDurationInMonths!=null?contractDurationInMonths.toString():null);
 			
 			getPdfFieldsMap().get(PE191_SEPE_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());

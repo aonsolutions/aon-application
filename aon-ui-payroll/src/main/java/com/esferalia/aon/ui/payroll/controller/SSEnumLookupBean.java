@@ -12,7 +12,9 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.payroll.enumeration.ss.SSCodeTables;
+import com.esferalia.aon.payroll.enumeration.ss.T53;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.payroll.enumeration.ss.T55;
 import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
@@ -98,6 +100,12 @@ public class SSEnumLookupBean implements Serializable {
 		handler.onInitSSCodesModels(event);
 	}
 	
+	public void clear(ActionEvent event) {
+		code = null;
+		description = null;
+		ssEnum = null;
+	}
+	
 	public void onSearch(ActionEvent event) {
 		String value = getEnumName().contains("-")?getEnumName():StringUtils.replace(getEnumName(), "T", "T-");
 		SSCodeTables codeTable = SSCodeTables.getEnumByValue(value);
@@ -109,21 +117,29 @@ public class SSEnumLookupBean implements Serializable {
 	}
 	
 	public void loadEnumByCode(ActionEvent event) {
+		enumName = event.getComponent().getParent().getParent().getId().substring(0, 4);
 		ContractController controller = (ContractController) FormUtil.getController("contract");
 		try {
-			Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase().replaceAll("-", ""));
-			for (Object obj : clazz.getEnumConstants()) {
-				ISSEnum enumeration = (ISSEnum) obj;
-				if(enumeration.getCode().equals(code)){
-					// Add here the required S.S. enums
-					if(enumeration.getClass()==T54.class){
-						controller.getParams().setCollectivePeculiarityQuote((T54) enumeration);
+			if(code!=null){
+				Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase().replaceAll("-", ""));
+				for (Object obj : clazz.getEnumConstants()) {
+					ISSEnum enumeration = (ISSEnum) obj;
+					if(enumeration.getCode().toUpperCase().equals(code.toUpperCase())){
+						// Add here the required S.S. enums
+						if(enumeration.getClass()==T53.class){
+							controller.getParams().setPartialTimeReductionIndicator((T53) enumeration);
+						} else if(enumeration.getClass()==T54.class){
+							controller.getParams().setCollectivePeculiarityQuote((T54) enumeration);
+						} else if(enumeration.getClass()==T55.class){
+							controller.getParams().setDisabilityIndicator((T55) enumeration);
+						}
 					}
 				}
 			}
 		} catch (ClassNotFoundException e1) {
 			// nothing to do
 		}
+		clear(event);
 	}
 	
 	public void onSelect(ActionEvent event) {
@@ -132,11 +148,16 @@ public class SSEnumLookupBean implements Serializable {
 		ContractController controller = (ContractController) FormUtil.getController("contract");
 		
 		// Add here the required S.S. enums
-		if(getSsEnum().getClass()==T54.class){
+		if(getSsEnum().getClass()==T53.class){
+			controller.getParams().setPartialTimeReductionIndicator((T53) getSsEnum());
+		} else if(getSsEnum().getClass()==T54.class){
 			controller.getParams().setCollectivePeculiarityQuote((T54) getSsEnum());
+		} else if(getSsEnum().getClass()==T55.class){
+			controller.getParams().setDisabilityIndicator((T55) getSsEnum());
 		}
 		
 		setShowEnumLookupWindow(false);
+		clear(null);
 	}
 
 	public List<ISSEnum> autocomplete(Object suggest) {

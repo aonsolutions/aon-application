@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
@@ -537,7 +538,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			return textListBox;
 		}
 
-
 	}
 
 	static class EnumIntListBoxFactory<E extends Enum<?> & HasDescription>
@@ -859,6 +859,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			item.setExpression(dialog.getPaymentExpression());
 			item.setIrpfExpression(dialog.getIrpfExpression());
 			item.setQuoteExpression(dialog.getQuoteExpression());
+			if (item.getMonth() == null
+					&& item.getSalaryType() == Salary.Type.EXTRA)
+				item.setSalaryType(Salary.Type.SALARY);
 			salaryDraftObject.addDraftPayment(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
 
@@ -1300,7 +1303,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			draftPayment.setStartDate(salaryDraftObject.getStartDate());
 			draftPayment.setSalaryType(salaryDraftObject.getType());
 			// draftPayment.setMonth(deduction.getMonth());
-			
+
 			salaryDraftObject.addDraftPayment(draftPayment);
 
 		}

@@ -11,7 +11,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Hashtable;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -24,7 +23,6 @@ import com.code.aon.google.apis.sessionInfo.GoogleUser;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
 import com.code.aon.google.apis.sessionInfo.SessionUserInfo;
 import com.code.aon.jaas.auth.spi.db.Domain;
-import com.code.aon.jaas.auth.spi.db.OpenIDLoginModule;
 import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
@@ -82,6 +80,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 		Tasks tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
 				.setApplicationName("AON SOLUTIONS").build();
 				
+		
 		String email = oauth2.userinfo().v2().me().get().execute().getEmail();
 		System.out.println("EMAIL = " + email );
 		

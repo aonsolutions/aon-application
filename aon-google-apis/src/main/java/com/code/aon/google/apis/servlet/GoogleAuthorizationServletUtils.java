@@ -8,8 +8,6 @@ import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
@@ -19,10 +17,8 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.oauth2.Oauth2Scopes;
-import com.google.api.services.plus.PlusScopes;
 import com.google.api.services.tasks.TasksScopes;
 
 

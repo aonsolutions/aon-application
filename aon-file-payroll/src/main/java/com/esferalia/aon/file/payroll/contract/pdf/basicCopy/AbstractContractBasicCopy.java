@@ -86,14 +86,6 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		getHandler().setNumberOfDocumentPages(numberOfDocumentPages);
 	}
 	
-	public PdfReader getReader() {
-		return getHandler().getReader();
-	}
-
-	public void setReader(PdfReader reader) {
-		getHandler().setReader(reader);
-	}
-	
 	@Override
 	public String getDocumentPath(){
 		return CONTRACT_BASIC_COPY_PATH;
@@ -101,7 +93,11 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 	
 	@Override
 	public byte[] buildPdf(boolean readOnly) {
-		return getHandler().buildPdf(readOnly);
+		try {
+			return getHandler().buildPdf(new PdfReader(getContractBasicCopyUrl(documentName+".pdf")), readOnly);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
@@ -119,7 +115,7 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 	}
 	
 	protected void readPdfFields() throws IOException{
-		getHandler().readPdfFields();
+		getHandler().readPdfFields(new PdfReader(getContractBasicCopyUrl(documentName+".pdf")));
 	}
 	
 	protected void setPdfFieldValue(String name, String value){

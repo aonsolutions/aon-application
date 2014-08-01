@@ -6,6 +6,9 @@
 
 	<inherits name="com.google.gwt.i18n.I18N" />
 	
+
+	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>
+
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>
 	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>
@@ -22,6 +25,7 @@
 
 	<set-property name="user.agent" value="gecko1_8" />	
 	<extend-property name="user.agent" values="safari" />
+	<extend-property name="user.agent" values="opera" />
 	<extend-property name="user.agent" values="ie6" />
 	<extend-property name="user.agent" values="ie8" />
 	<extend-property name="user.agent" values="opera" />
@@ -41,6 +45,7 @@
 
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class='com.esferalia.aon.gwt.payroll.client.MainEntryPoint' />
+
 
 	<!-- Specify the paths for translatable code                    -->
 	<source path='client' />

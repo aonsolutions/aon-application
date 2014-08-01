@@ -46,7 +46,8 @@ public class LearningModel extends AbstractContractModel {
 	
 	public final static String MODEL_NAME = "Formacion";
 	
-	public LearningModel(){
+	public LearningModel(Contract contract){
+		super.contract = contract;
 		super.documentName = MODEL_NAME;
 	}
 	
@@ -54,12 +55,12 @@ public class LearningModel extends AbstractContractModel {
 	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
 		try {			
-			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
-			String range = "1-3";
-			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
-			range += ","+modelOption.getPageNumber();
-			getReader().selectPages(range);
-			readPdfFields();
+			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
+//			String range = "1-3";
+//			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
+//			range += ","+modelOption.getPageNumber();
+//			reader.selectPages(range);
+			readPdfFields(reader);
 			
 			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
@@ -382,7 +383,7 @@ public class LearningModel extends AbstractContractModel {
 			/*
 			 *  OPTIONS PAGE
 			 */
-			modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
+			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
 			
 			if(modelOption == ModelOption.LEARNING_OPT1){
 				setPdfFieldValue(PdfFieldLearning.MAIN_OPT1_CHECK.getValue(),"true");

@@ -104,16 +104,20 @@
 												value="#{bundle.aon_date_from}" />
 											<aon:selectOneMenu id="ProjectReservationService_fromDate" 
 												value="#{controller.serviceFromDate}" style="width: 100px;"
-												required="true" converter="aon.DateConverter">
+												required="true">
 												<f:selectItems value="#{controller.reservationDates}" />
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />												
 											</aon:selectOneMenu>
 											<aon:outputLabel for="ProjectReservationService_toDate" 
 												styleClass="aon-margin-left aon-margin-right aon-italic"
 												value="#{bundle.aon_date_to}" />
 											<aon:selectOneMenu id="ProjectReservationService_toDate" 
 												value="#{controller.serviceToDate}" style="width: 100px;"
-												required="true" converter="aon.DateConverter">
+												required="true">
 												<f:selectItems value="#{controller.reservationDates}" />
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />												
 											</aon:selectOneMenu>
 										</aon:div>
 

@@ -9,24 +9,29 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<aon:set var="#{ssEnumLookup.enumName}" value="#{enumName}" />
-	<aon:set var="#{ssEnumLookup.ssEnum}" value="#{lookupTo}" />
-	
-	<aon:outputText value="#{lookupLabel}" />
-	<aon:div id="#{enumName}enumLookup#{lookupSuffix}" styleClass="aon-lookup" >
+	<aon:outputText value="#{lookupLabel}"
+		rendered="#{lookupRendered==null or lookupRendered}" />
+	<aon:div id="#{enumName}enumLookup#{lookupSuffix}" styleClass="aon-lookup"
+		rendered="#{lookupRendered==null or lookupRendered}" >
 		<aon:inputText value="#{ssEnumLookup.code}"
-			disabled="#{lookupTo!=null}" size="5">
-			<a4j:support event="onchange" reRender="#{enumName}enumLookup"
+			rendered="#{lookupTo==null}" size="5">
+			<a4j:support event="onchange" reRender="#{enumName}enumLookup#{lookupSuffix}"
 				actionListener="#{ssEnumLookup.loadEnumByCode}" />
-			<a4j:support event="onblur" reRender="#{enumName}enumLookup"
+			<a4j:support event="onblur" reRender="#{enumName}enumLookup#{lookupSuffix}"
 				actionListener="#{ssEnumLookup.loadEnumByCode}" />
 		</aon:inputText>
+		<aon:inputText value="#{lookupTo.code}"
+			disabled="#{true}"
+			rendered="#{lookupTo!=null}" size="5" />
 		
 		<aon:commandButton id="#{enumName}_SearchButton#{lookupSuffix}"
 			rendered="#{lookupTo==null}" ajaxSingle="true"
 			reRender="#{enumName}enumLookup, showEnumLookupWindow"
-			actionListener="#{ssEnumLookup.onSearch}"
-			styleClass="aon-lookupButton" />
+			styleClass="aon-lookupButton" >
+			<f:setPropertyActionListener
+				target="#{ssEnumLookup.enumName}" value="#{enumName}" />
+			<aon:actionListener method="#{ssEnumLookup.onSearch}"/>
+		</aon:commandButton>
 			
 		<aon:commandButton id="#{enumName}_ClearButton#{lookupSuffix}"
 			rendered="#{lookupTo!=null}" ajaxSingle="true"
@@ -35,17 +40,22 @@
 			styleClass="aon-lookupButton-clear" >
 			<f:setPropertyActionListener
 				target="#{lookupTo}" value="#{null}" />
+			<aon:actionListener method="#{ssEnumLookup.clear}" 
+				reRender="#{enumName}enumLookup" />
 		</aon:commandButton>
 		
 		<aon:div style="display: inline;">
 			<aon:inputText id="#{enumName}lookup-description#{lookupSuffix}" 
-				value="#{ssEnumLookup.description}" disabled="#{lookupTo!=null}" size="64">
+				value="#{ssEnumLookup.description}" rendered="#{lookupTo==null}" size="64">
 				<aon:abbreviateConverter maxWidth="64" />
+				<a4j:support event="onfocus" >
+					<f:setPropertyActionListener target="#{ssEnumLookup.enumName}" value="#{enumName}" />
+				</a4j:support>
 			</aon:inputText>
 			<rich:suggestionbox for="#{enumName}lookup-description#{lookupSuffix}" tokens=",[]"
                 fetchValue="#{lto.description}" 
                 minChars="3" rows="5"
-                width="300" height="300" border="1" 
+                width="300" height="150" border="1" 
                 usingSuggestObjects="true"
                 suggestionAction="#{ssEnumLookup.autocomplete}" var="lto"
                 nothingLabel="#{bundle.aon_search_no_results}" >
@@ -65,6 +75,10 @@
 					<aon:outputText value="#{lookupTo.description}" />
 				</rich:toolTip>
 			</c:if>
+			<aon:inputText  
+				value="#{lookupTo.description}" rendered="#{lookupTo!=null}" disabled="#{true}" size="64">
+				<aon:abbreviateConverter maxWidth="64" />
+			</aon:inputText>
 		</aon:div>
 		
 	</aon:div>

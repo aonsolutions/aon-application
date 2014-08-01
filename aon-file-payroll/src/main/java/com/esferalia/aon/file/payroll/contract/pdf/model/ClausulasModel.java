@@ -27,16 +27,17 @@ public class ClausulasModel extends AbstractContractModel {
 	
 	public final static String MODEL_NAME = "Clausulas";
 	
-	public ClausulasModel(){
+	public ClausulasModel(Contract contract){
+		super.contract = contract;
 		super.documentName = MODEL_NAME;
 	}
 	
 	@Override
 	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		try {
-			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
-			readPdfFields();
-			
+			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
+			readPdfFields(reader);
+
 			setPdfFieldValue(ClausesCommonFieldName.CONTENT.getValue(), obtainClausesContent(contract));
 
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();

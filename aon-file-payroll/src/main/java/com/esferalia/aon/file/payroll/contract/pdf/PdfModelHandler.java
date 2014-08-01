@@ -41,7 +41,6 @@ public class PdfModelHandler implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private PdfReader reader;
 	private Double documentWidth;
 	private Double documentHeight;
 	private Integer numberOfDocumentPages;
@@ -87,15 +86,8 @@ public class PdfModelHandler implements Serializable {
 		this.numberOfDocumentPages = numberOfDocumentPages;
 	}
 	
-	public PdfReader getReader() {
-		return reader;
-	}
-
-	public void setReader(PdfReader reader) {
-		this.reader = reader;
-	}
 	
-	public byte[] buildPdf(boolean readOnly) {
+	public byte[] buildPdf(PdfReader reader, boolean readOnly) {
 		try {
 			setDocumentWidth((double)reader.getPageSize(1).getWidth());
 			setDocumentHeight((double)reader.getPageSize(1).getHeight());
@@ -173,7 +165,7 @@ public class PdfModelHandler implements Serializable {
 	}
 	
 	
-	public void readPdfFields() throws IOException{
+	public void readPdfFields(PdfReader reader) throws IOException{
 		setDocumentWidth((double)reader.getPageSize(1).getWidth());
 		setDocumentHeight((double)reader.getPageSize(1).getHeight());
 		setNumberOfDocumentPages(reader.getNumberOfPages());

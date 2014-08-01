@@ -37,6 +37,8 @@ public class ContrataContratoParams implements IContrataParams, Serializable {
 	private TETPGMEM codigoProgramaEmpleo;
 	private String signaturePlace;
 	private Date signatureDate;
+	private Date startDate;
+	private Date endDate;
 	/* 
 	 * datos de contrata 
 	 */
@@ -395,6 +397,18 @@ public class ContrataContratoParams implements IContrataParams, Serializable {
 	}
 	public void setSignatureDate(Date signatureDate) {
 		this.signatureDate = signatureDate;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 	public TEYTRELE getTipoTrabajadorRelevo() {
 		return tipoTrabajadorRelevo;

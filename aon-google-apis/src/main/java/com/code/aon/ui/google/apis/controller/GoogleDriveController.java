@@ -1,35 +1,25 @@
 package com.code.aon.ui.google.apis.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.richfaces.event.UploadEvent;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.AonFile;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
-import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
-
-import eu.medsea.mimeutil.MimeException;
 
 
 

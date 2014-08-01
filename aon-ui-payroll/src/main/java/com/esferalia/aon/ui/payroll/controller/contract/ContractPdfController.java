@@ -368,21 +368,28 @@ public class ContractPdfController implements Serializable {
 		
 		setContrataParams(new LinkedList<IContrataParams>());
 		ContrataController contrataController = null;
+		
+		// load initial contract contrata data
+		contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize(getContract());
+		contrataController.onContrataDataShow(null);
+		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
+			getContrataParams().add(contrataController.getHandler().getParams());
+		}
+		
 		if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 			// TODO
 //		} else if(getDocumentType()==ContractAttachmentType.TRANSFORM_DOC_DRAFT){
 //			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
-		} else {
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+//		} else {
+//			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		}
+		
 		contrataController.initialize(getContract());
-		
 		contrataController.onContrataDataShow(null);
-		
 		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
 			getContrataParams().add(contrataController.getHandler().getParams());
-//			setContrataParams(contrataController.getHandler().getParams());
 		} else {
 			setContrataParams(null);
 		}

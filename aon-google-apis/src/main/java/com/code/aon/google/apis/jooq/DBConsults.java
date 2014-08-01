@@ -1,17 +1,30 @@
 package com.code.aon.google.apis.jooq;
 
+import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
+import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
+import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
+import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATTACH;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
+import static com.esferalia.aon.jooq.tables.User.USER;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
@@ -20,28 +33,7 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.FileInfo;
-import com.code.aon.jaas.auth.spi.db.Domain;
-import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.ConnectionInfo;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
-
-import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
-import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
-import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
-import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
-import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
-import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATTACH;
-import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
-import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
-import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 
 public class DBConsults {
 
@@ -259,9 +251,9 @@ public class DBConsults {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 			String aux = null;
-			dslContext.update(CONTRACT_ATTACH)
-			.set(CONTRACT_ATTACH.DRIVEID,aux)
-			.where(CONTRACT_ATTACH.DRIVEID.eq(id)).execute();
+			
+			String sql = "UPDATE contract_attach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -387,10 +379,8 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			dslContext.update(IATTACH)
-			.set(IATTACH.DRIVEID,aux)
-			.where(IATTACH.DRIVEID.eq(id)).execute();
+			String sql = "UPDATE iattach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -549,10 +539,8 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			dslContext.update(INVOICE_ATTACH)
-			.set(INVOICE_ATTACH.DRIVEID,aux)
-			.where(INVOICE_ATTACH.DRIVEID.eq(id)).execute();
+			String sql = "UPDATE invoice_attach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -677,10 +665,8 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			dslContext.update(OFFER_ATTACH)
-			.set(OFFER_ATTACH.DRIVEID,aux)
-			.where(OFFER_ATTACH.DRIVEID.eq(id)).execute();
+			String sql = "UPDATE offer_attach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -810,10 +796,10 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			dslContext.update(PAYROLL_BATCH_ATTACH)
-			.set(PAYROLL_BATCH_ATTACH.DRIVEID,aux)
-			.where(PAYROLL_BATCH_ATTACH.DRIVEID.eq(id)).execute();
+			
+			String sql = "UPDATE payroll_batch_attach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
+			
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -971,10 +957,8 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			dslContext.update(PROJECT_ATTACH)
-			.set(PROJECT_ATTACH.DRIVEID,aux)
-			.where(PROJECT_ATTACH.DRIVEID.eq(id)).execute();
+			String sql = "UPDATE project_attach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -1101,10 +1085,8 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			dslContext.update(SEPE_BATCH_ATTACH)
-			.set(SEPE_BATCH_ATTACH.DRIVEID,aux)
-			.where(SEPE_BATCH_ATTACH.DRIVEID.eq(id)).execute();
+			String sql = "UPDATE sepe_batch_attach SET driveId = NULL WHERE driveId = "+id+";";
+			dslContext.fetch(sql);
 		} finally {
 			if (connection != null)
 				connection.close();

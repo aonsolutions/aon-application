@@ -1,11 +1,20 @@
 package com.code.aon.google.apis;
 
 
+import static com.code.aon.google.apis.DatabaseSync.getActivity;
+import static com.code.aon.google.apis.DatabaseSync.getCommercialTrackingAll;
+import static com.code.aon.google.apis.DatabaseSync.getCommercialTrackingKey;
+import static com.code.aon.google.apis.DatabaseSync.getDomain;
+import static com.code.aon.google.apis.DatabaseSync.getDomain1;
+import static com.code.aon.google.apis.DatabaseSync.getDomains;
+import static com.code.aon.google.apis.DatabaseSync.getEnterpriseEmail;
+import static com.code.aon.google.apis.DatabaseSync.getPotencialClient;
+import static com.code.aon.google.apis.DatabaseSync.getProject;
+import static com.code.aon.google.apis.DatabaseSync.getSellerEmail;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getHttpTransport;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getJsonFactory;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.getPrincipalShortName;
 import static com.code.aon.google.apis.servlet.GoogleAuthorizationServletUtils.newFlow;
-import static com.code.aon.google.apis.DatabaseSync.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +37,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialActivity;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
