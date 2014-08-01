@@ -1,0 +1,11 @@
+
+#/bin/sh
+
+
+/usr/share/aon-google-apis/bin/synchronize.sh
+
+ERR=$?
+
+[[ $ERR < 0 ]] && exit $ERR || exit 0 
+
+

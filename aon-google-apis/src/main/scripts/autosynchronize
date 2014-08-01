@@ -1,0 +1,4 @@
+# run-parts
+00 02 * * * root synchronize.sh dsync "novus.aibanez.net" | tee /etc/logs/out.log | mail aonsolutions@gmail.com;;
+
+00 04 * * * root synchronize.sh calendar | tee /etc/logs/out.log | mail aibanez@aonsolutions.es;;
