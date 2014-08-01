@@ -167,7 +167,7 @@
 			<id>rpm-release</id>
 			<activation>
 				<property>
-					<name>rpm.release</name>
+					<name>rpm.disable</name>
 					<value>true</value>
 				</property>
 			</activation>
