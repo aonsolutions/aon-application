@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<inherits name="com.google.gwt.core.Core"/>
+
+	<!-- CodeMirror Syntax Highlighting -->
+    <script src="codemirror/lib/codemirror.js"/>
+
+	<!-- stylesheets for codemirror, for manchester syntax and show-hint -->
+	<stylesheet src="codemirror/lib/codemirror.css"/>
+
+	<source path="client"/>
+
+</module>

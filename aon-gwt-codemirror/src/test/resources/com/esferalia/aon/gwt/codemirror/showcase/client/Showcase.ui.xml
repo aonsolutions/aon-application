@@ -1,0 +1,52 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.codemirror.client.ui'>
+
+
+	<ui:style>
+	.code-area {
+		padding: 0px;
+		min-height: 75px;
+		margin-left: 1px;
+		margin-bottom: 1px;
+	}
+	
+	.width-all {
+		width: 100%;
+	}
+	
+	.height-all {
+		width: 100%;
+	}
+	</ui:style>		
+	
+
+
+	<g:DockLayoutPanel unit='EM'>
+		<g:center>
+			<g:TabLayoutPanel barUnit='EM' barHeight='3'  >
+				<g:tab>
+					<g:header size='7'>
+						<b>MVEL Payroll</b>
+						CodeArea
+					</g:header>
+					<g:VerticalPanel styleName="{style.width-all} {style.height-all}"  >
+					<g:HorizontalPanel styleName="{style.width-all}"> <g:RadioButton ui:field="markerButton" name="marker">Marker</g:RadioButton> <g:RadioButton name="marker" ui:field="filterButton" >Filter</g:RadioButton> </g:HorizontalPanel>
+					<aon:CodeArea ui:field='payrollCodeArea'
+						styleName="{style.width-all} {style.height-all} gwt-TextArea {style.code-area}"
+						lineNumbers="true" matchBrackets="true" theme="eclipse" />
+					</g:VerticalPanel>
+				</g:tab>
+				<g:tab>
+					<g:header size='7'>
+						<b>Java</b>
+						CodeArea
+					</g:header>
+					<aon:CodeArea ui:field='javaCodeArea' 
+						styleName="{style.width-all} {style.height-all} gwt-TextArea {style.code-area}"
+						lineNumbers="true" matchBrackets="true" mode="text/x-java" theme="eclipse" />
+				</g:tab>
+			</g:TabLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+
+</ui:UiBinder>

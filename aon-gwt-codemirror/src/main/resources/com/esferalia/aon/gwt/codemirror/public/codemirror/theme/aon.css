@@ -1,0 +1,41 @@
+
+.cm-mark-user{
+	border: 1px solid #D8D37A;
+	border-left-width: 0px ;
+	border-right-width: 0px ;
+	background-color: #FFFFEB;
+}
+
+.cm-mark-read-only{
+	border: 1px solid #C4C4C4;
+	border-left-width: 0px ;
+	border-right-width: 0px ;
+	background-color:  #F2F2F2;
+}
+
+.cm-mark-user-end {
+	border-right-width: 1px ;
+	
+}
+.cm-mark-read-only-end {
+	border-right-width: 1px ;
+}
+
+.cm-mark-user-start {
+	border-left-width: 1px ;
+	
+}
+.cm-mark-read-only-start {
+	border-left-width: 1px ;
+}
+
+div.CodeMirror-cursors {
+    z-index: 10 !important;
+}
+
+.CodeMirror div.CodeMirror-cursor {
+    z-index: 10;
+    border-left: 2px solid black;
+}
+
+
