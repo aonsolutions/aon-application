@@ -270,12 +270,12 @@ public class ProjectReservationServiceController extends LinesController {
 
 	public void onAcceptReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
-		validateServiceDates();
+		boolean isNew = isNew();
+		if ( isNew ) {
+			validateServiceDates();	
+		}
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-		boolean isNew = isNew();
-		Date fromDate = getServiceFromDate();
-		Date toDate = getServiceToDate();
 		double quantity = getServiceQuantity();
 		double vatPercent = reservationUtils.getTaxPercentage(reservationService.getItem().getProduct().getVat(), reservationService.getProjectReservation().getDate());
 		double price = getPricesManager().getPrice(vatPercent, 0, getServicePrice(), 4);
@@ -284,6 +284,8 @@ public class ProjectReservationServiceController extends LinesController {
 		onAccept(event);
 
 		if (isNew) {
+			Date fromDate = getServiceFromDate();
+			Date toDate = getServiceToDate();
 			reservationUtils.insertProjectReservationServiceDetails(reservationService, fromDate, toDate, quantity, price, reservationRoom, getPriceStrategy());
 		} else {
 			reservationUtils.updateProjectReservationServiceDetails(reservationService, quantity, price, null, getPriceStrategy());
