@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_DEDUPLICATION_CONTROLLER_NAME;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 
@@ -53,6 +54,9 @@ public class TargetDeduplicationController extends DataScrollerState {
 	private int maxProgressValue;
 	private List<Integer> duplicateTargets;
 	private List<DeduplicationValues> deduplicationList;
+	private Target selectedTarget;
+	private DeduplicationValues selectedValues;
+	private DeduplicationEntry selectedEntry;
 	
 	private Connection connection;
 	private DSLContext context;
@@ -350,20 +354,29 @@ public class TargetDeduplicationController extends DataScrollerState {
 	}
 	
 	private Target getCurrentTarget() {
-		DeduplicationValues dv = getCurrentDeduplicationValues();
-		if ( (dv != null) && dv.getModel().isRowAvailable()) {
-			DeduplicationEntry entry = (DeduplicationEntry) dv.getModel().getRowData();
-			return entry.getTarget();
+		this.selectedValues = getCurrentDeduplicationValues();
+		if ( (selectedValues != null) && selectedValues.getModel().isRowAvailable()) {
+			this.selectedEntry = (DeduplicationEntry) selectedValues.getModel().getRowData();
+			return this.selectedEntry.getTarget();
 		}
 		return null;		
 	}
 	
 	public void onGoToTarget( ActionEvent event ) throws ManagerBeanException {
-		Target target = getCurrentTarget();
-		if ( target != null ) {
+		this.selectedTarget = getCurrentTarget();
+		if ( selectedTarget != null ) {
 			TargetController controller = getTargetController();
-			controller.select(event, target.getId());
+			controller.select(event, selectedTarget.getId());
 			controller.setBackAction(getBeanName()+BasicController.LIST_SUFFIX);
+			controller.setBackActionListener(TARGET_DEDUPLICATION_CONTROLLER_NAME + ".onBackToDeduplication");
+		}
+	}
+	
+	public void onBackToDeduplication( ActionEvent event ) throws ManagerBeanException {
+		TargetController controller = getTargetController();
+		Target target = (Target) controller.getManagerBean().get(this.selectedTarget.getId());
+		if ( target == null ) {
+			removeTarget();
 		}
 	}
 
@@ -388,22 +401,26 @@ public class TargetDeduplicationController extends DataScrollerState {
 			}
 		}
 	}	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+
 	public void onRemoveTarget( ActionEvent event ) throws ManagerBeanException {
 		Target target = getCurrentTarget();
 		if ( target != null ) {
 			TargetController controller = getTargetController();
 			controller.select(event, target.getId());
 			controller.onRemove(event);
-			DeduplicationValues dv = getCurrentDeduplicationValues();
-			if ( dv.getSize() == 2 ) {
-				List<DeduplicationValues> list = (List) getDirectModel().getWrappedData();
-				list.remove(dv);
-				getDirectModel().setWrappedData(list);
-			} else {
-				dv.removeCurrentEntry();
-			}			
+			removeTarget();
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void removeTarget() {
+		if ( this.selectedValues.getSize() == 2 ) {
+			List<DeduplicationValues> list = (List) getDirectModel().getWrappedData();
+			list.remove(this.selectedValues);
+			getDirectModel().setWrappedData(list);
+		} else {
+			this.selectedValues.removeEntry(this.selectedEntry);
+		}					
 	}
 	
 	public class DeduplicationValues {
@@ -455,8 +472,7 @@ public class TargetDeduplicationController extends DataScrollerState {
 			return model;
 		}
 		
-		public void removeCurrentEntry() {
-			DeduplicationEntry entry = (DeduplicationEntry) getModel().getRowData();
+		public void removeEntry( DeduplicationEntry entry ) {
 			entries.remove(entry);
 			getModel().setWrappedData(entries);
 		}

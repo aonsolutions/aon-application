@@ -29,6 +29,7 @@ public interface ICommercialConstants {
 	String TARGET_SELLER_CONTROLLER_NAME = "targetSeller";
 	String TARGET_PROJECT_COMMERCIAL_CONTROLLER_NAME = "targetProjectCommercial";
 	String TARGET_PROFILE_CONTROLLER_NAME = "targetProfile";
+	String TARGET_DEDUPLICATION_CONTROLLER_NAME = "targetDeduplication";
 	String SELLER_MEDIA_CONTROLLER_NAME = "sellerMedia";
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
 	String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";

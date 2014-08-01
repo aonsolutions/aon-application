@@ -55,6 +55,14 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TargetController extends RegistryController implements ICommonMessages {
 
+	@Override
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		if ( getBackAction() != null ) {
+			onBackActionListener(event);
+		}
+	}	
+	
 	public String getAliasPreffix() {
 		return getPojoShortName();
 	}

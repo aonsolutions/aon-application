@@ -9,6 +9,7 @@
 
 	<ui:define name="content">
 		<aon:form id="targetForm">
+			<aon:methodParam name="removeAction" value="#{target.backAction}" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_target_module}" />
