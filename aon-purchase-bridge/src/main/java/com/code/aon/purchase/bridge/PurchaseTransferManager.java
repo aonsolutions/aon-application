@@ -395,12 +395,16 @@ public class PurchaseTransferManager implements Serializable {
 		detail.setForcePendingQuantityCancel(!detail.isForcePendingQuantityCancel());
 	}
 	
-	public class FilterParams{
+	public static class FilterParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Date fromDate;
 		private Date toDate;
 		private String series;
 		private Integer numberFrom;
 		private Integer numberTo;
+		
 		public Date getFromDate() {
 			return fromDate;
 		}
