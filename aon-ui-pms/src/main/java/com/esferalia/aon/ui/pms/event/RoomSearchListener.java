@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
@@ -17,6 +18,8 @@ import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class RoomSearchListener extends ControllerSearchListener {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Hotel hotel;
 	private Item item;
 	

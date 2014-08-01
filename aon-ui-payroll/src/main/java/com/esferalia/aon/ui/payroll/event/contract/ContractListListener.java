@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.ast.Expression;
@@ -13,6 +14,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class ContractListListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private WorkPlace workPlace;
 	
 	public WorkPlace getWorkPlace() {

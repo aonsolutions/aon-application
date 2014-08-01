@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -35,7 +37,9 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.bean.AonServer;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class EmailCommunicationController implements IMarketingConstants {
+public class EmailCommunicationController implements IMarketingConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SurveyResponseController.class.getName());
 	

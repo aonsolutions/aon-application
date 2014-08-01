@@ -2,6 +2,7 @@ package com.code.aon.warehouse.event;
 
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,6 +19,8 @@ import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean updating = false;
 

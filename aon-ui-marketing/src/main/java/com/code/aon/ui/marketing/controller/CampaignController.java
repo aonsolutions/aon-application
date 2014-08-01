@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.ui.form.BasicController;
@@ -14,6 +15,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CampaignController extends BasicController implements IMarketingConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private IControllerListener messagesFilter;
 
 	/**

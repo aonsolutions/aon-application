@@ -1,11 +1,13 @@
 package com.code.aon.fiscal.mod115;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.finance.Finance;
@@ -16,7 +18,9 @@ import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod115Key;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
 
-public class Mod115 implements IFiscalDeclaration {
+public class Mod115 implements IFiscalDeclaration, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private FiscalModel fiscalModel;
 	private Map<Mod115Key,FiscalModelDetail> map;

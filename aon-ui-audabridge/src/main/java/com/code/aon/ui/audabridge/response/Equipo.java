@@ -1,6 +1,12 @@
 package com.code.aon.ui.audabridge.response;
 
-public class Equipo {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class Equipo implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String codigoEquipo;
 	private String descripcion;

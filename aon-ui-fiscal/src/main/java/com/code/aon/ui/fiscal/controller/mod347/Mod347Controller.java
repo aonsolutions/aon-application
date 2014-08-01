@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -39,6 +40,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod347Controller extends BasicController implements IFiscalModelController{
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private FileOutput fileOutput;
 	private FiscalParametersController fiscalParams;
 	private Mod347Parameters params;

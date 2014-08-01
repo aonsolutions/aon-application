@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,12 +20,14 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ActionLastExecutedController extends BasicController implements IAuditConstants {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionLastExecutedController.class);
 
 	private static final int LAST_EXECUTED_COUNT = 5;
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 
 	private ActionDeniedController getDeniedController() {

@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.ACCOUNT_SYSTEM_ERROR;
 
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,6 +18,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountAppParamsControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {

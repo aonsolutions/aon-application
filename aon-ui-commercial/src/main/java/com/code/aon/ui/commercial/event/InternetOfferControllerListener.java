@@ -2,6 +2,7 @@ package com.code.aon.ui.commercial.event;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  * @since 1.0
  */
 public class InternetOfferControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

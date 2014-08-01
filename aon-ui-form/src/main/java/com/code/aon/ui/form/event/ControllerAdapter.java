@@ -1,5 +1,8 @@
 package com.code.aon.ui.form.event;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.IController;
 
 /**
@@ -7,7 +10,9 @@ import com.code.aon.ui.form.IController;
  * 
  * @author Consulting & Development. ecastellano - 06/10/2006
  */
-public class ControllerAdapter implements IControllerListener {
+public class ControllerAdapter implements IControllerListener, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The controller. */
 	private IController controller;

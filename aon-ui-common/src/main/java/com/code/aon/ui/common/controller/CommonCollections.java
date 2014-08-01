@@ -3,6 +3,7 @@ package com.code.aon.ui.common.controller;
 import static com.code.aon.ui.common.ICommonMessages.NO;
 import static com.code.aon.ui.common.ICommonMessages.YES;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +12,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.CSSUnit;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.MimeType;
@@ -24,7 +26,9 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used to get Collections related with clasess in <code>com.code.aon.common</code>.
  * 
  */
-public class CommonCollections {
+public class CommonCollections implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> countries;  
 	private List<SelectItem> europeanUnionCountries;

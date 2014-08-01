@@ -1,15 +1,16 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,10 +20,13 @@ import com.code.aon.config.CNAE2009Rate;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
-public class CnaeRateController {
+public class CnaeRateController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private DataModel model;
 	private Integer year;
@@ -78,7 +82,7 @@ public class CnaeRateController {
 		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE), getPeriodEndDate(getYear()));
 		criteria.addOrder("CNAE2009Rate.cnae2009.code");
 		List<ITransferObject> list = bean.getList(criteria);
-		setModel(new ListDataModel(list));
+		setModel(new SerializableListDataModel(list));
 	}
 	
 	

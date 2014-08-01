@@ -19,6 +19,7 @@ import static com.code.aon.ui.common.ICommonMessages.TARGET;
 import static com.code.aon.ui.stat.controller.IStatConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +33,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -48,6 +48,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -70,6 +71,7 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
@@ -77,7 +79,9 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CommercialStatEngineController {
+public class CommercialStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(CommercialStatEngineController.class);
 	
@@ -143,9 +147,6 @@ public class CommercialStatEngineController {
 	private String offerBackAction;
 	private IPriceStrategy priceStrategy;
 
-	
-	
-	
 	public String getSellerName() {
 		return sellerName;
 	}
@@ -223,7 +224,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getOffersState() {
 		if (offersState == null) {
-			offersState = new DataScrollerState(new ListDataModel(getOfferList()), "offers");
+			offersState = new DataScrollerState(new SerializableListDataModel(getOfferList()), "offers");
 		}		
 		return offersState;
 	}
@@ -374,7 +375,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getSummaryState() {
 		if (summaryState == null) {
-			summaryState = new DataScrollerState(new ListDataModel(getSummary()), "sellerView");
+			summaryState = new DataScrollerState(new SerializableListDataModel(getSummary()), "sellerView");
 		}
 		return summaryState;
 	}
@@ -397,7 +398,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getActivityState() {
 		if (activityState == null) {
-			activityState = new DataScrollerState(new ListDataModel(getActivitySummary()), "activityView");
+			activityState = new DataScrollerState(new SerializableListDataModel(getActivitySummary()), "activityView");
 		}
 		return activityState;
 	}
@@ -476,7 +477,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getPendingVisitsState() {
 		if (pendingVisitsState == null) {
-			pendingVisitsState = new DataScrollerState(new ListDataModel(getPendingVisitsList()), "pendingVisits");
+			pendingVisitsState = new DataScrollerState(new SerializableListDataModel(getPendingVisitsList()), "pendingVisits");
 		}		
 		return pendingVisitsState;
 	}
@@ -499,7 +500,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getDoneOffersState() {
 		if (doneOffersState == null) {
-			doneOffersState = new DataScrollerState(new ListDataModel(getDoneOffersList()), "doneOffers");
+			doneOffersState = new DataScrollerState(new SerializableListDataModel(getDoneOffersList()), "doneOffers");
 		}				
 		return doneOffersState;
 	}
@@ -522,7 +523,7 @@ public class CommercialStatEngineController {
 
 	public DataScrollerState getClosedOffersState() {
 		if (closedOffersState == null) {
-			closedOffersState = new DataScrollerState(new ListDataModel(getClosedOffersList()), "closedOffers");
+			closedOffersState = new DataScrollerState(new SerializableListDataModel(getClosedOffersList()), "closedOffers");
 		}				
 		return closedOffersState;
 	}
@@ -545,7 +546,7 @@ public class CommercialStatEngineController {
 
 	public DataScrollerState getLostOffersState() {
 		if (lostOffersState == null) {
-			lostOffersState = new DataScrollerState(new ListDataModel(getLostOffersList()), "offersLost");
+			lostOffersState = new DataScrollerState(new SerializableListDataModel(getLostOffersList()), "offersLost");
 		}						
 		return lostOffersState;
 	}
@@ -568,7 +569,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getVisitsState() {
 		if (visitsState == null) {
-			visitsState = new DataScrollerState(new ListDataModel(getVisitsList()), "visits");
+			visitsState = new DataScrollerState(new SerializableListDataModel(getVisitsList()), "visits");
 		}
 		return visitsState;
 	}
@@ -591,7 +592,7 @@ public class CommercialStatEngineController {
 
 	public DataScrollerState getPendingOffersState() {
 		if (pendingOffersState == null) {
-			pendingOffersState = new DataScrollerState(new ListDataModel(getPendingOffersList()), "pendingOffers");
+			pendingOffersState = new DataScrollerState(new SerializableListDataModel(getPendingOffersList()), "pendingOffers");
 		}		
 		return pendingOffersState;
 	}
@@ -670,7 +671,7 @@ public class CommercialStatEngineController {
 
 	public DataScrollerState getProductStatState() {
 		if (productStatState == null) {
-			productStatState = new DataScrollerState(new ListDataModel(getProductStats()), "yearsStats");
+			productStatState = new DataScrollerState(new SerializableListDataModel(getProductStats()), "yearsStats");
 		}								
 		return productStatState;
 	}
@@ -749,7 +750,7 @@ public class CommercialStatEngineController {
 	
 	public DataScrollerState getYearStatState() {
 		if (yearStatState == null) {
-			yearStatState = new DataScrollerState(new ListDataModel(getYearStats()), "yearsStats");
+			yearStatState = new DataScrollerState(new SerializableListDataModel(getYearStats()), "yearsStats");
 		}						
 		return yearStatState;
 	}
@@ -1446,7 +1447,7 @@ public class CommercialStatEngineController {
 
 			activitiesList.add(cmt);
 		}
-		setVisitsModel(new ListDataModel(getActivitiesList()));
+		setVisitsModel(new SerializableListDataModel(getActivitiesList()));
 
 		setReportName(AonUtil.getMessage(REPORT_ACTIVITIES_VIEW));
 	}
@@ -1658,13 +1659,15 @@ public class CommercialStatEngineController {
 			CommercialTracking cmt = (CommercialTracking) to;
 			activitiesList.add(cmt);
 		}
-		setVisitsModel(new ListDataModel(getActivitiesList()));
+		setVisitsModel(new SerializableListDataModel(getActivitiesList()));
 
 		setReportName(AonUtil.getMessage(REPORT_ACTIVITIES_VIEW));
 	}
 
-	public static class ControlSummary {
+	public static class ControlSummary implements Serializable {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer id;
 		private String name;
 		private Integer numVisits;

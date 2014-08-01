@@ -1,16 +1,21 @@
 package com.code.aon.fiscal.retention;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.enumeration.VatReportType;
 
-public class Retention {
+public class Retention implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private InvoiceType invoiceType;
 	private int count;
 	private Double percent;

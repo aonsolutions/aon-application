@@ -1,13 +1,13 @@
 package com.code.aon.ui.audit.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MODULES_ENABLED;
 import static com.code.aon.ui.audit.controller.IAuditConstants.PROFILE_DENIED_ACTIONS_ENABLED;
 import static com.code.aon.ui.common.ICommonMessages.MENU;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +33,7 @@ import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.DomainApplicationModule;
@@ -65,8 +66,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 /**
  * The Class FavoriteOptionController.
  */
-public class ActionDeniedController {
+public class ActionDeniedController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
 	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY};
@@ -77,7 +80,7 @@ public class ActionDeniedController {
 	
 	private User user;
 	
-	private  Map<String,IAction> deniedActions;
+	private Map<String,IAction> deniedActions;
 	
 	private List<ApplicationOption> options;
 	
@@ -92,7 +95,8 @@ public class ActionDeniedController {
 	private Map<String,ApplicationOption> enabledManagedBeans;
 	
 	public ActionDeniedController() {
-		this.moduleEnabled = new ModuleEnabledMap();
+		this.moduleEnabled = new ModuleEnabledMap(this);
+		this.skipManagedBean = new SkipManagedBeanMap(this);
 		init();
 	}
 	
@@ -120,7 +124,7 @@ public class ActionDeniedController {
 	}
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 	
 	public void onInit( ActionEvent event ) {
@@ -560,7 +564,6 @@ public class ActionDeniedController {
 	}
 	
 	public void initEnabledManagedBeans() {
-		this.skipManagedBean = new SkipManagedBeanMap();
 		this.enabledManagedBeans = new HashMap<String, ApplicationOption>();
 		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(true) );	
 		for( ApplicationOption option : options ) {
@@ -642,12 +645,24 @@ public class ActionDeniedController {
 		return list;		
 	}
 	
-	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> {
+	private Map<String, ApplicationOption> getEnabledManagedBeans() {
+		return enabledManagedBeans;
+	}
+
+	public static class SkipManagedBeanMap extends AbstractMap<String,Boolean> implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private ActionDeniedController controller;
+		
+		public SkipManagedBeanMap(ActionDeniedController controller) {
+			this.controller = controller;
+		}
 		
 		@Override
 		public Boolean get(Object key) {
 			boolean skip = true;
-			ApplicationOption option = enabledManagedBeans.get(key);
+			ApplicationOption option = controller.getEnabledManagedBeans().get(key);
 			if ( option != null ) {
 				skip = ! option.isRendered();
 			}
@@ -661,11 +676,19 @@ public class ActionDeniedController {
 		
 	}
 
-	public class ModuleEnabledMap extends AbstractMap<String,Boolean> {
+	public static class ModuleEnabledMap extends AbstractMap<String,Boolean> implements Serializable {
+
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
+		private ActionDeniedController controller;
+		
+		public ModuleEnabledMap(ActionDeniedController controller) {
+			this.controller = controller;
+		}
+
 		@Override
 		public Boolean get(Object key) {
-			return ! deniedModulesMap.containsKey(key);
+			return ! controller.isDeniedModule(key.toString());
 		}
 
 		@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +20,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String ERROR_MSG = "La cuenta debe tener una longitud de 1, 2, 3, 4 ó 9 caracteres.";
 	

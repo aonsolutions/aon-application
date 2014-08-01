@@ -9,6 +9,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +42,8 @@ import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {

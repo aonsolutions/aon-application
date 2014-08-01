@@ -1,10 +1,15 @@
 package com.code.aon.aio;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.groupware.enumeration.TaskStatus;
 
 
-public class TaskInfo {
+public class TaskInfo implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private int inProgressUserTasks;
 	private int pendingUserTasks;
 	private int expiredInProgressUserTasks;

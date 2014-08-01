@@ -6,6 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
@@ -15,7 +16,9 @@ import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ActivityBasicSearchListener extends ControllerSearchListener{
+public class ActivityBasicSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Asset asset;
 	private ActivityStatus[] activityStatuses;

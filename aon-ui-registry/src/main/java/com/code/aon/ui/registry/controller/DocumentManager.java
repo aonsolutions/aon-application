@@ -3,12 +3,15 @@ package com.code.aon.ui.registry.controller;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT_SIZE_MESSAGE;
 import static com.code.aon.ui.common.ICommonMessages.USED_SPACE_MESSAGE;
 
+import java.io.Serializable;
+
 import org.apache.commons.io.FileUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -17,7 +20,9 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
 import com.code.aon.ui.util.AonUtil;
 
-public class DocumentManager {
+public class DocumentManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentManager.class);
 	

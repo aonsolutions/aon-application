@@ -2,9 +2,11 @@ package com.code.aon.common.domain;
 
 import java.util.EventObject;
 
+import com.code.aon.AonVersion;
+
 public class DomainEvent extends EventObject {
 	
-	private static final long serialVersionUID = 8548597086493958180L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private IDomainSwitcher source;
 	private Integer oldDomain;

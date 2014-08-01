@@ -3,6 +3,7 @@ package com.code.aon.ui.fiscal.controller.mod340;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
@@ -20,7 +22,9 @@ import com.code.aon.fiscal.mod340.Model340Parameters;
 import com.code.aon.ui.fiscal.file.MOD340Writer;
 import com.code.aon.ui.util.AonUtil;
 
-public class Mod340Controller {
+public class Mod340Controller implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Model340Parameters params;
 	

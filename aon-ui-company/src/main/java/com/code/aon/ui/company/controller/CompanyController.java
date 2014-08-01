@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.AttachmentUtil;
 
@@ -12,6 +13,8 @@ import com.code.aon.faces.controller.AttachmentUtil;
  * Controller used in the company maintenance.
  */
 public class CompanyController extends CompanyParentController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The uploaded logo file. */
 	private AonFile logoFile;

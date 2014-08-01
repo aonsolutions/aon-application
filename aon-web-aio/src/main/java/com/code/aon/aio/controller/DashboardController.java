@@ -2,6 +2,7 @@ package com.code.aon.aio.controller;
 
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +31,7 @@ import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -60,7 +62,9 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 
-public class DashboardController {
+public class DashboardController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(DashboardController.class);

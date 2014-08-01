@@ -1,6 +1,12 @@
 package com.code.aon.aio.controller;
 
-public class DashboardMessage {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class DashboardMessage implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String level;
 	private String category;

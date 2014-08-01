@@ -3,6 +3,7 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.Date;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -53,8 +55,10 @@ import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class NewDomainController {
+public class NewDomainController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(NewDomainController.class);
 	
 	private String domainName;
@@ -379,6 +383,8 @@ public class NewDomainController {
 	}
 	
 	private static class TemplateDomainFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Domain parentDomain;
 		

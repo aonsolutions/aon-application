@@ -5,10 +5,11 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.payroll.enumeration.ss.SSCodeTables;
 import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter;
 import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
@@ -16,6 +17,8 @@ import com.esferalia.aon.ui.sepe.controller.SepeTablesController;
 
 
 public class PayrollCodeTablesController extends SepeTablesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	final static String SS_ENUMERATIONS_PACKAGE_NAME 		= SSCodeTablesWriter.ENUMERATION_CLASS_PACKAGE_NAME;
 	
@@ -109,7 +112,7 @@ public class PayrollCodeTablesController extends SepeTablesController {
 				list.add(obj);
 			}
 		}
-		setSSTablesModel(new ListDataModel(list));
+		setSSTablesModel(new SerializableListDataModel(list));
 	}
 	
 	private void initSSCodesModel(){
@@ -134,6 +137,6 @@ public class PayrollCodeTablesController extends SepeTablesController {
 				}
 			}
 		}
-		setCodesModel(new ListDataModel(list));
+		setCodesModel(new SerializableListDataModel(list));
 	}	
 }

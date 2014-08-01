@@ -1,13 +1,18 @@
 package com.code.aon.ui.finance;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
 
 
-public class InvoiceExportConfiguration {
+public class InvoiceExportConfiguration implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String enterpriseCode;
 	

@@ -6,14 +6,15 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.registry.enumeration.QuestionType;
 import com.esferalia.aon.entity.master.RegistryProfileDB;
 
 @Entity
 @Table(name="rprofile")
-public class RegistryProfile extends RegistryProfileDB implements IValueHolder{
+public class RegistryProfile extends RegistryProfileDB implements IValueHolder {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	private Boolean getBooleanValue() {

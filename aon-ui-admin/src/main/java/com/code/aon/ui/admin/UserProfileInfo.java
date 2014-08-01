@@ -2,16 +2,21 @@ package com.code.aon.ui.admin;
 
 import static com.code.aon.ui.common.ICommonMessages.SYSTEM;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.admin.controller.ApplicationProfileController;
 import com.code.aon.ui.util.AonUtil;
 
-public class UserProfileInfo {
+public class UserProfileInfo implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean checked;
 	

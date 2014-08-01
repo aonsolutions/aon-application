@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
@@ -15,6 +16,8 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.controller.NoShowInvoiceController;
 
 public class NoShowInvoiceSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean guestReservationSearch;
 	private Hotel hotelReservation;

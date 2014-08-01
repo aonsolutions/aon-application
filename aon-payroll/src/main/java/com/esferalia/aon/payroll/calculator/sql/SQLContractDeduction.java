@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
@@ -15,6 +16,8 @@ public class SQLContractDeduction
 	extends SQLCollection<IContractDeduction> 
 	implements IContractDeduction {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	public static final String SCOPE_ALIAS = "scope";
 
 	public SQLContractDeduction() {

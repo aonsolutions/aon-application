@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.MimeType;
@@ -40,6 +41,8 @@ import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class SellerController extends RegistryController implements ICommonMessages {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private static final String UNEXPECTED_ERROR = "Se ha producido un error inesperado durante la generación del informe. ";
 

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
@@ -23,7 +24,7 @@ import com.esferalia.aon.entity.master.CraBatchDB;
 @Table(name="cra_batch")
 public class CraBatch extends CraBatchDB implements IBlobObject {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private byte[] outcomeFile;
 	

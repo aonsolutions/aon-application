@@ -7,7 +7,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,7 @@ import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -31,6 +31,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -38,6 +39,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class TrialBalanceController extends DataScrollerState implements ICollectionProvider,IAccountingBookItem{
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TrialBalanceController.class);
 	private SummaryProviderParameters parameters;
@@ -171,7 +173,7 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 				}
 			}
 			setSummaryCollection(null);
-			setModel(new ListDataModel(getSummaryCollection().getSummaryList()));
+			setModel(new SerializableListDataModel(getSummaryCollection().getSummaryList()));
 			if (getParameters().getAccountLevel() == 5) {
 				getParameters().setRowsPerPage(20);
 			}
@@ -200,7 +202,7 @@ public class TrialBalanceController extends DataScrollerState implements ICollec
 	@Override
 	public DataModel getModel() {
 		if (getDirectModel() == null) {
-			setModel(new ListDataModel());
+			setModel(new SerializableListDataModel());
 		}
 		return getDirectModel();
 	}

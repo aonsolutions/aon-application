@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import org.hibernate.Session;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -50,7 +51,7 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		dedManager.addFactory(new SalaryDeductionsFactory());
 	}
 
-	private static final long serialVersionUID = 628669216993025202L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int issueMonth;
 	private int issueYear;

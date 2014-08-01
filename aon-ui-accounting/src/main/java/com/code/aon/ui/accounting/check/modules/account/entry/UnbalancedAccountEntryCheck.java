@@ -3,6 +3,7 @@ package com.code.aon.ui.accounting.check.modules.account.entry;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,7 +30,9 @@ import com.code.aon.ui.accounting.check.CheckParams;
 import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.check.ICheckModule;
 
-public class UnbalancedAccountEntryCheck implements ICheckModule {
+public class UnbalancedAccountEntryCheck implements ICheckModule, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String label = "Chequeo de apuntes descuadrados.";
 	private boolean enabled;

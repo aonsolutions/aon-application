@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.ContractDeductionDB;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -16,7 +17,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 @Table(name="contract_deduction")
 public class ContractDeduction extends ContractDeductionDB implements IContractDeduction{
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	@Transient

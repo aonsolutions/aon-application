@@ -1,5 +1,6 @@
 package com.code.aon.ui.audabridge.response;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +10,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-public class CalculationDataResponse {
+import com.code.aon.AonVersion;
+
+public class CalculationDataResponse implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String wan;
 	private String numeroValoracion;
 	private String referencia;

@@ -4,6 +4,7 @@ import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -15,6 +16,8 @@ import com.code.aon.ql.util.ExpressionException;
 
 public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {

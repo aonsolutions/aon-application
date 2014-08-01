@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
@@ -20,7 +21,7 @@ import com.esferalia.aon.entity.master.Certifica2BatchDB;
 @Table(name = "certifica2_batch")
 public class Certifica2Batch extends Certifica2BatchDB implements IBlobObject {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private byte[] outcomeFile;
 	

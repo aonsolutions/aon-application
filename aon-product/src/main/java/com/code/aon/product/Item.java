@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Where;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,7 +35,7 @@ import com.esferalia.aon.entity.master.ItemDB;
 @Heritable
 public class Item extends ItemDB implements IPriceable {
 
-	private static final long serialVersionUID = -2720748805321005422L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
     private Set<RegistryItem> customers = new HashSet<RegistryItem>();
     private Set<RegistryItem> suppliers = new HashSet<RegistryItem>();

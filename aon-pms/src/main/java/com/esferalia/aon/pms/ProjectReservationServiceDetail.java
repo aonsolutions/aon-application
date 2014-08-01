@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.pricing.ItemPricesManager;
@@ -16,7 +17,7 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 @Table(name="project_reservation_service_detail")
 public class ProjectReservationServiceDetail extends ProjectReservationServiceDetailDB implements ICalculable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     @Transient
     public Item getItem() {

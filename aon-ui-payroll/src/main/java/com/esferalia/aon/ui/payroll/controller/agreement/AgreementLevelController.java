@@ -5,15 +5,16 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -21,6 +22,8 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 
 public class AgreementLevelController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String[] categories;
 	private boolean showCategoryWindow;
@@ -117,7 +120,7 @@ public class AgreementLevelController extends LinesController {
 			if(this.getModel().isRowAvailable()){
 				setSelectedLevel((AgreementLevel) this.getModel().getRowData());
 				refreshCategoryList(getSelectedLevel());
-				categoryModel = new ListDataModel(getCategoryList());
+				categoryModel = new SerializableListDataModel(getCategoryList());
 			} 
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("No se han podido obtener las categorias del nivel " + getSelectedLevel().getDescription());
@@ -144,7 +147,7 @@ public class AgreementLevelController extends LinesController {
 			getCategoryList().remove(category);
 			bean.remove(category);
 			refreshCategoryList(getSelectedLevel());
-			categoryModel = new ListDataModel(getCategoryList());
+			categoryModel = new SerializableListDataModel(getCategoryList());
 		}
 	}
 	

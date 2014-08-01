@@ -1,16 +1,20 @@
 package com.code.aon.ui.admin.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.util.AonUtil;
 
-public class AdminCollectionsController {
+public class AdminCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> domainTypes;
 	private List<SelectItem> newDomainTypes;

@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import static com.code.aon.ui.common.ICommonMessages.DATE_FROM;
 import static com.code.aon.ui.common.ICommonMessages.DATE_TO;
 import static com.code.aon.ui.common.ICommonMessages.TICKET;
@@ -9,6 +10,7 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
@@ -23,7 +25,9 @@ import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class PosClosingController implements IFinanceConstants {
+public class PosClosingController implements IFinanceConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private PosShift posShift;
 	private String fromTicket;

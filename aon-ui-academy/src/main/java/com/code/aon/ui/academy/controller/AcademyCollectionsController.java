@@ -1,5 +1,6 @@
 package com.code.aon.ui.academy.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -15,6 +16,7 @@ import com.code.aon.academy.QualitySkill;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.academy.enumeration.InstructorType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,7 +24,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AcademyCollectionsController {
+public class AcademyCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> courseStatuses;
 	private List<SelectItem> courseAlumnStatuses;

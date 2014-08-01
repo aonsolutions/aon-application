@@ -2,6 +2,7 @@ package com.code.aon.accounting;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -9,7 +10,7 @@ import com.code.aon.registry.RegistryBank;
 
 public class SalaryEntry implements ITransferObject {
 	
-	private static final long serialVersionUID = -3872966060253678894L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private Date date;

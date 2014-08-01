@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
@@ -18,6 +19,8 @@ import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
 public class ScopeSearchListener extends ControllerSearchListenerEx {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Scope EMPTY_SCOPE = new Scope();
 	
 	private Scope[] scopes;

@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.ContractEmbargoDB;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -15,7 +16,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 @Table(name="contract_embargo")
 public class ContractEmbargo extends ContractEmbargoDB implements IContractEmbargo {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean fixedAmount;
 	

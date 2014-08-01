@@ -1,6 +1,7 @@
 package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -13,6 +14,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.common.BeanManager;
@@ -31,7 +33,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 /**
  * The Class FavoriteOptionController.
  */
-public class ActionFavoriteController implements IAuditConstants {
+public class ActionFavoriteController implements IAuditConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionFavoriteController.class);
 	
@@ -57,7 +61,7 @@ public class ActionFavoriteController implements IAuditConstants {
 	}
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 
 	private ActionDeniedController getDeniedController() {

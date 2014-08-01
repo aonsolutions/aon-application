@@ -22,7 +22,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.mail.Address;
@@ -42,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -78,6 +78,7 @@ import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -101,6 +102,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String LEGAL_WARNING_NAME = "avisoLegal";
 	
 	private static final String LEGAL_WARNING_FILE = LEGAL_WARNING_NAME + "." + MimeType.MIME_PDF.getExtension();
@@ -888,7 +891,7 @@ public class DomainController extends BasicController {
 			DomainInfo di = DomainInfo.getDomainInfo((RegistryAttachment) to);
 			list.add(di);
 		}
-		this.historyState = new DataScrollerState(new ListDataModel(list), "history");
+		this.historyState = new DataScrollerState(new SerializableListDataModel(list), "history");
 	}
 	
 	private void saveHistory( DomainInfo di ) throws ManagerBeanException {
@@ -950,6 +953,8 @@ public class DomainController extends BasicController {
 	}
 
 	private static class ParentDomainFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)
@@ -971,6 +976,8 @@ public class DomainController extends BasicController {
 	}
 	
 	private static class OEMDomainFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

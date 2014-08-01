@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import org.hibernate.annotations.Where;
 
 import com.code.aon.account.IAccount;
@@ -28,7 +29,7 @@ import com.esferalia.aon.entity.master.CustomerDB;
 @Table(name="customer")
 public class Customer extends CustomerDB implements ITaxInfo, IRegistry, IScopable, IAccount, ITariffable {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();

@@ -5,10 +5,14 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.Map;
 
+import com.code.aon.AonVersion;
+
 import ar.com.fdvs.dj.domain.CustomExpression;
 
 public class BankCustomExpression implements CustomExpression {
-	private static final long serialVersionUID = 7368651157413691588L;
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Integer bankId;
 
 	public BankCustomExpression(Integer bankId) {

@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.ItemComposition;
@@ -12,6 +13,8 @@ import com.code.aon.warehouse.IncomeDetail;
 
 public class IncomeDetailCompositeListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IncomeDetailController controller = (IncomeDetailController)event.getController();

@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -31,7 +32,7 @@ import com.esferalia.aon.payroll.enumeration.PayrollBatchType;
 @DiscriminatorValue(value="true")
 public class PayrollBatchAttachment extends PayrollBatchAttachmentDB implements IAttachment, IScopable, IBlobObject {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private PayrollBatchType sourceType;
 	

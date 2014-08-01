@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +42,8 @@ import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class ContractControllerListener extends ControllerAdapter{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractControllerListener.class.getName());
 	

@@ -14,6 +14,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
@@ -132,6 +133,8 @@ public class SQLContractExtraCalculatorContext extends
 	// -------------------------------------------
 
 	public static class DateFormatException extends IllegalArgumentException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	}
 

@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.payroll.file;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;
@@ -24,7 +26,9 @@ import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
 
-public class ContractPdfWriter {
+public class ContractPdfWriter implements Serializable  {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private URL contractDocumentUrl;
 	private IContractPdfDocument pdfDocument;

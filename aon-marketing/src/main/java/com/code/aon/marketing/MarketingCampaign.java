@@ -7,13 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.MarketingCampaignDB;
 
 @Entity
 @Table(name="mk_campaign")
 public class MarketingCampaign extends MarketingCampaignDB {
 
-	private static final long serialVersionUID = 1978353768291679400L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<MarketingAction> actions;	
 

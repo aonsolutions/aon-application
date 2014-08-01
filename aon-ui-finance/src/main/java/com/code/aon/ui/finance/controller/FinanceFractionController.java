@@ -9,9 +9,9 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -22,12 +22,15 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceFractionController extends DataScrollerState implements IFinanceConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Finance currentFinance;
 	
@@ -38,7 +41,7 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 	@Override
 	public DataModel getModel() {
 		if (getDirectModel() == null) {
-			setModel(new ListDataModel(new LinkedList<Finance>()));
+			setModel(new SerializableListDataModel(new LinkedList<Finance>()));
 		}
 		return getDirectModel();
 	}

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
@@ -33,7 +34,7 @@ public class AlumnPrinter implements ICollectionProvider{
 	
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportAlumn> reportAlumnList = new LinkedList<ReportAlumn>();
 		try {
@@ -56,12 +57,12 @@ public class AlumnPrinter implements ICollectionProvider{
 		return reportAlumnList;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected String obtainPhone(Registry registry) {
 		String phone = "";
 		try {
@@ -80,7 +81,6 @@ public class AlumnPrinter implements ICollectionProvider{
 		return phone;
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected String obtainCellular(Registry registry) {
 		String cellular = "";
 		try {
@@ -88,7 +88,7 @@ public class AlumnPrinter implements ICollectionProvider{
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
-			Iterator iter = registryMediaBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = registryMediaBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryMedia media = (RegistryMedia)iter.next();
 				cellular += (cellular.equals("")?"":" | ") + media.getValue();
@@ -99,7 +99,6 @@ public class AlumnPrinter implements ICollectionProvider{
 		return cellular;
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected String obtainCourseCode(Registry registry) {
 		String course = "";
 		try {
@@ -109,7 +108,7 @@ public class AlumnPrinter implements ICollectionProvider{
 			criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_STATUS), CourseStatus.ACTIVE);
 			criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 			criteria.addOrder(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_CODE));
-			Iterator iter = courseAlumnBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = courseAlumnBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				CourseAlumn courseAlumn = (CourseAlumn)iter.next();
 				course += (course.equals("")?"":" | ") + courseAlumn.getCourse().getCode();
@@ -120,13 +119,12 @@ public class AlumnPrinter implements ICollectionProvider{
 		return course;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected Date obtainBirthDate(Registry registry) {
 		try {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(personBean.getFieldName(IEntityAlias.PERSON_REGISTRY_ID), registry.getId());
-			Iterator iter = personBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = personBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return ((Person)iter.next()).getBirthDate();
 			}
@@ -137,7 +135,9 @@ public class AlumnPrinter implements ICollectionProvider{
 	}
 
 
-	public class ReportAlumn implements ITransferObject {
+	public static class ReportAlumn implements ITransferObject {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Customer alumn;
 		private String phone;

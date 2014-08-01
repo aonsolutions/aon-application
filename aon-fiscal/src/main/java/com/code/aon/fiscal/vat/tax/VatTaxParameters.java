@@ -1,13 +1,17 @@
 package com.code.aon.fiscal.vat.tax;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.enumeration.Period;
 
-public class VatTaxParameters {
+public class VatTaxParameters implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String domainName;
 	private int domain;

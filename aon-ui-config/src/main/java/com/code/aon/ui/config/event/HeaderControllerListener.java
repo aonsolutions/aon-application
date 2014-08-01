@@ -1,5 +1,6 @@
 package com.code.aon.ui.config.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -10,6 +11,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * 
  */
 public class HeaderControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/**
 	 * Obtains the series and the next number to use

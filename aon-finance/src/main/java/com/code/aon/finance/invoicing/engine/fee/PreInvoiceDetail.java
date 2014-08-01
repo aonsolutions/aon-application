@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,7 +19,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class PreInvoiceDetail extends InvoiceDetail {
 	
-	private static final long serialVersionUID = -8846731278767129686L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<InvoiceTax> taxList;
 	

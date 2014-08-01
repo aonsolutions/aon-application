@@ -6,12 +6,15 @@ import org.apache.commons.lang.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class AuditableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditableBeanVetoListener.class);
 	

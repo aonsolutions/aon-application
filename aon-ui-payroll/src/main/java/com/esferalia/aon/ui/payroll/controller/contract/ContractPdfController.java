@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -65,7 +67,9 @@ import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
-public class ContractPdfController {
+public class ContractPdfController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPdfController.class.getName());
 	private static final String IMAGE_URL_PREFIX0 = ".contractImage";

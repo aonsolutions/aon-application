@@ -14,6 +14,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.admin.Profile;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,6 +31,8 @@ import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String selectedTab;
 	

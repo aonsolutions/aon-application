@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,7 +29,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 
-public class EnterpriseParamsController {
+public class EnterpriseParamsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Map<String, EnterpriseData> parameters;
 

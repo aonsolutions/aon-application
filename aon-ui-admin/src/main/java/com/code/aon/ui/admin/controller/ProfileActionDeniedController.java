@@ -1,9 +1,9 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,6 +16,7 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ProfileActionDenied;
@@ -36,13 +37,15 @@ import com.esferalia.aon.entity.IEntityAlias;
 /**
  * The Class FavoriteOptionController.
  */
-public class ProfileActionDeniedController {
+public class ProfileActionDeniedController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProfileActionDeniedController.class);
 	
 	private Profile profile;
 	
-	private  List<ProfileActionDenied> deniedActions;
+	private List<ProfileActionDenied> deniedActions;
 	
 	private List<ApplicationOption> options;
 	
@@ -73,7 +76,7 @@ public class ProfileActionDeniedController {
 	}
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

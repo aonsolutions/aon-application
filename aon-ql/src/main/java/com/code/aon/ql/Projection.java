@@ -1,5 +1,6 @@
 package com.code.aon.ql;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Criterion;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.IdentExpression;
@@ -15,7 +16,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
  */
 public class Projection implements Criterion {
 
-	private static final long serialVersionUID = -4257093769323361196L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * The Enum ProjectionType.

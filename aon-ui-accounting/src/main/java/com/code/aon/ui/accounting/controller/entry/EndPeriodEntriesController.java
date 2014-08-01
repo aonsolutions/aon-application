@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,6 +19,7 @@ import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.PeriodEntriesManager;
 import com.code.aon.accounting.util.PeriodEntriesParams;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -33,7 +35,10 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class EndPeriodEntriesController {
+public class EndPeriodEntriesController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EndPeriodEntriesController.class.getName());
 	
 	private static final String INTEGRITY_ERROR = "ERROR. Existen apuntes descuadrados en el ejercicio. Verifique la integridad de la contabilidad.";

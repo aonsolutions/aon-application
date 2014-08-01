@@ -2,6 +2,7 @@ package com.code.aon.ui.google.apis.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.Utils;
@@ -21,9 +23,9 @@ import com.google.api.services.drive.model.FileList;
 
 
 
-public class GoogleDriveController {
+public class GoogleDriveController implements Serializable {
 	
-	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String beanName;
 

@@ -25,6 +25,7 @@ import static com.code.aon.ui.common.ICommonMessages.SUPPLIER;
 import static com.code.aon.ui.common.ICommonMessages.YEAR;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,12 +39,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -61,6 +62,7 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
@@ -68,7 +70,9 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class StatEngineController {
+public class StatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<Stat> yearStats;
 	private List<Stat> monthStats;
@@ -136,7 +140,7 @@ public class StatEngineController {
 	
 	public DataScrollerState getProductState() {
 		if (productState == null) {
-			productState = new DataScrollerState(new ListDataModel(getProductStats()), "statsDataTable");
+			productState = new DataScrollerState(new SerializableListDataModel(getProductStats()), "statsDataTable");
 		}		
 		return productState;
 	}
@@ -310,7 +314,7 @@ public class StatEngineController {
 	
 	public DataScrollerState getYearStatState() {
 		if (yearStatState == null) {
-			yearStatState = new DataScrollerState(new ListDataModel(getYearStats()), "statsDataTable");
+			yearStatState = new DataScrollerState(new SerializableListDataModel(getYearStats()), "statsDataTable");
 		}		
 		return yearStatState;
 	}
@@ -333,7 +337,7 @@ public class StatEngineController {
 
 	public DataScrollerState getMonthStatState() {
 		if (monthStatState == null) {
-			monthStatState = new DataScrollerState(new ListDataModel(getMonthStats()), "statsDataTable");
+			monthStatState = new DataScrollerState(new SerializableListDataModel(getMonthStats()), "statsDataTable");
 		}				
 		return monthStatState;
 	}
@@ -357,7 +361,7 @@ public class StatEngineController {
 	
 	public DataScrollerState getDayStatState() {
 		if (dayStatState == null) {
-			dayStatState = new DataScrollerState(new ListDataModel(getDayStats()), "statsDataTable");
+			dayStatState = new DataScrollerState(new SerializableListDataModel(getDayStats()), "statsDataTable");
 		}						
 		return dayStatState;
 	}
@@ -380,7 +384,7 @@ public class StatEngineController {
 	
 	public DataScrollerState getCustomerStatState() {
 		if (customerStatState == null) {
-			customerStatState = new DataScrollerState(new ListDataModel(getCustomerStats()), "statsDataTable");
+			customerStatState = new DataScrollerState(new SerializableListDataModel(getCustomerStats()), "statsDataTable");
 		}						
 		return customerStatState;
 	}
@@ -403,7 +407,7 @@ public class StatEngineController {
 	
 	public DataScrollerState getAbcStatState() {
 		if (abcStatState == null) {
-			abcStatState = new DataScrollerState(new ListDataModel(getAbcStats()), "statsDataTable");
+			abcStatState = new DataScrollerState(new SerializableListDataModel(getAbcStats()), "statsDataTable");
 		}								
 		return abcStatState;
 	}
@@ -426,7 +430,7 @@ public class StatEngineController {
 
 	public DataScrollerState getInvoicesState() {
 		if (invoicesState == null) {
-			invoicesState = new DataScrollerState(new ListDataModel(getInvoices()), "invoices");
+			invoicesState = new DataScrollerState(new SerializableListDataModel(getInvoices()), "invoices");
 		}								
 		return invoicesState;
 	}

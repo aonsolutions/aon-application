@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -9,7 +10,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +17,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -30,6 +31,7 @@ import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.DataScrollerState;
@@ -38,6 +40,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemCatalogueReportController extends DataScrollerState implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private WorkPlace workPlace;
 	
@@ -55,7 +59,7 @@ public class ItemCatalogueReportController extends DataScrollerState implements 
 	
 	public DataModel getModel() {
 		if(getDirectModel()==null){
-			setModel(new ListDataModel(getList()));
+			setModel(new SerializableListDataModel(getList()));
 		}
 		return getDirectModel();
 	}
@@ -181,9 +185,13 @@ public class ItemCatalogueReportController extends DataScrollerState implements 
 		return this.getCollection();
 	}
 	
-	public class ItemCalalogueReport {
+	public static class ItemCalalogueReport implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private CatalogueItem catalogueItem;
 		private WorkplaceDepartment workplaceDepartment;
+		
 		public CatalogueItem getCatalogueItem() {
 			return catalogueItem;
 		}

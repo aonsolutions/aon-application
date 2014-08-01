@@ -1,5 +1,6 @@
 package com.code.aon.ui.purchase.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +18,8 @@ import com.code.aon.ui.purchase.controller.PurchaseDetailController;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 
 public class PurchaseDetailControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)

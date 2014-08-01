@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,14 +11,15 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfModel;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
@@ -27,7 +29,9 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.TemporaryModel;
 
-public class ContractModelController {
+public class ContractModelController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DataModel model;
 	private DataModel optionModel;
@@ -48,7 +52,7 @@ public class ContractModelController {
 			for(ContractPdfModel model: ContractPdfModel.values()){
 				list.add(model);
 			}
-			model = new ListDataModel( list ); 
+			model = new SerializableListDataModel( list ); 
 			 
 		}
 		return model;
@@ -87,7 +91,7 @@ public class ContractModelController {
 					list.add(option);
 				}
 			}
-			optionModel = new ListDataModel( list );
+			optionModel = new SerializableListDataModel( list );
 		}
 	}
 	

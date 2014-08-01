@@ -1,11 +1,15 @@
 package com.code.aon.fiscal.retention;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.WithholdingType;
 
-public class RetentionCollectionParameters {
+public class RetentionCollectionParameters implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean toCustomer;
 	private boolean byPercent;

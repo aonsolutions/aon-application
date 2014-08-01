@@ -26,6 +26,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
@@ -40,7 +41,7 @@ import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RSSServlet.class.getName());
 	

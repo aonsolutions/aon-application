@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.context.ExternalContext;
@@ -26,6 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,7 +36,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
-public class AccountExporter {
+public class AccountExporter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String ROOT = "accounts";
 	private static final String ACCOUNT = "account";
 	private static final String CODE = "code";

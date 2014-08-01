@@ -3,7 +3,14 @@
  */
 package com.code.aon.ui.finance.controller;
 
-public class CashFlowBank {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class CashFlowBank implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Integer id;
 	private String  description;
 	private String  account;

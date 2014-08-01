@@ -3,6 +3,7 @@ package com.code.aon.ui.marketing.event;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_CONTROLLER_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.SHOW_PHONE_ACTION_MEDIA_TYPE;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.ql.ast.Expression;
@@ -15,6 +16,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PhoneActionFilterListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)

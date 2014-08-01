@@ -1,8 +1,11 @@
 package com.esferalia.aon.salary.calculator;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.SalaryException;
 
 public class OutOfDateException extends SalaryException {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public OutOfDateException() {
 		// TODO Auto-generated constructor stub

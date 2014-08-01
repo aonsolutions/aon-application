@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.LogicalAndExpression;
@@ -14,7 +15,7 @@ import com.code.aon.ql.ast.LogicalAndExpression;
 class LogicalAndExpressionImpl extends AbstractBinaryExpressionImpl implements
         LogicalAndExpression {
 
-	private static final long serialVersionUID = 4254468602868315742L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Constructor for the given expressions.

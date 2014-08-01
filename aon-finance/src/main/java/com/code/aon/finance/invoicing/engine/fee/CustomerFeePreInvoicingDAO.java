@@ -1,5 +1,6 @@
 package com.code.aon.finance.invoicing.engine.fee;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,7 +23,9 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.registry.Registry;
 
-public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
+public class CustomerFeePreInvoicingDAO implements IInvoicingDAO, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerFeePreInvoicingDAO.class.getName());
 	

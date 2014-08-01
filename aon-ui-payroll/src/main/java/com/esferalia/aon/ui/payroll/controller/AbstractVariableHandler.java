@@ -13,7 +13,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -40,6 +39,7 @@ import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
 import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -148,7 +148,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	
 	public DataModel getVariablesModel() {
 		if(variablesModel==null){
-			variablesModel = new ListDataModel();
+			variablesModel = new SerializableListDataModel();
 		}
 		return variablesModel;
 	}
@@ -158,7 +158,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	public DataModel getUndefinedVariablesModel() {
 		if(undefinedVariablesModel==null){
-			undefinedVariablesModel = new ListDataModel();
+			undefinedVariablesModel = new SerializableListDataModel();
 		}
 		return undefinedVariablesModel;
 	}
@@ -467,7 +467,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	public DataModel getVariableHelperModel() {
 		if(variableHelperModel == null){
-			variableHelperModel = new ListDataModel(getVariableHelpList());
+			variableHelperModel = new SerializableListDataModel(getVariableHelpList());
 		}
 		return variableHelperModel;
 	}

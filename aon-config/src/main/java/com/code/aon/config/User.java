@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.Toolbar;
 import com.esferalia.aon.entity.master.UserDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.UserDB;
 @Table(name="user")
 public class User extends UserDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer enterprise;
 	private Integer registry;

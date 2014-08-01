@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
@@ -11,6 +12,8 @@ import com.code.aon.product.Item;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class SaleInvoiceDetailController extends InvoiceDetailController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onItemChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {

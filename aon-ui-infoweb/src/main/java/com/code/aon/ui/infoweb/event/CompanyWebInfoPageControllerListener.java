@@ -1,5 +1,6 @@
 package com.code.aon.ui.infoweb.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -8,6 +9,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.infoweb.controller.CompanyWebInfoPageController;
 
 public class CompanyWebInfoPageControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

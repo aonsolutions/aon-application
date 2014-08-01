@@ -9,6 +9,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -29,6 +30,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentityController extends RegistryAttachController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean massiveUpload;
 	

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.CourseInstructor;
@@ -26,7 +27,7 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 
 	protected static final String COURSE_CONTROLLER_NAME = "course";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<AbsenceReportTo> list = new ArrayList<AbsenceReportTo>();
 		CourseController courseController = (CourseController) FormUtil.getController(COURSE_CONTROLLER_NAME);
@@ -46,12 +47,12 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected List obtainCourseAlumnList(Course course)throws ManagerBeanException {
 		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
 		Criteria criteria = new Criteria();
@@ -73,7 +74,9 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 		return null;
 	}
 	
-	public class AbsenceReportTo implements ITransferObject{
+	public static class AbsenceReportTo implements ITransferObject{
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Course course;
 		private List<CourseAlumn> courseAlumns;

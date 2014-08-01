@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
@@ -17,13 +18,16 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.balance.BalanceManager;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class AnnualFinancialStatementsController {
+public class AnnualFinancialStatementsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	

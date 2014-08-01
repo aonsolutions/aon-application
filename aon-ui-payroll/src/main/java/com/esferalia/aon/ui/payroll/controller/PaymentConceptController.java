@@ -5,12 +5,15 @@ import javax.faces.event.ActionEvent;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class PaymentConceptController extends AbstractConceptController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Throwable expressionException;
 	private Throwable irpfExpressionException;

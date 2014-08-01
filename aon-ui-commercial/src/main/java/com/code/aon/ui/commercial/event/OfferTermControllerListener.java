@@ -3,6 +3,7 @@ package com.code.aon.ui.commercial.event;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferTerm;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferTermControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		OfferTermController controller = (OfferTermController) event.getController();

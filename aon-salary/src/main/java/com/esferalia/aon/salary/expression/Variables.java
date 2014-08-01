@@ -13,7 +13,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.time.DateUtils;
+
 
 public class Variables implements Comparator<ITimedVariable<?>> {
 
@@ -23,6 +25,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	public static class NotFoundVariableError extends Error {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String variableName;
 
 		public NotFoundVariableError(String variableName) {

@@ -1,14 +1,19 @@
 package com.code.aon.fiscal.config;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Period;
 
-public class ModelConfig {
+public class ModelConfig implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static enum PERIOD {
 		MONTHLY,QUATERLY,YEARLY;
 	}

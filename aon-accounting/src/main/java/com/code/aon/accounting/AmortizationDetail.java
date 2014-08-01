@@ -5,6 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.AmortizationDetailDB;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.AmortizationDetailDB;
 @Table(name="amortization_detail")
 public class AmortizationDetail extends AmortizationDetailDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Double accumulated;
 	private Double pending;

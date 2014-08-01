@@ -1,5 +1,6 @@
 package com.code.aon.ui.asset.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetStat;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,7 +30,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AssetStatController {
+public class AssetStatController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Date date;
 	private Integer year;
@@ -40,11 +44,11 @@ public class AssetStatController {
 	private Date toDate;
 	private String statType;
 	private String dateRange;
-	List<AssetStat> stats;
+	private List<AssetStat> stats;
 	private String beanName;
 	private IManagerBean assetActivityBean;
-	Criteria criteria;
-	Locale locale = AonUtil.getCurrentLocale();
+	private Criteria criteria;
+	private Locale locale = AonUtil.getCurrentLocale();
 	private static final Logger LOGGER = LoggerFactory.getLogger(AssetStatController.class.getName());
 	
 	/**

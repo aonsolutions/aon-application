@@ -2,6 +2,7 @@ package com.code.aon.ui.customer.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.ui.form.LinesController;
@@ -9,6 +10,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class InvoicingGroupFeeController extends LinesController implements ICustomerConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	protected void remove() throws ManagerBeanException {
 		CustomerFee customerFee = (CustomerFee)getModel().getRowData();

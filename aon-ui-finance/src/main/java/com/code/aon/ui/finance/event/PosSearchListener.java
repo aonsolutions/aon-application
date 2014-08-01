@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Department;
@@ -10,6 +11,8 @@ import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private WorkPlace workPlace;
 	private Department department;

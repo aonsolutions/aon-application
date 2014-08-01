@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.TrainingCourseDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.TrainingCourseDB;
 @Heritable
 public class TrainingCourse extends TrainingCourseDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 		
 }

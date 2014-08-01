@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -32,6 +33,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod131Manager extends FiscalModelManager {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String SELECT_15 = "SELECT " 
 			+" SUM( IF(fmd.amount<0,fmd.amount,0) )"

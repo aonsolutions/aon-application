@@ -1,6 +1,7 @@
 package com.code.aon.ui.dbutils.controller;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.faces.event.ActionEvent;
 
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
@@ -18,7 +20,9 @@ import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
-public class SQLScriptController  {
+public class SQLScriptController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private AonFile aonFile;
 	private List<String> statements;

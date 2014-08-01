@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -27,6 +28,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -38,6 +40,8 @@ import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class RoomBookingController extends DataScrollerState implements ICollectionProvider, ISQLConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Hotel[] hotels;
 	private Item[] items;
 	private Customer[] agencies;
@@ -136,7 +140,7 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		setModel(new ListDataModel(getBookingList()));
+		setModel(new SerializableListDataModel(getBookingList()));
 	}
 	
 	private void buildBookingList() throws AonSQLException {
@@ -396,7 +400,10 @@ public class RoomBookingController extends DataScrollerState implements ICollect
 
 	/***************** DAY BOOKING *********************************/
 
-	public class DayBooking {
+	public static class DayBooking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String hotel;
 		private Date date;
 		private Integer roomCheckin;

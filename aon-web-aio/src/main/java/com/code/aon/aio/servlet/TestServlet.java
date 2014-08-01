@@ -14,12 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ui.audit.session.JSFStartupUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class TestServlet extends HttpServlet {
 	
-	private static final long serialVersionUID = 2880941215591419695L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestServlet.class.getName());
 	private static final String SELECT_DOMAIN_ID = "SELECT id FROM domain WHERE name =?";	
 	
@@ -31,8 +34,9 @@ public class TestServlet extends HttpServlet {
 		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		String host = null;
 		try {
-			String host = req.getParameter("aon.domain");
+			host = req.getParameter("aon.domain");
 			if (host == null || "".equals(host)){
 				host = AonUtil.getServerName(req);
 			}
@@ -48,18 +52,22 @@ public class TestServlet extends HttpServlet {
 			LOGGER.error(e.getMessage(),e);
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
-			DatabaseUtil.closeQuietly(c);
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(c);
+		}
+		JSFStartupUtil util = new JSFStartupUtil(getServletContext());
+		if (! util.isStarted() ) {
+			util.init(host);
 		}
 		long duration = new Date().getTime() - start.getTime();
 		String message = "TestServlet: ("+domainId+") response time : " + duration + "Ms.";
-		if ( duration > 30 ) {
+		if ( duration > 50 ) {
 			LOGGER.info(message);
 		} else {
 			LOGGER.debug(message);
 		}			
 	}
-	
+
 
 }

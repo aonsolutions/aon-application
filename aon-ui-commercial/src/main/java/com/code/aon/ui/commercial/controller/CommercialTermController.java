@@ -3,6 +3,7 @@ package com.code.aon.ui.commercial.controller;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.commercial.CommercialTerm;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -13,6 +14,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommercialTermController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	public void onTypeChanged(ValueChangeEvent event) throws ManagerBeanException {
 		((CommercialTerm)this.getTo()).setLine(calculateNextLine((Boolean)event.getNewValue()));
 	}

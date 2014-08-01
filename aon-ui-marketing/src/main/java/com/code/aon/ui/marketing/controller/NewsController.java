@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -31,6 +32,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
  * Controller used in the offer maintenance.
  */
 public class NewsController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewsController.class.getName());
 

@@ -3,10 +3,12 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
@@ -19,7 +21,9 @@ import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
 
-public class AdminMainController implements IAdminConstants {
+public class AdminMainController implements IAdminConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static final String PROPERTIES_PATH = "/com/code/aon/ui/admin/";
 	

@@ -14,6 +14,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.domain.IDomain;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -25,7 +26,7 @@ import com.code.aon.registry.Registry;
 @PrimaryKeyJoinColumn(name="registry")
 public class Company extends Registry implements ITaxInfo, IDomain {
 
-	private static final long serialVersionUID = -4187068086094343444L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private int domain;
 	private boolean active;    

@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -10,12 +11,15 @@ import javax.faces.event.ValueChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class BatchListCheckHandler {
+public class BatchListCheckHandler implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BatchListCheckHandler.class);
 

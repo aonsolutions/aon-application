@@ -1,9 +1,14 @@
 package com.code.aon.ui.finance.util.print;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.enumeration.FinanceStatus;
 
-public class FinancePrinter {
+public class FinancePrinter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private CustomerStatus customerStatus;
 

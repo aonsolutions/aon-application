@@ -3,18 +3,17 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.salary.enumeration.BonusType;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractBonus extends SQLCollection<IContractBonus> implements IContractBonus{
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public SQLContractBonus() {
 	}

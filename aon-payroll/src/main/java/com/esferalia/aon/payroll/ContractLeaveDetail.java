@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.ContractLeaveDetailDB;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 @Table(name="contract_leave_detail")
 public class ContractLeaveDetail extends ContractLeaveDetailDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public boolean isLeave(){

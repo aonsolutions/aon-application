@@ -1,9 +1,14 @@
 package com.code.aon.product.pricing;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 
-public class ItemPricesManager {
+public class ItemPricesManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onPurchasePriceChanged(Item item, Object value) {
 		if (value != null && !value.toString().equals("")) {

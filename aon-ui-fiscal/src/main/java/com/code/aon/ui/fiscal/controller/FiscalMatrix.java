@@ -1,5 +1,6 @@
 package com.code.aon.ui.fiscal.controller;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import javax.faces.model.SelectItem;
 
 import org.jooq.tools.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.config.Model;
@@ -20,7 +22,9 @@ import com.code.aon.fiscal.config.ModelManager;
 import com.code.aon.fiscal.config.ModelManagerParams;
 import com.code.aon.ui.util.AonUtil;
 
-public class FiscalMatrix {
+public class FiscalMatrix implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static List<SelectItem> MODELS;
 	static {

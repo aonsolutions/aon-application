@@ -1,10 +1,14 @@
 package com.esferalia.aon.ui.calendar.print;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
-public class CalendarDay {
+public class CalendarDay implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String description;
 	private Date date;

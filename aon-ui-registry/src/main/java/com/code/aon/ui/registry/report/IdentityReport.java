@@ -1,14 +1,18 @@
 package com.code.aon.ui.registry.report;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
 
-public class IdentityReport {
+public class IdentityReport implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	// COMMON
 	

@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.finance;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Types;
 import java.util.Date;
@@ -11,7 +12,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,6 +23,7 @@ import com.code.aon.accounting.util.AccountingFinanceChecker;
 import com.code.aon.accounting.util.AccountingFinanceCheckerParams;
 import com.code.aon.accounting.util.StrippedStatement;
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -45,6 +46,7 @@ import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.controller.report.StatementController;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
@@ -52,7 +54,9 @@ import com.code.aon.ui.finance.event.FinanceSearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountingFinanceCheckerController {
+public class AccountingFinanceCheckerController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private AccountingFinanceChecker checker = null;
 	private AccountingFinanceCheckerParams params;
@@ -121,7 +125,7 @@ public class AccountingFinanceCheckerController {
 		try {
 			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			List<AccountingFinanceCheck> list =  getAccountingFinanceChecker().getChecks(c, getParams());
-			model = new ListDataModel(list);
+			model = new SerializableListDataModel(list);
 		} catch (AonConnectionException e) {
 			String msg = "No se pudo mostrar el resultado. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -296,7 +300,7 @@ public class AccountingFinanceCheckerController {
 				}
 				list = newList ;
 			}
-			strippedModel = new ListDataModel(list);					
+			strippedModel = new SerializableListDataModel(list);					
 			
 		} catch (AonConnectionException e) {
 			String msg = "No se pudo mostrar el resultado. " + e.getMessage();

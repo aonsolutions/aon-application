@@ -14,6 +14,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,7 +29,7 @@ public class Inventory extends InventoryDB {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Inventory.class.getName());
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<InventoryDetail> details = new HashSet<InventoryDetail>();
 

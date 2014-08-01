@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -20,6 +21,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * handles the relation between master and child controllers.
  */
 public class MasterControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The child bean. */
 	private String childBean;

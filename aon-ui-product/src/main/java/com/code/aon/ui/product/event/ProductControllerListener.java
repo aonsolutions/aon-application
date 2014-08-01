@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,6 +27,8 @@ import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductControllerListener extends ControllerAdapter implements IItemConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

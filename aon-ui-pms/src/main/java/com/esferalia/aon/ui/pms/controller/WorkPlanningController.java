@@ -1,17 +1,18 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -19,6 +20,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -28,6 +30,8 @@ import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.RoomWorkPlanning;
 
 public class WorkPlanningController extends DataScrollerState implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Hotel hotel;
 	private Date date;
@@ -124,7 +128,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 				rp.setAction(obtainRoomOperation(rp.getReservationRoomDetail(), (Room) to));
 				getRoomPlanningList().add(rp);
 			}
-			setModel(new ListDataModel(getRoomPlanningList()));
+			setModel(new SerializableListDataModel(getRoomPlanningList()));
 		}
 	}
 	
@@ -132,7 +136,10 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 	/**************************************************/
 	/**************************************************/
 	
-	public class RoomPlanning {
+	public static class RoomPlanning implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Room room;
 		private Date date;
 		private ProjectReservationRoomDetail reservationRoomDetail;

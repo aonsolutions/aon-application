@@ -1,9 +1,14 @@
 package com.code.aon.ui.academy.model;
 
+import java.io.Serializable;
+
 import com.code.aon.academy.Mark;
+import com.code.aon.AonVersion;
 import com.code.aon.customer.Customer;
 
-public class AlumnMarks {
+public class AlumnMarks implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Customer customer;
 	

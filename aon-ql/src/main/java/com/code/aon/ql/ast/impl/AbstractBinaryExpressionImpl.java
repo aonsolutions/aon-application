@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.BinaryExpression;
 import com.code.aon.ql.ast.Expression;
 
@@ -12,7 +13,7 @@ import com.code.aon.ql.ast.Expression;
  */
 abstract class AbstractBinaryExpressionImpl implements BinaryExpression {
 
-	private static final long serialVersionUID = 291169328179498002L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * The left expression.

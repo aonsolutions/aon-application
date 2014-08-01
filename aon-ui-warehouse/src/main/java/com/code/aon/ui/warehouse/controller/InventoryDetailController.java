@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -36,6 +37,8 @@ import com.code.aon.warehouse.InventoryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InventoryDetailController extends LinesController implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailController.class.getName());
 	private static final String INVENTORY_CONTROLLER_NAME = "inventory";
@@ -175,6 +178,8 @@ public class InventoryDetailController extends LinesController implements IColle
 	}	
 	
 	private static class ItemFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Integer inventory;
 		

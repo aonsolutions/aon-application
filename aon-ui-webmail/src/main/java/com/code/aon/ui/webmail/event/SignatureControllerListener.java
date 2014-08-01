@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_USED;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -13,6 +14,8 @@ import com.code.aon.webmail.ISignature;
 
 public class SignatureControllerListener extends ControllerAdapter {
 
+	public static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {

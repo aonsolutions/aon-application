@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 
 public class TaxRecordingTo implements ITransferObject {
 
-	private static final long serialVersionUID = -7892480587508670847L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Map<Account, Double> taxQuotaAccountMap;
 

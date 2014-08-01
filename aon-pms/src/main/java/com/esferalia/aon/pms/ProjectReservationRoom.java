@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,7 +20,7 @@ import com.esferalia.aon.entity.master.ProjectReservationRoomDB;
 @Table(name="project_reservation_room")
 public class ProjectReservationRoom extends ProjectReservationRoomDB implements IAuditable, ITariffable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean forceRefreshBooking;
 	private boolean showRoomDetail;

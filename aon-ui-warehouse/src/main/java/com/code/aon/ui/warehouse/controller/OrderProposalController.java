@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.controller;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -19,7 +21,9 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Warehouse;
 
-public class OrderProposalController implements ICollectionProvider{
+public class OrderProposalController implements ICollectionProvider, Serializable{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Warehouse warehouse;
 	private ProductCategory category;

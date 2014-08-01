@@ -7,6 +7,7 @@ import static com.code.aon.ui.company.controller.ICompanyConstants.LOGO_MAX_SIZE
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -24,6 +25,8 @@ import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
  * Listener added to the TrainingCenterController.
  */
 public class TrainingCenterSignatureControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(TrainingCenterSignatureControllerListener.class.getName());

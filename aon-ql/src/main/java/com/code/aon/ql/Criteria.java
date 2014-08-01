@@ -2,6 +2,7 @@ package com.code.aon.ql;
 
 import java.util.Collection;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Criterion;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.Expression;
@@ -18,7 +19,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
  */
 public class Criteria implements Criterion {
 
-	private static final long serialVersionUID = -716927155526751780L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean skipDomainFilter;
 	

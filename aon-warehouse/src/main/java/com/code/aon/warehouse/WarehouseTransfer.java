@@ -9,6 +9,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.esferalia.aon.entity.master.WarehouseTransferDB;
@@ -17,7 +18,7 @@ import com.esferalia.aon.entity.master.WarehouseTransferDB;
 @Table(name="warehouse_transfer", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number"}))
 public class WarehouseTransfer extends WarehouseTransferDB implements IHeaderObject {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public WarehouseTransfer() {
 		setIssueTime( new Date() );

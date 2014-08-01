@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.BalanceDetailDB;
 
 @Entity
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.BalanceDetailDB;
 @Deprecated
 public class BalanceDetail extends BalanceDetailDB {
 		
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public int getLevel() {

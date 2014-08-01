@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,6 +29,8 @@ import com.esferalia.aon.ui.pms.controller.AllotmentController;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 
 public class AllotmentControllerListener extends ControllerAdapter implements IPmsConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

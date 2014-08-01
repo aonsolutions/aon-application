@@ -1,8 +1,14 @@
 package com.code.aon.fiscal.config;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.enumeration.Period;
 
-public class ModelStatus {
+public class ModelStatus implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static enum Status {
 		MISSING("aon-icon-minus","No realizado. Click para crear."),
 		PENDING("aon-icon-edit-add-simple","Creado - Pendiente. Click para editar."),

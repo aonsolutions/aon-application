@@ -1,6 +1,7 @@
 package com.code.aon.ui.fiscal.controller;
 
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -13,8 +14,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -24,10 +25,13 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.retention.Retention;
 import com.code.aon.fiscal.retention.RetentionCollection;
 import com.code.aon.fiscal.retention.RetentionCollectionParameters;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
-public class RetentionReportController implements ICollectionProvider {
+public class RetentionReportController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private RetentionCollectionParameters params;
 	private Integer year;
@@ -50,7 +54,7 @@ public class RetentionReportController implements ICollectionProvider {
 
 	public DataModel getModel() {
 		if (model == null) {
-			model = new ListDataModel( decorate() );
+			model = new SerializableListDataModel( decorate() );
 		}
 		return model;
 	}
@@ -257,7 +261,7 @@ public class RetentionReportController implements ICollectionProvider {
 			setTitle(getParams());
 			RetentionCollection vc = new RetentionCollection();
 			List<Retention> list = vc.getRetentionDetailList(getParams(),getOrder());
-			setDetailState(new DataScrollerState(new ListDataModel(list), "retentionReportDetail"));
+			setDetailState(new DataScrollerState(new SerializableListDataModel(list), "retentionReportDetail"));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -268,7 +272,7 @@ public class RetentionReportController implements ICollectionProvider {
 		try {
 			RetentionCollection vc = new RetentionCollection();
 			List<Retention> list = vc.getGroupedRetentionDetailList(getParams(),getOrder());
-			setGroupedModel(new ListDataModel(list));
+			setGroupedModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);

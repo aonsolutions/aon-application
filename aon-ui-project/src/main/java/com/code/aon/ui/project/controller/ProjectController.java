@@ -2,12 +2,16 @@ package com.code.aon.ui.project.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.project.Project;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.ProjectStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProjectController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String GANTT_TAB_ID  = "project_gantt_tab";
 	private static final String GRAPH_TAB_ID  = "project_graph_tab";
 	

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.Asset;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.asset.controller.ActivityLinesController;
@@ -18,6 +19,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityLinesControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLinesControllerListener.class.getName());
 	

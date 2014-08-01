@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryDetailControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();

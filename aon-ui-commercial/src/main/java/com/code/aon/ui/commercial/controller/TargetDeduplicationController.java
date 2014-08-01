@@ -4,13 +4,13 @@ import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -20,6 +20,7 @@ import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.TargetStatus;
@@ -35,12 +36,15 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.commercial.enumeration.DeduplicationType;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class TargetDeduplicationController extends DataScrollerState {
+
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TargetDeduplicationController.class);
 	
@@ -73,7 +77,7 @@ public class TargetDeduplicationController extends DataScrollerState {
 	
 	private void finish() {
 		if ( this.enabledProgressBar ) {
-			setModel(new ListDataModel(deduplicationList));		
+			setModel(new SerializableListDataModel(deduplicationList));		
 			this.progressValue = this.maxProgressValue+1;
 			this.enabledProgressBar = false;			
 		}
@@ -423,7 +427,9 @@ public class TargetDeduplicationController extends DataScrollerState {
 		}					
 	}
 	
-	public class DeduplicationValues {
+	public static class DeduplicationValues implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private String value;
 		
@@ -467,7 +473,7 @@ public class TargetDeduplicationController extends DataScrollerState {
 
 		public DataModel getModel() {
 			if ( model == null ) {
-				this.model = new ListDataModel(entries);
+				this.model = new SerializableListDataModel(entries);
 			}
 			return model;
 		}
@@ -479,7 +485,9 @@ public class TargetDeduplicationController extends DataScrollerState {
 		
 	}
 
-	public class DeduplicationEntry {
+	public static class DeduplicationEntry implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private Integer id;
 		

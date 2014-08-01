@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.registry.IRegistry;
@@ -15,6 +16,8 @@ import com.code.aon.ui.registry.controller.event.RegistryFormListener;
 import com.code.aon.ui.util.AonUtil;
 
 public class RegistryRichLookupBean extends RichLookupBean {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
     
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryRichLookupBean.class);
 	

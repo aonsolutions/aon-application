@@ -12,6 +12,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -35,6 +36,8 @@ import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestRoomController extends LinesController implements IPmsConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Map<Integer,List<AvailableRoomStay>> availableRoomStayMap;
 

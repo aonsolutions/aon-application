@@ -1,8 +1,11 @@
 package com.code.aon.account.bridge.util;
 
+import java.io.Serializable;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Loan;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,7 +20,9 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountBridgeUtil {
+public class AccountBridgeUtil implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private AccountUtil accountUtil;
 	

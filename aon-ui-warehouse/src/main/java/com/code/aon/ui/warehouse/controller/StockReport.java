@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_ITEM_VALUED_KEY;
 import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_WAREHOUSE_KEY;
 import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_WAREHOUSE_VALUED_KEY;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.faces.event.AbortProcessingException;
@@ -12,6 +13,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -28,7 +30,9 @@ import com.code.aon.warehouse.enumeration.PriceType;
 import com.code.aon.warehouse.stock.StockManager;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class StockReport implements ICollectionProvider{
+public class StockReport implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	// Report Keys 
 	private static final String BY_ITEM_REPORT_KEY = "stockItemList";

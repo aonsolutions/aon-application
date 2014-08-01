@@ -19,6 +19,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -45,7 +46,8 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 @PrimaryKeyJoinColumn(name="project")
 public class ProjectReservation extends ProjectReservationDB implements ICalculableContainer, IProject, IAuditable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private boolean forceCalculateTotals;
 	private boolean forceRefreshBooking;

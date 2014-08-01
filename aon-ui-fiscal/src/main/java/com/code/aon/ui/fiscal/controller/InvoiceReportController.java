@@ -20,6 +20,7 @@ import static com.code.aon.ui.common.ICommonMessages.INVOICE_TRANSACTION;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_TYPE;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,6 +36,7 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
@@ -57,8 +59,10 @@ import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceReportController {
+public class InvoiceReportController implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private InvoiceReportParams params;
 	
 	public InvoiceReportParams getParams() {

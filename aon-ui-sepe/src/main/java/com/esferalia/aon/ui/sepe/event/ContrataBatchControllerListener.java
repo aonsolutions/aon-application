@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.sepe.event;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -19,6 +20,8 @@ import com.esferalia.aon.ui.sepe.controller.batch.ContrataListController;
  * 
  */
 public class ContrataBatchControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)

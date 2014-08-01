@@ -612,7 +612,12 @@ public class AonUtil {
 	public static AuthPrincipal getAuthPrincipal() {
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		if (request != null) {
-			return (AuthPrincipal) request.getUserPrincipal();	
+			AuthPrincipal principal = (AuthPrincipal) request.getUserPrincipal();
+			if ( principal != null ) {
+				return principal;
+			} else {
+				LOGGER.error( "Request without principal: {}", request );
+			}
 		}
 		return null;
 	}

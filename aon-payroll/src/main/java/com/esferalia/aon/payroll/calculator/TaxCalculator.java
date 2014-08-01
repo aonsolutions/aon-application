@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
@@ -45,6 +46,8 @@ public abstract class TaxCalculator {
 
 	
 	public static class NotNowException extends  AonException {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 	}
 	

@@ -1,8 +1,6 @@
 package com.code.aon.ui.form;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +20,7 @@ import org.richfaces.model.SortField2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -35,7 +34,7 @@ import com.code.aon.common.ManagerBeanException;
  */
 public class ExtendedPageDataModel extends ExtendedDataModel implements Serializable, Modifiable {
 
-	private static final long serialVersionUID = 5496498615778179844L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** Obtains a suitable Logger. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedPageDataModel.class);
@@ -252,16 +251,6 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	public SortOrderMap getSortOrder() {
 		return sortOrder;
 	}	
-	
-	private void writeObject(ObjectOutputStream oos) throws IOException {
-		oos.writeObject( getWrappedData() );
-		oos.writeInt( getRowIndex() );
-	}
-
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
-		this.setWrappedData( ois.readObject() );
-		this.setRowIndex( ois.readInt() );
-	}
 
 	@Override
 	public Object getRowKey() {

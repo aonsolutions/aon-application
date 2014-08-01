@@ -11,6 +11,7 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -24,6 +25,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryDetailController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public boolean isUpdatable() {
 		AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);

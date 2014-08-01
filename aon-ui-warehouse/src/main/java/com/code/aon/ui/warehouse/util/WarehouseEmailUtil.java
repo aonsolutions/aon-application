@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SU
 
 import java.io.IOException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -13,6 +14,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
 
 public class WarehouseEmailUtil extends CompanyEmailUtil {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public void initMessageController( MessageController messageController, Delivery delivery, String reportKey ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getAdministrativeEmails( delivery.getCustomer().getRegistry() );

@@ -25,6 +25,7 @@ import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -62,6 +63,8 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class BasicController extends AbstractPojoController implements IController,
 		ICollectionProvider, ITemplateController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
 	
@@ -71,7 +74,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private ITransferObject to;
 
 	/** Represent the model of data that we are going to interact with */
-	protected transient DataModel model;
+	protected DataModel model;
 
 	private boolean isNew;
 
@@ -1055,6 +1058,10 @@ public class BasicController extends AbstractPojoController implements IControll
 			}
 		}
 	}
+	
+	public List<IControllerListener> getListeners() {
+		return controllerListenerSupport.getListeners();
+	}	
 
 	/**
 	 * Get a collection that contains current <code>ITransferObject</code>

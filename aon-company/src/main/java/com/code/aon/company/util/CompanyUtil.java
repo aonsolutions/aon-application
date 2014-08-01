@@ -1,7 +1,9 @@
 package com.code.aon.company.util;
 
+import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -13,7 +15,9 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CompanyUtil {
+public class CompanyUtil implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private GeoZone companyGeoZone;
 

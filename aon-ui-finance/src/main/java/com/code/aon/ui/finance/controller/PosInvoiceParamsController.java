@@ -9,6 +9,7 @@ import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_TRADENA
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_WIDTH;
 import static com.code.aon.ui.common.ICommonMessages.FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.enumeration.ReportPrintOption;
@@ -26,7 +28,9 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class PosInvoiceParamsController {
+public class PosInvoiceParamsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PosInvoiceParamsController.class.getName());
 	

@@ -1,7 +1,9 @@
 package com.code.aon.groupware.report.dailyTracking;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.TaskHolder;
@@ -11,7 +13,9 @@ import com.code.aon.project.Project;
 import com.code.aon.project.ProjectType;
 import com.code.aon.registry.Registry;
 
-public class DailyTrackingReportParams {
+public class DailyTrackingReportParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private DailyTrackingReportType reportType;
 	

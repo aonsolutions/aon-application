@@ -1,6 +1,7 @@
 package com.code.aon.account.bridge.event;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -9,6 +10,8 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 

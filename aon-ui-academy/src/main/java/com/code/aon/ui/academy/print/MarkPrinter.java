@@ -8,6 +8,7 @@ import static com.code.aon.ui.common.ICommonMessages.MARK_QUANTITATIVE;
 import static com.code.aon.ui.common.ICommonMessages.MARK_QUANTITATIVE_AVERAGE;
 import static com.code.aon.ui.common.ICommonMessages.MARK_QUANTITATIVE_AVERAGE_FINAL;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.Absence;
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.Course;
@@ -366,9 +368,9 @@ public class MarkPrinter implements ICollectionProvider{
 		return qualificationLegend;
 	}
 	
-	public class ReportMark implements ITransferObject {
+	public static class ReportMark implements ITransferObject {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		private CourseAlumn courseAlumn;
 		private List<ReportMarkTo> marks;

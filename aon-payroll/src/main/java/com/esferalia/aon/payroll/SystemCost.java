@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.SystemCostDB;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -12,7 +13,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 @Table(name="system_cost")
 public class SystemCost extends SystemCostDB implements IExpression{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	@Transient

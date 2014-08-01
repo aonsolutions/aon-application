@@ -1,5 +1,6 @@
 package com.code.aon.fiscal.mod303;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -37,8 +39,9 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod303 implements IFiscalDeclaration, IMod303Declaration {
+public class Mod303 implements IFiscalDeclaration, IMod303Declaration, Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private FiscalModel fiscalModel;
 	private Map<Mod303Key,FiscalModelDetail> map;

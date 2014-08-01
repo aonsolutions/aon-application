@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -26,6 +27,7 @@ import org.apache.velocity.tools.generic.EscapeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -65,7 +67,9 @@ import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class GeneratorController implements VelocityConstants  {
+public class GeneratorController implements VelocityConstants, Serializable  {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DESCRIPTION = "WebInfoPageResource.rattach.description";
 

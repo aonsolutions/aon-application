@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,6 +22,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AcademicSkillToGroupController extends GroupSelectionController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AcademicSkillToGroupController.class);
 	

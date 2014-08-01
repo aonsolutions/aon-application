@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.controller;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,8 +12,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,12 +22,15 @@ import com.code.aon.product.Item;
 import com.code.aon.product.ItemAlternative;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ItemInfo {
+public class ItemInfo implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean panelVisible;
 	private boolean stockVisible;
@@ -168,7 +172,7 @@ public class ItemInfo {
 		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), item.getId());
 		criteria.addOrder(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID));
 		setStockList(stockBean.getList(criteria)); 
-		setStockModel(new ListDataModel(getStockList())); 
+		setStockModel(new SerializableListDataModel(getStockList())); 
 	}
 
 	private void loadAlternatives() throws ManagerBeanException {
@@ -177,7 +181,7 @@ public class ItemInfo {
 		criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ITEM_ID), item.getId());
 		criteria.addOrder(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY));
 		setAlternativesList(altItemBean.getList(criteria)); 
-		setAlternativesModel(new ListDataModel(getAlternativesList()));
+		setAlternativesModel(new SerializableListDataModel(getAlternativesList()));
 	}
 
 	public Double getAlternativeStock() throws ManagerBeanException {

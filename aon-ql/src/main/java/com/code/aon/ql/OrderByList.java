@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.Criterion;
 import com.code.aon.ql.ast.CriterionVisitor;
 
@@ -17,7 +18,7 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class OrderByList implements Criterion {
 
-	private static final long serialVersionUID = 4969072459805125924L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<Order> orders;
 	

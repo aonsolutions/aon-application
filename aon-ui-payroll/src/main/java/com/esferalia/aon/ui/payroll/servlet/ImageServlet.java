@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 
 public class ImageServlet extends HttpServlet implements IPayrollConstants{
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public ImageServlet() {
 		super();

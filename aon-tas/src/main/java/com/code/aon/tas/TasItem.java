@@ -5,13 +5,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.TasItemDB;
 
 @Entity
 @Table(name="tas_item", uniqueConstraints = {@UniqueConstraint(columnNames="publicCode"), @UniqueConstraint(columnNames="privateCode")})
 public class TasItem extends TasItemDB  {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	public String getFullName() {

@@ -2,6 +2,7 @@ package com.code.aon.tas.event;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -9,6 +10,8 @@ import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
 
 public class ProjectTasBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {

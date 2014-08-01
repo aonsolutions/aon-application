@@ -1,11 +1,16 @@
 package com.code.aon.accounting.report;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.Period;
 import com.code.aon.common.enumeration.SecurityLevel;
 
-public class OperationReportParams {
+public class OperationReportParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String domainName;
 	private int domainId;
 	

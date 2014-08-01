@@ -7,6 +7,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.audit.controller.MenuParser;
 
 /**
@@ -14,7 +15,7 @@ import com.code.aon.ui.audit.controller.MenuParser;
  */
 public class ApplicationOption extends BasicOption {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public static final String AON_MENU_ITEM = "aon:menuItem";
 

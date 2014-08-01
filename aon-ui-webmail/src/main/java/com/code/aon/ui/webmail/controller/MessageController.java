@@ -3,6 +3,7 @@ package com.code.aon.ui.webmail.controller;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
@@ -47,7 +49,9 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
 
-public class MessageController implements IWebMailConstants {
+public class MessageController implements IWebMailConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String MESSAGE_WINDOW_INCLUDED = "com.code.aon.ui.webmail.MessageWindow";
 
@@ -156,8 +160,8 @@ public class MessageController implements IWebMailConstants {
 	    	finishMessage();
 		}
     }
-    
-    public void send(AonServer server) throws WebmailException {
+
+	public void send(AonServer server) throws WebmailException {
     	AonMessage sentMessage = null;
     	try {
 	    	sentMessage = compoundMessage(server);

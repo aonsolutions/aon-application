@@ -13,13 +13,13 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,12 +34,15 @@ import com.code.aon.groupware.Task;
 import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignProjectController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(CampaignProjectController.class);
 
@@ -187,7 +190,7 @@ public class CampaignProjectController extends LinesController {
 				newList.add(cde);
 			}
 			Collections.sort(newList, new PercenteComparator<CampaignProjectExtended>() );
-			setExtendedModel(new ListDataModel(newList));
+			setExtendedModel(new SerializableListDataModel(newList));
 		}
 		return extendedModel;
 	}

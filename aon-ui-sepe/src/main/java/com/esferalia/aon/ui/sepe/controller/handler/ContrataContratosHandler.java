@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.sepe.controller.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
@@ -28,7 +30,9 @@ import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
-public class ContrataContratosHandler implements IContrataHandler{
+public class ContrataContratosHandler implements IContrataHandler, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Contract contract;
 	

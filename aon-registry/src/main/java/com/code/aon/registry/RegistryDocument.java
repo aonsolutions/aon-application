@@ -1,11 +1,16 @@
 package com.code.aon.registry;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.enumeration.DocumentType;
 
-public class RegistryDocument {
+public class RegistryDocument implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final char[] DNI_LETTERS = { 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D',
 			'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };

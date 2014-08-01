@@ -3,6 +3,7 @@ package com.code.aon.common;
 import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.FinderBeanEvent;
@@ -25,7 +26,9 @@ import com.code.aon.ql.ProjectionList;
  * 
  */
 
-public class BasicFinderBean implements IFinderBean {
+public class BasicFinderBean implements IFinderBean, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * Data Access Object.
@@ -42,22 +45,17 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	private ManagerBeanVetoListenerSupport vetoListeners;
 	
-	/**
-	 * Construct a finder bean.
-	 * 
-	 * @param dao
-	 */
-	public BasicFinderBean(IDAO dao) {
+	public void setDao(IDAO dao) {
 		this.dao = dao;
 	}
 
 	/**
 	 * @return Returns the dao.
 	 */
-	protected IDAO getDao() {
+	public IDAO getDao() {
 		return dao;
 	}
-
+	
 	/**
 	 * @return Returns the listeners.
 	 */

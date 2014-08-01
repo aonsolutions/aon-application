@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.38-SNAPSHOT</version>
+		<version>8.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon.ui.audit</artifactId>
@@ -25,6 +25,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>				
@@ -62,7 +68,13 @@
 			<groupId>com.sun.facelets</groupId>
 			<artifactId>jsf-facelets</artifactId>
 			<version>1.1.15</version>
-	    </dependency>						
+	    </dependency>			
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>coyote</artifactId>
+			<version>6.0.37</version>
+			<scope>provided</scope>
+		</dependency>	    			
 	</dependencies>
     <profiles>
       	<profile>

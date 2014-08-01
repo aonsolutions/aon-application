@@ -1,5 +1,6 @@
 package com.code.aon.ui.sales.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.ItemComposition;
@@ -14,6 +15,8 @@ import com.code.aon.ui.sales.controller.SalesDetailController;
 
 public class SalesDetailCompositeListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		SalesDetailController controller = (SalesDetailController)event.getController();

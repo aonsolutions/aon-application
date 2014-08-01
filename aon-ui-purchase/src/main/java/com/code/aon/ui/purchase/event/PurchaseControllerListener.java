@@ -2,6 +2,7 @@ package com.code.aon.ui.purchase.event;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -22,6 +23,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 
 public class PurchaseControllerListener extends ControllerAdapter implements IPurchaseConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {

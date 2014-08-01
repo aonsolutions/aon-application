@@ -35,9 +35,8 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditManager implements IAuditConstants {
@@ -84,7 +83,7 @@ public class AuditManager implements IAuditConstants {
 	}
 	
 	private static boolean isMenuAction( String name ) {
-		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
 		return aoc.getOptionMap().containsKey(name);
 	}
 

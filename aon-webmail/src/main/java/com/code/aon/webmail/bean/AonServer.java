@@ -4,6 +4,7 @@ import static javax.mail.Folder.HOLDS_MESSAGES;
 import static javax.mail.Folder.READ_WRITE;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Properties;
 
@@ -26,19 +27,24 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.sun.mail.imap.IMAPStore;
 
-public class AonServer implements IMailConstants {
+public class AonServer implements IMailConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonServer.class);
+	
+	private Properties properties;
 
-    private Store store;
+    private transient Store store;
 
-    private Session session;
+    private transient Session session;
 
     private IMailAccount account;
     
@@ -47,15 +53,21 @@ public class AonServer implements IMailConstants {
     /** Creates a new instance of Server */
     public AonServer(IMailAccount account){
         setAccount( account );
-        Properties properties = calculateProperties( account );
-        this.session = Session.getInstance(properties);
+        this.properties = calculateProperties( account );
     }
     
-    public boolean isQuotaAware() {
+    public Session getSession() {
+    	if ( this.session == null ) {	
+    		this.session = Session.getInstance(properties);
+    	}
+		return this.session;
+	}
+
+	public boolean isQuotaAware() {
     	return quotaAware;
     }
     
-    private boolean calculateQuotaAware() {
+    private boolean calculateQuotaAware(Store store) {
     	if (store instanceof IMAPStore) {
     		IMAPStore imapStore = (IMAPStore) store;
         	try {    		
@@ -104,7 +116,7 @@ public class AonServer implements IMailConstants {
     }
 
     public boolean isIMAP() {
-    	String store = session.getProperty(MAIL_STORE_PROTOCOL);
+    	String store = properties.getProperty(MAIL_STORE_PROTOCOL);
     	return StringUtils.contains(store, IMAP);
     }
     
@@ -192,9 +204,9 @@ public class AonServer implements IMailConstants {
      */
 	public void connect() throws MessagingException {
 		LOGGER.info( "Connecting {}", account.getIncomingHost() );
-        store = session.getStore();
+        store = getSession().getStore();
         store.connect(account.getMailUsername(),account.getPasswordString());
-        quotaAware = calculateQuotaAware();
+        quotaAware = calculateQuotaAware(store);
     }
 	
     /**
@@ -225,23 +237,21 @@ public class AonServer implements IMailConstants {
     }
     
     public AonFolder getAonFolder(String folderName) {
-        try {
-        	ensureConnection();
-            return new AonFolder(store.getFolder(folderName), this);
-        } catch (MessagingException e) {
-        	LOGGER.error("getAonFolder failed " , e);
-            return null;
-        }
+    	Folder folder = getFolder(folderName);
+    	if ( folder != null ) {
+    		return new AonFolder(folder, this);
+    	}
+    	return null;
     }
-
+    
     public Folder getFolder(String folderName) {
         try {
         	ensureConnection();
             return store.getFolder(folderName);
         } catch (MessagingException e) {
-        	LOGGER.error("getAonFolder failed " , e);
-            return null;
+        	LOGGER.error(e.getMessage(), e);
         }
+        return null;
     }
     
 	public AonFolder createAonFolder(AonFolder parent, String folderName, int type) {
@@ -271,7 +281,7 @@ public class AonServer implements IMailConstants {
     }
 
     public AonMessage createAonMessage( Address from ) throws WebmailException {
-    	AonMessage aonMessage = new AonMessage( new MimeMessage(session) );
+    	AonMessage aonMessage = new AonMessage( new MimeMessage(getSession()) );
 		aonMessage.setSender( from );
     	return aonMessage;
     }
@@ -302,7 +312,7 @@ public class AonServer implements IMailConstants {
         try {
             if ( message!=null && message.getFrom()!=null ) {
                 CommandMap.setDefaultCommandMap(new MailcapCommandMap());
-            	transport = getTransport(session, account);
+            	transport = getTransport(getSession(), account);
                 message.setSentDate(new Date());
                 message.setHeader(X_MAILER, WEBMAIL_MAILER);
                 transport.sendMessage(message,
@@ -374,7 +384,7 @@ public class AonServer implements IMailConstants {
     
     public MimeMessage createMessage( byte[] data ) throws MessagingException {
     	ByteArrayInputStream source = new ByteArrayInputStream(data);
-    	MimeMessage message = new MimeMessage(session, source);
+    	MimeMessage message = new MimeMessage(getSession(), source);
         return message;
     }    
 	

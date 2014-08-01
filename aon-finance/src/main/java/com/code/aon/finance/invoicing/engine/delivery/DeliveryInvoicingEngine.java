@@ -1,5 +1,6 @@
 package com.code.aon.finance.invoicing.engine.delivery;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -33,7 +35,9 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DeliveryInvoicingEngine implements IInvoicingEngine {
+public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private IInvoicingDAO invoicingDAO;
 	private IInvoicingFeedBack invoicingFeedBack;

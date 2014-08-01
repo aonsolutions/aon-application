@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms.reservation;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import org.opentravel.ota.x2003.x05.RoomTypeType;
 import org.opentravel.ota.x2003.x05.ServicesType.Service;
 import org.opentravel.ota.x2003.x05.SourceType;
 
+import com.code.aon.AonVersion;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
@@ -62,7 +64,9 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
-public class ReservationUtils implements IReservationConstants {
+public class ReservationUtils implements IReservationConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private int domain;
 	private boolean sellerUnknown;

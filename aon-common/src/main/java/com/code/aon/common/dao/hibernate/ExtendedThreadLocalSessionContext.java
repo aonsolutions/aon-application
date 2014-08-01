@@ -8,6 +8,8 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
+
 /**
  * TODO
  * @author Consulting & Development. ecastellano - 22/11/2006
@@ -15,6 +17,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ExtendedThreadLocalSessionContext extends
 		ThreadLocalSessionContext {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ExtendedThreadLocalSessionContext.class);
 
@@ -74,6 +78,9 @@ public class ExtendedThreadLocalSessionContext extends
 	 */
 	private static class NoCleanupSynch extends
 			ThreadLocalSessionContext.CleanupSynch {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		/**
 		 * @param factory
 		 */

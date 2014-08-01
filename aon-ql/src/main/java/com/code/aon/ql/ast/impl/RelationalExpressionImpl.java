@@ -1,5 +1,6 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.RelationalExpression;
@@ -13,7 +14,7 @@ import com.code.aon.ql.ast.RelationalType;
  */
 public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl implements RelationalExpression {
 
-	private static final long serialVersionUID = 8072237133711671470L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * Supported relational operator.

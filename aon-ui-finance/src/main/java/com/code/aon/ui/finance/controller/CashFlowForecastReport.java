@@ -14,12 +14,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -35,6 +35,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
@@ -45,6 +46,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CashFlowForecastReport extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String NO_BANK = "SIN BANCO ASIGNADO";
 	private Date fromDate;
@@ -97,7 +100,7 @@ public class CashFlowForecastReport extends DataScrollerState {
 
 	public DataModel getBankModel() {
 		if (bankModel == null) {
-			setBankModel( new ListDataModel(getBankList()));	
+			setBankModel( new SerializableListDataModel(getBankList()));	
 		}
 		return bankModel;
 	}
@@ -229,7 +232,7 @@ public class CashFlowForecastReport extends DataScrollerState {
 			Collections.sort(list);
 			list.add( getFinalBalance() );
 			calculateBalance(list);
-			setModel(new ListDataModel(list));
+			setModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			String msg = "Error al realizar la búsqueda del listado.";
 			AonUtil.addErrorMessage(msg);

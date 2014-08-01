@@ -2,6 +2,7 @@ package com.code.aon.accounting.event;
 
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.util.AccountHelperManager;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
@@ -11,6 +12,8 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
  * 
  */
 public class AccountHelperBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private AccountHelperManager manager;
 

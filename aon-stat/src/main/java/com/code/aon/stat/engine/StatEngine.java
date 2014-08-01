@@ -1,5 +1,6 @@
 package com.code.aon.stat.engine;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
@@ -23,7 +25,9 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 
-public class StatEngine {
+public class StatEngine implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<Integer> currentUserWorkPlacesIds;
 

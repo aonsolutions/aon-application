@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -14,6 +15,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 
@@ -21,7 +23,9 @@ import com.code.aon.common.enumeration.MimeType;
  * @author ecastellano
  * 
  */
-public class AonFile {
+public class AonFile implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AonFile.class);
 	

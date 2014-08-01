@@ -1,5 +1,6 @@
 package com.code.aon.ui.registry.controller;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.registry.Question;
 import com.code.aon.registry.enumeration.QuestionType;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  */
 public class QuestionController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private IControllerListener notInfoListener;
 	
 	public Question getQuestion() {
@@ -46,6 +49,8 @@ public class QuestionController extends BasicController {
 	}
 	
 	private static class NotInfoFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

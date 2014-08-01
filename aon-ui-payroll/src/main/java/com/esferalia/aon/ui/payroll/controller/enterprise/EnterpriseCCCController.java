@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -26,6 +27,8 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 
 public class EnterpriseCCCController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public boolean isNewCCCLineAvailable(){
 		try {

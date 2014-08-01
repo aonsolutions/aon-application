@@ -12,12 +12,15 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.audit.IModule;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ModuleLinesController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Set<Module> getAvalaibleModules() throws ManagerBeanException {
 		Set<Module> modules = new HashSet<Module>();

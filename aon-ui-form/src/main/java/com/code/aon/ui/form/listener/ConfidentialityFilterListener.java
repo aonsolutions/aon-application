@@ -1,5 +1,6 @@
 package com.code.aon.ui.form.listener;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.form.BasicController;
@@ -13,6 +14,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * @author Esferalia Networks.
  */
 public class ConfidentialityFilterListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.Session;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.IDomainChangeListener;
@@ -19,7 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AuditDomainChangeListener implements IDomainChangeListener, Serializable {
 
-	private static final long serialVersionUID = -7806308122004034352L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditDomainChangeListener.class);
 

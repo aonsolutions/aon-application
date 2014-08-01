@@ -2,6 +2,7 @@ package com.code.aon.ui.config.event;
 
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,6 +17,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * Listener added to the ItemController.
  */
 public class ScopeVetoListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * Sets a default productType to the current Item

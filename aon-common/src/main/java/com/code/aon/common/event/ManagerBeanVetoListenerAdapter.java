@@ -1,5 +1,7 @@
 package com.code.aon.common.event;
 
+import com.code.aon.AonVersion;
+
 /**
  * An "ManagerBean" event gets fired whenever an operation is performed  
  * over a bean. You can register a IManagerBeanVetoListener with a source
@@ -11,6 +13,8 @@ package com.code.aon.common.event;
  */
 
 public class ManagerBeanVetoListenerAdapter implements IManagerBeanVetoListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/*
 	 * (non-Javadoc)

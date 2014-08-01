@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -15,6 +16,8 @@ import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.ui.pms.controller.ReservationRequestRoomController;
 
 public class ReservationRequestRoomControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

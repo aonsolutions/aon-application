@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -50,6 +51,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxDeclarationController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	public static final String BEAN_NAME = "vatTaxDeclaration";
 
 	private FileOutput fileOutput;

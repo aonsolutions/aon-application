@@ -2,6 +2,7 @@ package com.code.aon.ui.sales.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesSearchListener extends RegistrySearchListener {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String REGISTRY_SEARCH_PREFFIX = "Sales_customer_registry_";
 
 	private Customer customer;

@@ -2,12 +2,15 @@ package com.esferalia.aon.payroll.calculator;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
-public class SimpleContractPayment implements IContractPayment{
+public class SimpleContractPayment implements IContractPayment {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Integer id;
 	private String name;

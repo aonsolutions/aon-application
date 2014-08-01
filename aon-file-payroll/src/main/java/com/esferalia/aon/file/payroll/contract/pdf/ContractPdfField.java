@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.AonVersion;
 import com.lowagie.text.pdf.AcroFields;
 
 public class ContractPdfField implements Serializable{
@@ -11,7 +12,7 @@ public class ContractPdfField implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final double FACTOR_1X = 1.2;
 	private static final double FACTOR_2X = 1.4;

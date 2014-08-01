@@ -1,5 +1,6 @@
 package com.code.aon.ui.geozone.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.ql.Criteria;
@@ -10,6 +11,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class GeotreeParentControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

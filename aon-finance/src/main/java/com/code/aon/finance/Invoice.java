@@ -20,6 +20,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
@@ -50,7 +51,8 @@ import com.esferalia.aon.entity.master.InvoiceDB;
 @Table(name="invoice", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number", "type"}))
 public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableContainer, ITaxInfo, IScopable, IAuditable {
 	
-	private static final long serialVersionUID = 5692053383866684819L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Invoice.class.getName());
 
 	private int issueYear;

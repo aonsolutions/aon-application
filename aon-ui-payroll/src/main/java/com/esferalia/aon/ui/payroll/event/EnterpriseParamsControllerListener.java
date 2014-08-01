@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -12,7 +13,8 @@ import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
  * 
  */
 public class EnterpriseParamsControllerListener extends ControllerAdapter {
-
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {

@@ -3,6 +3,7 @@ package com.code.aon.ui.accounting.check.modules.account.entry;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -15,6 +16,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class UnbalancedAccountEntryCheckEntry extends CheckEntryAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public boolean isFixAvailable() {

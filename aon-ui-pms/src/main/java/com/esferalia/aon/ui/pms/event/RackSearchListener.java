@@ -7,6 +7,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
@@ -19,6 +20,8 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class RackSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Hotel hotel;
 	private Item item;

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,6 +28,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationControllerListener.class);
 	

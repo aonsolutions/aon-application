@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.controller;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DIRECT_CUSTOMER;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 
+import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -43,6 +44,7 @@ import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -53,6 +55,8 @@ import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class AgencyBookingController extends DataScrollerState implements ISQLConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Hotel[] hotels;
 	private Customer[] agencies;
 	private InvoicingGroup[] agencyGroups;
@@ -173,7 +177,7 @@ public class AgencyBookingController extends DataScrollerState implements ISQLCo
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		setModel(new ListDataModel(getBookingList()));
+		setModel(new SerializableListDataModel(getBookingList()));
 	}
 	
 	private void buildBookingList() throws AonSQLException {
@@ -626,7 +630,10 @@ System.out.println(stmt.toString());
 
 	/***************** DAY BOOKING *********************************/
 
-	public class DayBooking {
+	public static class DayBooking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private String hotel;
 		private Date date;
 		private Integer roomBusy;
@@ -698,7 +705,10 @@ System.out.println(stmt.toString());
 
 	/***************** DAY AGENCY BOOKING *********************************/
 
-	public class DayAgencyBooking {
+	public static class DayAgencyBooking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer roomBusy;
 		private Integer roomCancelled;
 

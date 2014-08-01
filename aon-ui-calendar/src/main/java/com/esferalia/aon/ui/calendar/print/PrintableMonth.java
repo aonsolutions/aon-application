@@ -1,10 +1,14 @@
 package com.esferalia.aon.ui.calendar.print;
 
+import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 
-public class PrintableMonth {
+public class PrintableMonth implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<PrintableDay> dayList;
 	private Month month;

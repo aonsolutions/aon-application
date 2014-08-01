@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -12,6 +13,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class FeePrintController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<ITransferObject> orderedList;
 	

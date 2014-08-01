@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
@@ -37,7 +38,7 @@ import com.esferalia.aon.entity.master.IncomeDB;
 @Table(name="income", uniqueConstraints = @UniqueConstraint(columnNames={"supplier", "reference_code"}))
 public class Income extends IncomeDB implements ICalculableContainer, IBankAccountContainer, IPayMethod, IHeaderObject {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
     private static final String DELIM = " ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Income.class.getName());
     

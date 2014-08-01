@@ -1,6 +1,12 @@
 package com.code.aon.webmail.bean;
 
-public abstract class AonSortableList {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public abstract class AonSortableList implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     protected String sort;
     protected boolean ascending;

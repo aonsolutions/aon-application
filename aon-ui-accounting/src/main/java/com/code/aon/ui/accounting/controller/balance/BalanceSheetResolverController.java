@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,7 @@ import com.code.aon.accounting.mvel.BalanceSheet;
 import com.code.aon.accounting.mvel.BalanceTransformer;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -42,7 +44,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class BalanceSheetResolverController {
+public class BalanceSheetResolverController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private SummaryProviderParameters parameters;
 	private BalanceType balanceType;

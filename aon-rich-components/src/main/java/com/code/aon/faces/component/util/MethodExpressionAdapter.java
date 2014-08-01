@@ -6,9 +6,11 @@ import javax.el.MethodInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
+
 public class MethodExpressionAdapter extends MethodExpression {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private MethodExpression source;
 	private MethodExpression adapted;

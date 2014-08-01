@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.Course;
@@ -16,6 +15,7 @@ import com.code.aon.academy.CourseAcademicSkill;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.Mark;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -23,10 +23,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.academy.model.AlumnMarkHeader;
 import com.code.aon.ui.academy.model.AlumnMarks;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CourseMarkController extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Course course;
 	
@@ -191,7 +194,7 @@ public class CourseMarkController extends DataScrollerState {
         	alumnMarks.setValues(obtainOrderedValues(markMap));
         	alumnMarksList.add(alumnMarks);
     	}
-		setModel(new ListDataModel(alumnMarksList));
+		setModel(new SerializableListDataModel(alumnMarksList));
     }
 
     private Mark[] obtainOrderedValues(Map<Integer, Mark> markMap) {

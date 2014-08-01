@@ -2,11 +2,14 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class PurchaseInvoiceDetailController extends InvoiceDetailController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onItemChanged(LookupChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();

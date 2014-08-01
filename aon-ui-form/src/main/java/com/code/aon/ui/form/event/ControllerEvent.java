@@ -6,6 +6,7 @@ package com.code.aon.ui.form.event;
 
 import java.util.EventObject;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.IController;
 
 /**
@@ -17,7 +18,7 @@ import com.code.aon.ui.form.IController;
  
 public class ControllerEvent extends EventObject {
 
-	private static final long serialVersionUID = -3713191797729523559L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * The empty constructor.

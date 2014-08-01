@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.OfferTerm;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -22,6 +23,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used in the offer maintenance.
  */
 public class OfferTermController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean general;
 	private IControllerListener lookupListener;
@@ -64,6 +67,8 @@ public class OfferTermController extends LinesController {
 	}
 
 	private static class TermsFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
 		public boolean isGeneral() {
 			OfferTermController oft = (OfferTermController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_TERM_GENERAL_CONTROLLER_NAME);

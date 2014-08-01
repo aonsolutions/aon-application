@@ -8,11 +8,14 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class Mod347DetailAssetController extends LinesController  {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> assetLocations;
 	private List<SelectItem> provinces;

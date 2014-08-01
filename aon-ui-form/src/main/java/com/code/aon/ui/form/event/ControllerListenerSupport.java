@@ -1,13 +1,18 @@
 package com.code.aon.ui.form.event;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
+
 /**
  * The Class ControllerListenerSupport.
  */
-public class ControllerListenerSupport {
+public class ControllerListenerSupport implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** Indica la lista de clases que escuchan al Controlador. */
 	private List<IControllerListener> listeners;
@@ -33,6 +38,10 @@ public class ControllerListenerSupport {
 	 */
 	public void removeControllerListener(IControllerListener l) {
 		listeners.remove(l);
+	}
+	
+	public List<IControllerListener> getListeners() {
+		return listeners;
 	}
 
 	/**

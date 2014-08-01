@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +10,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.richfaces.model.Ordering;
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -32,12 +33,15 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FinanceTrackingEntryController {
+public class FinanceTrackingEntryController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceTrackingEntryController.class.getName());
 
@@ -90,7 +94,7 @@ public class FinanceTrackingEntryController {
 
 	public DataModel getLines() {
 		if (lines == null) {
-			lines = new ListDataModel(new LinkedList<FinanceTracking>());
+			lines = new SerializableListDataModel(new LinkedList<FinanceTracking>());
 		}
 		return lines;
 	}
@@ -100,7 +104,7 @@ public class FinanceTrackingEntryController {
 
 	public DataModel getFinances() {
 		if (finances == null) {
-			finances = new ListDataModel(new LinkedList<FinanceTracking>());
+			finances = new SerializableListDataModel(new LinkedList<FinanceTracking>());
 		}
 		return finances;
 	}
@@ -120,8 +124,8 @@ public class FinanceTrackingEntryController {
 		initializeHeader();
 		clearCheckedLines();
 		clearCheckedFinances();
-		setLines(new ListDataModel(new LinkedList<FinanceTracking>()));
-		setFinances(new ListDataModel(new LinkedList<FinanceTracking>()));
+		setLines(new SerializableListDataModel(new LinkedList<FinanceTracking>()));
+		setFinances(new SerializableListDataModel(new LinkedList<FinanceTracking>()));
 	}
 
 	private void initializeHeader() throws ManagerBeanException {
@@ -174,7 +178,7 @@ public class FinanceTrackingEntryController {
             criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE));
             criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_CONCEPT));
             resetOrder();
-            this.finances = new ListDataModel(financeTrackingBean.getList(criteria));
+            this.finances = new SerializableListDataModel(financeTrackingBean.getList(criteria));
         } catch (ManagerBeanException e) {
             LOGGER.error("Error loading Finance model", e);
         }

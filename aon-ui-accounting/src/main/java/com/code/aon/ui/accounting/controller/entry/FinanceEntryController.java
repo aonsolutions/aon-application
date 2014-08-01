@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.controller.entry;
 
 import static com.code.aon.ui.common.ICommonMessages.TRACKING_RECORDED;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -13,7 +14,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.richfaces.model.Ordering;
@@ -32,6 +32,7 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -50,13 +51,16 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FinanceEntryController implements ISpecialAccountEntry{
+public class FinanceEntryController implements ISpecialAccountEntry, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEntryController.class.getName());
 
@@ -206,7 +210,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	
 	public DataScrollerState getLinesState() {
 		if (linesState == null) {
-			DataModel model = new ListDataModel(new LinkedList<Finance>());
+			DataModel model = new SerializableListDataModel(new LinkedList<Finance>());
 			setLinesState( new DataScrollerState(model, "lines"));
 		}		
 		return linesState;
@@ -230,7 +234,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	
 	public DataScrollerState getFinancesState() {
 		if (financesState == null) {
-			DataModel model = new ListDataModel(new LinkedList<Finance>());
+			DataModel model = new SerializableListDataModel(new LinkedList<Finance>());
 			setFinancesState( new DataScrollerState(model, "finances"));
 		}		
 		return financesState;
@@ -254,8 +258,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		initializeHeader();
 		clearCheckedLines();
 		clearCheckedFinances();
-		setLines(new ListDataModel(new LinkedList<Finance>()));
-		setFinances(new ListDataModel(new LinkedList<Finance>()));
+		setLines(new SerializableListDataModel(new LinkedList<Finance>()));
+		setFinances(new SerializableListDataModel(new LinkedList<Finance>()));
 	}
 
 	private void resetOrder(){
@@ -325,7 +329,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
             criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
             criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_CONCEPT));
             resetOrder();
-            setFinances(new ListDataModel(financeBean.getList(criteria)));
+            setFinances(new SerializableListDataModel(financeBean.getList(criteria)));
         } catch (ManagerBeanException e) {
             LOGGER.error("Error loading Finance model", e);
         }

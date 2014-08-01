@@ -8,6 +8,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -28,6 +29,8 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesDetailController extends LinesController implements ISalesConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;

@@ -8,12 +8,15 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.balance.BalanceDefaults;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 @Deprecated
 public class BalanceController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onLoadDefaults(ActionEvent event) {
 		BalanceDefaults defaults = new BalanceDefaults();

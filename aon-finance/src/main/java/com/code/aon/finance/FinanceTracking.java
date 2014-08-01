@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.esferalia.aon.entity.master.FinanceTrackingDB;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.FinanceTrackingDB;
 @Table(name="finance_tracking")
 public class FinanceTracking extends FinanceTrackingDB implements IConfidentialable{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public boolean isBatched() {

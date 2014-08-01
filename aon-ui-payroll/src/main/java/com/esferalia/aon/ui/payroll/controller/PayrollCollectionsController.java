@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.enumeration.SalaryTemplate;
@@ -61,7 +63,9 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 
-public class PayrollCollectionsController {
+public class PayrollCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final int NAME_LENGHT_80 = 80;	
 	private final int NAME_LENGHT_100 = 100;	

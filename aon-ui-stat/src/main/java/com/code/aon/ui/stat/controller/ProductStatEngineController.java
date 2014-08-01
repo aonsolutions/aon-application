@@ -1,16 +1,17 @@
 package com.code.aon.ui.stat.controller;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -24,11 +25,14 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProductStatEngineController {
+public class ProductStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(CommercialStatEngineController.class);
 
@@ -127,7 +131,7 @@ public class ProductStatEngineController {
 
 	public DataScrollerState getLatestEntriesState() {
 		if (latestEntriesState == null) {
-			latestEntriesState = new DataScrollerState(new ListDataModel(getLatestEntriesList()), "latestEntries");
+			latestEntriesState = new DataScrollerState(new SerializableListDataModel(getLatestEntriesList()), "latestEntries");
 		}								
 		return latestEntriesState;
 	}
@@ -150,7 +154,7 @@ public class ProductStatEngineController {
 	
 	public DataScrollerState getLatestShipmentsState() {
 		if (latestShipmentsState == null) {
-			latestShipmentsState = new DataScrollerState(new ListDataModel(getLatestShipmentsList()), "latestShipments");
+			latestShipmentsState = new DataScrollerState(new SerializableListDataModel(getLatestShipmentsList()), "latestShipments");
 		}										
 		return latestShipmentsState;
 	}

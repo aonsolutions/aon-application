@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ql.ast.ConstantExpression;
 import com.code.aon.ql.ast.CriterionVisitor;
 
@@ -17,7 +18,7 @@ import com.code.aon.ql.ast.CriterionVisitor;
  */
 public class ConstantExpressionImpl implements ConstantExpression {
 
-	private static final long serialVersionUID = -3168973329223554784L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * The wrapped constant.

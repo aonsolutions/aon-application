@@ -6,6 +6,7 @@ import static com.code.aon.ui.common.ICommonMessages.FAX;
 import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryMedia;
@@ -28,7 +30,9 @@ import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
-public class EmailParentController {
+public class EmailParentController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmailParentController.class.getName());
 	private EmailSender sender;

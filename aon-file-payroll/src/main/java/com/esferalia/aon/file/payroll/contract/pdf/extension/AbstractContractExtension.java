@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.Classpath;
@@ -24,6 +25,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public abstract class AbstractContractExtension implements IContractPdfDocument {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/* 
 	 * Contract enterprise fields

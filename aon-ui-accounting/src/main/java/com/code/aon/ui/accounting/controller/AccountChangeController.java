@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.code.aon.account.bridge.InvoiceTaxAccount;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -29,7 +31,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountChangeController {
+public class AccountChangeController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryDetail.class.getName());
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
@@ -15,7 +16,7 @@ import com.code.aon.finance.FinanceTracking;
 
 public class FinanceRecordingTo implements ITransferObject {
 
-	private static final long serialVersionUID = -7892480587508670847L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private Date date;

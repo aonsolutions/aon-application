@@ -1,12 +1,16 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.AonVersion;
 import com.code.aon.ui.util.AonUtil;
 
-public class SpecialEntryControllerManager {
+public class SpecialEntryControllerManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Map<AccountEntryType,String> controllersPointers;
 	

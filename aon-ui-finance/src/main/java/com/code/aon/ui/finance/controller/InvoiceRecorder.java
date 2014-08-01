@@ -17,6 +17,7 @@ import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.AmortizationInvoice;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -38,7 +39,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceRecorder implements ITransferObject {
 
-	private static final long serialVersionUID = -6961138379394750580L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Invoice invoice;
 	private boolean checked;

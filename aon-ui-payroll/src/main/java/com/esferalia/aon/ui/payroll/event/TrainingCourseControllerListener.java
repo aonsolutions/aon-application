@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,6 +19,8 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.TrainingCourse;
 
 public class TrainingCourseControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

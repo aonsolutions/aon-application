@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
@@ -19,7 +20,7 @@ import com.esferalia.aon.entity.master.ContractBatchDB;
 @Table(name="contract_batch")
 public class ContractBatch extends ContractBatchDB implements IBlobObject {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private byte[] outcomeFile;
 	

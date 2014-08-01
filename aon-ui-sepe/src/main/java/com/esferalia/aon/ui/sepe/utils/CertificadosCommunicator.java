@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.sepe.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.certificados.Terrores;
@@ -29,7 +31,9 @@ import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 import com.esferalia.aon.ui.sepe.file.CertificadosResponseReader;
 
 
-public class CertificadosCommunicator implements ISepeCommunicator {
+public class CertificadosCommunicator implements ISepeCommunicator, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CertificadosCommunicator.class.getName());
 	

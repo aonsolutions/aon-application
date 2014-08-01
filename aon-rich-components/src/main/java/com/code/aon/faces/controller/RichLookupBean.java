@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -47,7 +48,9 @@ import com.code.aon.ui.util.AonUtil;
  * LookupBean is the class used to implement a Lookup creating an SQL sentence
  * which will be executed to retrive the required data.
  */
-public class RichLookupBean implements ITemplateController {
+public class RichLookupBean implements ITemplateController, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String LIST_ID = LookupButtonType.LIST.getName();
 

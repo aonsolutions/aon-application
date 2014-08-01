@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Types;
 import java.util.List;
 
@@ -8,10 +9,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.report.OperationReport;
@@ -28,10 +29,13 @@ import com.code.aon.report.poi.IReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 
-public class OperationReportController implements IAccountingBookItem{
+public class OperationReportController implements IAccountingBookItem, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String ID = "id";
 	private static final String DATE = "date";
@@ -148,7 +152,7 @@ public class OperationReportController implements IAccountingBookItem{
 			}
 			OperationReportManager operationReportManager = new OperationReportManager();
 			List<OperationReport> list = operationReportManager.getReport( getParams() );
-			setDetailModel(new ListDataModel(list));
+			setDetailModel(new SerializableListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());

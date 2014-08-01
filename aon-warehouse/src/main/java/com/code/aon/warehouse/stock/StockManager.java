@@ -1,9 +1,12 @@
 package com.code.aon.warehouse.stock;
 
+import java.io.Serializable;
+
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
+import com.code.aon.AonVersion;
 import java.sql.Connection;
 
 import org.jooq.DSLContext;
@@ -21,7 +24,10 @@ import com.code.aon.product.Item;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.enumeration.PriceType;
 
-public class StockManager {
+public class StockManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StockManager.class.getName());
 	

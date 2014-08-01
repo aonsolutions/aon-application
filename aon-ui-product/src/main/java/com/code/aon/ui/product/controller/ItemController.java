@@ -6,6 +6,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +18,8 @@ import com.code.aon.ui.stat.controller.ProductStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ItemController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String selectedTab;
 	private boolean showNewTariffWindow;

@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD130.MOD130Format;
@@ -21,6 +22,8 @@ import com.code.aon.ui.fiscal.file.MOD130Writer;
 import com.code.aon.ui.util.AonUtil;
 
 public class Mod130Controller extends FiscalModelController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	protected FiscalModelType getModelType() {

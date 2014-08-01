@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryAttachment;
@@ -9,6 +10,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener;
 
 public class CompanyImagesControllerListener extends RegistryAttachControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {

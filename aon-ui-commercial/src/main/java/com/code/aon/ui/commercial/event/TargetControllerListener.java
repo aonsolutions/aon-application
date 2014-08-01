@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Target;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.SurveyResponse;
@@ -19,6 +20,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class TargetControllerListener extends ControllerAdapter implements ICommercialConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {

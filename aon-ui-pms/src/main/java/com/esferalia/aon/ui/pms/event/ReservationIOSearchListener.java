@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.pms.event;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -11,6 +12,8 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationIOSearchListener extends ControllerSearchListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Hotel hotel;
 	private boolean checkin;

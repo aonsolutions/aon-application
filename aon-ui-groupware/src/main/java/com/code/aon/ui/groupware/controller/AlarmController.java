@@ -10,11 +10,12 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.ListDataModel;
+import javax.faces.model.DataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,6 +29,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -35,31 +37,29 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AlarmController extends BasicController {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlarmController.class);
 	
 	private final static String HOME_ACTION = "home";
 	
-    private ListDataModel todayModel;
+    private DataModel todayModel;
 
-    private ListDataModel recentModel;
+    private DataModel recentModel;
     
-    private ListDataModel ancientModel;
+    private DataModel ancientModel;
 	
 	private DelayTime delayTime;
-
-	private User user;
 	
 	private boolean showNewAlarmWindow;
 	
-	private int pendingCount;
+	private Integer pendingCount;
 	
 	private boolean returnToList;
 	
 	private String returnAction;
 	
 	public AlarmController() {
-		this.user = UserUtils.getInstance().getLoggedUser();
-		updatePendingCount();
 		setBackAction(HOME_ACTION);
 	}
 
@@ -79,6 +79,7 @@ public class AlarmController extends BasicController {
 		Alarm alarm = (Alarm)this.getTo();
 		try {
 			alarm.setStatus(AlarmStatus.FINISHED);
+			User user = UserUtils.getInstance().getLoggedUser();
 			alarm.setUser(user);
 			getManagerBean().update(alarm);
 			updateModels();
@@ -141,10 +142,10 @@ public class AlarmController extends BasicController {
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
 
-        this.todayModel = new ListDataModel(getAlarmList(from.getTime(), to.getTime()));
+        this.todayModel = new SerializableListDataModel(getAlarmList(from.getTime(), to.getTime()));
     }
 
-    public ListDataModel getTodayModel() throws ManagerBeanException{
+    public DataModel getTodayModel() throws ManagerBeanException{
         return this.todayModel;
     }
     
@@ -160,10 +161,10 @@ public class AlarmController extends BasicController {
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
 
-        this.recentModel = new ListDataModel(getAlarmList(from.getTime(), to.getTime()));
+        this.recentModel = new SerializableListDataModel(getAlarmList(from.getTime(), to.getTime()));
     }
 
-    public ListDataModel getRecentModel() throws ManagerBeanException{
+    public DataModel getRecentModel() throws ManagerBeanException{
         return this.recentModel;
     }
     
@@ -174,10 +175,10 @@ public class AlarmController extends BasicController {
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
 
-        this.ancientModel = new ListDataModel(getAlarmList(null, to.getTime()));
+        this.ancientModel = new SerializableListDataModel(getAlarmList(null, to.getTime()));
     }	
 
-    public ListDataModel getAncientModel() throws ManagerBeanException{
+    public DataModel getAncientModel() throws ManagerBeanException{
         return this.ancientModel;
     }	
 
@@ -207,7 +208,7 @@ public class AlarmController extends BasicController {
         onSelectAlarm(event, ancientModel);
     }
     
-    private void updateModel( ListDataModel model, ITransferObject alarm ) {
+    private void updateModel( DataModel model, ITransferObject alarm ) {
     	if ( model.isRowAvailable() ) {
     		@SuppressWarnings("unchecked")
 			List<ITransferObject> list = (List<ITransferObject>) model.getWrappedData();	
@@ -216,7 +217,7 @@ public class AlarmController extends BasicController {
     	}
     }
 
-    private void onSelectAlarm(ActionEvent event, ListDataModel model) {
+    private void onSelectAlarm(ActionEvent event, DataModel model) {
         Alarm alarm = (Alarm) model.getRowData();
         try {
             select(event, alarm);
@@ -239,10 +240,14 @@ public class AlarmController extends BasicController {
 		Alarm alarm = (Alarm)this.getTo();
 		alarm.setStatus(AlarmStatus.PENDING);
 		alarm.setPriority(Priority.NONE);
+		User user = UserUtils.getInstance().getLoggedUser();
 		alarm.setUser(user);
     }
 
 	public int getPendingCount() {
+		if ( pendingCount == null ) {
+			updatePendingCount();
+		}
 		return pendingCount;
 	}
 	

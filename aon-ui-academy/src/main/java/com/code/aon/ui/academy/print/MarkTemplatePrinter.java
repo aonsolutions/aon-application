@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
@@ -32,7 +33,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportTemplateMark> reportTemplateMarkList = new LinkedList<ReportTemplateMark>();
 		try{
@@ -52,7 +53,6 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return reportTemplateMarkList;
 	}
 
-	@SuppressWarnings("unchecked")
 	private TaskHolder obtainCourseInstructor(Course course) throws ManagerBeanException {
 		IManagerBean courseInstructorBean = BeanManager.getManagerBean(CourseInstructor.class);
 		Criteria criteria = new Criteria();
@@ -65,12 +65,11 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void obtainDetails(ReportTemplateMark reportTemplateMark, Course course){
 		List<CourseAlumn> courseAlumns = obtainAlumns(course);
 		Iterator<CourseAlumn> courseAlumnsIter = courseAlumns.iterator(); 
@@ -84,7 +83,6 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<CourseAlumn> obtainAlumns(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -93,7 +91,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 			criteria.addOrder(bean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 			List<CourseAlumn> lst = new ArrayList<CourseAlumn>();
-			Iterator iter = bean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){
 				lst.add((CourseAlumn)iter.next());
 			}
@@ -104,14 +102,13 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<CourseAcademicSkill> obtainSkills(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId());
 			List<CourseAcademicSkill> lst = new ArrayList<CourseAcademicSkill>();
-			Iterator iter = bean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){
 				lst.add((CourseAcademicSkill)iter.next());
 			}
@@ -122,7 +119,9 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 	
-	public class ReportTemplateMark implements ITransferObject {
+	public static class ReportTemplateMark implements ITransferObject {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Course course;
 		private TaskHolder instructor;
@@ -152,23 +151,27 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			return detail;
 		}
 		
-		public class TemplateMarkDetail implements ITransferObject {
-			
-			private AcademicSkill academicSkill;
-			private Customer alumn;
-			
-			public AcademicSkill getAcademicSkill() {
-				return academicSkill;
-			}
-			public void setAcademicSkill(AcademicSkill academicSkill) {
-				this.academicSkill = academicSkill;
-			}
-			public Customer getAlumn() {
-				return alumn;
-			}
-			public void setAlumn(Customer alumn) {
-				this.alumn = alumn;
-			}
+	}
+
+	private static class TemplateMarkDetail implements ITransferObject {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private AcademicSkill academicSkill;
+		private Customer alumn;
+		
+		public AcademicSkill getAcademicSkill() {
+			return academicSkill;
+		}
+		public void setAcademicSkill(AcademicSkill academicSkill) {
+			this.academicSkill = academicSkill;
+		}
+		public Customer getAlumn() {
+			return alumn;
+		}
+		public void setAlumn(Customer alumn) {
+			this.alumn = alumn;
 		}
 	}
+
 }

@@ -4,13 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.MakeDB;
 
 @Entity
 @Table(name="make")
 public class Make extends MakeDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public String getFullName() {

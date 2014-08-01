@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.io.Writer;
 import java.sql.Connection;
 import java.text.MessageFormat;
@@ -28,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -42,15 +44,11 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class BackupController implements IDumpListener {
+public class BackupController implements IDumpListener, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BackupController.class);
-	
-	private final static String BACKUP_INFO = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);
-	private final static String BACKUP_TABLE_START = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
-	private final static String BACKUP_TABLE_PROGRESS = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
-	private final static String BACKUP_TABLE_FINISH = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
-	private final static String BACKUP_ERROR = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
 	
 	private Domain domain;
 	private boolean includeParentDomain;
@@ -59,8 +57,22 @@ public class BackupController implements IDumpListener {
 	private int maxProgressValue;
 	private String progressMessage;
 	private boolean enabledProgressBar;
-	private Locale locale = AonUtil.getCurrentLocale();
+	private Locale locale;
+	private String tableStartMessage;
+	private String tableProgressMessage;
+	private String tableFinishMessage;
+	private String infoMessage;
+	private String errorMessage;
 	
+	public BackupController() {
+		this.locale = AonUtil.getCurrentLocale();
+		this.tableStartMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
+		this.tableProgressMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
+		this.tableFinishMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
+		this.infoMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);		
+		this.errorMessage = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
+	}
+
 	public boolean isIncludeParentDomain() {
 		return includeParentDomain;
 	}
@@ -142,7 +154,7 @@ public class BackupController implements IDumpListener {
         } catch (Throwable e) {
 			LOGGER.error(">>>> onDump: ", e);
 			this.progressValue = this.maxProgressValue + 1;
-			setProgressMessage( format(BACKUP_ERROR, e.getMessage()) );
+			setProgressMessage( format(errorMessage, e.getMessage()) );
 		} finally {
 			IOUtils.closeQuietly(zipOut);
 			DbUtils.closeQuietly(connection);
@@ -207,25 +219,25 @@ public class BackupController implements IDumpListener {
 	public synchronized void initDump(String databaseName, String version, int numberOfTables) {
 		this.progressValue = 0;
 		this.maxProgressValue = numberOfTables;
-		setProgressMessage( format(BACKUP_INFO, databaseName, version) );
+		setProgressMessage( format(infoMessage, databaseName, version) );
 	}
 
 	@Override
 	public synchronized void startDumpTable(String table) {
 		this.progressValue++;
-		setProgressMessage( format(BACKUP_TABLE_START, table) );
+		setProgressMessage( format(tableStartMessage, table) );
 	}
 	
 	@Override
 	public synchronized void dumpTable(String table, int rowCount) {
 		if ( rowCount%100 == 0 ) {
-			setProgressMessage( format(BACKUP_TABLE_PROGRESS, table, rowCount) );	
+			setProgressMessage( format(tableProgressMessage, table, rowCount) );	
 		}
 	}
 
 	@Override
 	public synchronized void endDumpTable(String table, int rowCount) {
-		setProgressMessage( format(BACKUP_TABLE_FINISH, table, rowCount) );
+		setProgressMessage( format(tableFinishMessage, table, rowCount) );
 	}
 
 	@Override

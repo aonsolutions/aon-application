@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.SEARCH_NO_RESULTS;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -46,7 +48,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProjectStatEngineController {
+public class ProjectStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static String TOTAL_ERROR_MSG = "No se pudieron calcular los totales";
 
 	private static String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";

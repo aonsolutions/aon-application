@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -8,25 +9,28 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
 
 public class EmptyRoomController extends DataScrollerState implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmptyRoomController.class.getName());
 	
@@ -118,7 +122,7 @@ public class EmptyRoomController extends DataScrollerState implements ICollectio
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		setModel(new ListDataModel(getRoomStatusList()));
+		setModel(new SerializableListDataModel(getRoomStatusList()));
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -136,7 +140,10 @@ public class EmptyRoomController extends DataScrollerState implements ICollectio
 	/**************************************************/
 	/**************************************************/
 	
-	public class RoomStatus {
+	public static class RoomStatus implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Room room;
 		private boolean free;
 		public Room getRoom() {

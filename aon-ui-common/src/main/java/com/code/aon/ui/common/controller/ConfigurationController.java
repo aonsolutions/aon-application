@@ -1,6 +1,5 @@
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.BEAN_CONFIG_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.ON_LOGOUT;
 
 import java.io.Serializable;
@@ -24,6 +23,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.LocaleElement;
@@ -35,7 +35,7 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class ConfigurationController implements Serializable {
 	
-	private static final long serialVersionUID = -1159615075844874762L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Locale SPANISH = new Locale("es");
 	
@@ -212,8 +212,7 @@ public class ConfigurationController implements Serializable {
 	 */
 	public Map<String, Map<String, Object>> getBean() {
 		if ( bean == null ) {
-			BeanConfiguration beanConfig = (BeanConfiguration) AonUtil.getRegisteredBean(BEAN_CONFIG_CONTROLLER_NAME); 
-			this.bean = beanConfig.getBeanCopy();					
+			this.bean = BeanConfiguration.getInstance().getBeanCopy();
 		}
 		return bean;
 	}

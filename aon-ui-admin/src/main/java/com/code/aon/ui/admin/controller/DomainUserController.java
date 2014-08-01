@@ -24,6 +24,7 @@ import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.Session;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -57,6 +58,8 @@ import com.code.aon.webmail.db.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserController.class);
 	

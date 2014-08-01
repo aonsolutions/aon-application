@@ -1,10 +1,16 @@
 package com.code.aon.accounting.util;
 
+import java.io.Serializable;
+
 import com.code.aon.accounting.Period;
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 
-public class VatManagerParams {
+public class VatManagerParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Period period;
 	private SecurityLevel securityLevel;
 	private boolean investment;

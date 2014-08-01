@@ -1,11 +1,13 @@
 package com.code.aon.fiscal.mod310;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,7 +27,9 @@ import com.code.aon.fiscal.model.IFiscalDeclaration;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class Mod310 implements IFiscalDeclaration {
+public class Mod310 implements IFiscalDeclaration, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private FiscalModel fiscalModel;
 	private Map<Mod310Key,FiscalModelDetail> map;

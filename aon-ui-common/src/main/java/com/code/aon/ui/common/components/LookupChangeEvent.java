@@ -6,13 +6,15 @@ import javax.faces.event.FacesEvent;
 import javax.faces.event.FacesListener;
 import javax.faces.event.PhaseId;
 
+import com.code.aon.AonVersion;
+
 /**
  * @author ecastellano
  *
  */
 public class LookupChangeEvent extends FacesEvent {
 	
-	private static final long serialVersionUID = 6511778964744467134L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	// ------------------------------------------------------------ Constructors
 

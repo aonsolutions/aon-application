@@ -1,20 +1,24 @@
 package com.code.aon.ui.audit.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.util.AonUtil;
 
-public class WebMapController implements IAuditConstants {
+public class WebMapController implements IAuditConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ApplicationOptionController getOptionController() {
-		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		return ApplicationOptionController.getInstance();
 	}
 
 	private ActionDeniedController getDeniedController() {

@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 
 public class LazyExpressionVariable implements IExpressionVariable<Object> {

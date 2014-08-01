@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.registry.RegistryAddress;
@@ -21,6 +22,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public class BasicCopy extends AbstractContractBasicCopy {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String BASIC_COPY_NAME = "ContractBasicCopy";
 	

@@ -5,13 +5,16 @@ import java.util.GregorianCalendar;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.CalendarPeriod;
 
 public class CalendarPeriodController extends LinesController {
 	
-	Integer year;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private Integer year;
 	
 	public Integer getYear() {
 		return year;

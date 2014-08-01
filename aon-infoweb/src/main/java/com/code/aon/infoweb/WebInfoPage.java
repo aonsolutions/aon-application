@@ -10,6 +10,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.esferalia.aon.entity.master.WebInfoPageDB;
 
@@ -17,7 +18,7 @@ import com.esferalia.aon.entity.master.WebInfoPageDB;
 @Table(name="web_info_page")
 public class WebInfoPage extends WebInfoPageDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<WebInfoPageDetail> details;
 	private Set<WebInfoPageResource> resources;

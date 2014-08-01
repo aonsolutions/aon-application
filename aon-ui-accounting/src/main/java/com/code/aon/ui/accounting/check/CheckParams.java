@@ -1,8 +1,13 @@
 package com.code.aon.ui.accounting.check;
 
-import com.code.aon.accounting.Period;
+import java.io.Serializable;
 
-public class CheckParams {
+import com.code.aon.accounting.Period;
+import com.code.aon.AonVersion;
+
+public class CheckParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Period period;
 	private String domainName;

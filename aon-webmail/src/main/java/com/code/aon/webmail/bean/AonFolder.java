@@ -15,25 +15,21 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.webmail.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonFolder.class);
-	
-	private AonServer server;
 
 	public AonFolder(Folder folder, AonServer server) {
 		this( folder, server, false );
 	}
 
 	private AonFolder(Folder folder, AonServer server, boolean sortable) {
-		super(DATE_COLUMN,folder, sortable);
-		this.server = server;		
-	}
-	
-	public AonServer getServer() {
-		return server;
+		super(DATE_COLUMN, server, folder, sortable);
 	}
 
     public void refresh() throws WebmailException {
@@ -44,7 +40,7 @@ public class AonFolder extends AonMessageSortableList {
 	public ArrayList<AonFolder> getFolderList() throws WebmailException {
 		ArrayList<AonFolder> folderList = null;
 		try {
-            Folder[] folders = folder.list();
+            Folder[] folders = getFolder().list();
             folderList = new ArrayList<AonFolder>(folders.length);
             for (int i = 0; i < folders.length; i++) {
                 if (folders[i] != null) {
@@ -52,7 +48,7 @@ public class AonFolder extends AonMessageSortableList {
                 }
             }
 		} catch (MessagingException e) {
-			String msg = "Folder list " + folder.getName();
+			String msg = "Folder list " + getFolder().getName();
 			LOGGER.error(msg, e);
 			throw new WebmailException(msg,e);
 		}
@@ -62,7 +58,7 @@ public class AonFolder extends AonMessageSortableList {
 	public void deleteFolder(boolean content) throws WebmailException{
 		try {
 			close(false);
-			folder.delete(content);
+			getFolder().delete(content);
 		} catch (MessagingException e) {
 			LOGGER.error("Deleting folder failed", e);
 			throw new WebmailException(e);
@@ -72,11 +68,11 @@ public class AonFolder extends AonMessageSortableList {
 	private synchronized void refreshMessageList() throws WebmailException {
 		try {
 			open(Folder.READ_WRITE);
-			Message[] messages = folder.getMessages();
+			Message[] messages = getFolder().getMessages();
 			FetchProfile profile = new FetchProfile();
 			profile.add(FetchProfile.Item.FLAGS);
 			profile.add(FetchProfile.Item.ENVELOPE);
-			folder.fetch(messages, profile);
+			getFolder().fetch(messages, profile);
 
 			int realLength = 0;
 			AonMessage[] list = new AonMessage[messages.length];
@@ -99,21 +95,21 @@ public class AonFolder extends AonMessageSortableList {
 
     public boolean open(int mode){
     	try {
-    		if (!folder.isOpen()){
-    			folder.open(mode);
+    		if (!getFolder().isOpen()){
+    			getFolder().open(mode);
     		}
 			return true;
 		} catch (MessagingException e) {
-			LOGGER.error("Error opening folder {} in mode {}: {}",folder.getName(),mode);
+			LOGGER.error("Error opening folder {} in mode {}: {}",getFolder().getName(),mode);
 		}
 		return false;
     }
     
     public boolean close(boolean mode){
     	try {
-	    	folder.close(mode);
+	    	getFolder().close(mode);
 		} catch (MessagingException e) {
-			LOGGER.error("Error closing folder {} in mode ",folder.getName(),mode);
+			LOGGER.error("Error closing folder {} in mode ",getFolder().getName(),mode);
 		}
 		return false;
     }
@@ -121,7 +117,7 @@ public class AonFolder extends AonMessageSortableList {
 
     public boolean isHoldFolders(){
     	try {
-    		return ( folder.getType() & Folder.HOLDS_FOLDERS ) != 0;
+    		return ( getFolder().getType() & Folder.HOLDS_FOLDERS ) != 0;
     	} catch (MessagingException e) {
 			LOGGER.error("Error getting folder type", e);
 		}
@@ -130,7 +126,7 @@ public class AonFolder extends AonMessageSortableList {
     
     public boolean isHoldMessages() {
     	try {
-    		return ( folder.getType() & Folder.HOLDS_MESSAGES ) != 0;
+    		return ( getFolder().getType() & Folder.HOLDS_MESSAGES ) != 0;
 		} catch (MessagingException e) {
 			LOGGER.error("Error getting folder type", e);
 		}
@@ -139,7 +135,7 @@ public class AonFolder extends AonMessageSortableList {
     
 	public boolean isRoot(){
 		try {
-			if (folder.getParent()==null) {
+			if (getFolder().getParent()==null) {
 				return true;
 			}
 		} catch (MessagingException e) {
@@ -156,9 +152,9 @@ public class AonFolder extends AonMessageSortableList {
     	}
     	destinationFolder.open(Folder.READ_WRITE);
     	Folder desfFolder = destinationFolder.getFolder();
-		folder.copyMessages(messages, desfFolder);
-        folder.setFlags(messages,new Flags(Flags.Flag.DELETED), true);
-        folder.expunge();
+		getFolder().copyMessages(messages, desfFolder);
+        getFolder().setFlags(messages,new Flags(Flags.Flag.DELETED), true);
+        getFolder().expunge();
         destinationFolder.close(true);
     }
     
@@ -167,13 +163,13 @@ public class AonFolder extends AonMessageSortableList {
     		messagesToDelete[pos].getMessage().setFlag(Flags.Flag.DELETED, true);
     		messagesToDelete[pos].setSelected(false);
     	}
-        folder.expunge();
+        getFolder().expunge();
     }
 
     public int getMessageCount() throws WebmailException{
 		try {
 			if ( isHoldMessages() ) {			
-				return folder.getMessageCount();
+				return getFolder().getMessageCount();
 			}
 			return 0;
 		} catch (MessagingException e) {
@@ -185,7 +181,7 @@ public class AonFolder extends AonMessageSortableList {
     	int count = 0;
 		try {
 			if ( isHoldMessages() ) {
-				count = folder.getUnreadMessageCount();				
+				count = getFolder().getUnreadMessageCount();				
 			}
 		} catch (MessagingException e) {
 			LOGGER.warn( "Error getting unread message count", e );
@@ -221,15 +217,15 @@ public class AonFolder extends AonMessageSortableList {
     }
 
     public String getName() {
-    	return folder.getName();
+    	return getFolder().getName();
     }
 
     public String getFullName() {
-    	return folder.getFullName();
+    	return getFolder().getFullName();
     }
     
     public boolean isOpen(){
-    	return folder.isOpen();
+    	return getFolder().isOpen();
     }
     
     //**************************************************************

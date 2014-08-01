@@ -30,6 +30,7 @@ import net.sf.cglib.transform.impl.AddDelegateTransformer;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
@@ -98,6 +99,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	}
 
 	private static class UndefPayment extends SimpleContractPayment {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private UndefinedVariablesException exception;
 
 		public UndefPayment(IContractPayment contractPayment,

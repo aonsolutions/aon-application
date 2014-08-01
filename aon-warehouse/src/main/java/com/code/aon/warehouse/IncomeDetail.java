@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -24,7 +25,7 @@ import com.esferalia.aon.entity.master.IncomeDetailDB;
 @Table(name="income_detail")
 public class IncomeDetail extends IncomeDetailDB implements ICalculable, IStockable {
 	
-	private static final long serialVersionUID = 3100497435533821492L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private final static Logger LOGGER = LoggerFactory.getLogger(IncomeDetail.class);
 
 	public void setPrice(double price) {

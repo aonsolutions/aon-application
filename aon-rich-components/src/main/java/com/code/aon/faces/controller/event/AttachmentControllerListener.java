@@ -1,5 +1,6 @@
 package com.code.aon.faces.controller.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -8,6 +9,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AttachmentControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {

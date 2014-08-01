@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,6 +25,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentityControllerListener extends RegistryAttachControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public CorporateIdentitySearchListener getSearch() {
 		return (CorporateIdentitySearchListener) AonUtil.getRegisteredBean(CORPORATE_IDENTITY_SEARCH_CONTROLLER_NAME);

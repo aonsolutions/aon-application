@@ -1,7 +1,9 @@
 package com.code.aon.ui.registry.util;
 
+import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -12,7 +14,9 @@ import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public abstract class RegistryValidationManager {
+public abstract class RegistryValidationManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public abstract boolean isBlocked(ITransferObject to);
 

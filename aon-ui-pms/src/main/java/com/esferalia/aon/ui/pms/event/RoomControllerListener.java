@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.pms.event;
 
 import com.code.aon.asset.Asset;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -12,6 +13,8 @@ import com.esferalia.aon.ui.pms.controller.RoomController;
 
 public class RoomControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		RoomController roomController = (RoomController)event.getController();

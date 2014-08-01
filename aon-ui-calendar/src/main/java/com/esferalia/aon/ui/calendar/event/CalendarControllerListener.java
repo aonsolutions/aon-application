@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -25,6 +26,8 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
  *
  */
 public class CalendarControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeBeanCreated(ControllerEvent event)

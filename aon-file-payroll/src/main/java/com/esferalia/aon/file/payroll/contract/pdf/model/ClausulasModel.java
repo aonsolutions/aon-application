@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,6 +22,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public class ClausulasModel extends AbstractContractModel {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String MODEL_NAME = "Clausulas";
 	

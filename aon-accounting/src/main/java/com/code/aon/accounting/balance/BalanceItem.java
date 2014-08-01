@@ -8,12 +8,13 @@ import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.BalanceDetail;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 @Deprecated
 public class BalanceItem implements Serializable{
 
-	private static final long serialVersionUID = 7537787806934473438L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private BalanceDetail detail;
 	private String notes;

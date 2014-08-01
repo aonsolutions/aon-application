@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -17,6 +18,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignActionLookupListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)

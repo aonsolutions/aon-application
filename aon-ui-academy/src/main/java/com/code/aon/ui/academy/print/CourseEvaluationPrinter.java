@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseEvaluation;
 import com.code.aon.academy.CourseObservation;
@@ -24,6 +25,7 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 	private static final String COURSE_EVALUATION_CONTROLLER_NAME = "courseEvaluation";
 	private static final String COURSE_OBSERVATION_CONTROLLER_NAME = "courseObservation";
 
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportCourseEvaluation> reportCourseEvaluationList = new LinkedList<ReportCourseEvaluation>();
 		CourseController courseController = (CourseController)FormUtil.getController(COURSE_CONTROLLER_NAME);
@@ -36,7 +38,7 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		return reportCourseEvaluationList;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
@@ -61,8 +63,10 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		return null;
 	}
 	
-	public class ReportCourseEvaluation implements ITransferObject {
+	public static class ReportCourseEvaluation implements ITransferObject {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Course course;
 		private List<CourseEvaluation> courseEvaluations;
 		private List<CourseObservation> courseObservations;

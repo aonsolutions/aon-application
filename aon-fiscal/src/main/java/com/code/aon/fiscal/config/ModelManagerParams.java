@@ -1,8 +1,13 @@
 package com.code.aon.fiscal.config;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.Administration;
 
-public class ModelManagerParams {
+public class ModelManagerParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private int masterDomain;
 	

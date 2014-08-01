@@ -4,6 +4,7 @@ package com.code.aon.product;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.CatalogueItemDB;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.CatalogueItemDB;
 @Heritable
 public class CatalogueItem extends CatalogueItemDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void setQuantity(double quantity) {
         super.setQuantity( CommonUtil.round(quantity, 3));

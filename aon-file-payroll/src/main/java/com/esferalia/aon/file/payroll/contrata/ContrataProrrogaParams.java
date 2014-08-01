@@ -1,8 +1,13 @@
 package com.esferalia.aon.file.payroll.contrata;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ContrataProrrogaParams implements IContrataParams{
+import com.code.aon.AonVersion;
+
+public class ContrataProrrogaParams implements IContrataParams, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/**
 	 * DATOS_GENERALESPRORROGATYPE

@@ -1,6 +1,12 @@
 package com.esferalia.aon.gwt.payroll.bean;
 
-public class GWT {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class GWT implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String entryPoint;
 	

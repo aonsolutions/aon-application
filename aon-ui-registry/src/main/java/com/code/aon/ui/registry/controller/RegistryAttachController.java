@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.AttachmentController;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -9,6 +10,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryAttachController extends AttachmentController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private RegistryAttachmentType type;
 	

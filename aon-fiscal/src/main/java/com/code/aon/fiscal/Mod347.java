@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.enumeration.Mod347Status;
 import com.esferalia.aon.entity.master.Mod347DB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.Mod347DB;
 @Table(name="fs_mod347")
 public class Mod347 extends Mod347DB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public static final Double MINIMUM_AMOUNT = 3005.06;
 	

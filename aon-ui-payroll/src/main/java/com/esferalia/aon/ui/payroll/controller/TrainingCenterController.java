@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -35,6 +36,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.TrainingCenter;
 
 public class TrainingCenterController extends RegistryController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/** The logo attach. */
 	private RegistryAttachment logoAttach;

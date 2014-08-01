@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.calendar.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -7,9 +8,12 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
-public class CalendarCollections {
+public class CalendarCollections implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> dayTypes;
 	private Integer monthMaxDays;

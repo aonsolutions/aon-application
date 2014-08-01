@@ -8,9 +8,9 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,6 +26,7 @@ import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -33,6 +34,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosShiftController extends BasicController implements IFinanceConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private WorkPlace workPlace;
 	private Department department;
@@ -71,7 +74,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 
 	public DataModel getTotalShiftCountModel() {
 		if (totalShiftCountModel == null) {
-			totalShiftCountModel = new ListDataModel(getTotalShiftCountList((PosShift)getTo()));
+			totalShiftCountModel = new SerializableListDataModel(getTotalShiftCountList((PosShift)getTo()));
 		}
 		return totalShiftCountModel;
 	}
@@ -82,7 +85,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 
 	public DataModel getFinanceModel() {
 		if (financeModel == null) {
-			financeModel = new ListDataModel(getFinanceList((PosShift)getTo()));
+			financeModel = new SerializableListDataModel(getFinanceList((PosShift)getTo()));
 		}
 		return financeModel;
 	}

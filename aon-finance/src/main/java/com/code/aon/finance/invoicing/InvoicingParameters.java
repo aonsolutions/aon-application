@@ -1,10 +1,12 @@
 package com.code.aon.finance.invoicing;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
@@ -16,7 +18,9 @@ import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 
-public class InvoicingParameters {
+public class InvoicingParameters implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private InvoicingGroup invoicingGroup;
 	private Customer customer;

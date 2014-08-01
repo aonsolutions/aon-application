@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +42,8 @@ import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class A3Writer extends BasicExporter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private StreetType[] VALID_STREET_TYPES = new StreetType[]{
 			StreetType.AD, StreetType.AL, StreetType.AP, StreetType.AV, StreetType.BL, StreetType.BO,

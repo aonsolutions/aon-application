@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -41,7 +42,9 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CertificateController {
+public class CertificateController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;	
 
 	private static final String DEFAULT_TSA_URL = "http://ocsp.izenpe.com:8093"; 
 

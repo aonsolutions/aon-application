@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -49,7 +51,9 @@ import com.esferalia.aon.payroll.enumeration.ss.T21;
 import com.esferalia.aon.payroll.enumeration.ss.T7;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
-public class AFIWriter {
+public class AFIWriter implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final String AFI 				= "AFI";
 	private final String WINSUITE_VERSION 	= "71WSxxx";

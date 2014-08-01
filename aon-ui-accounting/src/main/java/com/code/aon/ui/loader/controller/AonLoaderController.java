@@ -2,6 +2,7 @@ package com.code.aon.ui.loader.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -14,6 +15,7 @@ import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.AonFile;
@@ -23,7 +25,9 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
 
-public class AonLoaderController {
+public class AonLoaderController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonLoaderController.class.getName());
 

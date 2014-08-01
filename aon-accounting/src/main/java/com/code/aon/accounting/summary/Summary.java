@@ -1,10 +1,15 @@
 package com.code.aon.accounting.summary;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
-public class Summary implements Comparable<Summary>{
+public class Summary implements Comparable<Summary>, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final double ZERO = 0.0;
 	

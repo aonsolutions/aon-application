@@ -1,8 +1,13 @@
 package com.esferalia.aon.ui.calendar.print;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Month;
 
-public class CalPeriod {
+public class CalPeriod implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String description;
 	private Month month;

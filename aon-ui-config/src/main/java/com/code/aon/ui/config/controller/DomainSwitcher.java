@@ -1,5 +1,6 @@
 package com.code.aon.ui.config.controller;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.IDN;
 import java.util.Iterator;
@@ -11,7 +12,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +21,7 @@ import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -33,10 +34,13 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateController {
+public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateController, Serializable {
+
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainSwitcher.class);
 	private List<IDomainChangeListener> listenerClasses;
@@ -159,7 +163,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 						filteredList.add(d);					
 					}
 				}
-				filteredModel = new ListDataModel(filteredList);
+				setFilteredModel(new SerializableListDataModel(filteredList));
 				modelFilter = filter;
 			}
 			return filteredModel;
@@ -213,7 +217,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 				domains.add(dom);	
 			}
 		} 
-		setModel(new ListDataModel(domains));
+		setModel(new SerializableListDataModel(domains));
 	}
 	
 	public void setModel(DataModel model) {

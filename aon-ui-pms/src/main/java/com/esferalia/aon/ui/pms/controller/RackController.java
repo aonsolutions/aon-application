@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -35,6 +37,8 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.event.RackSearchListener;
 
 public class RackController extends BasicController implements IPmsConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private FilterParams filterParams;
 	private Map<Integer, List<RackTo>> rackActivityMap;
@@ -239,9 +243,18 @@ public class RackController extends BasicController implements IPmsConstants {
 	}
 
 
-	public class FilterParams {
+	public static class FilterParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private RackController controller;
+		
 		private Date viewerStartDate;
 		private Integer startDateIncrease;
+		
+		public FilterParams(RackController controller) {
+			this.controller = controller;
+		}
 
 		public FilterParams() {
 			viewerStartDate = new Date();
@@ -257,7 +270,7 @@ public class RackController extends BasicController implements IPmsConstants {
 			return DateUtils.addMonths(viewerStartDate, 1);
 		}
 		public int getViewerDays() {
-			return (int)CommonUtil.getDaysBetweenDates(getFilterParams().getViewerStartDate(), getFilterParams().getViewerEndDate()) + 1;
+			return (int)CommonUtil.getDaysBetweenDates(controller.getFilterParams().getViewerStartDate(), controller.getFilterParams().getViewerEndDate()) + 1;
 		}
 
 		public Integer getStartDateIncrease() {
@@ -272,7 +285,10 @@ public class RackController extends BasicController implements IPmsConstants {
 
 	}
 
-	public class RackTo {
+	public static class RackTo implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer roomId;
 		private Date roomDate;
 		private ActivityStatus roomStatus;

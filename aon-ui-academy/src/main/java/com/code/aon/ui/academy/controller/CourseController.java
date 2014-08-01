@@ -1,5 +1,7 @@
 package com.code.aon.ui.academy.controller;
 
+import com.code.aon.AonVersion;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -34,6 +36,8 @@ import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CourseController extends CourseListController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
 

@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ui.util.DownloadUtil;
@@ -27,7 +28,7 @@ import com.code.aon.ui.util.DownloadUtil;
 
 public class ResourceServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -2158184452139430686L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/**
 	 * Logger initialization

@@ -2,6 +2,7 @@ package com.code.aon.ui.warehouse.event;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
@@ -19,6 +20,8 @@ import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 
 public class IncomeControllerListener extends ControllerAdapter implements IWarehouseConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

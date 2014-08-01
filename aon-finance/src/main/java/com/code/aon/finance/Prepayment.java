@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.finance.enumeration.PrepaymentCollect;
 import com.esferalia.aon.entity.master.PrepaymentDB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.PrepaymentDB;
 @Table(name="prepayment")
 public class Prepayment extends PrepaymentDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
 	public boolean isCollectFee() {

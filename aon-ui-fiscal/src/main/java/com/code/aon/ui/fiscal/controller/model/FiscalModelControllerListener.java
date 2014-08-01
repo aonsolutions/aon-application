@@ -1,6 +1,7 @@
 package com.code.aon.ui.fiscal.controller.model;
 
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
@@ -10,6 +11,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class FiscalModelControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private FiscalModelController getController(ControllerEvent event) {
 		FiscalModelController c = (FiscalModelController) event.getController();
 		return c;

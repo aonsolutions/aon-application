@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.SEARCH_NO_RESULTS;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -45,7 +47,9 @@ import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class GanttController {
+public class GanttController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean monitor;
 

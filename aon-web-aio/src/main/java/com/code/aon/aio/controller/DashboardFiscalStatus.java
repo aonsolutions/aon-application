@@ -1,10 +1,14 @@
 package com.code.aon.aio.controller;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.enumeration.Period;
 
-public class DashboardFiscalStatus {
+public class DashboardFiscalStatus implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Period period;
 	private Map<String,Integer> models;

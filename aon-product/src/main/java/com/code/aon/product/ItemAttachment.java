@@ -11,6 +11,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -23,7 +24,7 @@ import com.esferalia.aon.entity.master.ItemAttachmentDB;
 @Heritable
 public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Cloneable, IBlobObject {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
     private Integer size;
 	

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,11 +17,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.IOUtils;
 import org.xml.sax.SAXException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -33,6 +34,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -53,6 +55,8 @@ import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2BatchController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private CertificadosWriter certificadosWriter;
 	private FileOutput fileOutput;
@@ -90,7 +94,7 @@ public class Certifica2BatchController extends BasicController {
 	
 	public Certifica2BatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new Certifica2BatchNewWizard();
+			newBatchWizard = new Certifica2BatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -404,14 +408,22 @@ public class Certifica2BatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class Certifica2BatchNewWizard {
-
+	public static class Certifica2BatchNewWizard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private Certifica2BatchController controller;
+		
 		private List<Certifica2BatchDetail> selectedList;
 		
 		private ArrayList<Object> checks = new ArrayList<Object>();
 		
 		private DataModel selectedModel;
 		
+		public Certifica2BatchNewWizard(Certifica2BatchController controller) {
+			this.controller = controller;
+		}
+
 		public DataModel getSelectedModel() {
 			return selectedModel;
 		}
@@ -490,7 +502,7 @@ public class Certifica2BatchController extends BasicController {
 				throw new AbortProcessingException("Seleccione los contratos para continuar");
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -524,7 +536,7 @@ public class Certifica2BatchController extends BasicController {
 			}
 			
 	        listController.getCheckHandler().clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -536,9 +548,9 @@ public class Certifica2BatchController extends BasicController {
 	        	}
 	        }
 	        clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
-	        loadDetails();
-	        onSearchContracts(event);
+	        setSelectedModel(new SerializableListDataModel(selectedList));
+	        controller.loadDetails();
+	        controller.onSearchContracts(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

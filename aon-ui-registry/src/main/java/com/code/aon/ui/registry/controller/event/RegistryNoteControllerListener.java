@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller.event;
 
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
@@ -12,6 +13,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryNoteControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

@@ -2,12 +2,15 @@ package com.code.aon.ui.product.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.product.ItemTariff;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ui.form.LinesController;
 
 public class ItemTariffController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ItemPricesManager pricesManager;
 

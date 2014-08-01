@@ -3,6 +3,7 @@ package com.code.aon.purchase.event;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -15,6 +16,8 @@ import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 
 public class ProposalDetailBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beanUpdated(ManagerBeanEvent event) throws ManagerBeanException {

@@ -1,5 +1,6 @@
 package com.code.aon.ui.form.listener;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -11,6 +12,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * It handles the relation between master and child controllers.
  */
 public class LinesControllerListener extends MasterControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean simultaneousEdition;
 

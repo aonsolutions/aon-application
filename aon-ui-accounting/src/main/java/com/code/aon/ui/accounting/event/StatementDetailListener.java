@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.event;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -14,6 +15,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class StatementDetailListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

@@ -1,14 +1,18 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 
-public class CashCalculator implements ICollectionProvider {
+public class CashCalculator implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showCalculatorWindow;
 	private Integer[] amounts = new Integer[15];

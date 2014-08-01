@@ -3,12 +3,13 @@ package com.code.aon.accounting;
 import java.util.Date;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 
 public class LoanFeeEntry implements ITransferObject {
 
-	private static final long serialVersionUID = -8273893100974866857L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period feePeriod;
 	private Date feeDate;

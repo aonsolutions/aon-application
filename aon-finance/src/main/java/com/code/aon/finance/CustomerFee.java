@@ -10,6 +10,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,7 +29,7 @@ import com.esferalia.aon.entity.master.CustomerFeeDB;
 @Table(name="customer_fee")
 public class CustomerFee extends CustomerFeeDB implements ICalculable {
 
-	private static final long serialVersionUID = 113912434021805866L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String invoicingDescription;
 

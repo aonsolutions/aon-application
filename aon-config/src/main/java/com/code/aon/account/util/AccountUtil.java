@@ -1,8 +1,10 @@
 package com.code.aon.account.util;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -11,7 +13,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountUtil {
+public class AccountUtil implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static final String NO_COST_CENTER_ACCOUNT = "Cuentas sin centro de costo";
 

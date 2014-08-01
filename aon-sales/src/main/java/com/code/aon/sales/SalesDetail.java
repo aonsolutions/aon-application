@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.SalesDetailDB;
 @Table(name="sales_detail")
 public class SalesDetail extends SalesDetailDB implements ICalculable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private double transfered;
 

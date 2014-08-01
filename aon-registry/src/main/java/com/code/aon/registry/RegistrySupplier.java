@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
@@ -15,7 +16,7 @@ import com.esferalia.aon.entity.master.RegistrySupplierDB;
 @Table(name="rsupplier")
 public class RegistrySupplier extends RegistrySupplierDB implements IBankAccountContainer, IPayMethod {
 
-	private static final long serialVersionUID = -9181775363113298274L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private static final String DELIM = " ";
 

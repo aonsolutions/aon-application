@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin;
 
+import java.io.Serializable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,15 +24,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.AonVersion;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainInfo {
+public class DomainInfo implements Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomainInfo.class);
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 	

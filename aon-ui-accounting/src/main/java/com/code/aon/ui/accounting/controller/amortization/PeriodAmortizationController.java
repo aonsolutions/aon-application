@@ -15,6 +15,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,6 +32,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PeriodAmortizationController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Period period;
 	private Date fromDate;

@@ -1,5 +1,7 @@
 package com.code.aon.common.event;
 
+import java.io.Serializable;
+
 /**
  * An "ManagerBean" event gets fired whenever an operation is performed  
  * over a bean. You can register a IManagerBeanVetoListener with a source
@@ -9,7 +11,7 @@ package com.code.aon.common.event;
  *
  */
 
-public interface IManagerBeanVetoListener {
+public interface IManagerBeanVetoListener extends Serializable {
 
 	/**
      * This method gets called before a bean is inserted.

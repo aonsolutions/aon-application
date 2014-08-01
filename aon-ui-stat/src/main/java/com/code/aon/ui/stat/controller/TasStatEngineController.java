@@ -5,21 +5,24 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.stat.engine.TasStatEngine;
 import com.code.aon.stat.tas.TasStatDetail;
 import com.code.aon.stat.tas.TasStatHeader;
 import com.code.aon.tas.TasItem;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class TasStatEngineController extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private TasStatParams params;
 	private DataModel detailModel;
@@ -83,7 +86,7 @@ public class TasStatEngineController extends DataScrollerState {
 		try {
 			TasStatEngine engine = new TasStatEngine();
 			List<TasStatHeader> headerList = engine.getTasHeaders(params.getStatParams());
-			setHeaderModel( new ListDataModel( headerList ) );
+			setHeaderModel( new SerializableListDataModel( headerList ) );
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar el informe. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -110,7 +113,7 @@ public class TasStatEngineController extends DataScrollerState {
 			} else {
 				detailList = engine.getTasDetails(header, params.getStatParams());
 			}
-			setDetailModel( new ListDataModel( detailList ) );
+			setDetailModel( new SerializableListDataModel( detailList ) );
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar el informe. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);

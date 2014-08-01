@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;

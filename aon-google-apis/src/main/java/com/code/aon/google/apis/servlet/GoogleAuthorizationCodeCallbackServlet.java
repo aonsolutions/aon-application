@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.AonVersion;
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.GoogleUser;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
@@ -36,11 +37,8 @@ import com.google.api.services.tasks.Tasks;
 public class GoogleAuthorizationCodeCallbackServlet extends
 		AbstractAuthorizationCodeCallbackServlet {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5248059355038389197L;
-
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	public static String pass;
 	
 

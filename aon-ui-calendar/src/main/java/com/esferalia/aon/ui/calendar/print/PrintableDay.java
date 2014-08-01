@@ -1,7 +1,13 @@
 package com.esferalia.aon.ui.calendar.print;
 
+import java.io.Serializable;
 
-public class PrintableDay {
+import com.code.aon.AonVersion;
+
+
+public class PrintableDay implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Integer dayOfMonth;
 	private boolean holiday;

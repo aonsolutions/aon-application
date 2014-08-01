@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.sepe.controller.batch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,8 +14,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +26,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -43,13 +45,15 @@ import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class ContrataBatchController extends BasicController {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private FileOutput fileOutput;
 	private boolean recorded;
 	private ContrataBatchNewWizard newBatchWizard;
 	
 	public ContrataBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new ContrataBatchNewWizard();
+			newBatchWizard = new ContrataBatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -231,7 +235,11 @@ public class ContrataBatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class ContrataBatchNewWizard {
+	public static class ContrataBatchNewWizard implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private ContrataBatchController controller;
 
 		private List<ContrataBatchDetail> selectedList;
 		
@@ -239,6 +247,10 @@ public class ContrataBatchController extends BasicController {
 		
 		private DataModel selectedModel;
 		
+		public ContrataBatchNewWizard(ContrataBatchController controller) {
+			this.controller = controller;
+		}
+
 		public DataModel getSelectedModel() {
 			return selectedModel;
 		}
@@ -313,7 +325,7 @@ public class ContrataBatchController extends BasicController {
 				throw new AbortProcessingException("Seleccione los contratos para continuar");
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -326,7 +338,7 @@ public class ContrataBatchController extends BasicController {
 				selectedList.add(detail);
 			}
 	        listController.getCheckHandler().clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
+	        setSelectedModel(new SerializableListDataModel(selectedList));
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -338,9 +350,9 @@ public class ContrataBatchController extends BasicController {
 	        	}
 	        }
 	        clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
-	        loadDetails();
-	        onSearchContracts(event);
+	        setSelectedModel(new SerializableListDataModel(selectedList));
+	        controller.loadDetails();
+	        controller.onSearchContracts(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

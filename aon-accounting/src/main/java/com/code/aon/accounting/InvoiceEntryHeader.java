@@ -3,6 +3,7 @@ package com.code.aon.accounting;
 import java.util.Date;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -16,7 +17,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 
 public class InvoiceEntryHeader implements ITransferObject {
 	
-	private static final long serialVersionUID = 7455764834130396589L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private InvoiceType type;
 	private boolean investment;

@@ -14,12 +14,11 @@
 <%
 try {
 	failedLogin.setShowError("true".equals(request.getParameter("showError")));
-	customize.initMessages(request.getLocale());
+	ResourceBundle commonBundle = customize.initMessages(request.getLocale());
 	customize.initResources();
 	customize.initApplicationVersion(application.getResourceAsStream("META-INF/MANIFEST.MF"));
 	String domainName = AonUtil.getServerName(request);
 	customize.init(domainName);
-	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.common.i18n.messages", request.getLocale());
 	companyDisplay.init(domainName);
 	
 %>
@@ -178,7 +177,7 @@ try {
 
 								<div class="aon-login-info">
 									<div class="aon-login-info-title">
-										<%=customize.getBundle().getString("aon_support_title")%>
+										<%=commonBundle.getString("aon_support_title")%>
 									</div>
 		
 									<div class="aon-bold">
@@ -199,21 +198,21 @@ try {
 										<c:if test="${!customize.hideTrademark}">
 										    <c:if test="${customize.customized}">
 												<span class="aon-outputText">
-													<%=customize.getBundle().getString("aon_powered_by")%>
+													<%=commonBundle.getString("aon_powered_by")%>
 												</span>
 										    </c:if>
 											<a target="_blank"
-												href="<%=customize.getBundle().getString("aon_solutions_url")%>">
+												href="<%=commonBundle.getString("aon_solutions_url")%>">
 												<span class="aon-outputText">
-													<%=customize.getBundle().getString("aon_solutions")%>
+													<%=commonBundle.getString("aon_solutions")%>
 												</span>
 											</a>    
 										    <c:if test="${!customize.customized}">
 												<span class="aon-outputText">
-													<%=customize.getBundle().getString("aon_trademark")%>
+													<%=commonBundle.getString("aon_trademark")%>
 												</span>
 												<span class="aon-footer-company-label">
-													<%=customize.getBundle().getString("aon_esferalia")%> <%=customize.getBundle().getString("aon_networks")%>
+													<%=commonBundle.getString("aon_esferalia")%> <%=commonBundle.getString("aon_networks")%>
 												</span>
 											</c:if>
 										</c:if>
@@ -221,7 +220,7 @@ try {
 											<c:if test="${customize.applicationVersion != null}">
 												<div>
 													<%
-													String value = customize.getBundle().getString("aon_about_version");
+													String value = commonBundle.getString("aon_about_version");
 										    		MessageFormat mf = new MessageFormat( value );
 										    		out.print( mf.format(new Object[]{customize.getApplicationVersion()}) ); 
 										    		%>
@@ -231,7 +230,7 @@ try {
 									    		</div>
 											</c:if>
 											<div>
-												<%=customize.getBundle().getString("aon_about_db_version")%> <%= du.getCurrentVersion() %>
+												<%=commonBundle.getString("aon_about_db_version")%> <%= du.getCurrentVersion() %>
 								    		</div>
 								    	</c:if>
 									</div>

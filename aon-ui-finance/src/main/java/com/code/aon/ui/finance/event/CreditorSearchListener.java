@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.ql.Criteria;
@@ -11,6 +12,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CreditorSearchListener extends RegistryPayMethodSearchListener {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private CreditorStatus[] creditorStatuses;
 	
 	public CreditorStatus[] getCreditorStatuses() {

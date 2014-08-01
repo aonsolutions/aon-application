@@ -1,9 +1,11 @@
 package com.code.aon.fiscal.model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,7 +18,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public abstract class FiscalModelManager implements IFiscalModelManager {
+public abstract class FiscalModelManager implements IFiscalModelManager, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	protected Date getInitialDate( FiscalModel fiscalModel) {
 		Calendar c = Calendar.getInstance();

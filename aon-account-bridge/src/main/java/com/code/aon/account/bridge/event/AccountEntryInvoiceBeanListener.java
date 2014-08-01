@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -15,6 +16,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryInvoiceBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {

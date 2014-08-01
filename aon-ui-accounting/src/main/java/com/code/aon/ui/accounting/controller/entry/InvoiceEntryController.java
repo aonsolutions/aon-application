@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.controller.entry;
 
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,7 +16,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -36,6 +36,7 @@ import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -85,6 +86,7 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountAppParamsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -95,7 +97,9 @@ import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceEntryController implements ISpecialAccountEntry {
+public class InvoiceEntryController implements ISpecialAccountEntry, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceEntryController.class.getName());
 
@@ -210,7 +214,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public DataModel getDetails() {
 		if (details == null) {
-			details = new ListDataModel(new LinkedList<InvoiceEntryDetail>());
+			details = new SerializableListDataModel(new LinkedList<InvoiceEntryDetail>());
 		}
 		return details;
 	}
@@ -221,7 +225,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public DataModel getFinances() {
 		if (finances == null) {
-			finances = new ListDataModel(new LinkedList<Finance>());
+			finances = new SerializableListDataModel(new LinkedList<Finance>());
 		}
 		return finances;
 	}
@@ -344,10 +348,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		initializeHeader();
 		getHeader().setType(InvoiceType.SALES);
 
-		setDetails(  new ListDataModel(new LinkedList<InvoiceEntryDetail>()));
+		setDetails(  new SerializableListDataModel(new LinkedList<InvoiceEntryDetail>()));
 		setCurrentDetail( resetDetail() );
 		setNewDetail(false);
-		setFinances( new ListDataModel(new LinkedList<Finance>()) );
+		setFinances( new SerializableListDataModel(new LinkedList<Finance>()) );
 		setCurrentFinance( null );
 		setNewFinance(false);
 		setRemovedDetails(null);
@@ -1281,7 +1285,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		financeList = getFinanceGenerator().generateFinances(invoice, getInvoiceTotal(), false);
-		setFinances( new ListDataModel(financeList) );
+		setFinances( new SerializableListDataModel(financeList) );
 	}
 
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
@@ -1628,9 +1632,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			getHeader().setInvestment(accountEntryInvoice.getInvoice().isInvestment());
 			getHeader().setTransaction(accountEntryInvoice.getInvoice().getTransaction());
 			getHeader().setAccountEntryId(entry.getId());
-			setFinances(new ListDataModel(
+			setFinances(new SerializableListDataModel(
 					obtainFinances(accountEntryInvoice.getInvoice())));
-			setDetails(new ListDataModel(
+			setDetails(new SerializableListDataModel(
 					obtainDetails(accountEntryInvoice.getInvoice())));
 		}
 	}

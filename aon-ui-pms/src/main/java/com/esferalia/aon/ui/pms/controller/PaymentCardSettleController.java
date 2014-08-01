@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,12 +18,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -44,6 +45,7 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
@@ -53,6 +55,8 @@ import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class PaymentCardSettleController extends DataScrollerState implements ISQLConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 
@@ -291,7 +295,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 
 	public DataScrollerState getPaymentCardState() {
 		if (paymentCardState == null) {
-			paymentCardState = new DataScrollerState(new ListDataModel(getPaymentCardFinances()), "paymentCardState");
+			paymentCardState = new DataScrollerState(new SerializableListDataModel(getPaymentCardFinances()), "paymentCardState");
 		}
 		return paymentCardState;
 	}
@@ -343,7 +347,6 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 	public void setShowFinanceBatchWindow(boolean showFinanceBatchWindow) {
 		this.showFinanceBatchWindow = showFinanceBatchWindow;
 	}
-
 
 	public void onInit(ActionEvent event) {
 		try {
@@ -450,7 +453,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 
 	private void onSearchFinances() throws AonSQLException {
 		clearCheckedFinances();
-		setModel(new ListDataModel(getFinanceList()));
+		setModel(new SerializableListDataModel(getFinanceList()));
 	}
 
 	private List<PaymentCardFinance> getFinanceList() throws AonSQLException {
@@ -851,7 +854,10 @@ System.out.println(stmt.toString());
 	}
 
 
-	public class PaymentCardFinance {
+	public static class PaymentCardFinance implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer financeId;
 		private Date financeDate;
 		private String agency;
@@ -874,6 +880,7 @@ System.out.println(stmt.toString());
 		public Integer getFinanceId() {
 			return financeId;
 		}
+
 		public void setFinanceId(Integer financeId) {
 			this.financeId = financeId;
 		}

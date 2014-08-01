@@ -2,6 +2,7 @@ package com.code.aon.common.event;
 
 import java.util.EventObject;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -15,10 +16,7 @@ import com.code.aon.common.ITransferObject;
 
 public class ManagerBeanEvent extends EventObject {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5471580484072404461L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
      * Construct a new <code>ManagerBeanEvent</code>.

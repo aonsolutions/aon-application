@@ -2,10 +2,13 @@ package com.esferalia.aon.ui.payroll.controller.batch;
 
 import org.slf4j.Logger;
 
+import com.code.aon.AonVersion;
 import com.code.aon.faces.controller.AttachmentController;
 import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 
 public abstract class BatchAttachController extends AttachmentController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean show;
 	private PayrollBatchAttachmentType type;

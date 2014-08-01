@@ -1,5 +1,6 @@
 package com.code.aon.ui.asset.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,7 +10,6 @@ import java.util.ListIterator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
@@ -20,6 +20,7 @@ import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetType;
 import com.code.aon.asset.Feature;
 import com.code.aon.asset.enumeration.ViewerType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -30,10 +31,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ActivityViewerController {
+public class ActivityViewerController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ViewerType viewerType;
 	private AssetType assetType;
@@ -45,7 +49,7 @@ public class ActivityViewerController {
 	private AssetActivity selectedAssetActivity;
 	private DataModel assetModel;
 	private List<DayAssetList> dayAssetList;
-	private Integer[] featureFilter ;
+	private Integer[] featureFilter;
 	private List<AssetDayList> assetDayList = new ArrayList<AssetDayList>();
 	
 	
@@ -278,11 +282,11 @@ public class ActivityViewerController {
 			Asset a = getAsset((Integer)(((Object[])to)[0]));
 			AssetReservation r = new AssetReservation();
 			r.setAsset(a);
-			r.setAssetDayModel(new ListDataModel(buildAssetDayList(a)));
+			r.setAssetDayModel(new SerializableListDataModel(buildAssetDayList(a)));
 			list.add(r);
 		}
 
-		assetModel = new ListDataModel(list);	
+		assetModel = new SerializableListDataModel(list);	
 	}
 	
 	private Asset getAsset(Integer id) {
@@ -314,7 +318,7 @@ public class ActivityViewerController {
 	
 	public void initializeAssetModel() throws ManagerBeanException {
 		List<ITransferObject> assetList = BeanManager.getManagerBean(Asset.class).getList(null);
-		assetModel = new ListDataModel(assetList);
+		assetModel = new SerializableListDataModel(assetList);
 	}
 	
 	public List<AssetDayList> getAssetDayList(){
@@ -422,7 +426,9 @@ public class ActivityViewerController {
 		}
 	}
 	
-	public class AssetDayList {
+	public static class AssetDayList implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Asset asset;
 		private List<Fraction> fractions;
@@ -443,7 +449,9 @@ public class ActivityViewerController {
 	}
 	
 	
-	public class DayAssetList {
+	public static class DayAssetList implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Asset asset;
 		private List<Fraction> fractions;
@@ -464,7 +472,10 @@ public class ActivityViewerController {
 		}
 	}
 
-	public class Fraction {
+	public static class Fraction implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private AssetActivity activity;
 		private boolean reserved;
 		private boolean first;

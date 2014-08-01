@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
@@ -18,7 +19,7 @@ import com.esferalia.aon.entity.master.MailAccountDB;
 @Table(name="mail_account")
 public class MailAccount extends MailAccountDB implements IMailAccount {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public MailAccount() {
 	    setIncomingSecurity(ConnectionSecurity.NONE);

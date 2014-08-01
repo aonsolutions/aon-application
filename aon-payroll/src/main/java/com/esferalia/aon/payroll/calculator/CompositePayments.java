@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -159,6 +160,8 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 		private static class PeriodsContractPaymentIterator extends
 				DelegateContractPayment implements Iterator<IContractPayment> {
 
+			private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+			
 			private Period nextPeriod;
 			private Iterator<Period> periodsIt;
 

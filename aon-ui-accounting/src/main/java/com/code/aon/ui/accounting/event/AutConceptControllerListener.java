@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -7,6 +8,9 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class AutConceptControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final String COLLECTIONS_CONTROLLER = "accountingCollections";
 
 	@Override

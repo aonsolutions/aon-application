@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.faces.model.DataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -22,7 +24,9 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class FinancePaymentPrintController implements ICollectionProvider, IFinanceConstants {
+public class FinancePaymentPrintController implements ICollectionProvider, IFinanceConstants, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(FinancePaymentPrintController.class);
 

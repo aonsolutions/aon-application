@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.BeanManager;
@@ -28,7 +29,7 @@ import com.esferalia.aon.entity.master.CourseDB;
 @Table(name = "course")
 public class Course extends CourseDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<CourseAlumn> alumns = new HashSet<CourseAlumn>();
 

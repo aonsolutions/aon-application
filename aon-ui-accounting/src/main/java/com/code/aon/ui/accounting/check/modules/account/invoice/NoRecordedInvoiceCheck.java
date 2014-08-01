@@ -3,6 +3,7 @@ package com.code.aon.ui.accounting.check.modules.account.invoice;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,7 +28,9 @@ import com.code.aon.ui.accounting.check.CheckParams;
 import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.check.ICheckModule;
 
-public class NoRecordedInvoiceCheck implements ICheckModule {
+public class NoRecordedInvoiceCheck implements ICheckModule, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String LABEL = "Chequeo de facturas contabilizadas sin apunte contable.";
 	private static final String NO_RECORDED_INVOICE = "Factura contabilizada sin apunte contable.";

@@ -1,10 +1,11 @@
 package com.esferalia.aon.pms.reservation;
 
 import com.code.aon.common.AonException;
+import com.code.aon.AonVersion;
 
 public class ReservationException extends AonException {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String record;
 	private int type;

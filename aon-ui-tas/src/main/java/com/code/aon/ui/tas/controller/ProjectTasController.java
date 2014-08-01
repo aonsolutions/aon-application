@@ -6,6 +6,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -23,6 +24,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectTasController extends HeaderObjectController implements ITasConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
 		ProjectTas projectTas = ((ProjectTas)getTo());

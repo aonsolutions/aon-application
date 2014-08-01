@@ -9,6 +9,7 @@ import javax.faces.model.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,6 +29,8 @@ import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class DivertController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DivertController.class);
 	
@@ -70,6 +73,8 @@ public class DivertController extends BasicController {
 	}
 
 	private static class DivertFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelSearched(ControllerEvent event)

@@ -10,6 +10,7 @@ import javax.faces.component.UIInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -29,6 +30,8 @@ import com.sun.faces.util.MessageFactory;
  */
 public class CompanyLogoControllerListener extends ControllerAdapter {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	/** The LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyLogoControllerListener.class.getName());
 

@@ -23,6 +23,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -82,6 +83,8 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferController extends HeaderObjectController implements ISignatureController, ICommercialConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfferController.class.getName());
 	

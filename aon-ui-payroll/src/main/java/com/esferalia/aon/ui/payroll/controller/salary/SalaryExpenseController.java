@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -40,7 +41,7 @@ import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class SalaryExpenseController implements Serializable, ICollectionProvider{
 
-	private static final long serialVersionUID = 3030775088000990987L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryExpenseController.class.getName());
 	

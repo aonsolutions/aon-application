@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.event;
 import java.util.Iterator;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
@@ -11,6 +12,8 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class PosInvoiceDetailControllerListener extends InvoiceDetailControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	@SuppressWarnings("unchecked")

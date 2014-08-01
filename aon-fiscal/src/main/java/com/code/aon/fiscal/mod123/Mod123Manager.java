@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,6 +27,8 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod123Manager extends FiscalModelManager {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static String SELECT = "SELECT " 
 			+"i.type,it.percentage,i.rdocument,i.rname,"

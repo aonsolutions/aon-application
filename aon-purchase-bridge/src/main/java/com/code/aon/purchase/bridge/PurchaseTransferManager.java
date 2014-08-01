@@ -1,5 +1,6 @@
 package com.code.aon.purchase.bridge;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -9,8 +10,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,10 +25,13 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PurchaseTransferManager {
+public class PurchaseTransferManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private Integer selectedPurchaseId;
@@ -73,7 +77,7 @@ public class PurchaseTransferManager {
 
 	public DataModel getPurchaseModel() {
 		if (purchaseModel == null) {
-			purchaseModel = new ListDataModel(purchaseList);
+			purchaseModel = new SerializableListDataModel(purchaseList);
 		}
 		return purchaseModel;
 	}
@@ -84,7 +88,7 @@ public class PurchaseTransferManager {
 
 	public DataModel getDetailModel() {
 		if (detailModel == null) {
-			detailModel = new ListDataModel(detailList);
+			detailModel = new SerializableListDataModel(detailList);
 		}
 		return detailModel;
 	}
@@ -391,12 +395,16 @@ public class PurchaseTransferManager {
 		detail.setForcePendingQuantityCancel(!detail.isForcePendingQuantityCancel());
 	}
 	
-	public class FilterParams{
+	public static class FilterParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Date fromDate;
 		private Date toDate;
 		private String series;
 		private Integer numberFrom;
 		private Integer numberTo;
+		
 		public Date getFromDate() {
 			return fromDate;
 		}

@@ -20,6 +20,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
@@ -41,7 +42,7 @@ import com.esferalia.aon.entity.master.DeliveryDB;
 @Table(name="delivery", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number"}))
 public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
-	private static final long serialVersionUID = 5865460388758611455L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	private static final String DELIM = " ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Delivery.class.getName());
 

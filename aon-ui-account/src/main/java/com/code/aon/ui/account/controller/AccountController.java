@@ -16,14 +16,16 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);	
 	

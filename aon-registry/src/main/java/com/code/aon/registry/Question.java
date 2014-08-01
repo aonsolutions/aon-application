@@ -11,13 +11,14 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.QuestionDB;
 
 @Entity
 @Table(name = "question")
 public class Question extends QuestionDB{
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<QuestionValue> values;	
 	

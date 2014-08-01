@@ -4,17 +4,18 @@ import static com.code.aon.ui.stat.controller.IStatConstants.DELIVERY_CONTROLLER
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.SALES_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -32,6 +33,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
@@ -39,7 +41,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class RegistryStatEngineController {
+public class RegistryStatEngineController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Registry registry;
 	private DataScrollerState pendingInvoiceState;
@@ -105,7 +109,7 @@ public class RegistryStatEngineController {
 	
 	public DataScrollerState getPendingInvoiceState() {
 		if (pendingInvoiceState == null) {
-			pendingInvoiceState = new DataScrollerState(new ListDataModel(getPendingInvoiceList()), "pending");
+			pendingInvoiceState = new DataScrollerState(new SerializableListDataModel(getPendingInvoiceList()), "pending");
 		}								
 		return pendingInvoiceState;
 	}
@@ -128,7 +132,7 @@ public class RegistryStatEngineController {
 	
 	public DataScrollerState getUnpayedFinanceState() {
 		if (unpayedFinanceState == null) {
-			unpayedFinanceState = new DataScrollerState(new ListDataModel(getPendingFinanceList()), "scored");
+			unpayedFinanceState = new DataScrollerState(new SerializableListDataModel(getPendingFinanceList()), "scored");
 		}						
 		return unpayedFinanceState;
 	}
@@ -151,7 +155,7 @@ public class RegistryStatEngineController {
 	
 	public DataScrollerState getBoughtProductState() {
 		if (boughtProductState == null) {
-			boughtProductState = new DataScrollerState(new ListDataModel(getBoughtProductList()), "products");
+			boughtProductState = new DataScrollerState(new SerializableListDataModel(getBoughtProductList()), "products");
 		}				
 		return boughtProductState;
 	}
@@ -174,7 +178,7 @@ public class RegistryStatEngineController {
 
 	public DataScrollerState getPendingDeliveryState() {
 		if (pendingDeliveryState == null) {
-			pendingDeliveryState = new DataScrollerState(new ListDataModel(getPendingDeliveryList()), "deliveries");
+			pendingDeliveryState = new DataScrollerState(new SerializableListDataModel(getPendingDeliveryList()), "deliveries");
 		}						
 		return pendingDeliveryState;
 	}
@@ -197,7 +201,7 @@ public class RegistryStatEngineController {
 
 	public DataScrollerState getPendingSalesState() {
 		if (pendingSalesState == null) {
-			pendingSalesState = new DataScrollerState(new ListDataModel(getPendingSalesList()), "sales");
+			pendingSalesState = new DataScrollerState(new SerializableListDataModel(getPendingSalesList()), "sales");
 		}						
 		return pendingSalesState;
 	}
@@ -220,7 +224,7 @@ public class RegistryStatEngineController {
 	
 	public DataScrollerState getPendingOfferState() {
 		if (pendingOfferState == null) {
-			pendingOfferState = new DataScrollerState(new ListDataModel(getPendingOfferList()), "offer");
+			pendingOfferState = new DataScrollerState(new SerializableListDataModel(getPendingOfferList()), "offer");
 		}								
 		return pendingOfferState;
 	}

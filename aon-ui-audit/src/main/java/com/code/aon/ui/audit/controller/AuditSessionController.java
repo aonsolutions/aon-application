@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
@@ -38,6 +39,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditSessionController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditSessionController.class);
 	
@@ -114,6 +117,8 @@ public class AuditSessionController extends BasicController {
 	}	
 
 	private static class DomainsFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelInitialized(ControllerEvent event)

@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.AgreementLevelDataDB;
 import com.esferalia.aon.payroll.enumeration.CNO;
@@ -21,7 +22,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 @Heritable
 public class AgreementLevelData extends AgreementLevelDataDB implements IExpression {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	public ContextVariable getVariable(){

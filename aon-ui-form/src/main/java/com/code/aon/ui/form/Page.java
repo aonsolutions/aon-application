@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -15,7 +16,7 @@ import com.code.aon.common.ITransferObject;
 public class Page implements Serializable {
 
 	
-	private static final long serialVersionUID = -591644494125219121L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** EMPTY_PAGE. */
 	public static final Page EMPTY_PAGE;

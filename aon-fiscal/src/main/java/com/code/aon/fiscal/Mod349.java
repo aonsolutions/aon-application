@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.enumeration.Mod349Status;
 import com.esferalia.aon.entity.master.Mod349DB;
 
@@ -11,7 +12,7 @@ import com.esferalia.aon.entity.master.Mod349DB;
 @Table(name="fs_mod349")
 public class Mod349 extends Mod349DB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean generateLines;
 	

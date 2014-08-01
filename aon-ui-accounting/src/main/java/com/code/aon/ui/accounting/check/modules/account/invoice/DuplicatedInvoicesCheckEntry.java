@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ui.accounting.check.AonCheckException;
@@ -16,6 +17,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class DuplicatedInvoicesCheckEntry extends CheckEntryAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String fixLabel = "Ver facturas";
 

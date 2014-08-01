@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -38,6 +39,8 @@ import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistrySearchListener extends ControllerSearchListenerEx {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final GeoZone EMPTY_GEOZONE = new GeoZone();
 	

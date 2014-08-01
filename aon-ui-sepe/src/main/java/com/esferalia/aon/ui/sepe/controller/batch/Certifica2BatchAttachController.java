@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
@@ -12,6 +13,8 @@ import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class Certifica2BatchAttachController extends SEPEBatchAttachController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Certifica2BatchAttachController.class);
 	private final static String QUERY = "select sum(length(data)) from Certifica2BatchAttachment";

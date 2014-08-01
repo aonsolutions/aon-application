@@ -1,5 +1,6 @@
 package com.code.aon.ui.product.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.event.AttachmentControllerListener;
@@ -11,6 +12,8 @@ import com.code.aon.ui.product.controller.ItemAttachController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemAttachControllerListener extends AttachmentControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

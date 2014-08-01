@@ -3,6 +3,7 @@ package com.code.aon.registry;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.SegmentDB;
 
@@ -11,6 +12,6 @@ import com.esferalia.aon.entity.master.SegmentDB;
 @Heritable
 public class Segment extends SegmentDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 }

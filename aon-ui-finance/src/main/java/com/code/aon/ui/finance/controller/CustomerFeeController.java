@@ -10,13 +10,13 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,6 +31,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
@@ -40,6 +41,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeController extends LinesController implements IFinanceConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private boolean longDescription;
 	private IPriceStrategy priceStrategy;
 	private DataScrollerState noFeeCustomersState;
@@ -74,7 +77,7 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 	
 	public DataScrollerState getNoFeeCustomersState() {
 		if (noFeeCustomersState == null) {
-			noFeeCustomersState = new DataScrollerState(new ListDataModel(getNoFeeCustomersList()), "yearsStats");
+			noFeeCustomersState = new DataScrollerState(new SerializableListDataModel(getNoFeeCustomersList()), "yearsStats");
 		}				
 		return noFeeCustomersState;
 	}

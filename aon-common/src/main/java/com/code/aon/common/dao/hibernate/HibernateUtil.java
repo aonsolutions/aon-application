@@ -21,7 +21,7 @@ public class HibernateUtil {
 	public static final String HIBERNATE_CONFIGURATION_FILE_PROPERTY = "com.code.aon.hibernate.cfg.xml";
     public static final String DEFAULT_SESSION_FACTORY_NAME = "localhost/default";
     
-    private static Map<String,SessionFactory> sessionFactory = new HashMap<String, SessionFactory>();
+    private static SessionFactory sessionFactory;
     public static final Map<String,ThreadLocal<Session>> session = new HashMap<String,ThreadLocal<Session>>();
     public static final Map<String,ThreadLocal<Transaction>> transaction = new HashMap<String,ThreadLocal<Transaction>>(); 
 
@@ -52,7 +52,7 @@ public class HibernateUtil {
         Session s = session.get(sessionFactoryName).get(); 
         //Open a new Session, if this Thread has none yet 
         if (s == null) { 
-            s = sessionFactory.get(sessionFactoryName).openSession(); 
+            s = sessionFactory.openSession(); 
             session.get(sessionFactoryName).set(s); 
         } 
         return s; 
@@ -86,12 +86,14 @@ public class HibernateUtil {
     }
 
     public static SessionFactory getSessionFactory( String sessionFactoryName ) {
-        SessionFactory sf = sessionFactory.get(sessionFactoryName); 
-        // Open a new Session, if this Thread has none yet 
-        if (sf == null) { 
-            sf = createSessionFactory( sessionFactoryName ); 
-        } 
-        return sf; 
+        if (sessionFactory == null) { 
+            sessionFactory = createSessionFactory( sessionFactoryName ); 
+        }
+        if ((sessionFactoryName != null) && (!session.containsKey(sessionFactoryName)) ) {
+            session.put(sessionFactoryName, new ThreadLocal<Session>()); 
+            transaction.put(sessionFactoryName, new ThreadLocal<Transaction>()); 	
+        }
+        return sessionFactory; 
     }
     
     public static String getSessionFactoryName() {
@@ -167,9 +169,6 @@ public class HibernateUtil {
         try {
             Configuration configuration = configurationFactory.getConfiguration(sessionFactoryName);
             factory = configuration.buildSessionFactory();
-            sessionFactory.put(sessionFactoryName, factory); 
-            session.put(sessionFactoryName, new ThreadLocal<Session>()); 
-            transaction.put(sessionFactoryName, new ThreadLocal<Transaction>()); 
             DAOConstantsResolver resolver = new DAOConstantsResolver(configuration);
             resolver.createDAOConstants();
         } catch (HibernateException he) {

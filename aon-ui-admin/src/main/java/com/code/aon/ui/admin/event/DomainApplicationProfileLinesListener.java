@@ -3,6 +3,7 @@ package com.code.aon.ui.admin.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
@@ -18,6 +19,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationProfileLinesListener extends LinesControllerListener {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationProfileLinesListener.class);
 

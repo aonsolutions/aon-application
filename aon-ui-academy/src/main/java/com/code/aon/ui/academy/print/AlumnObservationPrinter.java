@@ -21,7 +21,7 @@ public class AlumnObservationPrinter extends AlumnPrinter{
 	private static final String OBSERVATION_CONTROLLER_NAME = "customerObservation";
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportAlumn> reportAlumnList = new LinkedList<ReportAlumn>();
 		try {

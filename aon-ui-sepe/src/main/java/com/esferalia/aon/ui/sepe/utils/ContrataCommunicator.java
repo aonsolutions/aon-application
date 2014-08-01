@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.sepe.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
@@ -26,7 +28,9 @@ import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 import com.esferalia.aon.ui.sepe.file.ContrataResponseReader;
 
 
-public class ContrataCommunicator implements ISepeCommunicator {
+public class ContrataCommunicator implements ISepeCommunicator, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataCommunicator.class.getName());
 	

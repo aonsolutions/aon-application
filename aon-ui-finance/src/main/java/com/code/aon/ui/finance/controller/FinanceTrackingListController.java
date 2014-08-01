@@ -7,6 +7,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceTracking;
@@ -14,6 +15,8 @@ import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceTrackingListController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ArrayList<FinanceTracking> checks = new ArrayList<FinanceTracking>();
 

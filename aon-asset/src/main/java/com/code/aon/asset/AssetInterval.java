@@ -1,20 +1,17 @@
 package com.code.aon.asset;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
@@ -28,7 +25,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 @Table(name = "asset_interval")
 public class AssetInterval implements ITransferObject {
 
-	private static final long serialVersionUID = 5681628284571233422L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 

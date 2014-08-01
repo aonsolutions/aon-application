@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -9,7 +10,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
@@ -17,6 +17,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -27,6 +28,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -34,6 +36,8 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class BoardBookingController extends DataScrollerState implements ICollectionProvider {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoardBookingController.class.getName());
 	
@@ -97,7 +101,7 @@ public class BoardBookingController extends DataScrollerState implements ICollec
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		setModel(new ListDataModel(getBookingList()));
+		setModel(new SerializableListDataModel(getBookingList()));
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -258,7 +262,10 @@ public class BoardBookingController extends DataScrollerState implements ICollec
 		}
 	}
 	
-	public class Booking {
+	public static class Booking implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Integer hotelId;
 		private String hotelName;
 		private Date date;

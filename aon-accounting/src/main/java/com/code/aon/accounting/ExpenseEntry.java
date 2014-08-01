@@ -3,6 +3,7 @@ package com.code.aon.accounting;
 import java.util.Date;
 
 import com.code.aon.account.Account;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.PayMethodTypeDetail;
@@ -10,7 +11,7 @@ import com.code.aon.registry.RegistryBank;
 
 public class ExpenseEntry implements ITransferObject {
 	
-	private static final long serialVersionUID = -3850406267453485925L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Period period;
 	private Date date;

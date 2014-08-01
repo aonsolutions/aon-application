@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
@@ -36,7 +37,7 @@ import com.esferalia.aon.entity.master.OfferDB;
 @Table(name="offer", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number", "version"}))
 public class Offer extends OfferDB implements IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
     private static final String DELIM = " ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Offer.class.getName());
 	

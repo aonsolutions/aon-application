@@ -31,11 +31,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.AdminUtil;
 
 public class UpdateDomain extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String DEPLOYED_XML = "/var/lib/jbossas/server/default/conf/aon.workspace/deployed.xml";
 //	private static final String DEPLOYED_XML = "/mnt/iNetServer.x86_64/var/lib/jbossas/server/default/conf/aon.workspace/deployed.xml";

@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -40,6 +41,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod311Controller extends FiscalModelController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private boolean payBack;
 	private boolean activityPanelVisible;
 	private Mod311Key selectedKey;

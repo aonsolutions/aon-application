@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.GregorianCalendar;
 
@@ -20,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -30,7 +32,9 @@ import com.code.aon.dbutils.runner.DBUtilsRunner;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
 
-public class DumpController implements DBUtilsListener {
+public class DumpController implements DBUtilsListener, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DumpController.class.getName());
 

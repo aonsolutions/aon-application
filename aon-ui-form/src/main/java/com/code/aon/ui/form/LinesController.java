@@ -9,20 +9,23 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * LinesController is used to implement child Controllers.
  */
 public class LinesController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** The master controller. */
 	private IController masterController;
@@ -108,7 +111,7 @@ public class LinesController extends BasicController {
 	@SuppressWarnings("rawtypes")
 	public void initModel() {
 		if (isMasterNew()) {
-			this.model = new ListDataModel(new ArrayList());
+			this.model = new SerializableListDataModel(new ArrayList());
 		} else {
 			this.model = null;
 		}

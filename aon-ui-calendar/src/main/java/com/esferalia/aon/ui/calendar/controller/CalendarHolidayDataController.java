@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.calendar.controller;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,11 +13,11 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +26,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
@@ -33,7 +35,9 @@ import com.esferalia.aon.calendar.HolidayDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
-public class CalendarHolidayDataController {
+public class CalendarHolidayDataController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarHolidayDataController.class.getName());
 
@@ -49,7 +53,7 @@ public class CalendarHolidayDataController {
 		for(String key: holidays.keySet()){
 			HolidayData data = new HolidayData();
 			data.setDescription(key);
-			data.setModel(new ListDataModel(holidays.get(key)));
+			data.setModel(new SerializableListDataModel(holidays.get(key)));
 			list.add(data);
 		}
 		return list;

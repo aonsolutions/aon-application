@@ -2,6 +2,7 @@ package com.code.aon.ui.customer.event;
 
 import static com.code.aon.ui.common.ICommonMessages.INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +20,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoicingGroupDetailControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {

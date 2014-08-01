@@ -1,11 +1,13 @@
 package com.code.aon.commercial.strategy;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommissionCategory;
 import com.code.aon.commercial.CommissionItem;
 import com.code.aon.commercial.CommissionTypeCommission;
@@ -20,7 +22,9 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class BasicCommissionStrategy implements ICommissionStrategy {
+public class BasicCommissionStrategy implements ICommissionStrategy, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicCommissionStrategy.class.getName());
 

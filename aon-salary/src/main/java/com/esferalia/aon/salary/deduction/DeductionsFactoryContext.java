@@ -1,10 +1,15 @@
 package com.esferalia.aon.salary.deduction;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
-public class DeductionsFactoryContext implements IDeductionsFactoryContext{
+public class DeductionsFactoryContext implements IDeductionsFactoryContext, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private ISalaryProxy salaryProxy;
 	private ISalary  currentSalary;

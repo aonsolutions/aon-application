@@ -7,13 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.SurveyResponseDB;
 
 @Entity
 @Table(name="survey_response")
 public class SurveyResponse extends SurveyResponseDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SurveyResponseDetail> details;	
 	

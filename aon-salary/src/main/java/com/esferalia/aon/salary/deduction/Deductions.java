@@ -1,12 +1,16 @@
 package com.esferalia.aon.salary.deduction;
 
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
-public class Deductions {
+public class Deductions implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	double total  ; 
 	double socialSecurityContributions ; 

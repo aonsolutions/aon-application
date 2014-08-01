@@ -1,5 +1,6 @@
 package com.code.aon.report;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 
 /**
@@ -9,7 +10,7 @@ import com.code.aon.common.AonException;
  */
 public class ReportException extends AonException {
 
-	private static final long serialVersionUID = 5089919483233108679L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/**
 	 * Constructs a <code>ReportException</code> with the specified detail message.

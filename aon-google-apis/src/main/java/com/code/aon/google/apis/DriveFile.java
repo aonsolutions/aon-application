@@ -1,7 +1,12 @@
 package com.code.aon.google.apis;
 
+import java.io.Serializable;
 
-public class DriveFile{
+import com.code.aon.AonVersion;
+
+public class DriveFile implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private String url, description,mimetype,id;
 	

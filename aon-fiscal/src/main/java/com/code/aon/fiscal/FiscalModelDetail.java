@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.IFiscalModelKey;
@@ -21,7 +22,7 @@ import com.esferalia.aon.entity.master.FiscalModelDetailDB;
 @Table(name="fs_model_detail")
 public class FiscalModelDetail extends FiscalModelDetailDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void addAccumulatedAmount(double amount) {
 		setAccumulatedAmount( CommonUtil.round(getAccumulatedAmount()) + amount);

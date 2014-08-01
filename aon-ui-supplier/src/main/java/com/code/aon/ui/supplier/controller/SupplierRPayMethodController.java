@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -12,6 +13,8 @@ import com.code.aon.ui.registry.controller.RegistryPayMethodController;
 import com.code.aon.ui.util.AonUtil;
 
 public class SupplierRPayMethodController extends RegistryPayMethodController{
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		if (isBankTransfer()) {

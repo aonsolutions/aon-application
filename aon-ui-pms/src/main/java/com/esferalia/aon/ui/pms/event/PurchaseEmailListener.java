@@ -1,11 +1,14 @@
 package com.esferalia.aon.ui.pms.event;
 
+import java.io.Serializable;
+
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,7 +21,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 
 
-public class PurchaseEmailListener implements IEmailControllerListener {
+public class PurchaseEmailListener implements IEmailControllerListener, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseEmailListener.class.getName());
 	

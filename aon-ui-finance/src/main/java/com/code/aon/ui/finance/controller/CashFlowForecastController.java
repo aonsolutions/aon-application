@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.finance.CashFlowForecast;
@@ -12,11 +13,12 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CashFlowForecastController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private CashFlowForecastParams params;
 	private Month startMonth;
 	private BillingPeriod billingPeriod;
-	
 	
 	public CashFlowForecastParams getParams() {
 		if (params == null) {

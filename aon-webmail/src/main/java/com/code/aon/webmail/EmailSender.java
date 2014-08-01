@@ -1,5 +1,7 @@
 package com.code.aon.webmail;
 
+import java.io.Serializable;
+
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags.Flag;
@@ -11,13 +13,16 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
 
-public class EmailSender {
+public class EmailSender implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private AonServer server;
 	

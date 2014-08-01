@@ -1,32 +1,37 @@
 package com.code.aon.ui.messaging.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
+import javax.faces.model.DataModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class SMSContactController {
+public class SMSContactController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger( SMSContactController.class.getName() );
 	
 	private static final String BEAN_CONTACT = "contact";
 	
     private Criteria criteria = new Criteria();
-	private ListDataModel model;
+	private DataModel model;
 	private List<SelectionContact> contacts = new ArrayList<SelectionContact>();
 	
 	private String displayName;
@@ -35,7 +40,7 @@ public class SMSContactController {
 	
 	private String surname;
 	
-	public ListDataModel getModel() {
+	public DataModel getModel() {
 		return model;
 	}
 
@@ -83,7 +88,7 @@ public class SMSContactController {
     	} catch (ManagerBeanException e) {
     		LOGGER.error(e.getMessage(), e);
 		}
-    	this.model = new ListDataModel( contacts );
+    	this.model = new SerializableListDataModel(contacts);
 	}
 
 	public void onToggleSelected(ActionEvent event) {

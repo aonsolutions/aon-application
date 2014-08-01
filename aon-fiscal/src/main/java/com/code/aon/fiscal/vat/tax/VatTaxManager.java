@@ -1,5 +1,6 @@
 package com.code.aon.fiscal.vat.tax;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,7 +36,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class VatTaxManager {
+public class VatTaxManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static String TYPE = "type";
 	private static String RECTIFICATION_TYPE = "rectification_type";

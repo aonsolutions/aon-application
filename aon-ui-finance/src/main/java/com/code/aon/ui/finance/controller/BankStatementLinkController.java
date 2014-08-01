@@ -6,12 +6,15 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.BankStatementLink;
 import com.code.aon.ui.form.BasicController;
 
 public class BankStatementLinkController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private ArrayList<BankStatementLink> checks= new ArrayList<BankStatementLink>();
 

@@ -1,11 +1,13 @@
 package com.esferalia.aon.file.payroll.contract.pdf.basicCopy;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.common.util.Classpath;
@@ -21,6 +23,8 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 public abstract class AbstractContractBasicCopy implements IContractPdfDocument {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public final static String CONTRACT_BASIC_COPY_PATH = "com/esferalia/aon/file/payroll/contract/basicCopyPdf/";
 

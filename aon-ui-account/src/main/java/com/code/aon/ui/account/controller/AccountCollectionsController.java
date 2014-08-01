@@ -1,5 +1,6 @@
 package com.code.aon.ui.account.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccountConstants;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,7 +21,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AccountCollectionsController {
+public class AccountCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private List<SelectItem> getAccounts(Criteria criteria, boolean pojo) throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();

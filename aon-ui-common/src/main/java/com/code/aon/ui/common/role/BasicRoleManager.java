@@ -1,5 +1,6 @@
 package com.code.aon.ui.common.role;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Set;
 
@@ -8,13 +9,17 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
+
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
  * 
  * @author ecastellano
  * 
  */
-public abstract class BasicRoleManager {
+public abstract class BasicRoleManager implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back", "cancel", "report"};
 	
@@ -25,11 +30,13 @@ public abstract class BasicRoleManager {
 	
 	private boolean admin;	
 	
-	public BasicRoleManager() {
-		this.roles = new boolean[IAonRole.values().length];
-		init();	
+	private boolean[] getRoles() {
+		if (this.roles == null) {
+			init();
+		}
+		return this.roles;
 	}
-
+	
 	/**
 	 * @param role
 	 *            The Role
@@ -38,6 +45,7 @@ public abstract class BasicRoleManager {
 	public abstract boolean isUserInRole(String role);
 	
 	public void init() {
+		this.roles = new boolean[IAonRole.values().length];
 		for( IAonRole role : IAonRole.values() ) {
 			roles[role.ordinal()] = isUserInRole(role.getName());
 		}
@@ -45,7 +53,7 @@ public abstract class BasicRoleManager {
 	}
 
 	public void setUserInRole( IAonRole role, boolean value ) {
-		this.roles[role.ordinal()] = value;
+		getRoles()[role.ordinal()] = value;
 	}
 	
 	public void setSysAdmin() {
@@ -59,7 +67,7 @@ public abstract class BasicRoleManager {
 	 * @return TRUE if user has role, false otherwise.
 	 */
 	public boolean isUserInRole(IAonRole role) {
-		return this.roles[role.ordinal()];
+		return getRoles()[role.ordinal()];
 	}
 
 	/**

@@ -1,19 +1,23 @@
 package com.code.aon.ui.fiscal.vat;
 
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.VatReportType;
 import com.code.aon.fiscal.vat.Vat;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 
-public class VatReportTypeBreakdown  {
+public class VatReportTypeBreakdown implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private VatReportType vatReportType;
 	private Map<Double,VatBreakdown> map;
@@ -71,7 +75,7 @@ public class VatReportTypeBreakdown  {
 		if (model == null) {
 			List<VatBreakdown> ret = new LinkedList<VatBreakdown>();
 			ret.addAll( getMap().values());
-			model = new ListDataModel(ret);
+			model = new SerializableListDataModel(ret);
 		}
 		return model;
 	}

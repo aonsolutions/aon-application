@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.IPayMethod;
 import com.esferalia.aon.entity.master.RegistryPayMethodDB;
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.RegistryPayMethodDB;
 @Table(name="rpaymethod")
 public class RegistryPayMethod extends RegistryPayMethodDB implements IPayMethod {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private final String DELIM = " ";
     private int[] paymentDaysArray;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -12,6 +13,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 
 public class CarrierRPayMethodController extends RegistryPayMethodController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		if (isNegotiableDocument()) {

@@ -13,8 +13,8 @@ import org.hibernate.annotations.Cascade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
-import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.ManagerBeanEvent;
@@ -31,18 +31,11 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
  */
 public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(BasicManagerBean.class);
 	
-	private Stack<Class<? extends ITransferObject>> pojoDependences;
-
-	/**
-	 * Construct a BasicManagerBean.
-	 * 
-	 * @param dao
-	 */
-	public BasicManagerBean(IDAO dao) {
-		super(dao);
-	}
+	private transient Stack<Class<? extends ITransferObject>> pojoDependences;
 
 	/**
 	 * Return POJO dependences.

@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -10,6 +11,8 @@ import com.code.aon.registry.Segment;
 import com.code.aon.ui.form.LinesController;
 
 public class RegistrySegmentController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void segmentData(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {

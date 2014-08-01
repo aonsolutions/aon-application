@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.PURCHASE_DEPARTMENT;
 import static com.code.aon.ui.common.ICommonMessages.SOURCE;
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,7 +12,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +20,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +42,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.DataScrollerState;
@@ -52,6 +54,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseOrderController extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderController.class.getName());
 	
@@ -127,7 +131,7 @@ public class PurchaseOrderController extends DataScrollerState {
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
-		setParams(new OrderParams());
+		setParams(new OrderParams(this));
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -184,7 +188,7 @@ public class PurchaseOrderController extends DataScrollerState {
 			ig.setTotalItem(((Long) ob[2]));
 			itemGroupList.add(ig);
 		}
-		setModel(new ListDataModel(itemGroupList));
+		setModel(new SerializableListDataModel(itemGroupList));
 		setProductIndex(-1);
 	}
 	
@@ -197,7 +201,7 @@ public class PurchaseOrderController extends DataScrollerState {
 	}
 	
 	private void buildGroupDetail() throws ManagerBeanException{
-		detailModel = new ListDataModel(obtainGroupDetail());
+		detailModel = new SerializableListDataModel(obtainGroupDetail());
 		setDetailIndex(-1);
 	}
 
@@ -449,7 +453,10 @@ public class PurchaseOrderController extends DataScrollerState {
 	/**************************************************/
 	/**************************************************/
 	
-	public class ItemGroup{
+	public static class ItemGroup implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Item item;
 		private Double totalQuantity;
 		private Long totalItem;
@@ -474,7 +481,10 @@ public class PurchaseOrderController extends DataScrollerState {
 		}
 	}
 	
-	public class PurchaseGroup{
+	public static class PurchaseGroup implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Supplier supplier;
 		private WorkPlace workPlace;
 		private Department department;
@@ -561,7 +571,10 @@ public class PurchaseOrderController extends DataScrollerState {
 		
 	}
 	
-	public class GroupDetail {
+	public static class GroupDetail implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private boolean checked;
 		private ProposalDetail proposalDetail;
 		private int groupIndex;
@@ -586,7 +599,12 @@ public class PurchaseOrderController extends DataScrollerState {
 		}
 	}
 	
-	public class OrderParams{
+	public static class OrderParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private PurchaseOrderController controller;
+		
 		private Date startDate;
 		private Date endDate;
 		private WorkPlace workPlace;
@@ -595,6 +613,10 @@ public class PurchaseOrderController extends DataScrollerState {
 		private ProposalStatus status;
 		private boolean itemReturn;
 		
+		public OrderParams(PurchaseOrderController controller) {
+			this.controller = controller;
+		}
+
 		public Date getStartDate() {
 			return startDate;
 		}
@@ -641,14 +663,14 @@ public class PurchaseOrderController extends DataScrollerState {
 		public Criteria getProposalStatusCriteria() throws ManagerBeanException {
 			IManagerBean bean = BeanManager.getManagerBean(ProposalDetail.class);
 			Criteria criteria = new Criteria();
-			if( getParams().getStartDate() != null ){
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ISSUE_DATE), getParams().getStartDate());
+			if( controller.getParams().getStartDate() != null ){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ISSUE_DATE), controller.getParams().getStartDate());
 			}
-			if( getParams().getEndDate() != null ){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ISSUE_DATE), getParams().getEndDate());
+			if( controller.getParams().getEndDate() != null ){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ISSUE_DATE), controller.getParams().getEndDate());
 			}
-			if( getParams().getWorkPlace() != null ){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getParams().getWorkPlace().getId());
+			if( controller.getParams().getWorkPlace() != null ){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), controller.getParams().getWorkPlace().getId());
 			}
 			return criteria;
 		}

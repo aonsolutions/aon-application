@@ -1,6 +1,7 @@
 package com.code.aon.common.domain;
 
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,9 +9,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
-public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
+public abstract class AbstractDomainSwitcher implements IDomainSwitcher, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String DOMAIN_CLASS_NAME = "com.code.aon.config.Domain";
 	

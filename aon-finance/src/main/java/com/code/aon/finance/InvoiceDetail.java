@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.commercial.OfferDetail;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,7 +32,7 @@ import com.esferalia.aon.entity.master.InvoiceDetailDB;
 @Table(name="invoice_detail")
 public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStockable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean updateEnabled;
 	private boolean taxDataInDetail;

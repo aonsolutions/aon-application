@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.pms.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,7 +19,9 @@ import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 
 public class DivertReceptionSearchListener extends ControllerSearchListener {
 	
-private ReservationDivertStatus[] reservationDivertStatuses;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private ReservationDivertStatus[] reservationDivertStatuses;
 	
 	public ReservationDivertStatus[] getReservationDivertStatuses() {
 		return reservationDivertStatuses;

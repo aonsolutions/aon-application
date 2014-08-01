@@ -1,5 +1,6 @@
 package com.code.aon.finance.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
@@ -11,6 +12,8 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 
 public class FinanceBatchDetailBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {

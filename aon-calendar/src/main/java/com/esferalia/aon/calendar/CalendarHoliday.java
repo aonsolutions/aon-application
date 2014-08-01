@@ -3,6 +3,7 @@ package com.esferalia.aon.calendar;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.CalendarHolidayDB;
 
@@ -12,6 +13,6 @@ import com.esferalia.aon.entity.master.CalendarHolidayDB;
 @Heritable
 public class CalendarHoliday extends CalendarHolidayDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 }

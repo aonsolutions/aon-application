@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.enumeration.Advertising;
+import com.code.aon.AonVersion;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -87,6 +88,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.master.TargetDB;
 
 public class RegistryController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryController.class);
 	

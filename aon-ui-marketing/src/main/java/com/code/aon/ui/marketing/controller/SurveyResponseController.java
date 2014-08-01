@@ -3,6 +3,7 @@ package com.code.aon.ui.marketing.controller;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -12,6 +13,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used in the offer maintenance.
  */
 public class SurveyResponseController extends BasicController implements IMarketingConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public void onSelectSurveyResponse( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
         FacesContext context = FacesContext.getCurrentInstance();

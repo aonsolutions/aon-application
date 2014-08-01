@@ -8,6 +8,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
@@ -21,6 +22,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContractListController extends BasicController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContractListController.class);
 

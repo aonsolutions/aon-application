@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.CourseScheduleDB;
 
 /**
@@ -16,7 +17,7 @@ import com.esferalia.aon.entity.master.CourseScheduleDB;
 @Table(name="course_schedule")
 public class CourseSchedule extends CourseScheduleDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public CourseSchedule() {
 		Date startTime = new Date();

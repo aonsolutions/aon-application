@@ -8,8 +8,8 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.ListDataModel;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,12 +17,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeTransferManager extends DataScrollerState {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private IPriceStrategy priceStrategy;
 	private Integer selectedIncomeId;
@@ -59,7 +62,7 @@ public class IncomeTransferManager extends DataScrollerState {
 	
 	public void setIncomeList(List<ITransferObject> incomeList) {
 		this.incomeList = incomeList;
-		setModel(incomeList != null ? new ListDataModel(incomeList) : null);
+		setModel(incomeList != null ? new SerializableListDataModel(incomeList) : null);
 	}
 	
     public List<ITransferObject> getDetailList() {
@@ -72,7 +75,7 @@ public class IncomeTransferManager extends DataScrollerState {
 
 	public DataScrollerState getDetailState() {
 		if (detailState == null) {
-			detailState = new DataScrollerState(new ListDataModel(detailList), "incomeDetailTransfer");
+			detailState = new DataScrollerState(new SerializableListDataModel(detailList), "incomeDetailTransfer");
 			detailState.setPageLimit(-1);
 		}
 		return detailState;

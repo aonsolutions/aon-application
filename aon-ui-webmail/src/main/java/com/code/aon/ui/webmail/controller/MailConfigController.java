@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import org.richfaces.model.TreeNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;
@@ -31,7 +33,9 @@ import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.EmailFolder;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
-public class MailConfigController {
+public class MailConfigController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(MailConfigController.class);
 	

@@ -11,6 +11,7 @@ import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -22,6 +23,8 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class RecordDataController extends LinesController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(RecordDataController.class);
 	

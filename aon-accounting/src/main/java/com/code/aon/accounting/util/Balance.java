@@ -4,11 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 
 public class Balance implements Serializable {
 
-	private static final long serialVersionUID = -1663183754727817121L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer accountEntry;
 	private String account;

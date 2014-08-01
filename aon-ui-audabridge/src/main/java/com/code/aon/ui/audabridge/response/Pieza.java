@@ -1,6 +1,13 @@
 package com.code.aon.ui.audabridge.response;
 
-public class Pieza {
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
+
+public class Pieza implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private String tipoLinea;
 	private String simbolo;
 	private String posicionDb;

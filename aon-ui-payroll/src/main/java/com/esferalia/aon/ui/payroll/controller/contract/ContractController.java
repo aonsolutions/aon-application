@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +22,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,6 +31,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -50,6 +51,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -111,6 +113,8 @@ import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContractController extends BasicController {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
 	
 	final static String ADDITIONAL_CLAUSES_TAB_NAME = "additionalClausesData";
@@ -1270,7 +1274,10 @@ public class ContractController extends BasicController {
 	/*
 	 * INNER CLASES
 	 */
-	public class SalaryInfoHandler{
+	public static class SalaryInfoHandler implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		public final String IPREM_FORMMULA = "EXCESO_IPREM";
 		public final String ZERO_VALUE = "0";
 		private Contract contract;
@@ -1369,10 +1376,10 @@ public class ContractController extends BasicController {
 			this.paymentTracking = paymentTracking;
 		}
 		public DataModel getDataTrackingModel(){
-			return new ListDataModel(dataTracking);
+			return new SerializableListDataModel(dataTracking);
 		}
 		public DataModel getPaymentTrackingModel(){
-			return new ListDataModel(paymentTracking);
+			return new SerializableListDataModel(paymentTracking);
 		}
 		public Integer getDataTrackingCount(){
 			if(getContractDataModel().isRowAvailable()){
@@ -1543,7 +1550,7 @@ public class ContractController extends BasicController {
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME));
-				setContractDataModel( new ListDataModel(bean.getList(criteria)));
+				setContractDataModel( new SerializableListDataModel(bean.getList(criteria)));
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente los datos de contrato");
 			}
@@ -1572,7 +1579,7 @@ public class ContractController extends BasicController {
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getFilterStartDate());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-				setPaymentModel( new ListDataModel(bean.getList(criteria)));
+				setPaymentModel( new SerializableListDataModel(bean.getList(criteria)));
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
 			}
@@ -1602,7 +1609,7 @@ public class ContractController extends BasicController {
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), getFilterStartDate());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-				setDeductionModel( new ListDataModel(bean.getList(criteria)));
+				setDeductionModel( new SerializableListDataModel(bean.getList(criteria)));
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente las deducciones");
 			}
@@ -1802,7 +1809,10 @@ public class ContractController extends BasicController {
 	
 // ************************************
 // ************************************
-	public class ContractParams {
+	public static class ContractParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 
 		private ContractInfo sepeStatusInfo;
 		private ContractInfo ssStatusInfo;
@@ -2026,7 +2036,7 @@ public class ContractController extends BasicController {
 		}
 		public DataModel getBonusModel() {
 			if(bonusModel==null){
-				bonusModel = new ListDataModel(getBonuses());
+				bonusModel = new SerializableListDataModel(getBonuses());
 			}
 			return bonusModel;
 		}

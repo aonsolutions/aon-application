@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.event;
 import java.util.Iterator;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,6 +22,8 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
  * 
  */
 public class CompanyWorkPlaceControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event)

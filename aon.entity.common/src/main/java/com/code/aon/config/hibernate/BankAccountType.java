@@ -8,12 +8,13 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.type.StringType;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.BankAccount;
 
 public class BankAccountType extends StringType {
 
-	private static final long serialVersionUID = 7916889161980318593L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public Class<?> getReturnedClass() {

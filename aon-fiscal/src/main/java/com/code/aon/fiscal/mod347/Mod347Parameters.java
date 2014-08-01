@@ -1,8 +1,13 @@
 package com.code.aon.fiscal.mod347;
 
+import java.io.Serializable;
+
+import com.code.aon.AonVersion;
 import com.code.aon.fiscal.Mod347;
 
-public class Mod347Parameters {
+public class Mod347Parameters implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Mod347 mod347;
 	private boolean taxDateEnabled;

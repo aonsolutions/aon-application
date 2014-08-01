@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.PMS_REGENERATE_BOOKING_INFO
 import static com.code.aon.ui.common.ICommonMessages.PMS_REGENERATE_BOOKING_PROCESS_END;
 import static com.code.aon.ui.common.ICommonMessages.PMS_REGENERATE_BOOKING_PROCESS_START;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.dbutils.AonSQLException;
@@ -29,7 +31,9 @@ import com.esferalia.aon.pms.sql.SQLBooking;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class BookingRegeneratorController {
+public class BookingRegeneratorController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Hotel hotel;
 	private Date fromDate;

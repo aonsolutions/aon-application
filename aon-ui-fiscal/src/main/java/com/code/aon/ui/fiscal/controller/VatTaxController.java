@@ -9,13 +9,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -43,12 +43,15 @@ import com.code.aon.fiscal.vat.tax.VatTaxParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxController extends BasicController implements IFiscalModelController {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VatTaxController.class.getName());
 	public static final String PAY_TAB = "payTab";
@@ -87,7 +90,7 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 
 	public DataModel getVatTaxModel() {
 		if (vatTaxModel == null) {
-			vatTaxModel = new ListDataModel(getSummary());
+			vatTaxModel = new SerializableListDataModel(getSummary());
 		}
 		return vatTaxModel;
 	}
@@ -187,7 +190,7 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 		} else {
 			setSummary(getManager().getDetailList(getParams()));
 		}
-		setVatTaxModel(new ListDataModel(getSummary()));
+		setVatTaxModel(new SerializableListDataModel(getSummary()));
 	}
 
 	public void onChangePeriod(ActionEvent event) {
@@ -430,7 +433,7 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 			VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
 			setDetail(detail);
 			VatTaxManager manager = getManager();
-			setDeclaredModel( new ListDataModel( manager.getPeriodDeclaredDetails( detail ) ) );
+			setDeclaredModel( new SerializableListDataModel( manager.getPeriodDeclaredDetails( detail ) ) );
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo mostrar el desglose de lo declarado. " + e.getMessage();
 			LOGGER.error(msg, e);

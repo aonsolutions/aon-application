@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Index;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,7 +35,7 @@ import com.esferalia.aon.entity.master.RegistryDB;
 @org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name"})})
 public class Registry extends RegistryDB implements IRegistry{
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();

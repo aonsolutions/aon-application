@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.check.modules.balance;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
@@ -28,7 +30,9 @@ import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class BalanceCheck implements ICheckModule{
+public class BalanceCheck implements ICheckModule, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private String label = "Chequeo de cuentas ausentes o duplicadas en los balances oficiales.";
 	private boolean enabled;

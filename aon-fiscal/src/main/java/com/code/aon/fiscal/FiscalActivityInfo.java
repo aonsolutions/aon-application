@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.FiscalActivityInfoDB;
 
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.FiscalActivityInfoDB;
 @Table(name="fs_activity_info")
 public class FiscalActivityInfo extends FiscalActivityInfoDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	public Object cast() throws NumberFormatException{

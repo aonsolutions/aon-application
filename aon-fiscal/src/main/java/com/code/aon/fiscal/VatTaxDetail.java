@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.vat.tax.VatTaxAmount;
@@ -13,7 +14,7 @@ import com.esferalia.aon.entity.master.VatTaxDetailDB;
 @Table(name="fs_vat_detail")
 public class VatTaxDetail extends VatTaxDetailDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
     private boolean descriptionDisabled;
 

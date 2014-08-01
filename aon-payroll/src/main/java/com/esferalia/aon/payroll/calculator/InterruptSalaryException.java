@@ -1,8 +1,11 @@
 package com.esferalia.aon.payroll.calculator;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.salary.SalaryException;
 
 public class InterruptSalaryException extends SalaryException {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public InterruptSalaryException() {
 		// TODO Auto-generated constructor stub

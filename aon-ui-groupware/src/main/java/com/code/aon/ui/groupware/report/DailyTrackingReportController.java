@@ -1,5 +1,6 @@
 package com.code.aon.ui.groupware.report;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.faces.model.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -29,7 +31,9 @@ import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class DailyTrackingReportController implements ICollectionProvider {
+public class DailyTrackingReportController implements ICollectionProvider, Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DailyTrackingReportController.class);
 	

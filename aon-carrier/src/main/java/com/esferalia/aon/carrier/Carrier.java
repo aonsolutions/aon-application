@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.IScopable;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.RegistryAttachment;
@@ -21,6 +22,6 @@ import com.esferalia.aon.entity.master.SellerDB;
 @PrimaryKeyJoinColumn(name="registry")
 public class Carrier extends CarrierDB implements IRegistry, IScopable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 }

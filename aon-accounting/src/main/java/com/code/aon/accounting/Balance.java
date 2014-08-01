@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.accounting.enumeration.BalanceType;
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.BalanceDB;
 
 @Entity
@@ -19,7 +20,7 @@ import com.esferalia.aon.entity.master.BalanceDB;
 @Deprecated
 public class Balance extends BalanceDB {
 		
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 
 	private Set<BalanceDetail> lines;

@@ -6,13 +6,14 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.Mod347DetailDB;
 
 @Entity
 @Table(name="fs_mod347_detail")
 public class Mod347Detail extends Mod347DetailDB {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Transient
 	public String getAddress() {

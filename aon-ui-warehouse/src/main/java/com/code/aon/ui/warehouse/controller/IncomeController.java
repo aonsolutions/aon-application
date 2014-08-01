@@ -9,6 +9,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -54,6 +55,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeController extends BasicController implements IWarehouseConstants {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;

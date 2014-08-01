@@ -11,6 +11,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -29,7 +30,7 @@ import com.esferalia.aon.entity.master.EnterpriseDB;
 @PrimaryKeyJoinColumn(name="registry")
 public class Enterprise extends EnterpriseDB implements IRegistry, IScopable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	

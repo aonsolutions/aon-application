@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
@@ -27,6 +28,8 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.registry.RegistryAddress;
 
 public class AplifisaWriter extends BasicExporter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AplifisaWriter.class);
 	

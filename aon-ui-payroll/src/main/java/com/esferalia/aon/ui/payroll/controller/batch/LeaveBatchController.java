@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +20,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -27,12 +27,14 @@ import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -49,11 +51,13 @@ import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
 public class LeaveBatchController extends BasicController {
 	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private LeaveBatchNewWizard newBatchWizard;
 	
 	public LeaveBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
-			newBatchWizard = new LeaveBatchNewWizard();
+			newBatchWizard = new LeaveBatchNewWizard(this);
 		}
 		return newBatchWizard;
 	}
@@ -217,14 +221,22 @@ public class LeaveBatchController extends BasicController {
 	/*
 	 * INNER CLASSES
 	 */
-	public class LeaveBatchNewWizard {
+	public static class LeaveBatchNewWizard implements Serializable {
 
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private LeaveBatchController controller;
+		
 		private List<ITransferObject> selectedList;
 		
 		private ArrayList<Object> checks = new ArrayList<Object>();
 		
 		private DataModel selectedModel;
 		
+		public LeaveBatchNewWizard(LeaveBatchController controller) {
+			this.controller = controller;
+		}
+
 		public boolean isNew(){
 			return true;
 		}
@@ -303,7 +315,7 @@ public class LeaveBatchController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 			saveData();
-			loadDetails();
+			controller.loadDetails();
 		}
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -316,8 +328,8 @@ public class LeaveBatchController extends BasicController {
 				selectedList.add(detail);
 			}
 	        listController.getCheckHandler().clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
-	        onSearchLeaves(event);
+	        setSelectedModel(new SerializableListDataModel(selectedList));
+	        controller.onSearchLeaves(event);
 		}
 
 		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -329,9 +341,9 @@ public class LeaveBatchController extends BasicController {
 	        	}
 	        }
 	        clearCheckedList();
-	        setSelectedModel(new ListDataModel(selectedList));
-	        loadDetails();
-	        onSearchLeaves(event);
+	        setSelectedModel(new SerializableListDataModel(selectedList));
+	        controller.loadDetails();
+	        controller.onSearchLeaves(event);
 		}
 		
 		public void rowSelected(ValueChangeEvent event) {

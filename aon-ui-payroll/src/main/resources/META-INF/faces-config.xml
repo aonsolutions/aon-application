@@ -1083,11 +1083,6 @@
 
 	<!-- ************ FAN BATCH **************** -->
 	<managed-bean>
-		<managed-bean-name>fanBatchTest</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanBatchTest</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>fanBatch</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanBatchController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>

@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -10,6 +11,8 @@ import com.code.aon.webmail.IMailAccount;
 
 public class MailAccountControllerListener extends ControllerAdapter {
 
+	public static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private MailConfigController getMailConfig() {
 		return (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
 	}

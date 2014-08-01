@@ -1,10 +1,14 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.registry.RegistryBank;
 
-public class CashFlowForecastParams {
+public class CashFlowForecastParams implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Date date;
 	private Date startDate;

@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.entity.master.ProjectReservationGuestDB;
@@ -14,7 +15,7 @@ import com.esferalia.aon.entity.master.ProjectReservationGuestDB;
 @Table(name="project_reservation_guest")
 public class ProjectReservationGuest extends ProjectReservationGuestDB {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public ProjectReservationGuest() {
 		setDocumentType(DocumentType.NIF);

@@ -3,13 +3,14 @@ package com.code.aon.finance.invoicing.engine.fee;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 
 public class PreInvoice extends Invoice {
 	
-	private static final long serialVersionUID = 6315145312817823828L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<PreInvoiceDetail> details;
 	

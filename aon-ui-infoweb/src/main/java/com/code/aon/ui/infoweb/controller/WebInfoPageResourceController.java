@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageResource;
@@ -13,6 +14,8 @@ import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class WebInfoPageResourceController extends BasicController implements IInfoWebConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyWebInfoPageController.class.getName());
 	

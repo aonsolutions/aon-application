@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.groupware.CampaignProject;
@@ -23,7 +24,8 @@ import com.code.aon.groupware.Task;
 
 public class CampaignProjectExtended implements ITransferObject {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private static final Color color2 = new Color( 221,139,69);
 	private static final Color color3 = new Color( 216,182,69);
 	private static final Color color4 = new Color( 214,216,69);

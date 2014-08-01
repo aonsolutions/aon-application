@@ -23,6 +23,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.common.BeanManager;
@@ -71,6 +72,8 @@ import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer, ISQLConstants {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoiceController.class);
 
@@ -653,6 +656,8 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	}
 
 	private static class CurrentReservationFilter extends ControllerAdapter {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		@Override
 		public void beforeModelSearched(ControllerEvent event)

@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.account.IAccount;
+import com.code.aon.AonVersion;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.CreditorStatus;
@@ -22,7 +23,7 @@ import com.esferalia.aon.entity.master.CreditorDB;
 @Table(name="creditor")
 public class Creditor extends CreditorDB implements ITaxInfo, IScopable, IRegistry, IAccount {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 

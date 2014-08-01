@@ -1,5 +1,6 @@
 package com.code.aon.ui.groupware.event;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmStatus;
@@ -9,6 +10,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.groupware.controller.AlarmController;
 
 public class AlarmControllerListener extends ControllerAdapter {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)

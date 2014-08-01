@@ -2,6 +2,7 @@ package com.code.aon.ui.admin;
 
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,7 +21,9 @@ import com.code.aon.config.DomainApplication;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DomainApplicationInfo {
+public class DomainApplicationInfo implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private boolean checked;
 	

@@ -3,11 +3,12 @@ package com.code.aon.common;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 
 public class BasicAttachment implements IAttachment {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Integer id;
 	

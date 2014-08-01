@@ -25,7 +25,11 @@ import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
 
+import com.code.aon.AonVersion;
+
 public class OpenIDAuthServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static class PasswordGenerator {
 		 

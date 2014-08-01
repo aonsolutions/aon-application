@@ -1,8 +1,12 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.faces.model.SelectItem;
+
+import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.enumeration.ss.*;
 
 /** 
@@ -12,7 +16,9 @@ import com.esferalia.aon.payroll.enumeration.ss.*;
  * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
 */ 
 
-public class SSCollectionsController {
+public class SSCollectionsController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	/** 
 	 *  ------------------------------------------------------------------------

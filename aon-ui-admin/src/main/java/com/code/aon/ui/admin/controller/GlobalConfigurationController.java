@@ -2,6 +2,8 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 
+import java.io.Serializable;
+
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
@@ -27,7 +30,9 @@ import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class GlobalConfigurationController {
+public class GlobalConfigurationController implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GlobalConfigurationController.class);
 	
