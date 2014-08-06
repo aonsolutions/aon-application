@@ -1,5 +1,6 @@
 package com.code.aon.warehouse.bridge;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -193,7 +194,10 @@ public class IncomeTransferManager extends DataScrollerState {
 		clearCheckedIncome();
 	}
 	
-	public class FilterParams{
+	public static class FilterParams implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Date fromDate;
 		private Date toDate;
 		private String referenceCode;
