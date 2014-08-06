@@ -62,9 +62,6 @@ public class TargetDeduplicationController extends DataScrollerState {
 	private DeduplicationValues selectedValues;
 	private DeduplicationEntry selectedEntry;
 	
-	private Connection connection;
-	private DSLContext context;
-	
 	public void onEditSearch( ActionEvent event ) {
 		getTargetController().onEditSearch(event);
 		reset();
@@ -211,56 +208,56 @@ public class TargetDeduplicationController extends DataScrollerState {
 		return criteria;
 	}
 	
-	private String[] getRegistryMedias(Integer id, MediaType type) {
-		String[] result = getContext().select(RMEDIA.VALUE).from(RMEDIA)
+	private String[] getRegistryMedias(DSLContext context, Integer id, MediaType type) {
+		String[] result = context.select(RMEDIA.VALUE).from(RMEDIA)
 				.where(RMEDIA.REGISTRY.eq(id), RMEDIA.MEDIA.eq((byte)type.ordinal()))
 				.fetchArray(RMEDIA.VALUE);
 		return result;
 	}	
 	
-	private String getRegistryDocument( Integer id ) {
-		return getContext().select(REGISTRY.DOCUMENT).from(REGISTRY)
+	private String getRegistryDocument( DSLContext context, Integer id ) {
+		return context.select(REGISTRY.DOCUMENT).from(REGISTRY)
 				.where(REGISTRY.ID.eq(id))
 				.fetchOne(REGISTRY.DOCUMENT);
 	}	
 
-	private String getRegistryName( Integer id ) {
-		return getContext().select(REGISTRY.NAME).from(REGISTRY)
+	private String getRegistryName( DSLContext context, Integer id ) {
+		return context.select(REGISTRY.NAME).from(REGISTRY)
 				.where(REGISTRY.ID.eq(id))
 				.fetchOne(REGISTRY.NAME);
 	}	
 	
-	private String[] getValues( Integer id ) throws ManagerBeanException {
+	private String[] getValues( DSLContext context, Integer id ) {
 		String[] values = null;
 		switch ( type ) {
 			case DOCUMENT:
-				String document = getRegistryDocument(id);
+				String document = getRegistryDocument(context, id);
 				if (! StringUtils.isBlank(document) ) {
 					values = new String[]{document};	
 				}
 				break;
 			case NAME:
-				String name = getRegistryName(id);
+				String name = getRegistryName(context, id);
 				if (! StringUtils.isBlank(name) ) {
 					values = new String[]{name};
 				}
 				break;
 			case EMAIL:
-				values = getRegistryMedias(id, MediaType.EMAIL);
+				values = getRegistryMedias(context, id, MediaType.EMAIL);
 				break;
 			case FIXED_PHONE:
-				values = getRegistryMedias(id, MediaType.FIXED_PHONE);
+				values = getRegistryMedias(context, id, MediaType.FIXED_PHONE);
 				break;
 			case CELLULAR:
-				values = getRegistryMedias(id, MediaType.CELLULAR);
+				values = getRegistryMedias(context, id, MediaType.CELLULAR);
 				break;
 		}
 		return values;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void findDuplicates( Integer id, IManagerBean bean, Criteria mainCriteria ) throws ManagerBeanException {
-		String[] values = getValues(id);
+	private void findDuplicates( Integer id, DSLContext context, IManagerBean bean, Criteria mainCriteria ) throws ManagerBeanException {
+		String[] values = getValues(context, id);
 		if(! ArrayUtils.isEmpty(values) ) {
 			for( String value : values ) {
 				Criteria criteria = getDeduplicateCriteria(id, value, bean, mainCriteria);
@@ -291,32 +288,33 @@ public class TargetDeduplicationController extends DataScrollerState {
 		thread.setCriteria(mainCriteria);
 		thread.start();
 	}
-	
-	private DSLContext getContext() {
-		if ( this.context == null ) {
-			try {
-				this.connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-				this.context = DSL.using(connection, AccountingUtil.getDefaultSettings());
-			} catch (AonConnectionException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
+
+	private Connection getConnection() {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+		} catch (AonConnectionException e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		return this.context;
+		return connection;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void searchDuplicates(HttpServletRequest httpServletRequest, TargetController controller, Criteria mainCriteria ) {
 		this.duplicateTargets = new LinkedList<Integer>();
 		this.deduplicationList = new LinkedList<DeduplicationValues>();
+		Connection connection = null;
 		try {
 			HttpServletRequestValve.setHttpServletRequest(httpServletRequest);
+			connection = getConnection();
+			DSLContext context = DSL.using(connection, AccountingUtil.getDefaultSettings());
 			IManagerBean bean = controller.getManagerBean();
 			Criteria searchCriteria = getSearchCriteria(bean, mainCriteria);
 			List<Integer> list = bean.getList(getProjectionList(bean), searchCriteria);
 			LOGGER.info( "Targets deduplication: {}, {}", list.size(), searchCriteria);
 			for( Integer id : list ) {
 				if (! duplicateTargets.contains(id) ) {
-					findDuplicates(id, bean, mainCriteria);	
+					findDuplicates(id, context, bean, mainCriteria);	
 				}
 				this.progressValue++;
 				if (! isEnabledProgressBar() ) {
@@ -329,8 +327,6 @@ public class TargetDeduplicationController extends DataScrollerState {
 		} finally {
 			HttpServletRequestValve.setHttpServletRequest(null);
 			DatabaseUtil.closeQuietly(connection);
-			this.connection = null;
-			this.context = null;
 		}
 		finish();
 	}
