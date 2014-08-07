@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.POS_ERROR_PRINT_TICKET;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -306,19 +307,21 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public List<Tag> getPagedTags() {
 		if (pagedTags == null && getPosShift().getPos().isTouchScreen()) {
 			int tagsLimit = getTagsLimit();
+			List<Tag> subList = null;
 			if (getTagsCount() <= tagsLimit) {
-				pagedTags = getTags().subList(0, getTagsCount());
+				subList = getTags().subList(0, getTagsCount());
 			} else {
 				int fromIndex = (getTagPage() == 1) ? 0 : tagsLimit * (getTagPage() - 1) - (2 * (getTagPage() - 1) - 1);
 				int toIndex = (getTagPage() == 1) ? tagsLimit - 1 : fromIndex + tagsLimit - 2;
-				pagedTags = getTags().subList(fromIndex, (toIndex < getTagsCount()) ? toIndex : getTagsCount());
+				subList = getTags().subList(fromIndex, (toIndex < getTagsCount()) ? toIndex : getTagsCount());
 			}
+			pagedTags = new LinkedList<Tag>(subList);
 		}
 		return pagedTags;
 	}
 
 	public void setPagedTags(List<Tag> pagedTags) {
-		this.pagedTags = pagedTags;
+		this.pagedTags = pagedTags;	
 	}
 
 	public int getPagedTagsCount() {
@@ -352,13 +355,15 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public List<Product> getPagedSelectedProducts() {
 		if (pagedSelectedProducts == null && selectedProducts != null && getPosShift().getPos().isTouchScreen()) {
 			int posLimit = getPosShift().getPos().getLimit();
+			List<Product> subList = null;
 			if (getSelectedProductsCount() <= posLimit) {
-				pagedSelectedProducts = getSelectedProducts().subList(0, getSelectedProductsCount());
+				subList = getSelectedProducts().subList(0, getSelectedProductsCount());
 			} else {
 				int fromIndex = (getSelectedProductPage() == 1) ? 0 : posLimit * (getSelectedProductPage() - 1) - (2 * (getSelectedProductPage() - 1) - 1);
 				int toIndex = (getSelectedProductPage() == 1) ? posLimit - 1 : fromIndex + posLimit - 2;
-				pagedSelectedProducts = getSelectedProducts().subList(fromIndex, (toIndex < getSelectedProductsCount()) ? toIndex : getSelectedProductsCount());
+				subList = getSelectedProducts().subList(fromIndex, (toIndex < getSelectedProductsCount()) ? toIndex : getSelectedProductsCount());
 			}
+			pagedSelectedProducts = new LinkedList<Product>(subList);
 		}
 		return pagedSelectedProducts;
 	}

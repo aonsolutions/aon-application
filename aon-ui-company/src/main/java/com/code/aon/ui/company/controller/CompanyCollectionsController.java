@@ -169,7 +169,10 @@ public class CompanyCollectionsController implements Serializable {
     		for (ITransferObject to : list) {
     			RegistryAddress address = (RegistryAddress)to;
 				String addressLabel = address.getFullAddress();
-				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getGeozone().getName();
+				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel);
+				if ( address.getGeozone() != null ) {
+					addressLabel += " - " + address.getGeozone().getName();
+				}
 				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
 				SelectItem item = new SelectItem(address, addressLabel);
 				addresses.add(item);

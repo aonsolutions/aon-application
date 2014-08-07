@@ -1,17 +1,22 @@
 package com.code.aon.fiscal.vat;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.enumeration.VatReportType;
 import com.code.aon.fiscal.enumeration.VatType;
 
-public class Vat {
+public class Vat implements Serializable {
+	
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private InvoiceType invoiceType;
 	private double percent;
 	private double surcharge;

@@ -409,7 +409,10 @@ public class ActivityViewerController implements Serializable {
 	/* CLASES WRAPPED */
 	/* ****************/
 	
-	public class AssetReservation {
+	public static class AssetReservation implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private Asset asset;
 		private DataModel assetDayModel;
 		public Asset getAsset() {
