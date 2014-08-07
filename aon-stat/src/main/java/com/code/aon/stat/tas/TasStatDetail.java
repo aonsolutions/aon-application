@@ -1,15 +1,19 @@
 package com.code.aon.stat.tas;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.registry.enumeration.DocumentType;
 
 
-public class TasStatDetail {
+public class TasStatDetail implements Serializable {
 
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 	private Integer id;
 	private String series;
 	private Integer number;

@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -339,7 +340,10 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	}
 
 
-	public class PayMethodCount implements Comparable<Object> {
+	public static class PayMethodCount implements Comparable<Object>, Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
 		private PayMethod payMethod;
 		private double countAmount;
 		private double financeAmount;
