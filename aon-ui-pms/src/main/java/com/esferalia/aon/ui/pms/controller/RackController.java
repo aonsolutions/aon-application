@@ -45,7 +45,7 @@ public class RackController extends BasicController implements IPmsConstants {
 
 	public FilterParams getFilterParams() {
 		if (filterParams == null) {
-			filterParams = new FilterParams();
+			filterParams = new FilterParams(this);
 		}
 		return filterParams;
 	}
@@ -254,9 +254,6 @@ public class RackController extends BasicController implements IPmsConstants {
 		
 		public FilterParams(RackController controller) {
 			this.controller = controller;
-		}
-
-		public FilterParams() {
 			viewerStartDate = new Date();
 		}
 		
