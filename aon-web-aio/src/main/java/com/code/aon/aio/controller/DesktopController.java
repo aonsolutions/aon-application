@@ -187,4 +187,18 @@ public class DesktopController implements Serializable {
 		return logEnabled;
 	}
 	
+	public boolean isPortal() {
+		return false;
+	}
+	public boolean isFiscalInfoVisibleForPortal() {
+		return false;
+	}
+	public boolean isPayrollInfoVisibleForPortal() {
+		return false;
+	}
+	public boolean isDocumentalInfoVisibleForPortal() {
+		return false;
+	}
+	
+	
 }
