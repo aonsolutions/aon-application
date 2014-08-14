@@ -88,6 +88,8 @@ public enum AppParam {
 	
 	AON_LOG_ENABLED,
 	
+	AON_PORTAL,
+	
 	AON_PRODUCT_DETAIL_LEVEL,
 	
 	AON_SUPPORT_ENABLED,

@@ -25,6 +25,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.groupware.Note;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.audit.ActionSource;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
@@ -48,7 +49,7 @@ public class DesktopController implements Serializable {
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
 	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";
 	private static final String PASSWORD_EXPIRED_TEMPLATE = "/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml";
-
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 	
 	private DesktopState state;
@@ -188,17 +189,19 @@ public class DesktopController implements Serializable {
 	}
 	
 	public boolean isPortal() {
-		return false;
-	}
-	public boolean isFiscalInfoVisibleForPortal() {
-		return false;
-	}
-	public boolean isPayrollInfoVisibleForPortal() {
-		return false;
-	}
-	public boolean isDocumentalInfoVisibleForPortal() {
-		return false;
+		return getState().getPortalValue() != 0;
 	}
 	
+	public boolean isFiscalInfoVisibleForPortal() {
+		return (getState().getPortalValue() & IAdminConstants.FISCAL_PORTAL) != 0;
+	}
+	
+	public boolean isPayrollInfoVisibleForPortal() {
+		return (getState().getPortalValue() & IAdminConstants.PAYROLL_PORTAL) != 0;
+	}
+	
+	public boolean isDocumentalInfoVisibleForPortal() {
+		return (getState().getPortalValue() & IAdminConstants.DOCUMENTAL_PORTAL) != 0;
+	}
 	
 }

@@ -35,5 +35,9 @@ public interface IAdminConstants {
 	String COMPANY_TABLE = "company";
 	String SCOPE_TABLE = "scope";
 	String WORK_GROUP_TABLE = "workgroup";
-		
+
+	int PAYROLL_PORTAL = 1;
+	int FISCAL_PORTAL = 2;
+	int DOCUMENTAL_PORTAL = 4;
+	
 }

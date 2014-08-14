@@ -91,6 +91,7 @@ public class DesktopState implements Serializable {
     private boolean adminDomain;
     private boolean supportEnabled;
     private boolean patchInitAction;
+    private int portalValue;
 	
     public DesktopState() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
@@ -212,6 +213,8 @@ public class DesktopState implements Serializable {
 	}	
 
 	private void initPortal( DomainSwitcher ds ) {
+		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL); 
+		portalValue = (value != null) ? value : 0;
 		if ( ds.isChildDomain() && this.initOption!=null ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			List<Module> modules = adc.getVisibleModules();
@@ -416,4 +419,9 @@ public class DesktopState implements Serializable {
 			parser.checkSerialization();
 		}	
 	}
+	
+	public int getPortalValue() {
+		return this.portalValue;
+	}
+	
 }
