@@ -80,6 +80,10 @@ public class LogPanelController implements ILogger, Serializable {
 		return this.activePoll;
 	}
 
+	public void setActivePoll(boolean activePoll) {
+		this.activePoll = activePoll;
+	}
+
 	public void onShowWindow(ActionEvent event){
 		this.activePoll = true;
 		reset();

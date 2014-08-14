@@ -450,5 +450,8 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

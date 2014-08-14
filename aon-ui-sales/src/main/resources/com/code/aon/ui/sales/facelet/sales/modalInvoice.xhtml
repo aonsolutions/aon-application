@@ -46,6 +46,8 @@
 										<f:setPropertyActionListener
 											target="#{sales.showInvoiceWindow}"
 											value="#{false}" />
+										<ui:include
+											src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />
 									</aon:commandButton>
 									<aon:commandButton id="invoice-cancel"
 										value="#{bundle.aon_cancel}"

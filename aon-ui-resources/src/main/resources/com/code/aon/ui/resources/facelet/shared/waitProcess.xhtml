@@ -2,11 +2,23 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<c:if test="#{addWaitProcessPoll}">
+		<aon:valueParam name="waitProcessPollInterval" default="2000" />
+	
+	    <a4j:region>
+	        <h:form>
+	            <a4j:poll id="waitProcess_poll" interval="#{waitProcessPollInterval}"
+	            	enabled="#{logPanel.activePoll}" status="aonStatus" 
+	            	actionListener="#{logPanel.onDoNothig}" />
+	        </h:form>
+	    </a4j:region>
+    </c:if>
 	<rich:modalPanel id="waitProccess" height="200" width="300"
 		zindex="2000" resizeable="false">
 
