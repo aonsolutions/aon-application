@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jdt.internal.compiler.util.HashtableOfPackage;
-
 import com.esferalia.aon.gwt.payroll.client.ITDataObject.CallculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
