@@ -4,12 +4,19 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
+import org.mvel2.MVEL;
+import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedObject;
 
 public enum ContextVariable implements IResourceable{
 	
@@ -311,6 +318,9 @@ public enum ContextVariable implements IResourceable{
     public static Date parse(String str) throws ParseException {
     	return  StringUtils.isBlank(str) ? null : DATE_FORMAT.parse(str);
     }
-	
+    
+    public static double br(){
+    	return 666;
+    }
 
 }

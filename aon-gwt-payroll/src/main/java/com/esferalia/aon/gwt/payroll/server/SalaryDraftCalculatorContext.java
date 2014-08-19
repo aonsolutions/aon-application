@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.persistence.Transient;
 
@@ -34,7 +35,9 @@ import com.esferalia.aon.payroll.calculator.HierarchyIterator;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -267,27 +270,40 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 					&& DateUtils.compare(leaveStartDate, ctxEndDate) < 0
 					&& DateUtils.compare(leaveEndDate, ctxStartDate) > 0) {
 				
-				addLeaveIt(dataPerson, start, end, exprCtx);
+				long days = DateUtils.getDaysBetween(leaveStartDate, resetTime(DateUtils.getPrevDay(leaveEndDate)));
+				
+				if(days < 0)
+					days = 0;
+				LeaveType type = getLeaveType(dataPerson.getType());
+				
+				Integer id = dataPerson.getContractLeaveId();
+				cleanDBLeave(exprCtx, id);
+				if(dataPerson.getRegBase().equals("REMOVE_VARIABLE") == false) {
+					getCtx().loadContractLeave(id, start, end, days, type, 
+							dataPerson.getRegBase(), exprCtx);
+				}
+					
+				
 			}
 		}
 	}
 	
-	private void addLeaveIt (ITDataPerson person, Date startDate, Date endDate, ExpressionContext exprCtx) 
-			throws ExpressionException {
-					
-		Date leaveStartDate = resetTime(person.getLeaveStartDate());
-		Date preDayDraftStart = resetTime(DateUtils.getPrevDay(ctx.getStartDate()));
+	protected void cleanDBLeave(ExpressionContext exprCtx, Integer id)
+			throws ExpressionException{		
+		if ( id <=  0 )
+			return;
 		
-		long days = DateUtils.getDaysBetween(leaveStartDate, preDayDraftStart);		
-		
-		if(days < 0) {
-			days = 0;
+		SortedSet<Leave> dbLeaves = getCtx().getLeaves();
+		for (Leave dbLeave : dbLeaves) {
+			if ( dbLeave.getId().equals(id) ){
+				getCtx().clean(exprCtx, dbLeave);
+			}
 		}
 		
-		LeaveType type = getLeaveType(person.getType());
-		getCtx().loadContractLeave(startDate, endDate, days, type, person.getRegBase(), exprCtx);		
+	
 	}
 	
+
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {

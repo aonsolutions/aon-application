@@ -22,6 +22,26 @@ import com.esferalia.aon.salary.expression.Period;
 
 public class SQLContractLeaveLoader {
 
+	public static class Leave extends Period {
+		private Integer id;
+		private LeaveType type;
+
+		public Leave(Integer id, Date start, Date end, LeaveType type) {
+			super(start, end);
+			this.id = id;
+			this.type = type;
+		}
+
+		public Integer getId() {
+			return id;
+		}
+
+		public LeaveType getType() {
+			return type;
+		}
+
+	}
+
 	private static class DaysRange {
 		public Long start;
 		public Long end;
@@ -51,20 +71,6 @@ public class SQLContractLeaveLoader {
 				return String.format("%s_%d", variable, start);
 			}
 		}
-	}
-
-	private static class Leave extends Period {
-		private LeaveType type;
-
-		public Leave(Date start, Date end, LeaveType type) {
-			super(start, end);
-			this.type = type;
-		}
-
-		public LeaveType getType() {
-			return type;
-		}
-
 	}
 
 	private static final DaysRange RANGES[] = { new DaysRange(1, 3),
@@ -158,22 +164,26 @@ public class SQLContractLeaveLoader {
 
 			Object dailyRegBase = rs
 					.getObject(ContractLeaveColumns.DAILY_REG_BASE);
-			loadContractLeave(start, end, parentDays, type,
+			Integer id = rs.getInt(ContractLeaveColumns.ID);
+
+			loadContractLeave(id, start, end, parentDays, type,
 					(Double) dailyRegBase, exprCtx);
 		}
 	}
 
-	public void loadContractLeave(final Date leaveStart, final Date leaveEnd,
-			final long parentDays, final LeaveType type, Double dailyRegBase,
-			final ExpressionContext exprCtx) throws ExpressionException {
-		loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+	public void loadContractLeave(final Integer id, final Date leaveStart,
+			final Date leaveEnd, final long parentDays, final LeaveType type,
+			Double dailyRegBase, final ExpressionContext exprCtx)
+			throws ExpressionException {
+		loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
 				dailyRegBase != null ? dailyRegBase.toString() : null, exprCtx);
 	}
 
-	public void loadContractLeave(final Date leaveStart, final Date leaveEnd,
-			final long parentDays, final LeaveType type, String dailyRegBase,
-			final ExpressionContext exprCtx) throws ExpressionException {
-		final Date start = Period.max(leaveStart, startDate);
+	public void loadContractLeave(final Integer id, final Date leaveStart,
+			final Date leaveEnd, final long parentDays, final LeaveType type,
+			String dailyRegBase, final ExpressionContext exprCtx)
+			throws ExpressionException {
+		final Date start = Period.max(leaveStart, startDate); 
 		final Date end = Period.min(leaveEnd, endDate);
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
 
@@ -187,8 +197,7 @@ public class SQLContractLeaveLoader {
 			exp.setExpression(String.format("%s(%s)", ContextVariable.BR,
 					ContextVariable.IT_START));
 		}
-		exprCtx.addExpression(exp, start, end);
-
+		exprCtx.addExpression(exp, startDate, endDate);
 
 		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
 
@@ -230,7 +239,7 @@ public class SQLContractLeaveLoader {
 				long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
 				if (days <= 0)
 					return null;
-				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
+				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, 
 						days, start, end);
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
@@ -239,7 +248,7 @@ public class SQLContractLeaveLoader {
 
 			@Override
 			public Void visitMaternity(LeaveType leaveType) {
-				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
+				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays, 
 						start, end);
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
@@ -267,12 +276,39 @@ public class SQLContractLeaveLoader {
 			}
 
 		});
-		add(new Leave(start, end, type));
+		add(new Leave(id, start, end, type));
+	}
+
+	public SortedSet<Leave> getLeaves() {
+		return leaves;
 	}
 
 	// -------------------------------------------------------------- Protected
 	protected void add(Leave leave) {
 		leaves.add(leave);
+	}
+
+	protected void remove(Leave leave) {
+		leaves.remove(leave);
+	}
+
+	protected void clean(ExpressionContext exprCtx, Leave leave) {
+		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(),
+				leave.getEnd());
+		
+		for (DaysRange range : RANGES) {
+			
+			String name = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
+
+			exprCtx.removeVariable(name, leave.getStart(), leave.getEnd());
+
+		}
+		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS,	leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
+		
 	}
 
 }

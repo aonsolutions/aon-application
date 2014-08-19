@@ -117,7 +117,7 @@ public class Tooltip extends DecoratedPopupPanel {
 	private Date endContract;
 	
 	private boolean changes;
-	
+	private String regBase;	
 	private int dischargeCause;
 
 	interface TooltipUiBinder extends UiBinder<Widget, Tooltip> {
@@ -342,6 +342,14 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	public Date getStartDateBoxValue() {
 		return startLeaveDateBox.getValue();
+	}
+	
+	public void setRegBase(String regBase) {
+		this.regBase = regBase;
+	}
+	
+	public String getRegBase () {
+		return regBase;
 	}
 
 	// ------------------------------------------------------------------------

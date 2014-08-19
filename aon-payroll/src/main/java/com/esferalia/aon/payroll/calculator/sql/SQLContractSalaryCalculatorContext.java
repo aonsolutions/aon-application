@@ -67,10 +67,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.locale.converters.DateLocaleConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -109,6 +109,7 @@ import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.UndefinedTotalPaymentException;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -382,7 +383,7 @@ public class SQLContractSalaryCalculatorContext implements
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
 				@Override
-				public void loadContractLeave(Date leaveStart, Date leaveEnd,
+				public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd,
 						long parentDays, LeaveType type, Double dailyRegBase,
 						ExpressionContext exprCtx) throws ExpressionException {
 
@@ -394,7 +395,7 @@ public class SQLContractSalaryCalculatorContext implements
 						calendar.setTime(leaveStart);
 						calendar.add(Calendar.DATE, start - 1);
 
-						super.loadContractLeave(leaveStart, calendar.getTime(),
+						super.loadContractLeave(id, leaveStart, calendar.getTime(),
 								parentDays, type, dailyRegBase, exprCtx);
 
 					}
@@ -406,7 +407,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 						parentDays += end;
 
-						super.loadContractLeave(calendar.getTime(), leaveEnd,
+						super.loadContractLeave(id, calendar.getTime(), leaveEnd,
 								parentDays, type, dailyRegBase, exprCtx);
 					}
 				}
@@ -1271,19 +1272,31 @@ public class SQLContractSalaryCalculatorContext implements
 				contractCriteria);
 	}
 
-	public void loadContractLeave(Date leaveStart, Date leaveEnd,
+	public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd,
 			long parentDays, LeaveType type, Double dailyRegBase,
 			ExpressionContext exprCtx) throws ExpressionException {
-		leaveLoader.loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+		leaveLoader.loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
 				dailyRegBase, exprCtx);
 	}
 
-	public void loadContractLeave(Date leaveStart, Date leaveEnd,
+	public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd,
 			long parentDays, LeaveType type, String dailyRegBase,
 			ExpressionContext exprCtx) throws ExpressionException {
-		leaveLoader.loadContractLeave(leaveStart, leaveEnd, parentDays, type,
+		leaveLoader.loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
 				dailyRegBase, exprCtx);
 	}
+	
+	public void clean(ExpressionContext exprCtx, Leave leave) {
+		leaveLoader.clean(exprCtx, leave);
+	}
+	
+	
+
+	public SortedSet<Leave> getLeaves() {
+		return leaveLoader.getLeaves();
+	}
+	
+	
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double x) {
 
@@ -2774,8 +2787,8 @@ public class SQLContractSalaryCalculatorContext implements
 			SalaryType type, Integer contractID) throws SQLException,
 			ExpressionException, SalaryException {
 		Date startDate = CommonUtil.getMonthFirstDay(date);
-		// Date endDate = CommonUtil.getMonthLastDay(date)
-
+	 
+		// Se calcula un dia anterior a la fecha de baja.
 		Date endDate = new Date(date.getTime() - 86400000);
 
 		Criteria criteria = new Criteria();
@@ -2828,6 +2841,7 @@ public class SQLContractSalaryCalculatorContext implements
 			@Override
 			public Double visitCommonDisease(LeaveType leaveType) {
 				// TODO Apéndice de método generado automáticamente
+				
 				return null;
 			}
 

@@ -365,6 +365,11 @@ public class ExpressionContext {
 		this.putVariable(name.toString(), timedObject);
 	}
 
+	public void removeVariable(Object name, Date start, Date end) {
+		Period period = new Period(start, end);
+		variables.remove(name.toString(), period);
+	}
+
 	public boolean isDef(Object name) {
 		return variables.containsKey(name.toString());
 	}

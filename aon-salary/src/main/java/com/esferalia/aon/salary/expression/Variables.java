@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.code.aon.AonVersion;
-import org.apache.commons.lang.time.DateUtils;
 
 
 public class Variables implements Comparator<ITimedVariable<?>> {
@@ -224,6 +224,23 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			}
 		}
 
+	}
+	
+	public void remove(String name, Period p) {
+		List<ITimedVariable<?>> values = vars.get(name);
+		ITimedVariable<?> iTimedVariable = null;
+		
+		
+		if (values == null) 
+			return;
+		
+		for (ITimedVariable<?> it : values) {
+			if (it.getPeriod().compareTo(p) == 0) {
+				iTimedVariable = it;
+			}
+		}
+		
+		values.remove(iTimedVariable);
 	}
 
 	public List<ITimedVariable<?>> getValues(String var) {

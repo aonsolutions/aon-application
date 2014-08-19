@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.internal.compiler.util.HashtableOfPackage;
+
 import com.esferalia.aon.gwt.payroll.client.ITDataObject.CallculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -165,7 +167,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		@Override
 		public void onMouseOver(MouseOverEvent event) {
-			try {				
+			try {	
 				Element el = Element
 						.as(event.getNativeEvent().getEventTarget());				
 				int mouseClientX = event.getClientX();
@@ -181,7 +183,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				}
 
 			} catch (Throwable ex) {
-				// Window.alert("Error [onMouseOver] : " + ex.getMessage());
+
 			} finally {
 				event.stopPropagation();
 			}
@@ -206,8 +208,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 					if (tooltipCallback.isRunning())
 						tooltipCallback.cancel();
 					}
-			} catch (Throwable ex) {
-				//Window.alert("Error [onMouseOver] : " + ex.getMessage());
+			} catch (Throwable ex) {				
+
 			} finally {
 				event.preventDefault();
 				event.stopPropagation();
@@ -367,8 +369,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				
 				int leaveType = tooltip.getTypeLeaveListBox();								
 				int dischargeCause = tooltip.getTypeDischargeListBox();
-				int contractId = tooltip.getContractId();
-				int leaveId = tooltip.getLeaveId();
 				Date startDate = tooltip.getStartDateBoxValue();
 				Date endDate = getNextEndDate(tooltip.getFromDateBoxValue());
 				
@@ -379,15 +379,14 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				newDataPerson.setDischarge_cause(dischargeCause);
 				newDataPerson.setNumType(leaveType);
 				newDataPerson.setType(getEnumConstant(
-						ITDataPerson.Type.class, leaveType));				
+						ITDataPerson.Type.class, leaveType));
+				newDataPerson.setRegBase(tooltip.getRegBase());
 				if(action.equals(UPDATE)) {
 					newDataPerson.setContractLeaveId(tooltip.getLeaveId());
-					newDataPerson.setRegBase(dataObject.getDataIts(contractId).get(leaveId).getRegBase());
 					dataObject.updateLeaveItem(newDataPerson);
 				}
 				else {
 					newDataPerson.setContractLeaveId(--decremental);
-					newDataPerson.setRegBase(null);
 					dataObject.addLeaveItem(newDataPerson);
 				}
 				
@@ -565,7 +564,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 							employee.getStartDate(), employee.getEndDate(),
 							employee.getDocument(),
 							employee.getSocialSecurity(), contractId,
-							contractId, -1);
+							contractId, -1, new ITDataPerson());
 				}
 
 				finalizado = true;
@@ -604,13 +603,13 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			data.addRow(employee.getFullname(), ACTIVE, start, leaveStart,
 					employee.getStartDate(), employee.getEndDate(),
 					employee.getDocument(), employee.getSocialSecurity(),
-					contractId, contractId, -1);
+					contractId, contractId, -1, new ITDataPerson());
 
 			data.addRow(employee.getFullname(), type.getDescription(),
 					leaveStart, leaveEnd, itDataPerson.getLeaveStartDate(),
 					itDataPerson.getLeaveEndDate(), employee.getDocument(),
 					employee.getSocialSecurity(), contractId, contractLeaveId,
-					itDataPerson.getDischarge_cause());
+					itDataPerson.getDischarge_cause(), itDataPerson);
 
 			start = leaveEnd;
 
@@ -619,7 +618,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			data.addRow(employee.getFullname(), ACTIVE, start, end,
 					employee.getStartDate(), employee.getEndDate(),
 					employee.getDocument(), employee.getSocialSecurity(),
-					contractId, contractId, -1);
+					contractId, contractId, -1, new ITDataPerson());
 		}
 
 	}
@@ -696,6 +695,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		int contractId = data.getContractId(posColumn, posCell);
 		int leaveId = data.getContractLeaveId(posColumn, posCell);
 		String estado = data.getStatus(posColumn, posCell);
+		String regBase = data.getITDataPerson(posColumn, posCell).getRegBase();
 		Date startDate = data.getStartDate(posColumn, posCell);
 		String formatStartDate = format.format(startDate);
 		Date endDate = data.getEndDate(posColumn, posCell);
@@ -704,9 +704,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		if (endDate != null) {
 			formatEndDate = format.format(endDate);
 		}
-
-		Date rowStart = data.getRowStartDate(posColumn, posCell);
-		Date rowEndDate = data.getRowEndDate(posColumn, posCell);
 
 		int dischargeCause = data.getDischargeCause(posColumn, posCell);
 		int typeTooltip = data.getTypeTooltip(posColumn, posCell);
@@ -723,6 +720,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		tooltip.setWorkPeriod(formatStartDate, formatEndDate);
 		tooltip.setNumDays(startDate, endDate);
 		tooltip.setDischargeCause(dischargeCause);
+		tooltip.setRegBase(regBase);
 
 		/**
 		 * 0 - contract active 1 - contract ended 2 - leave active 3 - leave
@@ -734,7 +732,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			this.showContractActiveTooltip(tooltip, mouseClientX, mouseClientY);
 			break;
 		case 1:
-			this.showContractEndedTooltip(tooltip, mouseClientX, mouseClientY);
+			this.showContractActiveTooltip(tooltip, mouseClientX, mouseClientY);
 			break;
 		case 2:
 			this.showLeaveActiveTooltip(tooltip, mouseClientX, mouseClientY);
@@ -1033,46 +1031,11 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			data.addColumn(ColumnType.DATE, "Inicio");
 			data.addColumn(ColumnType.DATE, "Fin");
 		}
-		
-		/*public void addRow(Employee employee, ITDataPerson dataPerson, String status, Date startDate, Date endDate) {
-			data.addRow();
-			
-			data.setValue(row, 0, employee.getFullname());
-			data.setValue(row, 1, status);
-			data.setValue(row, 2, startDate);
-			data.setValue(row, 3, endDate);
-
-			this.row++;
-
-			if (myEmployees.isEmpty()) {
-				statusList = new LinkedList<ITEditor.Status>();
-				myEmployees.add(statusList);
-			} else {
-				if (myEmployees.getLast().getLast().getFullName().equals(employee.getFullname()) == false) {
-					statusList = new LinkedList<ITEditor.Status>();
-					myEmployees.add(statusList);
-				}
-			}
-			statusList.add(new Status());
-			myEmployees.getLast().getLast().setFullName(employee.getFullname());
-			myEmployees.getLast().getLast().setDNI(employee.getDocument());
-			myEmployees.getLast().getLast().setSocialSecurity(employee.getSocialSecurity());
-			myEmployees.getLast().getLast().setEstado(status);
-			myEmployees.getLast().getLast().setRowStartDate(pRowStartDate);
-			myEmployees.getLast().getLast().setRowEndDate(pRowEndDate);
-			myEmployees.getLast().getLast().setStartDate(pStartDate);
-			myEmployees.getLast().getLast().setEndDate(pEndDate);
-			myEmployees.getLast().getLast().setContractId(pContractId);
-			myEmployees.getLast().getLast().setContractLeaveId(contractLeaveId);
-			myEmployees.getLast().getLast().setDischarge_cause(discharge_cause);
-			myEmployees.getLast().getLast().calculateTypeTooltip();
-
-		}*/
 
 		public void addRow(String pName, String pStatus, Date pRowStartDate,
 				Date pRowEndDate, Date pStartDate, Date pEndDate, String pDni,
 				String pSocialSecurity, int pContractId, int contractLeaveId,
-				int discharge_cause) {
+				int discharge_cause, ITDataPerson dataPerson) {
 
 			data.addRow();
 
@@ -1096,6 +1059,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			myEmployees.getLast().getLast().setFullName(pName);
 			myEmployees.getLast().getLast().setDNI(pDni);
 			myEmployees.getLast().getLast().setSocialSecurity(pSocialSecurity);
+			myEmployees.getLast().getLast().setITDataPerson(dataPerson);
 			myEmployees.getLast().getLast().setEstado(pStatus);
 			myEmployees.getLast().getLast().setRowStartDate(pRowStartDate);
 			myEmployees.getLast().getLast().setRowEndDate(pRowEndDate);
@@ -1122,6 +1086,10 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		private String getSocialSecurity(int posColumn, int posCell) {
 			return myEmployees.get(posColumn).get(posCell).getSocialSecurity();
+		}
+		
+		private ITDataPerson getITDataPerson(int posColumn, int posCell) {
+			return myEmployees.get(posColumn).get(posCell).getITDataPerson();
 		}
 
 		private int getContractId(int posColumn, int posCell) {
@@ -1202,6 +1170,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		private String fullName;
 		private String dni;
 		private String socialSecurityNum;
+		private ITDataPerson dataPerson;
 		private int contractId;
 		private int contractLeaveId;
 		private String estado;
@@ -1243,6 +1212,14 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 		public String getSocialSecurity() {
 			return socialSecurityNum;
+		}
+		
+		public void setITDataPerson(ITDataPerson dataPerson) {
+			this.dataPerson = dataPerson;
+		}
+		
+		public ITDataPerson getITDataPerson() {
+			return dataPerson;
 		}
 
 		public int getContractId() {
