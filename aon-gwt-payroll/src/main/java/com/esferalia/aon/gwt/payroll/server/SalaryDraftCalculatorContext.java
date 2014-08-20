@@ -278,13 +278,12 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				
 				Integer id = dataPerson.getContractLeaveId();
 				cleanDBLeave(exprCtx, id);
+				
 				if(dataPerson.getRegBase() == null || 
 						dataPerson.getRegBase().compareTo("REMOVE_VARIABLE") != 0) {
 					getCtx().loadContractLeave(id, start, end, days, type, 
 							dataPerson.getRegBase(), exprCtx);
-				}
-					
-				
+				}			
 			}
 		}
 	}
@@ -299,11 +298,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			if ( dbLeave.getId().equals(id) ){
 				getCtx().clean(exprCtx, dbLeave);
 			}
-		}
-		
-	
-	}
-	
+		}	
+	}	
 
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()

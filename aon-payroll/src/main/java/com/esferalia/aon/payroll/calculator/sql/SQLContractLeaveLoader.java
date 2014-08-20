@@ -177,7 +177,7 @@ public class SQLContractLeaveLoader {
 			throws ExpressionException {
 		loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
 				dailyRegBase != null ? dailyRegBase.toString() : null, exprCtx);
-	}
+	}	
 
 	public void loadContractLeave(final Integer id, final Date leaveStart,
 			final Date leaveEnd, final long parentDays, final LeaveType type,
@@ -303,11 +303,14 @@ public class SQLContractLeaveLoader {
 			exprCtx.removeVariable(name, leave.getStart(), leave.getEnd());
 
 		}
+		
 		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS,	leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE.getName(), leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.BR, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
+	
 		
 	}
 
