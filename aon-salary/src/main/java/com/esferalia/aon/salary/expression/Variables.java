@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.AonVersion;
 
 
@@ -227,20 +229,21 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 	
 	public void remove(String name, Period p) {
-		List<ITimedVariable<?>> values = vars.get(name);
-		ITimedVariable<?> iTimedVariable = null;
-		
+		List<ITimedVariable<?>> values = vars.get(name);		
 		
 		if (values == null) 
 			return;
 		
-		for (ITimedVariable<?> it : values) {
-			if (it.getPeriod().compareTo(p) == 0) {
-				iTimedVariable = it;
+		Iterator<ITimedVariable<?>> iterator = values.iterator();
+		
+		while(iterator.hasNext()) {
+			
+			ITimedVariable<?> object = iterator.next();
+			if(object.getPeriod().compareTo(p) == 0) {				
+				iterator.remove();
+				return;
 			}
 		}
-		
-		values.remove(iTimedVariable);
 	}
 
 	public List<ITimedVariable<?>> getValues(String var) {

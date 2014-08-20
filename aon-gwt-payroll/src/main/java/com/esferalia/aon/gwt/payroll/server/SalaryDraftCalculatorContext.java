@@ -279,13 +279,24 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				Integer id = dataPerson.getContractLeaveId();
 				cleanDBLeave(exprCtx, id);
 				
-				if(dataPerson.getRegBase() == null || 
-						dataPerson.getRegBase().compareTo("REMOVE_VARIABLE") != 0) {
-					getCtx().loadContractLeave(id, start, end, days, type, 
-							dataPerson.getRegBase(), exprCtx);
-				}			
+				loadContractLeave(id, start, end, days, type, dataPerson, exprCtx);			
 			}
 		}
+	}
+	
+	private void loadContractLeave(Integer id, Date start, Date end, long days, LeaveType type, 
+			ITDataPerson dataPerson, ExpressionContext exprCtx) throws ExpressionException {
+		
+		try {
+			
+			if(dataPerson.getRegBase().compareTo("REMOVE_VARIABLE()") != 0) {
+				getCtx().loadContractLeave(id, start, end, days, type, dataPerson.getRegBase(), exprCtx);
+			}
+		}catch(Exception ex) {
+			//is null
+			getCtx().loadContractLeave(id, start, end, days, type, dataPerson.getRegBase(), exprCtx);
+		}
+		
 	}
 	
 	protected void cleanDBLeave(ExpressionContext exprCtx, Integer id)

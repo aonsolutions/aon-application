@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.payroll.client.SalaryDraft.NewItemHandler;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -79,13 +78,13 @@ public class ITDataObject {
 		}
 
 		@Override
-		void addIT(ITDataPerson t) {
+		void addIT(ITDataPerson t) {			
 			saveDeletes(t);
 			
 		}
 
 		@Override
-		void removeIT(ITDataPerson t) {
+		void removeIT(ITDataPerson t) {			
 			removeSaveDeletes(t);
 		}
 	}
@@ -186,10 +185,6 @@ public class ITDataObject {
 		ITDataPerson oldItem = getDataIts(contractId).get(leaveId);
 		ITDataPerson newItem = saveDeletes(oldItem);
 		undoManager.add(new UndoableDeleteEdit(newItem, oldItem));
-		
-	/*	ITDataPerson newItem = getDataIts(contractId).get(leaveId);
-		ITDataPerson oldItem = saveDeletes(newItem);
-		undoManager.add(new UndoableDeleteEdit(newItem, oldItem));*/
 	}
 
 	private ITDataPerson saveDeletes(ITDataPerson object) {
@@ -211,6 +206,7 @@ public class ITDataObject {
 	private ITDataPerson removeSaveDeletes(ITDataPerson object) {
 		if (object.getContractLeaveId() < 0) {
 			++contador;
+			object.setRegBase(null);			
 			return getSaveInserts(object.getContractId()).put(
 					object.getContractLeaveId(), object);
 		}
