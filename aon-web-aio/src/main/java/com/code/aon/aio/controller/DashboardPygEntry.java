@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.code.aon.AonVersion;
-import com.esferalia.aon.gwt.common.shared.AonUtil;
+import com.code.aon.common.util.CommonUtil;
 
 public class DashboardPygEntry implements Serializable {
 	
@@ -87,7 +87,7 @@ public class DashboardPygEntry implements Serializable {
 		this.type = type;
 	}
 	public double getProfit() {
-		return AonUtil.round( getIncome() - getExpense() - getPurchase());
+		return CommonUtil.round( getIncome() - getExpense() - getPurchase());
 	}
 	public String[] getSeriesKeys() {
 		return seriesKeys;
