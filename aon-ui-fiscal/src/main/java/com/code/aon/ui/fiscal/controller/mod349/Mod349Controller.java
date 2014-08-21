@@ -185,5 +185,22 @@ public class Mod349Controller extends BasicController implements IFiscalModelCon
 		fm.setPeriod(period);
 		fm.setAdministration(administration);
 		return "mod349_form";
-	}	
+	}
+	
+	@Override
+	public void printModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.MOD349_YEAR);
+		String periodAlias = getManagerBean().getFieldName(IEntityAlias.MOD349_PERIOD);
+		String admonAlias = getManagerBean().getFieldName(IEntityAlias.MOD349_ADMINISTRATION);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(periodAlias,period);
+		criteria.addEqualExpression(admonAlias,administration);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+	}
+	
 }

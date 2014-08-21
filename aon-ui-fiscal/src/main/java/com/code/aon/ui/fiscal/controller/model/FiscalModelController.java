@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonException;
 import com.code.aon.AonVersion;
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -715,4 +715,20 @@ public abstract class FiscalModelController extends BasicController implements I
 		fm.setAdministration(administration);
 		return getFormPage();
 	}	
+
+	@Override
+	public void printModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_YEAR); 
+		String periodAlias = getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_PERIOD);
+		String admonAlias = getManagerBean().getFieldName(IEntityAlias.FISCAL_MODEL_ADMINISTRATION);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(periodAlias,period);
+		criteria.addEqualExpression(admonAlias,administration);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+	}
 }

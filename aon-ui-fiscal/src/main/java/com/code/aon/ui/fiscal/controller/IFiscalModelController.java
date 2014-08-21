@@ -12,4 +12,6 @@ public interface IFiscalModelController {
 	public String newModel(Administration administration, int year,
 			Period period) throws ManagerBeanException;
 
+	public void printModel(Administration administration, int year,
+			Period period) throws ManagerBeanException;
 }

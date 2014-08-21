@@ -78,8 +78,8 @@ public class DashboardController implements Serializable {
 	private LinkedList<DashboardStaff> staff;
 	private DashboardEntry[] salaryMonthsEntriesCount;
 	private DashboardEntry[] contractMonthsEntriesCount;
-
 	private List<ModelConfig> fiscalConfig;
+	private DashboardFiscalPortal fiscalPortal;
 	
 	private com.code.aon.accounting.Period accountingPeriod;
 	private Integer fiscalYear;
@@ -144,6 +144,17 @@ public class DashboardController implements Serializable {
 	public void onAccountingPeriodChanged(ActionEvent event) {
 		periodEntriesCount = null;
 		messages = null;
+		fiscalPortal = null;
+	}
+	public DashboardFiscalPortal getFiscalPortal() {
+		if (fiscalPortal == null) {
+			fiscalPortal = new DashboardFiscalPortal();
+			fiscalPortal.setDomainId(DomainManager.getCurrentDomain());
+			fiscalPortal.setDomainName(AonUtil.getDomainName());
+			fiscalPortal.setPygEntriesPeriod(getAccountingPeriod());
+			fiscalPortal.setExpensesPeriod(getAccountingPeriod());
+		}
+		return fiscalPortal;
 	}
 
 	public void onFiscalPeriodChanged(ActionEvent event) {
@@ -176,7 +187,7 @@ public class DashboardController implements Serializable {
 		this.messages = null;
 		this.periodEntriesCount = null;
 		this.fiscalConfig = null;
-
+		this.fiscalPortal = null;
 	}
 
 	public DashboardEntry[] getPeriodEntriesCount() throws ManagerBeanException {
@@ -296,6 +307,60 @@ public class DashboardController implements Serializable {
 			return navKey;
 		} catch (ManagerBeanException e) {
 			String message = "Imposible realizar la navegación al modelo solicitado.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message,e);
+		}
+	}
+
+	public void onPrintModel(ActionEvent event) {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		String ad = params.get("adm");
+		Administration administration = null;
+		if (StringUtils.isNotBlank(ad)) {
+			administration = Administration.valueOf(ad);
+		}
+		Model mod = Model.valueOf(params.get("model"));
+		Period period = Period.valueOf(params.get("period"));
+		String beanName = null;
+		if ( mod == Model.M111) {
+			beanName = "mod111";
+		} else if ( mod == Model.M115) {
+			beanName = "mod115";
+		} else if ( mod == Model.M123) {
+			beanName = "mod123";
+		} else if ( mod == Model.M130) {
+			beanName = "mod130";
+		} else if ( mod == Model.M131) {
+			beanName = "mod131";
+		} else if ( mod == Model.M303_RG) {
+			beanName = "vatTax";
+		} else if ( mod == Model.M303_RS) {
+			beanName = "mod303";
+		} else if ( mod == Model.M347) {
+			beanName = "mod347";
+		} else if ( mod == Model.M349) {
+			beanName = "mod349";
+		} else if ( mod == Model.M390_HF) {
+			beanName = "vatTax";
+		} else if ( mod == Model.M311) {
+			beanName = "mod311";
+		} else if ( mod == Model.M310) {
+			beanName = "mod310";
+//		} else if ( mod == Model.M390) {
+//			return "gwt_mod390";
+//		} else if ( mod == Model.M180) {
+//			return "gwt_mod180";
+//		} else if ( mod == Model.M190) {
+//			return "gwt_mod190";
+//		} else if ( mod == Model.M200) {
+//			return "gwt_mod200";
+		}
+		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
+		try {
+			controller.printModel(administration, getFiscalYear(), period);
+		} catch (ManagerBeanException e) {
+			String message = "Imposible realizar la impresión del modelo solicitado.";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message,e);
 		}
@@ -795,7 +860,6 @@ public class DashboardController implements Serializable {
 		}
 		return list;
 	}
-	
 	
 }
 

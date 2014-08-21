@@ -895,5 +895,20 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 		fm.setYear(year);
 		fm.setPeriod(period);
 		return "vatTax_form";
-	}	
+	}
+	
+	@Override
+	public void printModel(Administration administration, int year,Period period) throws ManagerBeanException {
+		onEditSearch(null);
+		Criteria criteria = getCriteria();
+		String yearAlias = getManagerBean().getFieldName(IEntityAlias.VAT_TAX_YEAR); 
+		String periodAlias = getManagerBean().getFieldName(IEntityAlias.VAT_TAX_PERIOD);
+		criteria.addEqualExpression(yearAlias,year);
+		criteria.addEqualExpression(periodAlias,period);
+		setCriteria(criteria);
+		onSearch(null);
+		getModel().setRowIndex(0);
+		onSelect(null);
+	}
+	
 }
