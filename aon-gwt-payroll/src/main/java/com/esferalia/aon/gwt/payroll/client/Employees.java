@@ -1018,6 +1018,7 @@ public class Employees extends ResizeComposite implements
 			TreeItem employeeItem = addImageItem(workplaceItem,
 					text.toString(),
 					current ? images.employee() : images.oldemployee());
+			added++;
 
 			employeeItem.setUserObject(employee);
 
@@ -1080,7 +1081,6 @@ public class Employees extends ResizeComposite implements
 				
 			}
 
-			added++;
 
 		}
 
