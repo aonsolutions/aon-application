@@ -299,8 +299,7 @@ public class SQLContractLeaveLoader {
 		for (DaysRange range : RANGES) {
 			
 			String common = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
-			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());
-			
+			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());			
 		}
 		
 		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS,	leave.getStart(), leave.getEnd());

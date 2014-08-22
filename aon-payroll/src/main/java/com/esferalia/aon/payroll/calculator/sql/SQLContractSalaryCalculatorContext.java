@@ -1288,15 +1288,11 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	public void clean(ExpressionContext exprCtx, Leave leave) {
 		leaveLoader.clean(exprCtx, leave);
-	}
-	
-	
+	}	
 
 	public SortedSet<Leave> getLeaves() {
 		return leaveLoader.getLeaves();
-	}
-	
-	
+	}	
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double x) {
 
@@ -1530,6 +1526,11 @@ public class SQLContractSalaryCalculatorContext implements
 
 	public Object br(Date startDate) throws ExpressionException, SQLException,
 			SalaryException {
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.add(Calendar.MONTH, -1);
+		startDate = c.getTime();
 
 		ISalary salary = getDbSalary(connection, startDate, SalaryType.SALARY,
 				getId());
@@ -2787,9 +2788,13 @@ public class SQLContractSalaryCalculatorContext implements
 			SalaryType type, Integer contractID) throws SQLException,
 			ExpressionException, SalaryException {
 		Date startDate = CommonUtil.getMonthFirstDay(date);
+	
 	 
 		// Se calcula un dia anterior a la fecha de baja.
-		Date endDate = new Date(date.getTime() - 86400000);
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.add(Calendar.DATE, -1);
+		Date endDate = c.getTime();
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "."
@@ -2831,7 +2836,7 @@ public class SQLContractSalaryCalculatorContext implements
 		return calculator.calculate(ctx);
 
 	}
-
+	
 	protected static ISalary getDbSalary(Connection connection, Date date,
 			SalaryType type, Integer contractID) throws SQLException {
 
