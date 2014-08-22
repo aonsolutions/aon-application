@@ -50,6 +50,7 @@ public class CashFlowForecastReport extends DataScrollerState {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String NO_BANK = "SIN BANCO ASIGNADO";
+	private static final String OTHER_BANK= "OTROS BANCOS";
 	private Date fromDate;
 	private Date toDate;
 	private boolean returnedFinanceIncluded;
@@ -121,7 +122,7 @@ public class CashFlowForecastReport extends DataScrollerState {
 			for (CashFlowBank bank: getBankList() ) {
 				if (bank.isEnabled()) {
 					banks.add(bank);
-				} 
+				}
 			}
 		}
 		return banks;
@@ -205,18 +206,26 @@ public class CashFlowForecastReport extends DataScrollerState {
 		sa.setBalance(0);
 		sa.setInitialBalance(0);
 		getBankList().add(sa);
+		boolean allEnabled = true; 
 		for (SelectItem item:banks) {
 			RegistryBank rbank = (RegistryBank) item.getValue();
 			CashFlowBank bank = new CashFlowBank();
 			bank.setId(rbank.getId());
-			String alias = StringUtils.abbreviate(rbank.getBankAlias(), 15) + " " +rbank.getBankAccount().getIban();
-			bank.setDescription( alias );
+			bank.setDescription( rbank.getBankAlias() );
 			bank.setAccount(rbank.getBankAccount().toString());
 			bank.setEnabled(rbank.isActive());
+			if (!rbank.isActive()) allEnabled = false;
 			// TODO Calcular el saldo inicial del banco.
 			bank.setBalance(0.0);
 			getBankList().add(bank);
 		}
+		sa = new CashFlowBank();
+		sa.setId(Integer.MAX_VALUE);
+		sa.setDescription(OTHER_BANK);
+		sa.setEnabled(!allEnabled);
+		sa.setBalance(0);
+		sa.setInitialBalance(0);
+		getBankList().add(sa);
 	}
 
 	public void onSearch(ActionEvent event) {
@@ -261,7 +270,59 @@ public class CashFlowForecastReport extends DataScrollerState {
 		initializeBalances(initial);
 		calculateBalance(list);
 	}
-	
+
+	public void onChangePeriod(ActionEvent event) {
+		try {
+			CashFlowReport cfr = (CashFlowReport) getDirectModel().getRowData();
+			IManagerBean bean = BeanManager.getManagerBean(CashFlowForecast.class);
+			CashFlowForecast cff = (CashFlowForecast) bean.get(cfr.getId());
+			// Cambiar la fecha desde en función de la fecha de hoy y del siguiente periodo checked, dia de pago.
+			if (cff != null) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(cfr.getDate());
+				int day = c.get(Calendar.DAY_OF_MONTH);
+				int month = c.get(Calendar.MONTH);
+				int year = c.get(Calendar.YEAR);
+				month = month + 1;
+				if (month > 11) {
+					month = 0;
+					year = year + 1;
+				}
+				boolean found = false;
+				for (int i = month; i < cff.getMonths().length; i++) {
+					if (cff.getMonths()[i]) {
+						month = i;
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					for (int i = 0; i < month; i++) {
+						if (cff.getMonths()[i]) {
+							month = i;
+							found = true;
+							year = year + 1;
+							break;
+						}
+					}
+				}
+				if (found) {
+					c.set(Calendar.DAY_OF_MONTH,day );
+					c.set(Calendar.MONTH,month);
+					c.set(Calendar.YEAR,year);
+					cff.setStartDate(c.getTime());
+					bean.update(cff);
+					onSearch(event);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al modificar el periodo de la previsión.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+			
+	}
+
 	public void onShow(ActionEvent event) {
 		try {
 			CashFlowReport cfr = (CashFlowReport) getDirectModel().getRowData();
@@ -436,7 +497,9 @@ public class CashFlowForecastReport extends DataScrollerState {
 		cfr.setMap( new HashMap<Integer, CashFlowBank>());
 		CashFlowBank cfb = new CashFlowBank();
 		int bankId = getRegistryBank(cff);
-		cfr.setBankDescription( cff.getRegistryBank()!= null?cff.getRegistryBank().getFullName():NO_BANK);
+		cfr.setBankDescription( cff.getRegistryBank()!= null?
+				(StringUtils.isBlank(cff.getRegistryBank().getAlias())?cff.getRegistryBank().getFullName():cff.getRegistryBank().getAlias())
+				:NO_BANK);
 		cfb.setId( bankId );
 		cfb.setBalance(0.0 );
 		double amount = cff.isPayment()?CommonUtil.round(cff.getAmount() * (-1)):cff.getAmount();
@@ -513,7 +576,7 @@ public class CashFlowForecastReport extends DataScrollerState {
 		if (cff.getRegistryBank()!=null && cff.getRegistryBank().getId()!=null) {
 			for (CashFlowBank bank:getBankList()) {
 				if (bank.getId().equals(cff.getRegistryBank().getId())) {
-					return cff.getRegistryBank().getId();
+					return bank.isEnabled()?cff.getRegistryBank().getId():Integer.MAX_VALUE;
 				}
 			}
 		}
@@ -526,7 +589,7 @@ public class CashFlowForecastReport extends DataScrollerState {
 		}
 		for ( CashFlowBank bank: getBankList() ) {
 			if (StringUtils.equals(bank.getAccount(), finance.getBankAccount().toString()) ) {
-				return bank.getId();
+				return bank.isEnabled()?bank.getId():Integer.MAX_VALUE;
 			}
 		}
 		return Integer.MIN_VALUE;

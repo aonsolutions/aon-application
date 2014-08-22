@@ -26,14 +26,8 @@
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
 					<aon:htmlCommandLink id="cashFlowForecastReport-excel-report"
-						value="&#160;" target="_blank" action="#{cashFlowForecastReport.onExcelReport}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="cashFlowForecastReport-report"
-						onclick="alert('No implementado. Prueba el listado a Excel'); return false;"
 						value="#{bundle.aon_listing}" target="_blank" action="#{cashFlowForecastReport.onExcelReport}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
 					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
@@ -160,15 +154,25 @@
 
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap"
 							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
-						<aon:commandLink ajaxSingle="true" reRender="cashFlowForecastData"
-							styleClass="aon-dataTable-link"
-							actionListener="#{cashFlowForecastReport.onSimulate}"
-							style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"
-							title="#{to.disabled?(bundle.finance_enable):(bundle.finance_disable)}">
-							<aon:outputText value="#{to.description}">
-								<aon:abbreviateConverter maxWidth="40"/>
-							</aon:outputText>
-						</aon:commandLink>
+						<aon:div styleClass="aon-nowrap">
+							<aon:commandLink ajaxSingle="true" reRender="cashFlowForecastData"
+								styleClass="aon-dataTable-link"
+								actionListener="#{cashFlowForecastReport.onSimulate}"
+								style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"
+								title="#{to.disabled?(bundle.finance_enable):(bundle.finance_disable)}">
+								<aon:outputText value="#{to.description}">
+									<aon:abbreviateConverter maxWidth="40"/>
+								</aon:outputText>
+							</aon:commandLink>
+							<aon:commandLink rendered="#{to.prevision}"
+								value="&#160;"
+								style="padding-left: 15px; margin-left: 5px;"
+								styleClass="aon-icon-refresh"
+								onclick="if (!confirm('#{bundle.finance_cashflow_update_date}')) return false;"
+								actionListener="#{cashFlowForecastReport.onChangePeriod}"
+								title="#{bundle.finance_cashflow_update_date_msg}">
+							</aon:commandLink>
+						</aon:div>
 					</aon:column>
 
 					<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-100"

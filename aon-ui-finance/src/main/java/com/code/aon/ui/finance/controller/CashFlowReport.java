@@ -12,6 +12,9 @@ import com.code.aon.AonVersion;
 public class CashFlowReport implements Comparable<CashFlowReport>, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	private static final int BEFORE = -1;
+	private static final int EQUAL = 0;
+	private static final int AFTER = 1;
 	
 	private Integer id; // ID del vtos. o de la previsión.
 	private Date date;
@@ -95,7 +98,9 @@ public class CashFlowReport implements Comparable<CashFlowReport>, Serializable 
 	public void setMap(Map<Integer, CashFlowBank> map) {
 		this.map = map;
 	}
-
+	public boolean isPrevision() {
+		return ("Pr.".equals(getType()));
+	}
 	public double getAmount() {
 		return amount;
 	}
@@ -118,16 +123,23 @@ public class CashFlowReport implements Comparable<CashFlowReport>, Serializable 
 		}
 		return 0.0;
 	}
+	
 	@Override
 	public int compareTo(CashFlowReport cfr) {
+		
+		if (this == cfr) return EQUAL;
+		
 		if (cfr == null) {
-			return 1;	
+			return BEFORE;	
+		}
+		if (getDate() == null && cfr.getDate() == null) {
+			return EQUAL;
 		}
 		if (getDate() == null) {
-			return -1;
+			return BEFORE;
 		}
 		if (cfr.getDate() == null) {
-			return -1;	
+			return AFTER;	
 		}
 		return getDate().compareTo(cfr.getDate());
 	}
