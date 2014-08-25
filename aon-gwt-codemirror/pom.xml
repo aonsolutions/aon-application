@@ -34,7 +34,6 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
-					<include>**/public/**</include>
 					<include>**/*.gwt.xml</include>
 				</includes>
 			</resource>

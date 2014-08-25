@@ -158,6 +158,15 @@ public class CodeMirror extends JavaScriptObject {
 			return this;
 		}-*/;
 
+		public native MarkOptions setInclusiveLeft(boolean inclusiveLeft) /*-{
+			this.inclusiveLeft = inclusiveLeft;
+			return this;
+		}-*/;
+
+		public native MarkOptions setInclusiveRight(boolean inclusiveRight) /*-{
+			this.inclusiveRight = inclusiveRight;
+			return this;
+		}-*/;
 	}
 
 	public static final class ChangeEvent extends JavaScriptObject {
@@ -359,6 +368,10 @@ public class CodeMirror extends JavaScriptObject {
 	 */
 	public final native void setValue(String value) /*-{
 		this.getDoc().setValue(value);
+	}-*/;
+
+	public final native void setSize(int width, int height) /*-{
+		this.setSize(width, height);
 	}-*/;
 
 	/**

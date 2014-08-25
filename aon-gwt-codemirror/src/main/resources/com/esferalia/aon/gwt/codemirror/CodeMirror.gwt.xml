@@ -3,7 +3,7 @@
 	<inherits name="com.google.gwt.core.Core"/>
 
 	<!-- CodeMirror Syntax Highlighting -->
-    <script src="codemirror/lib/codemirror.js"/>
+    <!--  script src="codemirror/lib/codemirror.js"/-->
 
 	<!-- stylesheets for codemirror, for manchester syntax and show-hint -->
 	<stylesheet src="codemirror/lib/codemirror.css"/>

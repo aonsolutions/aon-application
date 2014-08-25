@@ -54,25 +54,19 @@ class Showcase implements EntryPoint {
 		payrollCodeArea = new CodeArea();
 		payrollCodeArea.setMode(CLikeConfiguration.create()
 				.setKeywords(getKeywords()).setBuiltin(getBuiltin()).setName("text/x-java"));
-
+		
 
 		// Create the UI defined in Showcase.ui.xml.
 		RootLayoutPanel.get().add(binder.createAndBindUi(this));
 		//javaCodeArea.addKeyMap("Ctrl-Space", "autocomplete");
 
-		payrollCodeArea.setValue("( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_PATERNIDAD) : DIAS_PATERNIDAD ) * BASE_REGULADORA");
+		payrollCodeArea.addDocumentChangeHandler(filterButton.getValue()  ? aonFilter : aonMarker );
+
+		payrollCodeArea.setValue("( COTIZACION_IT == \"MENSUAL\" ? 30 - ( /*re1ad-only*/DIAS_MES - DIAS_PATERNIDAD/**/) : /*user*/DIAS_PATERNIDAD/**/ ) * BASE_REGULADORA");
 
 		//CodeMirror.defineMode("aon", AONOverlayMode.create() );
 		//payrollCodeArea.addOverlay("aon");
 		
-		payrollCodeArea.addDocumentChangeHandler(filterButton.getValue()  ? aonFilter : aonMarker );
-		payrollCodeArea.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				Window.alert("onValueChange");
-			}
-		});
 	}
 	
 	@UiHandler({"markerButton"})

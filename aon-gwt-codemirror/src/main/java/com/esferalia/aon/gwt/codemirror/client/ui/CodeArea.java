@@ -67,7 +67,10 @@ public class CodeArea extends TextArea {
 		codeMirror.addOverlay(mode);
 	}
 	
-	
+	public final void setSize(int width, int height) {
+		codeMirror.setSize(width, height);
+	}
+
 	public final void addKeyMap(String key, String action) {
 		codeMirror.addKeyMap(key, action);
 	}
@@ -108,6 +111,7 @@ public class CodeArea extends TextArea {
 		codeMirror = CodeMirror.fromTextArea(TextAreaElement.as(getElement()), config);
 		
 		codeMirror.getWrapperElement().addClassName(getStyleName());
+
 		
 		addDocumentChangeHandler(new DocumentChangeHandler() {
 			@Override

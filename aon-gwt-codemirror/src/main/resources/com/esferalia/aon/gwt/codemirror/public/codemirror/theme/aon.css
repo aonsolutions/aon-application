@@ -3,14 +3,14 @@
 	border: 1px solid #D8D37A;
 	border-left-width: 0px ;
 	border-right-width: 0px ;
-	background-color: #FFFFEB;
+	background-color: hsla(57, 65%, 75%, 0.3);
 }
 
 .cm-mark-read-only{
 	border: 1px solid #C4C4C4;
 	border-left-width: 0px ;
 	border-right-width: 0px ;
-	background-color:  #F2F2F2;
+	background-color:  hsla(0, 0%, 85%, 0.3);
 }
 
 .cm-mark-user-end {

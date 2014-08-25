@@ -45,12 +45,12 @@ public class AONMarker extends DocumentChangeHandler {
 				.exec(expression)) {
 			int index = result.getIndex();
 			String label = result.getGroup(LABEL_GROUP);
-			_handleNoMatch(doc, expression, prevIndex, index -1, lastLabel, label);
+			handleNoMatch(doc, expression, prevIndex, index -1, lastLabel, label);
 			prevIndex = regExp.getLastIndex();
 			handleMatch(doc, expression, result);
 			lastLabel = label;
 		}
-		_handleNoMatch(doc, expression, prevIndex, expression.length(), lastLabel, null );
+		handleNoMatch(doc, expression, prevIndex, expression.length(), lastLabel, null );
 	}
 
 	// ------------------------------------------------------------------------
@@ -104,10 +104,6 @@ public class AONMarker extends DocumentChangeHandler {
 	}
 
 
-	private void _handleNoMatch(Doc doc, String expression, int start, int end, String prevLabel, String nextLabel) {
-		if ( start <= end )
-			handleNoMatch(doc, expression, start, end, prevLabel, nextLabel);
-	}
 
 	// ------------------------------------------------------------------------
 
