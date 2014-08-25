@@ -3,7 +3,7 @@
 # Creation Date: 25/08/2014 
 
 
-ALTER TABLE `domain_gserviceaccount` ADD COLUMN `limit` DOUBLE NULL DEFAULT 102400  AFTER `size` ;
+ALTER TABLE `domain_gserviceaccount` ADD COLUMN `limit` DOUBLE NULL DEFAULT 102400.00  AFTER `size` ;
 
 UPDATE `db_version` SET `version_number` = '8.0.2';
 
