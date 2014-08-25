@@ -17,7 +17,7 @@ import org.apache.commons.collections.iterators.FilterIterator;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;

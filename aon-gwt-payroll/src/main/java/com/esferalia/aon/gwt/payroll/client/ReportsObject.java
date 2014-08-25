@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.ReportData.Column;

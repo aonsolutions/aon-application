@@ -9,9 +9,13 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -85,10 +89,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	public void onModuleLoad() {
 
 		// Inject rich styles.
-		GWT.<MainEntryPoint.GWTResources> create(
-				MainEntryPoint.GWTResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.AonResources> create(
-				MainEntryPoint.AonResources.class).css().ensureInjected();
+		GWT.<GWTResources> create(
+				GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(
+				AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in MainCalculator.ui.xml.
 		Widget ui = binder.createAndBindUi(this);

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.client;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import static com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.BOUND_TO_SELECTION;
 
@@ -27,8 +27,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -39,7 +37,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
-import com.google.web.bindery.requestfactory.vm.impl.Deobfuscator;
 
 public class ComboBox<T> extends ListBox implements HasData<T> {
 
@@ -98,7 +95,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		}
 
 		@Override
-		@Source({ CellList.Style.DEFAULT_CSS, "comboBoxDropDownCellList.css" })
+		@Source({ CellList.Style.DEFAULT_CSS, "../css/comboBoxDropDownCellList.css" })
 		DropDownListStyle cellListStyle();
 
 	}
@@ -324,9 +321,8 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		throw new UnsupportedOperationException();
 	}
 
-	// ------------------------------------------------------- protected methods
 
-	void onResizeDropDownPopup() {
+	public void onResizeDropDownPopup() {
 
 		if (dropDownPopupPanel.isShowing())
 			return;
@@ -350,12 +346,14 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		popupEl.getStyle().clearPosition();
 	}
 
-	void onResizeDropDownList(int dropDownListWidth) {
+	// ------------------------------------------------------- protected methods
+
+	protected void onResizeDropDownList(int dropDownListWidth) {
 		setWidth(String.valueOf(dropDownListWidth + 2 /* TODO: border-width */)
 				+ "px");
 	}
 
-	AbstractFormatSafeHtmlRenderer<T> getFormatSafeHtmlRenderer() {
+	protected AbstractFormatSafeHtmlRenderer<T> getFormatSafeHtmlRenderer() {
 		return (AbstractFormatSafeHtmlRenderer<T>) dropDowncell.getRenderer();
 	}
 

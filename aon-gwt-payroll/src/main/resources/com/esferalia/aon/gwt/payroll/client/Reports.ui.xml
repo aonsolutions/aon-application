@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:style>
 		.editor {
@@ -52,7 +53,7 @@
 
 								<g:ListBox ui:field='reportListBox' />
 
-								<a:MonthListBox ui:field='monthListBox' />
+								<aon:MonthListBox ui:field='monthListBox' />
 									
 								</g:HTMLPanel>
 						</g:HorizontalPanel>

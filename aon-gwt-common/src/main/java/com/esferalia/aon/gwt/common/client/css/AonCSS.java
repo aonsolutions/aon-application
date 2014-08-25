@@ -194,10 +194,70 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-mod200-inner-group-body")
 	String  aonMod200InnerGroupBody();
 
-
 	@ClassName("aon-clickable")
 	String aonClickable();
 	
+	@ClassName("aon-icon-error")
+	String aonIconError();
 	
+	@ClassName("aon-icon-changed")
+	String aonIconChanged();
+
+	@ClassName("aon-icon-fx")
+	String aonIconFx();
+
+	@ClassName("aon-icon-collapseAll")
+	String aonIconCollapseAll();
+
+	@ClassName("aon-icon-expandAll")
+	String aonIconExpandAll();
+
+	@ClassName("aon-icon-irpfPreview")
+	String aonIconIrpfPreview();
+
+	@ClassName("aon-icon-pdfPreview")
+	String aonIconPdfPreview();
+
+	@ClassName("aon-icon-undo")
+	String aonIconUndo();
+
+	@ClassName("aon-icon-redo")
+	String aonIconRedo();
+
+	@ClassName("aon-icon-warn")
+	String aonIconWarn();
+
+	@ClassName("aon-icon-minimize")
+	String aonIconMinimize();
+
+	@ClassName("aon-icon-maximize")
+	String aonIconMaximize();
+
+	@ClassName("aon-icon-view")
+	String aonIconView();
+
+	@ClassName("aon-icon-rowSelector-Changed")
+	String aonIconRowSelectorChanged();
+
+	@ClassName("aon-icon-rowSelector-S")
+	String aonIconRowSelectorSystem();
 	
+	@ClassName("aon-icon-rowSelector-C")
+	String aonIconRowSelectorAgreement();
+	/*
+	@ClassName("aon-dataTable-cell-highlight")
+	String aonDataTableCellHighlight ();
+
+	@ClassName("aon-dataTable-cell-highlight-top")
+	String aonDataTableCellHighlightTop();
+
+	@ClassName("aon-dataTable-row-current")
+	String aonDataTableRowCurrent ();
+
+	@ClassName("aon-dataTable-row-highlight")
+	String aonDataTableRowHighlight ();
+
+	@ClassName("aon-dataTable-row-highlight-top")
+	String aonDataTableRowHighlightTop ();
+	*/
 }

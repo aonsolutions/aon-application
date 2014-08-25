@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Item;
@@ -15,7 +17,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -48,15 +49,6 @@ public class MetaData extends ResizeComposite {
 
 	}
 
-	interface Images extends ClientBundle {
-		ImageResource concept();
-
-		ImageResource payment();
-
-		ImageResource deduction();
-
-		ImageResource segsocial();
-	}
 
 	interface Templates extends SafeHtmlTemplates {
 		@SafeHtmlTemplates.Template("<img src=\"{0}\"/>")

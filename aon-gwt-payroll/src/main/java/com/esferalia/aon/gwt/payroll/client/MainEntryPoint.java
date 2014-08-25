@@ -9,123 +9,16 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.resources.client.ImageResource;
 
 public class MainEntryPoint implements EntryPoint {
 
-	interface GWTResources extends ClientBundle {
+
+	interface CodeMirrorResources extends ClientBundle {
 		@NotStrict
-		@Source("gwt.css")
+		@Source("codemirror.css")
 		CssResource css();
 
-		@Source("warn.png")
-		ImageResource warn();
-
-		@Source("aon-menuBar.png")
-		ImageResource menuBar();
-
-		@Source("aon-tabBar.png")
-		ImageResource tabBar();
-
-		@Source("checkyes.png")
-		ImageResource checkYes();
-
-		@Source("button.png")
-		ImageResource button();
-
-		@Source("public.png")
-		ImageResource publiC();
-
-		@Source("private.png")
-		ImageResource privatE();
-
-		@Source("protected.png")
-		ImageResource protecteD();
-
-	}
-
-	interface AonResources extends ClientBundle {
-		@NotStrict
-		@Source("aon.css")
-		CssResource css();
-
-		ImageResource x();
-
-		ImageResource f();
-
-		ImageResource fx();
-
-
-		ImageResource lamp();
-
-		ImageResource blank();
-
-		ImageResource expand();
-		
-		ImageResource collapse();
-		
-		ImageResource tooltip_top();
-
-		@Source("draft.png")
-		ImageResource draft();
-
-		@Source("salaries.png")
-		ImageResource salaries();
-
-		ImageResource aet();
-
-		@Source("ine.png")
-		ImageResource ine();
-
-		@Source("workplace.png")
-		ImageResource workplace();
-
-		@Source("columnchart.png")
-		ImageResource columnchart();
-
-		@Source("linechart.png")
-		ImageResource linechart();
-
-		@Source("employee.png")
-		ImageResource employee();
-		
-		@Source("card.png")
-		ImageResource card();
-
-		@Source("agreement.png")
-		ImageResource agreement();
-
-		@Source("month_changed.png")
-		ImageResource month_changed();
-
-		@Source("warn.png")
-		ImageResource warn();
-
-		@Source("changed.png")
-		ImageResource changed();
-
-		@Source("clipboard.png")
-		ImageResource clipboard();
-
-		ImageResource payment();
-
-		ImageResource deduction();
-
-		ImageResource segsocial();
-
-		ImageResource segsocial_small();
-
-		ImageResource aon_icon_row_s(); // TODO: change this name?
-
-		ImageResource aon_icon_row_c(); // TODO: change this name?
-
-		ImageResource aon_icon_row_changed(); // TODO: change this name?
-
-		@Source("rich-calendar-button.png")
-		ImageResource rich_calendar_button(); // TODO: change this name?
-
-	}
-
+	}	
 	@Override
 	public void onModuleLoad() {
 		ensureGwtSelector();

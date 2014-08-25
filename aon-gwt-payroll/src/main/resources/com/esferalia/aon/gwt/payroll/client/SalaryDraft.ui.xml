@@ -3,6 +3,8 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
+
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle'>
 		.editor {
 			
@@ -79,19 +81,11 @@
 			color: red !important;
 		}
 
-		@sprite .cell-warn {
-			width: auto; 
-			height: auto;
+		.cell-warn {
 			color: orange;
-			gwt-image: 'warn';
-			padding-left: 14px;
 		}
 
-		@sprite .cell-changed {
-			width: auto; 
-			height: auto;
-			gwt-image: 'changed';
-			padding-left: 14px;
+		.cell-changed {
 		}
 
 		.span-cell-table {
@@ -113,55 +107,9 @@
 			vertical-align: middle;
 		}
 		
-		@sprite .irpfPreviewButton {
-			width: auto; 
-			height: auto;
-			gwt-image: 'aet';
-			background-position: left center;
-		}
-
-		@sprite .collapseAllButton {
-			float: right;
-			gwt-image: 'collapseall';
-		}
-
-		@sprite .expandAllButton {
-			float: right;
-			gwt-image: 'expandall';
-		}
-		@sprite .pdfPreviewButton {
-			width: auto; 
-			height: auto;
-			gwt-image: 'pdfPreview';
-			background-position: left center;
-		}
-		
-		@sprite .fxButton {
-			gwt-image: 'fx';
-			background-position: left center;
-		}
-
-		@sprite .redoButton {
-			gwt-image: 'redo';
-			background-position: left center;
-		}
-
-		@sprite .undoButton {
-			gwt-image: 'undo';
-			background-position: left center;
-		}
 		
 	</ui:style>
 
-	<ui:image field='fx' src='fx.png' />
-	<ui:image field='aet' src='aet.png' />
-	<ui:image field='redo' src='redo.png' />
-	<ui:image field='undo' src='undo.png' />
-	<ui:image field='warn' src='warn.png' />
-	<ui:image field='changed' src='changed.png' />
-	<ui:image field='expandall' src='expandall.png' />
-	<ui:image field='collapseall' src='collapseall.png' />
-	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
 
@@ -192,10 +140,10 @@
 								<g:Button ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" />
 								<g:Button ui:field='printPreviewButton'
-									styleName='aon-finding-toolbar-item {style.pdfPreviewButton}'
+									styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
 									text="Vista Preliminar" />
 								<g:Button ui:field='irpfPreviewButton'
-									styleName='aon-finding-toolbar-item {style.irpfPreviewButton}'
+									styleName='aon-finding-toolbar-item {res.css.aonIconIrpfPreview}'
 									text="IRPF" />
 								<e:SalarySelect ui:field="salarySelect" />
 								<g:ListBox ui:field="zoomListBox" />
@@ -221,11 +169,11 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field="fxButton"
-									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
+									styleName='aon-finding-toolbar-item {res.css.aonIconFx}' enabled="false" />
 								<g:Button ui:field="undoButton"
-									styleName='aon-finding-toolbar-item {style.undoButton}' />
+									styleName='aon-finding-toolbar-item {res.css.aonIconUndo}' />
 								<g:Button ui:field='redoButton'
-									styleName="aon-finding-toolbar-item {style.redoButton}" />
+									styleName="aon-finding-toolbar-item {res.css.aonIconRedo}" />
 								<g:ListBox ui:field='datesListBox'>
 									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes</g:item>
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>

@@ -7,8 +7,9 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.esferalia.aon.gwt.payroll.client.ComboBox.Resources;
-import com.esferalia.aon.gwt.payroll.client.ComboBox.Resources.DropDownListStyle;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ComboBox.Resources;
+import com.esferalia.aon.gwt.common.client.widget.ComboBox.Resources.DropDownListStyle;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;

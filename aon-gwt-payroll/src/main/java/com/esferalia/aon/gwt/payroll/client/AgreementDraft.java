@@ -19,12 +19,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateTimeFormatException;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmptyStringException;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasDescription;
@@ -178,8 +180,6 @@ public class AgreementDraft extends ResizeComposite implements
 
 		String highlight();
 
-		@ClassName("icon-view")
-		String iconView();
 	}
 
 	interface Binder extends UiBinder<Widget, AgreementDraft> {
@@ -1129,7 +1129,6 @@ public class AgreementDraft extends ResizeComposite implements
 	void onFxClicked(MouseDownEvent event) {
 		FxDialog fxDialog = new FxDialog(contextProvider);
 		fxDialog.setExpression(fxhasValue.getValue());
-		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
 		fxDialog.center();
 		fxDialog.show();
 	}
@@ -2857,7 +2856,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private Button getViewButton() {
 		final Button viewButton = new Button();
-		viewButton.setStyleName(style.iconView());
+		viewButton.setStyleName(AON.AON_ICON_VIEW);
 		viewButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
 		class HideVariableCommad implements ScheduledCommand {

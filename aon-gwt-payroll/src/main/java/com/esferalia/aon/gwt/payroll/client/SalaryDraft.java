@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Employee.Dismissal;
@@ -1535,9 +1536,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		@ClassName("value-changed")
 		String valueChanged();
 
-		String expandAllButton();
-
-		String collapseAllButton();
 	}
 
 	interface Binder extends UiBinder<Widget, SalaryDraft> {
@@ -2143,7 +2141,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	void onFxHelperMouseDown(MouseDownEvent event) {
 		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
 		fxDialog.setExpression(fxhasValue.getValue());
-		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
 		fxDialog.center();
 		fxDialog.show();
 
@@ -2326,8 +2323,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		eventStyles.put(Event.Type.DEBUG, new String[] { "", "" });
 		eventStyles.put(Event.Type.ERROR, new String[] { "aon-icon-exception",
 				myStyle.textError() });
-		eventStyles.put(Event.Type.WARNING, new String[] { myStyle.cellWarn(),
-				myStyle.textWarn() });
+		eventStyles.put(Event.Type.WARNING, new String[] { AON.AON_ICON_WARN,
+				myStyle.cellWarn(), myStyle.textWarn() });
 	}
 
 	// -------------------------------------------------------------------------
@@ -2878,6 +2875,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		if (percentVariable instanceof UndefinedDeductionVariable) {
 			Label warnLabel = new InlineHTML("&nbsp;");
+			warnLabel.addStyleName(AON.AON_ICON_WARN);
 			warnLabel.addStyleName(style.cellWarn());
 			paymentsTable.setWidget(row, 0, warnLabel);
 			return;
@@ -2893,6 +2891,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
 		}
 		Label changedLabel = new InlineHTML("&nbsp;");
+		changedLabel.addStyleName(AON.AON_ICON_CHANGED);
 		changedLabel.addStyleName(style.cellChanged());
 		paymentsTable.setWidget(row, 0, changedLabel);
 	}
@@ -3140,8 +3139,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		expandPanel.add(expandLabel);
 		final Button expandButton = new Button();
 		expandButton.setTabIndex(Short.MAX_VALUE);
-		expandButton.setStyleName(collapse ? style.collapseAllButton() : style
-				.expandAllButton());
+		expandButton.setStyleName(collapse ? AON.AON_ICON_COLLAPSEALL
+				: AON.AON_ICON_EXPANDALL);
 		expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		expandPanel.add(expandButton);
 		// this code, is for make this row's height equal to rows with variables
@@ -3169,8 +3168,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			private void expand() {
 				List<Variable> contextCopy = new ArrayList<Variable>(context);
 				dumpContext(contextCopy, expandScope, false, null);
-				expandButton.removeStyleName(style.expandAllButton());
-				expandButton.setStyleName(style.collapseAllButton(), true);
+				expandButton.removeStyleName(AON.AON_ICON_EXPANDALL);
+				expandButton.setStyleName(AON.AON_ICON_COLLAPSEALL, true);
 				expandLabel.setText("Ocultar variables del "
 						+ SCOPE_DESCRIPTIONS.get(expandScope));
 				SalaryDraft.this.scope = expandScope;
@@ -3182,8 +3181,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				for (int i = contextTable.getCellCount(row) - 1; i > col; i--)
 					contextTable.removeCell(row, i);
 
-				expandButton.removeStyleName(style.collapseAllButton());
-				expandButton.setStyleName(style.expandAllButton(), true);
+				expandButton.removeStyleName(AON.AON_ICON_COLLAPSEALL);
+				expandButton.setStyleName(AON.AON_ICON_EXPANDALL, true);
 				expandLabel.setText("Mostrar variables del "
 						+ SCOPE_DESCRIPTIONS.get(expandScope));
 				SalaryDraft.this.scope = SCOPE_STEPS.get(SCOPE_STEPS
@@ -3301,8 +3300,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		label.setStyleName(style.cellLabel());
 		if (variable instanceof UndefinedVariable) {
+			label.setStyleName(AON.AON_ICON_WARN, true);
 			label.setStyleName(style.cellWarn(), true);
 		} else if (variable.getScope() == Scope.SALARY) {
+			label.setStyleName(AON.AON_ICON_CHANGED, true);
 			label.setStyleName(style.cellChanged(), true);
 		}
 

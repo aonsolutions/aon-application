@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
+
 public class ITData implements Serializable{
 
 	private static final long serialVersionUID = -8223289513867055037L;

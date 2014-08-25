@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
 
 
@@ -82,7 +84,7 @@
 								<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
 							</td>
 							<td class="aon-panelGrid-even aon-width-all aon-height-all">
-								<aon:SelectDataGrid nameLabel="Empresa"
+								<payroll:SelectDataGrid nameLabel="Empresa"
 									ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
 							</td>
 						</tr>
@@ -102,7 +104,7 @@
 						<g:header>
 							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
 						</g:header>
-						<aon:ResultsPanel ui:field="resultsPanel" />
+						<payroll:ResultsPanel ui:field="resultsPanel" />
 					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>

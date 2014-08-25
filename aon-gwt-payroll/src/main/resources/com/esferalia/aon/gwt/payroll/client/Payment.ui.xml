@@ -54,29 +54,7 @@
 		resize: none;
 	}
 	
-	@sprite .fxButton {
-		margin: 0px;
-		padding: 0px;
-		border: 0px;
-		cursor: pointer;
-		gwt-image: 'fx';
-		background-position: left center;
-	}
-	
-	@sprite .undoButton {
-		margin: 0px;
-		padding: 0px;
-		border: 0px;
-		cursor: pointer;
-		gwt-image: 'undo';
-		background-position: left center;
-	}
 	</ui:Style>
-
-	<ui:image field='fx' src='fx.png' />
-	<ui:image field='undo' src='undo.png' />
-	<ui:image field='redo' src='redo.png' />
-
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.Payment.*" />
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
@@ -154,7 +132,7 @@
 						styleName="aon-width-all">
 						<g:TextBox ui:field="paymentTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxPaymentButton" styleName="{style.fxButton}" />
+							<g:Button ui:field="fxPaymentButton" styleName="aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetPaymentButton" styleName="aon-lookupButton-clear"
@@ -178,7 +156,7 @@
 						<g:Label>&nbsp;</g:Label>
 						<g:TextBox ui:field="taxTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxTaxButton" styleName="{style.fxButton}" />
+							<g:Button ui:field="fxTaxButton" styleName="aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetTaxButton" styleName="aon-lookupButton-clear"
@@ -203,7 +181,7 @@
 						<g:TextBox ui:field="quoteTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}"/>
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
 							<g:Button ui:field="fxQuoteButton"
-								styleName="aon-editDataTable-button {style.fxButton}" />
+								styleName="aon-editDataTable-button aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetQuoteButton" styleName="aon-lookupButton-clear"

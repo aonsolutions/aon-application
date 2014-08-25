@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.client.AON.format;
+import static com.esferalia.aon.gwt.common.client.AON.format;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
@@ -145,6 +147,7 @@ public class FxDialog extends CustomDialog {
 
 		@Override
 		public void onFailure(Throwable caught) {
+			cleanError();
 			cleanResult();
 			cleanContext();
 			// Convenient way to find out which exception was thrown.
@@ -234,9 +237,6 @@ public class FxDialog extends CustomDialog {
 		}
 	}
 	
-	private interface IEditState {
-		void change();
-	}
 	
 	
 	
@@ -266,7 +266,7 @@ public class FxDialog extends CustomDialog {
 	InlineHTML descriptionLabel;
 
 	@UiField
-	ExpressionArea expressionCodeArea;
+	ExpressionCodeArea expressionCodeArea;
 
 	@UiField
 	Button editButton;
@@ -280,7 +280,6 @@ public class FxDialog extends CustomDialog {
 
 	private boolean accepted;
 	
-	private IEditState editState;
 
 	private IContextProvider contextProvider;
 	private ContextDescriptor contextDescriptor;
@@ -310,6 +309,7 @@ public class FxDialog extends CustomDialog {
 		contextProvider.getContext(contextCallback);
 		// evalExpression(0);
 		super.show();
+		
 	}
 
 	public boolean isAccepted() {
@@ -343,7 +343,7 @@ public class FxDialog extends CustomDialog {
 
 	@UiHandler("editButton")
 	void onEditButtonClick(ClickEvent event) {
-		editState.change();
+		expressionCodeArea.setAdvancedMode(!expressionCodeArea.getAdvancedMode());
 	}
 
 	@UiHandler("categoryListBox")
@@ -387,17 +387,18 @@ public class FxDialog extends CustomDialog {
 		StringBuffer expressionBuffer = new StringBuffer(expression);
 		expressionBuffer.insert(curPos, varName + var.getSyntax());
 		expressionCodeArea.setValue(expressionBuffer.toString());
-		onExpressionKeyUp(null);
 		evalExpression(0); // eval now ???
 		
 	}
 
 	@UiHandler({"expressionCodeArea"})
-	void onExpressionKeyUp(KeyUpEvent event) {
+	void onExpressionChange(ValueChangeEvent<String> event) {
 		evalExpression(1000);
 	}
 
-
+	
+	
+	
 	// ---------------------------------------------------------------- Private
 
 	private void evalExpression(int milliseconds) {
@@ -492,6 +493,7 @@ public class FxDialog extends CustomDialog {
 
 		Label label = new Label(name);
 		label.setTitle(getDescription(name));
+		label.addStyleName(AON.AON_ICON_WARN);
 		label.addStyleName(style.variableWarn());
 		label.addStyleName(style.variableLabel());
 

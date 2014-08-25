@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {

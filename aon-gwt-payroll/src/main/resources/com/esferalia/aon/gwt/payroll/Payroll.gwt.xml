@@ -5,8 +5,16 @@
 
 
 	<inherits name="com.google.gwt.i18n.I18N" />
+
+	
+	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	
 	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>
+	
+	<!-- stylesheets eclipse them -->
+	<stylesheet src="codemirror/theme/eclipse.css"/>
+	<!-- stylesheets aon them -->
+	<stylesheet src="codemirror/theme/aon.css"/>
 
 	<!-- Chart Tools -->
 	<inherits name='com.google.gwt.visualization.Visualization'/>

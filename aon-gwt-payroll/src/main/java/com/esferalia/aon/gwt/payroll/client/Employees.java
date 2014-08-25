@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
@@ -19,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.CollectionUtils;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
@@ -500,6 +501,7 @@ public class Employees extends ResizeComposite implements
 
 	@Override
 	public void onScroll(ScrollEvent event) {
+		
 		// If scrolling up, ignore the event.
 		int oldScrollPos = lastScrollPos;
 		lastScrollPos = scrollPanel.getVerticalScrollPosition();
@@ -1018,6 +1020,7 @@ public class Employees extends ResizeComposite implements
 			TreeItem employeeItem = addImageItem(workplaceItem,
 					text.toString(),
 					current ? images.employee() : images.oldemployee());
+			added++;
 
 			employeeItem.setUserObject(employee);
 
@@ -1080,10 +1083,8 @@ public class Employees extends ResizeComposite implements
 				
 			}
 
-			added++;
 
 		}
-
 		if (added == limit) {
 			int last = workplaceItem.getChildCount() - 1;
 			TreeItem employeeCentinel = workplaceItem.getChild(last

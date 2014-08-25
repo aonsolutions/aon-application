@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -11,7 +13,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -31,20 +32,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Agreements extends ResizeComposite {
 
-	interface Images extends ClientBundle {
-		ImageResource agreement();
-
-		ImageResource agreement_warn();
-
-		ImageResource agreement_error();
-
-		ImageResource agreement_changed();
-
-		ImageResource agreement_changed_warn();
-
-		ImageResource agreement_changed_error();
-
-	}
 
 	private static final Images IMAGES = GWT.create(Images.class);
 

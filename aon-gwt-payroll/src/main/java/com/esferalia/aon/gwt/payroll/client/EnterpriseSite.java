@@ -4,23 +4,21 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 
 /**
  * @author rtrepiana
@@ -28,56 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
-	interface GWTResources extends ClientBundle {
-		@NotStrict
-		@Source("gwt.css")
-		CssResource css();
-
-		@Source("warn.png")
-		ImageResource warn();
-
-		@Source("changed.png")
-		ImageResource changed();
-
-		@Source("aon-menuBar.png")
-		ImageResource menuBar();
-
-		@Source("aon-tabBar.png")
-		ImageResource tabBar();
-
-		@Source("checkyes.png")
-		ImageResource checkYes();
-
-		@Source("button.png")
-		ImageResource button();
-
-		@Source("public.png")
-		ImageResource publiC();
-
-		@Source("private.png")
-		ImageResource privatE();
-
-		@Source("protected.png")
-		ImageResource protecteD();
-
-		@Source("ine.png")
-		ImageResource ine();
-
-		@Source("workplace.png")
-		ImageResource workplace();
-
-		@Source("employee.png")
-		ImageResource employee();
-		
-		@Source("card.png")
-		ImageResource card();
-
-		@Source("agreement.png")
-		ImageResource agreement();
-		
-		ImageResource blank();
-		
-	}
 
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {
 	}
@@ -112,8 +60,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	public void onModuleLoad() {
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.AonResources> create(
-				MainEntryPoint.AonResources.class).css().ensureInjected();
+		GWT.<AonResources> create(
+				AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);

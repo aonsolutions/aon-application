@@ -17,27 +17,15 @@
 			height:100%;
 		}
 		
-		@sprite .minimizeButton {
-			float: right;
-			gwt-image: 'minimize';
-		}
-		
-		@sprite .maximizeButton {
-			float: right;
-			gwt-image: 'maximize';
-		}
 	</ui:style>
 
-
-	<ui:image field='minimize' src='minimize.png' />
-	<ui:image field='maximize' src='maximize.png' />
 
 
 	<g:AbsolutePanel >
 		<g:FlowPanel styleName="{style.minimizeBar} gwt-MenuBar-horizontal">
-			<g:Button styleName="gwt-MenuItem {style.maximizeButton}"
+			<g:Button styleName="gwt-MenuItem aon-icon-maximize"
 				ui:field="maximizeButton"></g:Button>
-			<g:Button styleName="gwt-MenuItem {style.minimizeButton}"
+			<g:Button styleName="gwt-MenuItem aon-icon-minimize"
 				ui:field="minimizeButton"></g:Button>
 		</g:FlowPanel>
 		<g:at top='0' left='0'>

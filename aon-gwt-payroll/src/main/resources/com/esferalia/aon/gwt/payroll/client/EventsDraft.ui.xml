@@ -28,28 +28,7 @@
 			background-color: #E2F1F5;
 		}
 		
-		@sprite .redoButton {
-			gwt-image: 'redo';
-			background-position: left center;
-		}
-		
-		@sprite .undoButton {
-			gwt-image: 'undo';
-			background-position: left center;
-		}
-		
-		@sprite .pdfPreviewButton {
-			width: auto;
-			height: auto;
-			gwt-image: 'pdfPreview';
-			background-position: left center;
-		}
 	</ui:style>
-
-	<ui:image field='redo' src='redo.png' />
-	<ui:image field='undo' src='undo.png' />
-	<ui:image field='warn' src='warn.png' />
-	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
 
@@ -75,10 +54,10 @@
 								<g:Button ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
 								<g:Button ui:field="undoButton"
-									styleName='aon-finding-toolbar-item {style.undoButton}'
+									styleName='aon-finding-toolbar-item aon-icon-undo'
 									enabled="false" />
 								<g:Button ui:field='redoButton'
-									styleName="aon-finding-toolbar-item {style.redoButton}"
+									styleName="aon-finding-toolbar-item aon-icon-redo"
 									enabled="false" />
 								<g:InlineLabel styleName="aon-finding-toolbar-item aon-finding-toolbar-item-no-border">COPIAR : </g:InlineLabel>
 								<g:ListBox ui:field="copyDateRangeListBox" />

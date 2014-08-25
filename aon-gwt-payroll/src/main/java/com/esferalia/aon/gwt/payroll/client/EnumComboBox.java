@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.widget.ComboBox;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.i18n.client.HasDirection.Direction;
@@ -70,7 +71,7 @@ public class EnumComboBox<T> extends ComboBox<T> {
 	// ------------------------------------------------------------------------
 	
 	@Override
-	void onResizeDropDownList(int dropDownListWidth) {
+	protected void onResizeDropDownList(int dropDownListWidth) {
 	}
 	
 	// ------------------------------------------------------------------------

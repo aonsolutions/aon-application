@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
+
 
 
 public class Events implements Serializable {

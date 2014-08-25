@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -7,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
 
 public class MainSystem extends MainEntryPoint implements MetaData.Listener{
 
@@ -31,10 +33,10 @@ public class MainSystem extends MainEntryPoint implements MetaData.Listener{
 	public void onModuleLoad() {
 
 		// Inject rich styles.
-		GWT.<MainEntryPoint.GWTResources> create(
-				MainEntryPoint.GWTResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.AonResources> create(
-				MainEntryPoint.AonResources.class).css().ensureInjected();
+		GWT.<GWTResources> create(
+				GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(
+				AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in MainSystem.ui.xml.
 		Widget ui = binder.createAndBindUi(this);

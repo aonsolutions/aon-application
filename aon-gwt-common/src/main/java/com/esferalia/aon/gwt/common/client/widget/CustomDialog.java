@@ -27,6 +27,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class CustomDialog extends PopupPanel implements
 		CustomDialogBar.Listener {
 
+	private static final String DEFAULT_STYLENAME = "aon-CustomDialog";
+	
 	private static class SimpleResizePanel extends SimplePanel implements RequiresResize , ProvidesResize{
 		
 		public SimpleResizePanel() {

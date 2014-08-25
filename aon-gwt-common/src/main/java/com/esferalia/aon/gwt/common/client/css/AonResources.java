@@ -1,11 +1,14 @@
 package com.esferalia.aon.gwt.common.client.css;
 
+import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 
-public interface AonResources extends ClientBundle {
+public interface AonResources extends ClientBundle, Images {
 	
 	@Source("aon.css")
+	@CssResource.NotStrict
 	AonCSS css();
 
 	@Source("images/aon-icon-rowSelector.png")
@@ -41,6 +44,8 @@ public interface AonResources extends ClientBundle {
 	@Source("images/input-warn.png")
 	ImageResource aonInputError();
 
+	// ------------------------------------------------------------------------
+	
 		
 }
 

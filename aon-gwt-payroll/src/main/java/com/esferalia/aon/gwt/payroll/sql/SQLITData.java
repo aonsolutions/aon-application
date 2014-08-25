@@ -18,7 +18,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.code.aon.dbutils.DatabaseUtil;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITData;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;

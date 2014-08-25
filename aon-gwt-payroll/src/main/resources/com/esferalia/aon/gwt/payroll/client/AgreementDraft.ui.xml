@@ -1,7 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:s="urn:import:com.google.gwt.dom.builder.shared" 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources'/>
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.AgreementDraft.MyStyle'>
 	
@@ -93,12 +96,8 @@
 			color: red !important;
 		}
 
-		@sprite .icon-warn {
-			width: auto; 
-			height: auto;
+		.icon-warn {
 			color: orange;
-			gwt-image: 'warn';
-			padding-left: 14px;
 		}
 
 		.span-cell-table {
@@ -120,27 +119,6 @@
 			vertical-align: middle;
 		}
 		
-		@sprite .pdfPreviewButton {
-			width: auto; 
-			height: auto;
-			gwt-image: 'pdfPreview';
-			background-position: left center;
-		}
-		
-		@sprite .fxButton {
-			gwt-image: 'fx';
-			background-position: left center;
-		}
-
-		@sprite .redoButton {
-			gwt-image: 'redo';
-			background-position: left center;
-		}
-
-		@sprite .undoButton {
-			gwt-image: 'undo';
-			background-position: left center;
-		}
 		
 		.toolBar-checkBox input {
 			vertical-align: middle;
@@ -154,18 +132,8 @@
 			
 		}
 
-		@sprite .icon-view {
-			float: right;
-			gwt-image: 'view';
-		}
 	</ui:style>
 
-	<ui:image field='fx' src='fx.png' />
-	<ui:image field='redo' src='redo.png' />
-	<ui:image field='undo' src='undo.png' />
-	<ui:image field='warn' src='warn.png' />
-	<ui:image field='view' src='view.png' />
-	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.AgreementDraft.*" />
@@ -196,12 +164,12 @@
 										styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
 										enabled="false" />
 									<g:Button ui:field="fxButton"
-										styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
+										styleName='aon-finding-toolbar-item {res.css.aonIconFx}' enabled="false" />
 									<g:Button ui:field="undoButton"
-										styleName='aon-finding-toolbar-item {style.undoButton}'
+										styleName='aon-finding-toolbar-item aon-icon-undo'
 										enabled="false" visible="false" />
 									<g:Button ui:field='redoButton'
-										styleName="aon-finding-toolbar-item {style.redoButton}"
+										styleName="aon-finding-toolbar-item aon-icon-redo"
 										enabled="false" visible="false" />
 									<g:ListBox ui:field='datesListBox'>
 										<g:item value="{ALWAYS}">Para todo</g:item>
@@ -211,12 +179,12 @@
 									<g:CheckBox ui:field='changesCheck'
 										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 										text="Cambios" checked="true" visible="false" />
-									<employee:MonthListBox ui:field="draftMonthListBox"
+									<aon:MonthListBox ui:field="draftMonthListBox"
 										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
 										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 
 									<g:Button ui:field='printPreviewButton'
-										styleName='aon-finding-toolbar-item {style.pdfPreviewButton}'
+										styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
 										text="Vista Preliminar" />
 
 								</g:HTMLPanel>
@@ -289,7 +257,7 @@
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 
 									<g:ListBox ui:field="typeListBox" />
-									<employee:MonthListBox ui:field="previewMonthListBox"
+									<aon:MonthListBox ui:field="previewMonthListBox"
 										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
 										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 										

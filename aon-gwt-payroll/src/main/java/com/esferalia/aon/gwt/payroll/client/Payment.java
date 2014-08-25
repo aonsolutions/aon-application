@@ -598,7 +598,6 @@ public class Payment extends ResizeComposite {
 	private void showFxDialog(final MyExpressionBox textBox) {
 		final FxDialog fxDialog = new FxDialog(contextProvider);
 		fxDialog.setExpression(textBox.getExpression());
-		fxDialog.setWidth(Window.getClientWidth() / 2 + "px");
 		fxDialog.center();
 		fxDialog.show();
 

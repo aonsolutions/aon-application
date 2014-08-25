@@ -82,6 +82,13 @@
 
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.visualization</artifactId>
 			<version>${project.version}</version>
 		</dependency>

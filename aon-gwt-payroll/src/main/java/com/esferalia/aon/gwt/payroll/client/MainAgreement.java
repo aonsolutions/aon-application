@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 
-import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CollectionUtils;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -44,13 +44,6 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 	}
 
 
-	static interface GWTResources extends ClientBundle {
-		@Source("agreement.png")
-		ImageResource agreement();
-
-		@Source("agreement_changed.png")
-		ImageResource agreement_changed();
-	}
 
 	static interface Binder extends UiBinder<Widget, MainAgreement> {
 	}
@@ -102,10 +95,12 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 	public void onModuleLoad() {
 
 		// Inject rich styles.
-		GWT.<MainEntryPoint.GWTResources> create(
-				MainEntryPoint.GWTResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.AonResources> create(
-				MainEntryPoint.AonResources.class).css().ensureInjected();
+		GWT.<GWTResources> create(
+				GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(
+				AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.CodeMirrorResources> create(
+				MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.

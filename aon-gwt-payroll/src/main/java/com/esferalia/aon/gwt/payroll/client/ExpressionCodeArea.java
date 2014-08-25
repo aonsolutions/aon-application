@@ -10,8 +10,7 @@ public class ExpressionCodeArea extends CodeArea {
 
 	private AONMarker marker;
 	private AONFilter filter;
-
-	private boolean advancedMode = false;
+	private boolean advancedMode;
 
 	public ExpressionCodeArea() {
 		this(false);
@@ -19,9 +18,12 @@ public class ExpressionCodeArea extends CodeArea {
 
 	public ExpressionCodeArea(boolean advancedMode) {
 		super();
-		advancedMode = false;
 		marker = new AONMarker();
 		filter = new AONFilter();
+		setTheme("eclipse");
+		this.advancedMode = advancedMode;
+		setMode(CLikeConfiguration.create().setKeywords(getKeywords())
+				.setBuiltin(getBuiltin()).setName("text/x-java"));
 	}
 
 	public void setBuiltin(String builtin[]) {
@@ -39,6 +41,11 @@ public class ExpressionCodeArea extends CodeArea {
 			enableAdvancedMode();
 		else
 			disableAdvancedMode();
+		this.advancedMode = advancedMode;
+	}
+	
+	public boolean getAdvancedMode(){
+		return advancedMode;
 	}
 
 	private final void enableAdvancedMode() {
@@ -57,8 +64,6 @@ public class ExpressionCodeArea extends CodeArea {
 	protected void onLoad() {
 		super.onLoad();
 		setAdvancedMode(advancedMode);
-		setMode(CLikeConfiguration.create().setKeywords(getKeywords())
-				.setBuiltin(getBuiltin()).setName("text/x-java"));
 	}
 
 	// ------------------------------------------------------------------------

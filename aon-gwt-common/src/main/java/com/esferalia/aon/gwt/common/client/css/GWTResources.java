@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.css;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 
@@ -33,4 +34,26 @@ public interface GWTResources extends ClientBundle {
 
 	@Source("images/protected.png")
 	ImageResource protecteD();
+
+	@Source("images/changed.png")
+	ImageResource changed();
+
+	@Source("images/ine.png")
+	ImageResource ine();
+
+	@Source("images/workplace.png")
+	ImageResource workplace();
+
+	@Source("images/employee.png")
+	ImageResource employee();
+	
+	@Source("images/card.png")
+	ImageResource card();
+
+	@Source("images/agreement.png")
+	ImageResource agreement();
+	
+	@Source("images/blank.png")
+	ImageResource blank();
+	
 }

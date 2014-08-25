@@ -6,8 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.ITDataObject.CallculateCallback;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
@@ -77,11 +78,6 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		@ClassName("legend-caption")
 		String legendCaption();
 
-		@ClassName("error-icon")
-		String errorIcon();
-		
-		@ClassName("warn-icon")
-		String warnIcon();
 	}
 
 	interface Binder extends UiBinder<Widget, ITEditor> {
@@ -280,7 +276,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				initStyles();			
 			
 			if( DateUtils.compare(startDate, startContract) < 0 || DateUtils.compare(startDate, endContract) > 0){
-				tooltip.startLeaveDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.startLeaveDateBox.setStyleName(AON.AON_ICON_ERROR, true);
 				tooltip.startLeaveDateBox.setTitle(OUT_PERIOD);
 				tooltip.acceptButton.setEnabled(false);
 				return;				
@@ -290,7 +286,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 					leaveId, startDate);
 
 			if (correct == false) {
-				tooltip.startLeaveDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.startLeaveDateBox.setStyleName(AON.AON_ICON_ERROR, true);
 				tooltip.startLeaveDateBox.setTitle(LEAVE_EXIST);
 				tooltip.acceptButton.setEnabled(false);
 				return;
@@ -309,7 +305,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				initStyles();			
 			
 			if(DateUtils.compare(endDate, startContract) < 0 || DateUtils.compare(endDate, endContract) > 0) {
-				tooltip.endDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.endDateBox.setStyleName(AON.AON_ICON_ERROR, true);
 				tooltip.endDateBox.setTitle(OUT_PERIOD);
 				tooltip.acceptButton.setEnabled(false);
 				return;
@@ -319,7 +315,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 					startDate, endDate);
 			
 			if(correct == false) {
-				tooltip.endDateBox.setStyleName(style.errorIcon(), true);
+				tooltip.endDateBox.setStyleName(AON.AON_ICON_ERROR, true);
 				tooltip.endDateBox.setTitle(LEAVE_EXIST);
 				tooltip.acceptButton.setEnabled(false);
 				return;
@@ -329,13 +325,13 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		}
 		
 		private boolean getStartDateBoxError() {
-			return tooltip.startLeaveDateBox.getStyleName().contains(style.errorIcon())
-					|| tooltip.startLeaveDateBox.getStyleName().contains(style.warnIcon());
+			return tooltip.startLeaveDateBox.getStyleName().contains(AON.AON_ICON_ERROR)
+					|| tooltip.startLeaveDateBox.getStyleName().contains(AON.AON_ICON_WARN);
 		}
 		
 		private boolean getEndDateBoxError() {
-			return tooltip.endDateBox.getStyleName().contains(style.errorIcon())
-					|| tooltip.endDateBox.getStyleName().contains(style.warnIcon());
+			return tooltip.endDateBox.getStyleName().contains(AON.AON_ICON_ERROR)
+					|| tooltip.endDateBox.getStyleName().contains(AON.AON_ICON_WARN);
 		}
 		
 		@Override
@@ -350,8 +346,8 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			Date endDate = tooltip.getFromDateBoxValue();
 			
 			if(DateUtils.compare(startDate, endDate) > 0) {
-				tooltip.startLeaveDateBox.setStyleName(style.warnIcon(), true);
-				tooltip.endDateBox.setStyleName(style.warnIcon(), true);
+				tooltip.startLeaveDateBox.setStyleName(AON.AON_ICON_WARN, true);
+				tooltip.endDateBox.setStyleName(AON.AON_ICON_WARN, true);
 				tooltip.startLeaveDateBox.setTitle(INTERVAL);
 				tooltip.endDateBox.setTitle(INTERVAL);
 				return;
@@ -404,10 +400,10 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		}	
 		
 		private void initStyles() {			
-			tooltip.startLeaveDateBox.removeStyleName(style.errorIcon());
-			tooltip.endDateBox.removeStyleName(style.errorIcon());
-			tooltip.startLeaveDateBox.removeStyleName(style.warnIcon());
-			tooltip.endDateBox.removeStyleName(style.warnIcon());
+			tooltip.startLeaveDateBox.removeStyleName(AON.AON_ICON_ERROR);
+			tooltip.endDateBox.removeStyleName(AON.AON_ICON_ERROR);
+			tooltip.startLeaveDateBox.removeStyleName(AON.AON_ICON_WARN);
+			tooltip.endDateBox.removeStyleName(AON.AON_ICON_WARN);
 			tooltip.startLeaveDateBox.setTitle("");
 			tooltip.endDateBox.setTitle("");
 			tooltip.acceptButton.setEnabled(true);									

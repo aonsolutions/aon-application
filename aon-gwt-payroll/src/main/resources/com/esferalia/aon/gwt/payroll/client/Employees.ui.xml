@@ -5,30 +5,14 @@
 
 	
 	<ui:style>
-	
-		@sprite .viewButton {
-			float: right;
-			gwt-image: 'view';
-		}
-
-		@sprite .collpaseAllButton {
-			float: right;
-			gwt-image: 'collapseall';
-		}
-	
 	</ui:style>
-	
-	
-	<ui:image field='view' src='view.png' />
-	<ui:image field='collapseall' src='collapseall.png' />
-	
 	
 	
 	<g:DockLayoutPanel unit='PX'>
 	  <g:north size='26'>
 	  	<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar" >
-	  		<g:Button styleName="gwt-MenuItem {style.viewButton}" ui:field="viewButton" ></g:Button>
-	  		<g:Button styleName="gwt-MenuItem {style.collpaseAllButton}" ui:field="collapseAllButton" ></g:Button>
+	  		<g:Button styleName="gwt-MenuItem aon-icon-view" ui:field="viewButton" ></g:Button>
+	  		<g:Button styleName="gwt-MenuItem aon-icon-collpaseAll" ui:field="collapseAllButton" ></g:Button>
 	  	</g:FlowPanel>
 	  </g:north>
 	

@@ -5,6 +5,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
