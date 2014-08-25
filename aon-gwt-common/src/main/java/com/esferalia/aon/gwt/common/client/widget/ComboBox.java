@@ -95,7 +95,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		}
 
 		@Override
-		@Source({ CellList.Style.DEFAULT_CSS, "../css/comboBoxDropDownCellList.css" })
+		@Source({ CellList.Style.DEFAULT_CSS, "comboBoxDropDownCellList.css" })
 		DropDownListStyle cellListStyle();
 
 	}
