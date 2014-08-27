@@ -61,7 +61,7 @@
 						<c:if test="#{desktop.payrollEnabled or desktop.payrollInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
 						</c:if>
-						<c:if test="#{desktop.fiscalEnabled or desktop.fiscalInfoVisibleForPortal}">
+						<c:if test="#{!(desktop.fiscalEnabled or desktop.fiscalInfoVisibleForPortal or desktop.payrollEnabled or desktop.payrollInfoVisibleForPortal)}">
 							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
 						</c:if>
 					</c:if>

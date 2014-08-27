@@ -294,6 +294,10 @@ public class DomainController extends BasicController {
 				setPayrollModule(Module.PAYROLL_PORTAL);
 			}
 		}
+		if ( (this.payrollPortal != null) && getDomain().isDomainManagement() && (getDomain().getType() == DomainType.CONSULTANCY) ) {
+			String description = AonUtil.getMessage(ICommonMessages.ADMIN_GLOBAL_PORTAL);
+			this.payrollPortal.setDescription(description);
+		}
 	}
 	
 	private void updateModules( DomainApplicationInfo appInfo, boolean sysAdmin ) throws ManagerBeanException {

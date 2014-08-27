@@ -1,6 +1,7 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.Serializable;
 
@@ -28,6 +29,7 @@ import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 
 public class GlobalConfigurationController implements Serializable {
@@ -139,8 +141,9 @@ public class GlobalConfigurationController implements Serializable {
 	}
 
 
-	public boolean isPayrollPortalRegistered() {
-		Integer domainId = DomainManager.getCurrentDomain();
+	public boolean isPortalRegistered() {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Integer domainId = ds.getParentDomainId();
 		Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
 		try {
 			return AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);

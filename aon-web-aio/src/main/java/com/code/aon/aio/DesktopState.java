@@ -46,6 +46,7 @@ import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.BasicOption;
@@ -104,9 +105,9 @@ public class DesktopState implements Serializable {
 			initAcademy();
 			initHotel();				
 		}
-		initUser();
+		User user = initUser();
 		initSupport();
-		initPortal(ds);
+		initPortal(user, ds);
 		checkSerialization();
 	}
 
@@ -171,7 +172,7 @@ public class DesktopState implements Serializable {
 		this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
 	}
 	
-	private void initUser() {
+	private User initUser() {
 		User user = UserUtils.getInstance().getLoggedUser();
 		setupInitAction(user);
 		ConfigurationController cc = AonUtil.getConfigurationController();
@@ -189,6 +190,7 @@ public class DesktopState implements Serializable {
 		if ( user.getLinesPageLimit() != null ) {
 			cc.setPageLimit(user.getLinesPageLimit());
 		}
+		return user;
 	}
 	
 	public boolean isSupportEnabled() {
@@ -212,13 +214,25 @@ public class DesktopState implements Serializable {
 		}
 	}	
 
-	private void initPortal( DomainSwitcher ds ) {
-		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL); 
-		portalValue = (value != null) ? value : 0;
-		if ( ds.isChildDomain() && this.initOption!=null ) {
+	private boolean isPayrollPortal() {
+		if (this.initOption!=null) {
+			if ((this.portalValue & IAdminConstants.PAYROLL_PORTAL) != 0) {
+				return true;
+			}
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			List<Module> modules = adc.getVisibleModules();
 			if ( modules.size()==1 && modules.get(0)==Module.PAYROLL_PORTAL ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void initPortal( User user, DomainSwitcher ds ) {
+		if ( ds.isChildDomain() && (user.getEnterprise()!=null) ) {
+			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL); 
+			portalValue = (value != null) ? value : 0;
+			if ( isPayrollPortal() ) {
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_PENDING, Boolean.FALSE);
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_LIST, Boolean.FALSE);
 				Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();

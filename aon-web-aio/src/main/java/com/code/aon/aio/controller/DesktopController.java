@@ -193,15 +193,15 @@ public class DesktopController implements Serializable {
 	}
 	
 	public boolean isFiscalInfoVisibleForPortal() {
-		return (getState().getPortalValue() & IAdminConstants.FISCAL_PORTAL) != 0;
+		return (getState().getPortalValue() & IAdminConstants.FISCAL_INFO_PORTAL) != 0;
 	}
 	
 	public boolean isPayrollInfoVisibleForPortal() {
-		return (getState().getPortalValue() & IAdminConstants.PAYROLL_PORTAL) != 0;
+		return (getState().getPortalValue() & IAdminConstants.PAYROLL_INFO_PORTAL) != 0;
 	}
 	
 	public boolean isDocumentalInfoVisibleForPortal() {
-		return (getState().getPortalValue() & IAdminConstants.DOCUMENTAL_PORTAL) != 0;
+		return (getState().getPortalValue() & IAdminConstants.DOCUMENTAL_INFO_PORTAL) != 0;
 	}
 	
 }

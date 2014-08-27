@@ -253,7 +253,9 @@ public class TicketPrinter {
 		if (! StringUtils.isEmpty(address.getCity()) ) {
 			sb.append( address.getCity() ).append(' ');
 		}
-		sb.append('(').append(address.getGeozone().getName()).append(')');
+		if ( address.getGeozone() != null ) {
+			sb.append('(').append(address.getGeozone().getName()).append(')');	
+		}
 		return sb.toString();		
 	}
 	

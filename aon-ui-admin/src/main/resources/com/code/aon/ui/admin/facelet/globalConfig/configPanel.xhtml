@@ -272,12 +272,12 @@
 									value="#{bundle.admin_domain_management}" />
 							</aon:div>
 						</c:if>
-						<c:if test="#{domainSwitcher.parentDomainUserInChildDomain and globalConfig.payrollPortalRegistered}">
+						<c:if test="#{domainSwitcher.parentDomainUserInChildDomain and globalConfig.portalRegistered}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="portalAccess"
 									action="portalAccess_form"
 									actionListener="#{portalAccess.onInit}"
-									value="#{bundle.admin_global_payroll_portal}" >
+									value="#{bundle.admin_global_portal_access}" >
 								</aon:commandLink>						
 							</aon:div>
 						</c:if>													

@@ -1,7 +1,8 @@
 package com.code.aon.dbutils;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,25 +102,36 @@ public class AonDomainRemove implements Constants {
 		}
 	}
 	
-	public static void main(String[] args) {
-		DbUtils.loadDriver("com.mysql.jdbc.Driver");
+	public static void main(String[] arguments) {
+		DomainCommandLine dcl = new DomainCommandLine(false);
 		
-		Integer domain = 7;
-		
-		String url = "jdbc:mysql://192.168.2.222:3306/aimar-esferalia-com";
-		String user = "dbuser";
-		String password = "serubd2000";
-		
-		Connection connection  = null ;
+		dcl.parse(CheckIntegrity.class.getName(), arguments);
+				
+		Connection connection = null;
+		Writer writer = null;
 		try {
-			connection = DriverManager.getConnection(url, user, password);
-			AonDomainRemove adr = new AonDomainRemove(connection);
-			adr.execute(domain);
+			connection = dcl.getConnection();
+			
+			Integer[] domains = dcl.getDomains(connection);
+			if (! ArrayUtils.isEmpty(domains) ) {
+				LOGGER.info( "Starting process..." );
+				AonDomainRemove adr = new AonDomainRemove(connection);
+				for(Integer domain : domains) {
+					adr.execute(domain);
+				}
+			}
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(connection);
+			if ( writer != null ) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
 		}
-	}
+	}	
 	
 }

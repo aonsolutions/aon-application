@@ -36,8 +36,9 @@ public interface IAdminConstants {
 	String SCOPE_TABLE = "scope";
 	String WORK_GROUP_TABLE = "workgroup";
 
-	int PAYROLL_PORTAL = 1;
-	int FISCAL_PORTAL = 2;
-	int DOCUMENTAL_PORTAL = 4;
+	int PAYROLL_INFO_PORTAL = 1;
+	int FISCAL_INFO_PORTAL = 2;
+	int DOCUMENTAL_INFO_PORTAL = 4;
+	int PAYROLL_PORTAL = 8;
 	
 }

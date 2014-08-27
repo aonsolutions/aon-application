@@ -223,6 +223,7 @@ public interface ICommonMessages {
 	String ADMIN_BACKUP_TABLE_START = "admin_backup_table_start";
 	String ADMIN_BACKUP_INFO = "admin_backup_info";
 	String ADMIN_ADVANCED_MODE = "admin_advanced_mode";
+	String ADMIN_GLOBAL_PORTAL = "admin_global_portal";
 	
 	String AUDIT_LEVEL = "audit_audit_level";	
 	

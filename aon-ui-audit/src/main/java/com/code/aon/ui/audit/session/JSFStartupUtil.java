@@ -33,6 +33,7 @@ import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -227,7 +228,7 @@ public class JSFStartupUtil {
 				List<String> list = new LinkedList<String>();
 				Collection<File> files = FileUtils.listFiles(directory, new String[]{"xhtml"}, true);
 				for ( File file : files ) {
-					String relativePath = StringUtils.substringAfter(file.getAbsolutePath(), "/aon-aio");
+					String relativePath = StringUtils.substringAfter(file.getAbsolutePath(), SystemUtils.FILE_SEPARATOR + "aon-aio");
 					list.add(relativePath);
 				}
 				return (String[]) list.toArray(new String[list.size()]);
