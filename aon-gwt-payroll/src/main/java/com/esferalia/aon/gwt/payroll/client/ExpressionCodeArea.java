@@ -22,6 +22,7 @@ public class ExpressionCodeArea extends CodeArea {
 		filter = new AONFilter();
 		setTheme("eclipse");
 		this.advancedMode = advancedMode;
+		setMatchBrackets(true);
 		setMode(CLikeConfiguration.create().setKeywords(getKeywords())
 				.setBuiltin(getBuiltin()).setName("text/x-java"));
 	}

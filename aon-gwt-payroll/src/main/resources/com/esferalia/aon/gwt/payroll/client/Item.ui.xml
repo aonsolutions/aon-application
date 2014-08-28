@@ -111,7 +111,7 @@
 						styleName="aon-width-all">
 						<g:TextBox ui:field="expressionTextBox" styleName="aon-width-all aon-inputText" maxLength="{DESCRIPTION_MAX_LENGTH}"/>
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxExpressionButton" styleName="aon-icon-fx" />
+							<g:Button ui:field="fxExpressionButton" styleName="aon-margin-left aon-editDataTable-button aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetExpressionButton" styleName="aon-lookupButton-clear"

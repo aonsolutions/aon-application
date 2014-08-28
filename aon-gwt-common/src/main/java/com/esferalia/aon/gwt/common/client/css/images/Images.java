@@ -15,6 +15,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 
 	ImageResource draft();
 
+	ImageResource card();
+
 	ImageResource calc();
 
 	ImageResource data();
@@ -98,7 +100,11 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource gps();
 	
+	ImageResource expand();
+
 	ImageResource expandall();
+
+	ImageResource collapse();
 
 	ImageResource collapseall();
 	
@@ -116,5 +122,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	@Source("rich-calendar-button.png")
 	ImageResource rich_calendar_button();
+	
+	ImageResource tooltip_top ();
 
+	ImageResource segsocial_small();
 }

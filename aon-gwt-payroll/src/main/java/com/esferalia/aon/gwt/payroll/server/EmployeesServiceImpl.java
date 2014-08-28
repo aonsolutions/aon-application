@@ -2789,7 +2789,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// Filter ContextVariable
 			List<String> contextVariables = new LinkedList<String>();
 			for (ContextVariable ctxVar : ContextVariable.values())
-				contextVariables.add(ctxVar.getName());
+				if ( ctxVar.isInternal() )
+					contextVariables.add(ctxVar.getName());
 			variables.removeAll(contextVariables);
 
 			// This is awfull ... very awful

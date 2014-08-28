@@ -315,6 +315,16 @@
 	background-position: left center;
 }
 
+@sprite .aon-icon-expand {
+       	gwt-image: "expand" ;
+        background-position: center;
+}
+
+@sprite .aon-icon-collapse {
+        gwt-image: "collapse" ;
+        background-position: center;
+}
+
 @sprite .aon-icon-collapseAll {
 	float: right;
 	gwt-image: 'collapseall';
@@ -324,6 +334,7 @@
 	float: right;
 	gwt-image: 'expandall';
 }
+
 @sprite .aon-icon-pdfPreview {
 	width: auto; 
 	height: auto;
@@ -331,6 +342,23 @@
 	background-position: left center;
 }
 
+@sprite .aon-icon-card {
+        width: auto;
+        height: auto;
+        padding: 0 0 0 18px;
+       	text-align: left;
+        gwt-image: "card" ;
+}
+
+@sprite .aon-icon-employee {
+        gwt-image: "employee" ;
+}
+
+@sprite .aon-icon-segsocial-small{
+	width: auto; 
+	height: auto;
+	gwt-image: 'segsocial_small';
+}
 
 @sprite .aon-icon-redo {
 	gwt-image: 'redo';
@@ -529,6 +557,7 @@ input:disabled + label{
 	/* the outside of the popup */
 	margin-left: 32px;
 }
+
 .aon-tooltip .popupBottomCenter { 
 	/* the bottom center cell */
 	background: inherit;
@@ -587,6 +616,14 @@ input:disabled + label{
 	/* the inner element of the cell */
 	background: inherit;
 }
+
+@sprite .aon-tooltip .popupTopCenter {
+        /* the top center cell */
+       	gwt-image: "tooltip_top";
+        width: auto;
+        background-position: center top;
+}
+
 .aon-tooltip .popupTopCenterInner { 
 	/* the inner element of the cell */
 	background: inherit;

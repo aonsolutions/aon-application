@@ -19,7 +19,6 @@
 	}
 	
 	.width-quarter{
-		width: 25%;
 	}
 
 	.height-all{
@@ -74,14 +73,14 @@
 
 
 
-	<g:HTMLPanel styleName="aon-width-all aon-height-all">
+	<g:HTMLPanel styleName="aon-width-a11 aon-height-all">
 
 
 
-		<g:Grid styleName="aon-width-all aon-height-all">
+		<g:Grid styleName="aon-width-a11 aon-height-all">
 			<g:row>
-				<g:customCell styleName="{style.width-quarter}">
-					<g:Grid styleName="aon-width-all aon-height-all">
+				<g:customCell >
+					<g:Grid styleName="aon-width-a11 aon-height-all">
 						<g:row>
 							<g:customCell>
 								<g:Label>Categor&iacute;a</g:Label>
@@ -102,8 +101,8 @@
 								<g:Label>Funci&oacute;n</g:Label>
 							</g:customCell>
 						</g:row>
-						<g:row class="aon-width-all aon-height-all">
-							<g:customCell class="aon-width-all aon-height-all">
+						<g:row class="aon-width-a11 aon-height-all">
+							<g:customCell class="aon-width-a11 aon-height-all">
 								<g:ListBox ui:field="functionListBox"
 									visibleItemCount="20"
 									styleName="aon-width-all aon-height-all {style.function-ListBox}" />
@@ -112,7 +111,7 @@
 					</g:Grid>
 				</g:customCell>
 				<g:customCell styleName="">
-					<g:Grid styleName="aon-width-all aon-height-all">
+					<g:Grid styleName="aon-width-a11 aon-height-all">
 						<g:row>
 							<g:customCell>
 								<g:Label ui:field="nameLabel" styleName="aon-bold"></g:Label>
@@ -191,19 +190,22 @@
 						<g:row styleName="aon-width-al1 aon-height-al1">
 							<g:customCell colspan="3" class="aon-width-al1 aon-height-al1">
 								<aon:ExpressionCodeArea ui:field="expressionCodeArea"
-									styleName="aon-width-all {style.height-all} gwt-TextArea {style.expression-TextArea}" />
+									styleName="aon-width-a11 {style.height-all} gwt-TextArea {style.expression-TextArea}" />
 							</g:customCell>
 						</g:row>
 					</g:Grid>
 				</g:customCell>
 			</g:row>
 			<g:row>
-				<g:customCell styleName="aon-width-all {style.align-left}">
+				<g:customCell styleName="aon-width-a11 {style.align-left}">
 					<g:Button ui:field="editButton"
 						styleName="aon-editDataTable-button aon-icon-edit-add" />
 				</g:customCell>
-				<g:customCell styleName="{style.align-right}">
+				<g:customCell horizontalAlignment='ALIGN_RIGHT' >
 					<g:HorizontalPanel spacing="5" styleName="aon-width-all">
+						<g:cell horizontalAlignment='ALIGN_RIGHT' width="100%">
+							<g:InlineLabel>&nbsp;</g:InlineLabel>
+						</g:cell>
 						<g:cell horizontalAlignment='ALIGN_RIGHT'>
 							<g:Button ui:field="cancelButton">Cancelar</g:Button>
 						</g:cell>

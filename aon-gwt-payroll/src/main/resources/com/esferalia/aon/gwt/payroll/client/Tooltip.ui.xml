@@ -7,13 +7,17 @@
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.Tooltip.Style'>
 
 		.legend-icon {
-		width: 13px;
-		height: 13px;
+			width: 13px;
+			height: 13px;
 		}
 
 		.buttons {
-		padding-top: 10px;
-		text-align: right;
+			padding-top: 10px;
+			text-align: right;
+		}
+		
+		.padding-left{
+			padding-left: 16px;
 		}
 
 	</ui:style>
@@ -26,7 +30,7 @@
 		<g:InlineLabel ui:field="dniLabel" styleName="aon-icon-card"
 			title="Número Documento Nacional de Identidad"></g:InlineLabel>
 		<g:InlineLabel> - </g:InlineLabel>
-		<g:InlineLabel styleName="aon-icon-normal-segsocial-small"
+		<g:InlineLabel styleName="{style.padding-left} aon-icon-segsocial-small"
 			ui:field="socialSecurityNum" title="Número de Afiliación a la Seguridad Social"></g:InlineLabel>
 		<br></br>
 		<table>

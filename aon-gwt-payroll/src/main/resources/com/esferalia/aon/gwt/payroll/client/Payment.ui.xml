@@ -132,7 +132,7 @@
 						styleName="aon-width-all">
 						<g:TextBox ui:field="paymentTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxPaymentButton" styleName="aon-icon-fx" />
+							<g:Button ui:field="fxPaymentButton" styleName="aon-margin-left aon-editDataTable-button aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetPaymentButton" styleName="aon-lookupButton-clear"
@@ -156,7 +156,7 @@
 						<g:Label>&nbsp;</g:Label>
 						<g:TextBox ui:field="taxTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}" />
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxTaxButton" styleName="aon-icon-fx" />
+							<g:Button ui:field="fxTaxButton" styleName="aon-margin-left aon-editDataTable-button  aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetTaxButton" styleName="aon-lookupButton-clear"
@@ -181,7 +181,7 @@
 						<g:TextBox ui:field="quoteTextBox" styleName="aon-width-all aon-inputText" maxLength="{EXPRESSION_MAX_LENGTH}"/>
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
 							<g:Button ui:field="fxQuoteButton"
-								styleName="aon-editDataTable-button aon-icon-fx" />
+								styleName="aon-margin-left aon-editDataTable-button aon-icon-fx" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetQuoteButton" styleName="aon-lookupButton-clear"

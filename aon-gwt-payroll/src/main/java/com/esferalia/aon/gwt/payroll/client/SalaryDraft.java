@@ -2324,7 +2324,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		eventStyles.put(Event.Type.ERROR, new String[] { "aon-icon-exception",
 				myStyle.textError() });
 		eventStyles.put(Event.Type.WARNING, new String[] { AON.AON_ICON_WARN,
-				myStyle.cellWarn(), myStyle.textWarn() });
+				myStyle.textWarn() });
 	}
 
 	// -------------------------------------------------------------------------
@@ -2648,6 +2648,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		if (amount != null && !amount.equals(quote)) {
 			labelWidget = newPercentLabel(format(quote));
 			labelWidget.addStyleName(AON.AON_ICON_BONUS_SMALL);
+			labelWidget.getElement().getStyle().setPaddingRight(16, Unit.PX);
+			labelWidget.getElement().getStyle().setProperty("backgroundPosition", "center right");
 		}
 
 		Button expandButton = null;
