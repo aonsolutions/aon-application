@@ -40,14 +40,14 @@
 										value="#{bundle.finance_record}"
 										reRender="showFbatchRecordWindow,financeBatchForm"
 										actionListener="#{fbatch.onRecord}"
-										styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-										onclick="Richfaces.showModalPanel('waitProccess')" 
-							     		oncomplete="Richfaces.hideModalPanel('waitProccess')">	
+										styleClass="aon-finding-toolbar-item aon-icon-task-assume">	
 										<rich:componentControl for="fbatchRecordModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{fbatch.showFbatchRecordWindow}"
 											value="#{false}" />
+										<ui:include
+											src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
 									</aon:commandButton>
 									<aon:commandButton id="fbatchRecord-cancel"
 										value="#{bundle.aon_cancel}"

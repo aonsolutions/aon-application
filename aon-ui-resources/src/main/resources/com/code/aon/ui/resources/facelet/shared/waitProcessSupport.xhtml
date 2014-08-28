@@ -1,20 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<a4j:support 
-		event="onclick" reRender="waitProcess_poll" ajaxSingle="true" 
-		onclick="javascript:Richfaces.showModalPanel('waitProccess');">
-		<f:setPropertyActionListener value="#{true}"
-			target="#{logPanel.activePoll}" />
-	</a4j:support>
+	<a4j:support
+		event="onclick" reRender="waitProcess_poll" ajaxSingle="true"
+		actionListener="#{logPanel.onShowWindow}" 
+		oncomplete="javascript:Richfaces.showModalPanel('waitProccess');" />
 	<a4j:support 
 		event="oncomplete" reRender="waitProcess_poll" ajaxSingle="true"
-		onclick="javascript:Richfaces.hideModalPanel('waitProccess');" >
-		<f:setPropertyActionListener value="#{false}"
-			target="#{logPanel.activePoll}" />
-	</a4j:support>
+		oncomplete="javascript:Richfaces.hideModalPanel('waitProccess');" />
+	<aon:actionListener method="#{logPanel.onCloseWindow}" />
 
 </ui:composition>

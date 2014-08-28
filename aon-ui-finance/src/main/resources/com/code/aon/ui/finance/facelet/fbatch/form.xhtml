@@ -39,9 +39,10 @@
 						<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
 							rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}">
+							<ui:include
+								src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />
+				     	</aon:commandButton>
 				     </c:if>	
 					<c:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')}" >
 						<aon:commandButton id="sepaCreateDisk" value="#{bundle.finance_create_disk}"
@@ -63,9 +64,10 @@
 						<aon:commandButton id="unrecord" value="#{bundle.finance_unrecord}"
 							rendered="#{fbatch.recorded and !fbatch.inStatement}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-							action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							action="fbatch_form" actionListener="#{fbatch.onUnrecord}" >
+				     		<ui:include
+								src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />				     		
+				     	</aon:commandButton>
 				     </c:if>	
 				</ui:define>				
 				
@@ -200,6 +202,8 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalRecord.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalSEPA.xhtml" />
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

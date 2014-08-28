@@ -11,16 +11,18 @@
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
 			rendered="#{financeList.model.rowCount > 0}"
-			actionListener="#{financeList.checkAll}" reRender="financeToolBarDiv,financeDataDiv"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			actionListener="#{financeList.checkAll}" reRender="financeToolBarDiv,financeDataDiv">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
+     	</aon:commandButton>	
 		<aon:commandButton title="#{bundle.aon_uncheck_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 			value="#{bundle.aon_uncheck_all}"
 			rendered="#{financeList.model.rowCount > 0}"
-			actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
+     	</aon:commandButton>	
 		<aon:commandButton title="#{bundle.finance_refine_search}"
 			styleClass="aon-finding-toolbar-item aon-icon-search"
 			value="#{bundle.finance_refine_search}"
@@ -33,9 +35,10 @@
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{bundle.finance_add_batch}"
 			rendered="#{financeList.checkedCount > 0}"
-			actionListener="#{fbatch.onBatchSelected}" reRender="financeBatchForm,fbatchPanelTabSet"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+			actionListener="#{fbatch.onBatchSelected}" reRender="financeBatchForm,fbatchPanelTabSet">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
+     	</aon:commandButton>	
 	</aon:div>
 
 	<aon:div id="financeDataDiv">

@@ -10,22 +10,25 @@
 		<aon:commandButton title="#{bundle.aon_check_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
-			actionListener="#{fBatchDetail.checkAll}" reRender="fBatchDetailToolBarDiv,fBatchDetailDataDiv"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+			actionListener="#{fBatchDetail.checkAll}" reRender="fBatchDetailToolBarDiv,fBatchDetailDataDiv" >
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
+     	</aon:commandButton>	
 		<aon:commandButton title="#{bundle.aon_uncheck_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 			value="#{bundle.aon_uncheck_all}"
-			actionListener="#{fBatchDetail.checkNone}" reRender="fBatchDetailToolBarDiv,fBatchDetailDataDiv"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			actionListener="#{fBatchDetail.checkNone}" reRender="fBatchDetailToolBarDiv,fBatchDetailDataDiv" >
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
+     	</aon:commandButton>	
 		<aon:commandButton title="#{bundle.finance_remove_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 			value="#{bundle.finance_remove_batch}"
 			rendered="#{fBatchDetail.checkedCount > 0}"
-			actionListener="#{fbatch.onRemoveSelected}" reRender="financeBatchForm,fbatchPanelTabSet"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			actionListener="#{fbatch.onRemoveSelected}" reRender="financeBatchForm,fbatchPanelTabSet">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
+     	</aon:commandButton>	
 		<aon:htmlCommandLink target="_blank"
 			title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 			value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
