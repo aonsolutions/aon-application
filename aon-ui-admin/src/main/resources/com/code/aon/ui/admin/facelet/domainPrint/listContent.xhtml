@@ -33,11 +33,22 @@
 			<aon:outputText value="#{bundle.aon_type}" />
 		</f:facet>							
 		<aon:outputText value="#{to.type}" />
+		<rich:toolTip styleClass="aon-width-200" rendered="#{to.parent != null}" >				
+			<aon:outputText value="#{to.parent.description}" />
+		</rich:toolTip>		
 		<aon:div styleClass="aon-margin-left" layout="inline">
 			<aon:outputText value="&#160;"
 				rendered="#{to.domainManagement}"
 				title="#{bundle.admin_domain_domainManagement}"
-				styleClass=" aon-icon2 aon-icon-tree-root" />
+				styleClass="aon-icon2 aon-icon-tree-root" />
+			<aon:outputText value="&#160;"
+				rendered="#{(to.parent != null) and to.enableHeredity}"
+				title="#{bundle.aon_domian_enableHeredity}"
+				styleClass="aon-icon2 aon-icon-index" />														
+			<aon:outputText value="&#160;"
+				rendered="#{(to.parent != null) and (!to.enableHeredity)}"
+				title="#{bundle.aon_domian_disableHeredity}"
+				styleClass="aon-icon2 aon-icon-disableHeredity" />																	
 		</aon:div>																
 	</aon:column>
 	
@@ -112,14 +123,6 @@
 			<aon:outputText value="#{bundle.admin_domain_url}" />
 		</f:facet>							
 		<aon:outputText style="#{customize.fontStyle}" value="http://#{to.name}" />
-	</aon:column>	
-
-	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
-		alias="Domain.parent&lt;description" >
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.admin_domain_parent}" />
-		</f:facet>							
-		<aon:outputText value="#{to.parent.description}" />
 	</aon:column>	
 
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
