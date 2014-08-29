@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAINS_CONTROLLE
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID;
 
+import java.net.IDN;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -181,6 +182,15 @@ public class DomainPrintController extends BasicController {
 		}
 		return diff;
 	}
+	
+	public String getCurrentDomainURL() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			String name = IDN.toASCII(domain.getName());
+			return name;
+		}
+		return null;
+	}	
 
 	private static class DomainFilter extends ControllerAdapter {
 		

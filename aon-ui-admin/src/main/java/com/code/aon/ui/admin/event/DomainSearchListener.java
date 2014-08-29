@@ -37,6 +37,7 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	private Boolean domainManagement;
 	private Date[] creationDate;
 	private Date[] modificationDate;	
+	private Date[] expirationDate;
 	private boolean showList;
 
 	public boolean isShowList() {
@@ -126,6 +127,14 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	public void setModificationDate(Date[] modificationDate) {
 		this.modificationDate = modificationDate;
 	}
+	
+	public Date[] getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date[] expirationDate) {
+		this.expirationDate = expirationDate;
+	}
 
 	public Domain getParent() {
 		return parent;
@@ -148,6 +157,7 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 		setTypes(null);
 		setCreationDate(new Date[2]);
 		setModificationDate(new Date[2]);
+		setExpirationDate(new Date[2]);
 		setShowList(false);
 		try {
 			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
@@ -185,6 +195,7 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 			criteria.addEqualExpression( getFieldName(IEntityAlias.DOMAIN_PARENT_ID), getParent().getId());			
 		}
 		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_CREATION_DATE), getCreationDate());
+		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_EXPIRATION_DATE), getExpirationDate());
 		addModificationDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_MODIFICATION_DATE));
 		setShowList(true);
 	}	

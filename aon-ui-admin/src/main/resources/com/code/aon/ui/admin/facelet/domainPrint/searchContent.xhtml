@@ -96,6 +96,25 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</aon:div>	
+
+				<aon:outputLabel value="#{bundle.admin_domain_expiration}" />
+				<aon:div>
+					<aon:outputLabel for="Domain_expirationDate-From"
+						styleClass="aon-form-date-label aon-padding-right" 
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="Domain_expirationDate-From"
+						value="#{domainSearch.expirationDate[0]}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+			
+					<aon:outputLabel for="Domain_expirationDate-To"
+						styleClass="aon-form-date-label aon-padding-right" 
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="Domain_expirationDate-To"
+						value="#{domainSearch.expirationDate[1]}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</aon:div>	
 				
 				<aon:outputLabel for="Domain_active"
 					value="#{bundle.aon_active}" />
