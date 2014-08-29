@@ -578,12 +578,14 @@ public class ReservationInvoicing implements IReservationConstants {
 		List<ProjectReservationService> servicesToRemove = new LinkedList<ProjectReservationService>();
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		for (ITransferObject ito : invoice.getDetailList()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-    		ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.get(invoiceDetail.getSourceId());
-    		if (reservationServiceDetail != null && reservationServiceDetail.getProjectReservationService().isExtra()) {
-        		reservationServiceDetailBean.remove(reservationServiceDetail);
-				if (!servicesToRemove.contains(reservationServiceDetail.getProjectReservationService())) {
-					servicesToRemove.add(reservationServiceDetail.getProjectReservationService());
+			Integer serviceDetailId = ((InvoiceDetail)ito).getSourceId();
+			if (serviceDetailId != null) {
+	    		ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.get(serviceDetailId);
+	    		if (reservationServiceDetail != null && reservationServiceDetail.getProjectReservationService().isExtra()) {
+	        		reservationServiceDetailBean.remove(reservationServiceDetail);
+					if (!servicesToRemove.contains(reservationServiceDetail.getProjectReservationService())) {
+						servicesToRemove.add(reservationServiceDetail.getProjectReservationService());
+					}
 				}
 			}
 		}
