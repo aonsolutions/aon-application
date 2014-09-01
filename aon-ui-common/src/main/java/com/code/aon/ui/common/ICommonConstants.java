@@ -44,6 +44,8 @@ public interface ICommonConstants {
 	/** The hide menu bar. */
 	String HIDE_MENU_BAR = "hideMenuBar";
 	
+	String HIDE_MENU_EMAIL = "hideMenuEmail";
+	
 	String HIDE_MENU_HOME = "hideMenuHome";
 	
 	String HIDE_MENU_FAVORITE = "hideMenuFavorite";

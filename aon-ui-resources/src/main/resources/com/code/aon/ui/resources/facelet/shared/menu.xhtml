@@ -39,7 +39,7 @@
 							styleClass="aon-menu-icon aon-icon-email"
 							title="#{bundle.webmail_send_email}" 
 							ajaxSingle="true" reRender="showNewMessageWindow"
-							rendered="#{mailConfig.mailAccountCount &gt; 0}"
+							rendered="#{(!aonConfiguration.properties.hideMenuEmail) and (mailConfig.mailAccountCount &gt; 0)}"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>								
 						<ui:insert name="beforeRightMenuContent"/>								

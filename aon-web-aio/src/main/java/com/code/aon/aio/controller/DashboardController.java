@@ -40,7 +40,6 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
-import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
@@ -83,6 +82,7 @@ import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+
 public class DashboardController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -977,7 +977,7 @@ public class DashboardController implements Serializable {
 	
 	public   Vector<DashboardDocs> getTypesCat() throws AonConnectionException,
 	SQLException {
-			String domain = "cemerida.aibanez.net"; //AonUtil.getDomainName();
+			String domain = AonUtil.getDomainName();
 			Result<Record3<Integer, String,String>> category =  getCategory(domain);
 			sizes();
 			getTypesCatBD2();
@@ -999,7 +999,7 @@ public class DashboardController implements Serializable {
 	
 	public   DashboardDocs getTypesCatBD(Integer category) throws AonConnectionException,
 	SQLException {
-		String domain = "cemerida.aibanez.net";//AonUtil.getDomainName();
+		String domain = AonUtil.getDomainName();
 		Integer key = DomainManager.getCurrentDomain();
 
 		Connection connection = null;
@@ -1032,17 +1032,16 @@ public class DashboardController implements Serializable {
 			}
 			
 			long aux = 0;
-			System.out.println("hola");
 			for (Record3<Integer, String, String> record : data) {
-				System.out.println(a.getnum());
-				System.out.println(record.value2());
-				System.out.println(record.value3());
+				LOGGER.debug("{}",a.getnum());
+				LOGGER.debug(record.value2());
+				LOGGER.debug(record.value3());
 				a.setnum(a.getnum()+1);
 				String s = record.value2();
 				if (s != null) a.setsize(a.getsize()+(long) Integer.parseInt(record.value2()));
 				if (record.value3()!=null) aux = aux+1;
 			}
-			System.out.println(a.getsize()+" "+a.getnum());
+			LOGGER.debug(a.getsize()+" "+a.getnum());
 			a.setmediaDrive(aux, a.getnum());
 			a.setColor(category);
 		
@@ -1056,7 +1055,7 @@ public class DashboardController implements Serializable {
 	Hashtable<Integer, DashboardDocs> categories;
 	public void getTypesCatBD2() throws AonConnectionException,
 	SQLException {
-		String domain = "cemerida.aibanez.net";//AonUtil.getDomainName();
+		String domain = AonUtil.getDomainName();
 		Integer key = DomainManager.getCurrentDomain();
 
 		Connection connection = null;
@@ -1068,35 +1067,37 @@ public class DashboardController implements Serializable {
 					JooqSettings.getDefaultSettings());
 			
 			
-			Result<Record3<Integer, String, String>> data ;
+			Result<Record3<Integer, Integer, String>> data ;
 			
 			Hashtable<Integer, DashboardDocs> map = new Hashtable<Integer, DashboardDocs>();
 	
 				data =  dslContext
-						.select(RATTACH.CATEGORY,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
+						.select(RATTACH.CATEGORY,RATTACH.DATA.length(),RATTACH.DRIVE_ID)
 						.from(RATTACH)
 						.where(RATTACH.DOMAIN.eq(key)).fetch();
 				
 				int aux = 0;
-				for (Record3<Integer, String, String> record : data) {
-					if(map.containsKey(record.value1())){
-						map.get(record.value1()).setnum(map.get(record.value1()).getnum()+1);
-						String s = record.value2();
-						if (s != null) map.get(record.value1()).setsize(map.get(record.value1()).getsize()+(long) Integer.parseInt(record.value2()));
-						if (record.value3()!=null) map.get(record.value1()).setmediaDrive(map.get(record.value1()).getmediaDrive()+1,map.get(record.value1()).getnum());
+				for (Record3<Integer, Integer, String> record : data) {
+					Integer categoryId = (record.value1() != null) ? record.value1() : -1;
+					if(map.containsKey(categoryId)){
+						map.get(categoryId).setnum(map.get(categoryId).getnum()+1);
+						Integer s = record.value2();
+						if (s != null) map.get(categoryId).setsize(map.get(categoryId).getsize()+(long) record.value2().longValue());
+						if (record.value3()!=null) map.get(categoryId).setmediaDrive(map.get(categoryId).getmediaDrive()+1,map.get(categoryId).getnum());
 					}	
 					else{
-						Result<Record1<String>> categoryName = DBConsults.getCategoryName(record.value1(), domain);
+						Result<Record1<String>> categoryName = DBConsults.getCategoryName(categoryId, domain);
 						DashboardDocs a;
 						String category = null;
 						for (Record1<String> record1 : categoryName) {
 							category = record1.value1();
 						}
+						long size = (record.value2() != null) ? record.value2().longValue() : 0;
 						if (category != null)
-							a= new DashboardDocs(category, 1, (long) Integer.parseInt(record.value2()), 0);
-						else a= new DashboardDocs("Otros", 1, (long) Integer.parseInt(record.value2()), 0);
+							a= new DashboardDocs(category, 1, size, 0);
+						else a= new DashboardDocs("Otros", 1, size, 0);
 						if (record.value3()!=null) a.setmediaDrive(1,a.getnum());
-						map.put(record.value1(),a);
+						map.put(categoryId,a);
 					}
 				}
 				
@@ -1175,16 +1176,16 @@ public class DashboardController implements Serializable {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 			
-			Result<Record5<Byte, String, Integer, String, java.sql.Date>> data ;
+			Result<Record5<Byte, Integer, Integer, String, java.sql.Date>> data ;
 			data =  dslContext
-					.selectDistinct(RATTACH.TYPE,RATTACH.DPARENT_ID,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE)
+					.selectDistinct(RATTACH.TYPE,RATTACH.DATA.length(),RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE)
 					.from(RATTACH)
 					.where(RATTACH.DOMAIN.eq(key))
 					.orderBy(RATTACH.ATTACH_DATE.desc()).fetch();
 			
 			Vector<DashboardRecentFiles> vector = new Vector<DashboardRecentFiles>();
 			int j=0;
-			for (Record5<Byte, String, Integer, String, java.sql.Date> record : data) {
+			for (Record5<Byte, Integer, Integer, String, java.sql.Date> record : data) {
 				DashboardRecentFiles drc = new DashboardRecentFiles();
 				String typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
 				if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
@@ -1200,14 +1201,14 @@ public class DashboardController implements Serializable {
 					else category = "otros";
 					drc.setcategory(category);
 					
-					String s = record.value2();
-					if (s != null) drc.setsize((long) Integer.parseInt(record.value2()));
+					Integer s = record.value2();
+					if (s != null) drc.setsize(s.longValue());
 					if (record.value1()!=null) drc.settype(typeName);
 					else drc.settype("otros");
 					
 					if (record.value5() != null){
 						String date = record.value5().toString();
-						System.out.println(date);
+						LOGGER.debug("{}", date);
 						drc.setDate(date);
 						
 					}
@@ -1262,7 +1263,7 @@ public class DashboardController implements Serializable {
 		return list;
 	}
 	public  void sizes() throws SQLException{
-		String domain = "cemerida.aibanez.net";// AonUtil.getDomainName();
+		String domain = AonUtil.getDomainName();
 		DomainGserviceaccount dg = DatabaseSync.getServiceAccount(domain);
 		occupied = dg.getSize();
 		free = (long) (dg.getLimit() - occupied);
@@ -1462,7 +1463,7 @@ public class DashboardController implements Serializable {
 				DashboardPayrollPortal dpp = new DashboardPayrollPortal();
 				dpp.setDeduction(0.00);dpp.setIrpf(0.00);
 				int auxMes = Integer.parseInt((record.value1().toString().substring(5, 7)))-1;
-				System.out.println((record.value1().toString().substring(5, 7)));
+				LOGGER.debug((record.value1().toString().substring(5, 7)));
 				int ano= Integer.parseInt((record.value1().toString().substring(0, 4)));
 				
 				String mes = Month.getMonthByValue(auxMes).getName(locale);
@@ -1519,13 +1520,13 @@ public class DashboardController implements Serializable {
 	}
 	private  void view(DashboardPayrollPortal d) {
 		// TODO Apéndice de método generado automáticamente
-		System.out.println("AÑO:  "+d.getAno());
-		System.out.println("MES:  "+d.getMes());
-		System.out.println("SS:   "+d.getSs());
-		System.out.println("OTROS:  "+d.getOtros());
-		System.out.println("NETO:  "+d.getNeto());
-		System.out.println("IRPF:  "+d.getIrpf());
-		System.out.println();
+		LOGGER.debug("AÑO:  "+d.getAno());
+		LOGGER.debug("MES:  "+d.getMes());
+		LOGGER.debug("SS:   "+d.getSs());
+		LOGGER.debug("OTROS:  "+d.getOtros());
+		LOGGER.debug("NETO:  "+d.getNeto());
+		LOGGER.debug("IRPF:  "+d.getIrpf());
+		LOGGER.debug("");
 	}
 	private Double twoDecimal(Double valor){
 		String val = valor+"";

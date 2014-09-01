@@ -21,30 +21,12 @@
 		<aon:div styleClass="aon-scroll-area">
 
 			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
-				columnClasses="#{(domainSwitcher.childDomain and desktop.fiscalEnabled)?'':'aon-portlets-column1,'}
+				columnClasses="#{(desktop.showGraphicsPortlet)?'':'aon-portlets-column1,'}
 					aon-portlets-column2,aon-portlets-column3">
 
-				<c:if test="#{!(domainSwitcher.childDomain and desktop.fiscalEnabled)}">
+				<c:if test="#{!desktop.showGraphicsPortlet}">
 					<aon:div id="desktopDiv1">
-						<c:if test="#{domainSwitcher.parentDomain or (domainSwitcher.childDomain and !desktop.fiscalEnabled)}">
-							<aon:div styleClass="aon-portlet">
-								<aon:div styleClass="aon-portlet-title">								
-									<aon:commandLink id="menu_refresh"
-										title="#{bundle.aon_refresh}"
-										reRender="desktopDiv1" immediate="true"
-										actionListener="#{desktop.onRefresh}">
-										<aon:outputText value="#{bundle.aon_refresh}" styleClass="aon-portlet-title-text aon-icon aon-icon-refresh"/>
-									</aon:commandLink>
-								</aon:div>
-							</aon:div>
-							<c:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
-								<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
-							</c:if>
-							<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
-							<ui:include src="/facelet/homepage/portlet/notePortlet.xhtml" />
-							<ui:include src="/facelet/homepage/portlet/favoritePortlet.xhtml" />
-							<ui:include src="/facelet/homepage/portlet/googleDrivePortlet.xhtml" />
-						</c:if>
+						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
 					</aon:div>
 				</c:if>
 				<aon:div styleClass="aon-width-all">
@@ -59,7 +41,7 @@
 							<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
 						</c:if>
 						
-						<c:if test="#{desktop.payrollEnabled or !desktop.payrollInfoVisibleForPortal}">
+						<c:if test="#{desktop.payrollEnabled and !desktop.payrollInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
 						</c:if>
 						<c:if test="#{desktop.documentalEnabled and !desktop.documentalInfoVisibleForPortal}">
@@ -74,8 +56,7 @@
 							<ui:include src="/facelet/homepage/portlet/documentalPortalDashboardPortlet.xhtml" />
 						</c:if>
 
-						<c:if test="#{!(desktop.fiscalEnabled or desktop.fiscalInfoVisibleForPortal or desktop.payrollEnabled or desktop.payrollInfoVisibleForPortal)}">
-
+						<c:if test="#{!desktop.showGraphicsPortlet}">
 							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
 						</c:if>
 

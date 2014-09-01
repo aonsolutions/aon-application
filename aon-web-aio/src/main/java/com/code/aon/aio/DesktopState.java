@@ -93,6 +93,7 @@ public class DesktopState implements Serializable {
     private boolean supportEnabled;
     private boolean patchInitAction;
     private int portalValue;
+    private boolean userWithPortalView;
 	
     public DesktopState() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
@@ -228,22 +229,52 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 	
+	private boolean isPortalActive( User user, DomainSwitcher ds ) {
+		if ( ds.isChildDomain() ) {
+			if ( user.getEnterprise() != null ) {
+				if (this.initOption!=null) {
+					return true;	
+				} else if (portalValue != 0) {
+					return true;
+				}
+			}
+			if ( (ds.getDomainId()==user.getDomain()) && (portalValue != 0) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 	private void initPortal( User user, DomainSwitcher ds ) {
-		if ( ds.isChildDomain() && (user.getEnterprise()!=null) ) {
-			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL); 
-			portalValue = (value != null) ? value : 0;
-			if ( isPayrollPortal() ) {
+		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL);
+		portalValue = (value != null) ? value : 0;
+		if ( isPortalActive(user, ds) ) {
+			this.userWithPortalView = user.getEnterprise() == null;
+			if (! this.userWithPortalView ) {
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_PENDING, Boolean.FALSE);
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_LIST, Boolean.FALSE);
 				Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
+				properties.put( ICommonConstants.HIDE_MENU_EMAIL, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_FAVORITE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_CHOOSE_LANGUAGE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_ADVANCED_MODE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_WEB_MAP, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
-				properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
+				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+				String[] enabledCategories = null;
+				if ( isPayrollPortal() ) {
+					properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
+					enabledCategories = new String[]{Module.PAYROLL_PORTAL.getName()};
+				} else {
+					enabledCategories = new String[0];
+				}
+				adc.enableOnly(enabledCategories, new String[0]);				
 			}
+		} else {
+			portalValue = 0;
 		}
 	}
 
@@ -436,6 +467,60 @@ public class DesktopState implements Serializable {
 	
 	public int getPortalValue() {
 		return this.portalValue;
+	}
+
+	public boolean isPayrollEnabled() {
+		if ( AonUtil.getRoleManager().isPayroll() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.PAYROLL.getName());
+		}
+		return false;
+	}
+
+	public boolean isFiscalEnabled() {
+		if ( AonUtil.getRoleManager().isFiscal() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.FISCAL.getName());
+		}
+		return false;
+	}
+	
+	public boolean isDocumentalEnabled() {
+		if ( AonUtil.getRoleManager().isDocument() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.DOCUMENT.getName());
+		}
+		return false;
+	}
+	
+	public boolean isFiscalInfoVisibleForPortal() {
+		if ( (this.portalValue & IAdminConstants.FISCAL_INFO_PORTAL) != 0 ) {
+			if ( this.userWithPortalView ) {
+				return isFiscalEnabled();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isPayrollInfoVisibleForPortal() {
+		if ( (this.portalValue & IAdminConstants.PAYROLL_INFO_PORTAL) != 0 ) {
+			if ( this.userWithPortalView ) {
+				return isPayrollEnabled();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isDocumentalInfoVisibleForPortal() {
+		if ( (this.portalValue & IAdminConstants.DOCUMENTAL_INFO_PORTAL) != 0 ) {
+			if ( this.userWithPortalView ) {
+				return isDocumentalEnabled();
+			}
+			return true;
+		}
+		return false;
 	}
 	
 }

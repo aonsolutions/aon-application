@@ -3,6 +3,7 @@ package com.code.aon.aio.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,13 +26,13 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.groupware.Note;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.audit.ActionSource;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.IGroupWareConstants;
@@ -134,26 +135,15 @@ public class DesktopController implements Serializable {
 	}
 
 	public boolean isPayrollEnabled() {
-		if ( AonUtil.getRoleManager().isPayroll() ) {
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			return ! adc.isDeniedModule(Module.PAYROLL.getName());
-		}
-		return false;
+		return getState().isPayrollEnabled();
 	}
+	
 	public boolean isDocumentalEnabled() {
-		if ( AonUtil.getRoleManager().isDocument() ) {
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			return ! adc.isDeniedModule(Module.DOCUMENT.getName());
-		}
-		return false;
+		return getState().isDocumentalEnabled();
 	}
 
 	public boolean isFiscalEnabled() {
-		if ( AonUtil.getRoleManager().isFiscal() ) {
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			return ! adc.isDeniedModule(Module.FISCAL.getName());
-		}
-		return false;
+		return getState().isFiscalEnabled();
 	}
 
 	public boolean isGroupwareEnabled() {
@@ -200,17 +190,28 @@ public class DesktopController implements Serializable {
 	}
 	
 	public boolean isFiscalInfoVisibleForPortal() {
-		return (getState().getPortalValue() & IAdminConstants.FISCAL_INFO_PORTAL) != 0;
+		return getState().isFiscalInfoVisibleForPortal();
 	}
 	
 	public boolean isPayrollInfoVisibleForPortal() {
-
-		return (getState().getPortalValue() & IAdminConstants.PAYROLL_INFO_PORTAL) != 0;
-
+		return getState().isPayrollInfoVisibleForPortal();
 	}
 	
 	public boolean isDocumentalInfoVisibleForPortal() {
-		return (getState().getPortalValue() & IAdminConstants.DOCUMENTAL_INFO_PORTAL) != 0;
+		return getState().isDocumentalInfoVisibleForPortal();
+	}
+
+	public boolean isShowGraphicsPortlet() {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		if ( ds.isChildDomain() ) {
+			if ( isFiscalEnabled() || isPayrollEnabled() ) {
+				return true;
+			}
+			if ( isFiscalInfoVisibleForPortal() || isPayrollInfoVisibleForPortal() || isDocumentalInfoVisibleForPortal() ) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
