@@ -54,18 +54,14 @@
 						<c:if test="#{desktop.fiscalEnabled and !desktop.fiscalInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
 						</c:if>
-<<<<<<< .mine
-						<c:if test="#{desktop.payrollEnabled and !desktop.payrollInfoVisibleForPortal}">
-=======
+
 						<c:if test="#{desktop.fiscalInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
 						</c:if>
 						
-						<c:if test="#{desktop.payrollEnabled or desktop.payrollInfoVisibleForPortal}">
->>>>>>> .r21972
+						<c:if test="#{desktop.payrollEnabled or !desktop.payrollInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
 						</c:if>
-<<<<<<< .mine
 						<c:if test="#{desktop.documentalEnabled and !desktop.documentalInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
 						</c:if>
@@ -77,10 +73,9 @@
 						<c:if test="#{desktop.documentalInfoVisibleForPortal}">
 							<ui:include src="/facelet/homepage/portlet/documentalPortalDashboardPortlet.xhtml" />
 						</c:if>
-						<c:if test="#{desktop.fiscalEnabled or desktop.fiscalInfoVisibleForPortal}">
-=======
+
 						<c:if test="#{!(desktop.fiscalEnabled or desktop.fiscalInfoVisibleForPortal or desktop.payrollEnabled or desktop.payrollInfoVisibleForPortal)}">
->>>>>>> .r21972
+
 							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
 						</c:if>
 
