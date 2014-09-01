@@ -1,8 +1,18 @@
 package com.code.aon.aio.controller;
 
+import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
+import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -26,7 +37,13 @@ import org.apache.commons.lang.StringUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.Record3;
+import org.jooq.Record4;
+import org.jooq.Record5;
+import org.jooq.Record6;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +64,11 @@ import com.code.aon.fiscal.config.Model;
 import com.code.aon.fiscal.config.ModelConfig;
 import com.code.aon.fiscal.config.ModelManager;
 import com.code.aon.fiscal.enumeration.Period;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.jooq.DBConsults;
+import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckParams;
 import com.code.aon.ui.accounting.check.ICheckEntry;
@@ -58,18 +79,21 @@ import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-
 public class DashboardController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(DashboardController.class);
 
 	private static final String WHERE = " WHERE ";
+
+	//private static final String Month = null;
 
 	private List<DashboardMessage> messages;
 	private DashboardEntry[] periodEntriesCount;
@@ -86,6 +110,19 @@ public class DashboardController implements Serializable {
 	private Integer payrollYear;
 	private Integer salaryYear;
 	private Integer contractYear; 
+	
+	private boolean pieChart=true;
+	private boolean columnChart=false;
+	private boolean bubbleChart=false;
+	private boolean totalsize=false;
+	
+	private static Double occupied;
+	private static long free;
+	
+	
+	private Integer graficSelection;
+	
+	
 	
 	/*
 	 * Inicializo metodos en el constructor ya que estan implementados en el onChange.
@@ -861,7 +898,654 @@ public class DashboardController implements Serializable {
 		return list;
 	}
 	
+	/***************************** DOCUMENTAL  
+	 * @throws GeneralSecurityException 
+	 * @throws IOException 
+	 * @throws KeyStoreException **********************************/ 
+	
+	
+	/*public Vector<DashboardDocs> getTypesDrive() throws AonConnectionException, SQLException, KeyStoreException, IOException, GeneralSecurityException{
+		String domain = "novus.aibanez.net";//AonUtil.getDomainName();
+		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+		Drive drive = DriveUtils.serviceInitialize(g);
+		Integer aux = RegistryAttachmentType.values().length;
+		Vector<DashboardDocs> docs = new Vector<DashboardDocs>();
+		for (int i = 0; i<aux; i++){
+			String type = RegistryAttachmentType.values()[i].toString();
+			FileList fl = SearchFiles.searchFilesProperties(drive, "type", type);
+			
+			DashboardDocs dc = new DashboardDocs();
+			dc.settype(type);
+			dc.setnum(fl.getItems().size());
+			dc.setsize(getSize(fl));
+			
+			docs.add(dc);
+		}
+		
+		return docs;
+	}
+	
+	private long getSize(FileList fl) {
+		long size=0;
+		for (File f : fl.getItems()) {
+			size = size + f.getFileSize();	
+		}
+		return size;
+
+	}*/
+	
+	
+	public  Vector<DashboardDocs> getTypes() throws AonConnectionException,
+	SQLException {
+			Integer aux = RegistryAttachmentType.values().length;
+			sizes();
+			Vector<DashboardDocs> types= new Vector<DashboardDocs>(); 
+			
+			for(Byte i = 0 ; i<aux ; i++ ){
+				DashboardDocs a = getTypesBD(i);
+				if (!a.gettype().equals("Logo") && !a.gettype().equals("Firma")){
+					if (a.getsize()>0){
+						types.add(a);	
+						free= free - a.getsize();
+					}
+				}
+			}	
+			Byte b = 100;
+			DashboardDocs dd = getTypesBD(b);
+			dd.settype("otros");
+			if ((!dd.gettype().equals("Logo") && !dd.gettype().equals("Firma")) ){
+				if (dd.getsize()>0){
+					types.add(dd);
+				}
+			}
+			
+			DashboardDocs d = new DashboardDocs();
+			d.settype("Disponible");
+			dd.settype("otros");
+			d.setnum(0);
+			d.setsize(free);
+			
+			if ((!d.gettype().equals("Logo") && !d.gettype().equals("Firma"))){
+				if (d.getsize()>0){
+
+					types.add(d);
+				}
+			}
+					
+			return types;
+	}
+	
+	public   Vector<DashboardDocs> getTypesCat() throws AonConnectionException,
+	SQLException {
+			String domain = "cemerida.aibanez.net"; //AonUtil.getDomainName();
+			Result<Record3<Integer, String,String>> category =  getCategory(domain);
+			sizes();
+			getTypesCatBD2();
+			Vector<DashboardDocs> types= new Vector<DashboardDocs>(); 
+			for (Record3<Integer, String, String> record3 : category) {
+				if (categories.containsKey(record3.value1())){
+					DashboardDocs a = categories.get(record3.value1());
+
+					if (a.getsize()>0){
+						types.add(a);	
+						free= free - a.getsize();
+					}
+				}
+				
+			}
+			
+			return types;
+	}
+	
+	public   DashboardDocs getTypesCatBD(Integer category) throws AonConnectionException,
+	SQLException {
+		String domain = "cemerida.aibanez.net";//AonUtil.getDomainName();
+		Integer key = DomainManager.getCurrentDomain();
+
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			DashboardDocs a=null;
+			Result<Record3<Integer, String, String>> data ;
+			if (category == 100){
+				data =  dslContext
+						.select(RATTACH.CATEGORY,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
+						.from(RATTACH)
+						.where(RATTACH.CATEGORY.isNull().and(RATTACH.DOMAIN.eq(key))).fetch();
+				a = new DashboardDocs("Otros",0,0,0);
+
+			}
+			else{
+				data =  dslContext
+						.select(RATTACH.CATEGORY,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
+						.from(RATTACH)
+						.where(RATTACH.CATEGORY.eq(category).and(RATTACH.DOMAIN.eq(key))).fetch();
+				Result<Record1<String>> categoryName = DBConsults.getCategoryName(category, domain);
+				for (Record1<String> record1 : categoryName) {
+					a = new DashboardDocs(record1.value1(),0,0,0);
+				}
+			}
+			
+			long aux = 0;
+			System.out.println("hola");
+			for (Record3<Integer, String, String> record : data) {
+				System.out.println(a.getnum());
+				System.out.println(record.value2());
+				System.out.println(record.value3());
+				a.setnum(a.getnum()+1);
+				String s = record.value2();
+				if (s != null) a.setsize(a.getsize()+(long) Integer.parseInt(record.value2()));
+				if (record.value3()!=null) aux = aux+1;
+			}
+			System.out.println(a.getsize()+" "+a.getnum());
+			a.setmediaDrive(aux, a.getnum());
+			a.setColor(category);
+		
+			return a;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	Hashtable<Integer, DashboardDocs> categories;
+	public void getTypesCatBD2() throws AonConnectionException,
+	SQLException {
+		String domain = "cemerida.aibanez.net";//AonUtil.getDomainName();
+		Integer key = DomainManager.getCurrentDomain();
+
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			
+			Result<Record3<Integer, String, String>> data ;
+			
+			Hashtable<Integer, DashboardDocs> map = new Hashtable<Integer, DashboardDocs>();
+	
+				data =  dslContext
+						.select(RATTACH.CATEGORY,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
+						.from(RATTACH)
+						.where(RATTACH.DOMAIN.eq(key)).fetch();
+				
+				int aux = 0;
+				for (Record3<Integer, String, String> record : data) {
+					if(map.containsKey(record.value1())){
+						map.get(record.value1()).setnum(map.get(record.value1()).getnum()+1);
+						String s = record.value2();
+						if (s != null) map.get(record.value1()).setsize(map.get(record.value1()).getsize()+(long) Integer.parseInt(record.value2()));
+						if (record.value3()!=null) map.get(record.value1()).setmediaDrive(map.get(record.value1()).getmediaDrive()+1,map.get(record.value1()).getnum());
+					}	
+					else{
+						Result<Record1<String>> categoryName = DBConsults.getCategoryName(record.value1(), domain);
+						DashboardDocs a;
+						String category = null;
+						for (Record1<String> record1 : categoryName) {
+							category = record1.value1();
+						}
+						if (category != null)
+							a= new DashboardDocs(category, 1, (long) Integer.parseInt(record.value2()), 0);
+						else a= new DashboardDocs("Otros", 1, (long) Integer.parseInt(record.value2()), 0);
+						if (record.value3()!=null) a.setmediaDrive(1,a.getnum());
+						map.put(record.value1(),a);
+					}
+				}
+				
+		
+			categories =  map;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
+	public  DashboardDocs getTypesBD(byte type) throws AonConnectionException,
+	SQLException {
+		Locale locale = AonUtil.getCurrentLocale();
+		String domain = AonUtil.getDomainName();
+		Integer key = DomainManager.getCurrentDomain();
+
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			DashboardDocs a=null;
+			Result<Record3<Byte, String,String>> data ;
+			if (type == 100){
+				data =  dslContext
+						.selectDistinct(RATTACH.TYPE,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
+						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
+						.where(RATTACH.TYPE.isNull().and(DOMAIN.NAME.eq(domain).or(RATTACH.DOMAIN.eq(key)))).fetch();
+				a = new DashboardDocs("Otros",0,0);
+
+			}
+			else{
+				data =  dslContext
+						.selectDistinct(RATTACH.TYPE,RATTACH.DPARENT_ID,RATTACH.DRIVE_ID)
+						.from(RATTACH).join(DOMAIN).on(DOMAIN.ID.eq(RATTACH.DOMAIN))
+						.where(RATTACH.TYPE.eq(type).and(DOMAIN.NAME.eq(domain).or(RATTACH.DOMAIN.eq(key)))).fetch();
+				String typeName = RegistryAttachmentType.values()[type].getName(locale);
+				a = new DashboardDocs(typeName,0,0);
+
+			}
+			
+			long aux = 0;
+			
+			for (Record3<Byte, String,String> record : data) {
+				a.setnum(a.getnum()+1);
+				String s = record.value2();
+				if (s != null) a.setsize(a.getsize()+(long) Integer.parseInt(record.value2()));
+				if (record.value3()!=null) aux = aux+1;
+			}
+			a.setmediaDrive(aux, a.getnum());
+			a.setColor(type);
+		
+			return a;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public  Vector<DashboardRecentFiles> getRecentsFiles() throws AonConnectionException,
+	SQLException {
+		Locale locale = AonUtil.getCurrentLocale();
+		String domain = AonUtil.getDomainName();
+		Integer key = DomainManager.getCurrentDomain();
+
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+			
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record5<Byte, String, Integer, String, java.sql.Date>> data ;
+			data =  dslContext
+					.selectDistinct(RATTACH.TYPE,RATTACH.DPARENT_ID,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE)
+					.from(RATTACH)
+					.where(RATTACH.DOMAIN.eq(key))
+					.orderBy(RATTACH.ATTACH_DATE.desc()).fetch();
+			
+			Vector<DashboardRecentFiles> vector = new Vector<DashboardRecentFiles>();
+			int j=0;
+			for (Record5<Byte, String, Integer, String, java.sql.Date> record : data) {
+				DashboardRecentFiles drc = new DashboardRecentFiles();
+				String typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
+				if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
+					drc.setname(record.value4());
+					String category = null;
+					Result<Record1<String>> categoryName; 
+					if(record.value3()!=null){
+						categoryName = getCategoryName(record.value3(), domain);
+						for (Record1<String> record1 : categoryName) {
+							category = record1.value1();
+						}
+					}
+					else category = "otros";
+					drc.setcategory(category);
+					
+					String s = record.value2();
+					if (s != null) drc.setsize((long) Integer.parseInt(record.value2()));
+					if (record.value1()!=null) drc.settype(typeName);
+					else drc.settype("otros");
+					
+					if (record.value5() != null){
+						String date = record.value5().toString();
+						System.out.println(date);
+						drc.setDate(date);
+						
+					}
+					vector.add(drc);
+					j++;
+				}
+					if (j >= 10 ) return vector;
+									
+			}
+			
+			return vector;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public void onGraficSelectionChanged(ActionEvent event){
+		//System.out.println(graficSelection.getValue() + " " + graficSelection.getLabel() );
+		if (graficSelection.equals(1)){
+			pieChart=true;
+			columnChart=false;
+			bubbleChart=false;
+			totalsize=false;
+		}
+		if (graficSelection.equals(2)){
+			pieChart=false;
+			columnChart=true;
+			bubbleChart=false;
+			totalsize=false;
+		}
+		if (graficSelection.equals(3)){
+			pieChart=false;
+			columnChart=false;
+			bubbleChart=true;
+			totalsize=false;
+		}
+
+	}
+	
+	public List<SelectItem> getGraficSelections(){
+		SelectItem a = new SelectItem(1,"Pie Chart");
+		SelectItem b = new SelectItem(2,"Column Chart");
+		SelectItem c = new SelectItem(3,"Bubble Chart");
+		
+		List<SelectItem> list = new Vector<SelectItem>();
+		list.add(a);
+		list.add(b);
+		list.add(c);
+		
+		
+		return list;
+	}
+	public  void sizes() throws SQLException{
+		String domain = "cemerida.aibanez.net";// AonUtil.getDomainName();
+		DomainGserviceaccount dg = DatabaseSync.getServiceAccount(domain);
+		occupied = dg.getSize();
+		free = (long) (dg.getLimit() - occupied);
+		if (free <0) free=0;
+	}
+	
+	public Boolean getPieChart(){ return pieChart;}
+	
+	public void setPieChart(boolean pieChart){ this.pieChart = pieChart;}
+	
+	public Boolean getColumnChart(){ return columnChart;}
+	
+	public void setColumnChart(boolean columnChart){ this.columnChart = columnChart;}
+
+	public Boolean getBubbleChart(){ return bubbleChart;}
+
+	public void setBubbleChart(Boolean bubbleChart){ this.bubbleChart = bubbleChart;}
+	
+	public Boolean getTotalSize() throws SQLException{ 
+		sizes();
+		return totalsize;}
+
+	public void setTotalSize(Boolean total){ this.totalsize = total;}
+
+	public Double getOccupied(){ return occupied;}
+
+	public void setOccupied(long total){ 
+		this.occupied = (double) total;}
+	
+	public long getFree(){ return free;}
+
+	public void setFree(long total){ this.free = total;}
+	
+	public Integer getGraficSelection(){return graficSelection;}
+	
+	public void setGraficSelection(Integer graficSelection){this.graficSelection = graficSelection;}
+	
+	
+	/* ***************************************************************** */
+	/* ******************  PAYROLL PORTAL  *******************************/
+	
+	
+	private static Integer year=2014;
+	private Integer option; 
+	private static Map<Integer, Hashtable<String, DashboardPayrollPortal>> salaries;
+	private Boolean meses = true;
+	private Boolean años= false;
+	
+	
+	public Integer getOption() {
+		return option;
+	}
+
+	public void setOption(Integer option) {
+		this.option = option;
+	}
+
+	public Boolean getMeses() {
+		return meses;
+	}
+
+	public void setMeses(Boolean meses) {
+		this.meses = meses;
+	}
+
+	public Boolean getAños() {
+		return años;
+	}
+
+	public void setAños(Boolean años) {
+		this.años = años;
+	}
+
+	public Map<Integer, Hashtable<String, DashboardPayrollPortal>> getSalaries() {
+		return salaries;
+	}
+
+	public void setSalaries(
+			Map<Integer, Hashtable<String, DashboardPayrollPortal>> salaries) {
+		this.salaries = salaries;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+	
+	public void onYearChanged(ActionEvent event) {
+		
+		
+	}
+	
+	public void onOptionChanged(ActionEvent event) {
+		if (option.equals(1)){
+			meses=true;
+			años= false;
+		}
+		if (option.equals(2)){
+			meses=false;
+			años=true;
+		}
+		
+	}
+	
+	public  List<SelectItem> getOptions(){
+		List<SelectItem> list = new Vector<SelectItem>();
+		SelectItem si = new SelectItem(1, "meses");
+		SelectItem si2 = new SelectItem(2, "años");
+		
+		list.add(si);
+		list.add(si2);
+		return list;
+	}
+	
+	public  List<SelectItem> getYears(){
+		List<SelectItem> list = new Vector<SelectItem>();
+		for (Integer salary: salaries.keySet()) {
+			SelectItem si = new SelectItem(salary, salary.toString());
+			list.add(si);
+			
+		}	
+		return list;
+	}
+	
+	
+	public   List<DashboardPayrollPortal> getPayroll() throws SQLException{
+		Locale locale = AonUtil.getCurrentLocale();
+		Map<Integer, Hashtable<String, DashboardPayrollPortal>> a =getPayrollBD();
+		List<DashboardPayrollPortal> list = new Vector<DashboardPayrollPortal>();
+		for (int i = 0; i<12 ; i++) {
+			String m = Month.getMonthByValue(i).getName(locale); 
+			
+			if (a.get(year) != null && a.get(year).get(m)!=null)
+				list.add(a.get(year).get(m));
+			else list.add(new DashboardPayrollPortal(0,0,0,0,0,m,year));
+		}	
+		return list;
+	}
+
+	public   List<DashboardPayrollPortal> getPayrollAno() throws SQLException{
+		Locale locale = AonUtil.getCurrentLocale();
+		Map<Integer, Hashtable<String, DashboardPayrollPortal>> a =getPayrollBD();
+		List<DashboardPayrollPortal> list = new Vector<DashboardPayrollPortal>();
+		
+		for (Integer key : a.keySet()) {
+			DashboardPayrollPortal b = new DashboardPayrollPortal(0,0,0,0,0,null, key); 
+			b.setAno(key);
+			
+			for (int i =0; i<12 ; i++){
+				String m = Month.getMonthByValue(i).getName(locale); 
+				if (a.get(key).get(m)!=null){
+					b.setIrpf(b.getIrpf()+a.get(key).get(m).getIrpf());
+					b.setNeto(b.getNeto()+a.get(key).get(m).getNeto());
+					b.setSs(b.getSs()+a.get(key).get(m).getSs());
+					b.setOtros(b.getOtros()+a.get(key).get(m).getOtros());;
+				}
+				
+			}
+			list.add(b);
+		}
+		return list;
+	}
+	
+	public   Map<Integer, Hashtable<String, DashboardPayrollPortal>> getPayrollBD() throws SQLException {
+		Locale locale = AonUtil.getCurrentLocale();
+		String domain = AonUtil.getDomainName();
+		Integer key = DomainManager.getCurrentDomain();
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			//Result<Record6<java.sql.Date, Double, Double, Double, Double, Double>> data ;
+
+			
+ 			Result<Record6<java.sql.Date, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> data ;
+
+			data =  dslContext.select(SALARY.CHARGE_DATE,DSL.sum(SALARY.TOTAL_LIQUID),DSL.sum(SALARY.TOTAL_DEDUCTION),DSL.sum(SALARY.TOTAL_IRPF),DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS),DSL.sum(SALARY.TOTAL_ENTERPRISE))
+					.from(SALARY)
+					.where(SALARY.DOMAIN.eq(key))
+					.groupBy(SALARY.CHARGE_DATE).fetch();
+			
+			/*data=dslContext.select(SALARY.CHARGE_DATE,SALARY.TOTAL_LIQUID,SALARY.TOTAL_DEDUCTION,SALARY.TOTAL_IRPF,SALARY.SOCIAL_SECURITY_CONTRIBUTIONS,SALARY.TOTAL_ENTERPRISE)
+					.from(SALARY).join(DOMAIN).on(SALARY.DOMAIN.eq(DOMAIN.ID))
+					.where(DOMAIN.NAME.eq(domain)).fetch();
+				*/	
+			Map<Integer, Hashtable<String, DashboardPayrollPortal>>  map = new Hashtable<Integer,Hashtable<String, DashboardPayrollPortal>>();
+			
+			for (Record6<java.sql.Date, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal> record : data) {
+				Hashtable<String, DashboardPayrollPortal> dpps = new Hashtable<String, DashboardPayrollPortal>();
+				DashboardPayrollPortal dpp = new DashboardPayrollPortal();
+				dpp.setDeduction(0.00);dpp.setIrpf(0.00);
+				int auxMes = Integer.parseInt((record.value1().toString().substring(5, 7)))-1;
+				System.out.println((record.value1().toString().substring(5, 7)));
+				int ano= Integer.parseInt((record.value1().toString().substring(0, 4)));
+				
+				String mes = Month.getMonthByValue(auxMes).getName(locale);
+				if(!map.containsKey(ano)){ 
+					dpp.setMes(mes);
+					dpp.setAno(ano);
+					dpp.setIrpf(twoDecimal(record.value4().doubleValue()));
+					dpp.setNeto(twoDecimal(record.value2().doubleValue()));
+					dpp.setDeduction(twoDecimal(record.value3().doubleValue()));
+					dpp.setSs(twoDecimal(record.value5().doubleValue()+record.value6().doubleValue()));
+					Double otros= dpp.getDeduction()-(dpp.getIrpf()+record.value5().doubleValue());
+					if (otros >=0) dpp.setOtros(twoDecimal(otros));
+					else dpp.setOtros(0.00);
+					view(dpp);
+					dpps.put(mes, dpp);
+					map.put(ano, dpps);		
+				}
+				else{
+					if (!map.get(ano).containsKey(mes)){
+						dpp.setMes(mes);
+						dpp.setAno(ano);
+						dpp.setIrpf(twoDecimal(record.value4().doubleValue()));
+						dpp.setNeto(twoDecimal(record.value2().doubleValue()));
+						dpp.setDeduction(twoDecimal(record.value3().doubleValue()));
+						dpp.setSs(twoDecimal(record.value5().doubleValue()+record.value6().doubleValue()));
+						Double otros= dpp.getDeduction()-(dpp.getIrpf()+record.value5().doubleValue());
+						if (otros >=0) dpp.setOtros(twoDecimal(otros));
+						else dpp.setOtros(0.00);
+						view(dpp);
+
+						map.get(ano).put(mes, dpp);
+					}
+					else{
+						DashboardPayrollPortal d = map.get(ano).get(mes);
+						d.setIrpf(twoDecimal(d.getIrpf()+record.value4().doubleValue()));
+						d.setNeto(twoDecimal(d.getNeto()+record.value2().doubleValue()));
+						d.setDeduction(twoDecimal(d.getDeduction()+record.value3().doubleValue()));
+						d.setSs(twoDecimal(d.getSs()+record.value5().doubleValue()+record.value6().doubleValue()));
+						Double otros= dpp.getDeduction()-(dpp.getIrpf()+record.value5().doubleValue());
+						if (otros >=0) d.setOtros(twoDecimal(d.getOtros()+otros));
+						
+						view(d);
+
+					}		
+				}
+			}
+			salaries = map;
+			return map;
+		}
+		finally{
+			if (connection != null)
+				connection.close();
+		}
+	}
+	private  void view(DashboardPayrollPortal d) {
+		// TODO Apéndice de método generado automáticamente
+		System.out.println("AÑO:  "+d.getAno());
+		System.out.println("MES:  "+d.getMes());
+		System.out.println("SS:   "+d.getSs());
+		System.out.println("OTROS:  "+d.getOtros());
+		System.out.println("NETO:  "+d.getNeto());
+		System.out.println("IRPF:  "+d.getIrpf());
+		System.out.println();
+	}
+	private Double twoDecimal(Double valor){
+		String val = valor+"";
+	    BigDecimal big = new BigDecimal(val);
+	    big = big.setScale(2, RoundingMode.HALF_UP);
+	    return big.doubleValue();
+	}
+	public static void main(String[] args) throws SQLException, AonConnectionException {
+		//DashboardDocs dd = getTypesCatBD(1607);
+		//System.out.println(dd.category+ " "  +dd.size );
+		
+		//System.out.println(dd.category+ " "  +dd.size );
+
+		System.out.println( ""  );
+		System.out.println( ""  );
+		List<DashboardDocs> a = null;//getTypesCat();
+		for (DashboardDocs d : a) {
+			System.out.println(d.category +" "+ d.size);
+			//view(d);
+		}
+		
+	} 
 }
-
-
-

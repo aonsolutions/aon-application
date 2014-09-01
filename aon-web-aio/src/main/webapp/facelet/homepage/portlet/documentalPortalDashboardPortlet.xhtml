@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet aon-width-half" style="display: inline-block;">
+		<script type="text/javascript"
+			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
+
+		<aon:div styleClass="aon-portlet-title">
+			<aon:div styleClass="aon-portlet-title-buttons">
+			</aon:div>
+			<aon:outputText value="#{bundle.documental_portal}"
+				styleClass="aon-portlet-title-text aon-icon aon-icon-stat" />
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body">
+			<aon:panelGrid columns="2" styleClass="aon-width-all"
+				columnClasses="aon-width-all">
+
+					
+				<!--  CONTAINER 2 -->
+
+				<aon:div id="recentsFileGraphContainer"
+					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
+					<aon:div styleClass="aon-bold">
+						<aon:outputText value="Archivos recientes" />
+						<!-- <aon:selectOneMenu id="Dashboard_recentsFilePeriod"
+							style="border: none;" value="#{dashboard.salaryYear}">
+							<a4j:support event="onchange"
+								actionListener="#{dashboard.onSalaryYearChanged}"
+								reRender="recentsFileGraphContainer,messageList"
+								ajaxSingle="true" 
+								limitToList="true"
+								ignoreDupResponses="true"/>
+							<f:selectItems value="#{dashboard.salaryYears}" />
+						</aon:selectOneMenu>-->
+					</aon:div>
+					<aon:div id="table_div"
+						style="width: 100%; height: 180px;" />
+
+					<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+					<script type='text/javascript'>
+					google.load("visualization", "1", {'callback' : 'drawTable' ,'packages':["table"], 'language': 'en'});
+      			
+      				function drawTable() {
+        				var data = new google.visualization.DataTable();
+        				data.addColumn('string', 'Fecha');
+        				data.addColumn('string', 'Nombre');
+      				  	data.addColumn('string', 'Tipo');
+        				data.addColumn('string', 'Categoria');
+        				data.addColumn('number', 'Tamaño');
+
+        				<!--data.addRow(['Mike',  1, true]);
+        				data.addRow(['Jim',   2,  false]);
+        				data.addRow(['Alice', 3, true]);
+        				data.addRow(['Bob',   4,  true]);
+						-->
+						
+        				<c:forEach var="recent" items="#{dashboard.recentsFiles}">		
+						
+							data.addRow(['#{recent.date}',
+							             '#{recent.name}',
+						             	'#{recent.type}',
+						             	'#{recent.category}',
+						             	#{recent.size}]);											
+						</c:forEach>
+						var options = {
+        						showRowNumber: true,
+						      };
+						
+        				var table = new google.visualization.Table(document.getElementById('aonContent:mainForm:table_div'));
+           				table.draw(data, options);
+           				
+           				
+           				// Every time the table fires the "select" event, it should call your
+           				// selectHandler() function.
+           				google.visualization.events.addListener(table, 'select', selectHandler);
+
+           				function selectHandler(e) {
+           					
+           			  		alert('A table row was selected');
+           				}	
+      				}
+    				</script>
+					</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+		</aon:div>
+</ui:composition>

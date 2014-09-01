@@ -1,0 +1,228 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<script type="text/javascript"
+			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
+
+		<aon:div styleClass="aon-portlet-title">
+			<aon:div styleClass="aon-portlet-title-buttons">
+			</aon:div>
+			<aon:outputText value="#{bundle.daily_tracking_graphic}"
+				styleClass="aon-portlet-title-text aon-icon aon-icon-stat" />
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body">
+			<aon:panelGrid columns="2" styleClass="aon-width-all"
+				columnClasses="aon-width-half,aon-width-half">
+
+				<!-- Container 1 Payrolls Informations by Colors -->
+					
+				<aon:div id="documentalGraphContainer" style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
+					
+					<aon:div styleClass="aon-bold">
+						<aon:outputText value="Documental" />
+						<aon:selectOneMenu id="Dashboard_documentalPeriod"
+							style="border: none;" value="#{dashboard.graficSelection}">
+							<a4j:support event="onchange"
+								actionListener="#{dashboard.onGraficSelectionChanged}"
+								reRender="documentalGraphContainer,messageList" ajaxSingle="true" />
+							<f:selectItems value="#{dashboard.graficSelections}" />
+						</aon:selectOneMenu>
+					</aon:div>
+					<aon:div id="documental_chart_div" style="width: 100%; height: 180px;" /> 
+					
+					
+					<c:if test="#{dashboard.pieChart}">
+						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+						<script type="text/javascript"> 
+							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
+							function drawCharts(){
+						
+								var data = new google.visualization.DataTable();								                                                  
+								data.addColumn('string', 'Task');
+								data.addColumn('number', 'Hours per Day');
+  								data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
+
+								<!--data.addRow(['Eat',2]),
+								data.addRow(['Commute',  2]);
+								data.addRow(['Watch TV', 2]);
+								data.addRow(['Sleep',    7]);
+								-->
+								<c:forEach var="doc" items="#{dashboard.typesCat}">//#{dashboard.types}		
+									
+								//	data.addRow(['#{doc.type}',
+								//	             #{doc.size},'#{doc.description}']);											
+									data.addRow(['#{doc.category}',
+									             #{doc.size},'#{doc.description}']);											
+								
+								</c:forEach>
+								
+								var options = {
+										
+										is3D: true,
+								      };
+								var chart = new google.visualization.PieChart(document.getElementById('aonContent:mainForm:documental_chart_div'));
+								chart.draw(data, options);
+							}
+							</script>
+							</c:if>
+					<c:if test="#{dashboard.columnChart}">
+						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+						<script type="text/javascript">
+								google.load("visualization", "1", {'callback' : 'drawChart' ,'packages':["corechart"], 'language': 'en'});
+
+								function drawChart() {
+
+  									var data = new google.visualization.DataTable();
+      								data.addColumn('string','Type');
+      								data.addColumn('number', 'Size');
+      								data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
+      							
+									<c:forEach var="doc" items="#{dashboard.typesCat}">//#{dashboard.types}			
+									
+										data.addRow(['#{doc.categoryAbr}',
+									             #{doc.size},'#{doc.description}']);											
+									</c:forEach>
+      
+
+  								var options = {
+  		        						tooltip: {isHtml: true},
+
+									    hAxis: {title: 'Type', titleTextStyle: {color: 'red'}},
+  								};
+
+  								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:documental_chart_div'));	
+		 			 			chart.draw(data, options);
+
+							}
+    					</script>
+    				</c:if>
+    					
+					<c:if test="#{dashboard.bubbleChart}">
+
+						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    					<script type="text/javascript">
+    					
+						google.load("visualization", "1", {'callback' : 'drawSeriesChart' ,'packages':["corechart"], 'language': 'en'});
+
+						   
+  						  	function drawSeriesChart() {
+							
+      						var data = new google.visualization.DataTable();
+      						data.addColumn('string','categoryAbr');
+      						data.addColumn('number','número de archivos');
+      						data.addColumn('number','media Drive');
+      						data.addColumn('string','categoria');
+      						data.addColumn('number','tamaño');
+							data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
+
+      						
+      						<c:forEach var="doc" items="#{dashboard.typesCat}">		
+							
+							data.addRow(['#{doc.categoryAbr}',
+										#{doc.num},
+										#{doc.mediaDrive},
+										'#{doc.category}',
+										#{doc.size},'#{doc.description}']);											
+							</c:forEach>
+      						/*
+      						 var data = google.visualization.arrayToDataTable([
+      						                                                 ['ID', 'Life Expectancy', 'Fertility Rate', 'Region',     'Population'],
+      						                                                 ['CAN',    80.66,              1.67,      'North America',  33739900],
+      						                                                 ['DEU',    79.84,              1.36,      'Europe',         81902307],
+      						                                                 ['DNK',    78.6,               1.84,      'Europe',         5523095],
+      						                                                 ['EGY',    72.73,              2.78,      'Middle East',    79716203],
+      						                                                 ['GBR',    80.05,              2,         'Europe',         61801570],
+      						                                                 ['IRN',    72.49,              1.7,       'Middle East',    73137148],
+      						                                                 ['IRQ',    68.09,              4.77,      'Middle East',    31090763],
+      						                                                 ['ISR',    81.55,              2.96,      'Middle East',    7485600],
+      						                                                 ['RUS',    68.6,               1.54,      'Europe',         141850000],
+      						                                                 ['USA',    78.09,              2.05,      'North America',  307007000]
+      						                                               ]);
+      					
+							*/
+      						var options = {
+        						hAxis: {title: 'num',maxValue: 5},
+        						vAxis: {title: 'mediaDrive',maxValue: 10,minValue: -1},
+        						bubble: {textStyle: {fontSize: 11}}
+      						};
+
+							
+
+      						var chart = new google.visualization.BubbleChart(document.getElementById('aonContent:mainForm:documental_chart_div'));
+      						chart.draw(data, options);
+    						}   					 	
+							</script>
+					</c:if>
+									
+									
+					
+						</aon:div>
+					
+				<!--  CONTAINER 2 -->
+
+				<aon:div id="recentsFileGraphContainer"
+					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
+					<aon:div styleClass="aon-bold">
+						<aon:outputText value="Archivos recientes" />
+						<!-- <aon:selectOneMenu id="Dashboard_recentsFilePeriod"
+							style="border: none;" value="#{dashboard.salaryYear}">
+							<a4j:support event="onchange"
+								actionListener="#{dashboard.onSalaryYearChanged}"
+								reRender="recentsFileGraphContainer,messageList"
+								ajaxSingle="true" 
+								limitToList="true"
+								ignoreDupResponses="true"/>
+							<f:selectItems value="#{dashboard.salaryYears}" />
+						</aon:selectOneMenu>-->
+					</aon:div>
+					<aon:div id="table_div"
+						style="width: 100%; height: 180px;" />
+
+					<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+					<script type='text/javascript'>
+					google.load("visualization", "1", {'callback' : 'drawTable' ,'packages':["table"], 'language': 'en'});
+      			
+      				function drawTable() {
+        				var data = new google.visualization.DataTable();
+        				data.addColumn('string', 'Fecha');
+        				data.addColumn('string', 'Name');
+      				  	data.addColumn('string', 'type');
+        				data.addColumn('string', 'category');
+        				data.addColumn('number', 'size');
+
+        				<!--data.addRow(['Mike',  1, true]);
+        				data.addRow(['Jim',   2,  false]);
+        				data.addRow(['Alice', 3, true]);
+        				data.addRow(['Bob',   4,  true]);
+						-->
+						
+        				<c:forEach var="recent" items="#{dashboard.recentsFiles}">		
+						
+							data.addRow(['#{recent.date}',
+							             '#{recent.name}',
+						             	'#{recent.type}',
+						             	'#{recent.category}',
+						             	#{recent.size}]);											
+						</c:forEach>
+        				
+        				var options = {
+        						showRowNumber: true,
+						      };
+        				
+        				var table = new google.visualization.Table(document.getElementById('aonContent:mainForm:table_div'));
+        				table.draw(data, options);
+      				}
+    				</script>
+					</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+		</aon:div>
+</ui:composition>

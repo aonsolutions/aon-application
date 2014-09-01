@@ -140,6 +140,13 @@ public class DesktopController implements Serializable {
 		}
 		return false;
 	}
+	public boolean isDocumentalEnabled() {
+		if ( AonUtil.getRoleManager().isDocument() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.DOCUMENT.getName());
+		}
+		return false;
+	}
 
 	public boolean isFiscalEnabled() {
 		if ( AonUtil.getRoleManager().isFiscal() ) {
@@ -197,7 +204,9 @@ public class DesktopController implements Serializable {
 	}
 	
 	public boolean isPayrollInfoVisibleForPortal() {
+
 		return (getState().getPortalValue() & IAdminConstants.PAYROLL_INFO_PORTAL) != 0;
+
 	}
 	
 	public boolean isDocumentalInfoVisibleForPortal() {

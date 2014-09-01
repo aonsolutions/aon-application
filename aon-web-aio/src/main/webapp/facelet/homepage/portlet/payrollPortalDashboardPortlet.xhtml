@@ -1,0 +1,157 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet aon-width-half" style="display: inline-block;">
+		<script type="text/javascript"
+			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
+
+		<aon:div styleClass="aon-portlet-title">
+			<aon:div styleClass="aon-portlet-title-buttons">
+			</aon:div>
+			<aon:outputText value="#{bundle.payroll_portal}"
+				styleClass="aon-portlet-title-text aon-icon aon-icon-stat" />
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body">
+			<aon:panelGrid columns="1" styleClass="aon-width-all"
+				columnClasses="aon-width-all">
+
+				<!-- Container 1 Payrolls Informations by Colors -->
+
+				<aon:div id="payrollPortalGraphContainer"
+					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
+
+   						<script type="text/javascript">
+						    		<c:forEach var="sal" items="#{dashboard.payroll}">		
+										//data.addRow(['#{sal.mes}', #{sal.ss}, #{sal.irpf}, #{sal.otros}, #{sal.neto}]);										
+									</c:forEach>
+    					</script>
+
+					<aon:div styleClass="aon-bold">
+						<aon:outputText value="Salarios" />
+						<aon:selectOneMenu id="Dashboard_payrollPortalPeriod"
+							style="border: none;" value="#{dashboard.option}">
+							<a4j:support event="onchange"
+								actionListener="#{dashboard.onOptionChanged}"
+								reRender="payrollPortalGraphContainer,messageList" ajaxSingle="true" />
+							<f:selectItems value="#{dashboard.options}" />
+						</aon:selectOneMenu>
+						<!-- c:if test="#{dashboard.meses}"-->
+						<aon:selectOneMenu id="Dashboard_payrollPortalPeriod2"
+							style="border: none;" value="#{dashboard.year}" rendered="#{dashboard.meses}">
+							<a4j:support event="onchange"
+								actionListener="#{dashboard.onYearChanged}"
+								reRender="payrollPortalGraphContainer,messageList" ajaxSingle="true" />
+							<f:selectItems value="#{dashboard.years}" />
+						</aon:selectOneMenu>
+						<!-- /c:if-->
+					</aon:div>
+					
+					<aon:div id="payroll_portal_chart_div" style="width: 100%; height: 180px;" />
+					<c:if test="#{dashboard.meses}">
+					
+						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+   						<script type="text/javascript">
+   						
+						google.load("visualization", "1", {'callback' : 'drawChart' ,'packages':["corechart"], 'language': 'en'});
+
+						function drawChart() {
+
+						 	var data = new google.visualization.DataTable();
+						      		data.addColumn('string','MES');
+						      		data.addColumn('number','SS');
+						      		data.addColumn('number','IRPF');
+									data.addColumn('number','OTROS');
+						      		data.addColumn('number','SALARIO');
+
+
+						 	//['MES','SS', 'IRPF', 'OTROS', 'SALARIO'],
+						    		<c:forEach var="sal" items="#{dashboard.payroll}">		
+						    		//['#{sal.mes}',#{sal.ss} , #{sal.irpf}, #{sal.otros}, #{sal.neto}]
+										data.addRow(['#{sal.mes}', #{sal.ss}, #{sal.irpf}, #{sal.otros}, #{sal.neto}]);										
+									</c:forEach>
+						           
+						            //]);
+						 	
+						 	
+
+						 	var options = {
+						           
+						           // legend: { position: 'top', maxLines: 3 },
+						           // bar: { groupWidth: '75%' },
+						            isStacked: true,
+						            };
+  								
+						  	var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:payroll_portal_chart_div'));
+
+  							chart.draw(data, options);
+  							
+  							
+  							google.visualization.events.addListener(table, 'select', selectHandler);
+
+  							function selectHandler(e) {
+  							  alert('A table row was selected');
+  							}
+
+						}
+    				</script>
+    				</c:if>
+    				
+    				<c:if test="#{dashboard.años}">
+					
+						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+   						<script type="text/javascript">
+   						
+						google.load("visualization", "1", {'callback' : 'drawChart' ,'packages':["corechart"], 'language': 'en'});
+
+						function drawChart() {
+
+						 	var data = new google.visualization.DataTable();
+						      		data.addColumn('string','AÑO');
+						      		data.addColumn('number','SS');
+						      		data.addColumn('number','IRPF');
+									data.addColumn('number','OTROS');
+						      		data.addColumn('number','SALARIO');
+
+
+						 	//['MES','SS', 'IRPF', 'OTROS', 'SALARIO'],
+						    		<c:forEach var="sal" items="#{dashboard.payrollAno}">		
+						    		//['#{sal.mes}',#{sal.ss} , #{sal.irpf}, #{sal.otros}, #{sal.neto}]
+										data.addRow(['#{sal.ano}', #{sal.ss}, #{sal.irpf}, #{sal.otros}, #{sal.neto}]);										
+									</c:forEach>
+						           
+						            //]);
+						 	
+						 	
+
+						 	var options = {
+						           
+						           // legend: { position: 'top', maxLines: 3 },
+						           // bar: { groupWidth: '75%' },
+						            isStacked: true,
+						            };
+  								
+						  	var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:payroll_portal_chart_div'));
+
+  							chart.draw(data, options);
+
+						}
+    				</script>
+    				</c:if>
+    				
+    				
+				</aon:div>
+
+
+
+					
+				
+			</aon:panelGrid>
+		</aon:div>
+	</aon:div>
+</ui:composition>
