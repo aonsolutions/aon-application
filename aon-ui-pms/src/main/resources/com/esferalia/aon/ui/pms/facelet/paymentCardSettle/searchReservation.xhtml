@@ -39,9 +39,8 @@
 		<aon:div id="PaymentCardFinance_reservationCode-Div"> 
 			<aon:inputText id="PaymentCardFinance_reservationCode"
 				value="#{paymentCardSettle.reservationCode}" size="23" >
-				<a4j:support event="onkeyup" ignoreDumpResponses="true" requestDelay="500" 
-					reRender="PaymentCardFinance_reservationCode-Div"
-					focus="PaymentCardFinance_reservationCode" /> 
+				<a4j:support event="onblur" ignoreDumpResponses="true" 
+					reRender="PaymentCardFinance_reservationCode-Div" ajaxSingle="#{true}" /> 
 			</aon:inputText>
 			<aon:commandButton id="PaymentCardFinance_reservationCode-add" 
 				styleClass="aon-finding-toolbar-item aon-search-add"

@@ -84,9 +84,8 @@
 		<aon:div id="PaymentCardFinance_invoiceReferenceCode-Div">
 			<aon:inputText id="PaymentCardFinance_invoiceReferenceCode"
 				value="#{paymentCardSettle.referenceCode}" size="23" >
-				<a4j:support event="onkeyup" ignoreDumpResponses="true" requestDelay="500" 
-					reRender="PaymentCardFinance_invoiceReferenceCode-Div"
-					focus="PaymentCardFinance_invoiceReferenceCode" />
+				<a4j:support event="onblur" ignoreDumpResponses="true"
+					reRender="PaymentCardFinance_invoiceReferenceCode-Div" ajaxSingle="#{true}" />
 			</aon:inputText>
 			<aon:commandButton id="PaymentCardFinance_invoiceReferenceCode-add"
 				styleClass="aon-finding-toolbar-item aon-search-add"
