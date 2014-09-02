@@ -65,7 +65,7 @@
 								</c:forEach>
 								
 								var options = {
-										
+  		        						tooltip: {isHtml: true},
 										is3D: true,
 								      };
 								var chart = new google.visualization.PieChart(document.getElementById('aonContent:mainForm:documental_chart_div'));
@@ -149,7 +149,8 @@
       					
 							*/
       						var options = {
-        						hAxis: {title: 'num',maxValue: 5},
+		        				tooltip: {isHtml: true},	
+								hAxis: {title: 'num',maxValue: 5},
         						vAxis: {title: 'mediaDrive',maxValue: 10,minValue: -1},
         						bubble: {textStyle: {fontSize: 11}}
       						};
@@ -193,10 +194,10 @@
       				function drawTable() {
         				var data = new google.visualization.DataTable();
         				data.addColumn('string', 'Fecha');
-        				data.addColumn('string', 'Name');
-      				  	data.addColumn('string', 'type');
-        				data.addColumn('string', 'category');
-        				data.addColumn('number', 'size');
+        				data.addColumn('string', 'Nombre');
+      				  	data.addColumn('string', 'tipo');
+        				data.addColumn('string', 'Categoria');
+        				data.addColumn('string', 'Tamaño');
 
         				<!--data.addRow(['Mike',  1, true]);
         				data.addRow(['Jim',   2,  false]);
@@ -210,7 +211,7 @@
 							             '#{recent.name}',
 						             	'#{recent.type}',
 						             	'#{recent.category}',
-						             	#{recent.size}]);											
+						             	'#{recent.sizeString}']);											
 						</c:forEach>
         				
         				var options = {

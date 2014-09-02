@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -1052,7 +1053,7 @@ public class DashboardController implements Serializable {
 		}
 	}
 	
-	Hashtable<Integer, DashboardDocs> categories;
+	HashMap<Integer, DashboardDocs> categories;
 	public void getTypesCatBD2() throws AonConnectionException,
 	SQLException {
 		String domain = AonUtil.getDomainName();
@@ -1069,7 +1070,7 @@ public class DashboardController implements Serializable {
 			
 			Result<Record3<Integer, Integer, String>> data ;
 			
-			Hashtable<Integer, DashboardDocs> map = new Hashtable<Integer, DashboardDocs>();
+			HashMap<Integer, DashboardDocs> map = new HashMap<Integer, DashboardDocs>();
 	
 				data =  dslContext
 						.select(RATTACH.CATEGORY,RATTACH.DATA.length(),RATTACH.DRIVE_ID)
@@ -1187,7 +1188,8 @@ public class DashboardController implements Serializable {
 			int j=0;
 			for (Record5<Byte, Integer, Integer, String, java.sql.Date> record : data) {
 				DashboardRecentFiles drc = new DashboardRecentFiles();
-				String typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
+				String typeName = "-";
+				if (record.value1()!=null) typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
 				if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
 					drc.setname(record.value4());
 					String category = null;
@@ -1308,7 +1310,7 @@ public class DashboardController implements Serializable {
 	
 	private static Integer year=2014;
 	private Integer option; 
-	private static Map<Integer, Hashtable<String, DashboardPayrollPortal>> salaries;
+	private static Map<Integer, HashMap<String, DashboardPayrollPortal>> salaries;
 	private Boolean meses = true;
 	private Boolean años= false;
 	
@@ -1337,12 +1339,12 @@ public class DashboardController implements Serializable {
 		this.años = años;
 	}
 
-	public Map<Integer, Hashtable<String, DashboardPayrollPortal>> getSalaries() {
+	public Map<Integer, HashMap<String, DashboardPayrollPortal>> getSalaries() {
 		return salaries;
 	}
 
 	public void setSalaries(
-			Map<Integer, Hashtable<String, DashboardPayrollPortal>> salaries) {
+			Map<Integer, HashMap<String, DashboardPayrollPortal>> salaries) {
 		this.salaries = salaries;
 	}
 
@@ -1394,7 +1396,7 @@ public class DashboardController implements Serializable {
 	
 	public   List<DashboardPayrollPortal> getPayroll() throws SQLException{
 		Locale locale = AonUtil.getCurrentLocale();
-		Map<Integer, Hashtable<String, DashboardPayrollPortal>> a =getPayrollBD();
+		Map<Integer, HashMap<String, DashboardPayrollPortal>> a =getPayrollBD();
 		List<DashboardPayrollPortal> list = new Vector<DashboardPayrollPortal>();
 		for (int i = 0; i<12 ; i++) {
 			String m = Month.getMonthByValue(i).getName(locale); 
@@ -1408,7 +1410,7 @@ public class DashboardController implements Serializable {
 
 	public   List<DashboardPayrollPortal> getPayrollAno() throws SQLException{
 		Locale locale = AonUtil.getCurrentLocale();
-		Map<Integer, Hashtable<String, DashboardPayrollPortal>> a =getPayrollBD();
+		Map<Integer, HashMap<String, DashboardPayrollPortal>> a =getPayrollBD();
 		List<DashboardPayrollPortal> list = new Vector<DashboardPayrollPortal>();
 		
 		for (Integer key : a.keySet()) {
@@ -1430,7 +1432,7 @@ public class DashboardController implements Serializable {
 		return list;
 	}
 	
-	public   Map<Integer, Hashtable<String, DashboardPayrollPortal>> getPayrollBD() throws SQLException {
+	public   Map<Integer, HashMap<String, DashboardPayrollPortal>> getPayrollBD() throws SQLException {
 		Locale locale = AonUtil.getCurrentLocale();
 		String domain = AonUtil.getDomainName();
 		Integer key = DomainManager.getCurrentDomain();
@@ -1456,10 +1458,10 @@ public class DashboardController implements Serializable {
 					.from(SALARY).join(DOMAIN).on(SALARY.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.NAME.eq(domain)).fetch();
 				*/	
-			Map<Integer, Hashtable<String, DashboardPayrollPortal>>  map = new Hashtable<Integer,Hashtable<String, DashboardPayrollPortal>>();
+			Map<Integer, HashMap<String, DashboardPayrollPortal>>  map = new HashMap<Integer,HashMap<String, DashboardPayrollPortal>>();
 			
 			for (Record6<java.sql.Date, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal> record : data) {
-				Hashtable<String, DashboardPayrollPortal> dpps = new Hashtable<String, DashboardPayrollPortal>();
+				HashMap<String, DashboardPayrollPortal> dpps = new HashMap<String, DashboardPayrollPortal>();
 				DashboardPayrollPortal dpp = new DashboardPayrollPortal();
 				dpp.setDeduction(0.00);dpp.setIrpf(0.00);
 				int auxMes = Integer.parseInt((record.value1().toString().substring(5, 7)))-1;
@@ -1479,7 +1481,8 @@ public class DashboardController implements Serializable {
 					else dpp.setOtros(0.00);
 					view(dpp);
 					dpps.put(mes, dpp);
-					map.put(ano, dpps);		
+					map.put(ano, dpps);	
+				
 				}
 				else{
 					if (!map.get(ano).containsKey(mes)){
@@ -1520,7 +1523,7 @@ public class DashboardController implements Serializable {
 	}
 	private  void view(DashboardPayrollPortal d) {
 		// TODO Apéndice de método generado automáticamente
-		LOGGER.debug("AÑO:  "+d.getAno());
+		LOGGER.debug("AÑO:  "+ d.getAno());
 		LOGGER.debug("MES:  "+d.getMes());
 		LOGGER.debug("SS:   "+d.getSs());
 		LOGGER.debug("OTROS:  "+d.getOtros());

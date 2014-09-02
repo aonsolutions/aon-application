@@ -3,6 +3,8 @@ package com.code.aon.aio.controller;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
+
 import com.code.aon.AonVersion;
 
 public class DashboardRecentFiles implements Serializable {
@@ -14,6 +16,7 @@ public class DashboardRecentFiles implements Serializable {
 	String category;
 	String	date;
 	long size;
+	String sizeString;
 
 	
 	public DashboardRecentFiles(){
@@ -57,6 +60,12 @@ public class DashboardRecentFiles implements Serializable {
 	}
 	public void setDate(String date) {
 		this.date = date;
+	}
+	public String getSizeString() {
+		return FileUtils.byteCountToDisplaySize(size); 
+	}
+	public void setSizeString(String sizeString) {
+		this.sizeString = sizeString;
 	}
 	
 
