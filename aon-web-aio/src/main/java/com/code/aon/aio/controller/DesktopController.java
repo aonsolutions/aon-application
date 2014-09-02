@@ -204,7 +204,7 @@ public class DesktopController implements Serializable {
 	public boolean isShowGraphicsPortlet() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		if ( ds.isChildDomain() ) {
-			if ( isFiscalEnabled() || isPayrollEnabled() ) {
+			if ( isFiscalEnabled() || isPayrollEnabled() || isDocumentalEnabled()) {
 				return true;
 			}
 			if ( isFiscalInfoVisibleForPortal() || isPayrollInfoVisibleForPortal() || isDocumentalInfoVisibleForPortal() ) {

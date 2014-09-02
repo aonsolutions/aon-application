@@ -257,7 +257,6 @@ public class DesktopState implements Serializable {
 				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_LIST, Boolean.FALSE);
 				Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
 				properties.put( ICommonConstants.HIDE_MENU_EMAIL, Boolean.TRUE );
-				properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_FAVORITE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_CHOOSE_LANGUAGE, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_ADVANCED_MODE, Boolean.TRUE );
@@ -266,6 +265,7 @@ public class DesktopState implements Serializable {
 				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 				String[] enabledCategories = null;
 				if ( isPayrollPortal() ) {
+					properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 					properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
 					enabledCategories = new String[]{Module.PAYROLL_PORTAL.getName()};
 				} else {

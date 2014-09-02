@@ -25,9 +25,7 @@
 					aon-portlets-column2,aon-portlets-column3">
 
 				<c:if test="#{!desktop.showGraphicsPortlet}">
-					<aon:div id="desktopDiv1">
-						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
-					</aon:div>
+					<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
 				</c:if>
 				<aon:div styleClass="aon-width-all">
 					<c:if test="#{domainSwitcher.childDomain}">
@@ -73,6 +71,9 @@
 
 				<aon:div>
 					<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />
+					<c:if test="#{desktop.showGraphicsPortlet}">
+						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+					</c:if>					
 					<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
 				</aon:div>
 			</aon:panelGrid>
