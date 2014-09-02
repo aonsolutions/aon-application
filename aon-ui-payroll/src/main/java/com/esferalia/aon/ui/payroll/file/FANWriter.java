@@ -34,7 +34,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -51,14 +50,13 @@ import com.esferalia.aon.file.payroll.fan.data.TCT;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
-import com.esferalia.aon.payroll.ContractLeave;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -187,6 +185,9 @@ public class FANWriter implements Serializable {
 		if(!list.isEmpty()){
 			Integer previousPerson = null;
 			TRA tra = null;
+//			System.out.println("STARTING ...");
+//			Date start = new Date();
+//			Date contractLoop = new Date();
 			for(ITransferObject to: list){
 				Contract contract = (Contract) to;
 				Salary salary = null;
@@ -204,9 +205,18 @@ public class FANWriter implements Serializable {
 					tra.getDat().addAll(createDATRecords(contract));
 					++totalContractSum;
 				}
+//				Date end = new Date();
+//				System.out.println((end.getTime()-contractLoop.getTime()) + " .... " + contract.getPerson().getFullName());
+//				contractLoop = end;
 			}
+//			Date end = new Date();
+//			System.out.println((end.getTime()-start.getTime()));
 			emp.getTcTotales().add(createTCTRecord(ccc));
+//			System.out.println("STARTING TOTALS");
+//			start = new Date();
 			createEDTRecords(ccc, emp, list);
+//			end = new Date();
+//			System.out.println((end.getTime()-start.getTime()));
 		
 			emp.setMpg(createMPGRecord(ccc));
 			return emp;
@@ -233,24 +243,6 @@ public class FANWriter implements Serializable {
 			// NADA
 		}
 		return ccc;
-	}
-	
-	private RegistryDirStaff obtainDirStaff(Enterprise enterprise){
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
-			Criteria criteria = new Criteria();
-			criteria.setSkipDomainFilter(true);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), enterprise.getRegistry().getId() );
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date() );
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
-			List<ITransferObject> dirStaffList = bean.getList(criteria);
-			if (! dirStaffList.isEmpty() ) {
-				return (RegistryDirStaff) dirStaffList.get(0);	
-			}
-		} catch (ManagerBeanException e) {
-			// NADA
-		}
-		return null;
 	}
 	
 	private String autoComplete(String value, int lenght, String completeValue, boolean leftSide) {
@@ -295,7 +287,6 @@ public class FANWriter implements Serializable {
 		} else {
 			tipo = "1";
 		}
-//		String pais = contract.getPerson().getRegistry().getDocumentCountry().getIso3();
 		String pais = WHITESPACE_3;
 		String doc = autoComplete(contract.getPerson().getRegistry().getDocument(), 14, "0", true);
 		String ipf = StringUtils.isBlank(tipo)?"9":tipo;
@@ -303,7 +294,6 @@ public class FANWriter implements Serializable {
 		ipf += doc;
 		tra.setIpf(ipf);
 		tra.setAyn(createAYNRecord(contract));
-//		tra.setDat(createDATRecords(contract));
 		return tra;
 	}
 	
@@ -337,11 +327,11 @@ public class FANWriter implements Serializable {
 		
 		if(liquidationType==LiquidationType.L00){
 			if(isLessThan7DaysContract(contract)){
-				datList.add(createDATRecord(contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract)));
+				createDATRecord(datList, contract, autoComplete("C", 7, " ", true), getContractDaysOrHours(contract));
 			} else {
 				Integer days = getContractDaysOrHours(contract);
 				if(days!=null && days>0){
-					datList.add(createDATRecord(contract, null, getContractDaysOrHours(contract)));
+					createDATRecord(datList, contract, null, getContractDaysOrHours(contract));
 				}
 			}
 			
@@ -362,7 +352,7 @@ public class FANWriter implements Serializable {
 					Double dayHours = (Double.parseDouble(weekHours)/5);
 					itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
 				}
-				datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays));
+				createDATRecord(datList, contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays);
 			}
 			// TODO
 //			if(isMonthSalary(contract)){
@@ -377,7 +367,7 @@ public class FANWriter implements Serializable {
 //				datList.add(createDATRecord(contract, autoComplete(getOthers(contract), 6, " ", true), getContractDaysOrHours(contract)));
 //			}
 		} else if(liquidationType==LiquidationType.L13){
-			datList.add(createDATRecord(contract, null, getNotEnjoyedVacationDays(contract)));
+			createDATRecord(datList, contract, null, getNotEnjoyedVacationDays(contract));
 		}
 		
 		return datList;
@@ -390,7 +380,7 @@ public class FANWriter implements Serializable {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	private DAT createDATRecord(Contract contract, String indicadorPerfil, Integer diasHoras) {
+	private DAT createDATRecord(List<DAT> list, Contract contract, String indicadorPerfil, Integer diasHoras) {
 		DAT dat = new DAT();
 		dat.setMes(endMonth.ordinal()+1);
 		dat.setIndicadoresPerfil(indicadorPerfil);
@@ -413,62 +403,109 @@ public class FANWriter implements Serializable {
 		dat.setColectivoPeculiar(getParticularGroup(contract));
 		dat.setInfoComplementaria(null);
 		dat.setCotizacionDesempleo(null);
-		
-		createEDLRecords(contract, dat);
-		
+		list.add(dat);
+		createEDLRecords(contract, dat, list);
 		return dat;
 	}
-
-	private List<ITransferObject> getContractLeaves(Contract contract, Date startDate, Date endDate) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
-			Criteria criteria = new Criteria();
-			criteria.setSkipDomainFilter(true);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), contract.getId());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), endDate);
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), startDate);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE), startDate);
-			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE));
-			return bean.getList(criteria);
-		} catch (ManagerBeanException e) {
-			// NADA
-		}
-		return null;
-	}
 	
-	private Double getItDailyBase(Contract contract){
-		Double base = null;
-		
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	private boolean isContractLeave(Contract contract){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			String select = "SELECT daily_reg_base FROM contract_leave";
-			select += " WHERE contract = " + contract.getId();
-			select += " AND start_date <= '" + dateFormatter.format(getEndDate()) + "'";
-			select += " AND (end_date >= '" + dateFormatter.format(getStartDate()) + "' OR end_date is null);";
-			
+			String select = "SELECT * FROM salary_payment";
+			select += " WHERE payment_concept = '" + ContextVariable.PREST_IT.getName() + "'";
+			select += " AND salary in (";
+			select += " SELECT id FROM salary WHERE contract = " + contract.getId()
+					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
+					+ " AND end_date <= '" + dateFormatter.format(getEndDate())+"'";
+			select += " );";
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
-			if(rs.next()){
-				base =  rs.getDouble(1);
-			}
+			return rs.next();
 		} catch (AonConnectionException e) {
-			// return null
+			// do nothing
+			System.out.println("isContractLeave - AonConnectionException");
 		} catch (SQLException e) {
-			// return null
+			// do nothing
+			System.out.println("isContractLeave - SQLException");
 		} finally {
 			DatabaseUtil.closeQuietly(ps);
 			DatabaseUtil.closeQuietly(conn);
 		}
-		if(base!=null){
-			return base; 
-		}
-		return null;
+		return false;
 	}
+	
+//	private Integer getItDays(Contract contract){
+//		Integer ecssDays = getECSSDays(contract);
+//		if(ecssDays!=null && ecssDays>0){
+//			return ecssDays;
+//		}
+//		Integer atepDays = getATEPDays(contract);
+//		if(atepDays!=null && atepDays>0){
+//			return atepDays;
+//		}
+//		return 0;
+//	}
+//	private Integer getECSSDays(Contract contract){
+//		Connection conn = null;
+//		PreparedStatement ps = null;
+//		try {
+//			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+//			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+//			String select = "SELECT expression FROM contract_data";
+//			select += " WHERE contract = " + contract.getId();
+//			select += " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'";
+//			select += " AND end_date <= '" + dateFormatter.format(getEndDate()) + "'";
+//			select += " AND name IN ('DIAS_ENFERMEDAD_COMUN_4_15', 'DIAS_ENFERMEDAD_COMUN_16_20', 'DIAS_ENFERMEDAD_COMUN_21')";
+//			select += " ;";
+//			ps = conn.prepareStatement(select);
+//			ResultSet rs = ps.executeQuery();
+//			Integer days = 0;
+//			if(rs.next()) 
+//				days += (int)rs.getDouble(1);
+//			return days;
+//		} catch (AonConnectionException e) {
+//			// do nothing
+//			System.out.println("ecss days - AonConnectionException");
+//		} catch (SQLException e) {
+//			// do nothing
+//			System.out.println("ecss days - SQLException");
+//		} finally {
+//			DatabaseUtil.closeQuietly(ps);
+//			DatabaseUtil.closeQuietly(conn);
+//		}
+//		return 0;
+//	}
+//	private Integer getATEPDays(Contract contract){
+//		Connection conn = null;
+//		PreparedStatement ps = null;
+//		try {
+//			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+//			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+//			String select = "SELECT expression FROM contract_data";
+//			select += " WHERE contract = " + contract.getId();
+//			select += " AND start_date >= '" + dateFormatter.format(getStartDate()) + "'";
+//			select += " AND end_date <= '" + dateFormatter.format(getEndDate()) + "'";
+//			select += " AND name = '" + ContextVariable.OCCUPATIONAL_DISEASE_DAYS.getName() + "'";
+//			select += " ;";
+//			ps = conn.prepareStatement(select);
+//			ResultSet rs = ps.executeQuery();
+//			if(rs.next()) 
+//				return (int)rs.getDouble(1);
+//		} catch (AonConnectionException e) {
+//			// do nothing
+//			System.out.println("atep days - AonConnectionException");
+//		} catch (SQLException e) {
+//			// do nothing
+//			System.out.println("atep days - SQLException");
+//		} finally {
+//			DatabaseUtil.closeQuietly(ps);
+//			DatabaseUtil.closeQuietly(conn);
+//		}
+//		return 0;
+//	}
 
 	private Integer getItDays(Contract contract){
 		return getItDays(contract, 0);
@@ -524,151 +561,115 @@ public class FANWriter implements Serializable {
 		return null;
 	}
 	
-	private Integer getIt1MoreDays(Contract contract) {
-		return getItDays(contract, 1);
-	}
-	private Integer getIt4To15MoreDays(Contract contract) {
-		return getItDays(contract, 4) - getItDays(contract, 15);
-	}
-	private Integer getIt16To20MoreDays(Contract contract) {
-		return getItDays(contract, 16) - getItDays(contract, 21);
-	}
-	private Integer getIt21MoreDays(Contract contract) {
-		return getItDays(contract, 21);
-	}
-	
-	private void createEDLRecords(Contract contract, DAT dat) {
+	private void createEDLRecords(Contract contract, DAT dat, List<DAT> datList) {
 		Salary salary = null;
 	
 		if(liquidationType==LiquidationType.L00){
 			salary = getSalary(contract, SalaryType.SALARY);
 		
 		
-		if(salary!=null){
-				
-			List<ITransferObject> leaveList = getContractLeaves(contract, getStartDate(), getEndDate());
-			if(dat.getIndicadoresPerfil()==null || !dat.getIndicadoresPerfil().contains("I")){
-				if(leaveList==null || leaveList.isEmpty()){
-					createEDLBa01Segment(salary.getCommonBase(), dat);
-					createEDLBa02Segment(salary.getProfessionalBase(), dat);
-				} else {
-					Double itBase = getItDailyBase(salary.getContract()) * getItDays(salary.getContract());
+			if(salary!=null){
 					
-					createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
-					createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
-				}
+				if(dat.getIndicadoresPerfil()==null || !dat.getIndicadoresPerfil().contains("I")){
+					if(!isContractLeave(contract)){
+						createEDLBa01Segment(salary.getCommonBase(), dat);
+						createEDLBa02Segment(salary.getProfessionalBase(), dat);
+					} else {
+						Double itBase = getITBase(salary);
+						createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
+						createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
+					}
+						
+						
+					createEDLBa05Segment(salary, dat);
+					createEDLBa06Segment(salary, dat);
+					createEDLBa07Segment(salary, dat);
+					createEDLBa08Segment(salary, dat);
+					createEDLBa09Segment(salary, dat);
+					createEDLBa10Segment(salary, dat);
+					createEDLBa11Segment(salary, dat);
+					createEDLBa20Segment(salary, dat);
+					createEDLBa21Segment(salary, dat);
+					createEDLBa22Segment(salary, dat);
+					createEDLBa23Segment(salary, dat);
+					createEDLBa28Segment(salary, dat);
+					createEDLBa30Segment(salary, dat);
+					createEDLBa31Segment(salary, dat);
+					createEDLBa32Segment(salary, dat);
+					createEDLBa33Segment(salary, dat);
+					createEDLBa34Segment(salary, dat);
+					createEDLBa35Segment(salary, dat);
+					createEDLBa36Segment(salary, dat);
+					createEDLBa37Segment(salary, dat);
+					createEDLBa38Segment(salary, dat);
+					createEDLBa41Segment(salary, dat);
+					createEDLBa42Segment(salary, dat);
 					
-					
-				createEDLBa05Segment(salary, dat);
-				createEDLBa06Segment(salary, dat);
-				createEDLBa07Segment(salary, dat);
-				createEDLBa08Segment(salary, dat);
-				createEDLBa09Segment(salary, dat);
-				createEDLBa10Segment(salary, dat);
-				createEDLBa11Segment(salary, dat);
-				createEDLBa20Segment(salary, dat);
-				createEDLBa21Segment(salary, dat);
-				createEDLBa22Segment(salary, dat);
-				createEDLBa23Segment(salary, dat);
-				createEDLBa28Segment(salary, dat);
-				createEDLBa30Segment(salary, dat);
-				createEDLBa31Segment(salary, dat);
-				createEDLBa32Segment(salary, dat);
-				createEDLBa33Segment(salary, dat);
-				createEDLBa34Segment(salary, dat);
-				createEDLBa35Segment(salary, dat);
-				createEDLBa36Segment(salary, dat);
-				createEDLBa37Segment(salary, dat);
-				createEDLBa38Segment(salary, dat);
-				createEDLBa41Segment(salary, dat);
-				createEDLBa42Segment(salary, dat);
-				
-				List<ITransferObject> bonusList = getSalaryBonuses(salary);
-				if (bonusList!=null && !bonusList.isEmpty()) {
-					SalaryBonus bonus = null;
-					BonusType bonusType = null;
-					for(ITransferObject to: bonusList){
-						bonus = (SalaryBonus) to;
-						bonusType = obtainBonusType(bonus);
-						if(bonus!=null && bonusType != null){
-							if(bonusType==BonusType.SOCIAL_SECURITY){
+					List<ITransferObject> bonusList = getSalaryBonuses(salary);
+					if (bonusList!=null && !bonusList.isEmpty()) {
+						SalaryBonus bonus = null;
+						BonusType bonusType = null;
+						for(ITransferObject to: bonusList){
+							bonus = (SalaryBonus) to;
+							bonusType = obtainBonusType(bonus);
+							if(bonus!=null && bonusType != null){
+								if(bonusType==BonusType.SOCIAL_SECURITY){
+									createEDLCd07Segment(bonus, dat);
+								} else if(bonusType==BonusType.EMPLOYMENT_PROMOTION){
+									createEDLCd22Segment(bonus, dat);
+								} else if(bonusType==BonusType.CEUTA_MELILLA){
+									createEDLCd20Segment(bonus, dat);
+								} else if(bonusType==BonusType.HANDICAP){
+									createEDLCd13Segment(bonus, dat);
+								} else if(bonusType==BonusType.LAW_19_94){
+									createEDLCd12Segment(bonus, dat);
+								} else if(bonusType==BonusType.DISTANCE_FORMATION){
+									createEDLCd11Segment(bonus, dat);
+								} else if(bonusType==BonusType.CLASSROOM_FORMATION){
+									createEDLCd10Segment(bonus, dat);
+								} else if(bonusType==BonusType.ERE){
+									createEDLCd28Segment(bonus, dat);
+								} else if(bonusType==BonusType.ENCOURAGED_INDUSTRIAL_SECTOR){
+									createEDLCd23Segment(bonus, dat);
+								} else if(bonusType==BonusType.GT_60){
+								} else if(bonusType==BonusType.EXEMPTION_GT30_CHILD){
+									createEDLCd25Segment(bonus, dat);
+								} else if(bonusType==BonusType.REDUCTION_RIGHT_CONTRACT){
+									createEDLCd06Segment(bonus, dat);
+								} else if(bonusType==BonusType.REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT){
+									createEDLCd17Segment(bonus, dat);
+								} else if(bonusType==BonusType.REDUCTION_FARMER_COMMON_CONTINGENCY){
+									createEDLCd29Segment(bonus, dat);
+								} else if(bonusType==BonusType.REDUCTION_FARMER_UNEMPLOYMENT){
+									createEDLCd30Segment(bonus, dat);
+								} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+									createEDLCd31Segment(bonus, dat);
+								}
+							} else if(bonus!=null && bonusType==null) {
 								createEDLCd07Segment(bonus, dat);
-							} else if(bonusType==BonusType.EMPLOYMENT_PROMOTION){
-								createEDLCd22Segment(bonus, dat);
-							} else if(bonusType==BonusType.CEUTA_MELILLA){
-								createEDLCd20Segment(bonus, dat);
-							} else if(bonusType==BonusType.HANDICAP){
-								createEDLCd13Segment(bonus, dat);
-							} else if(bonusType==BonusType.LAW_19_94){
-								createEDLCd12Segment(bonus, dat);
-							} else if(bonusType==BonusType.DISTANCE_FORMATION){
-								createEDLCd11Segment(bonus, dat);
-							} else if(bonusType==BonusType.CLASSROOM_FORMATION){
-								createEDLCd10Segment(bonus, dat);
-							} else if(bonusType==BonusType.ERE){
-								createEDLCd28Segment(bonus, dat);
-							} else if(bonusType==BonusType.ENCOURAGED_INDUSTRIAL_SECTOR){
-								createEDLCd23Segment(bonus, dat);
-							} else if(bonusType==BonusType.GT_60){
-							} else if(bonusType==BonusType.EXEMPTION_GT30_CHILD){
-								createEDLCd25Segment(bonus, dat);
-							} else if(bonusType==BonusType.REDUCTION_RIGHT_CONTRACT){
-								createEDLCd06Segment(bonus, dat);
-							} else if(bonusType==BonusType.REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT){
-								createEDLCd17Segment(bonus, dat);
-							} else if(bonusType==BonusType.REDUCTION_FARMER_COMMON_CONTINGENCY){
-								createEDLCd29Segment(bonus, dat);
-							} else if(bonusType==BonusType.REDUCTION_FARMER_UNEMPLOYMENT){
-								createEDLCd30Segment(bonus, dat);
-							} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
-								createEDLCd31Segment(bonus, dat);
 							}
-						} else if(bonus!=null && bonusType==null) {
-							createEDLCd07Segment(bonus, dat);
 						}
 					}
-				}
-					
-			} else {				
-				if (leaveList!=null && !leaveList.isEmpty()) {
-					ContractLeave it = null;
-					for(ITransferObject to: leaveList){
-						Double itBase = null;
-						it = (ContractLeave) to;
-						if(it.getType()==LeaveType.COMMON_DISEASE || it.getType()==LeaveType.NON_OCCUPATIONAL_DISEASE){
-							Integer itDays = getItDays(salary.getContract());
-							// itDays = 30 - dias sano
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(getStartDate());
-							itDays = 30 - (cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays);
-							
-							itBase = getItDailyBase(salary.getContract()) * itDays;
-							createEDLBa01Segment(itBase, dat);
-							createEDLBa02Segment(itBase, dat);
-							createEDLCd01Segment(salary, dat);
-						} else if(it.getType()==LeaveType.OCCUPATIONAL_DISEASE){
-							Integer itDays = getItDays(salary.getContract());
-							// itDays = 30 - dias sano
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(getStartDate());
-							itDays = 30 - (cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays);
 						
-							itBase = getItDailyBase(salary.getContract()) * itDays;
-							createEDLBa01Segment(itBase, dat);
-							createEDLBa02Segment(itBase, dat);
-							createEDLCd03Segment(salary, dat);
-						}
+				} else {				
+					if (isContractLeave(contract)) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(getStartDate());
+						Double itBase = getITBase(salary);
+						createEDLBa01Segment(datList.size()>1?itBase:salary.getCommonBase(), dat);
+						createEDLBa02Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
+						createEDLCd01Segment(salary, dat);
+						createEDLCd03Segment(salary, dat);
 					}
 				}
 			}
-		}
-//		createEDLCd05Segment(salary, dat);
-//		createEDLCd16Segment(salary, dat);
-//		createEDLCd18Segment(salary, dat);
-//		createEDLCd21Segment(salary, dat);
-//		createEDLCd24Segment(salary, dat);
-//		createEDLCd26Segment(salary, dat);
-//		createEDLCd27Segment(salary, dat);
+//			createEDLCd05Segment(salary, dat);
+//			createEDLCd16Segment(salary, dat);
+//			createEDLCd18Segment(salary, dat);
+//			createEDLCd21Segment(salary, dat);
+//			createEDLCd24Segment(salary, dat);
+//			createEDLCd26Segment(salary, dat);
+//			createEDLCd27Segment(salary, dat);
 		
 		} else if(liquidationType==LiquidationType.L13){
 			salary = getSalary(contract, SalaryType.SETTLE);
@@ -678,6 +679,29 @@ public class FANWriter implements Serializable {
 			}
 		}
 		
+	}
+	
+	private Double getITBase(Salary salary) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT sum(quote) FROM salary_payment";
+			select += " WHERE salary = " + salary.getId();
+			select += " AND payment_concept = '" + ContextVariable.PREST_IT.getName() + "'";
+			select += " GROUP BY payment_concept;";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDouble(1);
+		} catch (AonConnectionException e) {
+			// do nothing
+		} catch (SQLException e) {
+			// do nothing
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return 0.0;
 	}
 	
 	////////////////////////
@@ -830,7 +854,9 @@ public class FANWriter implements Serializable {
 	 */
 	private void createEDLCd11Segment(SalaryBonus bonus, DAT dat) {
 		EDL edl = dat.getEdlSegment("CD11");
-		createEDLRecord(edl, "CD", 11, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
+		Integer days = obtainFormationHours();
+		createEDLRecord(edl, "CD", 11, days, amount);
 	}
 	/**
 	 *  10 Bonificación por formación teórica presencial
@@ -839,7 +865,9 @@ public class FANWriter implements Serializable {
 	 */
 	private void createEDLCd10Segment(SalaryBonus bonus, DAT dat) {
 		EDL edl = dat.getEdlSegment("CD10");
-		createEDLRecord(edl, "CD", 10, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
+		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
+		Integer days = obtainFormationHours();
+		createEDLRecord(edl, "CD", 10, days, amount);
 	}
 	/**
 	 *  7 Bonificaciones Contratos con derecho a bonificación/reducción (casilla 601 de TC1)
@@ -869,8 +897,7 @@ public class FANWriter implements Serializable {
 	 * @param dat
 	 */
 	private void createEDLCd03Segment(Salary salary, DAT dat) {
-		// TODO
-		Double amount = getItDailyBase(salary.getContract()) * 0.75 * getIt1MoreDays(salary.getContract());
+		Double amount = (-1) * getATEPAmount(salary);
 		if (salary.getContract().getRegimeType() != SSRegimeType.ARTIST
 				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
 				&& Double.compare(amount,0.0d)>0) {
@@ -886,16 +913,62 @@ public class FANWriter implements Serializable {
 	 * @param dat
 	 */
 	private void createEDLCd01Segment(Salary salary, DAT dat) {
-		// TODO 
-		Double dailyBase = getItDailyBase(salary.getContract());
-		Double amount = dailyBase * 0.6 * getIt16To20MoreDays(salary.getContract());
-		amount += dailyBase * 0.75 * getIt21MoreDays(salary.getContract());
+		Double amount = (-1) * getECSSAmount(salary);
 		if (salary.getContract().getRegimeType() != SSRegimeType.ARTIST
 				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
 				&& Double.compare(amount,0.0d)>0) {
 			EDL edl = dat.getEdlSegment("CD01");
 			createEDLRecord( edl, "CD", 1, new Double(CommonUtil.round(amount)*100).intValue());
 		}
+	}
+	private Double getATEPAmount(Salary salary) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT sum(amount) FROM salary_cost";
+			select += " WHERE salary = " + salary.getId();
+			select += " AND cost_concept = 'ATEP_E'";
+			select += " GROUP BY cost_concept;";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDouble(1);
+		} catch (AonConnectionException e) {
+			// do nothing
+			System.out.println("ATEP amount - AonConnectionException");
+		} catch (SQLException e) {
+			// do nothing
+			System.out.println("ATEP amount - SQLException");
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return 0.0;
+	}
+
+	private Double getECSSAmount(Salary salary) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT sum(amount) FROM salary_cost";
+			select += " WHERE salary = " + salary.getId();
+			select += " AND cost_concept = 'ECSS_E'";
+			select += " GROUP BY cost_concept;";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return rs.getDouble(1);
+		} catch (AonConnectionException e) {
+			// do nothing
+			System.out.println("ECSS amount - AonConnectionException");
+		} catch (SQLException e) {
+			// do nothing
+			System.out.println("ECSS amount - SQLException");
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return 0.0;
 	}
 	
 	
@@ -1028,11 +1101,6 @@ public class FANWriter implements Serializable {
 		createEDLRecord(edl, "BA", 0, new Double(salary.getCommonBase()*100).intValue());		
 	}
 	
-	private Integer getDcDays(Contract c) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	private List<ITransferObject> getSalaryBonuses(Salary salary) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryBonus.class);
@@ -1115,15 +1183,18 @@ public class FANWriter implements Serializable {
 //		9909 Personal becario de investigación
 		return null;
 	}
+	/**
+	 * INDICADOR DISCAPACIDAD
+		D Minusvalía igual o superior al 33%
+		S Pensionista incapacidad permanente de la S.S.
+		P Pensionista incapacidad permanente clases pasivas
+	 * 
+	 * @param contract
+	 * @return
+	 */
 	private String getHandicapIndicator(Contract contract) {
-		// TODO getHandicapIndicator
-//		D Minusvalía igual o superior al 33%
-//		S Pensionista incapacidad permanente de la S.S.
-//		P Pensionista incapacidad permanente clases pasivas
-		
-//		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.HANDICAP_INDICATOR.getName());
-//		return o!=null && !o.isEmpty()?o:null;
-		return null;
+		String o = SEPEUtils.getInstance().getContractInfoMap(contract, false, true).get(ContractVariable.DISABILITY_INDICATOR.getValue());
+		return o!=null && !o.isEmpty()?o:null;
 	}
 	private String getQuoteMode(Contract contract) {
 		// TODO getQuoteMode
@@ -1159,17 +1230,20 @@ public class FANWriter implements Serializable {
 		String q = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.QUOTE_GROUP.getName());
 		return q!=null && !q.isEmpty()?Integer.parseInt(q):null;
 	}
+	/**
+	 * INDICADOR REDUCCION BONIFICACIO CONTRATOS TP
+			1	Reducción mínima *
+			2	Reducción media
+			3	Reducción máxima
+			4	Importe total sin reducción
+			5	Tarifa plana minima (RDL 3/2014).
+			6	Tarifa plana media (RDL 3/2014)
+	 * @param contract
+	 * @return
+	 */
 	private Integer getBonificationReduction(Contract contract) {
-		// TODO getBonificationReduction
-//		1	Reducción mínima *
-//		2	Reducción media
-//		3	Reducción máxima
-//		4	Importe total sin reducción
-//		5	Tarifa plana minima (RDL 3/2014).
-//		6	Tarifa plana media (RDL 3/2014)
-//		String o = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.HANDICAP_INDICATOR.getName());
-//		return o!=null && !o.isEmpty()?Integer.parseInt(o):null;
-		return null;
+		String o = SEPEUtils.getInstance().getContractInfoMap(contract, false, true).get(ContractVariable.BONUS_REDUCTION_INDICATOR.getValue());
+		return o!=null && !o.isEmpty()?Integer.parseInt(o):null;
 	}
 	private Integer getSpecifics(Contract contract) {
 		// TODO getSpecifics
@@ -1198,7 +1272,6 @@ public class FANWriter implements Serializable {
 	 * @return
 	 */
 	private String getQuoteIndicator(Contract contract) {
-		// TODO 
 		String code = getContractCode(contract).getValue();
 		if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
@@ -1215,17 +1288,21 @@ public class FANWriter implements Serializable {
 		programa de fomento de empleo (R.D.L. 5/2006 de 9 de junio)
 		Podrá tomar valor entre 1 y 31. Se cumplimentará en un solo segmento DAT de los varios que pueda tener un mismo trabajador y
 		periodo (diferentes situaciones contractuales en el mismo mes).
+		
+		Obligatorio para contratos a tiempo parcial bonificados con el programa de fomento de empleo (R.D.L. 5/2006 de 9 de junio). 
+		Obligatorio para TRL 930 (socios cooperativas ) con contrato a tiempo parcial. 
+		Obligatorio para contratos a tiempo parcial bonificados por el R.D.L. 3/2014
 	 * @param c
 	 * @return
 	 */
 	private Integer getContractDischargeDays(Contract contract) {
 		String code = getContractCode(contract).getValue();
 		if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
-			getSalaryBonuses(getSalary(contract, SalaryType.SALARY));
 			boolean match = false;
 			for(ITransferObject to: getSalaryBonuses(getSalary(contract, SalaryType.SALARY))){
-				ContractBonus bonus = (ContractBonus) to;
-				if(bonus.getBonusConcept().getType()==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+				SalaryBonus bonus = (SalaryBonus) to;
+				BonusType bonusType = obtainBonusType(bonus);
+				if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
 					match = true;
 				}
 			}
@@ -1240,7 +1317,6 @@ public class FANWriter implements Serializable {
 				}
 			}
 		}
-		// TODO 
 		return null;
 	}
 	
@@ -1325,6 +1401,15 @@ public class FANWriter implements Serializable {
 	}
 	
 	/**
+	 * numero de horas destinadas a formacion para las bonificaciones por formacion
+	 * @return
+	 */
+	private Integer obtainFormationHours() {
+		// TODO how obtain formation hours count
+		return 0;
+	}
+	
+	/**
 	 * C - Obligatorio para contratos de duración efectiva inferior a 7 días Ley 12/2001
 	 * @param c
 	 * @return
@@ -1390,8 +1475,9 @@ public class FANWriter implements Serializable {
 	private String getJournalReduction(Contract contract) {
 		// TODO 
 
-		List<ITransferObject> leaveList = getContractLeaves(contract, getStartDate(), getEndDate());
-		if(leaveList!=null && !leaveList.isEmpty()){
+//		List<ITransferObject> leaveList = getContractLeaves(contract, getStartDate(), getEndDate());
+//		if(leaveList!=null && !leaveList.isEmpty()){
+		if(isContractLeave(contract)){
 			return "I";
 		}
 		return null;
@@ -1501,112 +1587,99 @@ public class FANWriter implements Serializable {
 	}
 	
 	private void createEDTRecords(EnterpriseCCC ccc, EMP emp,List<ITransferObject> contractList) throws ManagerBeanException {
-		for(ITransferObject to: contractList){
-			Contract c = (Contract) to;
-		
-			Salary salary = null;
-			if(liquidationType==LiquidationType.L00){
-				salary = getSalary(c, SalaryType.SALARY);
-			} else if(liquidationType==LiquidationType.L13){
-				salary = getSalary(c, SalaryType.SETTLE);
-			}
-			
-			if( salary!=null ){
 				
-				createEDTBa01Segment(emp);
-				createEDTBa02Segment(emp);
-				createEDTBa05Segment(emp);
-				createEDTBa06Segment(emp);
-				createEDTBa07Segment(emp);
-				createEDTBa08Segment(emp);
-				createEDTBa09Segment(ccc, emp);
-				createEDTBa10Segment(ccc, emp);
-				createEDTBa11Segment(ccc, emp);
-				createEDTBa21Segment(ccc, emp);
-				createEDTBa22Segment(emp);
-				createEDTBa23Segment(emp);
-				createEDTBa28Segment(emp);
-				createEDTBa30Segment(emp);
-				createEDTBa31Segment(emp);
-				createEDTBa32Segment(emp);
-				createEDTBa33Segment(emp);
-				createEDTBa34Segment(emp);
-				createEDTBa35Segment(emp);
-				createEDTBa36Segment(emp);
-				createEDTBa37Segment(emp);
-				createEDTBa38Segment(emp);
-				createEDTBa41Segment(emp);
-				createEDTBa42Segment(emp);
+		createEDTBa01Segment(emp);
+		createEDTBa02Segment(emp);
+		createEDTBa05Segment(emp);
+		createEDTBa06Segment(emp);
+		createEDTBa07Segment(emp);
+		createEDTBa08Segment(emp);
+		createEDTBa09Segment(ccc, emp);
+		createEDTBa10Segment(ccc, emp);
+		createEDTBa11Segment(ccc, emp);
+		createEDTBa21Segment(ccc, emp);
+		createEDTBa22Segment(emp);
+		createEDTBa23Segment(emp);
+		createEDTBa28Segment(emp);
+		createEDTBa30Segment(emp);
+		createEDTBa31Segment(emp);
+		createEDTBa32Segment(emp);
+		createEDTBa33Segment(emp);
+		createEDTBa34Segment(emp);
+		createEDTBa35Segment(emp);
+		createEDTBa36Segment(emp);
+		createEDTBa37Segment(emp);
+		createEDTBa38Segment(emp);
+		createEDTBa41Segment(emp);
+		createEDTBa42Segment(emp);
 				
-				createEDTCd01Segment(ccc, emp);
-				createEDTCd03Segment(ccc, emp);
-				createEDTCd05Segment(emp);
-				createEDTCd06Segment(emp);
-				createEDTCd07Segment(emp);
-				createEDTCd10Segment(emp);
-				createEDTCd11Segment(emp);
-				createEDTCd12Segment(emp);
-				createEDTCd13Segment(emp);
-				createEDTCd16Segment(emp);
-				createEDTCd17Segment(ccc, emp);
-				createEDTCd18Segment(emp);
-				createEDTCd20Segment(emp);
-				createEDTCd21Segment(emp);
-				createEDTCd22Segment(ccc, emp);
-				createEDTCd23Segment(emp);
-				createEDTCd24Segment(ccc, emp);
-				createEDTCd25Segment(ccc, emp);
-				createEDTCd26Segment(emp);
-				createEDTCd27Segment(emp);
-				createEDTCd28Segment(emp);
-				createEDTCd29Segment(emp);
-				createEDTCd30Segment(emp);
-				createEDTCd31Segment(ccc, emp);
+		createEDTCd01Segment(ccc, emp);
+		createEDTCd03Segment(ccc, emp);
+		createEDTCd05Segment(emp);
+		createEDTCd06Segment(emp);
+		createEDTCd07Segment(emp);
+		createEDTCd10Segment(emp);
+		createEDTCd11Segment(emp);
+		createEDTCd12Segment(emp);
+		createEDTCd13Segment(emp);
+		createEDTCd16Segment(emp);
+		createEDTCd17Segment(ccc, emp);
+		createEDTCd18Segment(emp);
+		createEDTCd20Segment(emp);
+		createEDTCd21Segment(emp);
+		createEDTCd22Segment(ccc, emp);
+		createEDTCd23Segment(emp);
+		createEDTCd24Segment(ccc, emp);
+		createEDTCd25Segment(ccc, emp);
+		createEDTCd26Segment(emp);
+		createEDTCd27Segment(emp);
+		createEDTCd28Segment(emp);
+		createEDTCd29Segment(emp);
+		createEDTCd30Segment(emp);
+		createEDTCd31Segment(ccc, emp);
 				
-				createEDTCa01Segment(ccc, emp);
-				createEDTCa02Segment(emp);
-				createEDTCa03Segment(emp);
-				createEDTCa11Segment(ccc, emp);
-				createEDTCa12Segment(emp);
-				createEDTCa20Segment(emp);
-				createEDTCa21Segment(emp);
-				createEDTCa22Segment(emp);
-				emp.getEdtSegment("EDTCA30");
-				createEDTCa31Segment(ccc, emp);
-				createEDTCa32Segment(ccc, emp);
-				createEDTCa30Segment(emp);
+		createEDTCa01Segment(ccc, emp);
+		createEDTCa02Segment(emp);
+		createEDTCa03Segment(emp);
+		createEDTCa11Segment(ccc, emp);
+		createEDTCa12Segment(emp);
+		createEDTCa20Segment(emp);
+		createEDTCa21Segment(emp);
+		createEDTCa22Segment(emp);
+		emp.getEdtSegment("EDTCA30");
+		createEDTCa31Segment(ccc, emp);
+		createEDTCa32Segment(ccc, emp);
+		createEDTCa30Segment(emp);
 				
-				createEDTCa50Segment(ccc, emp);
-				createEDTCa51Segment(emp);
-				createEDTCa52Segment(emp);
-				createEDTCa53Segment(emp);
-				createEDTCa54Segment(emp);
-				createEDTCa55Segment(emp);
-				createEDTCa56Segment(emp);
-				createEDTCa57Segment(emp);
+		createEDTCa50Segment(ccc, emp);
+		createEDTCa51Segment(emp);
+		createEDTCa52Segment(emp);
+		createEDTCa53Segment(emp);
+		createEDTCa54Segment(emp);
+		createEDTCa55Segment(emp);
+		createEDTCa56Segment(emp);
+		createEDTCa57Segment(emp);
 				
-				emp.getEdtSegment("EDTCA60");
-				createEDTCa80Segment(ccc, emp);
-				createEDTCa60Segment(emp);
-				if(emp.getEdtSegment("EDTCA60").getImporte()==null){
-					emp.getEdt().remove("EDTCA60");
-				}
-				createEDTCa90Segment(emp);
-				
-				emp.getEdt().remove("EDTTT10");
-				emp.getEdt().remove("EDTTT20");
-				emp.getEdt().remove("EDTTT30");
-				emp.getEdt().remove("EDTTT91");
-				emp.getEdt().remove("EDTTT92");
-				emp.getEdtSegment("EDTTT10");
-				emp.getEdtSegment("EDTTT20");
-				emp.getEdtSegment("EDTTT30");
-				createEDTTt10Segment(emp);
-				createEDTTt20Segment(emp);
-				createEDTTt30Segment(emp);
-				createEDTTt9XSegment(emp);
-			}
+		emp.getEdtSegment("EDTCA60");
+		createEDTCa80Segment(ccc, emp);
+		createEDTCa60Segment(emp);
+		if(emp.getEdtSegment("EDTCA60").getImporte()==null){
+			emp.getEdt().remove("EDTCA60");
 		}
+		createEDTCa90Segment(emp);
+				
+		emp.getEdt().remove("EDTTT10");
+		emp.getEdt().remove("EDTTT20");
+		emp.getEdt().remove("EDTTT30");
+		emp.getEdt().remove("EDTTT91");
+		emp.getEdt().remove("EDTTT92");
+		emp.getEdtSegment("EDTTT10");
+		emp.getEdtSegment("EDTTT20");
+		emp.getEdtSegment("EDTTT30");
+		createEDTTt10Segment(emp);
+		createEDTTt20Segment(emp);
+		createEDTTt30Segment(emp);
+		createEDTTt9XSegment(emp);
 	}
 	
 	
@@ -1689,8 +1762,9 @@ public class FANWriter implements Serializable {
 		amount -= (emp.getEdt().containsKey("EDTCA20")?emp.getEdtSegment("EDTCA20").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTCA21")?emp.getEdtSegment("EDTCA21").getImporte():0);
 		amount -= (emp.getEdt().containsKey("EDTCA22")?emp.getEdtSegment("EDTCA22").getImporte():0);
-		amount -= (emp.getEdt().containsKey("EDTBA10")?emp.getEdtSegment("EDTBA10").getImporte():0);
-		amount -= (emp.getEdt().containsKey("EDTBA11")?emp.getEdtSegment("EDTBA11").getImporte():0);
+		amount += (emp.getEdt().containsKey("EDTBA10")?emp.getEdtSegment("EDTBA10").getImporte():0);
+		amount += (emp.getEdt().containsKey("EDTBA11")?emp.getEdtSegment("EDTBA11").getImporte():0);
+		
 		EDT edt = emp.getEdtSegment("EDTTT10");
 		edt.setTipoElemento("TT");
 		edt.setClave(10);
