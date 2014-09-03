@@ -75,7 +75,7 @@ public class AonServer implements IMailConstants, Serializable {
 					Quota[] quotas = imapStore.getQuota(INBOX_FOLDER_NAME);
 					return ! ArrayUtils.isEmpty(quotas);
 				}
-    		} catch (MessagingException e) {
+    		} catch (Throwable e) {
     			LOGGER.error("Error checking is QUOTA enabled" + account.toString(),e);
     		}
 		}
@@ -93,7 +93,7 @@ public class AonServer implements IMailConstants, Serializable {
 					break;
 				}
 			}
-		} catch (MessagingException e) {
+		} catch (Throwable e) {
 			LOGGER.error("Error getting QUOTA" + account.toString(),e);
 		}
 		return resource;
@@ -269,7 +269,7 @@ public class AonServer implements IMailConstants, Serializable {
 				LOGGER.info("Found folder : {}",folderName);
 			}
 			return new AonFolder(new_folder, this);
-		} catch (MessagingException e) {
+		} catch (Throwable e) {
 			LOGGER.error("Creating new folder failed ", e);
 		}
 		return null;
@@ -392,7 +392,7 @@ public class AonServer implements IMailConstants, Serializable {
     	if ( service!=null && service.isConnected() ) {
     		try {
 				service.close();
-			} catch (MessagingException e) {
+			} catch (Throwable e) {
 				LOGGER.error( "Error closing service, " + e.getMessage(), e );
 			}
     	}

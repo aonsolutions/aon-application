@@ -2,10 +2,12 @@ package com.code.aon.aio.controller;
 
 import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -36,6 +38,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.AggregateFunction;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -57,6 +60,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.User;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -75,6 +79,8 @@ import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountEntryCheck;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.controller.IFiscalModelController;
 import com.code.aon.ui.form.FormUtil;
@@ -1057,7 +1063,6 @@ public class DashboardController implements Serializable {
 	public void getTypesCatBD2() throws AonConnectionException,
 	SQLException {
 		String domain = AonUtil.getDomainName();
-		Integer key = DomainManager.getCurrentDomain();
 
 		Connection connection = null;
 		try {
@@ -1075,7 +1080,7 @@ public class DashboardController implements Serializable {
 				data =  dslContext
 						.select(RATTACH.CATEGORY,RATTACH.DATA.length(),RATTACH.DRIVE_ID)
 						.from(RATTACH)
-						.where(RATTACH.DOMAIN.eq(key)).fetch();
+						.where(getAttachmentCondition()).fetch();
 				
 				int aux = 0;
 				for (Record3<Integer, Integer, String> record : data) {
@@ -1163,11 +1168,55 @@ public class DashboardController implements Serializable {
 		}
 	}
 	
+	private List<Integer> getCurrentUserScopeIds() throws SQLException {
+		User user = UserUtils.getInstance().getLoggedUser();
+		String domain = AonUtil.getDomainName();
+		List<Integer> scopes = null;
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection, JooqSettings.getDefaultSettings());
+
+			scopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+					.where(USER_SCOPE.USER_ID.eq(user.getId()))
+					.fetch(USER_SCOPE.SCOPE);
+
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+		return scopes;
+	}
+	
+	private Condition getAttachmentCondition() throws SQLException {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		List<Integer> domains = new LinkedList<Integer>();
+		domains.add(ds.getDomainId());
+		if ( ds.isChildDomain() ) {
+			domains.add(ds.getParentDomainId());
+		}
+		Condition condition = RATTACH.TYPE.eq((byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
+		condition = condition.and(RATTACH.DOMAIN.in(domains));
+		if (!ds.isParentDomainUserInChildDomain()) {
+			Condition scopeCondition = RATTACH.SCOPE.isNull();
+			List<Integer> scopes = getCurrentUserScopeIds();
+			if (scopes!= null && !scopes.isEmpty() ) {
+				if ( scopes.size() == 1 ) {
+					scopeCondition = scopeCondition.or(RATTACH.SCOPE.eq(scopes.get(0)));
+				} else {
+					scopeCondition = scopeCondition.or(RATTACH.SCOPE.in(scopes));
+				}
+			}
+			condition = condition.and(scopeCondition);
+		}
+		return condition;
+	}
+	
 	public  Vector<DashboardRecentFiles> getRecentsFiles() throws AonConnectionException,
 	SQLException {
 		Locale locale = AonUtil.getCurrentLocale();
 		String domain = AonUtil.getDomainName();
-		Integer key = DomainManager.getCurrentDomain();
 
 		Connection connection = null;
 		try {
@@ -1181,8 +1230,8 @@ public class DashboardController implements Serializable {
 			data =  dslContext
 					.selectDistinct(RATTACH.TYPE,RATTACH.DATA.length(),RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE)
 					.from(RATTACH)
-					.where(RATTACH.DOMAIN.eq(key))
-					.orderBy(RATTACH.ATTACH_DATE.desc()).fetch();
+					.where(getAttachmentCondition())					
+					.orderBy(RATTACH.ATTACH_DATE.desc()).limit(10).fetch();
 			
 			Vector<DashboardRecentFiles> vector = new Vector<DashboardRecentFiles>();
 			int j=0;
