@@ -59,6 +59,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.Administration;
@@ -1196,8 +1197,10 @@ public class DashboardController implements Serializable {
 		if ( ds.isChildDomain() ) {
 			domains.add(ds.getParentDomainId());
 		}
-		Condition condition = RATTACH.TYPE.eq((byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal());
-		condition = condition.and(RATTACH.DOMAIN.in(domains));
+		Condition condition = RATTACH.DOMAIN.in(domains);
+		if ( !AonUtil.getRoleManager().isConfidentiality() ) {
+			condition = condition.and(RATTACH.SECURITY_LEVEL.eq((byte)SecurityLevel.OFFICIAL.ordinal()));
+		}
 		if (!ds.isParentDomainUserInChildDomain()) {
 			Condition scopeCondition = RATTACH.SCOPE.isNull();
 			List<Integer> scopes = getCurrentUserScopeIds();
@@ -1210,6 +1213,7 @@ public class DashboardController implements Serializable {
 			}
 			condition = condition.and(scopeCondition);
 		}
+		condition = condition.and(RATTACH.TYPE.eq((byte)RegistryAttachmentType.CORPORATE_IDENTITY.ordinal()));
 		return condition;
 	}
 	
