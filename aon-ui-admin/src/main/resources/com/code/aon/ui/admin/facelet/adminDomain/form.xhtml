@@ -68,6 +68,15 @@
 						</aon:selectOneMenu>		
 					</c:if>				
 							
+					<c:if test="#{aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain}">							
+						<aon:outputLabel for="Domain_owner"
+							value="#{bundle.admin_new_domain_owner}" />
+						<aon:inputText id="Domain_owner" size="90" maxlength="256"
+							title="#{bundle.admin_new_domain_owner_help}"
+							validator="#{adminDomain.ownerCheck}" required="true"
+							value="#{adminDomain.to.owner}" />
+					</c:if>									
+							
 					<aon:outputLabel for="Domain_name"
 						value="#{bundle.admin_domain_url}" />
 					<c:if test="#{!aonRole.sysAdmin}">
@@ -80,12 +89,6 @@
 							validator="#{adminDomain.domainNameCheck}"
 							size="64" maxlength="#{adminDomain.maxDomainNameLength}" value="#{adminDomain.to.name}" />
 
-						<aon:outputLabel for="Domain_owner"
-							value="#{bundle.admin_new_domain_owner}" />
-						<aon:inputText id="Domain_owner" size="90" maxlength="256"
-							validator="#{adminDomain.ownerCheck}" required="true"
-							value="#{adminDomain.to.owner}" />
-									
 						<c:if test="#{!domainSwitcher.childDomain}" >							
 							<aon:outputLabel for="Domain_subDomainSuffix"
 								value="#{bundle.admin_domain_subDomainSuffix}" />

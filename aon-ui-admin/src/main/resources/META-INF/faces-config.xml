@@ -513,6 +513,10 @@
 			<from-outcome>domainPrint_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/domainPrint/search.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainPrint_history</from-outcome>
+			<to-view-id>com/code/aon/ui/admin/facelet/domainPrint/history.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>		
 		
 	<!-- =================== Domain User ================= -->

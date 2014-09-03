@@ -181,7 +181,7 @@ public class DomainController extends BasicController {
 			initDomainApplication();
 			initApplicationInfos();
 			initOEM();
-			initHistory();
+			initHistory(getCompany().getId());
 			this.currentDomainInfo = getDomainInfo();
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
 				saveHistory(this.currentDomainInfo);
@@ -712,7 +712,7 @@ public class DomainController extends BasicController {
 				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
 				adc.init();
 			}
-			initHistory();
+			initHistory(getCompany().getId());
 		}
 		this.currentDomainInfo = di;
 	}
@@ -826,6 +826,7 @@ public class DomainController extends BasicController {
 		IManagerBean bean = BeanManager.getManagerBean(MailAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_DOMAIN), user.getDomain());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_USER_ID), user.getId());
 		for( ITransferObject to : bean.getList(criteria) ) {
 			MailAccount ma = (MailAccount) to;
@@ -866,6 +867,10 @@ public class DomainController extends BasicController {
 				emails.addAll(getOwnerEmails(adminId));
 			}
 			emails.addAll(getOwnerEmails(DomainManager.getCurrentDomain()));
+			Integer parentDomainId = DomainManager.getDomainProvider().getParentDomain(); 
+			if ( parentDomainId != null ) {
+				emails.addAll(getOwnerEmails(parentDomainId));
+			}
 			emails.addAll(getUserEmails());
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
@@ -882,11 +887,11 @@ public class DomainController extends BasicController {
 		return companyController.obtainCompany();		
 	}
 	
-	private void initHistory() throws ManagerBeanException {
+	public void initHistory( Integer companyId ) throws ManagerBeanException {
 		List<DomainInfo> list = new LinkedList<DomainInfo>();
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		Integer companyId = getCompany().getId();
+		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), companyId);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DOMAIN_BOOK_HISTORY);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_MIME_TYPE), MimeType.MIME_TXT);

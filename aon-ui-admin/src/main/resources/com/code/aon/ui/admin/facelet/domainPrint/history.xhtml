@@ -6,12 +6,12 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+	template="/facelet/templates/aon.ui.content.xhtml">
 
-	<ui:define name="configContent">
+	<ui:define name="content">
 
 		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/historyContent.xhtml" >
-			<aon:methodParam name="historyBackAction" value="adminDomain_form" />
+			<aon:methodParam name="historyBackAction" value="domainPrint_search" />
 		</ui:include>
 			
 	</ui:define>

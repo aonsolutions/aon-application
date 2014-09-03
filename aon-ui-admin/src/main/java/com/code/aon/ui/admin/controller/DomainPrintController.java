@@ -1,6 +1,7 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAINS_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN;
 import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID;
 
@@ -16,8 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.AonVersion;
+import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -192,6 +193,15 @@ public class DomainPrintController extends BasicController {
 		return null;
 	}	
 
+	public void onGoToDomainHistory(ActionEvent event) throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			Integer companyId = AdminUtil.getCompanyId(domain.getId());
+			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+			controller.initHistory(companyId);
+		}
+	}
+	
 	private static class DomainFilter extends ControllerAdapter {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

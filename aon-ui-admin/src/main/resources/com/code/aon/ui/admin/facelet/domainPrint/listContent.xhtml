@@ -17,14 +17,22 @@
 	
 	<aon:column styleClass="aon-editDataTable-iconColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_changes}" />
+			<aon:outputText value="#{bundle.aon_history}" />
 		</f:facet>
-		<aon:div rendered="#{controller.currentHasModifications}">
+		<aon:div rendered="#{controller.currentHasModifications}"
+			onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+			onmouseout="enableRowSelector();" >
 			<aon:outputText value="&#160;"
 				style="padding-left:15px;" styleClass="aon-icon-comment"/>
 			<rich:toolTip value="#{controller.currentModifications}"
 				styleClass="aon-width-450" />						
-		</aon:div>													
+			<aon:commandLink id="goToDomainHistory"
+				styleClass="aon-button-goto" style="padding-right: 20px;padding-top: 2px;" 
+				value="&#160;" immediate="true"
+				action="domainPrint_history"
+				actionListener="#{controller.onGoToDomainHistory}">
+			</aon:commandLink>											
+		</aon:div>			
 	</aon:column>	
 	
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-140"
