@@ -87,7 +87,11 @@ public class PmsUtil {
 		}
 	}
 	
-	public boolean isAddExtensions() {
+	public ProjectReservation getReservation() {
+		return reservation;
+	}
+
+	public boolean isReservationAvailable() {
 		return this.reservation != null;
 	}
 	

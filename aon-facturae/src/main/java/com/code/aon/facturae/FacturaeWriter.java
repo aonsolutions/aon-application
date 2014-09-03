@@ -75,6 +75,7 @@ import es.mityc.facturae32.LegalEntityType;
 import es.mityc.facturae32.ModalityType;
 import es.mityc.facturae32.OverseasAddressType;
 import es.mityc.facturae32.PartiesType;
+import es.mityc.facturae32.PeriodDates;
 import es.mityc.facturae32.PersonTypeCodeType;
 import es.mityc.facturae32.RegistrationDataType;
 import es.mityc.facturae32.ResidenceTypeCodeType;
@@ -423,6 +424,14 @@ public class FacturaeWriter {
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);
+		if ( pmsUtil.isReservationAvailable() ) {
+			PeriodDates pd = new PeriodDates();
+			XMLGregorianCalendar startDate = Util.toXMLCalendar(pmsUtil.getReservation().getStartDate());
+			pd.setStartDate(startDate);
+			XMLGregorianCalendar endDate = Util.toXMLCalendar(pmsUtil.getReservation().getEndDate());
+			pd.setEndDate(endDate);;
+			invoiceIssueData.setInvoicingPeriod(pd);
+		}
 		return invoiceIssueData;
 	}	
 	
@@ -568,7 +577,7 @@ public class FacturaeWriter {
 			invoiceLine.setDiscountsAndRebates( getDiscountsAndRebates(line, totalCost) );
 		}
 		addLinesTaxes( invoiceType, invoiceLine, line );
-		if ( this.pmsUtil.isAddExtensions() ) {
+		if ( this.pmsUtil.isReservationAvailable() ) {
 			ExtensionsType extension = new ExtensionsType();
 			invoiceLine.setExtensions(extension);			
 		}
@@ -669,7 +678,7 @@ public class FacturaeWriter {
 			MarshallerUtil marshallerUtil32 = MarshallerUtil.getInstance(FacturaeVersion.FACTURAE_32);
 			marshallerUtil32.marshal( facturae, fileName );
 			String realName = fileName + FACTURAE_EXTENSION;
-	    	if ( pmsUtil.isAddExtensions() ) {
+	    	if ( pmsUtil.isReservationAvailable() ) {
 	    		pmsUtil.transform(realName);
 	    	}
 	    	if ( numberOfDecimals != DecimalUtil.DEFAULT_DECIMALS ) {
