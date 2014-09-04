@@ -26,6 +26,7 @@ public class GoogleLoginCallbackServlet extends HttpServlet {
 	public static String pass;
 	
 	public static String getUsername(String email, String statepass) {
+		
 		return "OpenID_Email=" + email + "&" + statepass;
 	}
 	public static String getPassword() {
@@ -66,8 +67,9 @@ public class GoogleLoginCallbackServlet extends HttpServlet {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
-		
-		String statepass = SessionInfo.table.get(key).getUsers().get(username).getGoogleUsers().get(email).getState();
+		String statepass="";
+		if (username !=  null)
+			statepass = SessionInfo.table.get(key).getUsers().get(username).getGoogleUsers().get(email).getState();
 		
 		
 		RequestDispatcher dispatcher = getServletContext()
