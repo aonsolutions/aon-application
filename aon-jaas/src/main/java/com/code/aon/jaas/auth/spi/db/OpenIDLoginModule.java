@@ -53,6 +53,7 @@ public class OpenIDLoginModule extends LoginModule {
 			String pass = (String) request.getSession().getAttribute("Oauth2callback.state");
 			
 			if(!emailAux.substring(pos+1).equals(pass)){
+				System.out.println(email);
 				throw new AuthenticationLoginException( "aon_login_err_7", email);
 
 			}
@@ -61,6 +62,8 @@ public class OpenIDLoginModule extends LoginModule {
 
 			
 			if ( username == null ) {
+				System.out.println(email);
+
 				throw new AuthenticationLoginException( "aon_login_err_6", email);
 			}
 			
@@ -83,13 +86,14 @@ public class OpenIDLoginModule extends LoginModule {
 						OPENID_EMAIL );
 
 				int pos = userAux.indexOf("&");
+
+				String email = userAux.substring(0, pos);
+				
+				String user = getUserName(email,domain);
 				
 				
-				String user = getUserName(userAux.substring(0, pos),domain);
-				
-				if ( user == null ) {
-					throw new AuthenticationLoginException( "aon_login_err_6", StringUtils.substringAfter(info[0],
-							OPENID_EMAIL ));
+				if ( user==null ) {
+					throw new AuthenticationLoginException( "aon_login_err_6", email);
 				}
 				String password = info[1];
 				
