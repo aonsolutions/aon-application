@@ -12,6 +12,7 @@ public class GoogleUser {
 	private  Drive drive;
 	private  Tasks tasks;
 	private  FileList fl;
+	private  String state;
 	
 	public GoogleUser() {
 		// TODO Apéndice de constructor generado automáticamente
@@ -55,6 +56,14 @@ public class GoogleUser {
 	
 	public void setFl(FileList fl){
 		this.fl= fl;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 	
 	

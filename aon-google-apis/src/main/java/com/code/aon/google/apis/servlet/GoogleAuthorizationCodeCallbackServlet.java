@@ -94,6 +94,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 				gu.setGmail(email);
 				gu.setOAuth2(oauth2);
 				gu.setTasks(tasks);
+				gu.setState(statepass);
 
 				SessionUserInfo su = new SessionUserInfo();
 
@@ -143,7 +144,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 */
 		resp.sendRedirect(req.getRequestURL().append("?")
 				.append("name="+key+"&act="+SessionInfo.table.get(key).getAction()+"&username="+ getUsername(email, statepass)+"&password="+getPassword()).toString()
-				.replace(req.getServerName(), key).replace(req.getServletPath(), "LoginPopupClose"));
+				.replace(req.getServerName(), key).replace(req.getServletPath(), "/LoginPopupClose/&"+email));
 
 	}
 
