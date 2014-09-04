@@ -94,6 +94,7 @@ public class DesktopState implements Serializable {
     private boolean patchInitAction;
     private int portalValue;
     private boolean userWithPortalView;
+    private int externalApplicationsValue;
 	
     public DesktopState() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
@@ -109,6 +110,7 @@ public class DesktopState implements Serializable {
 		User user = initUser();
 		initSupport();
 		initPortal(user, ds);
+		initExternalApplications(user);
 		checkSerialization();
 	}
 
@@ -521,6 +523,30 @@ public class DesktopState implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	private void initExternalApplications( User user ) {
+		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS, user.getDomain());
+		externalApplicationsValue = (value != null) ? value : 0;
+	}	
+	
+	public boolean isShowExternalApplications() {
+		return externalApplicationsValue != 0;
+	}
+
+	public boolean isShowDehOnline() {
+		return (externalApplicationsValue & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+	}
+	
+	public boolean isShowServiconvenios() {
+		if ( (externalApplicationsValue & IAdminConstants.SERVICONVENIOS_EXTERNAL_APP) != 0 ) {
+			return isPayrollEnabled();
+		}
+		return false;
+	}
+
+	public boolean isShowTirant() {
+		return (externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
 	}
 	
 }

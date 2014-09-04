@@ -84,6 +84,31 @@
 							<aon:outputText value="http://#{adminDomain.to.name}" />
 					    </aon:outputLink>
 					</c:if>
+					
+					<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') and (!domainSwitcher.childDomain)}">
+						<aon:outputLabel for="Domain_externalApplications"
+							value="#{bundle.aon_external_applications}" />
+						<aon:div>
+							<aon:selectBooleanCheckbox id="ExternalApplication_DEHOnline"
+								value="#{adminDomain.dehOnline}">
+							</aon:selectBooleanCheckbox>
+							<aon:outputLabel for="ExternalApplication_DEHOnline"
+								value="#{bundle.aon_external_dehOnline}" />			
+							<c:if test="#{actionDenied.moduleEnabled['payroll']}">											
+								<aon:selectBooleanCheckbox id="ExternalApplication_Serviconvenios"
+									value="#{adminDomain.serviconvenios}">
+								</aon:selectBooleanCheckbox>
+								<aon:outputLabel for="ExternalApplication_Serviconvenios"
+									value="#{bundle.aon_external_serviconvenios}" />
+							</c:if>						
+							<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
+								value="#{adminDomain.tirant}">
+							</aon:selectBooleanCheckbox>
+							<aon:outputLabel for="ExternalApplication_Tirant"
+								value="#{bundle.aon_external_tirant}" />						
+						</aon:div>
+					</c:if>
+					
 					<c:if test="#{aonRole.sysAdmin}">
 						<aon:inputText id="Domain_name" required="true"
 							validator="#{adminDomain.domainNameCheck}"

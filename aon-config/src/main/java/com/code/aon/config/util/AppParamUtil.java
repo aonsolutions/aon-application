@@ -1,5 +1,6 @@
 package com.code.aon.config.util;
 
+import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_PARAMETER_DOMAIN;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_PARAMETER_NAME;
 
 import java.util.List;
@@ -19,11 +20,15 @@ import com.code.aon.ql.Criteria;
 public class AppParamUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AppParamUtil.class);
-	
-	public static ApplicationParameter getParameter( AppParam ap ) {
+
+	public static ApplicationParameter getParameter( AppParam ap, Integer domainId ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
+			if ( domainId != null ) {
+				criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_DOMAIN), domainId);
+				criteria.setSkipDomainFilter(true);
+			}
 			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), ap.getValue());
 			List<ITransferObject> list = bean.getList(criteria, 0, 1);
 			if (! list.isEmpty() ) {
@@ -33,6 +38,10 @@ public class AppParamUtil {
 			LOGGER.error( e.getMessage(), e );
 		}
 		return null;
+	}
+	
+	public static ApplicationParameter getParameter( AppParam ap ) {
+		return getParameter(ap, null);
 	}
 	
 	public static ApplicationParameter insertParameter( ApplicationParameter ap ) {
@@ -87,13 +96,17 @@ public class AppParamUtil {
 		}	
 		return false;
     }	
-	
-	public static String getValue( AppParam appParam ) {
-		ApplicationParameter ap = getParameter(appParam);
+
+	public static String getValue( AppParam appParam, Integer domainId ) {
+		ApplicationParameter ap = getParameter(appParam, domainId);
 		if ( ap != null ) {
 			return StringUtils.trimToNull(ap.getValue());
 		}
 		return null;
+	}
+	
+	public static String getValue( AppParam appParam ) {
+		return getValue(appParam, null);
 	}
 
 	public static boolean getValueAsBoolean( AppParam appParam, boolean _default ) {
@@ -108,8 +121,8 @@ public class AppParamUtil {
 		return getValueAsBoolean(appParam, false);
 	}
 
-	public static Integer getValueAsInteger( AppParam appParam ) {
-		String value = getValue(appParam);
+	public static Integer getValueAsInteger( AppParam appParam, Integer domainId ) {
+		String value = getValue(appParam, domainId);
 		if ( value != null ) {
 			try {
 				return Integer.parseInt(value);
@@ -118,6 +131,10 @@ public class AppParamUtil {
 			}
 		}
 		return null;
+	}
+	
+	public static Integer getValueAsInteger( AppParam appParam ) {
+		return getValueAsInteger(appParam, null);
 	}
 	
 }

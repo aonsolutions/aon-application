@@ -119,10 +119,6 @@ public class DesktopController implements Serializable {
 		return DESKTOP_TEMPLATE;
 	}
 
-	public boolean isSupportEnabled() {
-		return getState().isSupportEnabled();
-	}
-
 	public void onEnableSupport(ActionEvent event) {
 		getState().setSupportEnabled(true);
 		String value = String.valueOf(new Date().getTime());
@@ -132,18 +128,6 @@ public class DesktopController implements Serializable {
 	public void onDisableSupport(ActionEvent event) {
 		getState().setSupportEnabled(false);
 		AppParamUtil.removeParameter(AppParam.AON_SUPPORT_ENABLED);
-	}
-
-	public boolean isPayrollEnabled() {
-		return getState().isPayrollEnabled();
-	}
-	
-	public boolean isDocumentalEnabled() {
-		return getState().isDocumentalEnabled();
-	}
-
-	public boolean isFiscalEnabled() {
-		return getState().isFiscalEnabled();
 	}
 
 	public boolean isGroupwareEnabled() {
@@ -184,30 +168,18 @@ public class DesktopController implements Serializable {
 		}
 		return logEnabled;
 	}
-	
-	public boolean isPortal() {
-		return getState().getPortalValue() != 0;
-	}
-	
-	public boolean isFiscalInfoVisibleForPortal() {
-		return getState().isFiscalInfoVisibleForPortal();
-	}
-	
-	public boolean isPayrollInfoVisibleForPortal() {
-		return getState().isPayrollInfoVisibleForPortal();
-	}
-	
-	public boolean isDocumentalInfoVisibleForPortal() {
-		return getState().isDocumentalInfoVisibleForPortal();
-	}
 
 	public boolean isShowGraphicsPortlet() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		if ( ds.isChildDomain() ) {
-			if ( isFiscalEnabled() || isPayrollEnabled() || isDocumentalEnabled()) {
+			if ( getState().isFiscalEnabled() ||
+				getState().isPayrollEnabled() ||
+				getState().isDocumentalEnabled()) {
 				return true;
 			}
-			if ( isFiscalInfoVisibleForPortal() || isPayrollInfoVisibleForPortal() || isDocumentalInfoVisibleForPortal() ) {
+			if ( getState().isFiscalInfoVisibleForPortal() ||
+				getState().isPayrollInfoVisibleForPortal() ||
+				getState().isDocumentalInfoVisibleForPortal() ) {
 				return true;
 			}
 		}

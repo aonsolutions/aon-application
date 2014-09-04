@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<c:if test="#{domainSwitcher.parentDomain and desktop.state.showExternalApplications}">
+		<aon:div styleClass="aon-margin-top">					  
+			<c:if test="#{desktop.state.showTirant}">
+				<aon:div styleClass="aon-text-center aon-margin-bottom aon-margin-top aon-support">
+					<h:outputLink id="tirantWeb" target="_blank" value="#{bundle.aon_external_tirant_url}" >
+						<h:graphicImage title="#{bundle.aon_external_tirant}"
+							url="#{aonResource.resolve['/images/logo-tirant-asesores.png']}" />
+					</h:outputLink>
+				</aon:div>
+			</c:if>							
+			<c:if test="#{desktop.state.showServiconvenios}">
+				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
+					<h:outputLink id="serviconveniosWeb" target="_blank" value="#{bundle.aon_external_serviconvenios_url}" >						
+						<h:graphicImage title="#{bundle.aon_external_serviconvenios}"
+							url="#{aonResource.resolve['/images/logo-serviconvenios.png']}" />
+					</h:outputLink>
+				</aon:div>
+			</c:if>
+			<c:if test="#{desktop.state.showDehOnline}">							
+				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
+					<h:outputLink id="dehOnlineWeb" target="_blank" value="#{bundle.aon_external_dehOnline_url}" >						
+						<h:graphicImage title="#{bundle.aon_external_dehOnline}"
+							url="#{aonResource.resolve['/images/logo-deh-online.png']}" />
+					</h:outputLink>
+				</aon:div>
+			</c:if>
+		</aon:div>		
+	</c:if>
+					
+</ui:composition>

@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -38,10 +39,10 @@ import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.AonException;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -158,6 +159,8 @@ public class DomainController extends BasicController {
 	
 	private DataScrollerState historyState;
 	
+	private int externalApplications;
+
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
 	}
@@ -182,6 +185,7 @@ public class DomainController extends BasicController {
 			initApplicationInfos();
 			initOEM();
 			initHistory(getCompany().getId());
+			initExternalApplications();
 			this.currentDomainInfo = getDomainInfo();
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
 				saveHistory(this.currentDomainInfo);
@@ -448,6 +452,19 @@ public class DomainController extends BasicController {
 		this.heritableOEMDomain = getOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 	}
 
+	public void initExternalApplications() {
+		if ( (getDomain().getType() == DomainType.CONSULTANCY) && (getParentDomain() == null) ) {
+			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS);
+			externalApplications = (value != null) ? value : 0;
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			if ( adc.isDeniedModule(Module.PAYROLL.getName()) ) {
+				setServiconvenios(false);
+			}	
+		} else {
+			externalApplications = 0;
+		}
+	}
+	
 	private void saveOEMDomain( AppParam appParam, Domain domain) throws ManagerBeanException {
 		String id = null;
 		if ( domain != null && domain.getId() != null ) {
@@ -470,6 +487,14 @@ public class DomainController extends BasicController {
 		saveOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID, this.heritableOEMDomain);
 	}	
 
+	public void saveExternalApplications() {
+		if ( externalApplications != 0 ) {
+			AppParamUtil.insertParameter(AppParam.AON_EXTERNAL_APPLICATIONS, externalApplications);	
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_EXTERNAL_APPLICATIONS);
+		}
+	}	
+	
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
 		String name = (String) value;
 		if (! StringUtils.equals(name, getDomain().getName()) ) {
@@ -960,6 +985,42 @@ public class DomainController extends BasicController {
 		attach.setMimeType(MimeType.MIME_PDF);
 		DownloadUtil.downloadAttachment(attach);
 	}
+	
+	private boolean getExternalApplicationsValue(int bitwise) {
+		return (externalApplications & bitwise) != 0;
+	}
+
+	private void setExternalApplicationsValue(int bitwise, boolean value) {
+		if ( value ) {
+			this.externalApplications |= bitwise;	
+		} else {
+			this.externalApplications &= (~bitwise);
+		}
+	}
+	
+	public boolean isDehOnline() {
+		return getExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP);
+	}
+
+	public void setDehOnline(boolean value) {
+		setExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP, value);
+	}
+
+	public boolean isServiconvenios() {
+		return getExternalApplicationsValue(IAdminConstants.SERVICONVENIOS_EXTERNAL_APP);
+	}
+
+	public void setServiconvenios(boolean value) {
+		setExternalApplicationsValue(IAdminConstants.SERVICONVENIOS_EXTERNAL_APP, value);
+	}
+
+	public boolean isTirant() {
+		return getExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP);
+	}
+
+	public void setTirant(boolean value) {
+		setExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP, value);
+	}	
 
 	private static class ParentDomainFilter extends ControllerAdapter {
 		

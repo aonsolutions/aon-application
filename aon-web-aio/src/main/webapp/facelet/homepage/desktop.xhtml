@@ -31,26 +31,26 @@
 					<c:if test="#{domainSwitcher.childDomain}">
 						<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
 						
-						<c:if test="#{desktop.fiscalEnabled and !desktop.fiscalInfoVisibleForPortal}">
+						<c:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
 						</c:if>
 
-						<c:if test="#{desktop.fiscalInfoVisibleForPortal}">
+						<c:if test="#{desktop.state.fiscalInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
 						</c:if>
 						
-						<c:if test="#{desktop.payrollEnabled and !desktop.payrollInfoVisibleForPortal}">
+						<c:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
 						</c:if>
-						<c:if test="#{desktop.documentalEnabled and !desktop.documentalInfoVisibleForPortal}">
+						<c:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
 						</c:if>
 						<!-- payroll portal -->
-						<c:if test="#{desktop.payrollInfoVisibleForPortal}">
+						<c:if test="#{desktop.state.payrollInfoVisibleForPortal}">
 							<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
 						</c:if>
 						<!-- docs -->
-						<c:if test="#{desktop.documentalInfoVisibleForPortal}">
+						<c:if test="#{desktop.state.documentalInfoVisibleForPortal}">
 							<ui:include src="/facelet/homepage/portlet/documentalPortalDashboardPortlet.xhtml" />
 						</c:if>
 
@@ -70,11 +70,13 @@
 				</aon:div>
 
 				<aon:div>
-					<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />
+					<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
+					<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
 					<c:if test="#{desktop.showGraphicsPortlet}">
 						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
-					</c:if>					
+					</c:if>			
 					<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
+					<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
 				</aon:div>
 			</aon:panelGrid>
 
