@@ -181,6 +181,17 @@
 	
 	
 	<servlet>
+		<servlet-name>LoginCallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.google.apis.servlet.GoogleLoginCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoginCallbackServlet</servlet-name>
+		<url-pattern>/LoginPopupClose/*</url-pattern>
+	</servlet-mapping>
+	
+	
+	
+	<servlet>
 		<servlet-name>OAuth2Servlet</servlet-name>
 		<servlet-class>com.code.aon.google.apis.servlet.GoogleAuthorizationCodeServlet</servlet-class>
 	</servlet>
