@@ -11,9 +11,11 @@ public class ItemCustomerController extends LinesController {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onCustomerChanged(LookupChangeEvent event) {
-		Customer customer = (Customer) event.getNewValue();
 		RegistryItem registryItem = (RegistryItem)getTo();
-		registryItem.setRegistry(customer.getRegistry());
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Customer customer = (Customer)event.getNewValue();
+			registryItem.setRegistry(customer.getRegistry());
+		}
 	}
 
 }

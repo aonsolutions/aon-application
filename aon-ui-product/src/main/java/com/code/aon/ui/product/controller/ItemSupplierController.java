@@ -11,9 +11,11 @@ public class ItemSupplierController extends LinesController {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	public void onSupplierChanged(LookupChangeEvent event) {
-		Supplier supplier = (Supplier) event.getNewValue();
 		RegistryItem registryItem = (RegistryItem)getTo();
-		registryItem.setRegistry(supplier.getRegistry());
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Supplier supplier = (Supplier)event.getNewValue();
+			registryItem.setRegistry(supplier.getRegistry());
+		}
 	}
 
 }
