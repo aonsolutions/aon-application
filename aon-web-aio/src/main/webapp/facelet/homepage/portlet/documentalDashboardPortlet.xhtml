@@ -46,8 +46,8 @@
 							function drawCharts(){
 						
 								var data = new google.visualization.DataTable();								                                                  
-								data.addColumn('string', 'Task');
-								data.addColumn('number', 'Hours per Day');
+								data.addColumn('string', 'Categoría');
+								data.addColumn('number', 'Archivos');
   								data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
 
 								<!--data.addRow(['Eat',2]),
@@ -60,7 +60,7 @@
 								//	data.addRow(['#{doc.type}',
 								//	             #{doc.size},'#{doc.description}']);											
 									data.addRow(['#{doc.category}',
-									             #{doc.size},'#{doc.description}']);											
+									             #{doc.num},'#{doc.description}']);											
 								
 								</c:forEach>
 								
@@ -81,21 +81,21 @@
 								function drawChart() {
 
   									var data = new google.visualization.DataTable();
-      								data.addColumn('string','Type');
-      								data.addColumn('number', 'Size');
-      								data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
+      								data.addColumn('string','Categoría');
+      								data.addColumn('number', 'Archivos');
+      								//data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
       							
 									<c:forEach var="doc" items="#{dashboard.typesCat}">//#{dashboard.types}			
 									
 										data.addRow(['#{doc.categoryAbr}',
-									             #{doc.size},'#{doc.description}']);											
+									             #{doc.num}]);			//, '#{doc.description}']);											
 									</c:forEach>
       
 
   								var options = {
   		        						tooltip: {isHtml: true},
 
-									    hAxis: {title: 'Type', titleTextStyle: {color: 'red'}},
+									    hAxis: {title: 'Categorías', titleTextStyle: {color: 'red'}},
   								};
 
   								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:documental_chart_div'));	
@@ -117,8 +117,8 @@
 							
       						var data = new google.visualization.DataTable();
       						data.addColumn('string','categoryAbr');
-      						data.addColumn('number','número de archivos');
-      						data.addColumn('number','media Drive');
+      						data.addColumn('number','Archivos');
+      						data.addColumn('number','media');
       						data.addColumn('string','categoria');
       						data.addColumn('number','tamaño');
 							data.addColumn({type:'string', role:'tooltip','p': {'html': true}});
@@ -150,8 +150,8 @@
 							*/
       						var options = {
 		        				tooltip: {isHtml: true},	
-								hAxis: {title: 'num',maxValue: 5},
-        						vAxis: {title: 'mediaDrive',maxValue: 10,minValue: -1},
+								hAxis: {title: 'Archivos',maxValue: 5},
+        						vAxis: {title: '',maxValue: 10,minValue: -1},
         						bubble: {textStyle: {fontSize: 11}}
       						};
 
@@ -195,7 +195,6 @@
         				var data = new google.visualization.DataTable();
         				data.addColumn('string', 'Fecha');
         				data.addColumn('string', 'Nombre');
-      				  	data.addColumn('string', 'tipo');
         				data.addColumn('string', 'Categoria');
         				data.addColumn('string', 'Tamaño');
 
@@ -209,7 +208,6 @@
 						
 							data.addRow(['#{recent.date}',
 							             '#{recent.name}',
-						             	'#{recent.type}',
 						             	'#{recent.category}',
 						             	'#{recent.sizeString}']);											
 						</c:forEach>

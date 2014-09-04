@@ -59,7 +59,8 @@ public class DashboardRecentFiles implements Serializable {
 		return date;
 	}
 	public void setDate(String date) {
-		this.date = date;
+		
+		this.date = formatDate(date);
 	}
 	public String getSizeString() {
 		return FileUtils.byteCountToDisplaySize(size); 
@@ -67,6 +68,13 @@ public class DashboardRecentFiles implements Serializable {
 	public void setSizeString(String sizeString) {
 		this.sizeString = sizeString;
 	}
-	
+	private String formatDate( String date){
+		Integer pos = date.indexOf("-");
+		String año = date.substring(0,pos);
+		Integer pos1 = date.substring(pos+1).indexOf("-");
+		String mes = date.substring(pos+1).substring(0,pos1);
+		String dia = date.substring(pos+1).substring(pos1+1);
+		return dia+"-"+mes+"-"+año;
+	}
 
 }

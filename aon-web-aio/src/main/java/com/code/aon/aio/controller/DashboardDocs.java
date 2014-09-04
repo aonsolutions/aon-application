@@ -59,8 +59,7 @@ public class DashboardDocs implements Serializable {
 		return mediaDrive;
 	}
 	public void setmediaDrive(long mediaDrive, int num) {
-		if (num!=0) this.mediaDrive=mediaDrive/(long)num;
-		else this.mediaDrive=0;
+		this.mediaDrive=0;
 		
 	}
 	
@@ -81,9 +80,9 @@ public class DashboardDocs implements Serializable {
 	
 	public String getDescription(){
 		if (type != null)
-			return "<b>Type:</b>"+type+"<br/> <b>número archivos:</b>"+num+"<br/> <b>Tamaño:</b>" +size;
+			return "<b>Tipo:</b>"+type+"<br/> <b>Archivos:</b>"+num+"<br/> <b>Tamaño:</b>" +size;
 		else if(category !=null)
-			return "<b>Category:</b>"+category+"<br/> <b>número archivos:</b>"+num+"<br/> <b>Tamaño:</b>" +size;
+			return "<b>Categoría:</b>"+category+"<br/> <b>Archivos:</b>"+num;//+"<br/> <b>Tamaño:</b>" +size;
 		else return null;
 		
 	}

@@ -4,6 +4,7 @@ import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -47,6 +48,7 @@ import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -942,7 +944,7 @@ public class DashboardController implements Serializable {
 
 	}*/
 	
-	
+	// esta en DBConsults
 	public  Vector<DashboardDocs> getTypes() throws AonConnectionException,
 	SQLException {
 			Integer aux = RegistryAttachmentType.values().length;
@@ -983,10 +985,13 @@ public class DashboardController implements Serializable {
 			return types;
 	}
 	
+	
+	
+	
 	public   Vector<DashboardDocs> getTypesCat() throws AonConnectionException,
 	SQLException {
 			String domain = AonUtil.getDomainName();
-			Result<Record3<Integer, String,String>> category =  getCategory(domain);
+			Result<Record3<Integer, String,String>> category =  DBConsults.getCategory(domain);
 			sizes();
 			getTypesCatBD2();
 			Vector<DashboardDocs> types= new Vector<DashboardDocs>(); 
@@ -1262,15 +1267,13 @@ public class DashboardController implements Serializable {
 					else drc.settype("otros");
 					
 					if (record.value5() != null){
-						String date = record.value5().toString();
-						LOGGER.debug("{}", date);
-						drc.setDate(date);
+						drc.setDate(record.value5().toString());
 						
 					}
 					vector.add(drc);
 					j++;
 				}
-					if (j >= 10 ) return vector;
+				if (j >= 10 ) return vector;
 									
 			}
 			
