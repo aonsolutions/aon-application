@@ -17,7 +17,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.AonVersion;
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.sessionInfo.GoogleUser;
 import com.code.aon.google.apis.sessionInfo.SessionInfo;
@@ -33,95 +34,92 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.tasks.Tasks;
 
-
 public class GoogleAuthorizationCodeCallbackServlet extends
 		AbstractAuthorizationCodeCallbackServlet {
-	
-	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	public static String pass;
-	
 
-	
-	public static String getUsername(String email,String statepass) {
-		return "OpenID_Email=" + email+"&"+statepass;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5248059355038389197L;
+
+	public static String pass;
+
+	public static String getUsername(String email, String statepass) {
+		return "OpenID_Email=" + email + "&" + statepass;
 	}
 
 	public static String getPassword() {
-		return 	pass;
+		return pass;
 
 	}
-	public String getBDUsername(String email,String key) throws AonConnectionException, SQLException{
+
+	public String getBDUsername(String email, String key)
+			throws AonConnectionException, SQLException {
 		String username = getUserName(email, key);
 		return username;
 	}
-	
-	
+
 	@Override
 	protected void onSuccess(HttpServletRequest req, HttpServletResponse resp,
 			Credential credential) throws ServletException, IOException {
-		
+
 		super.onSuccess(req, resp, credential);
 
-		
 		String username = null;
-		int pos=req.getParameter("state").indexOf("&");
+		int pos = req.getParameter("state").indexOf("&");
 		String key = req.getParameter("state").substring(0, pos);
-		String statepass= req.getParameter("state").substring(pos+1); 
-		
-		Oauth2 oauth2 = new Oauth2.Builder(getHttpTransport(), getJsonFactory(), credential)
-				.setApplicationName("AON SOLUTIONS").build();
-		
-		Drive drive = new Drive.Builder(getHttpTransport(), getJsonFactory(), credential)
-				.setApplicationName("AON SOLUTIONS").build();
-		
-		
+		String statepass = req.getParameter("state").substring(pos + 1);
+
+		Oauth2 oauth2 = new Oauth2.Builder(getHttpTransport(),
+				getJsonFactory(), credential).setApplicationName(
+				"AON SOLUTIONS").build();
+
+		Drive drive = new Drive.Builder(getHttpTransport(), getJsonFactory(),
+				credential).setApplicationName("AON SOLUTIONS").build();
+
 		System.out.println(drive);
-		Tasks tasks=new Tasks.Builder(getHttpTransport(), getJsonFactory(), credential)
-				.setApplicationName("AON SOLUTIONS").build();
-				
-		
+		Tasks tasks = new Tasks.Builder(getHttpTransport(), getJsonFactory(),
+				credential).setApplicationName("AON SOLUTIONS").build();
+
 		String email = oauth2.userinfo().v2().me().get().execute().getEmail();
-		System.out.println("EMAIL = " + email );
-		
+		System.out.println("EMAIL = " + email);
+
 		try {
-			username = getBDUsername(email,key);
-			
-			if ( username != null ) {
-			
+			username = getBDUsername(email, key);
+
+			if (username != null) {
+
 				GoogleUser gu = new GoogleUser();
 				gu.setDrive(drive);
 				gu.setGmail(email);
 				gu.setOAuth2(oauth2);
 				gu.setTasks(tasks);
-				
+
 				SessionUserInfo su = new SessionUserInfo();
-			
-				
+
 				su.setUsername(username);
-				//su.setGoogleUsers(new Hashtable<String, GoogleUser>());
-				
-				if (!su.getGoogleUsers().containsKey(email)){
+				// su.setGoogleUsers(new Hashtable<String, GoogleUser>());
+
+				if (!su.getGoogleUsers().containsKey(email)) {
 					su.getGoogleUsers().put(email, gu);
-				}
-				else{
+				} else {
 					su.getGoogleUsers().get(email).setDrive(drive);
 					su.getGoogleUsers().get(email).setOAuth2(oauth2);
 					su.getGoogleUsers().get(email).setTasks(tasks);
 				}
-				
+
 				su.setDomain(key);
 				su.setIsGoogleSession(true);
-			
-				if(!SessionInfo.table.get(key).getUsers().containsKey(username)){
+
+				if (!SessionInfo.table.get(key).getUsers()
+						.containsKey(username)) {
 					SessionInfo.table.get(key).getUsers().put(username, su);
-				}
-				else{
-					SessionInfo.table.get(key).getUsers().get(username).getGoogleUsers().put(email, gu);
+				} else {
+					SessionInfo.table.get(key).getUsers().get(username)
+							.getGoogleUsers().put(email, gu);
 				}
 			}
 
-			
 		} catch (AonConnectionException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
@@ -129,32 +127,32 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
-		
+
 		pass = Utils.PasswordGenerator.getPassword(
 				Utils.PasswordGenerator.MINUSCULAS
-				+ Utils.PasswordGenerator.MAYUSCULAS
-				+ Utils.PasswordGenerator.NUMEROS, 10);
-		
+						+ Utils.PasswordGenerator.MAYUSCULAS
+						+ Utils.PasswordGenerator.NUMEROS, 10);
+
 		credential.getClientAuthentication().toString();
-		RequestDispatcher dispatcher = getServletContext()
+	/*	RequestDispatcher dispatcher = getServletContext()
 				.getRequestDispatcher("/login/popupclose.jsp");
 		req.setAttribute("name", key);
-		req.setAttribute("act",SessionInfo.table.get(key).getAction()); 
-		req.setAttribute("username", getUsername(email,statepass));
+		req.setAttribute("act", SessionInfo.table.get(key).getAction());
+		req.setAttribute("username", getUsername(email, statepass));
 		req.setAttribute("password", getPassword());
-		dispatcher.forward(req, resp);
-		
+*/
+		resp.sendRedirect(req.getRequestURL().append("?")
+				.append("name="+key+"&act="+SessionInfo.table.get(key).getAction()+"&username="+ getUsername(email, statepass)+"&password="+getPassword()).toString()
+				.replace(req.getServerName(), key).replace(req.getServletPath(), "LoginPopupClose"));
+
 	}
-	
-	
+
 	@Override
 	protected String getRedirectUri(HttpServletRequest req)
 			throws ServletException, IOException {
-		
+
 		return getAuth2CallbackUri(req);
 	}
-	
-	
 
 	@Override
 	protected String getUserId(HttpServletRequest req) throws ServletException,
@@ -167,53 +165,53 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			IOException {
 		return newFlow();
 	}
-	
-	
-	
-	private String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
-		
-		
+
+	private String getUserName(String email, String domainName)
+			throws AonConnectionException, SQLException {
+
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
-			
-			
-		
-		String sql="SELECT U.login"
-				+ " FROM user AS U inner join mail_account AS MA ON (U.id = MA.user_id) inner join domain AS D ON (D.id=U.domain)"
-				+ " WHERE MA.email=? AND D.name = ?";
 
-		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
-		
-		Util util = new Util(connectionInfo);
-		util.createMetadataConnection();
-		Domain domain = util.getDomain(domainName);
-		connection = connectionInfo.getDomainConnection(domain.getDataBaseName());
-		/*
-		DSLContext dslContext= DSL.using(connection, JooqSettings.getDefaultSettings());
-		
-		Result<Record1<String>> username = dslContext.select(USER.LOGIN)
-			.from(USER)
-			.join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
-			.join(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
-			.where(MAIL_ACCOUNT.EMAIL.eq(email).and(DOMAIN.NAME.eq(domainName))).fetch();
-		
-		String a= username.format();
-		
-		System.out.println(a);
-		
-		return a;
-		*/
-		stmt = connection.prepareStatement(sql);
-		stmt.setString(1,email);
-		stmt.setString(2, domainName);
-		rs = stmt.executeQuery();
-		
-		return rs.next() ? rs.getString("login") : null;
-		
-		}finally {
-		
+			String sql = "SELECT U.login"
+					+ " FROM user AS U inner join mail_account AS MA ON (U.id = MA.user_id) inner join domain AS D ON (D.id=U.domain)"
+					+ " WHERE MA.email=? AND D.name = ?";
+
+			ConnectionInfo connectionInfo = ConnectionInfo
+					.getDefaultConnectionInfo();
+
+			Util util = new Util(connectionInfo);
+			util.createMetadataConnection();
+			Domain domain = util.getDomain(domainName);
+			connection = connectionInfo.getDomainConnection(domain
+					.getDataBaseName());
+			/*
+			 * DSLContext dslContext= DSL.using(connection,
+			 * JooqSettings.getDefaultSettings());
+			 * 
+			 * Result<Record1<String>> username = dslContext.select(USER.LOGIN)
+			 * .from(USER)
+			 * .join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
+			 * .join(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
+			 * .where(MAIL_ACCOUNT.EMAIL
+			 * .eq(email).and(DOMAIN.NAME.eq(domainName))).fetch();
+			 * 
+			 * String a= username.format();
+			 * 
+			 * System.out.println(a);
+			 * 
+			 * return a;
+			 */
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, email);
+			stmt.setString(2, domainName);
+			rs = stmt.executeQuery();
+
+			return rs.next() ? rs.getString("login") : null;
+
+		} finally {
+
 			if (rs != null)
 				rs.close();
 			if (connection != null)
@@ -221,7 +219,7 @@ public class GoogleAuthorizationCodeCallbackServlet extends
 			if (stmt != null)
 				stmt.close();
 		}
-		
+
 	}
-	
+
 }

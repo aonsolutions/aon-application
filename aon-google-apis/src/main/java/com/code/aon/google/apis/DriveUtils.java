@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -35,7 +36,11 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.w3c.tidy.PPrint;
 
+import com.code.aon.common.IBlobManager;
+import com.code.aon.common.IBlobObject;
+import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -50,6 +55,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.client.util.SecurityUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Properties;
@@ -63,9 +69,8 @@ import com.google.api.services.drive.model.Permission;
 import com.google.api.services.drive.model.Property;
 
 
-public class DriveUtils  {
+public class DriveUtils  implements IBlobManager{
 
-	
 	public static class CheckSum {
 		    /***
 		     * Convierte un arreglo de bytes a String usando valores hexadecimales
@@ -172,12 +177,16 @@ public class DriveUtils  {
 		
 	}
 	
-	
+	private static final DriveUtils DRIVEUTILS = new DriveUtils();
+
 	
 	//private static Credential credential;	
 	private static Drive client;
 	
-	
+	public static DriveUtils getInstace() {
+		// TODO Apéndice de método generado automáticamente
+		return DRIVEUTILS;
+	}
 	public static Drive serviceInitialize(DomainGserviceaccount d) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
 				
 		
@@ -214,26 +223,26 @@ public class DriveUtils  {
 		Result<Record3<Integer, String,String>> category =  getCategory(domain);
 		
 		for (Record3<Integer, String, String> record3 : category) {
-			createFolder(drive,record3.value2(),record3.value3(),true,parent);
+			createFolder(drive,record3.value2(),record3.value3(),true,parent, domain);
 
 		}
-		createFolder(drive,"otros","",true,parent);
+		createFolder(drive,"otros","",true,parent, domain);
 	}
 	
 	public static void createAttachFolders(Drive drive, String domain,String parent) throws IOException, AonConnectionException, SQLException{
-		File file1=createFolder(drive,"contract","",true,parent);
-		createFolder(drive, "nominas", "", true, file1.getId());
-		createFolder(drive,"item","",true,parent);
-		createFolder(drive,"invoice","",true,parent);
-		createFolder(drive,"offer","",true,parent);
-		createFolder(drive,"payroll","",true,parent);
-		createFolder(drive,"project","",true,parent);
-		File file2=createFolder(drive,"registry","",true,parent);
+		File file1=createFolder(drive,"contract","",true,parent, domain);
+		createFolder(drive, "nominas", "", true, file1.getId(), domain);
+		createFolder(drive,"item","",true,parent, domain);
+		createFolder(drive,"invoice","",true,parent, domain);
+		createFolder(drive,"offer","",true,parent, domain);
+		createFolder(drive,"payroll","",true,parent, domain);
+		createFolder(drive,"project","",true,parent, domain);
+		File file2=createFolder(drive,"registry","",true,parent, domain);
 	 	createFolders(drive, domain, file2.getId());
-		createFolder(drive,"sepe","",true,parent);
+		createFolder(drive,"sepe","",true,parent, domain);
 	}
 	
-	public static File createFolder(Drive drive , String title, String description, Boolean hasParent,String parent) throws IOException{
+	public static File createFolder(Drive drive , String title, String description, Boolean hasParent,String parent,String domain) throws IOException{
 	
 		File folder=new File();
 		if (hasParent) folder.setParents(Arrays.asList(new ParentReference().setId(parent)));
@@ -241,13 +250,20 @@ public class DriveUtils  {
 		folder.setDescription(description);
 		folder.setMimeType("application/vnd.google-apps.folder");
 		folder = drive.files().insert(folder).execute();
+		if (!title.contains("AONSOLUTIONS-")){
+			Property property = new Property();
+			property.setValue(domain);
+			property.setKey("domain");
+			drive.properties().insert(folder.getId(), property).execute();
+
+		}
 		return folder;
 	}
 	
-	public static File principal(Drive drive,String domain,FileInfo fileInfo) throws IOException, AonConnectionException, SQLException, NamingException{
+	public static File principal(Drive drive,String domain,FileInfo fileInfo) throws IOException, AonConnectionException, SQLException, NamingException, KeyStoreException, GeneralSecurityException{
 		Vector<String> emails=new Vector<String>();
 		Vector<ParentReference> parents = new Vector<ParentReference>();
-		fileInfo.getEmails().add("aibanezdegau004@gmail.com");
+		//fileInfo.getEmails().add("aibanezdegau004@gmail.com");
 		if(fileInfo.getEmails()!=null && fileInfo.getAonType().equals("registry")){
 			for (int i=0;i<fileInfo.getEmails().size();i++) {	
 				if (Utils.isGmail(fileInfo.getEmails().get(i))){
@@ -269,47 +285,78 @@ public class DriveUtils  {
 	}
 	
 	public static String insertToFolder(Drive drive,String email,String domain, FileInfo fileInfo) throws IOException, AonConnectionException, SQLException{
-		FileList fl=getRootFiles2(drive,"aibanezdegau004@gmail.com");
+		FileList fl=getRootFiles2(drive,email);
 		Boolean esta = false;
 		int i = 0;
 		File file= new File();
 		String hijo= new String();
 		int pos = email.indexOf('@');
 		String title = email.substring(0, pos)+"."+domain;
-				
+		String title1 = "AONSOLUTIONS-"+email;
 		while (!esta && i<fl.getItems().size()){
+			
 			file = fl.getItems().get(i);
-						
-			if (file.getTitle().equalsIgnoreCase(title)){//file.getUserPermission().getEmailAddress()==email){				
+			System.out.println(title1 + file.getTitle()+  file.getTitle().equalsIgnoreCase(title1));
+			if (file.getTitle().equalsIgnoreCase(title1)){//file.getUserPermission().getEmailAddress()==email){				
 				// tratando todos los attach a la hora de compartir la carpeta ( registry, invoice, project ,...)
 				//hijo = searchParent(drive,fileInfo,domain,file.getId());
 				
+				FileList aux = drive.files().list().setQ("'"+file.getId()+"' in parents").execute();
+				Boolean esta2 = false;
+				File f = new File();
+				int j = 0;
+				while (!esta2 && j<aux.getItems().size()){
+					f= aux.getItems().get(j);
+					if(f.getTitle().equalsIgnoreCase(domain)){
+						hijo = insertFile(drive,fileInfo.getCategory(),domain,f);
+						esta2=true;
+					}
+				}
+				if (!esta2){
+					//String username="";
+					f = createFolder(drive,domain,"",true,file.getId(), domain);
+		   	 		
+					//todos las carpetas de los tipos de attach de la base de datos
+		   	 		//createAttachFolders(drive, domain, file.getId());
+		   	 		
+		   	 		//todos las carpetas de las categorias de rattach.
+		   	 		createFolders(drive, domain, f.getId());
+		   	   	 	// tratando todos los attach a la hora de compartir la carpeta ( registry, invoice, project ,...)
+		   	 		//hijo= searchParent(drive,fileInfo,domain,file.getId());
+				
+					// tratando unicamente rattach (registry) a la hora de compartir la carpeta.
+					hijo = insertFile(drive,fileInfo.getCategory(),domain,f);
+				}
 				// tratando unicamente rattach (registry) a la hora de compartir la carpeta.
-				hijo = insertFile(drive,fileInfo.getCategory(),domain,file);
 				esta=true;
 			}
 			i++;
 		}
 		if (!esta){
 			//String username="";
-			file = createFolder(drive,title,"",false,null);
+			file = createFolder(drive,title1,"",false,null, domain);
 			//SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email).setFl(getRootFiles2(drive));
 			Permission p=new Permission();
-   	 		p.setValue("aibanezdegau004@gmail.com");// poner email en vez de aibane...
+   	 		p.setValue(email);// poner email en vez de aibane...
    	 		p.setType("user");//user || group || domain || anyone
    	 		p.setRole("reader");//owner || reader || writer || commenter		
    	 		drive.permissions().insert(file.getId(), p).setSendNotificationEmails(false).execute();
    	 		
-   	 		//todos las carpetas de los tipos de attach de la base de datos
+   	 		
+   	 		File f = new File();
+   	 		//String username="";
+			f = createFolder(drive,domain,"",true,file.getId(), domain);
+   	 		
+			//todos las carpetas de los tipos de attach de la base de datos
    	 		//createAttachFolders(drive, domain, file.getId());
    	 		
    	 		//todos las carpetas de las categorias de rattach.
-   	 		createFolders(drive, domain, file.getId());
+   	 		createFolders(drive, domain, f.getId());
    	   	 	// tratando todos los attach a la hora de compartir la carpeta ( registry, invoice, project ,...)
    	 		//hijo= searchParent(drive,fileInfo,domain,file.getId());
 		
 			// tratando unicamente rattach (registry) a la hora de compartir la carpeta.
-			hijo = insertFile(drive,fileInfo.getCategory(),domain,file);
+			hijo = insertFile(drive,fileInfo.getCategory(),domain,f);
 		}
 		
 		return hijo;
@@ -365,10 +412,10 @@ public class DriveUtils  {
 		return f2.getId();//insertFile(rattach, f2.getId());
 	}
 	
-	private static File insertFile(Drive drive,FileInfo fileInfo,Vector<ParentReference> parents, Vector<String> emails,String domain) throws SQLException, AonConnectionException, IOException, MessagingException {
+	private static File insertFile(Drive drive,FileInfo fileInfo,Vector<ParentReference> parents, Vector<String> emails,String domain) throws SQLException, AonConnectionException, IOException, MessagingException, KeyStoreException, GeneralSecurityException {
 	    // File's metadata.
 	    File file = newFile(fileInfo.getMimetype(),fileInfo.getTitle());
-		
+		file.setModifiedDate(new DateTime(new Date()));
 		file.setParents(parents);
 	    // File's content.
 	    
@@ -406,10 +453,17 @@ public class DriveUtils  {
 		property2.setValue(type);
 		//property2.setEtag("type");
 		property2.setKey("type");
-	
+		property2.setVisibility("PRIVATE");
+		
+		Property property3= new Property();
+		property3.setValue(domain);
+		//property2.setEtag("type");
+		property3.setKey("domain");
+
 		drive.properties().insert(id, property1).execute();
 		drive.properties().insert(id, property2).execute();
-		
+		drive.properties().insert(id, property3).execute();
+
 	}
 	/************************** OBTENER TODOS LOS ARCHIVOS **************************/
 	
@@ -431,6 +485,10 @@ public class DriveUtils  {
 	
 	public static File getFile(String fileId) throws IOException{
 		return client.files().get(fileId).execute();
+	}
+	
+	public static File getFile(Drive drive, String fileId) throws IOException{
+		return drive.files().get(fileId).execute();
 	}
 	
 
@@ -549,8 +607,8 @@ public class DriveUtils  {
 	
 	private static File updateFile(FileInfo fileInfo) throws IOException{
 	    File file=getFile(fileInfo.getDriveId());
-		
-
+		file.setModifiedDate(new DateTime(new Date()));
+	  
 		// File's content.
 	    java.io.File fileContent = Utils.InputStreamToFile(fileInfo);
 	    FileContent mediaContent = new FileContent(file.getMimeType(), fileContent);
@@ -712,8 +770,8 @@ public class DriveUtils  {
 	}
 	
 	
-	public static void sync2(Drive drive,FileInfo fileInfo,String domain) throws SQLException, AonConnectionException, IOException, NoSuchAlgorithmException, NamingException{
-
+	public static void sync2(Drive drive,FileInfo fileInfo,String domain) throws SQLException, AonConnectionException, IOException, NamingException, KeyStoreException, GeneralSecurityException{
+		
 		if(fileInfo.getAonType().equals("project") || fileInfo.getAonType().equals("offer") || checkTypes(fileInfo.getType())){
 						
 			if(fileInfo.getDriveId()==null){
@@ -737,9 +795,20 @@ public class DriveUtils  {
 						fileInfo.setDriveId(file.getId());
 						setDriveId(fileInfo,domain);
 					}
-				}	
+				}
+				else updateDateSync(drive,fileInfo);
+
 			}
 		}
+		else{
+			if(fileInfo.getDriveId()!=null) updateDateSync(drive,fileInfo);	
+		}
+		
+	}
+	public static void updateDateSync(Drive drive,FileInfo fileInfo) throws IOException{
+	    File file=getFile(fileInfo.getDriveId());
+	    file.setModifiedDate(new DateTime(new Date()));
+		drive.files().update(fileInfo.getDriveId(), file).execute();
 	}
 	
 	public static void setDriveId(FileInfo fileInfo, String domain) throws SQLException, AonConnectionException{
@@ -788,60 +857,66 @@ public class DriveUtils  {
 	public static void synchronize(String domain) throws SQLException, AonConnectionException, IOException, KeyStoreException, GeneralSecurityException, NamingException{
 		//DriveData dd=DatabaseSync.getDomainFiles(domain);
 		// get iattachs, get contract attachs,.... y añadir a DriveData
-		
+
 		DriveData dd = getAttachs(domain);
-		
-		
-		// Rattach
-		if(dd.getGservice().getClientId()!=null && dd.getAttachs()!=null && dd.getAttachs().size()>0){
-			Drive drive = serviceInitialize(dd.getGservice());
-			for(int j=0;j<dd.getAttachs().size();j++){
-				FileInfo attach=  dd.getAttachs().get(j);
-				
-				if(attach.getAonType().equals("registry")) {
-	            		InputStream i =DatabaseSync.getFileData(attach.getFileId(),domain);
-	            		Vector<String> emails= DatabaseSync.getEmails(attach.getFileId(),domain);
-	        			Vector<String> pemails=DatabaseSync.getPersonEmails(attach.getFileId(),domain);
+
+		//long max= 100000;
+
+		//if (max >= dd.getGservice().getSize()){
+			// Rattach
+			if(dd.getGservice().getClientId()!=null && dd.getAttachs()!=null && dd.getAttachs().size()>0){
+				Drive drive = serviceInitialize(dd.getGservice());
+				for(int j=0;j<dd.getAttachs().size();j++){
+					FileInfo attach=  dd.getAttachs().get(j);
+
+					if(attach.getAonType().equals("registry")) {
+						InputStream i =DatabaseSync.getFileData(attach.getFileId(),domain);
+						Vector<String> emails= DatabaseSync.getEmails(attach.getFileId(),domain);
+						Vector<String> pemails=DatabaseSync.getPersonEmails(attach.getFileId(),domain);
 						emails.addAll(pemails);
 						attach.setEmails(emails);
-	        			attach.setData(i);	
+						attach.setData(i);	
+					}
+					else if( attach.getAonType().equals("contract")){  
+						attach=DBConsults.getDataContractAttach(domain, attach);
+						attach=DBConsults.getEmailsContractAttach(domain, attach);
+					}
+					else if(attach.getAonType().equals( "item")){
+						attach=DBConsults.getDataIattach(domain, attach);
+					}
+					else if(attach.getAonType().equals("invoice")){  
+						attach=DBConsults.getDataInvoiceAttach(domain, attach);
+						attach=DBConsults.getEmailsInvoiceAttach(domain, attach);
+					}
+					else if(attach.getAonType().equals("offer")){
+						attach=DBConsults.getDataOfferAttach(domain, attach);
+					}
+					else if(attach.getAonType().equals("payroll")){
+						attach=DBConsults.getDataPayrollAttach(domain, attach);
+					}
+					else if(attach.getAonType().equals("project")){
+						attach= DBConsults.getDataProjectAttach(domain, attach);
+						attach=DBConsults.getEmailsProjectAttach(domain, attach);
+					}
+					else if(attach.getAonType().equals("sepe")){  
+						attach=DBConsults.getDataSepeAttach(domain, attach);	
+					}
+
+					viewFile(attach);
+
+					sync2(drive,attach,domain);
+					//long size = DriveUtils.totalSize(domain);
+					//DBConsults.setDriveSize(domain, size, dd.getGservice().getDomain());
 				}
-				else if( attach.getAonType().equals("contract")){  
-	            		attach=DBConsults.getDataContractAttach(domain, attach);
-	            		attach=DBConsults.getEmailsContractAttach(domain, attach);
-				}
-				else if(attach.getAonType().equals( "item")){
-	            		attach=DBConsults.getDataIattach(domain, attach);
-				}
-				else if(attach.getAonType().equals("invoice")){  
-	            		attach=DBConsults.getDataInvoiceAttach(domain, attach);
-	            		attach=DBConsults.getEmailsInvoiceAttach(domain, attach);
-				}
-				else if(attach.getAonType().equals("offer")){
-	            		attach=DBConsults.getDataOfferAttach(domain, attach);
-				}
-				else if(attach.getAonType().equals("payroll")){
-	            		attach=DBConsults.getDataPayrollAttach(domain, attach);
-				}
-				else if(attach.getAonType().equals("project")){
-	            		attach= DBConsults.getDataProjectAttach(domain, attach);
-	            		attach=DBConsults.getEmailsProjectAttach(domain, attach);
-				}
-				else if(attach.getAonType().equals("sepe")){  
-	            		attach=DBConsults.getDataSepeAttach(domain, attach);	
-				}
-	            				
-				viewFile(attach);
+
 				
-				sync2(drive,attach,domain);
-			}
+			//}
 		}
-		
 		// Iattach
 
-		
-		
-	/*rattach viejo	
+
+
+		/*rattach viejo	
 		if(dd.getRattachs()!=null && dd.getRattachs().size()>0){
 			for(int j=0;j<dd.getRattachs().size();j++){
 				sync(drive,dd.getRattachs().get(j),domain);
@@ -867,8 +942,8 @@ public class DriveUtils  {
 		
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
 		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
-			
 			synchronize(key);
+		
 		}
 		
 	}
@@ -944,7 +1019,7 @@ public class DriveUtils  {
 		FileList fl = drive.files().list().execute();
 		for (File f : fl.getItems()) {
 			deleteFile(drive,f.getId());
-			DatabaseSync.delDriveId(f.getId(), domain);
+			DatabaseSync.delRattachDriveId(f.getId(), domain);
 			System.out.println("--------------------------------------");
 			System.out.println("Archivo eliminado:");
 			System.out.println("   --> ID:"+f.getId());
@@ -1095,5 +1170,152 @@ public class DriveUtils  {
 					options, true);
 		}
 	}
-	  		
+
+
+	@Override
+	public byte[] getBlob(IBlobObject blobObject, String property) {
+		System.out.println("GEEETT BLOB DRIVEEEEEE");
+		// TODO Apéndice de método generado automáticamente
+
+
+		String domain = AonUtil.getDomainName();
+		DomainGserviceaccount sa = null;
+
+		FileInfo file = null;
+		file = DatabaseSync.getDriveId(domain, (Integer) blobObject.getReference());
+		if(file.getDriveId()!= null){
+			System.out.println("GEEETT BLOB DRIVEEEEEE");
+
+			try {
+				sa = DatabaseSync.getServiceAccount(domain);
+			} catch (SQLException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			}
+
+			Drive drive = null;
+
+			try {
+				drive = serviceInitialize(sa);
+			} catch (KeyStoreException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			}
+
+
+
+			File file2 = null;
+
+			try {
+				file2 = getFile(drive,file.getDriveId());
+			} catch (IOException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			}
+
+			InputStream data = downloadFile(drive, file2);
+
+			try {
+				return Utils.InputStreamToByte(data);
+			} catch (IOException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			}
+		}
+
+		return HibernateBlobManager.getInstance().getBlob(blobObject, property);
+		
+	}
+
+
+	@Override
+	public void setBlobs(IBlobObject blobObject){
+		// TODO Apéndice de método generado automáticamente
+		System.out.println("SEEETT BLOB DRIVEEEEEE");
+
+		HibernateBlobManager.getInstance().setBlobs(blobObject);
+		
+		String[] aux= {"LOGO","DOCUMENT"};
+		types= aux;
+		String domain = AonUtil.getDomainName();
+		DomainGserviceaccount sa = null;
+		try {
+			sa = DatabaseSync.getServiceAccount(domain);
+		} catch (SQLException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		}
+
+
+		Drive drive = null;
+
+
+		try {
+			drive = serviceInitialize(sa);
+		} catch (KeyStoreException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		} catch (GeneralSecurityException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		}
+		
+		if ( blobObject.getReference() != null ) {
+			
+			FileInfo file = null;
+			file = DatabaseSync.getDriveId(domain, (Integer) blobObject.getReference());
+			try {
+				sync2(drive, file, domain);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (AonConnectionException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (NamingException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	public static long totalSize(String domain) throws IOException, SQLException, KeyStoreException, GeneralSecurityException{
+		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
+		Drive drive = serviceInitialize(d);
+		long size=0;
+		FileList fl = SearchFiles.searchFilesProperties(drive, "domain", domain);
+		for (File f : fl.getItems()) {
+			size = size + f.getFileSize();
+		}
+		return size;
+	}
 }
+

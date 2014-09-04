@@ -40,5 +40,10 @@ public class View {
 	public static void error3(){
 		System.out.println("ERROR: No se ha especificado el id del archivo a eliminar.");
 	}
+
+    public static void error4() {
+        System.out.println("ERROR: No se ha especificado el email.");
+    }
+
 	
 }

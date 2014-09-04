@@ -237,7 +237,7 @@ public class CalendarUtils {
 	}
 	
 	
-	public static void serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
+	public static com.google.api.services.calendar.Calendar serviceInitialize(DomainGserviceaccount g) throws KeyStoreException, IOException, GeneralSecurityException, SQLException{
 		
 		
 		final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -259,11 +259,25 @@ public class CalendarUtils {
 		client = new com.google.api.services.calendar.Calendar.Builder(
 				HTTP_TRANSPORT, JSON_FACTORY, credential )
 				.setApplicationName("AON SOLUTIONS").build();
+		return client;
 		
 	}
 	
 	
 	//------------------------------------------- CALENDARS
+	
+	
+	//getEvents(aux.getId(), calendar)
+	public static CalendarList getCalendars(com.google.api.services.calendar.Calendar calendar) throws IOException{
+		
+		return calendar.calendarList().list().execute();
+	}
+	
+	public static Events getEvents(String calId,com.google.api.services.calendar.Calendar calendar) throws IOException{
+		
+		return calendar.events().list(calId).execute();
+	}
+	
 	
 	/**
 	 * showCalendars(), Muestra por pantalla todos los calendarios que el usuario
@@ -572,6 +586,13 @@ public class CalendarUtils {
 		client.events().delete(calendarId, eventId).execute();
 	}
 	
+	public static void removeEvent(com.google.api.services.calendar.Calendar calendar,String calendarId, String eventId)
+			throws IOException {
+		View.header("Delete Event");
+		calendar.events().delete(calendarId, eventId).execute();
+	}
+	
+	
 	/**
 	 * searchEvents(Events events, int dato, int n), Búsqueda 
 	 * dicotomica de un evento de un calendario de Google Calendar.
@@ -621,6 +642,42 @@ public class CalendarUtils {
 	
 	
 	//------------------------------------------- UTILS
+	
+public static void synchronize(String key) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+		
+				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
+			
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(key);
+				if(g.getClientId()!=null){
+					serviceInitialize(g);
+					CalendarList calendars = Quicksort.calendarsSort(getCalendars());		
+					int aux=searchCalendars(calendars,key,calendars.getItems().size());
+					String calendarId;
+					if (aux==-1){
+						Calendar calendar = newCalendar(key);
+						calendarId= calendar.getId();
+					}
+					else calendarId = calendars.getItems().get(aux).getId();
+					
+					if (eventsBD !=null && eventsBD.size()>0 ){
+						for (CommercialTracking ct : eventsBD) {
+							if (isRegular(ct)){
+								if (ct.getEventId() == null){
+									Event event=addEvent(calendarId,newEvent(ct,key));
+									DatabaseSync.setEventId(event.getId(),ct.getId(),key);// añadir el id del evento a la base de datos!!!
+								}
+								else{
+									modifyEvent(ct.getEventId(), ct,calendarId,key);
+								}				
+							}
+						}
+					}	
+
+				}						
+			
+		
+	}
+	
 	
 	/**
 	 * synchronize(String domainC), Sincronización con la base da datos, crea 

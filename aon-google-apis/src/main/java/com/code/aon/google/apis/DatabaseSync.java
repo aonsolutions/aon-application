@@ -1819,6 +1819,30 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 		
 	}
 
+// ----------------------------------------------------------------------------
 
-	
+    public static void delRattachDriveId(String driveId, String domain)
+        throws SQLException, AonConnectionException
+    {
+	Connection connection = null;
+	PreparedStatement stmt = null;
+	try {
+		String sql = "UPDATE rattach SET drive_id= NULL WHERE drive_id = ?";
+		connection = getConnection(domain);
+		stmt = connection.prepareStatement(sql);
+		stmt.setString(1, driveId);
+		stmt.executeUpdate();
+	}
+        finally{
+		if(stmt != null)
+		    stmt.close();
+		if(connection != null)
+		    connection.close();
+	}
+
+    }
+    public static FileInfo getDriveId(String domain, Integer ref){
+		return null;
+    	
+    }
 }

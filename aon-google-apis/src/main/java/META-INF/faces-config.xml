@@ -1,0 +1,57 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+
+	<!-- ************ ACTION FAVORITE CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>googleDrive</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.google.apis.controller.GoogleDriveController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>google_drive</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>googleTask</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.google.apis.controller.GoogleTaskController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>google_task</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- =================== Favorite ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>google_drive_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/google/apis/facelet/drive/form.xhtml</to-view-id>
+		</navigation-case>
+		<!--  navigation-case>
+			<from-outcome>google_drive_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/google/apis/facelet/drive/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>favorite_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/favorite/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>favorite_search</from-outcome>
+	        <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	        <from-outcome>favorite_category</from-outcome>
+	        <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/category/grid.xhtml</to-view-id>
+	    </navigation-case-->
+	</navigation-rule>
+
+	
+</faces-config>

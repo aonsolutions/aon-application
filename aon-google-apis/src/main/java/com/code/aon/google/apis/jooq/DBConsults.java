@@ -16,6 +16,8 @@ import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -1111,5 +1113,64 @@ public class DBConsults {
 				connection.close();
 		}
 	}
+	
+	
+	public static Vector<String> getCommercial(String domain,
+			Integer id) throws AonConnectionException,
+			SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record1<String>> data = dslContext
+					.select(REGISTRY.NAME)
+					.from(COMMERCIAL_TRACKING).join(REGISTRY).on(COMMERCIAL_TRACKING.SELLER.eq(REGISTRY.ID))
+					.where(COMMERCIAL_TRACKING.ID.eq(id))
+					.fetch();
+			Vector<String> vector = new Vector<String>();
+			for (Record1<String> record1 : data) {
+				vector.add(record1.value1());
+			}
+			return vector;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static Vector<String> getParentName(String domain) throws AonConnectionException,
+			SQLException {
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+
+			Result<Record1<String>> data = dslContext
+					.select(DOMAIN.NAME)
+					.from(DOMAIN)
+					.where(DOMAIN.PARENT.isNull())
+					.fetch();
+			
+			Vector<String> vector = new Vector<String>();
+			for (Record1<String> record1 : data) {
+				vector.add(record1.value1());
+			}
+			return vector;
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
+	//getParentName(schemas.get(sch)))
+	
 
 }

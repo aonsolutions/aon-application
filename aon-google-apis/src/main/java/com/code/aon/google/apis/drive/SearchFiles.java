@@ -25,6 +25,12 @@ import com.google.api.services.drive.model.FileList;
 
 public class SearchFiles {
 
+
+	  public static FileList searchFilesProperties(final Drive drive, final String key, final String property) throws IOException {
+        return (FileList)drive.files().list().setQ("properties has {key='" + key + "' and value='" + property + "' and visibility='PRIVATE'}").execute();
+    }
+
+	
 	public static FileList searchFilesFulltext(Drive drive, String searcher) throws IOException{
 		FileList fl = drive.files().list().setQ("fullText contains '"+searcher+"'").execute();
 		return fl;
