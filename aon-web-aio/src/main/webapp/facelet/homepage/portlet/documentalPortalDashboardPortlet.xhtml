@@ -50,7 +50,6 @@
         				var data = new google.visualization.DataTable();
         				data.addColumn('string', 'Fecha');
         				data.addColumn('string', 'Nombre');
-      				  
         				data.addColumn('string', 'Categoria');
         				data.addColumn('string', 'Tamaño');
 
@@ -64,9 +63,8 @@
 						
 							data.addRow(['#{recent.date}',
 							             '#{recent.name}',
-						             	
 						             	'#{recent.category}',
-						             	#{recent.sizeString}]);											
+						             	'#{recent.sizeString}']);											
 						</c:forEach>
 						var options = {
         						showRowNumber: true,
