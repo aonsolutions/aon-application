@@ -7,38 +7,45 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:panelGrid columns="2" id="peculiar_quote_collective_panel" style="width:920px;"
+
+	<aon:panelGrid columns="2" id="indicators_panel" style="width:920px;"
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
-		
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contract.params.collectivePeculiarityQuote}" />
-			<ui:param name="lookupLabel" value="#{bundle.payroll_collective_peculiarity_quote}" />
-			<ui:param name="enumName" value="T-54" />
-		</ui:include>
 
-<!--  
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contract.params.partialTimeReductionIndicator}" />
-			<ui:param name="lookupLabel" value="#{bundle.payroll_partialTimeReductionIndicator}" />
-			<ui:param name="lookupRendered" value="#{contract.partialTimeReductionBonus}" />
-			<ui:param name="enumName" value="T-53" />
-		</ui:include>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.disabilityIndicator}" />
+				<ui:param name="lookupLabel" value="#{bundle.payroll_disabilityIndicator}" />
+				<ui:param name="lookupRendered" value="#{contract.showDisabilityIndicator}" />
+				<ui:param name="enumName" value="T-55" />
+			</ui:include>
 
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contract.params.disabilityIndicator}" />
-			<ui:param name="lookupLabel" value="#{bundle.payroll_disabilityIndicator}" />
-			<ui:param name="lookupRendered" value="#{contract.showDisabilityIndicator}" />
-			<ui:param name="enumName" value="T-55" />
-		</ui:include>
--->
-		
 	</aon:panelGrid>
+		
+	<c:if test="#{contract.params.bonusModel.rowCount>0}" >
 	
-	<aon:panel style="width:920px;">
-		<f:facet name ="header">
-			<aon:outputText value="#{bundle.payroll_salary_bonus_tab}" />
-		</f:facet>
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml" />
-	</aon:panel>
+		<aon:panelGrid columns="2" id="indicators-bonus_panel" style="width:920px;"
+			columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.collectivePeculiarityQuote}" />
+				<ui:param name="lookupLabel" value="#{bundle.payroll_collective_peculiarity_quote}" />
+				<ui:param name="enumName" value="T-54" />
+			</ui:include>
+	
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.partialTimeReductionIndicator}" />
+				<ui:param name="lookupLabel" value="#{bundle.payroll_partialTimeReductionIndicator}" />
+				<ui:param name="lookupRendered" value="#{contract.partialTimeReductionBonus}" />
+				<ui:param name="enumName" value="T-53" />
+			</ui:include>
+			
+		</aon:panelGrid>
+	
+		<aon:panel style="width:920px;">
+			<f:facet name ="header">
+				<aon:outputText value="#{bundle.payroll_salary_bonus_tab}" />
+			</f:facet>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml" />
+		</aon:panel>
+	</c:if>
 	
 </ui:composition>

@@ -87,11 +87,9 @@
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
 								<ui:param name="readOnly" value="#{contract.readOnly}" />
 							</ui:include>
-							<c:if test="#{contract.params.bonusModel.rowCount>0}" >
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/panel_list.xhtml" >
-									<ui:param name="removeButtonReRender" value="contract-panelTab" />
-								</ui:include>
-							</c:if>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/panel_list.xhtml" >
+								<ui:param name="removeButtonReRender" value="contract-panelTab" />
+							</ui:include>
 						</aon:panelTab>
 						
 						<c:if test="#{!contract.params.retaQuote}">

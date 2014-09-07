@@ -61,7 +61,9 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
+import com.esferalia.aon.payroll.enumeration.ss.T53;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
+import com.esferalia.aon.payroll.enumeration.ss.T55;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
@@ -495,6 +497,36 @@ public class ContractUtils implements Serializable {
 			AonUtil.addErrorMessage(msg);
 		}
 		
+		try {
+			if(params.getPartialTimeReductionIndicator()!=null){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.BONUS_REDUCTION_INDICATOR.getValue() );
+				info.setExpression("\"" + params.getPartialTimeReductionIndicator().getCode() + "\"");
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el indicador de reduccion de bonificacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
+		try {
+			if(params.getDisabilityIndicator()!=null){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.DISABILITY_INDICATOR.getValue() );
+				info.setExpression("\"" + params.getDisabilityIndicator().getCode() + "\"");
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el indicador de discapacidad. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
 	}
 	
 	public void insertContractInfo(Contract contract, String name, String expression) throws ManagerBeanException {
@@ -913,6 +945,46 @@ public class ContractUtils implements Serializable {
 			String msg = "Error al grabar el codigo de contrato de SEPE. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+
+		try {
+			ContractInfo bonusReductionIndicator = obtainContractInfo(contract, ContractVariable.BONUS_REDUCTION_INDICATOR.getValue());
+			if(params.getPartialTimeReductionIndicator()!=null){
+				info = bonusReductionIndicator!=null?bonusReductionIndicator:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.BONUS_REDUCTION_INDICATOR.getValue() );
+				info.setExpression("\"" + params.getPartialTimeReductionIndicator().getCode() + "\"");
+				bean.insertOrUpdate(info);
+			} else {
+				if(bonusReductionIndicator != null){
+					bean.remove(bonusReductionIndicator);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el indicador de reduccion de bonificacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
+		try {
+			ContractInfo disabilityIndicator = obtainContractInfo(contract, ContractVariable.DISABILITY_INDICATOR.getValue());
+			if(params.getDisabilityIndicator()!=null){
+				info = disabilityIndicator!=null?disabilityIndicator:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.DISABILITY_INDICATOR.getValue() );
+				info.setExpression(params.getDisabilityIndicator().getCode());
+				bean.insertOrUpdate(info);
+			} else {
+				if(disabilityIndicator != null){
+					bean.remove(disabilityIndicator);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el indicador de reduccion de bonificacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
 		try {
 			if(params.getSsStatusInfo()!=null){
@@ -1052,6 +1124,12 @@ public class ContractUtils implements Serializable {
 		
 		if(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue())!=null){
 			params.setSepeContractId( map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()) );
+		}
+		if(map.get(ContractVariable.DISABILITY_INDICATOR.getValue())!=null){
+			params.setDisabilityIndicator( T55.getEnumByValue(map.get(ContractVariable.DISABILITY_INDICATOR.getValue())) );
+		}
+		if(map.get(ContractVariable.BONUS_REDUCTION_INDICATOR.getValue())!=null){
+			params.setPartialTimeReductionIndicator( T53.getEnumByValue(map.get(ContractVariable.BONUS_REDUCTION_INDICATOR.getValue())) );
 		}
 	}
 	
