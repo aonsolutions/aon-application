@@ -45,5 +45,5 @@ public class View {
         System.out.println("ERROR: No se ha especificado el email.");
     }
 
-	
+    
 }

@@ -34,7 +34,6 @@ import org.apache.commons.cli.PosixParser;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
-import org.w3c.tidy.PPrint;
 
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -58,15 +57,14 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.SecurityUtils;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Properties;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.File.Labels;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
 import com.google.api.services.drive.model.Permission;
 import com.google.api.services.drive.model.Property;
+
 
 
 public class DriveUtils  implements IBlobManager{
@@ -264,7 +262,7 @@ public class DriveUtils  implements IBlobManager{
 		Vector<String> emails=new Vector<String>();
 		Vector<ParentReference> parents = new Vector<ParentReference>();
 		//fileInfo.getEmails().add("aibanezdegau004@gmail.com");
-		if(fileInfo.getEmails()!=null && fileInfo.getAonType().equals("registry")){
+		/*if(fileInfo.getEmails()!=null && fileInfo.getAonType().equals("registry")){
 			for (int i=0;i<fileInfo.getEmails().size();i++) {	
 				if (Utils.isGmail(fileInfo.getEmails().get(i))){
 					String id = insertToFolder(drive, fileInfo.getEmails().get(i), domain, fileInfo);
@@ -273,7 +271,7 @@ public class DriveUtils  implements IBlobManager{
 				}
     		}
 			
-		}
+		}*/
 		 File file = new File();
    	 	try {
 			 file = insertFile(drive,fileInfo,parents,emails,domain);
@@ -292,41 +290,20 @@ public class DriveUtils  implements IBlobManager{
 		String hijo= new String();
 		int pos = email.indexOf('@');
 		String title = email.substring(0, pos)+"."+domain;
-		String title1 = "AONSOLUTIONS-"+email;
+		//String title1 = "AONSOLUTIONS-"+email;
+		System.out.println(fl.getItems().size());
+	
+		
 		while (!esta && i<fl.getItems().size()){
 			
 			file = fl.getItems().get(i);
-			System.out.println(title1 + file.getTitle()+  file.getTitle().equalsIgnoreCase(title1));
-			if (file.getTitle().equalsIgnoreCase(title1)){//file.getUserPermission().getEmailAddress()==email){				
+			System.out.println(file.getTitle()+" - "+title+" - "+file.getTitle().equalsIgnoreCase(title));
+			if (file.getTitle().equalsIgnoreCase(title)){//file.getUserPermission().getEmailAddress()==email){				
 				// tratando todos los attach a la hora de compartir la carpeta ( registry, invoice, project ,...)
 				//hijo = searchParent(drive,fileInfo,domain,file.getId());
+			
+				hijo = insertFile(drive,fileInfo.getCategory(),domain,file);
 				
-				FileList aux = drive.files().list().setQ("'"+file.getId()+"' in parents").execute();
-				Boolean esta2 = false;
-				File f = new File();
-				int j = 0;
-				while (!esta2 && j<aux.getItems().size()){
-					f= aux.getItems().get(j);
-					if(f.getTitle().equalsIgnoreCase(domain)){
-						hijo = insertFile(drive,fileInfo.getCategory(),domain,f);
-						esta2=true;
-					}
-				}
-				if (!esta2){
-					//String username="";
-					f = createFolder(drive,domain,"",true,file.getId(), domain);
-		   	 		
-					//todos las carpetas de los tipos de attach de la base de datos
-		   	 		//createAttachFolders(drive, domain, file.getId());
-		   	 		
-		   	 		//todos las carpetas de las categorias de rattach.
-		   	 		createFolders(drive, domain, f.getId());
-		   	   	 	// tratando todos los attach a la hora de compartir la carpeta ( registry, invoice, project ,...)
-		   	 		//hijo= searchParent(drive,fileInfo,domain,file.getId());
-				
-					// tratando unicamente rattach (registry) a la hora de compartir la carpeta.
-					hijo = insertFile(drive,fileInfo.getCategory(),domain,f);
-				}
 				// tratando unicamente rattach (registry) a la hora de compartir la carpeta.
 				esta=true;
 			}
@@ -334,29 +311,27 @@ public class DriveUtils  implements IBlobManager{
 		}
 		if (!esta){
 			//String username="";
-			file = createFolder(drive,title1,"",false,null, domain);
+			file = createFolder(drive,title,"",false,null, domain);
 			//SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email).setFl(getRootFiles2(drive));
 			Permission p=new Permission();
-   	 		p.setValue(email);// poner email en vez de aibane...
+   	 		p.setValue("aibanez@aonsolutions.es");// poner email en vez de aibane...
    	 		p.setType("user");//user || group || domain || anyone
    	 		p.setRole("reader");//owner || reader || writer || commenter		
    	 		drive.permissions().insert(file.getId(), p).setSendNotificationEmails(false).execute();
    	 		
    	 		
-   	 		File f = new File();
-   	 		//String username="";
-			f = createFolder(drive,domain,"",true,file.getId(), domain);
-   	 		
+   	 		//File f = new File();
+   	 		   	 		
 			//todos las carpetas de los tipos de attach de la base de datos
    	 		//createAttachFolders(drive, domain, file.getId());
    	 		
    	 		//todos las carpetas de las categorias de rattach.
-   	 		createFolders(drive, domain, f.getId());
+   	 		createFolders(drive, domain, file.getId());
    	   	 	// tratando todos los attach a la hora de compartir la carpeta ( registry, invoice, project ,...)
    	 		//hijo= searchParent(drive,fileInfo,domain,file.getId());
 		
 			// tratando unicamente rattach (registry) a la hora de compartir la carpeta.
-			hijo = insertFile(drive,fileInfo.getCategory(),domain,f);
+			hijo = insertFile(drive,fileInfo.getCategory(),domain,file);
 		}
 		
 		return hijo;
@@ -403,7 +378,7 @@ public class DriveUtils  implements IBlobManager{
 		File f2 = null;
 		
 		for (File f : aux.getItems()) {
-			if(f.getTitle().equals(name)){
+			if(f.getTitle().equalsIgnoreCase(name)){
 				f2= f;
 				
 			}
@@ -459,10 +434,15 @@ public class DriveUtils  implements IBlobManager{
 		property3.setValue(domain);
 		//property2.setEtag("type");
 		property3.setKey("domain");
+		
+		Property property4= new Property();
+		property4.setValue(fileInfo.getAonType());
+		property4.setKey("aontype");
 
 		drive.properties().insert(id, property1).execute();
 		drive.properties().insert(id, property2).execute();
 		drive.properties().insert(id, property3).execute();
+		drive.properties().insert(id, property4).execute();
 
 	}
 	/************************** OBTENER TODOS LOS ARCHIVOS **************************/
@@ -605,7 +585,7 @@ public class DriveUtils  implements IBlobManager{
 		
 	}
 	
-	private static File updateFile(FileInfo fileInfo) throws IOException{
+	public static File updateFile(FileInfo fileInfo) throws IOException{
 	    File file=getFile(fileInfo.getDriveId());
 		file.setModifiedDate(new DateTime(new Date()));
 	  
@@ -775,7 +755,7 @@ public class DriveUtils  implements IBlobManager{
 		if(fileInfo.getAonType().equals("project") || fileInfo.getAonType().equals("offer") || checkTypes(fileInfo.getType())){
 						
 			if(fileInfo.getDriveId()==null){
-				
+				viewFile(fileInfo);
 				File file = principal(drive, domain, fileInfo);
 				
 				if(file!=null){
@@ -788,7 +768,7 @@ public class DriveUtils  implements IBlobManager{
 				
 				File fileAux = getFile(fileInfo.getDriveId());
 								
-				if(!fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(fileInfo.getData()))){
+				if(fileInfo.getData()!= null && !fileAux.getMd5Checksum().equals(CheckSum.getMD5Checksum(fileInfo.getData()))){
 					
 					File file= updateFile(fileInfo);
 					if(file!=null){
@@ -796,13 +776,12 @@ public class DriveUtils  implements IBlobManager{
 						setDriveId(fileInfo,domain);
 					}
 				}
-				else updateDateSync(drive,fileInfo);
-
+				//else updateDateSync(drive,fileInfo);
 			}
 		}
-		else{
+		/*else{
 			if(fileInfo.getDriveId()!=null) updateDateSync(drive,fileInfo);	
-		}
+		}*/
 		
 	}
 	public static void updateDateSync(Drive drive,FileInfo fileInfo) throws IOException{
@@ -815,35 +794,35 @@ public class DriveUtils  implements IBlobManager{
 		
 		if(fileInfo.getAonType().equals("registry")) {
 			DatabaseSync.addDriveId(fileInfo.getDriveId(),fileInfo.getFileId(),domain);
-			//DatabaseSync.deleteBlob(rattach.getId(),domain);
+			DatabaseSync.deleteBlob(fileInfo.getFileId(),domain);
 		}
 		else if( fileInfo.getAonType().equals("contract")){  
 			DBConsults.setDriveIdContractAttach(domain, fileInfo);
-			//DBConsults.deleteBlobContractAttach(domain, fileInfo);
+			DBConsults.deleteBlobContractAttach(domain, fileInfo);
 		}
 		else if(fileInfo.getAonType().equals( "item")){
 			DBConsults.setDriveIdIattach(domain, fileInfo);
-			//DBConsults.deleteBlobIattach(domain, fileInfo);
+			DBConsults.deleteBlobIattach(domain, fileInfo);
 		}
 		else if(fileInfo.getAonType().equals("invoice")){  
 			DBConsults.setDriveIdInvoiceAttach(domain, fileInfo);
-			//DBConsults.deleteBlobInvoiceAttach(domain, fileInfo);
+			DBConsults.deleteBlobInvoiceAttach(domain, fileInfo);
 		}
 		else if(fileInfo.getAonType().equals("offer")){
 			DBConsults.setDriveIdOfferAttach(domain, fileInfo);
-			//DBConsults.deleteBlobOfferAttach(domain, fileInfo);
+			DBConsults.deleteBlobOfferAttach(domain, fileInfo);
 		}
 		else if(fileInfo.getAonType().equals("payroll")){
 			DBConsults.setDriveIdPayrollAttach(domain, fileInfo);
-			//DBConsults.deleteBlobPayrollAttach(domain, fileInfo);
+			DBConsults.deleteBlobPayrollAttach(domain, fileInfo);
 		}
 		else if(fileInfo.getAonType().equals("project")){
 			DBConsults.setDriveIdProjectAttach(domain, fileInfo);
-			//DBConsults.deleteBlobProjectAttach(domain, fileInfo);
+			DBConsults.deleteBlobProjectAttach(domain, fileInfo);
 		}
 		else if(fileInfo.getAonType().equals("sepe")){  
 			DBConsults.setDriveIdSepeAttach(domain, fileInfo);
-			//DBConsults.deleteBlobSepeAttach(domain, fileInfo);
+			DBConsults.deleteBlobSepeAttach(domain, fileInfo);
 		}
 	}
 	
@@ -902,7 +881,7 @@ public class DriveUtils  implements IBlobManager{
 						attach=DBConsults.getDataSepeAttach(domain, attach);	
 					}
 
-					viewFile(attach);
+					
 
 					sync2(drive,attach,domain);
 					//long size = DriveUtils.totalSize(domain);
@@ -953,10 +932,10 @@ public class DriveUtils  implements IBlobManager{
 		DriveData dd= new DriveData();
 		
 		dd.setDomain(domain);
-		
+		// de momento solo se sincroniza con Rattach
 		//REGISTRY ATTACH
 		dd=DatabaseSync.getDomainFiles(domain);
-		
+		/*	
 		//CONTRACT ATTACH
 		dd.setAttachs(DBConsults.getContractAttach(domain, dd.getAttachs()));
 		
@@ -977,7 +956,7 @@ public class DriveUtils  implements IBlobManager{
 		
 		//SEPE ATTACH
 		dd.setAttachs(DBConsults.getSepeAttach(domain, dd.getAttachs()));
-		
+		*/
 		return dd;
 	}
 	
@@ -1175,7 +1154,6 @@ public class DriveUtils  implements IBlobManager{
 	@Override
 	public byte[] getBlob(IBlobObject blobObject, String property) {
 		System.out.println("GEEETT BLOB DRIVEEEEEE");
-		// TODO Apéndice de método generado automáticamente
 
 
 		String domain = AonUtil.getDomainName();
@@ -1240,8 +1218,7 @@ public class DriveUtils  implements IBlobManager{
 	@Override
 	public void setBlobs(IBlobObject blobObject){
 		// TODO Apéndice de método generado automáticamente
-		System.out.println("SEEETT BLOB DRIVEEEEEE");
-
+		System.out.println("lalalaalalalal");
 		HibernateBlobManager.getInstance().setBlobs(blobObject);
 		
 		String[] aux= {"LOGO","DOCUMENT"};

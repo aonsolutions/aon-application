@@ -169,6 +169,8 @@ public class ShareFiles {
 			if(outaux!=null) out = outaux; 
 			String[] categoriesaux = line.getOptionValues("a");
 			if(categoriesaux!=null){ categories = categoriesaux;}
+			String[] emailsaux = line.getOptionValues("e");
+			if(emailsaux!=null){ emails = emailsaux;}
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);

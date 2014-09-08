@@ -1,10 +1,13 @@
 package com.code.aon.google.apis.drive;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,133 +20,185 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.Utils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.Property;
 
 public class DeleteFiles {
-	
-	private static void deleteDriveIds(String driveId, String domain) throws SQLException, AonConnectionException
-	{
-		DatabaseSync.delDriveId(driveId, domain);
-		DBConsults.deleteDriveIdContractAttach(domain, driveId);
-		DBConsults.deleteDriveIdIattach(domain, driveId);
-		DBConsults.deleteDriveIdInvoiceAttach(domain, driveId);
-		DBConsults.deleteDriveIdOfferAttach(domain, driveId);
-		DBConsults.deleteDriveIdOfferAttach(domain, driveId);
-		DBConsults.deleteDriveIdPayrollAttach(domain, driveId);
-		DBConsults.deleteDriveIdProjectAttach(domain, driveId);
-		DBConsults.deleteDriveIdSepeAttach(domain, driveId);
-	}
-	
-	public static void deleteFile(Drive drive,File f, String domain) throws IOException, SQLException, AonConnectionException{
-		drive.files().delete(f.getId()).execute();
-		deleteDriveIds(f.getId(), domain);//si se consigue que funcione properties o labels, eliminar solo del Aontype k sea, no de todos.
-		View.delete(f);
-	}
-	
-	public static void deleteFilesId(Drive drive,String domain) throws IOException, SQLException, AonConnectionException{
-		
-		if(values.length == 0){
-			View.error3();
+
+	private static void deleteDriveIds(File f, String domain)
+			throws SQLException, AonConnectionException {
+		String aonType = null;
+		if(f.getProperties() != null){
+			for (Property property : f.getProperties()) {
+				if(property.getKey().equals("aontype"))
+					aonType = property.getValue();
+			}
+			if (aonType.equals("registry")) DatabaseSync.delDriveId(f.getId(), domain);
+			if (aonType.equals("contract")) DBConsults.deleteDriveIdContractAttach(domain, f.getId());
+			if (aonType.equals("item")) DBConsults.deleteDriveIdIattach(domain, f.getId());
+			if (aonType.equals("invoice")) DBConsults.deleteDriveIdInvoiceAttach(domain, f.getId());
+			if (aonType.equals("offer")) DBConsults.deleteDriveIdOfferAttach(domain, f.getId());
+			if (aonType.equals("payroll")) DBConsults.deleteDriveIdPayrollAttach(domain, f.getId());
+			if (aonType.equals("project")) DBConsults.deleteDriveIdProjectAttach(domain, f.getId());
+			if (aonType.equals("sepe")) DBConsults.deleteDriveIdSepeAttach(domain, f.getId());
 		}
-		else{
+	}
+		
+	private static void insertBlobs(byte[] data, String driveId, String domain)
+			throws SQLException, AonConnectionException {
+		DBConsults.insertBlobRAttach(data, domain, driveId);
+		DBConsults.insertBlobContractAttach(data, domain, driveId);
+		DBConsults.insertBlobIAttach(data, domain, driveId);
+		DBConsults.insertBlobInvoiceAttach(data, domain, driveId);
+		DBConsults.insertBlobOfferAttach(data, domain, driveId);
+		DBConsults.insertBlobPayrollAttach(data, domain, driveId);
+		DBConsults.insertBlobProjectAttach(data, domain, driveId);
+		DBConsults.insertBlobSepeAttach(data, domain, driveId);
+	}
+
+	public static void deleteFile(Drive drive, File f, String domain)
+			throws IOException, SQLException, AonConnectionException {
+		if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
+			InputStream data = DriveUtils.downloadFile(drive, f);
+			insertBlobs(Utils.InputStreamToByte(data), f.getId(), domain);
+		}
+		drive.files().delete(f.getId()).execute();
+		
+		if(!f.getMimeType().equals("application/vnd.google-apps.folder")) deleteDriveIds(f, domain);
+			
+		View.delete(f);
+		
+	}
+
+	public static void deleteFilesId(Drive drive, String domain)
+			throws IOException, SQLException, AonConnectionException {
+
+		if (values.length == 0) {
+			View.error3();
+		} else {
 			for (String fileId : values) {
 				File f = SearchFiles.searchFile(drive, fileId);
 				deleteFile(drive, f, domain);
 			}
-		}	
-		
+		}
+
 	}
-	
-	public static void deleteFilesAll(Drive drive, String domain) throws IOException, SQLException, AonConnectionException{
-		SearchFiles.types=types;
+
+	public static void deleteFilesAll(Drive drive, String domain)
+			throws IOException, SQLException, AonConnectionException {
+		SearchFiles.types = types;
 		FileList fl = SearchFiles.searchFilesAllAndTypes(drive);
-		for (File f : fl.getItems()) {
-			deleteFile(drive,f,domain);
-		}
-	}
-	
-	public static void act(String domain) throws KeyStoreException, IOException, GeneralSecurityException, SQLException, AonConnectionException{
-		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		Drive drive = DriveUtils.serviceInitialize(d);
-		View.domain(domain);
-	
-		if(action.equals("all")){
-			deleteFilesAll(drive, domain);
-		}
-		else if(action.equals("id")){
-			deleteFilesId(drive,domain);
-		}
-		else{
-			View.error2();
-		}
-	}
-	
-	public static void main(String[] args) throws SQLException, KeyStoreException, IOException, GeneralSecurityException, AonConnectionException {
-		parse(args);
-		if( domains[0].equals("all")){
-			Map<String, String> domains1=DatabaseSync.getDomains();
-			for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
-				act(key);
+		if (fl.getItems() != null){
+			for (File f : fl.getItems()) {
+				deleteFile(drive, f, domain);
 			}
 		}
-		else{
+	}
+
+	public static void act(String domain) throws KeyStoreException,
+			IOException, GeneralSecurityException, SQLException,
+			AonConnectionException {
+		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
+		if (d.getClientId() != null) {
+			Drive drive = DriveUtils.serviceInitialize(d);
+			View.domain(domain);
+
+			if (action.equals("all")) {
+				deleteFilesAll(drive, domain);
+			} else if (action.equals("id")) {
+				deleteFilesId(drive, domain);
+			} else {
+				View.error2();
+			}
+		}
+	}
+
+	public static void main(String[] args) throws SQLException,
+			KeyStoreException, IOException, GeneralSecurityException,
+			AonConnectionException {
+		parse(args);
+		System.out.println(domains[0]);
+		if (domains[0].equals("all")) {
+			Map<String, String> domains1=DatabaseSync.getDomains();
+			Hashtable<String,String> schemas = new Hashtable<String, String>();
+			
+			for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
+				if (!SearchFiles.esta(schemas,domains1.get(key))){
+					schemas.put(domains1.get(key), key);
+				}
+			}
+			Vector<String> domains2 = new Vector<String>();
+			for (String sch : schemas.keySet()){
+				domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
+			}
+			
+			for (String key : domains2) { // recorre todos los dominios de la BD	
+				act(key);
+			}
+		} else {
 			for (String domain : domains) {
 				act(domain);
 			}
 		}
-		
+
 	}
-	
-	private static String types[]={"all"};
-	private static String domains[];
+
+	private static String types[] = { "all" };
+	private static String domains[] = { "all" };
 	private static String action = "all";
-	private static String values[] ;
+	private static String values[];
 	private static String out = "normally";
-	
-	private static void parse(String  args []) {
+
+	private static void parse(String args[]) {
 		CommandLineParser parser = new PosixParser();
 		HelpFormatter helpFormatter = new HelpFormatter();
-		
+
 		Options options = new Options();
-		
+
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
 		OptionBuilder.withDescription("imprime esta ayuda.");
 		Option helpOption = OptionBuilder.create("help");
-		
-		OptionBuilder.isRequired(true);
+
+		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de archivo que se quiere tratar. Ej: LOGO,SIGNATURE,DOCUMENT,... ");
+		OptionBuilder
+				.withDescription("Tipo de archivo que se quiere tratar. Ej: LOGO,SIGNATURE,DOCUMENT,... ");
 		OptionBuilder.withValueSeparator(',');
 		Option typeOption = OptionBuilder.create("t");
-		
+
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Dominio al que se le quiere aplicar la acción. Ej: xxx.net,... ");
-		OptionBuilder.withValueSeparator(',');		
+		OptionBuilder
+				.withDescription("Dominio al que se le quiere aplicar la acción. Ej: xxx.net,... ");
+		OptionBuilder.withValueSeparator(',');
 		Option domainOption = OptionBuilder.create("d");
-		
+
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de acción que se va aplicar a la búsqueda o al borrado. Ej: -a title (buscar por título)");
-		OptionBuilder.withValueSeparator(',');		
+		OptionBuilder
+				.withDescription("Tipo de acción que se va aplicar a la búsqueda o al borrado. Ej: -a title (buscar por título)");
+		OptionBuilder.withValueSeparator(',');
 		Option actionOption = OptionBuilder.create("a");
-		
+
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Valor que acompaña al tipo de acción a aplicar. Ej: -a title -v hola (Buscar archivos que contenga 'hola' en el título. ");
-		OptionBuilder.withValueSeparator(',');		
+		OptionBuilder
+				.withDescription("Valor que acompaña al tipo de acción a aplicar. Ej: -a title -v hola (Buscar archivos que contenga 'hola' en el título. ");
+		OptionBuilder.withValueSeparator(',');
 		Option valueOption = OptionBuilder.create("v");
-		
+
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
-		OptionBuilder.withValueSeparator(',');		
+		OptionBuilder
+				.withDescription("Tipo de salida al aplicar el comando. Ej: normally");
+		OptionBuilder.withValueSeparator(',');
 		Option outOption = OptionBuilder.create("o");
 
 		options.addOption(helpOption);
@@ -152,20 +207,30 @@ public class DeleteFiles {
 		options.addOption(typeOption);
 		options.addOption(valueOption);
 		options.addOption(actionOption);
-		
+
 		try {
 			CommandLine line = parser.parse(options, args);
-			
-			String[] typesaux  = line.getOptionValues("t");
-			if(typesaux!=null){ types = typesaux;}
+					
+			String[] typesaux = line.getOptionValues("t");
+			if (typesaux != null) {
+				types = typesaux;
+			}
 			String[] domainsaux = line.getOptionValues("d");
-			if(domainsaux!=null){ domains = domainsaux;}
+			System.out.println(domainsaux);
+			if (domainsaux != null) {
+				domains = domainsaux;
+			}
 			String actionaux = line.getOptionValue("a");
-			if(actionaux!=null){ action = actionaux;}
-			String[] valuesaux= line.getOptionValues("v");
-			if(valuesaux!=null){ values = valuesaux;}
+			if (actionaux != null) {
+				action = actionaux;
+			}
+			String[] valuesaux = line.getOptionValues("v");
+			if (valuesaux != null) {
+				values = valuesaux;
+			}
 			String outaux = line.getOptionValue("o");
-			if(outaux!=null) out = outaux; 
+			if (outaux != null)
+				out = outaux;
 		} catch (ParseException e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);

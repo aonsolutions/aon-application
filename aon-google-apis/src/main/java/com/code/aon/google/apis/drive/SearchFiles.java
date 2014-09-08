@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,6 +19,7 @@ import org.apache.commons.cli.PosixParser;
 
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
@@ -44,7 +47,7 @@ public class SearchFiles {
 		}
 		else{
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'}").setQ("fullText contains '"+searcher+"'").execute();
+				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and fullText contains '"+searcher+"'").execute();
 				fl.getItems().addAll(aux.getItems());
 				
 			}
@@ -65,7 +68,7 @@ public class SearchFiles {
 		}
 		else{
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'}").setQ("title contains '"+searcher+"'").execute();
+				FileList aux = drive.files().list().setQ("properties has {etag='type' and value ='"+type2+"'} and title contains '"+searcher+"'").execute();
 				fl.getItems().addAll(aux.getItems());
 			}
 		}
@@ -87,7 +90,7 @@ public class SearchFiles {
 		}
 		else{
 			for (String type2 : types) {
-				FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'}").setQ("mimetype contains '"+searcher+"'").execute();
+				FileList aux = drive.files().list().setQ("properties has {key='type' and value ='"+type2+"'} and mimetype contains '"+searcher+"'").execute();
 				fl.getItems().addAll(aux.getItems());
 			}
 		}
@@ -103,7 +106,6 @@ public class SearchFiles {
 		String type1 = types[0];
 
 		FileList fl= new FileList();
-		FileList fl2= new FileList();
 
 		if(type1.equals("all")){
 			fl = drive.files().list().execute();
@@ -119,7 +121,7 @@ public class SearchFiles {
 			}
 			
 		}
-		return fl2;
+		return fl;
 	}
 	
 	public static File searchFile(Drive drive, String id) throws IOException{
@@ -130,7 +132,6 @@ public class SearchFiles {
 
 
 		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
-		System.out.println(d.getEmailAddress());
 		if(d.getClientId()!=null){
 			Drive drive = DriveUtils.serviceInitialize(d);
 
@@ -172,7 +173,19 @@ public class SearchFiles {
 		parse(args);
 		if( domains[0].equals("all")){
 			Map<String, String> domains1=DatabaseSync.getDomains();
+			Hashtable<String,String> schemas = new Hashtable<String, String>();
+			
 			for (String key : domains1.keySet()) { // recorre todos los dominios de la BD	
+				if (!esta(schemas,domains1.get(key))){
+					schemas.put(domains1.get(key), key);
+				}
+			}
+			Vector<String> domains2 = new Vector<String>();
+			for (String sch : schemas.keySet()){
+				domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
+			}
+			
+			for (String key : domains2) { // recorre todos los dominios de la BD	
 				act(key);
 			}
 		}
@@ -181,6 +194,15 @@ public class SearchFiles {
 				act(domain);
 			}
 		}
+	}
+	
+	public static boolean esta(Map<String,String> schemas, String schema) {
+		for (String sch : schemas.keySet()) {
+			if (sch.equals(schema)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static String types [] = {"all"};
@@ -243,7 +265,6 @@ public class SearchFiles {
 		
 		try {
 			CommandLine line = parser.parse(options, args);
-			
 			String[] typesaux  = line.getOptionValues("t");
 			if(typesaux!=null){ types = typesaux;}
 			String[] domainsaux = line.getOptionValues("d");

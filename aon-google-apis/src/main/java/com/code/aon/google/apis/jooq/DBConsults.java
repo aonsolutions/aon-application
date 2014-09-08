@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -118,7 +119,24 @@ public class DBConsults {
 	}
 
 	/**************************** ATTACHS *****************************/
+	//REGISTRY ATTACH
+	public static void insertBlobRAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
 
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(RATTACH)
+			.set(RATTACH.DATA,bs)
+			.where(RATTACH.DRIVE_ID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
 	
 	//CONTRACT ATTACH
 	public static Vector<FileInfo> getContractAttach(String domain,
@@ -281,6 +299,24 @@ public class DBConsults {
 		}
 	}
 	
+	public static void insertBlobContractAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(CONTRACT_ATTACH)
+			.set(CONTRACT_ATTACH.DATA,bs)
+			.where(CONTRACT_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
 	//ITEM ATTACH
 	public static Vector<FileInfo> getIattach(String domain,
 			Vector<FileInfo> attachs) throws AonConnectionException,
@@ -402,6 +438,24 @@ public class DBConsults {
 			dslContext.update(IATTACH)
 			.set(IATTACH.DATA,aux)
 			.where(IATTACH.ID.eq(fileInfo.getFileId())).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void insertBlobIAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(IATTACH)
+			.set(IATTACH.DATA,bs)
+			.where(IATTACH.DRIVEID.eq(driveId)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -568,6 +622,24 @@ public class DBConsults {
 		}
 	}
 	
+	public static void insertBlobInvoiceAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(INVOICE_ATTACH)
+			.set(INVOICE_ATTACH.DATA,bs)
+			.where(INVOICE_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
 	//OFFER ATTACH
 	public static Vector<FileInfo> getOfferAttach(String domain,
 			Vector<FileInfo> attachs) throws AonConnectionException,
@@ -688,6 +760,24 @@ public class DBConsults {
 			dslContext.update(OFFER_ATTACH)
 			.set(OFFER_ATTACH.DATA,aux)
 			.where(OFFER_ATTACH.ID.eq(fileInfo.getFileId())).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void insertBlobOfferAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(OFFER_ATTACH)
+			.set(OFFER_ATTACH.DATA,bs)
+			.where(OFFER_ATTACH.DRIVEID.eq(driveId)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -821,6 +911,24 @@ public class DBConsults {
 			dslContext.update(PAYROLL_BATCH_ATTACH)
 			.set(PAYROLL_BATCH_ATTACH.DATA,aux)
 			.where(PAYROLL_BATCH_ATTACH.ID.eq(fileInfo.getFileId())).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static void insertBlobPayrollAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(PAYROLL_BATCH_ATTACH)
+			.set(PAYROLL_BATCH_ATTACH.DATA,bs)
+			.where(PAYROLL_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -986,6 +1094,25 @@ public class DBConsults {
 		}
 	}
 	
+	public static void insertBlobProjectAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(PROJECT_ATTACH)
+			.set(PROJECT_ATTACH.DATA,bs)
+			.where(PROJECT_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	
 	//SEPE BATCH ATTACH
 	public static Vector<FileInfo> getSepeAttach(String domain,
 			Vector<FileInfo> attachs) throws AonConnectionException,
@@ -1114,6 +1241,23 @@ public class DBConsults {
 		}
 	}
 	
+	public static void insertBlobSepeAttach(byte[] bs,String domain,String driveId) throws SQLException{
+		Connection connection = null;
+		try {
+
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			dslContext.update(SEPE_BATCH_ATTACH)
+			.set(SEPE_BATCH_ATTACH.DATA,bs)
+			.where(SEPE_BATCH_ATTACH.DRIVEID.eq(driveId)).execute();
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
 	
 	public static Vector<String> getCommercial(String domain,
 			Integer id) throws AonConnectionException,
@@ -1168,6 +1312,7 @@ public class DBConsults {
 				connection.close();
 		}
 	}
+	
 	
 	
 	//getParentName(schemas.get(sch)))

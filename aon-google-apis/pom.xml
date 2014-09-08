@@ -166,7 +166,7 @@
 			<id>rpm-release</id>
 			<activation>
 				<property>
-					<name>rpm.disable</name>
+					<name>rpm.release</name>
 					<value>true</value>
 				</property>
 			</activation>
@@ -248,7 +248,7 @@
 										</source>
 										
 										<source>								
-											<location>/var/tmp/apache-tomcat-6.0.24/lib/aon.pool-7.18-SNAPSHOT.jar</location>
+											<location>/var/tmp/apache-tomcat-6.0.24/lib/aon.pool-${project.version}.jar</location>
 											<destination>aon.pool.jar</destination>
 										</source>
 										<source>								
