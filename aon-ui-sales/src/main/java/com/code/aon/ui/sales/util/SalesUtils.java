@@ -1,13 +1,27 @@
 package com.code.aon.ui.sales.util;
 
+import static com.esferalia.aon.jooq.tables.Sales.SALES;
+
+import java.sql.Connection;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
+
+import org.jooq.DSLContext;
+import org.jooq.Record2;
+import org.jooq.Result;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
@@ -15,6 +29,8 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
@@ -26,6 +42,7 @@ import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -203,4 +220,30 @@ public class SalesUtils {
 	}
 	
 
+	
+	public Result<Record2<Integer, String>> getSalesRecord(String purchaseReference) {
+		return getSalesRecords(Arrays.asList(purchaseReference));
+	}
+	
+	public Result<Record2<Integer, String>> getSalesRecords(
+			Collection<String> purchaseReferenceList) {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Settings SETTINGS = null;
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+			DSLContext ctx = DSL.using(connection, SETTINGS);
+			Result<Record2<Integer, String>> record = ctx
+					.select(SALES.ID, SALES.PURCHASE_REFERENCE)
+					.from(SALES)
+					.where(SALES.DOMAIN.equal(DomainManager.getCurrentDomain()))
+					.and(SALES.PURCHASE_REFERENCE.in(purchaseReferenceList)).fetch();
+			return record;
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}
+	}
 }

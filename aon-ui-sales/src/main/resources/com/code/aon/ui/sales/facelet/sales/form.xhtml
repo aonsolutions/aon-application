@@ -195,9 +195,19 @@
 						<aon:outputLabel for="Sales_purchaseReference" 
 							styleClass="aon-margin-left aon-italic"
 							value="#{bundle.sales_purchase_reference}: " />
-						<aon:inputText id="Sales_purchaseReference"
-							value="#{sales.to.purchaseReference}" size="30" maxlength="32" />
- 					</aon:div>
+						<aon:div id="purchaseReference-div">
+							<aon:inputText id="Sales_purchaseReference"
+								value="#{sales.to.purchaseReference}" size="30" maxlength="32" >
+								<a4j:support event="onchange" ajaxSingle="#{true}"
+									reRender="purchaseReference-div" />
+							</aon:inputText>
+							<aon:outputText id="sales-existPurchaseReference"
+								rendered="#{sales.existPurchaseReference}"
+								title="#{bundle.sales_purchase_reference_previously_used}"
+								value="&#160;&#160;&#160;"
+								styleClass="aon-icon-warning aon-margin-left aon-padding-left" />
+						</aon:div>
+					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{sales.to.customer}" />

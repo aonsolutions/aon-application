@@ -446,7 +446,10 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 				getReservationCodes().add(getReservationCode());
 			}
 			onSearchFinances();
+			init();
 		} catch (AonSQLException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
