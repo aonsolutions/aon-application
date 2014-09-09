@@ -11,7 +11,7 @@
 		<aon:div styleClass="aon-margin-top">					  
 			<c:if test="#{desktop.state.showTirant}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-margin-top aon-support">
-					<h:outputLink id="tirantWeb" target="_blank" value="#{bundle.aon_external_tirant_url}" >
+					<h:outputLink id="tirantWeb" target="_blank" value="#{desktop.state.tirantExternalUrl}" >
 						<h:graphicImage title="#{bundle.aon_external_tirant}"
 							url="#{aonResource.resolve['/images/logo-tirant-asesores.png']}" />
 					</h:outputLink>

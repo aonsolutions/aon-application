@@ -549,4 +549,13 @@ public class DesktopState implements Serializable {
 		return (externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
 	}
 	
+	public String getTirantExternalUrl() {
+		String url = AonUtil.getMessage("aon_external_tirant_url");
+		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath(); 
+		if (StringUtils.isNotBlank( contextPath)  ) {
+			url = contextPath + url;
+		}
+		return url;		
+	}
+	
 }
