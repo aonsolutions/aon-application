@@ -45,6 +45,7 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
@@ -72,6 +73,7 @@ import com.code.aon.fiscal.config.ModelConfig;
 import com.code.aon.fiscal.config.ModelManager;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.google.apis.jooq.JooqSettings;
 import com.code.aon.pool.AonConnectionException;
@@ -92,6 +94,8 @@ import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class DashboardController implements Serializable {
 	
@@ -1223,10 +1227,13 @@ public class DashboardController implements Serializable {
 	}
 	
 	public  Vector<DashboardRecentFiles> getRecentsFiles() throws AonConnectionException,
-	SQLException {
+	SQLException, KeyStoreException, IOException, GeneralSecurityException {
 		Locale locale = AonUtil.getCurrentLocale();
 		String domain = AonUtil.getDomainName();
-
+		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+		Drive drive = null;
+		if (g.getClientId()!= null) drive = DriveUtils.serviceInitialize(g);
+		Integer key = DomainManager.getCurrentDomain();
 		Connection connection = null;
 		try {
 			
@@ -1235,25 +1242,25 @@ public class DashboardController implements Serializable {
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
 			
-			Result<Record5<Byte, Integer, Integer, String, java.sql.Date>> data ;
+			Result<Record6<Byte, Integer, String, java.sql.Date, String, Integer>> data ;
 			data =  dslContext
-					.selectDistinct(RATTACH.TYPE,RATTACH.DATA.length(),RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE)
+					.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.ID)
 					.from(RATTACH)
 					.where(getAttachmentCondition())					
 					.orderBy(RATTACH.ATTACH_DATE.desc()).limit(10).fetch();
 			
 			Vector<DashboardRecentFiles> vector = new Vector<DashboardRecentFiles>();
 			int j=0;
-			for (Record5<Byte, Integer, Integer, String, java.sql.Date> record : data) {
+			for (Record6<Byte, Integer, String, java.sql.Date, String, Integer> record : data) {
 				DashboardRecentFiles drc = new DashboardRecentFiles();
 				String typeName = "-";
 				if (record.value1()!=null) typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
 				if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
-					drc.setname(record.value4());
+					drc.setname(record.value3());
 					String category = null;
 					Result<Record1<String>> categoryName; 
 					if(record.value3()!=null){
-						categoryName = getCategoryName(record.value3(), domain);
+						categoryName = getCategoryName(record.value2(), domain);
 						for (Record1<String> record1 : categoryName) {
 							category = record1.value1();
 						}
@@ -1261,13 +1268,21 @@ public class DashboardController implements Serializable {
 					else category = "otros";
 					drc.setcategory(category);
 					
-					Integer s = record.value2();
-					if (s != null) drc.setsize(s.longValue());
+					String driveId = record.value5();
+					if(driveId!=null){
+						File file = drive.files().get(driveId).execute();
+						drc.setsize(file.getFileSize());
+					}
+					else{
+						drc.setsize(getFileSize(domain,record.value6()).longValue());
+					}
+					//Integer s = record.value2();
+					//if (s != null) drc.setsize(s.longValue());
 					if (record.value1()!=null) drc.settype(typeName);
 					else drc.settype("otros");
 					
-					if (record.value5() != null){
-						drc.setDate(record.value5().toString());
+					if (record.value4() != null){
+						drc.setDate(record.value4().toString());
 						
 					}
 					vector.add(drc);
@@ -1279,6 +1294,33 @@ public class DashboardController implements Serializable {
 			
 			return vector;
 		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public Integer getFileSize(String domain, Integer id) throws SQLException {
+		Connection connection = null;
+		try {
+			
+			connection = DatabaseSync.getConnection(domain);
+			
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+		Result<Record1<Integer>> data ;
+		data =  dslContext
+				.selectDistinct(RATTACH.DATA.length())
+				.from(RATTACH)
+				.where(RATTACH.ID.eq(id)).fetch();
+		
+		
+		Integer size = null;
+		for (Record1<Integer> record : data) {
+			size = record.value1(); 
+		}
+		return size;
+		}finally {
 			if (connection != null)
 				connection.close();
 		}
