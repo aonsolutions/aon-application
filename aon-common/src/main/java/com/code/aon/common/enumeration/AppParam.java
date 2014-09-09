@@ -196,7 +196,9 @@ public enum AppParam {
 	
 	POS_INVOICE_FOOTER_TEXT,
 	
-	POS_INVOICE_WIDTH;
+	POS_INVOICE_WIDTH,
+	
+	SALES_ACTIVE_MARKETPLACE;
 
 	public String getValue() {
 		return toString();

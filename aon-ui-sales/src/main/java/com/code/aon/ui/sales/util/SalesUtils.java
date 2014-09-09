@@ -174,12 +174,12 @@ public class SalesUtils {
 		bean.insert(detail);
 	}
 	
-	private String obtainWorkPlaceSerie(WorkPlace workPlace) throws ManagerBeanException {
+	public String obtainWorkPlaceSerie(WorkPlace workPlace) throws ManagerBeanException {
 		List<ITransferObject> seriesList = getWorkPlaceSeries(workPlace);
 		return (seriesList.size() > 0) ? ((Series)seriesList.get(0)).getCode() : "";
 	}
 	
-	private int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
+	public int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Sales", null);
 	}
 	

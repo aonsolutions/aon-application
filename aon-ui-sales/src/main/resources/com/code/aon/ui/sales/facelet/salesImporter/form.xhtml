@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="salesImporter-Form">
+			<aon:div id="menuExt">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{salesImporter.handler.moduleLabel}" />
+					<ui:param name="toolbarDescription" value="#{bundle.aon_import}" />
+					<ui:define name="toolbarContent">
+						<aon:commandButton id="salesImporter-clear"
+							value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							actionListener="#{salesImporter.onInit}" reRender="salesImporter-Form"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="salesImporter-process"
+							rendered="#{salesImporter.importedSales.rowCount>0}"
+							value="#{bundle.aon_accept}"
+							actionListener="#{salesImporter.onAcceptSales}" reRender="salesImporter-Form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+					</ui:define>
+				</ui:decorate>
+			</aon:div>			
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panel style="width:100%;">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_loader_module}" />
+					</f:facet>
+					<h:panelGrid id="attachGrid" columns="2">
+						<aon:outputText rendered="#{salesImporter.aonFile.size > 0}"
+							value="#{salesImporter.aonFile.fileName} - ( #{salesImporter.aonFile.size} bytes)" />
+						<aon:fileUpload id="attach_file"
+							addControlLabel="#{bundle.aon_fileUpload_add}"
+							stopControlLabel="#{bundle.aon_fileUpload_stop}"
+							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+							fileUploadListener="#{salesImporter.fileUploaded}" immediateUpload="true"
+							autoclear="true" listWidth="0px" listHeight="0px">
+							<f:facet name="label">
+								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+							</f:facet>
+							<a4j:support event="onuploadcomplete" actionListener="#{salesImporter.loadData}" reRender="salesImporter-Form" />
+						</aon:fileUpload>
+					</h:panelGrid>
+				</aon:panel>
+
+				<aon:div rendered="#{not empty salesImporter.aonFile and !salesImporter.validFile}">
+					<aon:panel>
+						<aon:outputText value="&#160;"
+							styleClass="aon-icon-exception aon-icon" />
+						<aon:outputText style="font-size:1.5em;"
+							value="La estructura del fichero no es correcta." />
+					</aon:panel>
+				</aon:div>
+
+				<aon:div rendered="#{salesImporter.nonExistentItems.rowCount>0}">
+					<aon:panel rendered="#{not empty salesImporter.nonExistentItems}">
+						<aon:outputText value="&#160;" styleClass="aon-icon-exception aon-icon"/>
+						<aon:outputText style="font-size:1.5em;"
+							value="El fichero contiene productos inexistentes. Deben crearse para poder continuar." />
+					</aon:panel>
+					
+					<aon:dataTable var="to" value="#{salesImporter.nonExistentItems}" rows="0">
+						<aon:rowSelector id="nonExistentItems-rowSelect" toggleOnClick="#{false}" />
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText	value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.code}" />
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText	value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.item.description}" />
+							<f:facet name="footer">
+								<aon:div style="widht: 100%; text-align: right;">
+									<aon:outputText value="#{bundle.aon_total}:" />
+									<aon:outputText value="&#160;" />
+									<aon:outputText value="#{salesImporter.nonExistentItems.rowCount}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+					</aon:dataTable>
+				</aon:div>
+				
+				<aon:div rendered="#{salesImporter.importedSales.rowCount>0}">
+					<ui:include
+						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
+						<ui:param name="dataModel" value="#{salesImporter.importedSales}" />
+					</ui:include>
+				</aon:div>
+				
+				<aon:panel rendered="#{salesImporter.existingSales.rowCount>0}">
+					<f:facet name="header">
+						<aon:outputText value="Pedidos existentes (se excluyen)" />
+					</f:facet>
+					<ui:include
+						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
+						<ui:param name="dataModel" value="#{salesImporter.existingSales}" />
+					</ui:include>
+				</aon:panel>
+				
+				<aon:panel rendered="#{salesImporter.nonExistentSales.rowCount>0}">
+					<f:facet name="header">
+						<aon:outputText value="Pedidos no existentes (no se actualizan)" />
+					</f:facet>
+					<ui:include
+						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
+						<ui:param name="dataModel" value="#{salesImporter.nonExistentSales}" />
+					</ui:include>
+				</aon:panel>
+				
+			</aon:div>
+			
+		</aon:form>
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		</ui:include>
+	</ui:define>
+</ui:composition>

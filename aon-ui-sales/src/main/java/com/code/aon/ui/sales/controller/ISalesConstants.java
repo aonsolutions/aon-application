@@ -12,5 +12,9 @@ public interface ISalesConstants {
 	String OFFER_CONTROLLER_NAME = "offer";
 	String DELIVERY_CONTROLLER_NAME = "delivery";
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
+	
+	String AMAZON_SALES_INTEGRATION = "sales_amazon_sales_integration";
+	String AMAZON_SALES_RETURN_INTEGRATION = "sales_amazon_sales_return_integration";
+	String AMAZON_SHIPMENT_INTEGRATION = "sales_amazon_shipment_integration";
 
 }

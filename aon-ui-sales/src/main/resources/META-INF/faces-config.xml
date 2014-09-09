@@ -208,6 +208,24 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ****** AMAZON SALES IMPORTER ****** -->
+	<managed-bean>
+		<managed-bean-name>salesImporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.sales.controller.SalesImporterController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ****** SALES APP PARAMS ****** -->
+	<managed-bean>
+		<managed-bean-name>salesAppParam</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.sales.controller.SalesAppParamController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -233,6 +251,14 @@
 		<navigation-case>
 			<from-outcome>orderServer_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/sales/facelet/orderServer/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
+	<!-- ************* AMAZON SALES IMPORTER ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>salesImporter_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/sales/facelet/salesImporter/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 	
