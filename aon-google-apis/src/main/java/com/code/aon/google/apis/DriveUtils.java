@@ -760,7 +760,7 @@ public class DriveUtils  implements IBlobManager{
 				
 				if(file!=null){
 					fileInfo.setDriveId(file.getId());
-					setDriveId(fileInfo,domain);
+					setDriveId(fileInfo,domain,file.getFileSize().toString());
 					
 				}
 			}
@@ -773,7 +773,7 @@ public class DriveUtils  implements IBlobManager{
 					File file= updateFile(fileInfo);
 					if(file!=null){
 						fileInfo.setDriveId(file.getId());
-						setDriveId(fileInfo,domain);
+						setDriveId(fileInfo,domain,file.getFileSize().toString());
 					}
 				}
 				//else updateDateSync(drive,fileInfo);
@@ -790,10 +790,10 @@ public class DriveUtils  implements IBlobManager{
 		drive.files().update(fileInfo.getDriveId(), file).execute();
 	}
 	
-	public static void setDriveId(FileInfo fileInfo, String domain) throws SQLException, AonConnectionException{
+	public static void setDriveId(FileInfo fileInfo, String domain,String size) throws SQLException, AonConnectionException{
 		
 		if(fileInfo.getAonType().equals("registry")) {
-			DatabaseSync.addDriveId(fileInfo.getDriveId(),fileInfo.getFileId(),domain);
+			DatabaseSync.addDriveId(fileInfo.getDriveId(),fileInfo.getFileId(),domain,size );
 			DatabaseSync.deleteBlob(fileInfo.getFileId(),domain);
 		}
 		else if( fileInfo.getAonType().equals("contract")){  

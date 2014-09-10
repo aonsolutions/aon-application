@@ -1717,21 +1717,22 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 	
 
 	
-	public static void addDriveId(String driveId,int id, String domain) throws SQLException, AonConnectionException {
+	public static void addDriveId(String driveId,int id, String domain, String size) throws SQLException, AonConnectionException {
 		
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
 			
 			String sql = "UPDATE " + SQLConstants.RATTACH
-					+" SET "+RattachColumns.DRIVE_ID + "= ? "
+					+" SET "+RattachColumns.DRIVE_ID + "= ? ,"+RattachColumns.DPARENT_ID+"= ?"
 					+ "WHERE "+RattachColumns.ID+" = ?";
 			
 			
 			connection = getConnection(domain);
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, driveId);
-			stmt.setLong(2, id);
+			stmt.setString(2, size);
+			stmt.setLong(3, id);
 
 
 			stmt.executeUpdate();

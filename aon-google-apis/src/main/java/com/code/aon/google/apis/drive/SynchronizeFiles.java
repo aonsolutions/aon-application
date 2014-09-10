@@ -108,11 +108,12 @@ public class SynchronizeFiles {
 			if(fileInfo.getDriveId()==null){
 				DriveUtils.viewFile(fileInfo);
 				File file = DriveUtils.principal(drive, domain, fileInfo);
+				
 				numero++;
 				if(file!=null){
 					fileInfo.setDriveId(file.getId());
-					DriveUtils.setDriveId(fileInfo,domain);
-					
+					DriveUtils.setDriveId(fileInfo,domain,file.getFileSize().toString());
+			
 				}
 			}
 			else{
@@ -124,7 +125,7 @@ public class SynchronizeFiles {
 					File file= DriveUtils.updateFile(fileInfo);
 					if(file!=null){
 						fileInfo.setDriveId(file.getId());
-						DriveUtils.setDriveId(fileInfo,domain);
+						DriveUtils.setDriveId(fileInfo,domain,file.getFileSize().toString());
 					}
 				}
 				//else updateDateSync(drive,fileInfo);
