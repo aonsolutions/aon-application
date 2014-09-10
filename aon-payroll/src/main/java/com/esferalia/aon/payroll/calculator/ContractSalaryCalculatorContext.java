@@ -29,8 +29,8 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-public class ContractSalaryCalculatorContext implements
-		IContractSalaryCalculatorContext, ISalaryProxy {
+public class ContractSalaryCalculatorContext extends
+		AbstractContractSalaryCalculatorContext implements ISalaryProxy {
 
 	private ISQLContractSalaryCalculatorContext ctx;
 	private Contract contract;
@@ -414,4 +414,18 @@ public class ContractSalaryCalculatorContext implements
 	public void setListener(IListener listener) {
 		ctx.setListener(listener);
 	}
+	
+	@Override
+	public ISalary getSalary(Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public IContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+			Date startDate, Date endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
