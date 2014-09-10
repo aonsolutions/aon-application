@@ -371,7 +371,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public boolean getExistPurchaseReference() {
 		SalesUtils utils = new SalesUtils();
 		Sales sales = (Sales)this.getTo();
-		return StringUtils.isNotBlank(sales.getPurchaseReference()) && utils.getSalesRecord(sales.getPurchaseReference()).size()>0;
+		return StringUtils.isNotBlank(sales.getPurchaseReference()) && utils.getSalesRecord(sales.getPurchaseReference()).size()>(this.isNew()?0:1);
 	}
 	
 	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {

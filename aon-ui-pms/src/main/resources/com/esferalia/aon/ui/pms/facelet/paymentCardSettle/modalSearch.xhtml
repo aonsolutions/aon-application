@@ -36,6 +36,11 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="financeSearch-clear"
+										value="#{bundle.aon_clear}"
+										ajaxSingle="true"
+										actionListener="#{controller.onClear}"
+										styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 									<aon:commandButton id="financeSearch-search"
 										value="#{bundle.aon_search}"
 										reRender="showFinanceSearchWindow,#{searchReRender}"

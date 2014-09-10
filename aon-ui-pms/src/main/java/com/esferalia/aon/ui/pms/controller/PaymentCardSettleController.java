@@ -360,6 +360,9 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 	private void init() throws ManagerBeanException{
 		setAgencies(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+		resetOptionalSearchParams();
+	}
+	private void resetOptionalSearchParams() {
 		setHotel(null);
 		setReferenceCodes(null);
 		setReferenceCode(null);
@@ -446,12 +449,12 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 				getReservationCodes().add(getReservationCode());
 			}
 			onSearchFinances();
-			init();
 		} catch (AonSQLException e) {
 			AonUtil.addErrorMessage(e.getMessage());
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
 		}
+	}
+	public void onClear(ActionEvent event) {
+		resetOptionalSearchParams();
 	}
 
 	private void onSearchFinances() throws AonSQLException {
