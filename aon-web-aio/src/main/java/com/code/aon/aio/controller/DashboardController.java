@@ -1274,7 +1274,7 @@ public class DashboardController implements Serializable {
 						drc.setname(record.value3());
 						String category = null;
 						Result<Record1<String>> categoryName; 
-						if(record.value3()!=null){
+						if(record.value2()!=null){
 							categoryName = getCategoryName(record.value2(), domain);
 							for (Record1<String> record1 : categoryName) {
 								category = record1.value1();
