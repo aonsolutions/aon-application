@@ -48,6 +48,7 @@ import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -118,7 +119,9 @@ public class DashboardController implements Serializable {
 	private DashboardEntry[] contractMonthsEntriesCount;
 	private List<ModelConfig> fiscalConfig;
 	private DashboardFiscalPortal fiscalPortal;
-	
+	public Vector<DashboardRecentFiles> recentFiles;
+	public Vector<DashboardDocs> types;
+
 	private com.code.aon.accounting.Period accountingPeriod;
 	private Integer fiscalYear;
 	private Integer payrollYear;
@@ -991,14 +994,17 @@ public class DashboardController implements Serializable {
 	
 	
 	
-	
 	public   Vector<DashboardDocs> getTypesCat() throws AonConnectionException,
 	SQLException {
+		if (types == null){
+		
+			types= new Vector<DashboardDocs>();
+
 			String domain = AonUtil.getDomainName();
 			Result<Record3<Integer, String,String>> category =  DBConsults.getCategory(domain);
 			sizes();
 			getTypesCatBD2();
-			Vector<DashboardDocs> types= new Vector<DashboardDocs>(); 
+			//Vector<DashboardDocs> vector= new Vector<DashboardDocs>(); 
 			for (Record3<Integer, String, String> record3 : category) {
 				if (categories.containsKey(record3.value1())){
 					DashboardDocs a = categories.get(record3.value1());
@@ -1010,8 +1016,8 @@ public class DashboardController implements Serializable {
 				}
 				
 			}
-			
-			return types;
+		}	
+		return types;
 	}
 	
 	public   DashboardDocs getTypesCatBD(Integer category) throws AonConnectionException,
@@ -1226,77 +1232,85 @@ public class DashboardController implements Serializable {
 		return condition;
 	}
 	
+	public String getInitialize(){
+		recentFiles= null;
+		types= null;
+		list= null;
+		listAno=null;
+		return "";
+	}
+	
 	public  Vector<DashboardRecentFiles> getRecentsFiles() throws AonConnectionException,
 	SQLException, KeyStoreException, IOException, GeneralSecurityException {
-		Locale locale = AonUtil.getCurrentLocale();
-		String domain = AonUtil.getDomainName();
-		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
-		Drive drive = null;
-		if (g.getClientId()!= null) drive = DriveUtils.serviceInitialize(g);
-		Integer key = DomainManager.getCurrentDomain();
-		Connection connection = null;
-		try {
-			
-			connection = DatabaseSync.getConnection(domain);
-			
-			DSLContext dslContext = DSL.using(connection,
-					JooqSettings.getDefaultSettings());
-			
-			Result<Record6<Byte, Integer, String, java.sql.Date, String, Integer>> data ;
-			data =  dslContext
-					.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.ID)
-					.from(RATTACH)
-					.where(getAttachmentCondition())					
-					.orderBy(RATTACH.ATTACH_DATE.desc()).limit(10).fetch();
-			
-			Vector<DashboardRecentFiles> vector = new Vector<DashboardRecentFiles>();
-			int j=0;
-			for (Record6<Byte, Integer, String, java.sql.Date, String, Integer> record : data) {
-				DashboardRecentFiles drc = new DashboardRecentFiles();
-				String typeName = "-";
-				if (record.value1()!=null) typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
-				if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
-					drc.setname(record.value3());
-					String category = null;
-					Result<Record1<String>> categoryName; 
-					if(record.value3()!=null){
-						categoryName = getCategoryName(record.value2(), domain);
-						for (Record1<String> record1 : categoryName) {
-							category = record1.value1();
+		if (recentFiles == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			String domain = AonUtil.getDomainName();
+			DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+			Drive drive = null;
+			if (g.getClientId()!= null) drive = DriveUtils.serviceInitialize(g);
+			Integer key = DomainManager.getCurrentDomain();
+			Connection connection = null;
+			try {
+				
+				connection = DatabaseSync.getConnection(domain);
+				
+				DSLContext dslContext = DSL.using(connection,
+						JooqSettings.getDefaultSettings());
+				
+				Result<Record7<Byte, Integer, String, java.sql.Date, String, Integer, String>> data ;
+				data =  dslContext
+						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID)
+						.from(RATTACH)
+						.where(getAttachmentCondition())					
+						.orderBy(RATTACH.ATTACH_DATE.desc()).limit(10).fetch();
+				
+				recentFiles = new Vector<DashboardRecentFiles>();
+				int j=0;
+				for (Record7<Byte, Integer, String, java.sql.Date, String, Integer, String> record : data) {
+					DashboardRecentFiles drc = new DashboardRecentFiles();
+					String typeName = "-";
+					if (record.value1()!=null) typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
+					if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
+						drc.setname(record.value3());
+						String category = null;
+						Result<Record1<String>> categoryName; 
+						if(record.value3()!=null){
+							categoryName = getCategoryName(record.value2(), domain);
+							for (Record1<String> record1 : categoryName) {
+								category = record1.value1();
+							}
 						}
-					}
-					else category = "otros";
-					drc.setcategory(category);
-					
-					String driveId = record.value5();
-					if(driveId!=null){
-						File file = drive.files().get(driveId).execute();
-						drc.setsize(file.getFileSize());
-					}
-					else{
-						drc.setsize(getFileSize(domain,record.value6()).longValue());
-					}
-					//Integer s = record.value2();
-					//if (s != null) drc.setsize(s.longValue());
-					if (record.value1()!=null) drc.settype(typeName);
-					else drc.settype("otros");
-					
-					if (record.value4() != null){
-						drc.setDate(record.value4().toString());
+						else category = "otros";
+						drc.setcategory(category);
 						
+						String driveId = record.value5();
+						if(driveId!=null){
+							Integer size = Integer.parseInt(record.value7());
+							drc.setsize(size.longValue());
+						}
+						else{
+							drc.setsize(record.value6().longValue());
+						}
+						//Integer s = record.value2();
+						//if (s != null) drc.setsize(s.longValue());
+						if (record.value1()!=null) drc.settype(typeName);
+						else drc.settype("otros");
+						
+						if (record.value4() != null){
+							drc.setDate(record.value4().toString());
+							
+						}
+						recentFiles.add(drc);
+						j++;
 					}
-					vector.add(drc);
-					j++;
+					if (j >= 10 ) return recentFiles;
 				}
-				if (j >= 10 ) return vector;
-									
+			} finally {
+				if (connection != null)
+					connection.close();
 			}
-			
-			return vector;
-		} finally {
-			if (connection != null)
-				connection.close();
 		}
+		return recentFiles;
 	}
 	
 	public Integer getFileSize(String domain, Integer id) throws SQLException {
@@ -1491,25 +1505,31 @@ public class DashboardController implements Serializable {
 		return list;
 	}
 	
+	List<DashboardPayrollPortal> list;
+	List<DashboardPayrollPortal> listAno;
 	
 	public   List<DashboardPayrollPortal> getPayroll() throws SQLException{
-		Locale locale = AonUtil.getCurrentLocale();
-		Map<Integer, HashMap<String, DashboardPayrollPortal>> a =getPayrollBD();
-		List<DashboardPayrollPortal> list = new Vector<DashboardPayrollPortal>();
-		for (int i = 0; i<12 ; i++) {
-			String m = Month.getMonthByValue(i).getName(locale); 
-			
-			if (a.get(year) != null && a.get(year).get(m)!=null)
-				list.add(a.get(year).get(m));
-			else list.add(new DashboardPayrollPortal(0,0,0,0,0,m,year));
-		}	
+		if (list== null){
+			Locale locale = AonUtil.getCurrentLocale();
+			Map<Integer, HashMap<String, DashboardPayrollPortal>> a =getPayrollBD();
+			list = new Vector<DashboardPayrollPortal>();
+			for (int i = 0; i<12 ; i++) {
+				String m = Month.getMonthByValue(i).getName(locale); 
+
+				if (a.get(year) != null && a.get(year).get(m)!=null)
+					list.add(a.get(year).get(m));
+				else list.add(new DashboardPayrollPortal(0,0,0,0,0,m,year));
+			}	
+		}
 		return list;
 	}
 
+	
 	public   List<DashboardPayrollPortal> getPayrollAno() throws SQLException{
+		if (listAno == null){
 		Locale locale = AonUtil.getCurrentLocale();
 		Map<Integer, HashMap<String, DashboardPayrollPortal>> a =getPayrollBD();
-		List<DashboardPayrollPortal> list = new Vector<DashboardPayrollPortal>();
+		listAno = new Vector<DashboardPayrollPortal>();
 		
 		for (Integer key : a.keySet()) {
 			DashboardPayrollPortal b = new DashboardPayrollPortal(0,0,0,0,0,null, key); 
@@ -1525,9 +1545,10 @@ public class DashboardController implements Serializable {
 				}
 				
 			}
-			list.add(b);
+			listAno.add(b);
 		}
-		return list;
+		}
+		return listAno;
 	}
 	
 	public   Map<Integer, HashMap<String, DashboardPayrollPortal>> getPayrollBD() throws SQLException {
@@ -1649,5 +1670,19 @@ public class DashboardController implements Serializable {
 			//view(d);
 		}
 		
+	}
+
+	public Vector<DashboardRecentFiles> getRecentFiles() {
+		return recentFiles;
+	}
+
+	public void setRecentFiles(Vector<DashboardRecentFiles> recentFiles) {
+		this.recentFiles = recentFiles;
+	}
+
+	public void setTypes(Vector<DashboardDocs> types) {
+		this.types = types;
 	} 
+	
+	
 }
