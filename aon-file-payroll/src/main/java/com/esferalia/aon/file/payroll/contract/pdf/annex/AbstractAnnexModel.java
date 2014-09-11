@@ -26,6 +26,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.lowagie.text.DocumentException;
@@ -38,7 +39,7 @@ import com.lowagie.text.pdf.PdfStamper;
 
 
 
-public abstract class AbstractAnnexModel implements IContractPdfDocument {
+public abstract class AbstractAnnexModel implements IContractPdfDocument<IContrataParams> {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

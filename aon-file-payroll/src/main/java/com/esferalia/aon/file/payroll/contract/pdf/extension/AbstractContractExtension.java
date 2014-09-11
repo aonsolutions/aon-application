@@ -24,7 +24,7 @@ import com.lowagie.text.pdf.PdfReader;
 
 
 
-public abstract class AbstractContractExtension implements IContractPdfDocument {
+public abstract class AbstractContractExtension implements IContractPdfDocument<IContrataParams> {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

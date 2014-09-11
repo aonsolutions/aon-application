@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -50,6 +51,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
@@ -59,6 +61,7 @@ import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmpresa;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.ContractPdfWriter;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
@@ -66,6 +69,7 @@ import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
+import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
 
 public class ContractPdfController implements Serializable {
 	
@@ -224,6 +228,9 @@ public class ContractPdfController implements Serializable {
 	public ContractAttachmentType getExtensionPdfType(){
 		return ContractAttachmentType.EXTENSION_DOC_DRAFT;
 	}
+	public ContractAttachmentType getEnterpriseCertificatePdfType(){
+		return ContractAttachmentType.SEPE_CERTIFICADOS_FILE;
+	}
 	public List<IContrataParams> getContrataParams() {
 		return contrataParams;
 	}
@@ -279,6 +286,8 @@ public class ContractPdfController implements Serializable {
 			builder.append(ModelPE230.MODEL_NAME);
 		} else if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			builder.append(Extension.EXTENSION_NAME);
+		} else if(getDocumentType()==ContractAttachmentType.SEPE_CERTIFICADOS_FILE){
+			builder.append(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME);
 		}
 		builder.append(IMAGE_URL_PREFIX2);
 		builder.append(getDocumentWidth());
@@ -379,6 +388,9 @@ public class ContractPdfController implements Serializable {
 		
 		if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize(getContract());
+			contrataController.onContrataDataShow(null);
+			getContrataParams().add(contrataController.getHandler().getParams());
 			// TODO
 //		} else if(getDocumentType()==ContractAttachmentType.TRANSFORM_DOC_DRAFT){
 //			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
@@ -391,10 +403,10 @@ public class ContractPdfController implements Serializable {
 		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
 			getContrataParams().add(contrataController.getHandler().getParams());
 		} else {
-			setContrataParams(null);
+			setContrataParams(new LinkedList<IContrataParams>());
 		}
 		
-		if(isTransformedContract(code)){
+		if(isTransformedContract(code) && getDocumentType()==getContractPdfType()){
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize(getContract());
 			contrataController.onContrataDataShow(null);
@@ -445,8 +457,30 @@ public class ContractPdfController implements Serializable {
 			} else {
 				getContractPdfWriter().loadExistingPdf(ClausulasModel.MODEL_NAME, getContractPdfDraft());
 			}
+		} else if(getDocumentType()==ContractAttachmentType.SEPE_CERTIFICADOS_FILE){
+			if(forceRefresh || getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
+				getContractPdfWriter().loadNewPdf(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME, getContract(), getEnterpriseCertificate());
+				completeNewPdfFields(ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
+			} else {
+				getContractPdfWriter().loadExistingPdf(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME, getContractPdfDraft());
+			}
 		}
 	}
+	
+	private List<CertificadoEmpresa> getEnterpriseCertificate(){
+		CertificadosWriter writer = new CertificadosWriter();
+		try {
+			List<CertificadoEmpresa> list = new LinkedList<CertificadoEmpresa>();
+			list.add(writer.createCertificadoEmpresaType(getContract(), getContractSuspensionCause()));
+			
+			return list;
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 	// TODO  
 	private void completeNewPdfFields(ContractAttachmentType attachType) {
@@ -465,7 +499,7 @@ public class ContractPdfController implements Serializable {
 //			}
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
 			String workSchedule = utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_SCHEDULE.getValue());
-			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(ModelPE230.PE230_TRAINING_COURSE_SCHEDULE).setValue(workSchedule);
+			((ContractPdfField) getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(ModelPE230.PE230_TRAINING_COURSE_SCHEDULE)).setValue(workSchedule);
 		} else if(attachType==ContractAttachmentType.CONTRACT_CLAUSES) {
 //			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(clausesController.getCustomClauses());
 		}
@@ -481,6 +515,8 @@ public class ContractPdfController implements Serializable {
 			fileName = ModelPE230.MODEL_NAME+".pdf"; 
 		} else if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			fileName = Extension.EXTENSION_NAME+".pdf"; 
+		} else if(getDocumentType()==ContractAttachmentType.SEPE_CERTIFICADOS_FILE){
+			fileName = EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME+".pdf"; 
 		}
 		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
 		if(getDocumentPage()<=3){
@@ -491,7 +527,7 @@ public class ContractPdfController implements Serializable {
 	}
 	
 	public void onChangeZoomFactor( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
-		for(ContractPdfField field: getContractPdfWriter().getContractPdfFields()){
+		for(ContractPdfField field: (Collection<ContractPdfField>)getContractPdfWriter().getContractPdfFields()){
 			field.setZoomFactor(getZoomFactor());
 		}
 		createPdfThumbnail();
@@ -656,8 +692,18 @@ public class ContractPdfController implements Serializable {
 				item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
 			}
+			
+			if(getContract().getEndDate()!=null && StringUtils.isNotBlank(getContractSuspensionCause())){
+				item = new SelectItem(ContractAttachmentType.SEPE_CERTIFICADOS_FILE, ContractAttachmentType.SEPE_CERTIFICADOS_FILE.getName(AonUtil.getCurrentLocale()));
+				availableDocumentList.add(item);
+			}
+			
 //		}
 		return availableDocumentList;
+	}
+	
+	private String getContractSuspensionCause() {
+		return ContractUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.CONTRACT_END_CODE.getName());
 	}
 	
 	public void onDocumentGenerationShow(ActionEvent event){
@@ -823,6 +869,27 @@ public class ContractPdfController implements Serializable {
 			}
 		}
 		
+		// Certificado de empresa
+		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.SEPE_CERTIFICADOS_FILE)){
+			try {
+				setDocumentType(ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
+				loadDocument(true);
+				generatedDocumentMap.put(ContractAttachmentType.SEPE_CERTIFICADOS_FILE, getContractPdfWriter().buildPdf(true));
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el certificado de empresa");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el certificado de empresa");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (Exception e){
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el certificado de empresa");
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+		}
+		
 	}
 	
 	private List<IAttachment> getGeneratedAttach(){
@@ -834,6 +901,7 @@ public class ContractPdfController implements Serializable {
 		types.add(ContractAttachmentType.TRAINING_ANNEX_II);
 		types.add(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
 		types.add(ContractAttachmentType.EXTENSION_DOC_DRAFT);
+		types.add(ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
 		for(ContractAttachmentType type: types){
 			if(generatedDocumentMap.containsKey(type)){
 				ContractAttachment attach = new ContractAttachment();

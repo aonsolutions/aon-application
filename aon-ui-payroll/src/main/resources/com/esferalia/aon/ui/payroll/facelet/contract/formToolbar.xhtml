@@ -132,6 +132,16 @@
 							target="#{contractPdf.backAction}" value="contract_form" />
 						<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 					</aon:menuItem>                
+					<aon:menuItem id="enterpriseCertificateDraft-edition"
+						action="contractPdfEdition_form" ajaxSingle="true"
+						value="Certificado empresa"
+						iconClass="aon-icon-page" >
+						<f:setPropertyActionListener
+							target="#{contractPdf.documentType}" value="#{contractPdf.enterpriseCertificatePdfType}" />
+						<f:setPropertyActionListener
+							target="#{contractPdf.backAction}" value="contract_form" />
+						<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
+					</aon:menuItem>                
 				</rich:menuGroup>
 			</c:if>
 			

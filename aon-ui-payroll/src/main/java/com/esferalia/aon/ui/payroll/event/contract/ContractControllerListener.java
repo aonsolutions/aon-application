@@ -16,6 +16,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -175,6 +176,9 @@ public class ContractControllerListener extends ControllerAdapter{
 				importContractClauses((Contract)controller.getTo());
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.PENDING.getValue());
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.PENDING.getValue());
+				ContractInfoController infoController = (ContractInfoController) FormUtil.getController("contractDocumentInfo");
+				infoController.loadContractFields((Contract) this.getController().getTo(), true);
+				updateContractDocumentFields();
 			} else {
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.MANUAL.getValue());
 				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.MANUAL.getValue());

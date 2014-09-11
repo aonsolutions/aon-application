@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE229;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
@@ -12,10 +13,10 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.TemporaryModel;
 import com.esferalia.aon.payroll.Contract;
 
 
-public class ContractPdfFactory {
+public class ContractPdfFactory<E> {
 	
 	
-	public IContractPdfDocument createContractDocument(Contract contract, String document) {
+	public IContractPdfDocument<?> createContractDocument(Contract contract, String document) {
 		// CONTRACT DOCUMENT
 		if (document.equals(LearningModel.MODEL_NAME)) {
 			return new LearningModel(contract);
@@ -44,6 +45,10 @@ public class ContractPdfFactory {
 		// EXTENSION DOCUMENT
 		if (document.equals(Extension.EXTENSION_NAME)) {
 			return new Extension();
+		} 
+		// ENTERPRISE CERTIFICATE DOCUMENT
+		if (document.equals(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME)) {
+			return new EnterpriseCertificate();
 		} 
 
 		return null;

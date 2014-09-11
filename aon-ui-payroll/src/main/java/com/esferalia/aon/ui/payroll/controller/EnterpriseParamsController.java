@@ -132,7 +132,9 @@ public class EnterpriseParamsController implements Serializable {
 	}
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
-		getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setExpression(getDraftTemplateName());
+		if(!DomainManager.isDomainManagementAvailable()){
+			getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setExpression(getDraftTemplateName());
+		}
 	}
 	
 	private String getDraftTemplateName() throws ManagerBeanException {

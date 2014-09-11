@@ -70,7 +70,8 @@ public class ContrataTransformacionesHandler implements IContrataHandler, Serial
 		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
 		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract).get(ContextVariable.TC2.getName()) );
-		getParams().setFechaInicio(contract.getEndDate());
+		getParams().setFechaInicio(contract.getStartDate());
+		getParams().setSourceStartDate(contract.getSeniorityDate());
 //		getParams().setFechaTerminoReal(fechaTerminoReal);
 //		getParams().setCno(obtainCno(utils.getContractDataMap(this.contract).get(ContextVariable.CNO.getName())));
 	}

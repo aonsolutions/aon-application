@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.file;
+package com.esferalia.aon.file.payroll.pdf;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -9,30 +9,30 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.context.FacesContext;
+//import javax.faces.context.FacesContext;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.Classpath;
-import com.code.aon.ui.util.AonUtil;
+//import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
-import com.esferalia.aon.file.payroll.pdf.PdfWriter;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
-import com.esferalia.aon.ui.payroll.utils.ContractUtils;
+//import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
-public class ContractPdfWriter<E> implements Serializable  {
+
+public abstract class PdfWriter implements Serializable  {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	
 	private URL contractDocumentUrl;
-	private IContractPdfDocument<E> pdfDocument;
+	private IContractPdfDocument pdfDocument;
 	
 	public IContractPdfDocument getPdfDocument(){
 		return pdfDocument;
@@ -49,7 +49,7 @@ public class ContractPdfWriter<E> implements Serializable  {
 		URL[] urls = Classpath.search(cl, pdfDocument.getDocumentPath(), file);
 		if(urls.length == 0) {
 			String msg = "Nombre del fichero incorrecto. No se ha podido hallar la ruta especificada.";
-			AonUtil.addErrorMessage(msg);
+//			AonUtil.addErrorMessage(msg);
 			throw new UnsupportedContractDocumentException(msg);
 		}
 		contractDocumentUrl = urls[0];
@@ -73,24 +73,25 @@ public class ContractPdfWriter<E> implements Serializable  {
 		return pdfDocument.buildPdf(readOnly);
 	}
 	
-	public void loadNewPdf(ContractModel model, Contract contract, E contrataParams) throws IOException, UnsupportedContractDocumentException {
-		List<E> list = new LinkedList<E>();
+	public void loadNewPdf(ContractModel model, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
+		List<IContrataParams> list = new LinkedList<IContrataParams>();
 		list.add(contrataParams);
 		loadNewPdf(model.toString(), contract, list);
 	}
-	
-	public void loadNewPdf(String document, Contract contract, List<E> paramsList) throws IOException, UnsupportedContractDocumentException {
+	public void loadNewPdf(String document, Contract contract, List<IContrataParams> contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(contract, document);
 		if(pdfDocument == null) {
 			String msg = "Documento incorrecto. No se ha podido hallar la factoria correspondiente a este tipo de documento";
-			AonUtil.addErrorMessage(msg);
+//			AonUtil.addErrorMessage(msg);
 			throw new UnsupportedContractDocumentException(msg);
 		}
-		ContractUtils utils = ContractUtils.getInstance();
-		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
-		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		pdfDocument.loadPdfFieldValues(ContractCode.getContractCodeByValue(tc2), contract, paramsList);
+//		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		pdfDocument.setLocale(getLocale());
+//		ContractUtils utils = ContractUtils.getInstance();
+//		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
+//		pdfDocument.loadPdfFieldValues(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
+		pdfDocument.loadPdfFieldValues(ContractCode.getContractCodeByValue(getContractCode(contract)), contract, contrataParams);
 	}
 
 	public void loadExistingPdf(ContractAttachment contractPdfDraft, Contract contract) throws UnsupportedContractDocumentException {
@@ -101,11 +102,16 @@ public class ContractPdfWriter<E> implements Serializable  {
 		pdfDocument = factory.createContractDocument(contractPdfDraft.getContract(), document);
 		if(pdfDocument == null) {
 			String msg = "Documento incorrecto. No se ha podido hallar la factoria correspondiente a este tipo de documento";
-			AonUtil.addErrorMessage(msg);
+//			AonUtil.addErrorMessage(msg);
 			throw new UnsupportedContractDocumentException(msg);
 		}
-		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+//		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		pdfDocument.setLocale(getLocale());
 		pdfDocument.loadPdfFields(contractPdfDraft);
 	}
+	
+	public abstract Locale getLocale();
+	
+	public abstract String getContractCode(Contract contract);
 	
 }

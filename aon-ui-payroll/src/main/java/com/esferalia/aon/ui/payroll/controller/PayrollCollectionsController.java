@@ -532,6 +532,7 @@ public class PayrollCollectionsController implements Serializable {
 							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_FILE
 							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID
 							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_RESPONSE 
+							&& t != ContractAttachmentType.SEPE_TRANSFORM_FILE 
 							&& t != ContractAttachmentType.CONTRACT_CLAUSES)) {
 				String name = t.getName(locale);
 				SelectItem item = new SelectItem(t, name);

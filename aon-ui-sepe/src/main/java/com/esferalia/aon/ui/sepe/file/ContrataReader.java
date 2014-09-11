@@ -1153,7 +1153,9 @@ public class ContrataReader {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 			
 			try {
-				params.setFechaInicio( formatter.parse(datosgeneralestransformacion.getFECHAINICIO()) );
+				if(datosgeneralestransformacion.getFECHAINICIO()!=null){
+					params.setFechaInicio( formatter.parse(datosgeneralestransformacion.getFECHAINICIO()) );
+				}
 			} catch (ParseException e) {
 				// nada
 			}

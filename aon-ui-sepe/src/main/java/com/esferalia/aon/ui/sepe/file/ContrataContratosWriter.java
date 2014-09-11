@@ -980,7 +980,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		if(params.isOlderThan52Data()){
 			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
 		}
-		if(tc2.equals("430") || (tc2.equals("530") && !datos.getINDDISCAPACIDAD().equals("C") ) ){
+		if( tc2.equals("430") || ( tc2.equals("530") && datos!=null && datos.getINDDISCAPACIDAD()!=null && !datos.getINDDISCAPACIDAD().equals("C") ) ){
 			String subsidized = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
 			datos.setTEMPORALMINUSVBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
 		}

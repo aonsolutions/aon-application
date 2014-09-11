@@ -1044,6 +1044,8 @@ public class ContractController extends BasicController {
 		newCodeData.setExpression("\""+params.getTransformCode().getValue()+"\"");
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			currentCodeData.setEndDate(currentCodeData.getContract().getEndDate());
+			bean.update(currentCodeData);
 			bean.insert(newCodeData);
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
@@ -1054,6 +1056,7 @@ public class ContractController extends BasicController {
 		}
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			contract.setStartDate(newCodeData.getStartDate());
 			contract.setEndDate(null);
 			bean.restoreNullSubPOJOs(contract);
 			bean.update(contract);

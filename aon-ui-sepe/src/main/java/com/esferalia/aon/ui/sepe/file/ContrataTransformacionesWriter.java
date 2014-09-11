@@ -414,14 +414,15 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 */
 	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataTransformacionesParams params) {
 		// TODO  createDatosMedidasFomento
-		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
-		datos.setINDCOSTEDESPIDO(params.isIndCosteDespido()?"1":"2");
-		if(params.isIndCosteDespido()){
-			datos.setCODIGOCOLECTIVODESPIDO(params.getCodigoColectivoDespido()!=null?params.getCodigoColectivoDespido().getCode():null);
-		} else {
-			datos.setCODIGOCOLECTIVODESPIDO(null);
-		}
-		return datos;
+//		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
+//		datos.setINDCOSTEDESPIDO(params.isIndCosteDespido()?"1":"2");
+//		if(params.isIndCosteDespido()){
+//			datos.setCODIGOCOLECTIVODESPIDO(params.getCodigoColectivoDespido()!=null?params.getCodigoColectivoDespido().getCode():null);
+//		} else {
+//			datos.setCODIGOCOLECTIVODESPIDO(null);
+//		}
+//		return datos;
+		return null;
 	}
 	
 	/**
@@ -531,8 +532,9 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 			datos.setCODIGOOCUPACION(completeLength(params.getCno().getCode(), 8, ZERO_VALUE, true));
 		}
 		datos.setNACIONALIDADCT(completeLength(getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
-		datos.setMUNICIPIOCT(completeLength(getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
-	    return datos;
+//		datos.setMUNICIPIOCT(completeLength(getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
+		datos.setMUNICIPIOCT(getContract().getWorkPlace().getAddress().getMunicipalityCode());
+		return datos;
 	}
 	
 	/**
@@ -591,7 +593,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 					datos.setIDENTIFICADORPFISICA("E"+getContract().getPerson().getRegistry().getDocument());
 				}
 			}
-			datos.setFECHAINICIOCTO(null);
+			datos.setFECHAINICIOCTO(getFormatedDate(getContract().getSeniorityDate()));
 		}
 		return datos;
 	}

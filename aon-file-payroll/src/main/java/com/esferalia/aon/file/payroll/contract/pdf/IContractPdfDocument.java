@@ -12,7 +12,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 
-public interface IContractPdfDocument extends Serializable {
+public interface IContractPdfDocument<E> extends Serializable {
 	
 	String MUNICIPALITIES_BUNDLE_BASE_NAME = "com.code.aon.common.i18n.municipalities";
 	
@@ -20,7 +20,8 @@ public interface IContractPdfDocument extends Serializable {
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft);
 	
-	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException;
+//	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException;
+	public void loadPdfFieldValues(ContractCode code, Contract contract, List<E> paramsList) throws UnsupportedContractDocumentException;
 	
 	public Collection<ContractPdfField> getPdfFields();
 	

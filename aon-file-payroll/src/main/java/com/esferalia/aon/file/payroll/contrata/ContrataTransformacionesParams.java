@@ -23,6 +23,7 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	private ITransformacionType transformContract;
 	private ContractCode transformCode;
 	private Date fechaInicio;
+	private Date sourceStartDate;
 	private Date fechaTerminoReal;
 	private String indicadorDiscontinuidad;
 	
@@ -57,6 +58,14 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
+	}
+
+	public Date getSourceStartDate() {
+		return sourceStartDate;
+	}
+
+	public void setSourceStartDate(Date sourceStartDate) {
+		this.sourceStartDate = sourceStartDate;
 	}
 
 	public Date getFechaTerminoReal() {

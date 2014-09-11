@@ -39,7 +39,7 @@ public class PracticeModel extends AbstractContractModel {
 //			reader.selectPages(range);
 			readPdfFields(reader);
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
+//			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
 			
 			super.loadPdfCommonFields(contract, contrataParams);
 			

@@ -26,7 +26,7 @@ import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.lowagie.text.pdf.PdfReader;
 
 
-public abstract class AbstractContractModel implements IContractPdfDocument {
+public abstract class AbstractContractModel implements IContractPdfDocument<IContrataParams> {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

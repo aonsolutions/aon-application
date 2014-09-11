@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -16,13 +17,14 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.PdfModelHandler;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.lowagie.text.pdf.PdfReader;
 
 
 
-public abstract class AbstractContractBasicCopy implements IContractPdfDocument {
+public abstract class AbstractContractBasicCopy implements IContractPdfDocument<IContrataParams> {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

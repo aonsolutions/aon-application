@@ -27,12 +27,25 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
-public class ContractPdfWriter<E> implements Serializable  {
+//public class ContractPdfWriter extends PdfWriter implements Serializable  {
+public class CertificadosPdfWriter implements Serializable  {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+//	@Override
+//	public Locale getLocale() {
+//		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+//	}
+//
+//	@Override
+//	public String getContractCode(Contract contract) {
+//		ContractUtils utils = ContractUtils.getInstance();
+//		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
+//		return tc2;
+//	}
+	
 	private URL contractDocumentUrl;
-	private IContractPdfDocument<E> pdfDocument;
+	private IContractPdfDocument pdfDocument;
 	
 	public IContractPdfDocument getPdfDocument(){
 		return pdfDocument;
@@ -73,13 +86,12 @@ public class ContractPdfWriter<E> implements Serializable  {
 		return pdfDocument.buildPdf(readOnly);
 	}
 	
-	public void loadNewPdf(ContractModel model, Contract contract, E contrataParams) throws IOException, UnsupportedContractDocumentException {
-		List<E> list = new LinkedList<E>();
+	public void loadNewPdf(ContractModel model, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
+		List<IContrataParams> list = new LinkedList<IContrataParams>();
 		list.add(contrataParams);
 		loadNewPdf(model.toString(), contract, list);
 	}
-	
-	public void loadNewPdf(String document, Contract contract, List<E> paramsList) throws IOException, UnsupportedContractDocumentException {
+	public void loadNewPdf(String document, Contract contract, List<IContrataParams> contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(contract, document);
 		if(pdfDocument == null) {
@@ -90,7 +102,7 @@ public class ContractPdfWriter<E> implements Serializable  {
 		ContractUtils utils = ContractUtils.getInstance();
 		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
 		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		pdfDocument.loadPdfFieldValues(ContractCode.getContractCodeByValue(tc2), contract, paramsList);
+		pdfDocument.loadPdfFieldValues(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
 	}
 
 	public void loadExistingPdf(ContractAttachment contractPdfDraft, Contract contract) throws UnsupportedContractDocumentException {

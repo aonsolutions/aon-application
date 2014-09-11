@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
@@ -120,11 +121,35 @@ public class CertificadosWriter implements Serializable {
 				cuentaCotizacionType = createCuentaCotizacionType(contractCcc);
 				certificado.getCuentaCotizacion().add(cuentaCotizacionType);
 				ccc = contractCcc;
-				System.out.println("__ccc: " + ccc.getFullCcc());
+//				System.out.println("__ccc: " + ccc.getFullCcc());
 			}
 			cuentaCotizacionType.getDatosTrabajador().add(createTrabajadorType(detail));
-			System.out.println("__trabajador: " + detail.getContract().getPerson().getFullName());
+//			System.out.println("__trabajador: " + detail.getContract().getPerson().getFullName());
 		}
+		return certificado;
+	}
+
+	public CertificadoEmpresa createCertificadoEmpresaType(Contract contract, String suspensionCauseCode) throws ManagerBeanException {
+		CertificadoEmpresa certificado = new CertificadoEmpresa();
+		EnterpriseCCC ccc = null;
+		CUENTACOTIZACIONTYPE cuentaCotizacionType = null;
+		Certifica2BatchDetail detail = new Certifica2BatchDetail();
+		detail.setContract(contract);
+		if(suspensionCauseCode!=null){
+			for(SuspensionCause cause: SuspensionCause.values()){
+				if(Integer.parseInt(cause.getValue()) == Integer.parseInt(suspensionCauseCode)){
+					detail.setSuspensionCause(cause);
+					break;
+				}
+			}
+		}
+		EnterpriseCCC contractCcc = detail.getContract().getEnterpriseCCC();
+		if(ccc == null || !ccc.getId().equals(contractCcc.getId())){
+			cuentaCotizacionType = createCuentaCotizacionType(contractCcc);
+			certificado.getCuentaCotizacion().add(cuentaCotizacionType);
+			ccc = contractCcc;
+		}
+		cuentaCotizacionType.getDatosTrabajador().add(createTrabajadorType(detail));
 		return certificado;
 	}
 	
@@ -290,7 +315,7 @@ public class CertificadosWriter implements Serializable {
 //		</xsd:choice>
 			
 		o.setFechaAltaEmpresa(createFechaSimpleType(batchDetail.getContract().getStartDate()));
-		o.setCodCausaSuspension(batchDetail.getSuspensionCause().getValue());
+		o.setCodCausaSuspension(batchDetail.getSuspensionCause()!=null?batchDetail.getSuspensionCause().getValue():null);
 		o.setFechaSuspensionExtincion(createFechaSimpleType(batchDetail.getContract().getEndDate()));
 		o.setFechaFinSuspension(null);
 		o.setERE(null);
@@ -510,7 +535,7 @@ public class CertificadosWriter implements Serializable {
 					COTIZACIONTYPE cotizacion = createCotizacionType( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, 
 							salary.getTimeUnits(), baseCg, baseAcc, null);
 					cotizacionList.add(cotizacion);
-					System.out.println("__cotizacion: " + cotizacion.getMes()+"/"+cotizacion.getAno());
+//					System.out.println("__cotizacion: " + cotizacion.getMes()+"/"+cotizacion.getAno());
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -663,6 +688,7 @@ public class CertificadosWriter implements Serializable {
 	 * @return
 	 */
 	private String createNombreSimpleType(String value){
+		value = StringUtils.trim(value);
 		if(StringUtils.isNotBlank(value) && StringUtils.length(value)>14 ){
 			return StringUtils.substring(value, 0, 14);
 		}
@@ -679,6 +705,7 @@ public class CertificadosWriter implements Serializable {
 	 * @return
 	 */
 	private String createApellidoSimpleType(String value){
+		value = StringUtils.trim(value);
 		if(StringUtils.isNotBlank(value) && StringUtils.length(value)>19 ){
 			return StringUtils.substring(value, 0, 19);
 		}

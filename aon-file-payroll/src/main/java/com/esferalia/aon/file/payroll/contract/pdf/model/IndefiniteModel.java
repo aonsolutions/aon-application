@@ -521,10 +521,15 @@ public class IndefiniteModel extends AbstractContractModel {
 					setPdfFieldValue(PdfFieldIndefinite.OPT17_SEPE_MUNICIPALITY.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.SEPE_MUNICIPALITY.toString()));
 				}				
 				// TODO: transform date
-				ContrataTransformacionesParams transformParams = (ContrataTransformacionesParams) contrataParams.get(1);
-				if(transformParams.getFechaInicio()!=null){
-					setPdfFieldValue(PdfFieldIndefinite.OPT17_TRANSFORM_DATE.getValue(),dateFormatter.format(transformParams.getFechaInicio()));
+				ContrataTransformacionesParams transformParams = null;
+				for(IContrataParams params: contrataParams){
+					if(params instanceof ContrataTransformacionesParams){
+						transformParams = (ContrataTransformacionesParams) params;
+					}
 				}
+				if(transformParams.getFechaInicio()!=null){
+				}
+				setPdfFieldValue(PdfFieldIndefinite.OPT17_TRANSFORM_DATE.getValue(),dateFormatter.format(contract.getStartDate()));
 				
 				
 //				String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_TRANSFORMATION_TO.toString());
@@ -550,14 +555,14 @@ public class IndefiniteModel extends AbstractContractModel {
 				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT.getValue(),"TEMPORAL");
 				
 				dateFormatter.applyPattern("dd/MM/yyyy");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_START_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
+				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_START_DATE.getValue(), dateFormatter.format(contract.getSeniorityDate()));
 				
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_MUNIC.toString()))){
 					setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_MUNIC.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_MUNIC.toString()));
 				}
 				
 				dateFormatter.applyPattern("dd/MM/yyyy");
-				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_DATE.getValue(), dateFormatter.format(contract.getStartDate()));
+				setPdfFieldValue(PdfFieldIndefinite.OPT17_SRC_CONTRACT_SEPE_DATE.getValue(), dateFormatter.format(contract.getSeniorityDate()));
 				
 				// TODO source contract sepe id
 				if(StringUtils.isNotBlank(transformParams.getSourceContractSepeId())){

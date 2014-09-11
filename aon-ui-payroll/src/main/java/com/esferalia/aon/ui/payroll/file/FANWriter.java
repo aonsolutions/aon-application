@@ -548,7 +548,9 @@ public class FANWriter implements Serializable {
 				if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
 				
 				int days = Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
-				return days>=0?days+1:0;
+				days = days>=0?days+1:0;
+				days = days>CommonUtil.daysInMonth(getStartDate())?CommonUtil.daysInMonth(getStartDate()):days;
+				return days;
 			}
 		} catch (AonConnectionException e) {
 			// return null
