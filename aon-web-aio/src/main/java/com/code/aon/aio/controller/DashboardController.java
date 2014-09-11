@@ -1016,6 +1016,13 @@ public class DashboardController implements Serializable {
 				}
 				
 			}
+			
+			DashboardDocs a = categories.get(-1);
+			if (a != null && a.getsize()>0){
+				types.add(a);	
+				free= free - a.getsize();
+			}
+
 		}	
 		return types;
 	}
