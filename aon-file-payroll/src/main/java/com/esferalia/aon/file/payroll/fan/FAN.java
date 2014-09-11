@@ -135,6 +135,8 @@ public class FAN extends AbstractFileFiller{
 				}
 			}
 			eti.getEtf().setContador(numEmp);
+			numTotal++; // segmento ETI 
+			numTotal++; // segmento ETF
 			eti.getEtf().setContadorTotal(numTotal);
 			properties.put(ETF, eti.getEtf());
 			createLine(ETF,properties);

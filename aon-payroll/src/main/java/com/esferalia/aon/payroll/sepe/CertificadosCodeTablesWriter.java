@@ -572,11 +572,15 @@ public class CertificadosCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 
+		out.write( "import java.io.Serializable;" );
+		out.newLine();
 		out.write( "import java.util.LinkedList;" );
 		out.newLine();
 		out.write( "import java.util.List;" );
 		out.newLine();
 		out.write( "import javax.faces.model.SelectItem;" );
+		out.newLine();
+		out.write( "import com.code.aon.AonVersion;" );
 		out.newLine();
 		out.write( "import " + ENUMERATION_CLASS_PACKAGE_NAME + ".*;" );
 		out.newLine();
@@ -596,8 +600,9 @@ public class CertificadosCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 		
-		out.write( "public class " + COLLECTIONS_CLASS_NAME + " {");
+		out.write( "public class " + COLLECTIONS_CLASS_NAME + " implements Serializable {");
 		out.newLine();
+		out.write( "private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;");
 		out.newLine();
 		
 		File folder = new File(ENUMERATIONS_FOLDER_PATH);

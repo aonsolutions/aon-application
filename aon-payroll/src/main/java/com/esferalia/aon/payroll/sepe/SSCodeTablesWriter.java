@@ -67,6 +67,10 @@ public class SSCodeTablesWriter {
 		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat();
 		dateFormatter.applyPattern("dd/MM/yyyy HH:mm:ss");
+//		waitForEnter(null, null);
+		System.out.println("BASE_DIR => " + BASE_DIR);
+		System.out.println("Press ENTER to proceed...");
+		System.in.read();
 		System.out.println("*******************************************************");
 		System.out.println("*** S.S. - TABLAS DE CODIGOS DE LA SEGURIDAD SOCIAL ***");
 		System.out.println("*******************************************************");
@@ -415,11 +419,15 @@ public class SSCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 
+		out.write( "import java.io.Serializable;" );
+		out.newLine();
 		out.write( "import java.util.LinkedList;" );
 		out.newLine();
 		out.write( "import java.util.List;" );
 		out.newLine();
 		out.write( "import javax.faces.model.SelectItem;" );
+		out.newLine();
+		out.write( "import com.code.aon.AonVersion;" );
 		out.newLine();
 		out.write( "import " + ENUMERATION_CLASS_PACKAGE_NAME + ".*;" );
 		out.newLine();
@@ -439,8 +447,9 @@ public class SSCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 		
-		out.write( "public class " + COLLECTIONS_CLASS_NAME + " {");
+		out.write( "public class " + COLLECTIONS_CLASS_NAME + " implements Serializable {");
 		out.newLine();
+		out.write( "private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;");
 		out.newLine();
 		
 		File folder = new File(ENUMERATIONS_FOLDER_PATH);

@@ -160,7 +160,7 @@ public class LeaveBatchController extends BasicController {
 		HttpServletResponse response = null;
 		OutputStream out = null;
         try {
-        	Date date = batch.getDate();
+        	Date date = batch.getOutcomeFileDate();
         	SimpleDateFormat formatter = new SimpleDateFormat("ddMMHHmm");
     		String name = formatter.format(date);
     		byte[] data = batch.getOutcomeFile();

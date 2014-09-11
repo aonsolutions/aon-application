@@ -2,7 +2,7 @@
 
 <register name="ETF">
 	<field name="cabecera" value="ETF" format="AlphaNumeric" pattern="X(3)" />
-	<field name="identificador" value="FDI30     " format="AlphaNumeric" pattern="X(10)" />
+	<field name="identificador" value="bean" bean="ETF" property="identificador" format="AlphaNumeric" pattern="X(10)" />
 	<field name="clave" value="bean" bean="ETF" property="clave" format="Numeric" pattern="9(8)" />
 	<field name="free1" value=" " format="AlphaNumeric" pattern="X(8)" />
 	<field name="fecha" value="bean" bean="ETF" property="fecha" format="Numeric" pattern="9(8)" />

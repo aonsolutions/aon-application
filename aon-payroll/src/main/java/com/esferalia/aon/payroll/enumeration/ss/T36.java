@@ -1,0 +1,99 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T36 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T36.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T36 implements ISSEnum {
+
+	T36_01( "01", "Curación", null, null ),
+	T36_02( "02", "Fallecimiento - Procesos de duración inferior a 365 días", null, null ),
+	T36_03( "03", "Inspección médica - Procesos de duración inferior a 365 días", null, null ),
+	T36_04( "04", "Propuesta incapacidad", null, null ),
+	T36_05( "05", "Agotamiento de plazo", null, null ),
+	T36_06( "06", "Mejoría que permite realizar el trabajo habitual", null, null ),
+	T36_07( "07", "Incomparecencia", null, null ),
+	T36_10( "10", "Control INSS duración 12 meses", null, null ),
+	T36_17( "17", "Recuperación capacidad profesional", null, null ),
+	T36_18( "18", "Incomparecencia contratos formación", null, null ),
+	T36_20( "20", "Inicio Maternidad comunicada por el SPS", null, null ),
+	T36_53( "53", "Alta inspección INSS", null, null ),
+	T36_55( "55", "Propuesta IP antes 12 meses", null, null ),
+	T36_56( "56", "Fallecimiento", null, null ),
+	T36_57( "57", "Alta MATEPSS (Art. 128)", null, null ),
+	;
+	public static final String TABLE_NAME = "T36";
+	public static final String TABLE_DESCRIPTION = "T36.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T36( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T36 getEnumByValue(String expression) {
+		for( T36 o : T36.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

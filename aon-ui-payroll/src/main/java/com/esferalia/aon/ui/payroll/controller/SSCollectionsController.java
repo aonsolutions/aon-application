@@ -3,9 +3,7 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.faces.model.SelectItem;
-
 import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.enumeration.ss.*;
 
@@ -17,9 +15,7 @@ import com.esferalia.aon.payroll.enumeration.ss.*;
 */ 
 
 public class SSCollectionsController implements Serializable {
-	
-	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
@@ -179,6 +175,75 @@ public class SSCollectionsController implements Serializable {
 			}
 		}
 		return T33CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T34.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T34CodeList;
+
+	public List<SelectItem> getT34CodeList() {
+		if (T34CodeList == null) {
+			T34CodeList = new LinkedList<SelectItem>();
+			T34[] el = T34.values();
+			for (T34 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T34CodeList.add(item);
+				}
+			}
+		}
+		return T34CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T35.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T35CodeList;
+
+	public List<SelectItem> getT35CodeList() {
+		if (T35CodeList == null) {
+			T35CodeList = new LinkedList<SelectItem>();
+			T35[] el = T35.values();
+			for (T35 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T35CodeList.add(item);
+				}
+			}
+		}
+		return T35CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T36.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T36CodeList;
+
+	public List<SelectItem> getT36CodeList() {
+		if (T36CodeList == null) {
+			T36CodeList = new LinkedList<SelectItem>();
+			T36[] el = T36.values();
+			for (T36 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T36CodeList.add(item);
+				}
+			}
+		}
+		return T36CodeList;
 	}
 
 	/** 

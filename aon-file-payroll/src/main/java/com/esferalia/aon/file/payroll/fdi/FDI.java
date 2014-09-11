@@ -92,29 +92,31 @@ public class FDI  extends AbstractFileFiller{
 						++numTotal;
 					}
 					if (tra.getDatosIT() != null) {
-						for (DIT dit: tra.getDatosIT()) {
-							properties.put(DIT , dit);
+//						for (DIT dit: tra.getDatosIT()) {
+							properties.put(DIT , tra.getDatosIT());
 							createLine(DIT,properties);
 							++numTotal;
-							if ("PB ".equals(dit.getAccion())) {
-								if (dit.getDec() != null) {
-									properties.put(DEC , dit.getDec());
+							if ("PB ".equals(tra.getDatosIT().getAccion())) {
+								if (tra.getDatosIT().getDec() != null) {
+									properties.put(DEC , tra.getDatosIT().getDec());
 									createLine(DEC ,properties);
 									++numTotal;
 								}
 							}
-							if ("PC ".equals(dit.getAccion())) {
-								if (dit.getOdp() != null) {
-									properties.put(ODP , dit.getOdp());
+							if ("PC ".equals(tra.getDatosIT().getAccion())) {
+								if (tra.getDatosIT().getOdp() != null) {
+									properties.put(ODP , tra.getDatosIT().getOdp());
 									createLine(ODP ,properties);
 									++numTotal;
 								}
 							}
-						}
+//						}
 					}
 				}
 			}
 			eti.getEtf().setContador(numEmp);
+			numTotal++; // segmento ETI 
+			numTotal++; // segmento ETF
 			eti.getEtf().setContadorTotal(numTotal);
 			properties.put(ETF, eti.getEtf());
 			createLine(ETF,properties);

@@ -2,7 +2,7 @@ package com.esferalia.aon.file.payroll.fdi.data;
 
 public class DIT {
 	private String accion;
-	private Integer causa;
+	private String causa;
 	private String contingencia;
 	private Integer fechaBaja;
 	private Integer fechaAlta;
@@ -22,10 +22,10 @@ public class DIT {
 	public void setAccion(String accion) {
 		this.accion = accion;
 	}
-	public Integer getCausa() {
+	public String getCausa() {
 		return causa;
 	}
-	public void setCausa(Integer causa) {
+	public void setCausa(String causa) {
 		this.causa = causa;
 	}
 	public String getContingencia() {

@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.fdi.data;
 
 public class ETF {
 
+	private String identificador;
 	private Integer clave;
 	private Integer fecha;
 	private Integer hora;
@@ -10,6 +11,12 @@ public class ETF {
 	private Integer contador;
 	private Integer contadorTotal;
 
+	public String getIdentificador() {
+		return identificador;
+	}
+	public void setIdentificador(String identificador) {
+		this.identificador = identificador;
+	}
 	public Integer getClave() {
 		return clave;
 	}
