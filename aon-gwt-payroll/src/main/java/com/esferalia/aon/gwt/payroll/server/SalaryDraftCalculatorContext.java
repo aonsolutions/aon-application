@@ -269,10 +269,10 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 					&& DateUtils.compare(leaveStartDate, ctxEndDate) < 0
 					&& DateUtils.compare(leaveEndDate, ctxStartDate) > 0) {
 				
-				long days = DateUtils.getDaysBetween(leaveStartDate, resetTime(DateUtils.getPrevDay(leaveEndDate)));
+				long days = leaveStartDate.before(ctxStartDate) ? 
+						DateUtils.getDaysBetween(leaveStartDate, ctxStartDate) 
+						: 0;
 				
-				if(days < 0)
-					days = 0;
 				LeaveType type = getLeaveType(dataPerson.getType());
 				
 				Integer id = dataPerson.getContractLeaveId();
