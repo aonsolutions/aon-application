@@ -98,7 +98,7 @@ public interface ISepeConstants {
 //		ModelOption.LEARNING_OPT2,
 //		ModelOption.LEARNING_OPT3,
 //		ModelOption.LEARNING_OPT4,
-//		ModelOption.PRACTICE_OPT1,
+		ModelOption.PRACTICE_OPT1,
 //		ModelOption.PRACTICE_OPT2,
 //		ModelOption.PRACTICE_OPT3,
 //		ModelOption.PRACTICE_OPT4,
