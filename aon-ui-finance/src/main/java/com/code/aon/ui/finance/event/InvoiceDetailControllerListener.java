@@ -12,7 +12,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -69,15 +68,29 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		try {
+			invoiceDetail.setInvoice(controller.getInvoice());
+			controller.getMasterController().getManagerBean().restoreNullSubPOJOs(invoiceDetail.getInvoice());
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage());
+		}
 		obtainTaxableBase(event, invoiceDetail);
 		obtainWorkPlace(event, invoiceDetail);
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		event.getController().initializeModel();
-		refreshInvoiceData((InvoiceDetailController)event.getController());
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		try {
+			controller.getMasterController().getManagerBean().initializePOJO(invoiceDetail.getInvoice());
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage());
+		}
+		controller.initializeModel();
+		refreshInvoiceData(controller);
 	}
 
 	@Override
@@ -88,8 +101,27 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
+	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		try {
+			invoiceDetail.setInvoice(controller.getInvoice());
+			controller.getMasterController().getManagerBean().restoreNullSubPOJOs(invoiceDetail.getInvoice());
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage());
+		}
+	}
+
+	@Override
 	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
-		refreshInvoiceData((InvoiceDetailController)event.getController());
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		try {
+			controller.getMasterController().getManagerBean().initializePOJO(invoiceDetail.getInvoice());
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException(ex.getMessage());
+		}
+		refreshInvoiceData(controller);
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
@@ -109,8 +141,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	private void obtainWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) {
 		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 			InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-			InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
-			Invoice invoice = (Invoice)invoiceController.getTo();
+			Invoice invoice = (Invoice)controller.getInvoice();
 			if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
 				invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
 			}
@@ -118,8 +149,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	}
 
 	private void refreshInvoiceData(InvoiceDetailController controller) {
-		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
-		Invoice invoice = (Invoice)invoiceController.getTo();
+		Invoice invoice = (Invoice)controller.getInvoice();
 		invoice.setTaxableBase(((InvoiceDetail)controller.getTo()).getInvoice().getTaxableBase());
 		invoice.setVatQuota(((InvoiceDetail)controller.getTo()).getInvoice().getVatQuota());
 		invoice.setRetentionQuota(((InvoiceDetail)controller.getTo()).getInvoice().getRetentionQuota());
