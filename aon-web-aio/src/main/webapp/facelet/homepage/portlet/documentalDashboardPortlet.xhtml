@@ -212,7 +212,7 @@
         				<c:forEach var="recent" items="#{dashboard.recentsFiles}">		
 						
 							data.addRow(['#{recent.date}',
-							             '#{recent.name}',
+							             "&lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name}",
 						             	'#{recent.category}',
 						             	'#{recent.sizeString}']);											
 						</c:forEach>

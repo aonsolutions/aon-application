@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.commons.io.FileUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.enumeration.MimeType;
 
 public class DashboardRecentFiles implements Serializable {
 	
@@ -17,7 +18,7 @@ public class DashboardRecentFiles implements Serializable {
 	String	date;
 	long size;
 	String sizeString;
-
+	String icon;
 	
 	public DashboardRecentFiles(){
 		//Constructor
@@ -28,6 +29,7 @@ public class DashboardRecentFiles implements Serializable {
 		this.size = size;
 		this.date = date;
 		this.category = category;	
+		
 	}
 	
 	public void settype(String type) {
@@ -35,6 +37,8 @@ public class DashboardRecentFiles implements Serializable {
 	}
 	public void setname(String name) {
 		this.name = name;
+		
+		
 	}
 	public void setsize(long size) {
 		this.size = size;
@@ -67,6 +71,26 @@ public class DashboardRecentFiles implements Serializable {
 	}
 	public void setSizeString(String sizeString) {
 		this.sizeString = sizeString;
+	}
+	
+	
+	public String getIcon() {
+		return icon;
+	}
+	public void setIcon(Integer icon) {
+		short type = icon.shortValue();
+		MimeType t = MimeType.values()[type];
+		if (icon.equals(-1)) this.icon="aon-icon-google-drive-unknown";
+		else if(t.getName().equals("application/pdf")) this.icon="aon-icon-google-drive-pdf";
+		else if(t.getName().equals("aapplication/msword")) this.icon="aon-icon-google-drive-word";
+		else if(isImage(t.getName())) this.icon="aon-icon-google-drive-image";
+		else this.icon="aon-icon-google-drive-unknown";
+	}
+	
+	private Boolean isImage(String name) {
+		Integer pos  = name.indexOf("/");
+
+		return name.substring(0,pos).equals("image");
 	}
 	private String formatDate( String date){
 		Integer pos = date.indexOf("-");

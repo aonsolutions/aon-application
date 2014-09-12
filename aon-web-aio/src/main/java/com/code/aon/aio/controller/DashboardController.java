@@ -49,6 +49,7 @@ import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Record7;
+import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -1264,16 +1265,16 @@ public class DashboardController implements Serializable {
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				
-				Result<Record7<Byte, Integer, String, java.sql.Date, String, Integer, String>> data ;
+				Result<Record8<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte>> data ;
 				data =  dslContext
-						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID)
+						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID,RATTACH.MIMETYPE)
 						.from(RATTACH)
 						.where(getAttachmentCondition())					
 						.orderBy(RATTACH.ATTACH_DATE.desc()).limit(10).fetch();
 				
 				recentFiles = new Vector<DashboardRecentFiles>();
 				int j=0;
-				for (Record7<Byte, Integer, String, java.sql.Date, String, Integer, String> record : data) {
+				for (Record8<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte> record : data) {
 					DashboardRecentFiles drc = new DashboardRecentFiles();
 					String typeName = "-";
 					if (record.value1()!=null) typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
@@ -1307,6 +1308,7 @@ public class DashboardController implements Serializable {
 							drc.setDate(record.value4().toString());
 							
 						}
+						if(record.value8()!=null) drc.setIcon(record.value8().intValue()); else drc.setIcon(-1);
 						recentFiles.add(drc);
 						j++;
 					}
