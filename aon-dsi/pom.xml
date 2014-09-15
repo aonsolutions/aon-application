@@ -11,7 +11,7 @@
 	<artifactId>aon.dsi</artifactId>
 	<packaging>jar</packaging>
 
-	<name>AON-PAYROLL-CTSQL2MYSQL</name>
+	<name>AON-DSI</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
