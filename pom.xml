@@ -43,6 +43,7 @@
 		<module>aon-sql-payroll</module>
 		<module>aon-master-jooq</module>
 		<module>aon-sql-google</module>
+		<module>aon-dsi</module>
 
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>
@@ -169,7 +170,6 @@
 		<module>aon-msm</module>
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
-		<module>aon-payroll-ctsql2mysql</module>
 		
 	</modules>
 
