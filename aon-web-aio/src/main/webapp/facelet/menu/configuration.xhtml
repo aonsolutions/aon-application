@@ -299,6 +299,15 @@
 												</aon:commandLink>
 											</aon:div>										
 										</c:if>
+										<c:if test="#{aonRole.payroll}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="dsi_import"
+													action="dsi_import_form"
+													title="#{bundle.dsi_import_module}" >
+													<aon:outputText styleClass="aon-icon aon-icon-dsi-gestion" value="#{bundle.dsi_import_module}" />
+												</aon:commandLink>
+											</aon:div>										
+										</c:if>
 									</aon:div>
 								</aon:panelGrid>
 								
