@@ -163,6 +163,14 @@
 		<servlet-name>Share Servlet</servlet-name>
 		<url-pattern>/aon_gwt_payroll/share</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>DSI Import Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.connect.server.DSIImportServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DSI Import Servlet</servlet-name>
+		<url-pattern>/aon_gwt_connect/dsiimport</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>TemplatePreview</servlet-name>
