@@ -23,6 +23,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/client/**</include>
+					<include>**/facelet/**</include>
 					<include>**/*.gwt.xml</include>
 				</includes>
 			</resource>
