@@ -1,0 +1,150 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonMainDeployer</property>
+		<property name="connection.datasource">java:comp/env/jdbc/AonEmployee</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="show_sql">false</property>
+		
+		<!-- C3P0 Stuff -->
+		<property name="hibernate.c3p0.acquire_increment">1</property>
+		<property name="hibernate.c3p0.idle_test_period">1900</property>
+		<property name="hibernate.c3p0.timeout">3600</property>
+		<property name="hibernate.c3p0.max_size">30</property>
+		<property name="hibernate.c3p0.min_size">1</property>
+		<property name="hibernate.c3p0.max_statements">0</property>
+		<property name="hibernate.c3p0.preferredTestQuery">select 1;</property>
+
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+		<mapping package="com.esferalia.aon.payroll.type"/>
+
+		<!-- AON-ACCOUNT Mapping files -->
+		<mapping class="com.code.aon.account.Account"/>
+		
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>
+		
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
+		<mapping class="com.code.aon.company.Enterprise"/>
+		<mapping class="com.code.aon.company.EnterpriseData"/>				
+		<mapping class="com.code.aon.company.EnterpriseUser"/>		
+		<mapping class="com.code.aon.company.WorkPlace"/>
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CNAE"/>
+		<mapping class="com.code.aon.config.CNAE2009"/>
+		<mapping class="com.code.aon.config.CNAE2009Rate"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.Domain"/>
+		<mapping class="com.code.aon.config.DomainApplication"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Series"/>
+        <mapping class="com.code.aon.config.Tag"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+		
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.person.Person"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Segment"/>
+		
+		<!-- AON-PAYROLL Mapping files -->
+		<mapping class="com.esferalia.aon.payroll.Agreement"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementData"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementExtra"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevel"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelCategory"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelData"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementPayment"/>
+		<mapping class="com.esferalia.aon.payroll.BonusConcept"/>
+		<mapping class="com.esferalia.aon.payroll.Certifica2Batch"/>
+		<mapping class="com.esferalia.aon.payroll.Certifica2BatchAttachment"/>
+		<!--  mapping class="com.esferalia.aon.payroll.Certifica2BatchData"/-->
+		<mapping class="com.esferalia.aon.payroll.Certifica2BatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.CNO"/>
+		<mapping class="com.esferalia.aon.payroll.Contract"/>
+		<mapping class="com.esferalia.aon.payroll.ContractAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBonus"/>
+		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
+		<mapping class="com.esferalia.aon.payroll.ContractData"/>
+		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.ContractEmbargo"/>
+		<mapping class="com.esferalia.aon.payroll.ContractLeave"/>
+		<mapping class="com.esferalia.aon.payroll.ContractLeaveDetail"/>
+		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
+		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatch"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.GeozoneIrpf"/>
+		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfDescendant"/>
+		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfHandicap"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfData"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfDataAscendants"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfDataDescendients"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfRegularization"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfResult"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
+		<mapping class="com.esferalia.aon.payroll.PayrollWorkPlace"/>
+		<mapping class="com.esferalia.aon.payroll.Salary"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryBonus"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryCost"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryEmbargo"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
+		<mapping class="com.esferalia.aon.payroll.SystemCost"/>
+		<mapping class="com.esferalia.aon.payroll.SystemData"/>
+		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
+
+	</session-factory>
+
+</hibernate-configuration>

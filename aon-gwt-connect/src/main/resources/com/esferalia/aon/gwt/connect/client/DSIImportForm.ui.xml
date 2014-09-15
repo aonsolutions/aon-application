@@ -1,0 +1,114 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+
+	<ui:style>
+	.monthListBox-item {
+		padding-left: 16px;
+	}
+	
+	.options-scroll-panel>div {
+		height: 99%;
+	}
+	</ui:style>
+
+
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+
+
+		<g:center>
+			<g:ScrollPanel styleName="aon-scroll-area {style.options-scroll-panel}">
+
+				<g:HTMLPanel styleName="aon-panelGrid-search aon-height-all">
+					<div class="aon-panelGrid-search-info ">
+						<span class="aon-panelGrid-search-info-internal">Introduzca los parámetros de cálculo:</span>
+						<a style="font-size:1em;font-weight:bold;float:right;" onclick=""
+							href="#">
+							<span class="aon-outputText">[?]</span>
+						</a>
+					</div>
+
+					<table class="aon-panelGrid" style="height:90%">
+						<tr>
+							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Tipo</g:Label>
+							</td>
+							<td class="aon-panelGrid-even">
+								<g:ListBox>
+									<g:item>N&oacute;mina</g:item>
+								</g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Mes</g:Label>
+							</td>
+							<td class="aon-panelGrid-even">
+								<aon:MonthListBox styleName="aon-selectOneMenu"
+									ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
+									highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Guardar</g:Label>
+							</td>
+							<td class="aon-panelGrid-even">
+								<g:RadioButton name="saveRadioButton" ui:field="saveRadioButton">Si</g:RadioButton>
+								<g:RadioButton name="saveRadioButton">No</g:RadioButton>
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Comparar con</g:Label>
+							</td>
+							<td class="aon-panelGrid-even ">
+								<g:ListBox styleName="aon-selectOneMenu"
+									ui:field="dbMonthListBox" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd">
+								<span class="aon-outputText"></span>
+							</td>
+							<td class="aon-panelGrid-even">
+								<g:Button ui:field="calcButton" enabled="false">Calcular</g:Button>
+							</td>
+						</tr>
+						<tr style="height:90%;">
+							<td class="aon-panelGrid-odd aon-height-all ">
+								<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
+							</td>
+							<td class="aon-panelGrid-even aon-width-all aon-height-all">
+							</td>
+						</tr>
+					</table>
+
+
+				</g:HTMLPanel>
+
+			</g:ScrollPanel>
+
+		</g:center>
+
+		<g:south size="0">
+			<aon:MinimizePanel ui:field="footPanel">
+				<g:TabLayoutPanel barHeight="26" barUnit="PX">
+					<g:tab>
+						<g:header>
+							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
+						</g:header>
+						
+						<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
+					
+					</g:tab>
+				</g:TabLayoutPanel>
+			</aon:MinimizePanel>
+		</g:south>
+
+	</g:SplitLayoutPanel>
+
+</ui:UiBinder>
