@@ -9,7 +9,7 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.gwt.connect</artifactId>
 	<packaging>jar</packaging>
-	<version>8.1-SNAPSHOT</version>
+	<version>8.2-SNAPSHOT</version>
 	<description>AON GWT CONECT@</description>
 	<name>AON GWT CONECT@</name>
 	<build>
