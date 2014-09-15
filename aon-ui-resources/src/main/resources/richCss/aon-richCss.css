@@ -2986,12 +2986,19 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-google-drive-pdf.png) scroll left center no-repeat;	
  }
  
-   .aon-icon-google-drive-word{
+ .aon-icon-google-drive-word{
 	background:transparent url(images/aon-icon/aon-icon-google-drive-word.png) scroll left center no-repeat;	
  }
  
-   .aon-icon-google-task{
+ .aon-icon-google-task{
 	background:transparent url(images/aon-icon/aon-icon-google-task.png) scroll left center no-repeat;	
  }
  
+.aon-icon-dsi-grupo {
+	background:transparent url(images/aon-icon/aon-icon-dsi-grupo.png) scroll left center no-repeat;
+}
+
+.aon-icon-dsi-gestion {
+	background:transparent url(images/aon-icon/aon-icon-dsi-gestion.png) scroll left center no-repeat;
+}
 
