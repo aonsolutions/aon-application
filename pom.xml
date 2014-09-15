@@ -138,6 +138,7 @@
 		<module>aon-gwt-common</module>
 		<module>aon-gwt-visualization</module>
 		<module>aon-gwt-codemirror</module>
+		<module>aon-gwt-connect</module>
 		<module>aon-gwt-payroll</module>
 		<module>aon-gwt-fiscal</module>
 
