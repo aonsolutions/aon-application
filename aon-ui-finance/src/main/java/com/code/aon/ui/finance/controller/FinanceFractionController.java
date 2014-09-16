@@ -112,7 +112,11 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 		finance.setBic(targetFinance.getBic());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(targetFinance.getSecurityLevel());
+		finance.setRemarks(targetFinance.getRemarks());
 		finance.setScope(targetFinance.getScope());
+		finance.setAdvance(targetFinance.isAdvance());
+		finance.setPayroll(targetFinance.isPayroll());
+		finance.setPrepayment(targetFinance.isPrepayment());
 		return finance;
 	}
 
