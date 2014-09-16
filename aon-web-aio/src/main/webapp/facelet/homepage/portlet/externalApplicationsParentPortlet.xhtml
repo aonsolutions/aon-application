@@ -27,10 +27,10 @@
 			</c:if>
 			<c:if test="#{desktop.state.showDehOnline}">							
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
-					<h:outputLink id="dehOnlineWeb" target="_blank" value="#{bundle.aon_external_dehOnline_url}" >						
-						<h:graphicImage title="#{bundle.aon_external_dehOnline}"
-							url="#{aonResource.resolve['/images/logo-deh-online.png']}" />
-					</h:outputLink>
+					<h:graphicImage title="#{bundle.aon_external_dehOnline}"
+						url="#{aonResource.resolve['/images/logo-deh-online.png']}"
+						style="cursor: pointer;" 
+						onclick="document.getElementById('dehonlineForm').submit()"/>
 				</aon:div>
 			</c:if>
 		</aon:div>		

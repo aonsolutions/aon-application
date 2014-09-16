@@ -82,5 +82,12 @@
 
 		</aon:div>
 	</aon:form>
+	<c:if test="#{desktop.state.showDehOnline}">	
+		<form id="dehonlineForm" action="https://panel.dehonline.es/login" method="post" target="_blank">
+			<input type="hidden" name="identity" value="eficiente"/>
+			<input type="hidden" name="password" value="despachoeficientedeho"/>
+		</form>
+	</c:if>
+	
 </ui:composition>
 

@@ -37,14 +37,15 @@
 			</c:if>
 			<c:if test="#{desktop.state.showDehOnline}">
 				<aon:div styleClass="aon-portlet aon-margin-bottom">
-					<aon:div styleClass="aon-portlet-title">								
-						<h:outputLink id="dehOnlineWeb" target="_blank" 
-							value="#{bundle.aon_external_dehOnline_url}" >
-							<h:graphicImage
-								url="#{aonResource.resolve['/images/icon-deh-online.png']}" />
-							<aon:outputText value="#{bundle.aon_external_dehOnline}"
-								styleClass="aon-portlet-title-text"/>
-						</h:outputLink>
+					<aon:div
+						style="cursor: pointer;"
+						onclick="document.getElementById('dehonlineForm').submit()" 
+						styleClass="aon-portlet-title">								
+						<h:graphicImage
+							url="#{aonResource.resolve['/images/icon-deh-online.png']}"/>
+						<aon:outputText value="#{bundle.aon_external_dehOnline}"
+							style="color:black"
+							styleClass="aon-portlet-title-text"/>
 					</aon:div>
 				</aon:div>
 			</c:if>
