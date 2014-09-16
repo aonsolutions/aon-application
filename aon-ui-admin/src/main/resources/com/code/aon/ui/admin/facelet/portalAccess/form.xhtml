@@ -81,15 +81,16 @@
 			</aon:div>
 		</aon:form>
 		
-		<aon:form id="portalAccessUserForm">
-			<aon:div styleClass="aon-scroll-area">
 
-				<aon:div id="portalAccessUserDiv">
-					<aon:panel rendered="#{portalAccess.active}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_login_user}" />
-						</f:facet>
-		
+		<aon:div styleClass="aon-scroll-area">
+
+			<aon:div id="portalAccessUserDiv">
+				<aon:panel rendered="#{portalAccess.active}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_login_user}" />
+					</f:facet>
+	
+					<aon:form id="portalAccessUserForm">
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 							<ui:param name="toolbarID" value="portalAccessUserToolbar" />
 							<ui:param name="innerToolbar" value="#{true}" />
@@ -157,10 +158,22 @@
 								value="#{portalAccess.user.active}" />
 							
 						</aon:panelGrid>
-					</aon:panel>
-				</aon:div>
-															
+					</aon:form>
+
+					<c:if test="#{portalAccess.user.id != null}" >
+						<aon:form id="portalAccessUserScopesForm">
+							<aon:div styleClass="aon-form-group-title aon-margin-top">
+								<aon:div styleClass="aon-form-group-title-internal">
+									<aon:outputText value="#{bundle.config_scopes}"/>
+								</aon:div>
+							</aon:div>
+							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" />
+						</aon:form>
+					</c:if>
+											
+				</aon:panel>
 			</aon:div>
-		</aon:form>
+														
+		</aon:div>
 	</ui:define>
 </ui:composition>

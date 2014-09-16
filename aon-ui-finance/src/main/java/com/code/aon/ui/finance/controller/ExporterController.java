@@ -112,6 +112,7 @@ public class ExporterController implements Serializable {
 				exporter = new LogicWinWriter(this.configuration);
 				break;
 			case EXCEL:
+			case DSI_GESTION:
 				exporter = new ExcelWriter(this.configuration);
 				break;
 		}

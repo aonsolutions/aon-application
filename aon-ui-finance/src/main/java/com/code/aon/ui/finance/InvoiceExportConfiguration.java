@@ -43,10 +43,14 @@ public class InvoiceExportConfiguration implements Serializable {
 	
 	public void initAccountSize() {
 		if (this.accountSize == null) {
-			if (this.type == InvoiceExportType.A3) {
-				this.accountSize = 12;
-			} else if (this.type == InvoiceExportType.EXCEL) {
-				this.accountSize = 9;
+			switch (this.type) {
+				case A3:
+					this.accountSize = 12;
+					break;
+				case EXCEL:
+				case DSI_GESTION:
+					this.accountSize = 9;
+					break;
 			}
 		}		
 	}
@@ -71,6 +75,7 @@ public class InvoiceExportConfiguration implements Serializable {
 				case APLIFISA:
 				case LOGIC_WIN:
 				case EXCEL:
+				case DSI_GESTION:
 					return true;
 			}
 		}
@@ -177,6 +182,7 @@ public class InvoiceExportConfiguration implements Serializable {
 				case APLIFISA:
 				case LOGIC_WIN:
 				case EXCEL:
+				case DSI_GESTION:
 					length = 0;
 					break;
 			}

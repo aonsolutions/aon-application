@@ -16,10 +16,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -124,8 +124,11 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			this.user = getPortalUser();
 			if ( this.user == null ) {
 				resetTo();
-			} else if ( this.user.getInitAction() != null ) {
-				setPayrollPortal(true);
+			} else {
+				updateScopes();
+				if ( this.user.getInitAction() != null ) {
+					setPayrollPortal(true);
+				}
 			}
 			setActive(this.portalValue != 0);
 			calculateAvalilableOptions();
@@ -190,6 +193,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	}
 	
 	private void updateUser() throws ManagerBeanException {
+		boolean isNew = ( this.user.getId() == null );
 		if ( isPayrollPortal() ) {
 			this.user.setInitAction(PAYROLL_PORTAL_OPTION);	
 		} else { 
@@ -198,6 +202,11 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		this.user.setEnterprise(getEnterpriseId());
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		bean.insertOrUpdate(this.user);
+		if ( isNew ) {
+			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
+			duc.registerScope(user, GENERAL_SCOPE);
+			updateScopes();
+		}
 		DomainApplication domainApplication = getDomainApplication();
 		if ( domainApplication != null ) {
 			ApplicationUser appUser = ensureApplicationUser(user, domainApplication);
@@ -409,5 +418,10 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			setPayrollInfo(false);
 		}
 	}
-		
+
+	private void updateScopes() {
+		UserScopeController usc = (UserScopeController) AonUtil.getRegisteredBean(IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME);
+		usc.init(user);
+	}	
+	
 }

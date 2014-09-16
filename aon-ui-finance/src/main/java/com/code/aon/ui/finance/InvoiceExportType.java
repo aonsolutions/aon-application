@@ -16,7 +16,9 @@ public enum InvoiceExportType implements IResourceable {
 	
 	LOGIC_WIN(ICommonMessages.FINANCE_INVOICE_EXPORT_LOGIC_WIN),
 	
-	EXCEL(ICommonMessages.FINANCE_INVOICE_EXPORT_EXCEL);
+	EXCEL(ICommonMessages.FINANCE_INVOICE_EXPORT_EXCEL),
+	
+	DSI_GESTION(ICommonMessages.FINANCE_INVOICE_EXPORT_DSI_GESTION);
 
 	private String label;
 	
@@ -26,8 +28,11 @@ public enum InvoiceExportType implements IResourceable {
 
 	@Override
 	public String getName(Locale arg0) {
-		return AonUtil.getMessage(label);
+		return getName();
 	}
 
+	public String getName() {
+		return AonUtil.getMessage(label);
+	}
 	
 }
