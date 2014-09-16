@@ -114,6 +114,7 @@
 					<ui:include
 						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
 						<ui:param name="dataModel" value="#{salesImporter.existingSales}" />
+						<ui:param name="showGoToButton" value="#{true}" />
 					</ui:include>
 				</aon:panel>
 				
@@ -124,6 +125,17 @@
 					<ui:include
 						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
 						<ui:param name="dataModel" value="#{salesImporter.nonExistentSales}" />
+					</ui:include>
+				</aon:panel>
+				
+				<aon:panel rendered="#{salesImporter.generatedSales.rowCount>0}">
+					<f:facet name="header">
+						<aon:outputText value="Pedidos generados" />
+					</f:facet>
+					<ui:include
+						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
+						<ui:param name="dataModel" value="#{salesImporter.generatedSales}" />
+						<ui:param name="showGoToButton" value="#{true}" />
 					</ui:include>
 				</aon:panel>
 				

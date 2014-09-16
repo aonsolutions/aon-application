@@ -2,16 +2,20 @@ package com.code.aon.ui.sales.controller;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import org.jooq.Record2;
+import org.jooq.Result;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.AonFile;
@@ -25,7 +29,9 @@ import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.sales.importer.AmazonSalesHandler;
 import com.code.aon.ui.sales.importer.AmazonSalesReturnHandler;
 import com.code.aon.ui.sales.importer.AmazonShipmentHandler;
+import com.code.aon.ui.sales.importer.ImporterUtils;
 import com.code.aon.ui.sales.importer.SalesImporterHandler;
+import com.code.aon.ui.sales.importer.SalesImporterHandler.AmazonSales;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -42,6 +48,10 @@ public class SalesImporterController implements Serializable {
 	private DataModel nonExistentSales;
 	
 	private DataModel importedSales;
+
+	private DataModel existingSales;
+
+	private DataModel generatedSales;
 
 	private SalesImporterHandler handler;
 
@@ -72,7 +82,17 @@ public class SalesImporterController implements Serializable {
 	}
 	
 	public DataModel getExistingSales() {
-		return new SerializableListDataModel(handler.getExistingSalesList());
+		if(existingSales==null){
+			existingSales = new SerializableListDataModel(handler.getExistingSalesList());
+		}
+		return existingSales;
+	}
+	
+	public DataModel getGeneratedSales() {
+		if(generatedSales==null){
+			generatedSales = new SerializableListDataModel(handler.getGeneratedSales());
+		}
+		return generatedSales;
 	}
 	
 	
@@ -115,6 +135,7 @@ public class SalesImporterController implements Serializable {
 	private void reset(){
 		nonExistentItems = null;
 		importedSales = null;
+		existingSales = null;
 		nonExistentSales = null;
 		nonExistentItems = null;
 		if(handler!=null){
@@ -191,6 +212,22 @@ public class SalesImporterController implements Serializable {
 //		product.setName(tempRItem.getItem().getDescription());
 //		controller.setBackAction("amazonSalesImporter_form");
 //		controller.setBackActionListener("amazonSalesImporter.reloadDataCheck");
+	}
+
+	public void onLoadSales(ActionEvent event){
+		AmazonSales sales = (AmazonSales) getExistingSales().getRowData();
+		Result<Record2<Integer, String>> record = ImporterUtils.getSalesRecords(Arrays.asList(sales.getPurchaseReference()));
+		try {
+			if(record.size()==1){
+				Integer id = record.get(0).value1();
+				SalesController controller = (SalesController) AonUtil.getRegisteredBean(ISalesConstants.SALES_CONTROLLER_NAME);
+				controller.onLoad(event, id, "amazonSalesImporter_form", null);
+			} else if(record.size()>1){
+				AonUtil.addErrorMessage("Existen múltiples pedidos con el mismo código: " + sales.getPurchaseReference());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("onLoadSales: " + e.getMessage());
+		}
 	}
 	
 	

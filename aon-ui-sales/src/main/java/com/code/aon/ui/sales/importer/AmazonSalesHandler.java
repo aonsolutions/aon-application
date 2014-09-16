@@ -42,25 +42,27 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
-	private List<Sales> importedSalesList;
+	private List<AmazonSales> importedSalesList;
 
-	private List<SalesDetail> importedSalesDetailList;
+	private List<AmazonSalesDetail> importedSalesDetailList;
 	
-	private List<Sales> existingSalesList;
+	private List<AmazonSales> existingSalesList;
 	
 	private List<RegistryItem> nonExistentItems;
 	
 	private Map<String, Integer> importedSalesItemMap;
+
+	private List<Sales> generatedSales;
 	
 	public String getModuleLabel(){
 		return AonUtil.getMessage(ISalesConstants.AMAZON_SALES_INTEGRATION);
 	}
 	
-	public List<Sales> getExistingSalesList(){
+	public List<AmazonSales> getExistingSalesList(){
 		return existingSalesList;
 	}
 
-	public List<Sales> getImportedSalesList(){
+	public List<AmazonSales> getImportedSalesList(){
 		return importedSalesList;
 	}
 	
@@ -68,8 +70,12 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		return nonExistentItems;
 	}
 	
-	public List<Sales> getNonExistentSales(){
+	public List<AmazonSales> getNonExistentSales(){
 		return null;
+	}
+		
+	public List<Sales> getGeneratedSales(){
+		return generatedSales;
 	}
 	
 	public boolean isValidFile(AonFile aonFile) {
@@ -104,14 +110,46 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 	}
 		
 	public void accept() throws ManagerBeanException{
+		generatedSales = new LinkedList<Sales>();
+		SalesUtils salesUtils = new SalesUtils();
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-		for(Sales sales: importedSalesList){
-			salesBean.insert(sales);
+		for(AmazonSales amazonSales: importedSalesList){
+			Sales sales = new Sales();
+			try {
+				sales.setPurchaseReference(amazonSales.getPurchaseReference());
+				sales.setStatus(SalesStatus.PENDING);
+				sales.setIssueDate(amazonSales.getIssueDate());
+				
+				sales.setSeller(amazonSales.getSeller());
+				sales.setCustomer(amazonSales.getCustomer());
+				
+				sales.setPaymentDays("0");
+				sales.setWorkPlace(ImporterUtils.obtainWorkPlace());
+				
+				sales.setSeries( salesUtils.obtainWorkPlaceSerie(sales.getWorkPlace()) );
+				sales.setNumber( salesUtils.obtainSeriesMaxNumber(sales.getSeries()) );
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage());
+			}
+			sales = (Sales) salesBean.insert(sales);
+			amazonSales.setSales(sales);
+			generatedSales.add(sales);
 		}
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-		for(SalesDetail detail: importedSalesDetailList){
-			if(detail.getSales()!=null && detail.getSales().getId()!=null){
-				salesDetailBean.insert(detail);
+		for(AmazonSalesDetail amazonSalesDetail: importedSalesDetailList){
+			if(amazonSalesDetail.getAmazonSales().getSales()!=null && amazonSalesDetail.getAmazonSales().getSales().getId()!=null){
+				SalesDetail salesDetail = new SalesDetail(); 
+				salesDetail.setSales(amazonSalesDetail.getAmazonSales().getSales());
+				salesDetail.setStatus(SalesDetailStatus.PENDING);
+				salesDetail.setItem(ImporterUtils.obtainItem(importedSalesItemMap.get(amazonSalesDetail.getSku())));
+				salesDetail.setDescription(salesDetail.getItem().getProduct().getName());
+				salesDetail.setPrice(salesDetail.getItem().getPrice());
+				salesDetail.setDiscountExpression(ImporterUtils.obtainItemDiscountExpression(salesDetail.getItem(), amazonSalesDetail.getPrice(), amazonSalesDetail.getCurrency()));
+				salesDetail.setQuantity(Double.valueOf(amazonSalesDetail.getQuantity()));
+				
+				
+				salesDetail.setLine(salesUtils.calculateNextLine(salesDetail.getSales()));
+				salesDetailBean.insert(salesDetail);
 			}
 		}
 	}
@@ -124,8 +162,8 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		linesList.remove(0);
 		for(String[] line: linesList){
 			if(line.length>=sku_col){
-				String sku = line[sku_col];
-				String productName = line[productName_col];
+				String sku = line[sku_col].trim().toLowerCase();
+				String productName = line[productName_col].trim().toLowerCase();
 				sku = StringUtils.removeEnd(sku.toLowerCase(), "az");
 				if(!items.containsKey(sku)){
 					items.put(sku, productName);
@@ -137,7 +175,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		Result<Record2<Integer, String>> record = ImporterUtils.getItemRecords(items.keySet());
 		for (Record2<Integer, String> step : record) {
 			Integer id = step.value1();
-			String code = step.value2();
+			String code = step.value2().trim().toLowerCase();
 			if(items.containsKey(code)){
 				items.remove(code);
 			}
@@ -159,7 +197,6 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 
 	private void processImportedSales(List<String[]> linesList) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+00:00");
-		SalesUtils salesUtils = new SalesUtils();
 		
 		String[] headers = linesList.get(0);
 		int sku_col = ImporterUtils.obtainHeaderPosition(headers, "sku");
@@ -174,10 +211,9 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		int itemPromotionDiscount_col = ImporterUtils.obtainHeaderPosition(headers, "item-promotion-discount");
 		
 		
-		HashMap<String, Sales> salesList = new HashMap<String, Sales>();
-		importedSalesDetailList = new LinkedList<SalesDetail>();
+		HashMap<String, AmazonSales> salesList = new HashMap<String, AmazonSales>();
+		importedSalesDetailList = new LinkedList<AmazonSalesDetail>();
 		linesList.remove(0);
-		int detailLine=0;
 		for(String[] line: linesList){
 			if ( ImporterUtils.validColumns(line, 
 					sku_col, amazonOrderId_col, purchaseDate_col, orderStatus_col, 
@@ -186,54 +222,43 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 				
 				String amazonOrderId = line[amazonOrderId_col];
 				if(!salesList.containsKey(amazonOrderId)){
-					Sales sales = new Sales();
+					AmazonSales sales = new AmazonSales();
 					sales.setPurchaseReference(amazonOrderId);
-					sales.setStatus(SalesStatus.PENDING);
 					try {
 						sales.setIssueDate(dateFormat.parse(line[purchaseDate_col]));
 					} catch (ParseException e) {
 						LOGGER.error(e.getMessage());
 						sales.setIssueDate(new Date());
 					}
-					sales.setSeller(ImporterUtils.obtainSeller(line[fulfillmentChannel_col], line[salesChannel_col]));
+					sales.setSeller(ImporterUtils.obtainSeller(line[salesChannel_col]));
 					sales.setCustomer(ImporterUtils.obtainCustomer(line[fulfillmentChannel_col], line[salesChannel_col]));
-					sales.setPaymentDays("0");
-					sales.setWorkPlace(ImporterUtils.obtainWorkPlace());
-					try {
-						sales.setSeries( salesUtils.obtainWorkPlaceSerie(sales.getWorkPlace()) );
-						sales.setNumber( salesUtils.obtainSeriesMaxNumber(sales.getSeries()) );
-					} catch (ManagerBeanException e) {
-						LOGGER.error(e.getMessage());
-					}
+					sales.setCustomerName(ImporterUtils.obtainCustomerName(line[fulfillmentChannel_col], line[salesChannel_col]));
 					salesList.put(amazonOrderId, sales);
 				}
 				if(line.length>=sku_col  && line.length>=quantity_col
 						&& line.length>=itemPrice_col && line.length>=itemPromotionDiscount_col ){
-					Sales sales = salesList.get(amazonOrderId);
-					SalesDetail detail = new SalesDetail(); 
-					detail.setSales(sales);
-					detail.setStatus(SalesDetailStatus.PENDING);
-					detail.setItem(ImporterUtils.obtainItem(importedSalesItemMap.get(StringUtils.removeEnd(line[sku_col].toLowerCase(), "az"))));
-					detail.setDescription(detail.getItem().getProduct().getName());
-					detail.setPrice(detail.getItem().getPrice());
-					detail.setDiscountExpression(ImporterUtils.obtainItemDiscountExpression(detail.getItem(), line[itemPrice_col], line[currency_col]));
-					detail.setQuantity(Double.valueOf(line[quantity_col]));
-					
-					detail.setLine(detailLine++);
+					AmazonSales amazonSales = salesList.get(amazonOrderId);
+					AmazonSalesDetail detail = new AmazonSalesDetail(); 
+					detail.setAmazonSales(amazonSales);
+					detail.setPurchaseReference(amazonOrderId);
+					detail.setSku(StringUtils.removeEnd(line[sku_col].toLowerCase(), "az"));
+					detail.setPrice(line[itemPrice_col]);
+					detail.setCurrency(line[currency_col]);
+					detail.setQuantity(line[quantity_col]);
 					importedSalesDetailList.add(detail);
 				}
 			}
 		}
 		
-		existingSalesList = new LinkedList<Sales>();
+		existingSalesList = new LinkedList<AmazonSales>();
 		Result<Record2<Integer, String>> record = ImporterUtils.getSalesRecords(salesList.keySet());
 		for (Record2<Integer, String> step : record) {
-			String code = step.value2();
+			String code = step.value2().trim();
 			if(salesList.containsKey(code)){
 				existingSalesList.add(salesList.remove(code));
 			}
 		}
-		importedSalesList = new ArrayList<Sales>(salesList.values());
+		importedSalesList = new ArrayList<AmazonSales>(salesList.values());
 	}
 
 	@Override

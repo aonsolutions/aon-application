@@ -1,15 +1,19 @@
 package com.code.aon.ui.sales.importer;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -26,26 +30,51 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.sales.Sales;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ImporterUtils implements Serializable {
 		
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImporterUtils.class.getName());
+	
+	private static String CURRENCY_GBP = "GBP";
+	
+	private static String CUSTOMER_NAME_UK = "CLIENTE CONTADO GRAN BRETAÑA";
+	private static String CUSTOMER_NAME_DE = "CLIENTE CONTADO ALEMANIA";
+	private static String CUSTOMER_NAME_FR = "CLIENTE CONTADO FRANCIA";
+	private static String CUSTOMER_NAME_IT = "CLIENTE CONTADO ITALIA";
+	private static String CUSTOMER_NAME_ES = "Ventas AMAZON MARKETPLACE";
+
+	private static String FUL_FILLMENT_CHANNEL_AMAZON = "amazon";
+	private static String FUL_FILLMENT_CHANNEL_MERCHANT = "merchant";
+	
+	private static String SALES_CHANNEL_UK = "amazon.co.uk";
+	private static String SALES_CHANNEL_DE = "amazon.de";
+	private static String SALES_CHANNEL_FR = "amazon.fr";
+	private static String SALES_CHANNEL_IT = "amazon.it";
+	private static String SALES_CHANNEL_ES = "amazon.es";
+	
+	private static Map<String, Customer> amazonCustomerMap = null;
+	private static Map<String, Seller> amazonSellerMap = null;
+	
 	
 	public static int obtainHeaderPosition(String[] headers, String _header) {
 		int flag = -1;
@@ -80,6 +109,10 @@ public class ImporterUtils implements Serializable {
 		return valid;
 	}
 	
+	public static boolean checkCustomer(String salesChannel){
+		return StringUtils.equals(salesChannel.trim().toLowerCase(), SALES_CHANNEL_ES);
+	}
+	
 	public static WorkPlace obtainWorkPlace() {
 		CompanyCollectionsController companyCollections = (CompanyCollectionsController) AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		try {
@@ -91,6 +124,21 @@ public class ImporterUtils implements Serializable {
 		} catch (ManagerBeanException e) {
 			LOGGER.error("SalesUtils.obtainWorkPlace: " + e.getMessage());
 		}
+		return null;
+	}
+	
+	public static GeoZone obtainGeozone(String code) {
+		try {
+			IManagerBean rMediaBean = BeanManager.getManagerBean(GeoZone.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.GEO_ZONE_CODE), code);
+			List<ITransferObject> list = rMediaBean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (GeoZone) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining GeoZone", e);
+		}			
 		return null;
 	}
 
@@ -108,7 +156,7 @@ public class ImporterUtils implements Serializable {
 		try {
 			if(item.getPrice()!=Double.valueOf(price)){
 				Double currencyFactor = 1.0;
-				if(StringUtils.isNotBlank(currency) && currency.toUpperCase().equals("GBP")){
+				if(StringUtils.isNotBlank(currency) && currency.toUpperCase().equals(CURRENCY_GBP)){
 					currencyFactor = 0.79;
 //					currencyFactor = 1.26;
 				}
@@ -121,43 +169,93 @@ public class ImporterUtils implements Serializable {
 		}
 		return new DiscountExpression("0");
 	}
-
-	public static Customer obtainCustomer(String fulfillmentChannel, String salesChannel) {
+	
+	public static String obtainCustomerName(String salesChannel) {
 		String name = null;
-		if(StringUtils.isNotBlank(fulfillmentChannel) && fulfillmentChannel.toLowerCase().equals("amazon")){
-			if(StringUtils.isNotBlank(salesChannel) && salesChannel.equals("Amazon.co.uk")){
-				name = "CLIENTE CONTADO GRAN BRETAÑA .UK";
-			} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.equals("Amazon.de")){
-				name = "CLIENTE CONTADO ALEMANIA .DE";
-			} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.equals("Amazon.fr")){
-				name = "CLIENTE CONTADO FRANCIA .FR";
-			} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.equals("Amazon.it")){
-				name = "CLIENTE CONTADO ITALIA .IT";
-			} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.equals("Amazon.es")){
-				name = "Ventas AMAZON MARKETPLACE";
-			}
-		} else if(StringUtils.isNotBlank(fulfillmentChannel) && fulfillmentChannel.toLowerCase().equals("merchant")){
-			name = "Ventas AMAZON MARKETPLACE";
+		if(StringUtils.isNotBlank(salesChannel) && salesChannel.toLowerCase().equals(SALES_CHANNEL_UK)){
+			name = CUSTOMER_NAME_UK;
+		} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.toLowerCase().equals(SALES_CHANNEL_DE)){
+			name = CUSTOMER_NAME_DE;
+		} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.toLowerCase().equals(SALES_CHANNEL_FR)){
+			name = CUSTOMER_NAME_FR;
+		} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.toLowerCase().equals(SALES_CHANNEL_IT)){
+			name = CUSTOMER_NAME_IT;
+		} else if(StringUtils.isNotBlank(salesChannel) && salesChannel.toLowerCase().equals(SALES_CHANNEL_ES)){
+			name = CUSTOMER_NAME_ES;
 		}
-		if(StringUtils.isNotBlank(name)){
-			Result<Record1<Integer>> records = getCustomerRecords(name);
-			if(records!=null && records.size()>0){
-				Integer id = records.get(0).value1();
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(Customer.class);
-					return (Customer) bean.get(id);
-				} catch (ManagerBeanException e) {
-					LOGGER.error("SalesUtils.obtainCustomer: " + e.getMessage());
-				}
-			} else {
-				AonUtil.addErrorMessage("No se ha podido localizar el cliente. (fulfillmentChannel: "+fulfillmentChannel+"- salesChannel: "+salesChannel+")" );
+		return name;
+	}
+	public static String obtainCustomerName(String fulfillmentChannel, String salesChannel) {
+		String name = null;
+		if(StringUtils.isNotBlank(fulfillmentChannel) && fulfillmentChannel.toLowerCase().equals(FUL_FILLMENT_CHANNEL_AMAZON)){
+			name = obtainCustomerName(salesChannel);
+		} else if(StringUtils.isNotBlank(fulfillmentChannel) && fulfillmentChannel.toLowerCase().equals(FUL_FILLMENT_CHANNEL_MERCHANT)){
+			name = CUSTOMER_NAME_ES;
+		}
+		return name;
+	}
+	
+	public static Customer obtainCustomer(String fulfillmentChannel, String salesChannel) {
+		if(amazonCustomerMap==null){
+			loadCustomerMap();
+		}
+		String name = obtainCustomerName(fulfillmentChannel, salesChannel);
+		return amazonCustomerMap.get(name);
+	}
+	
+	private static void loadCustomerMap() {
+		amazonCustomerMap = new HashMap<String, Customer>();
+		String name = CUSTOMER_NAME_UK;
+		amazonCustomerMap.put(name, obtainCustomerByName(name));
+		name = CUSTOMER_NAME_DE;
+		amazonCustomerMap.put(name, obtainCustomerByName(name));
+		name = CUSTOMER_NAME_FR;
+		amazonCustomerMap.put(name, obtainCustomerByName(name));
+		name = CUSTOMER_NAME_IT;
+		amazonCustomerMap.put(name, obtainCustomerByName(name));
+		name = CUSTOMER_NAME_ES;
+		amazonCustomerMap.put(name, obtainCustomerByName(name));
+	}
+
+	private static Customer obtainCustomerByName(String name) {
+		Result<Record1<Integer>> records = getCustomerRecords(name);
+		if(records!=null && records.size()>0){
+			Integer id = records.get(0).value1();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+				return (Customer) bean.get(id);
+			} catch (ManagerBeanException e) {
+				LOGGER.error("SalesUtils.obtainCustomer: " + e.getMessage());
 			}
+		} else {
+			AonUtil.addErrorMessage("No se ha podido localizar el cliente " + name );
 		}
 		return null;
 	}
 			
-	public static Seller obtainSeller(String fulfillmentChannel, String salesChannel) {
-		Result<Record1<Integer>> records = getSellerRecords(salesChannel);
+	public static Seller obtainSeller(String salesChannel) {
+		if(amazonSellerMap==null){
+			loadAmazonSellerMap();
+		}
+		return amazonSellerMap.get(salesChannel.toLowerCase());
+	}
+	
+	private static void loadAmazonSellerMap() {
+		amazonSellerMap = new HashMap<String, Seller>();
+		String name = SALES_CHANNEL_UK;
+		amazonSellerMap.put(name, obtainSellerByName(name));
+		name = SALES_CHANNEL_DE;
+		amazonSellerMap.put(name, obtainSellerByName(name));
+		name = SALES_CHANNEL_FR;
+		amazonSellerMap.put(name, obtainSellerByName(name));
+		name = SALES_CHANNEL_IT;
+		amazonSellerMap.put(name, obtainSellerByName(name));
+		name = SALES_CHANNEL_ES;
+		amazonSellerMap.put(name, obtainSellerByName(name));
+		
+	}
+	public static Seller obtainSellerByName(String name) {
+		Result<Record1<Integer>> records = getSellerRecords(name);
 		if(records!=null && records.size()>0 ){
 			Integer id = records.get(0).value1();
 			try {
@@ -167,11 +265,11 @@ public class ImporterUtils implements Serializable {
 				LOGGER.error("SalesUtils.obtainSeller: " + e.getMessage());
 			}
 		} else {
-			AonUtil.addErrorMessage("No se ha podido localizar el comercial. (salesChannel: "+salesChannel+")" );
+			AonUtil.addErrorMessage("No se ha podido localizar el comercial " + name);
 		}
 		return null;
 	}
-	
+
 	public static Sales obtainSales(String amazonOrderId) {
 		Result<Record2<Integer, String>> record = getSalesRecords(Arrays.asList(amazonOrderId));
 		try {
@@ -180,7 +278,7 @@ public class ImporterUtils implements Serializable {
 				IManagerBean bean = BeanManager.getManagerBean(Sales.class);
 				return (Sales) bean.get(id);
 			} else if(record.size()>1){
-				AonUtil.addErrorMessage("Existen multiples pedidos con el mismo código: " + amazonOrderId);
+				AonUtil.addErrorMessage("Existen múltiples pedidos con el mismo código: " + amazonOrderId);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("SalesUtils.obtainSales: " + e.getMessage());
@@ -204,7 +302,7 @@ public class ImporterUtils implements Serializable {
 					.from(REGISTRY)
 					.where(REGISTRY.DOMAIN.equal(DomainManager
 							.getCurrentDomain()))
-					.and(REGISTRY.NAME.like("%" + name + "%")).fetch();
+					.and(REGISTRY.NAME.likeIgnoreCase("%" + name + "%")).fetch();
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
@@ -213,7 +311,7 @@ public class ImporterUtils implements Serializable {
 			DatabaseUtil.closeQuietly(connection);
 		}
 	}
-	public static Result<Record1<Integer>> getCustomerByEmailRecords(String email) {
+	public static Result<Record2<Integer, String>> getCustomerRecords(List<String> emailList) {
 		Connection connection = null;
 		try {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
@@ -221,11 +319,12 @@ public class ImporterUtils implements Serializable {
 			SETTINGS = new Settings();
 			SETTINGS.setRenderSchema(false);
 			DSLContext ctx = DSL.using(connection, SETTINGS);
-			Result<Record1<Integer>> record = ctx
-					.select(RMEDIA.REGISTRY)
-					.from(RMEDIA)
-					.where(RMEDIA.DOMAIN.equal(DomainManager.getCurrentDomain()))
-					.and(RMEDIA.VALUE.like("%" + email + "%"))
+			
+			Result<Record2<Integer, String>> record = ctx
+					.select(CUSTOMER.REGISTRY, RMEDIA.VALUE)
+					.from(CUSTOMER.leftOuterJoin(RMEDIA).on(RMEDIA.REGISTRY.equal(CUSTOMER.REGISTRY)))
+					.where(CUSTOMER.DOMAIN.equal(DomainManager.getCurrentDomain()))
+					.and(DSL.trim(RMEDIA.VALUE).in(emailList))
 					.and(RMEDIA.MEDIA.equal((byte) MediaType.EMAIL.ordinal()))
 					.fetch();
 			return record;
@@ -273,7 +372,7 @@ public class ImporterUtils implements Serializable {
 					.select(RITEM.ITEM, RITEM.CODE)
 					.from(RITEM)
 					.where(RITEM.DOMAIN.equal(DomainManager.getCurrentDomain()))
-					.and(RITEM.CODE.in(codeList)).fetch();
+					.and(DSL.trim(RITEM.CODE).in(codeList)).fetch();
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
@@ -297,7 +396,7 @@ public class ImporterUtils implements Serializable {
 					.from(PRODUCT)
 					.where(PRODUCT.DOMAIN.equal(DomainManager
 							.getCurrentDomain()))
-					.and(PRODUCT.CODE.in(codeList)).fetch();
+					.and(DSL.trim(PRODUCT.CODE).in(codeList)).fetch();
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
@@ -320,7 +419,7 @@ public class ImporterUtils implements Serializable {
 					.select(SALES.ID, SALES.PURCHASE_REFERENCE)
 					.from(SALES)
 					.where(SALES.DOMAIN.equal(DomainManager.getCurrentDomain()))
-					.and(SALES.PURCHASE_REFERENCE.in(codeList)).fetch();
+					.and(DSL.trim(SALES.PURCHASE_REFERENCE).in(codeList)).fetch();
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
@@ -330,4 +429,5 @@ public class ImporterUtils implements Serializable {
 		}
 	}
 
+	
 }

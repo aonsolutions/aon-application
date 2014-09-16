@@ -14,6 +14,12 @@
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
 			</f:facet>
+			<aon:commandLink id="sales_link" immediate="true"
+				styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+				value="&#160;" title="#{bundle.aon_go}"
+				rendered="#{showGoToButton}"
+				actionListener="#{salesImporter.onLoadSales}"
+				action="sales_form" />
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">
@@ -41,9 +47,11 @@
 				<aon:outputText	value="#{bundle.aon_customer}" />
 			</f:facet>
 			<aon:div>
-				<aon:outputText value="&#160;" styleClass="aon-icon-info"
-					rendered="#{not empty to.customer.registry.id}" />
-				<aon:outputText value="#{to.customer.registry.fullName}" />
+				<aon:outputText value="&#160;"
+					title="Nuevo cliente" 
+					styleClass="aon-icon-info aon-padding-left"
+					rendered="#{to.newCustomer}" />
+				<aon:outputText value="#{to.customerName}" />
 			</aon:div>
 			<f:facet name="footer">
 				<aon:div style="widht: 100%; text-align: right;">

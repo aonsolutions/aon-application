@@ -9,8 +9,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.jooq.Record2;
+import org.jooq.Result;
 import org.jooq.tools.csv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +24,16 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.customer.Customer;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.sales.Sales;
-import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.util.AonUtil;
@@ -33,23 +44,21 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
-	private List<Sales> importedSalesList;
+	private List<AmazonSales> importedSalesList;
 
-	private List<Sales> existingSalesList;
-	
 	private List<RegistryItem> nonExistentItems;
 
-	private List<Sales> nonExistentSales;
+	private List<AmazonSales> nonExistentSales;
 	
 	public String getModuleLabel(){
 		return AonUtil.getMessage(ISalesConstants.AMAZON_SHIPMENT_INTEGRATION);
 	}
 	
-	public List<Sales> getExistingSalesList(){
-		return existingSalesList;
+	public List<AmazonSales> getExistingSalesList(){
+		return null;
 	}
 
-	public List<Sales> getImportedSalesList(){
+	public List<AmazonSales> getImportedSalesList(){
 		return importedSalesList;
 	}
 	
@@ -57,8 +66,12 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 		return nonExistentItems;
 	}
 	
-	public List<Sales> getNonExistentSales(){
+	public List<AmazonSales> getNonExistentSales(){
 		return nonExistentSales;
+	}
+	
+	public List<Sales> getGeneratedSales(){
+		return null;
 	}
 	
 	public boolean isValidFile(AonFile aonFile) {
@@ -89,8 +102,66 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 	}
 	public void accept() throws ManagerBeanException{
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-		for(Sales sales: importedSalesList){
-			salesBean.update(sales);
+		for(AmazonSales amazonSales: importedSalesList){
+			Sales sales = (Sales) salesBean.get(amazonSales.getSalesId());
+			if(sales!=null && sales.getId()!=null){
+				
+				if(amazonSales.isNewCustomer()){
+					Registry registry = new Registry();
+					registry.setName(amazonSales.getBuyerName());
+					registry.setType(RegistryType.NATURAL);
+					registry = (Registry) BeanManager.getManagerBean(Registry.class).insert(registry);
+					
+					Customer customer = new Customer();
+					customer.setRegistry(registry);
+					customer.setScope(sales.getWorkPlace().getScope());
+					customer = (Customer) BeanManager.getManagerBean(Customer.class).insert(customer);
+					sales.setCustomer(customer);
+					
+					RegistryAddress raddress = new RegistryAddress();
+					raddress.setRegistry(customer.getRegistry());
+					
+					raddress.setAddress(amazonSales.getShipAddress1());
+					raddress.setAddress2(amazonSales.getShipAddress2());
+					raddress.setAddress3(amazonSales.getShipAddress3());
+					raddress.setAddressType(AddressType.MAIN);
+					raddress.setCity(amazonSales.getShipCity());
+					if(StringUtils.isNotBlank(amazonSales.getShipPostalCode()) 
+							&& amazonSales.getShipPostalCode().length()>2){
+						raddress.setGeozone(ImporterUtils.obtainGeozone(amazonSales.getShipPostalCode().substring(0, 2)));
+					}
+					raddress.setProvince(amazonSales.getShipState());
+					raddress.setStreetType(StreetType.CL);
+					raddress.setZip(amazonSales.getShipPostalCode());
+					raddress = (RegistryAddress) BeanManager.getManagerBean(RegistryAddress.class).insert(raddress);					
+					
+					RegistryMedia rmedia = null;
+					if(StringUtils.isNotBlank(amazonSales.getBuyerPhoneNumber())){
+						rmedia = new RegistryMedia();
+						rmedia.setRegistry(customer.getRegistry());
+						rmedia.setAddress(raddress);
+						rmedia.setMediaType(MediaType.FIXED_PHONE);
+						rmedia.setValue(amazonSales.getBuyerPhoneNumber());
+						BeanManager.getManagerBean(RegistryMedia.class).insert(rmedia);
+					}
+					if(StringUtils.isNotBlank(amazonSales.getBuyerEmail())){
+						rmedia = new RegistryMedia();
+						rmedia.setRegistry(customer.getRegistry());
+						rmedia.setAddress(raddress);
+						rmedia.setMediaType(MediaType.EMAIL);
+						rmedia.setValue(amazonSales.getBuyerEmail());
+						BeanManager.getManagerBean(RegistryMedia.class).insert(rmedia);
+					}
+				} else {
+					sales.setShippingAlternativeAddress(amazonSales.getShipAddress1());
+					sales.setShippingAlternativeAddress2(amazonSales.getShipAddress2()+". "+amazonSales.getShipAddress3());
+					sales.setShippingAlternativeZip(amazonSales.getShipPostalCode());
+					sales.setShippingAlternativeCity(amazonSales.getShipCity()+", "+amazonSales.getShipState()+" ("+amazonSales.getShipCountry()+")");
+					sales.setShippingAlternativePhone(amazonSales.getBuyerPhoneNumber());
+					sales.setShippingAlternativeRecipient(amazonSales.getBuyerName());
+				}
+				salesBean.update(sales);
+			}
 		}
 	}
 	
@@ -114,9 +185,10 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 		int fulfillmentChannel_col = ImporterUtils.obtainHeaderPosition(headers, "fulfillment-channel");
 		int salesChannel_col = ImporterUtils.obtainHeaderPosition(headers, "sales-channel");
 		
-		HashMap<String, Sales> salesList = new HashMap<String, Sales>();
-		HashMap<String, Sales> nonExistentSalesMap = new HashMap<String, Sales>();
+		HashMap<String, AmazonSales> salesList = new HashMap<String, AmazonSales>();
+		HashMap<String, AmazonSales> nonExistentSalesMap = new HashMap<String, AmazonSales>();
 		linesList.remove(0);
+		List<String> customerEmailList = new LinkedList<String>();
 		for(String[] line: linesList){
 			if ( ImporterUtils.validColumns(line, 
 					amazonOrderId_col, buyerEmail_col, buyerName_col, buyerPhoneNumber_col, shipAddress1_col, 
@@ -125,64 +197,93 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 					purchaseDate_col, fulfillmentChannel_col, salesChannel_col) ){
 
 				String amazonOrderId = line[amazonOrderId_col];
-				
-//				ShipmentLine shipmentLine = new ShipmentLine();
-//				shipmentLine.amazonOrderId = line[amazonOrderId_col];
-//				shipmentLine.buyerEmail = line[buyerEmail_col];
-//				shipmentLine.buyerName = line[buyerName_col];
-//				shipmentLine.buyerPhoneNumber = line[buyerPhoneNumber_col];
-//				shipmentLine.shipAddress1 = line[shipAddress1_col];
-//				shipmentLine.shipAddress2 = line[shipAddress2_col];
-//				shipmentLine.shipAddress3 = line[shipAddress3_col];
-//				shipmentLine.shipCity = line[shipCity_col];
-//				shipmentLine.shipState = line[shipState_col];
-//				shipmentLine.shipPostalCode = line[shipPostalCode_col];
-//				shipmentLine.shipCountry = line[shipCountry_col];
-//				shipmentLine.shipPhoneNumber = line[shipPhoneNumber_col];
-//				shipmentLine.purchaseDate = line[purchaseDate_col];
-//				shipmentLine.fulfillmentChannel = line[fulfillmentChannel_col];
-//				shipmentLine.salesChannel = line[salesChannel_col];
-//				salesList.put(amazonOrderId, shipmentLine);
-				
-				
-				if(!salesList.containsKey(amazonOrderId)){
-					Sales sales = ImporterUtils.obtainSales(amazonOrderId);
-					if(sales!=null && sales.getId()!=null){
-						sales.setShippingAlternativeAddress(line[shipAddress1_col]);
-						sales.setShippingAlternativeAddress2(line[shipAddress2_col]+". "+line[shipAddress3_col]);
-						sales.setShippingAlternativeZip(line[shipPostalCode_col]);
-						sales.setShippingAlternativeCity(line[shipCity_col]+", "+line[shipState_col]+" ("+line[shipCountry_col]+")");
-						sales.setShippingAlternativePhone(line[buyerPhoneNumber_col]);
-						sales.setShippingAlternativeRecipient(line[buyerName_col]);
-						sales.setShippingContact(null);
-						sales.setShippingPeriod(null);
-						salesList.put(amazonOrderId, sales);
-					} else {
-						sales = new Sales();
-						sales.setPurchaseReference(amazonOrderId);
-						sales.setStatus(SalesStatus.PENDING);
-						try {
-							sales.setIssueDate(dateFormat.parse(line[purchaseDate_col]));
-						} catch (ParseException e) {
-							LOGGER.error(e.getMessage());
-							sales.setIssueDate(new Date());
-						}
-						if(!nonExistentSalesMap.containsKey(amazonOrderId)){
-							nonExistentSalesMap.put(amazonOrderId, sales);
-						}
-					}
+				AmazonSales amazonSales = new AmazonSales();
+				amazonSales.setPurchaseReference(line[amazonOrderId_col]);
+				try {
+					amazonSales.setIssueDate(dateFormat.parse(line[purchaseDate_col]));
+				} catch (ParseException e) {
+					LOGGER.error(e.getMessage());
+					amazonSales.setIssueDate(new Date());
 				}
+				amazonSales.setSeller(ImporterUtils.obtainSeller(line[salesChannel_col]));
+				amazonSales.setBuyerEmail(line[buyerEmail_col]);
+				if(ImporterUtils.checkCustomer(line[salesChannel_col])){
+					customerEmailList.add(line[buyerEmail_col]);
+					amazonSales.setCustomerName(line[buyerName_col]);
+				} else {
+					amazonSales.setCustomerName(ImporterUtils.obtainCustomerName(line[salesChannel_col]));
+				}
+				amazonSales.setBuyerName(line[buyerName_col]);
+				amazonSales.setBuyerPhoneNumber(line[buyerPhoneNumber_col]);
+				amazonSales.setShipAddress1(line[shipAddress1_col]);
+				amazonSales.setShipAddress2(line[shipAddress2_col]);
+				amazonSales.setShipAddress3(line[shipAddress3_col]);
+				amazonSales.setShipCity(line[shipCity_col]);
+				amazonSales.setShipState(line[shipState_col]);
+				amazonSales.setShipPostalCode(line[shipPostalCode_col]);
+				amazonSales.setShipCountry(line[shipCountry_col]);
+				amazonSales.setShipPhoneNumber(line[shipPhoneNumber_col]);
+				amazonSales.setPurchaseDate(line[purchaseDate_col]);
+				amazonSales.setFulfillmentChannel(line[fulfillmentChannel_col]);
+				amazonSales.setSalesChannel(line[salesChannel_col]);
+				salesList.put(amazonOrderId, amazonSales);
+				
 			}
 		}
 		
-		nonExistentSales = new ArrayList<Sales>(nonExistentSalesMap.values());
-		importedSalesList = new ArrayList<Sales>(salesList.values());
+		
+		Result<Record2<Integer, String>> customerRecords = ImporterUtils.getCustomerRecords(customerEmailList);
+		
+		HashMap<String, Integer> existingEmailMap = new HashMap<String, Integer>();
+		for (Record2<Integer, String> step : customerRecords) {
+			Integer registry = step.value1();
+			String email = step.value2();
+			existingEmailMap.put(email, registry);
+		}
+		
+		Result<Record2<Integer, String>> salesRecords = ImporterUtils.getSalesRecords(salesList.keySet());
+		if(salesRecords==null || salesRecords.size()<=0){
+			nonExistentSales = new ArrayList<AmazonSales>(salesList.values());
+			importedSalesList = new ArrayList<AmazonSales>(null);
+		} else {
+			
+			// existing sales in data base
+			HashMap<String, Integer> resultMap = new HashMap<String, Integer>();
+			for (Record2<Integer, String> step : salesRecords) {
+				Integer id = step.value1();
+				String code = step.value2();
+				resultMap.put(code, id);
+			}
+			
+			// extract non existing sales
+			for (AmazonSales amazonSales : salesList.values()) {
+				if(resultMap.containsKey(amazonSales.getPurchaseReference())){
+					amazonSales.setSalesId(resultMap.get(amazonSales.getPurchaseReference()));
+				} else {
+					nonExistentSalesMap.put(amazonSales.getPurchaseReference(), salesList.get(amazonSales.getPurchaseReference()));
+				}
+			}
+			for (String key : nonExistentSalesMap.keySet()) {
+				salesList.remove(key);
+			}
+			
+			// check customer data
+			for (AmazonSales amazonSales : salesList.values()) {
+				if( ImporterUtils.checkCustomer(amazonSales.getSalesChannel())
+						&& !existingEmailMap.containsKey(amazonSales.getBuyerEmail()) ){
+					amazonSales.setNewCustomer(true);
+				}
+			}
+			
+			nonExistentSales = new ArrayList<AmazonSales>(nonExistentSalesMap.values());
+			importedSalesList = new ArrayList<AmazonSales>(salesList.values());
+		}
+		
 	}
 
 	@Override
 	public void reset() {
 		importedSalesList = null;
-		existingSalesList = null;
 		nonExistentItems = null;
 		nonExistentSales = null;
 	}

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,24 +30,24 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
-	private List<Sales> importedSalesList;
+	private List<AmazonSales> importedSalesList;
 
-	private List<Sales> existingSalesList;
+	private List<AmazonSales> existingSalesList;
 	
 	private List<RegistryItem> nonExistentItems;
 
-	private List<Sales> nonExistentSales;
+	private List<AmazonSales> nonExistentSales;
 	
 	
 	public String getModuleLabel(){
 		return AonUtil.getMessage(ISalesConstants.AMAZON_SALES_RETURN_INTEGRATION);
 	}
 	
-	public List<Sales> getExistingSalesList(){
+	public List<AmazonSales> getExistingSalesList(){
 		return existingSalesList;
 	}
 
-	public List<Sales> getImportedSalesList(){
+	public List<AmazonSales> getImportedSalesList(){
 		return importedSalesList;
 	}
 	
@@ -56,8 +55,12 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		return nonExistentItems;
 	}
 	
-	public List<Sales> getNonExistentSales(){
+	public List<AmazonSales> getNonExistentSales(){
 		return nonExistentSales;
+	}
+	
+	public List<Sales> getGeneratedSales(){
+		return null;
 	}
 	
 	public boolean isValidFile(AonFile aonFile) {
@@ -84,10 +87,6 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	public void accept() throws ManagerBeanException{
 		// TODO
 		AonUtil.addInfoMessage("sin implementar");
-//			IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-//			for(Sales sales: importedSalesList){
-//				salesBean.update(sales);
-//			}
 	}
 	
 	private void processImportedSalesShipment(List<String[]> linesList) {
@@ -132,8 +131,8 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 				}
 			}
 		}
-		nonExistentSales = new ArrayList<Sales>(nonExistentSalesMap.values());
-		importedSalesList = new ArrayList<Sales>(salesList.values());
+//		nonExistentSales = new ArrayList<Sales>(nonExistentSalesMap.values());
+//		importedSalesList = new ArrayList<Sales>(salesList.values());
 	}
 	
 	@Override
