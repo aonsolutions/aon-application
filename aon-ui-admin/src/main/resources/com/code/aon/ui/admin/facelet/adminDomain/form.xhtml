@@ -94,13 +94,6 @@
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="ExternalApplication_DEHOnline"
 								value="#{bundle.aon_external_dehOnline}" />			
-							<c:if test="#{actionDenied.moduleEnabled['payroll']}">											
-								<aon:selectBooleanCheckbox id="ExternalApplication_Serviconvenios"
-									value="#{adminDomain.serviconvenios}">
-								</aon:selectBooleanCheckbox>
-								<aon:outputLabel for="ExternalApplication_Serviconvenios"
-									value="#{bundle.aon_external_serviconvenios}" />
-							</c:if>						
 							<aon:selectBooleanCheckbox id="ExternalApplication_Tirant"
 								value="#{adminDomain.tirant}">
 							</aon:selectBooleanCheckbox>

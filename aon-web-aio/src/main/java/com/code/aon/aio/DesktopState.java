@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.aio.servlet.TirantConnectionServlet;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -531,7 +532,7 @@ public class DesktopState implements Serializable {
 	}	
 	
 	public boolean isShowExternalApplications() {
-		return externalApplicationsValue != 0;
+		return isShowDehOnline() || isShowServiconvenios() || isShowTirant();
 	}
 
 	public boolean isShowDehOnline() {
@@ -539,14 +540,24 @@ public class DesktopState implements Serializable {
 	}
 	
 	public boolean isShowServiconvenios() {
-		if ( (externalApplicationsValue & IAdminConstants.SERVICONVENIOS_EXTERNAL_APP) != 0 ) {
-			return isPayrollEnabled();
-		}
-		return false;
+		return isPayrollEnabled();
 	}
 
 	public boolean isShowTirant() {
-		return (externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0;
+		return ((externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0) || isFiscalEnabled() || isPayrollEnabled();
+	}
+	
+	private int getTirantType() {
+		if ( (externalApplicationsValue & IAdminConstants.TIRANT_EXTERNAL_APP) != 0) {
+			return TirantConnectionServlet.TIRANT_FULL;
+		} else if ( isFiscalEnabled() && isPayrollEnabled() ) {
+			return TirantConnectionServlet.TIRANT_FISCAL_PAYROLL;
+		} else if ( isFiscalEnabled()  ) {
+			return TirantConnectionServlet.TIRANT_FISCAL;
+		} else if ( isPayrollEnabled() ) {
+			return TirantConnectionServlet.TIRANT_PAYROLL;
+		}
+		return 0;
 	}
 	
 	public String getTirantExternalUrl() {
@@ -554,6 +565,10 @@ public class DesktopState implements Serializable {
 		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath(); 
 		if (StringUtils.isNotBlank( contextPath)  ) {
 			url = contextPath + url;
+		}
+		int type = getTirantType();
+		if ( type != 0 ) {
+			url += type;
 		}
 		return url;		
 	}

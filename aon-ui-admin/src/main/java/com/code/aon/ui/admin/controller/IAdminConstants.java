@@ -42,7 +42,6 @@ public interface IAdminConstants {
 	int PAYROLL_PORTAL = 8;
 	
 	int TIRANT_EXTERNAL_APP = 1;
-	int SERVICONVENIOS_EXTERNAL_APP = 2;
 	int DEH_ONLINE_EXTERNAL_APP = 4;
 	
 }

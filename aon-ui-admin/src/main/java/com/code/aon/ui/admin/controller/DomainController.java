@@ -1,6 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -456,10 +455,6 @@ public class DomainController extends BasicController {
 		if ( (getDomain().getType() == DomainType.CONSULTANCY) && (getParentDomain() == null) ) {
 			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS);
 			externalApplications = (value != null) ? value : 0;
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-			if ( adc.isDeniedModule(Module.PAYROLL.getName()) ) {
-				setServiconvenios(false);
-			}	
 		} else {
 			externalApplications = 0;
 		}
@@ -1004,14 +999,6 @@ public class DomainController extends BasicController {
 
 	public void setDehOnline(boolean value) {
 		setExternalApplicationsValue(IAdminConstants.DEH_ONLINE_EXTERNAL_APP, value);
-	}
-
-	public boolean isServiconvenios() {
-		return getExternalApplicationsValue(IAdminConstants.SERVICONVENIOS_EXTERNAL_APP);
-	}
-
-	public void setServiconvenios(boolean value) {
-		setExternalApplicationsValue(IAdminConstants.SERVICONVENIOS_EXTERNAL_APP, value);
 	}
 
 	public boolean isTirant() {
