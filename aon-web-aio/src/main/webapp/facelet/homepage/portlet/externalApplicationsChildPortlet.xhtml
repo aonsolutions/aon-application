@@ -24,14 +24,15 @@
 			</c:if>
 			<c:if test="#{desktop.state.showServiconvenios}">
 				<aon:div styleClass="aon-portlet aon-margin-bottom">
-					<aon:div styleClass="aon-portlet-title">								
-						<h:outputLink id="serviconveniosWeb" target="_blank"
-							value="#{bundle.aon_external_serviconvenios_url}" >
+					<aon:div styleClass="aon-portlet-title">	
+						<aon:commandLink id="serviconveniosWeb" styleClass="none" 
+							action="corporateIdentityAttach_list"
+							actionListener="#{corporateIdentityAttach.onInitServiconvenios}" >				
 							<h:graphicImage
 								url="#{aonResource.resolve['/images/icon-serviconvenios.png']}" />
 							<aon:outputText value="#{bundle.aon_external_serviconvenios}"
 								styleClass="aon-portlet-title-text"/>
-						</h:outputLink>
+						</aon:commandLink>
 					</aon:div>
 				</aon:div>
 			</c:if>

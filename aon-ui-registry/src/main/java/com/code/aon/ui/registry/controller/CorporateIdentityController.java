@@ -9,9 +9,9 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -32,7 +32,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class CorporateIdentityController extends RegistryAttachController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	
 	private boolean massiveUpload;
 	
 	private RegistryAttachment lastAttachment;
@@ -133,5 +133,23 @@ public class CorporateIdentityController extends RegistryAttachController {
 		}
 		return initialAction;
 	}	
+
+	public void onInit( ActionEvent event ) {
+		setMassiveUpload(false);
+		onEditSearch(event);
+	}
+
+	public void onInitMassiveUpload( ActionEvent event ) {
+		setMassiveUpload(true);
+		onReset(event);
+	}
+
+	public void onInitServiconvenios( ActionEvent event ) throws ManagerBeanException {
+		setMassiveUpload(false);
+		onEditSearch(event);
+		String id = getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID);
+		getCriteria().addLessThanExpression(id, 0);
+		onSearch(event);
+	}
 	
 }

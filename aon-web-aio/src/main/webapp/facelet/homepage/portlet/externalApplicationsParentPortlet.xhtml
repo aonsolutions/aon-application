@@ -19,10 +19,12 @@
 			</c:if>							
 			<c:if test="#{desktop.state.showServiconvenios}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
-					<h:outputLink id="serviconveniosWeb" target="_blank" value="#{bundle.aon_external_serviconvenios_url}" >						
+					<aon:commandLink id="serviconvenios" styleClass="none" 
+						action="corporateIdentityAttach_list"
+						actionListener="#{corporateIdentityAttach.onInitServiconvenios}" >				
 						<h:graphicImage title="#{bundle.aon_external_serviconvenios}"
 							url="#{aonResource.resolve['/images/logo-serviconvenios.png']}" />
-					</h:outputLink>
+					</aon:commandLink>
 				</aon:div>
 			</c:if>
 			<c:if test="#{desktop.state.showDehOnline}">							

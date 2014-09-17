@@ -5,6 +5,7 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MA
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.AttachmentController;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -45,6 +46,11 @@ public class RegistryAttachController extends AttachmentController {
 			String type = getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 			getCriteria().addEqualExpression(type, getType());
 		}
+	}
+	
+	public Integer getRegistryId() {
+		Registry registry = (Registry) getMasterController().getTo();
+		return registry.getId();
 	}
 	
 }

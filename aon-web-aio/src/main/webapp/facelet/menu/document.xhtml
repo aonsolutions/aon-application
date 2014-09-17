@@ -28,11 +28,8 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateDocuments" 
 										action="#{corporateIdentityAttach.initialAction}"
-										actionListener="#{corporateIdentityAttach.onEditSearch}"
-										value="#{bundle.aon_documents}">
-										<f:setPropertyActionListener value="#{false}"
-											target="#{corporateIdentityAttach.massiveUpload}"  />			
-									</aon:commandLink>
+										actionListener="#{corporateIdentityAttach.onInit}"
+										value="#{bundle.aon_documents}" />
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="batchDocument" 
@@ -43,11 +40,8 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentMassiveUpload" 
 											action="corporateIdentityAttach_form"
-											value="#{bundle.registry_document_massive_upload}">
-											<f:setPropertyActionListener value="#{true}"
-												target="#{corporateIdentityAttach.massiveUpload}"  />
-											<aon:actionListener method="#{corporateIdentityAttach.onReset}" />
-										</aon:commandLink>
+											actionListener="#{corporateIdentityAttach.onInitMassiveUpload}"
+											value="#{bundle.registry_document_massive_upload}" />
 									</aon:div>
 								</c:if>							
 								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
