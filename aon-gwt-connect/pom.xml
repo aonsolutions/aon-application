@@ -37,6 +37,14 @@
 
 
 	<dependencies>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.dsi</artifactId>
@@ -62,6 +70,28 @@
 			<artifactId>aon.gwt.common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-dbutils</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 	</dependencies>
 	<profiles>
 		<profile>
