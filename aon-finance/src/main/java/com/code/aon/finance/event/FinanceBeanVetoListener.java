@@ -146,7 +146,7 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			for (ITransferObject ito : contractBean.getList(criteria)) {
 				return ((Contract)ito).getWorkPlace().getScope();
 			}
-			return null;
+			throw new ManagerBeanVetoListenerException("El Trabajador no tiene Contrato.");
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
