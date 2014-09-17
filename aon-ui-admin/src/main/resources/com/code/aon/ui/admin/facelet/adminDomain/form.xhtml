@@ -77,14 +77,6 @@
 							value="#{adminDomain.to.owner}" />
 					</c:if>									
 							
-					<aon:outputLabel for="Domain_name"
-						value="#{bundle.admin_domain_url}" />
-					<c:if test="#{!aonRole.sysAdmin}">
-						<aon:outputLink id="Domain_name" target="_blank" value="http://#{adminDomain.to.name}" >
-							<aon:outputText value="http://#{adminDomain.to.name}" />
-					    </aon:outputLink>
-					</c:if>
-					
 					<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') and (!domainSwitcher.childDomain)}">
 						<aon:outputLabel for="Domain_externalApplications"
 							value="#{bundle.aon_external_applications}" />
@@ -109,6 +101,13 @@
 						</aon:div>
 					</c:if>
 					
+					<aon:outputLabel for="Domain_name"
+						value="#{bundle.admin_domain_url}" />
+					<c:if test="#{!aonRole.sysAdmin}">
+						<aon:outputLink id="Domain_name" target="_blank" value="http://#{adminDomain.to.name}" >
+							<aon:outputText value="http://#{adminDomain.to.name}" />
+					    </aon:outputLink>
+					</c:if>
 					<c:if test="#{aonRole.sysAdmin}">
 						<aon:inputText id="Domain_name" required="true"
 							validator="#{adminDomain.domainNameCheck}"

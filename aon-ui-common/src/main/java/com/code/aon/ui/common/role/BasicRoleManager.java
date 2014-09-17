@@ -28,7 +28,7 @@ public abstract class BasicRoleManager implements Serializable {
 	
 	private boolean[] roles;
 	
-	private boolean admin;	
+	private Boolean admin;	
 	
 	private boolean[] getRoles() {
 		if (this.roles == null) {
@@ -57,7 +57,7 @@ public abstract class BasicRoleManager implements Serializable {
 	}
 	
 	public void setSysAdmin() {
-		this.admin = true;
+		this.admin = Boolean.TRUE;
 		setUserInRole(IAonRole.SYS_ADMIN, true);
 	}
 	
@@ -74,13 +74,16 @@ public abstract class BasicRoleManager implements Serializable {
 	 * @return TRUE if user has IAonRole.GUEST role, false otherwise.
 	 */
 	public boolean isGuest() {
-		return (!this.admin) && isUserInRole(IAonRole.GUEST);
+		return (!isAdmin()) && isUserInRole(IAonRole.GUEST);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.ADMIN role, false otherwise.
 	 */
 	public boolean isAdmin() {
+		if ( this.admin == null ) {
+			init();
+		}
 		return this.admin;
 	}
 
@@ -88,91 +91,91 @@ public abstract class BasicRoleManager implements Serializable {
 	 * @return TRUE if user has IAonRole.CONFIG role, false otherwise.
 	 */
 	public boolean isConfig() {
-		return this.admin || isUserInRole(IAonRole.CONFIG);
+		return isAdmin() || isUserInRole(IAonRole.CONFIG);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.AUDITOR role, false otherwise.
 	 */
 	public boolean isAuditor() {
-		return this.admin || isUserInRole(IAonRole.AUDITOR);
+		return isAdmin() || isUserInRole(IAonRole.AUDITOR);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.CONFIDENTIALITY role, false otherwise.
 	 */
 	public boolean isConfidentiality() {
-		return this.admin || isUserInRole(IAonRole.CONFIDENTIALITY);
+		return isAdmin() || isUserInRole(IAonRole.CONFIDENTIALITY);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.PRODUCT role, false otherwise.
 	 */
 	public boolean isProductOperator() {
-		return this.admin || isUserInRole(IAonRole.PRODUCT);
+		return isAdmin() || isUserInRole(IAonRole.PRODUCT);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.COMMERCIAL role, false otherwise.
 	 */
 	public boolean isCommercialOperator() {
-		return this.admin || isUserInRole(IAonRole.COMMERCIAL);
+		return isAdmin() || isUserInRole(IAonRole.COMMERCIAL);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.SALE role, false otherwise.
 	 */
 	public boolean isSaleOperator() {
-		return this.admin || isUserInRole(IAonRole.SALE);
+		return isAdmin() || isUserInRole(IAonRole.SALE);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.PURCHASE role, false otherwise.
 	 */
 	public boolean isPurchaseOperator() {
-		return this.admin || isUserInRole(IAonRole.PURCHASE);
+		return isAdmin() || isUserInRole(IAonRole.PURCHASE);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.WAREHOUSE role, false otherwise.
 	 */
 	public boolean isWarehouseOperator() {
-		return this.admin || isUserInRole(IAonRole.WAREHOUSE);
+		return isAdmin() || isUserInRole(IAonRole.WAREHOUSE);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.FINANCE role, false otherwise.
 	 */
 	public boolean isFinanceOperator() {
-		return this.admin || isUserInRole(IAonRole.FINANCE);
+		return isAdmin() || isUserInRole(IAonRole.FINANCE);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.ACCOUNTING role, false otherwise.
 	 */
 	public boolean isAccountingOperator() {
-		return this.admin || isUserInRole(IAonRole.ACCOUNTING);
+		return isAdmin() || isUserInRole(IAonRole.ACCOUNTING);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.STATISTICS role, false otherwise.
 	 */
 	public boolean isStatisticsOperator() {
-		return this.admin || isUserInRole(IAonRole.STATISTICS);
+		return isAdmin() || isUserInRole(IAonRole.STATISTICS);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.TASK_MOPNITORING role, false otherwise.
 	 */
 	public boolean isTaskMonitor() {
-		return this.admin || isUserInRole(IAonRole.TASK_MONITORING);
+		return isAdmin() || isUserInRole(IAonRole.TASK_MONITORING);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.E_SIGNATURE role, false otherwise.
 	 */
 	public boolean isESignature() {
-		return this.admin || isUserInRole(IAonRole.E_SIGNATURE);
+		return isAdmin() || isUserInRole(IAonRole.E_SIGNATURE);
 	}
 	
 	/**
@@ -200,28 +203,28 @@ public abstract class BasicRoleManager implements Serializable {
 	 * @return TRUE if user has IAonRole.DOCUMENT_MANANGER role, false otherwise.
 	 */
 	public boolean isDocumentManager() {
-		return this.admin || isUserInRole(IAonRole.DOCUMENT_MANAGER);
+		return isAdmin() || isUserInRole(IAonRole.DOCUMENT_MANAGER);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.PAYROLL role, false otherwise.
 	 */
 	public boolean isPayroll() {
-		return this.admin || isUserInRole(IAonRole.PAYROLL);
+		return isAdmin() || isUserInRole(IAonRole.PAYROLL);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.FISCAL role, false otherwise.
 	 */
 	public boolean isFiscal() {
-		return this.admin || isUserInRole(IAonRole.FISCAL);
+		return isAdmin() || isUserInRole(IAonRole.FISCAL);
 	}
 	
 	/**
 	 * @return TRUE if user has IAonRole.ACCOUNTING_MANAGER role, false otherwise.
 	 */
 	public boolean isAccountingManager() {
-		return this.admin || isUserInRole(IAonRole.ACCOUNTING_MANAGER);
+		return isAdmin() || isUserInRole(IAonRole.ACCOUNTING_MANAGER);
 	}
 	
 	/**
