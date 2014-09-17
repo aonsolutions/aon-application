@@ -120,7 +120,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 		if ( StringUtils.equals(COMPANY_LOGO, value) ) {
 			companyLogo = true;
 		} else {
-			String idValue = StringUtils.substringBefore(value, "-");
+			String idValue = StringUtils.substringBeforeLast(value, "-");
 			if ( NumberUtils.isNumber(idValue) ) {
 				attachmentId = NumberUtils.toInt(idValue);
 			}
@@ -139,7 +139,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 						attachment = getAttachment(connection, attachmentId);
 					}
 					if ( (attachmentId != null) && (attachment != null) ) {
-						String md5Value = StringUtils.substringAfter(value, "-");
+						String md5Value = StringUtils.substringAfterLast(value, "-");
 						if (! StringUtils.equals(attachment.getMD5(), md5Value) ) {
 							attachment = null;
 						}
