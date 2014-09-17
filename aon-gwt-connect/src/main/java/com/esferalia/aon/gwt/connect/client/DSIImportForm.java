@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class DSIImportForm implements EntryPoint {
 
@@ -24,6 +25,7 @@ public class DSIImportForm implements EntryPoint {
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
+	@UiField DateBox dateBox;
 	@UiField FormPanel uploadFormPanel;
 	@UiField FileUpload fileUpload;
 	@UiField Button sendButton;
@@ -51,10 +53,12 @@ public class DSIImportForm implements EntryPoint {
 	}	
 	
 	protected void init () {
+		
+		dateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
+		
 		uploadFormPanel.setAction("/aon_gwt_connect/dsiimport");
 		uploadFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadFormPanel.setMethod(FormPanel.METHOD_POST);
-
 	}
 	// ------------------------------------------------------------- UiHandlers
 	
@@ -70,7 +74,7 @@ public class DSIImportForm implements EntryPoint {
 			Window.alert("Subida cancelada");
 			event.cancel();
 		}
- 	}
+ 	}	
 	
 	@UiHandler ("uploadFormPanel")
 	void onSubmitComplete(SubmitCompleteEvent event) {
@@ -88,7 +92,6 @@ public class DSIImportForm implements EntryPoint {
 		 }catch(Exception ex) {
 			 Window.alert("Error en submit");
 		 }
-		 
 	}
 
 }

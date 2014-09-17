@@ -4,7 +4,6 @@
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
-
 	<ui:style>
 	.monthListBox-item {
 		padding-left: 16px;
@@ -19,7 +18,7 @@
 		<g:center>
 			<g:ScrollPanel styleName="aon-scroll-area {style.options-scroll-panel}">
 
-				<g:HTMLPanel styleName="aon-panelGrid-search aon-height-all">
+				<g:HTMLPanel styleName="aon-panelGrid-search">
 					<div class="aon-panelGrid-search-info ">
 						<span class="aon-panelGrid-search-info-internal">Seleccione la Base de Datos: </span>
 						<a style="font-size:1em;font-weight:bold;float:right;" onclick=""
@@ -35,10 +34,9 @@
 									<g:Label styleName="aon-outputLabel">Fecha inicio de carga</g:Label>
 								</td>
 								<td>
-									<!--<img class="rich-calendar-button aon-selectInputDate-buttonClass"										
-										src="/aon-aio/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.iconimages.CalendarIcon/DATB/eAE7fv4Kw6znAA4mA-w_.jspx"
-										style="vertical-align: middle" alt=""></img>-->
-									<datepicker:DateBox ui:field="dateBox3" styleName="aon-inputText" width="10em" />
+									<datepicker:DateBox ui:field="dateBox"
+										styleName="aon-inputText" width="6em" />
+									<g:Image styleName="aon-cmd-commandButton"></g:Image>
 								</td>
 							</tr>
 							<tr>
@@ -49,10 +47,23 @@
 									<g:CheckBox styleName="aon-selectBooleanCheckbox"></g:CheckBox>
 								</td>
 							</tr>
+							<tr>
+								<td class="aon-panelGrid-odd">
+									<g:Label styleName="aon-outputLabel">Adjuntar archivo</g:Label>
+								</td>
+								<td>
+									<g:FormPanel ui:field="uploadFormPanel">
+										<g:HorizontalPanel>
+											<g:FileUpload ui:field="fileUpload" />
+
+										</g:HorizontalPanel>
+									</g:FormPanel>									
+								</td>
+							</tr>
 						</table>
 					</div>
 
-					<div class="aon-scroll-area">
+		<!-- 			<div class="aon-scroll-area">
 						<table class="aon-panelGrid" cellspacing="0" cellpadding="0">
 							<tr>
 								<td class="aon-panelGrid-odd">
@@ -68,24 +79,11 @@
 								</td>
 							</tr>
 						</table>
-
-					</div>
+					</div> -->
 
 					<div class="aon-scroll-area">
 						<g:Button ui:field="sendButton" styleName="aon-search-lookup-button">Enviar</g:Button>
 					</div>
-
-
-
-
-					<!-- <table cellspacing="0" cellpadding="0" class="aon-width-all"> <tr> 
-						<td class="aon-panelGrid-odd"> <g:FormPanel ui:field="uploadFormPanel"> <g:HorizontalPanel> 
-						<g:FileUpload ui:field="fileUpload" /> </g:HorizontalPanel> </g:FormPanel> 
-						</td> <td> <g:Button ui:field="sendButton">Enviar</g:Button> </td> </tr> 
-						</table> -->
-
-
-
 				</g:HTMLPanel>
 
 			</g:ScrollPanel>
