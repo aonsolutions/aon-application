@@ -38,6 +38,7 @@ public class MainTest {
 		parentDomain = DBUtils.createParentDomain(aonConn, PARENT,
 				"DSI GRUPO", OWNER);
 		*/
+		
 	}
 
 	@Before
@@ -60,7 +61,7 @@ public class MainTest {
 	@Test
 	public void testDSI2AON() throws Exception {
 		new DSI2AON(dsiConn, aonConn)
-		.setCommit(true)
+		.setCommit(false)
 		.run(parentDomain, "-"+PARENT, OWNER );
 	}
 	

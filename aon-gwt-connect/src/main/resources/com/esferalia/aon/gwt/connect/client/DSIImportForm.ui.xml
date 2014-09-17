@@ -54,7 +54,7 @@
 								<td>
 									<g:FormPanel ui:field="uploadFormPanel">
 										<g:HorizontalPanel>
-											<g:FileUpload ui:field="fileUpload" />
+											<g:FileUpload ui:field="fileUpload" name="zipfile"/>
 
 										</g:HorizontalPanel>
 									</g:FormPanel>									

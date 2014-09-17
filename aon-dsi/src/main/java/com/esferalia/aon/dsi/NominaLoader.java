@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static java.lang.String.format;
 import static org.jooq.tools.StringUtils.isBlank;
 
 import java.sql.Date;
@@ -32,6 +33,7 @@ import org.jooq.RecordHandler;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.esferalia.aon.dsi.jooq.tables.Fncconce;
+import com.esferalia.aon.dsi.jooq.tables.Fnnominc;
 import com.esferalia.aon.dsi.jooq.tables.Fntconce;
 import com.esferalia.aon.dsi.jooq.tables.records.FncconceRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
@@ -116,12 +118,21 @@ public class NominaLoader extends AbstractLoader {
 			int domain = cb.getDomain(nominc);
 			int contract = cb.getContract(nominc);
 
+			SalaryRecord salary = getSalaryRecord(nominc, contract);
+			if (salary != null) {
+				// TODO: REPLACE INTO `salary` (...
+				// TODO: REPLACE INTO `salary_data` (...
+				// TODO: REPLACE INTO `salary_payment` (...
+				// TODO: REPLACE INTO `salary_deduction` (...
+				continue;
+			}
+
 			if (nominl == null && nominlnCursor.hasNext()) {
 				Record record = nominlnCursor.fetchOne();
 				nominl = record.into(new FnnominlRecord());
 				tconce = record.into(new FntconceRecord());
 			}
-			
+
 			List<Pair<FnnominlRecord, FntconceRecord>> nominlns = new ArrayList<Pair<FnnominlRecord, FntconceRecord>>();
 
 			while (nominl.getF31sscodem().equals(nominc.getF30sscodem())
@@ -130,7 +141,8 @@ public class NominaLoader extends AbstractLoader {
 					&& nominl.getF31ssnum().equals(nominc.getF30ssnum())
 					&& nominl.getF31mes().equals(nominc.getF30mes())
 					&& nominl.getF31tipo().equals(nominc.getF30tipo())) {
-				nominlns.add(new Pair<FnnominlRecord, FntconceRecord>(nominl, tconce) );
+				nominlns.add(new Pair<FnnominlRecord, FntconceRecord>(nominl,
+						tconce));
 				if (!nominlnCursor.hasNext())
 					break;
 				Record record = nominlnCursor.fetchOne();
@@ -143,13 +155,10 @@ public class NominaLoader extends AbstractLoader {
 	}
 
 	public void execute() {
-		insertSetMoreStepSalary.execute();
-		if (insertSetMoreStepSalaryDeduction != null)
-			insertSetMoreStepSalaryDeduction.execute();
-		if (insertSetMoreStepSalaryCost != null)
-			insertSetMoreStepSalaryCost.execute();
-		if (insertSetMoreStepSalaryPayment != null)
-			insertSetMoreStepSalaryPayment.execute();
+		execute(insertSetMoreStepSalary);
+		execute(insertSetMoreStepSalaryDeduction);
+		execute(insertSetMoreStepSalaryCost);
+		execute(insertSetMoreStepSalaryPayment);
 
 		insertSetMoreStepSalary = null;
 		insertSetMoreStepSalaryCost = null;
@@ -157,9 +166,22 @@ public class NominaLoader extends AbstractLoader {
 		insertSetMoreStepSalaryPayment = null;
 	}
 
+	private SalaryRecord getSalaryRecord(FnnomincRecord nominc, int contract) {
+		//@formatter:off
+		return aonContext
+		.select()
+		.from(SALARY)
+		.where(SALARY.CONTRACT.eq(contract))
+		.and(SALARY.ISSUE_DATE.eq(nominc.getF30fechan()))
+		.and(SALARY.CHARGE_DATE.eq(nominc.getF30fecha()))
+		.and(SALARY.TYPE.eq(enum2Byte(getSalaryType(nominc))))
+		.fetchOneInto(SALARY);
+		//@formatter:on
+	}
+
 	private void loadNominc(FnnomincRecord nominc,
-			Collection<Pair<FnnominlRecord, FntconceRecord>> nominls, int contract, int domain,
-			Callback cb) {
+			Collection<Pair<FnnominlRecord, FntconceRecord>> nominls,
+			int contract, int domain, Callback cb) {
 
 		Integer reg = 0;
 		if (!isBlank(nominc.getF30matric()))
@@ -256,10 +278,7 @@ public class NominaLoader extends AbstractLoader {
 
 				.set(SALARY.EMPLOYEE_NAME, nominc.getF30nomtra())
 				.set(SALARY.EMPLOYEE_DOCUMENT, nominc.getF30nif())
-				.set(SALARY.SOCIAL_SECURITY_NUMBER, String.format("%s%s%s",
-						nominc.getF30sscod(),  
-						nominc.getF30ssnum(), 
-						nominc.getF30ssctrl()))
+				.set(SALARY.SOCIAL_SECURITY_NUMBER, getSocialSecutiryNumber(nominc))
 				
 				.set(SALARY.ENTERPRISE_NAME, nominc.getF30nomemp())
 				.set(SALARY.CCC, String.format("%s%s%s",
@@ -292,7 +311,8 @@ public class NominaLoader extends AbstractLoader {
 		//@formatter:on
 
 		for (Pair<FnnominlRecord, FntconceRecord> nominl : nominls) {
-			loadSalaryPayment(nominl.getFirst(), nominl.getSecond(), domain, salary, cb);
+			loadSalaryPayment(nominl.getFirst(), nominl.getSecond(), domain,
+					salary, cb);
 		}
 
 		loadSalaryDeductions(nominc, domain, salary);
@@ -304,8 +324,13 @@ public class NominaLoader extends AbstractLoader {
 		//@formatter:on
 	}
 
-	private void loadSalaryPayment(FnnominlRecord nominl, FntconceRecord tconce, int domain,
-			int salary, Callback cb) {
+	private String getSocialSecutiryNumber(FnnomincRecord nominc) {
+		return format("%s%s%s", nominc.getF30sscod(), nominc.getF30ssnum(),
+				nominc.getF30ssctrl());
+	}
+
+	private void loadSalaryPayment(FnnominlRecord nominl,
+			FntconceRecord tconce, int domain, int salary, Callback cb) {
 
 		double impor = nominl.getF31impor() != null ? nominl.getF31impor()
 				: 0.00;
@@ -592,11 +617,9 @@ public class NominaLoader extends AbstractLoader {
 	private InsertSetStep<SalaryDeductionRecord> getSalaryDeductionInsertSetStep() {
 		return get(insertSetMoreStepSalaryDeduction, SALARY_DEDUCTION);
 	}
-	
+
 	private static FnnominlRecord getFnnominlRecord(Record record) {
 		return record.into(new FnnominlRecord());
 	}
-	
-	
 
 }

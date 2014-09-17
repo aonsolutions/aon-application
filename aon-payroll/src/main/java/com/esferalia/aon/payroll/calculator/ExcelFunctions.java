@@ -107,5 +107,9 @@ public class ExcelFunctions {
 		}
 	}
 	
+	public static void main(String[] args) {
+		System.out.println ("SI(1 <= 1, REMOVE(), H)".replaceAll("SI\\((.*),(.*),(.*)\\)", "($1?$2:$3)"));
+	}
+	
 	
 }

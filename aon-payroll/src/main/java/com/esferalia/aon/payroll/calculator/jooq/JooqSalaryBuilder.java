@@ -383,14 +383,14 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 			Map<String, ITimedVariable<?>> context) {
 		InsertSetStep<SalaryPaymentRecord> insertPayment;
 
+		insertPayment = insertMorePayment == null ? dslContext
+				.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
+
 		if (isSiblingOfPrevious(payment)) {
-			insertPayment = insertMorePayment;
 			tax += prevPayment.getIrpf();
 			quote += prevPayment.getQuote();
 			amount += prevPayment.getAmount();
 		} else {
-			insertPayment = insertMorePayment == null ? dslContext
-					.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
 			prevPayment.setId(((IContractPayment) payment).getId());
 		}
 

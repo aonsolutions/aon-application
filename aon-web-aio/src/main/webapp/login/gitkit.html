@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd" >
+<html>
+<head>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/jsapi"></script>
+<script type="text/javascript"
+	src="https://www.accountchooser.com/client.js"></script>
+<script type="text/javascript">
+	function load() {
+		google.load("identitytoolkit", "2", {
+			packages : [ "ac" ],
+			callback : callback
+		});
+	}
+	function callback() {
+		window.google.identitytoolkit.setConfig({
+			developerKey : "AIzaSyDY7IWGM2jLX3E2QUQvtm7Sq71nn6hE6eg",
+			callbackUrl : "http://nbc.rtrepiana.dev:8080/aon-aio/gitkit_callback", // must be a full URL
+			userStatusUrl : "/userStatus", // these can just be partial paths
+			loginUrl : "/login",
+			signupUrl : "/signup",
+			homeUrl : "/home",
+			logoutUrl : "/logout",
+			realm : "", // optional
+			language : "en",
+			idps : [ "Gmail", "AOL", "Hotmail", "Yahoo" ],
+			tryFederatedFirst : true,
+			useContextParam : true
+		});
+		window.google.identitytoolkit.init();
+	}
+</script>
+<script type="text/javascript"
+	src="https://apis.google.com/js/client.js?onload=load"></script>
+</head>
+<body>
+</body>
+</html>

@@ -18,14 +18,13 @@ import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.salary.enumeration.SalaryType.EXTRA;
 import static com.esferalia.aon.salary.enumeration.SalaryType.SALARY;
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-import java.lang.reflect.Array;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,17 +37,14 @@ import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 
-import com.esferalia.aon.dsi.jooq.tables.Fnnominl;
 import com.esferalia.aon.dsi.jooq.tables.records.FncategoRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnconvenRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntrabajRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnzantigRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnzconceRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnzpagasRecord;
-import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelDataRecord;
@@ -75,7 +71,8 @@ public class ConvenLoader extends AbstractLoader implements
 	private Map<String, Integer> agreements;
 
 	private InsertSetMoreStep<AgreementRecord> insertSetMoreStepAgreement;
-	private InsertSetMoreStep<AgreementDataRecord> insertSetMoreStepAgreementData;
+	// private InsertSetMoreStep<AgreementDataRecord>
+	// insertSetMoreStepAgreementData;
 	private InsertSetMoreStep<AgreementLevelRecord> insertSetMoreStepAgreementLevel;
 	private InsertSetMoreStep<AgreementLevelDataRecord> insertSetMoreStepAgreementLevelData;
 	private InsertSetMoreStep<AgreementLevelCategoryRecord> insertSetMoreStepAgreementLevelCategory;
@@ -153,7 +150,7 @@ public class ConvenLoader extends AbstractLoader implements
 			Set<String> zPagas = new HashSet<String>();
 			Set<String> zConces = new HashSet<String>();
 			Set<String> zAntigs = new HashSet<String>();
-			
+
 			Set<String> zPagasZconces = new HashSet<String>();
 
 			StringBuffer antigBuffer = new StringBuffer();
@@ -180,7 +177,7 @@ public class ConvenLoader extends AbstractLoader implements
 							&& !isBlank(antig.getF21annos())) {
 						if (antigBuffer.length() > 0)
 							antigBuffer.append(" + ");
-						antigBuffer.append(String.format(
+						antigBuffer.append(format(
 								"%s(\"SALARIO_BASE\" * %.2f,%d)",
 								ContextVariable.OLD, antig.getF21valor() / 100,
 								Integer.valueOf(antig.getF21annos())));
@@ -238,12 +235,12 @@ public class ConvenLoader extends AbstractLoader implements
 	}
 
 	public void execute() {
-		insertSetMoreStepAgreement.execute();
-		insertSetMoreStepAgreementLevel.execute();
-		insertSetMoreStepAgreementLevelData.execute();
-		insertSetMoreStepAgreementLevelCategory.execute();
-		insertSetMoreStepAgreementPayment.execute();
-		insertSetMoreStepAgreementExtra.execute();
+		execute(insertSetMoreStepAgreement);
+		execute(insertSetMoreStepAgreementLevel);
+		execute(insertSetMoreStepAgreementLevelData);
+		execute(insertSetMoreStepAgreementLevelCategory);
+		execute(insertSetMoreStepAgreementPayment);
+		execute(insertSetMoreStepAgreementExtra);
 
 		insertSetMoreStepAgreement = null;
 		insertSetMoreStepAgreementPayment = null;
@@ -256,7 +253,7 @@ public class ConvenLoader extends AbstractLoader implements
 	// ------------------------------------------------------------------------
 	@Override
 	public Integer getCategory(FntrabajRecord trabaj) {
-		return categories.get(String.format("%s%s", trabaj.getF20conven(),
+		return categories.get(format("%s%s", trabaj.getF20conven(),
 				trabaj.getF20categ()));
 	}
 
@@ -269,17 +266,27 @@ public class ConvenLoader extends AbstractLoader implements
 	public PaymentConceptRecord getConcept(FntconceRecord conce) {
 		return cb.getpaymentConcept(conce);
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 	private int loadConven(int domain, FnconvenRecord conven) {
+
+		AgreementRecord record = getAgreementRecord(conven, domain);
+		if (record != null) {
+			// TODO: REPLACE INTO `agreement` (...
+			agreements.put(conven.getF20codigo(), record.getId());
+			return record.getId();
+		}
+		// INSERT INTO `agreement` (...
 		InsertSetStep<AgreementRecord> insertSetStepAgreement = getAgreementInsertSetStep();
 		int agreement = next(AGREEMENT.getIdentity());
+		String description = format("%s %s", getImportKey(conven),
+				conven.getF20nombre());
 		//@formatter:off
 		insertSetMoreStepAgreement = insertSetStepAgreement
 				.set(AGREEMENT.ID, agreement)
 				.set(AGREEMENT.DOMAIN, domain)
-				.set(AGREEMENT.DESCRIPTION, conven.getF20nombre())
+				.set(AGREEMENT.DESCRIPTION, description)
 				;
 		//@formatter:on
 		agreements.put(conven.getF20codigo(), agreement);
@@ -287,7 +294,15 @@ public class ConvenLoader extends AbstractLoader implements
 	}
 
 	private int loadCatego(int domain, int agreement, FncategoRecord catego) {
+		AgreementLevelCategoryRecord record = getCategoryRecord(catego, domain);
+		if (record != null) {
+			// TODO: REPLACE INTO `agreement_level` (...
+			// TODO: REPLACE INTO `agreement_level_category` (...
+			categories.put(getImportKey(catego), record.getId());
+			return record.getId();
+		}
 
+		// INSERT INTO `agreement_level` (...
 		String levelDescription;
 		try {
 			levelDescription = toRoman(Integer.valueOf(catego.getF20codcat()));
@@ -305,6 +320,7 @@ public class ConvenLoader extends AbstractLoader implements
 				;
 		//@formatter:on
 
+		// TODO: INSERT INTO `agreement_level_category` (...
 		int category = next(AGREEMENT_LEVEL_CATEGORY.getIdentity());
 		InsertSetStep<AgreementLevelCategoryRecord> insertSetStepAgreementLevelCategory = getAgreementLevelCategoryInsertSetStep();
 		//@formatter:off
@@ -312,13 +328,11 @@ public class ConvenLoader extends AbstractLoader implements
 				.set(AGREEMENT_LEVEL_CATEGORY.ID, category)
 				.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, domain)
 				.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, level)
-				.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, catego.getF20nomcat())
+				.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, format("%s %s", getImportKey(catego), catego.getF20nomcat()))
 				;
 		//@formatter:on
 
-		categories.put(
-				String.format("%s%s", catego.getF20codcon(),
-						catego.getF20codcat()), category);
+		categories.put(getImportKey(catego), category);
 
 		return level;
 	}
@@ -326,15 +340,24 @@ public class ConvenLoader extends AbstractLoader implements
 	private int loadPaga(int domain, int agreement, Date startDate,
 			FnzpagasRecord zpagas, Integer concept, Set<String> payments) {
 
+		AgreementPaymentRecord record = getPaymentRecord(zpagas, domain);
+		if (record != null) {
+			// TODO: REPLACE INTO `agreement_extra` (...
+			// TODO: REPLACE INTO `agreement_payment` (...
+			return record.getId();
+		}
+
+		// INSERT INTO `agreement_payment` (...
 		InsertSetStep<AgreementPaymentRecord> insertSetStepAgreementPayment = getAgreementPaymentInsertSetStep();
 
 		int paymentId = next(AGREEMENT_PAYMENT.getIdentity());
 
 		byte mes = Byte.valueOf(zpagas.getF21mes());
-		
+
 		StringBuffer paymentsSumBuff = new StringBuffer();
-		for (String payment : payments) 
-			paymentsSumBuff.append((paymentsSumBuff.length() > 0 ? " + " : "") +payment );
+		for (String payment : payments)
+			paymentsSumBuff.append((paymentsSumBuff.length() > 0 ? " + " : "")
+					+ payment);
 
 		//@formatter:off
 		insertSetMoreStepAgreementPayment = insertSetStepAgreementPayment
@@ -352,11 +375,13 @@ public class ConvenLoader extends AbstractLoader implements
 				.set(AGREEMENT_PAYMENT.MONTH, (Byte) mes)
 				.set(AGREEMENT_PAYMENT.START_DATE, startDate )
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, enum2Byte(EXTRA))
-				.set(AGREEMENT_PAYMENT.EXPRESSION, String.format("( /*user*/ %s /**/ ) * ( %s / 12 )",paymentsSumBuff.toString(), ContextVariable.MONTHS))
+				.set(AGREEMENT_PAYMENT.EXPRESSION, format("( /*user*/ %s /**/ ) * ( %s / 12 )",paymentsSumBuff.toString(), ContextVariable.MONTHS))
 				;
 		//@formatter:on
 
 		InsertSetStep<AgreementExtraRecord> insertSetStepAgreementExtra = getAgreementExtraInsertSetStep();
+
+		// INSERT INTO `agreement_payment` (...
 
 		int mesdes = Integer.valueOf(zpagas.getF21mesdes());
 		int diades = Integer.valueOf(zpagas.getF21diades());
@@ -366,14 +391,14 @@ public class ConvenLoader extends AbstractLoader implements
 		int dia = meshas == mes ? diahas : 15; // TODO : 15???
 
 		String extraStart = StringUtils.equalsIgnoreCase("A",
-				zpagas.getF21annohas()) ? String.format("%d/%d -1", diades,
-				mesdes) : String.format("%d/%d", diades, mesdes);
+				zpagas.getF21annohas()) ? format("%d/%d -1", diades, mesdes)
+				: format("%d/%d", diades, mesdes);
 
 		String extraEnd = StringUtils.equalsIgnoreCase("A",
-				zpagas.getF21annohas()) ? String.format("%d/%d -1", diahas,
-				meshas) : String.format("%d/%d", diahas, meshas);
+				zpagas.getF21annohas()) ? format("%d/%d -1", diahas, meshas)
+				: format("%d/%d", diahas, meshas);
 
-		String extraIssue = String.format("%d/%d", dia, mes);
+		String extraIssue = format("%d/%d", dia, mes);
 
 		//@formatter:off
 		insertSetMoreStepAgreementExtra = insertSetStepAgreementExtra
@@ -395,6 +420,13 @@ public class ConvenLoader extends AbstractLoader implements
 			FnzconceRecord zconce, Callback cb, String expression) {
 		InsertSetStep<AgreementPaymentRecord> insertSetStepAgreementPayment = getAgreementPaymentInsertSetStep();
 
+		AgreementPaymentRecord record = getPaymentRecord(zconce, domain);
+		if (record != null) {
+			// TODO: REPLACE INTO `agreement_payment` (...
+			return record.getId();
+		}
+
+		// INSERT INTO `agreement_payment` (...
 		int payment = next(AGREEMENT_PAYMENT.getIdentity());
 
 		PaymentConceptRecord concept = cb.getpaymentConcept(zconce);
@@ -445,10 +477,19 @@ public class ConvenLoader extends AbstractLoader implements
 
 	private void loadConceData(int domain, int level, Date startDate,
 			FnzconceRecord zconce) {
+
+		AgreementLevelDataRecord record = getDataRecord(domain, level,
+				startDate, zconce);
+		if (record != null) {
+			// TODO: REPLACE INTO `agreement_level_data` (...
+			return;
+		}
+
+		// INSERT INTO `agreement_level_data` (...
 		InsertSetStep<AgreementLevelDataRecord> insertSetStepAgreeementLevelData = getAgreementLevelDataInsertSetStep();
 		String expression = null;
 		if (zconce.getF21impor() != null)
-			expression = String.format("%.2f", zconce.getF21impor());
+			expression = format("%.2f", zconce.getF21impor());
 
 		if (isBlank(expression))
 			return;
@@ -475,6 +516,100 @@ public class ConvenLoader extends AbstractLoader implements
 		.fetchOne();
 		//@formatter:on
 		return record1 != null ? record1.value1() : null;
+	}
+
+	private String getImportKey(FnconvenRecord conven) {
+		return format("/*CODIGO:%s*/", conven.getF20codigo());
+	}
+
+	private String getImportKey(FncategoRecord catego) {
+		return format("/*CODCON:%s, CODCAT:%s*/", catego.getF20codcon(),
+				catego.getF20codcat());
+	}
+
+	private String getImportKey(FnzpagasRecord pagas) {
+		return format("/*CODCON:%s, CODCAT:%s, NORDEN:%s*/",
+				pagas.getF21codcon(), pagas.getF21codcat(),
+				pagas.getF21norden());
+	}
+
+	private String getImportKey(FnzconceRecord conce) {
+		return format("/*CODCON:%s, CODCAT:%s, NORDEN:%s*/",
+				conce.getF21codcon(), conce.getF21codcat(),
+				conce.getF21norden());
+	}
+
+	private AgreementRecord getAgreementRecord(FnconvenRecord conven, int domain) {
+		//@formatter:off
+		return 
+		aonContext
+		.select()
+		.from(AGREEMENT)
+		.where(AGREEMENT.DOMAIN.eq(domain))
+		.and(AGREEMENT.DESCRIPTION.like(format("%%%s%%", getImportKey(conven))))
+		.fetchOneInto(AGREEMENT)
+		;
+		//@formatter:on
+	}
+
+	private AgreementLevelCategoryRecord getCategoryRecord(
+			FncategoRecord catego, int domain) {
+		//@formatter:off
+		return 
+		aonContext
+		.select()
+		.from(AGREEMENT_LEVEL_CATEGORY)
+		.where(AGREEMENT_LEVEL_CATEGORY.DOMAIN.eq(domain))
+		.and(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION.like(format("%%%s%%", getImportKey(catego))))
+		.fetchOneInto(AGREEMENT_LEVEL_CATEGORY)
+		;
+		//@formatter:on
+	}
+
+	private AgreementPaymentRecord getPaymentRecord(FnzpagasRecord pagas,
+			int domain) {
+		//@formatter:off
+		return 
+		aonContext
+		.select()
+		.from(AGREEMENT_PAYMENT)
+		.where(AGREEMENT_PAYMENT.DOMAIN.eq(domain))
+		.and(AGREEMENT_PAYMENT.SALARY_TYPE.eq(enum2Byte(EXTRA)))
+		.and(AGREEMENT_PAYMENT.EXPRESSION.like(format("%%%s%%", getImportKey(pagas))))
+		.fetchOneInto(AGREEMENT_PAYMENT)
+		;
+		//@formatter:on
+	}
+
+	private AgreementPaymentRecord getPaymentRecord(FnzconceRecord conce,
+			int domain) {
+		//@formatter:off
+		return 
+		aonContext
+		.select()
+		.from(AGREEMENT_PAYMENT)
+		.where(AGREEMENT_PAYMENT.DOMAIN.eq(domain))
+		.and(AGREEMENT_PAYMENT.SALARY_TYPE.eq(enum2Byte(SALARY)))
+		.and(AGREEMENT_PAYMENT.EXPRESSION.like(format("%%%s%%", getImportKey(conce))))
+		.fetchOneInto(AGREEMENT_PAYMENT)
+		;
+		//@formatter:on
+	}
+
+	private AgreementLevelDataRecord getDataRecord(int domain, int level,
+			Date startDate, FnzconceRecord conce) {
+		//@formatter:off
+		return 
+		aonContext
+		.select()
+		.from(AGREEMENT_LEVEL_DATA)
+		.where(AGREEMENT_LEVEL_DATA.DOMAIN.eq(domain))
+		.and(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.eq(level))
+		.and(AGREEMENT_LEVEL_DATA.START_DATE.eq(startDate))
+		.and(AGREEMENT_LEVEL_DATA.NAME.eq(getVariable(conce)))
+		.fetchOneInto(AGREEMENT_LEVEL_DATA)
+		;
+		//@formatter:on
 	}
 
 	private InsertSetStep<AgreementRecord> getAgreementInsertSetStep() {

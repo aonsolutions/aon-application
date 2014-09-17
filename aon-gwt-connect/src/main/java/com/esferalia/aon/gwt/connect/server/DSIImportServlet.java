@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -34,6 +35,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.dsi.DSI2AON;
 import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
+import com.esferalia.aon.gwt.payroll.server.AonServletUtils;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
 @MultipartConfig
@@ -60,6 +62,9 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 		File tempDir = null;
 		List<File> dbs = new ArrayList<File>();
 		try {
+			ServletContext context = getServletContext();
+			AonServletUtils.initFacesContext(context, req, resp);
+
 			// checks if the request actually contains upload file
 			if (!isMultipartContent(req)) {
 				// if not, we stop here(?:X
@@ -91,32 +96,34 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 			}
 
 			
-			
-			int domain = getDomainId(); 
-			String owner = getRemoteUser();
-			String suffix = getDomainName();
-			Connection aon = getConnection();
+			String owner = "admin"; //getRemoteUser();
+			String domain = req.getServerName();//getDomainName();
+			Connection aon = DatabaseUtil.getConnection(domain);
 
 			for (File db : dbs) {
-				String url = String.format("jdbc:paradox://%s",
+				String url = String.format("jdbc:paradox:///%s",
 						db.getAbsolutePath());
 				Connection dsi = DBUtils.getDsiConnection(url);
 
-				DSI2AON dsi2aon = new DSI2AON(dsi, aon);
-				
-				dsi2aon.run(domain, "-" + suffix, owner);
+				new DSI2AON(dsi, aon)
+				.setCommit(false)
+				.run(domain, "-" + domain, owner);
 			}
 
 		} catch (SQLException e) {
-
+			e.printStackTrace();
 		} catch (FileUploadException e) {
 
 		} catch (AonSQLException e) {
+			e.printStackTrace();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			if (tempDir != null)
 				tempDir.delete();
 			for (File db : dbs)
 				db.delete();
+			AonServletUtils.releaseFacesContext();
 		}
 	}
 
@@ -150,6 +157,9 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 				zipin.close();
 		}
 	}
+
+
+
 
 	// ------------------------------------------------------------------------
 
@@ -188,20 +198,14 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 		}
 	}
 
-	private static DomainSwitcher getDomainSwitcher() {
-		return  (DomainSwitcher) AonUtil
-				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-	}
 	private static String getRemoteUser() {
+		
 		return AonUtil.getRemoteUser();
 	}
 
-	private static Integer getDomainId() {
-		return getDomainSwitcher().getDomainId();
-	}
 
 	private static String getDomainName() {
-		return getDomainSwitcher().getDomainName();
+		return AonUtil.getDomainName();
 	}
 	
 	

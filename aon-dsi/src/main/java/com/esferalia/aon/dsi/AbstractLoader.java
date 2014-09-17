@@ -14,9 +14,10 @@ import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Table;
+import org.jooq.UpdateSetMoreStep;
+import org.jooq.UpdateSetStep;
 
 import com.esferalia.aon.dsi.util.DBUtils;
-import com.esferalia.aon.jooq.tables.Domain;
 
 public abstract class AbstractLoader {
 
@@ -40,18 +41,24 @@ public abstract class AbstractLoader {
 	protected <R extends Record> Integer getId(Identity<R, Integer> identity,
 			Condition... conditions) {
 		//@formatter:off
-		Integer id = aonContext.select(identity.getField())
+		return aonContext.select(identity.getField())
 				.from(identity.getTable())
 				.where(conditions)
 				.fetchOne(identity.getField());
 		//@formatter:on
-		return id != null ? id : next(identity);
 	}
 
 	protected <R extends Record> InsertSetStep<R> get(
 			InsertSetMoreStep<R> insertSetMoreStep, Table<R> table) {
 		return insertSetMoreStep != null ? insertSetMoreStep.newRecord()
 				: aonContext.insertInto(table);
+
+	}
+
+	protected <R extends Record> UpdateSetMoreStep<R> update(
+			UpdateSetMoreStep<R> updateSetMoreStep, Table<R> table, R r) {
+		return updateSetMoreStep != null ? updateSetMoreStep.set(r)
+				: aonContext.update(table).set(r);
 
 	}
 
@@ -85,6 +92,11 @@ public abstract class AbstractLoader {
 		//@formatter:on
 		
 		return parent == null ? null : getGeozone(provin, parent);
+	}
+	
+	public static void execute(InsertSetMoreStep<?> insertSetMoreStep) {
+		if ( insertSetMoreStep != null ) 
+			insertSetMoreStep.execute();
 	}
 
 }

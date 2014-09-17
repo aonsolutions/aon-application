@@ -107,6 +107,10 @@
 		<servlet-name>Resource Servlet</servlet-name>
 		<url-pattern>/aon_gwt_connect/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_document/*</url-pattern>
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>Employees Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl</servlet-class>

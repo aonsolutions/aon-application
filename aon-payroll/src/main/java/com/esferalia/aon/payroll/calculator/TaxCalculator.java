@@ -94,6 +94,7 @@ public abstract class TaxCalculator {
 			
 			Month salaryMonth =  getMonth(charge);
 			Month paymentMonth = contractPayment.getMonth();
+			
 			if ( paymentMonth != null && paymentMonth != salaryMonth ) {
 				throw new NotNowException();
 			}

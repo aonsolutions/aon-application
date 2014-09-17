@@ -1,9 +1,6 @@
 package com.esferalia.aon.dsi;
 
 import static com.esferalia.aon.dsi.jooq.tables.Fnempres.FNEMPRES;
-import static com.esferalia.aon.dsi.jooq.tables.Fnnominc.FNNOMINC;
-import static com.esferalia.aon.dsi.jooq.tables.Fntraba2.FNTRABA2;
-import static com.esferalia.aon.dsi.jooq.tables.Fntrabaj.FNTRABAJ;
 import static com.esferalia.aon.dsi.util.EnumUtils.enum2Byte;
 import static com.esferalia.aon.dsi.util.EnumUtils.getDocumentType;
 import static com.esferalia.aon.dsi.util.RomanNumber.toRoman;
@@ -16,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static java.lang.String.format;
 import static org.jooq.tools.StringUtils.isBlank;
 
 import java.util.Hashtable;
@@ -24,25 +22,17 @@ import java.util.Map;
 import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
-import org.jooq.impl.DSL;
 
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.dsi.Trabaj2Loader.Callback;
-import com.esferalia.aon.dsi.jooq.tables.Fnempres;
-import com.esferalia.aon.dsi.jooq.tables.Fnnominc;
 import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.Fntraba2Record;
 import com.esferalia.aon.dsi.jooq.tables.records.FntrabajRecord;
 import com.esferalia.aon.jooq.tables.records.CompanyRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -56,17 +46,17 @@ import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 
 public class EmpresLoader extends AbstractLoader implements
 		Trabaj2Loader.Callback {
-	
+
 	public static interface Callback {
 
 		Integer getCategory(FntrabajRecord trabaj);
 
 		Integer getAgreement(FnempresRecord empres);
-		
+
 		PaymentConceptRecord getConcept(FntconceRecord conce);
 
 	}
-	
+
 	private Callback cb;
 
 	private Map<String, Integer> domains;
@@ -91,9 +81,10 @@ public class EmpresLoader extends AbstractLoader implements
 	// ------------------------------------------------------------------------
 
 	public EmpresLoader loadEmpres(Integer parentDomain, String domainSuffix,
-			String owner, Callback cb, Condition... conditions) throws AonSQLException {
+			String owner, Callback cb, Condition... conditions)
+			throws AonSQLException {
 		this.cb = cb;
-		
+
 		Cursor<Record> empresCursor = dsiContext.select().from(FNEMPRES)
 				.where(conditions).fetchLazy();
 		while (empresCursor.hasNext()) {
@@ -101,16 +92,21 @@ public class EmpresLoader extends AbstractLoader implements
 
 			String key = empres.getF20sscod() + empres.getF20ssnum();
 
-			int enterprise = getId(REGISTRY.getIdentity(),
-					REGISTRY.DOCUMENT.eq(empres.getF20nif()));
+			WorkplaceRecord record = getWorkplace(empres);
+
+			if (record != null) {
+				// TODO : REPLACE INTO `enterprise`
+				ssIdsMap.put(key, new int[] { record.getDomain(), record.getId()});
+				continue;
+			}
+
+			Integer domain = next(DOMAIN.getIdentity());
+
+			Integer enterprise = next(REGISTRY.getIdentity());
 
 			//@formatter:off
-			int domain = getId(DOMAIN.getIdentity(), 
-					DOMAIN.ID.eq(aonContext.select(REGISTRY.DOMAIN)
-							.from(REGISTRY)
-							.where(REGISTRY.ID.eq(enterprise))));
 
-			int scope = getId(SCOPE.getIdentity(), 
+			Integer scope = getId(SCOPE.getIdentity(), 
 					SCOPE.DOMAIN.eq(parentDomain));
 			//@formatter:on
 
@@ -125,20 +121,18 @@ public class EmpresLoader extends AbstractLoader implements
 	}
 
 	public void execute() {
-		insertSetMoreStepDomain.execute();
-		insertSetMoreStepRegistry.execute();
-		if (insertSetMoreStepRmedia != null)
-			insertSetMoreStepRmedia.execute();
-		insertSetMoreStepRaddress.execute();
-		insertSetMoreStepEnterprise.execute();
-		insertSetMoreStepCompany.execute();
-		insertSetMoreStepWorkplace.execute();
-		insertSetMoreStepPayrollWorkplace.execute();
+		execute(insertSetMoreStepDomain);
+		execute(insertSetMoreStepRegistry);
+		execute(insertSetMoreStepRmedia);
+		execute(insertSetMoreStepRaddress);
+		execute(insertSetMoreStepEnterprise);
+		execute(insertSetMoreStepCompany);
+		execute(insertSetMoreStepWorkplace);
+		execute(insertSetMoreStepPayrollWorkplace);
 
 		insertSetMoreStepDomain = null;
 		insertSetMoreStepRegistry = null;
-		if (insertSetMoreStepRmedia != null)
-			insertSetMoreStepRmedia = null;
+		insertSetMoreStepRmedia = null;
 		insertSetMoreStepRaddress = null;
 		insertSetMoreStepEnterprise = null;
 		insertSetMoreStepCompany = null;
@@ -150,40 +144,44 @@ public class EmpresLoader extends AbstractLoader implements
 	// ------------------------------------------------------------------------
 	@Override
 	public int getDomain(FntrabajRecord trabaj) {
-		return ssIdsMap.get(trabaj.getF20sscodem()
-				+ trabaj.getF20ssnumem())[0];
+		return ssIdsMap.get(trabaj.getF20sscodem() + trabaj.getF20ssnumem())[0];
 	}
 
 	@Override
 	public int getWorplace(FntrabajRecord trabaj) {
-		return ssIdsMap.get(trabaj.getF20sscodem()
-				+ trabaj.getF20ssnumem())[1];
+		return ssIdsMap.get(trabaj.getF20sscodem() + trabaj.getF20ssnumem())[1];
 	}
-	
+
 	@Override
 	public Integer getCategory(FntrabajRecord trabaj) {
 		return cb.getCategory(trabaj);
 	}
-	
+
 	@Override
 	public PaymentConceptRecord getConcept(FntconceRecord conce) {
 		return cb.getConcept(conce);
 	}
-	
-	// ------------------------------------------------------------------------
 
-	private void cleanEmpres(int registry, int domain) {
-		aonContext.delete(RMEDIA).where(RMEDIA.REGISTRY.eq(registry)).execute();
-		aonContext.delete(RADDRESS).where(RADDRESS.REGISTRY.eq(registry))
-				.execute();
-		aonContext.delete(ENTERPRISE).where(ENTERPRISE.REGISTRY.eq(registry))
-				.execute();
-		aonContext.delete(REGISTRY).where(REGISTRY.ID.eq(registry)).execute();
-		aonContext.delete(DOMAIN).where(DOMAIN.ID.eq(domain)).execute();
+	// ------------------------------------------------------------------------
+	
+	private WorkplaceRecord getWorkplace(FnempresRecord empres) {
+		//@formatter:off
+		return aonContext
+		.select()
+		.from(WORKPLACE)
+		.where(WORKPLACE.DESCRIPTION.like(String.format("%%%s%%", getImportKey(empres))))
+		.fetchOneInto(WORKPLACE);
+		//@formatter:on
+	}
+	
+	private String getImportKey(FnempresRecord empres) {
+		return String.format("/*SSCOD:%s, SSNUM:%s*/", empres.getF20sscod(), empres.getF20ssnum());
 	}
 
+
 	private int loadEmpres(FnempresRecord empres, int registry, int domain,
-			Integer parentDomain, String domainName, String owner, int scope, Callback cb) {
+			Integer parentDomain, String domainName, String owner, int scope,
+			Callback cb) {
 		//@formatter:off
 		InsertSetStep<DomainRecord> insertSetStepDomain = getDomainInsertSetStep();
 		insertSetMoreStepDomain = insertSetStepDomain.set(DOMAIN.ID, domain)
@@ -260,7 +258,7 @@ public class EmpresLoader extends AbstractLoader implements
 				.set(WORKPLACE.DOMAIN, domain)
 				.set(WORKPLACE.ENTERPRISE, registry)
 				.set(WORKPLACE.ADDRESS, raddress)
-				.set(WORKPLACE.DESCRIPTION, "PRINCIPAL");
+				.set(WORKPLACE.DESCRIPTION, format("%s %S", getImportKey(empres) ,"PRINCIPAL"));
 		//@formatter:on
 
 		//@formatter:off
@@ -336,6 +334,5 @@ public class EmpresLoader extends AbstractLoader implements
 	}
 
 	// ------------------------------------------------------------------------
-
 
 }

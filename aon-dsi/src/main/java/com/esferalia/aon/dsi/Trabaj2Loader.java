@@ -17,15 +17,16 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
-import static org.jooq.tools.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.hibernate.tool.hbm2x.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
@@ -39,7 +40,6 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.Fntraba2Record;
 import com.esferalia.aon.dsi.jooq.tables.records.FntrabajRecord;
@@ -70,8 +70,6 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 		PaymentConceptRecord getConcept(FntconceRecord conce);
 	}
-	
-	private Callback cb;
 
 	private Map<String, int[]> ssIdsMap;
 
@@ -90,7 +88,6 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	public void loadTrabj2(Callback cb, Condition... conditions)
 			throws AonSQLException {
-		this.cb = cb;
 		//@formatter:off
 		Cursor<Record> trabjCursor = dsiContext.select()
 				.from(FNTRABAJ)
@@ -128,6 +125,18 @@ public class Trabaj2Loader extends AbstractLoader implements
 			int domain = cb.getDomain(trabaj);
 			int workplace = cb.getWorplace(trabaj);
 
+			String key = trabaj.getF20sscod() + trabaj.getF20ssnum()
+					+ trabaj.getF20falta();
+
+			ContractRecord record = getContract(trabaj, workplace);
+			if (record != null) {
+				// TODO: REPLACE INTO `registry` (...
+				// TODO: REPLACE INTO `person` (...
+				// TODO: REPLACE INTO `contract` (...
+				ssIdsMap.put(key, new int[] { domain, record.getId() });
+				continue;
+			}
+
 			int person = next(REGISTRY.getIdentity());
 			int contract = loadTrabj2(trabaj, traba2, person, workplace,
 					domain, cb);
@@ -146,8 +155,6 @@ public class Trabaj2Loader extends AbstractLoader implements
 						.fetchOneInto(FNTCONCE) : null;
 			}
 
-			String key = trabaj.getF20sscod() + trabaj.getF20ssnum()
-					+ trabaj.getF20falta();
 			ssIdsMap.put(key, new int[] { domain, contract });
 		}
 	}
@@ -187,14 +194,13 @@ public class Trabaj2Loader extends AbstractLoader implements
 	}
 
 	public void execute() {
-		insertSetMoreStepRegistry.execute();
-		insertSetMoreStepRaddress.execute();
-		if (insertSetMoreStepRmedia != null)
-			insertSetMoreStepRmedia.execute();
-		insertSetMoreStepPerson.execute();
-		insertSetMoreStepContract.execute();
-		insertSetMoreStepContractData.execute();
-		insertSetMoreStepContractPayment.execute();
+		execute(insertSetMoreStepRegistry);
+		execute(insertSetMoreStepRaddress);
+		execute(insertSetMoreStepRmedia);
+		execute(insertSetMoreStepPerson);
+		execute(insertSetMoreStepContract);
+		execute(insertSetMoreStepContractData);
+		execute(insertSetMoreStepContractPayment);
 
 		insertSetMoreStepRegistry = null;
 		insertSetMoreStepPerson = null;
@@ -217,8 +223,22 @@ public class Trabaj2Loader extends AbstractLoader implements
 		return ssIdsMap.get(nominc.getF30sscod() + nominc.getF30ssnum()
 				+ nominc.getF30falta())[1];
 	}
-	
+
 	// ------------------------------------------------------------------------
+
+	private ContractRecord getContract(FntrabajRecord trabaj, int workplace) {
+		//@formatter:off
+		return aonContext.
+		select()
+		.from(CONTRACT)
+		.join(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.where(CONTRACT.WORKPLACE.eq(workplace))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(getSocialSecurityNum(trabaj)))
+		.and(CONTRACT.START_DATE.eq(trabaj.getF20falta()))
+		.fetchOneInto(CONTRACT)
+		;
+		//@formatter:on
+	}
 
 	private int loadTrabj2(FntrabajRecord trabaj, Fntraba2Record traba2,
 			int person, int workplace, int domain, Callback cb) {
@@ -287,10 +307,7 @@ public class Trabaj2Loader extends AbstractLoader implements
 				.set(PERSON.NAME, trabaj.getF20nombre())
 				.set(PERSON.FIRST_SURNAME, trabaj.getF20apell1())
 				.set(PERSON.SECOND_SURNAME, trabaj.getF20apell2())
-				.set(PERSON.SOCIAL_SECURITY_NUM, String.format("%s%s%s",
-						trabaj.getF20sscod(),  
-						trabaj.getF20ssnum(), 
-						trabaj.getF20ssctrl()))
+				.set(PERSON.SOCIAL_SECURITY_NUM, getSocialSecurityNum(trabaj))
 				;
 				//TODO : MARITAL_STATUS, F20NOMBREC? 
 		//@formatter:on
@@ -429,6 +446,11 @@ public class Trabaj2Loader extends AbstractLoader implements
 			//@formatter:on
 		}
 
+	}
+
+	private String getSocialSecurityNum(FntrabajRecord trabaj) {
+		return format("%s%s%s", trabaj.getF20sscod(), trabaj.getF20ssnum(),
+				trabaj.getF20ssctrl());
 	}
 
 	private InsertSetStep<RegistryRecord> getRegistryInsertSetStep() {

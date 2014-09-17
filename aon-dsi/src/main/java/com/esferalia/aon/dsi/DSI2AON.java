@@ -1,5 +1,7 @@
 package com.esferalia.aon.dsi;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.sql.Connection;
 
 import org.jooq.Condition;
@@ -12,6 +14,7 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.dbutils.AonSQLException;
+import com.esferalia.aon.jooq.tables.Domain;
 
 public class DSI2AON {
 
@@ -40,6 +43,12 @@ public class DSI2AON {
 		return this;
 	}
 
+	public void run(final String parentDomain, final String domainSuffix,
+			final String owner, final Condition... conditions)
+			throws AonSQLException {
+		run(getDomain(parentDomain), domainSuffix, owner, conditions);
+	}
+
 	public void run(final Integer parentDomain, final String domainSuffix,
 			final String owner, final Condition... conditions)
 			throws AonSQLException {
@@ -57,7 +66,8 @@ public class DSI2AON {
 
 					ConvenLoader convenLoader = new ConvenLoader(dsiContext,
 							aonContext);
-					convenLoader.loadConven(parentDomain, cconceLoader, conditions);
+					convenLoader.loadConven(parentDomain, cconceLoader,
+							conditions);
 
 					EmpresLoader empresLoader = new EmpresLoader(dsiContext,
 							aonContext);
@@ -102,6 +112,11 @@ public class DSI2AON {
 
 		}
 
+	}
+
+	private int getDomain(String name) {
+		return aonContext.select(DOMAIN.ID).from(DOMAIN)
+				.where(DOMAIN.NAME.eq(name)).fetchOne(DOMAIN.ID);
 	}
 
 	// ------------------------------------------------------------------------
