@@ -77,14 +77,23 @@ public class DashboardRecentFiles implements Serializable {
 	public String getIcon() {
 		return icon;
 	}
-	public void setIcon(Integer icon) {
-		short type = icon.shortValue();
-		MimeType t = MimeType.values()[type];
-		if (icon.equals(-1)) this.icon="aon-icon-google-drive-unknown";
-		else if(t.getName().equals("application/pdf")) this.icon="aon-icon-google-drive-pdf";
-		else if(t.getName().equals("aapplication/msword")) this.icon="aon-icon-google-drive-word";
-		else if(isImage(t.getName())) this.icon="aon-icon-google-drive-image";
-		else this.icon="aon-icon-google-drive-unknown";
+	public void setIcon(Integer icon) {		
+		if (icon.equals(-1))
+			this.icon = "aon-icon-google-drive-unknown";
+
+		else {
+			short type = icon.shortValue();
+			MimeType t = MimeType.values()[type];
+			if (t.getName().equals("application/pdf"))
+				this.icon = "aon-icon-google-drive-pdf";
+			else if (t.getName().equals("aapplication/msword"))
+				this.icon = "aon-icon-google-drive-word";
+			else if (isImage(t.getName()))
+				this.icon = "aon-icon-google-drive-image";
+			else
+				this.icon = "aon-icon-google-drive-unknown";
+		}
+
 	}
 	
 	private Boolean isImage(String name) {
