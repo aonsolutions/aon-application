@@ -106,7 +106,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 				Connection dsi = DBUtils.getDsiConnection(url);
 
 				new DSI2AON(dsi, aon)
-				.setCommit(false)
+				.setCommit(true)
 				.run(domain, "-" + domain, owner);
 			}
 
