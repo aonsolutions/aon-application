@@ -16,6 +16,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -146,8 +147,12 @@ public class PurchaseTransferManager implements Serializable {
 		final PurchaseDetail detail = (PurchaseDetail) getDetailModel().getRowData();
 		return getPriceStrategy().getBasePrice(new ICalculable() {
 			@Override
-			public double getTaxes() throws ManagerBeanException {
-				return detail.getTaxes();
+			public Item getItem() {
+				return detail.getItem();
+			}			
+			@Override
+			public DiscountExpression getDiscountExpression() {
+				return detail.getDiscountExpression();
 			}
 			@Override
 			public double getQuantity() {
@@ -158,12 +163,12 @@ public class PurchaseTransferManager implements Serializable {
 				return detail.getPrice();
 			}			
 			@Override
-			public Item getItem() {
-				return detail.getItem();
-			}			
+			public double getTaxes() {
+				return detail.getTaxes();
+			}
 			@Override
-			public DiscountExpression getDiscountExpression() {
-				return detail.getDiscountExpression();
+			public WorkPlace getWorkPlace() {
+				return detail.getWorkPlace();
 			}
 		});
 	}
