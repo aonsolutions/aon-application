@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 
 import com.code.aon.AonVersion;
@@ -98,6 +99,9 @@ public class GoogleCalendarSynchronizer extends ControllerAdapter {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		} catch (GeneralSecurityException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		} catch (NamingException e) {
 			// TODO Bloque catch generado automáticamente
 			e.printStackTrace();
 		}
