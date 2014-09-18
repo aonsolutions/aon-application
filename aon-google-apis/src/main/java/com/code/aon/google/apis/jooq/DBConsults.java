@@ -1314,7 +1314,32 @@ public class DBConsults {
 	}
 	
 	
+	public static String getUserName(String domain, Integer id) throws AonConnectionException,
+	SQLException {
+Connection connection = null;
+try {
+
+	connection = DatabaseSync.getConnection(domain);
+
+	DSLContext dslContext = DSL.using(connection,
+			JooqSettings.getDefaultSettings());
+
+	Result<Record1<String>> data = dslContext
+			.select(REGISTRY.NAME)
+			.from(REGISTRY)
+			.where(REGISTRY.ID.eq(id))
+			.fetch();
 	
+	String name = new String();
+	for (Record1<String> record1 : data) {
+		if(record1.value1() != null) name = record1.value1();
+	}
+	return name;
+} finally {
+	if (connection != null)
+		connection.close();
+}
+}
 	//getParentName(schemas.get(sch)))
 	
 

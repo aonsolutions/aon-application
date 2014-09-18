@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,12 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.code.aon.google.apis.drive.SearchFiles;
+import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialActivity;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
@@ -338,12 +342,13 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws SQLException
 	 * @throws AonConnectionException 
+	 * @throws NamingException 
 	 */
-	public static Calendar addCalendar(Calendar entry, String email) throws IOException, SQLException, AonConnectionException{
+	public static Calendar addCalendar(Calendar entry, String email) throws IOException, SQLException, AonConnectionException, NamingException{
 		View.header("Add Calendar");
 		Calendar result = client.calendars().insert(entry).execute();
-		email="aibanezdegau004@gmail.com";
-		if (email!= null && isGmail(email)){
+		
+		if (email!= null && Utils.isGmail(email)){
 			AclRule rule = new AclRule();
 			Scope scope = new Scope();
 			scope.setType("group");
@@ -365,8 +370,9 @@ public class CalendarUtils {
 	 * @throws SQLException
 	 * @throws AonConnectionException
 	 * @throws IOException
+	 * @throws NamingException 
 	 */
-	public static Calendar newCalendar( String key) throws SQLException, AonConnectionException, IOException{
+	public static Calendar newCalendar( String key) throws SQLException, AonConnectionException, IOException, NamingException{
 		
 		Domain company = getDomain1(key);
 		String email= getEnterpriseEmail(company.getId(),key);
@@ -411,12 +417,12 @@ public class CalendarUtils {
 	 * @throws IOException
 	 * @throws SQLException
 	 * @throws AonConnectionException
+	 * @throws NamingException 
 	 */
-	public static Calendar modifyCalendar(Calendar entry,String  email) throws IOException, SQLException, AonConnectionException{
+	public static Calendar modifyCalendar(Calendar entry,String  email) throws IOException, SQLException, AonConnectionException, NamingException{
 
 		Calendar result=updateCalendar(entry);
-		if (email!= null && isGmail(email)){
-			email="aibanezdegau004@gmail.com";
+		if (email!= null && Utils.isGmail(email)){
 			AclRule rule = new AclRule();
 			Scope scope = new Scope();
 			scope.setType("group");
@@ -439,8 +445,9 @@ public class CalendarUtils {
 	 * @throws SQLException
 	 * @throws AonConnectionException
 	 * @throws IOException
+	 * @throws NamingException 
 	 */
-	public static Calendar modifyCommercialCalendar(CalendarListEntry calendar, Domain company, String key) throws SQLException, AonConnectionException, IOException{
+	public static Calendar modifyCommercialCalendar(CalendarListEntry calendar, Domain company, String key) throws SQLException, AonConnectionException, IOException, NamingException{
 		String email= getEnterpriseEmail(company.getId(),key);	
 		Calendar entry = new Calendar();
 		entry.setSummary(company.getName());
@@ -488,19 +495,25 @@ public class CalendarUtils {
 		Registry registry= getPotencialClient(commercialTracking,key);
 		String description ="Actividad: "+commercialActivity.getName() 
 				+"\nCliente Potencial: "+ registry.getName() + ", "+ registry.getNationality()
-				+"\nComentarios: "+commercialTracking.getComments();
+				+"\nComentarios: "+commercialTracking.getComments()
+				+"\nComercial: "+DBConsults.getUserName(key,commercialTracking.getSeller());
 		event.setDescription(description);
 		
 		// ATTENDEES
 		String email = getSellerEmail(commercialTracking,key);
-		email="ibznav@gmail.com";
-		if (email!=null && isGmail(email)){
-			
-			EventAttendee eventAttendee = new EventAttendee();
-			List<EventAttendee> list = new LinkedList<EventAttendee>();
-			eventAttendee.setEmail(email);
-			list.add(eventAttendee);
-			event.setAttendees(list);
+		email=email;
+		try {
+			if (email!=null && Utils.isGmail(email)){
+				
+				EventAttendee eventAttendee = new EventAttendee();
+				List<EventAttendee> list = new LinkedList<EventAttendee>();
+				eventAttendee.setEmail(email);
+				list.add(eventAttendee);
+				event.setAttendees(list);
+			}
+		} catch (NamingException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
 		}
 		// START DATE
 		Date startDate = convertDate(commercialTracking.getDate());
@@ -643,7 +656,7 @@ public class CalendarUtils {
 	
 	//------------------------------------------- UTILS
 	
-public static void synchronize(String key) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+public static void synchronize(String key) throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
 		
 				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
 			
@@ -689,8 +702,9 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 	 * @throws AonConnectionException 
 	 * @throws GeneralSecurityException 
 	 * @throws KeyStoreException 
+	 * @throws NamingException 
 	 */
-	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+	public static void synchronize() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
 		
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
 		for (String key : domains.keySet()) { // recorre todos los dominios de la BD
@@ -747,10 +761,21 @@ public static void synchronize(String key) throws IOException, SQLException, Aon
 	
 	
 	
-public static void synchronize2() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException {
+public static void synchronize2() throws IOException, SQLException, AonConnectionException, KeyStoreException, GeneralSecurityException, NamingException {
 		
 		Map<String, String> domains=getDomains();//obtiene todos los dominios de la BD
-		for (String key : domains.keySet()) { // recorre todos los dominios de la BD
+		Hashtable<String,String> schemas = new Hashtable<String, String>();
+		
+		for (String key : domains.keySet()) { // recorre todos los dominios de la BD	
+			if (!SearchFiles.esta(schemas,domains.get(key))){
+				schemas.put(domains.get(key), key);
+			}
+		}
+		Vector<String> domains2 = new Vector<String>();
+		for (String sch : schemas.keySet()){
+			domains2.addAll(DBConsults.getParentName(schemas.get(sch)));
+		}
+		for(String key : domains2) { // recorre todos los dominios de la BD
 				Vector<CommercialTracking> eventsBD= getCommercialTrackingKey(key);// Obtiene todos los eventos(CommercialTracking) de la BD
 			
 				DomainGserviceaccount g = DatabaseSync.getServiceAccount(key);
@@ -866,9 +891,10 @@ public static void synchronize2() throws IOException, SQLException, AonConnectio
 	 * @throws ServletException
 	 * @throws SQLException
 	 * @throws AonConnectionException 
+	 * @throws NamingException 
 	 */
 	public static void main(String[] args) throws GeneralSecurityException,
-			IOException, ServletException, SQLException, AonConnectionException {
+			IOException, ServletException, SQLException, AonConnectionException, NamingException {
 		String domain = "energilandia.aibanez.net";
 /* ELIMINAR TODOS LOS CALENDARIOS!
 		DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);

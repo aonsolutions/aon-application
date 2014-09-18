@@ -3,7 +3,6 @@ package com.code.aon.google.apis;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import javax.naming.directory.InitialDirContext;
 import org.apache.commons.io.IOUtils;
 
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
-import com.google.common.io.Files;
 
 
 public class Utils{
