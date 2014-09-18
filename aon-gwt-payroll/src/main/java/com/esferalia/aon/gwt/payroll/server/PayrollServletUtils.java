@@ -45,6 +45,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.server.OpenDocumentConverterServlet;
+import com.esferalia.aon.gwt.payroll.server.OpenDocumentConverterServlet.NoSuchDocumentException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -62,7 +65,7 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public class AonServletUtils {
+public class PayrollServletUtils extends AonServletUtils {
 
 	protected static class RAttach {
 
@@ -338,98 +341,6 @@ public class AonServletUtils {
 		}
 	}
 
-	public static Connection getConnection() throws SQLException {
-		try {
-			String domainName = AonUtil.getDomainName();
-			Connection connection = DatabaseUtil.getConnection(domainName);
-			return connection;
-		} catch (AonConnectionException e) {
-			throw new SQLException(e.getMessage(), e);
-		}
-	}
-
-	public static void rollback(Connection conn) {
-		try {
-			conn.rollback();
-		} catch (SQLException e) {
-		}
-	}
-
-	public static void commit(Connection conn) throws SQLException {
-		conn.commit();
-	}
-
-	public static void execute(Connection connection, String... sqls)
-			throws SQLException {
-		Statement stmt = null;
-		try {
-			stmt = connection.createStatement();
-			for (String sql : sqls) {
-				stmt.execute(sql);
-			}
-		} finally {
-			if (stmt != null)
-				stmt.close();
-		}
-	}
-
-	public static void disableAutoCommit(Connection conn) throws SQLException {
-		conn.setAutoCommit(false);
-	}
-
-	public static void enableAutoCommit(Connection conn) {
-		try {
-			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-		}
-	}
-
-	public static String getExtn(String path) {
-		return path.substring(path.lastIndexOf('.') + 1);
-	}
-
-	public static String getWithoutExtn(String path) {
-		String fileName = path.substring(path.lastIndexOf('/') + 1);
-		return fileName.substring(0, fileName.lastIndexOf('.'));
-	}
-
-	public static void initFacesContext(ServletContext context,
-			HttpServletRequest request, HttpServletResponse response) {
-
-		try {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			if (facesContext != null) {
-				return;
-			}
-
-			LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder
-					.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-			FacesContextFactory facesContextFactory = (FacesContextFactory) FactoryFinder
-					.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-
-			Lifecycle lifecycle = lifecycleFactory
-					.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
-
-			facesContext = facesContextFactory.getFacesContext(context,
-					request, response, lifecycle);
-
-			UIViewRoot view = facesContext.getApplication().getViewHandler()
-					.createView(facesContext, "/home.jsf");
-
-			facesContext.setViewRoot(view);
-
-		} catch (Throwable throwable) {
-			// TODO: Do some usefull with this.
-			throwable.printStackTrace();
-		}
-	}
-
-	public static void releaseFacesContext() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		if (facesContext != null) {
-			facesContext.release();
-		}
-	}
 
 	protected static String getSalaryReport(Integer enterpriseID,
 			String report, String def) throws SQLException {
@@ -571,7 +482,7 @@ public class AonServletUtils {
 
 	}
 
-	protected static AonServletUtils.RAttach getRAttach(Integer id)
+	protected static PayrollServletUtils.RAttach getRAttach(Integer id)
 			throws SQLException, IOException {
 		Connection conn = null;
 
@@ -592,7 +503,7 @@ public class AonServletUtils {
 						id);
 			}
 
-			AonServletUtils.RAttach rattach = new AonServletUtils.RAttach();
+			PayrollServletUtils.RAttach rattach = new PayrollServletUtils.RAttach();
 			Blob blob = rs.getBlob(RattachColumns.DATA);
 			rattach.bytes = blob.getBytes(1, (int) blob.length());
 			rattach.mimeType = OpenDocumentConverterServlet.mimeTypeOf(rs

@@ -20,6 +20,7 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 
 public class OpenDocumentConverterServlet extends HttpServlet {
 
@@ -52,7 +53,7 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			MimeType mimeType = MimeType.getByExtension(extension);
 			
-			AonServletUtils.RAttach rattach = AonServletUtils.getRAttach(rattachId);
+			PayrollServletUtils.RAttach rattach = PayrollServletUtils.getRAttach(rattachId);
 			
 			resp.setContentType(mimeType.getName());
 			OutputStream os = resp.getOutputStream();

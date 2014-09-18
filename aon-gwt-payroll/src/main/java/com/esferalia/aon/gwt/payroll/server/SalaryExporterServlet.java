@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -28,11 +27,10 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.bean.GWT;
-import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
-import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
+import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Constants;
-import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @SuppressWarnings("serial")
@@ -66,7 +64,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			OutputFormat outputFormat = getOutputFormat(extension);
 			reportManager.setOutputFormat(outputFormat);
 			
-			reportManager.setCollectionProvider(new AonServletUtils.SalaryProvider(criteria, new SiteFilter()));
+			reportManager.setCollectionProvider(new PayrollServletUtils.SalaryProvider(criteria, new SiteFilter()));
 			
 			
 			MimeType mimeType = MimeType.getByExtension(extension);
@@ -76,7 +74,7 @@ public class SalaryExporterServlet extends HttpServlet {
 			
 			int enterpriseId = AonRemoteServiceServlet.getEnterpriseID();
 			// TODO : SalaryType????
-			String salaryReport = AonServletUtils.getSalaryReport(enterpriseId, SalaryType.SALARY); 
+			String salaryReport = PayrollServletUtils.getSalaryReport(enterpriseId, SalaryType.SALARY); 
 			
 			reportManager.execute(os, salaryReport);
 			

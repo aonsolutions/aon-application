@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 
 public class DocumentServlet extends HttpServlet {
 	
@@ -25,8 +26,8 @@ public class DocumentServlet extends HttpServlet {
 		MimeType mimetype = MimeType.getByExtension(ext);
 		
 		try {
-			AonServletUtils.RAttach rattach = 
-					AonServletUtils.getRAttach(rattachId);
+			PayrollServletUtils.RAttach rattach = 
+					PayrollServletUtils.getRAttach(rattachId);
 			
 			resp.setContentType(mimetype.getName());
 			OutputStream os = resp.getOutputStream();

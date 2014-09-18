@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.commit;
-import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.disableAutoCommit;
-import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.enableAutoCommit;
-import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.getConnection;
-import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.rollback;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.DOMAIN;
@@ -13,9 +13,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_DATA;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_REGULARIZATION;
 import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_RESULT;
-import static com.esferalia.aon.payroll.sql.SQLConstants.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER;
@@ -32,7 +30,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -87,8 +84,8 @@ import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
-import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
-import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
+import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SalaryFilter;
+import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -164,15 +161,12 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfResultColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -1590,8 +1584,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			conn = getConnection();
 			int enterpriseId = getEnterpriseID();
-			return AonServletUtils.getSalaryReport(conn, enterpriseId,
-					salaryType);
+			return PayrollServletUtils.getSalaryReport(conn, enterpriseId,
+					salaryType != null ? salaryType : SalaryType.SALARY);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());
 		} catch (ManagerBeanException e) {
@@ -1628,7 +1622,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			reportManager.setOutputFormat(OutputFormat.HTML);
 			reportManager
-					.setCollectionProvider(new AonServletUtils.SalaryProvider(
+					.setCollectionProvider(new PayrollServletUtils.SalaryProvider(
 							criteria, null));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1967,10 +1961,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				.addInExpression(salaryBeanManager
 						.getFieldName(IEntityAlias.SALARY_TYPE), types);
 
-		return calc ? new AonServletUtils.CalcSalaryProvider(startDate,
+		return calc ? new PayrollServletUtils.CalcSalaryProvider(startDate,
 				endDate, sqlCriteria, types,
-				new AonServletUtils.SalaryProvider(aliasCriteria, filter))
-				: new AonServletUtils.SalaryProvider(aliasCriteria, filter);
+				new PayrollServletUtils.SalaryProvider(aliasCriteria, filter))
+				: new PayrollServletUtils.SalaryProvider(aliasCriteria, filter);
 
 	}
 
@@ -3218,7 +3212,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = AonServletUtils.getContract(draft.getEmployee()
+			Contract contract = PayrollServletUtils.getContract(draft.getEmployee()
 					.getId());
 
 			salary.setContract(contract);
@@ -3922,7 +3916,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = AonServletUtils.getContract(draft.getEmployee()
+			Contract contract = PayrollServletUtils.getContract(draft.getEmployee()
 					.getId());
 
 			salary.setContract(contract);

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getRAttach;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -22,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.RAttach;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -82,7 +86,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	private static ByteBuffer getPdfByeBuffer(Integer id) throws SQLException,
 			IOException {
 
-		AonServletUtils.RAttach rattach = AonServletUtils.getRAttach(id);
+		RAttach rattach = getRAttach(id);
 
 		return getPdfByeBuffer(id, rattach.mimeType, rattach.bytes);
 	}

@@ -7,10 +7,6 @@
 		background: none !important;
 	}
 	
-	@sprite .icon-view {
-		gwt-image: 'view';
-	}
-	
 	.button-bar button {
 		float: right;
 		width: 16px;
@@ -25,12 +21,11 @@
 	</ui:style>
 
 
-	<ui:image field='view' src='view.png' />
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel">
 		<g:north size="26">
 			<g:FlowPanel styleName="{style.button-bar} gwt-MenuBar-horizontal">
-				<g:Button styleName="{style.icon-view} gwt-MenuItem"
+				<g:Button styleName="aon-icon-view gwt-MenuItem"
 					ui:field=" viewResultsButton"></g:Button>
 				<g:Button styleName="aon-icon-time gwt-MenuItem" ui:field="resultsButton"></g:Button>
 				<g:Button styleName="aon-icon-delete gwt-MenuItem"

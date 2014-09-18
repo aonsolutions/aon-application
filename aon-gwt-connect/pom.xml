@@ -92,13 +92,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.gwt.payroll</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
 	</dependencies>
 	<profiles>
 		<profile>

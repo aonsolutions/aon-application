@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.connect.server;
 
+import static java.lang.String.format;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.apache.commons.fileupload.servlet.ServletFileUpload.isMultipartContent;
 
@@ -7,6 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.jooq.Record;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -33,15 +37,19 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.dsi.DSI2AON;
+import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
 import com.esferalia.aon.dsi.util.DBUtils;
+import com.esferalia.aon.dsi.util.DSIUtils;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
-import com.esferalia.aon.gwt.payroll.server.AonServletUtils;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
 @MultipartConfig
 public class DSIImportServlet extends HttpServlet implements DSIImportService {
 
-	private int MAX_MEM_SIZE = 4 * 1024;
+	private static int MAX_MEM_SIZE = 4 * 1024;
+	
+	private List<File> dbs ;
 
 	/**
 	 * The get method is used to monitor the uploading process .
@@ -60,7 +68,8 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		File tempDir = null;
-		List<File> dbs = new ArrayList<File>();
+		
+		dbs = new ArrayList<File>();
 		try {
 			ServletContext context = getServletContext();
 			AonServletUtils.initFacesContext(context, req, resp);
@@ -94,7 +103,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 					dbs.add(processUploadFile(fileItem));
 				}
 			}
-
 			
 			String owner = "admin"; //getRemoteUser();
 			String domain = req.getServerName();//getDomainName();
@@ -129,6 +137,31 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 
 	// ------------------------------------------------------------------------
 
+	protected void doGetEnterprises(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException, SQLException {
+		OutputStream out = null;
+		PrintStream print = null; 
+		try {
+			
+			out = resp.getOutputStream();
+			print = new PrintStream(out);
+			
+			for (File db : dbs) {
+				Connection conn = null;
+				try {
+					conn = getDSIConn(db);
+					List<FnempresRecord> empress = DSIUtils.getEmpress(conn);
+				}finally {
+					if ( conn != null )
+						conn.close();
+				}
+			}
+		} finally {
+			if ( print != null )
+				print.close(); // closes unserlying stream
+		}
+	}
+	
 	/**
 	 * Mark the current process to be canceled.
 	 * 
@@ -162,6 +195,18 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 
 
 	// ------------------------------------------------------------------------
+	
+	private static <R extends Record> void print(PrintStream print, R record ){
+		print.print('{');
+		
+		print.print('}');
+	}
+	
+	private static Connection getDSIConn(File db) throws SQLException {
+		String url = format("jdbc:paradox:///%s",
+				db.getAbsolutePath());
+		return DBUtils.getDsiConnection(url);
+	}
 
 	private static void unzip(File parent, ZipInputStream zin)
 			throws IOException {

@@ -104,7 +104,7 @@
 						<g:header>
 							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
 						</g:header>
-						<payroll:ResultsPanel ui:field="resultsPanel" />
+						<aon:ResultsPanel ui:field="resultsPanel" />
 					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>

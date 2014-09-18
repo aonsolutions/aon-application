@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.payroll.sql.SQLConstants.CATEGORY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.RATTACH;
-import static com.esferalia.aon.gwt.payroll.server.AonServletUtils.*;
+import static com.esferalia.aon.gwt.common.server.AonServletUtils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
