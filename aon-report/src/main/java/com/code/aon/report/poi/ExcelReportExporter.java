@@ -22,9 +22,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import com.code.aon.report.ReportException;
 
 public class ExcelReportExporter implements IReportExporter {
-	private static final String DATE_PATTERN = "dd/MM/yyyy";
-	private static final String DECIMAL_PATTERN = "#,##0.00";
-	private static final String NUMBER_PATTERN = "#,###";
+	public static final String DATE_PATTERN = "dd/MM/yyyy";
+	public static final String DECIMAL_PATTERN = "#,##0.00";
+	public static final String NUMBER_PATTERN = "#,###";
 	public  static short DEFAULT_BACKGROUND = new HSSFColor.AUTOMATIC().getIndex();
 
 	private HSSFWorkbook workbook;
@@ -60,14 +60,21 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public void exportHeader(ReportMetadata metadata) throws ReportException {
+		exportHeader(metadata, headerCellStyle);
+	}
+	public void exportHeader(ReportMetadata metadata,HSSFCellStyle cellStyle) throws ReportException {
 		addHeaderRow();
         for (int i=1; i<(metadata.getCount()+1); i++) {
 			ReportColumnMetadata columnMetadata = metadata.getColumns().get((i-1));
-			int width = ((columnMetadata.getDisplaySize() + 2) * 256);
-			width = width < 512 ? 512 : width;
-			width = width > (255 * 255) ? (255 * 255) : width;
-			addHeaderCell(columnMetadata.getLabel(), width);
+			int width = getWidth( columnMetadata.getDisplaySize() );
+			addHeaderCell(columnMetadata.getLabel(), width,cellStyle);
 		}
+	}
+
+	public int getWidth(int characters) {
+		int width = ((characters + 2) * 256);
+		width = width < 512 ? 512 : width;
+		return width > (255 * 255) ? (255 * 255) : width;
 	}
 
 	public void addHeaderRow() {
@@ -104,6 +111,12 @@ public class ExcelReportExporter implements IReportExporter {
 		}
 		return cell;
 	}
+	
+	public HSSFCell addStringCell(String value,HSSFCellStyle cellStyle) {
+		HSSFCell cell = addStringCell(value);
+		cell.setCellStyle(cellStyle);
+		return cell;
+	}
 
 	public HSSFCell addStringCell(String value) {
 		HSSFCell cell = addCell();
@@ -112,7 +125,12 @@ public class ExcelReportExporter implements IReportExporter {
 		return cell;
 	}
 
-	public HSSFCell addNumberCell(double number) {
+	public HSSFCell addNumberCell(double value,HSSFCellStyle cellStyle) {
+		HSSFCell cell = addNumberCell(value);
+		cell.setCellStyle(cellStyle);
+		return cell;
+	}
+	public HSSFCell addNumberCell(double number) {	
 		HSSFCell cell = addCell();
 		cell.setCellValue(number);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -127,9 +145,12 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public HSSFCell addDecimalCell(double number) {
+		return addDecimalCell(number,getDecimalCellStyle());
+	}
+	public HSSFCell addDecimalCell(double number,CellStyle cellStyle) {
 		HSSFCell cell = addCell();
 		cell.setCellValue(number);
-		cell.setCellStyle(getDecimalCellStyle());
+		cell.setCellStyle(cellStyle);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		return cell;
 	}
@@ -142,13 +163,17 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 
 	public HSSFCell addDateCell(Date value) {
+		return addDateCell(value,getDateCellStyle());
+	}
+
+	public HSSFCell addDateCell(Date value,CellStyle style) {
 		HSSFCell cell = addCell();
 		if (value == null) {
 			cell.setCellValue("");
 		} else {
 			cell.setCellValue(value);
 		}
-		cell.setCellStyle(getDateCellStyle());
+		cell.setCellStyle(style);
 		return cell;
 	}
 
@@ -185,6 +210,10 @@ public class ExcelReportExporter implements IReportExporter {
 
     public HSSFCellStyle createCellStyle() {
     	return workbook.createCellStyle();	
+    }
+
+    public DataFormat getDataFormat() {
+    	return dataFormat;	
     }
 
     public HSSFFont createFont() {

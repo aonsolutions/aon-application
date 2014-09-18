@@ -600,11 +600,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency> <groupId>ar.com.fdvs</groupId> <artifactId>DynamicJasper</artifactId> 
-			<version>4.0.0_beta3</version> <exclusions> <exclusion> <groupId>net.sf.jasperreports</groupId> 
-			<artifactId>jasperreports</artifactId> </exclusion> <exclusion> <groupId>commons-collections</groupId> 
-			<artifactId>commons-collections</artifactId> </exclusion> <exclusion> <groupId>commons-beanutils</groupId> 
-			<artifactId>commons-beanutils</artifactId> </exclusion> </exclusions> </dependency> -->
 		<dependency>
 			<groupId>eu.medsea.mimeutil</groupId>
 			<artifactId>mime-util</artifactId>

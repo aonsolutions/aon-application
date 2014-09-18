@@ -3,6 +3,7 @@ package com.code.aon.report.poi;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +41,27 @@ public class ReportMetadata {
 			throw new ReportException(e.getMessage(),e);
 			
 		} 
+	}
+
+	private ReportColumnMetadata getColumnMetadata(String name, String label,int type,int size) {
+		ReportColumnMetadata column = new ReportColumnMetadata();
+		column.setName(name);
+		column.setLabel(label);
+		column.setType(type);
+		column.setDisplaySize(size);
+		return column;
+	}
+	
+	public void addDateColumn( String name, String label) {
+		getColumns().add( getColumnMetadata(name, label, Types.DATE, 10));
+	}
+
+	public void addStringColumn(String name, String label, int size) {
+		getColumns().add( getColumnMetadata(name, label, Types.VARCHAR, size));
+	}
+	
+	public void addDecimalColumn(String name, String label) {
+		getColumns().add( getColumnMetadata(name, label, Types.DECIMAL, 15));
 	}
 	
 }

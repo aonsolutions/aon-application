@@ -20,23 +20,7 @@
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-payroll-ctsql2mysql</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-payroll-ctsql2mysql</connection>
 	</scm>
-
-	<repositories>
-		<repository>
-			<id>dynamicJasper-public-repository</id>
-			<name>DynamicJasper public Repository</name>
-			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

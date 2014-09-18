@@ -8,6 +8,7 @@ import static com.code.aon.ui.common.ICommonMessages.PENDING;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -15,17 +16,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.ss.usermodel.Font;
 import org.richfaces.event.UploadEvent;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryBankStatement;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
@@ -35,11 +42,11 @@ import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
@@ -65,8 +72,8 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.report.dynamic.DynaElements;
-import com.code.aon.report.dynamic.DynaReport;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.event.BankStatementSearchListener;
@@ -74,8 +81,8 @@ import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.event.FinanceTrackingListSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankStatementController extends BasicController implements IFinanceConstants {
@@ -1761,26 +1768,88 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 	
 	public String onExcelReport() {
+		HttpServletResponse response = null;
+		OutputStream out = null;
 		try {
-			DynaElements dyn = new DynaElements();
-			DynaReport report = new DynaReport();
-			report.addColumn(dyn.getStringColumn("registryBank.fullName", "Banco", 150))
-			.addColumn(dyn.getIntegerColumn("lotNumber", "Lote"))
-			.addColumn(dyn.getDateColumn("operationDate", "Fecha"))
-			.addColumn(dyn.getEnumColumn("commonConcept", AonUtil.getCurrentLocale(), "Operación", 100))
-			.addColumn(dyn.getStringColumn("description", "Concepto", 350))
-			.addColumn(dyn.getBooleanColumn("payment", "Cargo", "Abono", "Tipo", 50))
-			.addColumn(dyn.getNumberColumn("amount", "Importe"))
-			.addColumn(dyn.getEnumColumn("status", AonUtil.getCurrentLocale(), "Estado", 80))
-			.addColumn(dyn.getStringColumn("comments", "Comentarios", 1024));
+			Locale locale = AonUtil.getCurrentLocale();
+			String filename = "ExtractoBancario";
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, filename, MimeType.MIME_MS_EXCEL);
+			ExcelReportExporter exporter = new ExcelReportExporter();
+			exporter.startExport(filename);
+			
+			HSSFFont font = exporter.createFont();
+			font.setFontHeightInPoints((short) 8);
 
-			DynaReportManager drm = new DynaReportManager();
-			drm.toExcel(report,"ExtractoBancario", search(0, getRowCount()));
-		} catch (Exception e) {
+			HSSFFont boldFont = exporter.createFont();
+			boldFont.setFontHeightInPoints((short) 8);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
+		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
+		    headerCellStyle.setFont(boldFont);
+		    
+			exporter.addHeaderCell("Banco", exporter.getWidth(60), headerCellStyle);
+			exporter.addHeaderCell("Lote", exporter.getWidth(5), headerCellStyle);
+			exporter.addHeaderCell("Fecha", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Operación", exporter.getWidth(20), headerCellStyle);
+			exporter.addHeaderCell("Concepto", exporter.getWidth(50), headerCellStyle);
+			exporter.addHeaderCell("Tipo", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Importe", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Estado", exporter.getWidth(12), headerCellStyle);
+			exporter.addHeaderCell("Comentarios", exporter.getWidth(250), headerCellStyle);
+			
+			
+			HSSFCellStyle defaultStyle = exporter.createCellStyle();
+			defaultStyle.setFont(font);
+
+			HSSFCellStyle dateStyle = exporter.createCellStyle();
+			dateStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DATE_PATTERN));
+			dateStyle.setFont(font);
+
+			HSSFCellStyle amountStyle = exporter.createCellStyle();
+			amountStyle.setFont(font);
+			amountStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DECIMAL_PATTERN));
+			
+			List<ITransferObject> list = search(0, getRowCount());
+			for ( ITransferObject to : list ) {
+				BankStatement bs = (BankStatement) to;
+				exporter.startLine();
+				String bank = bs.getRegistryBank() != null?bs.getRegistryBank().getFullName():""; 
+				exporter.addStringCell( bank , defaultStyle );
+				exporter.addNumberCell( bs.getLotNumber() , defaultStyle );
+				exporter.addDateCell( bs.getOperationDate() , dateStyle );
+				String commonConcept = bs.getCommonConcept() != null?bs.getCommonConcept().getName(locale):"";
+				exporter.addStringCell( commonConcept , defaultStyle );
+				exporter.addStringCell( bs.getDescription() , defaultStyle );
+				String paymentLabel = (bs.isPayment())?"Cargo":"Abono";
+				exporter.addStringCell( paymentLabel , defaultStyle );
+				exporter.addDecimalCell( bs.getAmount(),amountStyle );
+				String status = bs.getStatus() != null?bs.getStatus().getName(locale):"";
+				exporter.addStringCell( status , defaultStyle );
+				exporter.addStringCell( bs.getComments() , defaultStyle );
+				exporter.endLine();
+			}
+			exporter.endExport(out);
+			
+		} catch (ReportException e) {
 			e.printStackTrace();
 			String msg = "No se pudo generar el listado";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
 		}
 		return null;
 	}

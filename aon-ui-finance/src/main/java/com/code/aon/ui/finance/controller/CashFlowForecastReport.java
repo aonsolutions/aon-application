@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,15 +17,20 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.ss.usermodel.Font;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.CashFlowForecast;
 import com.code.aon.finance.Finance;
@@ -33,16 +40,15 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.report.ReportException;
-import com.code.aon.report.dynamic.DynaElements;
-import com.code.aon.report.dynamic.DynaReport;
+import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CashFlowForecastReport extends DataScrollerState {
@@ -625,35 +631,6 @@ public class CashFlowForecastReport extends DataScrollerState {
 		return flows;
 	}
 
-	public String onExcelReport() {
-		try {
-			DynaElements dyn = new DynaElements();
-			DynaReport report = new DynaReport();
-			report.addField("to", CashFlowReport.class);
-			report.addField("payment", Boolean.class);
-			report.addField("systemProperty", Boolean.class);
-			report.addField("disabled", Boolean.class);
-			report.addColumn(dyn.getDateColumn("date", "Fecha"))
-				.addColumn(dyn.getStringColumn("type", "T", 30))
-				.addColumn(dyn.getStringColumn("description", "Descripción", 400))
-				.addColumn(dyn.getNumberBlueNormalColumn("amount", "Importe"))
-				.addColumn(dyn.getNumberRedBlueBoldColumn("total", "Saldo"));
-			for (CashFlowBank bank : getBanks()) {
-				if (bank.isEnabled()) {
-					report.addColumn(dyn.getNumberRedBlueColumn(new BankCustomExpression(bank.getId()), bank.getDescription()));
-				}
-			}
-			DynaReportManager drm = new DynaReportManager();
-			drm.toExcel(report,"PrevisionTesoreria", getStrippedCollection());
-		} catch (ReportException e) {
-			e.printStackTrace();
-			String msg = "No se pudo generar el listado";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		return null;
-	}
-
 	private List<CashFlowReport> getStrippedCollection() {
 		List<CashFlowReport> list = new LinkedList<CashFlowReport>();
 		List<?> model = (List<?>) getDirectModel().getWrappedData();
@@ -664,6 +641,94 @@ public class CashFlowForecastReport extends DataScrollerState {
 			}
 		}
 		return list;
+	}
+
+	public String onExcelReport() {
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			String filename = "PrevisionTesoreria";
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, filename, MimeType.MIME_MS_EXCEL);
+			ExcelReportExporter exporter = new ExcelReportExporter();
+			exporter.startExport(filename);
+			
+			HSSFFont font = exporter.createFont();
+			font.setFontHeightInPoints((short) 8);
+
+			HSSFFont boldFont = exporter.createFont();
+			boldFont.setFontHeightInPoints((short) 8);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
+		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
+		    headerCellStyle.setFont(boldFont);
+		    
+			exporter.addHeaderCell("Fecha", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Tipo", exporter.getWidth(3), headerCellStyle);
+			exporter.addHeaderCell("Descripción", exporter.getWidth(60), headerCellStyle);
+			exporter.addHeaderCell("Importe", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Total", exporter.getWidth(10), headerCellStyle);
+			for (CashFlowBank bank : getBanks()) {
+				if (bank.isEnabled()) {
+					exporter.addHeaderCell(bank.getDescription(), exporter.getWidth(10), headerCellStyle);
+				}
+			}
+			
+			HSSFCellStyle defaultStyle = exporter.createCellStyle();
+			defaultStyle.setFont(font);
+
+			HSSFCellStyle dateStyle = exporter.createCellStyle();
+			dateStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DATE_PATTERN));
+			dateStyle.setFont(font);
+
+			HSSFCellStyle amountStyle = exporter.createCellStyle();
+			amountStyle.setFont(font);
+			amountStyle.setDataFormat( exporter.getDataFormat().getFormat("[Blue]#,##0.00;[Red]-#,##0.00"));
+			
+			HSSFCellStyle totalStyle = exporter.createCellStyle();
+			totalStyle.setDataFormat( exporter.getDataFormat().getFormat("[Blue]#,##0.00;[Red]-#,##0.00"));
+			totalStyle.setFont(boldFont);
+			
+			
+			for ( CashFlowReport cfr : getStrippedCollection() ) {
+				exporter.startLine();
+				exporter.addDateCell( cfr.getDate() , dateStyle );
+				exporter.addStringCell( cfr.getType() , defaultStyle );
+				exporter.addStringCell( cfr.getDescription() , defaultStyle );
+				if (cfr.getAmount() != 0) {
+					exporter.addDecimalCell( cfr.getAmount(),amountStyle );	
+				} else {
+					exporter.addEmptyNumberCell();
+				}
+				exporter.addDecimalCell( cfr.getTotal(),amountStyle);
+				for (CashFlowBank bank : getBanks()) {
+					if (cfr.getMap().containsKey(bank.getId())) {
+						double amount = cfr.getMap().get(bank.getId()).getBalance();
+						exporter.addDecimalCell( amount,amountStyle );
+					} else {
+						exporter.addEmptyNumberCell();
+					}
+				}
+				exporter.endLine();
+			}
+			exporter.endExport(out);
+			
+		} catch (ReportException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
+		return null;
 	}
 }
 
