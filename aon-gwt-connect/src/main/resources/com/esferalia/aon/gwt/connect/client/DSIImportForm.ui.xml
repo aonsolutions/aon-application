@@ -55,7 +55,6 @@
 									<g:FormPanel ui:field="uploadFormPanel">
 										<g:HorizontalPanel>
 											<g:FileUpload ui:field="fileUpload" name="zipfile"/>
-
 										</g:HorizontalPanel>
 									</g:FormPanel>									
 								</td>
@@ -63,27 +62,10 @@
 						</table>
 					</div>
 
-		<!-- 			<div class="aon-scroll-area">
-						<table class="aon-panelGrid" cellspacing="0" cellpadding="0">
-							<tr>
-								<td class="aon-panelGrid-odd">
-									<g:Label styleName="aon-outputLabel">Adjuntar archivo</g:Label>
-								</td>
-								<td>
-									<g:FormPanel ui:field="uploadFormPanel">
-										<g:HorizontalPanel>
-											<g:FileUpload ui:field="fileUpload" />
-
-										</g:HorizontalPanel>
-									</g:FormPanel>
-								</td>
-							</tr>
-						</table>
-					</div> -->
-
 					<div class="aon-scroll-area">
 						<g:Button ui:field="sendButton" styleName="aon-search-lookup-button">Enviar</g:Button>
-					</div>
+					</div>					
+					
 				</g:HTMLPanel>
 
 			</g:ScrollPanel>

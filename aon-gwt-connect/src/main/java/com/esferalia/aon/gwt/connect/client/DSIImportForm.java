@@ -31,9 +31,6 @@ public class DSIImportForm implements EntryPoint {
 	@UiField FileUpload fileUpload;
 	@UiField Button sendButton;
 	
-	public DSIImportForm() {
-
-	}
 
 	@Override
 	public void onModuleLoad() {
@@ -59,7 +56,9 @@ public class DSIImportForm implements EntryPoint {
 		
 		uploadFormPanel.setAction("/aon_gwt_connect/dsiimport");
 		uploadFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
-		uploadFormPanel.setMethod(FormPanel.METHOD_POST);
+		uploadFormPanel.setMethod(FormPanel.METHOD_POST);		
+		
+		uploadFormPanel.getElement().setDraggable("DRAGGABLE_TRUE");
 	}
 	// ------------------------------------------------------------- UiHandlers
 	
@@ -87,12 +86,15 @@ public class DSIImportForm implements EntryPoint {
 	
 	@UiHandler ("sendButton")
 	void onClick (ClickEvent event) {
-		
+				
 		 try {
 			 uploadFormPanel.submit();
 		 }catch(Exception ex) {
 			 Window.alert("Error en submit");
+		 }finally {
+			 fileUpload.getElement().setPropertyString("value", "");
 		 }
+		 
 	}
 
 }
