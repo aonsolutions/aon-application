@@ -3,10 +3,12 @@ package com.code.aon.ui.sales.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.SelectItem;
 
 import org.jooq.Record2;
 import org.jooq.Result;
@@ -25,6 +27,8 @@ import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.sales.importer.AmazonSalesHandler;
 import com.code.aon.ui.sales.importer.AmazonSalesReturnHandler;
@@ -54,8 +58,32 @@ public class SalesImporterController implements Serializable {
 	private DataModel generatedSales;
 
 	private SalesImporterHandler handler;
+	
+	private String series;
+	
+	private boolean succesfullEnding;
 
 	
+	public boolean isSuccesfullEnding() {
+		return succesfullEnding;
+	}
+
+	public void setSuccesfullEnding(boolean succesfullEnding) {
+		this.succesfullEnding = succesfullEnding;
+	}
+
+	public String getSeries() {
+		return series;
+	}
+
+	public void setSeries(String series) {
+		this.series = series;
+	}
+	
+	public boolean isSalesImport(){
+		return handler instanceof AmazonSalesHandler;
+	}
+
 	public SalesImporterHandler getHandler() {
 		return handler;
 	}
@@ -113,6 +141,7 @@ public class SalesImporterController implements Serializable {
 
 	public void fileUploaded(UploadEvent event) {
 		setAonFile(AttachmentUtil.fileUploaded(event));
+		reset();
 	}
 	
 	public void onInitAmazonItem(ActionEvent event){
@@ -133,9 +162,11 @@ public class SalesImporterController implements Serializable {
 	}
 	
 	private void reset(){
+		succesfullEnding = false;
 		nonExistentItems = null;
 		importedSales = null;
 		existingSales = null;
+		generatedSales = null;
 		nonExistentSales = null;
 		nonExistentItems = null;
 		if(handler!=null){
@@ -189,8 +220,8 @@ public class SalesImporterController implements Serializable {
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 		
-		AonUtil.addInfoMessage("Pedidos generados correctamente.");
-		onInit(event);
+		reset();
+		succesfullEnding = true;
 	}
 	
 	public void onSelectNonexistentItem(ActionEvent event){
@@ -205,13 +236,6 @@ public class SalesImporterController implements Serializable {
 		controller.setBackAction("amazonSalesImporter_form");
 		controller.setBackActionListener("amazonSalesImporter.loadData");
 		
-//		ProductController controller = (ProductController) AonUtil.getRegisteredBean("product");
-//		controller.onReset(event);
-//		Product product = (Product) controller.getTo();
-//		product.setCode(tempRItem.getCode());
-//		product.setName(tempRItem.getItem().getDescription());
-//		controller.setBackAction("amazonSalesImporter_form");
-//		controller.setBackActionListener("amazonSalesImporter.reloadDataCheck");
 	}
 
 	public void onLoadSales(ActionEvent event){
@@ -229,6 +253,10 @@ public class SalesImporterController implements Serializable {
 			LOGGER.error("onLoadSales: " + e.getMessage());
 		}
 	}
-	
+
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		return ccc.getSalesSeriesIds();
+	}
 	
 }

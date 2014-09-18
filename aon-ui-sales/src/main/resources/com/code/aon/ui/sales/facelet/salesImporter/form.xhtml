@@ -22,6 +22,13 @@
 							type="reset" ajaxSingle="true"
 							actionListener="#{salesImporter.onInit}" reRender="salesImporter-Form"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="salesImporter-loader"
+							rendered="#{salesImporter.aonFile.size > 0 and !(salesImporter.importedSales.rowCount>0) and salesImporter.validFile and !salesImporter.succesfullEnding}"
+							value="#{bundle.aon_loader_load}"
+							actionListener="#{salesImporter.loadData}" reRender="salesImporter-Form"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+			     			oncomplete="Richfaces.hideModalPanel('waitProccess')"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 						<aon:commandButton id="salesImporter-process"
 							rendered="#{salesImporter.importedSales.rowCount>0}"
 							value="#{bundle.aon_accept}"
@@ -32,35 +39,62 @@
 			</aon:div>			
 
 			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:panel style="width:100%;">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_loader_module}" />
-					</f:facet>
-					<h:panelGrid id="attachGrid" columns="2">
-						<aon:outputText rendered="#{salesImporter.aonFile.size > 0}"
-							value="#{salesImporter.aonFile.fileName} - ( #{salesImporter.aonFile.size} bytes)" />
-						<aon:fileUpload id="attach_file"
-							addControlLabel="#{bundle.aon_fileUpload_add}"
-							stopControlLabel="#{bundle.aon_fileUpload_stop}"
-							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-							fileUploadListener="#{salesImporter.fileUploaded}" immediateUpload="true"
-							autoclear="true" listWidth="0px" listHeight="0px">
-							<f:facet name="label">
-								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-							</f:facet>
-							<a4j:support event="onuploadcomplete" actionListener="#{salesImporter.loadData}" reRender="salesImporter-Form" />
-						</aon:fileUpload>
-					</h:panelGrid>
-				</aon:panel>
-
+	
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-even aon-noborder aon-width-500, aon-panelGrid-even aon-noborder aon-width-auto">
+					<aon:panelGrid id="attachGrid" columns="4" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-150 ,aon-panelGrid-even aon-width-auto">
+						<aon:div style="height: 30px;">
+							<aon:outputText value="#{bundle.aon_loader_module}" />
+						</aon:div>
+						<h:panelGrid columns="2">
+							<aon:outputText rendered="#{salesImporter.aonFile.size > 0}"
+								value="#{salesImporter.aonFile.fileName} - ( #{salesImporter.aonFile.size} bytes)" />
+							<aon:fileUpload id="attach_file"
+								rendered="#{!(salesImporter.importedSales.rowCount>0) and !salesImporter.succesfullEnding}"
+								addControlLabel="#{bundle.aon_fileUpload_add}"
+								stopControlLabel="#{bundle.aon_fileUpload_stop}"
+								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+								fileUploadListener="#{salesImporter.fileUploaded}" immediateUpload="true"
+								autoclear="true" listWidth="0px" listHeight="0px">
+								<f:facet name="label">
+									<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+								</f:facet>
+								<a4j:support event="onuploadcomplete" reRender="salesImporter-Form" />
+							</aon:fileUpload>
+						</h:panelGrid>
+					</aon:panelGrid>
+						
+					<aon:panelGrid id="seriesGrid" columns="4" styleClass="aon-width-all"
+						rendered="#{salesImporter.salesImport and salesImporter.importedSales.rowCount>0}"
+						columnClasses="aon-panelGrid-odd aon-width-80 ,aon-panelGrid-even aon-width-auto">
+						<aon:div style="height: 30px;">
+							<aon:outputText value="#{bundle.aon_series}" />
+						</aon:div>
+						<aon:selectOneMenu value="#{salesImporter.series}" required="#{true}" >
+							<f:selectItems value="#{salesImporter.seriesCodes}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+				</aon:panelGrid>
+				
+				<aon:div style="height: 10px;" />
+				
 				<aon:div rendered="#{not empty salesImporter.aonFile and !salesImporter.validFile}">
 					<aon:panel>
 						<aon:outputText value="&#160;"
 							styleClass="aon-icon-exception aon-icon" />
 						<aon:outputText style="font-size:1.5em;"
-							value="La estructura del fichero no es correcta." />
+							value="La estructura del fichero es incorrecta." />
+					</aon:panel>
+				</aon:div>
+
+				<aon:div rendered="#{salesImporter.succesfullEnding}">
+					<aon:panel>
+						<aon:outputText value="&#160;"
+							styleClass="aon-icon-predetermine aon-icon" />
+						<aon:outputText style="font-size:1.5em;"
+							value="Datos guardados correctamente" />
 					</aon:panel>
 				</aon:div>
 
@@ -120,22 +154,23 @@
 				
 				<aon:panel rendered="#{salesImporter.nonExistentSales.rowCount>0}">
 					<f:facet name="header">
-						<aon:outputText value="Pedidos no existentes (no se actualizan)" />
+						<aon:outputText value="Pedidos inexistentes (no se actualizan)" />
 					</f:facet>
 					<ui:include
 						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
 						<ui:param name="dataModel" value="#{salesImporter.nonExistentSales}" />
 					</ui:include>
 				</aon:panel>
-				
-				<aon:panel rendered="#{salesImporter.generatedSales.rowCount>0}">
+	
+				<aon:panel rendered="#{salesImporter.succesfullEnding}">
 					<f:facet name="header">
 						<aon:outputText value="Pedidos generados" />
 					</f:facet>
 					<ui:include
 						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
 						<ui:param name="dataModel" value="#{salesImporter.generatedSales}" />
-						<ui:param name="showGoToButton" value="#{true}" />
+						<ui:param name="showGoToButton" value="#{false}" />
+						<ui:param name="showSalesData" value="#{true}" />
 					</ui:include>
 				</aon:panel>
 				

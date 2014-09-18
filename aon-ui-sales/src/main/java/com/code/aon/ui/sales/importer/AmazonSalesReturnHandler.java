@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.jooq.Record2;
+import org.jooq.Result;
 import org.jooq.tools.csv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +22,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.sales.Sales;
-import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.util.AonUtil;
@@ -101,38 +103,68 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		int quantity_col = ImporterUtils.obtainHeaderPosition(headers, "quantity");
 		int reason_col = ImporterUtils.obtainHeaderPosition(headers, "reason");
 		
-		HashMap<String, Sales> salesList = new HashMap<String, Sales>();
-		HashMap<String, Sales> nonExistentSalesMap = new HashMap<String, Sales>();
+		HashMap<String, AmazonSales> salesList = new HashMap<String, AmazonSales>();
+		HashMap<String, AmazonSales> nonExistentSalesMap = new HashMap<String, AmazonSales>();
 		linesList.remove(0);
 		for(String[] line: linesList){
-			if ( ImporterUtils.validColumns(line, returnDate_col, orderId_col, merchantSku_col, title_col, quantity_col, reason_col) ) {
-
+			
+			if ( ImporterUtils.validColumns(line,
+					returnDate_col, orderId_col, merchantSku_col, 
+					title_col, quantity_col, reason_col) ){
 				String orderId = line[orderId_col];
-				if(!salesList.containsKey(orderId)){
-					Sales sales = ImporterUtils.obtainSales(orderId);
-					if(sales!=null && sales.getId()!=null){
-						salesList.put(orderId, sales);
-					} else {
-						sales = new Sales();
-						sales.setPurchaseReference(orderId);
-						sales.setStatus(SalesStatus.PENDING);
-						try {
-							sales.setIssueDate(dateFormat.parse(line[returnDate_col]));
-						} catch (ParseException e) {
-							LOGGER.error(e.getMessage());
-							sales.setIssueDate(new Date());
-						}
-						sales.setSeller(null);
-						sales.setCustomer(null);
-						if(!nonExistentSalesMap.containsKey(orderId)){
-							nonExistentSalesMap.put(orderId, sales);
-						}
-					}
+				AmazonSales amazonSales = new AmazonSales();
+				amazonSales.setPurchaseReference(orderId);
+				try {
+					amazonSales.setIssueDate(dateFormat.parse(line[returnDate_col]));
+				} catch (ParseException e) {
+					// leave empty
+					LOGGER.error(e.getMessage());
+				}
+				amazonSales.setSeller(ImporterUtils.obtainSales(orderId).getSeller());
+				amazonSales.setCustomer(ImporterUtils.obtainSales(orderId).getCustomer());
+				salesList.put(orderId, amazonSales);
+			}
+		}
+		
+		existingSalesList = new LinkedList<AmazonSales>();
+		Result<Record2<Integer, String>> record = ImporterUtils.getSalesReturnRecords(salesList.keySet());
+		if(record!=null && record.size()>0){
+			for (Record2<Integer, String> step : record) {
+				String code = step.value2().trim();
+				if(salesList.containsKey(code)){
+					existingSalesList.add(salesList.remove(code));
 				}
 			}
 		}
-//		nonExistentSales = new ArrayList<Sales>(nonExistentSalesMap.values());
-//		importedSalesList = new ArrayList<Sales>(salesList.values());
+		
+		
+		Result<Record2<Integer, String>> salesRecords = ImporterUtils.getSalesRecords(salesList.keySet());
+		if(salesRecords==null || salesRecords.size()<=0){
+			nonExistentSales = new ArrayList<AmazonSales>(salesList.values());
+			importedSalesList = new ArrayList<AmazonSales>(null);
+		} else {
+			// existing sales in data base
+			HashMap<String, Integer> resultMap = new HashMap<String, Integer>();
+			for (Record2<Integer, String> step : salesRecords) {
+				Integer id = step.value1();
+				String code = step.value2();
+				resultMap.put(code, id);
+			}
+			// extract non existing sales
+			for (AmazonSales amazonSales : salesList.values()) {
+				if(resultMap.containsKey(amazonSales.getPurchaseReference())){
+					amazonSales.setSalesId(resultMap.get(amazonSales.getPurchaseReference()));
+				} else {
+					nonExistentSalesMap.put(amazonSales.getPurchaseReference(), salesList.get(amazonSales.getPurchaseReference()));
+				}
+			}
+			for (String key : nonExistentSalesMap.keySet()) {
+				salesList.remove(key);
+			}
+		}
+		
+		nonExistentSales = new ArrayList<AmazonSales>(nonExistentSalesMap.values());
+		importedSalesList = new ArrayList<AmazonSales>(salesList.values());
 	}
 	
 	@Override

@@ -32,6 +32,7 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.sales.controller.ISalesConstants;
+import com.code.aon.ui.sales.controller.SalesImporterController;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -113,6 +114,8 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		generatedSales = new LinkedList<Sales>();
 		SalesUtils salesUtils = new SalesUtils();
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		SalesImporterController importerController = (SalesImporterController) AonUtil.getRegisteredBean(ISalesConstants.SALES_IMPORTER_CONTROLLER_NAME);
+		String serie = importerController.getSeries();
 		for(AmazonSales amazonSales: importedSalesList){
 			Sales sales = new Sales();
 			try {
@@ -126,8 +129,8 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 				sales.setPaymentDays("0");
 				sales.setWorkPlace(ImporterUtils.obtainWorkPlace());
 				
-				sales.setSeries( salesUtils.obtainWorkPlaceSerie(sales.getWorkPlace()) );
-				sales.setNumber( salesUtils.obtainSeriesMaxNumber(sales.getSeries()) );
+				sales.setSeries( serie );
+				sales.setNumber( salesUtils.obtainSeriesMaxNumber(serie) );
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage());
 			}
@@ -141,12 +144,15 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 				SalesDetail salesDetail = new SalesDetail(); 
 				salesDetail.setSales(amazonSalesDetail.getAmazonSales().getSales());
 				salesDetail.setStatus(SalesDetailStatus.PENDING);
-				salesDetail.setItem(ImporterUtils.obtainItem(importedSalesItemMap.get(amazonSalesDetail.getSku())));
-				salesDetail.setDescription(salesDetail.getItem().getProduct().getName());
-				salesDetail.setPrice(salesDetail.getItem().getPrice());
-				salesDetail.setDiscountExpression(ImporterUtils.obtainItemDiscountExpression(salesDetail.getItem(), amazonSalesDetail.getPrice(), amazonSalesDetail.getCurrency()));
-				salesDetail.setQuantity(Double.valueOf(amazonSalesDetail.getQuantity()));
 				
+				Item item = ImporterUtils.obtainItem(importedSalesItemMap.get(amazonSalesDetail.getSku()));
+				salesDetail.setItem(item);
+				salesDetail.setDescription(item.getProduct().getName()+" ["+item.getDetail()+"]");
+				
+				Double amazonPrice = ImporterUtils.obtainItemPrice(salesDetail.getItem().getVat(), amazonSalesDetail.getPrice());
+				salesDetail.setPrice(salesDetail.getItem().getPrice());
+				salesDetail.setDiscountExpression(ImporterUtils.obtainItemDiscountExpression(salesDetail.getItem().getPrice(), amazonPrice, amazonSalesDetail.getCurrency()));
+				salesDetail.setQuantity(Double.valueOf(amazonSalesDetail.getQuantity()));
 				
 				salesDetail.setLine(salesUtils.calculateNextLine(salesDetail.getSales()));
 				salesDetailBean.insert(salesDetail);

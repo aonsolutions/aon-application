@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Record2;
@@ -33,7 +34,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Tax;
 import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
@@ -43,6 +46,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -56,6 +60,7 @@ public class ImporterUtils implements Serializable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImporterUtils.class.getName());
 	
 	private static String CURRENCY_GBP = "GBP";
+	private static String CURRENCY_EUR = "EUR";
 	
 	private static String CUSTOMER_NAME_UK = "CLIENTE CONTADO GRAN BRETAÑA";
 	private static String CUSTOMER_NAME_DE = "CLIENTE CONTADO ALEMANIA";
@@ -152,17 +157,27 @@ public class ImporterUtils implements Serializable {
 		return null;
 	}
 
-	public static DiscountExpression obtainItemDiscountExpression(Item item, String price, String currency) {
+	public static Double obtainItemPrice(Tax vat, String price) {
+		if(!NumberUtils.isNumber(price)){
+			return null;
+		}
+		Double notVatPrice = Double.valueOf(price);
+		notVatPrice /= (1 + (vat.getPercentage()/100));
+		return notVatPrice;
+	}
+	
+	public static DiscountExpression obtainItemDiscountExpression(Double itemPrice, Double amazonPrice, String currency) {
 		try {
-			if(item.getPrice()!=Double.valueOf(price)){
+			if(itemPrice!=amazonPrice){
 				Double currencyFactor = 1.0;
 				if(StringUtils.isNotBlank(currency) && currency.toUpperCase().equals(CURRENCY_GBP)){
-					currencyFactor = 0.79;
-//					currencyFactor = 1.26;
+					currencyFactor = 1.2674;
+				} else if(StringUtils.isNotBlank(currency) && !currency.toUpperCase().equals(CURRENCY_EUR)){
+					LOGGER.error("Currency not supported " + currency);
+					AonUtil.addErrorMessage("Currency not supported " + currency);
 				}
-				
-				double percent = (1 - ((Double.valueOf(price) * currencyFactor)/item.getPrice()));
-				return new DiscountExpression( String.valueOf(percent) );
+				double percent = (1 - ((amazonPrice * currencyFactor)/itemPrice));
+				return new DiscountExpression( String.valueOf(CommonUtil.round(percent*100,4)) );
 			}
 		} catch (NumberFormatException e) {
 			LOGGER.error("SalesUtils.obtainItemDiscountExpression: " + e.getMessage());
@@ -349,7 +364,7 @@ public class ImporterUtils implements Serializable {
 					.from(REGISTRY)
 					.where(REGISTRY.DOMAIN.equal(DomainManager
 							.getCurrentDomain()))
-					.and(REGISTRY.ALIAS.equal(alias)).fetch();
+					.and(REGISTRY.ALIAS.likeIgnoreCase(alias)).fetch();
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
@@ -419,6 +434,7 @@ public class ImporterUtils implements Serializable {
 					.select(SALES.ID, SALES.PURCHASE_REFERENCE)
 					.from(SALES)
 					.where(SALES.DOMAIN.equal(DomainManager.getCurrentDomain()))
+					.and(SALES.DOCUMENT_TYPE.equal((byte) DocumentType.NORMAL.ordinal()))
 					.and(DSL.trim(SALES.PURCHASE_REFERENCE).in(codeList)).fetch();
 			return record;
 		} catch (AonConnectionException e) {
@@ -429,5 +445,28 @@ public class ImporterUtils implements Serializable {
 		}
 	}
 
+	public static Result<Record2<Integer, String>> getSalesReturnRecords(
+			Collection<String> codeList) {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Settings SETTINGS = null;
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+			DSLContext ctx = DSL.using(connection, SETTINGS);
+			Result<Record2<Integer, String>> record = ctx
+					.select(SALES.ID, SALES.PURCHASE_REFERENCE)
+					.from(SALES)
+					.where(SALES.DOMAIN.equal(DomainManager.getCurrentDomain()))
+					.and(SALES.DOCUMENT_TYPE.equal((byte) DocumentType.ITEM_RETURN.ordinal()))
+					.and(DSL.trim(SALES.PURCHASE_REFERENCE).in(codeList)).fetch();
+			return record;
+		} catch (AonConnectionException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}
+	}
 	
 }

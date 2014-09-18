@@ -50,6 +50,8 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 
 	private List<AmazonSales> nonExistentSales;
 	
+	private List<Sales> generatedSales;
+	
 	public String getModuleLabel(){
 		return AonUtil.getMessage(ISalesConstants.AMAZON_SHIPMENT_INTEGRATION);
 	}
@@ -71,7 +73,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 	}
 	
 	public List<Sales> getGeneratedSales(){
-		return null;
+		return generatedSales;
 	}
 	
 	public boolean isValidFile(AonFile aonFile) {
@@ -101,6 +103,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 		processImportedSalesShipment(csv.readAll());
 	}
 	public void accept() throws ManagerBeanException{
+		generatedSales = new LinkedList<Sales>();
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		for(AmazonSales amazonSales: importedSalesList){
 			Sales sales = (Sales) salesBean.get(amazonSales.getSalesId());
@@ -152,15 +155,17 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 						rmedia.setValue(amazonSales.getBuyerEmail());
 						BeanManager.getManagerBean(RegistryMedia.class).insert(rmedia);
 					}
-				} else {
-					sales.setShippingAlternativeAddress(amazonSales.getShipAddress1());
-					sales.setShippingAlternativeAddress2(amazonSales.getShipAddress2()+". "+amazonSales.getShipAddress3());
-					sales.setShippingAlternativeZip(amazonSales.getShipPostalCode());
-					sales.setShippingAlternativeCity(amazonSales.getShipCity()+", "+amazonSales.getShipState()+" ("+amazonSales.getShipCountry()+")");
-					sales.setShippingAlternativePhone(amazonSales.getBuyerPhoneNumber());
-					sales.setShippingAlternativeRecipient(amazonSales.getBuyerName());
 				}
+				// shipment data
+				sales.setShippingAlternativeAddress(amazonSales.getShipAddress1());
+				sales.setShippingAlternativeAddress2(amazonSales.getShipAddress2()+". "+amazonSales.getShipAddress3());
+				sales.setShippingAlternativeZip(amazonSales.getShipPostalCode());
+				sales.setShippingAlternativeCity(amazonSales.getShipCity()+", "+amazonSales.getShipState()+" ("+amazonSales.getShipCountry()+")");
+				sales.setShippingAlternativePhone(amazonSales.getBuyerPhoneNumber());
+				sales.setShippingAlternativeRecipient(amazonSales.getBuyerName());
+
 				salesBean.update(sales);
+				generatedSales.add(sales);
 			}
 		}
 	}

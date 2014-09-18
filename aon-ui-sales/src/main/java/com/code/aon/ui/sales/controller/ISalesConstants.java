@@ -7,6 +7,7 @@ public interface ISalesConstants {
 	String SALES_FORM_NAME = "sales_form";
 	String SALES_CONTROLLER_NAME = "sales";
 	String SALES_DETAIL_CONTROLLER_NAME = "salesDetail";
+	String SALES_IMPORTER_CONTROLLER_NAME = "salesImporter";
 	String SALES_SEARCH_LISTENER_NAME = "salesSearch";
 	
 	String OFFER_CONTROLLER_NAME = "offer";
