@@ -23,11 +23,13 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
+		Delivery delivery = (Delivery)controller.getMasterController().getTo();
 
 		controller.setLongDescription(false);
 		try {
 			deliveryDetail.setLine(calculateNextLine((Delivery)controller.getMasterController().getTo()));
 			deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
+			deliveryDetail.getDelivery().setWorkPlace(delivery.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

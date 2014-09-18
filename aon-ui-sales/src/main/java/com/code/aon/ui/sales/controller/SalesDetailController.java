@@ -106,33 +106,28 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
-		SalesDetail salesDetail = (SalesDetail)getTo();
-		double price = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
+			Sales sales = (Sales)getMasterController().getTo();
+
+			SalesDetail salesDetail = (SalesDetail)getTo();
 			salesDetail.setItem(item);
 			salesDetail.setDescription(item.getFullName());
 			if (salesDetail.getQuantity() == 0) {
 				salesDetail.setQuantity(1);
 			}
-
-			Sales sales = (Sales)getMasterController().getTo();
-			price = getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
+			salesDetail.setPrice(getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer()));
 		}
-		salesDetail.setPrice(price);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
-		SalesDetail salesDetail = (SalesDetail)getTo();
-		if (salesDetail.getItem() != null && salesDetail.getItem().getId() != null) {
-			double price = 0;
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Sales sales = (Sales)getMasterController().getTo();
+			SalesDetail salesDetail = (SalesDetail)getTo();
+			if (salesDetail.getItem() != null && salesDetail.getItem().getId() != null) {
 				salesDetail.setQuantity((Double)event.getNewValue());
-	
-				Sales sales = (Sales)getMasterController().getTo();
-				price = getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer());
+				salesDetail.setPrice(getPriceStrategy().getUnitPrice(salesDetail, sales.getIssueDate(), sales.getCustomer()));
 			}
-			salesDetail.setPrice(price);
 		}
 	}
 

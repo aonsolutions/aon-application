@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.Item;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.ICalculable;
@@ -32,6 +33,11 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
     @Transient
     public double getTaxes() {
     	return 0;
+    }
+
+    @Transient
+    public WorkPlace getWorkPlace() {
+    	return getProjectReservationService().getProjectReservation().getHotel().getWorkPlace();
     }
 
     @Transient

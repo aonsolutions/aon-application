@@ -2,10 +2,10 @@ package com.code.aon.ui.commercial.event;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -25,11 +25,13 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		OfferDetailController controller = (OfferDetailController)event.getController();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
+		Offer offer = (Offer)controller.getMasterController().getTo();
 
 		controller.setLongDescription(false);
 		try {
 			offerDetail.setLine(calculateNextLine((Offer)controller.getMasterController().getTo()));
 			offerDetail.setStatus(OfferDetailStatus.PENDING);
+			offerDetail.getOffer().setWorkPlace(offer.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

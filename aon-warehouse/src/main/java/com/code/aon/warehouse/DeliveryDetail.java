@@ -5,8 +5,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculable;
 import com.esferalia.aon.entity.master.DeliveryDetailDB;
 
@@ -21,13 +21,20 @@ public class DeliveryDetail extends DeliveryDetailDB implements ICalculable, ISt
 	}
 
 	@Transient
-	public double getTaxes() throws ManagerBeanException {
+	public double getTaxes() {
 		return 0;
 	}
+
+	@Transient
+	public WorkPlace getWorkPlace() {
+		return getDelivery() != null ? getDelivery().getWorkPlace() : null;
+	}
+
 	@Transient
 	public boolean isEntry() {
 		return false;
 	}
+
 	@Transient
 	public String getTableName() {
 		return "delivery_detail";

@@ -1,6 +1,6 @@
 package com.code.aon.product.strategy;
 
-import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 
@@ -14,6 +14,8 @@ public interface ICalculable {
 
 	public double getPrice();
 
-	public double getTaxes() throws ManagerBeanException;
+	public double getTaxes();
+
+	public WorkPlace getWorkPlace();
 
 }

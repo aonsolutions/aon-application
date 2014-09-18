@@ -14,6 +14,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
@@ -65,6 +66,11 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	@Transient
 	public boolean isSettled() {
 		return getStatus() == PurchaseDetailStatus.SETTLED;
+	}
+
+	@Transient
+	public WorkPlace getWorkPlace() {
+		return getPurchase().getWorkPlace();
 	}
 
 	@Transient

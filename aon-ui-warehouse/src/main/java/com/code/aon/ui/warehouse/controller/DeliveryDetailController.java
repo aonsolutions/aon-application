@@ -93,33 +93,28 @@ public class DeliveryDetailController extends LinesController implements IWareho
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
-		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
-		double price = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
+			Delivery delivery = (Delivery)getMasterController().getTo();
+
+			DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
 			deliveryDetail.setItem(item);
 			deliveryDetail.setDescription(item.getFullName());
 			if (deliveryDetail.getQuantity() == 0) {
 				deliveryDetail.setQuantity(1);
 			}
-
-			Delivery delivery = (Delivery)getMasterController().getTo();
-			price = getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getDate(), delivery.getCustomer());
+			deliveryDetail.setPrice(getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer()));
 		}
-		deliveryDetail.setPrice(price);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
-		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
-		if (deliveryDetail.getItem() != null && deliveryDetail.getItem().getId() != null) {
-			double price = 0;
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Delivery delivery = (Delivery)getMasterController().getTo();
+			DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
+			if (deliveryDetail.getItem() != null && deliveryDetail.getItem().getId() != null) {
 				deliveryDetail.setQuantity((Double)event.getNewValue());
-	
-				Delivery delivery = (Delivery)getMasterController().getTo();
-				price = getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getDate(), delivery.getCustomer());
+				deliveryDetail.setPrice(getPriceStrategy().getUnitPrice(deliveryDetail, delivery.getIssueTime(), delivery.getCustomer()));
 			}
-			deliveryDetail.setPrice(price);
 		}
 	}
 

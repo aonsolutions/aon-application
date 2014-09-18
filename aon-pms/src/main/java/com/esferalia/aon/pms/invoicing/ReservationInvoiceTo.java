@@ -8,6 +8,7 @@ import java.util.List;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.PosShift;
@@ -310,8 +311,13 @@ public class ReservationInvoiceTo implements IReservationConstants, Serializable
 		}
 
 		@Override
-		public double getTaxes() throws ManagerBeanException {
+		public double getTaxes() {
 			return 0;
+		}
+
+		@Override
+		public WorkPlace getWorkPlace() {
+			return null;
 		}
 
 	}

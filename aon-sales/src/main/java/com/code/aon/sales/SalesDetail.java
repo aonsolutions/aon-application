@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.esferalia.aon.entity.master.SalesDetailDB;
@@ -47,6 +48,11 @@ public class SalesDetail extends SalesDetailDB implements ICalculable {
 	@Transient
 	public boolean isSettled() {
 		return getStatus() == SalesDetailStatus.SETTLED;
+	}
+
+	@Transient
+	public WorkPlace getWorkPlace() {
+		return getSales().getWorkPlace();
 	}
 
 }

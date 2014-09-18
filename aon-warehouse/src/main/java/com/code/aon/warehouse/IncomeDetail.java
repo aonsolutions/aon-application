@@ -14,6 +14,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryItem;
@@ -33,13 +34,20 @@ public class IncomeDetail extends IncomeDetailDB implements ICalculable, IStocka
 	}
 	
 	@Transient
-	public double getTaxes() throws ManagerBeanException {
+	public double getTaxes() {
 		return 0;
 	}
+
+	@Transient
+	public WorkPlace getWorkPlace() {
+		return getIncome() != null ? getIncome().getWorkPlace() : null;
+	}
+
 	@Transient
 	public boolean isEntry() {
 		return true;
 	}
+
 	@Transient
 	public String getTableName() {
 		return "income_detail";

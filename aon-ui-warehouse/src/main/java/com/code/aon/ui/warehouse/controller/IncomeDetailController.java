@@ -1,23 +1,15 @@
 package com.code.aon.ui.warehouse.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
-import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryItem;
-import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -25,7 +17,6 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeDetailController extends LinesController implements IWarehouseConstants {
 
@@ -106,33 +97,20 @@ public class IncomeDetailController extends LinesController implements IWarehous
 		return (incomeDetail.getPurchaseDetail() == null || incomeDetail.getPurchaseDetail().getId() == null);
 	}
 
-	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
-		IncomeDetail incomeDetail = (IncomeDetail)getTo();
-		double price = 0;
+	public void onItemChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
+			Income income = (Income)getMasterController().getTo();
+
+			IncomeDetail incomeDetail = (IncomeDetail)getTo();
 			incomeDetail.setItem(item);
 			incomeDetail.setDescription(item.getFullName());
 			if (incomeDetail.getQuantity() == 0) {
 				incomeDetail.setQuantity(1);
 			}
-
-			RegistryItem itemSupplier = obtainItemSupplier((Income)getMasterController().getTo(), item);
-			price = itemSupplier!=null?itemSupplier.getPrice():item.getPurchasePrice();
+			incomeDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(incomeDetail, income.getIssueTime(), income.getSupplier()));
 		}
-		incomeDetail.setPrice(price);
 	}	
-
-	private RegistryItem obtainItemSupplier(Income income, Item item) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
-		Criteria criteria = new Criteria(); 
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), income.getSupplier().getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE_ID), income.getWorkPlace().getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), RegistryMode.SUPPLIER);
-		criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY),true);
-		List<ITransferObject> list = bean.getList(criteria);
-		return list!=null && !list.isEmpty()?(RegistryItem)list.get(0):null;
-	}
 
 	public double getAmount() {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());

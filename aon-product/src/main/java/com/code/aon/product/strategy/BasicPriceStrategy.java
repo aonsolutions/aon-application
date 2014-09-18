@@ -79,11 +79,14 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), registry.getId());
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS), RegistryItemStatus.ACTIVE);
 					criteria.addEqualExpression(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE), rMode);
+					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_WORK_PLACE), false);
 					criteria.addOrder(rItemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
 					for (ITransferObject itr : rItemBean.getList(criteria)) {
 						RegistryItem rItem = (RegistryItem)itr;
-						calc.getDiscountExpression().setDiscountExpr(rItem.getDiscountExpression().getDiscountExpr());
-						return rItem.getPrice();
+						if (rItem.getWorkPlace() == null || rItem.getWorkPlace().equals(calc.getWorkPlace())) {
+							calc.getDiscountExpression().setDiscountExpr(rItem.getDiscountExpression().getDiscountExpr());
+							return rItem.getPrice();
+						}
 					}
 				}
 				if (tariff != null && tariff.getId() != null) {
@@ -150,20 +153,16 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 
 	public double getBasePrice(ICalculable calc, boolean forceUnitPrice) {
 		double price = 0;
-		try {
-			if (forceUnitPrice) {
-				price = getUnitPrice(calc);
-			} else {
-				price = calc.getPrice();
+		if (forceUnitPrice) {
+			price = getUnitPrice(calc);
+		} else {
+			price = calc.getPrice();
+		}
+		price = (price + calc.getTaxes()) * calc.getQuantity();
+		if (calc.getDiscountExpression().getDiscounts() != null) {
+			for (int i = 0;i<calc.getDiscountExpression().getDiscounts().length;i++) {
+				price = price * ( 1 - calc.getDiscountExpression().getDiscounts()[i] /100);
 			}
-			price = (price + calc.getTaxes()) * calc.getQuantity();
-			if (calc.getDiscountExpression().getDiscounts() != null) {
-				for (int i = 0;i<calc.getDiscountExpression().getDiscounts().length;i++) {
-					price = price * ( 1 - calc.getDiscountExpression().getDiscounts()[i] /100);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining basePrice", e);
 		}
 		return CommonUtil.round(price, 4);
 	}

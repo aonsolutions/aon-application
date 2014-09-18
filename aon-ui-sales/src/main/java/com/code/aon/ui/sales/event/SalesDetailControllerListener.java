@@ -21,31 +21,31 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
-	public void beforeBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		checkQuantities();
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		checkQuantities();
-	}
-	
-	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		SalesDetailController controller = (SalesDetailController)event.getController();
 		SalesDetail salesDetail = (SalesDetail)controller.getTo();
+		Sales sales = (Sales)controller.getMasterController().getTo();
 
 		controller.setLongDescription(false);
 		try {
 			salesDetail.setLine(calculateNextLine((Sales)controller.getMasterController().getTo()));
 			salesDetail.setStatus(SalesDetailStatus.PENDING);
+			salesDetail.getSales().setWorkPlace(sales.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		checkQuantities();
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		checkQuantities();
+	}
+	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		event.getController().initializeModel();

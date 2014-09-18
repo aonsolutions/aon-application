@@ -12,8 +12,10 @@ import javax.persistence.Transient;
 import com.code.aon.account.IAccount;
 import com.code.aon.AonVersion;
 import com.code.aon.config.IScopable;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.supplier.enumeration.SupplierStatus;
@@ -21,7 +23,7 @@ import com.esferalia.aon.entity.master.SupplierDB;
 
 @Entity
 @Table(name="supplier")
-public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegistry, IAccount {
+public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegistry, IAccount, ITariffable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -54,5 +56,10 @@ public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegist
 	public boolean isRetentionFree() {
 		return getTransaction()!=InvoiceTransactionType.NATIONAL && getTransaction()!=InvoiceTransactionType.OTHER_ISP;
 	}
-	
+
+	@Transient
+	public Tariff getTariff() {
+		return null;
+	}
+
 }

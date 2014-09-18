@@ -22,32 +22,6 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Override
-	public void beforeBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		PurchaseDetailController controller = (PurchaseDetailController)event.getController();
-		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
-		if(purchaseDetail.getProposalDetail()!=null && purchaseDetail.getProposalDetail().getId()!=null){
-			try {
-				updateProposalDetail(purchaseDetail.getProposalDetail());
-			} catch (ManagerBeanException e) {
-				throw new ControllerListenerException(e.getMessage(), e);
-			}
-		}
-	}
-	
-	@Override
-	public void beforeBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		checkQuantities();
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		checkQuantities();
-	}
-	
-	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		PurchaseDetailController controller = (PurchaseDetailController)event.getController();
 		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
@@ -59,11 +33,22 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 			purchaseDetail.setProject((purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null);
 			purchaseDetail.setLine(utils.calculateNextLine((Purchase)controller.getMasterController().getTo()));
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+			purchaseDetail.getPurchase().setWorkPlace(purchase.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		checkQuantities();
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		checkQuantities();
+	}
+	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		event.getController().initializeModel();
@@ -77,11 +62,17 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		controller.setLongDescription((purchaseDetail.getDescription().length() > 64) ? true : false);
 	}
 	
-	private void updateProposalDetail(ProposalDetail proposalDetail) throws ManagerBeanException {
-		IManagerBean proposalDetailBean = BeanManager.getManagerBean(ProposalDetail.class);
-		ProposalDetail pd = (ProposalDetail) proposalDetailBean.get(proposalDetail.getId());
-		pd.setStatus(ProposalDetailStatus.PENDING);
-		proposalDetailBean.update(pd);
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		PurchaseDetailController controller = (PurchaseDetailController)event.getController();
+		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
+		if(purchaseDetail.getProposalDetail()!=null && purchaseDetail.getProposalDetail().getId()!=null){
+			try {
+				updateProposalDetail(purchaseDetail.getProposalDetail());
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e.getMessage(), e);
+			}
+		}
 	}
 	
 	private void checkQuantities() throws ControllerListenerException {
@@ -95,4 +86,11 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		}
 	}
 
+	private void updateProposalDetail(ProposalDetail proposalDetail) throws ManagerBeanException {
+		IManagerBean proposalDetailBean = BeanManager.getManagerBean(ProposalDetail.class);
+		ProposalDetail pd = (ProposalDetail) proposalDetailBean.get(proposalDetail.getId());
+		pd.setStatus(ProposalDetailStatus.PENDING);
+		proposalDetailBean.update(pd);
+	}
+	
 }

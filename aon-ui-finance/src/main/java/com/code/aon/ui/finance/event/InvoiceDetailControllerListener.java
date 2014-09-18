@@ -1,8 +1,13 @@
 package com.code.aon.ui.finance.event;
 
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Invoice;
@@ -27,7 +32,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		Invoice invoice = (Invoice)controller.getMasterController().getTo();
+		Invoice invoice = controller.getInvoice();
 
 		controller.setLongDescription(false);
 		try {
@@ -35,10 +40,14 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-
-			CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			if (companyCollections.getCurrentUserWorkPlacesCount() == 1) {
-				invoiceDetail.setWorkPlace((WorkPlace)companyCollections.getCurrentUserWorkPlaces().get(0).getValue());
+			if (invoiceDetail.getLine() == 1) {
+				CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+				List<SelectItem> workPlaces = companyCollections.getCurrentUserWorkPlaces();
+				if (workPlaces.size() > 0) {
+					invoiceDetail.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+				}
+			} else {
+				invoiceDetail.setWorkPlace(obtainPreviousWorkPlace(invoice));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -57,8 +66,10 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		obtainTaxableBase(event, invoiceDetail);
-		obtainWorkPlace(event, invoiceDetail);
+		invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
+		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
+			fillPosWorkPlace(event, invoiceDetail);
+		}
 	}
 
 	@Override
@@ -76,8 +87,10 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException ex) {
 			throw new ControllerListenerException(ex.getMessage());
 		}
-		obtainTaxableBase(event, invoiceDetail);
-		obtainWorkPlace(event, invoiceDetail);
+		invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
+		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
+			fillPosWorkPlace(event, invoiceDetail);
+		}
 	}
 
 	@Override
@@ -133,18 +146,27 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
-	private void obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
+	private WorkPlace obtainPreviousWorkPlace(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), false);
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			return ((InvoiceDetail)ito).getWorkPlace();
+		}
+		return null;
 	}
 
-	private void obtainWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) {
-		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
-			InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-			Invoice invoice = (Invoice)controller.getInvoice();
-			if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
-				invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
-			}
+	private double obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		return controller.getPriceStrategy().getBasePrice(invoiceDetail);
+	}
+
+	private void fillPosWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		Invoice invoice = (Invoice)controller.getInvoice();
+		if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
+			invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
 		}
 	}
 

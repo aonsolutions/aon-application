@@ -434,6 +434,10 @@
 		<alias names="birthDate,gender,id,maritalStatus,registry_id,socialSecurityNumber,name,firstSurname,secondSurname,registry_document,registry_documentCountry,registry_documentType"/>
 		<hibernate names="birthDate,gender,id,maritalStatus,registry.id,socialSecurityNumber,name,firstSurname,secondSurname,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>
+	<bean class="com.code.aon.registry.RegistryItem" sqlName="ritem">
+		<alias names="id,registry_id,item_id,type,code,price,discountExpression,priority,workPlace,workPlace_id,status"/>
+		<hibernate names="id,registry.id,item.id,type,code,price,discountExpression,priority,workPlace,workPlace.id,status"/>
+	</bean>
 
 	<!-- ** AON SALES  **************************************************** -->
 	<bean class="com.code.aon.sales.Sales" sqlName="sales">

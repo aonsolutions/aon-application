@@ -1,13 +1,12 @@
 package com.code.aon.commercial;
 
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.strategy.ICalculable;
 import com.esferalia.aon.entity.master.OfferDetailDB;
 
@@ -22,8 +21,13 @@ public class OfferDetail extends OfferDetailDB implements ICalculable {
 	}
 
 	@Transient
-	public double getTaxes() throws ManagerBeanException {
+	public double getTaxes() {
 		return 0;
+	}
+
+	@Transient
+	public WorkPlace getWorkPlace() {
+		return getOffer().getWorkPlace();
 	}
 
 }

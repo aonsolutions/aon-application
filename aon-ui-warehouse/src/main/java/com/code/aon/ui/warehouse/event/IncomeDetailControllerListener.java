@@ -29,6 +29,8 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		try {
 			incomeDetail.setProject((income.getProject() != null && income.getProject().getId() != null) ? income.getProject() : null);
 			incomeDetail.setLine(calculateNextLine((Income)controller.getMasterController().getTo()));
+			incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
+			incomeDetail.getIncome().setWorkPlace(income.getWorkPlace());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -36,16 +38,16 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		IncomeDetailController incomeDetailController = (IncomeDetailController)event.getController();
-		IncomeDetail incomeDetail = (IncomeDetail)incomeDetailController.getTo();
-		incomeDetail.setWarehouse(((IncomeController)incomeDetailController.getMasterController()).getWarehouse());
+		IncomeDetailController controller = (IncomeDetailController)event.getController();
+		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
+		incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		IncomeDetailController incomeDetailController = (IncomeDetailController)event.getController();
-		IncomeDetail incomeDetail = (IncomeDetail)incomeDetailController.getTo();
-		incomeDetail.setWarehouse(((IncomeController)incomeDetailController.getMasterController()).getWarehouse());
+		IncomeDetailController controller = (IncomeDetailController)event.getController();
+		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
+		incomeDetail.setWarehouse(((IncomeController)controller.getMasterController()).getWarehouse());
 	}
 
 	@Override

@@ -11,10 +11,10 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -80,33 +80,28 @@ public class OfferDetailController extends LinesController implements ICommercia
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
-		OfferDetail offerDetail = (OfferDetail)getTo();
-		double price = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
+			Offer offer = (Offer)getMasterController().getTo();
+
+			OfferDetail offerDetail = (OfferDetail)getTo();
 			offerDetail.setItem(item);
 			offerDetail.setDescription(item.getFullName());
 			if (offerDetail.getQuantity() == 0) {
 				offerDetail.setQuantity(1);
 			}
-
-			Offer offer = (Offer)getMasterController().getTo();
-			price = getPriceStrategy().getUnitPrice(offerDetail, offer.getDate(), offer.getTarget());
+			offerDetail.setPrice(getPriceStrategy().getUnitPrice(offerDetail, offer.getIssueDate(), offer.getTarget()));
 		}
-		offerDetail.setPrice(price);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
-		OfferDetail offerDetail = (OfferDetail)getTo();
-		if (offerDetail.getItem() != null && offerDetail.getItem().getId() != null) {
-			double price = 0;
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Offer offer = (Offer)getMasterController().getTo();
+			OfferDetail offerDetail = (OfferDetail)getTo();
+			if (offerDetail.getItem() != null && offerDetail.getItem().getId() != null) {
 				offerDetail.setQuantity((Double)event.getNewValue());
-	
-				Offer offer = (Offer)getMasterController().getTo();
-				price = getPriceStrategy().getUnitPrice(offerDetail, offer.getDate(), offer.getTarget());
+				offerDetail.setPrice(getPriceStrategy().getUnitPrice(offerDetail, offer.getIssueDate(), offer.getTarget()));
 			}
-			offerDetail.setPrice(price);
 		}
 	}
 

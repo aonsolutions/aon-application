@@ -84,9 +84,8 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 		super.setBillingDate(calendar.getTime());
 	}
 
-	@Override
 	@Transient
-	public double getTaxes() throws ManagerBeanException {
+	public double getTaxes() {
 		return 0;
 	}
 
