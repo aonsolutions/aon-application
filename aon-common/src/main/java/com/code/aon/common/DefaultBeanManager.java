@@ -47,7 +47,7 @@ public class DefaultBeanManager implements IBeanManager {
 	 * @param bean
 	 */
 	private void register(String instance, IFinderBean bean) {
-		if (!beans.containsKey(bean)) {
+		if (!beans.containsKey(instance)) {
 			beans.put(instance, bean);
 			LOGGER.debug("Registered bean {}", instance);
 		}

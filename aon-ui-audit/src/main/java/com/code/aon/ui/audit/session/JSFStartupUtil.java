@@ -245,6 +245,7 @@ public class JSFStartupUtil {
 	        	List<URL> list = new LinkedList<URL>();
 	        	for( JarFile jarFile : jarFiles ) {
 	        		list.addAll(Classpath.searchJar(cl, jarFile, "", ".xhtml"));
+	        		jarFile.close();
 	        	}
 	        	return (URL[]) list.toArray(new URL[list.size()]);
 	        }

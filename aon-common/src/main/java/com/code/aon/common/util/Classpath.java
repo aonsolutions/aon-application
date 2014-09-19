@@ -31,6 +31,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -71,6 +72,7 @@ public final class Classpath {
 				jarFile = getJarFile(url, conn);
 				if (jarFile != null) {
 					searchJar(cl, all, jarFile, prefix, suffix);
+					jarFile.close();
 				} else {
 					boolean searchDone = searchDir(all, new File(URLDecoder.decode(url.getFile(), "UTF-8")), suffix);
 					if (!searchDone)
@@ -98,6 +100,7 @@ public final class Classpath {
 				for( String prefix : prefixes ) {
 					if ( StringUtils.startsWith(name, prefix) ) {
 						all.add(jarFile);
+						break;
 					}
 				}
 			}

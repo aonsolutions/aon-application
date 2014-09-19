@@ -128,10 +128,11 @@ public class ResourceServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
+		InputStream in = null;
 		try {
 			String uri = StringUtils.substringBefore(req.getRequestURI(), ";");
 			ResourceURI resource = new ResourceURI(uri, req.getContextPath(), DEFAULT_PATTERN);
-			InputStream in = resource.getInputStream(getServletContext(), basePath);
+			in = resource.getInputStream(getServletContext(), basePath);
 			if (in == null) {
 				res.sendError(HttpServletResponse.SC_NOT_FOUND);
 				return;
@@ -143,6 +144,8 @@ public class ResourceServlet extends HttpServlet {
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			throw new ServletException(th.getMessage(), th);
+		} finally {
+			IOUtils.closeQuietly(in);
 		}
 	}
 
