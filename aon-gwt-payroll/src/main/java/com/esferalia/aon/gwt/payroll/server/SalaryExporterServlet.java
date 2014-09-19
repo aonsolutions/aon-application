@@ -28,9 +28,9 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.payroll.bean.GWT;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
-import com.esferalia.aon.gwt.payroll.shared.Constants;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @SuppressWarnings("serial")

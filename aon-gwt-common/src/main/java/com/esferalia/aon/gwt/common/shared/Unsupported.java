@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.gwt.common.shared;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

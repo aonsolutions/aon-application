@@ -3,13 +3,13 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Collections;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.shared.EvalException;
+import com.esferalia.aon.gwt.common.shared.EvalSyntaxErrorException;
+import com.esferalia.aon.gwt.common.shared.EvalWarning;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
-import com.esferalia.aon.gwt.payroll.shared.EvalException;
-import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
-import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;

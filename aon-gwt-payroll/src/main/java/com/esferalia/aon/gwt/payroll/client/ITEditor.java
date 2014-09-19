@@ -8,11 +8,11 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.ITDataObject.CallculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson.Type;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.BarLabelStyle;
@@ -28,6 +28,7 @@ import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -152,11 +153,12 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 	}
 
 	private class MouseEventsHandlers extends DecoratedPopupPanel 
-	implements MouseOverHandler, ContextMenuHandler {
+	implements MouseOverHandler, ContextMenuHandler, ClickHandler {
 
 		public MouseEventsHandlers(TimeLineChart timelineChart) {
 			timelineChart.addMouseOverHandler(this);			
-			timelineChart.addContextMenuHandler(this);			
+			timelineChart.addContextMenuHandler(this);
+			timelineChart.addClickHandler(this);
 		}
 
 		@Override
@@ -179,7 +181,9 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			} catch (Throwable ex) {
 
 			} finally {
+				event.preventDefault();
 				event.stopPropagation();
+				event.getNativeEvent();
 			}
 		}
 
@@ -209,6 +213,23 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 				event.stopPropagation();
 				event.getNativeEvent();
 			}
+		}
+
+		@Override
+		public void onClick(ClickEvent event) {
+			
+			try {
+				tooltipCallback.cancel();
+				Window.alert("Click!");
+				
+			}catch (Throwable ex) {
+				
+			}finally {
+				event.preventDefault();
+				event.stopPropagation();
+				event.getNativeEvent();
+			}
+			
 		}		
 	}	
 	

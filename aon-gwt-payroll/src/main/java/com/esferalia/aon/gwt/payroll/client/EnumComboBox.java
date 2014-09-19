@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.ComboBox;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.view.client.ListDataProvider;

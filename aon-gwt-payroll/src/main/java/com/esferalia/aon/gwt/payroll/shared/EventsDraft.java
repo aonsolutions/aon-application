@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+
 public class EventsDraft extends Events {
 
 	public EventsDraft() {

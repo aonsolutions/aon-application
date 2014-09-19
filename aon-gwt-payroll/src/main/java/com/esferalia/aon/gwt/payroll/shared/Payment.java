@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.shared.StringUtils;
+
 public class Payment extends Item<Payment.Type> {
 
 	

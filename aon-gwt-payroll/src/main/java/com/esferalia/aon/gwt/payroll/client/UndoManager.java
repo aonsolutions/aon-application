@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import com.esferalia.aon.gwt.common.client.Undoable;
+
 public class UndoManager<T extends Undoable> {
 
 	interface Listener {

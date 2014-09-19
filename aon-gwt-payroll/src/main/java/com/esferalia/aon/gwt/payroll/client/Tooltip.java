@@ -44,66 +44,26 @@ public class Tooltip extends DecoratedPopupPanel {
 
 	private static TooltipUiBinder uiBinder = GWT.create(TooltipUiBinder.class);
 
-	@UiField
-	Style style;
-	
-	@UiField
-	Label baja;
-	
-	@UiField
-	Label alta;
-
-	@UiField
-	ListBox typeLeaveListBox;
-
-	@UiField
-	ListBox typeDischargeListBox;
-
-	@UiField
-	InlineLabel socialSecurityNum;
-
-	@UiField
-	InlineLabel fullNameLabel;
-
-	@UiField
-	InlineLabel dniLabel;
-
-	@UiField
-	HTML iconStatusLabel;
-
-	@UiField
-	InlineLabel statusLabel;
-
-	@UiField
-	InlineLabel workPeriodLabel;
-
-	@UiField
-	InlineLabel numDaysLabel;
-
-	@UiField
-	InlineLabel startDateLabel;
-
-	@UiField
-	InlineLabel endDateLabel;
-
-	@UiField
-	InlineLabel causeStartLabel;
-
-	@UiField
-	InlineLabel causeEndLabel;
-
-	@UiField
-	DateBox endDateBox;
-
-	@UiField
-	DateBox startLeaveDateBox;
-
-	@UiField
-	Button acceptButton;
-
-	@UiField
-	InlineLabel daysLabel;
-	
+	@UiField Style style;	
+	@UiField Label baja;	
+	@UiField Label alta;
+	@UiField ListBox typeLeaveListBox;
+	@UiField ListBox typeDischargeListBox;
+	@UiField InlineLabel socialSecurityNum;
+	@UiField InlineLabel fullNameLabel;
+	@UiField InlineLabel dniLabel;
+	@UiField HTML iconStatusLabel;
+	@UiField InlineLabel statusLabel;
+	@UiField InlineLabel workPeriodLabel;
+	@UiField InlineLabel numDaysLabel;
+	@UiField InlineLabel startDateLabel;
+	@UiField InlineLabel endDateLabel;
+	@UiField InlineLabel causeStartLabel;
+	@UiField InlineLabel causeEndLabel;
+	@UiField DateBox endDateBox;
+	@UiField DateBox startLeaveDateBox;
+	@UiField Button acceptButton;
+	@UiField InlineLabel daysLabel;	
 	@UiField Label startDate;
 	@UiField Label typeLeave;
 	@UiField Label endDate;
@@ -139,6 +99,7 @@ public class Tooltip extends DecoratedPopupPanel {
 		
 		loadTypeListBox();
 		setAutoHideEnabled(true);
+
 	}
 
 	public void showContractActiveTooltip(final int clientX, final int clientY) {

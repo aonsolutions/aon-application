@@ -1,4 +1,6 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.gwt.common.shared;
+
+
 
 public class EvalSyntaxErrorException extends EvalException {
 

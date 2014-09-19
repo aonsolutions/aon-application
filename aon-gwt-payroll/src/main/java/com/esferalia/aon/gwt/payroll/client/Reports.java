@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.ReportsObject.ReportsType;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;

@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import com.esferalia.aon.gwt.payroll.shared.Constants;
-import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BodyElement;

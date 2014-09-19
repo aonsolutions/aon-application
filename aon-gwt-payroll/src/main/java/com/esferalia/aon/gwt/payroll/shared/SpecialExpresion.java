@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 

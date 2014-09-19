@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.shared.StringUtils;
+
 public class ReportData implements Serializable {
 	
 
