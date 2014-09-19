@@ -13,6 +13,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -33,6 +35,8 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 public class PayrollAppParamsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PayrollAppParamsController.class);
 
 //	public final static String DEFAULT_CONTRACT_CODE_KEY 	= "PAY_default_contractCode_PAY";
 //	public final static String DEFAULT_TRAINING_CENTER_KEY 	= "PAY_default_trainingCenter_PAY";
@@ -76,7 +80,7 @@ public class PayrollAppParamsController implements Serializable {
 				setFanTestEnvironment(true);
 			}
 		} catch (ManagerBeanException e) {
-			// NADA
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
@@ -164,17 +168,24 @@ public class PayrollAppParamsController implements Serializable {
 	}
 	
 	private void initDefaultTrainingCenter() {
+		TrainingCenter trainingCenter = null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
-			if(getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).getValue()!=null){
+			String value = getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).getValue(); 
+			if (value!=null) {
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(getParameter(AppParam.PAY_default_trainingCenter_PAY.getValue()).getValue()));
-				setDefaultTrainingCenter((TrainingCenter) bean.getList(criteria).get(0));
-			} else {
-				setDefaultTrainingCenter((TrainingCenter) bean.createNewTo());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(value));
+				List<ITransferObject> list = bean.getList(criteria);
+				if (! list.isEmpty() ) {
+					trainingCenter = (TrainingCenter) list.get(0);
+				}
 			}
+			if ( trainingCenter == null ) {
+				trainingCenter = (TrainingCenter) bean.createNewTo();
+			}
+			setDefaultTrainingCenter(trainingCenter);
 		} catch (ManagerBeanException e) {
-			// NADA
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
@@ -190,17 +201,24 @@ public class PayrollAppParamsController implements Serializable {
 	}
 
 	private void initSsPaymentBankAccount() {
+		RegistryBank rbank = null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
-			if(getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).getValue()!=null){
+			String value = getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).getValue();
+			if (value!=null) {
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(getParameter(AppParam.PAY_ss_payment_bankAccount_PAY.getValue()).getValue()));
-				setSsPaymentBankAccount((RegistryBank) bean.getList(criteria).get(0));
-			} else {
-				setSsPaymentBankAccount((RegistryBank) bean.createNewTo());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(value));
+				List<ITransferObject> list = bean.getList(criteria);
+				if (! list.isEmpty() ) {
+					rbank = (RegistryBank) list.get(0);
+				}
 			}
+			if ( rbank == null ) {
+				rbank = (RegistryBank) bean.createNewTo();
+			}
+			setSsPaymentBankAccount(rbank);
 		} catch (ManagerBeanException e) {
-			// NADA
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

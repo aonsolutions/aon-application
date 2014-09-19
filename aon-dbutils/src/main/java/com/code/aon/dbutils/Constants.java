@@ -40,6 +40,7 @@ public interface Constants {
 	String NOTICE_TABLE_NAME = "notice";
 	String PROFILE_TABLE_NAME = "profile";
 	String PURCHASE_DETAIL_TABLE_NAME = "purchase_detail";
+	String REGISTRY_BANK_TABLE_NAME = "rbank";
 	String ROLE_TABLE_NAME = "role";
 	String SALARY_TABLE_NAME = "salary";
 	String SALES_DETAIL_TABLE_NAME = "sales_detail";
@@ -47,6 +48,7 @@ public interface Constants {
 	String SESSION_TABLE_NAME = "session";
 	String TASK_TABLE_NAME = "task";	
 	String TAX_TABLE_NAME = "tax";
+	String TRAINING_CENTER_TABLE_NAME = "training_center";
 	String WEB_INFO_PAGE_TABLE_NAME = "web_info_page";
 	
 	String DOMAIN_COLUMN_NAME = "domain";
