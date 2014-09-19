@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -285,20 +286,18 @@ public class ImporterUtils implements Serializable {
 		return null;
 	}
 
-	public static Sales obtainSales(String amazonOrderId) {
-		Result<Record2<Integer, String>> record = getSalesRecords(Arrays.asList(amazonOrderId));
+	public static List<Sales> obtainSales(String amazonOrderId) {
+		Result<Record2<Integer, String>> records = getSalesRecords(Arrays.asList(amazonOrderId));
+		List<Sales> salesList = new LinkedList<Sales>();
 		try {
-			if(record.size()==1){
-				Integer id = record.get(0).value1();
-				IManagerBean bean = BeanManager.getManagerBean(Sales.class);
-				return (Sales) bean.get(id);
-			} else if(record.size()>1){
-				AonUtil.addErrorMessage("Existen múltiples pedidos con el mismo código: " + amazonOrderId);
+			for(Record2<Integer, String> record: records){
+				Integer id = record.value1();
+				salesList.add((Sales) BeanManager.getManagerBean(Sales.class).get(id));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("SalesUtils.obtainSales: " + e.getMessage());
 		}
-		return null;
+		return salesList;
 	}
 	
 	// ////////////////

@@ -36,6 +36,8 @@ public interface SalesImporterHandler extends Serializable {
 
 	List<AmazonSales> getNonExistentSales();
 	
+	List<AmazonSales> getCancelledSales();
+	
 	List<Sales> getGeneratedSales();
 	
 	
@@ -70,7 +72,16 @@ public interface SalesImporterHandler extends Serializable {
 		private Sales sales;
 		private Seller seller;
 		private Customer customer;
+
+		private boolean repeated;
 		
+		
+		public boolean isRepeated() {
+			return repeated;
+		}
+		public void setRepeated(boolean repeated) {
+			this.repeated = repeated;
+		}
 		public Date getIssueDate() {
 			return issueDate;
 		}
@@ -228,6 +239,7 @@ public interface SalesImporterHandler extends Serializable {
 		private String price;
 		private String currency;
 		private String quantity;
+		private String productName;
 		
 		public AmazonSales getAmazonSales() {
 			return amazonSales;
@@ -264,6 +276,12 @@ public interface SalesImporterHandler extends Serializable {
 		}
 		public void setQuantity(String quantity) {
 			this.quantity = quantity;
+		}
+		public String getProductName() {
+			return productName;
+		}
+		public void setProductName(String productName) {
+			this.productName = productName;
 		}
 	}
 	

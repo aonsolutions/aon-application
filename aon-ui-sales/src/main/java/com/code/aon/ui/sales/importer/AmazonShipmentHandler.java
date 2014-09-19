@@ -75,6 +75,10 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 	public List<Sales> getGeneratedSales(){
 		return generatedSales;
 	}
+
+	public List<AmazonSales> getCancelledSales(){
+		return null;
+	}
 	
 	public boolean isValidFile(AonFile aonFile) {
 		

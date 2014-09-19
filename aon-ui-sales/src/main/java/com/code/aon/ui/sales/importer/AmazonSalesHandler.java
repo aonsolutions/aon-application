@@ -48,6 +48,8 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 	private List<AmazonSalesDetail> importedSalesDetailList;
 	
 	private List<AmazonSales> existingSalesList;
+
+	private List<AmazonSales> cancelledSales;
 	
 	private List<RegistryItem> nonExistentItems;
 	
@@ -74,6 +76,10 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 	public List<AmazonSales> getNonExistentSales(){
 		return null;
 	}
+	
+	public List<AmazonSales> getCancelledSales(){
+		return cancelledSales;
+	}
 		
 	public List<Sales> getGeneratedSales(){
 		return generatedSales;
@@ -98,6 +104,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		}
 		return false;
 	}
+	
 	public void loadData(AonFile aonFile) throws IOException {
 		LineNumberReader reader = new LineNumberReader(new FileReader(aonFile.getFile()));
 		CSVReader csv = new CSVReader(reader,SEPARATOR_VALUE);
@@ -202,6 +209,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 	}
 
 	private void processImportedSales(List<String[]> linesList) {
+		final String STATUS_CANCELLED = "cancelled";
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+00:00");
 		
 		String[] headers = linesList.get(0);
@@ -219,6 +227,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		
 		HashMap<String, AmazonSales> salesList = new HashMap<String, AmazonSales>();
 		importedSalesDetailList = new LinkedList<AmazonSalesDetail>();
+		cancelledSales  = new LinkedList<AmazonSales>();
 		linesList.remove(0);
 		for(String[] line: linesList){
 			if ( ImporterUtils.validColumns(line, 
@@ -228,18 +237,22 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 				
 				String amazonOrderId = line[amazonOrderId_col];
 				if(!salesList.containsKey(amazonOrderId)){
-					AmazonSales sales = new AmazonSales();
-					sales.setPurchaseReference(amazonOrderId);
+					AmazonSales amazonSales = new AmazonSales();
+					amazonSales.setPurchaseReference(amazonOrderId);
 					try {
-						sales.setIssueDate(dateFormat.parse(line[purchaseDate_col]));
+						amazonSales.setIssueDate(dateFormat.parse(line[purchaseDate_col]));
 					} catch (ParseException e) {
 						LOGGER.error(e.getMessage());
-						sales.setIssueDate(new Date());
+						amazonSales.setIssueDate(new Date());
 					}
-					sales.setSeller(ImporterUtils.obtainSeller(line[salesChannel_col]));
-					sales.setCustomer(ImporterUtils.obtainCustomer(line[fulfillmentChannel_col], line[salesChannel_col]));
-					sales.setCustomerName(ImporterUtils.obtainCustomerName(line[fulfillmentChannel_col], line[salesChannel_col]));
-					salesList.put(amazonOrderId, sales);
+					amazonSales.setSeller(ImporterUtils.obtainSeller(line[salesChannel_col]));
+					amazonSales.setCustomer(ImporterUtils.obtainCustomer(line[fulfillmentChannel_col], line[salesChannel_col]));
+					amazonSales.setCustomerName(ImporterUtils.obtainCustomerName(line[fulfillmentChannel_col], line[salesChannel_col]));
+					if(!STATUS_CANCELLED.equals(line[orderStatus_col].trim().toLowerCase())){
+						salesList.put(amazonOrderId, amazonSales);
+					} else {
+						cancelledSales.add(amazonSales);
+					}
 				}
 				if(line.length>=sku_col  && line.length>=quantity_col
 						&& line.length>=itemPrice_col && line.length>=itemPromotionDiscount_col ){
@@ -253,6 +266,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 					detail.setQuantity(line[quantity_col]);
 					importedSalesDetailList.add(detail);
 				}
+				
 			}
 		}
 		
@@ -273,6 +287,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		importedSalesDetailList = null;
 		importedSalesItemMap = null;
 		existingSalesList = null;
+		cancelledSales = null;
 		nonExistentItems = null;
 	}
 }

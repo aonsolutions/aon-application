@@ -20,6 +20,13 @@
 				rendered="#{showGoToButton}"
 				actionListener="#{salesImporter.onLoadSales}"
 				action="sales_form" />
+			<c:if test="#{!showSalesData}">
+				<aon:outputText id="sales-isRepeated"
+					rendered="#{to.repeated}"
+					title="Existem pedidos con la misma referencia"
+					value="&#160;&#160;"
+					styleClass="aon-icon-warning aon-padding-left" />
+			</c:if>
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">

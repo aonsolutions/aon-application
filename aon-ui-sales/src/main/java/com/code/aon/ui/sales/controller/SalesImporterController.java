@@ -57,6 +57,8 @@ public class SalesImporterController implements Serializable {
 
 	private DataModel generatedSales;
 
+	private DataModel cancelledSales;
+
 	private SalesImporterHandler handler;
 	
 	private String series;
@@ -82,6 +84,10 @@ public class SalesImporterController implements Serializable {
 	
 	public boolean isSalesImport(){
 		return handler instanceof AmazonSalesHandler;
+	}
+
+	public boolean isSalesReturnImport(){
+		return handler instanceof AmazonSalesReturnHandler;
 	}
 
 	public SalesImporterHandler getHandler() {
@@ -121,6 +127,13 @@ public class SalesImporterController implements Serializable {
 			generatedSales = new SerializableListDataModel(handler.getGeneratedSales());
 		}
 		return generatedSales;
+	}
+
+	public DataModel getCancelledSales() {
+		if(cancelledSales==null){
+			cancelledSales = new SerializableListDataModel(handler.getCancelledSales());
+		}
+		return cancelledSales;
 	}
 	
 	
@@ -167,6 +180,7 @@ public class SalesImporterController implements Serializable {
 		importedSales = null;
 		existingSales = null;
 		generatedSales = null;
+		cancelledSales = null;
 		nonExistentSales = null;
 		nonExistentItems = null;
 		if(handler!=null){
@@ -233,19 +247,24 @@ public class SalesImporterController implements Serializable {
 		item.setProduct(new Product());
 		item.getProduct().setCode(tempRItem.getCode());
 		item.getProduct().setName(tempRItem.getItem().getDescription());
-		controller.setBackAction("amazonSalesImporter_form");
-		controller.setBackActionListener("amazonSalesImporter.loadData");
+		controller.setBackAction("salesImporter_form");
+		controller.setBackActionListener("salesImporter.loadData");
 		
 	}
 
 	public void onLoadSales(ActionEvent event){
 		AmazonSales sales = (AmazonSales) getExistingSales().getRowData();
-		Result<Record2<Integer, String>> record = ImporterUtils.getSalesRecords(Arrays.asList(sales.getPurchaseReference()));
+		Result<Record2<Integer, String>> record = null;
+		if(isSalesReturnImport()){
+			record = ImporterUtils.getSalesReturnRecords(Arrays.asList(sales.getPurchaseReference()));
+		} else {
+			record = ImporterUtils.getSalesRecords(Arrays.asList(sales.getPurchaseReference()));
+		}
 		try {
 			if(record.size()==1){
 				Integer id = record.get(0).value1();
 				SalesController controller = (SalesController) AonUtil.getRegisteredBean(ISalesConstants.SALES_CONTROLLER_NAME);
-				controller.onLoad(event, id, "amazonSalesImporter_form", null);
+				controller.onLoad(event, id, "salesImporter_form", null);
 			} else if(record.size()>1){
 				AonUtil.addErrorMessage("Existen múltiples pedidos con el mismo código: " + sales.getPurchaseReference());
 			}
