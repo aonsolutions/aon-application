@@ -67,7 +67,7 @@
 					</aon:panelGrid>
 						
 					<aon:panelGrid id="seriesGrid" columns="4" styleClass="aon-width-all"
-						rendered="#{salesImporter.salesReturnImport and salesImporter.importedSales.rowCount>0}"
+						rendered="#{(salesImporter.salesImport or salesImporter.salesReturnImport) and salesImporter.importedSales.rowCount>0}"
 						columnClasses="aon-panelGrid-odd aon-width-80 ,aon-panelGrid-even aon-width-auto">
 						<aon:div style="height: 30px;">
 							<aon:outputText value="#{bundle.aon_series}" />
