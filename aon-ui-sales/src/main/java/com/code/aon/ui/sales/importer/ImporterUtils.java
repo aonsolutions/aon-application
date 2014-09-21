@@ -169,7 +169,7 @@ public class ImporterUtils implements Serializable {
 	
 	public static DiscountExpression obtainItemDiscountExpression(Double itemPrice, Double amazonPrice, String currency) {
 		try {
-			if(itemPrice!=amazonPrice){
+			if(itemPrice!=amazonPrice && amazonPrice!=null && itemPrice!=null){
 				Double currencyFactor = 1.0;
 				if(StringUtils.isNotBlank(currency) && currency.toUpperCase().equals(CURRENCY_GBP)){
 					currencyFactor = 1.2674;
@@ -256,7 +256,7 @@ public class ImporterUtils implements Serializable {
 		return amazonSellerMap.get(salesChannel.toLowerCase());
 	}
 	
-	private static void loadAmazonSellerMap() {
+	public static void loadAmazonSellerMap() {
 		amazonSellerMap = new HashMap<String, Seller>();
 		String name = SALES_CHANNEL_UK;
 		amazonSellerMap.put(name, obtainSellerByName(name));

@@ -33,6 +33,8 @@
 							rendered="#{salesImporter.importedSales.rowCount>0}"
 							value="#{bundle.aon_accept}"
 							actionListener="#{salesImporter.onAcceptSales}" reRender="salesImporter-Form"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+			     			oncomplete="Richfaces.hideModalPanel('waitProccess')"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 					</ui:define>
 				</ui:decorate>

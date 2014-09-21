@@ -229,6 +229,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		importedSalesDetailList = new LinkedList<AmazonSalesDetail>();
 		cancelledSales  = new LinkedList<AmazonSales>();
 		linesList.remove(0);
+		ImporterUtils.loadAmazonSellerMap();
 		for(String[] line: linesList){
 			if ( ImporterUtils.validColumns(line, 
 					sku_col, amazonOrderId_col, purchaseDate_col, orderStatus_col, 
@@ -257,14 +258,16 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 				if(line.length>=sku_col  && line.length>=quantity_col
 						&& line.length>=itemPrice_col && line.length>=itemPromotionDiscount_col ){
 					AmazonSales amazonSales = salesList.get(amazonOrderId);
-					AmazonSalesDetail detail = new AmazonSalesDetail(); 
-					detail.setAmazonSales(amazonSales);
-					detail.setPurchaseReference(amazonOrderId);
-					detail.setSku(StringUtils.removeEnd(line[sku_col].toLowerCase(), "az"));
-					detail.setPrice(line[itemPrice_col]);
-					detail.setCurrency(line[currency_col]);
-					detail.setQuantity(line[quantity_col]);
-					importedSalesDetailList.add(detail);
+					if(amazonSales!=null){
+						AmazonSalesDetail detail = new AmazonSalesDetail(); 
+						detail.setAmazonSales(amazonSales);
+						detail.setPurchaseReference(amazonOrderId);
+						detail.setSku(StringUtils.removeEnd(line[sku_col].toLowerCase(), "az"));
+						detail.setPrice(line[itemPrice_col]);
+						detail.setCurrency(line[currency_col]);
+						detail.setQuantity(line[quantity_col]);
+						importedSalesDetailList.add(detail);
+					}
 				}
 				
 			}
