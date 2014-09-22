@@ -23,6 +23,7 @@ public class DomainControllerListener extends ControllerAdapter {
 			dc.saveApplications();
 			dc.updateDomainApplication();
 			dc.saveOEM();
+			dc.saveProductDetailLevel();
 			dc.saveExternalApplications();
 			dc.updateDocumental();
 			dc.updateDomainInfo();

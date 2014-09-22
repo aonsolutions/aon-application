@@ -159,6 +159,8 @@ public class DomainController extends BasicController {
 	private DataScrollerState historyState;
 	
 	private int externalApplications;
+	
+	private int productDetailLevel;
 
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
@@ -183,6 +185,7 @@ public class DomainController extends BasicController {
 			initDomainApplication();
 			initApplicationInfos();
 			initOEM();
+			initProductDetailLevel();
 			initHistory(getCompany().getId());
 			initExternalApplications();
 			this.currentDomainInfo = getDomainInfo();
@@ -451,6 +454,11 @@ public class DomainController extends BasicController {
 		this.heritableOEMDomain = getOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 	}
 
+	public void initProductDetailLevel() {
+		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PRODUCT_DETAIL_LEVEL);
+		this.productDetailLevel = (value != null) ? value : 0;
+	}
+	
 	public void initExternalApplications() {
 		if ( (getDomain().getType() == DomainType.CONSULTANCY) && (getParentDomain() == null) ) {
 			Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_EXTERNAL_APPLICATIONS);
@@ -482,6 +490,14 @@ public class DomainController extends BasicController {
 		saveOEMDomain(AppParam.AON_CUSTOMIZE_HERITABLE_ID, this.heritableOEMDomain);
 	}	
 
+	public void saveProductDetailLevel() {
+		if ( this.productDetailLevel > 0 ) {
+			AppParamUtil.insertParameter(AppParam.AON_PRODUCT_DETAIL_LEVEL, this.productDetailLevel );	
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_PRODUCT_DETAIL_LEVEL);
+		}
+	}	
+	
 	public void saveExternalApplications() {
 		if ( externalApplications != 0 ) {
 			AppParamUtil.insertParameter(AppParam.AON_EXTERNAL_APPLICATIONS, externalApplications);	
@@ -1008,6 +1024,14 @@ public class DomainController extends BasicController {
 	public void setTirant(boolean value) {
 		setExternalApplicationsValue(IAdminConstants.TIRANT_EXTERNAL_APP, value);
 	}	
+	
+	public int getProductDetailLevel() {
+		return productDetailLevel;
+	}
+
+	public void setProductDetailLevel(int productDetailLevel) {
+		this.productDetailLevel = productDetailLevel;
+	}
 
 	private static class ParentDomainFilter extends ControllerAdapter {
 		
