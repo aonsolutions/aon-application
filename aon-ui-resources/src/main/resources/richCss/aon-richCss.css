@@ -2641,6 +2641,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-email{
 	background:transparent url(images/aon-main-menu/aon-icon-mail2.png) no-repeat scroll center left;
 }
+.aon-icon-globe{
+	background:transparent url(images/aon-icon/aon-icon-globe.png) no-repeat scroll center left;
+}
 .aon-icon-home{
 	background:transparent url(images/aon-main-menu/aon-icon-home.png) no-repeat scroll center left;
 }

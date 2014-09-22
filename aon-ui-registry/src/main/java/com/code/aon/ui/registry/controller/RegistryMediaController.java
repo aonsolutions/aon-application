@@ -3,12 +3,14 @@ package com.code.aon.ui.registry.controller;
 import static com.code.aon.ui.common.ICommonMessages.INVALID_EMAIL;
 
 import java.io.Serializable;
+import java.net.IDN;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.EmailValidator;
 
 import com.code.aon.AonVersion;
@@ -63,4 +65,18 @@ public class RegistryMediaController extends LinesController {
 		super.accept();
 	}
 
+	public String getCurrentURL() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			RegistryMedia rm = (RegistryMedia) getSelectedTO();
+			String value = rm.getValue();
+			if ( MediaType.EMAIL == rm.getMediaType() ) {
+				value = "www." + StringUtils.substringAfter(value, "@");
+			}
+			if (! StringUtils.startsWith(value, "http") ) {
+				value = "http://" + value;
+			}
+			return IDN.toASCII(value);
+		}
+		return null;
+	}	
 }
