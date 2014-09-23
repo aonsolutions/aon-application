@@ -36,7 +36,7 @@ public interface SalesImporterHandler extends Serializable {
 
 	List<AmazonSales> getNonExistentSales();
 	
-	List<AmazonSales> getCancelledSales();
+	List<AmazonSales> getExcludedSales();
 	
 	List<Sales> getGeneratedSales();
 	
@@ -75,6 +75,7 @@ public interface SalesImporterHandler extends Serializable {
 
 		private boolean repeated;
 		
+		private String observation;
 		
 		public boolean isRepeated() {
 			return repeated;
@@ -225,6 +226,12 @@ public interface SalesImporterHandler extends Serializable {
 		}
 		public void setSalesChannel(String salesChannel) {
 			this.salesChannel = salesChannel;
+		}
+		public String getObservation() {
+			return observation;
+		}
+		public void setObservation(String observation) {
+			this.observation = observation;
 		}
 		
 	}

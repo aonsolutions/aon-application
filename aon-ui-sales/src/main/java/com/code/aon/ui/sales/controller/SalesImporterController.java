@@ -129,9 +129,9 @@ public class SalesImporterController implements Serializable {
 		return generatedSales;
 	}
 
-	public DataModel getCancelledSales() {
+	public DataModel getExcludedSales() {
 		if(cancelledSales==null){
-			cancelledSales = new SerializableListDataModel(handler.getCancelledSales());
+			cancelledSales = new SerializableListDataModel(handler.getExcludedSales());
 		}
 		return cancelledSales;
 	}

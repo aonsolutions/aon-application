@@ -49,7 +49,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 	
 	private List<AmazonSales> existingSalesList;
 
-	private List<AmazonSales> cancelledSales;
+	private List<AmazonSales> excludedSales;
 	
 	private List<RegistryItem> nonExistentItems;
 	
@@ -77,8 +77,8 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		return null;
 	}
 	
-	public List<AmazonSales> getCancelledSales(){
-		return cancelledSales;
+	public List<AmazonSales> getExcludedSales(){
+		return excludedSales;
 	}
 		
 	public List<Sales> getGeneratedSales(){
@@ -210,6 +210,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 
 	private void processImportedSales(List<String[]> linesList) {
 		final String STATUS_CANCELLED = "cancelled";
+		final String SALES_CHANNEL_NON_AMAZON = "non-amazon";
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+00:00");
 		
 		String[] headers = linesList.get(0);
@@ -227,7 +228,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		
 		HashMap<String, AmazonSales> salesList = new HashMap<String, AmazonSales>();
 		importedSalesDetailList = new LinkedList<AmazonSalesDetail>();
-		cancelledSales  = new LinkedList<AmazonSales>();
+		excludedSales  = new LinkedList<AmazonSales>();
 		linesList.remove(0);
 		ImporterUtils.loadAmazonSellerMap();
 		for(String[] line: linesList){
@@ -249,10 +250,14 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 					amazonSales.setSeller(ImporterUtils.obtainSeller(line[salesChannel_col]));
 					amazonSales.setCustomer(ImporterUtils.obtainCustomer(line[fulfillmentChannel_col], line[salesChannel_col]));
 					amazonSales.setCustomerName(ImporterUtils.obtainCustomerName(line[fulfillmentChannel_col], line[salesChannel_col]));
-					if(!STATUS_CANCELLED.equals(line[orderStatus_col].trim().toLowerCase())){
-						salesList.put(amazonOrderId, amazonSales);
+					if(STATUS_CANCELLED.equals(line[orderStatus_col].trim().toLowerCase())){
+						amazonSales.setObservation("Cancelado");
+						excludedSales.add(amazonSales);
+					} else if(SALES_CHANNEL_NON_AMAZON.equals(line[salesChannel_col].trim().toLowerCase())){
+						amazonSales.setObservation(SALES_CHANNEL_NON_AMAZON);
+						excludedSales.add(amazonSales);
 					} else {
-						cancelledSales.add(amazonSales);
+						salesList.put(amazonOrderId, amazonSales);
 					}
 				}
 				if(line.length>=sku_col  && line.length>=quantity_col
@@ -290,7 +295,7 @@ public class AmazonSalesHandler implements SalesImporterHandler {
 		importedSalesDetailList = null;
 		importedSalesItemMap = null;
 		existingSalesList = null;
-		cancelledSales = null;
+		excludedSales = null;
 		nonExistentItems = null;
 	}
 }

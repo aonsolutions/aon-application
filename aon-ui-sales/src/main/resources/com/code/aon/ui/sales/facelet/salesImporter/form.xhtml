@@ -154,15 +154,16 @@
 					</ui:include>
 				</aon:panel>
 	
-				<aon:panel rendered="#{salesImporter.cancelledSales.rowCount>0}">
+				<aon:panel rendered="#{salesImporter.excludedSales.rowCount>0}">
 					<f:facet name="header">
-						<aon:outputText value="Pedidos cancelados (se excluyen)" />
+						<aon:outputText value="Otros pedidos (se excluyen)" />
 					</f:facet>
 					<ui:include
 						src="/com/code/aon/ui/sales/facelet/salesImporter/sales_list.xhtml">
-						<ui:param name="dataModel" value="#{salesImporter.cancelledSales}" />
+						<ui:param name="dataModel" value="#{salesImporter.excludedSales}" />
 						<ui:param name="showGoToButton" value="#{false}" />
 						<ui:param name="showSalesData" value="#{true}" />
+						<ui:param name="showObservation" value="#{true}" />
 					</ui:include>
 				</aon:panel>
 				

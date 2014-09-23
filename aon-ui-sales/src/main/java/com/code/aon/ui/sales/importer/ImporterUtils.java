@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
+import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -459,6 +460,57 @@ public class ImporterUtils implements Serializable {
 					.where(SALES.DOMAIN.equal(DomainManager.getCurrentDomain()))
 					.and(SALES.DOCUMENT_TYPE.equal((byte) DocumentType.ITEM_RETURN.ordinal()))
 					.and(DSL.trim(SALES.PURCHASE_REFERENCE).in(codeList)).fetch();
+			return record;
+		} catch (AonConnectionException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}
+	}
+
+	public static Result<Record2<Integer, String>> getShipmentDataSalesRecords(
+			Collection<String> codeList) {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Settings SETTINGS = null;
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+			DSLContext ctx = DSL.using(connection, SETTINGS);
+			Result<Record2<Integer, String>> record = ctx
+					.select(SALES.ID, SALES.PURCHASE_REFERENCE)
+					.from(SALES)
+					.where(SALES.DOMAIN.equal(DomainManager.getCurrentDomain()))
+					.and(SALES.DOCUMENT_TYPE.equal((byte) DocumentType.NORMAL.ordinal()))
+					.and( SALES.SHIPPING_ALTERNATIVE_ADDRESS.isNotNull()
+							.or(SALES.SHIPPING_ALTERNATIVE_ADDRESS2.isNotNull()) )
+					.and(DSL.trim(SALES.PURCHASE_REFERENCE).in(codeList)).fetch();
+			return record;
+		} catch (AonConnectionException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}
+	}
+
+	public static Result<Record2<Double, String>>  getLastSalesDetailRecords(Integer itemId, String purchaseReference) {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Settings SETTINGS = null;
+			SETTINGS = new Settings();
+			SETTINGS.setRenderSchema(false);
+			DSLContext ctx = DSL.using(connection, SETTINGS);
+			Result<Record2<Double, String>> record = ctx
+					.select(SALES_DETAIL.PRICE, SALES_DETAIL.DISCOUNT_EXPR)
+					.from(SALES_DETAIL.leftOuterJoin(SALES).on(SALES.ID.equal(SALES_DETAIL.SALES)))
+					.where(SALES_DETAIL.DOMAIN.equal(DomainManager.getCurrentDomain()))
+					.and(SALES_DETAIL.ITEM.equal(itemId))
+					.and(DSL.trim(SALES.PURCHASE_REFERENCE).equal(purchaseReference))
+					.orderBy(SALES_DETAIL.PRICE).limit(1)
+					.fetch();
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());

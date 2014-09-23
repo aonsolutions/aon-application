@@ -50,6 +50,8 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 
 	private List<AmazonSales> nonExistentSales;
 	
+	private List<AmazonSales> existingSalesList;
+	
 	private List<Sales> generatedSales;
 	
 	public String getModuleLabel(){
@@ -57,7 +59,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 	}
 	
 	public List<AmazonSales> getExistingSalesList(){
-		return null;
+		return existingSalesList;
 	}
 
 	public List<AmazonSales> getImportedSalesList(){
@@ -76,7 +78,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 		return generatedSales;
 	}
 
-	public List<AmazonSales> getCancelledSales(){
+	public List<AmazonSales> getExcludedSales(){
 		return null;
 	}
 	
@@ -248,6 +250,18 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 			Integer registry = step.value1();
 			String email = step.value2();
 			existingEmailMap.put(email, registry);
+		}
+		
+		// process existing sales shipment data
+		existingSalesList = new LinkedList<AmazonSales>();
+		Result<Record2<Integer, String>> returnRecord = ImporterUtils.getShipmentDataSalesRecords(salesList.keySet());
+		if(returnRecord!=null && returnRecord.size()>0){
+			for (Record2<Integer, String> step : returnRecord) {
+				String code = step.value2().trim();
+				if(salesList.containsKey(code)){
+					existingSalesList.add(salesList.remove(code));
+				}
+			}
 		}
 		
 		Result<Record2<Integer, String>> salesRecords = ImporterUtils.getSalesRecords(salesList.keySet());

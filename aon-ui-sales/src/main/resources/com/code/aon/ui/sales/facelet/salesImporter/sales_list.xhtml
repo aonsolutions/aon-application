@@ -85,6 +85,21 @@
 				</f:facet>
 			</aon:column>
 		</c:if>
+		<c:if test="#{showObservation}">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputText	value="#{bundle.aon_remark}" />
+				</f:facet>
+				<aon:outputText value="#{to.observation}" />
+				<f:facet name="footer">
+					<aon:div style="widht: 100%; text-align: right;">
+						<aon:outputText value="#{bundle.aon_total}:" />
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{dataModel.rowCount}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</c:if>
 	</aon:dataTable>
 		
 </ui:composition>

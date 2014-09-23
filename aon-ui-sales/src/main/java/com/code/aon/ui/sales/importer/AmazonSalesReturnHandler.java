@@ -79,7 +79,7 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		return generatedSales;
 	}
 	
-	public List<AmazonSales> getCancelledSales(){
+	public List<AmazonSales> getExcludedSales(){
 		return null;
 	}
 	
@@ -144,11 +144,18 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 			Sales sales = amazonSalesDetail.getAmazonSales().getSales();
 			if(sales!=null && sales.getId()!=null){
 				Item item = ImporterUtils.obtainItem(importedSalesItemMap.get(amazonSalesDetail.getSku()));
+				Result<Record2<Double, String>> lastSalesDetailRecord = ImporterUtils.getLastSalesDetailRecords(importedSalesItemMap.get(amazonSalesDetail.getSku()), sales.getPurchaseReference());
+				DiscountExpression discountExpression  = new DiscountExpression();
+				Double price = item.getPrice();
+				if(lastSalesDetailRecord!=null && lastSalesDetailRecord.size()>0){
+					price = lastSalesDetailRecord.get(0).value1();
+					discountExpression  = new DiscountExpression(lastSalesDetailRecord.get(0).value2());
+				}
 				salesUtils.createSalesDetail(sales, item, salesUtils.calculateNextLine(sales), 
 						item.getProduct().getName()+" ["+item.getDetail()+"]", 
-						null, SalesDetailStatus.PENDING, new DiscountExpression(), 
+						null, SalesDetailStatus.PENDING, discountExpression, 
 						(-1)*Double.valueOf(amazonSalesDetail.getQuantity()), 
-						item.getPrice(), 0.0, 0.0, 0.0);
+						price, 0.0, 0.0, 0.0);
 			}
 		}
 	}
