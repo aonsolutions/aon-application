@@ -1,5 +1,7 @@
 package com.code.aon.ui.purchase.event;
 
+import java.util.List;
+
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
@@ -38,11 +40,15 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		PurchaseController controller = (PurchaseController)event.getController();
 		Purchase purchase = (Purchase) controller.getTo();
 		try {
+			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
+			if (workPlaces.size() > 0) {
+				purchase.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			} else {
+				throw new ControllerListenerException("No hay un Centro de Trabajo definido.");
+			}
 			purchase.setSecurityLevel(SecurityLevel.OFFICIAL);
 			purchase.setStatus(PurchaseStatus.PENDING);
-			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			purchase.setWorkPlace(workPlace);
-			purchase.setScope(workPlace.getScope());
+			purchase.setScope(purchase.getWorkPlace().getScope());
 			purchase.setDocumentType(PurchaseDocumentType.NORMAL);
 			controller.setAddresses(null);
 			controller.setDefaultPayMethod(null);
@@ -75,18 +81,7 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 	}
 	
 	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		PurchaseController purchaseController = (PurchaseController)this.getController();
-		Purchase purchase = (Purchase)purchaseController.getTo();
-		if (purchase.getProject() != null && purchase.getProject().getId() != null) {
-			IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
-			purchaseDetailController.onSearch(null);
-		}
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		PurchaseController purchaseController = (PurchaseController)this.getController();
 		Purchase purchase = (Purchase)purchaseController.getTo();
 		if (purchase.getProject() == null || purchase.getProject().getId() == null) {
@@ -100,6 +95,16 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 			emptyShippingAlternativeAddress((Purchase)purchaseController.getTo());
 		}
 		purchaseController.setShippingAlternativeAddress(purchaseController.isShippingAlternativeAddressDefined());
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		PurchaseController purchaseController = (PurchaseController)this.getController();
+		Purchase purchase = (Purchase)purchaseController.getTo();
+		if (purchase.getProject() != null && purchase.getProject().getId() != null) {
+			IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
+			purchaseDetailController.onSearch(null);
+		}
 	}
 	
 	private void emptyShippingAlternativeAddress(Purchase purchase) {

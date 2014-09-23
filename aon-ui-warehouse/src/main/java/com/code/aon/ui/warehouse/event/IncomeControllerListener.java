@@ -1,5 +1,7 @@
 package com.code.aon.ui.warehouse.event;
 
+import java.util.List;
+
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
@@ -27,12 +29,17 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		IncomeController controller = (IncomeController)event.getController();
+		Income income = (Income)controller.getTo(); 
 		try {
-			((Income)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
-			((Income)controller.getTo()).setStatus(IncomeStatus.PENDING);
-			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			((Income)controller.getTo()).setWorkPlace(workPlace);
-			((Income)controller.getTo()).setScope(workPlace.getScope());
+			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
+			if (workPlaces.size() > 0) {
+				income.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			} else {
+				throw new ControllerListenerException("No hay un Centro de Trabajo definido.");
+			}
+			income.setSecurityLevel(SecurityLevel.OFFICIAL);
+			income.setStatus(IncomeStatus.PENDING);
+			income.setScope(income.getWorkPlace().getScope());
 			controller.setAddresses(null);
 	        controller.setWarehouse(controller.obtainWarehouse((Income)controller.getTo()));
 			controller.setDefaultPayMethod(null);
@@ -63,18 +70,7 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 	}
 	
 	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		IncomeController incomeController = (IncomeController)this.getController();
-		Income income = (Income)incomeController.getTo();
-		if (income.getProject() != null && income.getProject().getId() != null) {
-			IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
-			incomeDetailController.onSearch(null);
-		}
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		IncomeController incomeController = (IncomeController)this.getController();
 		Income income = (Income)incomeController.getTo();
 		if (income.getProject() == null || income.getProject().getId() == null) {
@@ -86,4 +82,14 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		}
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		IncomeController incomeController = (IncomeController)this.getController();
+		Income income = (Income)incomeController.getTo();
+		if (income.getProject() != null && income.getProject().getId() != null) {
+			IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+			incomeDetailController.onSearch(null);
+		}
+	}
+
 }

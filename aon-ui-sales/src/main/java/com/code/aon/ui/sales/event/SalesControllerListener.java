@@ -1,5 +1,7 @@
 package com.code.aon.ui.sales.event;
 
+import java.util.List;
+
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
@@ -33,26 +35,20 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 	}
 	
 	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		SalesController controller = (SalesController)event.getController();
-		if(!controller.isShippingAlternativeAddress()){
-			emptyShippingAlternativeAddress((Sales)controller.getTo());
-		}
-		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
-	}
-
-	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		SalesController controller = (SalesController)event.getController();
 		Sales sales = (Sales) controller.getTo();
 		try {
+			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
+			if (workPlaces.size() > 0) {
+				sales.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			} else {
+				throw new ControllerListenerException("No hay un Centro de Trabajo definido.");
+			}
 			sales.setSecurityLevel(SecurityLevel.OFFICIAL);
 			sales.setStatus(SalesStatus.PENDING);
-			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			sales.setWorkPlace(workPlace);
-			sales.setScope(workPlace.getScope());
+			sales.setScope(sales.getWorkPlace().getScope());
 			sales.setDocumentType(DocumentType.NORMAL);
 			controller.setAddresses(null);
 			controller.setProjects(null);
@@ -92,6 +88,15 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 		salesDetailController.onReset(null);
 	}
 
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		SalesController controller = (SalesController)event.getController();
+		if(!controller.isShippingAlternativeAddress()){
+			emptyShippingAlternativeAddress((Sales)controller.getTo());
+		}
+		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+	}
+
 	private void emptyShippingAlternativeAddress(Sales sales) {
 		sales.setShippingAlternativeAddress(null);
 		sales.setShippingAlternativeAddress2(null);
@@ -100,5 +105,5 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 		sales.setShippingAlternativePhone(null);
 		sales.setShippingAlternativeRecipient(null);
 	}
-	
+
 }

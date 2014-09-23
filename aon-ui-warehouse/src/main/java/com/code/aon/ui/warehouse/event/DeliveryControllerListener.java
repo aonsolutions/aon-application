@@ -1,5 +1,7 @@
 package com.code.aon.ui.warehouse.event;
 
+import java.util.List;
+
 import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
@@ -26,26 +28,20 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		DeliveryController controller = (DeliveryController) event.getController();
-		if(!controller.isShippingAlternativeAddress()){
-			emptyShippingAlternativeAddress((Delivery)controller.getTo());
-		}
-		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
-	}
-	
-	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		DeliveryController controller = (DeliveryController)event.getController();
 		Delivery delivery = (Delivery)controller.getTo(); 
 		try {
+			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
+			if (workPlaces.size() > 0) {
+				delivery.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			} else {
+				throw new ControllerListenerException("No hay un Centro de Trabajo definido.");
+			}
 			delivery.setSecurityLevel(SecurityLevel.OFFICIAL);
 			delivery.setStatus(DeliveryStatus.PENDING);
-			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			delivery.setWorkPlace(workPlace);
-			delivery.setScope(workPlace.getScope());
+			delivery.setScope(delivery.getWorkPlace().getScope());
 			controller.setAddresses(null);
 			controller.setProjects(null);
 	        controller.setWarehouse(controller.obtainWarehouse((Delivery)controller.getTo()));
@@ -79,6 +75,15 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IController deliveryDetailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		deliveryDetailController.onReset(null);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		DeliveryController controller = (DeliveryController) event.getController();
+		if(!controller.isShippingAlternativeAddress()){
+			emptyShippingAlternativeAddress((Delivery)controller.getTo());
+		}
+		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
 	}
 	
 	private void emptyShippingAlternativeAddress(Delivery delivery) {

@@ -1,5 +1,7 @@
 package com.code.aon.ui.commercial.event;
 
+import java.util.List;
+
 import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.CommercialTerm;
@@ -37,11 +39,15 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 		OfferController controller = (OfferController)event.getController();
 		Offer offer = (Offer) controller.getTo();
 		try {
+			List<SelectItem> workPlaces = companyColls.getCurrentUserWorkPlaces();
+			if (workPlaces.size() > 0) {
+				offer.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			} else {
+				throw new ControllerListenerException("No hay un Centro de Trabajo definido.");
+			}
 			offer.setSecurityLevel(SecurityLevel.OFFICIAL);
 			offer.setStatus(OfferStatus.PENDING);
-			WorkPlace workPlace = (WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue();
-			offer.setWorkPlace(workPlace);
-			offer.setScope(workPlace.getScope());
+			offer.setScope(offer.getWorkPlace().getScope());
 			offer.setType(OfferType.NORMAL);
 			controller.setAddresses(null);
 			controller.setProjects(null);
