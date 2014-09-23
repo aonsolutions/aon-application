@@ -37,18 +37,21 @@
 		<aon:outputLabel for="PaymentCardFinance_reservationCode" 
 			value="#{bundle.report_reservation_code}" />
 		<aon:div id="PaymentCardFinance_reservationCode-Div"> 
-			<aon:inputText id="PaymentCardFinance_reservationCode"
-				value="#{paymentCardSettle.reservationCode}" size="23" >
-				<a4j:support event="onblur" ignoreDumpResponses="true" 
-					reRender="PaymentCardFinance_reservationCode-Div" ajaxSingle="#{true}" /> 
-			</aon:inputText>
-			<aon:commandButton id="PaymentCardFinance_reservationCode-add" 
-				styleClass="aon-finding-toolbar-item aon-search-add"
-				value="&#160;" immediate="true"
-				rendered="#{not empty paymentCardSettle.reservationCode}"
-				actionListener="#{paymentCardSettle.onAddReservationCode}"
-				reRender="ReservationSearchPanel"
-				focus="PaymentCardFinance_reservationCode" />
+			<aon:panelGrid columns="2"
+				columnClasses="aon-width-150,aon-width-auto">
+				<aon:inputText id="PaymentCardFinance_reservationCode"
+					value="#{paymentCardSettle.reservationCode}" size="20" >
+					<a4j:support event="onblur" ignoreDumpResponses="true" 
+						reRender="PaymentCardFinance_reservationCode-Div" ajaxSingle="#{true}" /> 
+				</aon:inputText>
+				<aon:commandButton id="PaymentCardFinance_reservationCode-add" 
+					styleClass="aon-finding-toolbar-item aon-search-add"
+					value="&#160;" immediate="true"
+					rendered="#{not empty paymentCardSettle.reservationCode}"
+					actionListener="#{paymentCardSettle.onAddReservationCode}"
+					reRender="ReservationSearchPanel"
+					focus="PaymentCardFinance_reservationCode" />
+			</aon:panelGrid>
 		</aon:div>
 
 		<aon:outputLabel value="#{bundle.report_guest}" />

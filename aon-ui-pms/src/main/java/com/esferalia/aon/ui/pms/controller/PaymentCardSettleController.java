@@ -362,6 +362,7 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		resetOptionalSearchParams();
 	}
+
 	private void resetOptionalSearchParams() {
 		setHotel(null);
 		setReferenceCodes(null);
@@ -436,6 +437,10 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		getReservationCodes().remove(index);
 	}
 	
+	public void onClear(ActionEvent event) {
+		resetOptionalSearchParams();
+	}
+
 	public void onSearch(ActionEvent event) {
 		setSelectedTab(PENDING_FINANCE_TAB);
 		try {
@@ -452,9 +457,6 @@ public class PaymentCardSettleController extends DataScrollerState implements IS
 		} catch (AonSQLException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
-	}
-	public void onClear(ActionEvent event) {
-		resetOptionalSearchParams();
 	}
 
 	private void onSearchFinances() throws AonSQLException {
