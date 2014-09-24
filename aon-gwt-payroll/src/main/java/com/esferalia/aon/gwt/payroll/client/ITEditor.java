@@ -115,7 +115,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 	private static final DateTimeFormat format = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_LONG);
-
+	
 	private static LinkedList<LinkedList<Status>> myEmployees;
 
 	private boolean finalizado;
@@ -220,7 +220,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			
 			try {
 				tooltipCallback.cancel();
-				Window.alert("Click!");
+			//	Window.alert("Click!");
 				
 			}catch (Throwable ex) {
 				
