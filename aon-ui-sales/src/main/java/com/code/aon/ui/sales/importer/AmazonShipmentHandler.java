@@ -117,7 +117,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 				
 				if(amazonSales.isNewCustomer()){
 					Registry registry = new Registry();
-					registry.setName(amazonSales.getBuyerName());
+					registry.setName(StringUtils.upperCase(amazonSales.getBuyerName()));
 					registry.setType(RegistryType.NATURAL);
 					registry = (Registry) BeanManager.getManagerBean(Registry.class).insert(registry);
 					
@@ -130,16 +130,16 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 					RegistryAddress raddress = new RegistryAddress();
 					raddress.setRegistry(customer.getRegistry());
 					
-					raddress.setAddress(amazonSales.getShipAddress1());
-					raddress.setAddress2(amazonSales.getShipAddress2());
-					raddress.setAddress3(amazonSales.getShipAddress3());
+					raddress.setAddress(StringUtils.upperCase(amazonSales.getShipAddress1()));
+					raddress.setAddress2(StringUtils.upperCase(amazonSales.getShipAddress2()));
+					raddress.setAddress3(StringUtils.upperCase(amazonSales.getShipAddress3()));
 					raddress.setAddressType(AddressType.MAIN);
-					raddress.setCity(amazonSales.getShipCity());
+					raddress.setCity(StringUtils.upperCase(amazonSales.getShipCity()));
 					if(StringUtils.isNotBlank(amazonSales.getShipPostalCode()) 
 							&& amazonSales.getShipPostalCode().length()>2){
 						raddress.setGeozone(ImporterUtils.obtainGeozone(amazonSales.getShipPostalCode().substring(0, 2)));
 					}
-					raddress.setProvince(amazonSales.getShipState());
+					raddress.setProvince(StringUtils.upperCase(amazonSales.getShipState()));
 					raddress.setStreetType(StreetType.CL);
 					raddress.setZip(amazonSales.getShipPostalCode());
 					raddress = (RegistryAddress) BeanManager.getManagerBean(RegistryAddress.class).insert(raddress);					
@@ -163,12 +163,24 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 					}
 				}
 				// shipment data
-				sales.setShippingAlternativeAddress(amazonSales.getShipAddress1());
-				sales.setShippingAlternativeAddress2(amazonSales.getShipAddress2()+". "+amazonSales.getShipAddress3());
+				sales.setShippingAlternativeAddress(StringUtils
+						.upperCase(amazonSales.getShipAddress1()));
+				sales.setShippingAlternativeAddress2(StringUtils
+						.upperCase(amazonSales.getShipAddress2())
+						+ ". "
+						+ StringUtils.upperCase(amazonSales.getShipAddress3()));
 				sales.setShippingAlternativeZip(amazonSales.getShipPostalCode());
-				sales.setShippingAlternativeCity(amazonSales.getShipCity()+", "+amazonSales.getShipState()+" ("+amazonSales.getShipCountry()+")");
-				sales.setShippingAlternativePhone(amazonSales.getBuyerPhoneNumber());
-				sales.setShippingAlternativeRecipient(amazonSales.getBuyerName());
+				sales.setShippingAlternativeCity(StringUtils
+						.upperCase(amazonSales.getShipCity())
+						+ ", "
+						+ StringUtils.upperCase(amazonSales.getShipState())
+						+ " ("
+						+ StringUtils.upperCase(amazonSales.getShipCountry())
+						+ ")");
+				sales.setShippingAlternativePhone(amazonSales
+						.getBuyerPhoneNumber());
+				sales.setShippingAlternativeRecipient(StringUtils
+						.upperCase(amazonSales.getBuyerName()));
 
 				salesBean.update(sales);
 				generatedSales.add(sales);
