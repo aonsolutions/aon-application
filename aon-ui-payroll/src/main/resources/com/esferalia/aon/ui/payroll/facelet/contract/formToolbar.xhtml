@@ -44,7 +44,7 @@
 		
 		<ui:define name="moreMenuContent">
 
-<c:if test="#{!contract.params.retaQuote}">
+<c:if test="#{!contract.params.retaQuote and !contract.internship}">
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
 				rendered="#{!contract.new}"

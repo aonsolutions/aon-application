@@ -393,7 +393,8 @@ public class FANWriter implements Serializable {
 		dat.setIndReduccionBoni(getBonificationReduction(contract));
 		dat.setGrupoCotizacion(getQuoteGroup(contract));
 		dat.setTipoContrato(getSourceContractType(contract));
-		dat.setClaveContrato(getContractCode(contract).getValue());
+		ContractCode code = getContractCode(contract);
+		dat.setClaveContrato(code==null?"000":code.getValue());
 		dat.setEpigrafeAtEp(getAtEpEpigraph(contract));
 		dat.setEpigrafeSecundario(getSecondariEpigraph(contract));
 		dat.setOcupacion(getContractOccupation(contract));
@@ -855,10 +856,12 @@ public class FANWriter implements Serializable {
 	 * @param dat
 	 */
 	private void createEDLCd11Segment(SalaryBonus bonus, DAT dat) {
-		EDL edl = dat.getEdlSegment("CD11");
-		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
-		Integer days = obtainFormationHours();
-		createEDLRecord(edl, "CD", 11, days, amount);
+		if(bonus.getType()==BonusType.DISTANCE_FORMATION){
+			EDL edl = dat.getEdlSegment("CD11");
+			Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
+			Integer days = obtainFormationDays();
+			createEDLRecord(edl, "CD", 11, days, amount);
+		}
 	}
 	/**
 	 *  10 Bonificación por formación teórica presencial
@@ -866,10 +869,12 @@ public class FANWriter implements Serializable {
 	 * @param dat
 	 */
 	private void createEDLCd10Segment(SalaryBonus bonus, DAT dat) {
-		EDL edl = dat.getEdlSegment("CD10");
-		Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
-		Integer days = obtainFormationHours();
-		createEDLRecord(edl, "CD", 10, days, amount);
+		if(bonus.getType()==BonusType.CLASSROOM_FORMATION){
+			EDL edl = dat.getEdlSegment("CD10");
+			Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
+			Integer days = obtainFormationDays();
+			createEDLRecord(edl, "CD", 10, days, amount);
+		}
 	}
 	/**
 	 *  7 Bonificaciones Contratos con derecho a bonificación/reducción (casilla 601 de TC1)
@@ -1354,7 +1359,7 @@ public class FANWriter implements Serializable {
 			} else {
 				return 30;
 			}
-		} else if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
+		} else {
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 			Double dayHours = (Double.parseDouble(weekHours)/7);
 			
@@ -1379,7 +1384,6 @@ public class FANWriter implements Serializable {
 			
 			return (totalDays * dayHours)<1?1:Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
 		}
-		return null;
 		
 	}
 	
@@ -1406,9 +1410,9 @@ public class FANWriter implements Serializable {
 	 * numero de horas destinadas a formacion para las bonificaciones por formacion
 	 * @return
 	 */
-	private Integer obtainFormationHours() {
+	private Integer obtainFormationDays() {
 		// TODO how obtain formation hours count
-		return 0;
+		return (int)getAvailableDays(getStartDate(), getEndDate());
 	}
 	
 	/**

@@ -43,13 +43,12 @@ public class IndefiniteModel extends AbstractContractModel {
 		
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
-//			String range = "1-3";
-//			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
-//			range += ","+modelOption.getPageNumber();
-//			reader.selectPages(range);
 			readPdfFields(reader);
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
+			ContrataContratoParams contrata = null;
+			if(contrataParams!=null && contrataParams.size()>0){
+				contrata = (ContrataContratoParams) contrataParams.get(0);
+			}
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 
@@ -237,19 +236,52 @@ public class IndefiniteModel extends AbstractContractModel {
 				setPdfFieldValue(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DIST_ADDR.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.EMPLOYEE_CONTRACT_DIST_ADDR.toString()));
 			}
 			
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_DESCRIPTION.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_ACTIVITY.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_DURATION.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_ESTIMATED_DURATION.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_AGREEMENT_COLLECTIVE.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_ESTIMATED_JOURNAL_HOURS.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_ESTIMATED_JOURNAL_PERIOD.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTONUOUS_WORK_ESTIMATED_SCHEDULE.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTINUOUS_AGREEMENT_COLLECTIVE_YES.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.DISCONTINUOUS_AGREEMENT_COLLECTIVE_NO.getValue(), null);
-			// setPdfFieldValue(PdfFieldIndefinite.**UNKNOWN**.getValue(), null);
+			if(code == ContractCode.C300 || code == ContractCode.C309 || code == ContractCode.C330 
+					|| code == ContractCode.C339 || code == ContractCode.C350 || code == ContractCode.C389){
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_DESCRIPTION.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_DESCRIPTION.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_DESCRIPTION.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ACTIVITY.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ACTIVITY.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ACTIVITY.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_DURATION.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_DURATION.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_DURATION.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIMATED_DURATION.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ESTIMATED_DURATION.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIMATED_DURATION.toString()));
+				}
+				
+				if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_AGREEMENT_COLLECTIVE.getValue(), contract.getAgreementLevelCategory().getLevel().getAgreement().getDescription());
+				}
+				
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_HOURS.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_HOURS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_HOURS.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_PERIOD.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_PERIOD.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_JOURNAL_PERIOD.toString()));
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_SCHEDULE.toString()))){
+					setPdfFieldValue(PdfFieldIndefinite.DISC_WORK_ESTIM_SCHEDULE.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_WORK_ESTIM_SCHEDULE.toString()));
+				}
+				
+				String discontinuous = getContractInfoMap(contract).get(PdfFieldIndefinite.DISC_AGREEMENT_COLLECTIVE.toString());
+				if(StringUtils.isNotBlank(discontinuous)){
+					if(PdfFieldIndefinite.DISC_AGREEMENT_COLLECTIVE_YES.toString().equals(discontinuous)){
+						setPdfFieldValue(PdfFieldIndefinite.DISC_AGREEMENT_COLLECTIVE_YES.getValue(), "true");
+					} else if(PdfFieldIndefinite.DISC_AGREEMENT_COLLECTIVE_NO.toString().equals(discontinuous)){
+						setPdfFieldValue(PdfFieldIndefinite.DISC_AGREEMENT_COLLECTIVE_NO.getValue(), "true");
+					}
+				}
+				
+				// setPdfFieldValue(PdfFieldIndefinite.**UNKNOWN**.getValue(), null);
+			}
 			
-			if(code.getValue().startsWith("1") || code.getValue().startsWith("4")){
+			String weekHours = getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString());
+			boolean isFullTimeDiscontinuous = code.getValue().startsWith("3") && StringUtils.isBlank(weekHours);
+			boolean isPartialTimeDiscontinuous = code.getValue().startsWith("3") && StringUtils.isNotBlank(weekHours);
+			
+			if(code.getValue().startsWith("1") || code.getValue().startsWith("4") || isFullTimeDiscontinuous){
 				setPdfFieldValue(PdfFieldIndefinite.FULL_TIME.getValue(), "true");
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
 					setPdfFieldValue(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()));
@@ -260,7 +292,7 @@ public class IndefiniteModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString()))){
 					setPdfFieldValue(PdfFieldIndefinite.FULL_TIME_END_TIME.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString()));
 				}
-			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5")){
+			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5") || isPartialTimeDiscontinuous){
 				setPdfFieldValue(PdfFieldIndefinite.PARTIALLY_TIME.getValue(), "true");
 				
 				

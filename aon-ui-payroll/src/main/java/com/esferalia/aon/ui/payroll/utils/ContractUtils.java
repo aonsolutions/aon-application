@@ -279,25 +279,11 @@ public class ContractUtils implements Serializable {
 				data.setStartDate(contract.getStartDate());
 				data.setEndDate(contract.getEndDate());
 				data.setName( ContextVariable.TC2.getName() );
-				data.setExpression("\"" + params.getContractCode().getValue() + "\"");
+				data.setExpression("\"" + params.getContractCode() + "\"");
 				bean.insert(data);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
-			if(params.getSubsidized()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.SUBSIDIZED.getName() );
-				data.setExpression(params.getSubsidized()?"true":"false");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
@@ -526,6 +512,7 @@ public class ContractUtils implements Serializable {
 			String msg = "Error al grabar el indicador de discapacidad. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+
 		
 	}
 	
@@ -645,7 +632,7 @@ public class ContractUtils implements Serializable {
 				data.setStartDate(contract.getStartDate());
 				data.setEndDate(contract.getEndDate());
 				data.setName( ContextVariable.TC2.getName() );
-				data.setExpression("\"" + params.getContractCode().getValue() + "\"");
+				data.setExpression("\"" + params.getContractCode() + "\"");
 				bean.insertOrUpdate(data);
 			} else {
 				if(tc2Data != null){
@@ -677,27 +664,8 @@ public class ContractUtils implements Serializable {
 //			AonUtil.addErrorMessage(msg);
 //		}
 		try {
-			ContractData subsidizedData = obtainContractData(contract, ContextVariable.SUBSIDIZED.getName());
-			if(params.getSubsidized()!=null){
-				data = subsidizedData!=null?subsidizedData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.SUBSIDIZED.getName() );
-				data.setExpression(params.getSubsidized()?"true":"false");
-				bean.insertOrUpdate(data);
-			} else {
-				if(subsidizedData != null){
-					bean.remove(subsidizedData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			ContractData weekHoursData = obtainContractData(contract, ContextVariable.WEEK_HOURS.getName());
-			if(params.getWeekHours()!=null){
+			if(params.getWeekHours()!=null && params.getWeekHours()>0){
 				data = weekHoursData!=null?weekHoursData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -756,7 +724,7 @@ public class ContractUtils implements Serializable {
 		try {
 			ContractData mondayHours = obtainContractData(contract, ContextVariable.MONDAY_HOURS.getName());
 //			if(params.getMondayHours()!=null){
-			if(params.getWeekDayHours()[0]!=null){
+			if(params.getWeekDayHours()[0]!=null && params.getWeekDayHours()[0]>0){
 				data = mondayHours!=null?mondayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -770,7 +738,7 @@ public class ContractUtils implements Serializable {
 				}
 			}
 			ContractData tuesdayHours = obtainContractData(contract, ContextVariable.TUESDAY_HOURS.getName());
-			if(params.getWeekDayHours()[1]!=null){
+			if(params.getWeekDayHours()[1]!=null && params.getWeekDayHours()[1]>0){
 				data = tuesdayHours!=null?tuesdayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -784,7 +752,7 @@ public class ContractUtils implements Serializable {
 				}
 			}
 			ContractData wednesdayHours = obtainContractData(contract, ContextVariable.WEDNESDAY_HOURS.getName());
-			if(params.getWeekDayHours()[2]!=null){
+			if(params.getWeekDayHours()[2]!=null && params.getWeekDayHours()[2]>0){
 				data = wednesdayHours!=null?wednesdayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -798,7 +766,7 @@ public class ContractUtils implements Serializable {
 				}
 			}
 			ContractData thursdayHours = obtainContractData(contract, ContextVariable.THURSDAY_HOURS.getName());
-			if(params.getWeekDayHours()[3]!=null){
+			if(params.getWeekDayHours()[3]!=null && params.getWeekDayHours()[3]>0){
 				data = thursdayHours!=null?thursdayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -812,7 +780,7 @@ public class ContractUtils implements Serializable {
 				}
 			}
 			ContractData fridayHours = obtainContractData(contract, ContextVariable.FRIDAY_HOURS.getName());
-			if(params.getWeekDayHours()[4]!=null){
+			if(params.getWeekDayHours()[4]!=null && params.getWeekDayHours()[4]>0){
 				data = fridayHours!=null?fridayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -826,7 +794,7 @@ public class ContractUtils implements Serializable {
 				}
 			}
 			ContractData saturdayHours = obtainContractData(contract, ContextVariable.SATURDAY_HOURS.getName());
-			if(params.getWeekDayHours()[5]!=null){
+			if(params.getWeekDayHours()[5]!=null && params.getWeekDayHours()[5]>0){
 				data = saturdayHours!=null?saturdayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -840,7 +808,7 @@ public class ContractUtils implements Serializable {
 				}
 			}
 			ContractData sundayHours = obtainContractData(contract, ContextVariable.SUNDAY_HOURS.getName());
-			if(params.getWeekDayHours()[6]!=null){
+			if(params.getWeekDayHours()[6]!=null && params.getWeekDayHours()[6]>0){
 				data = sundayHours!=null?sundayHours:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -1020,13 +988,10 @@ public class ContractUtils implements Serializable {
 		}
 		if(map.get(ContextVariable.TC2.getName())!=null){
 //			params.setContractModelCode( obtainContractModelCode(map.get(ContextVariable.TC2.getName()), contract.getModel()) );
-			params.setContractCode( ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName())) );
+			params.setContractCode( map.get(ContextVariable.TC2.getName()) );
 		}
 		if(map.get(ContextVariable.TC2.getName())!=null){
 //			params.setContractTransformCode( ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName())) );
-		}
-		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
-			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
 		if(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())!=null){
 			params.setCollectivePeculiarityQuote(T54.getEnumByValue(map.get(ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName())));
@@ -1319,7 +1284,7 @@ public class ContractUtils implements Serializable {
 	public boolean isTrainingContract(Contract contract, ContractParams params){
 		String contractCode = null;
 		if(params.getContractCode()!=null){
-			contractCode = params.getContractCode().getValue();
+			contractCode = params.getContractCode();
 		}
 		return contractCode!=null && ContractCode.getContractCodeByValue(contractCode)==ContractCode.C421;
 	}

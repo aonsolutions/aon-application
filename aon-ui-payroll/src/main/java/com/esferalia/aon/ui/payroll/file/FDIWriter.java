@@ -15,6 +15,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.fdi.FDI;
 import com.esferalia.aon.file.payroll.fdi.data.DEC;
 import com.esferalia.aon.file.payroll.fdi.data.DIT;
@@ -268,6 +269,9 @@ public class FDIWriter implements Serializable {
 
 		
 		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( detail.getContractLeave().getStartDate() )) );
+		if( StringUtils.isBlank(detail.getCollegeNumber()) && StringUtils.isBlank(detail.getCias()) ){
+			AonUtil.addErrorMessage("Ausencia de nº de colegiado o CIAS para el parte de "+detail.getContractLeave().getContract().getPerson().getFullName());
+		}
 		dit.setNumeroColegiado(detail.getCollegeNumber());
 		dit.setCias(detail.getCias());
 		if (StringUtils.isNotBlank(dit.getNumeroColegiado())) {

@@ -81,6 +81,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -146,6 +147,16 @@ public class ContractController extends BasicController {
 			Contract contract = (Contract) getModel().getRowData();
 			String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.SELF_EMPLOYED.getValue());
 			return new Boolean( value );
+		} catch (ManagerBeanException e) {
+			// nothing
+		}
+		return false;
+	}
+	public boolean isRowContractInternship() {
+		try {
+			Contract contract = (Contract) getModel().getRowData();
+			String code = getContractUtils().getDataCurrentValue(contract, ContextVariable.TC2.getName());
+			return code!=null && code.equals("BECARIO");
 		} catch (ManagerBeanException e) {
 			// nothing
 		}
@@ -289,7 +300,7 @@ public class ContractController extends BasicController {
 	public boolean isEndDateRequired(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		String[] codes = {"402", "420", "421", "430", "441", "452", "502", "520", "530", "541", "552", "970"};
 		return ArrayUtils.contains(codes, contractCode) ;
@@ -298,7 +309,7 @@ public class ContractController extends BasicController {
 	public boolean isEndDateOptional(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		String[] codes = {"401", "403", "410", "501", "503", "510", "540", "980", "990"};
 		return ArrayUtils.contains(codes, contractCode) ;
@@ -307,7 +318,7 @@ public class ContractController extends BasicController {
 	public boolean isPartiallyTimeContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		return contractCode!=null && !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4");
 	}
@@ -315,7 +326,7 @@ public class ContractController extends BasicController {
 	public boolean isExtensibleContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
@@ -323,7 +334,7 @@ public class ContractController extends BasicController {
 	public boolean isTransformableContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
@@ -367,7 +378,7 @@ public class ContractController extends BasicController {
 	public boolean isTransformedContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		String[] codes = {"109","139","189","209","239","289","309","339","389"};
 		return ArrayUtils.contains(codes, contractCode) ;
@@ -415,7 +426,7 @@ public class ContractController extends BasicController {
 	public boolean isUnsuportedContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
-			contractCode = this.getParams().getContractCode().getValue();
+			contractCode = this.getParams().getContractCode();
 		}
 		return contractCode!=null && (isTransformedContract() || !ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, contractCode));
 	}
@@ -447,9 +458,9 @@ public class ContractController extends BasicController {
 	
 	public boolean isShowDisabilityIndicator(){
 		if(this.getParams().getContractCode()!=null){
-			return this.getParams().getContractCode() == ContractCode.C130 || this.getParams().getContractCode() == ContractCode.C230
-					|| this.getParams().getContractCode() == ContractCode.C330 || this.getParams().getContractCode() == ContractCode.C430
-					|| this.getParams().getContractCode() == ContractCode.C530;
+			return this.getParams().getContractCode() == ContractCode.C130.getValue() || this.getParams().getContractCode() == ContractCode.C230.getValue()
+					|| this.getParams().getContractCode() == ContractCode.C330.getValue() || this.getParams().getContractCode() == ContractCode.C430.getValue()
+					|| this.getParams().getContractCode() == ContractCode.C530.getValue();
 		}
 		return false;
 	}
@@ -543,7 +554,7 @@ public class ContractController extends BasicController {
 		if(getParams().getContractCode()!=null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			for(ModelOption opt: ModelOption.values()){
-				if( ArrayUtils.contains(opt.getCodes(), getParams().getContractCode()) ){
+				if( ArrayUtils.contains(opt.getCodes(), ContractCode.getContractCodeByValue(getParams().getContractCode())) ){
 					String label = ArrayUtils.contains(availableModels, opt)?"":"* ";
 					label += opt.getName(locale);
 					SelectItem item = new SelectItem(opt, label);
@@ -750,6 +761,9 @@ public class ContractController extends BasicController {
 					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
 					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), contract.getWorkPlace().getAddress().getGeozone().getId());
 				}
+				if(isInternship()){
+					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.FELLOWS);
+				}
 				List<ITransferObject> cccList = ecBean.getList(criteria);
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				for(ITransferObject to: cccList){
@@ -767,6 +781,9 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public boolean isInternship() {
+		return getParams()!=null && getParams().getContractCode()!=null && getParams().getContractCode().equals("BECARIO");
+	}
 	public void loadWorkplaceAgreement(ActionEvent event){
 		Contract contract = (Contract) getTo(); 
 		try {
@@ -1842,7 +1859,6 @@ public class ContractController extends BasicController {
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
 		private Double grossSalary;
-		private Boolean subsidized;
 		private TrainingCenter trainingCenter;
 		private TrainingCourse trainingCourse;
 		private Date trainingStartDate;
@@ -1859,7 +1875,7 @@ public class ContractController extends BasicController {
 		private Integer settleAdvanceNoticeDays;
 		
 		private String sepeContractId;
-		
+		private String code;
 		
 		
 		public String getSepeContractId() {
@@ -1920,12 +1936,6 @@ public class ContractController extends BasicController {
 		public void setGrossSalary(Double grossSalary) {
 			this.grossSalary = grossSalary;
 		}
-		public Boolean getSubsidized() {
-			return subsidized;
-		}
-		public void setSubsidized(Boolean subsidized) {
-			this.subsidized = subsidized;
-		}
 		public TrainingCenter getTrainingCenter() {
 			return trainingCenter;
 		}
@@ -1937,7 +1947,9 @@ public class ContractController extends BasicController {
 		}
 		public void setTrainingCourse(TrainingCourse trainingCourse) {
 			this.trainingCourse = trainingCourse;
-			setCno(trainingCourse.getCNO());
+			if(trainingCourse!=null && trainingCourse.getId()!=null && trainingCourse.getCNO()!=null){
+				setCno(trainingCourse.getCNO());
+			}
 		}
 		public Date getTrainingStartDate() {
 			return trainingStartDate;
@@ -1983,11 +1995,18 @@ public class ContractController extends BasicController {
 		public void setContractModelCode(ContractModelCode contractModelCode) {
 			this.contractModelCode = contractModelCode;
 		}
-		public ContractCode getContractCode() {
-			return contractCode;
+//		public ContractCode getContractCode() {
+//			return contractCode;
+//		}
+//		public void setContractCode(ContractCode contractCode) {
+//			this.contractCode = contractCode;
+//		}
+		
+		public String getContractCode() {
+			return code;
 		}
-		public void setContractCode(ContractCode contractCode) {
-			this.contractCode = contractCode;
+		public void setContractCode(String contractCode) {
+			this.code = contractCode;
 		}
 		public QuoteGroup getQuoteGroup() {
 			return quoteGroup;

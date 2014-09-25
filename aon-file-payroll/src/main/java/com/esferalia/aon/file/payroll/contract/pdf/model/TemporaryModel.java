@@ -45,13 +45,12 @@ public class TemporaryModel extends AbstractContractModel {
 		
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
-//			range = "1-3";
-//			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
-//			range += ","+modelOption.getPageNumber();
-//			reader.selectPages(range);
 			readPdfFields(reader);
 			
-			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams.get(0);
+			ContrataContratoParams contrata = null;
+			if(contrataParams!=null && contrataParams.size()>0){
+				contrata = (ContrataContratoParams) contrataParams.get(0);
+			}
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 

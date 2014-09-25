@@ -233,15 +233,18 @@ public class PayrollCollectionsController implements Serializable {
 	}
 	
 	public List<SelectItem> getAllContractCodes() {
+		String INTERNSHIP = "BECARIOS";
 		List<SelectItem> list;
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		list = new LinkedList<SelectItem>();
 		ContractCode[] codes = ContractCode.values();
 		for (ContractCode code : codes) {
 			String name = code.getValue() +" - "+ code.getName(locale);
-			SelectItem item = new SelectItem(code, name);
+			SelectItem item = new SelectItem(code.getValue(), name);
 			list.add(item);
 		}
+		// CONTRATOS NO NORMALIZADOS
+		list.add(new SelectItem("BECARIO", INTERNSHIP));
 		return list;
 	}
 	
@@ -254,7 +257,7 @@ public class PayrollCollectionsController implements Serializable {
 			for (ContractCode code : codes) {
 				if( !ArrayUtils.contains(TRANSFORM_CODES, code.getValue()) ){
 					String name = code.getValue() +" - "+ code.getName(locale);
-					SelectItem item = new SelectItem(code, name);
+					SelectItem item = new SelectItem(code.getValue(), name);
 					contractCodes.add(item);
 				}
 			}
@@ -273,7 +276,7 @@ public class PayrollCollectionsController implements Serializable {
 					if(StringUtils.contains(name,", TRANSFORMACIÓN CONTRATO TEMPORAL")){
 						name = StringUtils.replace(name, "TRANSFORMACIÓN CONTRATO TEMPORAL", "TRANSFORMACIÓN");
 					}
-					SelectItem item = new SelectItem(code, name);
+					SelectItem item = new SelectItem(code.getValue(), name);
 					contractTransformCodes.add(item);
 				}
 			}

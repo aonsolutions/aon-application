@@ -592,11 +592,16 @@ public class CertificadosWriter implements Serializable {
 		TRABAJADORTYPE.DatosVacacionesCotizadas o = null;
 		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
-			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
 // TODO: search holidays using an appropiate ContextVariable field  
-			String noHolidays = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get("DIAS_VACACIONES_NO_DISFRUTADOS");
+			String noHolidaysData = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get("DIAS_VACACIONES_NO_DISFRUTADOS");
+			Double noHolidays = 0.0;
+			if(noHolidaysData!=null){
+				noHolidays = Double.valueOf(noHolidaysData);
+				noHolidays = CommonUtil.ceil(noHolidays, 0);
+			}
+			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
 			for(ISalary settle: settleList){
-				if(settle!=null && noHolidays!=null && noHolidays!="0"){
+				if(settle!=null && noHolidays!=null){
 					o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
 					Double baseCg = settle.getCommonBase();
 					Double baseAcc = settle.getProfessionalBase();
@@ -605,7 +610,7 @@ public class CertificadosWriter implements Serializable {
 					baseCg += getDelayBaseAmount(settleList, null, null, ContextVariable.CGC_BASE);
 					baseAcc += getDelayBaseAmount(settleList, null, null, ContextVariable.CGP_BASE);
 					
-					o.setNumDiasCotizados(completeLength(noHolidays,3,false));
+					o.setNumDiasCotizados(completeLength(noHolidays.intValue(),3,false));
 					o.setBaseCotizacionContingenciasComunes(completeLength(baseCg, 9,false));
 					o.setBaseCotizacionDesempleo(completeLength(baseAcc, 9,false));
 					o.setObservaciones(null);
