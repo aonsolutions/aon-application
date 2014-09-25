@@ -6,6 +6,9 @@ import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +27,28 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public class CconceLoader extends AbstractLoader implements
 		ConvenLoader.Callback {
+	
+	public static interface Listener {
+		void onPaymentConceptUpdated(PaymentConceptRecord concept);
+		void onPaymentConceptIgnored(PaymentConceptRecord concept);
+		void onPaymentConceptInserted(PaymentConceptRecord concept);
+		
+	}
+	
+	private static class NullListener implements Listener {
+		private static Listener NULL_LISTENER = new NullListener();
+
+		@Override
+		public void onPaymentConceptIgnored(PaymentConceptRecord concept) {
+		}
+		@Override
+		public void onPaymentConceptUpdated(PaymentConceptRecord concept) {
+		}
+		@Override
+		public void onPaymentConceptInserted(PaymentConceptRecord concept) {
+		}
+	
+	}
 
 	public static String getCode(FntconceRecord tconce) {
 		return getCode(tconce.getF21nombre(), tconce.getF21pagas(),
@@ -107,20 +132,39 @@ public class CconceLoader extends AbstractLoader implements
 	// ------------------------------------------------------------------------
 
 	private static String getExpression(FncconceRecord cconce) {
-		return String.format("/*CLAVE:%s*/", cconce.getF21clave());
+		return String.format("/*CODIGO:%s, NORDEN:%s, CLAVE:%s*/", cconce.getF21codigo(), cconce.getF21norden(), cconce.getF21clave());
 	}
 
 	// ------------------------------------------------------------------------
+	
+	private boolean replace;
+
+	private Listener listener;
+
+	private List<PaymentConceptRecord> toUpdate;
 
 	private Map<String, PaymentConceptRecord> concepts;
 
 	private InsertSetMoreStep<PaymentConceptRecord> insertSetMoreStepPaymentConcept;
 
-	//private InsertOnDuplicateSetMoreStep<PaymentConceptRecord> replaceSetMoreStepPaymentConcept;
+	// private InsertOnDuplicateSetMoreStep<PaymentConceptRecord>
+	// replaceSetMoreStepPaymentConcept;
 
 	public CconceLoader(DSLContext dsiContext, DSLContext aonContext) {
 		super(dsiContext, aonContext);
+		listener = NullListener.NULL_LISTENER;
+		toUpdate = new LinkedList<PaymentConceptRecord>();
 		concepts = new HashMap<String, PaymentConceptRecord>();
+	}
+	
+	public CconceLoader setReplace(boolean replace) {
+		this.replace = replace;
+		return this;
+	}
+	
+	public CconceLoader setListener(Listener listener) {
+		this.listener = listener;
+		return this;
 	}
 
 	public void load(int domain, Condition... conditions) {
@@ -140,10 +184,11 @@ public class CconceLoader extends AbstractLoader implements
 	}
 
 	public void execute() {
-		execute(insertSetMoreStepPaymentConcept);
-
-		insertSetMoreStepPaymentConcept = null;
+		insert();
+		update();
 	}
+	
+	
 
 	// ------------------------------------------------------------------------
 
@@ -158,29 +203,46 @@ public class CconceLoader extends AbstractLoader implements
 	}
 
 	// ------------------------------------------------------------------------
+	public void insert() {
+		execute(insertSetMoreStepPaymentConcept);
+		insertSetMoreStepPaymentConcept = null;
+	}
+
+	public void update() {
+		if ( toUpdate.isEmpty() )
+			return;
+		aonContext.batchUpdate(toUpdate).execute();
+		toUpdate.clear();
+	}
 
 	private int load(FncconceRecord cconce, int domain) {
 
-		PaymentConceptRecord record = getPaymentConcept(cconce, domain);
-		if (record != null) {
-			// TODO: REPLACE INTO ....
-			//replaceSetMoreStepPaymentConcept = replaceSetMoreStepPaymentConcept.set(record);
+		PaymentConceptRecord concept = getPaymentConcept(cconce, domain);
+		if (concept != null) {
+			if ( !replace  ) {
+				listener.onPaymentConceptIgnored(concept);
+			} else {
+				concept = newPaymentConcept(cconce, domain, concept.getId());
+				listener.onPaymentConceptUpdated(concept);
+				toUpdate.add(concept);
+			}
 		} else {
-			record = newPaymentConcept(cconce, domain);
+			concept = newPaymentConcept(cconce, domain, next(PAYMENT_CONCEPT.getIdentity()));
 			InsertSetStep<PaymentConceptRecord> insertSetStepPaymentConcept = getPaymentConceptInsertSetStep();
 			insertSetMoreStepPaymentConcept = insertSetStepPaymentConcept
-					.set(record);
+					.set(concept);
+			listener.onPaymentConceptInserted(concept);
 		}
 
-		concepts.put(cconce.getF21clave(), record);
-		return record.getId();
+		concepts.put(cconce.getF21clave(), concept);
+		return concept.getId();
 	}
 
 	private PaymentConceptRecord newPaymentConcept(FncconceRecord cconce,
-			int domain) {
+			int domain, int id) {
 
 		PaymentConceptRecord record = new PaymentConceptRecord();
-		record.setId(next(PAYMENT_CONCEPT.getIdentity()));
+		record.setId(id);
 
 		byte clavecra = StringUtils.isBlank(cconce.getF21clavecra()) ? 1 : Byte
 				.parseByte(cconce.getF21clavecra());
@@ -207,8 +269,9 @@ public class CconceLoader extends AbstractLoader implements
 
 	private PaymentConceptRecord getPaymentConcept(FncconceRecord cconce,
 			int domain) {
+
+		//@formatter:off
 		return 
-//@formatter:off
 		aonContext.select()
 		.from(PAYMENT_CONCEPT)
 		.where(PAYMENT_CONCEPT.DOMAIN.eq(domain))

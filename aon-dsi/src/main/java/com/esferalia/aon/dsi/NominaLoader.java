@@ -1,6 +1,6 @@
 package com.esferalia.aon.dsi;
 
-import static com.esferalia.aon.dsi.jooq.tables.Fncconce.FNCCONCE;
+import static com.esferalia.aon.dsi.jooq.tables.Fnempres.FNEMPRES;
 import static com.esferalia.aon.dsi.jooq.tables.Fnnominc.FNNOMINC;
 import static com.esferalia.aon.dsi.jooq.tables.Fnnominl.FNNOMINL;
 import static com.esferalia.aon.dsi.jooq.tables.Fntconce.FNTCONCE;
@@ -11,6 +11,14 @@ import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.salary.enumeration.DeductionType.COMMON_CONTINGENCY;
+import static com.esferalia.aon.salary.enumeration.DeductionType.FOGASA;
+import static com.esferalia.aon.salary.enumeration.DeductionType.IRPF;
+import static com.esferalia.aon.salary.enumeration.DeductionType.JOB_TRAINING;
+import static com.esferalia.aon.salary.enumeration.DeductionType.NON_STRUCTURAL_OVERTIME;
+import static com.esferalia.aon.salary.enumeration.DeductionType.OTHER;
+import static com.esferalia.aon.salary.enumeration.DeductionType.STRUCTURAL_OVERTIME;
+import static com.esferalia.aon.salary.enumeration.DeductionType.UNEMPLOYMENT;
 import static java.lang.String.format;
 import static org.jooq.tools.StringUtils.isBlank;
 
@@ -18,38 +26,30 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
-import org.jooq.Converter;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
-import org.jooq.Field;
+import org.jooq.DeleteConditionStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
-import org.jooq.RecordHandler;
 
 import com.code.aon.dbutils.AonSQLException;
-import com.esferalia.aon.dsi.jooq.tables.Fncconce;
-import com.esferalia.aon.dsi.jooq.tables.Fnnominc;
-import com.esferalia.aon.dsi.jooq.tables.Fntconce;
-import com.esferalia.aon.dsi.jooq.tables.records.FncconceRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnominlRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;
-import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
-import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class NominaLoader extends AbstractLoader {
@@ -60,24 +60,40 @@ public class NominaLoader extends AbstractLoader {
 		int getContract(FnnomincRecord nominc);
 	}
 
+	private boolean replace;
+
+	private List<Integer> toDelete;
+
 	private InsertSetMoreStep<SalaryRecord> insertSetMoreStepSalary;
-	private InsertSetMoreStep<SalaryDataRecord> insertSetMoreStepSalaryData;
 	private InsertSetMoreStep<SalaryCostRecord> insertSetMoreStepSalaryCost;
 	private InsertSetMoreStep<SalaryBonusRecord> insertSetMoreStepSalaryBonus;
 	private InsertSetMoreStep<SalaryEmbargoRecord> insertSetMoreStepSalaryEmbargo;
 	private InsertSetMoreStep<SalaryPaymentRecord> insertSetMoreStepSalaryPayment;
 	private InsertSetMoreStep<SalaryDeductionRecord> insertSetMoreStepSalaryDeduction;
+	
+	
 
 	public NominaLoader(DSLContext dsiContext, DSLContext aonContext) {
 		super(dsiContext, aonContext);
-		// TODO Auto-generated constructor stub
+		toDelete = new LinkedList<Integer>();
+	}
+
+	public NominaLoader setReplace(boolean replace) {
+		this.replace = replace;
+		return this;
 	}
 
 	public void loadNominc(Callback cb, Condition... conditions)
 			throws AonSQLException {
 		//@formatter:off
+		Condition nominc2empres = 
+				FNNOMINC.F30SSCODEM.eq(FNEMPRES.F20SSCOD)
+				.and(FNNOMINC.F30SSNUMEM.eq(FNEMPRES.F20SSNUM));
+
 		Cursor<Record> nomincCursor = dsiContext.select()
 				.from(FNNOMINC)
+				.join(FNEMPRES)
+				.on(nominc2empres)
 				.where(conditions)
 				.orderBy(FNNOMINC.F30SSCODEM, 
 						FNNOMINC.F30SSNUMEM, 
@@ -89,8 +105,12 @@ public class NominaLoader extends AbstractLoader {
 		//@formatter:on
 
 		//@formatter:off
+
 		Cursor<Record> nominlnCursor = dsiContext.select()
 				.from(FNNOMINL)
+				.join(FNEMPRES)
+				.on(FNNOMINL.F31SSCODEM.eq(FNEMPRES.F20SSCOD))
+				.and(FNNOMINL.F31SSNUMEM.eq(FNEMPRES.F20SSNUM))
 				.leftOuterJoin(FNTCONCE)
 				.on(FNNOMINL.F31SSCODEM.eq(FNTCONCE.F21SSCODEM))
 				.and(FNNOMINL.F31SSNUMEM.eq(FNTCONCE.F21SSNUMEM))
@@ -118,15 +138,6 @@ public class NominaLoader extends AbstractLoader {
 			int domain = cb.getDomain(nominc);
 			int contract = cb.getContract(nominc);
 
-			SalaryRecord salary = getSalaryRecord(nominc, contract);
-			if (salary != null) {
-				// TODO: REPLACE INTO `salary` (...
-				// TODO: REPLACE INTO `salary_data` (...
-				// TODO: REPLACE INTO `salary_payment` (...
-				// TODO: REPLACE INTO `salary_deduction` (...
-				continue;
-			}
-
 			if (nominl == null && nominlnCursor.hasNext()) {
 				Record record = nominlnCursor.fetchOne();
 				nominl = record.into(new FnnominlRecord());
@@ -150,20 +161,24 @@ public class NominaLoader extends AbstractLoader {
 				tconce = record.into(new FntconceRecord());
 			}
 
-			loadNominc(nominc, nominlns, contract, domain, cb);
+			int salary;
+			SalaryRecord record = getSalaryRecord(nominc, contract);
+			if (record != null) {
+				salary = record.getId();
+				if (!replace)
+					continue; // salary already exists
+			} else {
+				salary = next(SALARY.getIdentity());
+			}
+
+			toDelete.add(salary);
+			loadNominc(nominc, nominlns, contract, domain, salary, cb);
 		}
 	}
 
 	public void execute() {
-		execute(insertSetMoreStepSalary);
-		execute(insertSetMoreStepSalaryDeduction);
-		execute(insertSetMoreStepSalaryCost);
-		execute(insertSetMoreStepSalaryPayment);
-
-		insertSetMoreStepSalary = null;
-		insertSetMoreStepSalaryCost = null;
-		insertSetMoreStepSalaryDeduction = null;
-		insertSetMoreStepSalaryPayment = null;
+		delete();
+		insert();
 	}
 
 	private SalaryRecord getSalaryRecord(FnnomincRecord nominc, int contract) {
@@ -181,7 +196,7 @@ public class NominaLoader extends AbstractLoader {
 
 	private void loadNominc(FnnomincRecord nominc,
 			Collection<Pair<FnnominlRecord, FntconceRecord>> nominls,
-			int contract, int domain, Callback cb) {
+			int contract, int domain, int salary, Callback cb) {
 
 		Integer reg = 0;
 		if (!isBlank(nominc.getF30matric()))
@@ -192,7 +207,6 @@ public class NominaLoader extends AbstractLoader {
 			}
 
 		InsertSetStep<SalaryRecord> insertSetStepSalary = getSalaryInsertSetStep();
-		int salary = next(SALARY.getIdentity());
 		Date endDate = nominc.getF30fecha();
 
 		Calendar startCalendar = Calendar.getInstance();
@@ -351,15 +365,20 @@ public class NominaLoader extends AbstractLoader {
 			expression = String.format("%.2f ", total);
 
 		String concept = CconceLoader.getCode(tconce);
+		
+		String preffix = getExpressionPreffix(nominl);
+		
+		int id = getSalaryPaymentId(salary, preffix);
 
 		InsertSetStep<SalaryPaymentRecord> insertSetStepSalaryPayment = getSalaryPaymentInsertSetStep();
 		//@formatter:off
 		insertSetMoreStepSalaryPayment = insertSetStepSalaryPayment
+				.set(SALARY_PAYMENT.ID, id)
 				.set(SALARY_PAYMENT.DOMAIN, domain)
 				.set(SALARY_PAYMENT.SALARY, salary)
 				.set(SALARY_PAYMENT.PAYMENT_CONCEPT, concept )
 				.set(SALARY_PAYMENT.DESCRIPTION, nominl.getF31nombre())
-				.set(SALARY_PAYMENT.EXPRESSION, expression )
+				.set(SALARY_PAYMENT.EXPRESSION, String.format("%s %s",preffix ,expression ))
 				.set(SALARY_PAYMENT.IRPF, StringUtils.equalsIgnoreCase("S",nominl.getF31irpf())? total: 0.00 )
 				.set(SALARY_PAYMENT.QUOTE, StringUtils.equalsIgnoreCase("S",nominl.getF31segsoc())? total: 0.00 )
 				.set(SALARY_PAYMENT.TYPE, clavecra)
@@ -371,71 +390,81 @@ public class NominaLoader extends AbstractLoader {
 	private void loadSalaryDeductions(FnnomincRecord nominc, int domain,
 			int salary) {
 		if (nominc.getF30ccctra() != null) {
+			int id = getSalaryDeductionId(salary, COMMON_CONTINGENCY);
 			InsertSetStep<SalaryDeductionRecord> insertSetStepSalaryDeduction = getSalaryDeductionInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryDeduction = insertSetStepSalaryDeduction
+					.set(SALARY_DEDUCTION.ID, id)
 					.set(SALARY_DEDUCTION.DOMAIN, domain)
 					.set(SALARY_DEDUCTION.SALARY, salary)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, "CGC")
 					.set(SALARY_DEDUCTION.DESCRIPTION, String.format("%.2f %%",nominc.getF30tcctra()))
 					.set(SALARY_DEDUCTION.EXPRESSION, String.format("BASE_CGC * %.2f/100",nominc.getF30tcctra()))
-					.set(SALARY_DEDUCTION.TYPE, enum2Byte(DeductionType.COMMON_CONTINGENCY))
+					.set(SALARY_DEDUCTION.TYPE, enum2Byte(COMMON_CONTINGENCY))
 					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30ccctra())
 					;
 			//@formatter:on
 		}
 		if (nominc.getF30cdetra() != null) {
+			int id = getSalaryDeductionId(salary, UNEMPLOYMENT);
 			InsertSetStep<SalaryDeductionRecord> insertSetStepSalaryDeduction = getSalaryDeductionInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryDeduction = insertSetStepSalaryDeduction
+					.set(SALARY_DEDUCTION.ID, id)
 					.set(SALARY_DEDUCTION.DOMAIN, domain)
 					.set(SALARY_DEDUCTION.SALARY, salary)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, "DESMPL")
 					.set(SALARY_DEDUCTION.DESCRIPTION, String.format("%.2f %%",nominc.getF30tdetra()))
 					.set(SALARY_DEDUCTION.EXPRESSION, String.format("BASE_CGP * %.2f/100",nominc.getF30tdetra()))
-					.set(SALARY_DEDUCTION.TYPE, enum2Byte(DeductionType.UNEMPLOYMENT))
+					.set(SALARY_DEDUCTION.TYPE, enum2Byte(UNEMPLOYMENT))
 					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30cdetra())
 					;
 			//@formatter:on
 		}
 		if (nominc.getF30cfptra() != null) {
+			int id = getSalaryDeductionId(salary, JOB_TRAINING);
 			InsertSetStep<SalaryDeductionRecord> insertSetStepSalaryDeduction = getSalaryDeductionInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryDeduction = insertSetStepSalaryDeduction
+					.set(SALARY_DEDUCTION.ID, id)
 					.set(SALARY_DEDUCTION.DOMAIN, domain)
 					.set(SALARY_DEDUCTION.SALARY, salary)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, "FP")
 					.set(SALARY_DEDUCTION.DESCRIPTION, String.format("%.2f %%",nominc.getF30tfptra()))
 					.set(SALARY_DEDUCTION.EXPRESSION, String.format("BASE_CGP * %.2f/100",nominc.getF30tfptra()))
-					.set(SALARY_DEDUCTION.TYPE, enum2Byte(DeductionType.JOB_TRAINING))
+					.set(SALARY_DEDUCTION.TYPE, enum2Byte(JOB_TRAINING))
 					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30cfptra())
 					;
 			//@formatter:on
 		}
 		if (nominc.getF30chetra() != null && nominc.getF30chetra() > 0.00) {
+			int id = getSalaryDeductionId(salary, STRUCTURAL_OVERTIME);
 			InsertSetStep<SalaryDeductionRecord> insertSetStepSalaryDeduction = getSalaryDeductionInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryDeduction = insertSetStepSalaryDeduction
+					.set(SALARY_DEDUCTION.ID, id)
 					.set(SALARY_DEDUCTION.DOMAIN, domain)
 					.set(SALARY_DEDUCTION.SALARY, salary)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, "ESTR")
 					.set(SALARY_DEDUCTION.DESCRIPTION, String.format("%.2f %%",nominc.getF30thetra()))
 					.set(SALARY_DEDUCTION.EXPRESSION, String.format("BASE_ESTR * %.2f/100",nominc.getF30thetra()))
-					.set(SALARY_DEDUCTION.TYPE, enum2Byte(DeductionType.STRUCTURAL_OVERTIME))
+					.set(SALARY_DEDUCTION.TYPE, enum2Byte(STRUCTURAL_OVERTIME))
 					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30chetra())
 					;
 			//@formatter:on
 		}
 		if (nominc.getF30chntra() != null && nominc.getF30chntra() > 0.00) {
+			int id = getSalaryDeductionId(salary, NON_STRUCTURAL_OVERTIME);
 			InsertSetStep<SalaryDeductionRecord> insertSetStepSalaryDeduction = getSalaryDeductionInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryDeduction = insertSetStepSalaryDeduction
+					.set(SALARY_DEDUCTION.ID, id)
 					.set(SALARY_DEDUCTION.DOMAIN, domain)
 					.set(SALARY_DEDUCTION.SALARY, salary)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, "NESTR")
 					.set(SALARY_DEDUCTION.DESCRIPTION, String.format("%.2f %%",nominc.getF30thntra()))
 					.set(SALARY_DEDUCTION.EXPRESSION, String.format("BASE_NESTR * %.2f/100",nominc.getF30thntra()))
-					.set(SALARY_DEDUCTION.TYPE, enum2Byte(DeductionType.STRUCTURAL_OVERTIME))
+					.set(SALARY_DEDUCTION.TYPE, enum2Byte(NON_STRUCTURAL_OVERTIME))
 					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30chntra())
 					;
 			//@formatter:on
@@ -452,15 +481,17 @@ public class NominaLoader extends AbstractLoader {
 				cirpf += nominc.getF30cirpf1();
 			if (nominc.getF30cirpf2() != null)
 				cirpf += nominc.getF30cirpf2();
+			int id = getSalaryDeductionId(salary, IRPF);
 			InsertSetStep<SalaryDeductionRecord> insertSetStepSalaryDeduction = getSalaryDeductionInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryDeduction = insertSetStepSalaryDeduction
+					.set(SALARY_DEDUCTION.ID, id)
 					.set(SALARY_DEDUCTION.DOMAIN, domain)
 					.set(SALARY_DEDUCTION.SALARY, salary)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, "IRPF")
 					.set(SALARY_DEDUCTION.DESCRIPTION, String.format("%.2f %%",tirpf))
 					.set(SALARY_DEDUCTION.EXPRESSION, String.format("BASE_IRPF * %.2f/100",tirpf))
-					.set(SALARY_DEDUCTION.TYPE, enum2Byte(DeductionType.IRPF))
+					.set(SALARY_DEDUCTION.TYPE, enum2Byte(IRPF))
 					.set(SALARY_DEDUCTION.AMOUNT, cirpf)
 					;
 			//@formatter:on
@@ -468,124 +499,244 @@ public class NominaLoader extends AbstractLoader {
 	}
 
 	private void loadSalaryCosts(FnnomincRecord nominc, int domain, int salary) {
+
 		if (nominc.getF30cccemp() != null) {
+			int id = getSalaryCostId(salary, COMMON_CONTINGENCY);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "CGC_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tccemp()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.COMMON_CONTINGENCY))
+					.set(SALARY_COST.TYPE, enum2Byte(COMMON_CONTINGENCY))
 					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30cccemp())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30cdeemp() != null) {
+			int id = getSalaryCostId(salary, UNEMPLOYMENT);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "DESMPL_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tdeemp()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.UNEMPLOYMENT))
+					.set(SALARY_COST.TYPE, enum2Byte(UNEMPLOYMENT))
 					.set(SALARY_COST.AMOUNT, nominc.getF30cdeemp())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30cfpemp() != null) {
+			int id = getSalaryCostId(salary, JOB_TRAINING);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "FP_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tfpemp()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.JOB_TRAINING))
+					.set(SALARY_COST.TYPE, enum2Byte(JOB_TRAINING))
 					.set(SALARY_COST.AMOUNT, nominc.getF30cfpemp())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30cfgemp() != null) {
+			int id = getSalaryCostId(salary, FOGASA);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "FOGASA_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tfgemp()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.FOGASA))
+					.set(SALARY_COST.TYPE, enum2Byte(FOGASA))
 					.set(SALARY_COST.AMOUNT, nominc.getF30cfgemp())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30cheemp() != null) {
+			int id = getSalaryCostId(salary, STRUCTURAL_OVERTIME);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "ESTR_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30theemp()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.STRUCTURAL_OVERTIME))
+					.set(SALARY_COST.TYPE, enum2Byte(STRUCTURAL_OVERTIME))
 					.set(SALARY_COST.AMOUNT, nominc.getF30cheemp())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30chnemp() != null) {
+			int id = getSalaryCostId(salary, NON_STRUCTURAL_OVERTIME);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "NOESTR_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30thnemp()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.NON_STRUCTURAL_OVERTIME))
+					.set(SALARY_COST.TYPE, enum2Byte(NON_STRUCTURAL_OVERTIME))
 					.set(SALARY_COST.AMOUNT, nominc.getF30chnemp())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30cilttr() != null) {
+			int id = getSalaryCostId(salary, "IT_E");
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "IT_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tcpilt()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.OTHER))
+					.set(SALARY_COST.TYPE, enum2Byte(OTHER))
 					.set(SALARY_COST.AMOUNT, nominc.getF30cilttr())
 					;
 			//@formatter:on
 		}
 
 		if (nominc.getF30cimstr() != null) {
+			int id = getSalaryCostId(salary, "IMS_E");
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepSalaryCost = insertSetStepSalaryCost
+					.set(SALARY_COST.ID, id)
 					.set(SALARY_COST.DOMAIN, domain)
 					.set(SALARY_COST.SALARY, salary)
 					.set(SALARY_COST.COST_CONCEPT, "IMS_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tcpims()))
-					.set(SALARY_COST.TYPE, enum2Byte(DeductionType.OTHER))
+					.set(SALARY_COST.TYPE, enum2Byte(OTHER))
 					.set(SALARY_COST.AMOUNT, nominc.getF30cimstr())
 					;
 			//@formatter:on
 		}
 	}
 
+	private void insert() {
+		execute(insertSetMoreStepSalary);
+		execute(insertSetMoreStepSalaryDeduction);
+		execute(insertSetMoreStepSalaryCost);
+		execute(insertSetMoreStepSalaryPayment);
+
+		insertSetMoreStepSalary = null;
+		insertSetMoreStepSalaryCost = null;
+		insertSetMoreStepSalaryDeduction = null;
+		insertSetMoreStepSalaryPayment = null;
+	}
+
+	private void delete() {
+		if (toDelete.isEmpty())
+			return;
+		aonContext.delete(SALARY_COST).where(SALARY_COST.SALARY.in(toDelete))
+				.execute();
+		aonContext.delete(SALARY_PAYMENT)
+				.where(SALARY_PAYMENT.SALARY.in(toDelete)).execute();
+		aonContext.delete(SALARY_DEDUCTION)
+				.where(SALARY_DEDUCTION.SALARY.in(toDelete)).execute();
+		aonContext.delete(SALARY).where(SALARY.ID.in(toDelete)).execute();
+
+		toDelete.clear();
+	}
+
 	// ------------------------------------------------------------------------
+
+	private int getSalaryCostId(int salary, String concept) {
+		SalaryCostRecord record = getSalaryCostRecord(salary, concept);
+		return record != null ? record.getId()
+				: next(SALARY_COST.getIdentity());
+	}
+
+	private int getSalaryPaymentId(int salary, String expression) {
+		SalaryPaymentRecord record = getSalaryPaymentRecord(salary, expression);
+		return record != null ? record.getId() : next(SALARY_PAYMENT
+				.getIdentity());
+	}
+
+	private int getSalaryCostId(int salary, DeductionType type) {
+		SalaryCostRecord record = getSalaryCostRecord(salary, type);
+		return record != null ? record.getId()
+				: next(SALARY_COST.getIdentity());
+	}
+
+	private int getSalaryDeductionId(int salary, DeductionType type) {
+		SalaryDeductionRecord record = getSalaryDeductionRecord(salary, type);
+		return record != null ? record.getId() : next(SALARY_DEDUCTION
+				.getIdentity());
+	}
+
+	private SalaryCostRecord getSalaryCostRecord(int salary, String concept) {
+		//@formatter:off
+		return aonContext
+		.select()
+		.from(SALARY_COST)
+		.where(SALARY_COST.SALARY.eq(salary))
+		.and(SALARY_COST.COST_CONCEPT.eq(concept))
+		.fetchOneInto(SALARY_COST);
+		//@formatter:on
+	}
+
+	private SalaryCostRecord getSalaryCostRecord(int salary, DeductionType type) {
+		//@formatter:off
+		return aonContext
+		.select()
+		.from(SALARY_COST)
+		.where(SALARY_COST.SALARY.eq(salary))
+		.and(SALARY_COST.TYPE.eq(enum2Byte(type)))
+		.fetchOneInto(SALARY_COST);
+		//@formatter:on
+	}
+
+	private SalaryDeductionRecord getSalaryDeductionRecord(int salary,
+			DeductionType type) {
+		//@formatter:off
+		return aonContext
+		.select()
+		.from(SALARY_DEDUCTION)
+		.where(SALARY_DEDUCTION.SALARY.eq(salary))
+		.and(SALARY_DEDUCTION.TYPE.eq(enum2Byte(type)))
+		.fetchOneInto(SALARY_DEDUCTION);
+		//@formatter:on
+	}
+
+	private SalaryPaymentRecord getSalaryPaymentRecord(int salary,
+			String preffix) {
+		//@formatter:off
+		return aonContext
+		.select()
+		.from(SALARY_PAYMENT)
+		.where(SALARY_PAYMENT.SALARY.eq(salary))
+		.and(SALARY_PAYMENT.EXPRESSION.startsWith(preffix))
+		.fetchOneInto(SALARY_PAYMENT);
+		//@formatter:on
+	}
+
+	private String getExpressionPreffix(FnnominlRecord nominl) {
+		return String.format("/*NORDEN: %s, CLAVE: %s*/",
+				nominl.getF31norden(), nominl.getF31clave());
+	}
 
 	private SalaryType getSalaryType(FnnomincRecord nominc) {
 		int tipo = Integer.parseInt(nominc.getF30tipo());
 		switch (tipo) {
+		case 2:
+			return SalaryType.EXTRA;
 		case 3:
 			return SalaryType.SETTLE;
 

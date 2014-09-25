@@ -17,13 +17,18 @@ import static java.lang.String.format;
 import static org.jooq.tools.StringUtils.isBlank;
 
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
+import org.jooq.Param;
+import org.jooq.Query;
 import org.jooq.Record;
 
 import com.code.aon.config.enumeration.DomainType;
@@ -43,9 +48,36 @@ import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.payroll.Pair;
 
 public class EmpresLoader extends AbstractLoader implements
 		Trabaj2Loader.Callback {
+
+	public static interface Listener {
+		void onEnterpriseIgnored(RegistryRecord enterprise);
+
+		void onEnterpriseUpdated(RegistryRecord enterprise);
+
+		void onEnterpriseInserted(RegistryRecord enterprise);
+	}
+
+	public static class NullListener implements Listener {
+
+		static Listener NULL_LISTENER = new NullListener();
+
+		@Override
+		public void onEnterpriseIgnored(RegistryRecord enterprise) {
+		}
+
+		@Override
+		public void onEnterpriseUpdated(RegistryRecord enterprise) {
+		}
+
+		@Override
+		public void onEnterpriseInserted(RegistryRecord enterprise) {
+		}
+
+	}
 
 	public static interface Callback {
 
@@ -58,6 +90,12 @@ public class EmpresLoader extends AbstractLoader implements
 	}
 
 	private Callback cb;
+
+	private boolean replace;
+
+	private Listener listener;
+
+	private List<Query> updates;
 
 	private Map<String, Integer> domains;
 
@@ -74,8 +112,20 @@ public class EmpresLoader extends AbstractLoader implements
 
 	public EmpresLoader(DSLContext dsiContext, DSLContext aonContext) {
 		super(dsiContext, aonContext);
+		this.updates = new LinkedList<Query>();
+		this.listener = NullListener.NULL_LISTENER;
 		this.domains = new Hashtable<String, Integer>();
 		this.ssIdsMap = new Hashtable<String, int[]>();
+	}
+
+	public EmpresLoader setReplace(boolean replace) {
+		this.replace = replace;
+		return this;
+	}
+	
+	public EmpresLoader setListener(Listener listener) {
+		this.listener = listener;
+		return this;
 	}
 
 	// ------------------------------------------------------------------------
@@ -85,60 +135,76 @@ public class EmpresLoader extends AbstractLoader implements
 			throws AonSQLException {
 		this.cb = cb;
 
-		Cursor<Record> empresCursor = dsiContext.select().from(FNEMPRES)
-				.where(conditions).fetchLazy();
+		//@formatter:off
+		Cursor<Record> empresCursor = 
+				dsiContext
+				.select()
+				.from(FNEMPRES)
+				.where(conditions)
+				.fetchLazy()
+				;
+		//@formatter:on
+
 		while (empresCursor.hasNext()) {
 			FnempresRecord empres = empresCursor.fetchOneInto(FNEMPRES);
 
+			//@formatter:off
+			Integer scope = getId(SCOPE.getIdentity(), 
+					SCOPE.DOMAIN.eq(parentDomain));
+			//@formatter:on
+
 			String key = empres.getF20sscod() + empres.getF20ssnum();
 
-			WorkplaceRecord record = getWorkplace(empres);
+			Pair<WorkplaceRecord, RegistryRecord> pair = getWorkplace(empres);
+			
+			WorkplaceRecord workplace = pair.getFirst();
+			RegistryRecord registry = pair.getSecond();
 
-			if (record != null) {
-				// TODO : REPLACE INTO `enterprise`
-				ssIdsMap.put(key, new int[] { record.getDomain(), record.getId()});
+			if (workplace != null) {
+				ssIdsMap.put(key,
+						new int[] { workplace.getDomain(), workplace.getId() });
+				if (replace) {
+					String domainName = getDomainName(domainSuffix,
+							workplace.getDomain(), empres);
+
+					//@formatter:off
+					updateEmpres(
+							empres, 
+							registry, 
+							parentDomain, 
+							domainName, 
+							owner,
+							scope, 
+							cb);
+					//@formatter:on
+					listener.onEnterpriseUpdated(registry);
+				} else {
+					listener.onEnterpriseIgnored(registry);
+				}
+
 				continue;
 			}
 
 			Integer domain = next(DOMAIN.getIdentity());
 
-			Integer enterprise = next(REGISTRY.getIdentity());
-
-			//@formatter:off
-
-			Integer scope = getId(SCOPE.getIdentity(), 
-					SCOPE.DOMAIN.eq(parentDomain));
-			//@formatter:on
-
+			Integer enterpriseId = next(REGISTRY.getIdentity());
 			String domainName = getDomainName(domainSuffix, domain, empres);
-			int workplace = loadEmpres(empres, enterprise, domain,
-					parentDomain, domainName, owner, scope, cb);
 
-			ssIdsMap.put(key, new int[] { domain, workplace });
+			int workplaceId = loadEmpres(empres, enterpriseId, domain,
+					parentDomain, domainName, owner, scope, cb);
+			
+			registry = lastRegistry();
+			listener.onEnterpriseInserted(registry);
+
+			ssIdsMap.put(key, new int[] { domain, workplaceId });
 
 		}
 		return this;
 	}
 
 	public void execute() {
-		execute(insertSetMoreStepDomain);
-		execute(insertSetMoreStepRegistry);
-		execute(insertSetMoreStepRmedia);
-		execute(insertSetMoreStepRaddress);
-		execute(insertSetMoreStepEnterprise);
-		execute(insertSetMoreStepCompany);
-		execute(insertSetMoreStepWorkplace);
-		execute(insertSetMoreStepPayrollWorkplace);
-
-		insertSetMoreStepDomain = null;
-		insertSetMoreStepRegistry = null;
-		insertSetMoreStepRmedia = null;
-		insertSetMoreStepRaddress = null;
-		insertSetMoreStepEnterprise = null;
-		insertSetMoreStepCompany = null;
-		insertSetMoreStepWorkplace = null;
-		insertSetMoreStepPayrollWorkplace = null;
-
+		update();
+		insert();
 	}
 
 	// ------------------------------------------------------------------------
@@ -163,32 +229,166 @@ public class EmpresLoader extends AbstractLoader implements
 	}
 
 	// ------------------------------------------------------------------------
-	
-	private WorkplaceRecord getWorkplace(FnempresRecord empres) {
-		//@formatter:off
-		return aonContext
-		.select()
-		.from(WORKPLACE)
-		.where(WORKPLACE.DESCRIPTION.like(String.format("%%%s%%", getImportKey(empres))))
-		.fetchOneInto(WORKPLACE);
-		//@formatter:on
-	}
-	
-	private String getImportKey(FnempresRecord empres) {
-		return String.format("/*SSCOD:%s, SSNUM:%s*/", empres.getF20sscod(), empres.getF20ssnum());
+	private void insert() {
+		execute(insertSetMoreStepDomain);
+		execute(insertSetMoreStepRegistry);
+		execute(insertSetMoreStepRmedia);
+		execute(insertSetMoreStepRaddress);
+		execute(insertSetMoreStepEnterprise);
+		execute(insertSetMoreStepCompany);
+		execute(insertSetMoreStepWorkplace);
+		execute(insertSetMoreStepPayrollWorkplace);
+
+		insertSetMoreStepDomain = null;
+		insertSetMoreStepRegistry = null;
+		insertSetMoreStepRmedia = null;
+		insertSetMoreStepRaddress = null;
+		insertSetMoreStepEnterprise = null;
+		insertSetMoreStepCompany = null;
+		insertSetMoreStepWorkplace = null;
+		insertSetMoreStepPayrollWorkplace = null;
 	}
 
+	private void update() {
+		if (updates.isEmpty())
+			return;
+
+		aonContext.batch(updates).execute();
+
+		updates.clear();
+	}
+
+	private Pair<WorkplaceRecord, RegistryRecord> getWorkplace(
+			FnempresRecord empres) {
+		//@formatter:off
+		Record record = aonContext
+		.select()
+		.from(WORKPLACE)
+		.join(REGISTRY)
+		.on(WORKPLACE.ENTERPRISE.eq(REGISTRY.ID))
+		.where(WORKPLACE.DESCRIPTION.like(String.format("%%%s%%", getImportKey(empres))))
+		.fetchOne();
+		//@formatter:on
+		return record == null ? null
+				: new Pair<WorkplaceRecord, RegistryRecord>(
+						record.into(WORKPLACE), record.into(REGISTRY));
+	}
+
+	private String getImportKey(FnempresRecord empres) {
+		return String.format("/*SSCOD:%s, SSNUM:%s*/", empres.getF20sscod(),
+				empres.getF20ssnum());
+	}
+
+	private RegistryRecord updateEmpres(FnempresRecord empres, RegistryRecord registry,
+			Integer parentDomain, String domainName, String domainOwner,
+			int scope, Callback cb) {
+
+		//@formatter:off
+		updates.add(
+			aonContext
+			.update(DOMAIN)
+			.set(DOMAIN.NAME, domainName)
+			.set(DOMAIN.OWNER, domainOwner)
+			.set(DOMAIN.PARENT, parentDomain)
+			.set(DOMAIN.DESCRIPTION, empres.getF20rsocial())
+			.where(DOMAIN.ID.eq(registry.getDomain())) 
+			);
+		//@formatter:on
+		
+		registry.setName(empres.getF20rsocial());
+		registry.setDocument(empres.getF20nif());
+		registry.setDocumentType(enum2Byte(getDocumentType(empres.getF20nif())));
+		//@formatter:off
+		updates.add(
+			aonContext
+			.update(REGISTRY)
+			.set(registry)
+			.where(REGISTRY.ID.eq(registry.getId()))
+			);
+		//@formatter:on
+
+		//@formatter:off
+		updates.add(
+			aonContext
+			.update(ENTERPRISE)
+			.set(ENTERPRISE.SCOPE, scope)
+			.where(ENTERPRISE.REGISTRY.eq(registry.getId())) 
+			);
+		//@formatter:on
+
+		//@formatter:off
+		updates.add(
+			aonContext
+			.update(ENTERPRISE)
+			.set(ENTERPRISE.SCOPE, scope)
+			.where(ENTERPRISE.REGISTRY.eq(registry.getId())) 
+			);
+		//@formatter:on
+
+		//@formatter:off
+		updates.add(
+				aonContext
+				.update(WORKPLACE)
+				.set(WORKPLACE.SCOPE, scope)
+				.where(WORKPLACE.ENTERPRISE.eq(registry.getId()))
+				.and(WORKPLACE.DESCRIPTION.startsWith(getImportKey(empres)))
+				);
+		//@formatter:on
+
+		//@formatter:off
+		updates.add(
+				aonContext
+				.update(RADDRESS)
+				.set(RADDRESS.TYPE, enum2Byte(AddressType.MAIN))
+				.set(RADDRESS.NUMBER, empres.getF20numero())
+				.set(RADDRESS.ADDRESS, empres.getF20domicil())
+				.set(RADDRESS.CITY, empres.getF20poblaci())
+				.set(RADDRESS.MUNICIPALITY_CODE,
+						getMunicipality(empres.getF20poblaci()))
+				.set(RADDRESS.ZIP, empres.getF20cp())
+				.set(RADDRESS.GEOZONE, getGeozone(empres.getF20provin(), parentDomain))
+				.where(RADDRESS.REGISTRY.eq(registry.getId()))
+				.and(RADDRESS.TYPE.eq(enum2Byte(AddressType.MAIN)))
+				);
+		//@formatter:on
+
+		//@formatter:off
+		updates.add(
+				aonContext
+				.delete(RMEDIA)
+				.where(RMEDIA.REGISTRY.eq(registry.getId()))
+				.and(RMEDIA.MEDIA.eq(enum2Byte(MediaType.FIXED_PHONE)))
+				);
+		//@formatter:on
+
+		if (!isBlank(empres.getF20telef())) {
+			//@formatter:off
+			InsertSetStep<RmediaRecord> insertSetStepRmedia= getRmediaInsertSetStep();
+			insertSetMoreStepRmedia = insertSetStepRmedia
+					.set(RMEDIA.REGISTRY, registry.getId())
+					.set(RMEDIA.DOMAIN, registry.getDomain())
+					.set(RMEDIA.MEDIA, enum2Byte(MediaType.FIXED_PHONE))
+					.set(RMEDIA.VALUE, empres.getF20telef());
+			// TODO : raddress ?
+			//@formatter:on
+		}
+		return registry;
+	}
 
 	private int loadEmpres(FnempresRecord empres, int registry, int domain,
 			Integer parentDomain, String domainName, String owner, int scope,
 			Callback cb) {
 		//@formatter:off
 		InsertSetStep<DomainRecord> insertSetStepDomain = getDomainInsertSetStep();
-		insertSetMoreStepDomain = insertSetStepDomain.set(DOMAIN.ID, domain)
+		insertSetMoreStepDomain = insertSetStepDomain
+				.set(DOMAIN.ID, domain)
 				.set(DOMAIN.TYPE, enum2Byte(DomainType.ENTERPRISE))
 				.set(DOMAIN.OWNER, owner).set(DOMAIN.PARENT, parentDomain)
 				.set(DOMAIN.NAME, domainName)
 				.set(DOMAIN.DESCRIPTION, empres.getF20rsocial());
+		
+		FnempresRecord f;
+		
 		//@formatter:on
 
 		//@formatter:off
@@ -272,6 +472,12 @@ public class EmpresLoader extends AbstractLoader implements
 		//@formatter:on
 
 		return workplace;
+	}
+	
+	private RegistryRecord lastRegistry() {
+		RegistryRecord record = new RegistryRecord();
+		record.fromMap(insertSetMoreStepRegistry.getParams());
+		return record;
 	}
 
 	private String getDomainName(String domainSuffix, int domain,

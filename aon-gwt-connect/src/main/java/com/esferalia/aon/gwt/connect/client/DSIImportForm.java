@@ -6,10 +6,17 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.connect.client.DSIImportClient.DSIImportCallback;
+import com.esferalia.aon.gwt.connect.shared.JsEmpres;
+import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
+import com.esferalia.aon.gwt.connect.shared.JsImportEvent.EventTypeVisitor;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -22,7 +29,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -67,7 +73,8 @@ public class DSIImportForm implements EntryPoint {
 	SimplePanel simplePanel;
 
 	ResultsPanel resultsPanel;
-	
+
+	private JsArray<JsEmpres> empress;
 
 	@Override
 	public void onModuleLoad() {
@@ -98,11 +105,11 @@ public class DSIImportForm implements EntryPoint {
 		uploadFormPanel.setMethod(FormPanel.METHOD_POST);
 
 		uploadFormPanel.getElement().setDraggable("DRAGGABLE_TRUE");
-		
+
 	}
-	
+
 	private void showEnterprisesList() {
-		
+
 		sPanel.getElement().getStyle().setBackgroundColor("#FFFFFF");
 		vPanel.add(createAdvancedForm());
 		sPanel.setVisible(true);
@@ -110,18 +117,19 @@ public class DSIImportForm implements EntryPoint {
 
 	private Widget createAdvancedForm() {
 		FlexCellFormatter cellFormater = layout.getFlexCellFormatter();
-		layout.clear();		
-		layout.getElement().getStyle().setBackgroundColor("#FFFFFF");		
+		layout.clear();
+		layout.getElement().getStyle().setBackgroundColor("#FFFFFF");
 
 		// Create some advanced options
-		
+
 		CheckBox selectAll = new CheckBox();
 		selectAll.setTitle("Seleccionar todas");
-		
+
 		layout.setWidget(0, 0, selectAll);
-		
+
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-		String[] words = {"Vitoria", "Bilbao", "Pamplona", "San Sebastian", "Santander"};
+		String[] words = { "Vitoria", "Bilbao", "Pamplona", "San Sebastian",
+				"Santander" };
 		oracle.add(words[0]);
 		oracle.add(words[1]);
 		oracle.add(words[2]);
@@ -138,7 +146,7 @@ public class DSIImportForm implements EntryPoint {
 		advancedOptions.setHTML(2, 1, "Nombre empresa 3");
 		advancedOptions.setWidget(3, 0, new CheckBox());
 		advancedOptions.setHTML(3, 1, "Nombre empresa 4");
-		//****
+		// ****
 		advancedOptions.setWidget(4, 0, new CheckBox());
 		advancedOptions.setHTML(4, 1, "Nombre empresa 5");
 		advancedOptions.setWidget(5, 0, new CheckBox());
@@ -147,7 +155,7 @@ public class DSIImportForm implements EntryPoint {
 		advancedOptions.setHTML(6, 1, "Nombre empresa 7");
 		advancedOptions.setWidget(7, 0, new CheckBox());
 		advancedOptions.setHTML(7, 1, "Nombre empresa 8");
-		//****
+		// ****
 		advancedOptions.setWidget(8, 0, new CheckBox());
 		advancedOptions.setHTML(8, 1, "Nombre empresa 9");
 		advancedOptions.setWidget(9, 0, new CheckBox());
@@ -158,14 +166,15 @@ public class DSIImportForm implements EntryPoint {
 		advancedOptions.setHTML(11, 1, "Nombre empresa 12");
 
 		// Add advanced options to form in a disclosure panel
-		
-		DisclosurePanel advancedDisclosure = new DisclosurePanel("Listado de Empresas: ");
+
+		DisclosurePanel advancedDisclosure = new DisclosurePanel(
+				"Listado de Empresas: ");
 		advancedDisclosure.setOpen(true);
 		advancedDisclosure.setAnimationEnabled(true);
 		advancedDisclosure.setContent(advancedOptions);
 		layout.setWidget(3, 0, advancedDisclosure);
 		cellFormater.setColSpan(3, 0, 2);
-		
+
 		simplePanel.setWidget(layout);
 		return simplePanel;
 	}
@@ -174,10 +183,10 @@ public class DSIImportForm implements EntryPoint {
 
 		InlineLabel resultsTab = new InlineLabel("Resultados");
 		resultsTab.addStyleName(AON.AON_ICON_TIME);
-		resultsTab.addStyleName(AON.AON_ICON_CMD_BUTTON);		
+		resultsTab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 
 		DSIImportForm.this.footTabPanel.add(DSIImportForm.this.resultsPanel,
-		 resultsTab);
+				resultsTab);
 
 		DSIImportForm.this.splitLayoutPanel.setWidgetSize(
 				DSIImportForm.this.footPanel, Window.getClientHeight() / 4);
@@ -185,37 +194,76 @@ public class DSIImportForm implements EntryPoint {
 
 	// ------------------------------------------------------------- UiHandlers
 
-	@UiHandler("uploadFormPanel")
-	void onSubmit(SubmitEvent event) {
-
-		if ("".equalsIgnoreCase(fileUpload.getFilename()) == false) {
-			Window.alert("Subiendo archivo");
-			// NOW WHAT¿?
-		}
-
-		else {
-			Window.alert("Subida cancelada");
-			event.cancel();
-		}
+	@UiHandler("fileUpload")
+	void onChangeFileUpload(ChangeEvent event) {
+		uploadFormPanel.submit();
 	}
 
 	@UiHandler("uploadFormPanel")
-	void onSubmitComplete(SubmitCompleteEvent event) {
-		// refresh page??
-		Window.alert("Todo ok");
+	void onSubmitUpload(SubmitEvent event) {
+	}
+
+	@UiHandler("uploadFormPanel")
+	void onSubmitCompleteUpload(SubmitCompleteEvent event) {
+		String json = event.getResults();
+		JsArrayString dbs = JsonUtils.safeEval(json);
+		DSIImportClient.getEmpress(dbs,
+				new DSIImportCallback<JsArray<JsEmpres>>() {
+
+					@Override
+					public void onError(Throwable t) {
+						// TODO Show Dialog, Error at 'resultsPanel' or both.
+						// it's up to you
+					}
+
+					@Override
+					public void onSuccess(JsArray<JsEmpres> empress) {
+						DSIImportForm.this.empress = empress;
+						// TODO Loads and shows enterprises list.
+					}
+
+				});
 	}
 
 	@UiHandler("sendButton")
-	void onClick(ClickEvent event) {
-		try {
-			uploadFormPanel.submit();
-			fileUpload.getElement().setPropertyString("value", "");
-			//De momento siempre muestro. 
-			showResultsPanel();
-			showEnterprisesList();			
-		} catch (Exception ex) {
-			Window.alert("Error en submit");
-		}
+	void onClickSendButton(ClickEvent event) {
+		// TODO I pass all enterprises, you must pass only selected ones.
+		DSIImportClient.imp0rt(empress, new DSIImportCallback<JsImportEvent>() {
+
+			@Override
+			public void onError(Throwable t) {
+				// TODO Show Dialog, Error at 'resultsPanel' or both. It's up to
+				// you
+			}
+
+			@Override
+			public void onSuccess(JsImportEvent event) {
+				event.visit(new EventTypeVisitor<Void>() {
+
+					@Override
+					public Void onEnterpriseIgnored(JsEmpres empres) {
+						Window.alert("onEnterpriseIgnored");
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					@Override
+					public Void onEnterpriseUpdated(JsEmpres empres) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					@Override
+					public Void onEnterpriseInserted(JsEmpres empres) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				});
+			}
+
+		});
 	}
-	
+
+	// ------------------------------------------------------------------------
+
 }

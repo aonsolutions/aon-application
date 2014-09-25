@@ -1,0 +1,49 @@
+package com.esferalia.aon.gwt.connect.shared;
+
+import com.google.gwt.core.client.JavaScriptObject;
+
+public final class JsEmpres extends JavaScriptObject {
+
+	public static JsEmpres create() {
+		return JavaScriptObject.createObject().cast();
+	}
+
+	protected JsEmpres() {
+	}
+
+	public native String getDB() /*-{
+		return this.db;
+	}-*/;
+
+	public native JsEmpres setDB(String db) /*-{
+		this.db = db;
+		return this;
+	}-*/;
+
+	public native String getSScod() /*-{
+		return this.sscod;
+	}-*/;
+
+	public native JsEmpres setSScod(String sscod) /*-{
+		this.sscod = sscod;
+		return this;
+	}-*/;
+
+	public native String getSSnum() /*-{
+		return this.ssnum;
+	}-*/;
+
+	public native JsEmpres setSSnum(String ssnum) /*-{
+		this.sscod = ssnum;
+		return this;
+	}-*/;
+
+	public native String getRSocial() /*-{
+		return this.rsocial;
+	}-*/;
+	
+	public native JsEmpres setRSocial(String rsocial) /*-{
+		this.rsocial = rsocial;
+		return this;
+	}-*/;
+}

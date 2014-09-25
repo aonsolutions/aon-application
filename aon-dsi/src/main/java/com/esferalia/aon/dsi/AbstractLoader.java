@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
+import org.jooq.InsertOnDuplicateSetMoreStep;
+import org.jooq.InsertOnDuplicateSetStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -50,10 +52,12 @@ public abstract class AbstractLoader {
 
 	protected <R extends Record> InsertSetStep<R> get(
 			InsertSetMoreStep<R> insertSetMoreStep, Table<R> table) {
+
 		return insertSetMoreStep != null ? insertSetMoreStep.newRecord()
 				: aonContext.insertInto(table);
-
+		
 	}
+
 
 	protected <R extends Record> UpdateSetMoreStep<R> update(
 			UpdateSetMoreStep<R> updateSetMoreStep, Table<R> table, R r) {

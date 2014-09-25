@@ -3,10 +3,9 @@ package com.esferalia.aon.dsi;
 //i.puig@analize.es
 
 import static com.esferalia.aon.dsi.CconceLoader.getExpression;
+import static com.esferalia.aon.dsi.jooq.tables.Fnempres.FNEMPRES;
 import static com.esferalia.aon.dsi.jooq.tables.Fntconce.FNTCONCE;
-import static com.esferalia.aon.dsi.jooq.tables.Fntraba2.FNTRABA2;
 import static com.esferalia.aon.dsi.jooq.tables.Fntrabaj.FNTRABAJ;
-import static com.esferalia.aon.dsi.jooq.tables.Fnvario2.FNVARIO2;
 import static com.esferalia.aon.dsi.jooq.tables.Fnvarios.FNVARIOS;
 import static com.esferalia.aon.dsi.util.EnumUtils.enum2Byte;
 import static com.esferalia.aon.dsi.util.EnumUtils.getDocumentType;
@@ -17,14 +16,25 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.jar.Attributes.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
@@ -33,6 +43,8 @@ import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.person.enumeration.Gender;
@@ -41,10 +53,14 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.dsi.jooq.tables.records.FnnomincRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;
-import com.esferalia.aon.dsi.jooq.tables.records.Fntraba2Record;
 import com.esferalia.aon.dsi.jooq.tables.records.FntrabajRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.Fnvario2Record;
 import com.esferalia.aon.dsi.jooq.tables.records.FnvariosRecord;
+import com.esferalia.aon.jooq.tables.SalaryBonus;
+import com.esferalia.aon.jooq.tables.SalaryCost;
+import com.esferalia.aon.jooq.tables.SalaryData;
+import com.esferalia.aon.jooq.tables.SalaryDeduction;
+import com.esferalia.aon.jooq.tables.SalaryEmbargo;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -60,6 +76,30 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 public class Trabaj2Loader extends AbstractLoader implements
 		NominaLoader.Callback {
 
+	public static interface Listener {
+		void onContractIgnored(ContractRecord contract);
+		void onContractUpdated(ContractRecord contract);
+		void onContractInserted(ContractRecord contract);
+	}
+	
+	public static class NullListener implements Listener {
+		
+		static Listener NULL_LISTENER = new NullListener();
+
+		@Override
+		public void onContractIgnored(ContractRecord contract) {
+		}
+
+		@Override
+		public void onContractUpdated(ContractRecord contract) {
+		}
+
+		@Override
+		public void onContractInserted(ContractRecord contract) {
+		}
+		
+	}
+
 	public static interface Callback {
 
 		int getDomain(FntrabajRecord trabaj);
@@ -70,6 +110,25 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 		PaymentConceptRecord getConcept(FntconceRecord conce);
 	}
+
+	private static class Ids {
+		int registryId;
+		int contractId;
+
+		public Ids(int registryId, int contractId) {
+			this.registryId = registryId;
+			this.contractId = contractId;
+		}
+
+	}
+	
+	private Date from;
+	
+	private boolean replace;
+	
+	private Listener listener;
+	
+	private List<Ids> toDelete;
 
 	private Map<String, int[]> ssIdsMap;
 
@@ -84,29 +143,52 @@ public class Trabaj2Loader extends AbstractLoader implements
 	public Trabaj2Loader(DSLContext dsiContext, DSLContext aonContext) {
 		super(dsiContext, aonContext);
 		this.ssIdsMap = new Hashtable<String, int[]>();
+
+		this.from = new Date(0); // January 1, 1970;
+		this.toDelete = new LinkedList<Ids>();
+		this.listener = NullListener.NULL_LISTENER;
+	}
+	
+	public Trabaj2Loader setFrom(Date from) {
+		this.from = from;
+		return this;
+	}
+	
+	public Trabaj2Loader setReplace(boolean replace) {
+		this.replace = replace;
+		return this;
+	}
+	
+	public Trabaj2Loader setListener(Listener listener) {
+		this.listener = listener;
+		return this;
 	}
 
 	public void loadTrabj2(Callback cb, Condition... conditions)
 			throws AonSQLException {
+
 		//@formatter:off
+		Condition trabj2empres = 
+				FNTRABAJ.F20SSCODEM.eq(FNEMPRES.F20SSCOD)
+				.and(FNTRABAJ.F20SSNUMEM.eq(FNEMPRES.F20SSNUM));
 		Cursor<Record> trabjCursor = dsiContext.select()
 				.from(FNTRABAJ)
+				.join(FNEMPRES)
+				.on(trabj2empres)
 				.where(conditions)
 				.orderBy(FNTRABAJ.F20SSCOD, FNTRABAJ.F20SSNUM, FNTRABAJ.F20FALTA)
 				.fetchLazy();
 		//@formatter:on
 
 		//@formatter:off
-		Cursor<Record> trab2Cursor = dsiContext.select()
-				.from(FNTRABA2)
-				.where(conditions)
-				.orderBy(FNTRABA2.F20SSCOD, FNTRABA2.F20SSNUM, FNTRABA2.F20FALTA)
-				.fetchLazy();
-		//@formatter:on
+		Condition tconce2empres = 
+				FNTCONCE.F21SSCODEM.eq(FNEMPRES.F20SSCOD)
+				.and(FNTCONCE.F21SSNUMEM.eq(FNEMPRES.F20SSNUM));
 
-		//@formatter:off
 		Cursor<Record> tconceCursor = dsiContext.select()
 				.from(FNTCONCE)
+				.join(FNEMPRES)
+				.on(tconce2empres)
 				.where(conditions)
 				.orderBy(FNTCONCE.F21SSCODEM, 
 						FNTCONCE.F21SSNUMEM ,
@@ -119,28 +201,15 @@ public class Trabaj2Loader extends AbstractLoader implements
 		FntconceRecord tconce = tconceCursor.hasNext() ? tconceCursor
 				.fetchOneInto(FNTCONCE) : null;
 
-		while (trab2Cursor.hasNext() && trabjCursor.hasNext()) {
+		while (trabjCursor.hasNext()) {
 			FntrabajRecord trabaj = trabjCursor.fetchOneInto(FNTRABAJ);
-			Fntraba2Record traba2 = trab2Cursor.fetchOneInto(FNTRABA2);
 			int domain = cb.getDomain(trabaj);
 			int workplace = cb.getWorplace(trabaj);
 
 			String key = trabaj.getF20sscod() + trabaj.getF20ssnum()
 					+ trabaj.getF20falta();
 
-			ContractRecord record = getContract(trabaj, workplace);
-			if (record != null) {
-				// TODO: REPLACE INTO `registry` (...
-				// TODO: REPLACE INTO `person` (...
-				// TODO: REPLACE INTO `contract` (...
-				ssIdsMap.put(key, new int[] { domain, record.getId() });
-				continue;
-			}
-
-			int person = next(REGISTRY.getIdentity());
-			int contract = loadTrabj2(trabaj, traba2, person, workplace,
-					domain, cb);
-
+			List<FntconceRecord> tconces = new ArrayList<FntconceRecord>();
 			while (tconce != null 
 					//@formatter:off
 					&& StringUtils.equals(trabaj.getF20ssnumem(), tconce.getF21ssnumem()) 
@@ -150,19 +219,55 @@ public class Trabaj2Loader extends AbstractLoader implements
 					&& trabaj.getF20falta().equals(tconce.getF21falta())
 					//@formatter:on
 			) {
-				loadConce(tconce, contract, domain, cb);
+				tconces.add(tconce);
 				tconce = tconceCursor.hasNext() ? tconceCursor
 						.fetchOneInto(FNTCONCE) : null;
 			}
+			
+			int registry;
+			int contract ;
+
+			ContractRecord record = getContract(trabaj, workplace);
+			if (record != null) {
+				contract = record.getId();
+				registry  = record.getPerson();
+				if ( !replace ) {
+					ssIdsMap.put(key, new int[] { domain, contract });
+					listener.onContractIgnored(record);
+					continue;
+				}
+				toDelete.add(new Ids(registry, contract));
+				loadTrabjRegistry(trabaj, domain, registry, cb);
+				record = loadTrabjContract(trabaj, domain, workplace, registry, contract, cb);
+				listener.onContractUpdated(record);
+				
+			}else {
+				contract = next(CONTRACT.getIdentity());
+				registry  = next(REGISTRY.getIdentity());
+				loadTrabjRegistry(trabaj, domain, registry, cb);
+				record = loadTrabjContract(trabaj, domain, workplace, registry, contract, cb);
+				listener.onContractInserted(record);
+			}
+
+
+			for (FntconceRecord _tconce : tconces)
+				loadConce(_tconce, contract, domain, cb);
 
 			ssIdsMap.put(key, new int[] { domain, contract });
+
 		}
 	}
 
 	public void loadVarios(Condition... conditions) {
 		//@formatter:off
+		Condition variosempres = 
+				FNVARIOS.F30SSCODEM.eq(FNEMPRES.F20SSCOD)
+				.and(FNVARIOS.F30SSNUMEM.eq(FNEMPRES.F20SSNUM));
+
 		Cursor<Record> variosCursor = dsiContext.select()
 				.from(FNVARIOS)
+				.join(FNEMPRES)
+				.on(variosempres)
 				.where(conditions)
 				.orderBy(FNVARIOS.F30SSCODEM, 
 						FNVARIOS.F30SSNUMEM ,
@@ -173,42 +278,15 @@ public class Trabaj2Loader extends AbstractLoader implements
 				.fetchLazy();
 		//@formatter:on
 
-		//@formatter:off
-		Cursor<Record> vario2Cursor = dsiContext.select()
-				.from(FNVARIO2)
-				.where(conditions)
-				.orderBy(FNVARIO2.F30SSCODEM, 
-						FNVARIO2.F30SSNUMEM ,
-						FNVARIO2.F30SSCOD, 
-						FNVARIO2.F30SSNUM, 
-						FNVARIO2.F30FALTA, 
-						FNVARIO2.F30MESVAR )
-				.fetchLazy();
-		//@formatter:on
-
-		while (variosCursor.hasNext() && vario2Cursor.hasNext()) {
+		while (variosCursor.hasNext()) {
 			FnvariosRecord varios = variosCursor.fetchOneInto(FNVARIOS);
-			Fnvario2Record vario2 = vario2Cursor.fetchOneInto(FNVARIO2);
 		}
 
 	}
 
 	public void execute() {
-		execute(insertSetMoreStepRegistry);
-		execute(insertSetMoreStepRaddress);
-		execute(insertSetMoreStepRmedia);
-		execute(insertSetMoreStepPerson);
-		execute(insertSetMoreStepContract);
-		execute(insertSetMoreStepContractData);
-		execute(insertSetMoreStepContractPayment);
-
-		insertSetMoreStepRegistry = null;
-		insertSetMoreStepPerson = null;
-		insertSetMoreStepContract = null;
-		insertSetMoreStepRaddress = null;
-		insertSetMoreStepRmedia = null;
-		insertSetMoreStepContractData = null;
-		insertSetMoreStepContractPayment = null;
+		delete();
+		insert();
 	}
 
 	// ------------------------------------------------------------------------
@@ -226,26 +304,25 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	// ------------------------------------------------------------------------
 
-	private ContractRecord getContract(FntrabajRecord trabaj, int workplace) {
+	private PersonRecord getPerson(FntrabajRecord trabaj, int domain) {
 		//@formatter:off
 		return aonContext.
 		select()
-		.from(CONTRACT)
-		.join(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-		.where(CONTRACT.WORKPLACE.eq(workplace))
+		.from(PERSON)
+		.where(PERSON.DOMAIN.eq(domain))
 		.and(PERSON.SOCIAL_SECURITY_NUM.eq(getSocialSecurityNum(trabaj)))
-		.and(CONTRACT.START_DATE.eq(trabaj.getF20falta()))
-		.fetchOneInto(CONTRACT)
+		.fetchOneInto(PERSON)
 		;
 		//@formatter:on
 	}
 
-	private int loadTrabj2(FntrabajRecord trabaj, Fntraba2Record traba2,
-			int person, int workplace, int domain, Callback cb) {
+
+	private int loadTrabjRegistry(FntrabajRecord trabaj, int domain, int registry, Callback cb) {
+
 		InsertSetStep<RegistryRecord> insertSetStepRegistry = getRegistryInsertSetStep();
 		//@formatter:off
 		insertSetMoreStepRegistry = insertSetStepRegistry
-				.set(REGISTRY.ID, person)
+				.set(REGISTRY.ID, registry)
 				.set(REGISTRY.DOMAIN, domain) //TODO: parentDomain
 				.set(REGISTRY.TYPE, enum2Byte(RegistryType.NATURAL))
 				.set(REGISTRY.NAME, getFullName(trabaj))
@@ -261,9 +338,11 @@ public class Trabaj2Loader extends AbstractLoader implements
 			address2.append(String.format(" %s", trabaj.getF20puerta()));
 
 		//@formatter:off
+		int mainAddressId = getRaddressId(trabaj, registry, AddressType.MAIN);
 		InsertSetStep<RaddressRecord> insertSetStepRaddress= getRaddressInsertSetStep();
 		insertSetMoreStepRaddress = insertSetStepRaddress
-				.set(RADDRESS.REGISTRY, person)
+				.set(RADDRESS.ID, mainAddressId)
+				.set(RADDRESS.REGISTRY, registry)
 				.set(RADDRESS.DOMAIN, domain)
 				.set(RADDRESS.TYPE, enum2Byte(AddressType.MAIN))
 				.set(RADDRESS.NUMBER, trabaj.getF20numero())
@@ -279,10 +358,12 @@ public class Trabaj2Loader extends AbstractLoader implements
 		// telephone
 		String telef = trabaj.getF20telef();
 		if (!isBlank(telef)) {
+			int telephoneId = getRMediaId(trabaj, registry, MediaType.FIXED_PHONE);
 			//@formatter:off
 			InsertSetStep<RmediaRecord> insertSetStepRmedia= getRmediaInsertSetStep();
 			insertSetMoreStepRmedia = insertSetStepRmedia
-					.set(RMEDIA.REGISTRY, person)
+					.set(RMEDIA.ID, telephoneId)
+					.set(RMEDIA.REGISTRY, registry)
 					.set(RMEDIA.DOMAIN, domain)
 					.set(RMEDIA.MEDIA, enum2Byte(MediaType.FIXED_PHONE))
 					.set(RMEDIA.VALUE, telef);
@@ -300,7 +381,7 @@ public class Trabaj2Loader extends AbstractLoader implements
 		InsertSetStep<PersonRecord> insertSetStepPerson = getPersonInsertSetStep();
 		//@formatter:off
 		insertSetMoreStepPerson= insertSetStepPerson
-				.set(PERSON.REGISTRY, person)
+				.set(PERSON.REGISTRY, registry)
 				.set(PERSON.DOMAIN, domain)
 				.set(PERSON.BIRTH_DATE, trabaj.getF20fnac())
 				.set(PERSON.GENDER, enum2Byte(gender) )
@@ -311,6 +392,13 @@ public class Trabaj2Loader extends AbstractLoader implements
 				;
 				//TODO : MARITAL_STATUS, F20NOMBREC? 
 		//@formatter:on
+
+		return registry;
+	}
+
+	private ContractRecord loadTrabjContract(FntrabajRecord trabaj, int domain, int workplace, int person, 
+			 int contract, Callback cb) {
+
 		Integer reg = null;
 		if (!isBlank(trabaj.getF20matric()))
 			try {
@@ -323,52 +411,55 @@ public class Trabaj2Loader extends AbstractLoader implements
 		if (StringUtils.equalsIgnoreCase("S", trabaj.getF20autono()))
 			regimeType = SSRegimeType.SELF_EMPLOYED;
 
-		int contract = next(CONTRACT.getIdentity());
+		ContractRecord contractRecord = new ContractRecord();
+		contractRecord.setValue(CONTRACT.ID, contract);
+		contractRecord.setValue(CONTRACT.DOMAIN, domain);
+		contractRecord.setValue(CONTRACT.PERSON, person);
+		contractRecord.setValue(CONTRACT.REGISTRATION, reg);
+		contractRecord.setValue(CONTRACT.WORKPLACE, workplace);
+		contractRecord.setValue(CONTRACT.START_DATE, trabaj.getF20falta());
+		contractRecord.setValue(CONTRACT.END_DATE, trabaj.getF20fbaja());
+		contractRecord.setValue(CONTRACT.DESCRIPTION, trabaj.getF20puesto());
+		contractRecord.setValue(CONTRACT.SENIORITY_DATE, trabaj.getF20fantig());
+		contractRecord.setValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY, cb.getCategory(trabaj));
+		contractRecord.setValue(CONTRACT.SS_REGIME, enum2Byte(regimeType));
+		contractRecord.setValue(CONTRACT.CATEGORY_DESCRIPTION, trabaj.getF20nomcat());
+		contractRecord.setValue(CONTRACT.MODEL, enum2Byte(getModel(trabaj.getF20clcto())));
 		InsertSetStep<ContractRecord> insertSetStepCotract = getContractInsertSetStep();
-		//@formatter:off
-		insertSetMoreStepContract = insertSetStepCotract
-		.set(CONTRACT.ID, contract)
-		.set(CONTRACT.DOMAIN, domain)
-		.set(CONTRACT.PERSON, person)
-		.set(CONTRACT.REGISTRATION, reg)
-		.set(CONTRACT.WORKPLACE, workplace)
-		.set(CONTRACT.START_DATE, trabaj.getF20falta())
-		.set(CONTRACT.END_DATE, trabaj.getF20fbaja())
-		.set(CONTRACT.DESCRIPTION, trabaj.getF20puesto())
-		.set(CONTRACT.SENIORITY_DATE, trabaj.getF20fantig())
-		.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY, cb.getCategory(trabaj))
-		.set(CONTRACT.SS_REGIME, enum2Byte(regimeType))
-		.set(CONTRACT.CATEGORY_DESCRIPTION, trabaj.getF20nomcat())
-		.set(CONTRACT.MODEL, enum2Byte(getModel(trabaj.getF20clcto())))
-		;
-		//@formatter:on
+		insertSetMoreStepContract = insertSetStepCotract.set(contractRecord);
 
 		InsertSetStep<ContractDataRecord> insertSetStepCotractData = getContractDataInsertSetStep();
+		String groupName = ContextVariable.QUOTE_GROUP.getName();
+		int groupId = getContractDataId(contract, groupName);
 		//@formatter:off
 		insertSetMoreStepContractData = insertSetStepCotractData
+			.set(CONTRACT_DATA.ID, groupId)
 			.set(CONTRACT_DATA.DOMAIN, domain)
 			.set(CONTRACT_DATA.CONTRACT, contract)
-			.set(CONTRACT_DATA.NAME, ContextVariable.QUOTE_GROUP.getName())
+			.set(CONTRACT_DATA.NAME, groupName)
 			.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"",trabaj.getF20grupo()) )
 			.set(CONTRACT_DATA.START_DATE, trabaj.getF20falta())
 			.set(CONTRACT_DATA.END_DATE, (Date) null)
 		;
 		if ( trabaj.getF20irpf() != null  ) {
+			String irpfName = ContextVariable.IRPF_PERCENT.getName();
+			int irpfId = getContractDataId(contract, irpfName);
 			//@formatter:on
 			insertSetStepCotractData = getContractDataInsertSetStep();
 			//@formatter:off
 			insertSetMoreStepContractData = insertSetStepCotractData
+				.set(CONTRACT_DATA.ID, irpfId)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.CONTRACT, contract)
-				.set(CONTRACT_DATA.NAME, ContextVariable.IRPF_PERCENT.getName())
-				.set(CONTRACT_DATA.EXPRESSION, String.format("%.2f", trabaj.getF20irpf()) )
+				.set(CONTRACT_DATA.NAME, irpfName)
+				.set(CONTRACT_DATA.EXPRESSION,  String.format("%.2f", trabaj.getF20irpf()) )
 				.set(CONTRACT_DATA.START_DATE, trabaj.getF20falta())
 				.set(CONTRACT_DATA.END_DATE, (Date) null)
 			;
 			//@formatter:on
 		}
 
-		return contract;
+		return contractRecord;
 	}
 
 	private void loadConce(FntconceRecord tconce, int contract, int domain,
@@ -448,6 +539,74 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	}
 
+	private ContractRecord getContract(FntrabajRecord trabaj, int workplace) {
+		//@formatter:off
+		return aonContext.
+		select()
+		.from(CONTRACT)
+		.join(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.where(CONTRACT.WORKPLACE.eq(workplace))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(getSocialSecurityNum(trabaj)))
+		.and(CONTRACT.START_DATE.eq(trabaj.getF20falta()))
+		.fetchOneInto(CONTRACT)
+		;
+		//@formatter:on
+	}
+	
+	private int getRaddressId(FntrabajRecord trabaj, int registry, AddressType type) {
+		RaddressRecord record = getRaddress(trabaj, registry, type);
+		return record != null ? record.getId() : next( RADDRESS.getIdentity() );
+	}
+
+	private RaddressRecord getRaddress(FntrabajRecord trabaj, int registry, AddressType type) {
+		//@formatter:off
+		return aonContext.
+		select()
+		.from(RADDRESS)
+		.where(RADDRESS.REGISTRY.eq(registry))
+		.and(RADDRESS.TYPE.eq(enum2Byte(type)))
+		.limit(1)
+		.fetchOneInto(RADDRESS)
+		;
+		//@formatter:on
+	}
+
+	private int getRMediaId(FntrabajRecord trabaj, int registry, MediaType type) {
+		RmediaRecord record = getRMedia(trabaj, registry, type);
+		return record != null ? record.getId() : next( RMEDIA.getIdentity() );
+	}
+
+	private RmediaRecord getRMedia(FntrabajRecord trabaj, int registry, MediaType type) {
+		//@formatter:off
+		return aonContext.
+		select()
+		.from(RMEDIA)
+		.where(RMEDIA.REGISTRY.eq(registry))
+		.and(RMEDIA.MEDIA.eq(enum2Byte(type)))
+		.limit(1)
+		.fetchOneInto(RMEDIA)
+		;
+		//@formatter:on
+	}
+	
+	private int getContractDataId(int contract, String name) {
+		ContractDataRecord record = getContractData(contract, name);
+		return record == null ? record.getId() : next(CONTRACT_DATA.getIdentity());
+	}
+
+	private ContractDataRecord getContractData(int contract, String name) {
+		//@formatter:off
+		return aonContext.
+		select()
+		.from(CONTRACT_DATA)
+		.where(CONTRACT_DATA.CONTRACT.eq(contract))
+		.and(CONTRACT_DATA.NAME.eq(name))
+		.limit(1)
+		.fetchOneInto(CONTRACT_DATA)
+		;
+		//@formatter:on
+	}
+
 	private String getSocialSecurityNum(FntrabajRecord trabaj) {
 		return format("%s%s%s", trabaj.getF20sscod(), trabaj.getF20ssnum(),
 				trabaj.getF20ssctrl());
@@ -479,6 +638,120 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	private InsertSetStep<RmediaRecord> getRmediaInsertSetStep() {
 		return get(insertSetMoreStepRmedia, RMEDIA);
+	}
+
+	private void insert() {
+		execute(insertSetMoreStepRegistry);
+		execute(insertSetMoreStepRaddress);
+		execute(insertSetMoreStepRmedia);
+		execute(insertSetMoreStepPerson);
+		execute(insertSetMoreStepContract);
+		execute(insertSetMoreStepContractData);
+		execute(insertSetMoreStepContractPayment);
+
+		insertSetMoreStepRegistry = null;
+		insertSetMoreStepPerson = null;
+		insertSetMoreStepContract = null;
+		insertSetMoreStepRaddress = null;
+		insertSetMoreStepRmedia = null;
+		insertSetMoreStepContractData = null;
+		insertSetMoreStepContractPayment = null;
+	}
+
+	private void delete() {
+		if (toDelete.isEmpty())
+			return;
+
+		List<Integer> contractIds = new ArrayList<Integer>(toDelete.size());
+		List<Integer> registryIds = new ArrayList<Integer>(toDelete.size());
+		for (Ids ids : toDelete) {
+			contractIds.add(ids.contractId);
+			registryIds.add(ids.registryId);
+		}
+
+		//@formatter:off
+		
+		SelectConditionStep<Record1<Integer>> salarySelectCond= aonContext
+				.select(SALARY.ID)
+				.from(SALARY)
+				.where(SALARY.CONTRACT.in(contractIds));
+		
+		aonContext
+			.delete(SALARY_COST)
+			.where(SALARY_COST.SALARY
+			.in(salarySelectCond))
+			.execute();
+		aonContext
+			.delete(SALARY_DATA)
+			.where(SALARY_DATA.SALARY
+			.in(salarySelectCond))
+			.execute();
+		aonContext
+			.delete(SALARY_BONUS)
+			.where(SALARY_BONUS.SALARY
+			.in(salarySelectCond))
+			.execute();
+		aonContext
+			.delete(SALARY_EMBARGO)
+			.where(SALARY_EMBARGO.SALARY
+			.in(salarySelectCond))
+			.execute();
+		aonContext
+			.delete(SALARY_PAYMENT)
+			.where(SALARY_PAYMENT.SALARY
+			.in(salarySelectCond))
+			.execute();
+		aonContext
+			.delete(SALARY_DEDUCTION)
+			.where(SALARY_DEDUCTION.SALARY
+			.in(salarySelectCond))
+			.execute();
+		aonContext
+			.delete(SALARY)
+			.where(SALARY.CONTRACT
+			.in(contractIds))
+			.execute();
+		
+		aonContext
+			.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT
+			.in(contractIds))
+			.execute();
+		aonContext
+			.delete(CONTRACT_PAYMENT)
+			.where(CONTRACT_PAYMENT.CONTRACT
+			.in(contractIds))
+			.execute();
+		aonContext
+			.delete(CONTRACT)
+			.where(CONTRACT.ID
+			.in(contractIds))
+			.execute();
+		
+		aonContext
+			.delete(PERSON)
+			.where(PERSON.REGISTRY
+			.in(registryIds))
+			.execute();
+		aonContext
+			.delete(RADDRESS)
+			.where(RADDRESS.REGISTRY
+			.in(registryIds))
+			.execute();
+		aonContext
+			.delete(RMEDIA)
+			.where(RMEDIA.REGISTRY
+			.in(registryIds))
+			.execute();
+
+		aonContext
+			.delete(REGISTRY)
+			.where(REGISTRY.ID
+			.in(registryIds))
+			.execute();
+
+		//@formatter:on
+
 	}
 
 	private static ContractModel getModel(String str) {

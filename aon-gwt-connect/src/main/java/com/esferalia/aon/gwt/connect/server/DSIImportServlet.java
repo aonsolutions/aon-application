@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.connect.server;
 
+import static com.esferalia.aon.dsi.jooq.tables.Fnempres.FNEMPRES;
 import static java.lang.String.format;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.apache.commons.fileupload.servlet.ServletFileUpload.isMultipartContent;
@@ -13,10 +14,18 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -28,13 +37,16 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.util.regexp.Regexp;
+import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
-import com.code.aon.ui.config.controller.ConfigConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.dsi.DSI2AON;
 import com.esferalia.aon.dsi.jooq.tables.records.FnempresRecord;
@@ -42,23 +54,121 @@ import com.esferalia.aon.dsi.util.DBUtils;
 import com.esferalia.aon.dsi.util.DSIUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
+import com.esferalia.aon.gwt.connect.shared.DSIImportService.GetActionHandler;
+import com.esferalia.aon.gwt.connect.shared.JsEmpres;
+import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
 @MultipartConfig
-public class DSIImportServlet extends HttpServlet implements DSIImportService {
+public class DSIImportServlet extends HttpServlet implements DSIImportService,
+		GetActionHandler<HttpServletRequest, HttpServletResponse, IOException> {
 
 	private static int MAX_MEM_SIZE = 4 * 1024;
-	
-	private List<File> dbs ;
 
+	private static final Pattern JSON_PROPERTY_PATTERN = Pattern
+			.compile("(\\w+):(\"([^\"]*)\"|(\\w*))");
+
+	private static class PrintListener implements DSI2AON.Listener {
+
+		private PrintStream print;
+
+		public PrintListener(PrintStream print) {
+			this.print = print;
+		}
+
+		@Override
+		public void onCommited() {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onRollbacked() {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onPaymentConceptUpdated(PaymentConceptRecord concept) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onPaymentConceptIgnored(PaymentConceptRecord concept) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onPaymentConceptInserted(PaymentConceptRecord concept) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onContractIgnored(ContractRecord contract) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onContractUpdated(ContractRecord contract) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onContractInserted(ContractRecord contract) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onEnterpriseIgnored(RegistryRecord enterprise) {
+			printJsImportEvent(
+					toJsEmpres(enterprise)
+					, JsImportEvent.EventType.ENTERPRISE_IGNORED);
+		}
+
+		@Override
+		public void onEnterpriseUpdated(RegistryRecord enterprise) {
+			printJsImportEvent(
+					toJsEmpres(enterprise)
+					, JsImportEvent.EventType.ENTERPRISE_UPDATED);
+		}
+
+		@Override
+		public void onEnterpriseInserted(RegistryRecord enterprise) {
+			printJsImportEvent(
+					toJsEmpres(enterprise)
+					, JsImportEvent.EventType.ENTERPRISE_INSERTED);
+		}
+
+		private void printJsImportEvent(String src, JsImportEvent.EventType type) {
+			print.print("{");
+			print.print("\"src\":");
+			print.print(src);
+			print.print(",\"type\":");
+			print.print("\"");
+			print.print(type.name());
+			print.print("\"");
+			print.println("}");
+			print.flush();
+		}
+		
+		private static String toJsEmpres(RegistryRecord enterprise) {
+			return format("{\"rsocial\":\"%s\"}", 
+					enterprise.getName() );
+		}
+
+	}
 	/**
 	 * The get method is used to monitor the uploading process .
 	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doGet(req, resp);
+
+		GetAction.valueOf(req.getParameter(GET_ACTION_PARAM)).handle(this, req,
+				resp);
 	}
 
 	/**
@@ -68,9 +178,16 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		File tempDir = null;
-		
-		dbs = new ArrayList<File>();
+
+		OutputStream out = null;
+		PrintStream print = null;
+
 		try {
+			out = resp.getOutputStream();
+			print = new PrintStream(out, false, "UTF-8");
+			// resp.setContentType("application/json;charset=UTF-8");
+			resp.setContentType("text/html;charset=UTF-8");
+
 			ServletContext context = getServletContext();
 			AonServletUtils.initFacesContext(context, req, resp);
 
@@ -94,6 +211,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 			ServletFileUpload upload = new ServletFileUpload(factory);
 			// No limit for maximum allowed size of a complete request
 
+			List<File> dbs = new ArrayList<File>();
 			// Parse the request
 			List<FileItem> fileItems = upload.parseRequest(req);
 			for (FileItem fileItem : fileItems) {
@@ -103,65 +221,165 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 					dbs.add(processUploadFile(fileItem));
 				}
 			}
-			
-			String owner = "admin"; //getRemoteUser();
-			String domain = req.getServerName();//getDomainName();
-			Connection aon = DatabaseUtil.getConnection(domain);
 
-			for (File db : dbs) {
-				String url = String.format("jdbc:paradox:///%s",
-						db.getAbsolutePath());
-				Connection dsi = DBUtils.getDsiConnection(url);
+			print(print, dbs);
 
-				new DSI2AON(dsi, aon)
-				.setCommit(true)
-				.run(domain, "-" + domain, owner);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} catch (FileUploadException e) {
 
-		} catch (AonSQLException e) {
-			e.printStackTrace();
-		} catch (AonConnectionException e) {
-			e.printStackTrace();
 		} finally {
 			if (tempDir != null)
 				tempDir.delete();
-			for (File db : dbs)
-				db.delete();
+			if (print != null)
+				print.close();
+
 			AonServletUtils.releaseFacesContext();
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	protected void doGetEnterprises(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException, SQLException {
+	public void doCancel(HttpServletRequest t, HttpServletResponse i)
+			throws IOException {
+		// TODO Auto-generated method stub
+	};
+
+	@Override
+	public void doImport(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
 		OutputStream out = null;
-		PrintStream print = null; 
+		PrintStream print = null;
 		try {
-			
 			out = resp.getOutputStream();
 			print = new PrintStream(out);
-			
-			for (File db : dbs) {
+
+			String owner = "admin";// getRemoteUser();
+			String domain = req.getServerName(); // getDomainName();
+			Connection aonConn = DatabaseUtil.getConnection(domain);
+
+			Map<String, List<Properties>> empresMap = getEmpresMap(req);
+			for (String db : empresMap.keySet()) {
+				try {
+
+					Condition condition = DSL.condition(true);
+					for (Properties empres : empresMap.get(db)){
+						//@formatter:off
+							condition = condition
+							.or(FNEMPRES.F20SSCOD.eq(empres.getProperty("sscod"))
+							.and(FNEMPRES.F20SSNUM.eq(empres.getProperty("ssnum"))));
+						//@formatter:on
+					}
+
+					boolean commit = getCommit(req);
+					boolean replace = getReplace(req);
+					PrintListener listener = new PrintListener(print);
+
+					Connection dsiConn = getDSIConn(db);
+					//@formatter:off
+					new DSI2AON(dsiConn, aonConn)
+					.setCommit(commit)
+					.setReplace(replace)
+					.addListener(listener)
+					.run(domain, 
+						owner, 
+						condition);
+					//@formatter:on
+
+				} catch (SQLException e) {
+					throw new IOException(e);
+				} catch (AonSQLException e) {
+					throw new IOException(e);
+				}
+			}
+
+		} catch (AonConnectionException e) {
+			throw new IOException(e);
+		} finally {
+			if (print != null)
+				print.close();
+		}
+	}
+
+	@Override
+	public void doListEmpress(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+
+		OutputStream out = null;
+		PrintStream print = null;
+		try {
+
+			out = resp.getOutputStream();
+			print = new PrintStream(out);
+
+			for (String db : getDBs(req)) {
 				Connection conn = null;
 				try {
 					conn = getDSIConn(db);
 					List<FnempresRecord> empress = DSIUtils.getEmpress(conn);
-				}finally {
-					if ( conn != null )
-						conn.close();
+
+					//@formatter:off
+					print.print('[');
+					for (int i = 0; i < empress.size(); i++) {
+						if (i > 0)
+							print.println(',');
+						FnempresRecord empres = empress.get(i);
+						print.print("{");
+						print.print(format("\"db\":\"%s\",", db));
+						print.print(format("\"sscod\":\"%s\",", empres.getF20sscod()));
+						print.print(format("\"ssnum\":\"%s\",", empres.getF20ssnum()));
+						print.print(format("\"rsocial\":\"%s\"", empres.getF20rsocial()));
+						print.print("}");
+					}
+					print.print(']');
+					//@formatter:on
+
+				} catch (SQLException e) {
+					throw new IOException(e);
+				} finally {
+					if (conn != null)
+						try {
+							conn.close();
+						} catch (SQLException e) {
+						}
 				}
 			}
 		} finally {
-			if ( print != null )
+			if (print != null)
 				print.close(); // closes unserlying stream
 		}
 	}
-	
+
+	// ------------------------------------------------------------------------
+
+	private boolean getCommit(HttpServletRequest req) {
+		String value = req.getParameter(GET_COMMIT_PARAM);
+		return StringUtils.equalsIgnoreCase(value, String.valueOf(true));
+	}
+
+	private boolean getReplace(HttpServletRequest req) {
+		String value = req.getParameter(GET_REPLACE_PARAM);
+		return StringUtils.equalsIgnoreCase(value, String.valueOf(true));
+	}
+
+	private String[] getDBs(HttpServletRequest req) {
+		return req.getParameterValues(GET_DB_PARAM);
+	}
+
+	private Map<String, List<Properties>> getEmpresMap(HttpServletRequest req) {
+		String values[] = req.getParameterValues(GET_EMPRES_PARAM);
+		Map<String, List<Properties>> map = new HashMap<String, List<Properties>>();
+		for (int i = 0; i < values.length; i++) {
+			Properties properties =  getProperties(values[i]);
+			String db = properties.getProperty("db");
+			List<Properties> list = map.get(db);
+			if (list == null) {
+				list = new ArrayList<Properties>();
+				map.put(db, list);
+			}
+			list.add(properties);
+		}
+		return map;
+	}
+
 	/**
 	 * Mark the current process to be canceled.
 	 * 
@@ -191,20 +409,39 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 		}
 	}
 
+	private void saveBDs(List<File> file) {
 
-
+	}
 
 	// ------------------------------------------------------------------------
-	
-	private static <R extends Record> void print(PrintStream print, R record ){
-		print.print('{');
-		
-		print.print('}');
+
+	private static void print(PrintStream print, List<File> dbs) {
+		print.print('[');
+		for (int i = 0; i < dbs.size(); i++) {
+			if (i > 0)
+				print.print(',');
+			print.printf("\"%s\"", dbs.get(i).getAbsolutePath());
+		}
+		print.print(']');
 	}
-	
+
+	private static <R extends Record> void print(PrintStream print, R record,
+			Field<?>... fields) {
+		for (int i = 0; i < fields.length; i++) {
+			if (i > 0)
+				print.print(',');
+
+			String name = fields[i].getName();
+			print.printf("\"%s\":\"%s\"", name, record.getValue(fields[i]));
+		}
+	}
+
 	private static Connection getDSIConn(File db) throws SQLException {
-		String url = format("jdbc:paradox:///%s",
-				db.getAbsolutePath());
+		return getDSIConn(db.getAbsolutePath());
+	}
+
+	private static Connection getDSIConn(String path) throws SQLException {
+		String url = format("jdbc:paradox:///%s", path);
 		return DBUtils.getDsiConnection(url);
 	}
 
@@ -244,16 +481,28 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService {
 	}
 
 	private static String getRemoteUser() {
-		
+
 		return AonUtil.getRemoteUser();
 	}
-
 
 	private static String getDomainName() {
 		return AonUtil.getDomainName();
 	}
-	
-	
-	
+
+	private static Properties getProperties(String json) {
+		Properties properties = new Properties();
+		Matcher matcher = JSON_PROPERTY_PATTERN.matcher(json);
+		while (matcher.find()) {
+			String name = matcher.group(1);
+			String value1 = matcher.group(3);
+			String value2 = matcher.group(4);
+			properties.put(name, value1 != null ? value1: value2);
+		}
+		return properties;
+	}
+
+	public static void main(String[] args) throws ScriptException {
+		System.out.println(getProperties("{ x:\"ghghghgh\"     , h:ajskalsja}"));
+	}
 
 }

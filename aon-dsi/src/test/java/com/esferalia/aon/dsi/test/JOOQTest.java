@@ -1,6 +1,7 @@
 package com.esferalia.aon.dsi.test;
 
 import static com.esferalia.aon.dsi.jooq.tables.Fncconce.FNCCONCE;
+import static com.esferalia.aon.dsi.jooq.tables.Fnempres.FNEMPRES;
 import static com.esferalia.aon.dsi.jooq.tables.Fnnominc.FNNOMINC;
 import static com.esferalia.aon.dsi.jooq.tables.Fnnominl.FNNOMINL;
 import static com.esferalia.aon.dsi.jooq.tables.Fntantig.FNTANTIG;
@@ -17,6 +18,8 @@ import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Table;
+import org.jooq.UpdateSetMoreStep;
+import org.jooq.UpdateSetStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.junit.After;
@@ -27,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.esferalia.aon.dsi.jooq.tables.Fncconce;
+import com.esferalia.aon.dsi.jooq.tables.Fnempres;
 import com.esferalia.aon.dsi.jooq.tables.Fnnominc;
 import com.esferalia.aon.dsi.jooq.tables.Fntantig;
 import com.esferalia.aon.dsi.jooq.tables.Fntconce;
@@ -118,7 +122,7 @@ public class JOOQTest {
 
 	@Test
 	public void tesCconce() throws Exception {
-		showTable(FNCCONCE); // OK
+		//showTable(FNCCONCE); // OK
 	}
 
 	@Test
@@ -133,7 +137,7 @@ public class JOOQTest {
 
 	@Test
 	public void tesTconce() throws Exception {
-		showTable(FNTCONCE); // ContractPayment
+		//showTable(FNTCONCE); // ContractPayment
 	}
 
 
@@ -154,7 +158,7 @@ public class JOOQTest {
 
 	@Test
 	public void tesNominl() throws Exception {
-		showTable(FNNOMINL);
+	showTable(FNNOMINL);
 	}
 
 	@Test
@@ -198,6 +202,7 @@ public class JOOQTest {
 				System.out.println(record.getValue(FNNOMINL.F31NOMBRE) + " = " + record.getValue(FNNOMINL.F31MES) + " = " +  record.getValue(FNNOMINL.F31TOTAL ) );
 		}
 		*/
+		
 	}
 
 	public void showTable(Table<?> table) throws Exception {
