@@ -761,9 +761,6 @@ public class ContractController extends BasicController {
 					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
 					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), contract.getWorkPlace().getAddress().getGeozone().getId());
 				}
-				if(isInternship()){
-					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.FELLOWS);
-				}
 				List<ITransferObject> cccList = ecBean.getList(criteria);
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				for(ITransferObject to: cccList){
