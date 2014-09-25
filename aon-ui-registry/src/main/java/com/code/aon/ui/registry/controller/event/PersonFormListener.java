@@ -11,7 +11,6 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.StreetType;
@@ -19,7 +18,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PersonFormListener extends RegistryPayMethodFormListener {
+public class PersonFormListener extends RegistryFormListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
@@ -88,17 +87,7 @@ public class PersonFormListener extends RegistryPayMethodFormListener {
 			setFax(fax);
 			setEmail(email);
 			setWeb(web);
-
-			resetPayMethod();
-
-			IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-			Criteria criteriaPayMethod = new Criteria();
-			criteriaPayMethod.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
-			Iterator<?> payMethodIter = rPayMethodBean.getList(criteriaPayMethod).iterator();
-			if (payMethodIter.hasNext()) {
-				RegistryPayMethod rPayMethod = (RegistryPayMethod)payMethodIter.next();
-				setRegistryPayMethod(rPayMethod);
-			}
+			
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
