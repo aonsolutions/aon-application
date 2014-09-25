@@ -452,11 +452,19 @@ public class FinanceController extends FinanceListController implements IFinance
 
 	public void onEditSearchCharge(ActionEvent event) {
 		setPayment(false);
+		setPayroll(false);
 		super.onEditSearch(event);
 	}
 
 	public void onEditSearchPayment(ActionEvent event) {
 		setPayment(true);
+		setPayroll(false);
+		super.onEditSearch(event);
+	}
+
+	public void onEditSearchPayroll(ActionEvent event) {
+		setPayment(true);
+		setPayroll(true);
 		super.onEditSearch(event);
 	}
 

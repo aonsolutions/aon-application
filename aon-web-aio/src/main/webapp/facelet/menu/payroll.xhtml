@@ -296,11 +296,8 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financePayment-payroll"
 										action="finance_search-Payroll"
-										actionListener="#{finance.onEditSearchPayment}"
-										value="#{bundle.payroll_finance_payment_module}">
-										<f:setPropertyActionListener target="#{finance.payroll}"
-											value="#{true}" />
-									</aon:commandLink>
+										actionListener="#{finance.onEditSearchPayroll}"
+										value="#{bundle.payroll_finance_payment_module}" />
 								</aon:div>
 								<!--  
 								<aon:div styleClass="aon-direct-access-list-element">

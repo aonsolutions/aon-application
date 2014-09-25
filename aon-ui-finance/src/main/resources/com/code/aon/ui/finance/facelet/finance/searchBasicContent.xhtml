@@ -159,6 +159,16 @@
 		</aon:selectOneRadio>				
 	</c:if>
 
+	<c:if test="#{searchController.skipPayrollFilter and actionDenied.moduleEnabled['payroll']}">
+		<aon:outputLabel for="Finance_skipPayroll"
+			value="#{bundle.finance_include_payroll}" />
+		<aon:selectOneRadio id="Finance_payroll"
+			value="#{searchController.skipPayrollFilter}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>				
+	</c:if>
+
 	<aon:outputText value="#{bundle.aon_status}" />
 	<aon:selectManyCheckbox value="#{searchController.financeStatuses}">
 		<f:selectItems value="#{financeCollections.financeStatuses}" />

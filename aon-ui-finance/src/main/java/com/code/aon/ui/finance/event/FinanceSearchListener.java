@@ -18,6 +18,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.controller.IFinanceController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceSearchListener extends FinanceListSearchListener {
@@ -29,6 +30,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	private Registry registry;
 	private RegistryBank registryBank;
 	private PayMethod[] payMethods;
+	private boolean skipPayrollFilter;
 	private boolean nullInvoice;
 	
 	public Registry getRegistry() {
@@ -47,14 +49,6 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		this.registryBank = registryBank;
 	}
 
-	public boolean isNullInvoice() {
-		return nullInvoice;
-	}
-
-	public void setNullInvoice(boolean nullInvoice) {
-		this.nullInvoice = nullInvoice;
-	}
-
 	public PayMethod[] getPayMethods() {
 		if (payMethods == null) {
 			payMethods = new PayMethod[]{EMPTY_PAYMETHOD};
@@ -66,6 +60,22 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		this.payMethods = payMethods;
 	}
 	
+	public boolean isSkipPayrollFilter() {
+		return skipPayrollFilter;
+	}
+
+	public void setSkipPayrollFilter(boolean skipPayrollFilter) {
+		this.skipPayrollFilter = skipPayrollFilter;
+	}
+
+	public boolean isNullInvoice() {
+		return nullInvoice;
+	}
+
+	public void setNullInvoice(boolean nullInvoice) {
+		this.nullInvoice = nullInvoice;
+	}
+
 	public int getPayMethodsSize() {
 		return ArrayUtils.getLength(payMethods);
 	}	
@@ -97,13 +107,17 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setRegistryBank((RegistryBank)BeanManager.getManagerBean(RegistryBank.class).createNewTo());
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
+		setSkipPayrollFilter(getFinanceController().isPayment() && !getFinanceController().isPayroll() && AonUtil.getRoleManager().isPayroll());
 		setNullInvoice(false);
+	}
+
+	private IFinanceController getFinanceController() {
+		return (IFinanceController)getController();
 	}
 
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYMENT), ((IFinanceController)getController()).isPayment());
-		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYROLL), ((IFinanceController)getController()).isPayroll());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYMENT), getFinanceController().isPayment());
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), getRegistry().getId());			
 		}		
@@ -114,7 +128,10 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 			String payMethod = getController().resolveAlias(IEntityAlias.FINANCE_PAY_METHOD_ID);
 			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
 		}
-		if(isNullInvoice()){
+		if (!isSkipPayrollFilter()) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYROLL), getFinanceController().isPayroll());
+		}
+		if (isNullInvoice()) {
 			criteria.addNullExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_ID));
 		}
 		super.completeCriteria(criteria);
