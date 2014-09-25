@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -38,7 +36,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.util.regexp.Regexp;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -55,13 +52,10 @@ import com.esferalia.aon.dsi.util.DSIUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService.GetActionHandler;
-import com.esferalia.aon.gwt.connect.shared.JsEmpres;
 import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
 @MultipartConfig
@@ -501,8 +495,5 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		return properties;
 	}
 
-	public static void main(String[] args) throws ScriptException {
-		System.out.println(getProperties("{ x:\"ghghghgh\"     , h:ajskalsja}"));
-	}
 
 }
