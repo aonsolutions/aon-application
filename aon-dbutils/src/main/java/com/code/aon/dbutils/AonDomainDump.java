@@ -1,5 +1,7 @@
 package com.code.aon.dbutils;
 
+import static com.code.aon.dbutils.DomainCommandLine.FILE_ARGUMENT;
+
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -376,7 +380,12 @@ public class AonDomainDump implements Constants {
 
 	public static void main(String[] arguments) {
 		
-		DomainCommandLine dcl = new DomainCommandLine(true);
+		DomainCommandLine dcl = new DomainCommandLine();
+
+		Option fileOption = OptionBuilder.withDescription( "output sql file in ISO-8859-1" )
+				.withArgName( "sqlFile" ).hasArg().create(FILE_ARGUMENT);
+		fileOption.setRequired(true);
+		dcl.addOption(fileOption);					
 		
 		dcl.parse(AonDomainDump.class.getName(), arguments);
 				
@@ -387,7 +396,7 @@ public class AonDomainDump implements Constants {
 			
 			Integer[] domains = dcl.getDomains(connection);
 			if (! ArrayUtils.isEmpty(domains) ) {
-				String file = dcl.getFile();
+				String file = dcl.getValue(FILE_ARGUMENT);
 				writer = new OutputStreamWriter(new FileOutputStream(file), CharEncoding.ISO_8859_1);				
 				LOGGER.info( "Starting process..." );				
 				AonDomainDump dump = new AonDomainDump(connection);

@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:column alias="Domain.name" styleClass="aon-editDataTable-textColumn aon-width-200">
@@ -19,4 +20,25 @@
 		<aon:outputText value="#{to.description}" />
 	</aon:column>
 
+	<aon:column alias="Domain.type" styleClass="aon-editDataTable-textColumn aon-width-80">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.admin_domain_type}" />
+		</f:facet>							
+		<aon:outputText value="#{to.type}" />
+		<aon:div styleClass="aon-margin-left" layout="inline">
+			<aon:outputText value="&#160;"
+				rendered="#{to.domainManagement}"
+				title="#{bundle.admin_domain_domainManagement}"
+				styleClass="aon-icon2 aon-icon-tree-root" />
+			<aon:outputText value="&#160;"
+				rendered="#{(to.parent != null) and to.enableHeredity}"
+				title="#{bundle.aon_domian_enableHeredity}"
+				styleClass="aon-icon2 aon-icon-index" />														
+			<aon:outputText value="&#160;"
+				rendered="#{(to.parent != null) and (!to.enableHeredity)}"
+				title="#{bundle.aon_domian_disableHeredity}"
+				styleClass="aon-icon2 aon-icon-disableHeredity" />																	
+		</aon:div>																		
+	</aon:column>
+							
 </ui:composition>

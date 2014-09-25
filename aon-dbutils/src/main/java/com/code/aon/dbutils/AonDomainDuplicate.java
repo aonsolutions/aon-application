@@ -1,17 +1,29 @@
 package com.code.aon.dbutils;
 
+import static com.code.aon.dbutils.DomainCommandLine.DESCRIPTION_ARGUMENT;
+import static com.code.aon.dbutils.DomainCommandLine.DOMAIN_ARGUMENT;
+import static com.code.aon.dbutils.DomainCommandLine.NEW_NAME_ARGUMENT;
+import static com.code.aon.dbutils.DomainCommandLine.OWNER_ARGUMENT;
+import static com.code.aon.dbutils.DomainCommandLine.PARENT_ARGUMENT;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +31,21 @@ public class AonDomainDuplicate implements Constants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AonDomainDuplicate.class);
 	
+	public static final String[] SKIP_FORCE_HEREDITY_TABLES = new String[] {
+		DOMAIN_TABLE_NAME, COMPANY_TABLE_NAME, APP_PARAM_TABLE_NAME, ACCOUNT_PERIOD_TABLE_NAME,
+		DOMAIN_APPLICATION_TABLE_NAME, DOMAIN_APPLICATION_MODULE_TABLE_NAME
+	};	
+	
 	private Map<String,TableInfo> tables;
 	private Connection connection;
 	private Integer sourceDomain;
+	private Integer sourceParentDomain;
 	private Integer newDomain;
+	private Integer newParentDomain;
 	private String description;
 	private String owner;
+	private Map<TableInfo,List<UnresolvedReference>> unresolvedReferences; 
+	private boolean forceFullHeredity;
 	
 	public AonDomainDuplicate(Connection connection) throws AonSQLException {
 		this.connection = connection;
@@ -58,26 +79,86 @@ public class AonDomainDuplicate implements Constants {
 			DbUtils.closeQuietly(s);
 		}
 	}
+	
+	private boolean isForceFullHeredity( DomainInfo di) {
+		return (di.getParent() != null) && di.isEnableHeredity() && (!di.getParent().equals(newParentDomain));
+	}
+	
+	private void initDomainInfo() {
+		DomainInfo di = TableUtil.getDomainInfo(connection, sourceDomain);
+		this.sourceParentDomain = di.getParent();
+		this.forceFullHeredity = isForceFullHeredity(di);
+		if ( this.forceFullHeredity ) {
+			for( TableInfo ti : tables.values() ) {
+				if (! ArrayUtils.contains(SKIP_FORCE_HEREDITY_TABLES, ti.getName()) ) {
+					ti.setForceHeredity(true);	
+				}
+			}
+		}
+	}
+	
+	private void fixApplicationUser() {
+		TableInfo ti = this.tables.get(DOMAIN_APPLICATION_TABLE_NAME);
+		Collection<Integer> ids = ti.getKeys().values();
+		if ( ids.size() == 1 ) {
+			Integer domainApplicationId = ids.iterator().next();
+			String update = "UPDATE application_user SET domain_application = " +
+					domainApplicationId + " WHERE domain = " + newDomain;
+			executeStatement(update);
+		}
+	}
+	
+	
+	private void fixUnresolvedReferences(TableInfo t) {
+		List<UnresolvedReference> list = unresolvedReferences.get(t);
+		if ( list != null ) {
+			for( UnresolvedReference ur : list ) {
+				Integer newValue = t.getNewKey(ur.getSourceValue());
+				if ( newValue != null ) {
+					StringBuffer sb = new StringBuffer();
+					sb.append("UPDATE ").append(ur.getTableInfo().getName());
+					sb.append( " SET ").append(ur.getColumnInfo().getName());
+					sb.append( '=').append(newValue);
+					sb.append( " WHERE ").append(ur.getColumnInfo().getName());
+					sb.append( '=').append(ur.getSourceValue());
+					executeStatement(sb.toString());
+				} else {
+					LOGGER.warn( "Reference ({},{}-{}) for {} not found", new Object[]{ur.getTableInfo().getName(),ur.getColumnInfo().getName(), ur.getSourceValue(), t.getName()} );					
+				}
+			}
+		}
+	}
 
-	public Integer execute(Integer sourceDomain, String domainName) throws AonSQLException {
+	public Integer execute(Integer sourceDomain, Integer newParentDomain, String domainName) throws AonSQLException {
 		try {
 			this.newDomain = null;
 			this.sourceDomain = sourceDomain;
+			this.newParentDomain = newParentDomain;
+			this.unresolvedReferences = new HashMap<TableInfo, List<UnresolvedReference>>();
 
             connection.setAutoCommit(false);
+            
+            initDomainInfo();
             
             executeStatement(SET_FOREIGN_KEY_CHECKS_0);
             LOGGER.debug("Claves refereciales deshabilitadas");
             
             mergeDomain(domainName);
-
+            
             List<TableInfo> tables = new ArrayList<TableInfo>(this.tables.values());
             tables.remove(this.tables.get(DOMAIN_TABLE_NAME));
             
             int i = 0;
             for (TableInfo table: tables) {
             	LOGGER.info( "{}-Merging table {}",++i,table.getName() );
+            	if ( table.getName().equals("bank_statement_link") ) {
+            		LOGGER.info(table.getName());
+            	}
             	merge(table);
+            }
+            
+            if ( forceFullHeredity ) {
+            	fixApplicationUser();
             }
             
             connection.commit();
@@ -99,12 +180,19 @@ public class AonDomainDuplicate implements Constants {
 		return this.newDomain;
 	}
 
-	private void mergeDomain( String domainName) throws AonSQLException {
+	private void mergeDomain( String domainName ) throws AonSQLException {
 		TableInfo tableInfo = tables.get(DOMAIN_TABLE_NAME); 
-		DomainTableInfoListener listener = new DomainTableInfoListener(domainName, getDescription(), getOwner());
+		DomainTableInfoListener listener = new DomainTableInfoListener(domainName, getDescription(), getOwner(), newParentDomain);
 		tableInfo.setListener(listener);
 		merge( tableInfo );
 		this.newDomain = tableInfo.getNewKey(sourceDomain);
+	}
+	
+	private Integer[] getDomains( TableInfo ti ) {
+		if ( ti.isForceHeredity() && (this.sourceParentDomain != null) ) {
+			return new Integer[]{this.sourceDomain, this.sourceParentDomain};
+		}
+		return new Integer[]{this.sourceDomain};
 	}
 	
 	private void merge(TableInfo t) throws AonSQLException {
@@ -112,7 +200,7 @@ public class AonDomainDuplicate implements Constants {
 		ResultSet rs = null;
 		PreparedStatement insert = null;
 		try {
-			String sentence = t.getSelectStatement(new Integer[]{this.sourceDomain});
+			String sentence = t.getSelectStatement(getDomains(t));
 			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
@@ -137,6 +225,7 @@ public class AonDomainDuplicate implements Constants {
 			DbUtils.closeQuietly(select);
 			DbUtils.closeQuietly(insert);
 		}			
+		fixUnresolvedReferences(t);
 	}
 	
 	private void updateReferences(TableInfo t) throws SQLException {
@@ -207,8 +296,12 @@ public class AonDomainDuplicate implements Constants {
 				Object value = getObject(rs, ci);
 				if (value != null) {
 					if ( ci.isFkColummn() ) {
-						Integer valueInteger = getInteger(value);
-						value = getReferenceValue(t, valueInteger, ci.getName(), ci.getFkTableName());
+						if ( t.isForceHeredity() && DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {
+							value = newDomain;
+						} else {
+							Integer valueInteger = getInteger(value);
+							value = getReferenceValue(t, valueInteger, ci.getName(), ci.getFkTableName());
+						}
 					} else if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if ( air.getColumn().equals(ci) ) {
@@ -256,8 +349,32 @@ public class AonDomainDuplicate implements Constants {
 		return valueInteger;
 	}
 	
-	private Integer ensureValueId(String fkTable, String pk, Integer value) throws SQLException {
-		String sentence = "SELECT " + pk + " FROM " + fkTable + " WHERE " + pk + " = " + value; 
+	private Integer ensureValueId( TableInfo t, String column, TableInfo fkTableInfo, Integer value ) throws SQLException {
+		String condition = null;
+		if ( (sourceParentDomain != null) ) {
+			ColumnInfo domainCI = fkTableInfo.getColumn(DOMAIN_COLUMN_NAME);
+			if ( (domainCI != null) && (!domainCI.isNullable()) ) {
+				condition = DOMAIN_COLUMN_NAME + " = " + sourceParentDomain;
+			}
+		}
+		Integer newValue = ensureValueId(fkTableInfo.getName(), fkTableInfo.getPkColumn().getName(), value, condition);
+		if ( (newValue == null) || this.forceFullHeredity ) {
+			List<UnresolvedReference> list = unresolvedReferences.get(fkTableInfo);
+			if ( list == null ) {
+				list = new LinkedList<UnresolvedReference>();
+				unresolvedReferences.put(fkTableInfo, list);
+			}
+			list.add(new UnresolvedReference(t, column, value));
+			newValue = value;
+		}
+		return newValue;
+	}
+
+	private Integer ensureValueId(String fkTable, String pk, Integer value, String condition ) throws SQLException {
+		String sentence = "SELECT " + pk + " FROM " + fkTable + " WHERE " + pk + " = " + value;
+		if ( condition != null ) {
+			sentence += " AND " + condition;
+		}
 		Statement s = null;
 		ResultSet rs = null;
 		try {
@@ -280,10 +397,10 @@ public class AonDomainDuplicate implements Constants {
 			if ( fkTableInfo != null ) {
 				newValue = fkTableInfo.getNewKey(value);
 				if ( newValue == null ) {
-					newValue = ensureValueId(fkTable, fkTableInfo.getPkColumn().getName(), value);
+					newValue = ensureValueId(t, column, fkTableInfo, value);
 				}
 			} else {
-				newValue = ensureValueId(fkTable, "id", value);
+				newValue = ensureValueId(fkTable, "id", value, null);
 			}
 			if ( newValue == null ) {
 				LOGGER.warn( "Reference ({},{}-{}) for {} not found", new Object[]{t.getName(),column, value, fkTable} );
@@ -296,30 +413,84 @@ public class AonDomainDuplicate implements Constants {
 		return value;
 	}
 	
-	public static void main(String[] args) {
-		DbUtils.loadDriver("com.mysql.jdbc.Driver");
+	private static class UnresolvedReference {
 		
-		Integer sourceDomain = 791;
-		String domainName = "prueba-confialia.aonsolutions.net";
-		String domainDescription = "PRUEBA de PLANTILLA";
-		String owner = "jgarcia@esferalia.com";
+		private TableInfo tableInfo;
 		
-		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
-		String user = "dbuser";
-		String password = "serubd2000";
+		private ColumnInfo columnInfo;
 		
-		Connection connection  = null ;
+		private Integer sourceValue;
+		
+		public UnresolvedReference(TableInfo tableInfo, String column, Integer sourceValue) {
+			this.tableInfo = tableInfo;
+			this.columnInfo = tableInfo.getColumn(column);
+			this.sourceValue = sourceValue;
+		}
+
+		public TableInfo getTableInfo() {
+			return tableInfo;
+		}
+
+		public ColumnInfo getColumnInfo() {
+			return columnInfo;
+		}
+
+		public Integer getSourceValue() {
+			return sourceValue;
+		}
+		
+	}
+	
+	public static void main(String[] arguments) {
+		DomainCommandLine dcl = new DomainCommandLine();
+		
+		dcl.getOption(DOMAIN_ARGUMENT).setRequired(true);
+		
+		Option parentOption = OptionBuilder.withDescription( "parent for the duplicated domain" )
+				.withArgName(PARENT_ARGUMENT).hasArg().create(PARENT_ARGUMENT);
+		dcl.addOption(parentOption);					
+
+		Option descriptionOption = OptionBuilder.withDescription( "description of the new domain" )
+				.withArgName(DESCRIPTION_ARGUMENT).hasArg().create(DESCRIPTION_ARGUMENT);
+		descriptionOption.setRequired(true);
+		dcl.addOption(descriptionOption);					
+
+		Option ownerOption = OptionBuilder.withDescription( "email of the owner of the new domain" )
+				.withArgName(OWNER_ARGUMENT).hasArg().create(OWNER_ARGUMENT);
+		ownerOption.setRequired(true);
+		dcl.addOption(ownerOption);					
+
+		Option newNameOption = OptionBuilder.withDescription( "name for the duplicated domain" )
+				.withArgName(NEW_NAME_ARGUMENT).hasArg().create(NEW_NAME_ARGUMENT);
+		newNameOption.setRequired(true);
+		dcl.addOption(newNameOption);					
+		
+		dcl.parse(AonDomainDuplicate.class.getName(), arguments);
+				
+		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection(url, user, password);
-			AonDomainDuplicate dup = new AonDomainDuplicate(connection);
-			dup.setDescription(domainDescription);
-			dup.setOwner(owner);
-			dup.execute(sourceDomain, domainName);
+			connection = dcl.getConnection();
+			
+			Integer[] domains = dcl.getDomains(connection);
+			if (! ArrayUtils.isEmpty(domains) ) {
+				LOGGER.info( "Starting process..." );
+				AonDomainDuplicate add = new AonDomainDuplicate(connection);
+				add.setDescription(dcl.getValue(DESCRIPTION_ARGUMENT));
+				add.setOwner(dcl.getValue(OWNER_ARGUMENT));
+				String domainName = "prueba-confialia.aonsolutions.net";	
+				Integer parentDomainId = null;
+				String parentDomain = dcl.getValue(PARENT_ARGUMENT);
+				if (! StringUtils.isEmpty(parentDomain) ) {
+					parentDomainId = dcl.getDomainId(connection, parentDomain);
+				}
+				add.execute(domains[0], parentDomainId, domainName);
+			}
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(connection);
-		}
+		}		
+		
 	}
 	
 }

@@ -119,6 +119,10 @@ public class TableInfo implements Constants {
 		return this.keys.get(oldValue);
 	}
 	
+	public Map<Integer, Integer> getKeys() {
+		return keys;
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -25,6 +25,8 @@ public interface Constants {
 	String COMMERCIAL_TRACKING_TABLE_NAME = "commercial_tracking";
 	String COMPANY_TABLE_NAME = "company";
 	String DOMAIN_TABLE_NAME = "domain";
+	String DOMAIN_APPLICATION_TABLE_NAME = "domain_application";
+	String DOMAIN_APPLICATION_MODULE_TABLE_NAME = "domain_application_module";
 	String DELIVERY_DETAIL_TABLE_NAME = "delivery_detail";
 	String ENTERPRISE_DATA_TABLE_NAME = "enterprise_data";
 	String FBATCH_TABLE_NAME = "fbatch";
@@ -51,13 +53,16 @@ public interface Constants {
 	String TRAINING_CENTER_TABLE_NAME = "training_center";
 	String WEB_INFO_PAGE_TABLE_NAME = "web_info_page";
 	
+	String DESCRIPTION_COLUMN_NAME = "description";
 	String DOMAIN_COLUMN_NAME = "domain";
-	String NAME_COLUMN_NAME = "name";
-	String SOURCE_ID_COLUMN_NAME = "source_id";
-	String SOURCE_COLUMN_NAME = "source";
-	String VALUE_COLUMN_NAME = "value";
-	String ID_COLUMN_NAME = "id";
 	String EXPRESSION_COLUMN_NAME = "expression";
+	String ID_COLUMN_NAME = "id";
+	String NAME_COLUMN_NAME = "name";
+	String OWNER_COLUMN_NAME = "owner";
+	String PARENT_COLUMN_NAME = "parent";
+	String SOURCE_COLUMN_NAME = "source";
+	String SOURCE_ID_COLUMN_NAME = "source_id";
+	String VALUE_COLUMN_NAME = "value";
 	
 	String IS_AUTOINCREMENT = "IS_AUTOINCREMENT";
 	String COLUMN_NAME = "COLUMN_NAME";

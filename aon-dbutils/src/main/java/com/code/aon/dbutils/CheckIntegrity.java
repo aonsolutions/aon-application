@@ -1,7 +1,6 @@
 package com.code.aon.dbutils;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -224,12 +223,11 @@ public class CheckIntegrity implements Constants {
 	}
 	
 	public static void main(String[] arguments) {
-		DomainCommandLine dcl = new DomainCommandLine(false);
+		DomainCommandLine dcl = new DomainCommandLine();
 		
 		dcl.parse(CheckIntegrity.class.getName(), arguments);
 				
 		Connection connection = null;
-		Writer writer = null;
 		try {
 			connection = dcl.getConnection();
 			
@@ -243,13 +241,6 @@ public class CheckIntegrity implements Constants {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DbUtils.closeQuietly(connection);
-			if ( writer != null ) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}
 		}
 	}
 	

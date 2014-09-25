@@ -24,9 +24,17 @@ public class DomainCommandLine {
 
 	private static final String DRIVER_CLASS_ARGUMENT = "driverClass";
 
-	private static final String FILE_ARGUMENT = "file";
+	public static final String FILE_ARGUMENT = "file";
+	
+	public static final String DESCRIPTION_ARGUMENT = "description";
+	
+	public static final String OWNER_ARGUMENT = "owner";
+	
+	public static final String NEW_NAME_ARGUMENT = "newName";
 
-	private static final String DOMAIN_ARGUMENT = "domain";
+	public static final String DOMAIN_ARGUMENT = "domain";
+	
+	public static final String PARENT_ARGUMENT = "parent";
 
 	private static final String PASSWORD_ARGUMENT = "password";
 
@@ -40,7 +48,7 @@ public class DomainCommandLine {
 	
 	private CommandLine line;
 	
-	public DomainCommandLine( boolean addFileArgument ) {
+	public DomainCommandLine() {
 		options = new Options();
 		
 		Option userOption = OptionBuilder.withDescription( "user of database connection" )
@@ -65,13 +73,14 @@ public class DomainCommandLine {
 		Option driverClassOption = OptionBuilder.withDescription( "jdbc driver class" )
 				.withArgName( "jdbcDriver" ).hasArg().create(DRIVER_CLASS_ARGUMENT);
 		options.addOption(driverClassOption);
+	}
 
-		if ( addFileArgument ) {
-			Option fileOption = OptionBuilder.withDescription( "output sql file in ISO-8859-1" )
-					.withArgName( "sqlFile" ).hasArg().create(FILE_ARGUMENT);
-			fileOption.setRequired(true);
-			options.addOption(fileOption);					
-		}
+	public Option getOption( String value ) {
+		return this.options.getOption(value);
+	}
+	
+	public void addOption( Option option ) {
+		options.addOption(option);
 	}
 
 	public void parse( String className, String[] arguments ) {
@@ -95,36 +104,36 @@ public class DomainCommandLine {
 			System.exit(-1);
 		}		
 	}
+
+	public String getValue(String argument) {
+		return line.getOptionValue(argument);
+	}	
 	
 	private String getUrl() {
-		return line.getOptionValue(URL_ARGUMENT);
+		return getValue(URL_ARGUMENT);
 	}
 	
 	private String getUser() {
-		return line.getOptionValue(USER_ARGUMENT);
+		return getValue(USER_ARGUMENT);
 	}
 
 	private String getPassword() {
-		return line.getOptionValue(PASSWORD_ARGUMENT);
+		return getValue(PASSWORD_ARGUMENT);
+	}
+	
+	private String getDomain() {
+		return getValue(DOMAIN_ARGUMENT);
 	}
 
 	private boolean hasDomain() {
 		return line.hasOption(DOMAIN_ARGUMENT);
 	}
-	
-	private String getDomain() {
-		return line.getOptionValue(DOMAIN_ARGUMENT);
-	}
 
-	public String getFile() {
-		return line.getOptionValue(FILE_ARGUMENT);
-	}
-	
 	public Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(getUrl(), getUser(), getPassword());
 	}
 
-	private Integer getDomainId( Connection connection, String domainName ) {
+	public Integer getDomainId( Connection connection, String domainName ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Integer> h = new ScalarHandler<Integer>();

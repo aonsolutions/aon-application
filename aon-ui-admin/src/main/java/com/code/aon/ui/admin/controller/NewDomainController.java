@@ -342,7 +342,6 @@ public class NewDomainController implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(domainId);
 		if ( domain != null ) {
-			domain.setParent(getParentDomain());
 			domain.setCreationUser(AonUtil.getAuthPrincipal().getShortName());
 			domain.setCreationDate(new Date());
 			domain.setModificationDate(null);
@@ -358,7 +357,8 @@ public class NewDomainController implements Serializable {
 			AonDomainDuplicate add = new AonDomainDuplicate(connection);
 			add.setDescription(getDomainDescription());
 			add.setOwner(getOwner());
-			Integer newDomainId = add.execute(getTemplateDomain().getId(), name);
+			Integer parent = (getParentDomain() != null) ? getParentDomain().getId() : null;
+			Integer newDomainId = add.execute(getTemplateDomain().getId(), parent, name);
 			if ( newDomainId != null ) {
 				updateDomain( newDomainId );
 			}
@@ -407,7 +407,10 @@ public class NewDomainController implements Serializable {
 						controller.getCriteria().addEqualExpression(parent, parentDomain.getId());	
 					}							
 				} else {
-					controller.getCriteria().addNullExpression("Domain.parent");
+					DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+					if (ds.getType() != DomainType.ADMIN ) {
+						controller.getCriteria().addNullExpression("Domain.parent");
+					}
 				}
 				String type = controller.getFieldName(IEntityAlias.DOMAIN_TYPE);
 				controller.getCriteria().addNotEqualExpression(type, DomainType.ADMIN);
