@@ -504,6 +504,10 @@ public class DomainController extends BasicController {
 		} else {
 			AppParamUtil.removeParameter(AppParam.AON_EXTERNAL_APPLICATIONS);
 		}
+		if ( (externalApplications & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) == 0 ) {
+			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_USER);
+			AppParamUtil.removeParameter(AppParam.AON_DEH_ONLINE_PASSWORD);			
+		}
 	}	
 	
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {

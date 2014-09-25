@@ -536,7 +536,10 @@ public class DesktopState implements Serializable {
 	}
 
 	public boolean isShowDehOnline() {
-		return (externalApplicationsValue & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0;
+		if ( (externalApplicationsValue & IAdminConstants.DEH_ONLINE_EXTERNAL_APP) != 0 ) {
+			return (!StringUtils.isEmpty(getDEHOnlineUser())) && (!StringUtils.isEmpty(getDEHOnlinePassword())); 
+		}
+		return false;
 	}
 	
 	public boolean isShowServiconvenios() {
@@ -571,6 +574,14 @@ public class DesktopState implements Serializable {
 			url += type;
 		}
 		return url;		
+	}
+	
+	public String getDEHOnlineUser() {
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER);		
+	}
+
+	public String getDEHOnlinePassword() {
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD);		
 	}
 	
 }

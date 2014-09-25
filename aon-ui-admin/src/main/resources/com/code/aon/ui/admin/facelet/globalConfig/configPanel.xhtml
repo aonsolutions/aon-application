@@ -193,6 +193,15 @@
 										value="#{bundle.infoweb_publish_group}" />
 								</aon:div>
 							</c:if>						
+							<c:if test="#{dehOnline.showConfiguration}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="dehOnlineParameters" 
+										reRender="configPanelBar,configContent"
+										action="globalConfig_form"
+										actionListener="#{dehOnline.onInit}"
+										value="#{bundle.aon_external_dehOnline}" />
+								</aon:div>
+							</c:if>						
 						</aon:div>			
 					</rich:panelBarItem>
 				</c:if>
