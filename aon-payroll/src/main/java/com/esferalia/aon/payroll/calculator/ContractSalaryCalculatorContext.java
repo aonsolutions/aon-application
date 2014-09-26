@@ -415,16 +415,20 @@ public class ContractSalaryCalculatorContext extends
 		ctx.setListener(listener);
 	}
 	
-	@Override
 	public ISalary getSalary(Date date) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
 	public IContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Date startDate, Date endDate) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date getDate(String tableLabel, String columnLabel) {
+		// TODO Apéndice de método generado automáticamente
 		return null;
 	}
 
