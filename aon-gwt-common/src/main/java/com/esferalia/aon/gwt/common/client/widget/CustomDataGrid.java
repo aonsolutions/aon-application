@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.client;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.cellview.client.DataGrid;
@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.HeaderPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.ProvidesKey;
 
-class CustomDataGrid<T> extends DataGrid<T> {
+public class CustomDataGrid<T> extends DataGrid<T> {
 
 	private static Resources DEFAULT_RESOURCES = GWT
 			.create(CustomDataGrid.MyResources.class);
@@ -14,7 +14,7 @@ class CustomDataGrid<T> extends DataGrid<T> {
 	static interface MyResources extends Resources {
 
 		@Override
-		@Source("com/esferalia/aon/gwt/payroll/client/DataGrid.css")
+		@Source("com/esferalia/aon/gwt/common/client/widget/DataGrid.css")
 		public Style dataGridStyle();
 
 	}

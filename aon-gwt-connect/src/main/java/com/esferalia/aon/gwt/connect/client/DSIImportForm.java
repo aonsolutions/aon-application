@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.connect.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -7,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.connect.client.DSIImportClient.DSIImportCallback;
+import com.esferalia.aon.gwt.connect.shared.JsEmployee;
 import com.esferalia.aon.gwt.connect.shared.JsEmpres;
 import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
 import com.esferalia.aon.gwt.connect.shared.JsImportEvent.EventTypeVisitor;
@@ -41,6 +45,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.view.client.ListDataProvider;
 
 public class DSIImportForm implements EntryPoint {
 
@@ -71,10 +76,12 @@ public class DSIImportForm implements EntryPoint {
 	FlexTable layout;
 	@UiField
 	SimplePanel simplePanel;
-
+	@UiField
 	ResultsPanel resultsPanel;
 
 	private JsArray<JsEmpres> empress;
+
+	private List<DSIImportResult> results;
 
 	@Override
 	public void onModuleLoad() {
@@ -91,7 +98,6 @@ public class DSIImportForm implements EntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		sPanel.setVisible(false);
-		resultsPanel = new ResultsPanel();
 
 		init();
 	}
@@ -105,6 +111,14 @@ public class DSIImportForm implements EntryPoint {
 		uploadFormPanel.setMethod(FormPanel.METHOD_POST);
 
 		uploadFormPanel.getElement().setDraggable("DRAGGABLE_TRUE");
+
+		DSIImportResultsGrid resultsGrid = new DSIImportResultsGrid();
+
+		ListDataProvider<DSIImportResult> listDataProvider = new ListDataProvider<DSIImportResult>();
+		listDataProvider.addDataDisplay(resultsGrid);
+		this.results = listDataProvider.getList();
+
+		resultsPanel.setWidget(resultsGrid);
 
 	}
 
@@ -238,27 +252,66 @@ public class DSIImportForm implements EntryPoint {
 
 			@Override
 			public void onSuccess(JsImportEvent event) {
-				event.visit(new EventTypeVisitor<Void>() {
+				DSIImportResult result = event
+						.visit(new EventTypeVisitor<DSIImportResult>() {
 
-					@Override
-					public Void onEnterpriseIgnored(JsEmpres empres) {
-						Window.alert("onEnterpriseIgnored");
-						// TODO Auto-generated method stub
-						return null;
-					}
+							@Override
+							public DSIImportResult onCommitted() {
+								// TODO Auto-generated method stub
+								return null;
+							}
 
-					@Override
-					public Void onEnterpriseUpdated(JsEmpres empres) {
-						// TODO Auto-generated method stub
-						return null;
-					}
+							@Override
+							public DSIImportResult onRollbacked() {
+								// TODO Auto-generated method stub
+								return null;
+							}
 
-					@Override
-					public Void onEnterpriseInserted(JsEmpres empres) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-				});
+							@Override
+							public DSIImportResult onEmployeeIgnored(
+									JsEmployee employee) {
+								return new DSIImportResultsGrid.EmployeeDSIImportResult(
+										employee.getFullName());
+							}
+
+							@Override
+							public DSIImportResult onEmployeeUpdated(
+									JsEmployee employee) {
+								return new DSIImportResultsGrid.EmployeeDSIImportResult(
+										employee.getFullName());
+							}
+
+							@Override
+							public DSIImportResult onEmployeeInserted(
+									JsEmployee employee) {
+								return new DSIImportResultsGrid.EmployeeDSIImportResult(
+										employee.getFullName());
+							}
+
+							@Override
+							public DSIImportResult onEnterpriseIgnored(
+									JsEmpres empres) {
+								return new DSIImportResultsGrid.EnterpriseDSIImportResult(
+										empres.getRSocial());
+							}
+
+							@Override
+							public DSIImportResult onEnterpriseUpdated(
+									JsEmpres empres) {
+								return new DSIImportResultsGrid.EnterpriseDSIImportResult(
+										empres.getRSocial());
+							}
+
+							@Override
+							public DSIImportResult onEnterpriseInserted(
+									JsEmpres empres) {
+								return new DSIImportResultsGrid.EnterpriseDSIImportResult(
+										empres.getRSocial());
+							}
+
+						});
+				if (result != null)
+					results.add(result);
 			}
 
 		});

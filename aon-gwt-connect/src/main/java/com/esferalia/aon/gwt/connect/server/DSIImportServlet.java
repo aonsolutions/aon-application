@@ -55,6 +55,7 @@ import com.esferalia.aon.gwt.connect.shared.DSIImportService.GetActionHandler;
 import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
@@ -101,39 +102,42 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		}
 
 		@Override
-		public void onContractIgnored(ContractRecord contract) {
-			// TODO Auto-generated method stub
+		public void onContractIgnored(ContractRecord contract,
+				PersonRecord person) {
+			printJsImportEvent(toJsEmployee(contract, person),
+					JsImportEvent.EventType.EMPLOYEE_IGNORED);
 		}
 
 		@Override
-		public void onContractUpdated(ContractRecord contract) {
-			// TODO Auto-generated method stub
+		public void onContractInserted(ContractRecord contract,
+				PersonRecord person) {
+			printJsImportEvent(toJsEmployee(contract, person),
+					JsImportEvent.EventType.EMPLOYEE_INSERTED);
 		}
 
 		@Override
-		public void onContractInserted(ContractRecord contract) {
-			// TODO Auto-generated method stub
+		public void onContractUpdated(ContractRecord contract,
+				PersonRecord person) {
+			printJsImportEvent(toJsEmployee(contract, person),
+					JsImportEvent.EventType.EMPLOYEE_UPDATED);
 		}
 
 		@Override
 		public void onEnterpriseIgnored(RegistryRecord enterprise) {
-			printJsImportEvent(
-					toJsEmpres(enterprise)
-					, JsImportEvent.EventType.ENTERPRISE_IGNORED);
+			printJsImportEvent(toJsEmpres(enterprise),
+					JsImportEvent.EventType.ENTERPRISE_IGNORED);
 		}
 
 		@Override
 		public void onEnterpriseUpdated(RegistryRecord enterprise) {
-			printJsImportEvent(
-					toJsEmpres(enterprise)
-					, JsImportEvent.EventType.ENTERPRISE_UPDATED);
+			printJsImportEvent(toJsEmpres(enterprise),
+					JsImportEvent.EventType.ENTERPRISE_UPDATED);
 		}
 
 		@Override
 		public void onEnterpriseInserted(RegistryRecord enterprise) {
-			printJsImportEvent(
-					toJsEmpres(enterprise)
-					, JsImportEvent.EventType.ENTERPRISE_INSERTED);
+			printJsImportEvent(toJsEmpres(enterprise),
+					JsImportEvent.EventType.ENTERPRISE_INSERTED);
 		}
 
 		private void printJsImportEvent(String src, JsImportEvent.EventType type) {
@@ -147,13 +151,21 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 			print.println("}");
 			print.flush();
 		}
-		
+
 		private static String toJsEmpres(RegistryRecord enterprise) {
-			return format("{\"rsocial\":\"%s\"}", 
-					enterprise.getName() );
+			return format("{\"rsocial\":\"%s\"}", enterprise.getName());
 		}
 
+		private static String toJsEmployee(ContractRecord contract,
+				PersonRecord person) {
+			return format(
+					"{\"name\":\"%s\", \"firstSurName\":\"%s\", \"secondSurName\":\"%s\" }",
+					person.getName(), 
+					person.getFirstSurname(),
+					person.getSecondSurname());
+		}
 	}
+
 	/**
 	 * The get method is used to monitor the uploading process .
 	 */
@@ -255,7 +267,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				try {
 
 					Condition condition = DSL.condition(true);
-					for (Properties empres : empresMap.get(db)){
+					for (Properties empres : empresMap.get(db)) {
 						//@formatter:off
 							condition = condition
 							.or(FNEMPRES.F20SSCOD.eq(empres.getProperty("sscod"))
@@ -362,7 +374,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		String values[] = req.getParameterValues(GET_EMPRES_PARAM);
 		Map<String, List<Properties>> map = new HashMap<String, List<Properties>>();
 		for (int i = 0; i < values.length; i++) {
-			Properties properties =  getProperties(values[i]);
+			Properties properties = getProperties(values[i]);
 			String db = properties.getProperty("db");
 			List<Properties> list = map.get(db);
 			if (list == null) {
@@ -490,10 +502,9 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 			String name = matcher.group(1);
 			String value1 = matcher.group(3);
 			String value2 = matcher.group(4);
-			properties.put(name, value1 != null ? value1: value2);
+			properties.put(name, value1 != null ? value1 : value2);
 		}
 		return properties;
 	}
-
 
 }

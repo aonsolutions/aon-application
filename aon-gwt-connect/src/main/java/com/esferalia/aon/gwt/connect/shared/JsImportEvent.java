@@ -6,6 +6,36 @@ public class JsImportEvent extends JavaScriptObject {
 	
 	
 	public static enum EventType {
+		COMMITTED{
+			@Override
+			<T> T visit(EventTypeVisitor<T> visitor, JavaScriptObject jso) {
+				return visitor.onCommitted();
+			}
+		},
+		ROLLBACKED{
+			@Override
+			<T> T visit(EventTypeVisitor<T> visitor, JavaScriptObject jso) {
+				return visitor.onRollbacked();
+			}
+		},
+		EMPLOYEE_IGNORED{
+			@Override
+			<T> T visit(EventTypeVisitor<T> visitor, JavaScriptObject jso) {
+				return visitor.onEmployeeIgnored(jso.<JsEmployee>cast());
+			}
+		},
+		EMPLOYEE_UPDATED{
+			@Override
+			<T> T visit(EventTypeVisitor<T> visitor, JavaScriptObject jso) {
+				return visitor.onEmployeeUpdated(jso.<JsEmployee>cast());
+			}
+		},
+		EMPLOYEE_INSERTED{
+			@Override
+			<T> T visit(EventTypeVisitor<T> visitor, JavaScriptObject jso) {
+				return visitor.onEmployeeInserted(jso.<JsEmployee>cast());
+			}
+		},
 		ENTERPRISE_IGNORED{
 			@Override
 			<T> T visit(EventTypeVisitor<T> visitor, JavaScriptObject jso) {
@@ -30,6 +60,11 @@ public class JsImportEvent extends JavaScriptObject {
 	}
 	
 	public static interface EventTypeVisitor<T> {
+		T onCommitted();
+		T onRollbacked();
+		T onEmployeeIgnored(JsEmployee employee);
+		T onEmployeeUpdated(JsEmployee employee);
+		T onEmployeeInserted(JsEmployee employee);
 		T onEnterpriseIgnored(JsEmpres empres);
 		T onEnterpriseUpdated(JsEmpres empres);
 		T onEnterpriseInserted(JsEmpres empres);

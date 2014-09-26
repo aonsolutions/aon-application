@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.Style.Unit;
