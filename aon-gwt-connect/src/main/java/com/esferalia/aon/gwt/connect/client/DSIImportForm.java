@@ -92,12 +92,9 @@ public class DSIImportForm implements EntryPoint {
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);		
-		root.add(ui);
 		sPanel.setVisible(false);
 
-		init();
-		
-		
+		init();		
 	}
 
 	protected void init() {
