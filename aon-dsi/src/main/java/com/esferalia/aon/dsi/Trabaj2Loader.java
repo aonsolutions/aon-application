@@ -48,6 +48,7 @@ import org.jooq.SelectConditionStep;
 
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.person.enumeration.Gender;
+import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
@@ -90,15 +91,18 @@ public class Trabaj2Loader extends AbstractLoader implements
 		static Listener NULL_LISTENER = new NullListener();
 
 		@Override
-		public void onContractIgnored(ContractRecord contract, PersonRecord person) {
+		public void onContractIgnored(ContractRecord contract,
+				PersonRecord person) {
 		}
 
 		@Override
-		public void onContractUpdated(ContractRecord contract, PersonRecord person) {
+		public void onContractUpdated(ContractRecord contract,
+				PersonRecord person) {
 		}
 
 		@Override
-		public void onContractInserted(ContractRecord contract, PersonRecord person) {
+		public void onContractInserted(ContractRecord contract,
+				PersonRecord person) {
 		}
 
 	}
@@ -129,7 +133,8 @@ public class Trabaj2Loader extends AbstractLoader implements
 		private PersonRecord person;
 		private ContractRecord contract;
 
-		public PersonContractRecord(PersonRecord personRecord, ContractRecord contractRecord) {
+		public PersonContractRecord(PersonRecord personRecord,
+				ContractRecord contractRecord) {
 			this.person = personRecord;
 			this.contract = contractRecord;
 		}
@@ -145,6 +150,9 @@ public class Trabaj2Loader extends AbstractLoader implements
 	private List<Ids> toDelete;
 
 	private Map<String, int[]> ssIdsMap;
+
+	private PersonRecord personRecord;
+	private RegistryRecord registryRecord;
 
 	private InsertSetMoreStep<PersonRecord> insertSetMoreStepPerson;
 	private InsertSetMoreStep<RmediaRecord> insertSetMoreStepRmedia;
@@ -240,9 +248,9 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 			int registryId;
 			int contractId;
-			
+
 			PersonContractRecord record = getFullContract(trabaj, workplace);
-			
+
 			if (record != null) {
 				contractId = record.contract.getId();
 				registryId = record.contract.getPerson();
@@ -253,17 +261,17 @@ public class Trabaj2Loader extends AbstractLoader implements
 				}
 				toDelete.add(new Ids(registryId, contractId));
 				loadTrabjRegistry(trabaj, domain, registryId, cb);
-				
-				ContractRecord contract = loadTrabjContract(trabaj, domain, workplace, registryId,
-						contractId, cb);
+
+				ContractRecord contract = loadTrabjContract(trabaj, domain,
+						workplace, registryId, contractId, cb);
 				listener.onContractUpdated(contract, lastPerson());
 
 			} else {
 				contractId = next(CONTRACT.getIdentity());
 				registryId = next(REGISTRY.getIdentity());
 				loadTrabjRegistry(trabaj, domain, registryId, cb);
-				ContractRecord contract = loadTrabjContract(trabaj, domain, workplace, registryId,
-						contractId, cb);
+				ContractRecord contract = loadTrabjContract(trabaj, domain,
+						workplace, registryId, contractId, cb);
 				listener.onContractInserted(contract, lastPerson());
 			}
 
@@ -335,17 +343,24 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	private void loadTrabjRegistry(FntrabajRecord trabaj, int domain,
 			int registry, Callback cb) {
-
+		
+		registryRecord = new RegistryRecord();
+		registryRecord.setId(registry);
+		registryRecord.setDomain(domain);
+		registryRecord.setType(enum2Byte(RegistryType.NATURAL));
+		registryRecord.setName(getFullName(trabaj));
+		registryRecord.setDocument(trabaj.getF20dni());
+		registryRecord.setDocumentType(enum2Byte(getDocumentType(trabaj.getF20dni())));
+		
+		registryRecord.setAlias(null);
+		registryRecord.setNationality("ES");
+		registryRecord.setDocumentCountry("ES");
+		registryRecord.setSecurityLevel((byte)0);
+		
 		InsertSetStep<RegistryRecord> insertSetStepRegistry = getRegistryInsertSetStep();
 		//@formatter:off
 		insertSetMoreStepRegistry = insertSetStepRegistry
-				.set(REGISTRY.ID, registry)
-				.set(REGISTRY.DOMAIN, domain) //TODO: parentDomain
-				.set(REGISTRY.TYPE, enum2Byte(RegistryType.NATURAL))
-				.set(REGISTRY.NAME, getFullName(trabaj))
-				.set(REGISTRY.DOCUMENT, trabaj.getF20dni())
-				.set(REGISTRY.DOCUMENT_TYPE, enum2Byte(getDocumentType(trabaj.getF20dni())))
-				;
+				.set(registryRecord);
 		//@formatter:on
 
 		StringBuffer address2 = new StringBuffer();
@@ -396,21 +411,19 @@ public class Trabaj2Loader extends AbstractLoader implements
 		else if ("H".equals(sexo))
 			gender = Gender.MALE;
 
+		personRecord = new PersonRecord();
+		personRecord.setRegistry(registry);
+		personRecord.setDomain(domain);
+		personRecord.setBirthDate(trabaj.getF20fnac());
+		personRecord.setGender(enum2Byte(gender));
+		personRecord.setName(trabaj.getF20nombre());
+		personRecord.setFirstSurname(trabaj.getF20apell1());
+		personRecord.setSecondSurname(trabaj.getF20apell2());
+		personRecord.setSocialSecurityNum(getSocialSecurityNum(trabaj));
+		personRecord.setMaritalStatus(enum2Byte(MaritalStatus.UNKNOWN));
+		// TODO : MARITAL_STATUS, F20NOMBREC?
 		InsertSetStep<PersonRecord> insertSetStepPerson = getPersonInsertSetStep();
-		//@formatter:off
-		insertSetMoreStepPerson= insertSetStepPerson
-				.set(PERSON.REGISTRY, registry)
-				.set(PERSON.DOMAIN, domain)
-				.set(PERSON.BIRTH_DATE, trabaj.getF20fnac())
-				.set(PERSON.GENDER, enum2Byte(gender) )
-				.set(PERSON.NAME, trabaj.getF20nombre())
-				.set(PERSON.FIRST_SURNAME, trabaj.getF20apell1())
-				.set(PERSON.SECOND_SURNAME, trabaj.getF20apell2())
-				.set(PERSON.SOCIAL_SECURITY_NUM, getSocialSecurityNum(trabaj))
-				;
-				//TODO : MARITAL_STATUS, F20NOMBREC? 
-		//@formatter:on
-
+		insertSetMoreStepPerson = insertSetStepPerson.set(personRecord);
 	}
 
 	private ContractRecord loadTrabjContract(FntrabajRecord trabaj, int domain,
@@ -594,11 +607,11 @@ public class Trabaj2Loader extends AbstractLoader implements
 	}
 
 	private PersonRecord lastPerson() {
-		return last(insertSetMoreStepPerson, new PersonRecord());
+		return personRecord;
 	}
 
 	private RegistryRecord lastRegistry() {
-		return last(insertSetMoreStepRegistry, new RegistryRecord());
+		return registryRecord;
 	}
 
 	private int getRaddressId(FntrabajRecord trabaj, int registry,

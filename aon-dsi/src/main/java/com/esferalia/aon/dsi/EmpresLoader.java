@@ -100,6 +100,8 @@ public class EmpresLoader extends AbstractLoader implements
 	private Map<String, Integer> domains;
 
 	private Map<String, int[]> ssIdsMap;
+	
+	private RegistryRecord registryRecord;
 
 	private InsertSetMoreStep<DomainRecord> insertSetMoreStepDomain;
 	private InsertSetMoreStep<RegistryRecord> insertSetMoreStepRegistry;
@@ -391,15 +393,23 @@ public class EmpresLoader extends AbstractLoader implements
 		
 		//@formatter:on
 
+		registryRecord = new RegistryRecord();
+		registryRecord.setId(registry);
+		registryRecord.setDomain(domain);
+		registryRecord.setType(enum2Byte(RegistryType.NATURAL));
+		registryRecord.setName(empres.getF20rsocial());
+		registryRecord.setDocument(empres.getF20nif());
+		registryRecord.setDocumentType(enum2Byte(getDocumentType(empres.getF20nif())));
+		
+		registryRecord.setAlias(null);
+		registryRecord.setNationality("ES");
+		registryRecord.setDocumentCountry("ES");
+		registryRecord.setSecurityLevel((byte)0);
 		//@formatter:off
 		InsertSetStep<RegistryRecord> insertSetStepRegistry = 
 				getRegistryInsertSetStep();
 		insertSetMoreStepRegistry = insertSetStepRegistry
-				.set(REGISTRY.ID, registry).set(REGISTRY.DOMAIN, domain)
-				.set(REGISTRY.TYPE, enum2Byte(RegistryType.LEGAL))
-				.set(REGISTRY.NAME, empres.getF20rsocial())
-				.set(REGISTRY.DOCUMENT, empres.getF20nif())
-				.set(REGISTRY.DOCUMENT_TYPE, enum2Byte(getDocumentType(empres.getF20nif())));
+				.set(registryRecord);
 		//@formatter:on
 
 		int raddress = next(RADDRESS.getIdentity());
@@ -475,9 +485,7 @@ public class EmpresLoader extends AbstractLoader implements
 	}
 	
 	private RegistryRecord lastRegistry() {
-		RegistryRecord record = new RegistryRecord();
-		record.fromMap(insertSetMoreStepRegistry.getParams());
-		return record;
+		return registryRecord;
 	}
 
 	private String getDomainName(String domainSuffix, int domain,

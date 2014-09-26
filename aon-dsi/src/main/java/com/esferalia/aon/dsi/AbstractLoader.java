@@ -3,24 +3,36 @@ package com.esferalia.aon.dsi;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
+import org.jooq.Configuration;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Identity;
-import org.jooq.InsertOnDuplicateSetMoreStep;
+import org.jooq.InsertFinalStep;
 import org.jooq.InsertOnDuplicateSetStep;
+import org.jooq.InsertResultStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
+import org.jooq.Param;
+import org.jooq.Query;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Select;
 import org.jooq.Table;
 import org.jooq.UpdateSetMoreStep;
-import org.jooq.UpdateSetStep;
+import org.jooq.conf.ParamType;
+import org.jooq.exception.DataAccessException;
+import org.jooq.exception.DataTypeException;
 
 import com.esferalia.aon.dsi.util.DBUtils;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 
 public abstract class AbstractLoader {
 
@@ -56,9 +68,8 @@ public abstract class AbstractLoader {
 
 		return insertSetMoreStep != null ? insertSetMoreStep.newRecord()
 				: aonContext.insertInto(table);
-		
-	}
 
+	}
 
 	protected <R extends Record> UpdateSetMoreStep<R> update(
 			UpdateSetMoreStep<R> updateSetMoreStep, Table<R> table, R r) {
@@ -77,7 +88,7 @@ public abstract class AbstractLoader {
 
 	public Integer getGeozone(String provin, int domain) {
 		List<Integer> geozones = 
-		//@formatter:off
+//@formatter:off
 		aonContext.select(GEOZONE.ID)
 			.from(GEOZONE)
 			.where(GEOZONE.NAME.equalIgnoreCase(provin))
@@ -87,7 +98,6 @@ public abstract class AbstractLoader {
 		if (geozones.size() > 0)
 			return geozones.get(0);
 
-		
 		//@formatter:off
 		Integer parent = aonContext
 				.select(DOMAIN.PARENT)
@@ -95,19 +105,15 @@ public abstract class AbstractLoader {
 				.where(DOMAIN.ID.eq(domain))
 				.fetchOne(DOMAIN.PARENT);
 		//@formatter:on
-		
+
 		return parent == null ? null : getGeozone(provin, parent);
 	}
-	
+
 	public static void execute(InsertSetMoreStep<?> insertSetMoreStep) {
-		if ( insertSetMoreStep != null ) 
+		if (insertSetMoreStep != null)
 			insertSetMoreStep.execute();
 	}
-	
-	public static <R extends Record> R last(InsertSetMoreStep<R> insertSetMoreStep, R r) {
-		r.fromMap(insertSetMoreStep.getParams());
-		return r;
-	}
-	
+
+
 
 }
