@@ -20,6 +20,7 @@ import org.jooq.UpdateSetMoreStep;
 import org.jooq.UpdateSetStep;
 
 import com.esferalia.aon.dsi.util.DBUtils;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 
 public abstract class AbstractLoader {
 
@@ -102,5 +103,11 @@ public abstract class AbstractLoader {
 		if ( insertSetMoreStep != null ) 
 			insertSetMoreStep.execute();
 	}
+	
+	public static <R extends Record> R last(InsertSetMoreStep<R> insertSetMoreStep, R r) {
+		r.fromMap(insertSetMoreStep.getParams());
+		return r;
+	}
+	
 
 }

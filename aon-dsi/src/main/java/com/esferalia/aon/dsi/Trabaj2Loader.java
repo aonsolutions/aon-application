@@ -56,6 +56,7 @@ import com.esferalia.aon.dsi.jooq.tables.records.FntconceRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.FntrabajRecord;
 import com.esferalia.aon.dsi.jooq.tables.records.Fnvario2Record;
 import com.esferalia.aon.dsi.jooq.tables.records.FnvariosRecord;
+import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.SalaryCost;
 import com.esferalia.aon.jooq.tables.SalaryData;
@@ -77,27 +78,29 @@ public class Trabaj2Loader extends AbstractLoader implements
 		NominaLoader.Callback {
 
 	public static interface Listener {
-		void onContractIgnored(ContractRecord contract);
-		void onContractUpdated(ContractRecord contract);
-		void onContractInserted(ContractRecord contract);
+		void onContractIgnored(ContractRecord contract, PersonRecord person);
+
+		void onContractUpdated(ContractRecord contract, PersonRecord person);
+
+		void onContractInserted(ContractRecord contract, PersonRecord person);
 	}
-	
+
 	public static class NullListener implements Listener {
-		
+
 		static Listener NULL_LISTENER = new NullListener();
 
 		@Override
-		public void onContractIgnored(ContractRecord contract) {
+		public void onContractIgnored(ContractRecord contract, PersonRecord person) {
 		}
 
 		@Override
-		public void onContractUpdated(ContractRecord contract) {
+		public void onContractUpdated(ContractRecord contract, PersonRecord person) {
 		}
 
 		@Override
-		public void onContractInserted(ContractRecord contract) {
+		public void onContractInserted(ContractRecord contract, PersonRecord person) {
 		}
-		
+
 	}
 
 	public static interface Callback {
@@ -121,13 +124,24 @@ public class Trabaj2Loader extends AbstractLoader implements
 		}
 
 	}
-	
+
+	private static class PersonContractRecord {
+		private PersonRecord person;
+		private ContractRecord contract;
+
+		public PersonContractRecord(PersonRecord personRecord, ContractRecord contractRecord) {
+			this.person = personRecord;
+			this.contract = contractRecord;
+		}
+
+	}
+
 	private Date from;
-	
+
 	private boolean replace;
-	
+
 	private Listener listener;
-	
+
 	private List<Ids> toDelete;
 
 	private Map<String, int[]> ssIdsMap;
@@ -148,17 +162,17 @@ public class Trabaj2Loader extends AbstractLoader implements
 		this.toDelete = new LinkedList<Ids>();
 		this.listener = NullListener.NULL_LISTENER;
 	}
-	
+
 	public Trabaj2Loader setFrom(Date from) {
 		this.from = from;
 		return this;
 	}
-	
+
 	public Trabaj2Loader setReplace(boolean replace) {
 		this.replace = replace;
 		return this;
 	}
-	
+
 	public Trabaj2Loader setListener(Listener listener) {
 		this.listener = listener;
 		return this;
@@ -223,37 +237,40 @@ public class Trabaj2Loader extends AbstractLoader implements
 				tconce = tconceCursor.hasNext() ? tconceCursor
 						.fetchOneInto(FNTCONCE) : null;
 			}
-			
-			int registry;
-			int contract ;
 
-			ContractRecord record = getContract(trabaj, workplace);
+			int registryId;
+			int contractId;
+			
+			PersonContractRecord record = getFullContract(trabaj, workplace);
+			
 			if (record != null) {
-				contract = record.getId();
-				registry  = record.getPerson();
-				if ( !replace ) {
-					ssIdsMap.put(key, new int[] { domain, contract });
-					listener.onContractIgnored(record);
+				contractId = record.contract.getId();
+				registryId = record.contract.getPerson();
+				if (!replace) {
+					ssIdsMap.put(key, new int[] { domain, contractId });
+					listener.onContractIgnored(record.contract, record.person);
 					continue;
 				}
-				toDelete.add(new Ids(registry, contract));
-				loadTrabjRegistry(trabaj, domain, registry, cb);
-				record = loadTrabjContract(trabaj, domain, workplace, registry, contract, cb);
-				listener.onContractUpdated(record);
+				toDelete.add(new Ids(registryId, contractId));
+				loadTrabjRegistry(trabaj, domain, registryId, cb);
 				
-			}else {
-				contract = next(CONTRACT.getIdentity());
-				registry  = next(REGISTRY.getIdentity());
-				loadTrabjRegistry(trabaj, domain, registry, cb);
-				record = loadTrabjContract(trabaj, domain, workplace, registry, contract, cb);
-				listener.onContractInserted(record);
+				ContractRecord contract = loadTrabjContract(trabaj, domain, workplace, registryId,
+						contractId, cb);
+				listener.onContractUpdated(contract, lastPerson());
+
+			} else {
+				contractId = next(CONTRACT.getIdentity());
+				registryId = next(REGISTRY.getIdentity());
+				loadTrabjRegistry(trabaj, domain, registryId, cb);
+				ContractRecord contract = loadTrabjContract(trabaj, domain, workplace, registryId,
+						contractId, cb);
+				listener.onContractInserted(contract, lastPerson());
 			}
 
-
 			for (FntconceRecord _tconce : tconces)
-				loadConce(_tconce, contract, domain, cb);
+				loadConce(_tconce, contractId, domain, cb);
 
-			ssIdsMap.put(key, new int[] { domain, contract });
+			ssIdsMap.put(key, new int[] { domain, contractId });
 
 		}
 	}
@@ -316,8 +333,8 @@ public class Trabaj2Loader extends AbstractLoader implements
 		//@formatter:on
 	}
 
-
-	private int loadTrabjRegistry(FntrabajRecord trabaj, int domain, int registry, Callback cb) {
+	private void loadTrabjRegistry(FntrabajRecord trabaj, int domain,
+			int registry, Callback cb) {
 
 		InsertSetStep<RegistryRecord> insertSetStepRegistry = getRegistryInsertSetStep();
 		//@formatter:off
@@ -358,7 +375,8 @@ public class Trabaj2Loader extends AbstractLoader implements
 		// telephone
 		String telef = trabaj.getF20telef();
 		if (!isBlank(telef)) {
-			int telephoneId = getRMediaId(trabaj, registry, MediaType.FIXED_PHONE);
+			int telephoneId = getRMediaId(trabaj, registry,
+					MediaType.FIXED_PHONE);
 			//@formatter:off
 			InsertSetStep<RmediaRecord> insertSetStepRmedia= getRmediaInsertSetStep();
 			insertSetMoreStepRmedia = insertSetStepRmedia
@@ -393,11 +411,10 @@ public class Trabaj2Loader extends AbstractLoader implements
 				//TODO : MARITAL_STATUS, F20NOMBREC? 
 		//@formatter:on
 
-		return registry;
 	}
 
-	private ContractRecord loadTrabjContract(FntrabajRecord trabaj, int domain, int workplace, int person, 
-			 int contract, Callback cb) {
+	private ContractRecord loadTrabjContract(FntrabajRecord trabaj, int domain,
+			int workplace, int person, int contract, Callback cb) {
 
 		Integer reg = null;
 		if (!isBlank(trabaj.getF20matric()))
@@ -421,10 +438,13 @@ public class Trabaj2Loader extends AbstractLoader implements
 		contractRecord.setValue(CONTRACT.END_DATE, trabaj.getF20fbaja());
 		contractRecord.setValue(CONTRACT.DESCRIPTION, trabaj.getF20puesto());
 		contractRecord.setValue(CONTRACT.SENIORITY_DATE, trabaj.getF20fantig());
-		contractRecord.setValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY, cb.getCategory(trabaj));
+		contractRecord.setValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
+				cb.getCategory(trabaj));
 		contractRecord.setValue(CONTRACT.SS_REGIME, enum2Byte(regimeType));
-		contractRecord.setValue(CONTRACT.CATEGORY_DESCRIPTION, trabaj.getF20nomcat());
-		contractRecord.setValue(CONTRACT.MODEL, enum2Byte(getModel(trabaj.getF20clcto())));
+		contractRecord.setValue(CONTRACT.CATEGORY_DESCRIPTION,
+				trabaj.getF20nomcat());
+		contractRecord.setValue(CONTRACT.MODEL,
+				enum2Byte(getModel(trabaj.getF20clcto())));
 		InsertSetStep<ContractRecord> insertSetStepCotract = getContractInsertSetStep();
 		insertSetMoreStepContract = insertSetStepCotract.set(contractRecord);
 
@@ -552,13 +572,43 @@ public class Trabaj2Loader extends AbstractLoader implements
 		;
 		//@formatter:on
 	}
-	
-	private int getRaddressId(FntrabajRecord trabaj, int registry, AddressType type) {
-		RaddressRecord record = getRaddress(trabaj, registry, type);
-		return record != null ? record.getId() : next( RADDRESS.getIdentity() );
+
+	private PersonContractRecord getFullContract(FntrabajRecord trabaj,
+			int workplace) {
+		//@formatter:off
+		Record record = aonContext.
+		select()
+		.from(CONTRACT)
+		.join(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.where(CONTRACT.WORKPLACE.eq(workplace))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(getSocialSecurityNum(trabaj)))
+		.and(CONTRACT.START_DATE.eq(trabaj.getF20falta()))
+		.fetchOne()
+		;
+		if ( record == null )
+			return null;
+		return new PersonContractRecord(
+				record.into(PERSON), 
+				record.into(CONTRACT));
+		//@formatter:on
 	}
 
-	private RaddressRecord getRaddress(FntrabajRecord trabaj, int registry, AddressType type) {
+	private PersonRecord lastPerson() {
+		return last(insertSetMoreStepPerson, new PersonRecord());
+	}
+
+	private RegistryRecord lastRegistry() {
+		return last(insertSetMoreStepRegistry, new RegistryRecord());
+	}
+
+	private int getRaddressId(FntrabajRecord trabaj, int registry,
+			AddressType type) {
+		RaddressRecord record = getRaddress(trabaj, registry, type);
+		return record != null ? record.getId() : next(RADDRESS.getIdentity());
+	}
+
+	private RaddressRecord getRaddress(FntrabajRecord trabaj, int registry,
+			AddressType type) {
 		//@formatter:off
 		return aonContext.
 		select()
@@ -573,10 +623,11 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	private int getRMediaId(FntrabajRecord trabaj, int registry, MediaType type) {
 		RmediaRecord record = getRMedia(trabaj, registry, type);
-		return record != null ? record.getId() : next( RMEDIA.getIdentity() );
+		return record != null ? record.getId() : next(RMEDIA.getIdentity());
 	}
 
-	private RmediaRecord getRMedia(FntrabajRecord trabaj, int registry, MediaType type) {
+	private RmediaRecord getRMedia(FntrabajRecord trabaj, int registry,
+			MediaType type) {
 		//@formatter:off
 		return aonContext.
 		select()
@@ -588,10 +639,11 @@ public class Trabaj2Loader extends AbstractLoader implements
 		;
 		//@formatter:on
 	}
-	
+
 	private int getContractDataId(int contract, String name) {
 		ContractDataRecord record = getContractData(contract, name);
-		return record == null ? record.getId() : next(CONTRACT_DATA.getIdentity());
+		return record == null ? record.getId() : next(CONTRACT_DATA
+				.getIdentity());
 	}
 
 	private ContractDataRecord getContractData(int contract, String name) {

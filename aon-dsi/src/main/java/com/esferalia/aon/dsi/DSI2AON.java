@@ -20,6 +20,7 @@ import com.code.aon.audit.enumeration.Module;
 import com.code.aon.dbutils.AonSQLException;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 
 public class DSI2AON {
@@ -74,21 +75,21 @@ public class DSI2AON {
 		}
 
 		@Override
-		public void onContractIgnored(ContractRecord contract) {
+		public void onContractIgnored(ContractRecord contract, PersonRecord person) {
 			for (Listener listener : listeners)
-				listener.onContractIgnored(contract);
+				listener.onContractIgnored(contract, person);
 		}
 
 		@Override
-		public void onContractUpdated(ContractRecord contract) {
+		public void onContractUpdated(ContractRecord contract, PersonRecord person) {
 			for (Listener listener : listeners)
-				listener.onContractUpdated(contract);
+				listener.onContractUpdated(contract, person);
 		}
 
 		@Override
-		public void onContractInserted(ContractRecord contract) {
+		public void onContractInserted(ContractRecord contract, PersonRecord person) {
 			for (Listener listener : listeners)
-				listener.onContractInserted(contract);
+				listener.onContractInserted(contract, person);
 		}
 
 		@Override
@@ -238,10 +239,13 @@ public class DSI2AON {
 					nominaLoader.execute();
 
 					// Rolls back the outer transaction
-					if (!commit)
+					if (!commit) {
+						listeners.onRollbacked();
 						throw new RollBackException();
+					}
 
 					// Implicit commit executed here
+					listeners.onCommited();
 				}
 			});
 		} catch (RuntimeException e) {
