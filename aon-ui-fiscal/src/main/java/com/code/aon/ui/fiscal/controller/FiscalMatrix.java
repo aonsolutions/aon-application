@@ -2,8 +2,10 @@ package com.code.aon.ui.fiscal.controller;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import org.jooq.tools.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.config.Model;
 import com.code.aon.fiscal.config.ModelConfig;
@@ -57,7 +60,11 @@ public class FiscalMatrix implements Serializable {
 	public void onSearch(ActionEvent event) {
 		int domainId = DomainManager.getCurrentDomain();
 		params = new ModelManagerParams(domainId);
-		params.setYear(2013);
+		Date today = new Date();
+		Calendar c = Calendar.getInstance();
+		c.setTime(today);
+		c.set(Calendar.MONTH, (c.get(Calendar.MONTH) -1 ));
+		params.setYear(c.get(Calendar.YEAR));
 		onRefresh(event);
 	}
 	
