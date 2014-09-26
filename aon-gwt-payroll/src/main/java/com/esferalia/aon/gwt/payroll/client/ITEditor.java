@@ -193,7 +193,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			Element el = Element.as(event.getNativeEvent().getEventTarget());
 			int mouseClientX = event.getNativeEvent().getClientX();
 			int mouseClientY = event.getNativeEvent().getClientY();
-			String cadena = getLogicalName(el, mouseClientX, mouseClientY);			
+			String cadena = getLogicalName(el, mouseClientX, mouseClientY);
 			if(cadena == null)
 				return;
 			try {				
@@ -1430,5 +1430,13 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 			return false;
 		return true;
 	}
-
+	
+	
+	public static void main(String[] args) {
+		
+		String json = "\"{\"type\":\"bar\",\"data\":{\"VL\":0,\"UL\":1}}\"";
+		
+	}
+	
+	
 }

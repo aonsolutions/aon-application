@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -34,20 +35,20 @@ public class ExpressionContext {
 
 	public static class UnknownUndefVarException extends
 			UndefinedVariablesException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
+
 	}
 
 	public abstract static class MacroException extends ExpressionException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
+
 		public abstract String doMacro(String expr);
 	}
 
 	public abstract static class DeferredException extends ExpressionException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		public abstract void eval(ExpressionContext context)
@@ -90,13 +91,13 @@ public class ExpressionContext {
 	}
 
 	private static class RemoveVariableException extends ExpressionException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
+
 	}
 
 	public static class RemoveVariableError extends Error {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private RemovedExpressionVariable<?> var;
@@ -111,7 +112,7 @@ public class ExpressionContext {
 	}
 
 	public static class DeferredExpressionException extends DeferredException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private Date end;
@@ -260,9 +261,9 @@ public class ExpressionContext {
 	}
 
 	public static class ExpressionExceptionWrapper extends RuntimeException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-		
+
 		public ExpressionExceptionWrapper(ExpressionException e) {
 			super(e);
 		}
@@ -288,6 +289,7 @@ public class ExpressionContext {
 				.getCause()) {
 			if (parent instanceof UnresolveablePropertyException)
 				return ((UnresolveablePropertyException) parent).getName();
+
 		}
 		return null;
 	}
@@ -386,7 +388,8 @@ public class ExpressionContext {
 		return variables.getVariables(name.toString());
 	}
 
-	public <T> List<ITimedVariable<T>> getVariables(Object name, Date start, Date end) {
+	public <T> List<ITimedVariable<T>> getVariables(Object name, Date start,
+			Date end) {
 		return variables.getVariables(name.toString(), new Period(start, end));
 	}
 
@@ -407,7 +410,7 @@ public class ExpressionContext {
 			List<ITimedResult<T>> values = this
 					.eval(script, start, end, toType);
 			if (name != null) {
-				
+
 				for (ITimedResult<T> obj : values) {
 					IExpressionVariable<T> var = new ExpressionVariable<T>(
 							obj.getValue(), obj.getPeriod(), expression,
@@ -428,14 +431,14 @@ public class ExpressionContext {
 	public void addLazyExpression(IExpression expression, Date start, Date end)
 			throws ExpressionException {
 		String script = expression.getExpression();
-		
+
 		Set<String> inputs = null;
-		
-		if ( StringUtils.isBlank(script) )
-			inputs =  Collections.emptySet(); 
+
+		if (StringUtils.isBlank(script))
+			inputs = Collections.emptySet();
 		else
-			inputs =  getVarNames(script);
-		
+			inputs = getVarNames(script);
+
 		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
 		for (PeriodMap periodMap : bindings) {
 			Period period = periodMap.getPeriod();
@@ -451,7 +454,8 @@ public class ExpressionContext {
 	}
 
 	public <T> List<ITimedResult<T>> eval(String script, Date start, Date end,
-			Class<T> toType) throws ExpressionException {
+			Class<T> toType) throws ExpressionException,
+			UndefinedVariablesException {
 		if (script == null) {
 			return Collections.emptyList();
 		}
@@ -468,6 +472,7 @@ public class ExpressionContext {
 		} catch (UnknownUndefVarException e) {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
 		}
+
 	}
 
 	public String evalTemplate(String template, Date start, Date end) {
@@ -537,6 +542,9 @@ public class ExpressionContext {
 				throw new UndefinedVariablesException(e.getName());
 			} catch (ExpressionExceptionWrapper e) {
 				throw e.getExpressionException();
+			} catch (CompileException e) {
+				e.printStackTrace();
+				throw e;
 			}
 		}
 
@@ -621,7 +629,8 @@ public class ExpressionContext {
 				return false;
 		return true;
 	}
-	
+
 	// ------------------------------------------------------------------------
+
 
 }

@@ -5,20 +5,14 @@ import static com.esferalia.aon.payroll.enumeration.LeaveType.OCCUPATIONAL_DISEA
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
-import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.Period;
 
 public class SQLContractLeaveLoader extends ContractLeaveLoader{
@@ -76,6 +70,6 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 		loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
 				dailyRegBase != null ? dailyRegBase.toString() : null, exprCtx);
 	}	
-
+	
 
 }

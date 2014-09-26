@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.connect.shared;
 
 public interface DSIImportService {
 
-	public static final String URL = "/aon_gwt_connect/dsiimport";
+	public static final String URL = "/aon-aio/aon_gwt_connect/dsiimport";
 
 	public static final String POST_ZIP_FILE_PART = "zip-file-part";
 

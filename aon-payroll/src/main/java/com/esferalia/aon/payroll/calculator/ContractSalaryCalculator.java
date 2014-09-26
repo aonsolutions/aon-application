@@ -29,11 +29,13 @@ import net.sf.cglib.transform.impl.AddDelegateTransformer;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
+import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -45,6 +47,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -167,7 +170,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		Date start = ctx.getStartDate();
 		Date end = ctx.getEndDate();
-
+	
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 
 		salaryBuilder.createNewSalary();
@@ -176,8 +179,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		fillEnterpriseData(contractSalaryCalculatorContext);
 		fillEmployeeData(contractSalaryCalculatorContext);
-		fillSalaryData(contractSalaryCalculatorContext);
-		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
+		fillSalaryData(contractSalaryCalculatorContext);		
+		Double totalPayment = fillPayments(contractSalaryCalculatorContext);	
 		Double totalDeduction = fillDeductions(contractSalaryCalculatorContext);
 
 		expressionContext.setVariable(TOTAL_LIQUID, totalPayment
@@ -351,7 +354,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			double rawCgcbase = quoteCalculator.getRawCgcBase();
 			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
-
+			
 			double cgcBase = rawCgcbase;
 			try {
 				cgcBase = quoteCalculator.getCgcBase();
@@ -675,7 +678,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		String name = contractPayment.getName();
 
-		try {
+		try {			
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
@@ -766,6 +769,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			// onUndefinedData(contractPayment, e.getMessage(),
 			// e.getVariableNames());
 		} catch (CompileException e) {
+			e.printStackTrace();
 			onCompileError(contractPayment, e.getMessage());
 		}
 
@@ -960,4 +964,43 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		return calendar.getTime();
 	}
 
+/*	public static int Undefined() throws UndefinedContextVariablesException{
+		throw new UndefinedContextVariablesException(ContextVariable.REGULATORY_BASE);
+		//return 10;
+	}
+	public static void main(String[] args) throws ExpressionException, NoSuchMethodException, SecurityException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		Date startDate = calendar.getTime();
+
+		calendar.set(Calendar.DAY_OF_MONTH,
+				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endDate = calendar.getTime();
+
+		ExpressionContext ctx = new ExpressionContext();
+		ctx.setVariable("DIAS_ENFERMEDAD_COMUN_16_20", "0", startDate, endDate);
+		ctx.setVariable("DIAS_ENFERMEDAD_COMUN_21", "1", startDate, endDate);
+		
+		MethodStub methodStub = new MethodStub(ContractSalaryCalculator.class.getMethod("Undefined"));
+		
+		ctx.setVariable("LANZAR", methodStub, startDate, endDate);
+		
+		
+		//ctx.setVariable("BASE_REGULADORA", "1", startDate, endDate);
+		ExpressionImpl expression = new ExpressionImpl();
+		expression.setName("BASE_REGULADORA");
+		expression.setExpression("LANZAR()");
+		ctx.addLazyExpression(expression, startDate, endDate);
+		
+		
+		try {
+		System.out.println(ctx.eval("ECSS=(DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60 + DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75)", startDate,endDate).get(0).getValue());
+		} catch ( UndefinedVariablesException e ) {
+			//System.err.println(e.getClass().getName()  +"," +e.getVariableNames()[0]);
+		}
+		
+		//ctx.getVariable("BASE_REGULADORA", startDate, endDate);
+		
+		System.out.println(ctx.eval("ECSS=(DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60 + DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75)", startDate,endDate).get(0).getValue());
+	}*/
 }

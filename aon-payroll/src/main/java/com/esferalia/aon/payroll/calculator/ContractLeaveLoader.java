@@ -36,7 +36,7 @@ public class ContractLeaveLoader {
 
 	}
 
-	private static class DaysRange {
+	public static class DaysRange {
 		public Long start;
 		public Long end;
 
@@ -67,7 +67,7 @@ public class ContractLeaveLoader {
 		}
 	}
 
-	private static final DaysRange RANGES[] = { new DaysRange(1, 3),
+	protected static final DaysRange RANGES[] = { new DaysRange(1, 3),
 			new DaysRange(4, 15), new DaysRange(16, 20), new DaysRange(21) };
 
 	protected Date endDate;
@@ -130,21 +130,23 @@ public class ContractLeaveLoader {
 			final Date leaveEnd, final long parentDays, final LeaveType type,
 			String dailyRegBase, final ExpressionContext exprCtx)
 			throws ExpressionException {
+		
 		final Date start = Period.max(leaveStart, startDate); 
 		final Date end = Period.min(leaveEnd, endDate);
+
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
-
+		
 		exprCtx.setVariable(ContextVariable.IT_START, leaveStart, start, end);
-
+		
 		ExpressionImpl exp = new ExpressionImpl();
 		exp.setName(ContextVariable.REGULATORY_BASE.getName());
 		if (dailyRegBase != null) {
 			exp.setExpression(dailyRegBase);
 		} else {
-			exp.setExpression(String.format("%s(%s)", ContextVariable.BR,
+			exp.setExpression(String.format("SELF.br(%s)", 
 					ContextVariable.IT_START));
 		}
-		exprCtx.addExpression(exp, startDate, endDate);
+		exprCtx.addLazyExpression(exp, start, end);
 
 		exprCtx.setVariable(ContextVariable.LEAVE_DAYS, leaveDays, start, end);
 
@@ -204,22 +206,25 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitPaternity(LeaveType leaveType) {
+				exprCtx.setVariable(ContextVariable.PATERNITY_DAYS, 
+						leaveDays, start, end);				
 				return null;
 			}
 
 			@Override
-			public Void visitPregnacyRisk(LeaveType leaveType) {
+			public Void visitPregnacyRisk(LeaveType leaveType) {				
 				return null;
 			}
 
 			@Override
 			public Void visitBreastFeedingRisk(LeaveType leaveType) {
+				
 				return null;
 			}
 
 			@Override
 			public Void visitNonOcupationalDisease(LeaveType leaveType) {
-				return null;
+				return this.visitCommonDisease(leaveType);
 			}
 
 		});
@@ -260,9 +265,6 @@ public class ContractLeaveLoader {
 		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
-		
-		
-	
 		
 	}
 

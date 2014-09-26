@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 
 public class AgreementDraft extends Agreement {

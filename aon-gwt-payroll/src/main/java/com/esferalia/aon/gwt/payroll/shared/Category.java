@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.gwt.common.shared.HasId;
+
 public class Category implements Serializable, HasId<Integer>  {
 	
 	private Integer id;

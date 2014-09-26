@@ -1,20 +1,18 @@
-package com.esferalia.aon.gwt.payroll.client;
+package com.esferalia.aon.gwt.common.client;
 
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.payroll.shared.HasId;
-import com.esferalia.aon.gwt.payroll.shared.HasName;
+import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.common.shared.HasName;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 

@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.shared.HasId;
+
 
 public class Employee implements Serializable, HasId<Integer> {
 

@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.connect.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -76,8 +75,8 @@ public class DSIImportForm implements EntryPoint {
 	FlexTable layout;
 	@UiField
 	SimplePanel simplePanel;
-	@UiField
-	ResultsPanel resultsPanel;
+	
+	private ResultsPanel resultsPanel;
 
 	private JsArray<JsEmpres> empress;
 
@@ -86,32 +85,35 @@ public class DSIImportForm implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 
-		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
-		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 
-		// Add the outer panel to the RootLayoutPanel, so that it will be
-		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		root.add(ui);		
 		root.add(ui);
 		sPanel.setVisible(false);
 
 		init();
+		
+		
 	}
 
 	protected void init() {
+		
+		sPanel.setVisible(false);
+		resultsPanel = new ResultsPanel();
 
 		dateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
-
-		uploadFormPanel.setAction("/aon_gwt_connect/dsiimport");
+		
+		uploadFormPanel.setAction("/aon-aio/aon_gwt_connect/dsiimport");
+		
 		uploadFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadFormPanel.setMethod(FormPanel.METHOD_POST);
 
 		uploadFormPanel.getElement().setDraggable("DRAGGABLE_TRUE");
-
+		
 		DSIImportResultsGrid resultsGrid = new DSIImportResultsGrid();
 
 		ListDataProvider<DSIImportResult> listDataProvider = new ListDataProvider<DSIImportResult>();
@@ -122,14 +124,14 @@ public class DSIImportForm implements EntryPoint {
 
 	}
 
-	private void showEnterprisesList() {
+	private void showEnterprisesList(JsArray<JsEmpres> empress) {
 
 		sPanel.getElement().getStyle().setBackgroundColor("#FFFFFF");
-		vPanel.add(createAdvancedForm());
+		vPanel.add(createAdvancedForm(empress));
 		sPanel.setVisible(true);
 	}
 
-	private Widget createAdvancedForm() {
+	private Widget createAdvancedForm(JsArray<JsEmpres> empress) {
 		FlexCellFormatter cellFormater = layout.getFlexCellFormatter();
 		layout.clear();
 		layout.getElement().getStyle().setBackgroundColor("#FFFFFF");
@@ -137,8 +139,9 @@ public class DSIImportForm implements EntryPoint {
 		// Create some advanced options
 
 		CheckBox selectAll = new CheckBox();
-		selectAll.setTitle("Seleccionar todas");
 
+		selectAll.setTitle("Seleccionar todas");
+		
 		layout.setWidget(0, 0, selectAll);
 
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
@@ -148,36 +151,18 @@ public class DSIImportForm implements EntryPoint {
 		oracle.add(words[1]);
 		oracle.add(words[2]);
 		oracle.add(words[3]);
+		
 		final SuggestBox suggest = new SuggestBox(oracle);
+		
 		layout.setWidget(0, 1, suggest);
-		Grid advancedOptions = new Grid(12, 2);
+		Grid advancedOptions = new Grid(empress.length(), 2);		
 		advancedOptions.setCellSpacing(6);
-		advancedOptions.setWidget(0, 0, new CheckBox());
-		advancedOptions.setHTML(0, 1, "Nombre empresa 1");
-		advancedOptions.setWidget(1, 0, new CheckBox());
-		advancedOptions.setHTML(1, 1, "Nombre empresa 2");
-		advancedOptions.setWidget(2, 0, new CheckBox());
-		advancedOptions.setHTML(2, 1, "Nombre empresa 3");
-		advancedOptions.setWidget(3, 0, new CheckBox());
-		advancedOptions.setHTML(3, 1, "Nombre empresa 4");
-		// ****
-		advancedOptions.setWidget(4, 0, new CheckBox());
-		advancedOptions.setHTML(4, 1, "Nombre empresa 5");
-		advancedOptions.setWidget(5, 0, new CheckBox());
-		advancedOptions.setHTML(5, 1, "Nombre empresa 6");
-		advancedOptions.setWidget(6, 0, new CheckBox());
-		advancedOptions.setHTML(6, 1, "Nombre empresa 7");
-		advancedOptions.setWidget(7, 0, new CheckBox());
-		advancedOptions.setHTML(7, 1, "Nombre empresa 8");
-		// ****
-		advancedOptions.setWidget(8, 0, new CheckBox());
-		advancedOptions.setHTML(8, 1, "Nombre empresa 9");
-		advancedOptions.setWidget(9, 0, new CheckBox());
-		advancedOptions.setHTML(9, 1, "Nombre empresa 10");
-		advancedOptions.setWidget(10, 0, new CheckBox());
-		advancedOptions.setHTML(10, 1, "Nombre empresa 11");
-		advancedOptions.setWidget(11, 0, new CheckBox());
-		advancedOptions.setHTML(11, 1, "Nombre empresa 12");
+		
+		for(int i = 0; i < empress.length(); i ++) {
+			
+			advancedOptions.setWidget(i, 0, new CheckBox());
+			advancedOptions.setHTML(i, 1, empress.get(i).getRSocial());			
+		}
 
 		// Add advanced options to form in a disclosure panel
 
@@ -232,8 +217,10 @@ public class DSIImportForm implements EntryPoint {
 
 					@Override
 					public void onSuccess(JsArray<JsEmpres> empress) {
-						DSIImportForm.this.empress = empress;
+						DSIImportForm.this.empress = empress;						
 						// TODO Loads and shows enterprises list.
+						showEnterprisesList(empress);
+						
 					}
 
 				});

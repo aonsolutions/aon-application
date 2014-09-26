@@ -12,17 +12,16 @@ import com.google.gwt.resources.client.CssResource.NotStrict;
 
 public class MainEntryPoint implements EntryPoint {
 
-
 	interface CodeMirrorResources extends ClientBundle {
 		@NotStrict
 		@Source("codemirror.css")
 		CssResource css();
+	}
 
-	}	
 	@Override
 	public void onModuleLoad() {
 		ensureGwtSelector();
-		
+
 		String entryPoint = getParameter(GWT.getModuleName(),
 				Constants.ENTRY_POINT_PARAM);
 

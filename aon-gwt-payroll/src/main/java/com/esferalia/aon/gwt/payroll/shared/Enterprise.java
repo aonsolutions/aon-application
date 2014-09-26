@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.common.shared.HasName;
+
 public class Enterprise implements Serializable, HasId<Integer>, HasName<String> {
 	
 	

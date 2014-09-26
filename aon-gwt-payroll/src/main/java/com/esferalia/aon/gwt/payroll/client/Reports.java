@@ -5,6 +5,7 @@ import static com.esferalia.aon.gwt.payroll.client.ReportsObject.toCSVDataURL;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.ReportsObject.ReportsType;

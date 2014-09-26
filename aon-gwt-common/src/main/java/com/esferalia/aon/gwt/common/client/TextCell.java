@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.client;
+package com.esferalia.aon.gwt.common.client;
 
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -17,7 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * fullname.
  */
 
-class TextCell extends AbstractCell<String> {
+public class TextCell extends AbstractCell<String> {
 
 	/**
 	 * The HTML templates used to render the cell.

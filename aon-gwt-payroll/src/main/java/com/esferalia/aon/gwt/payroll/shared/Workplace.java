@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.gwt.common.shared.HasId;
+
 public class Workplace implements Serializable, HasId<Integer> {
 	
 	/**

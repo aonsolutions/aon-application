@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -22,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel.ClearHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -30,7 +32,6 @@ import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -687,12 +688,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onModuleLoad() {
 
 		// Inject rich styles.
-		GWT.<GWTResources> create(
-				GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(
-				AonResources.class).css().ensureInjected();
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<MainEntryPoint.CodeMirrorResources> create(
-				MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
+				MainEntryPoint.CodeMirrorResources.class).css()
+				.ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -795,8 +795,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		shareResultsProvider.getList().clear();
 		resultsPanel.setWidget(shareResultsGrid);
 
-		com.esferalia.aon.gwt.payroll.shared.Salary salary = documents.getSalaries()
-				.get(documents.getCurrentIndex());
+		com.esferalia.aon.gwt.payroll.shared.Salary salary = documents
+				.getSalaries().get(documents.getCurrentIndex());
 		share(salary, new Callback());
 		showResultsPanel();
 
@@ -929,14 +929,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeContextMenu.setEmployee(employee);
 		employeeContextMenu.show();
 	}
-	
+
 	@Override
 	public void onCategoryDraftSelected(CategoryDraftObject categoryDraftObject) {
 		employeeDetail.setWidget(categoryDraft);
 		categoryDraft.setCategoryDraftObject(categoryDraftObject);
-		
+
 	}
-	
+
 	@Override
 	public void onAgreementDraftSelected(
 			AgreementDraftObject agreementDraftObject) {

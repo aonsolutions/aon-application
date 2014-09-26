@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.text.DateFormat;
 
+import com.esferalia.aon.gwt.common.shared.HasId;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class Extra implements Serializable, HasId<Integer> {

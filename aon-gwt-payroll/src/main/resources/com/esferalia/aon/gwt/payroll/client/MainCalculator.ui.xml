@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client'
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
 
 
@@ -84,7 +84,7 @@
 								<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
 							</td>
 							<td class="aon-panelGrid-even aon-width-all aon-height-all">
-								<payroll:SelectDataGrid nameLabel="Empresa"
+								<common:SelectDataGrid nameLabel="Empresa"
 									ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
 							</td>
 						</tr>
