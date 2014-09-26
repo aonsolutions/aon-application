@@ -86,7 +86,6 @@ public class DSIImportClient implements DSIImportService {
 
 			@Override
 			public void onResponseReceived(Request request, Response response) {
-				Window.alert(response.getText());
 				if (200 == response.getStatusCode())
 					cb.onSuccess(JsonUtils.<T> safeEval(response.getText()));
 				// TODO: Handle the error. Can get the status text from response.getStatusText()
@@ -120,8 +119,6 @@ public class DSIImportClient implements DSIImportService {
 						|| state == XMLHttpRequest.DONE) {
 
 					String text = xhr.getResponseText();
-					Window.alert( text );
-
 					try {
 						for (T t = read(text); text != null; t = read(text))
 							cb.onSuccess(t);

@@ -642,7 +642,7 @@ public class Trabaj2Loader extends AbstractLoader implements
 
 	private int getContractDataId(int contract, String name) {
 		ContractDataRecord record = getContractData(contract, name);
-		return record == null ? record.getId() : next(CONTRACT_DATA
+		return record != null ? record.getId() : next(CONTRACT_DATA
 				.getIdentity());
 	}
 

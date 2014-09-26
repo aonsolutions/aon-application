@@ -76,7 +76,8 @@ public class DSIImportForm implements EntryPoint {
 	@UiField
 	SimplePanel simplePanel;
 	
-	private ResultsPanel resultsPanel;
+	@UiField
+	ResultsPanel resultsPanel;
 
 	private JsArray<JsEmpres> empress;
 
@@ -100,7 +101,6 @@ public class DSIImportForm implements EntryPoint {
 	protected void init() {
 		
 		sPanel.setVisible(false);
-		resultsPanel = new ResultsPanel();
 
 		dateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		
@@ -294,8 +294,9 @@ public class DSIImportForm implements EntryPoint {
 							}
 
 						});
-				if (result != null)
+				if (result != null) {
 					results.add(result);
+				}
 			}
 
 		});

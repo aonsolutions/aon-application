@@ -157,10 +157,10 @@ public class EmpresLoader extends AbstractLoader implements
 
 			Pair<WorkplaceRecord, RegistryRecord> pair = getWorkplace(empres);
 			
-			WorkplaceRecord workplace = pair.getFirst();
-			RegistryRecord registry = pair.getSecond();
 
-			if (workplace != null) {
+			if (pair != null) {
+				WorkplaceRecord workplace = pair.getFirst();
+				RegistryRecord registry = pair.getSecond();
 				ssIdsMap.put(key,
 						new int[] { workplace.getDomain(), workplace.getId() });
 				if (replace) {
@@ -193,7 +193,7 @@ public class EmpresLoader extends AbstractLoader implements
 			int workplaceId = loadEmpres(empres, enterpriseId, domain,
 					parentDomain, domainName, owner, scope, cb);
 			
-			registry = lastRegistry();
+			RegistryRecord registry = lastRegistry();
 			listener.onEnterpriseInserted(registry);
 
 			ssIdsMap.put(key, new int[] { domain, workplaceId });

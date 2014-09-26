@@ -145,7 +145,7 @@ public class UserLoader extends AbstractLoader {
 
 		InsertSetStep<ApplicationUserProfileRecord> insertSetStepApplicationUserProfile = getApplicationUserProfileInsertSetStep();
 		for (String pr0file : profiles) {
-			int profile = getProfile(pr0file);
+			int profile = getProfile(domain, pr0file);
 			
 			if ( getApplicationUserProfile(applicationUser, profile) != null )
 				continue;
@@ -176,11 +176,12 @@ public class UserLoader extends AbstractLoader {
 		insertSetMoreStepApplicationUserProfile = null;
 	}
 
-	private int getProfile(String name) {
+	private int getProfile(int domain, String name) {
 		//@formatter:off
 		return aonContext.select(PROFILE.ID)
 				.from(PROFILE)
 				.where(PROFILE.NAME.eq(name))
+				.and(PROFILE.DOMAIN.eq(domain).or(PROFILE.DOMAIN.isNull()))
 				.and(PROFILE.APPLICATION.eq(getApplication()))
 				.fetchOne(PROFILE.ID);
 		//@formatter:on
