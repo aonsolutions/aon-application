@@ -1,6 +1,8 @@
 package com.code.aon.ui.registry.controller.event;
 
 
+import static com.code.aon.ui.registry.controller.CorporateIdentityController.DOMAIN_0;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Category;
 import com.code.aon.ui.config.event.ScopeSearchListener;
+import com.code.aon.ui.registry.controller.CorporateIdentityController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentitySearchListener extends ScopeSearchListener {
@@ -165,6 +168,11 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
     	List<SelectItem> tags = new LinkedList<SelectItem>();
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
     	Criteria criteria = new Criteria();
+    	CorporateIdentityController cic = (CorporateIdentityController) getController();
+    	if ( cic.isServiconvenios() ) {
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_DOMAIN), DOMAIN_0);
+    	}
     	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.RATTACH );
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
     	for( ITransferObject to : tagBean.getList(criteria) ) {

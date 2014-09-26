@@ -155,6 +155,12 @@
 										actionListener="#{payrollCodeTables.onInit}"
 										value="#{bundle.payroll_predefined_tables}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="serviconvenios"
+										action="corporateIdentityAttach_list"
+										actionListener="#{corporateIdentityAttach.onInitServiconvenios}"
+										value="#{bundle.aon_external_serviconvenios}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>

@@ -3,6 +3,7 @@ package com.code.aon.ui.registry.controller;
 import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_COLLECTIONS;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUMENT_CONTROLLER_NAME;
 
+import java.awt.RadialGradientPaint;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
@@ -33,7 +35,11 @@ public class CorporateIdentityController extends RegistryAttachController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	public static Integer DOMAIN_0 = 0;
+	
 	private boolean massiveUpload;
+	
+	private boolean serviconvenios;
 	
 	private RegistryAttachment lastAttachment;
 	
@@ -55,6 +61,14 @@ public class CorporateIdentityController extends RegistryAttachController {
 
 	public void setMassiveUpload(boolean massiveUpload) {
 		this.massiveUpload = massiveUpload;
+	}
+
+	public boolean isServiconvenios() {
+		return serviconvenios;
+	}
+
+	public void setServiconvenios(boolean serviconvenios) {
+		this.serviconvenios = serviconvenios;
 	}
 
 	public RegistryAttachment getLastAttachment() {
@@ -133,23 +147,57 @@ public class CorporateIdentityController extends RegistryAttachController {
 		}
 		return initialAction;
 	}	
+	
+	public boolean isEditable() {
+		return AonUtil.getRoleManager().isDocumentManager() && (!isServiconvenios());
+	}
 
 	public void onInit( ActionEvent event ) {
 		setMassiveUpload(false);
+		setServiconvenios(false);
 		onEditSearch(event);
 	}
 
 	public void onInitMassiveUpload( ActionEvent event ) {
 		setMassiveUpload(true);
+		setServiconvenios(false);
 		onReset(event);
 	}
 
 	public void onInitServiconvenios( ActionEvent event ) throws ManagerBeanException {
 		setMassiveUpload(false);
+		setServiconvenios(true);
 		onEditSearch(event);
-		String id = getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID);
-		getCriteria().addLessThanExpression(id, 0);
 		onSearch(event);
 	}
+	
+	public String getCurrentTagList() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			RegistryAttachment ra = (RegistryAttachment) getModel().getRowData();
+			if ( isServiconvenios() ) {
+				return ra.getTagList(DOMAIN_0);
+			}
+			return ra.getTagList();
+		}
+		return null;
+	}
+	
+	@Override
+	public void clearCriteria() throws ManagerBeanException {
+		super.clearCriteria();
+		if ( isServiconvenios() ) {
+			getCriteria().setSkipDomainFilter(true);
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DOMAIN), DOMAIN_0);
+		}
+	}	
+	
+	@Override
+	public Integer getRegistryId() {
+		if ( isServiconvenios() ) {
+			return AdminUtil.getCompanyId(DOMAIN_0);
+		}
+		return super.getRegistryId();
+	}
+
 	
 }

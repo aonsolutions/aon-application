@@ -93,11 +93,15 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	}
 
 	@Transient
-	public String getTagList() throws ManagerBeanException {
+	public String getTagList(Integer domainId) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachmentTag.class);
 		Criteria criteria = new Criteria();
 		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_TAG_ATTACHMENT_ID);
 		criteria.addEqualExpression(alias, getId());
+		if ( domainId != null ) {
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_TAG_DOMAIN), domainId);
+		}
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			Set<String> tags = new TreeSet<String>();
@@ -109,6 +113,11 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 		}
 		return null;
 	}	
+
+	@Transient
+	public String getTagList() throws ManagerBeanException {
+		return getTagList(null);
+	}
 	
 	@OneToMany(mappedBy = "attachment", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachmentTag> getTags() {

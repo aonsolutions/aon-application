@@ -193,7 +193,7 @@
 										value="#{bundle.infoweb_publish_group}" />
 								</aon:div>
 							</c:if>						
-							<c:if test="#{dehOnline.showConfiguration}">
+							<c:if test="#{dehOnline.showConfiguration and (!domainSwitcher.childDomain)}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="dehOnlineParameters" 
 										reRender="configPanelBar,configContent"

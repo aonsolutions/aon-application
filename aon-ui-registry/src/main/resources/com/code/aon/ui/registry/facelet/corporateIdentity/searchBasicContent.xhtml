@@ -28,33 +28,35 @@
 	<ui:include 
 		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
 		
-	<ui:include
-		src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
-		
-	<aon:outputLabel for="RegistryAttachment_category"
-		value="#{bundle.aon_category}" />
-	<aon:div id="categoryDiv">
-		<a4j:region>
-			<a4j:repeat value="#{searchController.categories}" rowKeyVar="index" var="raCategory">
-				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-					<aon:selectOneMenu id="RegistryAttachment_category"
-						value="#{searchController.categories[index]}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{registryCollections.categories}" />
-						<a4j:support event="onchange" reRender="categoryDiv"/>
-					</aon:selectOneMenu>
-					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="categoryDiv"
-						actionListener="#{searchController.onRemoveCategory}" value="&#160;" immediate="true"
-						rendered="#{raCategory.id != null}">
-						<f:param name="index" value="#{index}" />
-					</aon:commandButton>
-					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="categoryDiv"
-						actionListener="#{searchController.onAddCategory}" value="&#160;" immediate="true"
-						rendered="#{(raCategory.id != null) and (index == (searchController.categoriesSize-1))}"/>
-				</aon:div>						
-			</a4j:repeat>
-		</a4j:region>
-	</aon:div>			
+	<c:if test="#{!controller.serviconvenios}">
+		<ui:include
+			src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
+			
+		<aon:outputLabel for="RegistryAttachment_category"
+			value="#{bundle.aon_category}" />
+		<aon:div id="categoryDiv">
+			<a4j:region>
+				<a4j:repeat value="#{searchController.categories}" rowKeyVar="index" var="raCategory">
+					<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+						<aon:selectOneMenu id="RegistryAttachment_category"
+							value="#{searchController.categories[index]}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{registryCollections.categories}" />
+							<a4j:support event="onchange" reRender="categoryDiv"/>
+						</aon:selectOneMenu>
+						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="categoryDiv"
+							actionListener="#{searchController.onRemoveCategory}" value="&#160;" immediate="true"
+							rendered="#{raCategory.id != null}">
+							<f:param name="index" value="#{index}" />
+						</aon:commandButton>
+						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="categoryDiv"
+							actionListener="#{searchController.onAddCategory}" value="&#160;" immediate="true"
+							rendered="#{(raCategory.id != null) and (index == (searchController.categoriesSize-1))}"/>
+					</aon:div>						
+				</a4j:repeat>
+			</a4j:region>
+		</aon:div>			
+	</c:if>
 
 	<aon:outputLabel for="RegistryAttachment_size-From"
 		value="#{bundle.aon_size} (KB)" />
