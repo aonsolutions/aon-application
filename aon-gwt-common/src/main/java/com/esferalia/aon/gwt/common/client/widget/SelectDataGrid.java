@@ -1,8 +1,8 @@
-package com.esferalia.aon.gwt.common.client;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.Set;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.common.shared.HasName;
 import com.google.gwt.cell.client.CheckboxCell;
