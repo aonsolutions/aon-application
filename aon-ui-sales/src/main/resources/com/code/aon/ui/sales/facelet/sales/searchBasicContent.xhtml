@@ -41,10 +41,20 @@
 							
 	<aon:outputLabel for="Sales_purchaseReference"
 		value="#{bundle.sales_purchase_reference}" />
-	<aon:inputText id="Sales_purchaseReference"
-		valueChangeListener="#{controller.addExpression}"
-		size="30">
-	</aon:inputText>
+	<aon:div>
+		<aon:inputText id="Sales_purchaseReference"
+			valueChangeListener="#{controller.addExpression}"
+			size="30">
+		</aon:inputText>
+		<aon:outputLabel for="Sales_purchaseGenerated" styleClass="aon-form-date-label"
+			value="#{bundle.purchase_module}" />
+		<aon:selectOneMenu id="Sales_purchaseGenerated"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel=" - " itemValue="#{null}" />
+			<f:selectItem itemLabel="#{bundle.aon_generated}" itemValue="#{true}" />
+			<f:selectItem itemLabel="#{bundle.aon_no} #{bundle.aon_generated}" itemValue="#{false}" />
+		</aon:selectOneMenu>
+	</aon:div>
 	
 	<aon:outputLabel for="Sales_documentType"
 		value="#{bundle.aon_type}" />

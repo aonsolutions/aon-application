@@ -321,6 +321,7 @@ public class AmazonShipmentHandler implements SalesImporterHandler {
 		importedSalesList = null;
 		nonExistentItems = null;
 		nonExistentSales = null;
+		existingSalesList = null;
 	}
 	
 }

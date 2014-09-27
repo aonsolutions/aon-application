@@ -2,11 +2,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:dataTable var="to" value="#{dataModel}" rows="0">
 		<aon:rowSelector toggleOnClick="#{false}" />
@@ -47,7 +45,7 @@
 			<f:facet name="header">
 				<aon:outputText	value="#{bundle.pms_seller}" />
 			</f:facet>
-			<aon:outputText value="#{to.seller.registry.fullName}" />
+			<aon:outputText value="#{fn:toUpperCase(to.seller.registry.fullName)}" />
 		</aon:column>
 		<c:if test="#{!showSalesData}">
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
@@ -57,9 +55,9 @@
 				<aon:div>
 					<aon:outputText value="&#160;"
 						title="Nuevo cliente" 
-						styleClass="aon-icon-info aon-padding-left"
+						styleClass="aon-icon-info aon-padding-left aon-margin-right"
 						rendered="#{to.newCustomer}" />
-					<aon:outputText value="#{to.customerName}" />
+					<aon:outputText value="#{fn:toUpperCase(to.customerName)}" />
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div style="widht: 100%; text-align: right;">
@@ -75,7 +73,7 @@
 				<f:facet name="header">
 					<aon:outputText	value="#{bundle.aon_customer}" />
 				</f:facet>
-				<aon:outputText value="#{to.customer.registry.fullName}" />
+				<aon:outputText value="#{fn:toUpperCase(to.customer.registry.fullName)}" />
 				<f:facet name="footer">
 					<aon:div style="widht: 100%; text-align: right;">
 						<aon:outputText value="#{bundle.aon_total}:" />

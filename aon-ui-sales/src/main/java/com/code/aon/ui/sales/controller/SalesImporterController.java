@@ -86,6 +86,10 @@ public class SalesImporterController implements Serializable {
 		return handler instanceof AmazonSalesHandler;
 	}
 
+	public boolean isShipmentImport(){
+		return handler instanceof AmazonShipmentHandler;
+	}
+	
 	public boolean isSalesReturnImport(){
 		return handler instanceof AmazonSalesReturnHandler;
 	}

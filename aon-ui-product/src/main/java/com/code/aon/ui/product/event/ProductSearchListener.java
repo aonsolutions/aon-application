@@ -8,9 +8,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.Account;
 import com.code.aon.AonVersion;
+import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -51,6 +52,8 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	
 	private Supplier supplier;
 	
+	private String supplierCode;
+	
 	private ProductCategory category;
 	
 	public Supplier getSupplier() {
@@ -61,6 +64,14 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		this.supplier = supplier;
 	}
 	
+	public String getSupplierCode() {
+		return supplierCode;
+	}
+
+	public void setSupplierCode(String supplierCode) {
+		this.supplierCode = supplierCode;
+	}
+
 	public ProductStatus[] getStatuses() {
 		return statuses;
 	}
@@ -164,6 +175,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setTags( new Tag[]{EMPTY_TAG} );
 		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 		setSupplier((Supplier)supplierBean.createNewTo());
+		setSupplierCode(null);
 		setCategory( (ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo() );
 	}
 	
@@ -201,6 +213,9 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Product_items_suppliers_registry_id"), getSupplier().getId());
+		}
+		if (StringUtils.isNotBlank(StringUtils.trim(getSupplierCode()))) {
+			criteria.addEqualExpression(getController().resolveAlias("Product_items_suppliers_code"), StringUtils.trim(getSupplierCode()));
 		}
 		if (getCategory() != null && getCategory().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Product_category<id"), getCategory().getId());
