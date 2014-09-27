@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T34.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T34 implements ISSEnum {
+public enum T34 implements IPayrollTablesEnum {
 
 	T34_PA( "PA", "Parte de alta", null, null ),
 	T34_PB( "PB", "Parte de baja", null, null ),

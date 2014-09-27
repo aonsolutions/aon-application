@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T58.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T58 implements ISSEnum {
+public enum T58 implements IPayrollTablesEnum {
 
 	T58_A( "a", "Personal en trabajos exclusivos de oficina", null, null ),
 	T58_B( "b", "Tipo de cotización para todos los trabajadores que deban desplazarse habitualmente durante su jornada laboral, siempre por razón de la ocupación o la actividad económina no corresponda un tipo superior. Representantes Comercio. - Solo para liquidaciones complementarias anteriores al 2010.", null, null ),

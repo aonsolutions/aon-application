@@ -3,12 +3,12 @@ package com.esferalia.aon.payroll.enumeration.contrata;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 /** 
  * Enumeration for represent Contrat@ (S.E.P.E.) table codes.
  * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
  */ 
-public enum ContrataCodeTables implements ISepeEnum {
+public enum ContrataCodeTables implements IPayrollTablesEnum {
 
 	T_STDIDETC( "STDIDETC", "TIPO DE DOCUMENTO IDENTIFICATIVO", "" ),
 	T_TABCCNAE( "TABCCNAE", "ACTIVIDAD ECONÓMICA", "15-03-2009" ),

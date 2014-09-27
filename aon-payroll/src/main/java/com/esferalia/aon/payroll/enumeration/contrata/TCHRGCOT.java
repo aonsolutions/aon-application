@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TCHRGCOT	RÉGIMEN DE COTIZACIÓN						10-01-2012						
  *  ------------------------------------------------------------------------
  */ 
-public enum TCHRGCOT implements ISepeEnum {
+public enum TCHRGCOT implements IPayrollTablesEnum {
 
 	TCHRGCOT_0111( "0111", "RÉGIMEN GENERAL", null, null ),
 	TCHRGCOT_0112( "0112", "ARTISTAS (R.G.)", null, null ),

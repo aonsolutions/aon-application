@@ -11,11 +11,11 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.ui.form.FormUtil;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import com.esferalia.aon.payroll.enumeration.ss.SSCodeTables;
 import com.esferalia.aon.payroll.enumeration.ss.T53;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.payroll.enumeration.ss.T55;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
 
@@ -25,7 +25,7 @@ public class SSEnumLookupBean implements Serializable {
 	
 	private String code;
 	private String description;
-	private ISSEnum ssEnum;
+	private IPayrollTablesEnum ssEnum;
 	private String enumName;
 	private boolean showEnumLookupWindow;
 	
@@ -53,11 +53,11 @@ public class SSEnumLookupBean implements Serializable {
 		this.description = description;
 	}
 
-	public ISSEnum getSsEnum() {
+	public IPayrollTablesEnum getSsEnum() {
 		return ssEnum;
 	}
 
-	public void setSsEnum(ISSEnum ssEnum) {
+	public void setSsEnum(IPayrollTablesEnum ssEnum) {
 		this.ssEnum = ssEnum;
 		if(ssEnum!=null){
 			code = ssEnum.getCode();
@@ -123,7 +123,7 @@ public class SSEnumLookupBean implements Serializable {
 			if(code!=null){
 				Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase().replaceAll("-", ""));
 				for (Object obj : clazz.getEnumConstants()) {
-					ISSEnum enumeration = (ISSEnum) obj;
+					IPayrollTablesEnum enumeration = (IPayrollTablesEnum) obj;
 					if(enumeration.getCode().toUpperCase().equals(code.toUpperCase())){
 						// Add here the required S.S. enums
 						if(enumeration.getClass()==T53.class){
@@ -143,7 +143,7 @@ public class SSEnumLookupBean implements Serializable {
 	}
 	
 	public void onSelect(ActionEvent event) {
-		setSsEnum((ISSEnum) handler.getCodesModel().getRowData());
+		setSsEnum((IPayrollTablesEnum) handler.getCodesModel().getRowData());
 		
 		ContractController controller = (ContractController) FormUtil.getController("contract");
 		
@@ -160,13 +160,13 @@ public class SSEnumLookupBean implements Serializable {
 		clear(null);
 	}
 
-	public List<ISSEnum> autocomplete(Object suggest) {
+	public List<IPayrollTablesEnum> autocomplete(Object suggest) {
 		String pref = (String) suggest;
-		ArrayList<ISSEnum> result = new ArrayList<ISSEnum>();
+		ArrayList<IPayrollTablesEnum> result = new ArrayList<IPayrollTablesEnum>();
 		try {
 			Class<?> clazz = Class.forName(PayrollCodeTablesController.SS_ENUMERATIONS_PACKAGE_NAME + "." + getEnumName().toUpperCase().replaceAll("-", ""));
 			for (Object obj : clazz.getEnumConstants()) {
-				ISSEnum enumeration = (ISSEnum) obj;
+				IPayrollTablesEnum enumeration = (IPayrollTablesEnum) obj;
 				if ( ((enumeration.getDescription() != null 
 						&& (enumeration.getDescription().toLowerCase().contains(pref.toLowerCase()) 
 						|| enumeration.getCode().toLowerCase().contains(pref.toLowerCase())))

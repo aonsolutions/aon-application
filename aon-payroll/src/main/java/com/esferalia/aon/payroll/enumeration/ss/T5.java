@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T5.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T5 implements ISSEnum {
+public enum T5 implements IPayrollTablesEnum {
 
 	T5_L00( "L00", "Normal", null, null ),
 	T5_L02( "L02", "Complementaria por salarios tramitación normal (Existencia de sentencia)", null, null ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TELCOLBO	COLECTIVO BONIFICACIÓN						17-04-2013
  *  ------------------------------------------------------------------------
  */ 
-public enum TELCOLBO implements ISepeEnum {
+public enum TELCOLBO implements IPayrollTablesEnum {
 
 	TELCOLBO_001( "001", "JOVENES MENORES DE 30 AÑOS", "19970517", "20010303" ),
 	TELCOLBO_002( "002", "MAYORES DE 45 AÑOS", "19940520", "20010303" ),

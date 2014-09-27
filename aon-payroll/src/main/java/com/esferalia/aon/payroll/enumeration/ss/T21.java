@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T21.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T21 implements ISSEnum {
+public enum T21 implements IPayrollTablesEnum {
 
 	T21_1( "1", "Alta", null, null ),
 	T21_51( "51", "Baja voluntaria/Dimisión - Dimisión del trabajado", " cese voluntario del trabajador durante el período de prueba", " rescisión de la relación laboral por voluntad del trabajador por motivos no incluidos en otra clave específica, incluidos los del artículo" ),

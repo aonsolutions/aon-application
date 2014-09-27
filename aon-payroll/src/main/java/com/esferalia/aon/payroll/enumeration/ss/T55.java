@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T55.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T55 implements ISSEnum {
+public enum T55 implements IPayrollTablesEnum {
 
 	T55_D( "D", "Minusvalía igual o superior al 33%", null, null ),
 	T55_S( "S", "Pensionista incapacidad permanente de la S.S.", null, null ),

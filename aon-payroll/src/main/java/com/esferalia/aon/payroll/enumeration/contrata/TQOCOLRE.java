@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TQOCOLRE	COLECTIVOS DE REDUCCIÓN						17-04-2013 					 
  *  ------------------------------------------------------------------------
  */ 
-public enum TQOCOLRE implements ISepeEnum {
+public enum TQOCOLRE implements IPayrollTablesEnum {
 
 	TQOCOLRE_01( "01", "DESEMPLEADOS CON EDAD IGUAL O INFERIOR A 30 AÑOS", "20110213", "20120212" ),
 	TQOCOLRE_02( "02", "DESEMPLEADOS AL MENOS 12 MESES EN 18 ANTERIORES", "20110213", "20120212" ),

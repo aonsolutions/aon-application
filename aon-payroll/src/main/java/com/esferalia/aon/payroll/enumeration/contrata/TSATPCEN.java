@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TSATPCEN	TIPOS DE CENTRO							22-03-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum TSATPCEN implements ISepeEnum {
+public enum TSATPCEN implements IPayrollTablesEnum {
 
 	TSATPCEN_E( "E", "CENTRO DEL SISTEMA EDUCATIVO", "20110831", null ),
 	TSATPCEN_C( "C", "CENTRO ACREDITADO POR LA COMUNIDAD AUTÓNOMA", "20110831", null ),

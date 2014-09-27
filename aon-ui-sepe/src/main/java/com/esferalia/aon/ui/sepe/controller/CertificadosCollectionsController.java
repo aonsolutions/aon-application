@@ -3,9 +3,7 @@ package com.esferalia.aon.ui.sepe.controller;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.faces.model.SelectItem;
-
 import com.code.aon.AonVersion;
 import com.esferalia.aon.payroll.enumeration.certificados.*;
 
@@ -17,9 +15,7 @@ import com.esferalia.aon.payroll.enumeration.certificados.*;
 */ 
 
 public class CertificadosCollectionsController implements Serializable {
-	
-	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.

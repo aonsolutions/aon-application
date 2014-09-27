@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TFGGRCOT	GRUPOS DE COTIZACION						15-01-2013
  *  ------------------------------------------------------------------------
  */ 
-public enum TFGGRCOT implements ISepeEnum {
+public enum TFGGRCOT implements IPayrollTablesEnum {
 
 	TFGGRCOT_01( "01", "DIRECTORES,INGENIEROS", "20020101", "20131231" ),
 	TFGGRCOT_02( "02", "PERITOS Y AYUDANTES", "20020101", "20131231" ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TBONVFOR	NIVEL FORMATIVO							29-02-2012					
  *  ------------------------------------------------------------------------
  */ 
-public enum TBONVFOR implements ISepeEnum {
+public enum TBONVFOR implements IPayrollTablesEnum {
 
 	TBONVFOR_11( "11", "ESTUDIOS PRIMARIOS INCOMPLETOS", null, null ),
 	TBONVFOR_12( "12", "ESTUDIOS PRIMARIOS COMPLETOS", null, null ),

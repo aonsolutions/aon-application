@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TRWCOLDF	COLECTIVO DE DEDUCCION FISCAL					29-02-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum TRWCOLDF implements ISepeEnum {
+public enum TRWCOLDF implements IPayrollTablesEnum {
 
 	TRWCOLDF_01( "01", "PRIMER CONTRATO CON TRABAJADOR MENOR DE 30 AÑOS", "20120212", null ),
 	TRWCOLDF_02( "02", "DESEMPLEADO BENEFICIARIO DE PRESTACIÓN CONTRIBUTIVA", "20120212", null ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TEVACTCL	ACTUACIONES DE CORPORACIONES LOCALES		
  *  ------------------------------------------------------------------------
  */ 
-public enum TEVACTCL implements ISepeEnum {
+public enum TEVACTCL implements IPayrollTablesEnum {
 
 	TEVACTCL_A( "A", "ACTUACIONES ORDINARIAS", null, null ),
 	TEVACTCL_B( "B", "ACTUACIONES EXTRAORDINARIAS, PIEC", null, null ),

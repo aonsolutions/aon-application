@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T54.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T54 implements ISSEnum {
+public enum T54 implements IPayrollTablesEnum {
 
 	T54_0001( "0001", "Plan Extr. Reducc. Temporalidad -C.Temporal", "0", "20120801" ),
 	T54_0002( "0002", "Plan Extr. Reducc. Temporalidad -C.Formativo", "0", "20120801" ),
@@ -253,9 +253,14 @@ public enum T54 implements ISSEnum {
 	T54_2090( "2090", "<35 años socio sociedadad laboral discapacitado", null, null ),
 	T54_2091( "2091", "Indefinido empresa usuaria formación hombre", null, null ),
 	T54_2092( "2092", "Indefinido empresa usuaria formación mujer", null, null ),
+	T54_2093( "2093", "Indefinido empresa usuaria contrato prácticas hombre", null, null ),
+	T54_2094( "2094", "Indefinido empresa usuaria contrato prácticas mujer", null, null ),
 	T54_3141( "3141", "Mayores de 59 años y 4 años de antigüedad", null, null ),
 	T54_3191( "3191", "Fijo Discontinuo. Turismo-Hostelería", null, null ),
 	T54_3220( "3220", "Cambio puesto de trabajo Riesgo Embarazo/Enfermedad Profesional", null, null ),
+	T54_3240( "3240", "Bomberos-reducción cuotas", null, null ),
+	T54_3262( "3262", "Reducciones RDL 3/2014 Tarifa plana (primeros dos años)", null, null ),
+	T54_3263( "3263", "Reducciones RDL 3/2014 Tarifa plana (Tercer año)", null, null ),
 	T54_4203( "4203", "Trabajador contrato formación sin desempleo", null, null ),
 	T54_4204( "4204", "Trabajador contrato formación con desempleo", null, null ),
 	T54_4208( "4208", "Contrato para la formación y aprendizaje", null, null ),

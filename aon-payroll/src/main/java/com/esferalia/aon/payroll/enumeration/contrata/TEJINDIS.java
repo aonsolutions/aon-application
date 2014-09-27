@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TEJINDIS	INDICADOR DISCAPACIDAD										
  *  ------------------------------------------------------------------------
  */ 
-public enum TEJINDIS implements ISepeEnum {
+public enum TEJINDIS implements IPayrollTablesEnum {
 
 	TEJINDIS_C( "C", "DISCAPACITADOS EN CENTROS ESPEC.EMPLEO", null, null ),
 	TEJINDIS_E( "E", "ENCLAVES LABORALES DISC.INTELECT.>=33%", null, null ),

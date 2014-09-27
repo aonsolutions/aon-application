@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TETPGMEM	PROGRAMA DE EMPLEO				
  *  ------------------------------------------------------------------------
  */ 
-public enum TETPGMEM implements ISepeEnum {
+public enum TETPGMEM implements IPayrollTablesEnum {
 
 	TETPGMEM_01( "01", "FOMENTO EMPLEO AGRARIO", null, null ),
 	TETPGMEM_02( "02", "INSERCIÓN CORPORACIÓN LOCAL", null, null ),

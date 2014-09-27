@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TRXLEYDF	LEY DE DEDUCCION FISCAL						26-07-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum TRXLEYDF implements ISepeEnum {
+public enum TRXLEYDF implements IPayrollTablesEnum {
 
 	TRXLEYDF_01( "01", "REAL DECRETO LEY 3 / 2012", "20120212", "20120707" ),
 	TRXLEYDF_02( "02", "LEY 3 / 2012", "20120708", null ),

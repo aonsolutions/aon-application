@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *THYDISLE	DISPOSICIONES LEGALES				
  *  ------------------------------------------------------------------------
  */ 
-public enum THYDISLE implements ISepeEnum {
+public enum THYDISLE implements IPayrollTablesEnum {
 
 	THYDISLE_001( "001", "LEY 45/2002 MAYORES DE 52 PERC.SUB.REASS", "20021214", "00000000" ),
 	THYDISLE_002( "002", "LEY 45/2002 MAYORES DE 52 PERC.RESTO SUB", "20021214", "00000000" ),

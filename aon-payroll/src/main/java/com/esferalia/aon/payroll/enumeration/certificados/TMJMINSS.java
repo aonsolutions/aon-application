@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum TMJMINSS implements ISepeEnum {
+public enum TMJMINSS implements IPayrollTablesEnum {
 
 	;
 	public static final String TABLE_NAME = "TMJMINSS";

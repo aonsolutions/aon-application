@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TRDACTFO	ACTIVIDAD FORMATIVA						15-01-2013
  *  ------------------------------------------------------------------------
  */ 
-public enum TRDACTFO implements ISepeEnum {
+public enum TRDACTFO implements IPayrollTablesEnum {
 
 	TRDACTFO_A( "A", "CERTIFICACIÓN ACADÉMICA / ACREDITACIÓN PARCIAL ACUMULABLE", "20120212", null ),
 	TRDACTFO_C( "C", "CERTIFICADO DE PROFESIONALIDAD", "20110831", "20131231" ),

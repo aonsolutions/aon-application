@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum TKCSITEM implements ISepeEnum {
+public enum TKCSITEM implements IPayrollTablesEnum {
 
 	TKCSITEM_01( "01", "PERIODOS DE ACTIVIDAD DE TRABAJADOR FIJO DISCONTINUO POR FINALIZACION DE CAMPAÑA", null, null ),
 	TKCSITEM_02( "02", "PERIODOS DE ACTIVIDAD DE TRABAJADOR FIJO DISCONTINUO Y FINALIZACION POR EXCEDENCIA DURANTE LA CAMPAÑA", null, null ),

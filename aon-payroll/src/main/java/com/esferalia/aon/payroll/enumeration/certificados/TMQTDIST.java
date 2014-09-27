@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum TMQTDIST implements ISepeEnum {
+public enum TMQTDIST implements IPayrollTablesEnum {
 
 	TMQTDIST_1( "1", "Parcial regular", null, null ),
 	TMQTDIST_2( "2", "Parcial irregular", null, null ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T37.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T37 implements ISSEnum {
+public enum T37 implements IPayrollTablesEnum {
 
 	T37_1( "1", "Desempleado inscrito en la oficina de empleo.", null, null ),
 	T37_2( "2", "Desempleado inscrito en la oficina de empleo durante más de 12 meses", null, null ),

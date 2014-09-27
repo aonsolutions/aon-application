@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T36.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T36 implements ISSEnum {
+public enum T36 implements IPayrollTablesEnum {
 
 	T36_01( "01", "Curación", null, null ),
 	T36_02( "02", "Fallecimiento - Procesos de duración inferior a 365 días", null, null ),

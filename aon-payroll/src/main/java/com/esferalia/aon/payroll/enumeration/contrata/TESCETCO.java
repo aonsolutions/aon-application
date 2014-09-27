@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TESCETCO	RELACIÓN CONTRACTUAL ET / CO / TE		
  *  ------------------------------------------------------------------------
  */ 
-public enum TESCETCO implements ISepeEnum {
+public enum TESCETCO implements IPayrollTablesEnum {
 
 	TESCETCO_E01( "E01", "CONTRATO TALLERES EMPLEO ALUMNO/TRABAJAD", "19990224", "0" ),
 	TESCETCO_E02( "E02", "CONTRATO DE TALLERES DE EMPLEO PERSONAL", "19990224", "0" ),

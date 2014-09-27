@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TEKLEYBO	LEY BONIFICACIÓN						17-04-2013	
  *  ------------------------------------------------------------------------
  */ 
-public enum TEKLEYBO implements ISepeEnum {
+public enum TEKLEYBO implements IPayrollTablesEnum {
 
 	TEKLEYBO_01( "01", "LEY 64 / 1997", "19970517", "19990516" ),
 	TEKLEYBO_02( "02", "LEY 50 / 1998", "19990101", "19991231" ),

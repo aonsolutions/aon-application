@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T61.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T61 implements ISSEnum {
+public enum T61 implements IPayrollTablesEnum {
 
 	T61_951( "951", "Consejero Administrador con contrato de trabajo", null, null ),
 	T61_952( "952", "Consejero Administrador con contrato mercantil", null, null ),

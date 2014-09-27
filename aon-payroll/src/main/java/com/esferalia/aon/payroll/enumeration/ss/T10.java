@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T10.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T10 implements ISSEnum {
+public enum T10 implements IPayrollTablesEnum {
 
 	T10_001( "001", "M MIDAT CYCLOPS", null, null ),
 	T10_002( "002", "MUTUALIA", null, null ),

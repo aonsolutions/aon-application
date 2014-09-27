@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TABCCNAE	ACTIVIDAD ECONÓMICA						15-03-2009	
  *  ------------------------------------------------------------------------
  */ 
-public enum TABCCNAE implements ISepeEnum {
+public enum TABCCNAE implements IPayrollTablesEnum {
 
 	TABCCNAE_00( "00", "SIN ACTIVIDAD ECONÓMICA", null, null ),
 	TABCCNAE_01( "01", "AGRICULTURA, GANADERÍA, CAZA Y SERVICIOS RELACIONADOS CON LAS MISMAS", null, null ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TEUECCLL	CORPORACIONES LOCALES				
  *  ------------------------------------------------------------------------
  */ 
-public enum TEUECCLL implements ISepeEnum {
+public enum TEUECCLL implements IPayrollTablesEnum {
 
 	TEUECCLL_1( "1", "AYUNTAMIENTOS", null, null ),
 	TEUECCLL_2( "2", "DIPUTACIONES Y CABILDOS", null, null ),

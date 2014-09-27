@@ -346,8 +346,8 @@ public class FANWriter implements Serializable {
 //			}
 			if(StringUtils.isNotBlank(getJournalReduction(contract))){
 				Integer itDays = getItDays(contract);
-				String code = getContractCode(contract).getValue();
-				if(!code.startsWith("1") && !code.startsWith("4")){
+				ContractCode code = getContractCode(contract);
+				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
 					String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 					Double dayHours = (Double.parseDouble(weekHours)/5);
 					itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
@@ -1279,8 +1279,8 @@ public class FANWriter implements Serializable {
 	 * @return
 	 */
 	private String getQuoteIndicator(Contract contract) {
-		String code = getContractCode(contract).getValue();
-		if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
+		ContractCode code = getContractCode(contract);
+		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
 			if( StringUtils.isNotBlank(weekHours) ){
 				return "H";
@@ -1303,8 +1303,8 @@ public class FANWriter implements Serializable {
 	 * @return
 	 */
 	private Integer getContractDischargeDays(Contract contract) {
-		String code = getContractCode(contract).getValue();
-		if(code.startsWith("2") || code.startsWith("3") || code.startsWith("5")){
+		ContractCode code = getContractCode(contract);
+		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
 			boolean match = false;
 			for(ITransferObject to: getSalaryBonuses(getSalary(contract, SalaryType.SALARY))){
 				SalaryBonus bonus = (SalaryBonus) to;
@@ -1344,8 +1344,8 @@ public class FANWriter implements Serializable {
 	private Integer getContractDaysOrHours(Contract contract) {
 		// TODO 
 		Integer itDays = getItDays(contract);
-		String code = getContractCode(contract).getValue();
-		if(code.startsWith("1") || code.startsWith("4")){
+		ContractCode code = getContractCode(contract);
+		if(code==null || code.getValue().startsWith("1") || code.getValue().startsWith("4")){
 			if(itDays!=null && itDays>0){
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(getStartDate());

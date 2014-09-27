@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T50.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T50 implements ISSEnum {
+public enum T50 implements IPayrollTablesEnum {
 
 	T50_01( "01", "Cuota empresarial por AT y EP, Cuotas de recaudación conjunta", null, null ),
 	T50_02( "02", "Cuota empresarial por Desempleo", null, null ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T7.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T7 implements ISSEnum {
+public enum T7 implements IPayrollTablesEnum {
 
 	T7___1( "__1", "Acciones a nivel de Empresa - Se cumplimentan en el segmento EMP", null, null ),
 	T7_CU( "CU", "Consulta de trabajadores con movimientos previos en un CCC", null, null ),

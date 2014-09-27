@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T53.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T53 implements ISSEnum {
+public enum T53 implements IPayrollTablesEnum {
 
 	T53_1( "1", "Reducción mínima *", null, null ),
 	T53_2( "2", "Reducción media", null, null ),

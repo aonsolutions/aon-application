@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum TKZCARPS implements ISepeEnum {
+public enum TKZCARPS implements IPayrollTablesEnum {
 
 	TKZCARPS_1( "1", "ALTO CARGO DE ADMINISTRACION GENERAL DEL ESTADO, NO FUNCIONARIO Y SIN DERECHO A INDEMNIZACION POR EL CESE", null, null ),
 	TKZCARPS_2( "2", "CARGO REPRESENTANTE DE SINDICATO CONSTITUIDO AL AMPARO DE LA LEY 11/1985, DE 2 DE AGOSTO, DE LIBERTAD SINDICAL", null, null ),

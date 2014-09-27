@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum TKDIASAC implements ISepeEnum {
+public enum TKDIASAC implements IPayrollTablesEnum {
 
 	TKDIASAC_01( "01", "SIN ACTIVIDAD", null, null ),
 	TKDIASAC_02( "02", "SIN ACTIVIDAD POR NO ACUDIR AL LLAMAMIENTO", null, null ),

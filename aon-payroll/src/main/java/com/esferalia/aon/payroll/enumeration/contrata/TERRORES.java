@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * TERRORES 
  *  ------------------------------------------------------------------------
  */ 
-public enum TERRORES implements ISepeEnum {
+public enum TERRORES implements IPayrollTablesEnum {
 
 	TERRORES_CBC4001( "CBC4001", "No se ha comunicado la copia básica para este contrato", null, null ),
 	TERRORES_CBC6001( "CBC6001", "Copia básica del contrato realizada correctamente.", null, null ),

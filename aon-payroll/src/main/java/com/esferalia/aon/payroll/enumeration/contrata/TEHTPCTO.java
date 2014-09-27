@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TEHTPCTO	CÓDIGOS DE CONTRATO						07-02-2013					
  *  ------------------------------------------------------------------------
  */ 
-public enum TEHTPCTO implements ISepeEnum {
+public enum TEHTPCTO implements IPayrollTablesEnum {
 
 	TEHTPCTO_001( "001", "INDEFINIDO A TIEMPO COMPLETO", "19800315", "20010303" ),
 	TEHTPCTO_002( "002", "TEMPORAL FOMENTO DE EMPLEO", "19940524", "20010303" ),

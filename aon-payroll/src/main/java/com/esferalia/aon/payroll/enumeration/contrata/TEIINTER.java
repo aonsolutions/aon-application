@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TEIINTER	CAUSA OBJETO DE LA INTERINIDAD					
  *  ------------------------------------------------------------------------
  */ 
-public enum TEIINTER implements ISepeEnum {
+public enum TEIINTER implements IPayrollTablesEnum {
 
 	TEIINTER_A( "A", "TRABAJADOR CON DERECHO RESERVA DE PUESTO", "19800315", "0" ),
 	TEIINTER_B( "B", "TRABAJADOR POR MATERNIDAD SIN BONIFICACION DE CUOTAS", "19800315", "0" ),

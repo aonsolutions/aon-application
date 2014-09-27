@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T84.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T84 implements ISSEnum {
+public enum T84 implements IPayrollTablesEnum {
 
 	T84_0001( "0001", "RETRIBUCION NO INCLUIDA OTROS APARTADOS", null, null ),
 	T84_0002( "0002", "HORAS EXTRAORDINARIAS NO ESTRUCTURALES", null, null ),

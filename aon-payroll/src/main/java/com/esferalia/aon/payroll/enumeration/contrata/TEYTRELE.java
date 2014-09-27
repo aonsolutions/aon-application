@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TEYTRELE	TIPO DE TRABAJADOR DE RELEVO			
  *  ------------------------------------------------------------------------
  */ 
-public enum TEYTRELE implements ISepeEnum {
+public enum TEYTRELE implements IPayrollTablesEnum {
 
 	TEYTRELE_1( "1", "TRABAJADOR INSCRITO COMO DEMANDANTE", null, null ),
 	TEYTRELE_2( "2", "TRABAJADOR CON CONTRATO DURAC.DETERMIN", null, null ),

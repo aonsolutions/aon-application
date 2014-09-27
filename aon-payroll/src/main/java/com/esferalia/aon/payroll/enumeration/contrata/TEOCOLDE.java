@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TEOCOLDE	COLECTIVO FOMENTO DE LA CONTR. INDEFINIDA			29-02-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum TEOCOLDE implements ISepeEnum {
+public enum TEOCOLDE implements IPayrollTablesEnum {
 
 	TEOCOLDE_01( "01", "JOVENES DE 18 A 30 AÑOS", "19970517", "20010303" ),
 	TEOCOLDE_02( "02", "MAYORES DE 45 AÑOS", "19970517", "20120211" ),

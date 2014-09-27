@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TEWEINVE	TIPO DE EMPLEADOR INVESTIGACIÓN					10-01-2012			
  *  ------------------------------------------------------------------------
  */ 
-public enum TEWEINVE implements ISepeEnum {
+public enum TEWEINVE implements IPayrollTablesEnum {
 
 	TEWEINVE_1( "1", "ORGANISMO PÚBLICO", null, null ),
 	TEWEINVE_2( "2", "INSTITUCIÓN SIN ÁNIMO DE LUCRO", null, null ),

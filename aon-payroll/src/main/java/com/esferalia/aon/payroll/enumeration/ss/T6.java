@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T6.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T6 implements ISSEnum {
+public enum T6 implements IPayrollTablesEnum {
 
 	T6_00( "00", "Solicitud cuota total", null, null ),
 	T6_01( "01", "Solucitud cuota aportación del trabajador", null, null ),

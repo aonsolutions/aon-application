@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *THPCOLFO	COLECTIVOS CONTRATOS DE FORMACIÓN				26-07-2012
  *  ------------------------------------------------------------------------
  */ 
-public enum THPCOLFO implements ISepeEnum {
+public enum THPCOLFO implements IPayrollTablesEnum {
 
 	THPCOLFO_01( "01", "DESEMPLEADO MINUSVALIDO", "20010304", "0" ),
 	THPCOLFO_02( "02", "EXTRANJERO 2 PROS.AÑOS.PERMISO TRABAJO", "20010304", "20060614" ),

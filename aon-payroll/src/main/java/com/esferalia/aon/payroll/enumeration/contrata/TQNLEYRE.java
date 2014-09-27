@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TQNLEYRE	LEYES DE REDUCCIÓN						17-04-2013
  *  ------------------------------------------------------------------------
  */ 
-public enum TQNLEYRE implements ISepeEnum {
+public enum TQNLEYRE implements IPayrollTablesEnum {
 
 	TQNLEYRE_01( "01", "REAL DECRETO LEY 1/2011", "20110213", "20120212" ),
 	TQNLEYRE_02( "02", "REAL DECRETO LEY 10/2011", "20110831", "20120211" ),

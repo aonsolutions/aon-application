@@ -11,19 +11,17 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import com.esferalia.aon.payroll.enumeration.certificados.CertificadosCodeTables;
 import com.esferalia.aon.payroll.enumeration.contrata.ContrataCodeTables;
-import com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter;
-import com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
 
 public class SepeTablesController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
-	final static String CONTRATA_ENUMERATIONS_PACKAGE_NAME 		= ContrataCodeTablesWriter.ENUMERATION_CLASS_PACKAGE_NAME;
 	
-	final static String CERTIFICADOS_ENUMERATIONS_PACKAGE_NAME 	= CertificadosCodeTablesWriter.ENUMERATION_CLASS_PACKAGE_NAME;
+	final static String CONTRATA_ENUMERATIONS_PACKAGE_NAME 		= "com.esferalia.aon.payroll.enumeration.contrata";
+	
+	final static String CERTIFICADOS_ENUMERATIONS_PACKAGE_NAME 	= "com.esferalia.aon.payroll.enumeration.certificados";
 	
 	private DataModel contrataTablesModel;
 
@@ -212,9 +210,9 @@ public class SepeTablesController implements Serializable {
 	}
 
 	private void completeCodesModel(Class<?> clazz){
-		List<ISepeEnum> list = new ArrayList<ISepeEnum>();
+		List<IPayrollTablesEnum> list = new ArrayList<IPayrollTablesEnum>();
 		for (Object obj : clazz.getEnumConstants()) {
-			ISepeEnum enumeration = (ISepeEnum) obj;
+			IPayrollTablesEnum enumeration = (IPayrollTablesEnum) obj;
 			if ( StringUtils.isBlank(getCodesFilter()) 
 					|| StringUtils.containsIgnoreCase(enumeration.getCode(), getCodesFilter())  
 					|| StringUtils.containsIgnoreCase(enumeration.getDescription(), getCodesFilter()) ) {

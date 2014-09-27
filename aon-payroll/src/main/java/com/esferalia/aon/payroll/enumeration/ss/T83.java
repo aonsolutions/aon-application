@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T83.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T83 implements ISSEnum {
+public enum T83 implements IPayrollTablesEnum {
 
 	T83_1( "1", "Exclusión Social", null, null ),
 	T83_2( "2", "Víctimas de violencia doméstica", null, null ),

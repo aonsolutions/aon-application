@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T49.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T49 implements ISSEnum {
+public enum T49 implements IPayrollTablesEnum {
 
 	T49_01( "01", "Bonificación INEM", null, null ),
 	T49_02( "02", "Bonificación Hacienda embarcaciones Zona Especial de Canarias", null, null ),

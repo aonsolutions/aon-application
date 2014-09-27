@@ -3,13 +3,13 @@ package com.esferalia.aon.payroll.enumeration.ss;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 
 /** 
  * Enumeration for represent SOCIAL SECURITY - Sistema RED table codes.
  * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
  */ 
-public enum SSCodeTables implements ISSEnum {
+public enum SSCodeTables implements IPayrollTablesEnum {
 
 	T_T1( "T-1", "Indicador de prueba", null ),
 	T_T2( "T-2", "Régimen / Sector", null ),

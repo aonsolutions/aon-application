@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum Terrores implements ISepeEnum {
+public enum Terrores implements IPayrollTablesEnum {
 
 	Terrores_DHG0006( "DHG0006", "Empleador inexistente en la base de datos", "Vigente", null ),
 	Terrores_DHG0008( "DHG0008", "La actividad económica no figura en tabla", "Vigente", null ),

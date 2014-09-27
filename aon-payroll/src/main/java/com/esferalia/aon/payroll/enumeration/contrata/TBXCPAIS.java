@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TBXCPAIS	PAÍS								
  *  ------------------------------------------------------------------------
  */ 
-public enum TBXCPAIS implements ISepeEnum {
+public enum TBXCPAIS implements IPayrollTablesEnum {
 
 	TBXCPAIS_004( "004", "AFGANISTÁN", null, null ),
 	TBXCPAIS_008( "008", "ALBANIA", null, null ),

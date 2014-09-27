@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TAICLAOC2011   OCUPACIÓN ( A partir de 2011 )					29-02-2012 
  *  ------------------------------------------------------------------------
  */ 
-public enum TAICLAOC2011 implements ISepeEnum {
+public enum TAICLAOC2011 implements IPayrollTablesEnum {
 
 	TAICLAOC2011_0011( "0011", "Oficiales de las fuerzas armadas", "S", null ),
 	TAICLAOC2011_0012( "0012", "Suboficiales de las fuerzas armadas", "S", null ),

@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TEQPTIEM	PERÍODO DE TIEMPO				
  *  ------------------------------------------------------------------------
  */ 
-public enum TEQPTIEM implements ISepeEnum {
+public enum TEQPTIEM implements IPayrollTablesEnum {
 
 	TEQPTIEM_A( "A", "JORNADA ANUAL", null, null ),
 	TEQPTIEM_D( "D", "JORNADA DIARIA", null, null ),

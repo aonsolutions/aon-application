@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TCMCSEXO	SEXO								
  *  ------------------------------------------------------------------------
  */ 
-public enum TCMCSEXO implements ISepeEnum {
+public enum TCMCSEXO implements IPayrollTablesEnum {
 
 	TCMCSEXO_1( "1", "HOMBRE", null, null ),
 	TCMCSEXO_2( "2", "MUJER", null, null ),

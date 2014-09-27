@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * No description found
  *  ------------------------------------------------------------------------
  */ 
-public enum TMPORCRD implements ISepeEnum {
+public enum TMPORCRD implements IPayrollTablesEnum {
 
 	TMPORCRD_01( "01", "Por ERE", null, null ),
 	TMPORCRD_02( "02", "Por cuidado de hijos o familiares o víctima de violencia de género", null, null ),

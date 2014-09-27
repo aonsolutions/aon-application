@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TEXTINVE	TIPO DE TRABAJADOR INVESTIGACIÓN				
  *  ------------------------------------------------------------------------
  */ 
-public enum TEXTINVE implements ISepeEnum {
+public enum TEXTINVE implements IPayrollTablesEnum {
 
 	TEXTINVE_1( "1", "INVESTIGADOR", null, null ),
 	TEXTINVE_2( "2", "CIENTIFICO O TECNICO", null, null ),

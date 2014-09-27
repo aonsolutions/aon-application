@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * T18.txt
  *  ------------------------------------------------------------------------
  */ 
-public enum T18 implements ISSEnum {
+public enum T18 implements IPayrollTablesEnum {
 
 	T18_1( "1", "Ingenieros y Licenciados. Personal de alta dirección no incluido en el art. 1.3.c) del Estatuto de los Trabajadores", null, null ),
 	T18_2( "2", "Ingenieros Técnicos, Peritos y Ayudantes titulados", null, null ),

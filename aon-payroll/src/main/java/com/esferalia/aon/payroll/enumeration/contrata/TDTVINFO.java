@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  * *TDTVINFO	VINCULACIÓN FORMATIVA						17-04-2013
  *  ------------------------------------------------------------------------
  */ 
-public enum TDTVINFO implements ISepeEnum {
+public enum TDTVINFO implements IPayrollTablesEnum {
 
 	TDTVINFO_01( "01", "FORMACIÓN ACREDITABLE OFICIAL O PROMOVIDA POR SPE", "20130224", null ),
 	TDTVINFO_02( "02", "FORMACIÓN IDIOMAS O T.I.C.DURANTE 90 HORAS ANUALES", "20130224", null ),

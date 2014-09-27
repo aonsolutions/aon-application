@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import org.apache.commons.lang.time.DateUtils;
 
 /** 
@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
  *  TERFIRCB	FIRMA COPIA BÁSICA				
  *  ------------------------------------------------------------------------
  */ 
-public enum TERFIRCB implements ISepeEnum {
+public enum TERFIRCB implements IPayrollTablesEnum {
 
 	TERFIRCB_1( "1", "FIRMADAS POR LOS REPRESENTANTES LEGALES", null, null ),
 	TERFIRCB_2( "2", "NO EXISTE REPRESENTACION LEGAL", null, null ),
