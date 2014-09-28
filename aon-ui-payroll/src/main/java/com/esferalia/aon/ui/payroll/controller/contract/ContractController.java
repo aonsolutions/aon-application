@@ -154,9 +154,7 @@ public class ContractController extends BasicController {
 	}
 	public boolean isRowContractInternship() {
 		try {
-			Contract contract = (Contract) getModel().getRowData();
-			String code = getContractUtils().getDataCurrentValue(contract, ContextVariable.TC2.getName());
-			return code!=null && code.equals("BECARIO");
+			return isInternship( (Contract) getModel().getRowData() );
 		} catch (ManagerBeanException e) {
 			// nothing
 		}
@@ -320,7 +318,8 @@ public class ContractController extends BasicController {
 		if(this.getParams().getContractCode()!=null){
 			contractCode = this.getParams().getContractCode();
 		}
-		return contractCode!=null && !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4");
+		return (getParams().isRetaQuote() && getParams().isRetaPartialTime())
+				||  (contractCode!=null && !StringUtils.startsWith(contractCode, "1") && !StringUtils.startsWith(contractCode, "4") && !isInternship()) ;
 	}
 	
 	public boolean isExtensibleContract(){
@@ -779,8 +778,16 @@ public class ContractController extends BasicController {
 	}
 	
 	public boolean isInternship() {
-		return getParams()!=null && getParams().getContractCode()!=null && getParams().getContractCode().equals("BECARIO");
+		return isInternship( (Contract) this.getTo() );
 	}
+	
+	private boolean isInternship(Contract contract) {
+		return (contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getType()==CCCType.FELLOWS)
+				&& getParams()!=null 
+				&& ( getParams().getContractCode()==null 
+				|| (getParams().getContractCode()!=null && getParams().getContractCode().equals("000")));
+	}
+	
 	public void loadWorkplaceAgreement(ActionEvent event){
 		Contract contract = (Contract) getTo(); 
 		try {
@@ -1835,6 +1842,7 @@ public class ContractController extends BasicController {
 		private ContractInfo ssStatusInfo;
 		
 		private boolean retaQuote;
+		private boolean retaPartialTime;
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
@@ -1992,18 +2000,15 @@ public class ContractController extends BasicController {
 		public void setContractModelCode(ContractModelCode contractModelCode) {
 			this.contractModelCode = contractModelCode;
 		}
-//		public ContractCode getContractCode() {
-//			return contractCode;
-//		}
-//		public void setContractCode(ContractCode contractCode) {
-//			this.contractCode = contractCode;
-//		}
 		
 		public String getContractCode() {
 			return code;
 		}
 		public void setContractCode(String contractCode) {
 			this.code = contractCode;
+		}
+		public ContractCode getContractCodeEnum() {
+			return ContractCode.getContractCodeByValue(code);
 		}
 		public QuoteGroup getQuoteGroup() {
 			return quoteGroup;
@@ -2067,6 +2072,13 @@ public class ContractController extends BasicController {
 		}
 		public void setRetaQuote(boolean retaQuote) {
 			this.retaQuote = retaQuote;
+		}
+		
+		public boolean isRetaPartialTime() {
+			return retaPartialTime;
+		}
+		public void setRetaPartialTime(boolean retaPartialTime) {
+			this.retaPartialTime = retaPartialTime;
 		}
 		public Double getWeekHours() {
 			return weekHours;

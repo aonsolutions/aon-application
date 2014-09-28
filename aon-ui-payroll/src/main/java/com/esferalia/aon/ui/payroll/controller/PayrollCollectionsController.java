@@ -244,7 +244,7 @@ public class PayrollCollectionsController implements Serializable {
 			list.add(item);
 		}
 		// CONTRATOS NO NORMALIZADOS
-		list.add(new SelectItem("BECARIO", INTERNSHIP));
+		list.add(new SelectItem("000", INTERNSHIP));
 		return list;
 	}
 	

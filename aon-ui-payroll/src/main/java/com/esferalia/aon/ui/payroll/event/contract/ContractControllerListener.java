@@ -4,6 +4,8 @@ package com.esferalia.aon.ui.payroll.event.contract;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractSsStatus;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.TrainingCourse;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
@@ -57,9 +60,9 @@ public class ContractControllerListener extends ControllerAdapter{
 			contract.setRegimeType(SSRegimeType.SELF_EMPLOYED);
 			contract.setEnterpriseCCC(null);
 			contract.setActivity(null);
-		} else {
-//			contract.setSepeStatus(ContractStatus.PENDING);
-//			contract.setSsStatus(ContractStatus.PENDING);
+		} else if(controller.getParams().getContractCode().equals("000") && contract.getEnterpriseCCC().getType()!=CCCType.FELLOWS){
+			throw new AbortProcessingException("No se ha podido dar de alta el contrato. Revise el tipo de contrato y la cuenta de cotizacion.");
+		} else { 
 			contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
 		}
 	}
@@ -180,8 +183,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				infoController.loadContractFields((Contract) this.getController().getTo(), true);
 				updateContractDocumentFields();
 			} else {
-				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SEPE_CONTRACT.getValue(), ContractSepeStatus.MANUAL.getValue());
-				utils.insertContractInfo((Contract) controller.getTo(), ContractVariable.SS_MA.getValue(), ContractSsStatus.MANUAL.getValue());
+				utils.insertRetaContractData((Contract) controller.getTo(), controller.getParams());
 			}
 			utils.loadContractData((Contract) controller.getTo(), controller.getParams());
 			utils.loadContractInfo((Contract) controller.getTo(), controller.getParams());
@@ -196,15 +198,15 @@ public class ContractControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
+		ContractUtils utils = ContractUtils.getInstance();
 		if(!controller.getParams().isRetaQuote()){
-			ContractUtils utils = ContractUtils.getInstance();
 			utils.updateContractData((Contract) controller.getTo(), controller.getParams());
-			utils.updateContractInfo((Contract) controller.getTo(), controller.getParams());
-			
 			updateContrataData();
-			
 			updateContractDocumentFields();
+		} else {
+			utils.updateRetaContractData((Contract) controller.getTo(), controller.getParams());
 		}
+		utils.updateContractInfo((Contract) controller.getTo(), controller.getParams());
 	}
 	
 	@Override

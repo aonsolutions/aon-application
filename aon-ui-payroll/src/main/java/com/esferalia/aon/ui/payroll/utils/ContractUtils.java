@@ -193,6 +193,28 @@ public class ContractUtils implements Serializable {
 		}
 	}
 	
+	public void insertContractData(Contract contract, String name, String expression) throws ManagerBeanException {
+		insertContractData(contract, name, expression, contract.getStartDate(), contract.getEndDate());
+	}
+
+	public void insertContractData(Contract contract, String name, String expression, Date startDate, Date endDate) throws ManagerBeanException {
+		IManagerBean bean;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		ContractData data;
+		data = new ContractData();
+		data.setContract( contract );
+		data.setStartDate( startDate );
+		data.setEndDate( endDate );
+		data.setName( name );
+		data.setExpression( expression );
+		bean.insert(data);
+	}
+	
 	public void insertContractData(Contract contract, ContractParams params) {
 		IManagerBean bean;
 		ContractData data;
@@ -315,7 +337,44 @@ public class ContractUtils implements Serializable {
 			AonUtil.addErrorMessage(msg);
 		}
 		
-
+		insertPartialTimeContractData(contract, params);
+	}
+		
+	public void insertRetaContractData(Contract contract, ContractParams params) {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		try {
+			data = new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setEndDate(contract.getEndDate());
+			data.setName( ContextVariable.FULL_TIME.getName() );
+			data.setExpression(String.valueOf(!params.isRetaPartialTime()));
+			bean.insert(data);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el tipo de jornada. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
+		insertPartialTimeContractData(contract, params);
+		
+	}
+	
+	public void insertPartialTimeContractData(Contract contract, ContractParams params) {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
 		try {
 			if(params.getWeekDayHours()[0]!=null){
 				data = new ContractData();
@@ -538,6 +597,25 @@ public class ContractUtils implements Serializable {
 		bean.insert(info);
 	}
 	
+	public void updateContractData(Contract contract, String name, String value) throws ControllerListenerException {
+		IManagerBean bean;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+			ContractData data = obtainContractData(contract, name);
+			data = data!=null?data:new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setEndDate(contract.getEndDate());
+			data.setName( name );
+			data.setExpression(value);
+			bean.insertOrUpdate(data);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible actualizar los datos de contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+	}
+	
 	public void updateContractData(Contract contract, ContractParams params) throws ControllerListenerException {
 		IManagerBean bean;
 		ContractData data;
@@ -664,25 +742,6 @@ public class ContractUtils implements Serializable {
 //			AonUtil.addErrorMessage(msg);
 //		}
 		try {
-			ContractData weekHoursData = obtainContractData(contract, ContextVariable.WEEK_HOURS.getName());
-			if(params.getWeekHours()!=null && params.getWeekHours()>0){
-				data = weekHoursData!=null?weekHoursData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.WEEK_HOURS.getName() );
-				data.setExpression(params.getWeekHours().toString());
-				bean.insertOrUpdate(data);
-			} else {
-				if(weekHoursData != null){
-					bean.remove(weekHoursData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			ContractData collectivePeculiarityQuote = obtainContractData(contract, ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName());
 			if(params.getCollectivePeculiarityQuote()!=null){
 				data = collectivePeculiarityQuote!=null?collectivePeculiarityQuote:new ContractData();
@@ -721,6 +780,76 @@ public class ContractUtils implements Serializable {
 			AonUtil.addErrorMessage(msg);
 		}
 		
+		updatePartialTimeContractData(contract, params);
+		
+	}
+	
+	public void updateRetaContractData(Contract contract, ContractParams params) throws ControllerListenerException {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible actualizar los datos de contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+		try {
+			ContractData fullTimeData = obtainContractData(contract, ContextVariable.FULL_TIME.getName());
+			data = fullTimeData!=null?fullTimeData:new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setEndDate(contract.getEndDate());
+			data.setName( ContextVariable.FULL_TIME.getName() );
+			data.setExpression(String.valueOf(!params.isRetaPartialTime()));
+			bean.insertOrUpdate(data);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el tipo de jornada (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
+		if(!params.isRetaPartialTime()){
+			params.setWeekHours(null);
+			params.getWeekDayHours()[0]=null;
+			params.getWeekDayHours()[1]=null;
+			params.getWeekDayHours()[2]=null;
+			params.getWeekDayHours()[3]=null;
+			params.getWeekDayHours()[4]=null;
+			params.getWeekDayHours()[5]=null;
+			params.getWeekDayHours()[6]=null;
+		}
+		updatePartialTimeContractData(contract, params);
+	}
+	
+	private void updatePartialTimeContractData(Contract contract, ContractParams params) throws ControllerListenerException {
+		IManagerBean bean;
+		ContractData data;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible actualizar los datos de contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+		try {
+			ContractData weekHoursData = obtainContractData(contract, ContextVariable.WEEK_HOURS.getName());
+			if(params.getWeekHours()!=null && params.getWeekHours()>0){
+				data = weekHoursData!=null?weekHoursData:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEEK_HOURS.getName() );
+				data.setExpression(params.getWeekHours().toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(weekHoursData != null){
+					bean.remove(weekHoursData);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		try {
 			ContractData mondayHours = obtainContractData(contract, ContextVariable.MONDAY_HOURS.getName());
 //			if(params.getMondayHours()!=null){
@@ -1003,6 +1132,9 @@ public class ContractUtils implements Serializable {
 			params.setSuspensionCause(TLDCAUSS.getEnumByValue(map.get(ContextVariable.CONTRACT_END_CODE.getName())));
 		}
 		
+		if(map.get(ContextVariable.FULL_TIME.getName())!=null){
+			params.setRetaPartialTime(!new Boolean(map.get(ContextVariable.FULL_TIME.getName())));
+		}
 		// PART-TIME 
 		if(map.get(ContextVariable.MONDAY_HOURS.getName())!=null){
 			params.getWeekDayHours()[0] = (Double.parseDouble(map.get(ContextVariable.MONDAY_HOURS.getName())));
