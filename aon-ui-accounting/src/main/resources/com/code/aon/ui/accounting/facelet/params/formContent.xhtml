@@ -190,6 +190,19 @@
 				<f:selectItems value="#{accountCollections.prepaymentAccountsIds}" />
 			</aon:selectOneMenu>
 
+			<aon:outputLabel for="ACC_operations_deadline"
+				value="#{bundle.accounting_operations_deadline}" />
+			<aon:inputText id="ACC_operations_deadline" 
+				value="#{accAppParams.parameters['ACC_OPERATIONS_DEADLINE'].value}"
+				size="10" maxlength="10" />
+<!-- 
+			<aon:selectInputDate id="ACC_operations_deadline" 
+				value="#{accAppParams.parameters['ACC_OPERATIONS_DEADLINE'].value}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+				<f:converter converterId="aon.DateConverter" />
+			</aon:selectInputDate>
+ -->
 		</aon:panelGrid>
 	</aon:div>
 

@@ -3,9 +3,12 @@ package com.code.aon.config.util;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_PARAMETER_DOMAIN;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_PARAMETER_NAME;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,7 @@ import com.code.aon.ql.Criteria;
 public class AppParamUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AppParamUtil.class);
+	private static final String DATE_PATTERN = "dd/MM/yyyy"; 
 
 	public static ApplicationParameter getParameter( AppParam ap, Integer domainId ) {
 		try {
@@ -135,6 +139,23 @@ public class AppParamUtil {
 	
 	public static Integer getValueAsInteger( AppParam appParam ) {
 		return getValueAsInteger(appParam, null);
+	}
+	
+	public static Date getValueAsDate( AppParam appParam, Integer domainId ) {
+		String value = getValue(appParam, domainId);
+		if ( value != null ) {
+			try {
+				String[] patterns = {DATE_PATTERN};
+				return DateUtils.parseDateStrictly(value, patterns);
+			} catch ( ParseException e ) {
+				LOGGER.error( e.getMessage(), e );
+			}
+		}
+		return null;
+	}
+	
+	public static Date getValueAsDate( AppParam appParam ) {
+		return getValueAsDate(appParam, null);
 	}
 	
 }

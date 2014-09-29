@@ -16,6 +16,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -24,6 +25,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
@@ -137,6 +139,10 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
 		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
 			throw new ManagerBeanVetoListenerException("La Fecha de la Factura no es correcta.");
+		}
+		Date deadline = AppParamUtil.getValueAsDate(AppParam.ACC_OPERATIONS_DEADLINE, DomainManager.getCurrentDomain());
+		if (deadline != null && deadline.before(invoice.getIssueDate())) {
+			throw new ManagerBeanVetoListenerException("La Fecha de la Factura supera la Fecha Limite de Operaciones.");
 		}
 		if (StringUtils.isEmpty(invoice.getRegistryName())) {
 			invoice.setRegistryName(invoice.getRegistry().getFullName());
