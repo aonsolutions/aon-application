@@ -24,22 +24,20 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,17 +58,19 @@ public class DSIImportForm implements EntryPoint {
 	@UiField
 	TabLayoutPanel footTabPanel;
 	@UiField
+	TabLayoutPanel westTabPanel;
+	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	@UiField
 	MinimizePanel footPanel;
+	@UiField
+	VerticalPanel enterPanel;
 	@UiField
 	FileUpload fileUpload;
 	@UiField
 	Button sendButton;
 	@UiField
-	ScrollPanel sPanel;
-	@UiField
-	VerticalPanel vPanel;
+	HorizontalPanel hPanel;
 	@UiField
 	FlexTable layout;
 	@UiField
@@ -90,18 +90,14 @@ public class DSIImportForm implements EntryPoint {
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		Widget ui = binder.createAndBindUi(this);
-
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);		
-		sPanel.setVisible(false);
-
-		init();		
+		sendButton.setEnabled(false);
+		init();	
 	}
 
 	protected void init() {
 		
-		sPanel.setVisible(false);
-
 		dateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		
 		uploadFormPanel.setAction("/aon-aio/aon_gwt_connect/dsiimport");
@@ -121,27 +117,15 @@ public class DSIImportForm implements EntryPoint {
 
 	}
 
-	private void showEnterprisesList(JsArray<JsEmpres> empress) {
-
-		sPanel.getElement().getStyle().setBackgroundColor("#FFFFFF");
-		vPanel.add(createAdvancedForm(empress));
-		sPanel.setVisible(true);
-	}
-
-	private Widget createAdvancedForm(JsArray<JsEmpres> empress) {
+	private Widget createAdvancedForm(JsArray<JsEmpres> empress) throws Exception {
+		
 		FlexCellFormatter cellFormater = layout.getFlexCellFormatter();
 		layout.clear();
 		layout.getElement().getStyle().setBackgroundColor("#FFFFFF");
 
 		// Create some advanced options
 
-		CheckBox selectAll = new CheckBox();
-
-		selectAll.setTitle("Seleccionar todas");
-		
-		layout.setWidget(0, 0, selectAll);
-
-		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+/*		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 		String[] words = { "Vitoria", "Bilbao", "Pamplona", "San Sebastian",
 				"Santander" };
 		oracle.add(words[0]);
@@ -151,41 +135,27 @@ public class DSIImportForm implements EntryPoint {
 		
 		final SuggestBox suggest = new SuggestBox(oracle);
 		
-		layout.setWidget(0, 1, suggest);
+		layout.setWidget(0, 1, suggest);*/
 		Grid advancedOptions = new Grid(empress.length(), 2);		
 		advancedOptions.setCellSpacing(6);
 		
 		for(int i = 0; i < empress.length(); i ++) {
-			
 			advancedOptions.setWidget(i, 0, new CheckBox());
 			advancedOptions.setHTML(i, 1, empress.get(i).getRSocial());			
 		}
 
 		// Add advanced options to form in a disclosure panel
-
 		DisclosurePanel advancedDisclosure = new DisclosurePanel(
 				"Listado de Empresas: ");
 		advancedDisclosure.setOpen(true);
 		advancedDisclosure.setAnimationEnabled(true);
 		advancedDisclosure.setContent(advancedOptions);
-		layout.setWidget(3, 0, advancedDisclosure);
+		layout.setWidget(0, 0, advancedDisclosure);
 		cellFormater.setColSpan(3, 0, 2);
 
-		simplePanel.setWidget(layout);
-		return simplePanel;
-	}
-
-	private void showResultsPanel() {
-
-		InlineLabel resultsTab = new InlineLabel("Resultados");
-		resultsTab.addStyleName(AON.AON_ICON_TIME);
-		resultsTab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-
-		DSIImportForm.this.footTabPanel.add(DSIImportForm.this.resultsPanel,
-				resultsTab);
-
-		DSIImportForm.this.splitLayoutPanel.setWidgetSize(
-				DSIImportForm.this.footPanel, Window.getClientHeight() / 4);
+		//simplePanel.add(layout);
+		
+		return layout;
 	}
 
 	// ------------------------------------------------------------- UiHandlers
@@ -216,10 +186,19 @@ public class DSIImportForm implements EntryPoint {
 					public void onSuccess(JsArray<JsEmpres> empress) {
 						DSIImportForm.this.empress = empress;						
 						// TODO Loads and shows enterprises list.
-						showEnterprisesList(empress);
+					
+						if(empress != null)
+							try {
+								simplePanel.setWidget(createAdvancedForm(empress));
+							}catch(Exception ex) {
+								Window.alert("" + ex.getMessage() + ", " + ex.getCause());
+							}
+							
 						
+						sendButton.setEnabled(true);						
+						DSIImportForm.this.splitLayoutPanel.setWidgetSize(
+								DSIImportForm.this.westTabPanel, Window.getClientWidth() / 3);							
 					}
-
 				});
 	}
 
@@ -295,6 +274,8 @@ public class DSIImportForm implements EntryPoint {
 
 						});
 				if (result != null) {
+					DSIImportForm.this.splitLayoutPanel.setWidgetSize(
+							DSIImportForm.this.footPanel, Window.getClientHeight() / 3);					
 					results.add(result);
 				}
 			}
@@ -303,5 +284,5 @@ public class DSIImportForm implements EntryPoint {
 	}
 
 	// ------------------------------------------------------------------------
-
+	
 }

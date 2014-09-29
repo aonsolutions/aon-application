@@ -45,14 +45,10 @@ public class DSIImportResultsGrid extends CustomDataGrid<DSIImportResult> implem
 		public String getBranchIconStyle() {
 			return "";
 		}
-		
-		
-		
+				
 	}
 
-	public static class EnterpriseDSIImportResult extends DefaultDSIImportResult{
-
-		
+	public static class EnterpriseDSIImportResult extends DefaultDSIImportResult{		
 		
 		public EnterpriseDSIImportResult(String message) {
 			super(message);

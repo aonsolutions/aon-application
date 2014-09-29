@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.connect.client;
 
+
 public interface DSIImportResult {
 	
 	String getMessage();
@@ -9,6 +10,5 @@ public interface DSIImportResult {
 	String getLeafIconStyle();
 
 	String getBranchIconStyle();
-	
 
 }
