@@ -88,7 +88,7 @@
 					</requires>
                                         <mappings>
                                                 <mapping>
-							<filemode>644</filemode>
+							<filemode>755</filemode>
                                                         <directory>/etc/yum.repos.d</directory>
 							<sources>
 								<source>
