@@ -16,14 +16,16 @@
 	<aon:inputText id="RegistryAttachment_description" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 	
-	<aon:outputLabel for="RegistryAttachment_mimeType"
-		value="#{bundle.aon_type}" />
-	<aon:selectOneMenu id="RegistryAttachment_mimeType"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{commonCollections.mimeTypes}" />
-	</aon:selectOneMenu>		
+	<c:if test="#{!controller.serviconvenios}">
+		<aon:outputLabel for="RegistryAttachment_mimeType"
+			value="#{bundle.aon_type}" />
+		<aon:selectOneMenu id="RegistryAttachment_mimeType"
+			converter="aon.EnumConverter"
+			valueChangeListener="#{controller.addEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{commonCollections.mimeTypes}" />
+		</aon:selectOneMenu>
+	</c:if>		
 
 	<ui:include 
 		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
@@ -56,21 +58,21 @@
 				</a4j:repeat>
 			</a4j:region>
 		</aon:div>			
+
+		<aon:outputLabel for="RegistryAttachment_size-From"
+			value="#{bundle.aon_size} (KB)" />
+		<aon:div>
+			<aon:outputLabel for="RegistryAttachment_size-From" styleClass="aon-form-date-label aon-padding-right"
+				value="#{bundle.aon_date_from}:" />
+			<aon:inputText id="RegistryAttachment_size-From" size="10"
+				value="#{searchController.sizeFrom}" />
+	
+			<aon:outputLabel for="RegistryAttachment_size-To" styleClass="aon-form-date-label aon-padding-right"
+				value="#{bundle.aon_date_to}:" />
+			<aon:inputText id="RegistryAttachment_size-To" size="10"
+				value="#{searchController.sizeTo}" />
+		</aon:div>
 	</c:if>
-
-	<aon:outputLabel for="RegistryAttachment_size-From"
-		value="#{bundle.aon_size} (KB)" />
-	<aon:div>
-		<aon:outputLabel for="RegistryAttachment_size-From" styleClass="aon-form-date-label aon-padding-right"
-			value="#{bundle.aon_date_from}:" />
-		<aon:inputText id="RegistryAttachment_size-From" size="10"
-			value="#{searchController.sizeFrom}" />
-
-		<aon:outputLabel for="RegistryAttachment_size-To" styleClass="aon-form-date-label aon-padding-right"
-			value="#{bundle.aon_date_to}:" />
-		<aon:inputText id="RegistryAttachment_size-To" size="10"
-			value="#{searchController.sizeTo}" />
-	</aon:div>
 		
 	<aon:outputLabel for="RegistryAttachment_attachDate-From"
 		value="#{bundle.aon_date}" />
@@ -89,15 +91,17 @@
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
-						
-	<c:if test="#{aonRole.confidentiality}">
-		<aon:outputLabel for="RegistryAttachment_securityLevel"
-			value="#{bundle.aon_confidential}" />
-		<aon:selectOneRadio id="RegistryAttachment_securityLevel" 
-			valueChangeListener="#{controller.addExpression}" >
-			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
-			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
-		</aon:selectOneRadio>
+			
+	<c:if test="#{!controller.serviconvenios}">
+		<c:if test="#{aonRole.confidentiality}">
+			<aon:outputLabel for="RegistryAttachment_securityLevel"
+				value="#{bundle.aon_confidential}" />
+			<aon:selectOneRadio id="RegistryAttachment_securityLevel" 
+				valueChangeListener="#{controller.addExpression}" >
+				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+			</aon:selectOneRadio>
+		</c:if>
 	</c:if>
 
 </ui:composition>
