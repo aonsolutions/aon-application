@@ -68,7 +68,7 @@
 					<release>${buildNumber}</release>
 					<copyright>2009, esferalia Networks S.A</copyright>
 					<requires>
-						<require>java-1.7.0-openjdk</require>
+						<require>java</require>
 						<require>xorg-x11-server-Xvfb</require>
 					</requires>
 
