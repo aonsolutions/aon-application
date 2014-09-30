@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoiceDetail" pageWidth="535" pageHeight="842" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -16,12 +16,19 @@
 	<field name="taxableBase" class="java.lang.Double"/>
 	<field name="sourceTo" class="com.code.aon.common.IHeaderObject"/>
 	<field name="deliverySource" class="java.lang.Boolean"/>
+	<field name="invoice" class="com.code.aon.finance.Invoice"/>
 	<variable name="invoiceTotal" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 	</variable>
 	<variable name="printDiscountPriceApplied" class="java.lang.Boolean">
 		<variableExpression><![CDATA[$P{printDiscountPriceApplied}!=null?$P{printDiscountPriceApplied}:false]]></variableExpression>
 		<initialValueExpression><![CDATA[$P{printDiscountPriceApplied}!=null?$P{printDiscountPriceApplied}:false]]></initialValueExpression>
+	</variable>
+	<variable name="deliveryCustomer" class="com.code.aon.customer.Customer" resetType="Group" resetGroup="deliveryGroup">
+		<variableExpression><![CDATA[($F{deliverySource} && $F{sourceTo} != null)?
+(((com.code.aon.warehouse.Delivery)$F{sourceTo}).getCustomer()):null]]></variableExpression>
+		<initialValueExpression><![CDATA[($F{deliverySource} && $F{sourceTo} != null)?
+(((com.code.aon.warehouse.Delivery)$F{sourceTo}).getCustomer()):null]]></initialValueExpression>
 	</variable>
 	<group name="deliveryGroup">
 		<groupExpression><![CDATA[$F{sourceTo}.getReferenceCode()]]></groupExpression>
@@ -44,7 +51,7 @@
 					<textFieldExpression><![CDATA[$R{aon_invoice_delivery} + ": " + $F{sourceTo}.getReferenceCode()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-1" positionType="Float" x="100" y="0" width="76" height="14">
+					<reportElement key="textField-1" positionType="Float" x="116" y="0" width="60" height="14">
 						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="0" rightPadding="0">
@@ -57,6 +64,38 @@
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{sourceTo}.getDate()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement key="textField-1" positionType="Float" x="176" y="0" width="359" height="14">
+						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" rightPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{invoice}.getRegistry().getId().equals($V{deliveryCustomer}.getId())?"":
+"("+$V{deliveryCustomer}.getRegistry().getFullName()+")"
+]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement key="textField-1" positionType="Float" x="100" y="0" width="16" height="14">
+						<printWhenExpression><![CDATA[$F{deliverySource} && $F{sourceTo} != null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" rightPadding="0">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report_from}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
