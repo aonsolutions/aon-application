@@ -82,9 +82,7 @@
 
 	<managed-bean>
 		<managed-bean-name>surveyQuestionListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -98,22 +96,6 @@
 					<value>id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>surveyChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.ChildControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>masterBean</property-name>
-			<value>survey</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterPropertyName</property-name>
-			<value>survey</value>
 		</managed-property>
 	</managed-bean>
 
@@ -176,6 +158,23 @@
 			<value>surveyQuestion</value>
 		</managed-property>
 		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>survey</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>survey.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>SurveyQuestion_position</value>
 		</managed-property>										
@@ -185,7 +184,6 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{surveyChildListener}</value>
 				<value>#{surveyQuestionControllerListener}</value>
 				<value>#{surveyWorkflowListener}</value>
 			</list-entries>
@@ -202,9 +200,7 @@
 
 	<managed-bean>
 		<managed-bean-name>surveyWorkflowListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -221,29 +217,11 @@
 		</managed-property>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>surveyQuestionChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.ChildControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>masterBean</property-name>
-			<value>surveyQuestion</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterPropertyName</property-name>
-			<value>surveyQuestion</value>
-		</managed-property>
-	</managed-bean>
-
 	<!--  **** SURVEY WORKFLOW **** -->
 
 	<managed-bean>
 		<managed-bean-name>surveyWorkflow</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -254,14 +232,22 @@
 			<value>surveyWorkflow</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{surveyQuestionChildListener}</value>
-			</list-entries>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>surveyQuestion</value>
 		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>surveyQuestion.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
 	</managed-bean>
 
 	<!-- ************ SURVEY RESPONSE ************** -->

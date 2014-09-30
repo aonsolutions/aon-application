@@ -17,14 +17,14 @@ import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the offer maintenance.
  */
-public class SurveyQuestionController extends BasicController implements IMarketingConstants {
+public class SurveyQuestionController extends LinesController implements IMarketingConstants {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

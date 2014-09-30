@@ -9,9 +9,8 @@
 	<aon:panelGroup id="surveyWorkflowWindow">
 		<c:if test="#{surveyQuestion.showSurveyWorkflowWindow}">
 			<rich:modalPanel id="surveyWorkflowModalPanel"
-				rendered="#{surveyQuestion.showSurveyWorkflowWindow}"
-				showWhenRendered="true" minHeight="390" height="390" width="680"
-				top="50">
+				showWhenRendered="#{surveyQuestion.showSurveyWorkflowWindow}"
+				minHeight="390" height="390" width="680" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.marketing_survey_workflows}" />
