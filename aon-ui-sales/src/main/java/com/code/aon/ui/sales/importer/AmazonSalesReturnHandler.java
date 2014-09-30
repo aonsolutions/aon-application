@@ -125,9 +125,10 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 			Sales sourceSales = sourceSalesList.get(0);
 			
 			String comments = AonUtil.getMessage("sales_return_over", amazonSales.getPurchaseReference());
+			comments += StringUtils.isNotBlank(amazonSales.getObservation())?amazonSales.getObservation():"";
 			Sales sales = salesUtils.createSales(serie, sourceSales.getSeller(), 
 					sourceSales.getCustomer(), sourceSales.getProject(), sourceSales.getWorkPlace(), 
-					DocumentType.ITEM_RETURN, sourceSales.getIssueDate(), sourceSales.getDiscountExpression(), 
+					DocumentType.ITEM_RETURN, amazonSales.getIssueDate(), sourceSales.getDiscountExpression(), 
 					sourceSales.getNumberOfPayments(), sourceSales.getDaysToFirstPayment(), sourceSales.getDaysBetweenPayments(), 
 					sourceSales.getPaymentDays(), sourceSales.getPayMethod(), sourceSales.getBankAccount(), 
 					sourceSales.getBankAlias(), sourceSales.getBic(), comments, sourceSales.getRemarks(), 
@@ -232,6 +233,7 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 				}
 				List<Sales> sales = ImporterUtils.obtainSales(amazonOrderId);
 				amazonSales.setRepeated(sales.size()>1);
+				amazonSales.setObservation(line[returnDate_col]);
 				if(sales.size()>0){
 					amazonSales.setSeller(sales.get(0).getSeller());
 					amazonSales.setCustomer(sales.get(0).getCustomer());
