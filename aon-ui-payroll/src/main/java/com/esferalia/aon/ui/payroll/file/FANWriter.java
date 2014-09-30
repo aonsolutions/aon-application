@@ -608,51 +608,7 @@ public class FANWriter implements Serializable {
 					createEDLBa41Segment(salary, dat);
 					createEDLBa42Segment(salary, dat);
 					
-					List<ITransferObject> bonusList = getSalaryBonuses(salary);
-					if (bonusList!=null && !bonusList.isEmpty()) {
-						SalaryBonus bonus = null;
-						BonusType bonusType = null;
-						for(ITransferObject to: bonusList){
-							bonus = (SalaryBonus) to;
-							bonusType = obtainBonusType(bonus);
-							if(bonus!=null && bonusType != null){
-								if(bonusType==BonusType.SOCIAL_SECURITY){
-									createEDLCd07Segment(bonus, dat);
-								} else if(bonusType==BonusType.EMPLOYMENT_PROMOTION){
-									createEDLCd22Segment(bonus, dat);
-								} else if(bonusType==BonusType.CEUTA_MELILLA){
-									createEDLCd20Segment(bonus, dat);
-								} else if(bonusType==BonusType.HANDICAP){
-									createEDLCd13Segment(bonus, dat);
-								} else if(bonusType==BonusType.LAW_19_94){
-									createEDLCd12Segment(bonus, dat);
-								} else if(bonusType==BonusType.DISTANCE_FORMATION){
-									createEDLCd11Segment(bonus, dat);
-								} else if(bonusType==BonusType.CLASSROOM_FORMATION){
-									createEDLCd10Segment(bonus, dat);
-								} else if(bonusType==BonusType.ERE){
-									createEDLCd28Segment(bonus, dat);
-								} else if(bonusType==BonusType.ENCOURAGED_INDUSTRIAL_SECTOR){
-									createEDLCd23Segment(bonus, dat);
-								} else if(bonusType==BonusType.GT_60){
-								} else if(bonusType==BonusType.EXEMPTION_GT30_CHILD){
-									createEDLCd25Segment(bonus, dat);
-								} else if(bonusType==BonusType.REDUCTION_RIGHT_CONTRACT){
-									createEDLCd06Segment(bonus, dat);
-								} else if(bonusType==BonusType.REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT){
-									createEDLCd17Segment(bonus, dat);
-								} else if(bonusType==BonusType.REDUCTION_FARMER_COMMON_CONTINGENCY){
-									createEDLCd29Segment(bonus, dat);
-								} else if(bonusType==BonusType.REDUCTION_FARMER_UNEMPLOYMENT){
-									createEDLCd30Segment(bonus, dat);
-								} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
-									createEDLCd31Segment(bonus, dat);
-								}
-							} else if(bonus!=null && bonusType==null) {
-								createEDLCd07Segment(bonus, dat);
-							}
-						}
-					}
+					createBonusSegment(salary, dat);
 						
 				} else {				
 					if (isContractLeave(contract)) {
@@ -663,6 +619,7 @@ public class FANWriter implements Serializable {
 						createEDLBa02Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
 						createEDLCd01Segment(salary, dat);
 						createEDLCd03Segment(salary, dat);
+						createBonusSegment(salary, dat);
 					}
 				}
 			}
@@ -682,6 +639,54 @@ public class FANWriter implements Serializable {
 			}
 		}
 		
+	}
+	
+	private void createBonusSegment(Salary salary, DAT dat){
+		List<ITransferObject> bonusList = getSalaryBonuses(salary);
+		if (bonusList!=null && !bonusList.isEmpty()) {
+			SalaryBonus bonus = null;
+			BonusType bonusType = null;
+			for(ITransferObject to: bonusList){
+				bonus = (SalaryBonus) to;
+				bonusType = obtainBonusType(bonus);
+				if(bonus!=null && bonusType != null){
+					if(bonusType==BonusType.SOCIAL_SECURITY){
+						createEDLCd07Segment(bonus, dat);
+					} else if(bonusType==BonusType.EMPLOYMENT_PROMOTION){
+						createEDLCd22Segment(bonus, dat);
+					} else if(bonusType==BonusType.CEUTA_MELILLA){
+						createEDLCd20Segment(bonus, dat);
+					} else if(bonusType==BonusType.HANDICAP){
+						createEDLCd13Segment(bonus, dat);
+					} else if(bonusType==BonusType.LAW_19_94){
+						createEDLCd12Segment(bonus, dat);
+					} else if(bonusType==BonusType.DISTANCE_FORMATION){
+						createEDLCd11Segment(bonus, dat);
+					} else if(bonusType==BonusType.CLASSROOM_FORMATION){
+						createEDLCd10Segment(bonus, dat);
+					} else if(bonusType==BonusType.ERE){
+						createEDLCd28Segment(bonus, dat);
+					} else if(bonusType==BonusType.ENCOURAGED_INDUSTRIAL_SECTOR){
+						createEDLCd23Segment(bonus, dat);
+					} else if(bonusType==BonusType.GT_60){
+					} else if(bonusType==BonusType.EXEMPTION_GT30_CHILD){
+						createEDLCd25Segment(bonus, dat);
+					} else if(bonusType==BonusType.REDUCTION_RIGHT_CONTRACT){
+						createEDLCd06Segment(bonus, dat);
+					} else if(bonusType==BonusType.REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT){
+						createEDLCd17Segment(bonus, dat);
+					} else if(bonusType==BonusType.REDUCTION_FARMER_COMMON_CONTINGENCY){
+						createEDLCd29Segment(bonus, dat);
+					} else if(bonusType==BonusType.REDUCTION_FARMER_UNEMPLOYMENT){
+						createEDLCd30Segment(bonus, dat);
+					} else if(bonusType==BonusType.REDUCTION_FLAT_RATE_RDL03_2014){
+						createEDLCd31Segment(bonus, dat);
+					}
+				} else if(bonus!=null && bonusType==null) {
+					createEDLCd07Segment(bonus, dat);
+				}
+			}
+		}
 	}
 	
 	private Double getITBase(Salary salary) {
