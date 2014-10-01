@@ -4,22 +4,21 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationUser;
-import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.admin.controller.DomainController;
-import com.code.aon.ui.admin.controller.IAdminConstants;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -153,10 +152,10 @@ public class UserApplicationInfo implements Serializable {
 		Expression expr1 = ExpressionUtilities.getEqualExpression("Profile.domain<id", da.getDomain());
 		Expression expr2 = ExpressionUtilities.getNullExpression("Profile.domain");
 		Expression expr3 = ExpressionUtilities.getOrExpression(expr1, expr2);
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_CONTROLLER_NAME);
-		Domain parent = dc.getParentDomain();
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		Integer parent = ds.getParentDomainId();
 		if ( parent != null ) {
-			Expression expr4 = ExpressionUtilities.getEqualExpression("Profile.domain<id", parent.getId());
+			Expression expr4 = ExpressionUtilities.getEqualExpression("Profile.domain<id", parent);
 			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr3, expr4));
 		} else {
 			criteria.addExpression(expr3);

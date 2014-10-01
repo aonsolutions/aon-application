@@ -78,9 +78,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		if (iterator.hasNext()) {
 			Integer pd = (Integer) iterator.next();
 			setParentDomain( pd == null ? domain : null );
-			return domain;
+		} else {
+			domain = null;
 		}
-		return null;
+		HibernateUtil.closeSession(sessionFactoryName);
+		return domain;
 	}
 
 	public List<IDomainChangeListener> getListenerClasses() {
@@ -179,6 +181,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		for( Object o : query.list() ) {
 			scopes.add( ((UserScope) o).getScope().getId() );
 		}
+		HibernateUtil.closeSession(sessionFactoryName);
 		return scopes;
 	}
 	
@@ -216,6 +219,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 				Domain dom = (Domain) iterator.next();
 				domains.add(dom);	
 			}
+			HibernateUtil.closeSession(sessionFactoryName);
 		} 
 		setModel(new SerializableListDataModel(domains));
 	}
@@ -232,6 +236,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 			sb.append(getDomainWhere());
 			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(sb.toString());
 			BigInteger count = (BigInteger) query.uniqueResult();
+			HibernateUtil.closeSession(sessionFactoryName);
 			return count.intValue();	
 		}
 		return 0;
@@ -275,6 +280,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		String name = (String) query
 				.addScalar("description", Hibernate.STRING)
 				.uniqueResult();
+		HibernateUtil.closeSession(sessionFactoryName);
 		setDomainName(name);
 	}
 	
@@ -319,7 +325,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		String sfn = HibernateUtil.getSessionFactoryName();
 		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
 		query.setInteger(0, domainId);
-		return (DomainType) query.uniqueResult();
+		DomainType type = (DomainType) query.uniqueResult();
+		HibernateUtil.closeSession(sfn);
+		return type;
 	}
 
 	@Override

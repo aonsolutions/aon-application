@@ -53,8 +53,8 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
 			AuditController ac = (AuditController) AonUtil.getRegisteredBean(AUDIT_CONTROLLER_NAME);
 			Integer appId = ac.getApplication().getId();
-	    	String name = HibernateUtil.getSessionFactoryName();
-	        Session session = HibernateUtil.getSession(name);
+	    	String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+	        Session session = HibernateUtil.getSession(sessionFactoryName);
 	        Criteria criteria = session.createCriteria(ActionEntry.class);
 	        criteria
 	        	.createAlias("action", "aeAction" )
@@ -72,6 +72,7 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 	        }
 	        LOGGER.info( "Criteria: " + criteria );
 	        List<?> actions = criteria.list();
+	        HibernateUtil.closeSession(sessionFactoryName);
 	        if (! actions.isEmpty() ) {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();
 		        for( Object o : actions ) {

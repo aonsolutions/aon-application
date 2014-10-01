@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
@@ -32,6 +33,8 @@ public abstract class BasicChangePasswordController implements Serializable {
 	
 	private String confirmPassword;
 	
+	private String backAction;
+	
 	public BasicChangePasswordController() {
 		this.principal = AonUtil.getAuthPrincipal();
 		this.to = UserUtils.getInstance().getLoggedUser();
@@ -46,6 +49,7 @@ public abstract class BasicChangePasswordController implements Serializable {
 		setPassword(null);
 		setNewPassword(null);
 		setConfirmPassword(null);
+		setBackAction(null);
 	}	
 	
 	protected abstract void updatePassword( String newPassword );
@@ -100,5 +104,20 @@ public abstract class BasicChangePasswordController implements Serializable {
 	protected AuthPrincipal getPrincipal() {
 		return principal;
 	}
+
+	public String getBackAction() {
+		return backAction;
+	}
+
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+	
+	public String backAction() {
+		if ( this.backAction == null ) {
+			return ICommonConstants.HOME_ACTION;
+		}
+		return backAction;
+	}	
 	
 }

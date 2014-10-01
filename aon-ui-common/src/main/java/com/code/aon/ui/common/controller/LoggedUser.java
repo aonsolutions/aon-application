@@ -16,6 +16,10 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class LoggedUser implements Serializable {
 
+	private static final String COMPANY_CLASS = "com.code.aon.company.Company";
+
+	private static final String USER_CLASS = "com.code.aon.config.User";
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	/** The logged. */
@@ -44,7 +48,8 @@ public class LoggedUser implements Serializable {
      * @param principal the principal
      */
     private void initVariables( AuthPrincipal principal ) {
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName("com.code.aon.config.User")); 
+    	String sessionFactoryName = HibernateUtil.getSessionFactoryName(USER_CLASS);
+		Session session = HibernateUtil.getSession(sessionFactoryName); 
 		if ( principal.getUserId() != null ) {
 			Query query = session.createQuery("SELECT name FROM User u WHERE u.id = ?");
 			query.setInteger(0, principal.getUserId());
@@ -57,15 +62,17 @@ public class LoggedUser implements Serializable {
     		Query query = session.createQuery(q).setMaxResults(1);
 			this.userName = (String) query.uniqueResult();
 		}
+		HibernateUtil.closeSession(sessionFactoryName);
 		if ( StringUtils.isEmpty(this.userName) ) {
     		this.userName = principal.getShortName();	
 		}
 
 		if (principal.getDomainId() != null) {
-    		String sessionFactoryName = HibernateUtil.getSessionFactoryName("com.code.aon.company.Company");
+    		sessionFactoryName = HibernateUtil.getSessionFactoryName(COMPANY_CLASS);
     		String q = "SELECT name FROM Company c  WHERE c.domain = ?";
     		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q).setMaxResults(1);
 			this.companyName = (String) query.setInteger(0, principal.getDomainId()).uniqueResult();
+			HibernateUtil.closeSession(sessionFactoryName);
 		}
     }
 

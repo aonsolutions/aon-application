@@ -378,11 +378,18 @@ public class CommonUtil {
 	@SuppressWarnings("unchecked")
 	public static String getDomainName(int domainId) {
 		String stmt = "SELECT name FROM domain as domain WHERE domain.id = :domainId";
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		SQLQuery query = session.createSQLQuery(stmt);
-		query.setInteger("domainId", domainId);
-		List<Object> list = query.list();
-		return !list.isEmpty() ? query.list().get(0).toString() : null;
+		String domainName = null;
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		try {
+			Session session = HibernateUtil.getSession(sessionFactoryName);
+			SQLQuery query = session.createSQLQuery(stmt);
+			query.setInteger("domainId", domainId);
+			List<Object> list = query.list();
+			domainName = !list.isEmpty() ? query.list().get(0).toString() : null;			
+		} finally {
+			HibernateUtil.closeSession(sessionFactoryName);	
+		}
+		return domainName;
 	}
 
 }

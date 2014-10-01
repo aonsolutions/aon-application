@@ -19,16 +19,17 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.Session;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
@@ -43,6 +44,7 @@ import com.code.aon.groupware.FavoriteCategory;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.TaskHolder;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.UserIdCheckUtil;
@@ -244,12 +246,17 @@ public class DomainUserController extends BasicController {
 	public String getActiveUsersMessage() {
 		return AonUtil.getMessage(ICommonMessages.ACTIVE_USERS, getNumberOfActiveUsers());		
 	}
+	
+	private Domain getDomain() {
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		return dc.getDomain();
+	}
 
 	public String getDetailMessage() {
 		String message = getActiveUsersMessage();
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		if ( dc.getDomain().getMaxDefinedUsers() != null ) {
-			message += ", " + AonUtil.getMessage(ICommonMessages.MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
+		Domain domain = getDomain();
+		if ( domain.getMaxDefinedUsers() != null ) {
+			message += ", " + AonUtil.getMessage(ICommonMessages.MAXIMUM_NUMBER_USERS, domain.getMaxDefinedUsers());
 		}
 		return message;
 	}
@@ -259,8 +266,7 @@ public class DomainUserController extends BasicController {
 	}
 	
 	public boolean isSkipUserReset() {
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		Domain domain = dc.getDomain();
+		Domain domain = getDomain();
 		if ( domain.getMaxDefinedUsers() != null ) {
 			return getNumberOfActiveUsers() >= domain.getMaxDefinedUsers();
 		}
@@ -361,6 +367,16 @@ public class DomainUserController extends BasicController {
 			((TaskHolder) to).setUser(null);
 			bean.update(to);
 		}
+	}
+	
+	public boolean isShowUserProfile() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		return principal.getUserDomainId().equals(DomainManager.getCurrentDomain());
+	}
+	
+	public void onInitUserProfile( ActionEvent event ) throws ManagerBeanException {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		select(event, principal.getUserId());
 	}
 	
 }

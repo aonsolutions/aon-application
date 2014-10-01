@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.lob.SerializableBlob;
 
 import com.code.aon.AonVersion;
@@ -41,12 +42,14 @@ public class ParentDomainController implements Serializable {
 		query.setInteger(0, domain);
 		query.addScalar("parent", Hibernate.INTEGER);
 		setDomain( (Integer) query.uniqueResult() );
+		HibernateUtil.closeSession(sessionFactoryName);
 
 		sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
+		Session session = HibernateUtil.getSession(sessionFactoryName);
 		q = "SELECT r.name FROM company c, registry r"
 				+ " WHERE c.domain = ? AND r.domain = ?"
 				+ " AND c.registry = r.id LIMIT 1";
-		query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+		query = session.createSQLQuery(q);
 		query.setInteger(0, domain).setInteger(1, domain);
 		query.addScalar("name", Hibernate.STRING);
 		setName( (String) query.uniqueResult() );
@@ -54,7 +57,7 @@ public class ParentDomainController implements Serializable {
 		q = "SELECT r.value FROM company c, rmedia r"
 				+ " WHERE c.domain = ? AND r.domain = ?"
 				+ " AND c.registry = r.registry AND r.media = 1 LIMIT 1";
-		query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+		query = session.createSQLQuery(q);
 		query.setInteger(0, domain).setInteger(1, domain);
 		query.addScalar("value", Hibernate.STRING);
 		setPhone((String) query.uniqueResult() );
@@ -62,10 +65,11 @@ public class ParentDomainController implements Serializable {
 		q = "SELECT r.value FROM company c, rmedia r"
 				+ " WHERE c.domain = ? AND r.domain = ?" 
 				+ " AND c.registry = r.registry AND r.media = 4 LIMIT 1";
-		query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+		query = session.createSQLQuery(q);
 		query.setInteger(0, domain).setInteger(1, domain);
 		query.addScalar("value", Hibernate.STRING);
 		setEmail((String) query.uniqueResult() );
+		HibernateUtil.closeSession(sessionFactoryName);
 		resolved = true;
 	}
 	
@@ -92,6 +96,7 @@ public class ParentDomainController implements Serializable {
 					IOUtils.copy(blob.getBinaryStream(), out);	
 				}
 			}
+			HibernateUtil.closeSession(sessionFactoryName);
 		}
 	}
 	

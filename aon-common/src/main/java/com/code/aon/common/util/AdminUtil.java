@@ -24,18 +24,32 @@ public class AdminUtil {
 		return HibernateUtil.getSession(sessionFactoryName).createQuery(query);		
 	}
 	
+	public static void closeSession() {
+		HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());				
+	}
+	
 	public static Integer getDomainApplication( Integer domain, Integer application ) {
-		Query query = getQuery("SELECT id FROM DomainApplication da WHERE da.active = true and da.domain = ? and da.application = ?");
-		query.setInteger(0, domain).setInteger(1, application);
-		return (Integer) query.uniqueResult();
+		Integer domainApplication = null;
+		try {
+			Query query = getQuery("SELECT id FROM DomainApplication da WHERE da.active = true and da.domain = ? and da.application = ?");
+			query.setInteger(0, domain).setInteger(1, application);
+			domainApplication = (Integer) query.uniqueResult();			
+		} finally {
+			closeSession();
+		}
+		return domainApplication;
 	}
 		
 	private static Integer getApplicationUserEx( Integer domain, Integer user, Integer application ) {
 		Integer domainApplication = getDomainApplication(domain, application);
 		if ( domainApplication != null ) {
-			Query query = getQuery("SELECT id FROM ApplicationUser au WHERE au.active = true and au.domainApplication = ? and au.user = ?");
-			query.setInteger(0, domainApplication).setInteger(1, user);
-			return (Integer) query.uniqueResult();				
+			try {
+				Query query = getQuery("SELECT id FROM ApplicationUser au WHERE au.active = true and au.domainApplication = ? and au.user = ?");
+				query.setInteger(0, domainApplication).setInteger(1, user);
+				return (Integer) query.uniqueResult();								
+			} finally {
+				closeSession();
+			}
 		}
 		return null;
 	}
@@ -54,16 +68,28 @@ public class AdminUtil {
 	
 	@SuppressWarnings("unchecked")
 	public static List<Integer> getProfiles( Integer applicationUser ) {
-		Query query = getQuery("SELECT profile.id FROM ApplicationUserProfile aup WHERE aup.applicationUser = ?");
-		query.setInteger(0, applicationUser);
-		return query.list();
+		List<Integer> profiles = null;
+		try {
+			Query query = getQuery("SELECT profile.id FROM ApplicationUserProfile aup WHERE aup.applicationUser = ?");
+			query.setInteger(0, applicationUser);
+			profiles = query.list();			
+		} finally {
+			closeSession();
+		}
+		return profiles;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List<String> getProfileRoles( Integer profile ) {
-		Query query = getQuery("SELECT pr.applicationRole.role.name FROM ProfileRole pr WHERE pr.profile = ?");
-		query.setInteger(0, profile );
-		return query.list();
+		List<String> profileRoles = null;
+		try {
+			Query query = getQuery("SELECT pr.applicationRole.role.name FROM ProfileRole pr WHERE pr.profile = ?");
+			query.setInteger(0, profile );
+			profileRoles = query.list();			
+		} finally {
+			closeSession();	
+		}
+		return profileRoles;
 	}
 
 	public static String encodeSHA( String value ) {
@@ -78,26 +104,50 @@ public class AdminUtil {
 	}	
 	
 	public static String getUserPassword( Integer user ) {
-		Query query = getQuery("SELECT password FROM User u WHERE u.id = ?");
-		query.setInteger(0, user);
-		return (String) query.uniqueResult();		
+		String password = null;
+		try {
+			Query query = getQuery("SELECT password FROM User u WHERE u.id = ?");
+			query.setInteger(0, user);
+			password = (String) query.uniqueResult();			
+		} finally {
+			closeSession();	
+		}
+		return password;
 	}
 
 	public static Integer getParentDomain( Integer domainId ) {
-		Query query = getQuery("SELECT parent.id FROM Domain d WHERE d.id = ?");
-		query.setInteger(0, domainId);
-		return (Integer) query.uniqueResult();
+		Integer parentDomain = null;
+		try {
+			Query query = getQuery("SELECT parent.id FROM Domain d WHERE d.id = ?");
+			query.setInteger(0, domainId);
+			parentDomain = (Integer) query.uniqueResult();
+		} finally {
+			closeSession();	
+		}
+		return parentDomain;
 	}
 
 	public static Integer getAdminDomain() {
-		Query query = getQuery("SELECT id FROM Domain d WHERE d.type = 5");
-		return (Integer) query.uniqueResult();
+		Integer adminDomain = null;
+		try {
+			Query query = getQuery("SELECT id FROM Domain d WHERE d.type = 5");
+			adminDomain = (Integer) query.uniqueResult();			
+		} finally {
+			closeSession();	
+		}
+		return adminDomain;
 	}
 
 	public static Integer getCompanyId( Integer domainId ) {
-		Query query = getQuery("SELECT id FROM Company c WHERE c.domain = ?");
-		query.setInteger(0, domainId);
-		return (Integer) query.uniqueResult();
+		Integer companyId = null;
+		try {
+			Query query = getQuery("SELECT id FROM Company c WHERE c.domain = ?");
+			query.setInteger(0, domainId);
+			companyId = (Integer) query.uniqueResult();			
+		} finally {
+			closeSession();	
+		}
+		return companyId;
 	}
 	
 }

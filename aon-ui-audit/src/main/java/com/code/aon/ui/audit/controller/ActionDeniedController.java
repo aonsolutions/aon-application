@@ -432,7 +432,9 @@ public class ActionDeniedController implements Serializable {
 	public static List<Module> getProfileDeniedModules( Integer profile ) {
 		Query query = AdminUtil.getQuery("SELECT pmd.module FROM ProfileModuleDenied pmd WHERE pmd.profile = ?");
 		query.setInteger(0, profile );
-		return query.list();
+		List<Module> modules = query.list();
+		AdminUtil.closeSession();
+		return modules;
 	}
 	
 	private List<Integer> getProfiles( User user ) {

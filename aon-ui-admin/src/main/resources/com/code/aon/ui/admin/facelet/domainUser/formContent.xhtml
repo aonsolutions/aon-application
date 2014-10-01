@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:form id="domainUserForm">
+	
+		<c:if test="#{userProfileView}" >
+			<aon:methodParam name="saveAction" value="domainUser_profile" />
+		</c:if>
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{bundle.admin_users}" />
+			<ui:param name="controller" value="#{domainUser}" />
+			<ui:param name="skipRemoveButton" value="#{userProfileView}" />
+			<ui:param name="skipBackButton" value="#{userProfileView}" />
+			<ui:param name="skipSearchButton" value="#{userProfileView}" />
+			<ui:param name="skipResetButton" value="#{userProfileView or domainUser.skipUserReset}" />
+			<ui:param name="removeConfirmMessage" value="#{bundle.admin_domain_user_remove_confirm}" />
+			<ui:define name="beforeSpinToolbarContent">
+				<c:if test="#{!userProfileView}" >
+					<aon:commandButton id="resetPassword"
+						value="#{bundle.admin_reset_password}"
+						actionListener="#{domainUser.onResetPassword}" immediate="true"
+						rendered="#{!domainUser.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities">
+						<aon:actionListener method="#{saveActionListener}" />
+					</aon:commandButton>				
+					<aon:commandButton id="changePasswordAdmin"
+						value="#{bundle.admin_change_password}"
+						actionListener="#{domainUser.onShowChangePasswordWindow}"
+						reRender="showChangePasswordWindow"  immediate="true"
+						rendered="#{(!domainUser.new) and aonRole.sysAdmin}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities">
+					</aon:commandButton>
+				</c:if>
+				<c:if test="#{userProfileView}" >
+					<aon:commandButton id="changePassword"
+						value="#{bundle.admin_change_password}"
+						action="changePassword_form"
+						actionListener="#{changePassword.onInit}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities">
+						<f:setPropertyActionListener value="domainUser_profile"
+							target="#{changePassword.backAction}"  />
+					</aon:commandButton>
+				</c:if>
+			</ui:define>								
+		</ui:decorate>
+
+		<aon:div styleClass="aon-scroll-area">
+
+			<aon:panelGrid columns="4"
+				columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto,
+					aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-auto">
+
+				<aon:outputLabel for="User_login"
+					value="#{bundle.aon_login}" />
+				<h:panelGrid styleClass="aon-nomargin">
+					<aon:inputText id="User_login"
+						size="20" maxlength="16" required="true" 
+						validator="#{domainUser.idCheck}"
+						value="#{domainUser.to.login}" />
+					<aon:outputText value="#{bundle.admin_user_init_password}"
+						styleClass="aon-margin-left"
+						rendered="#{domainUser.new}" />							
+				</h:panelGrid>
+				
+				<aon:outputLabel for="User_toolbar"
+					value="#{bundle.admin_user_toolbar}" />
+				<aon:selectOneMenu id="User_toolbar" 
+					value="#{domainUser.to.toolbar}">
+					<f:selectItems value="#{configCollections.toolbars}" />
+				</aon:selectOneMenu>											
+			
+				<aon:outputLabel for="User_name"
+					value="#{bundle.aon_name}" />
+				<aon:inputText id="User_name"
+					size="55" maxlength="64" required="true" 
+					value="#{domainUser.to.name}" />
+										
+				<aon:outputText for="User_pageLimit"
+					value="#{bundle.aon_row_number}"/>
+				<aon:selectOneMenu id="User_pageLimit" 
+					value="#{domainUser.to.pageLimit}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{commonCollections.pageLimits}" />
+				</aon:selectOneMenu>
+
+				<aon:outputText for="User_locale"
+					value="#{bundle.aon_locale}"/>
+				<aon:selectOneMenu id="User_locale" 
+					value="#{domainUser.to.locale}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{aonConfiguration.localeList}" />
+				</aon:selectOneMenu>					
+
+				<aon:outputText for="User_linesPageLimit"
+					value="#{bundle.aon_row_number_lines}"/>
+				<aon:selectOneMenu id="User_linesPageLimit" 
+					value="#{domainUser.to.linesPageLimit}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{commonCollections.pageLimits}" />
+				</aon:selectOneMenu>
+				
+				<c:if test="#{!domainUser.new}" >
+					<aon:outputText for="User_initAction"
+						value="#{bundle.admin_user_init_action}"/>
+					<aon:selectOneMenu id="User_initAction" 
+						value="#{domainUser.to.initAction}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{actionDenied.actionList}" />
+					</aon:selectOneMenu>
+				</c:if>			
+												
+				<c:if test="#{!userProfileView}" >
+					<aon:outputLabel for="User_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="User_active"
+						disabled="#{!domainUser.userActivable}" 
+						value="#{domainUser.to.active}" />
+				</c:if>
+
+				<c:if test="#{aonRole.sysAdmin}" >						
+					<aon:outputLabel for="User_passwordExpiration"
+						value="#{bundle.admin_password_expiration}" />
+					<aon:selectInputDate id="User_passwordExpiration" 
+						value="#{domainUser.to.passwordExpiration}"
+						timeZone="#{timeZoneController.timeZone}" inputSize="20"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
+				</c:if>								
+			
+			</aon:panelGrid>
+			
+			<c:if test="#{aonRole.sysAdmin}" >
+				<aon:div styleClass="aon-margin-top">
+					<aon:panelGrid columns="2"
+						columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
+	
+						<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
+							<ui:param name="lookupBean" value="#{registryLookup}" />
+							<ui:param name="lookupTo" value="#{domainUserSearch.registry}" />
+							<ui:param name="lookupLabel" value="#{bundle.aon_entity}"/>
+							<ui:param name="skipGoToButton" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+						
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>					
+								
+					</aon:panelGrid>
+				</aon:div>
+			</c:if>
+
+			<c:if test="#{!domainUser.new}" >
+                   
+				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
+                   
+					<aon:panelTab name="applications" label="#{bundle.admin_profiles}"
+						rendered="#{!userProfileView and (domainUser.applicationsInfoSize &gt; 0)}">
+						<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/applications.xhtml" />						
+                    </aon:panelTab>
+                   
+					<aon:panelTab name="userWorkGroups" rendered="#{!userProfileView}"
+						label="#{bundle.config_workgroup_module}">
+						<ui:include src="/com/code/aon/ui/admin/facelet/userWorkgroup/form.xhtml" />						
+                    </aon:panelTab>
+
+					<aon:panelTab name="scopes"  rendered="#{!userProfileView}"
+						label="#{bundle.config_scopes}">
+						<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" />
+                    </aon:panelTab>
+                    
+					<aon:panelTab name="deniedOptions" rendered="#{!userProfileView}"
+						label="#{bundle.audit_option_denied_module}">
+						<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
+							<ui:param name="controller" value="#{actionDenied}" />
+						</ui:include>
+                    </aon:panelTab>
+
+					<aon:panelTab name="contacts"
+						label="#{bundle.aon_contacts}">						
+						<ui:include src="/com/code/aon/ui/webmail/facelet/contact/grid.xhtml" >
+							<ui:param name="controller" value="#{mailConfig.contact}" />
+						</ui:include>						
+                    </aon:panelTab>
+		
+					<aon:panelTab name="mailAccount"
+						label="#{bundle.webmail_mailAccount}">
+						<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
+							<ui:param name="controller" value="#{mailConfig.mailAccount}" />
+						</ui:include>						
+                    </aon:panelTab>
+
+					<aon:panelTab name="signature"
+						label="#{bundle.webmail_signature}">
+						<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
+							<ui:param name="controller" value="#{mailConfig.signature}" />
+						</ui:include>						
+                    </aon:panelTab>
+
+				</aon:panelTabSet>					
+
+			</c:if>
+
+		</aon:div>
+	</aon:form>
+
+	<c:if test="#{aonRole.sysAdmin}" >
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" />
+	</c:if>
+	<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />
+		
+</ui:composition>

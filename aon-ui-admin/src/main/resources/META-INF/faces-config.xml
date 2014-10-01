@@ -542,6 +542,10 @@
 			<from-outcome>domainUser_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/domainUser/search.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainUser_profile</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/domainUser/userProfile.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 	<!-- =================== Domain Application ================= -->

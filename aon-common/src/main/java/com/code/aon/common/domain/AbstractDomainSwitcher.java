@@ -124,6 +124,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher, Seriali
 			enableHeredity = (Boolean) arr[3];
 			type = (Integer) arr[4];
 		}
+		HibernateUtil.closeSession(sessionFactoryName);
 	}
 	
 }

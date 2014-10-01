@@ -57,7 +57,9 @@ public class AuditManager implements IAuditConstants {
 	
 	private static User getUser( Integer userId ) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		return (User) HibernateUtil.getSession(sessionFactoryName).get(User.class, userId);
+		User user = (User) HibernateUtil.getSession(sessionFactoryName).get(User.class, userId);
+		HibernateUtil.closeSession(sessionFactoryName);
+		return user;
 	}
 	
 	private static void insertSession( HttpSession httpSession, Session session, AuditLevel level ) throws ManagerBeanException {
@@ -132,6 +134,7 @@ public class AuditManager implements IAuditConstants {
 			DomainApplication dp = (DomainApplication) iterator.next();
 			level = dp.getAuditLevel();
 		}
+		HibernateUtil.closeSession(sessionFactoryName);
 		return level;
 	}	
 	
@@ -178,7 +181,9 @@ public class AuditManager implements IAuditConstants {
 		String sfn = HibernateUtil.getSessionFactoryName();
 		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.domainManagement FROM Domain d WHERE d.id = ?");
 		query.setInteger(0, domainId);
-		return (Boolean) query.uniqueResult();		
+		Boolean available = (Boolean) query.uniqueResult();
+		HibernateUtil.closeSession(sfn);
+		return available;
 	}
 	
 	public static List<Module> getVisibleModules( Integer domainId, Integer applicationId ) throws ManagerBeanException {

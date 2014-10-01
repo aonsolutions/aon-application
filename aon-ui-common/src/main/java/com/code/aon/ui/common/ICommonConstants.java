@@ -63,6 +63,8 @@ public interface ICommonConstants {
 	/** Logout action listener. */
 	String ON_LOGOUT = "onLogout";
 	
+	String HOME_ACTION = "home";
+	
 	String FAVICON_NAME = "favicon.ico";
 
 	String LOGIN_LOGO_NAME = "aon-login-logo";

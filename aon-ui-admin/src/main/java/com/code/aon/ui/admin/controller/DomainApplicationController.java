@@ -69,6 +69,7 @@ public class DomainApplicationController extends BasicController {
 		for (Object id : query.list()) {
 			users.add( (Integer) id );
 		}
+		HibernateUtil.closeSession(sessionFactoryName);
 		return users;
 	}	
 		
@@ -82,7 +83,9 @@ public class DomainApplicationController extends BasicController {
 		Session session = HibernateUtil.getSession(sessionFactoryName);
 		Query query = session.createQuery("FROM User u WHERE u.active = true and u.domain = ?");
 		query.setInteger(0, domain);
-		return query.list();
+		List<User> users = query.list();
+		HibernateUtil.closeSession(sessionFactoryName);
+		return users;
 	}
 	
 	public void updateAvailableUsers( Integer domain ) {
