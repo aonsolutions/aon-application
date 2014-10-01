@@ -3,9 +3,7 @@ package com.esferalia.aon.accounting.mining.shared;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
-public class AccMiningParameters implements Serializable, IsSerializable{
+public class AccMiningParameters implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
