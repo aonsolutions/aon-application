@@ -92,12 +92,18 @@
 									style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 									<f:validateLength maximum="1024" />
 								</aon:inputTextarea>
-								<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-									actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description"
-									rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-								<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-									actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description"
-									rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+								<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
+									value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+									styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+									rendered="#{controller.longDescription and controller.to.item.product.code != null}"
+									actionListener="#{controller.onShortDescription}" 
+									reRender="invoiceDetailItemEdit" ajaxSingle="true" />
+								<aon:commandLink id="InvoiceDetail_description_long" immediate="true"
+									value="&#160;" title="#{bundle.aon_edit}"
+									styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+									rendered="#{!controller.longDescription and controller.to.item.product.code != null}"
+									actionListener="#{controller.onLongDescription}"
+									reRender="invoiceDetailItemEdit" ajaxSingle="true" />
 							</aon:panelGroup>
 							<f:facet name="footer">
 								<aon:div>
@@ -123,12 +129,18 @@
 											style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 											<f:validateLength maximum="1024" />
 										</aon:inputTextarea>
-										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-											actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description-New"
-											rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-											actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description-New"
-											rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+										<aon:commandLink id="InvoiceDetail_description_short-New" immediate="true"
+											value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+											styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+											rendered="#{controller.longDescription and controller.to.item.product.code != null}"
+											actionListener="#{controller.onShortDescription}" 
+											reRender="invoiceDetailItemNew" ajaxSingle="true" />
+										<aon:commandLink id="InvoiceDetail_description_long-New" immediate="true"
+											value="&#160;" title="#{bundle.aon_edit}"
+											styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+											rendered="#{!controller.longDescription and controller.to.item.product.code != null}"
+											actionListener="#{controller.onLongDescription}"
+											reRender="invoiceDetailItemNew" ajaxSingle="true" />
 									</aon:panelGroup>
 								</aon:div>
 							</f:facet>
