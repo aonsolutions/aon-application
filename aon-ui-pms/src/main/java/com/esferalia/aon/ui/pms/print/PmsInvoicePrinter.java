@@ -28,17 +28,27 @@ public class PmsInvoicePrinter implements IReservationConstants {
 	}
 
 	public Enterprise getEnterprise(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		Enterprise enterprise = invoiceDetail.getWorkPlace().getEnterprise();
 		if (!FinanceUtil.isValidLimitDate(invoiceDetail.getInvoice().getIssueDate())) {
 			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), invoiceDetail.getWorkPlace().getEnterprise().getId());
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), enterprise.getId());
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), OLD_COMPANY);
 			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-				RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
-				return (Enterprise)BeanManager.getManagerBean(Enterprise.class).get(rAddInfo.getValue());
+				Integer oldCompanyId = null;
+				try {
+					oldCompanyId = Integer.valueOf(((RegistryAddInfo)ito).getValue());
+				} catch (NumberFormatException ex) {
+				}
+				if (oldCompanyId != null) {
+					Enterprise oldEnterprise = (Enterprise)BeanManager.getManagerBean(Enterprise.class).get(oldCompanyId);
+					if (oldEnterprise != null) {
+						enterprise = oldEnterprise;
+					}
+				}
 			}
 		}
-		return invoiceDetail.getWorkPlace().getEnterprise();
+		return enterprise;
 	}
 
 	public Hotel getHotel(Integer invoiceId) throws ManagerBeanException {
