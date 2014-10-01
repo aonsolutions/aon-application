@@ -16,6 +16,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Warehouse;
@@ -30,6 +31,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+		checkLimitDate(invoiceDetail.getInvoice());
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
 			if (invoiceDetail.getItem().getProduct().isInventoriable()) {
@@ -45,6 +47,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+		checkLimitDate(invoiceDetail.getInvoice());
 		if (invoiceDetail.isUpdateEnabled() && invoiceDetail.getItem() != null) {
 			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
 			try {
@@ -58,10 +61,17 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+		checkLimitDate(invoiceDetail.getInvoice());
 		try {
 			removeInvoiceTax(invoiceDetail);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+		}
+	}
+
+	private void checkLimitDate(Invoice invoice) throws ManagerBeanVetoListenerException {
+		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+			throw new ManagerBeanVetoListenerException("La Fecha de la Factura rebasa la Fecha Limite de Operaciones.");
 		}
 	}
 

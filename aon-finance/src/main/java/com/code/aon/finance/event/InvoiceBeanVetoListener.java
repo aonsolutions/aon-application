@@ -16,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -25,7 +24,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
@@ -37,6 +35,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -107,7 +106,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				}
 				invoice.setReferenceCode(referenceCode);
 			}
-			if (checkInvoiceDate(invoice)) {
+			if (changeTaxDate(invoice)) {
 				invoice.setTaxDate(invoice.getIssueDate());
 			}
 		}
@@ -116,6 +115,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
+		checkLimitDate(invoice);
 		try {
 			if (isRemovable(invoice)) {
 				removeFinanceTrackings(invoice);
@@ -135,15 +135,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void checkInvoice(Invoice invoice) throws ManagerBeanVetoListenerException {
-		int thisYear = CommonUtil.getYear(new Date());
-		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
-		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
-			throw new ManagerBeanVetoListenerException("La Fecha de la Factura no es correcta.");
-		}
-		Date deadline = AppParamUtil.getValueAsDate(AppParam.ACC_OPERATIONS_DEADLINE, DomainManager.getCurrentDomain());
-		if (deadline != null && deadline.before(invoice.getIssueDate())) {
-			throw new ManagerBeanVetoListenerException("La Fecha de la Factura supera la Fecha Limite de Operaciones.");
-		}
+		checkLimitDate(invoice);
+		checkInvoiceYear(invoice);
 		if (StringUtils.isEmpty(invoice.getRegistryName())) {
 			invoice.setRegistryName(invoice.getRegistry().getFullName());
 		}
@@ -152,6 +145,20 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		if (invoice.isDefaultTaxInfo()) {
 			fillDefaultTaxInfo(invoice);
+		}
+	}
+
+	private void checkLimitDate(Invoice invoice) throws ManagerBeanVetoListenerException {
+		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+			throw new ManagerBeanVetoListenerException("La Fecha de la Factura rebasa la Fecha Limite de Operaciones.");
+		}
+	}
+
+	private void checkInvoiceYear(Invoice invoice) throws ManagerBeanVetoListenerException {
+		int thisYear = CommonUtil.getYear(new Date());
+		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
+		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
+			throw new ManagerBeanVetoListenerException("El Año de la Factura no es correcto.");
 		}
 	}
 
@@ -179,7 +186,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         }
 	}
 
-	private boolean checkInvoiceDate(Invoice invoice) throws ManagerBeanVetoListenerException {
+	private boolean changeTaxDate(Invoice invoice) throws ManagerBeanVetoListenerException {
     	if (invoice.getTaxDate() == null) {
     		return true;
     	}

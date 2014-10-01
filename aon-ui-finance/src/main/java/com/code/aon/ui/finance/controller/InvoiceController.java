@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_E
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_UNRECORD_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.GENERATE_FINANCES_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
@@ -27,11 +28,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -52,6 +53,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -748,7 +750,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
-		
+		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -785,6 +791,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Invoice invoice = getInvoice();
+		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);

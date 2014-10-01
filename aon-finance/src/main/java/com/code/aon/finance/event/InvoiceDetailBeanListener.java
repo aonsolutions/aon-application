@@ -14,6 +14,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.enumeration.WithholdingType;
+import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
@@ -22,6 +23,7 @@ import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -241,17 +243,20 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
 			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
 
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice.setUpdateEnabled(false);
 			invoice.setTaxableBase(taxableBase);
 			invoice.setVatQuota(vatQuota);
 			invoice.setRetentionQuota(retentionQuota);
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
-
 			if (!skipServiceProcess) {
 				invoice.setService(isServiceInvoice(invoice, taxableBase));	
 			}
-			invoiceBean.update(invoice);
+
+			try {
+				FinanceUtil.updateInvoiceTotals(invoice);
+			} catch (AonSQLException ex) {
+				throw new ManagerBeanException(ex.getMessage());
+			}
 		}
 	}
 

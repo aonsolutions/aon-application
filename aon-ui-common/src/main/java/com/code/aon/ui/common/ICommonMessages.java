@@ -301,6 +301,7 @@ public interface ICommonMessages {
 	String FINANCE_CUSTOMER_REQUIRED_ERROR = "finance_customer_required_error";
 	String FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING = "finance_duplicate_purchase_invoice_warning";
 	String FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING = "finance_duplicate_expense_invoice_warning";
+	String FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR = "finance_operation_deadline_overflow_error";
 	String FINANCE_POS_OPENED = "finance_pos_opened";
 	String FINANCE_POS_CATALOGUE_ERROR = "finance_pos_catalogue_error";
 	String FINANCE_PREPAYMENTS = "finance_prepayments";

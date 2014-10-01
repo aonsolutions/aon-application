@@ -103,8 +103,8 @@
 		<variableExpression><![CDATA[(($F{comments}!=null) ? $F{comments} : "") + (($F{rectifier}||$F{rectified}) ? (($F{comments}!=null && !"".equals($F{comments}.trim())) ? "\n" : "") + (($F{rectifier}) ? ($R{finance_invoice_rectifier_message} + " " + $F{rectificationInvoice}.getReferenceCode()) : ($F{rectified}) ? ($R{finance_invoice_rectified_message} + " " + $F{rectificationInvoicesString}) : "") : "")]]></variableExpression>
 	</variable>
 	<variable name="enterprise" class="com.code.aon.company.Enterprise" resetType="None">
-		<variableExpression><![CDATA[((com.code.aon.finance.InvoiceDetail)$F{detailList}.get(0)).getWorkPlace().getEnterprise()]]></variableExpression>
-		<initialValueExpression><![CDATA[((com.code.aon.finance.InvoiceDetail)$F{detailList}.get(0)).getWorkPlace().getEnterprise()]]></initialValueExpression>
+		<variableExpression><![CDATA[$P{pmsInvoicePrinter}.getEnterprise((com.code.aon.finance.InvoiceDetail)$F{detailList}.get(0))]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{pmsInvoicePrinter}.getEnterprise((com.code.aon.finance.InvoiceDetail)$F{detailList}.get(0))]]></initialValueExpression>
 	</variable>
 	<variable name="hotel" class="com.esferalia.aon.pms.Hotel" resetType="None">
 		<variableExpression><![CDATA[$P{pmsInvoicePrinter}.getHotel($F{id})]]></variableExpression>

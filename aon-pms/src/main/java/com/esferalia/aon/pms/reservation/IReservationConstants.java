@@ -55,6 +55,7 @@ public interface IReservationConstants {
 	String SERVICE_ALIAS = "ALIAS";
 	String SERVICE_BREAKDOWN = "SERVICE_BREAKDOWN";
 	String AGENCY_COMMISSION = "AGENCY_COMMISSION";
+	String OLD_COMPANY = "OLD_COMPANY";
 
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";

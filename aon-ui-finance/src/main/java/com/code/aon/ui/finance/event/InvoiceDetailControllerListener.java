@@ -81,12 +81,6 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		try {
-			invoiceDetail.setInvoice(controller.getInvoice());
-			controller.getMasterController().getManagerBean().restoreNullSubPOJOs(invoiceDetail.getInvoice());
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException(ex.getMessage());
-		}
 		invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
 		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 			fillPosWorkPlace(event, invoiceDetail);
@@ -96,12 +90,6 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		try {
-			controller.getMasterController().getManagerBean().initializePOJO(invoiceDetail.getInvoice());
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException(ex.getMessage());
-		}
 		controller.initializeModel();
 		refreshInvoiceData(controller);
 	}
@@ -114,26 +102,8 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
-	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		try {
-			invoiceDetail.setInvoice(controller.getInvoice());
-			controller.getMasterController().getManagerBean().restoreNullSubPOJOs(invoiceDetail.getInvoice());
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException(ex.getMessage());
-		}
-	}
-
-	@Override
 	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		try {
-			controller.getMasterController().getManagerBean().initializePOJO(invoiceDetail.getInvoice());
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException(ex.getMessage());
-		}
 		refreshInvoiceData(controller);
 	}
 
