@@ -505,7 +505,7 @@ public class ConvenLoader extends AbstractLoader implements
 		//@formatter:on
 	}
 
-	private int getExtraConcept() {
+	private Integer getExtraConcept() {
 		//@formatter:off
 		Record1<Integer> record1=
 		aonContext
