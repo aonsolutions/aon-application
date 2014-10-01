@@ -3,6 +3,7 @@ package com.esferalia.aon.accounting.mining.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+
 public class AccMiningParameters implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
