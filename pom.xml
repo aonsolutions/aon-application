@@ -11,12 +11,13 @@
 
 	<properties>
 		<compileSource>1.6</compileSource>
+		<compileTarget>1.6</compileTarget>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
 		<jasperReportsVersion>5.1.0</jasperReportsVersion>
 		<jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
 		<jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
-		<jasperreportsMavenPluginVersion>7.20-SNAPSHOT</jasperreportsMavenPluginVersion>
+		<jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
 		<maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
 
@@ -384,7 +385,7 @@
 				<version>2.5.1</version>
 				<configuration>
 					<source>${compileSource}</source>
-					<target>1.6</target>
+					<target>${compileTarget}</target>
 					<encoding>ISO-8859-1</encoding>
 				</configuration>
 			</plugin>
