@@ -934,9 +934,6 @@
 										<copyright>2009, esferalia Networks S.A</copyright>
 										<requires>
 											<require>tomcat6</require>
-											<!-- CONFIRMAR -->
-											<require>java-1.7.0-openjdk</require>
-
 											<require>mysql-connector-java</require>
 											<require>slf4j</require>
 
