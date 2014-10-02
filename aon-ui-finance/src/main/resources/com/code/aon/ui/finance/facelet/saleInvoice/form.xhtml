@@ -179,12 +179,12 @@
 								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}" />
 								<ui:param name="sfc_numberReset" value="#{saleInvoice.new}" />								
 								<ui:define name="additionalSeriesContent">
-									<aon:commandButton id="invoiceNextNumber" 
+									<aon:commandButton id="invoiceNextNumber" immediate="#{true}"
 										title="#{bundle.finance_invoice_find_next_number}"
 										styleClass="aon-icon-commandButton aon-icon-ambito"
 										rendered="#{sfc_editable}" value="&#160;"
 										actionListener="#{saleInvoice.onFindNextFreeNumber}"
-										reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
+										reRender="Invoice_number" ajaxSingle="true">
 									</aon:commandButton>															
 								</ui:define>
 							</ui:decorate>

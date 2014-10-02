@@ -101,7 +101,7 @@ public class SaleInvoiceController extends InvoiceController {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		while (true) {
 			Criteria criteria = new Criteria();
-			if (getInvoice().getSeries() == null) {
+			if (StringUtils.isBlank(getInvoice().getSeries())) {
 				criteria.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 			} else {
 				criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), getInvoice().getSeries());
