@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin.event;
 
+import static com.code.aon.ui.admin.controller.DomainUserController.FAVORITES;
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 
@@ -50,6 +51,14 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		DomainUserController duc = (DomainUserController) event.getController();
 		duc.resetPassword( duc.getDomainUser() );
 		duc.getIdCheck().setOldValue( duc.getDomainUser().getLogin() );
+		beforeUpdteInitAction(duc);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainUserController duc = (DomainUserController) event.getController();
+		beforeUpdteInitAction(duc);
 	}
 
 	@Override
@@ -89,6 +98,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			updateDeniedOptions(user);
 			updateScopes(user);
 			updateWorkGroups(user);
+			afterGetInitAction(duc);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -116,4 +126,17 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		uwgc.init(user);
 	}	
 		
+	private void afterGetInitAction( DomainUserController duc ) {
+		if ( FAVORITES.equals(duc.getDomainUser().getInitAction()) ) {
+			duc.getDomainUser().setInitAction(null);
+			duc.setShowFavorites(true);
+		}
+	}
+
+	private void beforeUpdteInitAction( DomainUserController duc ) {
+		if ( duc.isShowFavorites() ) {
+			duc.getDomainUser().setInitAction(FAVORITES);
+		}
+	}
+	
 }

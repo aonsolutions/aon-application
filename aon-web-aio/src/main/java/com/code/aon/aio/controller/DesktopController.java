@@ -170,18 +170,20 @@ public class DesktopController implements Serializable {
 	}
 
 	public boolean isShowGraphicsPortlet() {
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		if ( ds.isChildDomain() ) {
-			if ( getState().isFiscalEnabled() ||
-				getState().isPayrollEnabled() ||
-				getState().isDocumentalEnabled()) {
-				return true;
-			}
-			if ( getState().isFiscalInfoVisibleForPortal() ||
-				getState().isPayrollInfoVisibleForPortal() ||
-				getState().isDocumentalInfoVisibleForPortal() ) {
-				return true;
-			}
+		if (! getState().isShowFavorites() ) {
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			if ( ds.isChildDomain() ) {
+				if ( getState().isFiscalEnabled() ||
+					getState().isPayrollEnabled() ||
+					getState().isDocumentalEnabled()) {
+					return true;
+				}
+				if ( getState().isFiscalInfoVisibleForPortal() ||
+					getState().isPayrollInfoVisibleForPortal() ||
+					getState().isDocumentalInfoVisibleForPortal() ) {
+					return true;
+				}
+			}			
 		}
 		return false;
 	}

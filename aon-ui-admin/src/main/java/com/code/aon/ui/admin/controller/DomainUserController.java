@@ -65,6 +65,8 @@ public class DomainUserController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserController.class);
 	
+	public final static String FAVORITES = "[FAVORITES]";
+	
 	private boolean showChangePasswordWindow;
 	
 	private String newPassword;
@@ -76,6 +78,8 @@ public class DomainUserController extends BasicController {
 	private UserIdCheckUtil idCheck;
 	
 	private List<UserApplicationInfo> applicationInfos;
+	
+	private boolean showFavorites;
 	
 	public DomainUserController() {
 		this.idCheck = new UserIdCheckUtil();
@@ -377,6 +381,14 @@ public class DomainUserController extends BasicController {
 	public void onInitUserProfile( ActionEvent event ) throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		select(event, principal.getUserId());
+	}
+
+	public boolean isShowFavorites() {
+		return showFavorites;
+	}
+
+	public void setShowFavorites(boolean showFavorites) {
+		this.showFavorites = showFavorites;
 	}
 	
 }

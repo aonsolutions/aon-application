@@ -108,11 +108,24 @@
 				<c:if test="#{!domainUser.new}" >
 					<aon:outputText for="User_initAction"
 						value="#{bundle.admin_user_init_action}"/>
-					<aon:selectOneMenu id="User_initAction" 
-						value="#{domainUser.to.initAction}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{actionDenied.actionList}" />
-					</aon:selectOneMenu>
+					<h:panelGrid id="userInitActionDiv">
+						<aon:selectOneMenu id="User_initAction"
+							reRender="userInitActionDiv" 
+							disabled="#{domainUser.showFavorites}"
+							value="#{domainUser.to.initAction}" >
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{actionDenied.actionList}" />
+						</aon:selectOneMenu>
+						<aon:panelGroup>
+							<aon:selectBooleanCheckbox id="User_showFavorites"
+								reRender="userInitActionDiv"
+								disabled="#{domainUser.to.initAction != null}"
+								value="#{domainUser.showFavorites}">
+							</aon:selectBooleanCheckbox>
+							<aon:outputLabel for="User_showFavorites"
+								value="#{bundle.admin_user_show_favorites}" />
+						</aon:panelGroup>
+					</h:panelGrid>														
 				</c:if>			
 												
 				<c:if test="#{!userProfileView}" >

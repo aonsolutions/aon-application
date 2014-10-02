@@ -1,5 +1,6 @@
 package com.code.aon.aio;
 
+import static com.code.aon.ui.admin.controller.DomainUserController.FAVORITES;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -95,6 +96,7 @@ public class DesktopState implements Serializable {
     private boolean patchInitAction;
     private int portalValue;
     private boolean userWithPortalView;
+    private boolean showFavorites;
     private int externalApplicationsValue;
 	
     public DesktopState() {
@@ -169,7 +171,11 @@ public class DesktopState implements Serializable {
 			controller.setHideHeaderContent(true);
 			this.initOption = new BasicOption(COMPANY_CONTROLLER_NAME, COMPANY_CONTROLLER_NAME);
 		} else if (! StringUtils.isEmpty(user.getInitAction()) ) {
-			this.initOption = getOption(user.getInitAction());	
+			if ( FAVORITES.equals(user.getInitAction()) ) {
+				setShowFavorites(true);
+			} else {
+				this.initOption = getOption(user.getInitAction());	
+			}	
 		}
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		String value = ctx.getExternalContext().getInitParameter(PATCH_INIT_ACTION);
@@ -582,6 +588,14 @@ public class DesktopState implements Serializable {
 
 	public String getDEHOnlinePassword() {
 		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD);		
+	}
+
+	public boolean isShowFavorites() {
+		return showFavorites;
+	}
+
+	public void setShowFavorites(boolean showFavorites) {
+		this.showFavorites = showFavorites;
 	}
 	
 }
