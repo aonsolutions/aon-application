@@ -27,7 +27,13 @@
 			<artifactId>aon.config</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency>  	
+			<dependency>
+            <groupId>com.code.aon</groupId>             
+            <artifactId>aon.google.apis</artifactId>
+            <version>${project.version}</version>
+          	<scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>

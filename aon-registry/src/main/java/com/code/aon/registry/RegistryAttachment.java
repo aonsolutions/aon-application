@@ -34,6 +34,7 @@ import com.code.aon.common.dao.hibernate.BlobEntityListener;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RegistryAttachmentDB;
@@ -160,12 +161,16 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	@Override
 	@Transient
 	public Serializable getReference() {
+	
 		return getId();
 	}
 
 	@Override
 	@Transient
 	public IBlobManager getManager() {
+		if ( getDriveId() != null ) {
+			return DriveUtils.getInstace();
+		}
 		return HibernateBlobManager.getInstance();
 	}
 
