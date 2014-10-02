@@ -179,7 +179,7 @@ public class AdminUtil {
 			SQLQuery query = session.createSQLQuery(stmt);
 			query.setInteger("domainId", domainId);
 			List<Object> list = query.list();
-			domainType = !list.isEmpty() ? (Integer)query.list().get(0) : null;			
+			domainType = !list.isEmpty() ? ((Byte)query.list().get(0)).intValue() : null;			
 		} finally {
 			HibernateUtil.closeSession(sessionFactoryName);	
 		}
