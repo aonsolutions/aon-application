@@ -29,7 +29,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
@@ -78,6 +77,8 @@ public class DomainUserController extends BasicController {
 	private UserIdCheckUtil idCheck;
 	
 	private List<UserApplicationInfo> applicationInfos;
+	
+	private boolean skipDomain;
 	
 	private boolean showFavorites;
 	
@@ -373,14 +374,24 @@ public class DomainUserController extends BasicController {
 		}
 	}
 	
-	public boolean isShowUserProfile() {
-		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		return principal.getUserDomainId().equals(DomainManager.getCurrentDomain());
-	}
+	@Override
+	public void clearCriteria() throws ManagerBeanException {
+		super.clearCriteria();
+		getCriteria().setSkipDomainFilter(this.skipDomain);
+	}	
 	
 	public void onInitUserProfile( ActionEvent event ) throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		this.skipDomain = true;
 		select(event, principal.getUserId());
+	}
+
+	public boolean isSkipDomain() {
+		return skipDomain;
+	}
+
+	public void setSkipDomain(boolean skipDomain) {
+		this.skipDomain = skipDomain;
 	}
 
 	public boolean isShowFavorites() {

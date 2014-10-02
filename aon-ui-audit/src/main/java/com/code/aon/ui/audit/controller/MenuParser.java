@@ -45,6 +45,8 @@ public class MenuParser {
 	
 	public static final String AON_COMMAND_LINK = "aon:commandLink";
 	
+	public static final String AON_MENU_ITEM = "aon:menuItem";
+	
 	public static final String A4J_COMMAND_LINK = "a4j:commandLink";
 		
 	private static final String AON_OUTPUTTEXT = "aon:outputText";
@@ -90,6 +92,8 @@ public class MenuParser {
 	private static final String CATEGORY_EXPRESSION = "#{category}";
 	
 	public static final String MENU_ACTION_PREFFIX = "menu_";
+	
+	private static final String CONFIG_MENU_PREFFIX = "config_";
 	
 	private ApplicationOptionController controller;
 	
@@ -202,6 +206,34 @@ public class MenuParser {
 		for ( Element element : list ) {
 			parseCategory(element);
         }		
+		parseMenuItems(document);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void parseMenuItems( Document document ) {
+		this.group = new OptionGroup(category, "#{bundle.aon_general}");
+		this.group.setId("config_general");
+		this.group.setStyleClass(HEADER_CLASS_ATTRIBUTE);	
+		List<Element> list = document.selectNodes("//" + AON_MENU_ITEM );
+		for ( Element element : list ) {
+			parseMenuItem(element);
+        }				
+	}
+	
+	private void updateMenuItemXml( ApplicationOption option ) {
+		String xml = StringUtils.replace(option.getXml(), AON_MENU_ITEM, AON_COMMAND_LINK);
+		option.setXml(xml);
+	}
+	
+	private void parseMenuItem( Element menuItem ) {
+		String id = getId(menuItem);
+		if ( StringUtils.startsWith(id, CONFIG_MENU_PREFFIX) ) {
+			ApplicationOption option = getApplicationOption(menuItem);
+			if ( option != null ) {
+				updateMenuItemXml(option);
+				addOption(option);
+			}												
+		}
 	}
 
 	private void parseCategory( Element element ) {

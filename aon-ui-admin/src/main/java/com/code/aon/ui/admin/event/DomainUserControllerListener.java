@@ -31,6 +31,13 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserControllerListener.class);
 	
 	@Override
+	public void beforeEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainUserController duc = (DomainUserController) event.getController();
+		duc.setSkipDomain(false);
+	}
+
+	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();

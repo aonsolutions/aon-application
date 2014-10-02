@@ -146,8 +146,8 @@
 				rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 				value="#{bundle.admin_advanced_mode}" />
 		</c:if>
-		<aon:menuItem id="userProfile" action="domainUser_profile"
-			iconClass="aon-icon-menu-user" rendered="#{domainUser.showUserProfile}"
+		<aon:menuItem id="config_userProfile" action="domainUser_profile"
+			iconClass="aon-icon-menu-user"
 			actionListener="#{domainUser.onInitUserProfile}"
 			value="#{bundle.admin_user_profile}" />
 		<aon:menuItem id="changePassword" action="changePassword_form"

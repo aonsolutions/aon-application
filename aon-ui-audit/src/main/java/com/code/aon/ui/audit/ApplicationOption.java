@@ -17,8 +17,6 @@ public class ApplicationOption extends BasicOption {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	public static final String AON_MENU_ITEM = "aon:menuItem";
-
 	private static final DateFormat RECENT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy - HH:mm");
 		
 	private static final String ID_ATTRIBUTE_PATTERN = "id=\"" + ID_PATTERN + "\"";
@@ -45,7 +43,7 @@ public class ApplicationOption extends BasicOption {
 	}
 
 	public String getMenuItemXml( String prefix ) {
-		return StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, AON_MENU_ITEM);
+		return StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, MenuParser.AON_MENU_ITEM);
 	}
 	
 	public String getRecentXml( Date date ) {

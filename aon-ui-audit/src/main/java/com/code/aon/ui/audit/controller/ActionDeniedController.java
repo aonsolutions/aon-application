@@ -400,6 +400,15 @@ public class ActionDeniedController implements Serializable {
 			}				
 		}
 	}
+
+	public void renderedMenuItem( UIComponent component, UIComponent parent ) {
+		if ( component.isRendered() ) {
+			String action = getAction( (UICommand) component );
+			if ( this.deniedActionsMap.containsKey(action) ) {
+				component.setRendered(false);
+			}				
+		}
+	}
 	
 	public void renderedGroup( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {

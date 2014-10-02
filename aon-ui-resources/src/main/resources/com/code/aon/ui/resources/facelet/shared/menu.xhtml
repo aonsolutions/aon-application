@@ -59,7 +59,11 @@
 									action="alarm_list" actionListener="#{alarm.onInit}" 
 									iconClass="aon-icon-alarm" />
 							</c:if>	
-			                <ui:insert name="beforeHelpMenuContent"/>
+							<aon:componentGroup
+								family="org.richfaces.DropDownMenu"
+								method="#{actionDenied.renderedMenuItem}">
+				                <ui:insert name="beforeHelpMenuContent"/>
+							</aon:componentGroup>
 			                <aon:menuGroup
 			                	rendered="#{!aonConfiguration.properties.hideMenuChooseLanguage}"
 			                	value="#{bundle.aon_chooseLocale}">
