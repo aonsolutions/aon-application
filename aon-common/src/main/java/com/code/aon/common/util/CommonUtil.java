@@ -5,13 +5,8 @@ import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 /**
  * Clase CommonUtil para incluir metodos utiles comunes a los proyectos Aon-ui y
@@ -373,23 +368,6 @@ public class CommonUtil {
 		month = (month * 6) + 5; 
 		Date tmp = getDate(getYear(date), month, getDay(date));
 		return getMonthLastDay(tmp);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static String getDomainName(int domainId) {
-		String stmt = "SELECT name FROM domain as domain WHERE domain.id = :domainId";
-		String domainName = null;
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
-		try {
-			Session session = HibernateUtil.getSession(sessionFactoryName);
-			SQLQuery query = session.createSQLQuery(stmt);
-			query.setInteger("domainId", domainId);
-			List<Object> list = query.list();
-			domainName = !list.isEmpty() ? query.list().get(0).toString() : null;			
-		} finally {
-			HibernateUtil.closeSession(sessionFactoryName);	
-		}
-		return domainName;
 	}
 
 }

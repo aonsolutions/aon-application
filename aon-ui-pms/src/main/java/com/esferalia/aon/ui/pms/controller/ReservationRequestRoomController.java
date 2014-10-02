@@ -12,14 +12,14 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.AonVersion;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -62,7 +62,7 @@ public class ReservationRequestRoomController extends LinesController implements
 	private boolean isStopSalesDefined(ReservationRequest request) {
 		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(request.getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(request.getDomain()));
 			return SQLStopSales.isStopSalesDefined(connection, null, request.getHotel(), request.getStartDate(), request.getEndDate(), null, null);
 		} catch (Throwable e) {
 			try {
@@ -78,7 +78,7 @@ public class ReservationRequestRoomController extends LinesController implements
 	private boolean mustStopSale(ReservationRequestRoom requestRoom, String itemCode, String tariffCode) {
    		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(requestRoom.getReservationRequest().getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(requestRoom.getReservationRequest().getDomain()));
 			if (StringUtils.isNotBlank(itemCode) || StringUtils.isNotBlank(tariffCode)) {
 				return SQLStopSales.mustStopSale(connection, requestRoom, itemCode, tariffCode);
 			} else {

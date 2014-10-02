@@ -29,7 +29,7 @@ public class PmsInvoicePrinter implements IReservationConstants {
 
 	public Enterprise getEnterprise(InvoiceDetail invoiceDetail) throws ManagerBeanException {
 		Enterprise enterprise = invoiceDetail.getWorkPlace().getEnterprise();
-		if (!FinanceUtil.isValidLimitDate(invoiceDetail.getInvoice().getIssueDate())) {
+		if (!FinanceUtil.isValidLimitDate(invoiceDetail.getInvoice())) {
 			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), enterprise.getId());

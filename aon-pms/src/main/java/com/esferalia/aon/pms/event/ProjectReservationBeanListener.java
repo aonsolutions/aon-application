@@ -7,7 +7,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.sql.SQLBooking;
@@ -23,7 +23,7 @@ public class ProjectReservationBeanListener extends ManagerBeanListenerAdapter {
     	if (to.isForceRefreshBooking()) {
     		Connection connection = null;
     		try {
-    			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(to.getDomain()));
+    			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(to.getDomain()));
     			SQLBooking.delete(connection, to);
     			if (!to.isCancelled() && !to.isNoShow()) {
     				SQLBooking.insert(connection, to);

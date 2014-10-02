@@ -13,7 +13,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -54,7 +54,7 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
     	ProjectReservationRoom to = (ProjectReservationRoom)evt.getTo();
    		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(to.getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(to.getDomain()));
 			SQLBooking.delete(connection, to);
 		} catch (Throwable e) {
 			try {
@@ -70,7 +70,7 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
 	private boolean mustStopSale(ProjectReservationRoom reservationRoom) {
    		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservationRoom.getProjectReservation().getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservationRoom.getProjectReservation().getDomain()));
 			if (SQLStopSales.mustStopSale(connection, reservationRoom)) {
 				return true;
 	    	}

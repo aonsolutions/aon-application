@@ -40,6 +40,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -522,7 +523,7 @@ public class ReservationManager implements IReservationConstants {
 
 		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservation.getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservation.getDomain()));
 			SQLBooking.insert(connection, reservationRoom);
 		} catch (Throwable ex) {
 			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
@@ -621,7 +622,7 @@ public class ReservationManager implements IReservationConstants {
 	private void removeReservationRoom(ProjectReservation reservation) throws ManagerBeanException, ReservationException {
 		Connection connection = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservation.getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservation.getDomain()));
 			IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
@@ -685,7 +686,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setModificationDate(new Date());
 			BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservation.getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(reservation.getDomain()));
 			SQLBooking.delete(connection, reservation);
 		} catch (ManagerBeanException ex) {
 			throw ex;

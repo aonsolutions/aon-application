@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.common.util.AdminUtil;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -34,16 +36,24 @@ public class FinanceUtil {
 		return AppParamUtil.getValueAsDate(AppParam.ACC_OPERATIONS_DEADLINE, DomainManager.getCurrentDomain());
 	}
 
-	public static boolean isValidLimitDate(Date date) {
+	public static boolean isValidLimitDate(Invoice invoice) {
+		Integer type = AdminUtil.getDomainType(DomainManager.getCurrentDomain());
+		DomainType domainType = (type!=null) ? DomainType.values()[type] : null;
+
 		Date deadline = getLimitDate();
-		return deadline == null || !deadline.after(date);
+		if (deadline != null) {
+			if (domainType != null && domainType.equals(DomainType.HOTEL) && !invoice.isSales() && DateUtils.addWeeks(deadline, 1).after(new Date())) {
+				return deadline.after(invoice.getIssueDate());
+			}
+		}
+		return deadline == null || !deadline.after(invoice.getIssueDate());
 	}
 
 	public static void updateInvoiceTotals(Invoice invoice) throws AonSQLException {
 		Connection connection = null;
 		PreparedStatement updateStmt = null;
 		try {
-			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(invoice.getDomain()));
+			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(invoice.getDomain()));
 			updateStmt = connection.prepareStatement(UPDATE_INVOICE_TOTALS);
 			updateStmt.setInt(1, invoice.isService() ? 1 : 0);
 			updateStmt.setDouble(2, invoice.getTaxableBase());

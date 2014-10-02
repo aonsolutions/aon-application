@@ -70,7 +70,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	}
 
 	private void checkLimitDate(Invoice invoice) throws ManagerBeanVetoListenerException {
-		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+		if (!FinanceUtil.isValidLimitDate(invoice)) {
 			throw new ManagerBeanVetoListenerException("La Fecha de la Factura rebasa la Fecha Limite de Operaciones.");
 		}
 	}

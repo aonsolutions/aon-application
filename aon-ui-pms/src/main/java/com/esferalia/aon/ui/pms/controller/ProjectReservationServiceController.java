@@ -274,7 +274,7 @@ public class ProjectReservationServiceController extends LinesController {
 	public void onAcceptReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		boolean isNew = isNew();
-		if ( isNew ) {
+		if (isNew) {
 			validateServiceDates();	
 		}
 

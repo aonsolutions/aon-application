@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,5 +151,39 @@ public class AdminUtil {
 		}
 		return companyId;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public static String getDomainName(int domainId) {
+		String stmt = "SELECT name FROM domain as domain WHERE domain.id = :domainId";
+		String domainName = null;
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		try {
+			Session session = HibernateUtil.getSession(sessionFactoryName);
+			SQLQuery query = session.createSQLQuery(stmt);
+			query.setInteger("domainId", domainId);
+			List<Object> list = query.list();
+			domainName = !list.isEmpty() ? query.list().get(0).toString() : null;			
+		} finally {
+			HibernateUtil.closeSession(sessionFactoryName);	
+		}
+		return domainName;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Integer getDomainType(int domainId) {
+		String stmt = "SELECT type FROM domain as domain WHERE domain.id = :domainId";
+		Integer domainType = null;
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		try {
+			Session session = HibernateUtil.getSession(sessionFactoryName);
+			SQLQuery query = session.createSQLQuery(stmt);
+			query.setInteger("domainId", domainId);
+			List<Object> list = query.list();
+			domainType = !list.isEmpty() ? (Integer)query.list().get(0) : null;			
+		} finally {
+			HibernateUtil.closeSession(sessionFactoryName);	
+		}
+		return domainType;
+	}
+
 }

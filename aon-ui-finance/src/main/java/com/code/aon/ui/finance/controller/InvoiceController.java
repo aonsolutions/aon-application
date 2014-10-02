@@ -750,7 +750,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
-		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+		if (!FinanceUtil.isValidLimitDate(invoice)) {
 			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
 			throw new AbortProcessingException(message);
 		}
@@ -791,7 +791,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Invoice invoice = getInvoice();
-		if (!FinanceUtil.isValidLimitDate(invoice.getIssueDate())) {
+		if (!FinanceUtil.isValidLimitDate(invoice)) {
 			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
 			throw new AbortProcessingException(message);
 		}
