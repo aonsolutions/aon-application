@@ -14,7 +14,7 @@
 
 			<aon:div ajaxRendered="true" layout="none">
 				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{bundle.payroll_codeTables_module}" />
+					<ui:param name="toolbarTitle" value="#{bundle.payroll_predefined_tables}" />
 					<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				</ui:include>			
 
@@ -24,6 +24,8 @@
 					
 				
 					<aon:panelTabSet id="payrollCodeTablesTab" selectedTab="#{payrollCodeTables.selectedTab}">
+						
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/codeTables/list_quoteValuesTab.xhtml" />
 						
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/codeTables/list_ssTab.xhtml" />
 						

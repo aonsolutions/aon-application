@@ -2353,6 +2353,13 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.CnaeRateController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ QUOTE VALUES ************** -->
+	<managed-bean>
+		<managed-bean-name>quoteValues</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.QuoteValuesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!--  **** SS TABLES VIEWER **** -->
 	<managed-bean>
