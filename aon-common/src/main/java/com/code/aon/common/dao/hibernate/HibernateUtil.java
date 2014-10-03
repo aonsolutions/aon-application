@@ -71,15 +71,21 @@ public class HibernateUtil {
     	closeSession(getSessionFactoryName());
     } 
 
-    public static void closeSession( String sessionFactoryName ) { 
-        Session s = session.get(sessionFactoryName).get(); 
-        session.get(sessionFactoryName).set(null); 
-        if (s != null) {
-            s.close();
-            LOGGER.debug("** Hibernate session closed" );
-        } 
+    public static void closeSession( String sessionFactoryName ) {
+    	closeSession(sessionFactoryName, true);
     } 
 
+    public static void closeSession( String sessionFactoryName, boolean forceClose ) {
+    	if ( forceClose || mustCloseSession() ) {
+            Session s = session.get(sessionFactoryName).get(); 
+            session.get(sessionFactoryName).set(null); 
+            if (s != null) {
+                s.close();
+                LOGGER.debug("** Hibernate session closed" );
+            }     		
+    	}
+    } 
+    
     @Deprecated
     public static SessionFactory getSessionFactory() {
     	return getSessionFactory(getSessionFactoryName());

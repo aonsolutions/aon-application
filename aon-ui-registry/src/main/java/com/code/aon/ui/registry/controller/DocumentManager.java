@@ -98,7 +98,7 @@ public class DocumentManager implements Serializable {
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error calculating free space", th);
 		} finally {
-			HibernateUtil.closeSession(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName, false);
 		}
         return (usedSpace != null) ? usedSpace : 0L;
 	}

@@ -62,7 +62,7 @@ public class LoggedUser implements Serializable {
     		Query query = session.createQuery(q).setMaxResults(1);
 			this.userName = (String) query.uniqueResult();
 		}
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		if ( StringUtils.isEmpty(this.userName) ) {
     		this.userName = principal.getShortName();	
 		}
@@ -72,7 +72,7 @@ public class LoggedUser implements Serializable {
     		String q = "SELECT name FROM Company c  WHERE c.domain = ?";
     		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q).setMaxResults(1);
 			this.companyName = (String) query.setInteger(0, principal.getDomainId()).uniqueResult();
-			HibernateUtil.closeSession(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName, false);
 		}
     }
 

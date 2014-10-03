@@ -63,13 +63,16 @@ public class DomainApplicationController extends BasicController {
 	private static Set<Integer> getRegisteredUsers( Integer domainApplication ) {
 		Set<Integer> users = new HashSet<Integer>();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		Session session = HibernateUtil.getSession(sessionFactoryName);
-		Query query = session.createQuery("SELECT au.user.id FROM ApplicationUser au WHERE au.domainApplication = ?");
-		query.setInteger(0, domainApplication);
-		for (Object id : query.list()) {
-			users.add( (Integer) id );
+		try {
+			Session session = HibernateUtil.getSession(sessionFactoryName);
+			Query query = session.createQuery("SELECT au.user.id FROM ApplicationUser au WHERE au.domainApplication = ?");
+			query.setInteger(0, domainApplication);
+			for (Object id : query.list()) {
+				users.add( (Integer) id );
+			}
+		} finally {
+			HibernateUtil.closeSession(sessionFactoryName, false);
 		}
-		HibernateUtil.closeSession(sessionFactoryName);
 		return users;
 	}	
 		
@@ -79,12 +82,16 @@ public class DomainApplicationController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	private static List<User> getActiveUsers( Integer domain ) {
+		List<User> users = null;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		Session session = HibernateUtil.getSession(sessionFactoryName);
-		Query query = session.createQuery("FROM User u WHERE u.active = true and u.domain = ?");
-		query.setInteger(0, domain);
-		List<User> users = query.list();
-		HibernateUtil.closeSession(sessionFactoryName);
+		try {
+			Session session = HibernateUtil.getSession(sessionFactoryName);
+			Query query = session.createQuery("FROM User u WHERE u.active = true and u.domain = ?");
+			query.setInteger(0, domain);
+			users = query.list();
+		} finally {
+			HibernateUtil.closeSession(sessionFactoryName, false);	
+		}
 		return users;
 	}
 	

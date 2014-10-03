@@ -27,7 +27,7 @@ public class AdminUtil {
 	}
 	
 	public static void closeSession() {
-		HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());				
+		HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName(), false);	
 	}
 	
 	public static Integer getDomainApplication( Integer domain, Integer application ) {
@@ -164,7 +164,7 @@ public class AdminUtil {
 			List<Object> list = query.list();
 			domainName = !list.isEmpty() ? query.list().get(0).toString() : null;			
 		} finally {
-			HibernateUtil.closeSession(sessionFactoryName);	
+			closeSession();	
 		}
 		return domainName;
 	}
@@ -181,7 +181,7 @@ public class AdminUtil {
 			List<Object> list = query.list();
 			domainType = !list.isEmpty() ? ((Byte)query.list().get(0)).intValue() : null;			
 		} finally {
-			HibernateUtil.closeSession(sessionFactoryName);	
+			closeSession();	
 		}
 		return domainType;
 	}

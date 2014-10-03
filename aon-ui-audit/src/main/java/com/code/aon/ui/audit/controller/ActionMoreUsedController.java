@@ -72,7 +72,7 @@ public class ActionMoreUsedController extends DataScrollerState implements IAudi
 	        }
 	        LOGGER.info( "Criteria: " + criteria );
 	        List<?> actions = criteria.list();
-	        HibernateUtil.closeSession(sessionFactoryName);
+	        HibernateUtil.closeSession(sessionFactoryName, false);
 	        if (! actions.isEmpty() ) {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();
 		        for( Object o : actions ) {

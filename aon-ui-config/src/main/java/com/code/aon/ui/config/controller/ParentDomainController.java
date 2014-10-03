@@ -42,7 +42,7 @@ public class ParentDomainController implements Serializable {
 		query.setInteger(0, domain);
 		query.addScalar("parent", Hibernate.INTEGER);
 		setDomain( (Integer) query.uniqueResult() );
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 
 		sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
 		Session session = HibernateUtil.getSession(sessionFactoryName);
@@ -69,7 +69,7 @@ public class ParentDomainController implements Serializable {
 		query.setInteger(0, domain).setInteger(1, domain);
 		query.addScalar("value", Hibernate.STRING);
 		setEmail((String) query.uniqueResult() );
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		resolved = true;
 	}
 	
@@ -96,7 +96,7 @@ public class ParentDomainController implements Serializable {
 					IOUtils.copy(blob.getBinaryStream(), out);	
 				}
 			}
-			HibernateUtil.closeSession(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName, false);
 		}
 	}
 	

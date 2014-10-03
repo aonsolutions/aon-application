@@ -81,7 +81,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		} else {
 			domain = null;
 		}
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		return domain;
 	}
 
@@ -181,7 +181,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		for( Object o : query.list() ) {
 			scopes.add( ((UserScope) o).getScope().getId() );
 		}
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		return scopes;
 	}
 	
@@ -219,7 +219,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 				Domain dom = (Domain) iterator.next();
 				domains.add(dom);	
 			}
-			HibernateUtil.closeSession(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName, false);
 		} 
 		setModel(new SerializableListDataModel(domains));
 	}
@@ -236,7 +236,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 			sb.append(getDomainWhere());
 			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(sb.toString());
 			BigInteger count = (BigInteger) query.uniqueResult();
-			HibernateUtil.closeSession(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName, false);
 			return count.intValue();	
 		}
 		return 0;
@@ -280,7 +280,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		String name = (String) query
 				.addScalar("description", Hibernate.STRING)
 				.uniqueResult();
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		setDomainName(name);
 	}
 	
@@ -326,7 +326,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateC
 		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
 		query.setInteger(0, domainId);
 		DomainType type = (DomainType) query.uniqueResult();
-		HibernateUtil.closeSession(sfn);
+		HibernateUtil.closeSession(sfn, false);
 		return type;
 	}
 

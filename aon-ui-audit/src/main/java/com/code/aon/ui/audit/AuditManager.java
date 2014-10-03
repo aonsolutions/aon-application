@@ -58,7 +58,7 @@ public class AuditManager implements IAuditConstants {
 	private static User getUser( Integer userId ) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
 		User user = (User) HibernateUtil.getSession(sessionFactoryName).get(User.class, userId);
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		return user;
 	}
 	
@@ -134,7 +134,7 @@ public class AuditManager implements IAuditConstants {
 			DomainApplication dp = (DomainApplication) iterator.next();
 			level = dp.getAuditLevel();
 		}
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		return level;
 	}	
 	
@@ -182,7 +182,7 @@ public class AuditManager implements IAuditConstants {
 		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.domainManagement FROM Domain d WHERE d.id = ?");
 		query.setInteger(0, domainId);
 		Boolean available = (Boolean) query.uniqueResult();
-		HibernateUtil.closeSession(sfn);
+		HibernateUtil.closeSession(sfn, false);
 		return available;
 	}
 	

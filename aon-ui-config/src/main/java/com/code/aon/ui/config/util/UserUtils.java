@@ -78,7 +78,7 @@ public class UserUtils implements Serializable {
 		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery("SELECT u FROM User u  WHERE u.id = ?");
 		query.setInteger(0, principal.getUserId());
 		User user = (User) query.uniqueResult();
-		HibernateUtil.closeSession(sessionFactoryName);
+		HibernateUtil.closeSession(sessionFactoryName, false);
 		return user;
 	}
 

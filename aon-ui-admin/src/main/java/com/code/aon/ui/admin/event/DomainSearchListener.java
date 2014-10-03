@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,11 +219,13 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	}
 	
 	private void addDateRange( Criteria criteria, String alias, Date[] dates ) {
-		if ( dates[0] != null ) {
-			criteria.addGreaterThanOrEqualExpression(alias, dates[0]);	
-		}
-		if ( dates[1] != null ) {
-			criteria.addLessThanOrEqualExpression(alias, dates[1]);	
+		if ( ArrayUtils.getLength(dates) == 2 ) {
+			if ( dates[0] != null ) {
+				criteria.addGreaterThanOrEqualExpression(alias, dates[0]);	
+			}
+			if ( dates[1] != null ) {
+				criteria.addLessThanOrEqualExpression(alias, dates[1]);	
+			}			
 		}
 	}
 	
