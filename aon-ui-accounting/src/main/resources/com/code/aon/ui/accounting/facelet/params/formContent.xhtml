@@ -191,18 +191,19 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="ACC_operations_deadline"
-				value="#{bundle.accounting_operations_deadline}" />
-			<aon:inputText id="ACC_operations_deadline" 
-				value="#{accAppParams.parameters['ACC_OPERATIONS_DEADLINE'].value}"
-				size="10" maxlength="10" />
-<!-- 
-			<aon:selectInputDate id="ACC_operations_deadline" 
-				value="#{accAppParams.parameters['ACC_OPERATIONS_DEADLINE'].value}"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-				<f:converter converterId="aon.DateConverter" />
-			</aon:selectInputDate>
- -->
+				value="#{bundle.accounting_operations_deadline} (#{bundle.aon_date_pattern})" />
+			<aon:div>
+				<aon:inputText id="ACC_operations_deadline"
+					value="#{accAppParams.parameters['ACC_OPERATIONS_DEADLINE'].value}"
+					size="10" maxlength="10" />
+				<aon:selectBooleanCheckbox id="ACC_deadline_include_rectifications"
+					styleClass="aon-margin-left"
+					value="#{accAppParams.parameters['ACC_DEADLINE_INCL_RECTIFICATIONS'].value}" />
+				<aon:outputLabel for="ACC_deadline_include_rectifications" 
+					styleClass="aon-italic"
+					value="#{bundle.accounting_operations_deadline_include_rectifications}" />
+			</aon:div>
+
 		</aon:panelGrid>
 	</aon:div>
 

@@ -113,8 +113,8 @@ public class AppParamUtil {
 		return getValue(appParam, null);
 	}
 
-	public static boolean getValueAsBoolean( AppParam appParam, boolean _default ) {
-		String value = getValue(appParam);
+	public static boolean getValueAsBoolean( AppParam appParam, Integer domainId, boolean _default ) {
+		String value = getValue(appParam, domainId);
 		if ( value != null ) {
 			return Boolean.valueOf(value);
 		}
@@ -122,7 +122,7 @@ public class AppParamUtil {
 	}
 
 	public static boolean getValueAsBoolean( AppParam appParam ) {
-		return getValueAsBoolean(appParam, false);
+		return getValueAsBoolean(appParam, null, false);
 	}
 
 	public static Integer getValueAsInteger( AppParam appParam, Integer domainId ) {

@@ -497,6 +497,12 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void onRectificationShow(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (!FinanceUtil.isValidLimitRectificationDate(invoice)) {
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+
 		setRectificationNumberEditable(false);
 		setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
 		setRectificationNumber(0);

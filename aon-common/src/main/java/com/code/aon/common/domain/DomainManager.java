@@ -39,6 +39,10 @@ public class DomainManager {
 		return getDomainProvider().getCurrentDomain();
 	}
 	
+	public synchronized static Integer getParentDomain() {
+		return getDomainProvider().getParentDomain();
+	}
+	
 	public synchronized static boolean isDomainManagementAvailable() {
 		return getDomainProvider().isDomainManagementAvailable();
 	}

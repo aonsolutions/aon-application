@@ -621,6 +621,10 @@
 					<key>ACC_OPERATIONS_DEADLINE</key>
 					<value>[NULL]</value>
 				</map-entry>
+				<map-entry>
+					<key>ACC_DEADLINE_INCL_RECTIFICATIONS</key>
+					<value>false</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
