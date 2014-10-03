@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PMS_EARLY_CHECK_OUT;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
@@ -39,6 +40,7 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -125,14 +127,22 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 	}
 
 	public void onInit() {
-		if (getReservation().getHotelReservation().getItemPenalty() == null || getReservation().getHotelReservation().getItemPenalty().getId() == null) {
-			setShowEarlyCheckOutWindow(false);
-			String msg = "El Hotel no tiene definido Producto para Salidas Anticipadas.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-
 		try {
+			if (getReservation().getHotelReservation().getItemPenalty() == null || getReservation().getHotelReservation().getItemPenalty().getId() == null) {
+				setShowEarlyCheckOutWindow(false);
+				String msg = "El Hotel no tiene definido Producto para Salidas Anticipadas.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			for (ITransferObject ito : obtainReservationInvoiceList(getReservation())) {
+	    		Invoice invoiceToRectify = (Invoice)ito;
+	    		if (!FinanceUtil.isValidLimitRectificationDate(invoiceToRectify)) {
+					setShowEarlyCheckOutWindow(false);
+	    			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+	    			throw new AbortProcessingException(msg);
+	    		}
+			}
+
 			setChargeCheckOut(true);
 			setEarlyCheckOutPenalty(null);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));

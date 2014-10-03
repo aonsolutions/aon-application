@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.TIME_2_PATTERN;
 
@@ -38,6 +39,7 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
@@ -850,14 +852,18 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
-		Invoice invoice = (Invoice)getInvoiceModel().getRowData();
 		if (!PosUtils.isUserPosShiftOpened()) {
 			setShowRectificationWindow(false);
 			String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+		Invoice invoice = (Invoice)getInvoiceModel().getRowData();
+		if (!FinanceUtil.isValidLimitRectificationDate(invoice)) {
+			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+			throw new AbortProcessingException(message);
+		}
+
 		setInvoiceToRectify(invoice);
 		setReservationInvoiceTo(new ReservationInvoiceTo(false));
 		getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
@@ -902,14 +908,18 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-
-			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
 			if (!PosUtils.isUserPosShiftOpened()) {
 				setShowModificationWindow(false);
 				String msg = "No se puede Modificar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
+			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
+			if (!FinanceUtil.isValidLimitRectificationDate(invoice)) {
+				String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+				throw new AbortProcessingException(message);
+			}
+
 			setInvoiceToModify(invoice);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());

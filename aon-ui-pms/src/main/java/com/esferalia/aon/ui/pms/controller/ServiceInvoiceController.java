@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DAMAGES;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DEPOSITS;
 import static com.code.aon.ui.common.ICommonMessages.PMS_SERVICES;
@@ -40,6 +41,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
@@ -577,7 +579,13 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			setInvoiceToRectify((Invoice)getModel().getRowData());
+			Invoice invoice = (Invoice)getModel().getRowData();
+			if (!FinanceUtil.isValidLimitRectificationDate(invoice)) {
+				String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+				throw new AbortProcessingException(message);
+			}
+
+			setInvoiceToRectify(invoice);
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
 			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
