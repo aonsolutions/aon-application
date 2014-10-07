@@ -583,11 +583,13 @@ public class DesktopState implements Serializable {
 	}
 	
 	public String getDEHOnlineUser() {
-		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER);		
+		User user = UserUtils.getInstance().getLoggedUser();
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_USER, user.getDomain());
 	}
 
 	public String getDEHOnlinePassword() {
-		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD);		
+		User user = UserUtils.getInstance().getLoggedUser();
+		return AppParamUtil.getValue(AppParam.AON_DEH_ONLINE_PASSWORD, user.getDomain());		
 	}
 
 	public boolean isShowFavorites() {

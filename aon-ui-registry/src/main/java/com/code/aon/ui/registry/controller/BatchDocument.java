@@ -39,7 +39,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
-public class BatchDocument extends DataScrollerState {
+public class BatchDocument extends DataScrollerState implements ICorporateIdentityController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -205,5 +205,19 @@ public class BatchDocument extends DataScrollerState {
         IAttachment attachment = (IAttachment) bean.get(Integer.valueOf(id));
         DownloadUtil.downloadAttachment( attachment );    	
     }
+    
+	@Override
+	public String getCurrentTagList() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			RegistryAttachment ra = (RegistryAttachment) getModel().getRowData();
+			return ra.getTagList();
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean isServiconvenios() {
+		return false;
+	}    
 	
 }

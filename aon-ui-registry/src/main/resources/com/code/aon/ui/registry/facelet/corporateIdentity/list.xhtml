@@ -24,7 +24,9 @@
 					<ui:define name="columns">
 			
 						<ui:include 
-							src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+							src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" >
+							<ui:param name="skipAddToBatch" value="#{controller.serviconvenios}" />
+						</ui:include>
 							
 					</ui:define>
 					<ui:define name="additionalDataTableContent" >

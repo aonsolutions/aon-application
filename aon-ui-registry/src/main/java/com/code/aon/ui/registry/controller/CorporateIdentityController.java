@@ -44,7 +44,7 @@ import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
-public class CorporateIdentityController extends RegistryAttachController {
+public class CorporateIdentityController extends RegistryAttachController implements ICorporateIdentityController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	

@@ -17,7 +17,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class DocumentGlobalController extends BasicController {
+public class DocumentGlobalController extends BasicController implements ICorporateIdentityController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -61,5 +61,19 @@ public class DocumentGlobalController extends BasicController {
 		BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
 		bd.addToBatch( (IAttachment) getSelectedTO() );
 	}
-    
+ 
+	@Override
+	public String getCurrentTagList() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			RegistryAttachment ra = (RegistryAttachment) getModel().getRowData();
+			return ra.getTagList();
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean isServiconvenios() {
+		return false;
+	}
+	
 }
