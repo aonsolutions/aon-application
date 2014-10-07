@@ -1038,8 +1038,9 @@ public class DomainController extends BasicController {
 			int value = MAX_TOTAL_DOCUMENT_SIZE_VALUES[i];
 			String name = FileUtils.byteCountToDisplaySize(value*FileUtils.ONE_MB);
 			SelectItem item = new SelectItem(value, name);
-			if ( i > 0) {
-				item.setDisabled(!getDocumental().isChecked());
+			if (i > 0) {
+				boolean disabled = (getDocumental() == null) || !getDocumental().isChecked(); 
+				item.setDisabled(disabled);
 			}
 			list.add(item);					
 		}
