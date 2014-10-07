@@ -458,43 +458,26 @@ public class CertificadosController implements ISepeHandler, Serializable {
 	}
 	
 	private void processSepeResult(String result) {
-		
-//		final String ACCEPTED 				= "ACEPTADO";
-//		final String ACCEPTED_WITH_ERRORS 	= "ACEPTADO CON ERRORES";
-//		final String REJECTED 				= "RECHAZADO";
-//		final String WRONG_CONTRACT_ID 		= "E0000000000000";
-//		
-//		if(result!=null && (result.contains(ACCEPTED) || result.contains(ACCEPTED_WITH_ERRORS)) && !result.contains(REJECTED)){
-//			try {
-//				FICHEROCONTRATOS contratos = getCommunicator().obtainFicheroContratos(result.getBytes());
-//				for(Object o: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
-//					RESPUESTACONTRATOTYPE respuestaContratos = getCommunicator().obtainRespuestaContrato(o);
-//					try {
-//						if(!respuestaContratos.getIDCONTRATO().equals(WRONG_CONTRACT_ID)){
-//							IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-//							ContractData data = new ContractData();
-//							data.setContract(contract);
-//							data.setStartDate(contract.getStartDate());
-//							data.setEndDate(contract.getEndDate());
-//							data.setName( ContextVariable.SEPE_CONTRACT_ID.getName() );
-//							data.setExpression("\"" + respuestaContratos.getIDCONTRATO() + "\"");
-//							bean.insert(data);
-//						}
-//					} catch (ManagerBeanException e) {
-//						String msg = "Error al grabar el ID de contrato obtenido del SEPE. (" +e.getMessage() + ")";
-//						AonUtil.addErrorMessage(msg);
-//					}
-//				}
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//			} catch (JAXBException e) {
-//				// TODO Auto-generated catch block
-//			} catch (SAXException e) {
-//				// TODO Auto-generated catch block
-//			} catch (ParserConfigurationException e) {
-//				// TODO Auto-generated catch block
-//			}
-//		}
+		// nada
+	}
+	
+	public void onRemoveSepeFiles(ActionEvent event){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			if(getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null){
+				bean.remove(getCommunicationIdFile());
+			}
+			if(getResponseFile()!=null && getResponseFile().getId()!=null){
+				bean.remove(getResponseFile());
+			}
+			initialize(getContract());
+		} catch (ManagerBeanException e) {
+			String msg = "No se han podido guardar los datos de respuesta de Certific@2";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 	
 	@Override

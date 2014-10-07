@@ -39,7 +39,10 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			readPdfFields(reader);
 //			super.loadPdfCommonFields(contract);
 
-			ContrataContratoParams params = (ContrataContratoParams) contrataParams.get(0);
+			ContrataContratoParams contrata = null;
+			if(contrataParams!=null && contrataParams.size()>0){
+				contrata = (ContrataContratoParams) contrataParams.get(0);
+			}
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 
@@ -122,19 +125,19 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			setPdfFieldValue(BasicCopyField.CONTRACT_SIGN_YEAR.getValue(), dateFormatter.format(contract.getStartDate()));
 			
 			
-			if(contrataParams!=null){
-				String horasJornada = params.getHorasJornada();
+			if(contrata!=null){
+				String horasJornada = contrata.getHorasJornada();
 				if(horasJornada!=null){
 					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL_HOURS_1.getValue()).setValue(String.valueOf(Integer.parseInt(horasJornada)));				
 //					getPdfFieldsMap().get(CONTRACT_JOURNAL_HOURS_2).setValue(String.valueOf(minutosJornada));;
 					
-					if(params.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
+					if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
 						getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS ANUALES");;
-					} else if (params.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
+					} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
 						getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS DIARIAS");;
-					} else if (params.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
+					} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
 						getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS MENSUALES");;
-					} else if (params.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
+					} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
 						getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS SEMANALES");;
 					}
 				}

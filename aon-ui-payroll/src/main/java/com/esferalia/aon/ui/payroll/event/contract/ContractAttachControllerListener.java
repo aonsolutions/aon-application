@@ -53,6 +53,8 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
 				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.EXTENSION_DOC);
 				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
 				exp  = ExpressionUtilities.getNullExpression(alias);
 				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
 				criteria.addExpression(expToAdd);

@@ -229,7 +229,7 @@ public class ContractPdfController implements Serializable {
 		return ContractAttachmentType.EXTENSION_DOC_DRAFT;
 	}
 	public ContractAttachmentType getEnterpriseCertificatePdfType(){
-		return ContractAttachmentType.SEPE_CERTIFICADOS_FILE;
+		return ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT;
 	}
 	public List<IContrataParams> getContrataParams() {
 		return contrataParams;
@@ -286,7 +286,7 @@ public class ContractPdfController implements Serializable {
 			builder.append(ModelPE230.MODEL_NAME);
 		} else if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			builder.append(Extension.EXTENSION_NAME);
-		} else if(getDocumentType()==ContractAttachmentType.SEPE_CERTIFICADOS_FILE){
+		} else if(getDocumentType()==ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT){
 			builder.append(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME);
 		}
 		builder.append(IMAGE_URL_PREFIX2);
@@ -457,10 +457,10 @@ public class ContractPdfController implements Serializable {
 			} else {
 				getContractPdfWriter().loadExistingPdf(ClausulasModel.MODEL_NAME, getContractPdfDraft());
 			}
-		} else if(getDocumentType()==ContractAttachmentType.SEPE_CERTIFICADOS_FILE){
+		} else if(getDocumentType()==ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT){
 			if(forceRefresh || getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
 				getContractPdfWriter().loadNewPdf(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME, getContract(), getEnterpriseCertificate());
-				completeNewPdfFields(ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
+				completeNewPdfFields(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);
 			} else {
 				getContractPdfWriter().loadExistingPdf(EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME, getContractPdfDraft());
 			}
@@ -515,7 +515,7 @@ public class ContractPdfController implements Serializable {
 			fileName = ModelPE230.MODEL_NAME+".pdf"; 
 		} else if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
 			fileName = Extension.EXTENSION_NAME+".pdf"; 
-		} else if(getDocumentType()==ContractAttachmentType.SEPE_CERTIFICADOS_FILE){
+		} else if(getDocumentType()==ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT){
 			fileName = EnterpriseCertificate.ENTERPRISE_CERTIFICATE_NAME+".pdf"; 
 		}
 		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
@@ -694,7 +694,7 @@ public class ContractPdfController implements Serializable {
 			}
 			
 			if(getContract().getEndDate()!=null && StringUtils.isNotBlank(getContractSuspensionCause())){
-				item = new SelectItem(ContractAttachmentType.SEPE_CERTIFICADOS_FILE, ContractAttachmentType.SEPE_CERTIFICADOS_FILE.getName(AonUtil.getCurrentLocale()));
+				item = new SelectItem(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
 			}
 			
@@ -870,11 +870,11 @@ public class ContractPdfController implements Serializable {
 		}
 		
 		// Certificado de empresa
-		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.SEPE_CERTIFICADOS_FILE)){
+		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT)){
 			try {
-				setDocumentType(ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
+				setDocumentType(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);
 				loadDocument(true);
-				generatedDocumentMap.put(ContractAttachmentType.SEPE_CERTIFICADOS_FILE, getContractPdfWriter().buildPdf(true));
+				generatedDocumentMap.put(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				AonUtil.addErrorMessage("No se ha podido generar el certificado de empresa");
@@ -901,7 +901,7 @@ public class ContractPdfController implements Serializable {
 		types.add(ContractAttachmentType.TRAINING_ANNEX_II);
 		types.add(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
 		types.add(ContractAttachmentType.EXTENSION_DOC_DRAFT);
-		types.add(ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
+		types.add(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT);
 		for(ContractAttachmentType type: types){
 			if(generatedDocumentMap.containsKey(type)){
 				ContractAttachment attach = new ContractAttachment();

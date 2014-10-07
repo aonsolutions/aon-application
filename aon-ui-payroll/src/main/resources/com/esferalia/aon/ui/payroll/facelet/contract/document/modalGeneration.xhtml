@@ -59,7 +59,7 @@
 												rendered="#{contractPdf.generatonFinished}"
 												actionListener="#{contractPdf.onSaveFiles}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
-												reRender="showDocumentGenerationWindow"
+												reRender="showDocumentGenerationWindow, contractForm"
 												title="Guardar documentos adjuntos" />
 											<aon:commandButton value="#{bundle.aon_email_abrv}" id="documents-email" 
 												rendered="#{contractPdf.generatonFinished}"

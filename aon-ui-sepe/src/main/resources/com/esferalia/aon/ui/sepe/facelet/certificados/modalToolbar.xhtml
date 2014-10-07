@@ -63,7 +63,16 @@
 							<aon:graphicImage style="vertical-align:middle;"
 		                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
 						</aon:panelGroup>
-		            </f:facet>			
+		            </f:facet>
+		            
+		            <aon:menuItem id="sepe-process-restart"
+						value="Reiniciar proceso"
+						rendered="#{(controller.communicationIdReceived and not controller.communicationAccepted) or (controller.communicationResponseReceived and not controller.communicationFinished)}"
+						actionListener="#{controller.onRemoveSepeFiles}"
+						reRender="showCertificadosCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+						iconClass="aon-icon-refresh" 
+						/>
+		            			
 						<aon:menuItem iconClass="aon-icon-file-download">
 							<aon:htmlCommandLink id="sepeXmldownload" 
 								value="#{bundle.aon_fileupload_download} XML" target="_blank"
