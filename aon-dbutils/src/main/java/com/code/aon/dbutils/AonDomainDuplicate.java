@@ -274,16 +274,6 @@ public class AonDomainDuplicate implements Constants {
 			DbUtils.closeQuietly(rs);
 		}
 	}
-	
-	private Object getObject( ResultSet rs, ColumnInfo ci ) throws SQLException {
-		Object value = null;
-		if ( ci.getType() == Types.LONGVARBINARY) {
-			value = rs.getBlob(ci.getName());
-		} else {
-			value = rs.getObject(ci.getName());
-		}
-		return value;
-	}
 
 	private Integer insert(PreparedStatement insert,ResultSet rs, TableInfo t) throws SQLException {
 		int id = rs.getInt( t.getPkColumn().getName() );
@@ -293,7 +283,7 @@ public class AonDomainDuplicate implements Constants {
 			ColumnInfo[] insertColumns = t.getInsertColumns();
 			for (int i = 0; i < insertColumns.length; i++) {
 				ColumnInfo ci = insertColumns[i];
-				Object value = getObject(rs, ci);
+				Object value = TableUtil.getObject(rs, ci);
 				if (value != null) {
 					if ( ci.isFkColummn() ) {
 						if ( t.isForceHeredity() && DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {

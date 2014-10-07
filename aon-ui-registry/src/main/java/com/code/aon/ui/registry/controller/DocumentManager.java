@@ -44,24 +44,29 @@ public class DocumentManager implements Serializable {
 	private Long maxTotalDocumentSize;	
 	
 	public DocumentManager() {
-		this.maxDocumentSize = MINIMUM_MAX_DOCUMENT_SIZE * FileUtils.ONE_MB;
-		this.maxTotalDocumentSize = MINIMUM_MAX_TOTAL_DOCUMENT_SIZE * FileUtils.ONE_MB;
 		init();
 	}
 	
 	private void init() {
 		try {
+			init(MINIMUM_MAX_DOCUMENT_SIZE, MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			if ( domain != null ) {
 				updateLimits(domain);
+				init(domain.getMaxDocumentSize(), domain.getMaxTotalDocumentSize());
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error init max document szie", th);
 		}		
 	}
 	
-	private int getMaximumTotalDocumentSize( int value ) {
+	private void init( int maxDocumentSize, int maxTotalDocumentSize) {
+		this.maxDocumentSize = maxDocumentSize * FileUtils.ONE_MB;
+		this.maxTotalDocumentSize = maxTotalDocumentSize * FileUtils.ONE_MB;		
+	}
+	
+	private static int getMaximumTotalDocumentSize( int value ) {
 		for( int i = 0; i < MAX_TOTAL_DOCUMENT_SIZE_VALUES.length; i++ ) {
 			if ( value <= MAX_TOTAL_DOCUMENT_SIZE_VALUES[i] ) {
 				return MAX_TOTAL_DOCUMENT_SIZE_VALUES[i];
@@ -70,7 +75,7 @@ public class DocumentManager implements Serializable {
 		return MAX_TOTAL_DOCUMENT_SIZE_VALUES[MAX_TOTAL_DOCUMENT_SIZE_VALUES.length-1];
 	}
 	
-	public boolean updateLimits( Domain domain ) throws ManagerBeanException {
+	public static boolean updateLimits( Domain domain ) throws ManagerBeanException {
 		boolean updateDomain = false;
 		Integer value = domain.getMaxDocumentSize();
 		if ( (value == null) || (value < MINIMUM_MAX_DOCUMENT_SIZE)  ) {
@@ -80,14 +85,12 @@ public class DocumentManager implements Serializable {
 			updateDomain = true;
 			domain.setMaxDocumentSize(MAXIMUM_MAX_DOCUMENT_SIZE);
 		}
-		maxDocumentSize = domain.getMaxDocumentSize() * FileUtils.ONE_MB;
 		value = domain.getMaxTotalDocumentSize();
 		int newValue = getMaximumTotalDocumentSize(value);
 		if ( value != newValue ) {
 			updateDomain = true;
 			domain.setMaxTotalDocumentSize(newValue);			
 		}
-		maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * FileUtils.ONE_MB;
 		return updateDomain;
 	}
 	

@@ -91,7 +91,6 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.webmail.EmailSender;
@@ -191,6 +190,7 @@ public class DomainController extends BasicController {
 			if ( this.historyState.getDirectModel().getRowCount() == 0 ) {
 				saveHistory(this.currentDomainInfo);
 			}
+			updateDocumental();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
@@ -591,11 +591,7 @@ public class DomainController extends BasicController {
 	}
 
 	public void updateDocumental() throws ManagerBeanException {
-		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME);
-		Domain domain = getDomain();
-		if ( dm.updateLimits(domain) ) {
-			getManagerBean().update(domain);
-		}
+		DocumentManager.updateLimits(getDomain());
 	}
 
 	public IControllerListener getParentDomainFilter() {
