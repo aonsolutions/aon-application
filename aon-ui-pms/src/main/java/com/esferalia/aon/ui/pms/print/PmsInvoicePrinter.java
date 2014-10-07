@@ -11,7 +11,6 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAddInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -27,28 +26,8 @@ public class PmsInvoicePrinter implements IReservationConstants {
 		return (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).get(projectId);
 	}
 
-	public Enterprise getEnterprise(InvoiceDetail invoiceDetail) throws ManagerBeanException {
-		Enterprise enterprise = invoiceDetail.getWorkPlace().getEnterprise();
-		if (!FinanceUtil.isValidLimitDate(invoiceDetail.getInvoice())) {
-			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), enterprise.getId());
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), OLD_COMPANY);
-			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-				Integer oldCompanyId = null;
-				try {
-					oldCompanyId = Integer.valueOf(((RegistryAddInfo)ito).getValue());
-				} catch (NumberFormatException ex) {
-				}
-				if (oldCompanyId != null) {
-					Enterprise oldEnterprise = (Enterprise)BeanManager.getManagerBean(Enterprise.class).get(oldCompanyId);
-					if (oldEnterprise != null) {
-						enterprise = oldEnterprise;
-					}
-				}
-			}
-		}
-		return enterprise;
+	public Enterprise getEnterprise(InvoiceDetail invoiceDetail) {
+		return FinanceUtil.getEnterprise(invoiceDetail);
 	}
 
 	public Hotel getHotel(Integer invoiceId) throws ManagerBeanException {

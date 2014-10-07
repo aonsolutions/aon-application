@@ -27,6 +27,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -337,6 +338,11 @@ public class FacturaeWriter {
 			}
 		}
 		return null;
+	}
+	
+	private Enterprise getEnterprise() {
+		InvoiceDetail invoiceDetail = invoice.getLines().iterator().next();
+		return FinanceUtil.getEnterprise(invoiceDetail);
 	}
 	
 	private AdministrativeCentreType getAdministrativeCentre( WorkPlace workPlace ) throws ManagerBeanException {
@@ -660,7 +666,7 @@ public class FacturaeWriter {
 		this.taxBreakDowns = priceStrategy.getTaxBreakDowns(invoice, invoice);
 		this.pmsUtil = new PmsUtil(invoice);
 		this.workPlace = getWorkPlace();
-		this.enterprise = this.workPlace.getEnterprise();
+		this.enterprise = getEnterprise();
 		this.numberOfDecimals = DecimalUtil.getNumberOfDecimals(invoice);
 	}
 	
