@@ -69,7 +69,7 @@ public class Item extends ItemDB implements IPriceable {
 			if ( sb.length() > 0 ) {
 				sb.append("/");
 			}
-			sb.append(getDetail3());
+			sb.append(getDetail2());
 		}
 		if (StringUtils.isNotEmpty(getDetail3())) {
 			if ( sb.length() > 0 ) {
