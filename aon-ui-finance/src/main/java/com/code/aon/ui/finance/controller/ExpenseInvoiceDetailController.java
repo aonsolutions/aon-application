@@ -45,7 +45,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getFullName());
 		invoiceDetail.setQuantity(1);
-		fillTaxDataInDetail(true);
+		fillTaxDataInDetail(false, true);
 
 		if (invoice.getRegistry() == null || invoice.getRegistry().getId() == null) {
 			Creditor creditor = obtainExpenseLastCreditor(item);

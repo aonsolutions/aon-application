@@ -17,7 +17,7 @@ public class PosInvoiceDetailController extends SaleInvoiceDetailController {
 
 	public void itemChanged(Item item) {
 		super.itemChanged(item);
-		fillTaxDataInDetail(false);
+		fillTaxDataInDetail(true, false);
 	}	
 
 	public void quantityChanged(double quantity) {
@@ -50,7 +50,7 @@ public class PosInvoiceDetailController extends SaleInvoiceDetailController {
 
 	@Override
 	public void onAccept(ActionEvent event) {
-		fillTaxDataInDetail(true);
+		fillTaxDataInDetail(true, true);
 		super.onAccept(event);
 		onReset(event);
 	}

@@ -24,6 +24,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.purchase.Purchase;
@@ -127,15 +128,22 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return getPriceStrategy().getBasePrice((ICalculable)getTo());
 	}
 
-	public void fillTaxDataInDetail(boolean includeQuotas) {
+	public void fillTaxDataInDetail(boolean workWithSalesPrice, boolean includeQuotas) {
 		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			Tax vat = invoiceDetail.getItem().getProduct().getVat();
 			Tax retention = invoiceDetail.getItem().getProduct().getRetention();
-			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			invoiceDetail.setVatPercent((vat!=null && vat.getId()!=null) ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
 			invoiceDetail.setRetentionPercent((retention!=null && retention.getId()!=null) ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
+
+			if (workWithSalesPrice) {
+				ItemPricesManager pricesManager = new ItemPricesManager();
+				double salesPrice = pricesManager.getSalesPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), invoiceDetail.getPrice());
+				invoiceDetail.setPrice(pricesManager.getPrice(invoiceDetail.getVatPercent(), invoiceDetail.getRetentionPercent(), salesPrice, 4));
+			}
+			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+
 			if (includeQuotas) {
 				invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
 				invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
