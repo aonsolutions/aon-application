@@ -107,7 +107,7 @@ public class ItemPricesManager implements Serializable {
 	public void onSalesPriceChanged(IPriceable priceable, Object value, boolean calculateProfit) {
 		if (value != null && !value.toString().equals("")) {
 			double salesPrice = CommonUtil.round(((Double)value).doubleValue());
-			priceable.setPrice(getPrice(priceable, salesPrice, 2));
+			priceable.setPrice(getPrice(priceable, salesPrice, 4));
 			if (calculateProfit) {
 				priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), priceable.getPrice()));
 				priceable.setSalesProfitPercent(getSalesProfit(priceable.getProfitablePrice(), priceable.getPrice()));
