@@ -3,9 +3,9 @@ package com.code.aon.ui.commercial.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.code.aon.AonVersion;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.OfferTerm;
-import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -16,7 +16,6 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -59,7 +58,7 @@ public class OfferTermController extends LinesController {
 		Expression expression = ExpressionUtilities.getEqualExpression(generalAlias, general);
 		initExpressions.add( expression );
 		setInitExpressions(initExpressions);
-		this.lookupListener = new TermsFilter();
+		this.lookupListener = new TermsFilter(this);
 	}
 
 	public IControllerListener getLookupListener() {
@@ -70,9 +69,10 @@ public class OfferTermController extends LinesController {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
-		public boolean isGeneral() {
-			OfferTermController oft = (OfferTermController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_TERM_GENERAL_CONTROLLER_NAME);
-			return oft.isGeneral();
+		private OfferTermController controller;
+		
+		public TermsFilter(OfferTermController controller) {
+			this.controller = controller;
 		}
 
 		@Override
@@ -81,7 +81,7 @@ public class OfferTermController extends LinesController {
 			try {
 				Criteria criteria = event.getController().getCriteria();
 				String generalField = event.getController().getFieldName(IEntityAlias.COMMERCIAL_TERM_GENERAL);
-				criteria.addEqualExpression(generalField, isGeneral());
+				criteria.addEqualExpression(generalField, controller.isGeneral());
 			} catch (ManagerBeanException e) {
 				throw new ControllerListenerException( e.getMessage(), e );
 			}
@@ -91,7 +91,7 @@ public class OfferTermController extends LinesController {
 		public void afterBeanCreated(ControllerEvent event)
 				throws ControllerListenerException {
 			CommercialTerm ct = (CommercialTerm) event.getController().getTo();
-			ct.setGeneral(isGeneral());
+			ct.setGeneral(controller.isGeneral());
 		}
 		
 	}
