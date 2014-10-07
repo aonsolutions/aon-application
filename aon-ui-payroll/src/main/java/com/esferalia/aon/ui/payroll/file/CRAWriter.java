@@ -7,12 +7,16 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
 import org.jooq.Result;
@@ -22,6 +26,8 @@ import org.jooq.impl.DSL;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
@@ -38,9 +44,6 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 
 public class CRAWriter {
-	
-	/* Clave proporcionada por la seguridad social */
-	private final Integer SS_KEY = 12345678;
 	
 	private final String WHITESPACE_1  = " ";
 	
@@ -108,7 +111,12 @@ public class CRAWriter {
 		
 	private ETI createETIRecord(Integer year, Month month) throws ManagerBeanException {
 		ETI eti = new ETI();
-		eti.setClave(SS_KEY);
+		String authorizationKey = getAuthorizationKey();
+		if(StringUtils.isNotBlank(authorizationKey)){
+			eti.setClave(authorizationKey);
+		} else {
+			AonUtil.addErrorMessage("No se ha definido la clave de autorización.");
+		}
 		eti.setPrueba(WHITESPACE_1);
 		setEti( eti );
 		return getEti();
@@ -165,6 +173,40 @@ public class CRAWriter {
 	//////////////////////////
 	// AUX
 	//////////////////////////
+	private String getAuthorizationKey() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT value FROM app_param";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain();
+			select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getString(1);
+			} else {
+				select = "SELECT value FROM app_param";
+				select += " WHERE domain = " + DomainManager.getDomainProvider().getParentDomain();
+				select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
+				
+				ps = conn.prepareStatement(select);
+				rs = ps.executeQuery();
+				if(rs.next()){
+					return rs.getString(1);
+				}
+			}
+		} catch (AonConnectionException e) {
+			// return null
+		} catch (SQLException e) {
+			// return null
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
 	
 	private Result<Record3<Byte, Double, Integer>> getSalaryPaymentSelect(Connection connection, EnterpriseCCC ccc, Date startDate, Date endDate ) {
 		DSLContext ctx = DSL.using(connection, getDefaultSettings());

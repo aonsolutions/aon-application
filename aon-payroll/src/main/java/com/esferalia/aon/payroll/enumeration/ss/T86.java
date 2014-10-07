@@ -1,0 +1,325 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T86 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ⁄LTIMA ACTUALIZACI”N.
+ * T86.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T86 implements IPayrollTablesEnum {
+
+	T86_001( "001", "N”MINA PROPIA", null, null ),
+	T86_002( "002", "UNIT4 BUSINESS SOFTWARE SPAIN S.L.U.", null, null ),
+	T86_003( "003", "ALFA MICROGES, S.L.", null, null ),
+	T86_004( "004", "SAGE LOGIC CONTROL, S.L.", null, null ),
+	T86_005( "005", "MONITOR INFORMATICA SOFTWARE SL", null, null ),
+	T86_007( "007", "GRUPO CASTILLA - CARLOS CASTILLA INGENIEROS,", null, null ),
+	T86_011( "011", "DEICA INFORMATICA SL", null, null ),
+	T86_012( "012", "NORAY SOFTWARE", null, null ),
+	T86_013( "013", "TRAMIT-SOFT S.L.", null, null ),
+	T86_014( "014", "WOLTERS KLUWER ESPA—A, S.A.", null, null ),
+	T86_015( "015", "INVESTIGACION Y DESARROLLO INFORMATICO_EIKON", null, null ),
+	T86_018( "018", "GLI SERVICIOS GESTION LABORAL S.L.", null, null ),
+	T86_019( "019", "FOKE SERVICIOS INFORMATICO, S.A.", null, null ),
+	T86_020( "020", "META4 SPAIN S.A.", null, null ),
+	T86_021( "021", "CSI INFORMATICA DE GESTIO, S.L.", null, null ),
+	T86_024( "024", "GEYCE AGP SOFTWAR, S.L.", null, null ),
+	T86_033( "033", "BUSINESS T&G S.A.", null, null ),
+	T86_034( "034", "BYTEMASTER SERVICIOS INFORMATICOS, S.A.", null, null ),
+	T86_043( "043", "GEMATIC, S.A.", null, null ),
+	T86_047( "047", "IBERMATICA, S.A.", null, null ),
+	T86_054( "054", "MICROMED, S.A.", null, null ),
+	T86_056( "056", "MICROVEN, S.A.L.", null, null ),
+	T86_067( "067", "SOFTWARE AG ESPANA, S.A.", null, null ),
+	T86_071( "071", "JUAN CARLOS MARTIN MU—OZ", null, null ),
+	T86_072( "072", "DRIMAR S.L.", null, null ),
+	T86_076( "076", "ISLAS CENTRO INFORMATICO, S.L.", null, null ),
+	T86_079( "079", "LOGICSOFTWARE, S.A.", null, null ),
+	T86_082( "082", "GAE INFORM¡TICA, S.A.", null, null ),
+	T86_099( "099", "ENTER SYSTEMS II S.L.", null, null ),
+	T86_103( "103", "SUMMAR TECNOLOGIA Y GESTION, S.A.", null, null ),
+	T86_110( "110", "LOGICA, TECNOLOGIA Y CONTROLES INFORMATICOS", null, null ),
+	T86_111( "111", "INFORMATICA Y PROGRAMACION LOGICA, SCA", null, null ),
+	T86_112( "112", "JMD NOMINAS Y PROTECCION DE DATOS, S.L.", null, null ),
+	T86_116( "116", "TSICO, S.A. (TECNOLOGIA DE SISTEMAS Y COMUNIC", null, null ),
+	T86_120( "120", "INFORM¿TICA3 PROGEST SL", null, null ),
+	T86_122( "122", "GERARDO ANTUNEZ JIMENEZ_(GAJ SERVICIOS INFORM", null, null ),
+	T86_123( "123", "DAMOS SOLUCIONES INFORMATICAS S.L", null, null ),
+	T86_125( "125", "JLQS, S.L.", null, null ),
+	T86_128( "128", "SISLEI SA", null, null ),
+	T86_130( "130", "SBS AITANA", null, null ),
+	T86_131( "131", "MICRODATA SOFTWARE", null, null ),
+	T86_136( "136", "WURTH, S.L.", null, null ),
+	T86_137( "137", "FRANCISCO JAVIER NIETO LOPEZ (PROMINFO)", null, null ),
+	T86_145( "145", "HOT KEY S.L", null, null ),
+	T86_152( "152", "MICROAREA DESARROLLOS INFORMATICOS, S.L.U.", null, null ),
+	T86_156( "156", "AG INFORMATICA Y SERVICIOS, S.A.", null, null ),
+	T86_157( "157", "ANER SISTEMAS INFORMATICOS", null, null ),
+	T86_163( "163", "PRISMA 2.0", null, null ),
+	T86_164( "164", "ALEMANY INFORMATICA, S.L.", null, null ),
+	T86_169( "169", "CONSULTORES DE PROGRAMAS INFORMATICOS Y SOLUC", null, null ),
+	T86_171( "171", "SOLUCIONES AVANZADAS EN INFORMATICA APLICADA", null, null ),
+	T86_173( "173", "M3INFORMATICA SL", null, null ),
+	T86_177( "177", "AIDA VITORIA, S.L.", null, null ),
+	T86_178( "178", "GRUPO HISPATEC INFORM·TICA EMPRESARIAL S.A.", null, null ),
+	T86_180( "180", "ALFONSO PALMERO MUÒOZ", null, null ),
+	T86_181( "181", "GRUPO GTEI SA", null, null ),
+	T86_185( "185", "INFORATA, S.L.", null, null ),
+	T86_186( "186", "SEPRINSA", null, null ),
+	T86_190( "190", "SAP ESPA—A SISTEMAS APLICACIONES Y PRODUC. IN", null, null ),
+	T86_192( "192", "NIVEL IV SERVICIOS INFORMATICOS GALLEGOS, S.L", null, null ),
+	T86_193( "193", "RADEM, S.L.", null, null ),
+	T86_195( "195", "CAI SISTEMAS INFORMATICOS S.L.", null, null ),
+	T86_196( "196", "ALMERIMATIK", null, null ),
+	T86_197( "197", "IDS INGENIERÌA DE SISTEMAS S.A.", null, null ),
+	T86_198( "198", "UNIDATA SOLUCIONES INFORMATICAS, S. L.", null, null ),
+	T86_199( "199", "SAGE SP SLU", null, null ),
+	T86_201( "201", "GESTION DISE—O Y MANTENIMIENTO SL", null, null ),
+	T86_202( "202", "OFICINA DE COOPERACION UNIVERSITARIA", null, null ),
+	T86_203( "203", "MARIA DOLORES COMPAÒ VAZQUEZ", null, null ),
+	T86_204( "204", "ARION GRUPO DE TECNOLOGIAS AVANZADAS S.A.", null, null ),
+	T86_205( "205", "AIGE, SL", null, null ),
+	T86_208( "208", "TECNOLOGIA Y ASESORAMIENTO DE SOFTWARE SL", null, null ),
+	T86_215( "215", "GESIMDE, S.A.", null, null ),
+	T86_219( "219", "SERESCO, S.A.", null, null ),
+	T86_221( "221", "INFORMATICA Y CONSULTING S.A.", null, null ),
+	T86_223( "223", "APLICACIONES Y PROYECTOS INFORMATICOS, S.A.", null, null ),
+	T86_227( "227", "MICRO RIOJA, S.A.", null, null ),
+	T86_229( "229", "NSI, S.L.", null, null ),
+	T86_230( "230", "COMERCIAL DE PRODUCTOS INFORMATICOS S.A.(CPI)", null, null ),
+	T86_231( "231", "ADP ES IBERIA S.L.", null, null ),
+	T86_234( "234", "GLASOF INFORMATICA S.L.", null, null ),
+	T86_235( "235", "DATA PROCES S.L.", null, null ),
+	T86_240( "240", "SERVICIOS ESPECIALES DE CODIFICACION, S.A.", null, null ),
+	T86_241( "241", "GRUPO CIE, S.L.", null, null ),
+	T86_242( "242", "DALF (DESARROLLO, APLICACIÛN LABORAL Y FISCAL", null, null ),
+	T86_243( "243", "DIAGRAM SOFTWARE, .S.L.", null, null ),
+	T86_244( "244", "ACKNOWLEDGMENT, S.A.L.", null, null ),
+	T86_245( "245", "P.S.M. SOFTWARE, S.L.", null, null ),
+	T86_246( "246", "CIA. MERIDIONAL DE GESTION Y SERVICIOS, S-L-", null, null ),
+	T86_249( "249", "MINISTERIO DE HACIENDA Y ADMINISTRACIONES PUB", null, null ),
+	T86_256( "256", "FERNANDO SAINZ PEREDA (FESA INFORMATICA)", null, null ),
+	T86_257( "257", "SIGACUS GESTION, S.L.", null, null ),
+	T86_260( "260", "PROCONSI S.A.", null, null ),
+	T86_266( "266", "EL CLUB DEL ASESOR INTERSOFT, S.L.", null, null ),
+	T86_269( "269", "BIGUN, S.L.", null, null ),
+	T86_271( "271", "INTERCAMBIO ELECTRONICO DE DATOS Y COMUNICACI", null, null ),
+	T86_272( "272", "NUEVO CENTRO DE SISTEMAS, S.L.", null, null ),
+	T86_273( "273", "AGRISOFT INFORMATICA, S.L.", null, null ),
+	T86_275( "275", "PLANATEC SOFTWARE, S.L.", null, null ),
+	T86_276( "276", "INFORREX,S.L", null, null ),
+	T86_285( "285", "EKINFORMATIKA, S.L.", null, null ),
+	T86_286( "286", "C2P SISTEMAS S.L.", null, null ),
+	T86_288( "288", "MADD INFORMATICS S.L.", null, null ),
+	T86_289( "289", "SAECDATA, S.A.", null, null ),
+	T86_290( "290", "QUERRY S.A.", null, null ),
+	T86_291( "291", "GALDON SOFTWARE, S.A.", null, null ),
+	T86_292( "292", "BIT ON CONSULTORES, S.L.", null, null ),
+	T86_293( "293", "INFORMATICA Y PROCESOS DE GESTION, S.L.", null, null ),
+	T86_296( "296", "FUSION COMPANIA DE INFORMATICA S.L.", null, null ),
+	T86_297( "297", "APLICACIONES Y SISTEMAS ROIZ SL", null, null ),
+	T86_299( "299", "INDUCONTROL S.L.", null, null ),
+	T86_300( "300", "GINSA INFORMATICA S.A.", null, null ),
+	T86_305( "305", "ATM DOS,S.L.", null, null ),
+	T86_308( "308", "SISPYME, S.L.", null, null ),
+	T86_313( "313", "ILUROINFOR, S.L.L.", null, null ),
+	T86_314( "314", "SOFTWARE 8000, S.L.", null, null ),
+	T86_317( "317", "SODAD PROV INFORMATICA SEVILLA S.A.U.(INPRO)", null, null ),
+	T86_319( "319", "DATOS SOLUCIONES INFORMATICAS, S.A.", null, null ),
+	T86_334( "334", "FUNDACION HAZI FUNDAZIOA", null, null ),
+	T86_335( "335", "AUDIFILM ABI, S.L", null, null ),
+	T86_340( "340", "CONSULTING EMPRESARIAL B.G.H., SL", null, null ),
+	T86_341( "341", "REAN PATRIMONIOS, S.L.(R.P.ASESORES RECURSO", null, null ),
+	T86_343( "343", "EDISA ASTURIAS, S.A", null, null ),
+	T86_344( "344", "TEINSOFT. S.L.", null, null ),
+	T86_345( "345", "MANTOLAN S.L.", null, null ),
+	T86_346( "346", "ASSESSORS INFORMATICS VALENCIA S.L.", null, null ),
+	T86_347( "347", "DATADEC S.A.", null, null ),
+	T86_351( "351", "TECSA SERVICIOS S.A.", null, null ),
+	T86_353( "353", "SYGA SYSTEM S.L.", null, null ),
+	T86_357( "357", "INFOMUR, S.L.", null, null ),
+	T86_359( "359", "CENTRO INFORMATICO MUNICIPAL SAN SEBASTIAN", null, null ),
+	T86_360( "360", "GABRIEL MARTINEZ HERNANDEZ", null, null ),
+	T86_361( "361", "ALGOL INFORMATICA S.C.C.L.", null, null ),
+	T86_365( "365", "SOCIAL ERP TELEGESTION S.L.", null, null ),
+	T86_366( "366", "BILBOSOFT SL.", null, null ),
+	T86_370( "370", "EPRINSA", null, null ),
+	T86_373( "373", "SOFTGASA INFORMATICA S.L.", null, null ),
+	T86_376( "376", "ARVISOFT, S.L.", null, null ),
+	T86_377( "377", "CEDATEC 2000 S.L.", null, null ),
+	T86_378( "378", "SYSTEM SOFT S.C.", null, null ),
+	T86_383( "383", "T-SYSTEMS ITC IBERIA, S.A.U.", null, null ),
+	T86_385( "385", "APLICACIONES GRAFICAS E INFORMATICAS S.A", null, null ),
+	T86_386( "386", "GOLDEN SOFT S.L.", null, null ),
+	T86_387( "387", "ORACLE IBERICA,S.R.L.", null, null ),
+	T86_391( "391", "DST SOFTWARE_S.L.", null, null ),
+	T86_393( "393", "GREGAL SOLUCIONES INFORMATICAS, S.L.", null, null ),
+	T86_395( "395", "AMSELEM Y ASOCIADOS S.L.", null, null ),
+	T86_398( "398", "INFORMATIZACION DE EMPRESAS, S.L.", null, null ),
+	T86_401( "401", "TOT CLAR S.L", null, null ),
+	T86_404( "404", "GISA CONSULTORES INFORMATICOS_S.L.", null, null ),
+	T86_408( "408", "LAUKOLAN S.L.", null, null ),
+	T86_412( "412", "AYTOS SOLUCIONES INFORMATICAS, SLU", null, null ),
+	T86_413( "413", "ELECTRO INFORMATICA GARPE, S.L.", null, null ),
+	T86_416( "416", "M.P.G. INFORMATICA S.L.", null, null ),
+	T86_422( "422", "ASESORIA POUSADA, S.L.", null, null ),
+	T86_423( "423", "CENTRO INFORMATICO PARA XESTION ECONOMICO FIN", null, null ),
+	T86_424( "424", "DIGISOFT SYSTEMS SL", null, null ),
+	T86_429( "429", "FREEMATICA S.L.", null, null ),
+	T86_432( "432", "MARSOFT_APLICACIONES INFORMATICAS", null, null ),
+	T86_434( "434", "RANDOM COMPUTERS S.A", null, null ),
+	T86_435( "435", "SERVICIO GALEGO DE SAUDE", null, null ),
+	T86_438( "438", "GABILOS SOFTWARE", null, null ),
+	T86_439( "439", "CIMKEY. S.L.", null, null ),
+	T86_442( "442", "INFORMATICA Y DESARROLLO DE SOFTWARE S.L.", null, null ),
+	T86_447( "447", "INFORMATICA 68 S.A", null, null ),
+	T86_448( "448", "PRO XXI SDAD COOPERATIVA", null, null ),
+	T86_449( "449", "TECNYRED S.C.P._(SCP)", null, null ),
+	T86_451( "451", "INGESIT SISTEMAS S.L.", null, null ),
+	T86_452( "452", "APLIFISA, S.L", null, null ),
+	T86_453( "453", "SYSTEM DATA SDNEXT S.L.U.", null, null ),
+	T86_454( "454", "INFORMATICA DE APLICACION EMPRESARIAL S.L.", null, null ),
+	T86_455( "455", "SDM SERVICIO DESARROLLO Y MANTENIMIENTO DE PR", null, null ),
+	T86_457( "457", "CONINPE CONSULTORES INFORMATICOS, S.L", null, null ),
+	T86_459( "459", "TECNOLOGIA CONTABLE APLICADA,S.L.", null, null ),
+	T86_461( "461", "SUBBETICA DE INFORMATICA Y SISTEMAS S.L", null, null ),
+	T86_462( "462", "M. DE EDUCACION, CULTURA Y DEPORTE", null, null ),
+	T86_465( "465", "SOFYHARD, S.L", null, null ),
+	T86_467( "467", "FAGOR S. COOP.", null, null ),
+	T86_469( "469", "HR ACCESS SOLUTIONS S.L. (GRUPO SOPRA)", null, null ),
+	T86_473( "473", "SOFTWARE DEL SOL, S.A.", null, null ),
+	T86_474( "474", "COLT HOP ED, S.L.", null, null ),
+	T86_475( "475", "CARMEN DE LA TORRE GOMEZ", null, null ),
+	T86_476( "476", "ENOMINA, S.L.", null, null ),
+	T86_479( "479", "HERRAMIENTAS DE GESTION AVANZADA, S.L.", null, null ),
+	T86_481( "481", "COLEGIO PROFESIONAL ADMINISTRADORES DE FINCAS", null, null ),
+	T86_482( "482", "COSME GARCIA NORIEGA", null, null ),
+	T86_483( "483", "PROFESSIONAL SOFTWARE S.A. (PROSOFT)", null, null ),
+	T86_484( "484", "SOLUCIONES LABORALES DE INFORMACION, S.L.", null, null ),
+	T86_485( "485", "AGROMEDIA SOFTWARE", null, null ),
+	T86_486( "486", "ADOLFO DE BONIS MORA", null, null ),
+	T86_488( "488", "B-NET APLICACIONES S.L.", null, null ),
+	T86_489( "489", "INFO 90 S.L.", null, null ),
+	T86_491( "491", "GESTION CUATROCIENTOS S.L.", null, null ),
+	T86_492( "492", "TÈCNICAS INFORM·TICAS IVAL, S.L.", null, null ),
+	T86_494( "494", "COMPUTER SET, S.A.", null, null ),
+	T86_495( "495", "CASTILLA LA MANCHA SERVICIOS TECNOL”GICOS S.L", null, null ),
+	T86_496( "496", "DESINBUR, S.L.", null, null ),
+	T86_497( "497", "JGN ASESORIA DE SERVICIOS INFORM¡TICOS , S.L.", null, null ),
+	T86_498( "498", "ESFERALIA NETWORKS, S.A.", null, null ),
+	T86_499( "499", "ASESORIA DOCOTECH, S.L. - LYNX CONSULTORS", null, null ),
+	T86_501( "501", "SERVICIO ELECTRONICO LOCAL SLU", null, null ),
+	T86_502( "502", "INFORMATICA FORMACION Y GESTION DE LUGO S.L.", null, null ),
+	T86_503( "503", "ESPECTACULOS ESPIN, S.L.", null, null ),
+	T86_504( "504", "JJSOFTWARE", null, null ),
+	T86_505( "505", "EUSKALCOMP. JOSE MIGUEL MAESTU MARTINEZ", null, null ),
+	T86_506( "506", "NICOLAS SANCHEZ-PUGA SOLER", null, null ),
+	T86_507( "507", "MIGUEL ANGEL ROMO GARCIA", null, null ),
+	T86_508( "508", "STS SISTEMES DE SOFT SL", null, null ),
+	T86_509( "509", "IGD INFORMACION GESTION Y DESARROLLO", null, null ),
+	T86_510( "510", "GESTION DE INNOVACION Y MODERNIZACION S.L.", null, null ),
+	T86_511( "511", "DIPUTACION DE ALBACETE (SECCION INFORMATICA M", null, null ),
+	T86_512( "512", "DINOF S.A.", null, null ),
+	T86_513( "513", "GRUP INFORMATIC I DE SERVEIS, S.L.", null, null ),
+	T86_514( "514", "GABINETE PROFESIONAL DE INFORMATICA S.L.", null, null ),
+	T86_515( "515", "CENTRO DE DESARROLLOS INFORMATICOS DEL SUR, S", null, null ),
+	T86_516( "516", "GRECCO SOFT S.L.", null, null ),
+	T86_517( "517", "ENDALIA, S.L.", null, null ),
+	T86_518( "518", "AS PROV EMPRES DE LA PESCA 'SECTOR EXTR DE AL", null, null ),
+	T86_519( "519", "NIX UNIVERSAL S.L.", null, null ),
+	T86_520( "520", "GP GLOBAL DEVELOPMENT S.L.", null, null ),
+	T86_521( "521", "INFONUR S.L.", null, null ),
+	T86_522( "522", "SIMA S.L.", null, null ),
+	T86_523( "523", "SERVICIOS LABORALES WEB S.L.U", null, null ),
+	T86_524( "524", "JUAN SALMONTE VAZQUEZ", null, null ),
+	T86_525( "525", "IKUT GROUP S.L.L.", null, null ),
+	T86_526( "526", "ASESORES TITULADOS S.A.", null, null ),
+	T86_527( "527", "MEDINA SORIANO Y ABAD S.L. (MSYA)", null, null ),
+	T86_528( "528", "INNOVACIONES TECNICAS DEL MEDITERRANEO S.L.", null, null ),
+	T86_529( "529", "JOBERS Y ASOCIADOS S.L.", null, null ),
+	T86_530( "530", "SOFTWARE INNOVACI”N Y DESARROLLO SCG (SIDGAL)", null, null ),
+	T86_531( "531", "ARRETAZ, S.L.", null, null ),
+	T86_532( "532", "NEWLINE SOLUCIONES INFORMATICAS S.L.", null, null ),
+	T86_533( "533", "NORTCONSULTING SISTEMAS, S.L.", null, null ),
+	T86_534( "534", "GT3 SOLUCIONES S.L.", null, null ),
+	T86_535( "535", "(E) FLOWINN CONSULTING, LDA.", null, null ),
+	T86_536( "536", "ESPACIO INFORMATION TECNOLOGY (EIT)", null, null ),
+	T86_537( "537", "SAGE OVERSEAS LIMITED SUCURSAL EN ESPA—A", null, null ),
+	T86_538( "538", "ASESOWEB PROFESIONAL, S.L.", null, null ),
+	T86_539( "539", "DATAMARE MEDITERRANEA S.L.", null, null ),
+	T86_540( "540", "EIKI SISTEMAS, S.L.", null, null ),
+	T86_541( "541", "GESTI”N PATRIMONIAL DOM…STICA S.L.", null, null ),
+	;
+	public static final String TABLE_NAME = "T86";
+	public static final String TABLE_DESCRIPTION = "T86.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T86( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T86 getEnumByValue(String expression) {
+		for( T86 o : T86.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

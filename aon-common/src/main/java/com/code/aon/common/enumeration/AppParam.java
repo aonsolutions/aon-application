@@ -155,6 +155,8 @@ public enum AppParam {
 	PAY_available_contract_codes_PAY,
 
 	PAY_afi_test_env_PAY,
+
+	PAY_authorization_key_PAY,
 	
 	PAY_certifica2_passwd_PAY,
 	

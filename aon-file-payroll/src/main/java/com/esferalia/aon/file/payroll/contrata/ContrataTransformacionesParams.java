@@ -21,7 +21,8 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 	private String sourceContractSepeId;
 	private ContractCode sourceContractCode;
 	private ITransformacionType transformContract;
-	private ContractCode transformCode;
+//	private ContractCode transformCode;
+	private String transformCode;
 	private Date fechaInicio;
 	private Date sourceStartDate;
 	private Date fechaTerminoReal;
@@ -84,17 +85,23 @@ public class ContrataTransformacionesParams implements IContrataParams, Serializ
 		this.transformContract = transformContract;
 	}
 
-	public ContractCode getTransformCode() {
+//	public ContractCode getTransformCode() {
+//		return transformCode;
+//	}
+//
+//	public void setTransformCode(ContractCode transformCode) {
+//		this.transformCode = transformCode;
+//	}
+
+	public String getTransformCode() {
 		return transformCode;
 	}
 
-	public void setTransformCode(ContractCode transformCode) {
+	public void setTransformCode(String transformCode) {
 		this.transformCode = transformCode;
 	}
 
-	
-	
-//	/* 
+	//	/* 
 //	 * generales de contrato 
 //	 */
 //	private TBONVFOR nivelFormativo;

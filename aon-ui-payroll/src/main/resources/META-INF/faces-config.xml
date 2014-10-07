@@ -1550,6 +1550,10 @@
 					<key>PAY_afi_test_env_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
+				<map-entry>
+					<key>PAY_authorization_key_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>

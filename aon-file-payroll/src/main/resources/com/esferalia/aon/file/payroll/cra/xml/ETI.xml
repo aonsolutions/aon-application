@@ -6,7 +6,7 @@
 	<field name="id2" value="1" format="Numeric" pattern="9(1)" />
 	<field name="id3" value="WSxx" format="AlphaNumeric" pattern="X(4)" />
 	<field name="id4" value="1" format="Numeric" pattern="9(1)" />
-	<field name="clave" value="bean" bean="ETI" property="clave" format="Numeric" pattern="9(8)" />
+	<field name="clave" value="bean" bean="ETI" property="clave" format="AlphaNumeric" pattern="X(8)" />
 	<field name="reservado" value=" " format="AlphaNumeric" pattern="X(8)" />
 	<field name="fecha" value="bean" bean="ETI" property="fecha" format="Numeric" pattern="9(8)" />
 	<field name="hora" value="bean" bean="ETI" property="hora" format="Numeric" pattern="9(4)" />

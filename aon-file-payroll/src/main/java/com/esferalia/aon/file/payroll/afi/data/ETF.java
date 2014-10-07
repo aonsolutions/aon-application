@@ -4,7 +4,7 @@ package com.esferalia.aon.file.payroll.afi.data;
 public class ETF {
 
 	private String identificador;
-	private Integer clave;
+	private String clave;
 	private Integer fecha;
 	private Integer hora;
 	private String fichero;
@@ -18,13 +18,13 @@ public class ETF {
 	public void setIdentificador(String identificador) {
 		this.identificador = identificador;
 	}
-	public Integer getClave() {
+	
+	public String getClave() {
 		return clave;
 	}
-	public void setClave(Integer clave) {
+	public void setClave(String clave) {
 		this.clave = clave;
 	}
-
 	public Integer getFecha() {
 		return fecha;
 	}

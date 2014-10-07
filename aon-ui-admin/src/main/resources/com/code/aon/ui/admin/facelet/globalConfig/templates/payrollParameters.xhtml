@@ -29,20 +29,18 @@
 	
 		<aon:div styleClass="aon-scroll-area">	
 			
-			<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-				<c:if test="#{actionDenied.moduleEnabled['payroll']}">
-					<aon:div styleClass="aon-margin-bottom">
-						<aon:panelGrid  columns="2" style="margin-bottom: 2em;">	
-							<!--  
-							<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />
-							-->
-							<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formParamsContent.xhtml" />
-						</aon:panelGrid>
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/params/formContent.xhtml" />
-					</aon:div>
-				</c:if>
+			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+				<aon:div styleClass="aon-margin-bottom">
+					<aon:panelGrid  columns="2" style="margin-bottom: 2em;">	
+						<!--  
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />
+						-->
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formParamsContent.xhtml" />
+					</aon:panelGrid>
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/params/formContent.xhtml" />
+				</aon:div>
 			</c:if>
-
+		
 			<c:if test="#{aonRole.config}">
 				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
 			</c:if>

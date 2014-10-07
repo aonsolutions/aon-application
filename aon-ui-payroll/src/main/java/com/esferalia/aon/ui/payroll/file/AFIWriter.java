@@ -58,8 +58,6 @@ public class AFIWriter implements Serializable {
 	private final String AFI 				= "AFI";
 	private final String WINSUITE_VERSION 	= "71WSxxx";
 	private final String TESTING_CHECK		= "P";
-	/* Clave proporcionada por la seguridad social */
-	private final Integer SS_KEY			= 99999999;
 	
 	private final String WHITESPACE_1  = " ";
 	private final String WHITESPACE_2  = "  ";
@@ -106,7 +104,12 @@ public class AFIWriter implements Serializable {
 		eti.setFichero(formatter.format(date));
 		
 		eti.setIdentificador(AFI+WINSUITE_VERSION);
-		eti.setClave(SS_KEY);
+		String authorizationKey = getAuthorizationKey();
+		if(StringUtils.isNotBlank(authorizationKey)){
+			eti.setClave(authorizationKey);
+		} else {
+			AonUtil.addErrorMessage("No se ha definido la clave de autorización.");
+		}
 		eti.setPrueba( testFile?TESTING_CHECK:WHITESPACE_1 );
 		for (Enterprise e: getEnterprises(contractList)) {
 			EMP emp = createEMPrecord(e, contractList);
@@ -358,6 +361,41 @@ public class AFIWriter implements Serializable {
 			DatabaseUtil.closeQuietly(conn);
 		}
 		return false;
+	}
+	
+	private String getAuthorizationKey() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT value FROM app_param";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain();
+			select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getString(1);
+			} else {
+				select = "SELECT value FROM app_param";
+				select += " WHERE domain = " + DomainManager.getDomainProvider().getParentDomain();
+				select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
+				
+				ps = conn.prepareStatement(select);
+				rs = ps.executeQuery();
+				if(rs.next()){
+					return rs.getString(1);
+				}
+			}
+		} catch (AonConnectionException e) {
+			// return null
+		} catch (SQLException e) {
+			// return null
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
 	}
 	
 }

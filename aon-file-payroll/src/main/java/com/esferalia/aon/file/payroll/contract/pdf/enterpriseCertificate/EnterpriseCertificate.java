@@ -42,11 +42,13 @@ public class EnterpriseCertificate extends AbstractEnterpriseCertificate {
 			if (certificadoList.size()>0 && certificadoList.get(0)!=null && certificadoList.get(0).getCuentaCotizacion().size()>0 ){
 				CUENTACOTIZACIONTYPE ccc = certificadoList.get(0).getCuentaCotizacion().get(0);
 				
-				String dirStaffName = ccc.getDatosRepresentante().getApellido1() + " ";
-				dirStaffName += ccc.getDatosRepresentante().getApellido2() + ", ";
-				dirStaffName += ccc.getDatosRepresentante().getNombre();
-				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_DIR_STAFF_NAME.getValue(),dirStaffName);
-				setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),ccc.getDatosRepresentante().getCargo());
+				if(ccc.getDatosRepresentante()!=null){
+					String dirStaffName = ccc.getDatosRepresentante().getApellido1() + " ";
+					dirStaffName += ccc.getDatosRepresentante().getApellido2() + ", ";
+					dirStaffName += ccc.getDatosRepresentante().getNombre();
+					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_DIR_STAFF_NAME.getValue(),dirStaffName);
+					setPdfFieldValue(EnterpriseCertificateField.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),ccc.getDatosRepresentante().getCargo());
+				}
 				
 				
 				// ENTERPRISE

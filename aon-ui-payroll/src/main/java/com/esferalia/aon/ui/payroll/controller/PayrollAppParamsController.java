@@ -38,28 +38,41 @@ public class PayrollAppParamsController implements Serializable {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PayrollAppParamsController.class);
 
-//	public final static String DEFAULT_CONTRACT_CODE_KEY 	= "PAY_default_contractCode_PAY";
-//	public final static String DEFAULT_TRAINING_CENTER_KEY 	= "PAY_default_trainingCenter_PAY";
-//	public final static String SS_PAYMENT_BANK_ACCOUNT_KEY 	= "PAY_ss_payment_bankAccount_PAY";
-//	public final static String SS_MUTUAL_KEY				= "PAY_ss_mutual_PAY";
-//
-//	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
-//	public final static String FAN_TEST_ENVIRONMENT_ACTIVE	= "PAY_fan_test_env_PAY";
-//	public final static String AFI_TEST_ENVIRONMENT_ACTIVE	= "PAY_afi_test_env_PAY";
-//	
-//	public final static String REPORT_ADDITIONAL_SALAY_TEMPLATES 	= "PAY_REPORT_additional_salary_PAY";
-
 	private TrainingCenter defaultTrainingCenter;
 	private RegistryBank ssPaymentBankAccount;
 	private List<ContractCode> availableNewContracts;
 	private Boolean fanTestEnvironment;
 	private Boolean afiTestEnvironment;
+	private String authorizationKey;
 	
 	private Map<String, ApplicationParameter> parameters;
 	private Map<String, String> defaultParameters;
 	
 	private boolean skipPayrollData;
 	
+
+	public String getAuthorizationKey() {
+		if(authorizationKey==null){
+			initAuthorizationKey();
+		}
+		return authorizationKey;
+	}
+
+	public void setAuthorizationKey(String authorizationKey) {
+		this.authorizationKey = authorizationKey;
+	}
+
+	private void initAuthorizationKey() {
+		try {
+			if(getParameter(AppParam.PAY_authorization_key_PAY.getValue()).getValue()!=null){
+				setAuthorizationKey(getParameter(AppParam.PAY_authorization_key_PAY.getValue()).getValue());
+			} else {
+				setAuthorizationKey("");
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
 
 	public Boolean getFanTestEnvironment() {
 		if(fanTestEnvironment==null){
@@ -350,6 +363,41 @@ public class PayrollAppParamsController implements Serializable {
 	private String getSSMutual() throws ManagerBeanException {
 		if( StringUtils.isNotBlank(getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).getValue()) ){
 			return getParameter(AppParam.PAY_ss_mutual_PAY.getValue()).getValue();
+		}
+		return null;
+	}
+	
+	
+	/*
+	 * PARENT DOMAIN OVERRIDABLE DATA
+	 */
+	public boolean isWinsuiteAuthorizationDefined(){
+		return StringUtils.isNotBlank(getAuthorizationKey());
+	}
+	public boolean isParentWinsuiteAuthorizationDefined(){
+		String user = getParentAuthorizationKey();
+		return StringUtils.isNotBlank(user);
+	}
+	public String getParentAuthorizationKey(){
+		ApplicationParameter ap = obtainParentParamValue(AppParam.PAY_authorization_key_PAY);
+		return ap!=null?ap.getValue():null;
+	}
+	public void onRedefineWinsuiteAuthorization(ActionEvent event){
+		setAuthorizationKey(getParentAuthorizationKey());
+	}
+	
+	private ApplicationParameter obtainParentParamValue(AppParam ap){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_DOMAIN), DomainManager.getDomainProvider().getParentDomain());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), ap.getValue());
+			List<ITransferObject> list = bean.getList(criteria, 0, 1);
+			if (! list.isEmpty() ) {
+				return (ApplicationParameter) list.get(0);
+			}
+		} catch ( ManagerBeanException e ) {
 		}
 		return null;
 	}

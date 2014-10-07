@@ -1062,7 +1062,7 @@ public class ContractController extends BasicController {
 		newCodeData.setStartDate(params.getFechaInicio());
 		newCodeData.setEndDate(params.getFechaTerminoReal());
 		newCodeData.setName(currentCodeData.getName());
-		newCodeData.setExpression("\""+params.getTransformCode().getValue()+"\"");
+		newCodeData.setExpression("\""+params.getTransformCode()+"\"");
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			currentCodeData.setEndDate(currentCodeData.getContract().getEndDate());

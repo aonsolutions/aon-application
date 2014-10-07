@@ -548,6 +548,29 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T82.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T82CodeList;
+
+	public List<SelectItem> getT82CodeList() {
+		if (T82CodeList == null) {
+			T82CodeList = new LinkedList<SelectItem>();
+			T82[] el = T82.values();
+			for (T82 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T82CodeList.add(item);
+				}
+			}
+		}
+		return T82CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * T83.java
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -589,6 +612,29 @@ private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 			}
 		}
 		return T84CodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * T86.java
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> T86CodeList;
+
+	public List<SelectItem> getT86CodeList() {
+		if (T86CodeList == null) {
+			T86CodeList = new LinkedList<SelectItem>();
+			T86[] el = T86.values();
+			for (T86 obj : el) {
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					T86CodeList.add(item);
+				}
+			}
+		}
+		return T86CodeList;
 	}
 
 }

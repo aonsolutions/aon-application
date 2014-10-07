@@ -3,7 +3,7 @@
 <register name="ETI">
 	<field name="cabecera" value="ETI" format="AlphaNumeric" pattern="X(3)" />
 	<field name="identificador" value="bean" bean="ETI" property="identificador" format="AlphaNumeric" pattern="X(10)" />
-	<field name="clave" value="bean" bean="ETI" property="clave" format="Numeric" pattern="9(8)" />
+	<field name="clave" value="bean" bean="ETI" property="clave" format="AlphaNumeric" pattern="X(8)" />
 	<field name="free1" value=" " format="AlphaNumeric" pattern="X(8)" />
 	<field name="fecha" value="bean" bean="ETI" property="fecha" format="Numeric" pattern="9(8)" />
 	<field name="hora" value="bean" bean="ETI" property="hora" format="Numeric" pattern="9(4)" />

@@ -192,10 +192,10 @@
 				
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="4" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-auto,
+										aon-panelGrid-even aon-text-center aon-width-120,
+										aon-panelGrid-even aon-text-center aon-width-120,
+										aon-panelGrid-even aon-text-center aon-width-120">
 					<f:facet name="header">
 						<aon:outputText value="TIPOS DE COTIZACIÓN (%)" />
 					</f:facet>
@@ -269,10 +269,10 @@
 			
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="4" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-auto,
+										aon-panelGrid-even aon-text-center aon-width-120,
+										aon-panelGrid-even aon-text-center aon-width-120,
+										aon-panelGrid-even aon-text-center aon-width-120">
 					<f:facet name="header">
 						<aon:outputText value="DESEMPLEO" />
 					</f:facet>
@@ -327,9 +327,9 @@
 						
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="3" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-250,
+										aon-panelGrid-even aon-text-center aon-width-auto,
+										aon-panelGrid-even aon-text-center aon-width-250">
 					<f:facet name="header">
 						<aon:outputText value="FOGASA" />
 					</f:facet>
@@ -358,9 +358,9 @@
 		
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="3" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-250,
+										aon-panelGrid-even aon-text-center aon-width-auto,
+										aon-panelGrid-even aon-text-center aon-width-250">
 					<f:facet name="header">
 						<aon:outputText value="FORMACIÓN PROFESIONAL" />
 					</f:facet>
@@ -391,8 +391,8 @@
 	
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-400,
+										aon-panelGrid-even aon-text-center aon-width-auto">
 					<f:facet name="header">
 						<aon:outputText value="TOPES COTIZACIÓN DE ACCIDENTES DE TRABAJO Y ENFERMEDADES PROFESIONALES" />
 					</f:facet>
@@ -417,8 +417,8 @@
 	
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-										aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-400,
+										aon-panelGrid-even aon-text-center aon-width-auto">
 					<f:facet name="header">
 						<aon:outputText value="CONTRATO DE TRABAJO A TIEMPO PARCIAL" />
 					</f:facet>
@@ -449,6 +449,11 @@
 					<aon:outputText value="#{quoteValues.values['4_BASE_CGC_MIN_PARTIAL']}" >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
+
+					<aon:outputText value="A.T. y E.P." />
+					<aon:outputText value="#{quoteValues.values['BASE_CGP_MIN_PARTIAL']}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
 				</aon:panelGrid>
 			</aon:panel>
 			
@@ -456,9 +461,9 @@
 
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="3" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-									aon-panelGrid-even aon-text-center,
-									aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-250,
+									aon-panelGrid-even aon-text-center aon-width-auto,
+									aon-panelGrid-even aon-text-center aon-width-250">
 					<f:facet name="header">
 						<aon:outputText value="SALARIO MÍNIMO INTERPROFESIONAL(SMI)" />
 					</f:facet>
@@ -489,9 +494,9 @@
 
 			<aon:panel style="width: 750px; margin-top: 20px;">
 				<aon:panelGrid columns="3" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-text-center,
-									aon-panelGrid-even aon-text-center,
-									aon-panelGrid-even aon-text-center">
+					columnClasses="aon-panelGrid-even aon-text-center aon-width-250,
+									aon-panelGrid-even aon-text-center aon-width-auto,
+									aon-panelGrid-even aon-text-center aon-width-250">
 					<f:facet name="header">
 						<aon:outputText
 							value="INDICADOR PÚBLICO DE RENTAS DE EFECTOS MÚLTIPLES (IPREM)" />

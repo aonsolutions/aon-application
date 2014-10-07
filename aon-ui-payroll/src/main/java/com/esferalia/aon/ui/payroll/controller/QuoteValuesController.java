@@ -1,8 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.jooq.DSLContext;
@@ -87,7 +86,9 @@ public class QuoteValuesController implements Serializable {
 			String name = step.value1();
 			String expression = step.value2();
 			
+			/////////////////////
 			// BASES
+			/////////////////////
 			Map<String, Double> bases = new HashMap<String, Double>();
 			if(name.equals("BASE_CGC_MIN")){
 				bases = obtainBaseCgcMin(expression);
@@ -103,7 +104,9 @@ public class QuoteValuesController implements Serializable {
 			}
 
 			
+			/////////////////////
 			// TIPOS
+			/////////////////////
 			if(name.equals("PORCENTAJE_CGC")){
 				putValue(values, "CGC", expression);
 			}
@@ -147,6 +150,9 @@ public class QuoteValuesController implements Serializable {
 			
 		}
 		
+		//////////////////////////
+		// TIPOS -DESEMPLEO-
+		//////////////////////////
 		Result<Record4<String, String, java.sql.Date, java.sql.Date>> unemploymentEmployee = getGeneralRegimeUnemploymentEmployeeValues();
 		for (Record4<String, String, java.sql.Date, java.sql.Date> step : unemploymentEmployee) {
 			String expression = step.value2();
@@ -155,7 +161,8 @@ public class QuoteValuesController implements Serializable {
 				try {
 					values.put(key, Double.valueOf(types.get(key)));
 				} catch (NumberFormatException e) {
-					AonUtil.addErrorMessage("No se el valor: " + types.get(key) );
+					AonUtil.addErrorMessage("No se reconoce el valor: " + types.get(key) );
+					LOGGER.error("No se reconoce el valor: " + types.get(key) );
 				}
 			}
 		}
@@ -168,7 +175,8 @@ public class QuoteValuesController implements Serializable {
 				try {
 					values.put(key, types.get(key));
 				} catch (NumberFormatException e) {
-					AonUtil.addErrorMessage("No se el valor: " + types.get(key) );
+					AonUtil.addErrorMessage("No se reconoce el valor: " + types.get(key) );
+					LOGGER.error("No se reconoce el valor: " + types.get(key) );
 				}
 			}
 		}
@@ -177,15 +185,23 @@ public class QuoteValuesController implements Serializable {
 	
 	private Map<String, Double> obtainUnemploymentEmployeeType(String expression) {
 		Map<String, Double> values = new HashMap<String, Double>();
-		String DESEMPL_REGEX = ".*PORCENTAJE_DESMPL.*\\(INDEFINIDO\\s.*\\s(\\d{1}.\\d{2})\\s.*(\\d{1}.\\d{2})\\s\\)\\).*";
+		String DESEMPL_BINARY_REGEX = ".*PORCENTAJE_DESMPL.*\\(INDEFINIDO.*(\\d{1}.\\d{2}).*(\\d{1}.\\d{2}).*\\).*";
+		String DESEMPL_TERNARY_REGEX = ".*PORCENTAJE_DESMPL.*\\(INDEFINIDO.*(\\d{1}.\\d{2}).*\\(TIEMPO_COMPLETO.*(\\d{1}.\\d{2}).*(\\d{1}.\\d{2}).*\\)\\).*";
 		
-		putValue(values, expression, DESEMPL_REGEX, "DESEMPL", "DESEMPL_TC");
-		
-		if(expression.matches(DESEMPL_REGEX)){
-			Pattern PATTERN = Pattern.compile(DESEMPL_REGEX); 
-			Matcher m = PATTERN.matcher(expression);
-			if(m.find()) {
-				putValue(values, "DESEMPL_TP", m.group(2));
+		if(expression.matches(DESEMPL_TERNARY_REGEX)){
+			putValue(values, expression, DESEMPL_TERNARY_REGEX, "DESEMPL", "DESEMPL_TC", "DESEMPL_TP");
+		} else {
+			if(expression.matches(DESEMPL_BINARY_REGEX)){
+				Pattern PATTERN = Pattern.compile(DESEMPL_BINARY_REGEX); 
+				Matcher m = PATTERN.matcher(expression);
+				if(m.find()) {
+					putValue(values, "DESEMPL", m.group(1));
+					putValue(values, "DESEMPL_TC", m.group(2));
+					putValue(values, "DESEMPL_TP", m.group(2));
+				}
+			} else {
+				AonUtil.addErrorMessage("No se reconoce el valor: " + expression);
+				LOGGER.error("No se reconoce el valor: " + expression);
 			}
 		}
 		return values;
@@ -193,8 +209,25 @@ public class QuoteValuesController implements Serializable {
 	
 	private Map<String, Double> obtainUnemploymentEnterpriseType(String expression) {
 		Map<String, Double> values = new HashMap<String, Double>();
-		String DESEMPL_REGEX = ".*\\(PORCENTAJE_DESMPL_E.*\\(INDEFINIDO.*(\\d{1}.\\d{2}).*\\(TIEMPO_COMPLETO.*(\\d{1}.\\d{2}).*(\\d{1}.\\d{2})\\)\\)\\).*"; 
-		putValue(values, expression, DESEMPL_REGEX, "DESEMPL_E", "DESEMPL_TC_E", "DESEMPL_TP_E");
+		String DESEMPL_BINARY_REGEX = ".*PORCENTAJE_DESMPL_E.*\\(INDEFINIDO.*(\\d{1}.\\d{2}).*(\\d{1}.\\d{2}).*\\).*";
+		String DESEMPL_TERNARY_REGEX = ".*PORCENTAJE_DESMPL_E.*\\(INDEFINIDO.*(\\d{1}.\\d{2}).*\\(TIEMPO_COMPLETO.*(\\d{1}.\\d{2}).*(\\d{1}.\\d{2})\\)\\).*"; 
+		
+		if(expression.matches(DESEMPL_TERNARY_REGEX)){
+			putValue(values, expression, DESEMPL_TERNARY_REGEX, "DESEMPL_E", "DESEMPL_TC_E", "DESEMPL_TP_E");
+		} else {
+			if(expression.matches(DESEMPL_BINARY_REGEX)){
+				Pattern PATTERN = Pattern.compile(DESEMPL_BINARY_REGEX); 
+				Matcher m = PATTERN.matcher(expression);
+				if(m.find()) {
+					putValue(values, "DESEMPL_E", m.group(1));
+					putValue(values, "DESEMPL_TC_E", m.group(2));
+					putValue(values, "DESEMPL_TP_E", m.group(2));
+				}
+			} else {
+				AonUtil.addErrorMessage("No se reconoce el valor: " + expression);
+				LOGGER.error("No se reconoce el valor: " + expression);
+			}
+		}
 		return values;
 	}
 	
@@ -275,7 +308,8 @@ public class QuoteValuesController implements Serializable {
 		try {
 			values.put(key, Double.valueOf(value));
 		} catch (NumberFormatException e) {
-			AonUtil.addErrorMessage("No se el valor: " + value);
+			AonUtil.addErrorMessage("No se reconoce el valor: " + value);
+			LOGGER.error("No se reconoce el valor: " + value);
 		}
 	}
 	
@@ -288,24 +322,30 @@ public class QuoteValuesController implements Serializable {
 					try {
 						values.put(keys[0], Double.valueOf(m.group(1)));
 					} catch (NumberFormatException e) {
-						AonUtil.addErrorMessage("No se el valor: " + m.group(1));
+						AonUtil.addErrorMessage("No se reconoce el valor: " + m.group(1));
+						LOGGER.error("No se reconoce el valor: " + m.group(1));
 					}
 				}
 				if(keys.length>1){
 					try {
 						values.put(keys[1], Double.valueOf(m.group(2)));
 					} catch (NumberFormatException e) {
-						AonUtil.addErrorMessage("No se el valor: " + m.group(2));
+						AonUtil.addErrorMessage("No se reconoce el valor: " + m.group(2));
+						LOGGER.error("No se reconoce el valor: " + m.group(2));
 					}
 				}
 				if(keys.length>2){
 					try {
 						values.put(keys[2], Double.valueOf(m.group(3)));
 					} catch (NumberFormatException e) {
-						AonUtil.addErrorMessage("No se el valor: " + m.group(3));
+						AonUtil.addErrorMessage("No se reconoce el valor: " + m.group(3));
+						LOGGER.error("No se reconoce el valor: " + m.group(3));
 					}
 				}
 			}
+		} else {
+			AonUtil.addErrorMessage("No se reconoce el valor: " + keys.toString());
+			LOGGER.error("No se reconoce el valor: " + keys.toString());
 		}
 	}
 	
@@ -353,10 +393,11 @@ public class QuoteValuesController implements Serializable {
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
 		} finally {
 			DatabaseUtil.closeQuietly(connection);
 		}
+		return null;
 	}
 	
 	private Result<Record4<String, String, java.sql.Date, java.sql.Date>> getGeneralRegimeUnemploymentEmployeeValues() {
@@ -379,10 +420,11 @@ public class QuoteValuesController implements Serializable {
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
 		} finally {
 			DatabaseUtil.closeQuietly(connection);
 		}
+		return null;
 	}
 	
 	private Result<Record4<String, String, java.sql.Date, java.sql.Date>> getGeneralRegimeUnemploymentEnterpriseValues() {
@@ -405,10 +447,11 @@ public class QuoteValuesController implements Serializable {
 			return record;
 		} catch (AonConnectionException e) {
 			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
 		} finally {
 			DatabaseUtil.closeQuietly(connection);
 		}
+		return null;
 	}
 	
 	

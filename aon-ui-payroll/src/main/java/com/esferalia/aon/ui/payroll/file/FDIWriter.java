@@ -3,6 +3,10 @@ package com.esferalia.aon.ui.payroll.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +15,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Enterprise;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.fdi.FDI;
@@ -44,9 +52,6 @@ public class FDIWriter implements Serializable {
 	
 	private final String FDI 				= "FDI";
 	private final String WINSUITE_VERSION 	= "30WSxxx";
-//	private final String TESTING_CHECK		= "P";
-	/* Clave proporcionada por la seguridad social */
-	private final Integer SS_KEY			= 99999999;
 	
 	private ETI eti;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
@@ -86,8 +91,12 @@ public class FDIWriter implements Serializable {
 		eti.setFichero(formatter.format(date));
 		
 		eti.setIdentificador(FDI+WINSUITE_VERSION);
-		eti.setClave(SS_KEY);
-//		eti.setPrueba( testFile?TESTING_CHECK:WHITESPACE_1 );
+		String authorizationKey = getAuthorizationKey();
+		if(StringUtils.isNotBlank(authorizationKey)){
+			eti.setClave(authorizationKey);
+		} else {
+			AonUtil.addErrorMessage("No se ha definido la clave de autorización.");
+		}
 		EMP emp = null;
 		for (ContractLeaveDetail detail: partes) {
 			if(emp==null || !emp.getNumero().equals(detail.getContractLeave().getContract().getActivity().getEnterprise().getRegistry().getDocument())){
@@ -330,6 +339,41 @@ public class FDIWriter implements Serializable {
 	private ContractCode getContractCode(Contract contract) {
 		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
 		return ContractCode.getContractCodeByValue(tc2);
+	}
+	
+	private String getAuthorizationKey() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT value FROM app_param";
+			select += " WHERE domain = " + DomainManager.getCurrentDomain();
+			select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
+			
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getString(1);
+			} else {
+				select = "SELECT value FROM app_param";
+				select += " WHERE domain = " + DomainManager.getDomainProvider().getParentDomain();
+				select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
+				
+				ps = conn.prepareStatement(select);
+				rs = ps.executeQuery();
+				if(rs.next()){
+					return rs.getString(1);
+				}
+			}
+		} catch (AonConnectionException e) {
+			// return null
+		} catch (SQLException e) {
+			// return null
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
 	}
 
 }

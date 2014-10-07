@@ -7,7 +7,8 @@ import java.util.List;
 
 public class ETI {
 
-	private Integer clave;
+	private String clave;
+	private String proveedorNomina;
 	private Integer fecha;
 	private Integer hora;
 	private String fichero;
@@ -34,12 +35,17 @@ public class ETI {
 		etf.setHora(hora);
 	}
 	
-	public Integer getClave() {
+	public String getClave() {
 		return clave;
 	}
-	public void setClave(Integer clave) {
+	public void setClave(String clave) {
 		this.clave = clave;
-		etf.setClave(clave);
+	}
+	public String getProveedorNomina() {
+		return proveedorNomina;
+	}
+	public void setProveedorNomina(String proveedorNomina) {
+		this.proveedorNomina = proveedorNomina;
 	}
 
 	public Integer getFecha() {
