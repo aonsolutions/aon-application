@@ -1,12 +1,18 @@
 package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_COLLECTIONS;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUMENT_CONTROLLER_NAME;
 
-import java.awt.RadialGradientPaint;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -22,14 +28,21 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.event.DomainLoookupListener;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class CorporateIdentityController extends RegistryAttachController {
 	
@@ -148,6 +161,56 @@ public class CorporateIdentityController extends RegistryAttachController {
 		return initialAction;
 	}	
 	
+
+	public String getDownloadURL() throws ManagerBeanException, IOException, SQLException, KeyStoreException, GeneralSecurityException {
+		String url = null;
+		RegistryAttachment ra = (RegistryAttachment) getTo();
+		if ( ra.getDriveId() != null ) {
+			String domain = AonUtil.getDomainName();
+			DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
+			DriveUtils.serviceInitialize(d);
+			File f = DriveUtils.getFile(ra.getDriveId());
+			url= f.getDownloadUrl();//url= f.getAlternateLink();
+		} else {
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			url = ds.getDomainURL() + ra.getDownloadURL();
+		}
+		return url;
+	}
+
+	@Override
+	public void downloadAttachment(ActionEvent event) throws NumberFormatException, ManagerBeanException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String id = context.getExternalContext().getRequestParameterMap().get("index");
+        RegistryAttachment ra = (RegistryAttachment) getManagerBean().get(Integer.valueOf(id));
+		if ( ra.getDriveId() != null ) {
+			String domain = AonUtil.getDomainName();
+			DomainGserviceaccount d;
+			Drive drive = null;
+			File f = null;
+			try {
+				d = DatabaseSync.getServiceAccount(domain);
+				drive = DriveUtils.serviceInitialize(d);
+				f = DriveUtils.getFile(ra.getDriveId());
+			} catch (KeyStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			InputStream in = DriveUtils.downloadFile(drive, f);
+			long size = f.getFileSize();
+			
+			DownloadUtil.downloadAttachment(ra.getDescription(), ra.getMimeType(), in, size);			
+		} else {
+	        DownloadUtil.downloadAttachment(ra);
+		}    	
+	}	
+	
+
 	public boolean isEditable() {
 		return AonUtil.getRoleManager().isDocumentManager() && (!isServiconvenios());
 	}

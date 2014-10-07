@@ -53,7 +53,7 @@
 			onmouseup="disableRowSelector();"
 			onmouseout="enableRowSelector();" >
 			<aon:htmlCommandLink id="download" target="_blank"
-				rendered="#{to.size &gt; 0}"
+				rendered="#{(to.size &gt; 0) || (to.driveId != null)}"
 				actionListener="#{controller.downloadAttachment}"
 				styleClass="aon-icon aon-icon-mail-save"
 				style="line-height:16px;margin-right:0;"
