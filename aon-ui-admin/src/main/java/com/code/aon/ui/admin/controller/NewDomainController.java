@@ -375,7 +375,7 @@ public class NewDomainController implements Serializable {
 	}
 	
 	public int getMaxDomainNameLength() {
-		return DomainController.DEFAULT_MAX_TOTAL_DOCUMENT_SIZE - StringUtils.length(getDomainSuffix());
+		return DomainController.MAX_DOMAIN_NAME_LENGTH - StringUtils.length(getDomainSuffix());
 	}
 
 	public void onChangedEnableHeredity( ActionEvent event ) {

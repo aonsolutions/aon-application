@@ -3,6 +3,7 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.code.aon.ui.registry.controller.DocumentManager.MAX_TOTAL_DOCUMENT_SIZE_VALUES;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import java.io.File;
@@ -112,8 +113,6 @@ public class DomainController extends BasicController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
-	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;	
-	
 	private final static Pattern URL_LABEL_PATTERN = Pattern.compile("[a-z\\d][a-z\\d-]{0,62}");
 	
 	private final static Pattern URL_TLD_PATTERN = Pattern.compile("[a-z]{2,6}");
@@ -203,7 +202,7 @@ public class DomainController extends BasicController {
 
 	public void onDocumentalChanged( ActionEvent event ) {
 		if (! getDocumental().isChecked() ) {
-			getDomain().setMaxTotalDocumentSize(DEFAULT_MAX_TOTAL_DOCUMENT_SIZE);
+			getDomain().setMaxTotalDocumentSize(DocumentManager.MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
 		}
 	}
 
@@ -1037,6 +1036,20 @@ public class DomainController extends BasicController {
 		this.productDetailLevel = productDetailLevel;
 	}
 
+	public List<SelectItem> getMaxTotalDocumentSizes() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (int i = 0; i < MAX_TOTAL_DOCUMENT_SIZE_VALUES.length; i++) {
+			int value = MAX_TOTAL_DOCUMENT_SIZE_VALUES[i];
+			String name = FileUtils.byteCountToDisplaySize(value*FileUtils.ONE_MB);
+			SelectItem item = new SelectItem(value, name);
+			if ( i > 0) {
+				item.setDisabled(!getDocumental().isChecked());
+			}
+			list.add(item);					
+		}
+		return list;
+	}		
+	
 	private static class ParentDomainFilter extends ControllerAdapter {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

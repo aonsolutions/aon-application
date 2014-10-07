@@ -26,15 +26,16 @@ public class DocumentManager implements Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentManager.class);
 	
-	private static final Long MB_SIZE = 1048576L;
-	
 	public static final int MINIMUM_MAX_DOCUMENT_SIZE = 1;
 	
 	private static final int MAXIMUM_MAX_DOCUMENT_SIZE = 16;
 	
 	public static final int MINIMUM_MAX_TOTAL_DOCUMENT_SIZE = 100;
 	
-	private static final int MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE = 1500;
+	public static final int MAX_TOTAL_DOCUMENT_SIZE_VALUES[] = {
+		MINIMUM_MAX_TOTAL_DOCUMENT_SIZE, (int) (10*FileUtils.ONE_KB),
+		(int) (100*FileUtils.ONE_KB), (int) FileUtils.ONE_MB 
+	};
 	
 	/** Maximum number of users defined for the domain. */
 	private Long maxDocumentSize;
@@ -43,8 +44,8 @@ public class DocumentManager implements Serializable {
 	private Long maxTotalDocumentSize;	
 	
 	public DocumentManager() {
-		this.maxDocumentSize = MINIMUM_MAX_DOCUMENT_SIZE * MB_SIZE;
-		this.maxTotalDocumentSize = MINIMUM_MAX_TOTAL_DOCUMENT_SIZE * MB_SIZE;
+		this.maxDocumentSize = MINIMUM_MAX_DOCUMENT_SIZE * FileUtils.ONE_MB;
+		this.maxTotalDocumentSize = MINIMUM_MAX_TOTAL_DOCUMENT_SIZE * FileUtils.ONE_MB;
 		init();
 	}
 	
@@ -60,6 +61,15 @@ public class DocumentManager implements Serializable {
 		}		
 	}
 	
+	private int getMaximumTotalDocumentSize( int value ) {
+		for( int i = 0; i < MAX_TOTAL_DOCUMENT_SIZE_VALUES.length; i++ ) {
+			if ( value <= MAX_TOTAL_DOCUMENT_SIZE_VALUES[i] ) {
+				return MAX_TOTAL_DOCUMENT_SIZE_VALUES[i];
+			}
+		}
+		return MAX_TOTAL_DOCUMENT_SIZE_VALUES[MAX_TOTAL_DOCUMENT_SIZE_VALUES.length-1];
+	}
+	
 	public boolean updateLimits( Domain domain ) throws ManagerBeanException {
 		boolean updateDomain = false;
 		Integer value = domain.getMaxDocumentSize();
@@ -70,16 +80,14 @@ public class DocumentManager implements Serializable {
 			updateDomain = true;
 			domain.setMaxDocumentSize(MAXIMUM_MAX_DOCUMENT_SIZE);
 		}
-		maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;
+		maxDocumentSize = domain.getMaxDocumentSize() * FileUtils.ONE_MB;
 		value = domain.getMaxTotalDocumentSize();
-		if ( (value == null) || (value < MINIMUM_MAX_TOTAL_DOCUMENT_SIZE)  ) {
+		int newValue = getMaximumTotalDocumentSize(value);
+		if ( value != newValue ) {
 			updateDomain = true;
-			domain.setMaxTotalDocumentSize(MINIMUM_MAX_TOTAL_DOCUMENT_SIZE);
-		} else if (value > MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE  ) {
-			updateDomain = true;
-			domain.setMaxTotalDocumentSize(MAXIMUM_MAX_TOTAL_DOCUMENT_SIZE);
+			domain.setMaxTotalDocumentSize(newValue);			
 		}
-		maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
+		maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * FileUtils.ONE_MB;
 		return updateDomain;
 	}
 	
@@ -132,7 +140,7 @@ public class DocumentManager implements Serializable {
 	}
 
 	public static int getUsedSpaceInMB( Integer domain) {
-		int value = (int) (getUsedSpace(domain) / MB_SIZE);
+		int value = (int) (getUsedSpace(domain) / FileUtils.ONE_MB);
 		return value;
 	}
 	

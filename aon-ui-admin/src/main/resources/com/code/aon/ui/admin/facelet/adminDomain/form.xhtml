@@ -233,6 +233,13 @@
 					<aon:outputLabel for="Domain_maxTotalDocumentSize"
 						value="#{bundle.admin_domain_maxTotalDocumentSize}" />
 					<h:panelGrid columns="2">
+						<aon:selectOneMenu id="Domain_maxTotalDocumentSize" 
+							label="#{bundle.admin_domain_maxTotalDocumentSize}"
+							required="true" value="#{adminDomain.to.maxTotalDocumentSize}">
+							<f:selectItems value="#{adminDomain.maxTotalDocumentSizes}" />
+							<f:validateLongRange minimum="#{documentManager.usedSpaceInMB}" />
+						</aon:selectOneMenu>		
+						<!--
 						<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
 							label="#{bundle.admin_domain_maxTotalDocumentSize}"
 							disabled="#{!adminDomain.documental.checked}"
@@ -240,6 +247,7 @@
 							minValue="100" maxValue="1500" step="100" width="300" >
 							<f:validateLongRange minimum="#{documentManager.usedSpaceInMB}" />
 						</rich:inputNumberSlider>
+						-->
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{documentManager.usedSpaceMessage}" />
 					</h:panelGrid>
