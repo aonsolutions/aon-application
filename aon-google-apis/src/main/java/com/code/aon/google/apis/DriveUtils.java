@@ -837,11 +837,15 @@ public class DriveUtils implements IBlobManager {
 				LOGGER.info("{} '{}': Not at Drive. It was created & uploaded [{}].", type, fileInfo.getTitle(), file.getId());
 				return true;
 			} else {
+				
+				if (fileInfo.getData() == null) {
+					LOGGER.debug("Skip '{}': No new data.", fileInfo.getTitle());
+					return false;
+				}
 
 				File fileAux = getFile(fileInfo.getDriveId());
 
-				if (fileInfo.getData() != null
-						&& !fileAux.getMd5Checksum().equals(
+				if (!fileAux.getMd5Checksum().equals(
 								CheckSum.getMD5Checksum(fileInfo.getData()))) {
 
 					String type = RegistryAttachmentType.values()[fileInfo.getType()]
@@ -858,9 +862,6 @@ public class DriveUtils implements IBlobManager {
 					}
 					LOGGER.info("{} '{}': Changed. It was synchronized/uploaded [{}].", type, fileInfo.getTitle(), file.getId());
 					return true;
-				} else if (fileInfo.getData() == null) {
-					LOGGER.debug("Skip '{}': No new data.", fileInfo.getTitle());
-					return false;
 				} else {
 					LOGGER.debug(
 							"Skip '{}': New data it's the same that at drive ( MD5s are the same ).",
