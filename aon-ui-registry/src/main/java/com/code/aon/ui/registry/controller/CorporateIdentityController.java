@@ -189,7 +189,8 @@ public class CorporateIdentityController extends RegistryAttachController implem
 			Drive drive = null;
 			File f = null;
 			try {
-				d = DatabaseSync.getServiceAccount(domain);
+				//d = DatabaseSync.getServiceAccount(domain);
+				d = DatabaseSync.getServiceAccount(ra.getDomain());
 				drive = DriveUtils.serviceInitialize(d);
 				f = DriveUtils.getFile(ra.getDriveId());
 			} catch (KeyStoreException e) {

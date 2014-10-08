@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Hashtable;
@@ -15,6 +16,7 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.pool.ConnectionInfo;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialActivity;
 import com.esferalia.aon.google.sql.AbstractSQL.CommercialTracking;
 import com.esferalia.aon.google.sql.AbstractSQL.Domain;
@@ -908,6 +910,51 @@ public static void setEventId(String eventId,int id, String domain) throws SQLEx
 		}
 	}
 
+	public static DomainGserviceaccount getServiceAccount(Integer key) throws SQLException{
+		
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql = "SELECT DG.* FROM "+SQLConstants.DOMAIN_GSERVICEACCOUNT
+					+ " AS DG inner join "+SQLConstants.DOMAIN
+					+ " AS D ON (DG."+DomainGserviceaccountColumns.DOMAIN
+					+ "= D."+ DomainColumns.ID+" OR D."+DomainColumns.PARENT+" = DG."+DomainGserviceaccountColumns.DOMAIN+")"
+					+ " WHERE D."+DomainColumns.ID+"= ?";
+			
+			
+			connection = getConnection(AonUtil.getDomainName());
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, key);
+
+			rs = stmt.executeQuery();
+		
+			DomainGserviceaccount dgserviceaccount=new DomainGserviceaccount();
+			
+			if (rs.next()) {
+			
+				dgserviceaccount.setClientId(rs.getString(DomainGserviceaccountColumns.CLIENT_ID));
+				dgserviceaccount.setClientSecret(rs.getAsciiStream(DomainGserviceaccountColumns.CLIENT_SECRET));
+				dgserviceaccount.setDomain(rs.getInt(DomainGserviceaccountColumns.DOMAIN));
+				dgserviceaccount.setEmailAddress(rs.getString(DomainGserviceaccountColumns.EMAIL_ADDRESS));
+				dgserviceaccount.setPublicKey(rs.getString(DomainGserviceaccountColumns.PUBLIC_KEY));
+				dgserviceaccount.setPrivateKey(rs.getAsciiStream(DomainGserviceaccountColumns.PRIVATE_KEY));
+			
+			}
+			
+		
+		
+			return dgserviceaccount;
+		}finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
+	}
+
 	public static DomainGserviceaccount getServiceAccount(String key) throws SQLException{
 		
 		ResultSet rs = null;
@@ -1483,7 +1530,6 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 		
 		
 	}
-	
 	public static DriveData getDomainFiles(String key) throws SQLException{
 		ResultSet rs = null;
 		Connection connection = null;
