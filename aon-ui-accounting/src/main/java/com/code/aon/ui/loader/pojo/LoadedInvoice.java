@@ -193,18 +193,27 @@ public class LoadedInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		LoadedCustomer loadedCustomer = new LoadedCustomer();
 		fillLoadedRegistry(loadedCustomer);
 		loadedCustomer.setCuenta(getCuenta());
+		if (getTransaccion() != null) {
+			loadedCustomer.setTransaccion(getTransaccion());
+		}
 		return loadedCustomer;
 	}
 	public LoadedSupplier getLoadedSupplier() {
 		LoadedSupplier loadedSupplier = new LoadedSupplier();
 		fillLoadedRegistry(loadedSupplier);
 		loadedSupplier.setCuenta(getCuenta());
+		if (getTransaccion() != null) {
+			loadedSupplier.setTransaccion(getTransaccion());
+		}
 		return loadedSupplier;
 	}
 	public LoadedCreditor getLoadedCreditor() {
 		LoadedCreditor loadedCreditor = new LoadedCreditor();
 		fillLoadedRegistry(loadedCreditor);
 		loadedCreditor.setCuenta(getCuenta());
+		if (getTransaccion() != null) {
+			loadedCreditor.setTransaccion(getTransaccion());
+		}
 		return loadedCreditor;
 	}
 	private void fillLoadedRegistry(LoadedRegistry loadedRegistry) {
