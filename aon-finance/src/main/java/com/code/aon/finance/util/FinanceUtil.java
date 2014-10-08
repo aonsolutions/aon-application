@@ -45,7 +45,7 @@ public class FinanceUtil {
 
 		Date deadline = getLimitDate();
 		if (deadline != null) {
-			if (domainType != null && domainType.equals(DomainType.HOTEL) && !invoice.isSales() && DateUtils.addWeeks(deadline, 1).after(new Date())) {
+			if (domainType != null && domainType.equals(DomainType.HOTEL) && !invoice.isSales() && DateUtils.addDays(deadline, 12).after(new Date())) {
 				return deadline.after(invoice.getIssueDate());
 			}
 		}
