@@ -468,8 +468,8 @@ public class DriveUtils implements IBlobManager {
 		// property1.setEtag("category");
 		property1.setKey("category");
 
-		String type = RegistryAttachmentType.values()[fileInfo.getType()]
-				.toString();
+		String type = fileInfo.getType() != -1 ? RegistryAttachmentType
+				.values()[fileInfo.getType()].name() : "UNKNOWN";
 		Property property2 = new Property();
 		property2.setValue(type);
 		// property2.setEtag("type");
@@ -821,10 +821,12 @@ public class DriveUtils implements IBlobManager {
 				|| checkTypes(fileInfo.getType())) {
 
 			if (fileInfo.getDriveId() == null) {
-				String type = RegistryAttachmentType.values()[fileInfo.getType()]
-						.name();
-				if ( dryRun ) {
-					LOGGER.info("Dry Run {} '{}': Not at Drive. It will be created & uploaded.", type, fileInfo.getTitle());
+				String type = fileInfo.getType() != -1 ? RegistryAttachmentType
+						.values()[fileInfo.getType()].name() : "UNKNOWN";
+				if (dryRun) {
+					LOGGER.info(
+							"Dry Run {} '{}': Not at Drive. It will be created & uploaded.",
+							type, fileInfo.getTitle());
 					return true;
 				}
 				// viewFile(fileInfo);
@@ -834,10 +836,12 @@ public class DriveUtils implements IBlobManager {
 					fileInfo.setDriveId(file.getId());
 					setDriveId(fileInfo, domain, file.getFileSize().toString());
 				}
-				LOGGER.info("{} '{}': Not at Drive. It was created & uploaded [{}].", type, fileInfo.getTitle(), file.getId());
+				LOGGER.info(
+						"{} '{}': Not at Drive. It was created & uploaded [{}].",
+						type, fileInfo.getTitle(), file.getId());
 				return true;
 			} else {
-				
+
 				if (fileInfo.getData() == null) {
 					LOGGER.debug("Skip '{}': No new data.", fileInfo.getTitle());
 					return false;
@@ -846,12 +850,14 @@ public class DriveUtils implements IBlobManager {
 				File fileAux = getFile(fileInfo.getDriveId());
 
 				if (!fileAux.getMd5Checksum().equals(
-								CheckSum.getMD5Checksum(fileInfo.getData()))) {
+						CheckSum.getMD5Checksum(fileInfo.getData()))) {
 
-					String type = RegistryAttachmentType.values()[fileInfo.getType()]
-							.name();
-					if ( dryRun ) {
-						LOGGER.info("Dry Run {} '{}': Changed. It will be synchronized/uploaded.", type, fileInfo.getTitle());
+					String type = RegistryAttachmentType.values()[fileInfo
+							.getType()].name();
+					if (dryRun) {
+						LOGGER.info(
+								"Dry Run {} '{}': Changed. It will be synchronized/uploaded.",
+								type, fileInfo.getTitle());
 						return true;
 					}
 					File file = updateFile(fileInfo);
@@ -860,7 +866,9 @@ public class DriveUtils implements IBlobManager {
 						setDriveId(fileInfo, domain, file.getFileSize()
 								.toString());
 					}
-					LOGGER.info("{} '{}': Changed. It was synchronized/uploaded [{}].", type, fileInfo.getTitle(), file.getId());
+					LOGGER.info(
+							"{} '{}': Changed. It was synchronized/uploaded [{}].",
+							type, fileInfo.getTitle(), file.getId());
 					return true;
 				} else {
 					LOGGER.debug(
@@ -871,8 +879,8 @@ public class DriveUtils implements IBlobManager {
 				// else updateDateSync(drive,fileInfo);
 			}
 		} else {
-			String type = RegistryAttachmentType.values()[fileInfo.getType()]
-					.name();
+			String type = fileInfo.getType() != -1 ? RegistryAttachmentType
+					.values()[fileInfo.getType()].name() : "UNKNOWN";
 			LOGGER.debug("Skip '{}': {} won't be synchronized.",
 					fileInfo.getTitle(), type);
 			return false;
@@ -977,7 +985,7 @@ public class DriveUtils implements IBlobManager {
 				} else if (attach.getAonType().equals("sepe")) {
 					attach = DBConsults.getDataSepeAttach(domain, attach);
 				}
-				
+
 				sync2(drive, attach, domain);
 				// long size = DriveUtils.totalSize(domain);
 				// DBConsults.setDriveSize(domain, size,
