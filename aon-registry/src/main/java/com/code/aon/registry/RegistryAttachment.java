@@ -76,7 +76,15 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
     
 	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
-		return size;
+		if ( data != null )
+			return size;
+		
+		try {
+			return Integer.parseInt(getDparentId());
+		}
+		catch ( NumberFormatException e ){
+			return 0;
+		}
 	}
 
 	public void setSize(Integer size) {
