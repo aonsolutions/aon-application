@@ -44,7 +44,7 @@ public class TableUtil implements Constants {
 		PROFILE_TABLE_NAME, PROFILE_ROLE_TABLE_NAME,
 		PROFILE_MODULE_DENIED_TABLE_NAME, PROFILE_ACTION_DENIED_TABLE_NAME
 	};
-	
+
 	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCES = new AonInternalReference(
 			BANK_STATEMENT_LINK_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
 			, new Integer[] {0,1,2,3}
@@ -560,4 +560,32 @@ public class TableUtil implements Constants {
 		return MYSQL_NAME_BOUNDARY + name + MYSQL_NAME_BOUNDARY;
 	}	
 	
+
+	public static void executeStatement( Connection connection, String statement ) {
+		Statement s = null;
+		try {
+	        s = connection.createStatement();
+	        LOGGER.debug( "Execute: {}", statement );
+	        s.execute(statement);			
+		} catch (SQLException e) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			DbUtils.closeQuietly(s);
+		}
+	}
+
+	public static int executeUpdate( Connection connection, String statement ) {
+		Statement s = null;
+		try {
+	        s = connection.createStatement();
+	        LOGGER.debug( "Execute Update: {}", statement );
+	        return s.executeUpdate(statement);
+		} catch (SQLException e) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			DbUtils.closeQuietly(s);
+		}
+		return 0;
+	}
+
 }

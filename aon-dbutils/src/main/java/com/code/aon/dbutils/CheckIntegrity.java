@@ -21,8 +21,7 @@ public class CheckIntegrity implements Constants {
 	
 	private Map<String,TableInfo> tables;
 	private Connection connection;
-	private Integer[] domains;
-	private Map<Integer,DomainInfo> domainMap;
+	private DomainInfo domainInfo;
 	private Map<String,Map<Integer,Integer>> ids;
 	
 	public CheckIntegrity(Connection connection) throws AonSQLException {
@@ -30,12 +29,13 @@ public class CheckIntegrity implements Constants {
 		this.tables = new TableUtil().resolveTables(connection);
 	}
 	
-	public void execute( Integer[] domains ) throws AonSQLException {
+	public void execute( Integer domain ) throws AonSQLException {
 		try {
-			LOGGER.info("Database {}, domains {}", connection.getMetaData().getURL(), ArrayUtils.toString(domains) );
+			LOGGER.info("Database {}", connection.getMetaData().getURL());
+			this.domainInfo = TableUtil.getDomainInfo(connection, domain);
+			LOGGER.info("{}", domainInfo);
 			
-			this.domains = domains;
-			this.domainMap = new HashMap<Integer, DomainInfo>();
+			this.domainInfo = TableUtil.getDomainInfo(connection, domain);
 			this.ids = new HashMap<String, Map<Integer,Integer>>();
 
             int i = 0;
@@ -52,11 +52,23 @@ public class CheckIntegrity implements Constants {
 		}
 	}	
 	
+	private Integer[] getDomains( TableInfo ti ) {
+		if ( domainInfo.isEnableHeredity() && (domainInfo.getParent() != null) ) {
+			return new Integer[]{domainInfo.getId(), domainInfo.getParent()};
+		}
+		return new Integer[]{domainInfo.getId()};
+	}	
+	
+	
+	public boolean isValidDomain( Integer id, TableInfo ti ) {
+		return ArrayUtils.contains( getDomains(ti), id );
+	}	
+	
 	private void check(TableInfo t) throws AonSQLException, IOException {
 		PreparedStatement select = null;
 		ResultSet rs = null;
 		try {
-			String sentence = t.getSelectStatement(this.domains);
+			String sentence = t.getSelectStatement(getDomains(t));
 			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
@@ -78,15 +90,6 @@ public class CheckIntegrity implements Constants {
 		}			
 	}
 	
-	private DomainInfo getDomainInfo( Integer value ) {
-		DomainInfo di = this.domainMap.get(value);
-		if ( di == null ) {
-			di = TableUtil.getDomainInfo(connection, value);
-			this.domainMap.put(value, di);
-		}
-		return di;
-	}
-	
 	private String getSelect(TableInfo table, Integer value, boolean domainColumn) {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SELECT ");
@@ -103,13 +106,19 @@ public class CheckIntegrity implements Constants {
 		return sb.toString();
 	}
 	
-	private void throwInvalidDomain(DomainInfo di, TableInfo ti, Integer value, Integer domain) {
-		String message = "TABLE " + ti.getName() + " row " + value + " in domain " + domain +
-				". Valid domains " + ArrayUtils.toString(di.getDomainIds(ti));
-		throw new RuntimeException( message );						
+	private void logInvalidDomain(TableInfo ti, Integer value, Integer domain) {
+		if ( domain.equals(domainInfo.getParent()) ) {
+			String message = "TABLE " + ti.getName() + " row " + value + " in parent domain " + domain +
+					". Valid domains " + ArrayUtils.toString(getDomains(ti));
+			LOGGER.warn( message );												
+		} else {
+			String message = "TABLE " + ti.getName() + " row " + value + " in domain " + domain +
+					". Valid domains " + ArrayUtils.toString(getDomains(ti));
+			LOGGER.error( message );									
+		}
 	}
 	
-	private boolean exist(DomainInfo di, TableInfo ti, Integer value) {
+	private boolean exist(TableInfo ti, Integer value) {
 		if ( ti == null ) {
 			LOGGER.error("TI null");
 		}
@@ -121,24 +130,24 @@ public class CheckIntegrity implements Constants {
 			if ( domain == null ) {
 				return true;
 			}
-			if ( di.isValidDomain(domain, ti) ) {
+			if ( isValidDomain(domain, ti) ) {
 				return true;
 			} else {
-				throwInvalidDomain(di, ti, value, domain);
+				logInvalidDomain(ti, value, domain);
 			}
 		}
 		return false;
 	}
 	
-	private void add(DomainInfo di, TableInfo ti, ResultSet rs, boolean domainColumn) throws SQLException {
+	private void add(TableInfo ti, ResultSet rs, boolean domainColumn) throws SQLException {
 		Integer id = rs.getInt(1);
 		Integer domain = null;
 		if ( domainColumn ) {
 			domain = rs.getInt(2);
 			if ( rs.wasNull() ) {
 				domain = null;
-			} else if (! di.isValidDomain(domain, ti) ) {
-				throwInvalidDomain(di, ti, id, domain);
+			} else if (! isValidDomain(domain, ti) ) {
+				logInvalidDomain(ti, id, domain);
 			}			
 		}
 		Map<Integer,Integer> idMap = this.ids.get(ti.getName());
@@ -155,8 +164,7 @@ public class CheckIntegrity implements Constants {
 	}
 	
 	private boolean checkId(TableInfo table, Integer value, Integer domainId) throws SQLException {
-		DomainInfo di = getDomainInfo(domainId);
-		if ( exist(di, table, value) ) {
+		if ( exist(table, value) ) {
 			return true;
 		}				
 		boolean domainColumn = (table != null) && hasDomainColumn(table);
@@ -167,12 +175,12 @@ public class CheckIntegrity implements Constants {
 			s = connection.createStatement();
 			rs = s.executeQuery(sentence);
 			if ( rs.next() ) {
-				add( di, table, rs, domainColumn);
+				add( table, rs, domainColumn);
 				return true;
 			} else {
 				String message = "TABLE " + table.getName() + " row " + value + " not found";
 				LOGGER.error( message );
-				throw new RuntimeException( message );
+				return false;
 			}
 		} finally {
 			DbUtils.closeQuietly(rs);
@@ -235,7 +243,7 @@ public class CheckIntegrity implements Constants {
 			if (! ArrayUtils.isEmpty(domains) ) {
 				LOGGER.info( "Starting process..." );
 				CheckIntegrity ci = new CheckIntegrity(connection);
-				ci.execute(domains);
+				ci.execute(domains[0]);
 			}
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );

@@ -1,6 +1,7 @@
 package com.code.aon.dbutils;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 
 
 public class DomainInfo {
@@ -42,16 +43,9 @@ public class DomainInfo {
 		this.enableHeredity = enableHeredity;
 	}
 
-	public Integer[] getDomainIds( TableInfo ti ) {
-		if ( (getParent() != null) && (ti.isForceHeredity() || isEnableHeredity()) ) {
-			return new Integer[]{getId(), getParent()};
-		} else {
-			return new Integer[]{getId()};
-		}
-	}
-	
-	public boolean isValidDomain( Integer id, TableInfo ti ) {
-		return ArrayUtils.contains( getDomainIds(ti), id );
-	}
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}	
 	
 }

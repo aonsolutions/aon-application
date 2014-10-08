@@ -2,7 +2,6 @@ package com.code.aon.dbutils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
@@ -22,31 +21,6 @@ public class AonDomainRemove implements Constants {
 	public AonDomainRemove(Connection connection) throws AonSQLException {
 		this.connection = connection;
 	}
-
-	private void executeStatement( String statement ) {
-		Statement s = null;
-		try {
-	        s = connection.createStatement();
-	        s.execute(statement);			
-		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			DbUtils.closeQuietly(s);
-		}
-	}
-
-	private int executeUpdate( String statement ) {
-		Statement s = null;
-		try {
-	        s = connection.createStatement();
-	        return s.executeUpdate(statement);			
-		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			DbUtils.closeQuietly(s);
-		}
-		return 0;
-	}
 	
 	private void deleteFromTables( Integer domain ) {
 		QueryRunner run = new QueryRunner();
@@ -58,7 +32,8 @@ public class AonDomainRemove implements Constants {
 					"WHERE T.TABLE_SCHEMA = ? AND T.COLUMN_NAME = ?", h, dataBaseName, DOMAIN_COLUMN_NAME);
 			if ( result != null ) {
 				for( String table : result ) {
-					int rows = executeUpdate( "DELETE FROM " + table + " WHERE domain = " + domain );
+					String statement = "DELETE FROM " + table + " WHERE domain = " + domain;
+					int rows = TableUtil.executeUpdate( connection, statement );
 					if ( rows > 0 ) {
 						LOGGER.info("Deleting {} table {} rows", table, rows);	
 					}
@@ -72,14 +47,18 @@ public class AonDomainRemove implements Constants {
 	public void execute(Integer domain) throws AonSQLException {
 		try {
 			LOGGER.info("Database {}, domain {}", connection.getMetaData().getURL(), domain);
+			DomainInfo domainInfo = TableUtil.getDomainInfo(connection, domain);
+			LOGGER.info("{}", domainInfo);
+			
             connection.setAutoCommit(false);
             
-            executeStatement(SET_FOREIGN_KEY_CHECKS_0);
+            TableUtil.executeStatement( connection, SET_FOREIGN_KEY_CHECKS_0);
             LOGGER.debug("Claves refereciales deshabilitadas");
             
             deleteFromTables(domain);
             
-            int rows = executeUpdate( "DELETE FROM domain WHERE id = " + domain );
+            String statement = "DELETE FROM domain WHERE id = " + domain;
+            int rows = TableUtil.executeUpdate( connection, statement );
             LOGGER.info("Deleting DOMAIN table {} rows", rows);
             
             connection.commit();
@@ -95,7 +74,7 @@ public class AonDomainRemove implements Constants {
 			}
 			throw new AonSQLException(e.getMessage() , e);
 		} finally {
-			executeStatement(SET_FOREIGN_KEY_CHECKS_1);
+			TableUtil.executeStatement(connection, SET_FOREIGN_KEY_CHECKS_1);
 			LOGGER.debug("Claves refereciales habilitadas");
 		}
 	}

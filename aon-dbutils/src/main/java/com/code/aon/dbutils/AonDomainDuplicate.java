@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,18 +66,6 @@ public class AonDomainDuplicate implements Constants {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-
-	private void executeStatement( String statement ) {
-		Statement s = null;
-		try {
-	        s = connection.createStatement();
-	        s.execute(statement);			
-		} catch (SQLException e) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			DbUtils.closeQuietly(s);
-		}
-	}
 	
 	private boolean isForceFullHeredity( DomainInfo di) {
 		return (di.getParent() != null) && di.isEnableHeredity() && (!di.getParent().equals(newParentDomain));
@@ -86,6 +73,7 @@ public class AonDomainDuplicate implements Constants {
 	
 	private void initDomainInfo() {
 		DomainInfo di = TableUtil.getDomainInfo(connection, sourceDomain);
+		LOGGER.info("{}", di);
 		this.sourceParentDomain = di.getParent();
 		this.forceFullHeredity = isForceFullHeredity(di);
 		if ( this.forceFullHeredity ) {
@@ -104,7 +92,7 @@ public class AonDomainDuplicate implements Constants {
 			Integer domainApplicationId = ids.iterator().next();
 			String update = "UPDATE application_user SET domain_application = " +
 					domainApplicationId + " WHERE domain = " + newDomain;
-			executeStatement(update);
+			TableUtil.executeUpdate(connection, update);
 		}
 	}
 	
@@ -121,7 +109,12 @@ public class AonDomainDuplicate implements Constants {
 					sb.append( '=').append(newValue);
 					sb.append( " WHERE ").append(ur.getColumnInfo().getName());
 					sb.append( '=').append(ur.getSourceValue());
-					executeStatement(sb.toString());
+					sb.append(" AND DOMAIN = ").append(this.newDomain);
+					int rows = TableUtil.executeUpdate(connection, sb.toString());
+					if ( rows > 0 ) {
+						LOGGER.warn( "Updated {} rows in {}.{} ({}->{})",
+							new Object[]{rows, ur.getTableInfo().getName(),ur.getColumnInfo().getName(), ur.getSourceValue(), newValue} );
+					}
 				} else {
 					LOGGER.warn( "Reference ({},{}-{}) for {} not found", new Object[]{ur.getTableInfo().getName(),ur.getColumnInfo().getName(), ur.getSourceValue(), t.getName()} );					
 				}
@@ -131,6 +124,8 @@ public class AonDomainDuplicate implements Constants {
 
 	public Integer execute(Integer sourceDomain, Integer newParentDomain, String domainName) throws AonSQLException {
 		try {
+			LOGGER.info("Database {}", connection.getMetaData().getURL());
+			
 			this.newDomain = null;
 			this.sourceDomain = sourceDomain;
 			this.newParentDomain = newParentDomain;
@@ -140,7 +135,7 @@ public class AonDomainDuplicate implements Constants {
             
             initDomainInfo();
             
-            executeStatement(SET_FOREIGN_KEY_CHECKS_0);
+            TableUtil.executeStatement(connection, SET_FOREIGN_KEY_CHECKS_0);
             LOGGER.debug("Claves refereciales deshabilitadas");
             
             mergeDomain(domainName);
@@ -174,7 +169,7 @@ public class AonDomainDuplicate implements Constants {
 			}
 			throw new AonSQLException(e.getMessage() , e);
 		} finally {
-			executeStatement(SET_FOREIGN_KEY_CHECKS_1);
+			TableUtil.executeStatement(connection, SET_FOREIGN_KEY_CHECKS_1);
 			LOGGER.debug("Claves refereciales habilitadas");
 		}
 		return this.newDomain;
