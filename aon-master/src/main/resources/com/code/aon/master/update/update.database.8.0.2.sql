@@ -2,13 +2,17 @@
 # Created by: rtrepiana
 # Creation Date: 09/10/2014 
 
-
-
 BEGIN;
 
-SET @DOMAIN=(SELECT `id` FROM `domain` WHERE `type`= 5 );
+SET @DOMAIN=(SELECT IFNULL((SELECT `id` FROM `domain` WHERE `type`= 5 ),-666));
 
-SET @COMPANY=(SELECT `registry` FROM `company` WHERE `domain` = @DOMAIN );
+INSERT IGNORE INTO `domain` (`id`, `name`, `description`, `type`, `owner`) VALUES 
+(@DOMAIN,'admin.xxxxxxx.xxx','DOMINIO ADMIN',5,'aonsolutions');
+
+SET @COMPANY=(SELECT IFNULL((SELECT `registry` FROM `company` WHERE `domain` = @DOMAIN ),-666));
+
+INSERT IGNORE INTO `registry` (`id`, `domain`) VALUES (@COMPANY,@DOMAIN);
+INSERT IGNORE INTO `company` (`registry`, `domain`) VALUES (@COMPANY,@DOMAIN);
 
 INSERT IGNORE INTO `category` (`id`, `domain`, `name`, `type`, `scope`, `description`, `url`, `rattach`) VALUES 
 (-1001,@DOMAIN,'CONVENIOS',0,NULL,NULL,NULL,NULL);
