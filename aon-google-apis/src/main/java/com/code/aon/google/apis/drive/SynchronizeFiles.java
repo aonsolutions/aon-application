@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -30,13 +29,10 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveData;
 import com.code.aon.google.apis.DriveUtils;
-import com.code.aon.google.apis.DriveUtils.CheckSum;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 
 public class SynchronizeFiles {
 
@@ -156,31 +152,31 @@ public class SynchronizeFiles {
 			dd = DatabaseSync.getDomainFiles(domain);
 
 		// CONTRACT ATTACH
-		else if (map.containsKey("contract") || b[0].equals("all"))
+		if (map.containsKey("contract") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getContractAttach(domain, dd.getAttachs()));
 
 		// ITEM ATTACH
-		else if (map.containsKey("item") || b[0].equals("all"))
+		if (map.containsKey("item") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getIattach(domain, dd.getAttachs()));
 
 		// INVOICE ATTACH
-		else if (map.containsKey("invoice") || b[0].equals("all"))
+		if (map.containsKey("invoice") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getInvoiceAttach(domain, dd.getAttachs()));
 
 		// OFFER ATTACH
-		else if (map.containsKey("offer") || b[0].equals("all"))
+		if (map.containsKey("offer") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getOfferAttach(domain, dd.getAttachs()));
 
 		// PAYROLL ATTACH
-		else if (map.containsKey("payroll") || b[0].equals("all"))
+		if (map.containsKey("payroll") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getPayrollAttach(domain, dd.getAttachs()));
 
 		// PROJECT ATTACH
-		else if (map.containsKey("project") || b[0].equals("all"))
+		if (map.containsKey("project") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getProjectAttach(domain, dd.getAttachs()));
 
 		// SEPE ATTACH
-		else if (map.containsKey("sepe") || b[0].equals("all"))
+		if (map.containsKey("sepe") || b[0].equals("all"))
 			dd.setAttachs(DBConsults.getSepeAttach(domain, dd.getAttachs()));
 
 		return dd;
@@ -266,7 +262,6 @@ public class SynchronizeFiles {
 		Option dryOption = OptionBuilder.create('n');
 
 		OptionBuilder.isRequired(false);
-		OptionBuilder.hasArg(true);
 		OptionBuilder.hasArg(true);
 		OptionBuilder.withDescription("synchronize only N documents");
 		OptionBuilder.withLongOpt("count");
