@@ -66,11 +66,11 @@
 					<aon:outputText value="&#160;"
 						title="#{bundle.sign_signed}"
 						styleClass="aon-icon aon-icon-signed" 
-						rendered="#{!invoiceController.new and invoiceController.to.signed}" />
+						rendered="#{!invoiceController.nevv and invoiceController.to.signed}" />
 				</c:if>						
 
 				<aon:outputText value="#{invoiceController.to.status}"
-					rendered="#{!invoiceController.new}" />
+					rendered="#{!invoiceController.nevv}" />
 				<c:if test="#{aonRole.accountingOperator and invoiceController.recorded and invoiceController.backAction != 'accountEntry_form'}">
 					<aon:commandLink immediate="true"
 							styleClass="aon-button-goto"
@@ -132,8 +132,8 @@
 
 	<aon:outputLabel for="Invoice_taxDate" 
 		value="#{bundle.finance_tax_date}"
-		rendered="#{!invoiceController.new}" />
-	<aon:div rendered="#{!invoiceController.new}">
+		rendered="#{!invoiceController.nevv}" />
+	<aon:div rendered="#{!invoiceController.nevv}">
 		<c:if test="#{aonRole.accountingOperator}">
 			<aon:selectInputDate id="Invoice_taxDate"
 				value="#{invoiceController.to.taxDate}" required="true" 
@@ -194,7 +194,7 @@
 		</aon:panelGroup>
 	</aon:panelGroup>
 
-	<c:if test="#{!invoiceController.new}">
+	<c:if test="#{!invoiceController.nevv}">
 		<aon:outputLabel value="#{bundle.aon_document_number}" />
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.to.documentNumber}" />
@@ -226,7 +226,7 @@
 			<aon:commandButton id="invoiceAddressButton"
 				value="#{bundle.registry_address_other}"
 				styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
-				rendered="#{!invoiceController.new and !invoiceController.readOnly}"
+				rendered="#{!invoiceController.nevv and !invoiceController.readOnly}"
 				actionListener="#{invoiceController.onInvoiceAddressShow}"
 				reRender="showInvoiceAddressWindow" ajaxSingle="true">
 				<f:setPropertyActionListener target="#{invoiceController.showInvoiceAddressWindow}"
@@ -235,7 +235,7 @@
 		</aon:div>
 	</aon:div>
 
-	<c:if test="#{!invoiceController.new}">
+	<c:if test="#{!invoiceController.nevv}">
 		<aon:outputLabel for="Invoice_total" 
 			value="#{bundle.aon_total}" />
 		<aon:div>

@@ -126,7 +126,7 @@ public class UserOverloadController extends BasicController {
 	@Override
 	public void accept(ActionEvent event) {
 		ApplicationUser appUser = (ApplicationUser) getTo();
-		if ( isNew() ) {
+		if ( isNevv() ) {
 			appUser.setDomainApplication(getDomainApplication());
 		}
 		super.accept(event);

@@ -8,11 +8,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
-	<c:if test="#{contractBatch.new}" >
+	<c:if test="#{contractBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/afi/form_new.xhtml" />
 	</c:if>
 	
-	<c:if test="#{!contractBatch.new}" >
+	<c:if test="#{!contractBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.payroll_contrata_contractBatch_module}" />
 			<ui:param name="controller" value="#{contractBatch}" />
@@ -38,7 +38,7 @@
 					<aon:outputText value="#{bundle.finance_disk} AFI" />
 					<aon:div>
 						<aon:commandButton id="afi-create-button" value="#{bundle.payroll_create_disk}"
-							rendered="#{contractBatch.new or (!contractBatch.recorded and contractBatchDetail.model.rowCount > 0)}"
+							rendered="#{contractBatch.nevv or (!contractBatch.recorded and contractBatchDetail.model.rowCount > 0)}"
 							reRender="batchForm"
 							styleClass="aon-icon-commandButton aon-icon-accept"
 							actionListener="#{contractBatch.onCreateDisk}"

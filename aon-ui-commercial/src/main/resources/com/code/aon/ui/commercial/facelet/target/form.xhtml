@@ -14,7 +14,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_target_module}" />
 				<ui:param name="controller" value="#{target}" />
-				<ui:param name="showMoreMenu" value="#{!target.new}" />
+				<ui:param name="showMoreMenu" value="#{!target.nevv}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="showNotesButton" value="#{aonConfiguration.bean.target.showNote}" />
@@ -46,12 +46,12 @@
 			<aon:methodParam name="removeAction" value="" />
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{target.new}">
+				<c:if test="#{target.nevv}">
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/formNewContent.xhtml">
 						<ui:param name="controller" value="#{target}"/>
 					</ui:include>				
 				</c:if>			
-				<c:if test="#{!target.new}">
+				<c:if test="#{!target.nevv}">
 					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-150,
 							aon-panelGrid-even aon-width-auto,
@@ -185,7 +185,7 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{!target.new}">
+		<c:if test="#{!target.nevv}">
 			<c:if test="#{aonConfiguration.bean.target.showProduct}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</c:if>	

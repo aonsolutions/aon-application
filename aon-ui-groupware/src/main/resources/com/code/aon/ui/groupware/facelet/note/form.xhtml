@@ -20,9 +20,9 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="Note_date"
-						rendered="#{!note.new}" value="#{bundle.aon_date}" />
+						rendered="#{!note.nevv}" value="#{bundle.aon_date}" />
 					<aon:outputText id="Note_date" value="#{note.to.date}"
-						rendered="#{!note.new}" styleClass="aon-inputText-disabled"
+						rendered="#{!note.nevv}" styleClass="aon-inputText-disabled"
 						style="padding-left:1em;padding-right:1em;">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />

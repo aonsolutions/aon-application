@@ -24,7 +24,7 @@
 							value="#{bundle.aon_remove}"
 							title="#{bundle.finance_remove_selected}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							rendered="#{!controller.new and controller.to == null}"
+							rendered="#{!controller.nevv and controller.to == null}"
 							actionListener="#{controller.onRemoveSelected}"
 							reRender="#{dataTableId}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
@@ -41,7 +41,7 @@
 							value="#{bundle.aon_import}"
 							title="#{bundle.aon_import}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-							rendered="#{!controller.new and controller.to == null}"
+							rendered="#{!controller.nevv and controller.to == null}"
 							actionListener="#{controller.onImportFileShow}"
 							reRender="showImportFileWindow">
 							<f:setPropertyActionListener target="#{controller.showImportFileWindow}"
@@ -51,7 +51,7 @@
 							value="#{bundle.finance_bank_statement_check_auto}"
 							title="#{bundle.finance_bank_statement_check_auto}"
 							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
-							rendered="#{!controller.new and controller.to == null}"
+							rendered="#{!controller.nevv and controller.to == null}"
 							actionListener="#{controller.onAutoCheckSelected}"
 							reRender="#{dataTableId}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
@@ -71,7 +71,7 @@
 								value="#{bundle.finance_record}"
 								title="#{bundle.finance_record_selected}"
 								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-								rendered="#{!controller.new and controller.to == null}"
+								rendered="#{!controller.nevv and controller.to == null}"
 								actionListener="#{controller.onRecordSelected}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
@@ -82,7 +82,7 @@
 								value="#{bundle.finance_unrecord}"
 								title="#{bundle.finance_unrecord_selected}"
 								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-								rendered="#{!controller.new and controller.to == null}"
+								rendered="#{!controller.nevv and controller.to == null}"
 								actionListener="#{controller.onUnrecordSelected}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -95,7 +95,7 @@
 				<aon:div styleClass="aon-scroll-area">
 					<aon:div id="bankStatementCommandContainer"
 						style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;"
-						rendered="#{!bankStatement.new and bankStatement.to == null}">
+						rendered="#{!bankStatement.nevv and bankStatement.to == null}">
 						<aon:div>
 							<aon:outputText value="#{bundle.aon_see}:" styleClass="aon-bold" />
 							<aon:commandLink id="BankStatement-seeAll"
@@ -300,7 +300,7 @@
 								value="#{bankStatement.registryBank}"
 								valueChangeListener="#{bankStatement.onChangeBank}"
 								reRender="bankStatementDataContainer"
-								disabled="#{bankStatement.new or bankStatement.to != null}" 
+								disabled="#{bankStatement.nevv or bankStatement.to != null}" 
 								ajaxRendered="true">
 								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 							</aon:selectOneMenu>

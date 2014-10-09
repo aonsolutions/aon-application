@@ -19,13 +19,13 @@
 					<aon:commandButton id="#{toolbarID}-finish"
 						value="#{bundle.aon_finalice}"
 						actionListener="#{mod349.onFinish}"
-						rendered="#{!mod349.new and !mod349.to.finished}"
+						rendered="#{!mod349.nevv and !mod349.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-lock"
 						onclick="if (!confirm('#{bundle.aon_finalice}?')) return false;"/>
 					<aon:commandButton id="#{toolbarID}-reopen"
 						value="#{bundle.fiscal_reopen}"
 						actionListener="#{mod349.onReopen}"
-						rendered="#{!mod349.new and mod349.to.finished}"
+						rendered="#{!mod349.nevv and mod349.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-unlock"
 						onclick="if (!confirm('#{bundle.fiscal_reopen}?')) return false;"/>
 					<!-- 
@@ -125,7 +125,7 @@
 						<aon:commandButton id="gen-disk"
 							value="#{bundle.finance_create_disk}"
 							actionListener="#{mod349.onCreateDisk}"
-							rendered="#{!mod349.new and mod349.to.finished and mod349.fileOutput==null}"
+							rendered="#{!mod349.nevv and mod349.to.finished and mod349.fileOutput==null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							style="border-width: 0px 0px 0px 0px;" reRender="panel2"
 							accesskey="#{bundle.aon_key_cancel}" />
@@ -134,13 +134,13 @@
 							value="#{mod349.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 							style="border-width: 0px 0px 0px 0px;"
 							actionListener="#{mod349.downloadDisk}"
-							rendered="#{!mod349.new and mod349.fileOutput!=null}"
+							rendered="#{!mod349.nevv and mod349.fileOutput!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 					</aon:div>
 										
 				</aon:panelGrid>
 
-				<c:if test="#{mod349.new}">
+				<c:if test="#{mod349.nevv}">
 
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
@@ -188,7 +188,7 @@
 					</aon:div>
 				</c:if>
 				
-				<c:if test="#{!mod349.new}">
+				<c:if test="#{!mod349.nevv}">
 					<ui:include src="/com/code/aon/ui/fiscal/facelet/mod349/detail.xhtml" />
 				</c:if>
 				

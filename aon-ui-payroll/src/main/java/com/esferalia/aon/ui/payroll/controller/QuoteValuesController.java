@@ -54,7 +54,7 @@ public class QuoteValuesController implements Serializable {
 	public void setYear(Integer year) {
 		this.year = year;
 	}
-	public boolean isNew(){
+	public boolean isNevv(){
 		return false;
 	}
 	public String getBackActionListener(){

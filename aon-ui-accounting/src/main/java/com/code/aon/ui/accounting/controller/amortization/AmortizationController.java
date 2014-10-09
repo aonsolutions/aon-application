@@ -72,7 +72,7 @@ public class AmortizationController extends BasicController {
 	
 	public boolean isUpdatable() {
 		try {
-			if (isNew()) {
+			if (isNevv()) {
 				return true;
 			}
 			AmortizationDetailController adc = (AmortizationDetailController) AonUtil.getRegisteredBean(IAccountingConstants.AMORTIZATION_DETAIL_CONTROLLER);

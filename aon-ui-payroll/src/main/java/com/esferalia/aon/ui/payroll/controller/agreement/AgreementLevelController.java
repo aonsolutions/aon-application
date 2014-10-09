@@ -80,7 +80,7 @@ public class AgreementLevelController extends LinesController {
 					categories = categories.substring(0, categories.length()-2);
 				}					
 				return categories;
-			} else if(this.isNew()){
+			} else if(this.isNevv()){
 				return null;
 			}
 		} catch (ManagerBeanException e) {

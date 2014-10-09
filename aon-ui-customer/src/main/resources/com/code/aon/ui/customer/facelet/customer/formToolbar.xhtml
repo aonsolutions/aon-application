@@ -11,7 +11,7 @@
 		template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 		<ui:param name="controller" value="#{customer}" />
-		<ui:param name="showMoreMenu" value="#{!customer.new}" />
+		<ui:param name="showMoreMenu" value="#{!customer.nevv}" />
 		<ui:define name="moreMenuContent">
 			<c:if test="#{aonConfiguration.bean.customer.showHistory}">
 				<aon:menuItem id="CustomerHistory" 

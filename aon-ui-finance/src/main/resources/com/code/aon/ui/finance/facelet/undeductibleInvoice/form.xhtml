@@ -17,11 +17,11 @@
 					<ui:param name="toolbarTitle"
 						value="#{bundle.finance_undeductible_invoice_management_module}" />
 					<ui:param name="controller" value="#{undeductibleInvoice}" />
-					<ui:param name="skipFocusFirst" value="#{!undeductibleInvoice.new}" />
+					<ui:param name="skipFocusFirst" value="#{!undeductibleInvoice.nevv}" />
 					<ui:param name="skipSaveButton" value="#{undeductibleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!undeductibleInvoice.removable or !undeductibleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="undeductibleInvoiceForm" />
-					<ui:param name="showMoreMenu" value="#{!undeductibleInvoice.new and undeductibleInvoiceDetail.to == null}" />
+					<ui:param name="showMoreMenu" value="#{!undeductibleInvoice.nevv and undeductibleInvoiceDetail.to == null}" />
 					<ui:define name="moreMenuContent">					
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
@@ -164,7 +164,7 @@
 
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
-										rendered="#{!undeductibleInvoice.new and undeductibleInvoice.to.signed}"
+										rendered="#{!undeductibleInvoice.nevv and undeductibleInvoice.to.signed}"
 										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>						
@@ -309,7 +309,7 @@
 							<aon:commandButton id="invoiceAddressButton"
 								value="#{bundle.registry_address_other}"
 								styleClass="aon-icon-commandButton aon-icon-go"
-								rendered="#{!undeductibleInvoice.new and !undeductibleInvoice.readOnly}"
+								rendered="#{!undeductibleInvoice.nevv and !undeductibleInvoice.readOnly}"
 								actionListener="#{undeductibleInvoice.onInvoiceAddressShow}"
 								reRender="showInvoiceAddressWindow">
 								<f:setPropertyActionListener target="#{undeductibleInvoice.showInvoiceAddressWindow}"

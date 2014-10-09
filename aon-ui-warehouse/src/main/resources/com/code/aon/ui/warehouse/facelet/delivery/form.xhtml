@@ -23,7 +23,7 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton id="salesTransfer"
 							value="#{bundle.aon_invoice_sales2}"
-							immediate="#{true}" rendered="#{!delivery.new and delivery.pending}"
+							immediate="#{true}" rendered="#{!delivery.nevv and delivery.pending}"
 							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 							actionListener="#{delivery.onSalesTransferShow}"
 							reRender="showSalesTransferWindow">
@@ -48,7 +48,7 @@
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
 						<aon:htmlCommandLink id="delivery-report" value="#{bundle.aon_invoice_delivery}"
-							target="_new" rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0}"
+							target="_new" rendered="#{!delivery.nevv and deliveryDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -345,7 +345,7 @@
 					</c:if>
 				</aon:div>
 				
-				<c:if test="#{!delivery.new}">
+				<c:if test="#{!delivery.nevv}">
 					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
 						<aon:panelTab id="deliveryDetail" 
 							label="#{bundle.warehouse_delivery_detail}">

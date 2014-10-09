@@ -12,7 +12,7 @@
 	<aon:panelGrid columns="2" id="contract_panel" 
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 			
-		<c:if test="#{contract.new}" >
+		<c:if test="#{contract.nevv}" >
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.to.person}" />
 				<ui:param name="idRequired" value="#{true}" />
@@ -84,7 +84,7 @@
 					actionListener="#{contract.onUndoContractExtension}" 
 					reRender="contractForm" ajaxSingle="true" />
 			</aon:div>
-			<c:if test="#{contract.new}" >
+			<c:if test="#{contract.nevv}" >
 				<aon:selectOneMenu id="Contract_contractCode" required="true"
 					rendered="#{!contract.readOnly}" 
 					value="#{contract.params.contractCode}">
@@ -93,7 +93,7 @@
 					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
 			</c:if>
-			<c:if test="#{!contract.new and !contract.internship}" >
+			<c:if test="#{!contract.nevv and !contract.internship}" >
 				<aon:selectOneMenu id="Contract_contractCode" required="true"
 					rendered="#{!contract.readOnly and !contract.transformedContract}"
 					value="#{contract.params.contractCode}">
@@ -109,7 +109,7 @@
 					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
 			</c:if>
-			<aon:div rendered="#{contract.internship and !contract.new}">
+			<aon:div rendered="#{contract.internship and !contract.nevv}">
 				<aon:outputText value="Becario" />
 			</aon:div>
 			<aon:div rendered="#{readOnly}" >
@@ -125,7 +125,7 @@
 				<f:selectItems value="#{payrollCollections.contractCodes}" />
 				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 			</aon:selectOneMenu>
-			<aon:panelGroup rendered="#{!contract.new and contract.transformedContract}">
+			<aon:panelGroup rendered="#{!contract.nevv and contract.transformedContract}">
 				<aon:outputText value="#{contract.params.contractCode.value}" />
 				<aon:outputText value=" - " />
 				<aon:outputText value="#{contract.params.contractCode}" />
@@ -214,7 +214,7 @@
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText> 
-			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.new and !contract.readOnly}">
+			<aon:panelGroup id="suspensionCauseContainer" rendered="#{!contract.nevv and !contract.readOnly}">
 				<aon:div style="display:inline;"
 					rendered="#{contract.to.endDate!=null}">
 					<aon:outputLabel for="contract_suspensionCause" 

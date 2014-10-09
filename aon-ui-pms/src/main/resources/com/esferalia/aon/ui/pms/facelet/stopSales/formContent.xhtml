@@ -13,12 +13,12 @@
 
 		<aon:outputLabel for="StopSales_hotel_id" value="#{bundle.aon_module_hotel}" />
 		<aon:outputText	value="#{stopSales.to.hotel.workPlace.description}" styleClass="aon-bold"
-			rendered="#{!stopSales.new}" />
+			rendered="#{!stopSales.nevv}" />
 		<aon:selectOneMenu id="StopSales_hotel_id" value="#{stopSales.to.hotel}" 
-			rendered="#{stopSales.new}" required="true"
+			rendered="#{stopSales.nevv}" required="true"
 			valueChangeListener="#{stopSales.onHotelChanged}" 
 			reRender="StopSalesItemDiv" ajaxSingle="true">
-			<c:if test="#{stopSales.new}">
+			<c:if test="#{stopSales.nevv}">
 				<f:selectItem itemLabel="-" value="#{null}"/>
 			</c:if>
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />

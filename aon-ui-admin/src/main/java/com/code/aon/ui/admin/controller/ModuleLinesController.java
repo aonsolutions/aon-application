@@ -29,7 +29,7 @@ public class ModuleLinesController extends LinesController {
 			IModule iModule = (IModule) to;
 			modules.remove(iModule.getModule());
 		}
-		if (! isNew() ) {
+		if (! isNevv() ) {
 			IModule iModule = (IModule) getTo();
 			modules.add(iModule.getModule());
 		}

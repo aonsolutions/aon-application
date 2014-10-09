@@ -213,7 +213,7 @@ public class Certifica2ListController extends BasicController {
 		BasicController controller = (BasicController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
 		if( !DomainManager.isDomainManagementAvailable() 
 				|| (getEnterprise()!=null && getEnterprise().getId()!=null)
-				|| controller.isNew()){
+				|| controller.isNevv()){
 			super.initializeModel();
 		}
 	}

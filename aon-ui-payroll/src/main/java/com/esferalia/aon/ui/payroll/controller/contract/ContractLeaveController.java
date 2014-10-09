@@ -76,7 +76,7 @@ public class ContractLeaveController extends BasicController {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
 				Criteria criteria = new Criteria();
-				if(!this.isNew()){
+				if(!this.isNevv()){
 					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_ID), leave.getId());
 				}
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), leave.getContract().getId());

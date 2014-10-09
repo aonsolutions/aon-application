@@ -57,7 +57,7 @@ public class TaskHolderController extends RegistryController {
 			for (User user : users) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_HOLDER_USER_ID),user.getId());
-				if (!isNew()) {
+				if (!isNevv()) {
 					criteria.addNotEqualExpression(getFieldName(IEntityAlias.TASK_HOLDER_ID),((TaskHolder) getTo()).getId());	
 				}
 				List<?> ths = getManagerBean().getList(criteria);

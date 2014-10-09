@@ -295,7 +295,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	}
 	
 	@Override
-	public boolean isNew(){
+	public boolean isNevv(){
 		return getGeneratedFile()==null || getGeneratedFile().getId()==null;
 	}
 	
@@ -492,7 +492,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	}
 
 	private void beforeContrataAccept() throws ManagerBeanException {
-		if( isNew() && (isProrrogaFile() || isTransformacionFile()) ){
+		if( isNevv() && (isProrrogaFile() || isTransformacionFile()) ){
 			
 			IManagerBean bean;
 			try {

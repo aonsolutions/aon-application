@@ -90,7 +90,7 @@ public class LinesController extends BasicController {
 	 * @return true, if is master new
 	 */
 	private boolean isMasterNew() {
-		return getMasterController().isNew();
+		return getMasterController().isNevv();
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class LinesController extends BasicController {
 			throw new AbortProcessingException("Unable to locate Master Controller!");
 		}
 		try {
-			if (isNew()) {
+			if (isNevv()) {
 				updateJoinProperties(getMasterController().getTo(), getTo());
 			}
 			super.accept(event);

@@ -34,7 +34,7 @@
 					</aon:htmlCommandLink>
 					<c:if test="#{aonRole.purchaseOperator}">
 						<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{bundle.purchase_valued_reports}"
-							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
+							target="_new" rendered="#{!purchase.nevv and purchaseDetail.model.rowCount > 0}"
 							action="#{purchaseReport.onExecute}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">

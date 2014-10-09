@@ -97,7 +97,7 @@ public class AccountEntryDetailController extends LinesController {
 	@SuppressWarnings("unchecked")
 	public void onAccept(ActionEvent event) {
 		try {
-			boolean adding = isNew();
+			boolean adding = isNevv();
 			super.onAccept(event);
 			if (adding) {
 				List<AccountEntryDetail> list = (List<AccountEntryDetail>) getModel().getWrappedData();

@@ -39,7 +39,7 @@
 										<aon:commandButton
 											id="reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 											actionListener="#{companyImages.onReset}"
-											rendered="#{!companyImages.new}" reRender="imagesPanel"
+											rendered="#{!companyImages.nevv}" reRender="imagesPanel"
 											styleClass="aon-editDataTable-button aon-icon-reset"
 											accesskey="#{bundle.aon_key_new_line}" />
 									</f:facet>
@@ -81,7 +81,7 @@
 					</aon:div>	
 					
 					<aon:div id="image_form" styleClass="aon-width-auto">	
-						<aon:div rendered="#{(companyImages.to != null) or (companyImages.new)}">
+						<aon:div rendered="#{(companyImages.to != null) or (companyImages.nevv)}">
 							<aon:panel>
 								<f:facet name="header">
 									<aon:outputLabel for="RegistryAttachment_preview" value="#{bundle.aon_preview}" />
@@ -93,7 +93,7 @@
 											actionListener="#{companyImages.onAccept}" reRender="imagesPanel"/>
 										<aon:confirmButton id="remove_image"
 											value="#{bundle.aon_remove}" reRender="imagesPanel"
-											rendered="#{!companyImages.new}" immediate="true"
+											rendered="#{!companyImages.nevv}" immediate="true"
 											styleClass="aon-icon-delete aon-finding-toolbar-item"
 											confirmTitle="#{bundle.aon_confirm_title}"
 											confirmMessage="#{bundle.aon_remove_confirm}"
@@ -164,7 +164,7 @@
 											</rich:inputNumberSlider>
 										</c:if>					
 										
-										<c:if test="#{!companyImages.new}" >
+										<c:if test="#{!companyImages.nevv}" >
 											<aon:outputText value="#{bundle.aon_document_download_url}" />
 											<aon:outputLink target="_blank" value="#{domainSwitcher.domainURL}#{companyImages.to.downloadURL}" >
 												<aon:outputText value="#{domainSwitcher.domainURL}#{companyImages.to.downloadURL}" />

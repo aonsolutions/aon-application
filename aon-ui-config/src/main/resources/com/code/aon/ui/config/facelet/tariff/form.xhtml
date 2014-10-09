@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{bundle.product_tariff_module2}" />
 				<ui:param name="controller" value="#{tariff}" />
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="showMoreMenu" value="#{!tariff.new}" />
+				<ui:param name="showMoreMenu" value="#{!tariff.nevv}" />
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="catalogue-button"
 						value="#{bundle.product_catalogue_module}"
@@ -55,7 +55,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!tariff.new}">
+				<c:if test="#{!tariff.nevv}">
 					<aon:panelTabSet selectedTab="#{tariff.selectedTab}">
 						<c:if test="#{tariffCatalogue.model.rowCount > 0}">
 							<aon:panelTab id="tariffCataloguePanelTab"

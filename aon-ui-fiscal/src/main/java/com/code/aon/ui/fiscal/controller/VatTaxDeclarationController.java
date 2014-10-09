@@ -257,12 +257,12 @@ public class VatTaxDeclarationController extends LinesController {
 	
 	public boolean isAeatDraftReportEnabled() {
 		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		return ( !isNew() && to.isFromCommonTerritory() && to.getVatTax().getYear() > 2013);		
+		return ( !isNevv() && to.isFromCommonTerritory() && to.getVatTax().getYear() > 2013);		
 	}
 	
 	public boolean isAeatValidable() {
 		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		return ( !isNew() && to.isFromCommonTerritory() && isScriptPresent() && to.getVatTax().getYear() < 2014);
+		return ( !isNevv() && to.isFromCommonTerritory() && isScriptPresent() && to.getVatTax().getYear() < 2014);
 	}
 	private String validateAeatFile() {
 		VatTaxDeclaration to = (VatTaxDeclaration) getTo();

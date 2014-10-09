@@ -17,11 +17,11 @@
 					<ui:param name="toolbarTitle"
 						value="#{bundle.finance_expense_invoice_management_module}" />
 					<ui:param name="controller" value="#{expenseInvoice}" />
-					<ui:param name="skipFocusFirst" value="#{!expenseInvoice.new}" />
+					<ui:param name="skipFocusFirst" value="#{!expenseInvoice.nevv}" />
 					<ui:param name="skipSaveButton" value="#{expenseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!expenseInvoice.removable or !expenseInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="expenseInvoiceForm" />
-					<ui:param name="showMoreMenu" value="#{!expenseInvoice.new and expenseInvoiceDetail.to == null}" />
+					<ui:param name="showMoreMenu" value="#{!expenseInvoice.nevv and expenseInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:htmlCommandLink id="expenseInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
@@ -129,7 +129,7 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{expenseInvoice.new}">
+				<c:if test="#{expenseInvoice.nevv}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formNewContent.xhtml">
 						<ui:param name="invoiceController" value="#{expenseInvoice}" />
 						<ui:param name="addressController" value="#{expenseInvoiceAddress}" />
@@ -138,7 +138,7 @@
 						<ui:param name="formName" value="expenseInvoiceForm" />
 					</ui:include>
 				</c:if>			
-				<c:if test="#{!expenseInvoice.new}">
+				<c:if test="#{!expenseInvoice.nevv}">
 					<aon:panelGrid id="dataTable" columns="4"
 						styleClass="aon-width-all aon-margin-bottom"
 						columnClasses="aon-panelGrid-odd aon-width-140,

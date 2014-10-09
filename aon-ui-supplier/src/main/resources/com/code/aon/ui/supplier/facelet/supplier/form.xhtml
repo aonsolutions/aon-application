@@ -13,7 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.aon_suppliers}" />
 				<ui:param name="controller" value="#{supplier}" />
-				<ui:param name="showMoreMenu" value="#{!supplier.new}" />
+				<ui:param name="showMoreMenu" value="#{!supplier.nevv}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{supplier}" />
@@ -28,12 +28,12 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{supplier.new}">
+				<c:if test="#{supplier.nevv}">
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/formNewContent.xhtml">
 						<ui:param name="controller" value="#{supplier}"/>
 					</ui:include>				
 				</c:if>							
-				<c:if test="#{!supplier.new}">
+				<c:if test="#{!supplier.nevv}">
 					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
@@ -58,7 +58,7 @@
 								value="#{bundle.supplier_printValuated}" />
 						</aon:div>
 				
-						<c:if test="#{!supplier.new and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
+						<c:if test="#{!supplier.nevv and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
 							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
@@ -164,7 +164,7 @@
 		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>
-		<c:if test="#{!supplier.new}">
+		<c:if test="#{!supplier.nevv}">
 			<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
 					<ui:param name="controller" value="#{supplier}" />

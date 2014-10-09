@@ -10,7 +10,7 @@ import com.esferalia.aon.ui.sepe.utils.ISepeCommunicator;
 
 public interface ISepeHandler {
 	
-	boolean isNew();
+	boolean isNevv();
 
 	Boolean isBatchView();
 

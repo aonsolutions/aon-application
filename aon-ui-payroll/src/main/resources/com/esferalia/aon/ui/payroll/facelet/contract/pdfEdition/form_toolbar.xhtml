@@ -29,7 +29,7 @@
 		
 			<c:if test="#{!contractPdf.readOnly}">
 				<aon:commandButton id="accept"
-					value="#{contractPdf.new?bundle.aon_accept:bundle.aon_save}"
+					value="#{contractPdf.nevv?bundle.aon_accept:bundle.aon_save}"
 					actionListener="#{contractPdf.onDocumentSave}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept" />	
 			</c:if>
@@ -43,7 +43,7 @@
 			<c:if test="#{!contractPdf.readOnly}">
 				<aon:commandButton id="contract-refresh"
 					value="#{bundle.sepe_reload}"
-					rendered="#{!contractPdf.new}"
+					rendered="#{!contractPdf.nevv}"
 					reRender="#{toolbarReRender}"
 					action="contractPdfEdition_form"
 					actionListener="#{contractPdf.onDocumentReload}"
@@ -56,7 +56,7 @@
 				<aon:htmlCommandLink id="document-download" 
 					value="#{bundle.aon_draft}" target="_blank" 
 					title="#{bundle.payroll_draft_download}"
-					rendered="#{!contractPdf.new}"
+					rendered="#{!contractPdf.nevv}"
 					actionListener="#{contractPdf.onDownloadPdf}"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf" />
 					

@@ -132,7 +132,7 @@ public class LeaveBatchController extends BasicController {
 
 	public void onCreateDisk(ActionEvent event) {
 		try {
-			if(this.isNew()){
+			if(this.isNevv()){
 				getNewBatchWizard().accept(event);
 			}
 			String loggedUser = AonUtil.getRemoteUser();
@@ -237,7 +237,7 @@ public class LeaveBatchController extends BasicController {
 			this.controller = controller;
 		}
 
-		public boolean isNew(){
+		public boolean isNevv(){
 			return true;
 		}
 		

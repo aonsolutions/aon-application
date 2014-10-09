@@ -104,8 +104,8 @@
 					<aon:inputTextarea id="Notice_subject"
 						value="#{notice.to.subject}" cols="100" rows="7" />	
 
-					<aon:outputLabel for="Notice_sendEmail" value="#{bundle.notice_send_email}" rendered="#{notice.new}"/>
-					<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.new}">
+					<aon:outputLabel for="Notice_sendEmail" value="#{bundle.notice_send_email}" rendered="#{notice.nevv}"/>
+					<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.nevv}">
 						<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox"
 							value="#{notice.sendMail}" style="vertical-align:top" reRender="Notice_sendEmail" />
 						<aon:inputTextarea id="Notice_sendEmail_list" value="#{notice.mailList}" cols="97" rows="4" rendered="#{notice.sendMail}"/>	

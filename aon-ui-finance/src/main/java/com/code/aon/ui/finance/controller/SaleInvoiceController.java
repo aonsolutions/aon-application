@@ -145,7 +145,7 @@ public class SaleInvoiceController extends InvoiceController {
 		loadAddresses(customer.getId());
 		loadProjects(customer.getId());
 
-		if (isNew()) {
+		if (isNevv()) {
 			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
 			Finance finance = (Finance)financeController.getTo();
 			if (finance != null) {

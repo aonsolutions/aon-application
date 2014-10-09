@@ -213,7 +213,7 @@ public class ContractPdfController implements Serializable {
 	public void setContractPdfDraft(ContractAttachment contractPdfDraft) {
 		this.contractPdfDraft = contractPdfDraft;
 	}
-	public boolean isNew(){
+	public boolean isNevv(){
 		return getContractPdfDraft()==null||getContractPdfDraft().getId()==null;
 	}
 	public ContractAttachmentType getContractPdfType(){

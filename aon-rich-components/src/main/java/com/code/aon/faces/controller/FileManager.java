@@ -291,7 +291,7 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 		}
 	}
 	
-	public boolean isNew() {
+	public boolean isNevv() {
 		return this._new;
 	}
 	

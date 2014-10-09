@@ -169,7 +169,7 @@ public class ReservationRequestController extends BasicController implements IPm
 	public void accept(ActionEvent event) {
 		ReservationRequest request = (ReservationRequest)getTo();
 		if (validateRequest(request)) {
-			if (isNew() && reservationExists(request)) {
+			if (isNevv() && reservationExists(request)) {
 				setShowConfirmWindow(true);
 			} else {
 				acceptRequest(event);

@@ -28,14 +28,14 @@
 						value="#{bundle.aon_year}" />
 					<aon:inputText id="FiscalActivity_year" size="5" maxlength="4"
 						ajaxSingle="true" reRender="FiscalActivity_year"
-						disabled="#{!fiscalActivity.new}"
+						disabled="#{!fiscalActivity.nevv}"
 						focus="'#{'FiscalActivity_sector'}"
 						value="#{fiscalActivity.to.year}" required="true" />
 				
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="FiscalActivity_farmer" value="#{fiscalActivity.to.farmer}"
-							disabled="#{!fiscalActivity.new and fiscalActivity.to.epigraph != null}">
+							disabled="#{!fiscalActivity.nevv and fiscalActivity.to.epigraph != null}">
 							<a4j:support event="onchange" ajaxSingle="true"
 								reRender="epigraphTable"
 								actionListener="#{fiscalActivity.onClearSector}"/>
@@ -43,7 +43,7 @@
 						<aon:outputLabel for="FiscalActivity_farmer" value="#{bundle.fiscal_farmer_activity}" />
 					</aon:div>
 					
-					<c:if test="#{fiscalActivity.new}">
+					<c:if test="#{fiscalActivity.nevv}">
 						<aon:outputLabel for="FiscalActivity_sector"
 							value="#{bundle.fiscal_sector}" />
 						<aon:div id="epigraphContainer">

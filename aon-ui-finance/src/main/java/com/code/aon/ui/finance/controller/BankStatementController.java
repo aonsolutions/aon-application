@@ -445,7 +445,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onChangeBank(ValueChangeEvent event) {
-		if (!isNew()) {
+		if (!isNevv()) {
 			RegistryBank registryBank = (RegistryBank)event.getNewValue();
 			try {
 				searchBankStatements(registryBank);

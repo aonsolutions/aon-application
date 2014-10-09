@@ -887,7 +887,7 @@ public class ContractController extends BasicController {
 	
 	public void onChangeModel(ValueChangeEvent event){
 		ModelOption model = (ModelOption) event.getNewValue();
-		if(!this.isNew() && model != null){
+		if(!this.isNevv() && model != null){
 			ContractInfoController controller = (ContractInfoController) FormUtil.getController("contractDocumentInfo");
 			controller.loadContractFields((Contract) this.getTo(), true);
 		}

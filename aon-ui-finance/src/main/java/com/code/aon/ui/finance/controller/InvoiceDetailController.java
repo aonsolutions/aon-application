@@ -229,7 +229,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 
 	private double getRowStock(InvoiceDetail to) throws ManagerBeanException {
 		double rowStock = 0;
-		if (!isNew()) {
+		if (!isNevv()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)getManagerBean().get(to.getId());
 			if (to.getItem().equals(invoiceDetail.getItem())) {
 				rowStock = invoiceDetail.getQuantity();

@@ -132,7 +132,7 @@ public class FanBatchController extends BasicController {
 	
 	public void onCreateDisk(ActionEvent event) {
 		try {
-			if(this.isNew()){
+			if(this.isNevv()){
 				getNewBatchWizard().accept(event);
 			}
 			
@@ -287,7 +287,7 @@ public class FanBatchController extends BasicController {
 			this.liquidationTypes = liquidationTypes;
 		}
 
-		public boolean isNew(){
+		public boolean isNevv(){
 			return true;
 		}
 		

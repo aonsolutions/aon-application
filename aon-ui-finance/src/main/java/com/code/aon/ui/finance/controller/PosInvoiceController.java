@@ -421,7 +421,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 
 	public void onNewTicket(ActionEvent event) {
 		try {
-			if (!isNew() && getInvoice().getDetailList().size() == 0) {
+			if (!isNevv() && getInvoice().getDetailList().size() == 0) {
 				getManagerBean().remove(getInvoice());
 			}
 		} catch (ManagerBeanException ex) {
@@ -496,7 +496,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 		if (suspendedInvoiceList == null) {
 			suspendedInvoiceList = new LinkedList<Invoice>();
 			Criteria criteria = new Criteria();
-			if (!isNew()) {
+			if (!isNevv()) {
 				criteria.addNotEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), getInvoice().getId());
 			}
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_SHIFT_POS_ID), getPosShift().getPos().getId());
@@ -584,7 +584,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public void onCancelTicket(ActionEvent event) {
 		try {
 			cancelTicket(true);
-			if (!isNew()) {
+			if (!isNevv()) {
 				refresh(event);
 			} else {
 				FormUtil.getController(getInvoiceDetailControllerName()).onReset(event);
@@ -599,7 +599,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public void onCancelLine(ActionEvent event) {
 		try {
 			cancelTicket(false);
-			if (!isNew()) {
+			if (!isNevv()) {
 				refresh(event);
 			} else {
 				FormUtil.getController(getInvoiceDetailControllerName()).onReset(event);

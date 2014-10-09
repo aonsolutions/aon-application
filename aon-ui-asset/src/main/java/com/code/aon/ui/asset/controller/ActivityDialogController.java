@@ -74,7 +74,7 @@ public class ActivityDialogController extends EmailParentController implements S
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ActivityDialogController.class.getName());
-	private boolean isNew;
+	private boolean isNevv;
 	private boolean request;
 	
 
@@ -166,12 +166,12 @@ public class ActivityDialogController extends EmailParentController implements S
 		this.why = why;
 	}
 
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
 
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+	public void setNevv(boolean isNevv) {
+		this.isNevv = isNevv;
 	}
 
 	public boolean isRequest() {
@@ -291,7 +291,7 @@ public class ActivityDialogController extends EmailParentController implements S
 		setToTime(null);
 		setWho(null);
 		setWhy(null);
-		setNew(true);
+		setNevv(true);
 		setRequest(false);
 		setFromTimeHours("8");
 		setFromTimeMins("00");
@@ -355,7 +355,7 @@ public class ActivityDialogController extends EmailParentController implements S
 	}
 	
 	private void email(){
-		setNew(false);
+		setNevv(false);
 		
 //		from field
 		AuthPrincipal user = AonUtil.getAuthPrincipal();
@@ -519,7 +519,7 @@ public class ActivityDialogController extends EmailParentController implements S
 //		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
 		controller.onSearch(null);
 		controller.setWho(null);
-		setNew(false);
+		setNevv(false);
 	}
 
 	public List<SelectItem> getHours() {

@@ -33,13 +33,13 @@
 		
 			<aon:outputLabel for="EnterpriseActivity_quoteRegime"
 				value="#{bundle.payroll_activity_quoteRegime}" />
-			<c:if test="#{enterpriseActivity.new}">
+			<c:if test="#{enterpriseActivity.nevv}">
 				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
 					value="#{enterpriseActivity.to.type}">
 					<f:selectItems value="#{payrollCollections.availableSsRegimes}" />
 				</aon:selectOneMenu>
 			</c:if>
-			<c:if test="#{!enterpriseActivity.new}">
+			<c:if test="#{!enterpriseActivity.nevv}">
 				<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
 					disabled="#{true}"
 					value="#{enterpriseActivity.to.type}">
@@ -54,7 +54,7 @@
 		</aon:panelGrid>
 		
 		<aon:div>
-			<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.new}">
+			<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.nevv}">
 				<aon:div styleClass="aon-form-group-title">
 					<aon:div styleClass="aon-form-group-title-internal">
 						<aon:outputLabel for="enterpriseCCCData" value="#{bundle.company_enterprise_ccc}" />

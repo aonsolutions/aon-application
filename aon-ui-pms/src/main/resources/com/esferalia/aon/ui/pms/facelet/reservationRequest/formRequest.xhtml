@@ -10,16 +10,16 @@
 
 	<aon:outputLabel for="ReservationRequest_hotel_id" value="#{bundle.aon_module_hotel}" />
 	<aon:outputText	value="#{reservationRequest.to.hotel.workPlace.description}" styleClass="aon-bold"
-		rendered="#{!reservationRequest.new}" />
+		rendered="#{!reservationRequest.nevv}" />
 	<aon:selectOneMenu id="ReservationRequest_hotel_id" value="#{reservationRequest.to.hotel}" 
-		rendered="#{reservationRequest.new}" required="true" ajaxSingle="true">
+		rendered="#{reservationRequest.nevv}" required="true" ajaxSingle="true">
 		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ReservationRequest_id" value="#{bundle.pms_reservation_request_id}"
-		rendered="#{!reservationRequest.new}" />
+		rendered="#{!reservationRequest.nevv}" />
 	<aon:outputText	id="ReservationRequest_id" value="#{reservationRequest.to.id}" 
-		styleClass="aon-bold" rendered="#{!reservationRequest.new}" />
+		styleClass="aon-bold" rendered="#{!reservationRequest.nevv}" />
 
 	<aon:outputLabel for="ReservationRequest_code" value="#{bundle.report_reservation_code}" />
 	<aon:outputText	value="#{reservationRequest.to.code}" styleClass="aon-bold"

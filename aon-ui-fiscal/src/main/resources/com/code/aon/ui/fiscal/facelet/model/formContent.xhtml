@@ -21,13 +21,13 @@
 					value="#{bundle.aon_finalice}"
 					actionListener="#{controller.onShowFinalizePanel}"
 					reRender="DeclarationForm,finalizeContainer"
-					rendered="#{!controller.new and controller.to.pending}"
+					rendered="#{!controller.nevv and controller.to.pending}"
 					styleClass="aon-finding-toolbar-item aon-icon-lock" />
 
 				<aon:commandButton id="#{toolbarID}-reopen"
 					value="#{bundle.fiscal_reopen}"
 					actionListener="#{controller.onReopen}"
-					rendered="#{!controller.new and controller.to.finished}"
+					rendered="#{!controller.nevv and controller.to.finished}"
 					styleClass="aon-finding-toolbar-item aon-icon-unlock"
 					onclick="if (!confirm('#{bundle.fiscal_reopen}?')) return false;"/>
 
@@ -35,19 +35,19 @@
 					value="#{bundle.fiscal_recalculate}"
 					actionListener="#{controller.onRecalculate}"
 					accesskey="W" title="ALT+W [+May]" 
-					rendered="#{!controller.new and !controller.to.readOnly}"
+					rendered="#{!controller.nevv and !controller.to.readOnly}"
 					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 					
 				<aon:htmlCommandLink id="#{toolbarID}-report"
 					value="#{bundle.aon_listing}" target="_blank"
 					action="#{report.onExecute}"
-					rendered="#{!controller.new}"
+					rendered="#{!controller.nevv}"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf"
 					accesskey="#{bundle.aon_key_print}">
 					<f:param name="reportKey" value="#{controller.beanName}Report" />
 				</aon:htmlCommandLink>
 				
-				<c:if test="#{!controller.new and controller.to.finished and !controller.to.model111 and controller.scriptPresent}">
+				<c:if test="#{!controller.nevv and controller.to.finished and !controller.to.model111 and controller.scriptPresent}">
 					<aon:htmlCommandLink id="#{toolbarID}-reportAeat"
 						value="AEAT OFICIAL"  
 						action="#{controller.aeatReport}"
@@ -70,7 +70,7 @@
 				<aon:commandButton id="audit-info"
 					value="#{bundle.aon_audit}"
 					styleClass="aon-finding-toolbar-item aon-icon-audit"
-					rendered="#{!controller.new}"
+					rendered="#{!controller.nevv}"
 					reRender="showAuditInfoWindow">
 					<f:setPropertyActionListener target="#{controller.showAuditInfoWindow}"
 						value="#{true}" />							
@@ -94,10 +94,10 @@
 				<aon:outputLabel for="controller_year" value="#{bundle.aon_year} / #{bundle.aon_period}" />
 				<aon:div>
 					<aon:inputText id="controller_year" size="5" value="#{controller.declaration.header.year}"
-						required="true" disabled="#{!controller.new}"/>
+						required="true" disabled="#{!controller.nevv}"/>
 					<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
 						style="margin-left: 3px;"
-						required="true" disabled="#{!controller.new}">
+						required="true" disabled="#{!controller.nevv}">
 						<c:if test="#{quarterPeriods}">
 							<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
 						</c:if>
@@ -112,7 +112,7 @@
 				<aon:div id="administrationContainer">
 					<aon:selectOneMenu id="controller_administration" value="#{controller.declaration.header.administration}"
 						reRender="panelIdentification" ajaxSingle="true"
-						required="true" disabled="#{!controller.new}">
+						required="true" disabled="#{!controller.nevv}">
 						<f:selectItems value="#{configCollections.administrations}" />
 					</aon:selectOneMenu>
 				</aon:div>
@@ -142,7 +142,7 @@
 				</c:if>
 			</aon:panelGrid>
 			
-			<c:if test="#{!controller.new and controller.declaration.header.finished}">
+			<c:if test="#{!controller.nevv and controller.declaration.header.finished}">
 				
 				<aon:panelGrid id="panelFinance" columns="3" style="width: 100%;" styleClass="aon-margin-top"
 					columnClasses="aon-panelGrid-odd aon-width-70
@@ -208,7 +208,7 @@
 						<h:outputLink target="_blank"
 							value="#{controller.aeatWebPage}"
 							style="border-width: 0px 0px 0px 0px;"
-							rendered="#{!controller.new and controller.to.finished and controller.aeatWebPage != null}"
+							rendered="#{!controller.nevv and controller.to.finished and controller.aeatWebPage != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-aeat">
 							<aon:outputText value="#{bundle.fiscal_electronic_presentation}"/>
 						</h:outputLink>
@@ -248,7 +248,7 @@
 						<aon:commandButton id="gen-disk"
 							value="#{bundle.finance_create_disk}"
 							actionListener="#{controller.onCreateDisk}"
-							rendered="#{!controller.new and controller.declaration.header.finished}"
+							rendered="#{!controller.nevv and controller.declaration.header.finished}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							style="border-width: 0px 0px 0px 0px;" reRender="panelComments"
 							accesskey="#{bundle.aon_key_cancel}" />
@@ -257,7 +257,7 @@
 							value="#{controller.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 							style="border-width: 0px 0px 0px 0px;"
 							actionListener="#{controller.downloadDisk}"
-							rendered="#{!controller.new and controller.fileOutput!=null}"
+							rendered="#{!controller.nevv and controller.fileOutput!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 					</aon:div>
 				</aon:div>
@@ -268,7 +268,7 @@
 					<ui:include src="/com/code/aon/ui/fiscal/facelet/model/header.xhtml" />
 				</aon:panelTab>
 				
-				<c:if test="#{!controller.new}">
+				<c:if test="#{!controller.nevv}">
 					<aon:panelTab id="#{controller.liquidationTabName}" label="#{bundle.fiscal_liquidation}">
 						<c:if test="#{!skipDetail}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">

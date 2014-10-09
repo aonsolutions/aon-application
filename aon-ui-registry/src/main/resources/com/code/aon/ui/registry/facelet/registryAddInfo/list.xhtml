@@ -19,7 +19,7 @@
 					<ui:param name="resetButtonReRender" value="registryAddInfoList" />
 					<ui:define name="additionalToolbarContent">
 						<aon:htmlCommandLink id="registryAddInfo-excel-report" value="&#160;" 
-							target="_new" rendered="#{!registryAddInfo.new and registryAddInfo.rowCount > 0}"
+							target="_new" rendered="#{!registryAddInfo.nevv and registryAddInfo.rowCount > 0}"
 							disabled="#{registryAddInfo.to != null}"
 							action="#{report.onExecute}"
 							accesskey="#{bundle.aon_key_print}"
@@ -28,7 +28,7 @@
 							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="registryAddInfo-report" value="#{bundle.aon_listing}"
-							target="_new" rendered="#{!registryAddInfo.new and registryAddInfo.rowCount > 0}"
+							target="_new" rendered="#{!registryAddInfo.nevv and registryAddInfo.rowCount > 0}"
 							disabled="#{registryAddInfo.to != null}"
 							action="#{report.onExecute}"
 							accesskey="#{bundle.aon_key_print}"

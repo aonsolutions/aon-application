@@ -62,14 +62,14 @@
 						</aon:commandButton>			
 						<aon:htmlCommandLink id="offer-excel-report" value="&#160;"
 							target="_blank" action="#{report.onExecute}"
-							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
+							rendered="#{!offer.nevv and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 							<f:param name="reportKey" value="#{offer.reportTemplate}" />
 							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>											
 						<aon:htmlCommandLink id="offer-report" value="#{bundle.aon_invoice_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
-							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
+							rendered="#{!offer.nevv and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="#{offer.reportTemplate}" />
@@ -77,19 +77,19 @@
 						</aon:htmlCommandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{offerSigner}" />
-							<ui:param name="skipSignButton" value="#{offer.new or offer.to.signed or (!certificate.signable)}" />
-							<ui:param name="skipCancelSignButton" value="#{offer.new or (!offer.to.signed)}" />
+							<ui:param name="skipSignButton" value="#{offer.nevv or offer.to.signed or (!certificate.signable)}" />
+							<ui:param name="skipCancelSignButton" value="#{offer.nevv or (!offer.to.signed)}" />
 							<ui:param name="signButtonReRender" value="offerForm,showNewMessageWindow" />
 						</ui:include>
 						<c:if test="#{aonConfiguration.bean.offer.showTasData}">
 							<aon:htmlCommandLink id="audagateCall" value="#{bundle.audabridge_edit_assessment}"
-								rendered="#{!offer.new and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" target="_new"
+								rendered="#{!offer.nevv and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" target="_new"
 								actionListener="#{audabridgeOffer.onCallAudaGate}"
 								style="padding-left: 25px;"
 								styleClass="aon-finding-toolbar-item aon-icon-audatex">
 							</aon:htmlCommandLink>
 							<aon:commandButton id="offerCreation" value="#{bundle.audabridge_import_assessment}"
-								rendered="#{!offer.new and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" 
+								rendered="#{!offer.nevv and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" 
 								actionListener="#{audabridgeOffer.onImportAssessment}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -119,14 +119,14 @@
 								<ui:define name="additionalSeriesContent">
 									<aon:confirmButton id="version" value="&#160;"
 										title="#{bundle.commercial_offer_new_version}"
-										immediate="true" rendered="#{!offer.new and !(offer.approved or offer.invoiced)}"
+										immediate="true" rendered="#{!offer.nevv and !(offer.approved or offer.invoiced)}"
 										styleClass="aon-icon-commandButton aon-icon-version"
 										confirmTitle="#{bundle.aon_confirm_title}"
 										confirmMessage="#{bundle.commercial_offer_confirm_new_version}"
 										confirmActionListener="#{offer.onVersion}" />
 									<aon:commandButton id="copy" value="&#160;"
 										title="#{bundle.commercial_offer_copy}"
-										immediate="#{true}" rendered="#{!offer.new}"
+										immediate="#{true}" rendered="#{!offer.nevv}"
 										styleClass="aon-icon-commandButton aon-icon-copy" 
 										actionListener="#{offer.onOfferCopyShow}"
 										reRender="showOfferCopyWindow">
@@ -150,7 +150,7 @@
 
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
-										rendered="#{!offer.new and offer.to.signed}"
+										rendered="#{!offer.nevv and offer.to.signed}"
 										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>
@@ -190,7 +190,7 @@
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{offer.onBlock}"
 									title="#{bundle.commercial_offer_to_block}"
-									immediate="true" rendered="#{!offer.new and !(offer.blocked or offer.invoiced)}"
+									immediate="true" rendered="#{!offer.nevv and !(offer.blocked or offer.invoiced)}"
 									styleClass="aon-icon-commandButton aon-icon-lock">
 								</aon:commandButton>										
 								<aon:commandButton id="unblock" value="&#160;"
@@ -251,7 +251,7 @@
 						</aon:selectOneMenu>
 						<aon:outputText styleClass="aon-bold aon-margin-left"
 							value="#{offer.to.externalReference}"
-							rendered="#{!offer.new and offer.to.audatexOffer}" />
+							rendered="#{!offer.nevv and offer.to.audatexOffer}" />
 					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
@@ -470,7 +470,7 @@
 				</c:if>
 				</aon:div>
 
-				<c:if test="#{!offer.new}">
+				<c:if test="#{!offer.nevv}">
 					<aon:panelTabSet selectedTab="#{offer.selectedTab}">
 
 						<aon:panelTab id="offerDetail" label="#{bundle.commercial_offer_detail}">

@@ -9,11 +9,11 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<aon:div id="linesContainer" style="width: 99%;" >
-		<aon:div rendered="#{!accountEntry.new}" >
+		<aon:div rendered="#{!accountEntry.nevv}" >
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 				<ui:param name="controller" value="#{accountEntryDetail}" />
-				<ui:param name="showDataScroller" value="#{!accountEntryDetail.new}" />
+				<ui:param name="showDataScroller" value="#{!accountEntryDetail.nevv}" />
 				<ui:param name="dataTableFooterClass" value="aon-dataTable-footerClass" />
 				<ui:param name="skipSelectRow" value="true" />
 				<ui:param name="skipLineEdition" value="true" />
@@ -38,7 +38,7 @@
 									<aon:commandButton id="entryDetailTable-reset"
 										title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new_line})" 
 										actionListener="#{accountEntryDetail.onReset}" 
-										rendered="#{!accountEntryDetail.new}"
+										rendered="#{!accountEntryDetail.nevv}"
 										styleClass="aon-editDataTable-button aon-icon-reset"
 										accesskey="#{bundle.aon_key_new_line}"
 										focus="Account_Id-NEW" />
@@ -50,7 +50,7 @@
 	
 					<f:facet name="footer">
 						<rich:columnGroup
-							 rendered="#{accountEntryDetail.new}">
+							 rendered="#{accountEntryDetail.nevv}">
 							<aon:column colspan="#{accountEntry.updatable?'3':'2'}">
 								<aon:outputText value="&#160;" />
 							</aon:column>
@@ -117,7 +117,7 @@
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupSuffix" value="-New" />
 									<ui:param name="lookupTo" value="#{accountEntryDetail.to.account}" />
-									<ui:param name="lookupRendered" value="#{accountEntryDetail.new}" />
+									<ui:param name="lookupRendered" value="#{accountEntryDetail.nevv}" />
 									<ui:param name="idRequired" value="true" />
 									<ui:param name="lookupInputOnFocus" value="AccountEntryDetail_concept-New" />				
 								</ui:include>
@@ -140,7 +140,7 @@
 							<aon:div>
 								<aon:inputText id="AccountEntryDetail_concept-New"
 									value="#{accountEntryDetail.to.concept}"
-									rendered="#{accountEntryDetail.new}" 
+									rendered="#{accountEntryDetail.nevv}" 
 									required="true" size="15" maxlength="32" />
 			
 								<a4j:region>
@@ -192,7 +192,7 @@
 							<aon:div styleClass="aon-italic"
 								style="text-align:right; font-weight:bold;">
 								<aon:inputText id="AccountEntryDetail_debit-NEW" value="#{accountEntryDetail.to.debit}"
-									rendered="#{accountEntryDetail.new}" required="true" size="8">
+									rendered="#{accountEntryDetail.nevv}" required="true" size="8">
 									<f:validateDoubleRange />
 									<a4j:support event="onchange" ajaxSingle="true"
 										eventsQueue="debitChange" ignoreDupResponses="true"
@@ -200,7 +200,7 @@
 								</aon:inputText>
 								<aon:outputText value="#{accountEntry.totalDebit}"
 									style="#{accountEntry.balanced?'color:green':'color:red'}"
-									rendered="#{!accountEntryDetail.new}">
+									rendered="#{!accountEntryDetail.nevv}">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:div>
@@ -234,7 +234,7 @@
 							<aon:div styleClass="aon-italic"
 								style="text-align:right; font-weight:bold;">
 								<aon:inputText id="AccountEntryDetail_credit-NEW" value="#{accountEntryDetail.to.credit}"
-									rendered="#{accountEntryDetail.new}" required="true" size="8">
+									rendered="#{accountEntryDetail.nevv}" required="true" size="8">
 									<f:validateDoubleRange />
 									<a4j:support event="onchange" ajaxSingle="true"
 										eventsQueue="creditChange" ignoreDupResponses="true"
@@ -243,7 +243,7 @@
 								</aon:inputText>
 								<aon:outputText value="#{accountEntry.totalCredit}"
 									style="#{accountEntry.balanced?'color:green':'color:red'}"
-									rendered="#{!accountEntryDetail.new}">
+									rendered="#{!accountEntryDetail.nevv}">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:div>
@@ -279,7 +279,7 @@
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupSuffix" value="BalancingAccount-NEW" />
 									<ui:param name="lookupTo" value="#{accountEntryDetail.to.balancingAccount}" />
-									<ui:param name="lookupRendered" value="#{accountEntryDetail.new}" />
+									<ui:param name="lookupRendered" value="#{accountEntryDetail.nevv}" />
 									<ui:param name="skipNewButton" value="#{true}" />
 									<ui:param name="skipGoToButton" value="#{true}" />
 									<ui:param name="skipSuggestText" value="#{true}" />
@@ -304,7 +304,7 @@
 						<f:facet name="footer">
 							<aon:inputText id="AccountEntryDetail_documentNumber-New"
 								value="#{accountEntryDetail.to.documentNumber}"
-								rendered="#{accountEntryDetail.new}" 
+								rendered="#{accountEntryDetail.nevv}" 
 								required="false" size="10" maxlength="32"/>
 						</f:facet>
 					</aon:column>
@@ -338,7 +338,7 @@
 									actionListener="#{accountEntryDetail.onRemove}"
 									styleClass="aon-editDataTable-button aon-icon-delete"
 									accesskey="#{bundle.aon_key_remove_line}" />
-								<c:if test="#{!accountEntryDetail.new}">
+								<c:if test="#{!accountEntryDetail.nevv}">
 									<rich:jQuery timing="onload" selector="#Account_ClearButton" query="focus()"/>
 								</c:if>
 						</aon:div>
@@ -348,24 +348,24 @@
 								<aon:commandButton id="entryDetailTable-new-save"
 									title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save_line})"
 									actionListener="#{accountEntryDetail.onAccept}"
-									rendered="#{accountEntryDetail.new}"
+									rendered="#{accountEntryDetail.nevv}"
 									reRender="accountEntryDetailDataDiv"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									onclick="disabled=true"								
 									accesskey="#{bundle.aon_key_save_line}" />
 								<aon:commandButton id="entryDetailTable-new-cancel"
 									title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})"
-									rendered="#{accountEntryDetail.new}" immediate="true"
+									rendered="#{accountEntryDetail.nevv}" immediate="true"
 									confirmTitle="#{bundle.aon_confirm_title}"
 									onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 									actionListener="#{accountEntryDetail.onCancel}"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 	
-								<c:if test="#{accountEntryDetail.new and accountEntryDetail.to.account.id ==null}">
+								<c:if test="#{accountEntryDetail.nevv and accountEntryDetail.to.account.id ==null}">
 									<rich:jQuery timing="onload" selector="#Account_id-New" query="focus()"/>
 								</c:if>
-								<c:if test="#{accountEntryDetail.new and accountEntryDetail.to.account.id !=null}">
+								<c:if test="#{accountEntryDetail.nevv and accountEntryDetail.to.account.id !=null}">
 									<rich:jQuery timing="onload" selector="#Account_ClearButton-New" query="focus()"/>
 								</c:if>
 								

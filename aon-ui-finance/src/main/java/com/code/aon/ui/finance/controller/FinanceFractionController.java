@@ -36,7 +36,7 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 	
 	private Finance targetFinance;
 	
-	private boolean isNew;
+	private boolean isNevv;
 	
 	@Override
 	public DataModel getModel() {
@@ -66,12 +66,12 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 		this.targetFinance = originalFinance;
 	}
 	
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
 
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+	public void setNevv(boolean isNevv) {
+		this.isNevv = isNevv;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 	private void initializeController() {
 		setModel(null);
 		this.currentFinance = null;
-		this.setNew(false);
+		this.setNevv(false);
 	}
 
 	private Finance initializeFinance(double amount, double expenses) {
@@ -173,7 +173,7 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 
 	public void onReset(ActionEvent event) {
 		this.currentFinance = initializeFinance(obtainPendingAmount(), 0);
-		this.setNew(true);
+		this.setNevv(true);
 	}
 
 	public void onSelect(ActionEvent event) {
@@ -181,7 +181,7 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 	}
 
 	public void onAccept(ActionEvent event) {
-		if (isNew) {
+		if (isNevv) {
 			onAddFraction();
 		} else {
 			onUpdateFraction();
@@ -192,7 +192,7 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 	private void onAddFraction() {
 		((List<Finance>) getModel().getWrappedData()).add(this.currentFinance);
 		this.currentFinance = null;
-		this.setNew(false);
+		this.setNevv(false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -206,14 +206,14 @@ public class FinanceFractionController extends DataScrollerState implements IFin
 
 	public void onCancel(ActionEvent event){
 		this.currentFinance = null;
-		this.setNew(false);
+		this.setNevv(false);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void onRemove(ActionEvent event){
 		((List<Finance>)getModel().getWrappedData()).remove(this.currentFinance);
 		this.currentFinance = null;
-		this.setNew(false);
+		this.setNevv(false);
 	}
 
 	public boolean isFractionable(){

@@ -160,7 +160,7 @@ public class MasterControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		if (getDetailController().isNew() || getDetailController().getTo() != null) {
+		if (getDetailController().isNevv() || getDetailController().getTo() != null) {
 			getDetailController().onCancel(null);	
 		}
 	}

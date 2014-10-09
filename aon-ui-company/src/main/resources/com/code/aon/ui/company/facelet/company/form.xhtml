@@ -17,7 +17,7 @@
 				<ui:param name="toolbarDescription"
 					value="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
-					<c:if test="#{company.new}" >
+					<c:if test="#{company.nevv}" >
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="start" actionListener="#{company.accept}"
@@ -27,7 +27,7 @@
 								value="#{false}" />
 						</aon:commandButton>
 					</c:if>
-					<c:if test="#{!company.new}" >
+					<c:if test="#{!company.nevv}" >
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{company.accept}"

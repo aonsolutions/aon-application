@@ -21,7 +21,7 @@
 				<ui:define name="beforeSpinToolbarContent" >
 					<aon:commandButton id="sendEmail"
 						reRender="showNewMessageWindow" immediate="true"
-						value="#{bundle.webmail_send}" rendered="#{!news.new}"
+						value="#{bundle.webmail_send}" rendered="#{!news.nevv}"
 						actionListener="#{news.onSendEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
 				</ui:define>				
@@ -61,9 +61,9 @@
 							<f:validateLength  maximum="1024"/>
 						</aon:inputTextarea>						
 	
-						<aon:outputText rendered="#{!news.new}"
+						<aon:outputText rendered="#{!news.nevv}"
 							value="#{bundle.aon_document_download_url}" />
-						<aon:outputLink rendered="#{!news.new}" 
+						<aon:outputLink rendered="#{!news.nevv}" 
 							target="_blank" value="#{news.downloadURL}" >
 							<aon:outputText value="#{news.downloadURL}" />
 					    </aon:outputLink>

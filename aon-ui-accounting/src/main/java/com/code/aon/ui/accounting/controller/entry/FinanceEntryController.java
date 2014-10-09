@@ -69,7 +69,7 @@ public class FinanceEntryController implements ISpecialAccountEntry, Serializabl
 	private AccountBridgeUtil accountBridgeUtil;
 	private AccountingUtil accountingUtil;
 
-	private boolean isNew;
+	private boolean isNevv;
 	private Boolean payment;
 	private Period period;
 	private Date date;
@@ -119,12 +119,12 @@ public class FinanceEntryController implements ISpecialAccountEntry, Serializabl
 		this.accountEntry = accountEntry;
 	}
 
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
 
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+	public void setNevv(boolean isNevv) {
+		this.isNevv = isNevv;
 	}
 
 	public Boolean getPayment() {
@@ -254,7 +254,7 @@ public class FinanceEntryController implements ISpecialAccountEntry, Serializabl
 
 	private void reset() throws ManagerBeanException {
 		this.accountEntry = null;
-		this.isNew = true;
+		this.isNevv = true;
 		initializeHeader();
 		clearCheckedLines();
 		clearCheckedFinances();
@@ -385,7 +385,7 @@ public class FinanceEntryController implements ISpecialAccountEntry, Serializabl
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 
-			if (!this.isNew) {
+			if (!this.isNevv) {
 				deleteFinanceTracking(false);
 				deleteAccountEntryDetails();
 				accountEntry = (AccountEntry)HibernateUtil.getSession(sessionName).merge(accountEntry);
@@ -418,7 +418,7 @@ public class FinanceEntryController implements ISpecialAccountEntry, Serializabl
 				}
 			}
 
-			this.isNew = false;
+			this.isNevv = false;
 			clearCheckedLines();
 			clearCheckedFinances();
 
@@ -703,7 +703,7 @@ public class FinanceEntryController implements ISpecialAccountEntry, Serializabl
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
 		onReset(null);
-		setNew(false);
+		setNevv(false);
 
 		IManagerBean accountEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();

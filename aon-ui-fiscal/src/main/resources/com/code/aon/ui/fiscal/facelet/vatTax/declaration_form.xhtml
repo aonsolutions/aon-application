@@ -38,7 +38,7 @@
 				<aon:commandButton id="gen-disk"
 					value="#{bundle.finance_create_disk}"
 					actionListener="#{vatTaxDeclaration.onCreateDisk}"
-					rendered="#{!vatTaxDeclaration.new and !vatTaxDeclaration.to.generated}"
+					rendered="#{!vatTaxDeclaration.nevv and !vatTaxDeclaration.to.generated}"
 					styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 					style="border-width: 0px 0px 0px 0px;margin-left: 10px;" reRender="VatTaxDeclarationGrid"
 					accesskey="#{bundle.aon_key_cancel}" />
@@ -47,14 +47,14 @@
 					value="#{vatTaxDeclaration.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 					style="border-width: 0px 0px 0px 0px; font-weight: normal;"
 					actionListener="#{vatTaxDeclaration.downloadDisk}"
-					rendered="#{!vatTaxDeclaration.new and vatTaxDeclaration.fileOutput!=null}"
+					rendered="#{!vatTaxDeclaration.nevv and vatTaxDeclaration.fileOutput!=null}"
 					styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 				<aon:htmlCommandLink target="_blank" id="reportDraftAeat"
 					title="Imprimir via AEAT" 
 					value="Imprimir via AEAT"
 					style="border-width: 0px 0px 0px 0px; font-weight: normal;"
 					styleClass="aon-finding-toolbar-item aon-icon-aeat"
-					rendered="#{!vatTaxDeclaration.new and vatTaxDeclaration.fileOutput!=null and vatTaxDeclaration.aeatDraftReportEnabled}" 
+					rendered="#{!vatTaxDeclaration.nevv and vatTaxDeclaration.fileOutput!=null and vatTaxDeclaration.aeatDraftReportEnabled}" 
 					action="#{vatTaxDeclaration.onAEATPrint}" />
 <!-- 					
 				<aon:htmlCommandLink id="sendAeat"

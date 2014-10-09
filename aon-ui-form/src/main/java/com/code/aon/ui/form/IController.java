@@ -57,14 +57,14 @@ public interface IController extends ISearchable {
      * 
      * @return boolean
      */
-    boolean isNew();
+    boolean isNevv();
 
     /**
      * Sets the state of bean.
      * 
-     * @param isNew
+     * @param isNevv
      */
-    void setNew(boolean isNew);
+    void setNew(boolean isNevv);
 
     /**
      * Execute insert or update action.

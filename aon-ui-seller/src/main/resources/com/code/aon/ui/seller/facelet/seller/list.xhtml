@@ -20,7 +20,7 @@
 				<ui:param name="controller" value="#{seller}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="sellerReport-excel-report" value="&#160;"
-						target="_new" rendered="#{!seller.new}"
+						target="_new" rendered="#{!seller.nevv}"
 						action="#{report.onExecute}"
 						disabled="#{seller.to != null}"
 						accesskey="#{bundle.aon_key_print}"
@@ -29,7 +29,7 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="sellerReport-report" value="#{bundle.aon_listing}"
-						target="_new" rendered="#{!seller.new}"
+						target="_new" rendered="#{!seller.nevv}"
 						action="#{report.onExecute}"
 						disabled="#{seller.to != null}"
 						accesskey="#{bundle.aon_key_print}"
@@ -39,7 +39,7 @@
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="sellerDetailExcelReport-excel-report" 
 						value="#{bundle.aon_detailed_listing}" 
-						target="_new" rendered="#{!seller.new}"
+						target="_new" rendered="#{!seller.nevv}"
 						actionListener="#{seller.onDetailReport}"
 						disabled="#{seller.to != null}"
 						accesskey="#{bundle.aon_key_print}"

@@ -12,16 +12,16 @@
 		<aon:form id="enterpriseForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.aon_company}" />
-				<ui:param name="toolbarDescription" value="#{(enterprise.new)?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:param name="toolbarDescription" value="#{(enterprise.nevv)?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
-					<c:if test="#{enterprise.new}" >
+					<c:if test="#{enterprise.nevv}" >
 						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="home" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
 					</c:if>
-					<c:if test="#{!enterprise.new}" >
+					<c:if test="#{!enterprise.nevv}" >
 						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{enterprise.accept}"

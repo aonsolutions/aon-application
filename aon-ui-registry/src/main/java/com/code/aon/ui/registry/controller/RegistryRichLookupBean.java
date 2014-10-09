@@ -31,7 +31,7 @@ public class RegistryRichLookupBean extends RichLookupBean {
 		iRegistry.getRegistry().setType(iRegistry.getRegistry().getDocumentType() == DocumentType.CIF ? RegistryType.LEGAL : RegistryType.NATURAL);
 
 		try {
-			if (isNew()) {
+			if (isNevv()) {
 				RegistryController.validateDocument(iRegistry, getController().getManagerBean());
 			}
 		} catch (ManagerBeanException e) {

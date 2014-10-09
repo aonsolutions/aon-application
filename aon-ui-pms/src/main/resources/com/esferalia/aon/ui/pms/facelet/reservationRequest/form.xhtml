@@ -18,7 +18,7 @@
 					<aon:commandButton id="audit-info"
 						styleClass="aon-finding-toolbar-item aon-icon-audit"
 						value="#{bundle.aon_audit}"
-						rendered="#{!reservationRequest.new}"
+						rendered="#{!reservationRequest.nevv}"
 						reRender="showAuditInfoWindow">
 						<f:setPropertyActionListener target="#{reservationRequest.showAuditInfoWindow}"
 							value="#{true}" />							
@@ -27,11 +27,11 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{reservationRequest.new}">
+				<c:if test="#{reservationRequest.nevv}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formNewContent.xhtml" />
 				</c:if>
 
-				<c:if test="#{!reservationRequest.new}">
+				<c:if test="#{!reservationRequest.nevv}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formContent.xhtml" />
 
 					<aon:panelTabSet id="reservationRequestTab" selectedTab="#{reservationRequest.selectedTab}">

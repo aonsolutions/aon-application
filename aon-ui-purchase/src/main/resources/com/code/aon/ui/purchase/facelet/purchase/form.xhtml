@@ -28,7 +28,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
 						<aon:htmlCommandLink id="purchaseForm-report" value="#{bundle.aon_invoice_sales}"
-							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
+							target="_new" rendered="#{!purchase.nevv and purchaseDetail.model.rowCount > 0}"
 							action="#{purchaseReport.onExecute}"
 							disabled="#{purchaseDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -39,7 +39,7 @@
 						</aon:htmlCommandLink>
 						<c:if test="#{aonRole.purchaseOperator and !purchaseReadOnly}">
 							<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{bundle.purchase_valued_report}"
-								target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
+								target="_new" rendered="#{!purchase.nevv and purchaseDetail.model.rowCount > 0}"
 								action="#{purchaseReport.onExecute}"
 								accesskey="#{bundle.aon_key_print}"
 								styleClass="aon-finding-toolbar-item aon-icon-pdf">
@@ -74,14 +74,14 @@
 						</c:if>
 						<aon:menuItem id="purchaseReturnRequest"
 							value="#{bundle.purchase_return_request}"
-							rendered="#{!purchase.new and !purchase.to.itemReturn}"
+							rendered="#{!purchase.nevv and !purchase.to.itemReturn}"
 							iconClass="aon-icon-alternative"
 							action="purchase_form"
 							actionListener="#{purchase.onReturnRequest}" 
 							onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}" />
 						<aon:menuItem id="purchaseShipment"
 							value="#{bundle.carrier_shipment}"
-							rendered="#{!purchase.new and purchase.pending}"
+							rendered="#{!purchase.nevv and purchase.pending}"
 							iconClass="aon-icon-rename"
 							reRender="showShipmentWindow">
 							<f:setPropertyActionListener target="#{purchase.showShipmentWindow}"
@@ -164,7 +164,7 @@
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{purchase.onBlock}"
 									title="#{bundle.sales_to_block}"
-									immediate="true" rendered="#{!purchase.new and purchase.pending}"
+									immediate="true" rendered="#{!purchase.nevv and purchase.pending}"
 									styleClass="aon-icon-commandButton aon-icon-lock">
 								</aon:commandButton>										
 								<aon:commandButton id="unblock" value="&#160;"
@@ -187,10 +187,10 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="Purchase_documentType"
 							styleClass="aon-margin-left aon-italic"
-							rendered="#{purchase.new}"
+							rendered="#{purchase.nevv}"
 							value="#{bundle.aon_type}: " />
 						<aon:selectOneMenu id="Purchase_documentType"
-							rendered="#{purchase.new}"
+							rendered="#{purchase.nevv}"
 							value="#{purchase.to.documentType}">
 							<f:selectItems value="#{purchaseCollections.documentTypes}" />
 						</aon:selectOneMenu>
@@ -401,7 +401,7 @@
 					</c:if>
 				</aon:div>
 				
-				<c:if test="#{!purchase.new}">
+				<c:if test="#{!purchase.nevv}">
 					<aon:panelTabSet id="purchasePanelTab">
 						<aon:panelTab label="#{bundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">

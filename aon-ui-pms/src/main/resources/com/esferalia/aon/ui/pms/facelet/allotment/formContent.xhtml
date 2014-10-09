@@ -13,12 +13,12 @@
 
 		<aon:outputLabel for="Allotment_hotel_id" value="#{bundle.aon_module_hotel}" />
 		<aon:outputText	value="#{allotment.to.hotel.workPlace.description}" styleClass="aon-bold"
-			rendered="#{!allotment.new}" />
+			rendered="#{!allotment.nevv}" />
 		<aon:selectOneMenu id="Allotment_hotel_id" value="#{allotment.to.hotel}" 
-			rendered="#{allotment.new}" required="true"
+			rendered="#{allotment.nevv}" required="true"
 			valueChangeListener="#{allotment.onHotelChanged}" 
 			reRender="AllotmentItemDiv" ajaxSingle="true">
-			<c:if test="#{allotment.new}">
+			<c:if test="#{allotment.nevv}">
 				<f:selectItem itemLabel="-" value="#{null}"/>
 			</c:if>
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
@@ -33,24 +33,24 @@
 		<aon:panelGrid id="AllotmentHolderPanel" columns="2" columnClasses="aon-width-400, aon-width-auto">
 			<aon:div>
 				<aon:outputText value="#{allotment.to.agency.registry.fullName}" styleClass="aon-bold" 
-					rendered="#{!allotment.new and !allotment.group}"  />
+					rendered="#{!allotment.nevv and !allotment.group}"  />
 				<aon:selectOneMenu id="Allotment_agency" value="#{allotment.to.agency}" 
 					required="true" styleClass="aon-width-350"
-					rendered="#{allotment.new and !allotment.group}">
+					rendered="#{allotment.nevv and !allotment.group}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{pmsCollections.agencies}" />
 				</aon:selectOneMenu>
 
 				<aon:outputText value="#{allotment.to.agencyGroup.description}" styleClass="aon-bold" 
-					rendered="#{!allotment.new and allotment.group}"  />
+					rendered="#{!allotment.nevv and allotment.group}"  />
 				<aon:selectOneMenu id="Allotment_agencyGroup" value="#{allotment.to.agencyGroup}" 
 					required="true" styleClass="aon-width-350"
-					rendered="#{allotment.new and allotment.group}">
+					rendered="#{allotment.nevv and allotment.group}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{pmsCollections.agencyGroups}" />
 				</aon:selectOneMenu>
 			</aon:div>
-			<aon:div rendered="#{allotment.new}">
+			<aon:div rendered="#{allotment.nevv}">
 				<aon:commandLink id="Allotment-group" immediate="true"
 					styleClass="aon-italic" style="text-decoration:underline;"
 					value="#{allotment.group ? bundle.report_agency : bundle.aon_group}"

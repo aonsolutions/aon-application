@@ -8,11 +8,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
-	<c:if test="#{fanBatch.new}" >
+	<c:if test="#{fanBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/fan/form_new.xhtml" />
 	</c:if>
 	
-	<c:if test="#{!fanBatch.new}" >
+	<c:if test="#{!fanBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.payroll_fanBatchWizard_module}" />
 			<ui:param name="controller" value="#{fanBatch}" />
@@ -70,7 +70,7 @@
 					<aon:outputText value="#{bundle.finance_disk}" />
 					<aon:div>
 						<aon:commandButton id="fan-create-button" value="#{bundle.payroll_create_disk}"
-							rendered="#{fanBatch.new or (!fanBatch.recorded and fanBatchDetail.model.rowCount > 0)}"
+							rendered="#{fanBatch.nevv or (!fanBatch.recorded and fanBatchDetail.model.rowCount > 0)}"
 							reRender="batchForm"
 							styleClass="aon-commandButton"
 							actionListener="#{fanBatch.onCreateDisk}"

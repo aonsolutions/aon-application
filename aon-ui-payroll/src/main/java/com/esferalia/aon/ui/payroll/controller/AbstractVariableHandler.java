@@ -68,7 +68,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
 	
-	private boolean isNew;
+	private boolean isNevv;
 	
 	private IController controller;
 	
@@ -132,11 +132,11 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		return ((BasicController)getController()).getBeanName();
 	}
 
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+	public void setNew(boolean isNevv) {
+		this.isNevv = isNevv;
 	}
 
 	public VariableData getData() {
@@ -194,7 +194,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		beforeVariableSaved(event);
 		try {
 			IVariableData data = null;
-			if(isNew()){
+			if(isNevv()){
 				data = ((VariableData) getData()).getVariableData(); 
 			} else {
 				data = ((VariableData) getVariablesModel().getRowData()).getVariableData(); 

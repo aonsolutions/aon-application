@@ -44,7 +44,7 @@ public class AttachmentUtil implements ICommonMessages {
 				String message = AonUtil.getMessage(DOCUMENT_MAX_SIZE_ERROR);
 				throw new ControllerListenerException(message);
 			}
-		} else if ( required && controller.isNew() ) {
+		} else if ( required && controller.isNevv() ) {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );						
 		}

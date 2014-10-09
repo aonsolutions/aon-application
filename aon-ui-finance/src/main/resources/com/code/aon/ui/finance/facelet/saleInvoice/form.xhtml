@@ -17,11 +17,11 @@
 					<ui:param name="toolbarTitle"
 						value="#{bundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
-					<ui:param name="skipFocusFirst" value="#{!saleInvoice.new}" />
+					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
 					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
-					<ui:param name="showMoreMenu" value="#{!saleInvoice.new and saleInvoiceDetail.to == null}" />
+					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
@@ -177,7 +177,7 @@
 								<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
 								<ui:param name="sfc_seriesValid" value="#{saleInvoice.seriesValid}" />
 								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}" />
-								<ui:param name="sfc_numberReset" value="#{saleInvoice.new}" />								
+								<ui:param name="sfc_numberReset" value="#{saleInvoice.nevv}" />								
 								<ui:define name="additionalSeriesContent">
 									<aon:commandButton id="invoiceNextNumber" immediate="#{true}"
 										title="#{bundle.finance_invoice_find_next_number}"
@@ -203,7 +203,7 @@
 
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
-										rendered="#{!saleInvoice.new and saleInvoice.to.signed}"
+										rendered="#{!saleInvoice.nevv and saleInvoice.to.signed}"
 										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>						
@@ -344,7 +344,7 @@
 							<aon:commandButton id="invoiceAddressButton"
 								value="#{bundle.registry_address_other}"
 								styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
-								rendered="#{!saleInvoice.new and !saleInvoice.readOnly}"
+								rendered="#{!saleInvoice.nevv and !saleInvoice.readOnly}"
 								actionListener="#{saleInvoice.onInvoiceAddressShow}"
 								reRender="showInvoiceAddressWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showInvoiceAddressWindow}"

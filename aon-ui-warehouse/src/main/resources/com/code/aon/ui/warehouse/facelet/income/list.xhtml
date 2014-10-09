@@ -15,7 +15,7 @@
 				<ui:param name="controller" value="#{income}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="incomeList-excel-report" value="&#160;" 
-						target="_new" rendered="#{!delivery.new}"
+						target="_new" rendered="#{!delivery.nevv}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
@@ -24,7 +24,7 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="incomeList-report" value="#{bundle.aon_listing}"
-						target="_new" rendered="#{!income.new}"
+						target="_new" rendered="#{!income.nevv}"
 						action="#{report.onExecute}" 
 						disabled="#{incomeDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
@@ -33,7 +33,7 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="incomeDetailledList-excel-report" value="&#160;"
-						target="_new" rendered="#{!delivery.new}"
+						target="_new" rendered="#{!delivery.nevv}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
@@ -42,7 +42,7 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="incomeDetailledList-report" value="#{bundle.aon_detailed_listing}"
-						target="_new" rendered="#{!income.new}"
+						target="_new" rendered="#{!income.nevv}"
 						action="#{report.onExecute}" 
 						disabled="#{incomeDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"

@@ -23,21 +23,21 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="fBatch-excel-report"
 						value="&#160;" target="_blank"
-						action="#{report.onExecute}" rendered="#{!fbatch.new}"
+						action="#{report.onExecute}" rendered="#{!fbatch.nevv}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="fBatch" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>							
 					<aon:htmlCommandLink id="fBatch-report"
 						value="#{bundle.aon_listing}" target="_blank"
-						action="#{report.onExecute}" rendered="#{!fbatch.new}"
+						action="#{report.onExecute}" rendered="#{!fbatch.nevv}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
 					</aon:htmlCommandLink>
 					<c:if test="#{(fbatch.to.financeBatchType != 'SEPA_19_14_CORE_XML') and (fbatch.to.financeBatchType != 'SEPA_19_14_COR1_XML')}" >
 						<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
-							rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
+							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}">
 							<ui:include
@@ -46,14 +46,14 @@
 				     </c:if>	
 					<c:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')}" >
 						<aon:commandButton id="sepaCreateDisk" value="#{bundle.finance_create_disk}"
-							rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
+							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							actionListener="#{fbatch.onShowSEPAWindow}"
 							reRender="showSEPAWindow" />
 				     </c:if>	
 					<c:if test="#{aonRole.accountingOperator}">
 						<aon:commandButton id="recordPopup" value="#{bundle.finance_record}"
-							rendered="#{!fbatch.new and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode)}"
+							rendered="#{!fbatch.nevv and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode)}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 							reRender="showFbatchRecordWindow">	
 							<f:setPropertyActionListener target="#{fbatch.showFbatchRecordWindow}"
@@ -92,13 +92,13 @@
 							<aon:selectBooleanCheckbox id="FinanceBatch_securityLevel"
 							    styleClass="aon-margin-left"
 								value="#{fbatch.to.confidential}"
-								rendered="#{fbatch.new}" />
+								rendered="#{fbatch.nevv}" />
 							<aon:outputText styleClass="aon-italic aon-margin-right"
 								value="#{bundle.aon_confidential}"
-								rendered="#{fbatch.new}" />
+								rendered="#{fbatch.nevv}" />
 							<aon:outputText styleClass="aon-margin-left aon-icon aon-icon-confidential" 
 								value="&#160;" title="#{bundle.aon_confidential}"
-								rendered="#{!fbatch.new and fbatch.to.confidential}" />
+								rendered="#{!fbatch.nevv and fbatch.to.confidential}" />
 						</c:if>
 
 						<aon:outputText styleClass="aon-margin-left"
@@ -132,7 +132,7 @@
 						value="#{bundle.finance_disk_type}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
 						value="#{fbatch.to.financeBatchType}"
-						disabled="#{!fbatch.new}">
+						disabled="#{!fbatch.nevv}">
 						<c:if test="#{!fbatch.payroll}">
 							<f:selectItems value="#{(fbatch.payment)?(financeCollections.financeBatchPaymentTypes):(financeCollections.financeBatchChargeTypes)}" />
 						</c:if>
@@ -148,10 +148,10 @@
 							value="#{fbatch.to.registryBank}"
 							disabled="#{fbatch.readOnly}">
 							<f:selectItem itemLabel="-" value="#{null}"  />
-							<c:if test="#{fbatch.new}">
+							<c:if test="#{fbatch.nevv}">
 								<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 							</c:if>
-							<c:if test="#{!fbatch.new}">
+							<c:if test="#{!fbatch.nevv}">
 								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 							</c:if>
 						</aon:selectOneMenu>
@@ -175,7 +175,7 @@
 				</aon:panelGrid>
 
 				<aon:div id="fbatchPanelTabSet" >
-					<aon:panelTabSet rendered="#{!fbatch.new}">
+					<aon:panelTabSet rendered="#{!fbatch.nevv}">
 	
 						<c:if test="#{fBatchDetail.model.rowCount > 0}" >
 							<aon:panelTab id="fBatchDetailTab" label="#{bundle.finance_included_finance}">

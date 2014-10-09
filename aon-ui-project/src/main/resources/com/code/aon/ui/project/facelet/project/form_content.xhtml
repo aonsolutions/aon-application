@@ -8,9 +8,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 
-	<aon:outputLabel for="Project_id" rendered="#{!project.new}" 
+	<aon:outputLabel for="Project_id" rendered="#{!project.nevv}" 
 		value="#{bundle.aon_id}" />
-	<aon:div rendered="#{!project.new}">
+	<aon:div rendered="#{!project.nevv}">
 		<aon:inputText id="Project_id" required="true" disabled="true"
 			size="10" value="#{project.to.id}" />
 		<aon:selectBooleanCheckbox id="Project_active" styleClass="aon-margin-left" 

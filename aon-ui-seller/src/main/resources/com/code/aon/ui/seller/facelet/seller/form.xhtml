@@ -18,7 +18,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.seller_module}" />
 				<ui:param name="controller" value="#{seller}" />
-				<ui:param name="showMoreMenu" value="#{!seller.new}" />
+				<ui:param name="showMoreMenu" value="#{!seller.nevv}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{seller}" />
@@ -31,12 +31,12 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{seller.new}">
+				<c:if test="#{seller.nevv}">
 					<ui:include src="/com/code/aon/ui/seller/facelet/seller/formNewContent.xhtml">
 						<ui:param name="controller" value="#{seller}" />
 					</ui:include>								
 				</c:if>
-				<c:if test="#{!seller.new}">
+				<c:if test="#{!seller.nevv}">
 					<aon:panelGrid id="menuGrid" columns="2" 	
 						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 	
@@ -86,7 +86,7 @@
 		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>		
-		<c:if test="#{!seller.new}">
+		<c:if test="#{!seller.nevv}">
 			<c:if test="#{aonConfiguration.bean.target.showAddInfo}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
 					<ui:param name="controller" value="#{seller}" />

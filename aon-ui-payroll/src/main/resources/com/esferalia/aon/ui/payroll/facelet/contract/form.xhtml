@@ -15,11 +15,11 @@
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formToolbar.xhtml" />
 			
 			<aon:div styleClass="aon-scroll-area">		
-				<c:if test="#{contract.new}" >
+				<c:if test="#{contract.nevv}" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 				</c:if>
 			
-				<c:if test="#{!contract.new}" >
+				<c:if test="#{!contract.nevv}" >
 				
 					<aon:panelGrid id="contract-panelGrib" columns="4" styleClass="aon-width-all"
 						columnClasses="

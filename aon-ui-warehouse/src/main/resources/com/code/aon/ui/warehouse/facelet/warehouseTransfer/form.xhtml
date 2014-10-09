@@ -36,7 +36,7 @@
 
 					<aon:outputLabel for="WarehouseTransfer_sourceWarehouse_id" value="#{bundle.aon_source}" />
 					<aon:selectOneMenu id="WarehouseTransfer_sourceWarehouse_id"
-						disabled="#{!warehouseTransfer.new}"
+						disabled="#{!warehouseTransfer.nevv}"
 						value="#{warehouseTransfer.to.sourceWarehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
@@ -44,7 +44,7 @@
 
 					<aon:outputLabel for="WarehouseTransfer_targetWarehouse_id" value="#{bundle.warehouse_stock_target}" />
 					<aon:selectOneMenu id="WarehouseTransfer_targetWarehouse_id"
-						disabled="#{!warehouseTransfer.new}"
+						disabled="#{!warehouseTransfer.nevv}"
 						value="#{warehouseTransfer.to.targetWarehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
@@ -63,7 +63,7 @@
 						value="#{warehouseTransfer.to.comments}" />
 				</aon:panelGrid>
 
-				<c:if test="#{!warehouseTransfer.new}">
+				<c:if test="#{!warehouseTransfer.nevv}">
 					<aon:div styleClass="aon-padding-top">
 						<ui:include src="/com/code/aon/ui/warehouse/facelet/warehouseTransfer/formDetail.xhtml" />
 					</aon:div>

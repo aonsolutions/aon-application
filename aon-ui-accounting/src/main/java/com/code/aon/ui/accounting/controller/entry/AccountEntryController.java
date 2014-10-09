@@ -212,7 +212,7 @@ public class AccountEntryController extends BasicController {
     }
 
     public boolean isRemovable() {
-    	if (isNew()) {
+    	if (isNevv()) {
     		return false;
     	}
     	if (isManual() && isPeriodActive()) {
@@ -230,7 +230,7 @@ public class AccountEntryController extends BasicController {
     
 	@Override
 	public void onEditSearch(ActionEvent event) {
-		if (isNew()) {
+		if (isNevv()) {
 			super.onCancel(event);	
 		}
 		super.onEditSearch(event);
@@ -602,7 +602,7 @@ public class AccountEntryController extends BasicController {
 	}
 
 	public void accept(ActionEvent event) {
-		boolean newRow = isNew();
+		boolean newRow = isNevv();
 		if (newRow) {
 			if ((getDebitAccount() != null && getDebitAccount().getId() != null) ||
 				(getCreditAccount() != null && getCreditAccount().getId() != null)){

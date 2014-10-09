@@ -24,7 +24,7 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton id="purchaseTransfer"
 							value="#{bundle.aon_invoice_sales2}"
-							immediate="#{true}" rendered="#{!income.new and income.pending}"
+							immediate="#{true}" rendered="#{!income.nevv and income.pending}"
 							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 							actionListener="#{income.onPurchaseTransferShow}"
 							reRender="showPurchaseTransferWindow">
@@ -43,7 +43,7 @@
 							</aon:commandButton>
 						</c:if>
 						<aon:htmlCommandLink id="incomeForm-report" value="#{bundle.aon_invoice_delivery}"
-							target="_new" rendered="#{!income.new and incomeDetail.model.rowCount > 0}"
+							target="_new" rendered="#{!income.nevv and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{incomeDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -332,7 +332,7 @@
 				</aon:div>
 
 				<aon:div styleClass="aon-padding-top">
-					<aon:panel rendered="#{!income.new}">
+					<aon:panel rendered="#{!income.nevv}">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.warehouse_income_detail}" />
 						</f:facet>

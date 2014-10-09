@@ -65,7 +65,7 @@
 							value="#{controller.to.description}" />
 						<f:facet name="footer">
 							<aon:inputText id="RegistryNote_description-New"
-								rendered="#{controller.new}"
+								rendered="#{controller.nevv}"
 								maxlength="64" size="30"
 								value="#{controller.to.description}" />
 						</f:facet>
@@ -86,7 +86,7 @@
 						<f:facet name="footer">
 							<aon:selectInputDate
 								popupDateFormat="#{bundle.aon_date_pattern}"
-								rendered="#{controller.new}" value="#{controller.to.noteDate}" />
+								rendered="#{controller.nevv}" value="#{controller.to.noteDate}" />
 						</f:facet>
 					</aon:column>
 
@@ -121,7 +121,7 @@
 						</aon:selectOneMenu>
 						<f:facet name="footer">
 							<aon:selectOneMenu id="RegistryNote_notetype-New"
-								rendered="#{controller.new}"
+								rendered="#{controller.nevv}"
 								value="#{controller.to.notetype}">
 								<f:selectItems value="#{registryCollections.noteTypes}" />
 							</aon:selectOneMenu>
@@ -139,7 +139,7 @@
 							rows="5" value="#{controller.to.comments}" />
 						<f:facet name="footer">
 							<aon:inputTextarea id="RegistryNote_comments-New"
-								rendered="#{controller.new}"
+								rendered="#{controller.nevv}"
 								rows="5" cols="50" 
 								value="#{controller.to.comments}" />
 						</f:facet>

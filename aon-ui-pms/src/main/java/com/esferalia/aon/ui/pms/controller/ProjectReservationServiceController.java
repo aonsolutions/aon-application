@@ -154,7 +154,7 @@ public class ProjectReservationServiceController extends LinesController {
 	}
 
 	public void fillReservationServiceValues(ProjectReservationService reservationService) throws ManagerBeanException {
-		if (isNew()) {
+		if (isNevv()) {
 			reservationService.setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 
 			setServiceReservationRoom(null);
@@ -273,8 +273,8 @@ public class ProjectReservationServiceController extends LinesController {
 
 	public void onAcceptReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
-		boolean isNew = isNew();
-		if (isNew) {
+		boolean isNevv = isNevv();
+		if (isNevv) {
 			validateServiceDates();	
 		}
 
@@ -286,7 +286,7 @@ public class ProjectReservationServiceController extends LinesController {
 
 		onAccept(event);
 
-		if (isNew) {
+		if (isNevv) {
 			Date fromDate = getServiceFromDate();
 			Date toDate = getServiceToDate();
 			reservationUtils.insertProjectReservationServiceDetails(reservationService, fromDate, toDate, quantity, price, reservationRoom, getPriceStrategy());

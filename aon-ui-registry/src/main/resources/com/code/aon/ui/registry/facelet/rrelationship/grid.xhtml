@@ -57,7 +57,7 @@
 					<aon:selectOneMenu value="#{controller.to.relationship.id}"
 						styleClass="aon-form-selectOneMenu-field"
 						valueChangeListener="#{controller.onRelationshipChanged}"
-						rendered="#{controller.new}">
+						rendered="#{controller.nevv}">
 						<f:selectItems value="#{registryCollections.relationships}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -76,7 +76,7 @@
 					value="#{controller.to.comments}" />
 				<f:verbatim>&#160;</f:verbatim>
 				<f:facet name="footer">
-					<aon:inputText rendered="#{controller.new}"
+					<aon:inputText rendered="#{controller.nevv}"
 						styleClass="aon-form-input-text" size="64"
 						value="#{controller.to.comments}" />
 				</f:facet>

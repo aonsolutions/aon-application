@@ -14,12 +14,12 @@
 			<ui:insert name="formToolbarContent" />
 			
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{customer.new}">
+				<c:if test="#{customer.nevv}">
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/formNewContent.xhtml" >
 						<ui:param name="controller" value="#{customer}" />
 					</ui:include>								
 				</c:if>			
-				<c:if test="#{!customer.new}">
+				<c:if test="#{!customer.nevv}">
 					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
@@ -85,7 +85,7 @@
 							</aon:selectOneRadio>
 						</c:if>
 	
-						<c:if test="#{!customer.new and customer.to.invoicingGroup.id != null}">
+						<c:if test="#{!customer.nevv and customer.to.invoicingGroup.id != null}">
 							<aon:outputLabel value="#{bundle.customer_invoicingGroup}" />
 							<aon:div>
 								<aon:outputText	value="#{customer.to.invoicingGroup.description}" />
@@ -100,7 +100,7 @@
 							</aon:div>
 						</c:if>
 	
-						<c:if test="#{!customer.new and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
+						<c:if test="#{!customer.nevv and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
 							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
@@ -322,7 +322,7 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{!customer.new}">
+		<c:if test="#{!customer.nevv}">
 			<c:if test="#{aonRole.accountingOperator}">
 				<aon:lookupButtonPopup lookup="#{accountLookup}" />
 			</c:if>

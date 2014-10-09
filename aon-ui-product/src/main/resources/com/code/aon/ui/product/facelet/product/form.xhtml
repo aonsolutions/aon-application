@@ -14,7 +14,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />
 				<ui:param name="controller" value="#{product}" />
-				<ui:param name="showMoreMenu" value="#{!product.new}" />
+				<ui:param name="showMoreMenu" value="#{!product.nevv}" />
 				<ui:define name="moreMenuContent">
 					<c:if test="#{aonConfiguration.bean.product.showHistory}">
 						<aon:menuItem id="ProductHistory" 
@@ -89,13 +89,13 @@
 			</ui:decorate>
 
 			<aon:div id="productDiv" styleClass="aon-scroll-area">
-				<c:if test="#{product.new}">
+				<c:if test="#{product.nevv}">
 					<ui:include src="/com/code/aon/ui/product/facelet/product/formNewContent.xhtml">
 						<ui:param name="controller" value="#{product}" />
 					</ui:include>
 				</c:if>
 
-				<c:if test="#{!product.new}">
+				<c:if test="#{!product.nevv}">
 					<ui:include src="/com/code/aon/ui/product/facelet/product/formContent.xhtml">
 						<ui:param name="controller" value="#{product}" />
 					</ui:include>
@@ -201,7 +201,7 @@
 			</aon:div>
 		</aon:form>
 
-		<c:if test="#{!product.new}">
+		<c:if test="#{!product.nevv}">
 			<ui:include src="/com/code/aon/ui/product/facelet/product/item/newItemModal.xhtml">
 				<ui:param name="controller" value="#{product}" />
 				<ui:param name="itemController" value="#{item}" />

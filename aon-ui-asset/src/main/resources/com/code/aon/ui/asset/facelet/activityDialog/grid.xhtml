@@ -16,8 +16,8 @@
 			aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 			
 			<ui:param name="skipResetButton" value="#{true}" />
-			<ui:param name="showDataTable" value="#{!activityBasic.new}" />
-			<ui:param name="showDataScroller" value="#{!activityBasic.new}" />
+			<ui:param name="showDataTable" value="#{!activityBasic.nevv}" />
+			<ui:param name="showDataScroller" value="#{!activityBasic.nevv}" />
 			
 			<ui:define name="columns">
 			
@@ -34,7 +34,7 @@
 							popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 							value="#{activityBasic.to.date}" enableManualInput="true" />
 						<f:facet name="footer">
-							<aon:selectInputDate renderAsPopup="true" rendered="#{activityBasic.new}" 
+							<aon:selectInputDate renderAsPopup="true" rendered="#{activityBasic.nevv}" 
 								popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 								value="#{activityBasic.to.date}" enableManualInput="true" />
 						</f:facet>
@@ -101,7 +101,7 @@
 							<f:validateLength maximum="20" />
 						</aon:inputText>
 						<f:facet name="footer">
-							<aon:inputText value="#{activityBasic.to.who}" rendered="#{activityBasic.new}"
+							<aon:inputText value="#{activityBasic.to.who}" rendered="#{activityBasic.nevv}"
 							 	size="15" required="#{true}" >
 								<f:validateLength maximum="20" />
 							</aon:inputText>
@@ -119,7 +119,7 @@
 							<f:validateLength maximum="64" />
 						</aon:inputText>
 						<f:facet name="footer">
-							<aon:inputText value="#{activityBasic.to.why}" rendered="#{activityBasic.new}"
+							<aon:inputText value="#{activityBasic.to.why}" rendered="#{activityBasic.nevv}"
 							 	size="30" required="#{true}" >
 								<f:validateLength maximum="64" />
 							</aon:inputText>

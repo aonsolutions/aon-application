@@ -25,7 +25,7 @@
 
 					<aon:commandButton id="calculate" 
 						value="#{bundle.accounting_calculate}"
-						rendered="#{!amortization.new and amortization.to != null}"
+						rendered="#{!amortization.nevv and amortization.to != null}"
 						reRender="amortizationForm"
 						onclick="if (!confirm('#{bundle.accounting_fixed_asset_calculate}')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" 
@@ -36,7 +36,7 @@
 					<aon:commandButton id="salePopup" 
 						value="#{bundle.accounting_sale}"
 						immediate="#{true}"
-						rendered="#{!amortization.new and amortization.to != null}"
+						rendered="#{!amortization.nevv and amortization.to != null}"
 						styleClass="aon-finding-toolbar-item aon-icon-payment"
 						reRender="salePanelWindow,amortizationToolbar">
 						<f:setPropertyActionListener target="#{amortization.salePanelVisible}"
@@ -121,7 +121,7 @@
 					
 				</aon:panelGrid>
 
-				<aon:panelTabSet id="amortizationTab" selectedTab="#{amortization.selectedTab}" rendered="#{!amortization.new}">
+				<aon:panelTabSet id="amortizationTab" selectedTab="#{amortization.selectedTab}" rendered="#{!amortization.nevv}">
 					<aon:panelTab id="YearSummary" label="#{bundle.accounting_annual_summary}" rendered="#{!amortization.to.yearly}">
 						<ui:include src="/com/code/aon/ui/accounting/facelet/amortization/form_summary_lines.xhtml" />
 					</aon:panelTab>

@@ -56,7 +56,7 @@ public class AmortizationDetailController extends LinesController {
 	
 	private DataModel initializeSummaryModel() throws ManagerBeanException {
 		List<AmortizationDetail> list = new LinkedList<AmortizationDetail>();
-		if (!getMasterController().isNew()) { 
+		if (!getMasterController().isNevv()) { 
 			Amortization a = (Amortization) getMasterController().getTo();
 			int year = -1;
 			AmortizationDetail detail = null;

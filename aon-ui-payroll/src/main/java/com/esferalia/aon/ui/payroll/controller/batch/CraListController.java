@@ -121,7 +121,7 @@ public class CraListController extends BasicController {
 			
 			
 			CraBatchController batchController = (CraBatchController) AonUtil.getRegisteredBean(IPayrollConstants.CRA_BATCH_CONTROLLER_NAME);
-			if(batchController.isNew()){
+			if(batchController.isNevv()){
 				List<ITransferObject> list = batchController.getNewBatchWizard().getSelectedList();
 				if(list!=null){
 					for(ITransferObject to: list){

@@ -29,7 +29,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
 						<aon:htmlCommandLink id="sales-report" value="#{bundle.aon_invoice_sales}"
-							target="_new" rendered="#{!sales.new and salesDetail.model.rowCount > 0}"
+							target="_new" rendered="#{!sales.nevv and salesDetail.model.rowCount > 0}"
 							action="#{report.onExecute}"
 							disabled="#{salesDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -73,14 +73,14 @@
 						</c:if>
 						<aon:menuItem id="salesReturnRequest"
 							value="#{bundle.sales_return_request}"
-							rendered="#{!sales.new}"
+							rendered="#{!sales.nevv}"
 							iconClass="aon-icon-alternative"
 							action="sales_form"
 							actionListener="#{sales.onReturnRequest}" 
 							onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}" />
 						<aon:menuItem id="salesShipment"
 							value="#{bundle.carrier_shipment}"
-							rendered="#{!sales.new and sales.pending}"
+							rendered="#{!sales.nevv and sales.pending}"
 							iconClass="aon-icon-rename"
 							reRender="showShipmentWindow">
 							<f:setPropertyActionListener target="#{sales.showShipmentWindow}"
@@ -162,7 +162,7 @@
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{sales.onBlock}"
 									title="#{bundle.sales_to_block}"
-									immediate="true" rendered="#{!sales.new and sales.pending}"
+									immediate="true" rendered="#{!sales.nevv and sales.pending}"
 									styleClass="aon-icon-commandButton aon-icon-lock">
 								</aon:commandButton>										
 								<aon:commandButton id="unblock" value="&#160;"
@@ -185,10 +185,10 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="Sales_documentType"
 							styleClass="aon-margin-left aon-italic"
-							rendered="#{sales.new}"
+							rendered="#{sales.nevv}"
 							value="#{bundle.aon_type}: " />
 						<aon:selectOneMenu id="Sales_documentType"
-							rendered="#{sales.new}"
+							rendered="#{sales.nevv}"
 							value="#{sales.to.documentType}">
 							<f:selectItems value="#{salesCollections.basicSalesTypes}" />
 						</aon:selectOneMenu>
@@ -434,7 +434,7 @@
 					</c:if>
 				</aon:div>
 
-				<c:if test="#{!sales.new}">
+				<c:if test="#{!sales.nevv}">
 					<aon:panelTabSet id="salesPanelTab" selectedTab="#{sales.selectedTab}">
 						<aon:panelTab id="salesDetailTab" 
 							label="#{bundle.sales_detail}">

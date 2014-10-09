@@ -20,17 +20,17 @@
 				</rich:layoutPanel>
 				
 				<rich:layoutPanel position="left" width="25%">
-					<c:if test="#{!process.new}">
+					<c:if test="#{!process.nevv}">
 						<ui:include src="/com/code/aon/ui/groupware/facelet/process/sidebar.xhtml" />
 					</c:if> 
 				</rich:layoutPanel>
 				
 				<rich:layoutPanel position="center" width="75%">
 					<aon:div style="border: solid #DDDDDD 1px;background-color: #EFEFEF;">
-						<c:if test="#{!process.new and processDetail.to != null}">
+						<c:if test="#{!process.nevv and processDetail.to != null}">
 							<ui:include src="/com/code/aon/ui/groupware/facelet/process/processDetailForm.xhtml" />
 						</c:if>
-						<c:if test="#{!process.new and processDetail.to == null}">
+						<c:if test="#{!process.nevv and processDetail.to == null}">
 							<aon:div styleClass="aon-text-center" style="height: 250px;margin-top: 50px; font-style: italic;">
 								<aon:outputText value="#{bundle.groupware_process_detail_help}"/>
 							</aon:div>

@@ -71,7 +71,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 		setPageLimit(-1);
 	}
 
-	public boolean isNew() {
+	public boolean isNevv() {
 		return false;
 	}
 	

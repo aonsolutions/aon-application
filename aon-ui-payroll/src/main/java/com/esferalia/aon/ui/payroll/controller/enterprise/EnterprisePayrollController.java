@@ -128,7 +128,7 @@ public class EnterprisePayrollController {
     
     public void initMainActiviy() throws ManagerBeanException {
     	IController controller = FormUtil.getController(IPayrollConstants.ENTERPRISE_CONTROLLER);
-    	if (! controller.isNew() ) {
+    	if (! controller.isNevv() ) {
     		loadMainActivity();
     	}
     }

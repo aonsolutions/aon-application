@@ -13,6 +13,6 @@ public interface IAttachmentController {
 
 	long getMaximumSize();
 	
-	boolean isNew();
+	boolean isNevv();
 	
 }

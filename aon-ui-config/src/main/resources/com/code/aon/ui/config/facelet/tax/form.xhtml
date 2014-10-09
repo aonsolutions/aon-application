@@ -101,7 +101,7 @@
 				</aon:panelGrid>
 			</aon:div>
 				
-			<aon:div id="taxDetailTable" styleClass="aon-scroll-area" rendered="#{!tax.new}">	
+			<aon:div id="taxDetailTable" styleClass="aon-scroll-area" rendered="#{!tax.nevv}">	
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					<ui:param name="controller" value="#{taxDetail}" />
@@ -125,7 +125,7 @@
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<f:facet name="footer">
 								<aon:selectInputDate id="TaxDetail_startDate-New"
-									rendered="#{taxDetail.new}" value="#{taxDetail.to.startDate}"
+									rendered="#{taxDetail.nevv}" value="#{taxDetail.to.startDate}"
 									required="#{true}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -147,7 +147,7 @@
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<f:facet name="footer">
 								<aon:selectInputDate id="TaxDetail_endDate-New"
-									rendered="#{taxDetail.new}" value="#{taxDetail.to.endDate}"
+									rendered="#{taxDetail.nevv}" value="#{taxDetail.to.endDate}"
 									required="#{true}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -163,7 +163,7 @@
 							<aon:inputText id="TaxDetail_value" rendered="#{to==taxDetail.to}" size="6"
 								value="#{taxDetail.to.value}" required="true" />
 							<f:facet name="footer">
-								<aon:inputText id="TaxDetail_value-New" rendered="#{taxDetail.new}" size="6"
+								<aon:inputText id="TaxDetail_value-New" rendered="#{taxDetail.nevv}" size="6"
 									value="#{taxDetail.to.value}" required="true" />
 							</f:facet>
 						</aon:column>
@@ -177,7 +177,7 @@
 							<aon:inputText id="TaxDetail_surcharge" rendered="#{to==taxDetail.to}" size="6"
 								value="#{taxDetail.to.surcharge}" required="true" />
 							<f:facet name="footer">
-								<aon:inputText id="TaxDetail_surcharge-New" rendered="#{taxDetail.new}" size="6"
+								<aon:inputText id="TaxDetail_surcharge-New" rendered="#{taxDetail.nevv}" size="6"
 									value="#{taxDetail.to.surcharge}" required="true" />
 							</f:facet>
 						</aon:column>

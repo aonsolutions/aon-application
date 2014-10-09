@@ -236,7 +236,7 @@ public class RegistryController extends BasicController {
 		iRegistry.getRegistry().setType(iRegistry.getRegistry().getDocumentType() == DocumentType.CIF ? RegistryType.LEGAL : RegistryType.NATURAL);
 
 		try {
-			if (isNew()) {
+			if (isNevv()) {
 				RegistryController.validateDocument(iRegistry, getManagerBean());
 			}
 		} catch (ManagerBeanException e) {

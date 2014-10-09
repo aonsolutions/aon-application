@@ -25,7 +25,7 @@
 					<aon:commandButton id="resetPassword"
 						value="#{bundle.admin_reset_password}"
 						actionListener="#{domainUser.onResetPassword}" immediate="true"
-						rendered="#{!domainUser.new}"
+						rendered="#{!domainUser.nevv}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 						<aon:actionListener method="#{saveActionListener}" />
 					</aon:commandButton>				
@@ -33,7 +33,7 @@
 						value="#{bundle.admin_change_password}"
 						actionListener="#{domainUser.onShowChangePasswordWindow}"
 						reRender="showChangePasswordWindow"  immediate="true"
-						rendered="#{(!domainUser.new) and aonRole.sysAdmin}"
+						rendered="#{(!domainUser.nevv) and aonRole.sysAdmin}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 					</aon:commandButton>
 				</c:if>
@@ -65,7 +65,7 @@
 						value="#{domainUser.to.login}" />
 					<aon:outputText value="#{bundle.admin_user_init_password}"
 						styleClass="aon-margin-left"
-						rendered="#{domainUser.new}" />							
+						rendered="#{domainUser.nevv}" />							
 				</h:panelGrid>
 				
 				<aon:outputLabel for="User_toolbar"
@@ -105,7 +105,7 @@
 					<f:selectItems value="#{commonCollections.pageLimits}" />
 				</aon:selectOneMenu>
 				
-				<c:if test="#{!domainUser.new}" >
+				<c:if test="#{!domainUser.nevv}" >
 					<aon:outputText for="User_initAction"
 						value="#{bundle.admin_user_init_action}"/>
 					<h:panelGrid id="userInitActionDiv">
@@ -169,7 +169,7 @@
 				</aon:div>
 			</c:if>
 
-			<c:if test="#{!domainUser.new}" >
+			<c:if test="#{!domainUser.nevv}" >
                    
 				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
                    

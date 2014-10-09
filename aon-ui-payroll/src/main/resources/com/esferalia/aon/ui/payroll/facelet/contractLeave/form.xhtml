@@ -83,7 +83,7 @@
 							<f:validateDoubleRange />
 						</aon:inputText>
 						
-						<aon:div rendered="#{!contractLeave.new}" style="display:inline;">
+						<aon:div rendered="#{!contractLeave.nevv}" style="display:inline;">
 							<aon:outputText value="#{bundle.payroll_leaveBatch_leave_days}: "  
 								styleClass="aon-italic aon-bold aon-margin-left" />
 							<aon:outputText value="#{contractLeave.itDays}" 
@@ -171,7 +171,7 @@
 					
 				</aon:panel>
 				
-				<aon:panel rendered="#{!contractLeave.new}">
+				<aon:panel rendered="#{!contractLeave.nevv}">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.payroll_contractLeave_report_discharge}" />
 					</f:facet>
@@ -233,7 +233,7 @@
 				</aon:panel>
 				
 				<aon:panel id="confirmReport-panel" 
-					rendered="#{!contractLeave.new}">
+					rendered="#{!contractLeave.nevv}">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.payroll_contractLeave_report_confirm}" />
 					</f:facet>

@@ -19,7 +19,7 @@
 					<aon:htmlCommandLink id="calendarReport_list" value="#{bundle.aon_report}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						actionListener="#{calendarPrint.onLoad}"
-						rendered="#{!calendar.new}" action="#{report.onExecute}">
+						rendered="#{!calendar.nevv}" action="#{report.onExecute}">
 						<f:param name="reportKey" value="calendarReport" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>	
@@ -42,10 +42,10 @@
 							<ui:param name="lookupControllerListener" value="#{calendar.excludeCurrentCalendar}" />
 						</ui:include>
 							
-						<aon:outputLabel rendered="#{!calendar.new}"
+						<aon:outputLabel rendered="#{!calendar.nevv}"
 							value="#{bundle.aon_year}" />
 						<rich:inputNumberSpinner value="#{calendar.year}"
-						 	rendered="#{!calendar.new}"
+						 	rendered="#{!calendar.nevv}"
 							inputSize="4" minValue="2000" maxValue="2100"
 							enableManualInput="true" step="1"
 							ignoreDupResponses="true"
@@ -83,7 +83,7 @@
 
 				</aon:panelGrid>
 				
-				<c:if test="#{!calendar.new}">
+				<c:if test="#{!calendar.nevv}">
 					<aon:panelTabSet id="tabPanel">
 						<aon:panelTab label="#{bundle.aon_dates}">
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />

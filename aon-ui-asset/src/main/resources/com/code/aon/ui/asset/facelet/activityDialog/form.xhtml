@@ -16,7 +16,7 @@
 				<ui:param name="toolbarTitle"
 						value="#{(activityDialog.request)?(bundle.asset_request_module):(bundle.asset_activity_module)}" />
 				<ui:param name="toolbarDescription"
-						value="#{activityDialog.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						value="#{activityDialog.nevv?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="activityDialog-back"
@@ -28,20 +28,20 @@
 						accesskey="#{bundle.aon_key_cancel}" />
 					<aon:commandButton id="activityDialog-save"
 						value="#{bundle.aon_save}" reRender="activityDialogForm"
-						rendered="#{activityDialog.new and !activityDialog.request}" 
+						rendered="#{activityDialog.nevv and !activityDialog.request}" 
 						actionListener="#{activityDialog.onAccept}"
 						action="activityDialog_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}" />
 					<aon:commandButton id="activityDialog-reset"
 						value="#{bundle.aon_reset}" reRender="activityDialogForm"
-						rendered="#{!activityDialog.new and !activityDialog.request}" 
+						rendered="#{!activityDialog.nevv and !activityDialog.request}" 
 						actionListener="#{activityDialog.onInitialize}"
 						styleClass="aon-finding-toolbar-item aon-icon-new"
 						accesskey="#{bundle.aon_key_new}" />
 					<aon:commandButton id="activityDialog-email"
 						value="#{bundle.webmail_send_email}"
-						rendered="#{activityDialog.new and activityDialog.request}"
+						rendered="#{activityDialog.nevv and activityDialog.request}"
 						actionListener="#{activityDialog.onEmail}"
 						action="activityDialog_form" 
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2"
@@ -64,25 +64,25 @@
 					<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_startDate"
 						popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 						value="#{activityDialog.fromDate}" enableManualInput="true" 
-						disabled="#{!activityDialog.new}"/>
+						disabled="#{!activityDialog.nevv}"/>
 
 					<aon:outputLabel for="ActivityDialog_endDate"
 						value="#{bundle.aon_end_date}" />
 					<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_endDate"
 						popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 						value="#{activityDialog.toDate}" enableManualInput="true" 
-						disabled="#{!activityDialog.new}"/>
+						disabled="#{!activityDialog.nevv}"/>
 
 					<aon:outputLabel for="ActivityDialog_fromTime"
 						value="#{bundle.asset_fromTime}" />
 					<aon:div id="ActivityDialog_fromTime">
-						<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.new}"
+						<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.nevv}"
 							value="#{activityDialog.fromTimeHours}">
 							<f:selectItems value="#{activityDialog.hours}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel 
 							value="#{bundle.asset_hours}" />
-						<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.new}"
+						<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.nevv}"
 							value="#{activityDialog.fromTimeMins}">
 							<f:selectItems value="#{activityDialog.mins}" />
 						</aon:selectOneMenu>
@@ -93,13 +93,13 @@
 					<aon:outputLabel for="ActivityDialog_toTime"
 						value="#{bundle.asset_toTime}" />
 					<aon:div id="ActivityDialog_toTime">
-						<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.new}"
+						<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.nevv}"
 							value="#{activityDialog.toTimeHours}">
 							<f:selectItems value="#{activityDialog.hours}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel 
 							value="#{bundle.asset_hours}" />
-						<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.new}"
+						<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.nevv}"
 							value="#{activityDialog.toTimeMins}">
 							<f:selectItems value="#{activityDialog.mins}" />
 						</aon:selectOneMenu>
@@ -143,21 +143,21 @@
 					<aon:outputLabel for="ActivityDialog_who"
 						value="#{bundle.aon_holder}" />
 					<aon:inputText id="ActivityDialog_who" value="#{activityDialog.who}"
-						required="#{true}" size="20" disabled="#{!activityDialog.new}">
+						required="#{true}" size="20" disabled="#{!activityDialog.nevv}">
 						<f:validateLength maximum="20" />
 					</aon:inputText>
 
 					<aon:outputLabel for="ActivityDialog_why"
 						value="#{bundle.aon_remark}" />
 					<aon:inputTextarea id="ActivityDialog_why" value="#{activityDialog.why}"
-						required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.new}">
+						required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.nevv}">
 						<f:validateLength maximum="128" />
 					</aon:inputTextarea>
 
 				</aon:panelGrid>
 
 				<aon:div id="newActivities"> 				  
-					<aon:panel rendered="#{!activityDialog.new and !activityDialog.request}">
+					<aon:panel rendered="#{!activityDialog.nevv and !activityDialog.request}">
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.asset_activity_added_records}" />
 						</f:facet>

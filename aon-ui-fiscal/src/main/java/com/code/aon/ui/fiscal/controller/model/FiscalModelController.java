@@ -610,7 +610,7 @@ public abstract class FiscalModelController extends BasicController implements I
 	
 	public boolean isAeatValidable() {
 		FiscalModel to = (FiscalModel) getTo();
-		return ( !isNew() 
+		return ( !isNevv() 
 			&& to.isFinished() 
 			&& to.getAdministration() == Administration.COMMON_TERRITORY
 			&& (to.getModel() == FiscalModelType.M111 
@@ -623,7 +623,7 @@ public abstract class FiscalModelController extends BasicController implements I
 
 	public boolean isAeatReportEnabled() {
 		FiscalModel to = (FiscalModel) getTo();
-		return ( !isNew() 
+		return ( !isNevv() 
 			&& to.isFinished() 
 			&& !to.isModel111() 
 			&& isScriptPresent());

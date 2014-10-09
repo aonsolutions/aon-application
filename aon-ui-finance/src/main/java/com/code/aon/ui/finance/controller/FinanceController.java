@@ -762,7 +762,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	}
 	
 	public void onShowFinanceGroupWindow(ActionEvent event) throws ManagerBeanException{
-		if(!this.isNew()){
+		if(!this.isNevv()){
 			buildFinanceGroupList((Finance) this.getTo());
 		}
 		refreshFinanceList();
@@ -772,7 +772,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	public void onGroupSelected(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeListController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);        
         FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
-        if(!this.isNew()){
+        if(!this.isNevv()){
         	groupSelected();
         	buildFinanceGroupList((Finance) this.getTo());
         	this.getManagerBean().restoreNullSubPOJOs(this.getTo());
@@ -787,7 +787,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	
 	public void onUngroupSelected(ActionEvent event) throws ManagerBeanException{
         FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
-        if(!this.isNew()){
+        if(!this.isNevv()){
         	ungroupSelected();
         	buildFinanceGroupList((Finance) this.getTo());
         	this.getManagerBean().restoreNullSubPOJOs(this.getTo());

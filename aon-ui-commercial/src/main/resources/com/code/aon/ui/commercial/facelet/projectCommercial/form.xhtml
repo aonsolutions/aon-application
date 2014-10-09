@@ -19,7 +19,7 @@
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_operation_module}" />
 				<ui:param name="controller" value="#{projectCommercial}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<c:if test="#{!projectCommercial.new}">
+					<c:if test="#{!projectCommercial.nevv}">
 						<aon:commandButton id="ProjectHistory" 
 							action="project_stats" actionListener="#{projectCommercial.onProjectHistory}"
 							value="#{bundle.aon_history}"
@@ -38,7 +38,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!projectCommercial.new}">
+				<c:if test="#{!projectCommercial.nevv}">
 					<aon:panelTabSet id="projectCommercialTab" selectedTab="#{projectCommercial.selectedTab}">
 						<aon:panelTab id="tracking" label="#{bundle.commercial_tracking_module}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/grid.xhtml" />

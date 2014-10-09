@@ -19,13 +19,13 @@
 					<aon:commandButton id="#{toolbarID}-finish"
 						value="#{bundle.aon_finalice}"
 						actionListener="#{mod347.onFinish}"
-						rendered="#{!mod347.new and !mod347.to.finished}"
+						rendered="#{!mod347.nevv and !mod347.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-lock"
 						onclick="if (!confirm('#{bundle.aon_finalice}?')) return false;"/>
 					<aon:commandButton id="#{toolbarID}-reopen"
 						value="#{bundle.fiscal_reopen}"
 						actionListener="#{mod347.onReopen}"
-						rendered="#{!mod347.new and mod347.to.finished}"
+						rendered="#{!mod347.nevv and mod347.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-unlock"
 						onclick="if (!confirm('#{bundle.fiscal_reopen}?')) return false;"/>
 					<aon:htmlCommandLink id="mod347List-excel-report"
@@ -115,7 +115,7 @@
 						<aon:commandButton id="gen-disk"
 							value="#{bundle.finance_create_disk}"
 							actionListener="#{mod347.onCreateDisk}"
-							rendered="#{!mod347.new and mod347.to.finished and mod347.fileOutput==null}"
+							rendered="#{!mod347.nevv and mod347.to.finished and mod347.fileOutput==null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							style="border-width: 0px 0px 0px 0px;" reRender="panel2"
 							accesskey="#{bundle.aon_key_cancel}" />
@@ -124,13 +124,13 @@
 							value="#{mod347.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 							style="border-width: 0px 0px 0px 0px;"
 							actionListener="#{mod347.downloadDisk}"
-							rendered="#{!mod347.new and mod347.fileOutput!=null}"
+							rendered="#{!mod347.nevv and mod347.fileOutput!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 					</aon:div>
 										
 				</aon:panelGrid>
 
-				<c:if test="#{mod347.new}">
+				<c:if test="#{mod347.nevv}">
 
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
@@ -248,7 +248,7 @@
 					</aon:div>
 				</c:if>
 				
-				<c:if test="#{!mod347.new}">
+				<c:if test="#{!mod347.nevv}">
 
 					<aon:panelTabSet selectedTab="#{vatTax.selectedTab}">
 						<aon:panelTab id="detailTab" label="Declarados">

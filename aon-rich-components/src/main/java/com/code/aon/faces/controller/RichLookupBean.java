@@ -447,8 +447,8 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * 
 	 * @return boolean
 	 */
-	public boolean isNew() {
-		return getController().isNew();
+	public boolean isNevv() {
+		return getController().isNevv();
 	}
 
 	/**
@@ -456,8 +456,8 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * 
 	 * @param isNew
 	 */
-	public void setNew(boolean isNew) {
-		getController().setNew(isNew);
+	public void setNew(boolean isNevv) {
+		getController().setNew(isNevv);
 	}
 
 	/**

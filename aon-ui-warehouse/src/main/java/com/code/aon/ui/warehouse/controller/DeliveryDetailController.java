@@ -137,7 +137,7 @@ public class DeliveryDetailController extends LinesController implements IWareho
 
 	private double getRowStock(DeliveryDetail to) throws ManagerBeanException {
 		double rowStock = 0;
-		if (!isNew()) {
+		if (!isNevv()) {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(to.getId());
 			if (to.getItem().equals(deliveryDetail.getItem())) {

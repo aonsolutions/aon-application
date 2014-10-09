@@ -18,7 +18,7 @@
 				<ui:define name="beforeSpinToolbarContent" >
 					<aon:commandButton id="sendEmail"
 						reRender="showNewMessageWindow" immediate="true"
-						value="#{bundle.webmail_send}" rendered="#{!newsletter.new}"
+						value="#{bundle.webmail_send}" rendered="#{!newsletter.nevv}"
 						actionListener="#{newsletter.onSendEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
 				</ui:define>								
@@ -82,7 +82,7 @@
 					
 				</aon:panelGrid>
 
-				<aon:div styleClass="aon-form-group" rendered="#{!newsletter.new}">
+				<aon:div styleClass="aon-form-group" rendered="#{!newsletter.nevv}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputLabel for="newsletterDetailData" value="#{bundle.marketing_news_module}" />

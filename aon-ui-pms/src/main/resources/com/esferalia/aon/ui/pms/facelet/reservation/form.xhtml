@@ -16,7 +16,7 @@
 				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:param name="skipSaveButton" value="#{!reservation.reservationPermission.saveReservationAllowed}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
-				<ui:param name="showMoreMenu" value="#{!reservation.new and reservation.reservationPermission.showMoreMenuAllowed}" />
+				<ui:param name="showMoreMenu" value="#{!reservation.nevv and reservation.reservationPermission.showMoreMenuAllowed}" />
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="reservation-CheckIn"
 						value="#{bundle.pms_check_in}" immediate="#{true}" 
@@ -79,7 +79,7 @@
 					<aon:commandButton id="audit-info"
 						styleClass="aon-finding-toolbar-item aon-icon-audit"
 						value="#{bundle.aon_audit}"
-						rendered="#{!reservation.new}"
+						rendered="#{!reservation.nevv}"
 						reRender="showAuditInfoWindow">
 						<f:setPropertyActionListener target="#{reservation.showAuditInfoWindow}"
 							value="#{true}" />							
@@ -88,11 +88,11 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{reservation.new}">
+				<c:if test="#{reservation.nevv}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formNewContent.xhtml" />
 				</c:if>
 
-				<c:if test="#{!reservation.new}">
+				<c:if test="#{!reservation.nevv}">
 					<aon:panelGrid columns="4" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-400,
 										aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">

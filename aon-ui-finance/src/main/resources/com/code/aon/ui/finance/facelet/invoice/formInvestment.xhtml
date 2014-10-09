@@ -9,14 +9,14 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	<aon:panelGroup id="investmentContainer">
-		<c:if test="#{invoiceController.new}">
+		<c:if test="#{invoiceController.nevv}">
 			<aon:selectBooleanCheckbox id="Invoice_investment"
 				value="#{invoiceController.to.investment}" ajaxSingle="true" />
 			<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
 				value="#{bundle.invoice_investment}"/>
 		</c:if>
 		
-		<c:if test="#{!invoiceController.new}">
+		<c:if test="#{!invoiceController.nevv}">
 			<c:if test="#{!invoiceController.amortizationForm}">
 				<c:if test="#{!invoiceController.readOnly}">
 					<aon:selectBooleanCheckbox id="Invoice_investment"

@@ -51,7 +51,7 @@
 									<aon:commandButton id="serviceDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{bundle.aon_remove} #{bundle.finance_service}"
-										rendered="#{!controller.new and reservation.reservationPermission.removeReservationServiceAllowed}"
+										rendered="#{!controller.nevv and reservation.reservationPermission.removeReservationServiceAllowed}"
 										actionListener="#{controller.onRemoveReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -77,11 +77,11 @@
 											rendered="#{reservation.to.roomAssignedCount > 0}" />
 										<aon:selectOneMenu id="ProjectReservationService_roomItem" 
 											value="#{controller.serviceReservationRoom}"
-											rendered="#{controller.new and reservation.to.roomAssignedCount > 0}">
+											rendered="#{controller.nevv and reservation.to.roomAssignedCount > 0}">
 											<f:selectItems value="#{controller.reservationRoomItems}" />
 										</aon:selectOneMenu>
 										<a4j:repeat value="#{controller.reservationRooms}" var="availableServiceRoom"
-											rendered="#{!controller.new and reservation.to.roomAssignedCount > 0}">
+											rendered="#{!controller.nevv and reservation.to.roomAssignedCount > 0}">
 											<aon:commandLink styleClass="aon-dataTable-link-noicon aon-bold aon-nowrap"
 												style="color: #{(availableServiceRoom.id == controller.to.reservationRoom.id) ? ('blue') : ('black')}"
 												value="#{availableServiceRoom.roomNumber}" immediate="true"
@@ -97,8 +97,8 @@
 										</a4j:repeat>
 
 										<aon:outputLabel value="#{bundle.aon_date}"
-											rendered="#{controller.new}" />
-										<aon:div rendered="#{controller.new}">
+											rendered="#{controller.nevv}" />
+										<aon:div rendered="#{controller.nevv}">
 											<aon:outputLabel for="ProjectReservationService_fromDate" 
 												styleClass="aon-margin-right aon-italic"
 												value="#{bundle.aon_date_from}" />

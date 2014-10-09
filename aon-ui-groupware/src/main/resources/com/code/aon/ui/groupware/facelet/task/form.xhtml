@@ -22,14 +22,14 @@
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton id="toolbar-save"
 						value="#{bundle.aon_save}" 
-						rendered="#{task.to!=null or task.new}"
+						rendered="#{task.to!=null or task.nevv}"
 						disabled="#{task.to.finished or task.to.deleted}"
 						actionListener="#{task.saveTask}" 
 						action="task_list"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}" />
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						rendered="#{!task.new}"
+						rendered="#{!task.nevv}"
 						disabled="#{task.to.sourceProcess or task.to.finished or task.to.deleted}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						immediate="true"
@@ -42,7 +42,7 @@
 					<aon:commandButton id="startTask" value="#{bundle.groupware_task_start}"
 						actionListener="#{task.onStartTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-start"
-						rendered="#{!task.monitor and !task.new and task.myTask and task.to.pending}" />
+						rendered="#{!task.monitor and !task.nevv and task.myTask and task.to.pending}" />
 					<aon:commandButton id="stopTask" value="#{bundle.groupware_task_stop}"
 						actionListener="#{task.onStopTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-stop"
@@ -54,15 +54,15 @@
 					<aon:commandButton id="assumeTask" value="#{bundle.groupware_task_assume}"
 						actionListener="#{task.onAssumeTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-						rendered="#{!task.monitor and !task.new and task.to.unassigned}" />
+						rendered="#{!task.monitor and !task.nevv and task.to.unassigned}" />
 					<aon:commandButton id="releaseTask" value="#{bundle.groupware_task_release}"
 						actionListener="#{task.onReleaseTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-						rendered="#{!task.monitor and !task.new and task.myTask and !task.to.finished and !task.to.deleted and !task.to.inProgress}" />
+						rendered="#{!task.monitor and !task.nevv and task.myTask and !task.to.finished and !task.to.deleted and !task.to.inProgress}" />
 					<aon:commandButton id="finishTask" value="#{bundle.groupware_task_finish}" 
 						actionListener="#{task.onFinishTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
-						rendered="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}" />
+						rendered="#{!task.monitor and !task.nevv and !task.to.finished and !task.to.deleted}" />
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
@@ -82,7 +82,7 @@
 					<aon:div>
 						<aon:inputText id="Task_descripcion" required="true" size="60"
 							maxlength="128" value="#{task.to.description}"
-							disabled="#{!task.monitor and !task.new}" />
+							disabled="#{!task.monitor and !task.nevv}" />
 						<aon:outputText value="#{task.to.source}"
 							style="margin-left: 50px;" 
 							/>		
@@ -94,7 +94,7 @@
 						value="#{task.to.startDate}" renderAsPopup="true"
 						enableManualInput="true"
 						popupDateFormat="#{bundle.aon_date_pattern}"
-						disabled="#{!task.new and !task.monitor}">
+						disabled="#{!task.nevv and !task.monitor}">
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Task_endDate"
@@ -112,20 +112,20 @@
 						renderAsPopup="true" value="#{task.to.dueDate}"
 						enableManualInput="true"
 						popupDateFormat="#{bundle.aon_date_pattern}"
-						disabled="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}">
+						disabled="#{!task.monitor and !task.nevv and !task.to.finished and !task.to.deleted}">
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Task_priority"
-						rendered="#{task.monitor or task.new}"
+						rendered="#{task.monitor or task.nevv}"
 						value="#{bundle.aon_priority}" />
 					<aon:selectOneMenu id="Task_priority" value="#{task.to.priority}"
-						rendered="#{task.monitor or task.new}">
+						rendered="#{task.monitor or task.nevv}">
 						<f:selectItems value="#{groupWareCollections.priorities}" />
 					</aon:selectOneMenu>
 					<aon:outputText value="#{bundle.aon_priority}"
-						rendered="#{!task.monitor and !task.new}" />
+						rendered="#{!task.monitor and !task.nevv}" />
 					<aon:inputText value="#{task.to.priority}" size="10"
-						disabled="true" rendered="#{!task.monitor and !task.new}" />
+						disabled="true" rendered="#{!task.monitor and !task.nevv}" />
 
 					<aon:outputLabel for="Task_period"
 						rendered="#{!task.to.sourceProcess}"
@@ -136,9 +136,9 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Task_status" value="#{bundle.aon_status}"
-						rendered="#{!task.new}" />
+						rendered="#{!task.nevv}" />
 					<aon:inputText id="Task_status" value="#{task.to.status}" size="60"
-						disabled="true" rendered="#{!task.new}" />
+						disabled="true" rendered="#{!task.nevv}" />
 
 					<aon:outputLabel for="Task_workgroup"
 						 value="#{bundle.aon_group}" />
@@ -146,7 +146,7 @@
 						value="#{task.to.workGroup.description}"/>
 					<aon:div id="workgroup" rendered="#{!task.parentDomain}">						
 						<aon:selectOneMenu id="Task_workgroup"
-							disabled="#{!task.monitor and !task.new}"
+							disabled="#{!task.monitor and !task.nevv}"
 							reRender="workgroup,user"
 							value="#{task.to.workGroup}">
 							<f:selectItem itemLabel="-" value="#{null}" />
@@ -154,13 +154,13 @@
 							<a4j:support event="onchange" reRender="user" ajaxSingle="true" />
 						</aon:selectOneMenu>
 						<aon:selectBooleanCheckbox id="allMembers"
-							value="#{task.allMembers}" rendered="#{task.new}">
+							value="#{task.allMembers}" rendered="#{task.nevv}">
 							<a4j:support event="onclick"
 								actionListener="#{task.allMembersChanged}" ajaxSingle="true"
 								reRender="user" />
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="allMembers"
-							value="#{bundle.groupware_task_all_members}" rendered="#{task.new}" />
+							value="#{bundle.groupware_task_all_members}" rendered="#{task.nevv}" />
 					</aon:div>
 
 					<aon:outputText value="#{bundle.aon_login_user}" />
@@ -168,14 +168,14 @@
 						value="#{task.to.taskHolder.user.name}"/>
 					<aon:div id="user" rendered="#{!task.parentDomain}">
 						<aon:selectOneMenu
-							disabled="#{task.allMembers or (!task.monitor and !task.new)}" 
+							disabled="#{task.allMembers or (!task.monitor and !task.nevv)}" 
 							rendered="#{task.to.workGroup.id == null}"
 							value="#{task.to.taskHolder}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{groupWareCollections.taskHolders}" />
 							<a4j:support event="onchange" reRender="workgroup" ajaxSingle="true" />
 						</aon:selectOneMenu>
-						<aon:selectOneMenu disabled="#{task.allMembers or (!task.monitor and !task.new)}"
+						<aon:selectOneMenu disabled="#{task.allMembers or (!task.monitor and !task.nevv)}"
 							rendered="#{task.to.workGroup.id != null}"
 							value="#{task.to.taskHolder}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -208,7 +208,7 @@
 							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.project.name}"/>
 							<aon:selectOneMenu id="Task_project" value="#{task.to.project}"
 								rendered="#{!task.parentDomain}"
-								disabled="#{task.allMembers or (!task.monitor and !task.new)}">
+								disabled="#{task.allMembers or (!task.monitor and !task.nevv)}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{task.projects}" />
 								<a4j:support event="onchange"
@@ -224,7 +224,7 @@
 							<aon:selectOneMenu id="Task_activityType"
 								rendered="#{!task.parentDomain}"
 								value="#{task.to.activityType}"
-								disabled="#{task.allMembers or (!task.monitor and !task.new)}">
+								disabled="#{task.allMembers or (!task.monitor and !task.nevv)}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{task.activityTypes}" />
 							</aon:selectOneMenu>
@@ -240,10 +240,10 @@
 						maxlength="50" disabled="true" />
 						
 					<aon:outputLabel for="Task_percent"
-						value="#{bundle.aon_percentage}" rendered="#{!task.new}" />
+						value="#{bundle.aon_percentage}" rendered="#{!task.nevv}" />
 					<rich:inputNumberSlider id="Task_percent"
 						value="#{task.to.percent}" minValue="0" maxValue="100"
-						inputPosition="left" showToolTip="false" rendered="#{!task.new}" />
+						inputPosition="left" showToolTip="false" rendered="#{!task.nevv}" />
 
 					<aon:outputLabel for="Task_comments" value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="Task_comments" value="#{task.to.comments}"

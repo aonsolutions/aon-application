@@ -14,10 +14,10 @@
 	</ui:include>
 	
 	<aon:outputLabel for="workPlace"
-	rendered="#{calendar.new}"
+	rendered="#{calendar.nevv}"
 		value="#{bundle.purchase_workplace}" />
 	<aon:selectOneMenu id="workPlace"
-		rendered="#{calendar.new}" 
+		rendered="#{calendar.nevv}" 
 		disabled="#{calendar.enterprise==null or calendar.enterprise.id==null}"
 		value="#{calendar.workPlace}" >
 		<f:selectItem itemLabel="-" value="#{null}" />
@@ -27,7 +27,7 @@
 		</a4j:support>
 	</aon:selectOneMenu>
 
-	<aon:div rendered="#{calendar.new}">
+	<aon:div rendered="#{calendar.nevv}">
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{calendar.contract}" />
 			<ui:param name="skipNewButton" value="#{true}" />
@@ -36,10 +36,10 @@
 								
 								
 <!--  
-							<aon:outputLabel rendered="#{calendar.new}"
+							<aon:outputLabel rendered="#{calendar.nevv}"
 								value="#{bundle.aon_entity}" />
 							<aon:selectOneMenu id="calendarSource"
-								rendered="#{calendar.new}"
+								rendered="#{calendar.nevv}"
 								value="#{calendar.to.source}" >
 								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{calendarCollections.calendarSources}" />

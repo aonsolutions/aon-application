@@ -173,7 +173,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 	}
 	
 	@Override
-	public boolean isNew(){
+	public boolean isNevv(){
 		return getGeneratedFile()!=null && getGeneratedFile().getId()!=null;
 	}
 	

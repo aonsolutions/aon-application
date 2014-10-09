@@ -17,7 +17,7 @@
 				<ui:define name="additionalToolbarContent">
 					<c:if test="#{customer.showAlumnData}">
 						<aon:htmlCommandLink id="alumnReport-excel-report" value="&#160;" 
-							target="_new" rendered="#{!customer.new}"
+							target="_new" rendered="#{!customer.nevv}"
 							action="#{report.onExecute}"
 							disabled="#{customer.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -26,7 +26,7 @@
 							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="alumnReport-report" value="#{bundle.aon_listing}"
-							target="_new" rendered="#{!customer.new}"
+							target="_new" rendered="#{!customer.nevv}"
 							action="#{report.onExecute}"
 							disabled="#{customer.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -37,7 +37,7 @@
 					</c:if>
 					<c:if test="#{!customer.showAlumnData}">
 						<aon:htmlCommandLink id="customerReport-excel-report" value="&#160;" 
-							target="_new" rendered="#{!customer.new}"
+							target="_new" rendered="#{!customer.nevv}"
 							action="#{report.onExecute}"
 							disabled="#{customer.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -46,7 +46,7 @@
 							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="customerReport-report" value="#{bundle.aon_listing}"
-							target="_new" rendered="#{!customer.new}"
+							target="_new" rendered="#{!customer.nevv}"
 							action="#{report.onExecute}"
 							disabled="#{customer.to != null}"
 							accesskey="#{bundle.aon_key_print}"
@@ -57,7 +57,7 @@
 					</c:if>
 					<aon:htmlCommandLink id="customerDetailExcelReport-excel-report" 
 						value="#{bundle.aon_detailed_listing}" 
-						target="_new" rendered="#{!customer.new}"
+						target="_new" rendered="#{!customer.nevv}"
 						actionListener="#{customer.onDetailReport}"
 						disabled="#{customer.to != null}"
 						accesskey="#{bundle.aon_key_print}"

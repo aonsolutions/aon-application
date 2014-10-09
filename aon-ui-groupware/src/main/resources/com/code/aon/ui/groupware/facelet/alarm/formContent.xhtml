@@ -16,10 +16,10 @@
 					timeZone="#{timeZoneController.timeZone}" inputSize="16"
 					popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
 				</aon:selectInputDate>
-				<aon:outputLabel for="Alarm_delayTime" rendered="#{!alarm.new}"
+				<aon:outputLabel for="Alarm_delayTime" rendered="#{!alarm.nevv}"
 					value="#{bundle.alarm_delay_time}" />
 				<aon:selectOneMenu id="Alarm_delayTime"
-					styleClass="aon-margin-left" rendered="#{!alarm.new}"
+					styleClass="aon-margin-left" rendered="#{!alarm.nevv}"
 					valueChangeListener="#{alarm.onDelayTimeChanged}"
 					reRender="Alarm_alarmDate" value="#{alarm.delayTime}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
@@ -42,7 +42,7 @@
 			cols="60" rows="7" required="true"
 			value="#{alarm.to.description}" />
 		
-		<c:if test="#{!alarm.new}" >
+		<c:if test="#{!alarm.nevv}" >
 			<aon:outputLabel value="#{bundle.aon_source}" />
 			<aon:div>
 				<aon:outputText value="#{alarm.to.source}"/>

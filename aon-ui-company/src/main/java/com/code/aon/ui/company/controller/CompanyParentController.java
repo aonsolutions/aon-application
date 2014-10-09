@@ -900,7 +900,7 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	public void onChangeDocument(ActionEvent event) {
 		try {
-			if (isNew()) {
+			if (isNevv()) {
 				Company company = (Company) getTo();
 				RegistryController.validateDocument(company, getPojoShortName(), getManagerBean());
 			}

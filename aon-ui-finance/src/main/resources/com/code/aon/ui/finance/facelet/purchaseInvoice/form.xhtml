@@ -17,11 +17,11 @@
 					<ui:param name="toolbarTitle"
 						value="#{bundle.finance_purchase_invoice_management_module}" />
 					<ui:param name="controller" value="#{purchaseInvoice}" />
-					<ui:param name="skipFocusFirst" value="#{!purchaseInvoice.new}" />
+					<ui:param name="skipFocusFirst" value="#{!purchaseInvoice.nevv}" />
 					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
-					<ui:param name="showMoreMenu" value="#{!purchaseInvoice.new and purchaseInvoiceDetail.to == null}" />
+					<ui:param name="showMoreMenu" value="#{!purchaseInvoice.nevv and purchaseInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
@@ -200,7 +200,7 @@
 
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
-										rendered="#{!purchaseInvoice.new and purchaseInvoice.to.signed}"
+										rendered="#{!purchaseInvoice.nevv and purchaseInvoice.to.signed}"
 										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>						
@@ -343,7 +343,7 @@
 							<aon:commandButton id="invoiceAddressButton"
 								value="#{bundle.registry_address_other}"
 								styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
-								rendered="#{!purchaseInvoice.new and !purchaseInvoice.readOnly}"
+								rendered="#{!purchaseInvoice.nevv and !purchaseInvoice.readOnly}"
 								actionListener="#{purchaseInvoice.onInvoiceAddressShow}"
 								reRender="showInvoiceAddressWindow">
 								<f:setPropertyActionListener target="#{purchaseInvoice.showInvoiceAddressWindow}"

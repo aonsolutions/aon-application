@@ -17,14 +17,14 @@
 					value="#{bundle.accounting_balance_menu2}" />
 				<ui:param name="controller" value="#{balance}" />
 				
-				<ui:param name="skipRemoveButton" value="#{!balance.new and !balance.to.removable}" />
+				<ui:param name="skipRemoveButton" value="#{!balance.nevv and !balance.to.removable}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="defaults" value="CARGAR VALORES DEFECTO"
 						actionListener="#{balance.onLoadDefaults}"
 						onclick="if (!confirm('Desea borrar el balance seleccionado y cargar los valores por defecto del mismo?')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')"
-						rendered="#{!balance.new and !balance.to.removable}"
+						rendered="#{!balance.nevv and !balance.to.removable}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
 				</ui:define>
@@ -68,7 +68,7 @@
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="Balance_Type"
 						value="#{balance.to.type}"
-						disabled="#{!balance.new and !balance.to.removable}">
+						disabled="#{!balance.nevv and !balance.to.removable}">
 						<f:selectItems value="#{accountingCollections.balanceTypes}" />
 					</aon:selectOneMenu>
 
@@ -85,7 +85,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:outputText value="&#160;" />
-						<aon:outputText value="PRE-CONFIGURADO" rendered="#{!balance.new and !balance.to.removable}"/>
+						<aon:outputText value="PRE-CONFIGURADO" rendered="#{!balance.nevv and !balance.to.removable}"/>
 					</aon:div>
 
 				</aon:panelGrid>

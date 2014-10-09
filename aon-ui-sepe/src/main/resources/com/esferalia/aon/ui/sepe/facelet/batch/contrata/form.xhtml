@@ -7,11 +7,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<c:if test="#{contrataBatch.new}" >
+	<c:if test="#{contrataBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/form_new.xhtml" />
 	</c:if>
 	
-	<c:if test="#{!contrataBatch.new}" >
+	<c:if test="#{!contrataBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.sepe_contrataBatch_module}" />
 			<ui:param name="controller" value="#{contrataBatch}" />
@@ -37,7 +37,7 @@
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="ContrataBatch_date" 
 						required="#{true}"
-						disabled="#{!contrataBatch.new}"
+						disabled="#{!contrataBatch.nevv}"
 						value="#{contrataBatch.to.date}" 
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -49,7 +49,7 @@
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="ContrataBatch_type"
 						required="#{true}"
-						disabled="#{!contrataBatch.new}"
+						disabled="#{!contrataBatch.nevv}"
 						value="#{contrataBatch.to.type}" >
 						<f:selectItem itemLabel=" - " value="#{null}" />
 						<f:selectItems value="#{sepeCollections.contrataFileTypeList}" />

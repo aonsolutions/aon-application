@@ -39,7 +39,7 @@ public class CourseMarkController extends DataScrollerState {
 	
 	private List<AlumnMarkHeader> alumnMarkHeaders;
 	
-	private boolean isNew;
+	private boolean isNevv;
 	
 	private AlumnMarks to;
 
@@ -47,12 +47,12 @@ public class CourseMarkController extends DataScrollerState {
     	this.evaluation = 1;
     }
 
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
 
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+	public void setNew(boolean isNevv) {
+		this.isNevv = isNevv;
 	}
 	
 	/**

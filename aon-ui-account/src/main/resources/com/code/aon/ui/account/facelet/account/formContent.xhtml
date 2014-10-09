@@ -10,7 +10,7 @@
 	<aon:outputLabel for="Account_code" value="#{bundle.aon_id}" />
 	<aon:div>
 		<aon:inputText id="Account_code" value="#{controller.to.code}"
-			required="#{true}" size="10" maxlength="9" disabled="#{!controller.new}">
+			required="#{true}" size="10" maxlength="9" disabled="#{!controller.nevv}">
 			<f:validateLength maximum="9" />
 			<a4j:support event="onchange" ajaxSingle="true"
 				actionListener="#{controller.onIdentifierChanged}" reRender="Account_code"

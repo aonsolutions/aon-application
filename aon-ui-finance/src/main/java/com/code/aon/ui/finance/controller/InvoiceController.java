@@ -1066,7 +1066,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public boolean isAmortizationForm () {
-		if (!isNew() && getInvoice().isInvestment()) { 
+		if (!isNevv() && getInvoice().isInvestment()) { 
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
 				Criteria c = new Criteria();

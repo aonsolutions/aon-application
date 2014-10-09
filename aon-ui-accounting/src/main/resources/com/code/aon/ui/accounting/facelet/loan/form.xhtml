@@ -86,10 +86,10 @@
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
 						value="#{loan.to.registryBank}">
 						<f:selectItem value="#{null}" itemLabel="-" />
-						<c:if test="#{loan.new}">
+						<c:if test="#{loan.nevv}">
 							<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 						</c:if>
-						<c:if test="#{!loan.new}">
+						<c:if test="#{!loan.nevv}">
 							<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 						</c:if>
 					</aon:selectOneMenu>
@@ -132,7 +132,7 @@
 				</aon:panelGrid>
 									
 				<aon:panelGrid columns="2" style="margin-top: 10px; width: 100%;" 
-					rendered="#{!loan.new and loan.relatedAccount != null}"
+					rendered="#{!loan.nevv and loan.relatedAccount != null}"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 				
 					<aon:outputText value="#{bundle.account_account}" />

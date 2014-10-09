@@ -21,10 +21,10 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="importDossier"
 						value="#{bundle.project_import}" reRender="importContainer"
-						rendered="#{!project.new}"
+						rendered="#{!project.nevv}"
 						actionListener="#{activitiesImporter.onShowImportPanel}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailReply" />
-					<c:if test="#{!project.new}">
+					<c:if test="#{!project.nevv}">
 						<aon:commandButton id="ProjectHistory" 
 							action="project_stats" 
 							actionListener="#{project.onProjectHistory}"
@@ -44,7 +44,7 @@
 				
 				</aon:panelGrid>
 
-				<c:if test="#{!project.new}">
+				<c:if test="#{!project.nevv}">
 					<aon:panelTabSet id="projectTabSet" selectedTab="#{project.selectedTab}">
 						<aon:panelTab id="project_activities" label="#{bundle.aon_activities}">
 							<c:if test="#{project.selectedTab == 'project_activities' or project.selectedTab == null}">

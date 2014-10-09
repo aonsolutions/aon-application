@@ -24,13 +24,13 @@
 					<aon:outputLabel for="DomainApplicationUser_name"
 						value="#{bundle.aon_name}" />
 					<aon:selectOneMenu id="DomainApplicationUser_name-New"
-						rendered="#{userOverload.new}" required="true" 
+						rendered="#{userOverload.nevv}" required="true" 
 						value="#{userOverload.to.user}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{userOverload.availableUsers}" />
 					</aon:selectOneMenu>						
 					<aon:inputText id="DomainApplicationUser_name"
-						size="80" disabled="true" rendered="#{!userOverload.new}"
+						size="80" disabled="true" rendered="#{!userOverload.nevv}"
 						value="#{userOverload.to.user.login}" />
 							
 					<aon:outputLabel for="ApplicationUser_active"

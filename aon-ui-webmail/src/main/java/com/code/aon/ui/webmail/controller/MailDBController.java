@@ -95,7 +95,7 @@ public abstract class MailDBController extends BasicController {
 	
 	private boolean isDuplicated( String name ) throws ManagerBeanException {
 		boolean skipCheck = false;
-		if (! isNew() ) {
+		if (! isNevv() ) {
 			skipCheck = StringUtils.equals(name, getToName());
 		}
 		if (! skipCheck ) {

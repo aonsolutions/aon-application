@@ -46,7 +46,7 @@ public class PayrollWorkPlaceController extends LinesController {
 	@Override
 	public void accept(ActionEvent event) {
 		PayrollWorkPlace pw = (PayrollWorkPlace)this.getTo();
-		if(this.isNew() && (pw.getWorkPlace()!=null && pw.getWorkPlace().getId()==null)){
+		if(this.isNevv() && (pw.getWorkPlace()!=null && pw.getWorkPlace().getId()==null)){
 			insertCurrentTOWorkPlace();
 		}
 		super.accept(event);

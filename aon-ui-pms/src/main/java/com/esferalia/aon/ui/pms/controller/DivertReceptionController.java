@@ -214,7 +214,7 @@ public class DivertReceptionController extends BasicController {
 		Integer[] services = new Integer[servicesList.size()];
 		for (ProjectReservationService reservationService : servicesList) {
 			int roomCount = reservationService.getProjectReservation().getRoomCount();
-			if ((isNew() && roomCount == 0) || (!isNew() && roomCount == 1)) {
+			if ((isNevv() && roomCount == 0) || (!isNevv() && roomCount == 1)) {
 				services[servicesList.indexOf(reservationService)] = reservationService.getId();
 			}
 		}

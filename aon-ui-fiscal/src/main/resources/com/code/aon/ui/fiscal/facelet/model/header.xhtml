@@ -31,7 +31,7 @@
 			<aon:inputText id="controller_document" size="10" maxlength="9" required="true"
 				value="#{controller.to.document}" disabled="#{controller.declaration.header.readOnly}">
 			</aon:inputText>
-			<aon:panelGroup rendered="#{controller.participationPercentEnabled and controller.new}" style="margin-left: 5px;">
+			<aon:panelGroup rendered="#{controller.participationPercentEnabled and controller.nevv}" style="margin-left: 5px;">
 				<aon:outputLabel for="controller_participation" value="#{bundle.fiscal_model_particiapation_percent}" />
 				<aon:inputText id="controller_participation" size="5" maxlength="6" 
 					required="true" style="margin-left: 5px;" value="#{controller.to.participationPercent}" 

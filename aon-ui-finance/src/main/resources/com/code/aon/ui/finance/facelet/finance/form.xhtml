@@ -16,14 +16,14 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{(finance.payment)?(bundle.finance_payment_module):(bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
-				<ui:param name="skipSaveButton" value="#{!finance.new and !finance.pending and !finance.returned}" />
-				<ui:param name="skipRemoveButton" value="#{finance.new or !finance.to.emptyInvoice or finance.grouped}" />
-				<ui:param name="showMoreMenu" value="#{!finance.new}" />
+				<ui:param name="skipSaveButton" value="#{!finance.nevv and !finance.pending and !finance.returned}" />
+				<ui:param name="skipRemoveButton" value="#{finance.nevv or !finance.to.emptyInvoice or finance.grouped}" />
+				<ui:param name="showMoreMenu" value="#{!finance.nevv}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="paymentPopup" 
 						value="#{(finance.payment)?(bundle.finance_to_pay):(bundle.finance_to_charge)}"
-						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
+						immediate="#{true}" rendered="#{!finance.nevv and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-pay"
 						actionListener="#{finance.onFinancePaymentShow}"
 						reRender="showFinancePaymentWindow">
@@ -32,7 +32,7 @@
 					</aon:commandButton>
 					<aon:commandButton id="returnPopup" 
 						value="#{bundle.finance_to_return}"
-						immediate="#{true}" rendered="#{!finance.new and finance.paid}"
+						immediate="#{true}" rendered="#{!finance.nevv and finance.paid}"
 						styleClass="aon-finding-toolbar-item aon-icon-return"
 						actionListener="#{finance.onFinanceReturnShow}"
 						reRender="showFinanceReturnWindow">
@@ -41,12 +41,12 @@
 					</aon:commandButton>
 					<aon:commandButton id="settle" 
 						value="#{bundle.finance_to_settle}"
-						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
+						immediate="#{true}" rendered="#{!finance.nevv and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-settle"
 						actionListener="#{finance.onSettleFinance}" />
 					<aon:commandButton id="fraction" 
 						value="#{bundle.finance_to_fraction}"
-						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
+						immediate="#{true}" rendered="#{!finance.nevv and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-fraction"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
 				</ui:define>				
@@ -70,14 +70,14 @@
 						,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel
-						rendered="#{!finance.new and !finance.to.emptyInvoice}"  
+						rendered="#{!finance.nevv and !finance.to.emptyInvoice}"  
 						value="#{bundle.finance_invoice}" />
 					<aon:outputLabel for="Finance_type"
-						rendered="#{finance.new or finance.to.emptyInvoice}" 
+						rendered="#{finance.nevv or finance.to.emptyInvoice}" 
 						value="#{bundle.aon_type}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
-							<aon:div rendered="#{!finance.new}" >
+							<aon:div rendered="#{!finance.nevv}" >
 								<aon:div rendered="#{finance.to.emptyInvoice and !finance.financeGroup}">
 									<aon:outputText value="#{bundle.finance_individual_finance}" />
 								</aon:div>
@@ -110,7 +110,7 @@
 			 						</aon:div>
 			 					</aon:div>
 		 					</aon:div>
-							<aon:div rendered="#{finance.new}">
+							<aon:div rendered="#{finance.nevv}">
 								<aon:selectOneRadio id="Finance_type"
 									value="#{finance.financeGroup}"
 									reRender="Finance_amount-Panel, financeGroup-button">
@@ -154,7 +154,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{finance.to.financeStatus}"
-							rendered="#{!finance.new}" />
+							rendered="#{!finance.nevv}" />
 					</aon:div>
 
 					<aon:outputLabel for="Finance_concept" 
@@ -194,7 +194,7 @@
 						<aon:selectOneRadio id="Finance_purchase"
 							styleClass="aon-italic aon-normal" style="font-size: 11px;"
 							value="#{finance.purchase}"
-							rendered="#{finance.new and finance.to.payment}"
+							rendered="#{finance.nevv and finance.to.payment}"
 							valueChangeListener="#{finance.onPaymentTypeChanged}"
 							reRender="paymentTypeDiv">
 							<f:selectItem itemLabel="#{bundle.aon_expense}" itemValue="false" />
@@ -211,7 +211,7 @@
 							<ui:param name="lookupForRegistry" value="#{true}" />
 							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
 							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 							<ui:param name="idRequired" value="#{true}" />						
@@ -224,7 +224,7 @@
 							<ui:param name="lookupForRegistry" value="#{true}" />
 							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupRendered" value="#{finance.to.payment and finance.purchase}" />
 							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 							<ui:param name="idRequired" value="#{true}" />						
@@ -237,7 +237,7 @@
 							<ui:param name="lookupForRegistry" value="#{true}" />
 							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupRendered" value="#{finance.to.payment and !finance.purchase}" />
 							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 							<ui:param name="idRequired" value="#{true}" />						
@@ -252,7 +252,7 @@
 							<ui:param name="lookupForRegistry" value="#{true}" />
 							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
@@ -293,7 +293,7 @@
 						value="#{bundle.aon_company_document}" />
 					<aon:panelGroup id="Finance_holder_document">
 						<aon:selectOneMenu id="Finance_registry_document_type" 
-							disabled="#{!finance.new}"
+							disabled="#{!finance.nevv}"
 							value="#{finance.to.registryDocumentType}"
 							reRender="Finance_holder_document_icon">
 							<f:selectItems value="#{registryCollections.documentTypes}" />
@@ -301,13 +301,13 @@
 						<aon:outputText styleClass="aon-margin-left aon-italic"
 							value="#{bundle.aon_country}" />
 						<aon:selectOneMenu id="Finance_registry_document_country"
-							styleClass="aon-margin-left" disabled="#{!finance.new}"
+							styleClass="aon-margin-left" disabled="#{!finance.nevv}"
 							value="#{finance.to.registryDocumentCountry}"
 							reRender="Finance_holder_document_icon">
 							<f:selectItems value="#{commonCollections.countryCodes}" />
 						</aon:selectOneMenu>
 						<aon:inputText id="Finance_registry_document" 
-							style="margin-left: 5px;" disabled="#{!finance.new}"
+							style="margin-left: 5px;" disabled="#{!finance.nevv}"
 							value="#{finance.to.registryDocument}" size="16" maxlength="16"
 							reRender="Finance_holder_document_icon" 
 							onblur="toUpperCase(this);">
@@ -385,10 +385,10 @@
 								valueChangeListener="#{finance.onRegistryBankChanged}"
 								disabled="#{!finance.pending and !finance.returned}">
 								<f:selectItem itemLabel="-" value="#{null}" />
-								<c:if test="#{!finance.new}">
+								<c:if test="#{!finance.nevv}">
 									<f:selectItems value="#{finance.allBanks}" />
 								</c:if>
-								<c:if test="#{finance.new}">
+								<c:if test="#{finance.nevv}">
 									<f:selectItems value="#{finance.activeBanks}" />
 								</c:if>
 							</aon:selectOneMenu>
@@ -430,7 +430,7 @@
 
 				</aon:panelGrid>
 					
-				<c:if test="#{!finance.new}">
+				<c:if test="#{!finance.nevv}">
 					<aon:div styleClass="aon-padding-top">
 						<aon:panel>
 							<f:facet name="header">

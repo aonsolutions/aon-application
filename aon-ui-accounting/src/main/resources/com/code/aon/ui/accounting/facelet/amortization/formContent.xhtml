@@ -49,11 +49,11 @@
 	
 			<aon:outputText value="#{bundle.accounting_amortization_coef}" />
 			<aon:panelGroup id="percentage">
-				<aon:outputText rendered="#{!amortization.new}" 
+				<aon:outputText rendered="#{!amortization.nevv}" 
 					value="#{amortization.to.percentage}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
-				<aon:outputText rendered="#{amortization.new}" 
+				<aon:outputText rendered="#{amortization.nevv}" 
 					value="#{amortization.to.amortizationType.percentage}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
@@ -81,7 +81,7 @@
 				<f:validateLength maximum="64" />
 			</aon:inputText>
 	
-			<c:if test="#{amortization.new}">
+			<c:if test="#{amortization.nevv}">
 				<aon:outputLabel for="Amortization_amortizationType"
 					value="#{bundle.accounting_amortization_type}" />
 				<aon:selectOneMenu id="Amortization_amortizationType"
@@ -94,22 +94,22 @@
 				</aon:selectOneMenu>
 			</c:if>
 			
-			<c:if test="#{!amortization.new}">
+			<c:if test="#{!amortization.nevv}">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="&#160;"/>
 			</c:if>
 	
 			<aon:outputText value="#{bundle.accounting_fixed_asset_account}" />
 			<aon:panelGroup id="fixedAssetAccount" styleClass="aon-nowrap">
-				<aon:outputText rendered="#{!amortization.new}"
+				<aon:outputText rendered="#{!amortization.nevv}"
 					value="#{amortization.to.fixedAssetAccount.fullDescription}" />
 				<aon:selectOneMenu id="Amortization_fixedAssetAccount"
-					rendered="#{amortization.new and amortization.to.amortizationType != null}"
+					rendered="#{amortization.nevv and amortization.to.amortizationType != null}"
 					value="#{amortization.to.fixedAssetAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.fixedAssetAccounts}" />
 				</aon:selectOneMenu>
-				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
+				<aon:outputText rendered="#{!amortization.nevv and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
 					title="#{bundle.account_synchronize}"
@@ -126,15 +126,15 @@
 			<aon:outputText
 				value="#{bundle.accounting_accumulated_account}" />
 			<aon:panelGroup id="accumulatedAccount" styleClass="aon-nowrap">
-				<aon:outputText rendered="#{!amortization.new}"
+				<aon:outputText rendered="#{!amortization.nevv}"
 					value="#{amortization.to.accumulatedAccount.fullDescription}" />
 				<aon:selectOneMenu id="Amortization_accumulatedAccount"
-					rendered="#{amortization.new and amortization.to.amortizationType != null}"
+					rendered="#{amortization.nevv and amortization.to.amortizationType != null}"
 					value="#{amortization.to.accumulatedAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.accumulatedAccounts}" />
 				</aon:selectOneMenu>
-				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
+				<aon:outputText rendered="#{!amortization.nevv and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
 					title="#{bundle.account_synchronize}"
@@ -152,15 +152,15 @@
 			<aon:outputText
 				value="#{bundle.accounting_amortization_alloc_account}" />
 			<aon:panelGroup id="allocationAccount" styleClass="aon-nowrap">
-				<aon:outputText rendered="#{!amortization.new}"
+				<aon:outputText rendered="#{!amortization.nevv}"
 					value="#{amortization.to.allocationAccount.fullDescription}" />
 				<aon:selectOneMenu id="Amortization_allocationAccount"
-					rendered="#{amortization.new and amortization.to.amortizationType != null}"
+					rendered="#{amortization.nevv and amortization.to.amortizationType != null}"
 					value="#{amortization.to.allocationAccount}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{amortization.allocationAccounts}" />
 				</aon:selectOneMenu>
-				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
+				<aon:outputText rendered="#{!amortization.nevv and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
 					title="#{bundle.account_synchronize}"

@@ -17,7 +17,7 @@
 					<ui:param name="toolbarID" value="aonToolbarMain" />
 					<ui:param name="toolbarTitle" value="#{bundle.accounting_entry_module}" />
 					<ui:param name="toolbarDescription"
-						value="#{accountEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						value="#{accountEntry.nevv?(bundle.aon_reset):(bundle.aon_editing)}" />
 	
 					<ui:define name="additionalToolbarContent">
 						<aon:commandButton id="reset" 
@@ -27,14 +27,14 @@
 							action="accountEntry_form"
 							actionListener="#{accountEntry.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							rendered="#{!accountEntry.new}"
+							rendered="#{!accountEntry.nevv}"
 							focus="AccountEntry_accountPeriod_New" />
 
 						<aon:commandButton id="save-add" value="#{bundle.aon_save}"
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountEntry.accept}"
-							rendered="#{accountEntry.new}"
+							rendered="#{accountEntry.nevv}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							focus="Account_Id">
 						</aon:commandButton>
@@ -43,7 +43,7 @@
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountEntry.accept}"
-							rendered="#{!accountEntry.new and accountEntry.updatable and accountEntry.manual}"
+							rendered="#{!accountEntry.nevv and accountEntry.updatable and accountEntry.manual}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 						</aon:commandButton>
 
@@ -61,13 +61,13 @@
 							title="#{bundle.aon_search} (ALT+#{bundle.aon_key_search})"
 							accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
 							actionListener="#{accountEntry.onEditSearch}"
-							rendered="#{!accountEntry.new}"
+							rendered="#{!accountEntry.nevv}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							immediate="true" />
 
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel})"
-							accesskey="#{bundle.aon_key_cancel}" rendered="#{accountEntry.new}"
+							accesskey="#{bundle.aon_key_cancel}" rendered="#{accountEntry.nevv}"
 							actionListener="#{accountEntry.onCancel}" action="accountEntry_search"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" />
@@ -76,7 +76,7 @@
 							accesskey="Q" title="#{bundle.aon_update} Alt+Q"
 							action="#{accountEntry.onNavigate}"
 							actionListener="#{accountEntry.onSelectEntry}"
-							rendered="#{!accountEntry.new and accountEntry.updatableViaWizard}"
+							rendered="#{!accountEntry.nevv and accountEntry.updatableViaWizard}"
 							styleClass="aon-finding-toolbar-item aon-icon-refresh"
 							immediate="true" />
 
@@ -84,7 +84,7 @@
 							value="#{bundle.finance_invoice}"
 							accesskey="I" title="#{bundle.finance_invoice} Alt+I"
 							action="#{accountEntry.onLoadInvoice}"
-							rendered="#{!accountEntry.new and accountEntry.invoiceNavigationEnabled}"
+							rendered="#{!accountEntry.nevv and accountEntry.invoiceNavigationEnabled}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" />
 
@@ -99,7 +99,7 @@
 							<aon:commandButton id="updateSecurityLevel" 
 								value="#{bundle.aon_update} #{bundle.aon_security}"
 								title="#{bundle.aon_update} #{bundle.aon_security}"
-								rendered="#{!accountEntry.new and !accountEntry.manual and !accountEntry.updatableViaWizard}"
+								rendered="#{!accountEntry.nevv and !accountEntry.manual and !accountEntry.updatableViaWizard}"
 								actionListener="#{accountEntry.onChangeSecurityLevel}" 
 								styleClass="aon-finding-toolbar-item #{accountEntry.to.confidential?'aon-icon-unlock':'aon-icon-lock'}"
 								immediate="true"
@@ -108,7 +108,7 @@
 						<aon:commandButton id="duplicate" value="#{bundle.accounting_duplicate}"
 							title="#{bundle.accounting_duplicate}"
 							actionListener="#{accountEntry.showDuplicateEntryPanel}"
-							rendered="#{!accountEntry.new and accountEntry.manual}"
+							rendered="#{!accountEntry.nevv and accountEntry.manual}"
 							reRender="duplicateEntryContainer"
 							styleClass="aon-finding-toolbar-item aon-icon-copy"
 							immediate="true" />
@@ -118,23 +118,23 @@
 							actionListener="#{accountEntry.onExcelJournal}"
 							title="#{bundle.aon_listing} MS Excel"
 							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
-							rendered="#{!accountEntry.new}"
+							rendered="#{!accountEntry.nevv}"
 							accesskey="#{bundle.aon_key_print}">
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="journalBook-report"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 							value="#{bundle.aon_listing}" 
-							rendered="#{!accountEntry.new}"
+							rendered="#{!accountEntry.nevv}"
 							actionListener="#{accountEntry.onPDFJournal}">
 						</aon:htmlCommandLink>
 						
 						<aon:spin id="accountEntrySpin"
 							controller="#{accountEntry}" action="accountEntry_form" 
-							rendered="#{!accountEntry.new}" 
+							rendered="#{!accountEntry.nevv}" 
 							style="float:right;margin-right:0;" />
 					</ui:define>
 				</ui:decorate>
-				<c:if test="#{!accountEntry.new}">
+				<c:if test="#{!accountEntry.nevv}">
 					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/entriesToolbar.xhtml" />
 				</c:if>
  			</aon:div>
@@ -156,7 +156,7 @@
 
 					<aon:outputText value="#{bundle.aon_id}: " />
 					<aon:div>
-						<aon:div rendered="#{!accountEntry.new}">
+						<aon:div rendered="#{!accountEntry.nevv}">
 							<aon:outputText value="#{accountEntry.to.id}" />
 						</aon:div>
 					</aon:div>
@@ -166,16 +166,16 @@
 						<aon:selectOneMenu id="AccountEntry_accountPeriod"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accountEntry.to.accountPeriod}"
-							rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}">
+							rendered="#{accountEntry.nevv or (!accountEntry.nevv and accountEntry.manual and accountEntry.periodActive)}">
 							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 						</aon:selectOneMenu>
 						<aon:outputText value="#{accountEntry.to.accountPeriod.name}"
-							rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}" />
+							rendered="#{!accountEntry.nevv and (!accountEntry.manual or !accountEntry.periodActive)}" />
 					</aon:div>
 
 					<aon:outputText value="#{bundle.accounting_journal}: " />
 					<aon:div>
-						<aon:outputText value="#{accountEntry.to.journal}" rendered="#{!accountEntry.new}" />
+						<aon:outputText value="#{accountEntry.to.journal}" rendered="#{!accountEntry.nevv}" />
 					</aon:div>
 					
 					
@@ -183,7 +183,7 @@
 						<c:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
 								value="#{accountEntry.to.confidential}"
-								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}" />
+								rendered="#{accountEntry.nevv or (!accountEntry.nevv and accountEntry.manual and accountEntry.periodActive)}" />
 							<aon:outputText styleClass="aon-italic aon-margin-right"
 								value="#{bundle.aon_confidential}"
 								rendered="#{accountEntry.manual}"/>
@@ -200,11 +200,11 @@
 					<aon:div>
 						<aon:selectInputDate required="true"
 							id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
-							rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}"
+							rendered="#{accountEntry.nevv or (!accountEntry.nevv and accountEntry.manual and accountEntry.periodActive)}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputText value="#{accountEntry.to.entryDate}"
-							rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}">
+							rendered="#{!accountEntry.nevv and (!accountEntry.manual or !accountEntry.periodActive)}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
@@ -215,7 +215,7 @@
 					</aon:div>
 
 					<aon:div id="commentIconContainer" style="text-align:center;cursor:pointer;">
-						<c:if test="#{!accountEntry.new}">
+						<c:if test="#{!accountEntry.nevv}">
 							<a4j:support
 								event="onclick"
 								reRender="commentContainer,commentIconContainer"
@@ -238,7 +238,7 @@
 						
 					</aon:div>
 				</aon:panelGrid>
-				<c:if test="#{accountEntry.new}">
+				<c:if test="#{accountEntry.nevv}">
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText styleClass="aon-panelGrid-search-info-internal"
@@ -427,7 +427,7 @@
 			</c:if>
 		</aon:div>
  		<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		<c:if test="#{accountEntry.new}">
+		<c:if test="#{accountEntry.nevv}">
 			<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
 		</c:if>
 	</ui:define>

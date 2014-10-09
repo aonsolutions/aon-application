@@ -8,11 +8,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
-	<c:if test="#{craBatch.new}" >
+	<c:if test="#{craBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/cra/form_new.xhtml" />
 	</c:if>
 	
-	<c:if test="#{!craBatch.new}" >
+	<c:if test="#{!craBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.payroll_craBatch_module}" />
 			<ui:param name="controller" value="#{craBatch}" />
@@ -60,7 +60,7 @@
 					<aon:outputText value="#{bundle.finance_disk} CRA" />
 					<aon:div>
 						<aon:commandButton id="cra-create-button" value="#{bundle.payroll_create_disk}"
-							rendered="#{craBatch.new or (!craBatch.recorded and craBatchDetail.model.rowCount > 0)}"
+							rendered="#{craBatch.nevv or (!craBatch.recorded and craBatchDetail.model.rowCount > 0)}"
 							reRender="batchForm"
 							styleClass="aon-icon-commandButton aon-icon-accept"
 							actionListener="#{craBatch.onCreateDisk}"

@@ -17,13 +17,13 @@
 			<aon:outputLabel for="DomainApplicationUser_name"
 				value="#{bundle.aon_name}" />
 			<aon:selectOneMenu id="DomainApplicationUser_name-New"
-				rendered="#{controller.new}" required="true" 
+				rendered="#{controller.nevv}" required="true" 
 				value="#{controller.to.user}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{domainApplication.availableUsers}" />
 			</aon:selectOneMenu>						
 			<aon:inputText id="DomainApplicationUser_name"
-				size="80" disabled="true" rendered="#{!controller.new}"
+				size="80" disabled="true" rendered="#{!controller.nevv}"
 				value="#{controller.to.user.login}" />
 					
 			<aon:outputLabel for="ApplicationUser_active"

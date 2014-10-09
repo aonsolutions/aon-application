@@ -106,7 +106,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	private AccountEntryInvoiceWriter writer;
 	private FinanceGenerator financeGenerator;
 	private AccountEntryInvoice accountEntryInvoice;
-	private boolean isNew;
+	private boolean isNevv;
 	private boolean isNewDetail;
 	private boolean isNewFinance;
 	private InvoiceEntryHeader header;
@@ -180,12 +180,12 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 		this.accountEntryInvoice = accountEntryInvoice;
 	}
 
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
 
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
+	public void setNevv(boolean isNevv) {
+		this.isNevv = isNevv;
 	}
 
 	public boolean isNewDetail() {
@@ -344,7 +344,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	}
 
 	private void reset() throws ManagerBeanException {
-		setNew(true);
+		setNevv(true);
 		initializeHeader();
 		getHeader().setType(InvoiceType.SALES);
 
@@ -718,7 +718,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 		try {
 			setNewFinance( true );
 			setCurrentFinance( initializeFinance() );
-			Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
+			Invoice invoice = isNevv() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 			invoice = mergeInvoice(invoice);
 			getCurrentFinance().setInvoice(invoice);
 			getFinanceGenerator().initializeFinanceData(getCurrentFinance(), obtainInitialAmount());
@@ -836,12 +836,12 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			if (isNew) {
+			if (isNevv) {
 				generateInvoiceEntry(sessionName,invoiceTotal);
 			} else {
 				updateInvoiceEntry(sessionName,invoiceTotal);
 			}
-			setNew(false);
+			setNevv(false);
 			insertOrUpdateInvoice(sessionName); //Grabar los totales de factura.
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
@@ -1100,9 +1100,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 
 	private Invoice insertOrUpdateInvoice(String sessionName) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
+		Invoice invoice = isNevv() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
-		if (isNew()) {
+		if (isNevv()) {
 			invoice.setDefaultTaxInfo(false);
 			invoice = (Invoice) invoiceBean.insert(invoice);
 		} else {
@@ -1282,7 +1282,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 
 	public void generateFinances(ActionEvent event) throws ManagerBeanException {
 		List<Finance> financeList = new LinkedList<Finance>();
-		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
+		Invoice invoice = isNevv() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		financeList = getFinanceGenerator().generateFinances(invoice, getInvoiceTotal(), false);
 		setFinances( new SerializableListDataModel(financeList) );
@@ -1576,7 +1576,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
 		onReset(null);
-		setNew(false);
+		setNevv(false);
 		IManagerBean accountEntryInvoiceBean = BeanManager
 				.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();

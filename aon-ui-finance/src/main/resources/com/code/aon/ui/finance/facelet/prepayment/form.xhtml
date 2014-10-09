@@ -38,14 +38,14 @@
 										<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{prepayment.to.creditor}" />
 											<ui:param name="skipLabel" value="#{true}" />						
-											<ui:param name="lookupRendered" value="#{prepayment.new}" />
+											<ui:param name="lookupRendered" value="#{prepayment.nevv}" />
 											<ui:param name="lookupReRender" value="Prepayment_finance_payMethod,Prepayment_finance_bankAccount_div" />
 											<ui:param name="idRequired" value="#{true}" />						
 											<aon:methodParam name="lookupChangeListener"
 												value="#{prepayment.onCreditorChanged}" type="lookupChangeListener" />
 										</ui:include>
 										<aon:outputText	value="#{prepayment.to.creditor.registry.fullName}"
-											rendered="#{!prepayment.new}" />
+											rendered="#{!prepayment.nevv}" />
 
 										<aon:outputLabel for="Prepayment_finance_dueDate" value="#{bundle.aon_date}" />
 										<aon:selectInputDate id="Prepayment_finance_dueDate"
@@ -147,10 +147,10 @@
 													valueChangeListener="#{prepayment.onRBankChanged}"
 													reRender="Prepayment_registryBank" ajaxSingle="true">
 													<f:selectItem value="#{null}" />
-													<c:if test="#{prepayment.new}">
+													<c:if test="#{prepayment.nevv}">
 														<f:selectItems value="#{prepayment.activeBanks}" />
 													</c:if>
-													<c:if test="#{!prepayment.new}">
+													<c:if test="#{!prepayment.nevv}">
 														<f:selectItems value="#{prepayment.allBanks}" />
 													</c:if>
 												</aon:selectOneMenu>
@@ -173,8 +173,8 @@
 										</aon:div>
 
 										<aon:outputText value="#{bundle.aon_status}" 
-											rendered="#{!prepayment.new}" />
-										<aon:div rendered="#{!prepayment.new}">
+											rendered="#{!prepayment.nevv}" />
+										<aon:div rendered="#{!prepayment.nevv}">
 											<aon:outputText value="#{prepayment.to.finance.financeStatus}" />
 											<aon:commandLink id="Prepayment_finance_link" immediate="true"
 												styleClass="aon-button-goto" style="padding-right: 12px;"
@@ -335,8 +335,8 @@
 										</c:if>
 
 										<aon:outputText value="#{bundle.aon_status}"
-											rendered="#{!prepayment.new}" />
-										<aon:div rendered="#{!prepayment.new}">
+											rendered="#{!prepayment.nevv}" />
+										<aon:div rendered="#{!prepayment.nevv}">
 											<aon:outputText value="#{bundle.aon_pending}" rendered="#{!prepayment.chargeReadOnly}" />
 											<aon:commandLink id="Prepayment_customer_link" immediate="true"
 												styleClass="aon-button-goto" style="padding-right: 12px;"

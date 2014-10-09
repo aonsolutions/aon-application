@@ -75,7 +75,7 @@ public class ExpenseInvoiceController extends InvoiceController {
 		invoice.setWithholding(creditor.isWithholding());
 		loadAddresses(creditor.getId());
 
-		if (isNew()) {
+		if (isNevv()) {
 			ExpenseInvoiceDetailController detailController = (ExpenseInvoiceDetailController)FormUtil.getController(getInvoiceDetailControllerName());
 			InvoiceDetail invoiceDetail = (InvoiceDetail)detailController.getTo();
 			if (invoiceDetail.getItem() == null || invoiceDetail.getItem().getId() == null) {

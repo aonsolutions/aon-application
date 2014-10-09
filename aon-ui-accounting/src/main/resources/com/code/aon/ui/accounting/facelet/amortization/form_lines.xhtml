@@ -49,7 +49,7 @@
 					<aon:commandButton id="amortizationDetail-reset"
 						title="#{bundle.aon_reset}" 
 						actionListener="#{amortizationDetail.onReset}" 
-						rendered="#{!amortizationDetail.new}"
+						rendered="#{!amortizationDetail.nevv}"
 						styleClass="aon-editDataTable-button aon-icon-reset"/>
 			</f:facet>
 		</aon:column>
@@ -65,7 +65,7 @@
 			<f:facet name="footer">
 				<aon:div styleClass="aon-nowrap">
 					<aon:selectInputDate id="AmortizationDetail_fromDate"
-						rendered="#{amortizationDetail.new}" required="true"
+						rendered="#{amortizationDetail.nevv}" required="true"
 						value="#{amortizationDetail.to.fromDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -84,7 +84,7 @@
 			<f:facet name="footer">
 				<aon:div styleClass="aon-nowrap">
 					<aon:selectInputDate id="AmortizationDetail_toDate"
-						rendered="#{amortizationDetail.new}" required="true"
+						rendered="#{amortizationDetail.nevv}" required="true"
 						value="#{amortizationDetail.to.toDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -117,7 +117,7 @@
 			</aon:outputText>
 			<f:facet name="footer">
 				<aon:inputText id="AmortizationDetail_allocation-New"
-					rendered="#{amortizationDetail.new}"
+					rendered="#{amortizationDetail.nevv}"
 					required="true" value="#{amortizationDetail.to.allocation}" size="8">
 				</aon:inputText>
 			</f:facet>
@@ -155,7 +155,7 @@
 			</aon:outputText>
 			<f:facet name="footer">
 				<aon:inputText id="AmortizationDetail_fiscalAllocation-New"
-					rendered="#{amortizationDetail.new}"
+					rendered="#{amortizationDetail.nevv}"
 					required="true" value="#{amortizationDetail.to.fiscalAllocation}" size="8">
 				</aon:inputText>
 			</f:facet>
@@ -266,14 +266,14 @@
 					<aon:commandButton id="amortizationDetailTable-save-New"
 						title="#{bundle.aon_accept} (ALT+#{bundle.aon_key_save_line})"
 						actionListener="#{amortizationDetail.onAccept}"
-						rendered="#{amortizationDetail.new}"
+						rendered="#{amortizationDetail.nevv}"
 						reRender="amortizationForm"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						focus="accountId" accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton id="amortizationDetailTable-cancel-New"
 						title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})"
 						actionListener="#{amortizationDetail.onCancel}" immediate="true"
-						rendered="#{amortizationDetail.new}"
+						rendered="#{amortizationDetail.nevv}"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						accesskey="#{bundle.aon_key_cancel_line}" />
 				</aon:div>

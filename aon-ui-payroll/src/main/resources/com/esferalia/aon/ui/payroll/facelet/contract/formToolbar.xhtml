@@ -11,7 +11,7 @@
 		<ui:param name="toolbarTitle" value="#{bundle.payroll_contract_module}" />
 		<ui:param name="controller" value="#{contract}" />
 		<ui:param name="skipRemoveButton" value="#{!contract.removable}" />
-		<ui:param name="showMoreMenu" value="#{!contract.new}" />
+		<ui:param name="showMoreMenu" value="#{!contract.nevv}" />
 		
 		<ui:define name="beforeSpinToolbarContent">
 		
@@ -47,7 +47,7 @@
 <c:if test="#{!contract.params.retaQuote and !contract.internship}">
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
-				rendered="#{!contract.new}"
+				rendered="#{!contract.nevv}"
 				reRender="showDocumentGenerationWindow"
 				actionListener="#{contractPdf.onDocumentGenerationShow}"
 				iconClass="aon-icon-new-page">
@@ -173,7 +173,7 @@
 			
 			<aon:menuItem id="contractContrata-communication-log"
 				value="#{bundle.aon_module_contrata}"
-				disabled="#{contractContrata.new}"
+				disabled="#{contractContrata.nevv}"
 				rendered="#{!contract.extendedContract and !contract.transformedContract}" ajaxSingle="true"
 				reRender="showContrataCommunicationWindow-#{contractContrata.contrataModelName}"
 				actionListener="#{contractContrata.onContrataCommunicatioShow}"

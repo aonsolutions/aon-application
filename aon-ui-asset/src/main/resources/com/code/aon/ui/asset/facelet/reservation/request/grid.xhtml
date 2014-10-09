@@ -18,25 +18,25 @@
 		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_startDate"
 			popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 			value="#{activityDialog.fromDate}" enableManualInput="true" 
-			disabled="#{!activityDialog.new}"/>
+			disabled="#{!activityDialog.nevv}"/>
 
 		<aon:outputLabel for="ActivityDialog_endDate"
 			value="#{bundle.aon_end_date}" />
 		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_endDate"
 			popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 			value="#{activityDialog.toDate}" enableManualInput="true" 
-			disabled="#{!activityDialog.new}"/>
+			disabled="#{!activityDialog.nevv}"/>
 
 		<aon:outputLabel for="ActivityDialog_fromTime"
 			value="#{bundle.asset_fromTime}" />
 		<aon:div id="ActivityDialog_fromTime">
-			<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.new}"
+			<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.nevv}"
 				value="#{activityDialog.fromTimeHours}">
 				<f:selectItems value="#{activityDialog.hours}" />
 			</aon:selectOneMenu>
 			<aon:outputLabel 
 				value="#{bundle.asset_hours}" />
-			<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.new}"
+			<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.nevv}"
 				value="#{activityDialog.fromTimeMins}">
 				<f:selectItems value="#{activityDialog.mins}" />
 			</aon:selectOneMenu>
@@ -47,13 +47,13 @@
 		<aon:outputLabel for="ActivityDialog_toTime"
 			value="#{bundle.asset_toTime}" />
 		<aon:div id="ActivityDialog_toTime">
-			<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.new}"
+			<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.nevv}"
 				value="#{activityDialog.toTimeHours}">
 				<f:selectItems value="#{activityDialog.hours}" />
 			</aon:selectOneMenu>
 			<aon:outputLabel 
 				value="#{bundle.asset_hours}" />
-			<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.new}"
+			<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.nevv}"
 				value="#{activityDialog.toTimeMins}">
 				<f:selectItems value="#{activityDialog.mins}" />
 			</aon:selectOneMenu>
@@ -98,7 +98,7 @@
 			value="#{bundle.aon_holder}" />
 		<aon:div>
 			<aon:inputText id="ActivityDialog_who" value="#{activityDialog.login}"
-				required="#{true}" size="20" disabled="#{(!activityDialog.new) or activityDialog.request}">
+				required="#{true}" size="20" disabled="#{(!activityDialog.nevv) or activityDialog.request}">
 				<f:validateLength maximum="20" />
 			</aon:inputText>
 			<aon:outputText id="ActivityDialog_who_request" value="#{activityDialog.who}"
@@ -108,7 +108,7 @@
 		<aon:outputLabel for="ActivityDialog_why"
 			value="#{bundle.aon_remark}" />
 		<aon:inputTextarea id="ActivityDialog_why" value="#{activityDialog.why}"
-			required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.new}">
+			required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.nevv}">
 			<f:validateLength maximum="128" />
 		</aon:inputTextarea>
 		
@@ -117,14 +117,14 @@
 		<aon:div>
 			<aon:commandButton id="activityDialog-reset"
 				value="#{bundle.aon_reset}" reRender="activityDialogTable"
-				rendered="#{!activityDialog.new and activityDialog.request}" 
+				rendered="#{!activityDialog.nevv and activityDialog.request}" 
 				styleClass="aon-icon-new"
 				accesskey="#{bundle.aon_key_new}" >
 				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
 			</aon:commandButton>
 			<aon:commandButton id="activityDialog-email"
 				value="#{bundle.webmail_send_email}" reRender="activityDialogTable"
-				rendered="#{activityDialog.new and activityDialog.request}"
+				rendered="#{activityDialog.nevv and activityDialog.request}"
 				styleClass="aon-icon-webmail2"
 				accesskey="#{bundle.aon_key_new}" >
 				<aon:actionListener method="#{activityDialog.onAccept}" />

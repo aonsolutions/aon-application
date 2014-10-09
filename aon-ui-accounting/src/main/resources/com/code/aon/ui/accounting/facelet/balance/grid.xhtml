@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:div style="margin-top: 10px;">
-		<aon:editDataTable id="balanceDetailData" rendered="#{!balance.new}"
+		<aon:editDataTable id="balanceDetailData" rendered="#{!balance.nevv}"
 			value="#{balanceDetail.model}" var="to" rows="1000">
 
 			<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -27,7 +27,7 @@
 						<aon:commandButton alt="[#{bundle.aon_reset}]"
 							styleClass="aon-editDataTable-button aon-icon-reset"
 							actionListener="#{balanceDetail.onReset}" value=""
-							rendered="#{!balanceDetail.new}"
+							rendered="#{!balanceDetail.nevv}"
 							accesskey="#{bundle.aon_key_new_line}" />
 					</aon:div>
 
@@ -60,7 +60,7 @@
 				</aon:div>
 				<f:facet name="footer">
 					<aon:inputText required="true"
-						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.sortKey}"
+						rendered="#{balanceDetail.nevv}" value="#{balanceDetail.to.sortKey}"
 						maxlength="4" size="2" />
 				</f:facet>
 			</aon:column>
@@ -76,7 +76,7 @@
 					maxlength="16" size="10" />
 				<f:facet name="footer">
 					<aon:inputText 
-						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.code}"
+						rendered="#{balanceDetail.nevv}" value="#{balanceDetail.to.code}"
 						maxlength="16" size="10" />
 				</f:facet>
 			</aon:column>
@@ -96,7 +96,7 @@
 					value="#{balanceDetail.to.description}" maxlength="128" size="30" />
 				<f:facet name="footer">
 					<aon:inputText 
-						rendered="#{balanceDetail.new}"
+						rendered="#{balanceDetail.nevv}"
 						value="#{balanceDetail.to.description}" maxlength="128" size="30" />
 				</f:facet>
 			</aon:column>
@@ -115,7 +115,7 @@
 					value="#{balanceDetail.to.accounts}" maxlength="100"  />
 				<f:facet name="footer">
 					<h:inputTextarea styleClass="aon-form-input-text"
-						rendered="#{balanceDetail.new}" cols="20" rows="3"
+						rendered="#{balanceDetail.nevv}" cols="20" rows="3"
 						value="#{balanceDetail.to.accounts}" maxlength="100" />
 				</f:facet>
 			</aon:column>
@@ -131,7 +131,7 @@
 				<aon:inputText  rendered="#{to==balanceDetail.to}" 
 					value="#{balanceDetail.to.notes}" maxlength="100"  />
 				<f:facet name="footer">
-					<aon:inputText rendered="#{balanceDetail.new}" 
+					<aon:inputText rendered="#{balanceDetail.nevv}" 
 						value="#{balanceDetail.to.notes}" maxlength="100"  />
 				</f:facet>
 			</aon:column>
@@ -155,7 +155,7 @@
 				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
 					value="#{balanceDetail.to.title}" />
 				<f:facet name="footer">
-					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.nevv}"
 						value="#{balanceDetail.to.title}" />
 				</f:facet>
 			</aon:column>
@@ -179,7 +179,7 @@
 				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
 					value="#{balanceDetail.to.internalCalculation}" />
 				<f:facet name="footer">
-					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.nevv}"
 						value="#{balanceDetail.to.internalCalculation}" />
 				</f:facet>
 			</aon:column>
@@ -203,7 +203,7 @@
 				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
 					value="#{balanceDetail.to.visible}" />
 				<f:facet name="footer">
-					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.nevv}"
 						value="#{balanceDetail.to.visible}" />
 				</f:facet>
 			</aon:column>
@@ -227,7 +227,7 @@
 				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
 					value="#{balanceDetail.to.zeroFlag}" />
 				<f:facet name="footer">
-					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.nevv}"
 						value="#{balanceDetail.to.zeroFlag}" />
 				</f:facet>
 			</aon:column>
@@ -251,7 +251,7 @@
 				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
 					value="#{balanceDetail.to.creditNature}" />
 				<f:facet name="footer">
-					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.nevv}"
 						value="#{balanceDetail.to.creditNature}" />
 				</f:facet>
 			</aon:column>
@@ -283,16 +283,16 @@
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div styleClass="aon-nowrap">
-						<aon:outputText rendered="#{!porcentaje.new}">&#160;</aon:outputText> 
+						<aon:outputText rendered="#{!porcentaje.nevv}">&#160;</aon:outputText> 
 						<aon:commandButton title="[#{bundle.aon_accept}]"
 							styleClass="aon-editDataTable-button aon-icon-accept"
-							rendered="#{balanceDetail.new}"
+							rendered="#{balanceDetail.nevv}"
 							actionListener="#{balanceDetail.onAccept}"
 							accesskey="#{bundle.aon_key_save_line}" />
 						<aon:confirmButton id="cancel-Porcentaje"
 							title="[#{bundle.aon_cancel}]"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
-							rendered="#{balanceDetail.new}"
+							rendered="#{balanceDetail.nevv}"
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{balanceDetail.onCancel}"

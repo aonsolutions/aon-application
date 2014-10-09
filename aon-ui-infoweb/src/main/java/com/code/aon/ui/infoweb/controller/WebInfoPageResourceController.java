@@ -36,7 +36,7 @@ public class WebInfoPageResourceController extends BasicController implements II
 	
 	@Override
 	public void accept(ActionEvent event) {
-		if (isNew()) {
+		if (isNevv()) {
 			WebInfoPageResource resource = (WebInfoPageResource) getTo();
 			resource.setWebInfoPage(webInfoPage);
 		}

@@ -52,7 +52,7 @@
 						<f:selectItems value="#{corporateIdentityAttach.domainScopes}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{!corporateIdentityAttach.new}" >
+					<c:if test="#{!corporateIdentityAttach.nevv}" >
 						<aon:outputText value="#{bundle.aon_document_download_url}" />
 						<aon:outputLink target="_blank" value="#{corporateIdentityAttach.downloadURL}" >
 							<aon:outputText value="#{corporateIdentityAttach.downloadURL}" />

@@ -61,7 +61,7 @@
 									<aon:commandButton id="roomDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{bundle.aon_remove} #{bundle.pms_stay}"
-										rendered="#{!controller.new and reservation.reservationPermission.removeReservationRoomAllowed}"
+										rendered="#{!controller.nevv and reservation.reservationPermission.removeReservationRoomAllowed}"
 										actionListener="#{controller.onRemoveReservationRoom}"
 										immediate="true">
 										<rich:componentControl for="roomDetailModalPanel"
@@ -123,7 +123,7 @@
 											<aon:outputLabel for="ProjectReservationRoom_item"
 												value="#{bundle.pms_room_type}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_item" styleClass="aon-width-350"
-												value="#{roomAvailability.filterParams.item}" required="#{controller.new}"
+												value="#{roomAvailability.filterParams.item}" required="#{controller.nevv}"
 												valueChangeListener="#{roomAvailability.onItemFilterChanged}"
 												reRender="ProjectReservationRoomAvailability">
 												<f:selectItem itemLabel="-" value="#{null}" />
@@ -132,10 +132,10 @@
 
 											<aon:outputLabel for="ProjectReservationRoom_tariff"
 												value="#{bundle.report_tariff}"
-												rendered="#{controller.new or reservation.reservationPermission.reservationRoomTariffAllowed}" />
+												rendered="#{controller.nevv or reservation.reservationPermission.reservationRoomTariffAllowed}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_tariff" 
 												value="#{controller.to.tariff}" required="true"
-												rendered="#{controller.new or reservation.reservationPermission.reservationRoomTariffAllowed}"
+												rendered="#{controller.nevv or reservation.reservationPermission.reservationRoomTariffAllowed}"
 												disabled="#{!reservation.reservationPermission.reservationRoomTariffEditable}">
 												<f:selectItems value="#{pmsCollections.tariffs}" />
 											</aon:selectOneMenu>

@@ -14,7 +14,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />
 				<ui:param name="controller" value="#{item}" />
-				<ui:param name="showMoreMenu" value="#{!item.new}" />
+				<ui:param name="showMoreMenu" value="#{!item.nevv}" />
 				<ui:define name="moreMenuContent">
 					<c:if test="#{aonConfiguration.bean.product.showHistory}">
 						<aon:menuItem id="ProductHistory" 
@@ -82,13 +82,13 @@
 			</ui:decorate>
 
 			<aon:div id="itemDiv" styleClass="aon-scroll-area">
-				<c:if test="#{item.new}">
+				<c:if test="#{item.nevv}">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/formNewContent.xhtml">
 						<ui:param name="controller" value="#{item}" />
 					</ui:include>
 				</c:if>
 
-				<c:if test="#{!item.new}">
+				<c:if test="#{!item.nevv}">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/formContent.xhtml">
 						<ui:param name="controller" value="#{item}" />
 					</ui:include>
@@ -185,7 +185,7 @@
 			</aon:div>
 		</aon:form>
 
-		<c:if test="#{!item.new}">
+		<c:if test="#{!item.nevv}">
 			<c:if test="#{aonConfiguration.bean.product.showComposition or aonConfiguration.bean.product.showAlternatives}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</c:if>

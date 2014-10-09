@@ -8,11 +8,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
-	<c:if test="#{leaveBatch.new}" >
+	<c:if test="#{leaveBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/form_new.xhtml" />
 	</c:if>
 	
-	<c:if test="#{!leaveBatch.new}" >
+	<c:if test="#{!leaveBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.payroll_leaveBatchWizard_module}" />
 			<ui:param name="controller" value="#{leaveBatch}" />
@@ -39,7 +39,7 @@
 					<aon:outputText value="#{bundle.finance_disk} FDI" />
 					<aon:div>
 						<aon:commandButton id="fdi-create-button" value="#{bundle.payroll_create_disk}"
-							rendered="#{leaveBatch.new or (!leaveBatch.recorded and leaveBatchDetail.model.rowCount > 0)}"
+							rendered="#{leaveBatch.nevv or (!leaveBatch.recorded and leaveBatchDetail.model.rowCount > 0)}"
 							reRender="batchForm"
 							styleClass="aon-icon-commandButton aon-icon-accept"
 							actionListener="#{leaveBatch.onCreateDisk}"

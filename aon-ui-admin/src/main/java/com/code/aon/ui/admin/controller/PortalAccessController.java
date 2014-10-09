@@ -193,7 +193,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 	}
 	
 	private void updateUser() throws ManagerBeanException {
-		boolean isNew = ( this.user.getId() == null );
+		boolean isNevv = ( this.user.getId() == null );
 		if ( isPayrollPortal() ) {
 			this.user.setInitAction(PAYROLL_PORTAL_OPTION);	
 		} else { 
@@ -202,7 +202,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 		this.user.setEnterprise(getEnterpriseId());
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		bean.insertOrUpdate(this.user);
-		if ( isNew ) {
+		if ( isNevv ) {
 			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
 			duc.registerScope(user, GENERAL_SCOPE);
 			updateScopes();

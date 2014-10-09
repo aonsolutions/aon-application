@@ -209,7 +209,7 @@ public class CalendarController extends BasicController {
 	}
 
 	public void onCalendarLookupChanged(LookupChangeEvent event){
-		if(event.getNewValue()!=null && this.isNew()){
+		if(event.getNewValue()!=null && this.isNevv()){
 			Calendar newCalendar = (Calendar) event.getNewValue();
 			Calendar calendar = (Calendar) getTo();
 			calendar.setAnualHours(newCalendar.getAnualHours());

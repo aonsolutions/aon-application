@@ -23,7 +23,7 @@
 						<aon:htmlCommandLink id="mod145_list"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 							value="#{bundle.payroll_irpfData_mod145}"
-							rendered="#{!irpfData.new}"
+							rendered="#{!irpfData.nevv}"
 							action="#{report.onExecute}">
 							<f:param name="reportKey" value="mod145Report" />
 							<f:param name="outputFormat" value="PDF" />
@@ -36,7 +36,7 @@
 			
 			<aon:div styleClass="aon-scroll-area" style="padding-bottom:1px;" >
 
-				<aon:panelGrid rendered="#{!irpfData.new}" columns="4" dir="true" width="100%">
+				<aon:panelGrid rendered="#{!irpfData.nevv}" columns="4" dir="true" width="100%">
 					<aon:outputLabel value="#{bundle.payroll_salary_employee}" />
 					<aon:outputText value="#{irpfData.to.contract.person.registry.fullName}" />
 
@@ -50,7 +50,7 @@
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{irpfData.to.contract}" />
 						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="lookupRendered" value="#{irpfData.new}" />
+						<ui:param name="lookupRendered" value="#{irpfData.nevv}" />
 						<ui:param name="lookupReRender" value="IrpfData_validity" />
 						<aon:methodParam name="lookupChangeListener" 
 							value="#{irpfData.onContractChange}" type="lookupChangeListener" />
@@ -145,7 +145,7 @@
 				</aon:panelGrid>
 
 			
-				<c:if test="#{!irpfData.new}" >
+				<c:if test="#{!irpfData.nevv}" >
 					<aon:panelTabSet>
 							<aon:panelTab label="#{bundle.payroll_irpfData_descendants_data}">
 								<ui:include 

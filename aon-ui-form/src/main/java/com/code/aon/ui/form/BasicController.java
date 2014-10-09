@@ -76,7 +76,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	/** Represent the model of data that we are going to interact with */
 	protected DataModel model;
 
-	private boolean isNew;
+	private boolean isNevv;
 
 	private boolean queryOnStartUP;
 
@@ -363,19 +363,19 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	@Override
-	public boolean isNew() {
-		return isNew;
+	public boolean isNevv() {
+		return isNevv;
 	}
 
 	@Override
-	public void setNew(boolean isNew) {
-		if (isNew) {
+	public void setNew(boolean isNevv) {
+		if (isNevv) {
 			this.selectedIndex = -1;
 			if (this.model != null) {
 				this.model.setRowIndex(this.selectedIndex);
 			}
 		}
-		this.isNew = isNew;
+		this.isNevv = isNevv;
 	}
 
 	/**
@@ -415,7 +415,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void accept(ActionEvent event) {
 		try {
 			getManagerBean().restoreNullSubPOJOs(getTo());
-			boolean updateModel = isNew();
+			boolean updateModel = isNevv();
 			accept();
 			if (updateModel) {
 				resetBackProccess();
@@ -486,7 +486,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			//HibernateUtil.beginTransaction(sessionName);
 		
 			ControllerEvent evt = new ControllerEvent(this);
-			if (isNew) {
+			if (isNevv) {
 				controllerListenerSupport.fireBeforeBeanAdded(evt);
 				this.to = add();
 				setNew(false);
@@ -1545,7 +1545,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @return boolean
 	 */
 	public boolean isEditableTo() {
-		return isNew() || isCurrentDomainTo(getTo());
+		return isNevv() || isCurrentDomainTo(getTo());
 	}
 
 	@Override

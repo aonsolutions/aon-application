@@ -54,7 +54,7 @@
 						<ui:param name="lookupControllerListener" value="#{newsletter.imageFilter}" />
 					</ui:include>		
 					
-					<c:if test="#{!channel.new}" >
+					<c:if test="#{!channel.nevv}" >
 						<aon:outputText value="#{bundle.aon_document_download_url}" />
 						<aon:outputLink target="_blank" value="#{channel.downloadURL}" >
 							<aon:outputText value="#{channel.downloadURL}" />

@@ -40,7 +40,7 @@
 				<f:facet name="footer">
 					<aon:commandButton
 						id="#{controller.beanName}-reset" 
-						rendered="#{!controller.handler.new}"
+						rendered="#{!controller.handler.nevv}"
 						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 						actionListener="#{controller.handler.onResetVariable}"
 						reRender="#{controller.beanName}VarContainer"
@@ -54,7 +54,7 @@
 				<ui:param name="controller" value="#{controller}" />
 				<aon:valueParam name="formList" value="#{to!=controller.handler.data}" />
 				<aon:valueParam name="formEdit" value="#{to==controller.handler.data}" />
-				<aon:valueParam name="formNew" value="#{to==null and controller.handler.new}" />
+				<aon:valueParam name="formNew" value="#{to==null and controller.handler.nevv}" />
 				<aon:valueParam name="container" value="#{controller.beanName}VarContainer" />
 				
 			</ui:include>
@@ -93,14 +93,14 @@
 					<aon:div >			
 						<aon:commandButton id="paymentVarSave-New"
 							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
-							rendered="#{to==null and controller.handler.new}"
+							rendered="#{to==null and controller.handler.nevv}"
 							reRender="#{controller.beanName}VarContainer, #{container}"
 							actionListener="#{controller.handler.onSaveVariable}"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							accesskey="#{bundle.aon_key_save_line}" />
 						<aon:commandButton id="paymentVarCancel-New"
 							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
-							rendered="#{to==null and controller.handler.new}"
+							rendered="#{to==null and controller.handler.nevv}"
 							reRender="#{controller.beanName}VarContainer, #{container}"
 							actionListener="#{controller.handler.onCancelVariable}"
 							immediate="true"

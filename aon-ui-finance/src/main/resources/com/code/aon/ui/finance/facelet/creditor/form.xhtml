@@ -13,7 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.finance_creditor_module}" />
 				<ui:param name="controller" value="#{creditor}" />
-				<ui:param name="showMoreMenu" value="#{!creditor.new}" />
+				<ui:param name="showMoreMenu" value="#{!creditor.nevv}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{creditor}" />
@@ -28,12 +28,12 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{creditor.new}">
+				<c:if test="#{creditor.nevv}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/formNewContent.xhtml">
 						<ui:param name="controller" value="#{creditor}" />
 					</ui:include>				
 				</c:if>							
-				<c:if test="#{!creditor.new}">			
+				<c:if test="#{!creditor.nevv}">			
 					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
@@ -50,7 +50,7 @@
 						styleClass="aon-margin-top aon-width-all" columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
-						<c:if test="#{!creditor.new and aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount}">
+						<c:if test="#{!creditor.nevv and aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount}">
 							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
@@ -156,7 +156,7 @@
 		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>
-		<c:if test="#{!creditor.new}">
+		<c:if test="#{!creditor.nevv}">
 			<c:if test="#{aonConfiguration.bean.creditor.showSegment}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
 					<ui:param name="controller" value="#{creditor}" />

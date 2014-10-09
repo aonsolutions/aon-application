@@ -176,14 +176,14 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 		this.selectedTab = selectedTab;
 	}
 	
-	public void initializeVatTax(boolean isNew) throws ManagerBeanException {
+	public void initializeVatTax(boolean isNevv) throws ManagerBeanException {
 		setAnyPreviousAdjust(false);
 		VatTax vatTax = (VatTax) getTo();
 		getParams().setVatTax( vatTax );
 		getParams().setYear( vatTax.getYear() );
 		getParams().setPeriod( vatTax.getPeriod() );
 		getParams().setInvoiceStatus( isScoredInvoices()?InvoiceStatus.SCORED: null);
-		if (isNew) {
+		if (isNevv) {
 			setSummary( getManager().getVatTax(params));
 			calculateTax();
 			saveVatTax();
@@ -195,7 +195,7 @@ public class VatTaxController extends BasicController implements IFiscalModelCon
 
 	public void onChangePeriod(ActionEvent event) {
 		try {
-			if (isNew()) {
+			if (isNevv()) {
 				VatTax vatTax = (VatTax) getTo();
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());

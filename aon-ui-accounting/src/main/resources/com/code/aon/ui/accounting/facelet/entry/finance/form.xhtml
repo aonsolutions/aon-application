@@ -16,7 +16,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle" value="sss #{bundle.accounting_entry_finance_module}" />
-				<ui:param name="toolbarDescription" value="#{financeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:param name="toolbarDescription" value="#{financeEntry.nevv?(bundle.aon_reset):(bundle.aon_editing)}" />
 				
 				<ui:define name="toolbarContent">
 					<aon:commandButton value="#{bundle.accounting_entry_generate}"
@@ -45,21 +45,21 @@
 						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
 						action="accountEntry_search"
 						actionListener="#{financeEntry.onRemove}"
-						rendered="#{!financeEntry.new}"
+						rendered="#{!financeEntry.nevv}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_form" rendered="#{!financeEntry.new}"
+						action="accountEntry_form" rendered="#{!financeEntry.nevv}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_search" rendered="#{financeEntry.new}"
+						action="accountEntry_search" rendered="#{financeEntry.nevv}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />

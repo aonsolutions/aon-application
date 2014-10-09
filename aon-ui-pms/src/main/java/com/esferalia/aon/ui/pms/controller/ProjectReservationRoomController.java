@@ -116,7 +116,7 @@ public class ProjectReservationRoomController extends LinesController {
 
 	public void onAcceptReservationRoom(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
-		if (isNew()) {
+		if (isNevv()) {
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			reservationRoom.setItem(roomAvailability.getFilterParams().getItem());
 		}
@@ -129,7 +129,7 @@ public class ProjectReservationRoomController extends LinesController {
 		Room availableRoom = (Room)BeanManager.getManagerBean(Room.class).get(new Integer(params.get(IPmsConstants.AVAILABLE_ROOM)));
 
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
-		if (isNew()) {
+		if (isNevv()) {
 			reservationRoom.setItem(availableRoom.getItem());
 		}
 		onAccept(event);
@@ -234,7 +234,7 @@ public class ProjectReservationRoomController extends LinesController {
 
 			int roomCount = reservationService.getProjectReservation().getRoomCount();
 			int serviceRoom = (reservationService.getProjectReservationRoom() == null) ? 0 : reservationService.getProjectReservationRoom().intValue();
-			if ((isNew() && roomCount == 0) || (!isNew() && (roomCount == 1 || serviceRoom == reservationRoom.getId().intValue()))) {
+			if ((isNevv() && roomCount == 0) || (!isNevv() && (roomCount == 1 || serviceRoom == reservationRoom.getId().intValue()))) {
 				services[servicesList.indexOf(reservationService)] = reservationService.getId();
 			}
 		}

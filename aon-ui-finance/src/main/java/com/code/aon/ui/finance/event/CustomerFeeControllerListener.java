@@ -92,7 +92,7 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		if (!event.getController().isNew()) {
+		if (!event.getController().isNevv()) {
 			event.getController().initializeModel();
 		}
 	}

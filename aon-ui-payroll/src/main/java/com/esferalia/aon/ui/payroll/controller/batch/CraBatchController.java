@@ -122,7 +122,7 @@ public class CraBatchController extends BasicController {
 	
 	public void onCreateDisk(ActionEvent event) {
 		try {
-			if(this.isNew()){
+			if(this.isNevv()){
 				getNewBatchWizard().accept(event);
 			}
 			CraBatch batch = (CraBatch) getTo();
@@ -228,7 +228,7 @@ public class CraBatchController extends BasicController {
 			this.controller = controller;
 		}
 
-		public boolean isNew(){
+		public boolean isNevv(){
 			return true;
 		}
 		

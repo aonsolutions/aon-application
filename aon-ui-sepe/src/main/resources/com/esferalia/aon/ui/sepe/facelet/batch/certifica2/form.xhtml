@@ -7,11 +7,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<c:if test="#{certifica2Batch.new}" >
+	<c:if test="#{certifica2Batch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/form_new.xhtml" />
 	</c:if>
 
-	<c:if test="#{!certifica2Batch.new}" >
+	<c:if test="#{!certifica2Batch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.sepe_certifica2Batch_module}" />
 			<ui:param name="skipSaveButton" value="#{true}" />
