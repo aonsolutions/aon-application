@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.37.4
+# Version: 8.2.0
 # Created by: girazu
-# Creation Date: 15/07/2014 13:45
+# Creation Date: 10/10/2014 11:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3847,6 +3847,8 @@ CREATE TABLE `domain_gserviceaccount` (
   `private_key` mediumblob,
   `client_secret` mediumblob,
   `domain` int(4) default NULL,
+  `size` double default '0',
+  `limit` double default '0',
   PRIMARY KEY  (`client_id`),
   KEY `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN_IDX` (`domain`),
   CONSTRAINT `FK_DOMAIN_GSERVICEACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -4379,8 +4381,8 @@ CREATE TABLE `fs_model200` (
   `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
   `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
-  `phone1` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono 1',
-  `phone2` varchar(9) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Telefono 2',
+  `phone1` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'Telefono 1',
+  `phone2` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'Telefono 2',
   `complementary` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion complementaria',
   `receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion',
   `complementary_receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion sustituida',
@@ -7592,7 +7594,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.37.7');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.2.0');
 
 COMMIT;
 
