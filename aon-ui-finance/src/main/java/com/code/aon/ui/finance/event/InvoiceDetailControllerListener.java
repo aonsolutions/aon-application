@@ -40,15 +40,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			if (invoiceDetail.getLine() == 1) {
-				CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-				List<SelectItem> workPlaces = companyCollections.getCurrentUserWorkPlaces();
-				if (workPlaces.size() > 0) {
-					invoiceDetail.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
-				}
-			} else {
-				invoiceDetail.setWorkPlace(obtainPreviousWorkPlace(invoice));
-			}
+			fillPosWorkPlace(event, invoiceDetail);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -65,10 +57,14 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
-		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
-			fillPosWorkPlace(event, invoiceDetail);
+		try {
+			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
+			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
+				fillPosWorkPlace(event, invoiceDetail);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
@@ -80,11 +76,15 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		invoiceDetail.setInvoice(controller.getInvoice());
-		invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
-		if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
-			fillPosWorkPlace(event, invoiceDetail);
+		try {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+			invoiceDetail.setInvoice(controller.getInvoice());
+			invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
+			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
+				fillPosWorkPlace(event, invoiceDetail);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
@@ -140,6 +140,23 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
+	private void fillPosWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		Invoice invoice = (Invoice)controller.getInvoice();
+		if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
+			invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
+		} else if (invoiceDetail.getLine() == 1) {
+			CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			List<SelectItem> workPlaces = companyCollections.getCurrentUserWorkPlaces();
+			if (workPlaces.size() > 0) {
+				invoiceDetail.setWorkPlace((WorkPlace)workPlaces.get(0).getValue());
+			}
+		} else {
+			invoiceDetail.setWorkPlace(obtainPreviousWorkPlace(invoice));
+		}
+
+	}
+
 	private WorkPlace obtainPreviousWorkPlace(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
@@ -154,14 +171,6 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	private double obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		return controller.getPriceStrategy().getBasePrice(invoiceDetail);
-	}
-
-	private void fillPosWorkPlace(ControllerEvent event, InvoiceDetail invoiceDetail) {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		Invoice invoice = (Invoice)controller.getInvoice();
-		if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
-			invoiceDetail.setWorkPlace(invoice.getPosShift().getPos().getWorkPlace());
-		}
 	}
 
 	private void refreshInvoiceData(InvoiceDetailController controller) {
