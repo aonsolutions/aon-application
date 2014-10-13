@@ -16,7 +16,7 @@
 	<aon:inputText id="RegistryAttachment_description" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 	
-	<c:if test="#{!controller.serviconvenios}">
+	<aon:if test="#{!showServiconvenios}">
 		<aon:outputLabel for="RegistryAttachment_mimeType"
 			value="#{bundle.aon_type}" />
 		<aon:selectOneMenu id="RegistryAttachment_mimeType"
@@ -30,7 +30,7 @@
 	<ui:include 
 		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
 		
-	<c:if test="#{!controller.serviconvenios}">
+	<aon:if test="#{!showServiconvenios}">
 		<ui:include
 			src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
 			
@@ -92,8 +92,8 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 			
-	<c:if test="#{!controller.serviconvenios}">
-		<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{!showServiconvenios}">
+		<aon:if test="#{aonRole.confidentiality}">
 			<aon:outputLabel for="RegistryAttachment_securityLevel"
 				value="#{bundle.aon_confidential}" />
 			<aon:selectOneRadio id="RegistryAttachment_securityLevel" 
