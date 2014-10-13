@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,7 @@ import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -431,21 +433,25 @@ public class DriveUtils implements IBlobManager {
 		File file = newFile(fileInfo.getMimetype(), fileInfo.getTitle());
 		file.setModifiedDate(new DateTime(new Date()));
 		file.setParents(parents);
+		file.setProperties(setProperties(drive, fileInfo, domain));
 		// File's content.
 
-		java.io.File fileContent = Utils.InputStreamToFile(fileInfo);
-		FileContent mediaContent = new FileContent(file.getMimeType(),
-				fileContent);
+		//java.io.File fileContent = Utils.InputStreamToFile(fileInfo);
+		// FileContent mediaContent = new FileContent(file.getMimeType(),
+		// fileContent);
+		InputStreamContent mediaContent = new InputStreamContent(
+				file.getMimeType(), fileInfo.getData());
 
 		try {
+			
+			long start = System.currentTimeMillis();
+			
 			file = drive.files().insert(file, mediaContent).execute();
-			// GmailUtils.createEmail("aibanezdegau004@gmail.com",
-			// "aonsolutions@gmail.com", "", "hola");
-			setProperties(drive, file.getId(), fileInfo, domain);
-			LOGGER.info("Document uploaded: {}-{}",
-					file.getId() + file.getTitle());
-			// Dar permisos al archivo
-			fileContent.delete();
+
+			long time = System.currentTimeMillis() - start;
+			
+			LOGGER.info("Document uploaded: {}-{} ({}s)",
+					file.getId() , file.getTitle() , (time/1000d) );
 			return file;
 		} catch (IOException e) {
 			LOGGER.error("Error uploading document: {}-{}. {}", file.getId()
@@ -454,8 +460,7 @@ public class DriveUtils implements IBlobManager {
 		}
 	}
 
-	private static void setProperties(Drive drive, String id,
-			FileInfo fileInfo, String domain) throws AonConnectionException,
+	private static List<Property> setProperties(Drive drive, FileInfo fileInfo, String domain) throws AonConnectionException,
 			SQLException, IOException {
 		String name = "otros";
 		Result<Record1<String>> categoryName = getCategoryName(
@@ -484,11 +489,20 @@ public class DriveUtils implements IBlobManager {
 		Property property4 = new Property();
 		property4.setValue(fileInfo.getAonType());
 		property4.setKey("aontype");
+		
+		List<Property> properties = new ArrayList<Property>(4);
+		properties.add(property1);
+		properties.add(property2);
+		properties.add(property3);
+		properties.add(property4);
+		
+		return properties;
 
-		drive.properties().insert(id, property1).execute();
-		drive.properties().insert(id, property2).execute();
-		drive.properties().insert(id, property3).execute();
-		drive.properties().insert(id, property4).execute();
+		//drive.properties().insert(id, property1).execute();
+		//drive.properties().insert(id, property2).execute();
+		//drive.properties().insert(id, property3).execute();
+		//drive.properties().insert(id, property4).execute();
+		
 
 	}
 
@@ -611,14 +625,14 @@ public class DriveUtils implements IBlobManager {
 		return file;
 	}
 
-	public static File newFile(short mimetype, String title) {
+	public static File newFile(Byte mimetype, String title) {
 
-		MimeType t = MimeType.values()[mimetype];
 		File file = new File();
 
 		file.setShared(true);
 		file.setTitle(title);
-		file.setMimeType(t.getName());
+		if (mimetype != null)
+			file.setMimeType(MimeType.values()[mimetype].getName());
 
 		// file.setAppDataContents(true);// Indica que es un archivo de la
 		// aplicación, por lo tanto, el usuario no podrá borrar el archivo.
@@ -794,7 +808,9 @@ public class DriveUtils implements IBlobManager {
 		// PRINCIPAL!!!!!!
 		FileInfo fileInfo = new FileInfo("registry", rattach.getType(),
 				rattach.getData(), rattach.getDriveId(), rattach.getId(),
-				rattach.getDescription(), rattach.getMimeType());
+				rattach.getDescription(),
+				rattach.getMimeType() != null ? rattach.getMimeType()
+						.byteValue() : null);
 		fileInfo.setEmails(emails);
 		fileInfo.setIsNomina(true);
 		Drive drive = serviceInitialize(d);

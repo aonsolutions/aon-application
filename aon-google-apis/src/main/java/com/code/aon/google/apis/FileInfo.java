@@ -43,7 +43,7 @@ public class FileInfo {
 	private String driveId;
 	private int fileId;
 	private String title;
-	private short mimetype;
+	private Byte mimetype;
 	private int category;
 	private Vector<String> emails = new Vector<String>();
 	private Boolean isNomina = false;
@@ -53,7 +53,7 @@ public class FileInfo {
 	}
 
 	public FileInfo(String aonType, short type, InputStream data,
-			String driveId, int fileId, String title, short mimetype) {
+			String driveId, int fileId, String title, Byte mimetype) {
 		// TODO Apéndice de constructor generado automáticamente
 		this.type = type;
 		this.data = data;
@@ -95,11 +95,11 @@ public class FileInfo {
 		this.title = title;
 	}
 
-	public short getMimetype() {
+	public Byte getMimetype() {
 		return mimetype;
 	}
 
-	public void setMimetype(short mimetype) {
+	public void setMimetype(Byte mimetype) {
 		this.mimetype = mimetype;
 	}
 

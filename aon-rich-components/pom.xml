@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
@@ -22,12 +23,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- RichFaces libraries -->		
+		<!-- RichFaces libraries -->
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
 			<artifactId>richfaces-ui</artifactId>
 			<version>3.3.3.Final</version>
-			<scope>compile</scope>			
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-digester</groupId>
@@ -51,8 +52,8 @@
 				</exclusion>
 				<exclusion>
 					<groupId>javax.servlet</groupId>
-					<artifactId>jstl</artifactId> 
-				</exclusion> 				
+					<artifactId>jstl</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -72,7 +73,7 @@
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
-			</exclusions>			
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -103,17 +104,25 @@
 			<groupId>com.sun.facelets</groupId>
 			<artifactId>jsf-facelets</artifactId>
 			<version>1.1.15</version>
-	    </dependency>
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.google.apis</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+			</exclusions>
+		</dependency>
 	</dependencies>
-    <profiles>
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
-    </profiles>
+	<profiles>
+		<profile>
+			<id>perform-stats</id>
+		</profile>
+	</profiles>
 </project>
  

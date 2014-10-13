@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Formula;
 
@@ -37,7 +38,9 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 
 	@Formula("IFNULL(LENGTH(data),0)")
 	public Integer getSize() {
-		return size;
+    	if ( data == null && getDriveId() != null )
+    		return 666;
+    	return size;
 	}
 
 	public void setSize(Integer size) {

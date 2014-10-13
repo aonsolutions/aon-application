@@ -1540,8 +1540,9 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 								+RattachColumns.CATEGORY+",G.*, D."+DomainColumns.NAME
 					+ " FROM (" + SQLConstants.RATTACH +" AS RA inner join "+SQLConstants.DOMAIN+" AS D ON RA."+RattachColumns.DOMAIN+" = D."+DomainColumns.ID
 					+ ") inner join "+SQLConstants.DOMAIN_GSERVICEACCOUNT+" AS G ON (G."+DomainGserviceaccountColumns.DOMAIN+" = D."+DomainColumns.ID+" OR D."
-					+ DomainColumns.PARENT+" = G."+DomainGserviceaccountColumns.DOMAIN+") "
-					+ "WHERE D."+DomainColumns.NAME+" = ? OR D."+DomainColumns.PARENT+ " IN(SELECT "+DomainColumns.ID
+					+ DomainColumns.PARENT + " = G."
+					+ DomainGserviceaccountColumns.DOMAIN + ") " + "WHERE D."
+					+ DomainColumns.NAME + " = ? OR D."+DomainColumns.PARENT+ " IN(SELECT "+DomainColumns.ID
 																							+" FROM "+SQLConstants.DOMAIN
 																							+" WHERE "+DomainColumns.NAME+" = ?)" ;
 																
@@ -1561,7 +1562,7 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 				//todos los atributos de la tabla... error en el proyecto aon.sql.google
 				attach.setAonType("registry");
 				attach.setFileId(rs.getInt(RattachColumns.ID));
-				attach.setMimetype(rs.getShort(RattachColumns.MIMETYPE));
+				attach.setMimetype(rs.getByte(RattachColumns.MIMETYPE));
 				attach.setTitle(rs.getString(RattachColumns.DESCRIPTION));
 				attach.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
 				

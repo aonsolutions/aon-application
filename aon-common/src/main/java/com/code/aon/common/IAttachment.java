@@ -11,7 +11,22 @@ import com.code.aon.common.enumeration.MimeType;
 
 public interface IAttachment extends ITransferObject, Cloneable {
 
+
+	/**
+     * Return the domain's identifier.
+     *
+     * @return The identifier.
+     */
+	int getDomain();
+
     /**
+     * Assign the domain's identifier.
+     * 
+     * @param domain The domain's identifier.
+     */
+    void setDomain(int domain);
+
+	/**
      * Return the identifier.
      *
      * @return The identifier.
@@ -33,6 +48,20 @@ public interface IAttachment extends ITransferObject, Cloneable {
 	MimeType getMimeType();
 
     /**
+     * Return the Google Drive UID.
+     * 
+     * @return The Google Drive UID. 
+     */
+	String getDriveId();
+
+    /**
+     * Assign the Google Drive UID.
+     * 
+     * @param uid The UID.
+     */
+	void setDriveId(String uid);
+
+	/**
      * Assign the mime type.
      * 
      * @param mimeType The mime type..

@@ -12,11 +12,25 @@ public class BasicAttachment implements IAttachment {
 
 	private Integer id;
 	
+	private Integer domain;
+
 	private MimeType mimeType;
 	
 	private byte[] data;
 	
 	private String description;
+
+	private String driveId;
+	
+	@Override
+	public int getDomain() {
+		return domain;
+	}
+	
+	@Override
+	public void setDomain(int domain) {
+		this.domain = domain;
+	}
 
 	@Override
 	public Integer getId() {
@@ -26,6 +40,16 @@ public class BasicAttachment implements IAttachment {
 	@Override
 	public void setId(Integer primaryKey) {
 		this.id = primaryKey;
+	}
+	
+	@Override
+       	public String getDriveId(){
+		return driveId;
+	}
+	
+	@Override
+       	public void setDriveId(String driveId) {
+		this.driveId = driveId;
 	}
 
 	@Override

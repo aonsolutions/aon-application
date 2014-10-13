@@ -34,6 +34,7 @@ import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.pool.AonConnectionException;
@@ -966,7 +967,9 @@ public class DBConsults {
 				FileInfo fileInfo = new FileInfo();
 				fileInfo.setAonType("project");
 				fileInfo.setFileId(record4.value1());
-				fileInfo.setMimetype(record4.value2());
+				Byte mimeType = record4.value2();
+				if ( mimeType != null )
+					fileInfo.setMimetype(mimeType);
 				fileInfo.setTitle(record4.value3());
 				fileInfo.setCategory(-2);
 				fileInfo.setDriveId(record4.value4());
@@ -995,6 +998,7 @@ public class DBConsults {
 					.select(PROJECT_ATTACH.DATA)
 					.from(PROJECT_ATTACH)
 					.where(PROJECT_ATTACH.ID.eq(fileInfo.getFileId()))
+					.and(PROJECT_ATTACH.DATA.isNotNull())
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
