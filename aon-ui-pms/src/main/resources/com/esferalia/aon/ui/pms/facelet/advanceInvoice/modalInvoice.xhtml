@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showInvoiceWindow">
-		<c:if test="#{controller.showInvoiceWindow}">
+		<aon:if test="#{controller.showInvoiceWindow}">
 			<rich:modalPanel id="invoiceModalPanel" minHeight="340" minWidth="580" 
 				rendered="#{controller.showInvoiceWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -75,7 +75,7 @@
 												focus="AdvanceInvoice_percent" />
 										</aon:selectInputDate>
 
-										<c:if test="#{!searchListener.guestReservationSearch}">
+										<aon:if test="#{!searchListener.guestReservationSearch}">
 											<aon:outputLabel for="AdvanceInvoice_percent"
 												value="#{bundle.pms_invoice_percent}" />
 											<aon:inputText id="AdvanceInvoice_percent" 
@@ -84,24 +84,24 @@
 												ajaxSingle="true">
 												<f:validateDoubleRange minimum="1" maximum="100" />
 											</aon:inputText>
-										</c:if>
+										</aon:if>
 
 										<aon:outputLabel for="AdvanceInvoice_payMethod"
 											value="#{bundle.finance_payMethod}" />
-										<c:if test="#{searchListener.guestReservationSearch}">
+										<aon:if test="#{searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
 												value="#{controller.advancePayMethod}" required="true" 
 												ajaxSingle="true">
 												<f:selectItems value="#{configCollections.directPayMethods}" />
 											</aon:selectOneMenu>
-										</c:if>
-										<c:if test="#{!searchListener.guestReservationSearch}">
+										</aon:if>
+										<aon:if test="#{!searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
 												value="#{controller.advancePayMethod}" required="true"
 												reRender="invoiceModalContent" ajaxSingle="true">
 												<f:selectItems value="#{configCollections.payMethods}" />
 											</aon:selectOneMenu>
-										</c:if>
+										</aon:if>
 
 										<aon:outputLabel for="AdvanceInvoice_bank"
 											rendered="#{controller.bankRequired}"
@@ -141,7 +141,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

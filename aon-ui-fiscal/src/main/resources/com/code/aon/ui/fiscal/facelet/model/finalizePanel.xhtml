@@ -9,7 +9,7 @@
 	xmlns:rich="http://richfaces.org/rich">
  
 	<aon:div id="finalizeContainer">
-		<c:if test="#{controller.finalizePanelVisible}">
+		<aon:if test="#{controller.finalizePanelVisible}">
 			<rich:modalPanel id="finalizePanel" minHeight="400"
 				minWidth="700"
 				showWhenRendered="#{controller.finalizePanelVisible}" zindex="90">
@@ -39,7 +39,7 @@
 							</aon:div>
 						</aon:div>
 						<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-							<c:if test="#{controller.declaration.result &gt; 0 or (!controller.to.model311 and !controller.to.model303)}">
+							<aon:if test="#{controller.declaration.result &gt; 0 or (!controller.to.model311 and !controller.to.model303)}">
 								<aon:panelGrid id="finalizeGrid" columns="2" style="width: 100%;"
 										columnClasses="aon-panelGrid-odd aon-width-140
 													,aon-panelGrid-even aon-width-auto">
@@ -77,8 +77,8 @@
 										<f:selectItems value="#{controller.activeBanks}" />
 									</aon:selectOneMenu>
 								</aon:panelGrid>
-							</c:if>
-							<c:if test="#{controller.to.model311 and controller.declaration.result &lt; 0}">
+							</aon:if>
+							<aon:if test="#{controller.to.model311 and controller.declaration.result &lt; 0}">
 								<aon:div>
 									<aon:selectBooleanCheckbox id="m311_payback"
 										value="#{controller.payBack}" ajaxSingle="true"
@@ -88,7 +88,7 @@
 										value="Marque si desea devoluci&#243;n, en caso contrario la declaraci&#243;n ser&#225; a compensar."/>
 								</aon:div>
 								
-								<c:if test="#{controller.payBack}">
+								<aon:if test="#{controller.payBack}">
 									<aon:panelGrid id="finalizeGrid2" columns="2" style="width: 100%;"
 											columnClasses="aon-panelGrid-odd aon-width-140
 														,aon-panelGrid-even aon-width-auto">
@@ -126,13 +126,13 @@
 											<f:selectItems value="#{controller.activeBanks}" />
 										</aon:selectOneMenu>
 									</aon:panelGrid>
-								</c:if>
-							</c:if>
+								</aon:if>
+							</aon:if>
 						</aon:div>
 					</aon:div>
 					</aon:form>
 				</aon:div>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:div>
 </ui:composition>

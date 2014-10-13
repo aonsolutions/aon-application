@@ -70,11 +70,11 @@
 					<f:setPropertyActionListener value="#{lto}" target="#{lookupTo}" />
 				</a4j:support>			
             </rich:suggestionbox>
-			<c:if test="#{fn:length(lookupTo.description) > 64}">
+			<aon:if test="#{fn:length(lookupTo.description) > 64}">
 				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
 					<aon:outputText value="#{lookupTo.description}" />
 				</rich:toolTip>
-			</c:if>
+			</aon:if>
 			<aon:inputText  
 				value="#{lookupTo.description}" rendered="#{lookupTo!=null}" disabled="#{true}" size="64">
 				<aon:abbreviateConverter maxWidth="64" />

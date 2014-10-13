@@ -7,13 +7,13 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<c:if test="#{activityViewer.assetModel==null or activityViewer.assetModel.rowCount le 0 }" >
+	<aon:if test="#{activityViewer.assetModel==null or activityViewer.assetModel.rowCount le 0 }" >
 		<aon:div style="width:100%;" > 
 			<aon:outputText value="No se encontraron resultados -i18n-" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{activityViewer.assetModel!=null and activityViewer.assetModel.rowCount gt 0 }" >
+	<aon:if test="#{activityViewer.assetModel!=null and activityViewer.assetModel.rowCount gt 0 }" >
 	<rich:dataTable id="assetActivityCalendar" value="#{activityViewer.assetModel}" var="to">
 		<f:facet name="header" >
 			<rich:columnGroup>
@@ -94,6 +94,6 @@
 		
 	
 	</rich:dataTable>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

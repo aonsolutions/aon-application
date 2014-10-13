@@ -9,7 +9,7 @@
 
 	<c:set var="total" value="#{0.00}" />
 	
-	<c:if test="#{  ( deductions.count == 0 ) and (empty hide) }" >
+	<aon:if test="#{  ( deductions.count == 0 ) and (empty hide) }" >
 		<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
 			<aon:outputText value="#{deductions.name}" />
 		</aon:div>
@@ -19,9 +19,9 @@
 		<aon:div style="border-bottom: solid #CCCCCC 1px;">
 			<aon:outputText value="&#160;"/>
 		</aon:div>
-	</c:if>			
+	</aon:if>			
 	
-	<c:if test="#{deductions.count == 1}" >
+	<aon:if test="#{deductions.count == 1}" >
 		<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
 			<aon:outputText value="#{  deductions.list[0].type == 'OTHER' ? deductions.list[0].name : deductions.name }" />
 		</aon:div>
@@ -36,9 +36,9 @@
 			</aon:outputText>
 		</aon:div>
 		<c:set var="total" value="#{total + costs[0].amount}" />
-	</c:if>			
+	</aon:if>			
 	
-	<c:if test="#{deductions.count > 1}" >
+	<aon:if test="#{deductions.count > 1}" >
 		<c:set var="subTotal" value="#{0.00}" />
 		<c:forEach var="cost" items="#{deductions.list}">
 
@@ -72,7 +72,7 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:div>
-	</c:if>		
+	</aon:if>		
 		
 
 </ui:composition>			

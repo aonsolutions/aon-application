@@ -54,7 +54,7 @@
 					<ui:param name="termsOfServiceURL" value="#{adminMain.properties.newDomainApplicationURL}" />
 				</ui:include>
 									
-				<c:if test="#{!domainApplication.nevv}">
+				<aon:if test="#{!domainApplication.nevv}">
 					<aon:panelTabSet selectedTab="#{domainApplication.selectedTab}">
 						<aon:panelTab name="users"
 							label="#{bundle.admin_users}">
@@ -81,7 +81,7 @@
 	                    </aon:panelTab>	                    
 
 					</aon:panelTabSet>
-				</c:if>						
+				</aon:if>						
 				
 			</aon:div>
 		</aon:form>

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="#{controller.beanName}ModalContainer">
-		<c:if test="#{controller.modalPanelVisible}">
+		<aon:if test="#{controller.modalPanelVisible}">
 			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="#{controller.handler.totalVariablesCount>0?650:500}" 
 				minWidth="#{controller.handler.totalVariablesCount>0?999:700}" showWhenRendered="true" style="overflow:auto;" zindex="90">
 				<f:facet name="header">
@@ -61,7 +61,7 @@
 										<ui:insert name="gridContent"/>
 									</aon:div>
 									
-									<c:if test="#{controller.handler.totalVariablesCount>0}">
+									<aon:if test="#{controller.handler.totalVariablesCount>0}">
 										<ui:include 
 											src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
 											<ui:param name="controller" value="#{controller}" />
@@ -72,7 +72,7 @@
 										<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 											<ui:insert name="afterVariablesContent"/>
 										</aon:div>
-									</c:if>
+									</aon:if>
 									
 								</aon:div>
 							</aon:div>
@@ -82,16 +82,16 @@
 				
 				<ui:insert name="afterModalContent"/>
 				
-				<c:if test="#{!skipModalHelper}">
+				<aon:if test="#{!skipModalHelper}">
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
 						<ui:param name="controller" value="#{controller}" />
 						<ui:param name="container" value="#{controller.beanName}VarContainer" />
 						<ui:param name="helperSuffix" value="-Modal" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 	
 				

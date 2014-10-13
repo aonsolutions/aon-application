@@ -13,7 +13,7 @@
 					   aon-panelGrid2-header,
 					   aon-panelGrid2-header">
 
-		<c:if test="#{showBlockHeader}">
+		<aon:if test="#{showBlockHeader}">
 			<aon:div styleClass="aon-panelGrid2-header-text">
 				<aon:commandLink styleClass="aon-dataTable-link-noicon"
 					actionListener="#{vatReport.onDetail}" 
@@ -45,7 +45,7 @@
 					<f:param name="vatType" value="#{vatReport.investment}"/>
 				</aon:commandLink>
 			</aon:div>
-		</c:if>
+		</aon:if>
 		
 		<!-- IVA TIPO -->				
 		<aon:div styleClass="aon-panelGrid2-header-text">
@@ -135,7 +135,7 @@
 			</aon:column>
 		</aon:dataTable>
 
-		<c:if test="#{showBlockTotal}">
+		<aon:if test="#{showBlockTotal}">
 			<aon:div styleClass="aon-panelGrid2-total-title">
 				<aon:outputText value="#{bundle.aon_total}:"/>
 			</aon:div>
@@ -160,6 +160,6 @@
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{vatReport.summary[vatReport.investment].map[blockType].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
 			</aon:panelGrid>
-		</c:if>
+		</aon:if>
 	</aon:panelGrid>
 </ui:composition>

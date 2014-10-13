@@ -6,13 +6,13 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
-		<c:if test="#{empty notitle}">
+		<aon:if test="#{empty notitle}">
 			<aon:div style="margin-left: 20px;">
 				<aon:outputText value="#{empty title ? payments.name : title }" />
 			</aon:div>
 			<aon:outputText value="&#160;"/>
 			<aon:outputText value="&#160;"/>
-		</c:if>
+		</aon:if>
 			
 			<c:forEach  var="payment" items="#{payments.collection}">
 				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">

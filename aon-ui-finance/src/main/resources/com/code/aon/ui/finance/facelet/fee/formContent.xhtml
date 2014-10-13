@@ -14,13 +14,13 @@
 			value="#{controller.to.line}" 
 			required="true" size="2" maxlength="3" />
 
-		<c:if test="#{aonRole.confidentiality}">
+		<aon:if test="#{aonRole.confidentiality}">
 			<aon:div>
 				<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
 					value="#{controller.to.confidential}" />
 				<aon:outputLabel for="CustomerFee_securityLevel" value="#{bundle.aon_confidential}" />
 			</aon:div>
-		</c:if>
+		</aon:if>
 	</aon:panelGrid>
 
 	<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
@@ -137,26 +137,26 @@
 		</aon:div>
 	</aon:div>
 
-	<c:if test="#{controller.to.invoicingGroup.id == null or controller.invoicingGroupInMyScopes}">
+	<aon:if test="#{controller.to.invoicingGroup.id == null or controller.invoicingGroupInMyScopes}">
 		<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{controller.to.invoicingGroup}" />
 		</ui:include>
-	</c:if>
-	<c:if test="#{controller.to.invoicingGroup.id != null and !controller.invoicingGroupInMyScopes}">
+	</aon:if>
+	<aon:if test="#{controller.to.invoicingGroup.id != null and !controller.invoicingGroupInMyScopes}">
 		<aon:outputText	value="#{bundle.customer_invoicingGroup}" />
 		<aon:outputText	value="#{controller.to.invoicingGroup.customer.registry.fullName}" />
-	</c:if>
+	</aon:if>
 
 	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 		<ui:param name="lookupTo" value="#{controller.to.seller}" />
 	</ui:include>
 
-	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+	<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 		<aon:outputLabel for="CustomerFee_workPlace" value="#{bundle.purchase_workplace}" />
 		<aon:selectOneMenu id="CustomerFee_workPlace" 
 			value="#{controller.to.workPlace}" >
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

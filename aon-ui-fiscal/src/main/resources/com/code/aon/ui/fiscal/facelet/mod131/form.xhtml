@@ -18,7 +18,7 @@
 				<ui:param name="skipHeader" value="#{true}" />
 				
 				<ui:define name="customDetail">
-					<c:if test="#{!controller.nevv}">
+					<aon:if test="#{!controller.nevv}">
 					
 						<ui:include src="/com/code/aon/ui/fiscal/facelet/mod131/activitiesGrid.xhtml"/>
 						
@@ -27,7 +27,7 @@
 								<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detailContent.xhtml"/>
 							</aon:dataTable>
 						</aon:div>
-					</c:if>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 	</ui:define>

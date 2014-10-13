@@ -22,14 +22,14 @@
 					<ui:param name="controller" value="#{withholdingReport}" />
 
 					<ui:define name="columns">
-						<c:if test="#{aonConfiguration.bean.fiscal.enterpriseEnabled}">
+						<aon:if test="#{aonConfiguration.bean.fiscal.enterpriseEnabled}">
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_company}" />
 								</f:facet>
 								<aon:outputText value="#{to.enterprise}" />		
 							</aon:column>					
-						</c:if>
+						</aon:if>
 						
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100}">
 							<f:facet name="header">

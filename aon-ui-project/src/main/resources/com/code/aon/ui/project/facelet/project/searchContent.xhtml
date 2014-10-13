@@ -6,9 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Project_name"
 		value="#{bundle.aon_name}" />
@@ -63,7 +63,7 @@
 		<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
 	</aon:selectOneMenu>
 	
-	<c:if test="#{!aonConfiguration.bean.project.skipProjectFlags}">
+	<aon:if test="#{!aonConfiguration.bean.project.skipProjectFlags}">
 		<aon:outputLabel for="Project_commercial" style="white-space:normal;"
 			value="#{bundle.project_commercial}"/>
 		<aon:selectOneMenu id="Project_commercial"
@@ -90,6 +90,6 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

@@ -78,7 +78,7 @@
 		</ui:define>
 		
 		<ui:define name="endFormListContent">
-			<c:if test="#{!actionDenied.skip['alumn']}">
+			<aon:if test="#{!actionDenied.skip['alumn']}">
 
 				<aon:div  
 					onmouseover="disableRowSelector();"
@@ -91,7 +91,7 @@
 						action="alumn_form"
 						reRender="aonContent" />
 				</aon:div>
-			</c:if>
+			</aon:if>
 		</ui:define>
 
 	</ui:decorate>

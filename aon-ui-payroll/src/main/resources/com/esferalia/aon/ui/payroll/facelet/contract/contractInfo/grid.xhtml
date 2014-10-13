@@ -108,7 +108,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:define name="columns">
 			
-			<c:if test="#{showContractFieldsColumn}">
+			<aon:if test="#{showContractFieldsColumn}">
 				<aon:column alias="ContractInfo.name"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
@@ -131,8 +131,8 @@
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>
-			</c:if>
-			<c:if test="#{!showContractFieldsColumn}">
+			</aon:if>
+			<aon:if test="#{!showContractFieldsColumn}">
 				<aon:column alias="ContractInfo.name"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
@@ -149,7 +149,7 @@
 							value="#{controller.to.name}" maxlength="32" />
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 			
 			<aon:column alias="ContractInfo.expression"
 				styleClass="aon-editDataTable-textColumn">

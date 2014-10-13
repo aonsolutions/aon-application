@@ -10,7 +10,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:define name="columns">
 		
-			<c:if test="#{!skipTypeColumn}"> 
+			<aon:if test="#{!skipTypeColumn}"> 
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputLabel for="ItemAttach_type" value="#{bundle.aon_type}" />
@@ -24,7 +24,7 @@
 						</aon:selectOneMenu>									
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
 				<f:facet name="header">
@@ -41,7 +41,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<c:if test="#{!skipMimetypeColumn}">
+			<aon:if test="#{!skipMimetypeColumn}">
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputLabel for="ItemAttach_mimeType" value="#{bundle.product_mimetype}" />
@@ -53,7 +53,7 @@
 							disabled="true" rendered="#{formNew}" />
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 			 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap">
 				<f:facet name="header">

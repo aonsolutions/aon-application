@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showCertificadosBatchWindow">
-		<c:if test="#{controller.showBatchWindow}">
+		<aon:if test="#{controller.showBatchWindow}">
 			<rich:modalPanel id="batchModalPanel" minHeight="350"
 				minWidth="350" rendered="#{controller.showBatchWindow}"
 				showWhenRendered="true" zindex="91" style="overflow-y:auto">
@@ -98,7 +98,7 @@
 				</aon:form>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

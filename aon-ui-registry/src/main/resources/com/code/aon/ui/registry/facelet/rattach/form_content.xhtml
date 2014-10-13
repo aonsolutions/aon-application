@@ -45,11 +45,11 @@
 		</a4j:region>	
 	</aon:div>
 
-	<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputText value="#{bundle.aon_confidential}" />
 		<aon:selectBooleanCheckbox id="#{controller.beanName}_securityLevel"
 			value="#{controller.to.confidential}" />
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="#{controller.beanName}_attachDate"
 		value="#{bundle.aon_date}" />
@@ -57,7 +57,7 @@
 		popupDateFormat="#{bundle.aon_date_pattern}"
 		value="#{controller.to.attachDate}" />
 
-	<c:if test="#{!skipScopeSelection}">	
+	<aon:if test="#{!skipScopeSelection}">	
 		<aon:outputLabel for="#{controller.beanName}_scope"
 			value="#{bundle.aon_scope}" />
 		<aon:selectOneMenu id="#{controller.beanName}_scope" 
@@ -65,7 +65,7 @@
 			<f:selectItem itemLabel="-" value="#{null}"/>
 			<f:selectItems value="#{configCollections.currentUserScopes}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 	
 	<aon:outputLabel for="#{controller.beanName}_category"
 		value="#{bundle.aon_category}" />

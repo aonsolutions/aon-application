@@ -17,14 +17,14 @@
 		<aon:methodParam name="sendCancelAction" default="#{webmailMessage.getReturnAction}" />
 		<aon:valueParam name="inputTextSize" default="120" />
 		<aon:valueParam name="contentHeight" default="400" />		
-		<c:if test="#{!innerToolbar}">
+		<aon:if test="#{!innerToolbar}">
 			<ui:param name="toolbarTitle" value="#{bundle.webmail_main}" />
 			<ui:param name="toolbarDescription" value="#{bundle.webmail_newmail}" />
-		</c:if>
+		</aon:if>
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:define name="toolbarContent">
-				<c:if test="#{!skipSendButton}">
+				<aon:if test="#{!skipSendButton}">
 					<aon:commandButton id="send#{messageSuffix}"
 						value="#{bundle.webmail_send}"
 						styleClass="aon-icon-accept aon-finding-toolbar-item"
@@ -32,15 +32,15 @@
 						reRender="#{sendButtonReRender}"
 						onclick="Richfaces.showModalPanel('emailWaitProccess#{messageSuffix}')" 
 		     			oncomplete="Richfaces.hideModalPanel('emailWaitProccess#{messageSuffix}')" />
-				</c:if>
-				<c:if test="#{!skipSaveDraftButton}">
+				</aon:if>
+				<aon:if test="#{!skipSaveDraftButton}">
 					<aon:commandButton id="save_draft#{messageSuffix}" 
 						value="#{bundle.webmail_save_draft}"
 						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
 						action="#{saveDraftAction}" actionListener="#{saveDraftActionListener}"
 						reRender="#{saveDraftButtonReRender}" />
-				</c:if>
-				<c:if test="#{!skipSendCancelButton}">				
+				</aon:if>
+				<aon:if test="#{!skipSendCancelButton}">				
 		     		<aon:confirmButton id="sendCancel#{messageSuffix}" immediate="true"
 						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
 						confirmTitle="#{bundle.aon_confirm_title}"
@@ -51,7 +51,7 @@
 						confirmReRender="#{sendCancelButtonReRender}"
 						styleClass="aon-icon-cancel aon-finding-toolbar-item" >
 					</aon:confirmButton>
-				</c:if>	
+				</aon:if>	
 			</ui:define>
 		</ui:decorate>
 
@@ -87,8 +87,8 @@
 						<f:selectItems value="#{marketingTemplate.templates}" />
 					</aon:selectOneMenu>
 					
-					<c:if test="#{!skipRecipients}" >
-						<c:if test="#{!skipToEmail}" >
+					<aon:if test="#{!skipRecipients}" >
+						<aon:if test="#{!skipToEmail}" >
 							<aon:div styleClass="aon-text-right">							
 								<aon:commandButton id="addToEmail#{messageSuffix}"
 									reRender="showEmailWindow#{messageSuffix}" disabled="#{disableContacts}"
@@ -100,13 +100,13 @@
 								<aon:inputText id="NewMail_to#{messageSuffix}"
 									size="#{inputTextSize}"
 									value="#{webmailMessage.recipientsTo}"/>
-								<c:if test="#{!disableContacts}" >
+								<aon:if test="#{!disableContacts}" >
 									<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
 										<ui:param name="inputId" value="NewMail_to#{messageSuffix}" />
 									</ui:include>	
-								</c:if>							
+								</aon:if>							
 							</aon:div>
-						</c:if>
+						</aon:if>
 	
 						<aon:div styleClass="aon-text-right">						
 							<aon:commandButton id="addCcEmail#{messageSuffix}"
@@ -119,11 +119,11 @@
 							<aon:inputText id="NewMail_cc#{messageSuffix}"
 							size="#{inputTextSize}"
 							value="#{webmailMessage.recipientsCc}"/>
-							<c:if test="#{!disableContacts}" >								
+							<aon:if test="#{!disableContacts}" >								
 								<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
 									<ui:param name="inputId" value="NewMail_cc#{messageSuffix}" />
 								</ui:include>
-							</c:if>								
+							</aon:if>								
 						</aon:div>
 						
 						<aon:div styleClass="aon-text-right">							
@@ -137,13 +137,13 @@
 							<aon:inputText id="NewMail_Bcc#{messageSuffix}"
 								size="#{inputTextSize}"
 								value="#{webmailMessage.recipientsBcc}"/>
-							<c:if test="#{!disableContacts}" >
+							<aon:if test="#{!disableContacts}" >
 								<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
 									<ui:param name="inputId" value="NewMail_Bcc#{messageSuffix}" />
 								</ui:include>
-							</c:if>								
+							</aon:if>								
 						</aon:div>
-					</c:if>
+					</aon:if>
 					
 					<aon:div>
 						<aon:outputLabel for="NewMail_Subject#{messageSuffix}" 
@@ -153,7 +153,7 @@
 						size="#{inputTextSize}"
 						value="#{webmailMessage.subject}"/>			
 
-					<c:if test="#{!skipAttachments}" >
+					<aon:if test="#{!skipAttachments}" >
 						<aon:outputLabel for="attach_file#{messageSuffix}" 
 							value="#{bundle.webmail_attach_file}" />
 						<aon:div>
@@ -189,7 +189,7 @@
 								</aon:dataTable>						
 							</aon:div>
 						</aon:div>		
-					</c:if>
+					</aon:if>
 
 				</aon:panelGrid>
 				<aon:panelGrid id="NewMail_optionsGrid#{messageSuffix}"

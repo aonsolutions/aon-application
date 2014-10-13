@@ -22,7 +22,7 @@
 		</f:facet>
 	</aon:column>
 
-	<c:if test="#{showProjectType}">
+	<aon:if test="#{showProjectType}">
 		<aon:column alias="ActivityType.projectType.id" styleClass="aon-editDataTable-text aon-width-auto">
 			<f:facet name="header">
 				<aon:outputLabel for="ActivityType_projectType" value="#{bundle.project_project_type}" />
@@ -41,7 +41,7 @@
 				</aon:selectOneMenu>
 			</f:facet>
 		</aon:column>
-	</c:if>
+	</aon:if>
 	
 	<aon:column alias="ActivityType.active" styleClass="aon-editDataTable-textColumn aon-width-40">
 		<f:facet name="header">

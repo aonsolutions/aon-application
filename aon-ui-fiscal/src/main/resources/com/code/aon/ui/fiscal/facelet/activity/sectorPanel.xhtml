@@ -9,7 +9,7 @@
 	xmlns:rich="http://richfaces.org/rich">
  
 	<aon:div id="sectorDataContainer">
-		<c:if test="#{fiscalActivity.sectorPanelVisible}">
+		<aon:if test="#{fiscalActivity.sectorPanelVisible}">
 			<rich:modalPanel id="sectorPanel" minHeight="600"
 					minWidth="650" rendered="#{fiscalActivity.sectorPanelVisible}"
 					showWhenRendered="true" zindex="90">
@@ -52,7 +52,7 @@
 						</aon:div>
 					</aon:div>
 				</rich:modalPanel>
-			</c:if>
+			</aon:if>
 	</aon:div>
 
 </ui:composition>

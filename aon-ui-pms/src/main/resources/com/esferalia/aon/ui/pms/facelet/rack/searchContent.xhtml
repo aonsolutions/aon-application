@@ -13,7 +13,7 @@
 		<aon:panelCollapsible expanded="true" label="#{bundle.report_rooms}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 
-				<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+				<aon:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 					<aon:outputLabel for="Room_hotel_id"
 						value="#{bundle.aon_module_hotel}" />
 					<aon:selectOneMenu id="Room_hotel_id"
@@ -22,7 +22,7 @@
 						reRender="Room_item_id">
 						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 					</aon:selectOneMenu>
-				</c:if>
+				</aon:if>
 
 				<aon:outputLabel for="Room_item_id"
 					value="#{bundle.pms_room_type}" />

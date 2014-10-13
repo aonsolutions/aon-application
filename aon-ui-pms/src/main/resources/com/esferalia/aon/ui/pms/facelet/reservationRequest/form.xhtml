@@ -27,11 +27,11 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{reservationRequest.nevv}">
+				<aon:if test="#{reservationRequest.nevv}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formNewContent.xhtml" />
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{!reservationRequest.nevv}">
+				<aon:if test="#{!reservationRequest.nevv}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formContent.xhtml" />
 
 					<aon:panelTabSet id="reservationRequestTab" selectedTab="#{reservationRequest.selectedTab}">
@@ -41,7 +41,7 @@
 							</ui:include>
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />

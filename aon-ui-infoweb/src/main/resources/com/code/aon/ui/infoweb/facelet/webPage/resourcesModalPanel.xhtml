@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:panelGroup id="showResourceModalPanel">
-		<c:if test="#{webPage.showResourceModalPanel}">
+		<aon:if test="#{webPage.showResourceModalPanel}">
 			<rich:modalPanel id="resourceModalPanel"
 				rendered="#{webPage.showResourceModalPanel}" showWhenRendered="true"
 				minHeight="400" height="400" width="580">
@@ -51,6 +51,6 @@
 				</rich:panel>
 
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

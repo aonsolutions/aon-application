@@ -23,7 +23,7 @@
 	</aon:div>
 					
 	<aon:div>
-		<c:if test="#{!skipSecurityPanel}">
+		<aon:if test="#{!skipSecurityPanel}">
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
 					<aon:outputText value="#{bundle.aon_security}"/>
@@ -38,10 +38,10 @@
 					</aon:div>
 				</aon:div>
 			</aon:div>
-		</c:if>
+		</aon:if>
 		
 		<aon:div>
-			<c:if test="#{!skipLogoPanel and !skipSignaturePanel}">
+			<aon:if test="#{!skipLogoPanel and !skipSignaturePanel}">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
 						<aon:outputText value="#{bundle.company_logo_and_signature}"/>
@@ -54,10 +54,10 @@
 						</aon:div>
 					</aon:div>
 				</aon:div>			
-			</c:if>
+			</aon:if>
 		</aon:div>
 
-		<c:if test="#{!skipOtherDataPanel}">
+		<aon:if test="#{!skipOtherDataPanel}">
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
 					<aon:outputText value="#{bundle.aon_addInfo}"/>
@@ -74,7 +74,7 @@
 					</aon:div>
 				</aon:div>
 			</aon:div>
-		</c:if>
+		</aon:if>
 	</aon:div>
 
 </ui:composition>

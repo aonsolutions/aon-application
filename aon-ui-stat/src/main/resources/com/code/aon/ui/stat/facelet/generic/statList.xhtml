@@ -66,10 +66,10 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				
-				<c:if test="#{stat.params.workPlace!=null and stat.params.workPlace.id!=null}">
+				<aon:if test="#{stat.params.workPlace!=null and stat.params.workPlace.id!=null}">
 					<aon:outputText value="#{bundle.purchase_workplace}: " styleClass="aon-bold aon-margin-left" />
 					<aon:outputText value="#{stat.params.workPlace.description}" styleClass="aon-margin-left" />
-				</c:if>
+				</aon:if>
 			</aon:panel>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -84,20 +84,20 @@
 							<aon:outputText value="#{categoryLabel}" />
 						</f:facet>
 	
-						<c:if test="#{clickable}">
+						<aon:if test="#{clickable}">
 							<aon:commandLink styleClass="aon-dataTable-link" 
 								value="#{to.name}" action="#{goAction}"
 								actionListener="#{goMethod}"
 								reRender="aonContent">
 								<f:param name="#{paramName}" value="#{to.key}" />
 							</aon:commandLink>
-						</c:if>
+						</aon:if>
 	
-						<c:if test="#{!clickable}">
+						<aon:if test="#{!clickable}">
 							<aon:outputText value="#{to.name}">
 								<f:param name="#{paramName}" value="#{to.key}" />
 							</aon:outputText>
-						</c:if>
+						</aon:if>
 	
 						<f:facet name="footer">
 							<aon:outputText value="#{bundle.report_totals}">
@@ -107,15 +107,15 @@
 	
 					<aon:column styleClass="aon-editDataTable-numberColumn">
 						<f:facet name="header">
-							<c:if test="#{stat.invoiceType==1}">
+							<aon:if test="#{stat.invoiceType==1}">
 								<aon:outputText value="#{bundle.stat_sales_amount}" />
-							</c:if>
-							<c:if test="#{stat.invoiceType==0}">
+							</aon:if>
+							<aon:if test="#{stat.invoiceType==0}">
 								<aon:outputText value="#{bundle.stat_purchases_amount}" />
-							</c:if>
-							<c:if test="#{stat.invoiceType==2}">
+							</aon:if>
+							<aon:if test="#{stat.invoiceType==2}">
 								<aon:outputText value="#{bundle.stat_expenses_amount}" />
-							</c:if>
+							</aon:if>
 						</f:facet>
 						<aon:outputText value="#{to.amount}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -143,7 +143,7 @@
 						</f:facet>
 					</aon:column>
 	
-					<c:if test="#{showProductCountColumn}">
+					<aon:if test="#{showProductCountColumn}">
 						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.stat_productCount}" />
@@ -157,7 +157,7 @@
 								</aon:outputText>
 							</f:facet>
 						</aon:column>
-					</c:if>
+					</aon:if>
 	
 					<aon:column styleClass="aon-editDataTable-numberColumn">
 						<f:facet name="header">

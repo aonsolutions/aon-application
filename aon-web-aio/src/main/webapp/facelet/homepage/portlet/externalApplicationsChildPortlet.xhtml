@@ -7,9 +7,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<c:if test="#{domainSwitcher.childDomain and desktop.state.showExternalApplications}">
+	<aon:if test="#{domainSwitcher.childDomain and desktop.state.showExternalApplications}">
 		<aon:div styleClass="aon-margin-top">
-			<c:if test="#{desktop.state.showTirant}">
+			<aon:if test="#{desktop.state.showTirant}">
 				<aon:div styleClass="aon-portlet aon-margin-bottom">
 					<aon:div styleClass="aon-portlet-title">								
 						<h:outputLink id="tirantWeb" target="_blank"
@@ -21,8 +21,8 @@
 						</h:outputLink>
 					</aon:div>
 				</aon:div>
-			</c:if>
-			<c:if test="#{desktop.state.showServiconvenios}">
+			</aon:if>
+			<aon:if test="#{desktop.state.showServiconvenios}">
 				<aon:div styleClass="aon-portlet aon-margin-bottom">
 					<aon:div styleClass="aon-portlet-title">	
 						<aon:commandLink id="serviconveniosWeb" styleClass="none" 
@@ -35,8 +35,8 @@
 						</aon:commandLink>
 					</aon:div>
 				</aon:div>
-			</c:if>
-			<c:if test="#{desktop.state.showDehOnline}">
+			</aon:if>
+			<aon:if test="#{desktop.state.showDehOnline}">
 				<aon:div styleClass="aon-portlet aon-margin-bottom">
 					<aon:div
 						style="cursor: pointer;"
@@ -49,8 +49,8 @@
 							styleClass="aon-portlet-title-text"/>
 					</aon:div>
 				</aon:div>
-			</c:if>
+			</aon:if>
 		</aon:div>
-	</c:if>
+	</aon:if>
 					
 </ui:composition>

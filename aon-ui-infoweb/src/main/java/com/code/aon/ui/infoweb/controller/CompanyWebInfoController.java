@@ -32,12 +32,12 @@ public class CompanyWebInfoController extends BasicController {
 		Iterator<ITransferObject> iter = webInfoBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			this.setTo((WebInfo)iter.next());
-			this.setNew(false);
+			this.setNevv(false);
 		}else{
 			WebInfo info = new WebInfo();
 			info.setCompany(company);
 			this.setTo(info);
-			this.setNew(true);
+			this.setNevv(true);
 		}
 	}
 	

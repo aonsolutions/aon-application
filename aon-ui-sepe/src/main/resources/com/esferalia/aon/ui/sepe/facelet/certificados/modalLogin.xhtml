@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showCertificadosLoginWindow">
-		<c:if test="#{controller.showLoginWindow}">
+		<aon:if test="#{controller.showLoginWindow}">
 			<rich:modalPanel id="certificadosLoginModalPanel" minHeight="180"
 				minWidth="450" rendered="#{controller.showLoginWindow}"
 				showWhenRendered="true" zindex="91">
@@ -77,11 +77,11 @@
 									</aon:commandButton>
 								</aon:div>
 							
-								<c:if test="#{controller.communicator.testEnv}">
+								<aon:if test="#{controller.communicator.testEnv}">
 									<aon:div style="color: red; font-weight:bold; width: 100%; text-align: center; margin-bottom: -1em;">
 										<aon:outputText value="#{bundle.sepe_test_environment_active}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 								
 								<aon:div style="margin-top: 2em;">
 								
@@ -129,7 +129,7 @@
 				
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

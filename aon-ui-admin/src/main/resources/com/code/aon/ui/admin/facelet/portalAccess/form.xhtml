@@ -37,7 +37,7 @@
 						<aon:div id="portalAccessOptionsDiv">
 							<aon:div rendered="#{portalAccess.active}">
 								<aon:panel rendered="#{portalAccess.showInfo and !portalAccess.payrollPortal}">														
-									<c:if test="#{portalAccess.showFiscalInfo}">			
+									<aon:if test="#{portalAccess.showFiscalInfo}">			
 										<aon:selectBooleanCheckbox id="PortalAccess_fiscalInfo"
 											actionListener="#{portalAccess.onInfoChanged}"
 											reRender="portalAccessOptionsDiv"
@@ -45,8 +45,8 @@
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_fiscalInfo"
 											value="#{bundle.admin_portal_fiscal_info}" />
-									</c:if>							
-									<c:if test="#{portalAccess.showPayrollInfo}">
+									</aon:if>							
+									<aon:if test="#{portalAccess.showPayrollInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_payrollInfo"
 											actionListener="#{portalAccess.onInfoChanged}"
 											reRender="portalAccessOptionsDiv"
@@ -54,8 +54,8 @@
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_payrollInfo"
 											value="#{bundle.admin_portal_payroll_info}" />
-									</c:if>							
-									<c:if test="#{portalAccess.showDocumentalInfo}">
+									</aon:if>							
+									<aon:if test="#{portalAccess.showDocumentalInfo}">
 										<aon:selectBooleanCheckbox id="PortalAccess_documentalInfo"
 											actionListener="#{portalAccess.onInfoChanged}"
 											reRender="portalAccessOptionsDiv"
@@ -63,7 +63,7 @@
 										</aon:selectBooleanCheckbox>
 										<aon:outputLabel for="PortalAccess_documentalInfo"
 											value="#{bundle.admin_portal_documental_info}" />
-									</c:if>
+									</aon:if>
 								</aon:panel>				
 								<aon:panel rendered="#{portalAccess.showPayrollPortal and !portalAccess.infoEnabled}">		
 									<aon:selectBooleanCheckbox id="PortalAccess_payrollPortal"
@@ -160,7 +160,7 @@
 						</aon:panelGrid>
 					</aon:form>
 
-					<c:if test="#{portalAccess.user.id != null}" >
+					<aon:if test="#{portalAccess.user.id != null}" >
 						<aon:form id="portalAccessUserScopesForm">
 							<aon:div styleClass="aon-form-group-title aon-margin-top">
 								<aon:div styleClass="aon-form-group-title-internal">
@@ -169,7 +169,7 @@
 							</aon:div>
 							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" />
 						</aon:form>
-					</c:if>
+					</aon:if>
 											
 				</aon:panel>
 			</aon:div>

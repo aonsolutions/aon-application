@@ -13,7 +13,7 @@
 		columnClasses="aon-panelGrid-odd aon-width-150
 					  ,aon-panelGrid-even aon-width-auto">
 
-		<c:if test="#{controller.multiDeclarationEnabled}">
+		<aon:if test="#{controller.multiDeclarationEnabled}">
 			<aon:outputLabel for="controller_previous" value="Seleccione datos previos" />
 			<aon:selectOneMenu id="controller_previous" value="#{controller.previousDeclarationDocument}">
 				<f:selectItems value="#{controller.previousDeclarationDocuments}" />
@@ -24,7 +24,7 @@
 			
 			<aon:outputText value="&#160;" />
 			<aon:outputText value="&#160;" />
-		</c:if>
+		</aon:if>
 
 		<aon:outputLabel for="controller_document" value="#{bundle.aon_company_document}" />
 		<aon:div id="documentContainer">

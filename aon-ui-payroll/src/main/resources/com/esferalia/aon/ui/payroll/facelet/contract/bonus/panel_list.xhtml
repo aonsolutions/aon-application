@@ -20,7 +20,7 @@
 
 	</aon:panelGrid>
 		
-	<c:if test="#{contract.params.bonusModel.rowCount>0}" >
+	<aon:if test="#{contract.params.bonusModel.rowCount>0}" >
 	
 		<aon:panelGrid columns="2" id="indicators-bonus_panel" style="width:920px;"
 			columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
@@ -46,6 +46,6 @@
 			</f:facet>
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml" />
 		</aon:panel>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

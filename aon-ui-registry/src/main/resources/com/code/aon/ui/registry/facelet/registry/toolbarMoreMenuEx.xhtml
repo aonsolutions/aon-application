@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
-	<c:if test="#{showFeeButton}">
+	<aon:if test="#{showFeeButton}">
 		<aon:menuItem id="fee-button"
 			value="#{(feeButtonLabel!=null)?(feeButtonLabel):(bundle.finance_fees_module)}"
 			reRender="showNewFeeWindow"
@@ -15,8 +15,8 @@
 			actionListener="#{feeController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewFeeWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showProjectButton}">
+	</aon:if>
+	<aon:if test="#{showProjectButton}">
 		<aon:menuItem id="project-button"
 			value="#{(projectButtonLabel!=null)?(projectButtonLabel):(bundle.aon_project)}"
 			iconClass="aon-icon-statistics"
@@ -24,8 +24,8 @@
 			actionListener="#{projectResetActionListener}">
 			<f:setPropertyActionListener target="#{controller.showNewProjectWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showNotesButton}">
+	</aon:if>
+	<aon:if test="#{showNotesButton}">
 		<aon:menuItem id="rnotes-button"
 			value="#{(noteButtonLabel!=null)?(noteButtonLabel):(bundle.aon_notes)}"
 			reRender="showNewNoteWindow"
@@ -33,8 +33,8 @@
 			actionListener="#{notesController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewNoteWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showRelationshipButton}">
+	</aon:if>
+	<aon:if test="#{showRelationshipButton}">
 		<aon:menuItem id="rrelationship-button"
 			value="#{(relationshipButtonLabel!=null)?(relationshipButtonLabel):(bundle.registry_relationship)}"
 			reRender="showNewRelationshipWindow"
@@ -42,8 +42,8 @@
 			actionListener="#{relationshipController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRelationshipWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showRecordDataButton}">
+	</aon:if>
+	<aon:if test="#{showRecordDataButton}">
 		<aon:menuItem id="recordData-button"
 			value="#{(recordDataButtonLabel!=null)?(recordDataButtonLabel):(bundle.registry_rd_module)}"
 			reRender="showNewRecordDataWindow"
@@ -51,8 +51,8 @@
 			actionListener="#{recordDataController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRecordDataWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showSegmentButton}">
+	</aon:if>
+	<aon:if test="#{showSegmentButton}">
 		<aon:menuItem id="segment-button"
 			value="#{(segmentButtonLabel!=null)?(segmentButtonLabel):(bundle.registry_segment_module)}"
 			reRender="showNewSegmentWindow"
@@ -60,8 +60,8 @@
 			actionListener="#{segmentController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewSegmentWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showAddInfoButton}">
+	</aon:if>
+	<aon:if test="#{showAddInfoButton}">
 		<aon:menuItem id="addInfo-button"
 			value="#{(addInfoButtonLabel!=null)?(addInfoButtonLabel):(bundle.aon_addInfo)}"
 			reRender="showNewAddInfoWindow"
@@ -69,8 +69,8 @@
 			actionListener="#{addInfoController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewAddInfoWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showDirStaffButton}">
+	</aon:if>
+	<aon:if test="#{showDirStaffButton}">
 		<aon:menuItem id="dirStaff-button"
 			value="#{(dirStaffButtonLabel!=null)?(dirStaffButtonLabel):(bundle.registry_dir_staff)}"
 			reRender="showNewDirStaffWindow"
@@ -78,8 +78,8 @@
 			actionListener="#{dirStaffController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewDirStaffWindow}" value="#{true}" />							
 		</aon:menuItem>
-	</c:if>
-	<c:if test="#{showProductButton}">
+	</aon:if>
+	<aon:if test="#{showProductButton}">
 		<aon:menuItem id="product-button"
 			value="#{(productButtonLabel!=null)?(productButtonLabel):(bundle.aon_role_product)}"
 			iconClass="aon-icon-product"
@@ -87,8 +87,8 @@
 			actionListener="#{registryItemController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRegistryItemWindow}" value="#{true}" />							
 		</aon:menuItem>		
-	</c:if>
-	<c:if test="#{showProfileButton}">
+	</aon:if>
+	<aon:if test="#{showProfileButton}">
 		<aon:menuItem id="profile-button"
 			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(bundle.registry_profile)}"
 			iconClass="aon-icon-task"
@@ -96,8 +96,8 @@
 			actionListener="#{registryProfileController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRegistryProfileWindow}" value="#{true}" />							
 		</aon:menuItem>		
-	</c:if>
-	<c:if test="#{showRegistrySellerButton}">
+	</aon:if>
+	<aon:if test="#{showRegistrySellerButton}">
 		<aon:menuItem id="registrySeller-button"
 			value="#{(sellerButtonLabel!=null)?(sellerButtonLabel):(bundle.aon_module_commercial)}"
 			iconClass="aon-icon-commercial"
@@ -105,8 +105,8 @@
 			actionListener="#{registrySellerController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRegistrySellerWindow}" value="#{true}" />							
 		</aon:menuItem>		
-	</c:if>
-	<c:if test="#{showRegistrySupplierButton}">
+	</aon:if>
+	<aon:if test="#{showRegistrySupplierButton}">
 		<aon:menuItem id="registrySupplier-button"
 			value="#{(supplierButtonLabel!=null)?(supplierButtonLabel):(bundle.registry_supplier_info)}"
 			iconClass="aon-icon-purchase"
@@ -114,8 +114,8 @@
 			actionListener="#{registrySupplierController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRegistrySupplierWindow}" value="#{true}" />							
 		</aon:menuItem>		
-	</c:if>
-	<c:if test="#{showDocumentButton}">
+	</aon:if>
+	<aon:if test="#{showDocumentButton}">
 		<aon:menuItem id="document-button"
 			value="#{(documentsButtonLabel!=null)?(documentsButtonLabel):(bundle.aon_documents)}"
 			iconClass="aon-icon-documents"
@@ -123,6 +123,6 @@
 			actionListener="#{rAttachController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewDocumentWindow}" value="#{true}" />							
 		</aon:menuItem>		
-	</c:if>
+	</aon:if>
 
 </ui:composition>

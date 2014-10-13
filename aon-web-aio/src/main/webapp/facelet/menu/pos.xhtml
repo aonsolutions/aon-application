@@ -43,22 +43,22 @@
 										actionListener="#{posInvoice.onLoad}" 
 										value="#{bundle.finance_pos_invoice_management_module}" />
 								</aon:div>
-								<c:if test="#{aonRole.financeOperator}">
+								<aon:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_bath-tpv" 
 											action="posFinance_search-tpv"
 											actionListener="#{posFinance.onEditSearch}"
 											value="#{bundle.finance_posFinance_module}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.productOperator}">
+								</aon:if>
+								<aon:if test="#{aonRole.productOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="product" 
 											action="product_search"
 											actionListener="#{product.onEditSearch}"
 											value="#{bundle.aon_role_product}" />
 									</aon:div>
-								</c:if>								
+								</aon:if>								
 							</aon:div>							
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -82,22 +82,22 @@
 										action="productCategory-pos"
 										value="#{bundle.aon_categories}" />
 								</aon:div>								
-								<c:if test="#{aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posDefinition-tpv" 
 											action="pos_search-tpv"
 											actionListener="#{pos.onEditSearch}"
 											value="#{bundle.finance_pos_definition_module}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
+								</aon:if>
+								<aon:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift-tpv" 
 											action="posShift_search-tpv"
 											actionListener="#{posShift.onEditSearch}"
 											value="#{bundle.report_posShift_list}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>													

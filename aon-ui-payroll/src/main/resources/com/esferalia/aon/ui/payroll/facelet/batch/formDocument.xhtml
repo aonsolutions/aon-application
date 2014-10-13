@@ -54,7 +54,7 @@
 							rendered="#{formNew}" value="#{controllerAttach.to.attachDate}" />
 					</f:facet>
 				</aon:column>		
-				<c:if test="#{!skipScopeColumn}"> 
+				<aon:if test="#{!skipScopeColumn}"> 
 					<aon:column sortable="#{sortColumns}" alias="#{controllerAttach.pojoShortName}.scope.description"
 						styleClass="aon-editDataTable-textColumn aon-width-100">
 						<f:facet name="header">
@@ -75,7 +75,7 @@
 							</aon:selectOneMenu>
 						</f:facet>
 					</aon:column>
-				</c:if>
+				</aon:if>
 			</ui:define>
 			<ui:define name="additionalDataTableContent" >
 				<aon:div styleClass="aon-margin-top" >

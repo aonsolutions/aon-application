@@ -21,7 +21,7 @@
 
 					<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
 						actionListener="#{dashboard.fiscalPortal.onPygGraph}">
-						<c:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
 						<aon:panelGrid columns="1" styleClass="aon-width-all" columnClasses="aon-width-all">
 							<aon:div id="yearPygGraphContainer" 
 								style="width: 98%; min-height: 300px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
@@ -73,12 +73,12 @@
 							   </script>
 							</aon:div>
 						</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 
 					<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
 						actionListener="#{dashboard.fiscalPortal.onPygGraph}">
-						<c:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
 						<aon:div styleClass="aon-bold">
 							<aon:outputText value="Ejercicio"/>
 							<aon:selectOneMenu id="Dashboard_pygGraphAccountPeriod"
@@ -144,12 +144,12 @@
 							   </script>
 							</aon:div>
 						</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 
 					<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
 						actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
-						<c:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
 						<aon:div styleClass="aon-bold">
 							<aon:outputText value="Ejercicio"/>
 							<aon:selectOneMenu id="Dashboard_expenseGraphAccountPeriod"
@@ -191,11 +191,11 @@
 							   </script>
 							</aon:div>
 						</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 
 					<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}">
-						<c:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
 						<aon:div id="fiscal_status_div">
 							<aon:div styleClass="aon-bold">
 								<aon:outputText value="Tabla fiscal del ejercicio "/>
@@ -219,13 +219,13 @@
 								</aon:selectOneMenu>
 							</aon:div>
 							<aon:div id="fiscal_status_div_inner">
-								<c:if test="#{empty dashboard.fiscalInfo}">
+								<aon:if test="#{empty dashboard.fiscalInfo}">
 										<aon:div style="padding-top: 10px;">
 											<aon:outputText value="No se encontraron resultados"/>
 										</aon:div>
-								</c:if>
+								</aon:if>
 								<table style="margin: 10px;margin-left: auto; margin-right: auto; ">
-								<c:if test="#{not empty dashboard.fiscalInfo}">
+								<aon:if test="#{not empty dashboard.fiscalInfo}">
 									<tr>
 										<td></td>
 										<td></td>
@@ -243,7 +243,7 @@
 										<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="N"/></td>
 										<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="D"/></td>
 									</tr>
-								</c:if>
+								</aon:if>
 								<ui:repeat var="modelConfig" value="#{dashboard.fiscalInfo}">
 									<tr>
 										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">
@@ -297,7 +297,7 @@
 								</table>
 							</aon:div>
 						</aon:div>
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 				</aon:panelTabSet>						
 			</aon:div>

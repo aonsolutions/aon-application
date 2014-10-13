@@ -50,11 +50,11 @@
 									value="#{financeFraction.targetFinance.documentNumber}" />
 							</aon:div>
 							<aon:div>
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{financeFraction.targetFinance.confidential}" />
-								</c:if>
+								</aon:if>
 
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{financeFraction.targetFinance.financeStatus}" />

@@ -38,23 +38,23 @@
 				<aon:selectOneMenu id="WorkPlace_address_id" 
 					value="#{controller.to.address}" rendered="#{formEdit}"
 					required="true">
-					<c:if test="#{showEnterpriseData}">
+					<aon:if test="#{showEnterpriseData}">
 						<f:selectItems value="#{enterprise.addresses}" />
-					</c:if>
-					<c:if test="#{!showEnterpriseData}">
+					</aon:if>
+					<aon:if test="#{!showEnterpriseData}">
 						<f:selectItems value="#{companyCollections.companyAddresses}" />
-					</c:if>
+					</aon:if>
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="WorkPlace_address_id-New"
 						value="#{controller.to.address}" rendered="#{formNew}"
 						required="true">
-						<c:if test="#{showEnterpriseData}">
+						<aon:if test="#{showEnterpriseData}">
 							<f:selectItems value="#{enterprise.addresses}" />
-						</c:if>
-						<c:if test="#{!showEnterpriseData}">
+						</aon:if>
+						<aon:if test="#{!showEnterpriseData}">
 							<f:selectItems value="#{companyCollections.companyAddresses}" />
-						</c:if>
+						</aon:if>
 					</aon:selectOneMenu>
 				</f:facet>								
 			</aon:column>			

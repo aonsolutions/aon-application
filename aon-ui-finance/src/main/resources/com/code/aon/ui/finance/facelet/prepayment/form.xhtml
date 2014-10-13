@@ -77,7 +77,7 @@
 												rendered="#{prepayment.paymentReadOnly}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
-											<c:if test="#{aonRole.confidentiality}">
+											<aon:if test="#{aonRole.confidentiality}">
 												<aon:selectBooleanCheckbox id="Prepayment_finance_securityLevel"
 													styleClass="aon-margin-left"
 													value="#{prepayment.to.finance.confidential}"
@@ -88,7 +88,7 @@
 												<aon:outputText styleClass="aon-icon aon-icon-confidential aon-margin-left"
 													value="&#160;" title="#{bundle.aon_confidential}"
 													rendered="#{prepayment.paymentReadOnly and prepayment.to.finance.confidential}" />
-											</c:if>
+											</aon:if>
 										</aon:div>
 
 										<aon:outputLabel for="Prepayment_finance_payMethod" value="#{bundle.finance_payMethod}" />
@@ -147,12 +147,12 @@
 													valueChangeListener="#{prepayment.onRBankChanged}"
 													reRender="Prepayment_registryBank" ajaxSingle="true">
 													<f:selectItem value="#{null}" />
-													<c:if test="#{prepayment.nevv}">
+													<aon:if test="#{prepayment.nevv}">
 														<f:selectItems value="#{prepayment.activeBanks}" />
-													</c:if>
-													<c:if test="#{!prepayment.nevv}">
+													</aon:if>
+													<aon:if test="#{!prepayment.nevv}">
 														<f:selectItems value="#{prepayment.allBanks}" />
-													</c:if>
+													</aon:if>
 												</aon:selectOneMenu>
 												<aon:commandLink id="BankAccount_show_bank_manual"
 													styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
@@ -267,7 +267,7 @@
 													timeZone="#{timeZoneController.timeZoneId}" />
 											</aon:outputText>
 
-											<c:if test="#{aonRole.confidentiality}">
+											<aon:if test="#{aonRole.confidentiality}">
 												<aon:selectBooleanCheckbox id="Prepayment_customerFee_securityLevel"
 													styleClass="aon-margin-left"
 													value="#{prepayment.customerFee.confidential}"
@@ -278,7 +278,7 @@
 												<aon:outputText styleClass="aon-icon aon-icon-confidential aon-margin-left" 
 													value="&#160;" title="#{bundle.aon_confidential}"
 													rendered="#{prepayment.chargeReadOnly and prepayment.invoiceDetail.invoice.confidential}" />
-											</c:if>
+											</aon:if>
 										</aon:div>
 
 										<aon:outputLabel for="Prepayment_customerFee_project_id" value="#{bundle.aon_project}"
@@ -310,20 +310,20 @@
 										<aon:outputLabel value="#{bundle.aon_holder}"
 											rendered="#{prepayment.chargeReadOnly}" />
 										<aon:div id="CustomerFeeInvoicingGroupDiv" rendered="#{!prepayment.chargeReadOnly}">
-											<c:if test="#{prepayment.customerFee.invoicingGroup.id == null or prepayment.invoicingGroupInMyScopes}">
+											<aon:if test="#{prepayment.customerFee.invoicingGroup.id == null or prepayment.invoicingGroupInMyScopes}">
 												<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
 													<ui:param name="lookupTo" value="#{prepayment.customerFee.invoicingGroup}" />
 													<ui:param name="skipLabel" value="#{true}" />
 												</ui:include>
-											</c:if>
-											<c:if test="#{prepayment.customerFee.invoicingGroup.id != null and !prepayment.invoicingGroupInMyScopes}">
+											</aon:if>
+											<aon:if test="#{prepayment.customerFee.invoicingGroup.id != null and !prepayment.invoicingGroupInMyScopes}">
 												<aon:outputText	value="#{prepayment.customerFee.invoicingGroup.customer.registry.fullName}" />
-											</c:if>
+											</aon:if>
 										</aon:div>
 										<aon:outputText	value="#{prepayment.invoiceDetail.invoice.registryName}"
 											rendered="#{prepayment.chargeReadOnly}" />
 
-										<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+										<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 											<aon:outputLabel for="Prepayment_customerFee_workPlace" value="#{bundle.purchase_workplace}" />
 											<aon:selectOneMenu id="Prepayment_customerFee_workPlace" 
 												value="#{prepayment.customerFee.workPlace}"
@@ -332,7 +332,7 @@
 											</aon:selectOneMenu>
 											<aon:outputText	value="#{prepayment.invoiceDetail.workPlace.description}"
 												rendered="#{prepayment.chargeReadOnly}" />
-										</c:if>
+										</aon:if>
 
 										<aon:outputText value="#{bundle.aon_status}"
 											rendered="#{!prepayment.nevv}" />

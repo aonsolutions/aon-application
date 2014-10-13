@@ -46,7 +46,7 @@
 					<aon:selectBooleanCheckbox value="#{holiday.to.editable}" />
 				</aon:panelGrid>
 
-				<c:if test="#{!holiday.nevv}">
+				<aon:if test="#{!holiday.nevv}">
 					<aon:div>
 						<aon:panelTabSet id="tabPanel">
 							<aon:panelTab label="#{bundle.calendar_holidays}">
@@ -54,7 +54,7 @@
 							</aon:panelTab>
 						</aon:panelTabSet>
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{holidayLookup}" />

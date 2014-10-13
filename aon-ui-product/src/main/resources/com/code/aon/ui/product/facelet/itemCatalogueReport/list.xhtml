@@ -72,9 +72,9 @@
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.catalogueItem.item.product.name} #{to.catalogueItem.item.detail}">
-								<c:if test="#{abbreviateName}">
+								<aon:if test="#{abbreviateName}">
 									<aon:abbreviateConverter maxWidth="40" />
-								</c:if>
+								</aon:if>
 							</aon:outputText>
 						</aon:column>
 

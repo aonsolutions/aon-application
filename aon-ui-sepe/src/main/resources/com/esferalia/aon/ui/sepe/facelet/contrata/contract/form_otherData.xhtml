@@ -71,7 +71,7 @@
 				<f:validateLength maximum="30" />
 			</aon:inputText>
 			
-			<c:if test="#{contract.trainingContract}" >
+			<aon:if test="#{contract.trainingContract}" >
 				<aon:outputLabel for="workingDayType" 
 					rendered="#{controller.handler.showTipoJornada}"
 					value="#{bundle.sepe_contrata_contract_working_day_type}" />
@@ -97,7 +97,7 @@
 					<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
 						value="#{controller.params.minutosJornada}"/>
 				</aon:div>
-			</c:if>
+			</aon:if>
 
 			<aon:outputLabel 
 				rendered="#{controller.handler.showHorasMinutosConvenio}"

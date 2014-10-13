@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="categoryModalContainer">
-		<c:if test="#{agreementLevel.showCategoryWindow}">
+		<aon:if test="#{agreementLevel.showCategoryWindow}">
 			<rich:modalPanel id="categoryModalPanel" minHeight="400"
 				minWidth="310" showWhenRendered="true" style="overflow:auto;">
 				<f:facet name="header">
@@ -73,6 +73,6 @@
 				</aon:form>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

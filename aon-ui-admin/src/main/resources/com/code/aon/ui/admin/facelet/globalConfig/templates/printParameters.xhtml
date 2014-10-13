@@ -38,16 +38,16 @@
 				<aon:panelGrid columns="2" style="width:350px">
 					<aon:outputLabel for="Sale_invoice_template"
 						value="#{bundle.company_saleInvoice_template}" />
-					<c:if test="#{!company.customReportTemplate}">
+					<aon:if test="#{!company.customReportTemplate}">
 						<aon:selectOneMenu id="Sale_invoice_template"
 							value="#{company.saleInvoiceTemplate}" >
 								<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
 						</aon:selectOneMenu>
-					</c:if>
-					<c:if test="#{company.customReportTemplate}">
+					</aon:if>
+					<aon:if test="#{company.customReportTemplate}">
 						<aon:outputText id="Company_invoice_template"
 							value="#{bundle.company_custom_template}" />
-					</c:if>
+					</aon:if>
 					<aon:outputLabel for="Sale_invoice_discountInPrice"
 						value="#{bundle.company_invoice_discountInPrice}" />
 					<aon:selectBooleanCheckbox id="Sale_invoice_discountInPrice"

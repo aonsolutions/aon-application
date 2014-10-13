@@ -9,7 +9,7 @@
 	xmlns:rich="http://richfaces.org/rich">
  
 	<aon:div id="declaredDataContainer">
-		<c:if test="#{vatTax.declaredPanelVisible}">
+		<aon:if test="#{vatTax.declaredPanelVisible}">
 			<rich:modalPanel id="declaredPanel" minHeight="240"
 					minWidth="520" rendered="#{vatTax.declaredPanelVisible}"
 					showWhenRendered="true" zindex="90">
@@ -107,7 +107,7 @@
 						</aon:div>
 					</aon:div>
 				</rich:modalPanel>
-			</c:if>
+			</aon:if>
 	</aon:div>
 
 </ui:composition>

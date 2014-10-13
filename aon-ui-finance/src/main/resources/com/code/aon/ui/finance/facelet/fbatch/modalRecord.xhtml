@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFbatchRecordWindow">
-		<c:if test="#{fbatch.showFbatchRecordWindow}">
+		<aon:if test="#{fbatch.showFbatchRecordWindow}">
 			<rich:modalPanel id="fbatchRecordModalPanel" minHeight="240"
 				minWidth="520" rendered="#{fbatch.showFbatchRecordWindow}"
 				showWhenRendered="true" zindex="90">
@@ -80,7 +80,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -4,23 +4,23 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookupForRegistry}">
+	<aon:if test="#{lookupForRegistry}">
 		<aon:valueParam name="lookupProperty" default="registry"/>
 		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>
-	</c:if>
+	</aon:if>
 	<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.registry.name}"/>
 	<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.registry.name} (#{lto.registry.document})"/>
 	<aon:valueParam name="lookupInputNameDisabled" default="#{lookupDisabled}"/>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
 		<ui:define name="afterLookupContent">
-			<c:if test="#{skipSuggestText}">
+			<aon:if test="#{skipSuggestText}">
 				<aon:inputText id="#{pojoName}_name#{lookupSuffix}"
 					value="#{lookupInputNameValue}" 
 					disabled="#{lookupInputNameDisabled}" size="#{lookupInputSuggestSize}"
 					rendered="#{lookupInputNameValue != null}"
 					ajaxSingle="true" />
-			</c:if>
+			</aon:if>
 			<ui:insert name="afterLookupContent2"/>
 		</ui:define>
 	</ui:decorate>

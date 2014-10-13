@@ -95,7 +95,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" />
 
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:commandButton id="updateSecurityLevel" 
 								value="#{bundle.aon_update} #{bundle.aon_security}"
 								title="#{bundle.aon_update} #{bundle.aon_security}"
@@ -104,7 +104,7 @@
 								styleClass="aon-finding-toolbar-item #{accountEntry.to.confidential?'aon-icon-unlock':'aon-icon-lock'}"
 								immediate="true"
 								onclick="if (!confirm('#{bundle.accounting_change_security}')) return false;" />
-						</c:if>
+						</aon:if>
 						<aon:commandButton id="duplicate" value="#{bundle.accounting_duplicate}"
 							title="#{bundle.accounting_duplicate}"
 							actionListener="#{accountEntry.showDuplicateEntryPanel}"
@@ -134,9 +134,9 @@
 							style="float:right;margin-right:0;" />
 					</ui:define>
 				</ui:decorate>
-				<c:if test="#{!accountEntry.nevv}">
+				<aon:if test="#{!accountEntry.nevv}">
 					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/entriesToolbar.xhtml" />
-				</c:if>
+				</aon:if>
  			</aon:div>
  			
 			<aon:div id="entryContainer" styleClass="aon-scroll-area" >
@@ -180,7 +180,7 @@
 					
 					
 					<aon:div>
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
 								value="#{accountEntry.to.confidential}"
 								rendered="#{accountEntry.nevv or (!accountEntry.nevv and accountEntry.manual and accountEntry.periodActive)}" />
@@ -193,7 +193,7 @@
 								rendered="#{!accountEntry.manual and accountEntry.to.confidential}">
 							</aon:outputText>
 							
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 					<aon:outputText value="#{bundle.aon_date}: " />
@@ -215,7 +215,7 @@
 					</aon:div>
 
 					<aon:div id="commentIconContainer" style="text-align:center;cursor:pointer;">
-						<c:if test="#{!accountEntry.nevv}">
+						<aon:if test="#{!accountEntry.nevv}">
 							<a4j:support
 								event="onclick"
 								reRender="commentContainer,commentIconContainer"
@@ -234,11 +234,11 @@
 									<aon:outputText value="#{accountEntry.to.comments}"/>
 								</rich:toolTip>
 							</aon:div>
-						</c:if>
+						</aon:if>
 						
 					</aon:div>
 				</aon:panelGrid>
-				<c:if test="#{accountEntry.nevv}">
+				<aon:if test="#{accountEntry.nevv}">
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText styleClass="aon-panelGrid-search-info-internal"
@@ -285,14 +285,14 @@
 
 						</aon:panelGrid>
 					</aon:div>
-				</c:if>
+				</aon:if>
 				
 				<ui:include
 						src="/com/code/aon/ui/accounting/facelet/entry/linesForm.xhtml" />
 			</aon:div>
 		</aon:form>
 		<aon:div id="commentContainer">
-			<c:if test="#{accountEntry.commentPanelVisible}">
+			<aon:if test="#{accountEntry.commentPanelVisible}">
 				<rich:modalPanel id="commentModalPanel" minHeight="240"
 					minWidth="520" rendered="#{accountEntry.commentPanelVisible}"
 					showWhenRendered="true" zindex="90">
@@ -345,12 +345,12 @@
 						</aon:div>
 					</aon:form>
 				</rich:modalPanel>
-			</c:if>
+			</aon:if>
 		</aon:div>
 		
 		
 		<aon:div id="duplicateEntryContainer">
-			<c:if test="#{accountEntry.duplicateEntryPanelVisible}">
+			<aon:if test="#{accountEntry.duplicateEntryPanelVisible}">
 				<rich:modalPanel id="duplicateEntryModalPanel" minHeight="350"
 					minWidth="520" rendered="#{accountEntry.duplicateEntryPanelVisible}"
 					showWhenRendered="true" zindex="90">
@@ -424,11 +424,11 @@
 						</aon:div>
 					</aon:form>
 				</rich:modalPanel>
-			</c:if>
+			</aon:if>
 		</aon:div>
  		<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		<c:if test="#{accountEntry.nevv}">
+		<aon:if test="#{accountEntry.nevv}">
 			<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
-		</c:if>
+		</aon:if>
 	</ui:define>
 </ui:composition>

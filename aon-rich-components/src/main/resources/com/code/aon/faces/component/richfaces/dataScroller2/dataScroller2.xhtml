@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{model.rowCount == 0 and showNote}">
+	<aon:if test="#{model.rowCount == 0 and showNote}">
 		<aon:div styleClass="aon-note">
 			<aon:div styleClass="aon-note-internal">
 				<aon:panelGroup>
@@ -16,9 +16,9 @@
 				</aon:panelGroup>
 			</aon:div>
 		</aon:div>
-	</c:if>	
+	</aon:if>	
 
-	<c:if test="#{model.rowCount>0}">
+	<aon:if test="#{model.rowCount>0}">
 		<aon:div styleClass="aon-dataScroller2">					
 		    <aon:panelGrid id="#{dataTable}MessageDataScroller"
 		    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
@@ -30,15 +30,15 @@
 					</aon:outputFormat>
 				</aon:panelGroup>
 				<aon:panelGroup>
-					<c:if test="#{model.showControls}">	
+					<aon:if test="#{model.showControls}">	
 						<aon:commandButton id="#{dataTable}FirstScroll" ajaxSingle="true" process="#{dataTable}"
 							disabled="#{!model.previousNeeded}" actionListener="#{model.first}"
 							oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
 							styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-first':'aon-dataScroller2-button-first-disabled'}">
-							<c:if test="#{!disableHotKeys and model.previousNeeded}" >
+							<aon:if test="#{!disableHotKeys and model.previousNeeded}" >
 								<aon:actionHotKey key="home" disableInInput="true" />
-							</c:if>
+							</aon:if>
 						</aon:commandButton>
 		
 						<aon:commandButton id="#{dataTable}PreviousScroll" ajaxSingle="true" process="#{dataTable}"
@@ -46,9 +46,9 @@
 							oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
 							styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-previous':'aon-dataScroller2-button-previous-disabled'}">
-							<c:if test="#{!disableHotKeys and model.previousNeeded}" >
+							<aon:if test="#{!disableHotKeys and model.previousNeeded}" >
 								<aon:actionHotKey key="pageUp" />
-							</c:if>						
+							</aon:if>						
 						</aon:commandButton>
 						
 						<a4j:repeat value="#{model.pages}" var="page">
@@ -71,9 +71,9 @@
 							oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
 							styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-next':'aon-dataScroller2-button-next-disabled'}">
-							<c:if test="#{!disableHotKeys and model.nextNeeded}" >
+							<aon:if test="#{!disableHotKeys and model.nextNeeded}" >
 								<aon:actionHotKey key="pageDown" />
-							</c:if>						
+							</aon:if>						
 						</aon:commandButton>
 		
 						<aon:commandButton id="#{dataTable}LastScroll" ajaxSingle="true" process="#{dataTable}"
@@ -81,14 +81,14 @@
 							oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
 							styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-last':'aon-dataScroller2-button-last-disabled'}">
-							<c:if test="#{!disableHotKeys and model.nextNeeded}" >
+							<aon:if test="#{!disableHotKeys and model.nextNeeded}" >
 								<aon:actionHotKey key="end" disableInInput="true" />
-							</c:if>
+							</aon:if>
 						</aon:commandButton>
-					</c:if>					
+					</aon:if>					
 				</aon:panelGroup>
 				<aon:panelGroup>
-					<c:if test="#{!model.hidePageSizeSelector}">
+					<aon:if test="#{!model.hidePageSizeSelector}">
 						<aon:outputText styleClass="aon-margin-right"
 							value="#{bundle.aon_row_number}"/>
 						<aon:selectOneMenu value="#{model.pageSize}" >
@@ -96,10 +96,10 @@
 							<a4j:support event="onchange" ajaxSingle="true" 
 								reRender="#{dataTable},#{dataTable}MessageDataScroller"/>				
 						</aon:selectOneMenu>
-					</c:if>			
+					</aon:if>			
 				</aon:panelGroup>	
 			</aon:panelGrid>	
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

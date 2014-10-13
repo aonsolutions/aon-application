@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{invoiceEntry.registryFilled}">
+	<aon:if test="#{invoiceEntry.registryFilled}">
 		<aon:panel>
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.finance_checking}" />
@@ -299,5 +299,5 @@
 				</aon:column>
 			</aon:editDataTable>
 		</aon:panel>
-	</c:if>
+	</aon:if>
 </ui:composition>

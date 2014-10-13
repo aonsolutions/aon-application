@@ -10,7 +10,7 @@
 	<aon:panelGrid id="FinanceSearchPanel"
 		columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 
-		<c:if test="#{!skipAgency}">
+		<aon:if test="#{!skipAgency}">
 			<aon:outputLabel value="&#160;" rendered="#{paymentCardSettle.agenciesSize > 0}" />
 			<aon:div id="agenciesDiv" rendered="#{paymentCardSettle.agenciesSize > 0}">
 				<a4j:repeat value="#{paymentCardSettle.agencies}" var="agency" rowKeyVar="agencyIdx">
@@ -50,7 +50,7 @@
 					actionListener="#{paymentCardSettle.onAddAgency}"
 					reRender="FinanceSearchPanel" />
 			</aon:div>					
-		</c:if>
+		</aon:if>
 
 		<aon:outputLabel for="PaymentCardFinance_hotel" 
 			value="#{bundle.aon_module_hotel}" />

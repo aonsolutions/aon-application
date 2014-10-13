@@ -7,31 +7,31 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
-		<c:if test="#{enterprisePayroll.activity != null}" >	
+	<aon:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+		<aon:if test="#{enterprisePayroll.activity != null}" >	
 			<aon:outputText value="#{bundle.aon_activity}" />
 			<aon:outputText value="#{enterprisePayroll.activity.cnae2009.code} - #{not empty enterprisePayroll.activity.description ? enterprisePayroll.activity.description : enterprisePayroll.activity.cnae2009.title}" />
-		</c:if>
+		</aon:if>
 	
-		<c:if test="#{enterprisePayroll.ccc != null}" >	
+		<aon:if test="#{enterprisePayroll.ccc != null}" >	
 			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
 			<aon:outputText value="#{enterprisePayroll.ccc.ccc}" />
-		</c:if>
-	</c:if>
+		</aon:if>
+	</aon:if>
 
 	<aon:outputLabel for="Enterprise_workplace_description" value="#{bundle.purchase_workplace}" />
 	<aon:div  id="Enterprise_workplace_description">
 		<aon:outputText value="#{enterprise.workplace.description}" />
-		<c:if test="#{enterprise.workplace.economicAgreement != null}" >
+		<aon:if test="#{enterprise.workplace.economicAgreement != null}" >
 			<aon:outputText value=" (" />
 			<aon:outputText value="#{enterprise.workplace.economicAgreement}" />
 			<aon:outputText value=" )" />
-		</c:if>
+		</aon:if>
 	</aon:div>
 				
-	<c:if test="#{enterprise.dirStaff != null}" >
+	<aon:if test="#{enterprise.dirStaff != null}" >
 		<aon:outputText value="#{bundle.registry_dir_staff_representative_labor}" />
 		<aon:outputText value="#{enterprise.dirStaff.name}, #{bundle.aon_company_document} #{enterprise.dirStaff.document}" />
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

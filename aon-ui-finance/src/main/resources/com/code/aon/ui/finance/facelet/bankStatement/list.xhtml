@@ -66,7 +66,7 @@
 							accesskey="#{bundle.aon_key_print}">
 							<f:param name="reportKey" value="bankStatementList" />
 						</aon:htmlCommandLink>
-						<c:if test="#{aonRole.accountingOperator}">
+						<aon:if test="#{aonRole.accountingOperator}">
 							<aon:commandButton id="BankStatement-record"
 								value="#{bundle.finance_record}"
 								title="#{bundle.finance_record_selected}"
@@ -76,8 +76,8 @@
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						</c:if>
-						<c:if test="#{aonRole.accountingManager}">
+						</aon:if>
+						<aon:if test="#{aonRole.accountingManager}">
 							<aon:commandButton id="BankStatement-unrecord"
 								value="#{bundle.finance_unrecord}"
 								title="#{bundle.finance_unrecord_selected}"
@@ -87,7 +87,7 @@
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						</c:if>
+						</aon:if>
  					</ui:define>
 				</ui:decorate>
 
@@ -148,7 +148,7 @@
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
-							<c:if test="#{aonRole.accountingOperator}">
+							<aon:if test="#{aonRole.accountingOperator}">
 								<aon:outputText value="#{bundle.finance_check_selected}:" styleClass="aon-bold aon-margin-right" />
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 									<ui:param name="lookupTo" value="#{bankStatement.account}" />
@@ -160,7 +160,7 @@
 									reRender="#{dataTableId}"
 									onclick="Richfaces.showModalPanel('waitProccess')"
 									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							</c:if>							
+							</aon:if>							
 						</aon:div>
 						<aon:div>
 							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold" />
@@ -433,7 +433,7 @@
 											</f:facet>
 										</aon:column>
 
-										<c:if test="#{aonRole.confidentiality}">
+										<aon:if test="#{aonRole.confidentiality}">
 											<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 												<f:facet name="header">
 													<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -452,7 +452,7 @@
 														rendered="#{formNew}" />
 												</f:facet>
 											</aon:column>
-										</c:if>
+										</aon:if>
  
 										<aon:column alias="BankStatement.commonConcept"
 											styleClass="aon-editDataTable-textColumn aon-width-120">
@@ -583,7 +583,7 @@
 												rendered="#{(to.checked and to.showBankStatementLink) or (to.recorded and to.showAccountEntry)}" 
 												actionListener="#{controller.onHideBankStatementLink}"
 												reRender="#{dataTableId}" />
-											<c:if test="#{aonRole.accountingOperator}">
+											<aon:if test="#{aonRole.accountingOperator}">
 												<aon:commandButton id="BankStatement-recordCurrent"
 													value="&#160;" styleClass="aon-icon-task-assume aon-noborder"
 													title="#{bundle.finance_record}"
@@ -592,8 +592,8 @@
 													reRender="#{dataTableId}"
 													onclick="Richfaces.showModalPanel('waitProccess')"
 													oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-											</c:if>
-											<c:if test="#{aonRole.accountingManager}">
+											</aon:if>
+											<aon:if test="#{aonRole.accountingManager}">
 												<aon:commandButton id="BankStatement-unrecordCurrent"
 													value="&#160;" styleClass="aon-icon-task-liberate aon-noborder"
 													title="#{bundle.finance_unrecord}"
@@ -602,7 +602,7 @@
 													reRender="#{dataTableId}"
 													onclick="Richfaces.showModalPanel('waitProccess')"
 													oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-											</c:if>
+											</aon:if>
 											<aon:div style="display:inline; cursor:pointer;" rendered="#{!empty to.comments}">
 												<aon:outputText value="&#160;" styleClass="aon-icon-comment-red" 
 													style="padding-left:10px" />
@@ -634,7 +634,7 @@
 												</aon:outputText>
 											</aon:column>
 
-											<c:if test="#{aonRole.confidentiality}">
+											<aon:if test="#{aonRole.confidentiality}">
 												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-column">
 													<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
 														styleClass="aon-icon-confidential" style="padding-left:15px"
@@ -642,15 +642,15 @@
 													<aon:outputText value="&#160;"
 														rendered="#{!statementLink.confidential}" />
 												</aon:column>
-											</c:if>
+											</aon:if>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{bundle.finance_tracking_batched} "
 													rendered="#{statementLink.financeBatch}" />
-												<c:if test="#{aonRole.accountingOperator}">
+												<aon:if test="#{aonRole.accountingOperator}">
 													<aon:outputText value="#{statementLink.concept}" 
 														rendered="#{statementLink.bankConcept or statementLink.account}" />
-												</c:if>
+												</aon:if>
 												<aon:outputText value="#{statementLink.concept}" 
 													rendered="#{statementLink.financeTracking or statementLink.financeBatch}" />
 											</aon:column>
@@ -707,7 +707,7 @@
 												<aon:outputText value="#{entryDetail.concept}" />
 											</aon:column>
 
-											<c:if test="#{aonRole.confidentiality}">
+											<aon:if test="#{aonRole.confidentiality}">
 												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-column">
 													<f:facet name="header">
 														<aon:div>
@@ -720,7 +720,7 @@
 													</f:facet>
 													<aon:outputText value="&#160;" />
 												</aon:column>
-											</c:if>
+											</aon:if>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
@@ -773,9 +773,9 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{aonRole.accountingOperator}">
+		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		</c:if>
+		</aon:if>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml">

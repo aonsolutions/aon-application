@@ -13,7 +13,7 @@
 		<aon:form id="treasuryMenu">
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{aonRole.financeOperator}">
+				<aon:if test="#{aonRole.financeOperator}">
 					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
@@ -75,7 +75,7 @@
 								</aon:div>
 							</aon:panelGrid>
 	
-							<c:if test="#{bankStatement.availableRegistryBanks > 0}">
+							<aon:if test="#{bankStatement.availableRegistryBanks > 0}">
 								<aon:panelGrid id="group_treasury_bank_statement"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statement aon-direct-access-panel">
@@ -91,7 +91,7 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
-							</c:if>
+							</aon:if>
 	
 						</aon:panelGroup>
 	
@@ -113,7 +113,7 @@
 								</aon:div>
 							</aon:panelGrid>
 
-							<c:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
+							<aon:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
 								<aon:panelGrid id="group_treasury_forecast"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-forecast aon-direct-access-panel">
@@ -135,7 +135,7 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
-							</c:if>
+							</aon:if>
 	
 							<aon:panelGrid id="group_treasury_utilities"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -160,7 +160,7 @@
 											action="financeChecking_form"
 											value="#{bundle.finance_invoice_checking_module}" />
 									</aon:div>
-									<c:if test="#{actionDenied.moduleEnabled['hotel']}">
+									<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="pos_finance_bath" 
 												action="posFinance_search"
@@ -173,14 +173,14 @@
 												actionListener="#{paymentCardSettle.onInit}"
 												value="#{bundle.pms_paymentCardSettle_module}" />
 										</aon:div>
-									</c:if>									
+									</aon:if>									
 								</aon:div>
 							</aon:panelGrid>
 	
 						</aon:panelGroup>
 	
 					</h:panelGrid>
-				</c:if>
+				</aon:if>
 			</aon:div>
 
 		</aon:form>

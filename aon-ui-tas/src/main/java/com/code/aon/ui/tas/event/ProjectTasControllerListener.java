@@ -31,7 +31,7 @@ public class ProjectTasControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			//controller.getManagerBean().restoreNullSubPOJOs(projectTas);
 			//controller.getManagerBean().insert(projectTas);
-			controller.setNew(true);
+			controller.setNevv(true);
 			controller.accept(null);
 
 			throw new ControllerListenerException("No se puede borrar la Orden de Reparacion. Esta asociada a algún documento.");

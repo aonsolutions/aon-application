@@ -46,12 +46,12 @@
 							value="#{bundle.pms_check}"/>
 						<aon:selectManyCheckbox id="ReservationIO_checkStatuses"
 							value="#{reservationIO.checkStatuses}" >
-							<c:if test="#{reservationIO.checkin}">
+							<aon:if test="#{reservationIO.checkin}">
 								<f:selectItems value="#{pmsCollections.abbreviatedReservationInCheckStatuses}"/>
-							</c:if>
-							<c:if test="#{!reservationIO.checkin}">
+							</aon:if>
+							<aon:if test="#{!reservationIO.checkin}">
 								<f:selectItems value="#{pmsCollections.abbreviatedReservationInOutCheckStatuses}"/>
-							</c:if>
+							</aon:if>
 						</aon:selectManyCheckbox>
 
 						<aon:outputLabel value="#{bundle.aon_date}" />

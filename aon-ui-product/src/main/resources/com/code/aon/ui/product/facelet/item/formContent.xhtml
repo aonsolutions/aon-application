@@ -51,7 +51,7 @@
 				</aon:div>
 			</aon:div>
 
-			<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+			<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 				<aon:div styleClass="aon-group aon-vertical-align-bottom">
 					<aon:div styleClass="aon-group-title">
 						<aon:outputText value="#{bundle.accounting_balance_detail_accounts}"/>
@@ -81,7 +81,7 @@
 						</aon:div>
 					</aon:div>
 				</aon:div>
-			</c:if>
+			</aon:if>
 		</aon:div>
 	</aon:panelGrid>
 	 

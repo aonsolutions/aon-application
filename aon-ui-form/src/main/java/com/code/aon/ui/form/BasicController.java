@@ -368,7 +368,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	@Override
-	public void setNew(boolean isNevv) {
+	public void setNevv(boolean isNevv) {
 		if (isNevv) {
 			this.selectedIndex = -1;
 			if (this.model != null) {
@@ -489,7 +489,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			if (isNevv) {
 				controllerListenerSupport.fireBeforeBeanAdded(evt);
 				this.to = add();
-				setNew(false);
+				setNevv(false);
 				controllerListenerSupport.fireAfterBeanAdded(evt);
 			} else {
 				controllerListenerSupport.fireBeforeBeanUpdated(evt);
@@ -616,7 +616,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			ControllerEvent evt = new ControllerEvent(this);
 			setTo(getManagerBean().createNewTo());
 			controllerListenerSupport.fireBeforeBeanCreated(evt);
-			setNew(true);
+			setNevv(true);
 			controllerListenerSupport.fireAfterBeanCreated(evt);
 		} catch (ControllerListenerException e) {
 			LOGGER.error(">>>> onReset ",e);
@@ -744,7 +744,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			ITransferObject to = (ITransferObject) getSelectedTO();
 			getManagerBean().initializePOJO(to);
 			setTo(to);
-			setNew(false);
+			setNevv(false);
 			controllerListenerSupport.fireAfterBeanSelected(evt);
 			saveState(to);
 		} catch (ControllerListenerException e) {
@@ -962,7 +962,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	protected void resetTo() {
 		this.to = null;
-		setNew(false);
+		setNevv(false);
 	}
 
 	/**

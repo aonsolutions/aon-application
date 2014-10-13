@@ -83,7 +83,7 @@
 					columnClasses="aon-panelGrid-odd aon-width-140
 						,aon-panelGrid-even aon-width-auto">
 
-					<c:if test="#{aonRole.accountingOperator}">
+					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:outputLabel for="Account_id-Sales" value="#{bundle.aon_sales_account}" />
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{tax.to.salesAccount}" />
@@ -96,7 +96,7 @@
 							<ui:param name="lookupSuffix" value="-Purchase" />
 						</ui:include>
 						
-					</c:if>
+					</aon:if>
 
 				</aon:panelGrid>
 			</aon:div>

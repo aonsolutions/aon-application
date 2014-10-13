@@ -27,12 +27,12 @@
 
 	<aon:selectOneMenu id="Payment_month" value="#{controller.to.month}">
 		<f:selectItem itemLabel=" - " itemValue="#{null}" />
-		<c:if test="#{!skipCurrentMonth}">
+		<aon:if test="#{!skipCurrentMonth}">
 			<f:selectItem value="#{controller.currentMonth}" />
-		</c:if>
-		<c:if test="#{skipCurrentMonth}">
+		</aon:if>
+		<aon:if test="#{skipCurrentMonth}">
 			<f:selectItems value="#{commonCollections.months}" />
-		</c:if>
+		</aon:if>
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Payment_salaryType"
@@ -171,7 +171,7 @@
 						ajaxSingle="true" />
 				</aon:selectOneMenu>
 				<br />
-				<c:if test="#{controller.to.taxation=='MANUAL'}">
+				<aon:if test="#{controller.to.taxation=='MANUAL'}">
 					<ui:include
 						src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
 						<ui:param name="expression" value="irpfExpression" />
@@ -179,7 +179,7 @@
 						<ui:param name="expressionErrorMessage"
 							value="irpfExpressionErrorMessage" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 			</aon:div>
 
 		</ui:define>

@@ -33,12 +33,12 @@
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 
-	<c:if test="#{!skipTarget}">
+	<aon:if test="#{!skipTarget}">
 		<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{controller.to.target}" />
 			<ui:param name="idRequired" value="#{true}" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 	
 	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.seller}" />

@@ -38,7 +38,7 @@
 						<f:param name="reportKey" value="purchaseProposal" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-					<c:if test="#{aonRole.purchaseOperator}">
+					<aon:if test="#{aonRole.purchaseOperator}">
 						<aon:htmlCommandLink id="purchaseProposal_valued-report" value="#{bundle.purchase_valued_report}"
 							target="_new" rendered="#{!proposal.nevv and proposalDetail.model.rowCount > 0}"
 							action="#{purchaseReport.onExecute}"
@@ -48,7 +48,7 @@
 							<f:param name="reportKey" value="purchaseProposal" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-					</c:if>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 
@@ -135,11 +135,11 @@
 				
 				<br />
 				
-				<c:if test="#{!proposal.nevv}">
+				<aon:if test="#{!proposal.nevv}">
 					<ui:include	src="/com/code/aon/ui/purchase/facelet/proposal/detail/tab_grid.xhtml">
 						<ui:param name="controller" value="#{proposalDetail}" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 			

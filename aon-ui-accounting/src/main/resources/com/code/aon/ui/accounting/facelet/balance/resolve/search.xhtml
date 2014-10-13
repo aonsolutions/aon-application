@@ -71,7 +71,7 @@
 							value="#{bundle.accounting_show_previous_period}" />
 					</aon:div>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="balanceSheetResolver_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="balanceSheetResolver_securityLevel"
@@ -79,7 +79,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all}" />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 
 					<aon:outputText value="&#160;" />
 					<aon:div>

@@ -7,7 +7,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml" >
 		<ui:define name="beforeRightMenuContent">
 			<ui:insert name="beforeRightMenuContentEx" />
-			<c:if test="#{(!aonConfiguration.properties.hideMenuFavorite) and (not empty actionFavorite.favoriteAndMoreUsedOptions)}">
+			<aon:if test="#{(!aonConfiguration.properties.hideMenuFavorite) and (not empty actionFavorite.favoriteAndMoreUsedOptions)}">
 				<aon:dropDownMenu>
 					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
 	                <f:facet name="label"> 
@@ -15,7 +15,7 @@
 							value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-favorites.png']}" />
 	                </f:facet>				
 				</aon:dropDownMenu>
-			</c:if>				
+			</aon:if>				
 		</ui:define>
 		<ui:define name="beforeHelpMenuContent">
 			<ui:insert name="beforeWebMapMenuContent"/>

@@ -32,7 +32,7 @@
 						</ui:include>
 					</aon:panelGrid>
 
-				<c:if test="#{!carrier.nevv}">
+				<aon:if test="#{!carrier.nevv}">
 					<aon:panelTabSet id="carrierTabs" >
 						<aon:panelTab id="address" label="#{bundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
@@ -68,7 +68,7 @@
 						</aon:panelTab>
 						
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 			

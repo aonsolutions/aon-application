@@ -1,132 +1,34 @@
-/**
- * 
- */
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_RESOURCE;
-import static com.code.aon.ui.common.ICommonMessages.LOGIN_ERROR_DEFAULT;
-
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
+import javax.servlet.ServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.common.ICommonMessages;
 
-/**
- * @author Consulting & Development. Iñaki Ayerbe - 21/05/2007
- *
- */
 public class FailedLogin {
-	public static final String SESSION_MANAGER_REF = "jboss.admin:service=AonSessionManager";
-	public static final ObjectName SESSION_MANAGER = getObjectName(SESSION_MANAGER_REF);
 
-    /** Obtains the SessionFilter Logger. */
-	private final static Logger LOGGER = LoggerFactory.getLogger(FailedLogin.class);
-	
-	private final static String GET_LASTLOGIN_EXCEPTION = "getLastLoginException";
-	
-	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
-
-	private String message;
-	
-	private boolean showError;
-
-	public FailedLogin() {
-		init( AonUtil.getCurrentLocale() );
-	}
-	
-	public void init( Locale locale ) {
-		AuthenticationLoginException e = getLoginException(); 
-		if ( e != null ) {
-			setMessage( getMessage(e, locale) );
-		}		
-	}
-	
-    private AuthenticationLoginException getLoginException() {
-		Object[] params = { "" };
-		String[] sig = { String.class.getName() }; 	
-		try {
-			MBeanServer server = getMBeanServer();
-			return (AuthenticationLoginException) server.invoke( SESSION_MANAGER, GET_LASTLOGIN_EXCEPTION, params, sig );
-		} catch (Throwable e) {
-			LOGGER.warn( e.getMessage(), e );
-		} 
-    	return null;
-    }    
-	
-	private String getMessageString( AuthenticationLoginException e, Locale locale ) {
-		String message = null;
-		String errorId = e.getMessage();
-		if ( errorId.startsWith(LOGIN_ERROR_PREFFIX) ) {
-			errorId = LOGIN_ERROR_DEFAULT;
+	public String getMessage(ServletRequest request) {
+		AuthenticationLoginException exp = (AuthenticationLoginException) 
+				request.getAttribute(IConstants.AON_LOGIN_EXCEPTION);
+		if ( exp != null ) {
+			Locale locale = request.getLocale();
+			ResourceBundle bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, locale);
+			String message = bundle.getString(exp.getMessage());
+			MessageFormat messageFormat = new MessageFormat( message );
+			Object[] arguments;
+			if ( exp.getArg().getClass().isArray() ) {
+				arguments = (Object[]) exp.getArg();
+			} else {
+				arguments = new Object[] { exp.getArg() }; 
+			}
+			return messageFormat.format(arguments);
 		}
-		if ( message == null ) {
-			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);
-			message = bundle.getString(errorId);
-		}
-		return message;	
-	}
-	
-	private String getMessage( AuthenticationLoginException e, Locale locale ) {
-		MessageFormat messageFormat = new MessageFormat( getMessageString(e, locale) );
-		Object[] arguments;
-		if ( e.getArg().getClass().isArray() ) {
-			arguments = (Object[]) e.getArg();
-		} else {
-			arguments = new Object[] { e.getArg() }; 
-		}
-		return messageFormat.format(arguments);
-	}
-
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
-
-	/**
-	 * @param message the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public boolean isShowError() {
-		return showError;
-	}
-
-	public void setShowError(boolean showError) {
-		this.showError = showError;
-	}
-
-	private MBeanServer getMBeanServer() {
-		MBeanServer server = null;
-		List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
-		if (servers.size() > 0) {
-			server = (MBeanServer) servers.get(0);
-		}
-		return server;
-	}
-
-	private static ObjectName getObjectName( String ref ) {
-		try {
-			return new ObjectName( ref );
-		} catch (MalformedObjectNameException e) {
-			LOGGER.error( e.getMessage(), e );
-		}		
 		return null;
 	}
-
 }
 

@@ -6,7 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+	<aon:if test="#{!aonConfiguration.properties.hideMenuBar}">
 		<aon:form id="mainMenuForm">
 			<aon:menuBar id="mainMenu">
 				<ui:insert name="beforeMenuContent"/>
@@ -26,7 +26,7 @@
 					<aon:componentGroup
 						family="javax.faces.Command,org.richfaces.DropDownMenu"
 						method="#{selectedMenu.updateCommandsToReset}">						
-						<c:if test="#{aonConfiguration.bean.alarm.showPending}">
+						<aon:if test="#{aonConfiguration.bean.alarm.showPending}">
 							<aon:commandLink id="pendingAlarms"
 								title="#{alarm.pendingAlarmTitle}"
 								value="(#{alarm.pendingCount})"
@@ -34,7 +34,7 @@
 								action="alarm_list" actionListener="#{alarm.onInit}" 
 								style="padding-right: 5px;padding-left: 18px"
 								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
-						</c:if>
+						</aon:if>
 						<aon:commandLink id="showEmailWindow" 
 							styleClass="aon-menu-icon aon-icon-email"
 							title="#{bundle.webmail_send_email}" 
@@ -53,12 +53,12 @@
 		                        <aon:graphicImage title="#{bundle.aon_help}"
 		                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
 			                </f:facet>					                
-			                <c:if test="#{aonConfiguration.bean.alarm.showList}">
+			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
 									value="#{bundle.aon_alarm}"
 									action="alarm_list" actionListener="#{alarm.onInit}" 
 									iconClass="aon-icon-alarm" />
-							</c:if>	
+							</aon:if>	
 							<aon:componentGroup
 								family="org.richfaces.DropDownMenu"
 								method="#{actionDenied.renderedMenuItem}">
@@ -98,5 +98,5 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/about.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />				
-	</c:if>
+	</aon:if>
  </ui:composition>

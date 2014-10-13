@@ -30,8 +30,8 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />		
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
-		<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+		<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-		</c:if>
+		</aon:if>
 	</ui:define>
 </ui:composition>

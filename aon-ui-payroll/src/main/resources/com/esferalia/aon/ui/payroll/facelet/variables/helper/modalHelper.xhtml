@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="variableHelperModalContainer#{helperSuffix}">
-		<c:if test="#{controller.handler.modalHelperPanelVisible}">
+		<aon:if test="#{controller.handler.modalHelperPanelVisible}">
 			<rich:modalPanel id="variableHelperModalPanel" minHeight="650"
 				minWidth="900" showWhenRendered="true" zindex="100">
 				<f:facet name="header">
@@ -97,6 +97,6 @@
 				</aon:form>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

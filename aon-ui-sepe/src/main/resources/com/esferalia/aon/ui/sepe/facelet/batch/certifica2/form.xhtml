@@ -7,11 +7,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<c:if test="#{certifica2Batch.nevv}" >
+	<aon:if test="#{certifica2Batch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/form_new.xhtml" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!certifica2Batch.nevv}" >
+	<aon:if test="#{!certifica2Batch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.sepe_certifica2Batch_module}" />
 			<ui:param name="skipSaveButton" value="#{true}" />
@@ -72,13 +72,13 @@
 					<aon:outputLabel value="#{bundle.aon_status}" />
 					<aon:outputText value="#{certifica2Batch.to.status}" />
 					
-					<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 						<aon:outputLabel value="#{bundle.aon_company}" />
 						<aon:outputText value="#{certifica2Batch.to.enterprise.registry.fullName}" />
 		
 						<aon:outputLabel value="#{bundle.aon_signature}" />
 						<aon:outputText value="#{certifica2Batch.to.sign}" />
-					</c:if>
+					</aon:if>
 					
 				</aon:panelGrid>
 				
@@ -124,7 +124,7 @@
 			</ui:define>
 		
 		</ui:decorate>
-	</c:if>
+	</aon:if>
 	
 
 </ui:composition>

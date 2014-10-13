@@ -6,7 +6,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+	<aon:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="Room_hotel"
 			value="#{roomSearch.hotel}" >
@@ -15,7 +15,7 @@
 			<a4j:support event="onchange" reRender="Room_item" ignoreDupResponses="true" />
 			<a4j:support event="oninputchanged" reRender="Room_item" ignoreDupResponses="true" />	
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="Room_item"

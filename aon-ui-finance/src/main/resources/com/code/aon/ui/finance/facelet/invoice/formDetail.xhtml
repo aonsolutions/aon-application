@@ -9,7 +9,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div id="invoiceDetailContainer" styleClass="aon-padding-top">
-		<c:if test="#{!invoiceController.nevv}">
+		<aon:if test="#{!invoiceController.nevv}">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.finance_invoice_lines}" />
@@ -257,7 +257,7 @@
 							</f:facet>
 						</aon:column>
 
-						<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+						<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:outputLabel for="InvoiceDetail_workPlace" value="#{bundle.purchase_workplace}" />
@@ -280,7 +280,7 @@
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
-						</c:if>
+						</aon:if>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
 							<f:facet name="header">
@@ -314,6 +314,6 @@
 					</ui:define>
 				</ui:decorate>
 			</aon:panel>
-		</c:if>
+		</aon:if>
 	</aon:div>
 </ui:composition>

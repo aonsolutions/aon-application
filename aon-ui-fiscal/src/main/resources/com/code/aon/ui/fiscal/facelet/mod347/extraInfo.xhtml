@@ -9,7 +9,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<aon:div id="extraInfoContainer">
-		<c:if test="#{mod347Detail.extraInfoPanelVisible}">
+		<aon:if test="#{mod347Detail.extraInfoPanelVisible}">
 			<rich:modalPanel id="finalizePanel" minHeight="400" minWidth="700"
 				showWhenRendered="#{mod347Detail.extraInfoPanelVisible}" zindex="90">
 				<f:facet name="header">
@@ -151,6 +151,6 @@
 					</aon:form>
 				</aon:div>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:div>
 </ui:composition>

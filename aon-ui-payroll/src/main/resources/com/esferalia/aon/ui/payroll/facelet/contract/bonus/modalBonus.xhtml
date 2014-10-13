@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showContractBonusWindow">
-		<c:if test="#{contract.showContractBonusWindow}">
+		<aon:if test="#{contract.showContractBonusWindow}">
 			<rich:modalPanel id="bonusModalPanel" minHeight="400"
 				minWidth="600" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -100,6 +100,6 @@
 				<aon:lookupButtonPopup lookup="#{bonusConceptLookup}" />
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showEnumLookupWindow">
-		<c:if test="#{ssEnumLookup.showEnumLookupWindow}">
+		<aon:if test="#{ssEnumLookup.showEnumLookupWindow}">
 			<rich:modalPanel id="enumLookupModalPanel" minHeight="600"
 				minWidth="850" showWhenRendered="true" zindex="90"
 				style="overflow:auto;">
@@ -84,6 +84,6 @@
 				</aon:form>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

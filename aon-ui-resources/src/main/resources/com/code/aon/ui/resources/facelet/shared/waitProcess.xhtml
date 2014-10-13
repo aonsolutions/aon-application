@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{addWaitProcessPoll}">
+	<aon:if test="#{addWaitProcessPoll}">
 		<aon:valueParam name="waitProcessPollInterval" default="2000" />
 	
 	    <a4j:region>
@@ -18,7 +18,7 @@
 	            	actionListener="#{logPanel.onDoNothig}" />
 	        </h:form>
 	    </a4j:region>
-    </c:if>
+    </aon:if>
 	<rich:modalPanel id="waitProccess" height="200" width="300"
 		zindex="2000" resizeable="false">
 

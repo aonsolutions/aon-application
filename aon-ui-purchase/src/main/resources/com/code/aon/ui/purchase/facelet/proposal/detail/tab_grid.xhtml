@@ -82,7 +82,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<c:if test="#{aonRole.purchaseOperator}">
+			<aon:if test="#{aonRole.purchaseOperator}">
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.aon_price}" />
@@ -104,7 +104,7 @@
 					<f:facet name="footer">
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 				<f:facet name="header">

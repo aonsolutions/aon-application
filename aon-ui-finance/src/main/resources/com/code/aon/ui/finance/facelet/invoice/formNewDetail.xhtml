@@ -9,14 +9,14 @@
 	<aon:valueParam name="itemLookupTemplate"
 		default="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml"/>
 
-	<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
+	<aon:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
 		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
-	</c:if>
-	<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
+	</aon:if>
+	<aon:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
 		<aon:outputLabel for="Item_id" value="#{bundle.aon_concept}" />
-	</c:if>
+	</aon:if>
 	<aon:div>
-		<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
+		<aon:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
 			<ui:include src="#{itemLookupTemplate}">
 				<ui:param name="lookupTo" value="#{detailController.to.item}" />
 				<ui:param name="idRequired" value="#{true}" />
@@ -27,8 +27,8 @@
 				<aon:methodParam name="lookupChangeListener"
 					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 			</ui:include>
-		</c:if>
-		<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
+		</aon:if>
+		<aon:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
 			<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
 				<ui:param name="lookupTo" value="#{detailController.to.item}" />
 				<ui:param name="idRequired" value="#{true}" />
@@ -39,9 +39,9 @@
 				<aon:methodParam name="lookupChangeListener"
 					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 			</ui:include>
-		</c:if>
+		</aon:if>
 		<aon:panelGroup id="invoiceDetailItemDescription" styleClass="aon-nowrap aon-vertical-align-top">
-			<c:if test="#{aonConfiguration.bean.product.showStock}">
+			<aon:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:commandButton value="&#160;"
 					title="#{bundle.product_info}"
 					rendered="#{detailController.to.item != null and detailController.to.item.id != null and detailController.to.item.product.inventoriable}"
@@ -56,7 +56,7 @@
 					<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 					<aon:set var="#{itemInfo.alternativeMethod}" value="#{invoiceController.invoiceDetailControllerName}.onItemChanged" />
 				</aon:commandButton>															
-			</c:if>
+			</aon:if>
 			<aon:inputTextarea id="InvoiceDetail_description"
 				style="#{!detailController.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}"
 				value="#{detailController.to.description}"
@@ -80,7 +80,7 @@
 		</aon:panelGroup>
 	</aon:div>
 
-	<c:if test="#{invoiceController.to.expense}">
+	<aon:if test="#{invoiceController.to.expense}">
 		<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_taxable_base}" />
 		<aon:inputText id="InvoiceDetail_taxableBase"
 			value="#{detailController.to.taxableBase}"
@@ -104,7 +104,7 @@
 			</aon:outputText>
 			<aon:outputText styleClass="aon-bold" style="padding-left: 3px;" value="%" />
 
-			<c:if test="#{invoiceController.to.withholding}">
+			<aon:if test="#{invoiceController.to.withholding}">
 				<aon:outputLabel for="InvoiceDetail_retentionQuota" value="#{bundle.aon_retention}"
 					styleClass="aon-padding-left aon-padding-right" />
 				<aon:inputText id="InvoiceDetail_retentionQuota"
@@ -119,7 +119,7 @@
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 				</aon:outputText>
 				<aon:outputText styleClass="aon-bold" style="padding-left: 3px;" value="%" />
-			</c:if>
+			</aon:if>
 		</aon:div>
 
 		<aon:outputLabel for="InvoiceDetail_total" value="#{bundle.aon_total}" />
@@ -128,17 +128,17 @@
 			valueChangeListener="#{detailController.onTotalChanged}"
 			reRender="InvoiceDetail_taxableBase,invoiceDetailTaxQuota" ajaxSingle="true"  
 			required="true" size="5" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+	<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{bundle.purchase_workplace}" />
 		<aon:selectOneMenu id="InvoiceDetail_workPlace"
 			value="#{detailController.to.workPlace}" ajaxSingle="true">
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{invoiceController.to.sales}">
+	<aon:if test="#{invoiceController.to.sales}">
 		<aon:div>
 			<aon:outputLabel for="Invoice_comments"
 				value="#{bundle.aon_comment}" />
@@ -149,8 +149,8 @@
 		</aon:div>
 		<aon:inputTextarea id="Invoice_comments" cols="85" rows="4"
 			value="#{invoiceController.to.comments}" ajaxSingle="true" />
-	</c:if>
-	<c:if test="#{!invoiceController.to.sales}">
+	</aon:if>
+	<aon:if test="#{!invoiceController.to.sales}">
 		<aon:div>
 			<aon:outputLabel for="Invoice_remarks"
 				value="#{bundle.aon_remark}" />
@@ -161,6 +161,6 @@
 		</aon:div>
 		<aon:inputTextarea id="Invoice_remarks" cols="85" rows="4"
 			value="#{invoiceController.to.remarks}" ajaxSingle="true" />
-	</c:if>
+	</aon:if>
 
 </ui:composition>

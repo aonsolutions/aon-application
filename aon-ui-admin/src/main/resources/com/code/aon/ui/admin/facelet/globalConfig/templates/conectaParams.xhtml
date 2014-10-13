@@ -37,37 +37,37 @@
 					<f:selectItems value="#{financeCollections.invoiceExportTypes}" />
 				</aon:selectOneMenu>
 	
-				<c:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'GEYCE')}">
+				<aon:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'GEYCE')}">
 					<aon:outputLabel for="Exporter_enterpriseCode"
 						value="#{bundle.aon_company_id}" />
 					<aon:inputText id="Exporter_enterpriseCode"
 						value="#{exporter.configuration.enterpriseCode}"
 						size="10" maxlength="#{exporter.configuration.enterpriseCodeLength}"
 						required="true" />
-				</c:if> 
+				</aon:if> 
 				
-				<c:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'EXCEL') or (exporter.configuration.type == 'DSI_GESTION')}">
+				<aon:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'EXCEL') or (exporter.configuration.type == 'DSI_GESTION')}">
 					<aon:outputLabel for="Exporter_accountSize"
 						value="#{bundle.finance_exporter_account_size}" />
 					<aon:selectOneMenu id="Exporter_accountSize"
 						value="#{exporter.configuration.accountSize}" required="true">
-						<c:if test="#{exporter.configuration.type == 'A3'}">
+						<aon:if test="#{exporter.configuration.type == 'A3'}">
 							<f:selectItem itemLabel="7" itemValue="#{7}" />
 							<f:selectItem itemLabel="8" itemValue="#{8}" />
-						</c:if>
+						</aon:if>
 						<f:selectItem itemLabel="9" itemValue="#{9}" />
 						<f:selectItem itemLabel="10" itemValue="#{10}" />
 						<f:selectItem itemLabel="11" itemValue="#{11}" />
 						<f:selectItem itemLabel="12" itemValue="#{12}" />
-						<c:if test="#{(exporter.configuration.type == 'EXCEL') or (exporter.configuration.type == 'DSI_GESTION')}">
+						<aon:if test="#{(exporter.configuration.type == 'EXCEL') or (exporter.configuration.type == 'DSI_GESTION')}">
 							<f:selectItem itemLabel="13" itemValue="#{13}" />
 							<f:selectItem itemLabel="14" itemValue="#{14}" />
 							<f:selectItem itemLabel="15" itemValue="#{15}" />
-						</c:if>
+						</aon:if>
 					</aon:selectOneMenu>
-				</c:if> 				
+				</aon:if> 				
 	
-				<c:if test="#{exporter.configuration.type == 'GEYCE'}">
+				<aon:if test="#{exporter.configuration.type == 'GEYCE'}">
 					<aon:outputLabel for="Geyce_journal_general"
 						value="#{bundle.finance_journal_general}" />
 					<aon:inputText id="Geyce_journal_general"
@@ -92,7 +92,7 @@
 						size="2" maxlength="2"
 						value="#{exporter.configuration.expensesJournal}" />
 						
-				</c:if>												
+				</aon:if>												
 					
 			</aon:panelGrid>
 	

@@ -90,7 +90,7 @@
 						</f:facet>
 					</aon:column>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 							<f:facet name="header">
 								<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -107,7 +107,7 @@
 									value="#{controller.to.confidential}" rendered="#{formNew}" />
 							</f:facet>
 						</aon:column>
-					</c:if>
+					</aon:if>
 
 					<aon:column styleClass="aon-width-80">
 						<f:facet name="header">

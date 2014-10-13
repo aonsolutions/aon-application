@@ -31,12 +31,12 @@
 						</ui:include>
 
 						<aon:div id="IncludeFeesDiv" styleClass="aon-margin-left" style="display: inline;">
-							<c:if test="#{controller.customerFeesAvailables}">
+							<aon:if test="#{controller.customerFeesAvailables}">
 								<aon:selectBooleanCheckbox id="Customer_feesIncluded"
 									value="#{controller.feesIncluded}" />
 								<aon:outputLabel for="Customer_feesIncluded" styleClass="aon-italic"
 									value="#{bundle.customer_add_fees_to_invoicing_group}" />
-							</c:if>
+							</aon:if>
 						</aon:div>
 					</aon:div>
 				</f:facet>

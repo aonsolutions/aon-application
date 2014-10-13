@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFinancePaymentWindow">
-		<c:if test="#{finance.showFinancePaymentWindow}">
+		<aon:if test="#{finance.showFinancePaymentWindow}">
 			<rich:modalPanel id="financePaymentModalPanel" minHeight="240"
 				minWidth="520" rendered="#{finance.showFinancePaymentWindow}"
 				showWhenRendered="true" zindex="90">
@@ -101,7 +101,7 @@
 											value="#{finance.to.payMethod.name}"
 											rendered="#{finance.to.payMethod != null and finance.to.payMethod.id != null}" />
 
-										<c:if test="#{aonRole.accountingOperator}">
+										<aon:if test="#{aonRole.accountingOperator}">
 											<aon:outputLabel for="Finance_record"
 												value="#{bundle.finance_record}" />
 											<aon:selectOneRadio id="Finance_record" 
@@ -109,7 +109,7 @@
 												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 												<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 											</aon:selectOneRadio>
-										</c:if>
+										</aon:if>
 
 									</aon:panelGrid>
 								</aon:div>
@@ -119,7 +119,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

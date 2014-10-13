@@ -140,7 +140,7 @@
 							<aon:outputText value="#{to.roomTotal}" />
 						</aon:column>				
 	
-						<c:if test="#{controller.showCancelled}">
+						<aon:if test="#{controller.showCancelled}">
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.pms_cancelled}"
@@ -149,7 +149,7 @@
 								<aon:outputText value="#{to.roomCancelled}"
 									style="#{(to.roomCancelled > 0) ? ('color: red;') : ('')}" />
 							</aon:column>				
-						</c:if>
+						</aon:if>
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 							<f:facet name="header">

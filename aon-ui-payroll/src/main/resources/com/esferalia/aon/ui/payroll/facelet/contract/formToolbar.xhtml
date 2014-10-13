@@ -44,7 +44,7 @@
 		
 		<ui:define name="moreMenuContent">
 
-<c:if test="#{!contract.params.retaQuote and !contract.internship}">
+<aon:if test="#{!contract.params.retaQuote and !contract.internship}">
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
 				rendered="#{!contract.nevv}"
@@ -55,7 +55,7 @@
 					target="#{contractPdf.showDocumentGenerationWindow}" value="#{true}" />
  			</aon:menuItem>
 			
-			<c:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
+			<aon:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
 
 				<aon:menuItem id="document-preview" 
 					value="Vista Previa"
@@ -143,7 +143,7 @@
 						<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 					</aon:menuItem>                
 				</rich:menuGroup>
-			</c:if>
+			</aon:if>
 			
 			<rich:menuSeparator id="documentsSeparator" />
 			
@@ -202,7 +202,7 @@
 					target="#{transformContrata.showCommunicationWindow}" value="#{true}" />
 			</aon:menuItem>
 
-			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<aon:menuItem id="certificados-communication-log"
 					value="#{bundle.sepe_certificados}"
 					disabled="#{empty contract.to.endDate}"
@@ -213,10 +213,10 @@
 					<f:setPropertyActionListener
 						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
 				</aon:menuItem>
-			</c:if>
-</c:if>			
+			</aon:if>
+</aon:if>			
 			
-			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<rich:menuSeparator id="payrollSeparator" />
 				<aon:menuItem id="contract-bonus" 
 					value="#{bundle.sepe_contrata_contract_bonus}"
@@ -234,7 +234,7 @@
 					<f:setPropertyActionListener
 						target="#{contract.showContractSalaryInfoWindow}" value="#{true}" />
 				</aon:menuItem>				
-			</c:if>
+			</aon:if>
 			
 		</ui:define>
 

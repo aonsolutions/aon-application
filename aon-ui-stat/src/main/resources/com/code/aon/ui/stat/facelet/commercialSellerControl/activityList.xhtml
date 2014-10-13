@@ -51,21 +51,21 @@
 
 				<aon:panelGrid columns="4">
 
-					<c:if test="#{commercialStat.controlType==0}">
+					<aon:if test="#{commercialStat.controlType==0}">
 						<aon:outputText value="#{bundle.seller_stat_name}" />
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==1}">
 						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==2}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==2}">
 						<aon:outputText value="#{bundle.aon_product}" />
 						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
 
-					</c:if>
+					</aon:if>
 
 					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">
@@ -109,22 +109,22 @@
 								</aon:outputText>
 							</aon:column>
 	
-							<c:if test="#{commercialStat.controlType==1}">
+							<aon:if test="#{commercialStat.controlType==1}">
 								<aon:column	styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_module_commercial}" />
 									</f:facet>
 									<aon:outputText value="#{to.seller.registry.fullName}" />
 								</aon:column>
-							</c:if>
-							<c:if test="#{commercialStat.controlType==0}">
+							</aon:if>
+							<aon:if test="#{commercialStat.controlType==0}">
 								<aon:column	styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_target}" />
 									</f:facet>
 									<aon:outputText value="#{to.project.target.registry.fullName}" />
 								</aon:column>
-							</c:if>
+							</aon:if>
 	
 							<aon:column	styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">

@@ -12,7 +12,7 @@
 	<aon:panelGrid columns="2" id="cno_panel" styleClass="aon-width-all"
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 		
-		<c:if test="#{contract.trainingContract}" >
+		<aon:if test="#{contract.trainingContract}" >
 			
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
@@ -40,7 +40,7 @@
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 			</aon:div>
-		</c:if>
+		</aon:if>
 
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{contract.params.cno}" />

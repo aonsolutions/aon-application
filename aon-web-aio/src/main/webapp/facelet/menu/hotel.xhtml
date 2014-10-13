@@ -49,14 +49,14 @@
 										actionListener="#{reservationIO.onInit}"
 										value="#{bundle.pms_reservationIO_module}" />
 								</aon:div>
-								<c:if test="#{pmsCollections.currentUserServiceHotelsCount > 0}">
+								<aon:if test="#{pmsCollections.currentUserServiceHotelsCount > 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="serviceInvoice" 
 											action="serviceInvoice_list"
 											actionListener="#{serviceInvoice.onLoad}"
 											value="#{bundle.pms_service_invoice_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rack"
 										action="rack_search"
@@ -92,7 +92,7 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_hotel_room"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-room aon-direct-access-panel">
@@ -106,18 +106,18 @@
 											actionListener="#{room.onEditSearch}"
 											value="#{bundle.report_rooms}" />
 									</aon:div>
-									<c:if test="#{aonRole.admin}">
+									<aon:if test="#{aonRole.admin}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="feature" 
 												value="#{bundle.asset_feature_module}"
 												action="feature_grid" />
 										</aon:div>
-									</c:if>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>							
+						</aon:if>							
 
-						<c:if test="#{aonRole.purchaseOperator}">
+						<aon:if test="#{aonRole.purchaseOperator}">
 							<aon:panelGrid id="group_hotel_purchases"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-purchase aon-direct-access-panel">
@@ -165,7 +165,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 
 					</aon:panelGroup>
 
@@ -178,14 +178,14 @@
 								<aon:outputText value="#{bundle.aon_module_pos}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{aonRole.admin}">
+								<aon:if test="#{aonRole.admin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos" 
 											action="pos_search"
 											actionListener="#{pos.onEditSearch}"
 											value="#{bundle.finance_pos_definition_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="posShift" 
 										action="posShift_search"
@@ -252,7 +252,7 @@
 								<aon:outputText value="#{bundle.report_occupation}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{aonRole.commercialOperator}">
+								<aon:if test="#{aonRole.commercialOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="allotment" 
 											action="allotment_search"
@@ -271,7 +271,7 @@
 											actionListener="#{stopSales.onEditSearch}"
 											value="#{bundle.pms_stop_sales_module}"/>
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="roomBooking" 
 										action="roomBooking_search"
@@ -312,7 +312,7 @@
 										actionListener="#{mailConfig.onInitMailAccount}"
 										value="#{bundle.webmail_mailAccount_full}" />						
 								</aon:div>
-								<c:if test="#{aonRole.commercialOperator}">
+								<aon:if test="#{aonRole.commercialOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="registryAddInfo-hotel"
 											action="registryAddInfo_search-hotel"
@@ -321,15 +321,15 @@
 											<aon:actionListener method="#{registryAddInfo.setCustomerMode}" />
 										</aon:commandLink>
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.admin}">
+								</aon:if>
+								<aon:if test="#{aonRole.admin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="regenerateBooking"
 											action="regenerateBooking"
 											actionListener="#{bookingRegenerator.onEditSearch}"
 											value="#{bundle.pms_regenerate_booking_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 

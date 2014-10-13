@@ -27,53 +27,53 @@
 	<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
 		default="#{controller.onNumberEditable}" />
 
-	<c:if test="#{!skipSeriesLabel}">
+	<aon:if test="#{!skipSeriesLabel}">
 		<aon:outputLabel for="#{sfc_aliasPreffix}_number" value="#{sfc_label}" />
-	</c:if>
+	</aon:if>
 	<aon:div id="#{sfc_div}">
 		<a4j:region>
-			<c:if test="#{sfc_editable}">
-				<c:if test="#{sfc_seriesValid and (sfc_seriesCodesLength > 0)}">
+			<aon:if test="#{sfc_editable}">
+				<aon:if test="#{sfc_seriesValid and (sfc_seriesCodesLength > 0)}">
 					<aon:selectOneMenu id="#{sfc_aliasPreffix}_number-Series" 
 						value="#{sfc_seriesProperty}" required="#{sfc_seriesRequired}"
 						disabled="#{sfc_disabled}"
 						valueChangeListener="#{sfc_onSeriesChanged}"
 						reRender="#{sfc_aliasPreffix}_number-Series,#{sfc_aliasPreffix}_numberDiv#{(seriesChangedReRender != null)?',':''}#{seriesChangedReRender}">
-						<c:if test="#{(!sfc_seriesRequired or (sfc_seriesCodesLength > 1)) and (sfc_seriesProperty==null)}">
+						<aon:if test="#{(!sfc_seriesRequired or (sfc_seriesCodesLength > 1)) and (sfc_seriesProperty==null)}">
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						</c:if>
+						</aon:if>
 						<f:selectItems value="#{sfc_seriesCodes}" />
 					</aon:selectOneMenu>
-				</c:if>
-				<c:if test="#{!sfc_seriesValid}">
+				</aon:if>
+				<aon:if test="#{!sfc_seriesValid}">
 					<aon:inputText id="#{sfc_aliasPreffix}_number-Series"
 						value="#{sfc_seriesProperty}" size="5" maxlength="5" />
-				</c:if>			
-				<c:if test="#{!skipNumberInput}">
+				</aon:if>			
+				<aon:if test="#{!skipNumberInput}">
 					<aon:div id="#{sfc_aliasPreffix}_numberDiv"
 						layout="inline" styleClass="aon-margin-left">
-						<c:if test="#{sfc_numberEditable or (sfc_numberProperty != 0)}">
+						<aon:if test="#{sfc_numberEditable or (sfc_numberProperty != 0)}">
 							<aon:inputText id="#{sfc_aliasPreffix}_number"
 								value="#{sfc_numberProperty}"
 								required="true" size="6" maxlength="10"
 								disabled="#{!sfc_numberEditable or sfc_disabled}"
 								reRender="#{sfc_aliasPreffix}_number" />
-						</c:if>
-						<c:if test="#{!sfc_numberEditable and (sfc_numberProperty == 0)}">
+						</aon:if>
+						<aon:if test="#{!sfc_numberEditable and (sfc_numberProperty == 0)}">
 							<aon:inputText id="#{sfc_aliasPreffix}_number"
 								value=" &lt;Auto&gt;"
 								size="6" maxlength="10" disabled="true" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 					<aon:commandLink styleClass="aon-icon-edit-end-simple aon-margin-right"
 					 	style="margin-left: 5px; padding-right: 12px;"
 						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
 						reRender="#{sfc_div}"
 						rendered="#{sfc_numberEditable}" ajaxSingle="true" >
-						<c:if test="#{sfc_numberReset}">
+						<aon:if test="#{sfc_numberReset}">
 							<f:setPropertyActionListener
 								target="#{sfc_numberProperty}" value="#{0}" />
-						</c:if>
+						</aon:if>
 						<f:setPropertyActionListener
 							target="#{sfc_numberEditable}" value="#{false}" />
 					</aon:commandLink>
@@ -87,8 +87,8 @@
 						<f:setPropertyActionListener
 							target="#{sfc_numberEditable}" value="#{true}" />
 					</aon:commandLink>
-				</c:if>
-			</c:if>
+				</aon:if>
+			</aon:if>
 			<aon:outputText styleClass="aon-bold aon-margin-right"
 				value="#{controller.to.referenceCode}"
 				rendered="#{!sfc_editable}" />

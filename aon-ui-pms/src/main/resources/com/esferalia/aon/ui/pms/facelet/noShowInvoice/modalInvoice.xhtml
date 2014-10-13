@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showInvoiceWindow">
-		<c:if test="#{controller.showInvoiceWindow}">
+		<aon:if test="#{controller.showInvoiceWindow}">
 			<rich:modalPanel id="invoiceModalPanel" minHeight="340" minWidth="580" 
 				rendered="#{controller.showInvoiceWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -88,20 +88,20 @@
 
 										<aon:outputLabel for="NoShowInvoice_payMethod"
 											value="#{bundle.finance_payMethod}" />
-										<c:if test="#{searchListener.guestReservationSearch}">
+										<aon:if test="#{searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="NoShowInvoice_payMethod"
 												value="#{controller.noShowPayMethod}" required="true" 
 												ajaxSingle="true">
 												<f:selectItems value="#{configCollections.directPayMethods}" />
 											</aon:selectOneMenu>
-										</c:if>
-										<c:if test="#{!searchListener.guestReservationSearch}">
+										</aon:if>
+										<aon:if test="#{!searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="NoShowInvoice_payMethod"
 												value="#{controller.noShowPayMethod}" required="true"
 												reRender="invoiceModalContent" ajaxSingle="true">
 												<f:selectItems value="#{configCollections.payMethods}" />
 											</aon:selectOneMenu>
-										</c:if>
+										</aon:if>
 
 										<aon:outputLabel for="NoShowInvoice_bank"
 											rendered="#{controller.bankRequired}"
@@ -141,7 +141,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -8,10 +8,10 @@
 
 <ui:composition>
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
 		<ui:param name="abbreviateName" value="#{true}"/>
-	</c:if>
+	</aon:if>
 	
 
 	<aon:column alias="Product.code"
@@ -28,9 +28,9 @@
 			<aon:outputText value="#{bundle.aon_name}" />
 		</f:facet>
 		<aon:outputText value="#{to.name}">
-			<c:if test="#{abbreviateName}">
+			<aon:if test="#{abbreviateName}">
 				<aon:abbreviateConverter maxWidth="80" />
-			</c:if>		
+			</aon:if>		
 		</aon:outputText>
 	</aon:column>
 

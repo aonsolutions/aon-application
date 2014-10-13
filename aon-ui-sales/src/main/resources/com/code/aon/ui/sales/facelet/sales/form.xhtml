@@ -39,7 +39,7 @@
 						</aon:htmlCommandLink>
 					</ui:define>
 					<ui:define name="moreMenuContent">
-						<c:if test="#{aonRole.warehouseOperator}">
+						<aon:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="delivery"
 								value="#{bundle.aon_invoice_delivery}"
 								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
@@ -49,7 +49,7 @@
 								<f:setPropertyActionListener target="#{sales.showDeliveryWindow}"
 									value="#{true}" />
 							</aon:menuItem>
-						</c:if>
+						</aon:if>
 						<aon:menuItem id="purchaseGeneration"
 							value="#{bundle.sales_to_purchase}"
 							immediate="#{true}" 
@@ -60,7 +60,7 @@
 							<f:setPropertyActionListener target="#{sales.showPurchaseWindow}"
 								value="#{true}" />
 						</aon:menuItem>
-						<c:if test="#{aonRole.financeOperator}">
+						<aon:if test="#{aonRole.financeOperator}">
 							<aon:menuItem id="invoice"
 								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
@@ -70,7 +70,7 @@
 								<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
 									value="#{true}" />
 							</aon:menuItem>
-						</c:if>
+						</aon:if>
 						<aon:menuItem id="salesReturnRequest"
 							value="#{bundle.sales_return_request}"
 							rendered="#{!sales.nevv}"
@@ -108,7 +108,7 @@
 								<ui:param name="skipSeriesLabel" value="#{true}" />
 							</ui:include>
 							<aon:div>
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Sales_securityLevel"
 										value="#{sales.to.confidential}"
 										rendered="#{sales.pending}" />
@@ -118,7 +118,7 @@
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{!sales.pending and sales.to.confidential}" />
-								</c:if>
+								</aon:if>
 
 								<aon:outputText id="sales-itemReturn"
 									rendered="#{sales.to.itemReturn}"
@@ -292,14 +292,14 @@
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
-						<c:if test="#{!aonConfiguration.bean.sales.showTasData}">
+						<aon:if test="#{!aonConfiguration.bean.sales.showTasData}">
 							<aon:outputLabel for="Sales_project"
 								value="#{bundle.aon_project}" />
-						</c:if>
-						<c:if test="#{aonConfiguration.bean.sales.showTasData}">
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.sales.showTasData}">
 							<aon:outputLabel for="Sales_project"
 								value="#{bundle.tas_project_tas}" />
-						</c:if>
+						</aon:if>
 						<aon:div>
 							<aon:selectOneMenu id="Sales_project"
 								rendered="#{sales.pending and sales.to.project.id == null and sales.projectCount > 0}"
@@ -356,7 +356,7 @@
 				</aon:panelGrid>
 
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
-					<c:if test="#{sales.defaultPayMethod != null and !sales.defaultPayMethod}">
+					<aon:if test="#{sales.defaultPayMethod != null and !sales.defaultPayMethod}">
 						<aon:panel>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.finance_payMethod}" />
@@ -431,23 +431,23 @@
 
 							</aon:panelGrid>
 						</aon:panel>
-					</c:if>
+					</aon:if>
 				</aon:div>
 
-				<c:if test="#{!sales.nevv}">
+				<aon:if test="#{!sales.nevv}">
 					<aon:panelTabSet id="salesPanelTab" selectedTab="#{sales.selectedTab}">
 						<aon:panelTab id="salesDetailTab" 
 							label="#{bundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formDetail.xhtml" />
 						</aon:panelTab>
-						<c:if test="#{sales.shippingDataDefined}">
+						<aon:if test="#{sales.shippingDataDefined}">
 							<aon:panelTab id="salesShipmentTab" 
 								label="#{bundle.carrier_shipment}">
 								<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 		</aon:form>

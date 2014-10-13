@@ -18,9 +18,9 @@
 			rendered="#{allotment.nevv}" required="true"
 			valueChangeListener="#{allotment.onHotelChanged}" 
 			reRender="AllotmentItemDiv" ajaxSingle="true">
-			<c:if test="#{allotment.nevv}">
+			<aon:if test="#{allotment.nevv}">
 				<f:selectItem itemLabel="-" value="#{null}"/>
-			</c:if>
+			</aon:if>
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
 
@@ -104,9 +104,9 @@
 					valueChangeListener="#{allotment.onItemChanged}" 
 					reRender="AllotmentItemDiv">
 					<f:selectItem itemLabel="#{(allotment.itemsSize > 0)?'-':bundle.aon_common_all}" value="#{null}"/>
-					<c:if test="#{allotment.to.hotel != null and allotment.to.hotel.id != null}">
+					<aon:if test="#{allotment.to.hotel != null and allotment.to.hotel.id != null}">
 						<f:selectItems value="#{allotment.hotelRoomItems}" />
-					</c:if>
+					</aon:if>
 				</aon:selectOneMenu>
 				<aon:commandButton id="AllotmentItem-add"
 					styleClass="aon-finding-toolbar-item aon-search-add"

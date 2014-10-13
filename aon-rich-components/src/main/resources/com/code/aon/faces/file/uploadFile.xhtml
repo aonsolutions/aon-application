@@ -14,12 +14,12 @@
 		<rich:modalPanel id="uploadFileModalPanel" height="180" width="450">
 			<f:facet name="header">
 				<aon:div id="uploadFileTitle" styleClass="aon-popupWindow-title">
-					<c:if test="#{fileManager.uploadZip}">
+					<aon:if test="#{fileManager.uploadZip}">
 						<aon:outputText value="#{bundle.aon_zip_upload}" />
-					</c:if>
-					<c:if test="#{!fileManager.uploadZip}">
+					</aon:if>
+					<aon:if test="#{!fileManager.uploadZip}">
 						<aon:outputText value="#{bundle.aon_file_upload}" />
-					</c:if>
+					</aon:if>
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="addInvoicePanelWindow">
-		<c:if test="#{amortization.addInvoicePanelVisible}">
+		<aon:if test="#{amortization.addInvoicePanelVisible}">
 			<rich:modalPanel id="addInvoiceModalPanel" minHeight="450"
 				minWidth="750" rendered="#{amortization.addInvoicePanelVisible}"
 				showWhenRendered="true" zindex="90">
@@ -111,7 +111,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -84,7 +84,7 @@
 			<ui:param name="logPanelTitle" value="#{bundle.finance_account_export_module}" />			
 			<ui:param name="pollInterval" value="5000" /> 
 			<ui:define name="additionalLogPanelContent">
-				<c:if test="#{exporter.finished and (!exporter.dataEmpty)}">
+				<aon:if test="#{exporter.finished and (!exporter.dataEmpty)}">
 					<aon:div styleClass="aon-margin-bottom">
 						<aon:htmlCommandLink id="downloadExport"
 							value="#{bundle.aon_fileupload_download}" target="_blank"
@@ -94,7 +94,7 @@
 							<rich:componentControl for="logPanel" operation="hide" event="onclick" />
 						</aon:htmlCommandLink>
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</ui:define>
 		</ui:decorate>	
 		

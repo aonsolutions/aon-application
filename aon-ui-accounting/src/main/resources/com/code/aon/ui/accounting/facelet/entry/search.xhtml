@@ -29,9 +29,9 @@
 				</ui:define>				
 			</ui:decorate>
 
-			<c:if test="#{!accountEntry.nevv}">
+			<aon:if test="#{!accountEntry.nevv}">
 				<ui:include src="/com/code/aon/ui/accounting/facelet/entry/entriesToolbar.xhtml" />
-			</c:if>
+			</aon:if>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
@@ -89,7 +89,7 @@
 					<aon:inputText id="AccountEntry_journal" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio  id="AccountEntry_securityLevel"
@@ -98,7 +98,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem  value="#{null}"  itemLabel="#{bundle.aon_all}"/>
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 					
 					<!-- busqueda por lineas -->
 					

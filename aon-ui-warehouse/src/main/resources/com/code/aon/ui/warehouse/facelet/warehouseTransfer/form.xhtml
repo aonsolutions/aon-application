@@ -63,11 +63,11 @@
 						value="#{warehouseTransfer.to.comments}" />
 				</aon:panelGrid>
 
-				<c:if test="#{!warehouseTransfer.nevv}">
+				<aon:if test="#{!warehouseTransfer.nevv}">
 					<aon:div styleClass="aon-padding-top">
 						<ui:include src="/com/code/aon/ui/warehouse/facelet/warehouseTransfer/formDetail.xhtml" />
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />

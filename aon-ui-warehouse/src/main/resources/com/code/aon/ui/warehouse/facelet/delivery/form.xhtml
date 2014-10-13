@@ -30,7 +30,7 @@
 							<f:setPropertyActionListener target="#{delivery.showSalesTransferWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<c:if test="#{aonRole.financeOperator}">
+						<aon:if test="#{aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
 								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
@@ -40,7 +40,7 @@
 								<f:setPropertyActionListener target="#{delivery.showInvoiceWindow}"
 									value="#{true}" />
 							</aon:commandButton>
-						</c:if>
+						</aon:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{bundle.webmail_send_email}"
 							rendered="#{deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
@@ -79,7 +79,7 @@
 								<ui:param name="skipSeriesLabel" value="#{true}" />
 							</ui:include>
 							<aon:div>
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Delivery_securityLevel"
 										value="#{delivery.to.confidential}"
 										rendered="#{delivery.pending}" />
@@ -89,7 +89,7 @@
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{!delivery.pending and delivery.to.confidential}" />
-								</c:if>
+								</aon:if>
 
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{delivery.to.status}" />
@@ -203,14 +203,14 @@
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
-						<c:if test="#{!aonConfiguration.bean.delivery.showTasData}">
+						<aon:if test="#{!aonConfiguration.bean.delivery.showTasData}">
 							<aon:outputLabel for="Delivery_project"
 								value="#{bundle.aon_project}" />
-						</c:if>
-						<c:if test="#{aonConfiguration.bean.delivery.showTasData}">
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.delivery.showTasData}">
 							<aon:outputLabel for="Delivery_project"
 								value="#{bundle.tas_project_tas}" />
-						</c:if>
+						</aon:if>
 						<aon:div>
 							<aon:selectOneMenu id="Delivery_project"
 								rendered="#{delivery.pending and delivery.to.project.id == null and delivery.projectCount > 0}"
@@ -267,7 +267,7 @@
 				</aon:panelGrid>
 
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
-					<c:if test="#{delivery.defaultPayMethod != null and !delivery.defaultPayMethod}">
+					<aon:if test="#{delivery.defaultPayMethod != null and !delivery.defaultPayMethod}">
 						<aon:panel>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.finance_payMethod}" />
@@ -342,10 +342,10 @@
 
 							</aon:panelGrid>
 						</aon:panel>
-					</c:if>
+					</aon:if>
 				</aon:div>
 				
-				<c:if test="#{!delivery.nevv}">
+				<aon:if test="#{!delivery.nevv}">
 					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
 						<aon:panelTab id="deliveryDetail" 
 							label="#{bundle.warehouse_delivery_detail}">
@@ -356,7 +356,7 @@
 							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formShipment.xhtml" />
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 		</aon:form>

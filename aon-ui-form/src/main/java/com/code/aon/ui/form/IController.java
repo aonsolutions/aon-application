@@ -64,7 +64,7 @@ public interface IController extends ISearchable {
      * 
      * @param isNevv
      */
-    void setNew(boolean isNevv);
+    void setNevv(boolean isNevv);
 
     /**
      * Execute insert or update action.

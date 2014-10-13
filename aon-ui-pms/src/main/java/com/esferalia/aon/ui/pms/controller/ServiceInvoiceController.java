@@ -139,7 +139,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			setNew(true);
+			setNevv(true);
 			setProjectReservation((ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainHotel());

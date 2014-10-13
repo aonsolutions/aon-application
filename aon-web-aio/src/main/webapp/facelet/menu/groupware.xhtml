@@ -31,7 +31,7 @@
 										actionListener="#{project.onEditSearch}"
 										value="#{bundle.aon_module_groupware}" />
 								</aon:div>
-								<c:if test="#{aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="project_type"
 											action="projectType_list"
@@ -44,7 +44,7 @@
 											actionListener="#{activityTypeStandalone.onSearch}"
 											value="#{bundle.project_activity_type}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					
@@ -61,14 +61,14 @@
 										actionListener="#{task.onLaunch}"
 										value="#{bundle.groupware_task_inbox}" />
 								</aon:div>
-								<c:if test="#{aonRole.statisticsOperator}">
+								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_gantt"
 											action="gantt_form"
 											actionListener="#{gantt.onLaunch}"
 											value="#{bundle.groupware_gantt_diagram}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					
@@ -85,26 +85,26 @@
 										actionListener="#{dailyTracking.onReset}"
 										value="#{bundle.aon_daily_tracking_module}" />
 								</aon:div>
-								<c:if test="#{aonRole.statisticsOperator}">
+								<aon:if test="#{aonRole.statisticsOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_dailyTracking_reports"
 											actionListener="#{dailyTrackingReport.onResetReportSearch}"
 											action="daily_tracking_report"
 											value="#{bundle.aon_reports}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.config}">
+								</aon:if>
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="groupware_job_type"
 											action="job_type"
 											value="#{bundle.aon_job_type_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
 
-					<c:if test="#{aonRole.config or aonRole.taskMonitor}">
+					<aon:if test="#{aonRole.config or aonRole.taskMonitor}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_general_processes"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -113,7 +113,7 @@
 									<aon:outputText value="#{bundle.aon_processes}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.config}">
+									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_process"
 												action="process_list"
@@ -126,14 +126,14 @@
 												actionListener="#{processTransitionType.onSearch}"
 												value="#{bundle.groupware_process_transition_types}" />
 										</aon:div>
-									</c:if>
-									<c:if test="#{aonRole.taskMonitor}">
+									</aon:if>
+									<aon:if test="#{aonRole.taskMonitor}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_process_launcher"
 												action="#{processWizard.start}"
 												value="#{bundle.groupware_process_launcher}" />
 										</aon:div>
-									</c:if>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 	
@@ -144,26 +144,26 @@
 									<aon:outputText value="#{bundle.groupware_campaigns}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.taskMonitor}">
+									<aon:if test="#{aonRole.taskMonitor}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_campaigns"
 												action="campaign_search"
 												actionListener="#{campaign.onEditSearch}"
 												value="#{bundle.groupware_campaign_monitor}" />
 										</aon:div>
-									</c:if>
-									<c:if test="#{aonRole.config}">
+									</aon:if>
+									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_campaignTypes"
 												action="campaign_type"
 												actionListener="#{campaignType.onSearch}"
 												value="#{bundle.groupware_campaign_types}" />
 										</aon:div>
-									</c:if>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 	
-							<c:if test="#{aonRole.config}">
+							<aon:if test="#{aonRole.config}">
 								<aon:panelGrid id="group_general_taskHolders"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-direct-access-panel aon-icon-contactGroup">
@@ -192,9 +192,9 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
-							</c:if>
+							</aon:if>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 					
 				</h:panelGrid>
 			</aon:div>

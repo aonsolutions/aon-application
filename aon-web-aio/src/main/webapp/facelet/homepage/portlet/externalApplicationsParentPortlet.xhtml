@@ -7,17 +7,17 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<c:if test="#{domainSwitcher.parentDomain and desktop.state.showExternalApplications}">
+	<aon:if test="#{domainSwitcher.parentDomain and desktop.state.showExternalApplications}">
 		<aon:div styleClass="aon-margin-top">					  
-			<c:if test="#{desktop.state.showTirant}">
+			<aon:if test="#{desktop.state.showTirant}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-margin-top aon-support">
 					<h:outputLink id="tirantWeb" target="_blank" value="#{desktop.state.tirantExternalUrl}" >
 						<h:graphicImage title="#{bundle.aon_external_tirant}"
 							url="#{aonResource.resolve['/images/logo-tirant-asesores.png']}" />
 					</h:outputLink>
 				</aon:div>
-			</c:if>							
-			<c:if test="#{desktop.state.showServiconvenios}">
+			</aon:if>							
+			<aon:if test="#{desktop.state.showServiconvenios}">
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
 					<aon:commandLink id="serviconvenios" styleClass="none" 
 						action="corporateIdentityAttach_list"
@@ -26,16 +26,16 @@
 							url="#{aonResource.resolve['/images/logo-serviconvenios.png']}" />
 					</aon:commandLink>
 				</aon:div>
-			</c:if>
-			<c:if test="#{desktop.state.showDehOnline}">							
+			</aon:if>
+			<aon:if test="#{desktop.state.showDehOnline}">							
 				<aon:div styleClass="aon-text-center aon-margin-bottom aon-support">
 					<h:graphicImage title="#{bundle.aon_external_dehOnline}"
 						url="#{aonResource.resolve['/images/logo-deh-online.png']}"
 						style="cursor: pointer;" 
 						onclick="document.getElementById('dehonlineForm').submit()"/>
 				</aon:div>
-			</c:if>
+			</aon:if>
 		</aon:div>		
-	</c:if>
+	</aon:if>
 					
 </ui:composition>

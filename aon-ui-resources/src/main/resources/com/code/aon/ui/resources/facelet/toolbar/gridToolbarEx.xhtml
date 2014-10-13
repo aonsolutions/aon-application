@@ -6,22 +6,22 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
-			<c:if test="#{!skipResetButton}">								
+			<aon:if test="#{!skipResetButton}">								
 				<aon:commandButton id="#{toolbarID}-reset"
 					title="#{bundle.aon_key_new_accelerator}"
 					value="#{bundle.aon_reset}" rendered="#{!formNew}" 
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
-			</c:if>				
-			<c:if test="#{!skipSaveButton}">		
+			</aon:if>				
+			<aon:if test="#{!skipSaveButton}">		
 				<aon:commandButton id="#{toolbarID}-save"
 					title="#{bundle.aon_key_save_accelerator}"
 					value="#{bundle.aon_save}" rendered="#{formEdit or formNew}"
 					action="#{saveAction}" actionListener="#{saveActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
-			</c:if>
+			</aon:if>
 			<aon:confirmButton id="#{toolbarID}-cancel" 
 				title="#{bundle.aon_key_cancel_accelerator}"
 				value="#{bundle.aon_cancel}" 
@@ -32,7 +32,7 @@
 				confirmActionListener="#{cancelNewActionListener}"
 				confirmAction="#{cancelNewAction}"
 				accesskey="#{bundle.aon_key_cancel}" />
-			<c:if test="#{!skipRemoveButton}">				
+			<aon:if test="#{!skipRemoveButton}">				
 				<aon:confirmButton id="#{toolbarID}-remove" 
 					title="#{bundle.aon_key_remove_accelerator}"
 					value="#{bundle.aon_remove}" 
@@ -43,8 +43,8 @@
 					confirmActionListener="#{removeActionListener}"
 					confirmAction="#{removeAction}"
 					accesskey="#{bundle.aon_key_remove}" />
-			</c:if>
-			<c:if test="#{!skipSearchButton}">			
+			</aon:if>
+			<aon:if test="#{!skipSearchButton}">			
 				<aon:commandButton id="#{toolbarID}-search"
 					title="#{bundle.aon_key_search_accelerator}"
 					value="#{bundle.aon_search}"
@@ -52,7 +52,7 @@
 					action="#{searchAction}" actionListener="#{searchActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"
 					accesskey="#{bundle.aon_key_search}" />
-			</c:if>														
+			</aon:if>														
 			<aon:commandButton id="#{toolbarID}-new-cancel" 
 				title="#{bundle.aon_key_cancel_accelerator}"
 				value="#{bundle.aon_cancel}"

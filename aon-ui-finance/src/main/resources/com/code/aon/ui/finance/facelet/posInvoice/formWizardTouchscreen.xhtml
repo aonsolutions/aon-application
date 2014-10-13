@@ -18,12 +18,12 @@
 			</f:facet>
 			<h:panelGrid columns="#{invoiceController.tagsNumCols}" cellspacing="0" cellspadding="0">
 
-				<c:if test="#{invoiceController.tagPage != 1 and invoiceController.tagsCount > invoiceController.tagsLimit}">
+				<aon:if test="#{invoiceController.tagPage != 1 and invoiceController.tagsCount > invoiceController.tagsLimit}">
 					<aon:commandButton styleClass="aon-big-commandButton aon-icon-big-arrow-full-left aon-width-100"
 						value="&#160;" immediate="true"
 						actionListener="#{invoiceController.onPreviousTagPage}"
 						reRender="posInvoiceDetailItemDataTable" ajaxSingle="true" />
-				</c:if>
+				</aon:if>
 				<c:forEach items="#{invoiceController.pagedTags}" var="posInvoiceTag">
 					<aon:commandButton styleClass="aon-big-commandButton aon-width-100"
 						style="font-size:0.8em;"
@@ -33,13 +33,13 @@
 						<f:param name="selectedTag" value="#{posInvoiceTag.id}"/>
 					</aon:commandButton>
 				</c:forEach>
-				<c:if test="#{invoiceController.tagsCount > invoiceController.tagsLimit and 
+				<aon:if test="#{invoiceController.tagsCount > invoiceController.tagsLimit and 
 								invoiceController.tagsCount > (invoiceController.tagPage * (invoiceController.tagsLimit - 2) + 1)}">
 					<aon:commandButton styleClass="aon-big-commandButton aon-icon-big-arrow-full-right aon-width-100"
 						value="&#160;" immediate="true"
 						actionListener="#{invoiceController.onNextTagPage}"
 						reRender="posInvoiceDetailItemDataTable" ajaxSingle="true" />
-				</c:if>
+				</aon:if>
 
 			</h:panelGrid>
 		</aon:panel>
@@ -51,12 +51,12 @@
 			</f:facet>
 			<h:panelGrid columns="#{invoiceController.posShift.pos.numCols}" cellspacing="0" cellspadding="0">
 
-				<c:if test="#{invoiceController.selectedProductPage != 1 and invoiceController.selectedProductsCount > invoiceController.posShift.pos.limit}">
+				<aon:if test="#{invoiceController.selectedProductPage != 1 and invoiceController.selectedProductsCount > invoiceController.posShift.pos.limit}">
 					<aon:commandButton styleClass="aon-big-commandButton aon-icon-big-arrow-full-left aon-width-100"
 						value="&#160;" immediate="true"
 						actionListener="#{invoiceController.onPreviousSelectedProductPage}"
 						reRender="posInvoiceDetailItemDataTable" ajaxSingle="true" />
-				</c:if>
+				</aon:if>
 				<c:forEach items="#{invoiceController.pagedSelectedProducts}" var="posInvoiceSelectedProduct">
 					<aon:commandButton styleClass="aon-big-commandButton aon-width-100"
 						style="font-size:0.8em;"
@@ -67,13 +67,13 @@
 						<f:param name="selectedProduct" value="#{posInvoiceSelectedProduct.id}"/>
 					</aon:commandButton>
 				</c:forEach>
-				<c:if test="#{invoiceController.selectedProductsCount > invoiceController.posShift.pos.limit and
+				<aon:if test="#{invoiceController.selectedProductsCount > invoiceController.posShift.pos.limit and
 								invoiceController.selectedProductsCount > (invoiceController.selectedProductPage * (invoiceController.posShift.pos.limit - 2) + 1)}">
 					<aon:commandButton styleClass="aon-big-commandButton aon-icon-big-arrow-full-right aon-width-100"
 						value="&#160;" immediate="true"
 						actionListener="#{invoiceController.onNextSelectedProductPage}"
 						reRender="posInvoiceDetailItemDataTable" ajaxSingle="true" />
-				</c:if>
+				</aon:if>
 
 			</h:panelGrid>
 		</aon:panel>

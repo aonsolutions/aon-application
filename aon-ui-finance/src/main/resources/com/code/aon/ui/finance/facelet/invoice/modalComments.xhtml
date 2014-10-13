@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showCommentsWindow">
-		<c:if test="#{invoiceController.showCommentsWindow}">
+		<aon:if test="#{invoiceController.showCommentsWindow}">
 			<rich:modalPanel id="commentsModalPanel"
 				minWidth="740" minHeight="200" zindex="90"
 				showWhenRendered="#{invoiceController.showCommentsWindow}" >
@@ -79,7 +79,7 @@
 					</aon:div>							
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

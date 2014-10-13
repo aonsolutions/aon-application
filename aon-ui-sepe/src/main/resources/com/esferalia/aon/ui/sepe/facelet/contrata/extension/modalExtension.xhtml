@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showExtensionContrataWindow">
-		<c:if test="#{extensionContrata.showExtensionContrataWindow}">
+		<aon:if test="#{extensionContrata.showExtensionContrataWindow}">
 			<rich:modalPanel id="extensionContrataModalPanel" minHeight="350"
 				minWidth="650" showWhenRendered="true" >
 				<f:facet name="header">
@@ -67,6 +67,6 @@
 				</aon:form>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

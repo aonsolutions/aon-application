@@ -140,13 +140,13 @@
 										action="periodAmortization_search"
 										value="#{bundle.accounting_period_amortization_module}" />
 								</aon:div>
-								<c:if test="#{aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="amortizationType"
 											action="amortizationType_list"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -309,7 +309,7 @@ En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
 										value="#{bundle.accounting_relationships_module}" />
 								</aon:div>
  -->
-								<c:if test="#{aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="autConcept"
 											action="autConcept"
@@ -331,7 +331,7 @@ En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
 											actionListener="#{accPeriod.onSearch}"
 											value="#{bundle.accounting_period_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="defaultParams-accounting" 
 										action="accountingDefaultParams-accounting"

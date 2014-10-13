@@ -18,13 +18,13 @@
 					actionListener="#{dehOnline.acceptPassword}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
-				<c:if test="#{dehOnline.storedPassword != null}">
+				<aon:if test="#{dehOnline.storedPassword != null}">
 					<h:outputLink id="dehOnlineTest" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="document.getElementById('dehonlineForm').submit();return false;" >
 						<aon:outputText value="#{bundle.sepe_validateLogin}" />
 					</h:outputLink>
-				</c:if>			
+				</aon:if>			
 			</ui:define>				
 		</ui:decorate>
 	
@@ -56,11 +56,11 @@
 
 	</aon:form>
 
-	<c:if test="#{dehOnline.user != null}">	
+	<aon:if test="#{dehOnline.user != null}">	
 		<form id="dehonlineForm" action="https://panel.dehonline.es/login" method="post" target="_blank">
 			<input type="hidden" name="identity" value="#{dehOnline.user}"/>
 			<input type="hidden" name="password" value="#{dehOnline.storedPassword}"/>
 		</form>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

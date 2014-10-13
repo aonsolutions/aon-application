@@ -12,9 +12,9 @@
 
 	<!--  aon-region-body -->
 	<aon:div styleClass="aon-scroll-area">
-		<c:if test="#{innerToolbar}" >
+		<aon:if test="#{innerToolbar}" >
 			<aon:methodParam name="rowSelectorAction" default="" />
-		</c:if>				
+		</aon:if>				
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:define name="columns">
 

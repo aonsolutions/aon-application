@@ -18,7 +18,7 @@
 			
 			<ui:define name="afterAll">
 				<aon:div id="activityContainer">
-					<c:if test="#{controller.activityPanelVisible}">
+					<aon:if test="#{controller.activityPanelVisible}">
 						<rich:modalPanel id="finalizePanel" minHeight="400" minWidth="700"
 							showWhenRendered="#{controller.activityPanelVisible}" zindex="90">
 							<f:facet name="header">
@@ -53,7 +53,7 @@
 								</aon:form>
 							</aon:div>
 						</rich:modalPanel>
-					</c:if>
+					</aon:if>
 				</aon:div>
 			</ui:define>
 						

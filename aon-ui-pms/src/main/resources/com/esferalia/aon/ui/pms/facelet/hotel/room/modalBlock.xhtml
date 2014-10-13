@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRoomBlockWindow">
-		<c:if test="#{controller.showRoomBlockWindow}">
+		<aon:if test="#{controller.showRoomBlockWindow}">
 			<rich:modalPanel id="roomBlockModalPanel" minHeight="320" minWidth="580" 
 				rendered="#{controller.showRoomBlockWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -79,7 +79,7 @@
 												popupDateFormat="#{bundle.aon_date_pattern}" />
 										</aon:div>
 
-										<c:if test="#{controller.blockMode}">
+										<aon:if test="#{controller.blockMode}">
 											<aon:outputLabel for="Room_blockStatus"
 												value="#{bundle.aon_status}" />
 											<aon:selectOneMenu id="Room_blockStatus" 
@@ -92,7 +92,7 @@
 											<aon:inputText id="Room_blockRemarks" 
 												value="#{controller.blockRemarks}" 
 												size="52" maxlength="40" required="true"/>
-										</c:if>
+										</aon:if>
 
 									</aon:panelGrid>
 								</aon:div>
@@ -102,7 +102,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

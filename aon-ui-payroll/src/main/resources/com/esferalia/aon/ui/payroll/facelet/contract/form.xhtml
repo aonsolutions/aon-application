@@ -15,11 +15,11 @@
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formToolbar.xhtml" />
 			
 			<aon:div styleClass="aon-scroll-area">		
-				<c:if test="#{contract.nevv}" >
+				<aon:if test="#{contract.nevv}" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
-				</c:if>
+				</aon:if>
 			
-				<c:if test="#{!contract.nevv}" >
+				<aon:if test="#{!contract.nevv}" >
 				
 					<aon:panelGrid id="contract-panelGrib" columns="4" styleClass="aon-width-all"
 						columnClasses="
@@ -92,9 +92,9 @@
 							</ui:include>
 						</aon:panelTab>
 						
-						<c:if test="#{!contract.params.retaQuote}">
+						<aon:if test="#{!contract.params.retaQuote}">
 
-							<c:if test="#{!contract.transformedContract and !contract.extendedContract}">
+							<aon:if test="#{!contract.transformedContract and !contract.extendedContract}">
 								<aon:panelTab id="contractContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
 									actionListener="#{contractContrata.onContrataDataShow}" >
 										<aon:div style="width:920px;">
@@ -106,9 +106,9 @@
 											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
 										</aon:div>		
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{!contract.transformedContract and contract.extendedContract}">
+							<aon:if test="#{!contract.transformedContract and contract.extendedContract}">
 								<aon:panelTab id="extensionContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
 									actionListener="#{extensionContrata.onContrataDataShow}" >
 									<aon:actionListener method="#{extensionContrata.onContrataDataShow}" />
@@ -133,9 +133,9 @@
 											</aon:panelCollapsible>
 										</aon:div>
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{contract.transformedContract}">
+							<aon:if test="#{contract.transformedContract}">
 								<aon:panelTab id="transformContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
 									actionListener="#{transformContrata.onContrataDataShow}" >
 									<aon:actionListener method="#{contractContrata.onContrataDataShow}" />
@@ -159,7 +159,7 @@
 											</aon:panelCollapsible>
 										</aon:div>
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 	
 							<aon:panelTab id="documentOtherData" label="#{bundle.aon_addInfo}"
 								actionListener="#{contractDocumentInfo.onLoadContractFields}" ajaxSingle="#{true}">
@@ -170,14 +170,14 @@
 								</aon:div>
 							</aon:panelTab>
 							
-							<c:if test="#{true}">
+							<aon:if test="#{true}">
 								<aon:panelTab id="additionalClausesData" label="#{bundle.payroll_contract_additional_clauses}">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/formContent.xhtml" >
 										<ui:param name="controller" value="#{contractClause}" />
 									</ui:include>
 								</aon:panelTab>
-							</c:if>
-						</c:if>
+							</aon:if>
+						</aon:if>
 
 						<aon:panelTab id="attachData"  
 							label="#{bundle.aon_documents}">
@@ -186,7 +186,7 @@
 						
 					</aon:panelTabSet>
 					
-				</c:if>
+				</aon:if>
 			</aon:div>
 			
 		</aon:form>

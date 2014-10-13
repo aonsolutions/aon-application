@@ -8,9 +8,9 @@
 
 	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 
-		<c:if test="#{lookup != null}">
+		<aon:if test="#{lookup != null}">
 			<ui:param name="controller" value="#{lookup}"/>
-		</c:if>
+		</aon:if>
 
 		<ui:include	src="/com/code/aon/ui/tas/facelet/tasItem/formContent.xhtml" />
 

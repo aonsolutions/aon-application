@@ -85,7 +85,7 @@
 								value="#{deliveryInvoicing.params.toNumber}" size="7" />
 						</aon:panelGrid>
 	
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:outputLabel for="Invoicing_Confidential"
 								value="#{bundle.aon_confidential}" />
 							<aon:selectOneRadio id="Invoicing_Confidential" 
@@ -93,7 +93,7 @@
 								<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 							</aon:selectOneRadio>
-						</c:if>
+						</aon:if>
 	
 						<aon:outputLabel for="Invoicing_WorkPlace"
 							value="#{bundle.purchase_workplace}" />
@@ -131,7 +131,7 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 	
-						<c:if test="#{aonRole.accountingOperator}">
+						<aon:if test="#{aonRole.accountingOperator}">
 							<aon:outputLabel for="Invoice_record"
 								value="#{bundle.finance_record}" />
 							<aon:selectOneRadio id="Invoice_record" 
@@ -139,7 +139,7 @@
 								<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 							</aon:selectOneRadio>
-						</c:if>
+						</aon:if>
 
 						<aon:outputLabel for="Invoice_comments"
 							value="#{bundle.aon_comment}" />

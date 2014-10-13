@@ -26,12 +26,12 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="projectTas" />
 					</aon:htmlCommandLink>
-					<c:if test="#{!projectTas.nevv}">
+					<aon:if test="#{!projectTas.nevv}">
 						<aon:commandButton id="ProjectHistory" 
 							action="project_stats" actionListener="#{projectTas.onProjectHistory}"
 							value="#{bundle.aon_history}"
 							styleClass="aon-finding-toolbar-item aon-icon-info" />
-					</c:if>		
+					</aon:if>		
 				</ui:define>
 			</ui:decorate>
 

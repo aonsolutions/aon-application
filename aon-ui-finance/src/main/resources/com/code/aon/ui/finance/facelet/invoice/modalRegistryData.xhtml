@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRegistryDataWindow">
-		<c:if test="#{invoiceController.showRegistryDataWindow}">
+		<aon:if test="#{invoiceController.showRegistryDataWindow}">
 			<rich:modalPanel id="registryDataModalPanel" minHeight="240"
 				minWidth="620" rendered="#{invoiceController.showRegistryDataWindow}"
 				showWhenRendered="true" zindex="90">
@@ -62,7 +62,7 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
-										<c:if test="#{invoiceController.to.sales}">
+										<aon:if test="#{invoiceController.to.sales}">
 											<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 												<ui:param name="lookupTo" value="#{invoiceController.to.registry}" />
 												<ui:param name="lookupForRegistry" value="#{true}" />
@@ -75,7 +75,7 @@
 												<aon:methodParam name="lookupChangeListener" 
 													value="#{invoiceController.onCustomerChanged}" type="lookupChangeListener" />
 											</ui:include>
-										</c:if>
+										</aon:if>
 
 										<aon:outputLabel for="Invoice_registry_document"
 											value="#{bundle.aon_company_document}" />
@@ -126,14 +126,14 @@
 											<f:validateLength minimum="1" maximum="128" />
 										</aon:inputText>
 
-										<c:if test="#{invoiceController.addressCount > 0}">
+										<aon:if test="#{invoiceController.addressCount > 0}">
 											<aon:outputLabel for="Invoice_registryAddress"
 												value="#{bundle.aon_address}" />
 											<aon:selectOneMenu id="Invoice_registryAddress"
 												value="#{invoiceController.to.registryAddress}">
 												<f:selectItems value="#{invoiceController.addresses}" />
 											</aon:selectOneMenu>
-										</c:if>
+										</aon:if>
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>
@@ -142,7 +142,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

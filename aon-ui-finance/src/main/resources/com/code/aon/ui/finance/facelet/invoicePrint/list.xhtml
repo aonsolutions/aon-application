@@ -116,7 +116,7 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<c:if test="#{company.EInvoice}">					
+						<aon:if test="#{company.EInvoice}">					
 							<aon:column alias="Invoice.signed"
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
@@ -129,14 +129,14 @@
 									title="#{bundle.sign_sign_pending}"
 									styleClass="aon-icon aon-icon-unsigned" />
 							</aon:column>
-						</c:if>
+						</aon:if>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
 			
 		</aon:form>
 
-		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+		<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
 				<ui:param name="messageSuffix" value="-Invoice" />
 				<ui:param name="skipSendButton" value="true" />
@@ -158,7 +158,7 @@
 				<ui:param name="logPanelTitle" value="#{bundle.finance_invoice_send_email_title}" />
 			</ui:include>		
 			
-		</c:if>
+		</aon:if>
 	</ui:define>
 
 </ui:composition>

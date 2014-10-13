@@ -68,7 +68,7 @@
 					<aon:inputText id="Account_id" value="#{ledgerReport.account}"
 						size="14" />
 					
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 	 					<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_securityLevel"
 							value="#{bundle.aon_confidential}" />
@@ -77,7 +77,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all} " />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 					
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_order"

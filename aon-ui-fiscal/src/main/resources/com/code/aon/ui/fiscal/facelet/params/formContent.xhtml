@@ -74,13 +74,13 @@
 				<f:selectItems value="#{configCollections.administrations}" />
 			</aon:selectOneMenu>
 
-			<c:if test="#{fiscalParams.commonTerritoryDefaultAdministration}">					
+			<aon:if test="#{fiscalParams.commonTerritoryDefaultAdministration}">					
 				<aon:outputLabel for="administration_code"
 					value="#{bundle.fiscal_administration_code}" />
 				<aon:inputText id="administration_code" size="8" maxlength="5" 
 					value="#{fiscalParams.administrationCode}">
 				</aon:inputText>
-			</c:if>						
+			</aon:if>						
 
 			<aon:outputLabel for="Creditor_id" value="#{bundle.fiscal_admon_creditor}" />
 			<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">

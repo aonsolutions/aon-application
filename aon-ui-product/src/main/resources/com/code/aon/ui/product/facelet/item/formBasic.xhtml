@@ -12,12 +12,12 @@
 			value="#{controller.to.product.code}" required="true" size="20" maxlength="15" 
 			onblur="toUpperCase(this);" />
 
-		<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+		<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 			<aon:outputLabel for="Item_barcode" styleClass="aon-margin-left aon-margin-right aon-italic"
 				value="#{bundle.product_barcode}" />
 			<aon:inputText id="Item_barcode" 
 				value="#{controller.to.barcode}" size="25" maxlength="32" />
- 		</c:if>
+ 		</aon:if>
 	</aon:div>
 
 	<aon:outputLabel for="Item_product_name" value="#{bundle.aon_description}" />
@@ -36,48 +36,48 @@
 			<f:selectItems value="#{productCollections.categories}" />
 		</aon:selectOneMenu>
 
-		<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+		<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 			<aon:outputLabel for="Item_product_brand" styleClass="aon-margin-left aon-margin-right aon-italic"
 				value="#{bundle.tas_make}" />
 			<aon:selectOneMenu id="Item_product_brand" value="#{controller.to.product.brand}">
 				<f:selectItem itemLabel="-" itemValue="" />
 				<f:selectItems value="#{productCollections.brands}" />
 			</aon:selectOneMenu>
-		</c:if>
+		</aon:if>
 	</aon:div>
 
-	<c:if test="#{aonConfiguration.bean.product.showType or aonConfiguration.bean.product.showEcommerceData}">
+	<aon:if test="#{aonConfiguration.bean.product.showType or aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Item_product_type" value="#{bundle.aon_type}" />
 		<aon:div>
-			<c:if test="#{aonConfiguration.bean.product.showType}">
+			<aon:if test="#{aonConfiguration.bean.product.showType}">
 				<aon:selectOneMenu id="Item_product_type" styleClass="aon-margin-right"
 					value="#{controller.to.product.type}">
 					<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
 				</aon:selectOneMenu>
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
+			<aon:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 				<aon:selectBooleanCheckbox id="Item_internet" 
 					value="#{controller.to.internet}" />
 				<aon:outputLabel for="Item_internet" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_ecommerce_available}" />
-			</c:if>
+			</aon:if>
 		</aon:div>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
+	<aon:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel value="#{bundle.product_info}" />
 		<aon:div id="itemCheckValues">
-			<c:if test="#{aonConfiguration.bean.product.showStock}">
+			<aon:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:selectBooleanCheckbox id="Item_product_inventoriable"
 					value="#{controller.to.product.inventoriable}"
 					disabled="#{controller.to.product.composition}"
 					ajaxSingle="true" reRender="itemCheckValues" />
 				<aon:outputLabel for="Item_product_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_inventoriable}" />
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{aonConfiguration.bean.product.showComposition}">
+			<aon:if test="#{aonConfiguration.bean.product.showComposition}">
 				<aon:selectBooleanCheckbox id="Item_product_composition"
 					value="#{controller.to.product.composition}"
 					disabled="#{controller.to.product.inventoriable}"
@@ -92,9 +92,9 @@
 						value="#{bundle.product_composition_price}"
 						rendered="#{controller.to.product.composition}" />
 				</aon:panelGroup>
-			</c:if>
+			</aon:if>
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Item_status" value="#{controller.to.status}">

@@ -27,7 +27,7 @@
 		<f:selectItem itemLabel="-" itemValue="" />
 		<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 	</aon:selectOneMenu>
-	<c:if test="#{!isOfficialBalance}">
+	<aon:if test="#{!isOfficialBalance}">
 		<aon:outputLabel for="Account_id"
 			value="#{bundle.account_account}" />
 			<aon:div id="links">
@@ -82,7 +82,7 @@
 			value="#{controller.parameters.accountAlias}"
 			size="30">
 		</aon:inputText>
-	</c:if>
+	</aon:if>
 	
 	<aon:outputText value="#{bundle.aon_date_select}" />
 	<aon:div>
@@ -123,7 +123,7 @@
 		</aon:selectInputDate>
 	</aon:div>
 
-	<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel
 			for="AccountEntryDetail_accountEntry_securityLevel"
 			value="#{bundle.aon_confidential}" />
@@ -132,7 +132,7 @@
 			value="#{controller.parameters.securityLevel}">
 			<f:selectItems value="#{commonCollections.confidentialValues}" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 
 	<aon:outputText value="&#160;" />
 	<aon:div id="excludeOptions">
@@ -150,7 +150,7 @@
 		</aon:div>
 	</aon:div>
 
-	<c:if test="#{!isOfficialBalance}">
+	<aon:if test="#{!isOfficialBalance}">
 		<aon:outputText value="&#160;" />
 		<aon:div>
 			<aon:selectBooleanCheckbox id="Account_balanced_acounts"
@@ -184,7 +184,7 @@
 				</aon:selectOneRadio>
 			</aon:div>
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 	<aon:outputText value="&#160;" />
 	<aon:div>

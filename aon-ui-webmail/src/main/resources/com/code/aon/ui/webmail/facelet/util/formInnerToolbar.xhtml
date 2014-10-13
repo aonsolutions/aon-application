@@ -5,7 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-		<c:if test="#{innerToolbar}" >
+		<aon:if test="#{innerToolbar}" >
 			<ui:param name="skipToolbarTitle" value="true" />
 			<ui:param name="skipToolbarDescription" value="true" />
 		
@@ -20,7 +20,7 @@
 			<aon:methodParam name="backAction" value="" />
 			<ui:param name="backButtonReRender" value="#{controller.beanName}Div" />		
 			
-		</c:if>	
+		</aon:if>	
 	</ui:include>
 			
 </ui:composition>

@@ -89,20 +89,20 @@
 							<aon:outputText value="#{categoryLabel}" />
 						</f:facet>
 	
-						<c:if test="#{clickable}">
+						<aon:if test="#{clickable}">
 							<aon:commandLink styleClass="aon-dataTable-link"
 								value="#{to.name}" action="#{goAction}"
 								actionListener="#{goMethod}"
 								reRender="aonContent">
 								<f:param name="#{paramName}" value="#{to.key}" />
 							</aon:commandLink>
-						</c:if>
+						</aon:if>
 	
-						<c:if test="#{!clickable}">
+						<aon:if test="#{!clickable}">
 							<aon:outputText value="#{to.name}">
 								<f:param name="#{paramName}" value="#{to.key}" />
 							</aon:outputText>
-						</c:if>
+						</aon:if>
 	
 						<f:facet name="footer">
 						 	<aon:outputText value="#{bundle.report_totals}"> 

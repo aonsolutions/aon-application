@@ -77,7 +77,7 @@
 				</rich:panel>
 	
 				<aon:div id="contactDataListDiv">
-					<c:if test="#{smsContact.model.rowCount > 0}" >
+					<aon:if test="#{smsContact.model.rowCount > 0}" >
 						<aon:methodParam name="rowSelectorAction" value="" />
 						<aon:methodParam name="rowSelectorActionListener" value="#{smsContact.onToggleSelected}" type="actionListener" />
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -110,7 +110,7 @@
 								</aon:column>
 							</ui:define>
 						</ui:decorate>							
-					</c:if>
+					</aon:if>
 				</aon:div>	
 			</rich:modalPanel>
 		</aon:panelGroup>

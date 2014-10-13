@@ -60,7 +60,7 @@
 				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:include>
 			
-			<c:if test="#{!contract.skipPayrollData}" >
+			<aon:if test="#{!contract.skipPayrollData}" >
 				<aon:outputLabel  
 					value="#{bundle.payroll_agreementLevel_category_level}" />
 				<aon:panelGrid id="agreementLevelCategory-content" columns="2" 
@@ -96,14 +96,14 @@
 							value="#{contract.to.categoryDescription}" />
 					</aon:panelGroup>
 				</aon:panelGrid>
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{contract.skipPayrollData}" >
+			<aon:if test="#{contract.skipPayrollData}" >
 				<aon:outputLabel for="Contract_categoryDescription"  
 					value="#{bundle.aon_category}" />
 				<aon:inputText id="Contract_categoryDescription" maxLength="64" size="56"
 					value="#{contract.to.categoryDescription}" />
-			</c:if>
+			</aon:if>
 			
 			<aon:outputLabel for="quote_group"
 				value="#{bundle.payroll_contract_quote_group}" />
@@ -223,7 +223,7 @@
 			</aon:div>
 -->			
 		
-			<c:if test="#{contract.params.trainingContract}" >
+			<aon:if test="#{contract.params.trainingContract}" >
 				<aon:outputLabel for="contract_bonus" value="#{bundle.payroll_contract_subsidized}" />
 				<aon:selectBooleanCheckbox id="contract_bonus" value="#{contract.params.subsidized}" >
 					<!--  
@@ -249,7 +249,7 @@
 					<ui:param name="lookupDisabled" value="#{contract.params.trainingCenter.id==null}" />
 				</ui:include>
 		-->
-			</c:if>
+			</aon:if>
 			
 		</aon:panelGrid>
 		

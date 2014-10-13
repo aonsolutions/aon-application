@@ -18,7 +18,7 @@
 					             , aon-vertical-align-top aon-width-200
 					             , aon-vertical-align-top aon-width-200">
 
-					<c:if test="#{aonRole.saleOperator}">
+					<aon:if test="#{aonRole.saleOperator}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_management_holder_sales"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -27,7 +27,7 @@
 									<aon:outputText value="#{bundle.aon_sales}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{actionDenied.moduleEnabled['hotel']}">
+									<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="advanceInvoice" 
 												action="advanceInvoice_search"
@@ -40,7 +40,7 @@
 												actionListener="#{noShowInvoice.onEditSearch}"
 												value="#{bundle.pms_noShow_invoice_module}"/>
 										</aon:div>
-									</c:if>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceManagement"
 											action="saleInvoice_search"
@@ -70,7 +70,7 @@
 								</aon:div>
 							</aon:panelGrid>
 						
-							<c:if test="#{aonRole.statisticsOperator}">
+							<aon:if test="#{aonRole.statisticsOperator}">
 								<aon:panelGrid id="group_sales_reports"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statistics aon-direct-access-panel">
@@ -133,7 +133,7 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
-							</c:if>
+							</aon:if>
 							
 							<aon:panelGrid id="group_sales_finance"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -215,14 +215,14 @@
 											actionListener="#{invoiceRemover.onEditSearch}"
 											value="#{bundle.finance_invoice_removing_module}"/>
 									</aon:div>
-									<c:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
+									<aon:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="saleInvoiceSigner"
 												action="invoiceSigner_search"
 												actionListener="#{invoiceSigner.onEditSearch}"
 												value="#{bundle.finance_invoice_signing_module}"/>
 										</aon:div>								
-									</c:if>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="no_fee_customers"
 											action="noFeeCustomer_list"
@@ -232,9 +232,9 @@
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 
-					<c:if test="#{aonRole.purchaseOperator}">
+					<aon:if test="#{aonRole.purchaseOperator}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_management_holder_purchases"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -255,8 +255,8 @@
 											actionListener="#{purchase.onEditSearch}"
 											value="#{bundle.purchase_module2}" />
 									</aon:div>									
-									<c:if test="#{aonRole.warehouseOperator}">
-										<c:if test="#{actionDenied.moduleEnabled['hotel']}">
+									<aon:if test="#{aonRole.warehouseOperator}">
+										<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="proposal"
 													action="proposal_search"
@@ -271,32 +271,32 @@
 													value="#{bundle.purchase_purchaseOrder_module}">
 												</aon:commandLink>
 											</aon:div>				
-										</c:if>
+										</aon:if>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="purchasePrint" 
 												action="purchasePrint_search"
 												actionListener="#{purchasePrint.onEditSearch}"
 												value="#{bundle.purchase_purchasePrint_module}" />
 										</aon:div>															
-									</c:if>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="supplier-management" 
 											action="supplier_search-management"
 											actionListener="#{supplier.onEditSearch}"
 											value="#{bundle.aon_suppliers}" />
 									</aon:div>
-									<c:if test="#{aonRole.productOperator}">
+									<aon:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-management" 
 												action="product_search-management"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
 										</aon:div>
-									</c:if>									
+									</aon:if>									
 								</aon:div>
 							</aon:panelGrid>
 							
-							<c:if test="#{aonRole.statisticsOperator}">
+							<aon:if test="#{aonRole.statisticsOperator}">
 								<aon:panelGrid id="group_purchase_reports"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statistics aon-direct-access-panel">		
@@ -359,9 +359,9 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{salesAppParam.activeMarketPlace}">
+							<aon:if test="#{salesAppParam.activeMarketPlace}">
 								<aon:panelGroup>
 									<aon:panelGrid id="group_sales_marketplace"
 										styleClass="aon-width-all" columnClasses="aon-padding"
@@ -391,11 +391,11 @@
 										</aon:div>
 									</aon:panelGrid>
 								</aon:panelGroup>
-							</c:if>
+							</aon:if>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 
-					<c:if test="#{aonRole.purchaseOperator}">
+					<aon:if test="#{aonRole.purchaseOperator}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_management_holder_expenses"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -431,7 +431,7 @@
 								</aon:div>
 							</aon:panelGrid>
 	
-							<c:if test="#{aonRole.statisticsOperator}">
+							<aon:if test="#{aonRole.statisticsOperator}">
 								<aon:panelGrid id="group_expenses_reports"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statistics aon-direct-access-panel">		
@@ -494,9 +494,9 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
-							</c:if>
+							</aon:if>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 					
 				</h:panelGrid>
 			</aon:div>

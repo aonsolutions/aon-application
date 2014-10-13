@@ -66,7 +66,7 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 
-							<c:if test="#{posClosing.posShift.pos.invoiceable}">
+							<aon:if test="#{posClosing.posShift.pos.invoiceable}">
 								<aon:outputLabel value="#{bundle.aon_number} #{bundle.aon_of} #{bundle.aon_ticket}" 
 									rendered="#{posClosing.posShift.endTime == null}" />
 								<aon:div rendered="#{posClosing.posShift.endTime == null}">
@@ -82,7 +82,7 @@
 									<aon:inputText id="PosClosing_toTicket" value="#{posClosing.toTicket}"
 										size="10" maxlength="15" required="true" />
 								</aon:div>
-							</c:if>
+							</aon:if>
 
 							<aon:outputLabel for="PosShift_remarks" value="#{bundle.aon_remark}" />
 							<aon:inputTextarea id="PosShift_remarks" 

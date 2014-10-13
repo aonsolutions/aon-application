@@ -4,14 +4,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<c:if test="#{!(empty questionValues)}">
+	<aon:if test="#{!(empty questionValues)}">
 		<aon:selectOneMenu id="#{inputId}" required="true"
 			value="#{questionValueId}">
 			<f:selectItems value="#{questionValues}" />
 		</aon:selectOneMenu>
-	</c:if>
-	<c:if test="#{empty questionValues}">
+	</aon:if>
+	<aon:if test="#{empty questionValues}">
 		<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValue.xhtml" />
-	</c:if>
+	</aon:if>
 
 </ui:composition>

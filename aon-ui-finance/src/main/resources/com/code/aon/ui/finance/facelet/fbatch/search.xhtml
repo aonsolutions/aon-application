@@ -65,12 +65,12 @@
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
 						value="#{fBatchSearch.type}" >
 						<f:selectItem itemLabel="-" itemValue=""/>
-						<c:if test="#{!controller.payroll}">
+						<aon:if test="#{!controller.payroll}">
 							<f:selectItems value="#{(controller.payment)?(financeCollections.financeBatchPaymentTypes):(financeCollections.financeBatchChargeTypes)}" />
-						</c:if>
-						<c:if test="#{controller.payroll}">
+						</aon:if>
+						<aon:if test="#{controller.payroll}">
 							<f:selectItems value="#{financeCollections.financeBatchPayrollTypes}" />
-						</c:if>
+						</aon:if>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="FinanceBatch_financeBatchStatus"
@@ -82,7 +82,7 @@
 						<f:selectItems value="#{financeCollections.financeBatchStatus}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="FinanceBatch_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="FinanceBatch_securityLevel"
@@ -90,7 +90,7 @@
 							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 						</aon:selectOneRadio>				
-					</c:if>
+					</aon:if>
 					
 				</ui:define>
 			</ui:decorate>

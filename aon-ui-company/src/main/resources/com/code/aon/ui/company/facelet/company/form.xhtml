@@ -17,7 +17,7 @@
 				<ui:param name="toolbarDescription"
 					value="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
-					<c:if test="#{company.nevv}" >
+					<aon:if test="#{company.nevv}" >
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="start" actionListener="#{company.accept}"
@@ -26,14 +26,14 @@
 							<f:setPropertyActionListener target="#{company.hideHeaderContent}"
 								value="#{false}" />
 						</aon:commandButton>
-					</c:if>
-					<c:if test="#{!company.nevv}" >
+					</aon:if>
+					<aon:if test="#{!company.nevv}" >
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
-					</c:if>
+					</aon:if>
 				</ui:define>				
 			</ui:decorate>
 	
@@ -62,7 +62,7 @@
 							</aon:div>
 						</aon:div>
 					</aon:div>
-					<c:if test="#{aonConfiguration.bean.company.showCompanyOtherData}">
+					<aon:if test="#{aonConfiguration.bean.company.showCompanyOtherData}">
 						<aon:div styleClass="aon-group">
 							<aon:div styleClass="aon-group-title">
 								<aon:outputText value="#{bundle.aon_addInfo}"/>
@@ -80,22 +80,22 @@
 												<ui:include
 													src="/com/code/aon/ui/company/facelet/company/printParameters1.xhtml" />
 											</aon:panelGrid>
-											<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
+											<aon:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
 												<aon:panelGrid columns="2" styleClass="aon-width-all">
 													<ui:include
 														src="/com/code/aon/ui/company/facelet/company/printParameters2.xhtml" />
 												</aon:panelGrid>
-											</c:if>
+											</aon:if>
 										</aon:panelGrid>
 									</a4j:region>
 								</aon:div>
 							</aon:div>
 						</aon:div>
-					</c:if>
+					</aon:if>
 				</aon:div>
 			</aon:panelGrid>
 	 
-	 		<c:if test="#{aonConfiguration.bean.company.showPanelTabSet}">
+	 		<aon:if test="#{aonConfiguration.bean.company.showPanelTabSet}">
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelTabSet>
 						<aon:panelTab label="#{bundle.registry_addresses}">
@@ -110,7 +110,7 @@
 								<ui:param name="showPayrollData" value="#{false}" />
 							</ui:include>
 						</aon:panelTab>
-						<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+						<aon:if test="#{aonConfiguration.bean.company.showRegistryBank}">
 							<aon:panelTab label="#{bundle.registry_banks_module}">
 								<aon:panel>
 									<f:facet name="header">
@@ -132,14 +132,14 @@
 									</ui:include>
 								</aon:panel>
 							</aon:panelTab>
-						</c:if>				
+						</aon:if>				
 						<aon:panelTab label="#{bundle.registry_rd_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
 								<ui:param name="controller" value="#{companyRecordData}" />
 							</ui:include>
 						</aon:panelTab>
 						
-						<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
+						<aon:if test="#{aonConfiguration.bean.company.showDirStaff}">
 							<aon:panelTab id="dirStaff"
 								label="#{bundle.registry_dir_staff}">
 								<aon:div rendered="#{true}">
@@ -148,43 +148,43 @@
 									</ui:include>
 								</aon:div>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 										
-						<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
+						<aon:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
 							<aon:panelTab label="#{bundle.registry_digital_certificates}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyCertificate}" />
 									<ui:param name="skipCategoryColumn" value="#{true}" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{company.printSaleInvoiceFooter}">
+						<aon:if test="#{company.printSaleInvoiceFooter}">
 							<aon:panelTab label="#{bundle.company_saleInvoice_footer_text}">
 								<ui:include src="/com/code/aon/ui/company/facelet/saleInvoiceFooter/tab_grid.xhtml">
 									
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{actionDenied.moduleEnabled['pos']}">
+						<aon:if test="#{actionDenied.moduleEnabled['pos']}">
 							<aon:panelTab label="#{bundle.finance_posInvoice_params}"
 								actionListener="#{posInvoiceParams.onInit}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/posInvoiceParams/tab_grid.xhtml" />
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 						
 					</aon:panelTabSet>
 				</aon:div>
-			</c:if>
+			</aon:if>
 		</aon:form>
-		<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+		<aon:if test="#{aonConfiguration.bean.company.showRegistryBank}">
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		</c:if>
-		<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
 			<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 			<aon:lookupButtonPopup lookup="#{calendarLookup}" />
-		</c:if>
+		</aon:if>
 	</ui:define>
 
 </ui:composition>

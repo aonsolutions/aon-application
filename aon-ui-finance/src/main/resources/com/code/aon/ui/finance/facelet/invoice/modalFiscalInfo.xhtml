@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFiscalInformationWindow">
-		<c:if test="#{invoiceController.showFiscalInformationWindow}">
+		<aon:if test="#{invoiceController.showFiscalInformationWindow}">
 			<rich:modalPanel id="fiscalInformationModalPanel"
 				minWidth="740" minHeight="450" zindex="90"
 				showWhenRendered="#{invoiceController.showFiscalInformationWindow}" >
@@ -136,7 +136,7 @@
 													</aon:outputText>
 												</aon:column>
 															
-												<c:if test="#{invoiceController.to.surcharge}">	
+												<aon:if test="#{invoiceController.to.surcharge}">	
 													<aon:column>
 														<f:facet name="header">
 															<aon:outputText value="&#160;"/>
@@ -176,7 +176,7 @@
 															<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 														</aon:outputText>
 													</aon:column>
-												</c:if>
+												</aon:if>
 											</aon:dataTable>
 											<aon:div style="width:100%;" styleClass="aon-text-right">
 												<aon:panelGrid columns="2"
@@ -193,12 +193,12 @@
 														<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 													</aon:outputText>
 	
-													<c:if test="#{invoiceController.to.withholding}">
+													<aon:if test="#{invoiceController.to.withholding}">
 														<aon:outputText value="#{bundle.aon_retention_quota}:"/>
 														<aon:outputText value="#{invoiceController.to.retentionQuota}">
 															<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 														</aon:outputText>
-													</c:if>
+													</aon:if>
 	
 													<aon:outputText value="#{bundle.aon_total}:"/>
 													<aon:outputText value="#{invoiceController.to.total}" styleClass="aon-bold">
@@ -214,7 +214,7 @@
 					</aon:div>							
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -58,7 +58,7 @@
 				</aon:selectOneMenu>
 			</aon:div>
 			
-			<c:if test="#{showMunicipality}">
+			<aon:if test="#{showMunicipality}">
 				<aon:outputLabel for="RegistryAddress_municipality" value="#{bundle.registry_municipality}" styleClass="aon-italic"/>
 				<aon:div>
 					<aon:selectOneMenu id="RegistryAddress_municipality#{sufix}" styleClass="aon-margin-left aon-form-input-text"
@@ -70,12 +70,12 @@
 					<aon:inputText id="RegistryAddress_city#{sufix}" required="true" styleClass="aon-margin-left aon-form-input-text"
 						value="#{controller.to.city}" size="20" maxlength="64" />
 				</aon:div>
-			</c:if>
-			<c:if test="#{!showMunicipality}">
+			</aon:if>
+			<aon:if test="#{!showMunicipality}">
 				<aon:outputLabel for="RegistryAddress_city" value="#{bundle.registry_city}" styleClass="aon-italic"/>
 				<aon:inputText id="RegistryAddress_city#{sufix}" required="true" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.city}" size="20" maxlength="64" />
-			</c:if>
+			</aon:if>
 		</aon:panelGrid>
 	</aon:div>
 

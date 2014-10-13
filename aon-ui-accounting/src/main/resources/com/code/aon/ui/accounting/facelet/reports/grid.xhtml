@@ -54,7 +54,7 @@
 							</f:facet>
 						</aon:column>
 
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:column
 								styleClass="aon-editDataTable-numberColumn aon-width-20">
 								<f:facet name="header">
@@ -74,7 +74,7 @@
 										value="#{controller.to.confidential}" rendered="#{formNew}" />
 								</f:facet>
 							</aon:column>
-						</c:if>
+						</aon:if>
 
 						<aon:column alias="#{controller.pojoShortName}.attachDate"
 							styleClass="aon-editDataTable-textColumn aon-width-120">

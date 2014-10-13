@@ -16,12 +16,12 @@
 		
 		<aon:div styleClass="aon-scroll-area">
 			
-		<c:if test="#{taskHolder.groupwareUtils.currentTaskHolder == null}">
+		<aon:if test="#{taskHolder.groupwareUtils.currentTaskHolder == null}">
 			<aon:div style="margin: 1em;border: solid black 1px;">
 				<aon:outputText value="Debe crear o vincular una cuenta de accesso a un usuario para poder continuar." 
 					style="color:red;margin: 1em;"/>
 			</aon:div>
-		</c:if>		
+		</aon:if>		
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{taskHolder}" />

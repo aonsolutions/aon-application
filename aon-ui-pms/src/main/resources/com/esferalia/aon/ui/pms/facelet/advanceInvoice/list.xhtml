@@ -120,7 +120,7 @@
 							<aon:outputText value="#{to.agency.registry.fullName}" />
 						</aon:column>
 
-						<c:if test="#{advanceInvoiceSearch.guestReservationSearch}">
+						<aon:if test="#{advanceInvoiceSearch.guestReservationSearch}">
 							<aon:column alias="ProjectReservation.advance"
 								styleClass="aon-editDataTable-numberColumn">
 								<f:facet name="header">
@@ -130,7 +130,7 @@
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</aon:outputText>
 							</aon:column>
-						</c:if>
+						</aon:if>
 
 						<aon:column alias="ProjectReservation.total"
 							styleClass="aon-editDataTable-numberColumn">

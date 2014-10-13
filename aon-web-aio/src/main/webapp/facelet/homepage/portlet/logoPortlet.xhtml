@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<c:if test="#{company.withLogo}">	
+	<aon:if test="#{company.withLogo}">	
 		<aon:div styleClass="aon-text-center aon-margin-bottom">
 			<a4j:mediaOutput
 				mimeType="#{company.logoMimeType}" 
@@ -25,6 +25,6 @@
 				}
 			}
 		</script>	
-	</c:if>
+	</aon:if>
 
 </ui:composition>

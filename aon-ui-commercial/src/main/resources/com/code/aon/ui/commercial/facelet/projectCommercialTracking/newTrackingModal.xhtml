@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showNewTrackingWindow">
-		<c:if test="#{projectCommercial.showNewTrackingWindow}">
+		<aon:if test="#{projectCommercial.showNewTrackingWindow}">
 		
 			<aon:methodParam name="pctSaveActionListener" default="#{projectCommercialTracking.onAcceptTracking}" type="actionListener" />
 			<aon:methodParam name="pctSaveAction" default="#{commercialTracking.saveAction}" />
@@ -88,7 +88,7 @@
 			
 				<aon:lookupButtonPopup lookup="#{offerLookup}" />
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

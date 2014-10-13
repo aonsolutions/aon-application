@@ -9,7 +9,7 @@
 
 	<ui:decorate template="/com/code/aon/faces/attachment/grid.xhtml">
 		<ui:define name="additionalColumns" >
-			<c:if test="#{(!skipConfidentialityColumn) and aonRole.confidentiality}">
+			<aon:if test="#{(!skipConfidentialityColumn) and aonRole.confidentiality}">
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
 					<f:facet name="header">
 						<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -26,7 +26,7 @@
 							value="#{controller.to.confidential}" rendered="#{formNew}" />
 					</f:facet>
 				</aon:column>
-			</c:if>		
+			</aon:if>		
 			<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachDate"
 				styleClass="aon-editDataTable-textColumn aon-width-120">
 				<f:facet name="header">
@@ -46,7 +46,7 @@
 						rendered="#{formNew}" value="#{controller.to.attachDate}" />
 				</f:facet>
 			</aon:column>		
-			<c:if test="#{!skipScopeColumn}"> 
+			<aon:if test="#{!skipScopeColumn}"> 
 				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope&lt;description"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
@@ -67,8 +67,8 @@
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>
-			</c:if>
-			<c:if test="#{!skipCategoryColumn}"> 
+			</aon:if>
+			<aon:if test="#{!skipCategoryColumn}"> 
 				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.category&lt;name"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
@@ -89,15 +89,15 @@
 						</aon:selectOneMenu>									
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 		</ui:define>
 		<ui:define name="additionalDataTableContent" >
-			<c:if test="#{!skipFreeSpaceMessage}">		
+			<aon:if test="#{!skipFreeSpaceMessage}">		
 				<aon:div styleClass="aon-margin-top" >
 					<aon:outputText style="#{documentManager.freeSpaceStyle}"
 						value="#{documentManager.freeSpaceMessage}" />
 				</aon:div>
-			</c:if>								
+			</aon:if>								
 		</ui:define>
 	</ui:decorate>
 

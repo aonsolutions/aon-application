@@ -135,7 +135,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	public boolean isNevv() {
 		return isNevv;
 	}
-	public void setNew(boolean isNevv) {
+	public void setNevv(boolean isNevv) {
 		this.isNevv = isNevv;
 	}
 
@@ -174,7 +174,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 	}
 	
 	public void onResetVariable(ActionEvent event) throws ManagerBeanException {
-		setNew(true);
+		setNevv(true);
 		resetVariable();
 		getData().setExpression("");
 		getData().setStartDate(new Date());
@@ -245,13 +245,13 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 		}
-		setNew(false);
+		setNevv(false);
 		initEditor();
 		initializeVariables(event);
 	}
 
 	public void onCancelVariable(ActionEvent event) {
-		setNew(false);
+		setNevv(false);
 		getData().checkVariableNature();
 		getData().setSelected(false);
 		getData().setEnableExpressionEditor(false);
@@ -274,7 +274,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		setData(new VariableData());
 		getData().setVariableData((VariableData) getUndefinedVariablesModel().getRowData());
 		setData((VariableData) getUndefinedVariablesModel().getRowData());
-		setNew(true);
+		setNevv(true);
 	}
 	
 	public void onSelectExpressionEditor(ActionEvent event) {

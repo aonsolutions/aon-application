@@ -8,9 +8,9 @@
 
 	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 
-		<c:if test="#{lookup != null}">
+		<aon:if test="#{lookup != null}">
 			<ui:param name="controller" value="#{lookup}"/>
-		</c:if>
+		</aon:if>
 
 		<ui:include	src="/com/code/aon/ui/finance/facelet/creditor/formContent.xhtml" />
 
@@ -20,10 +20,10 @@
 
 	</aon:panelGrid>
 
-	<c:if test="#{aonConfiguration.bean.creditor.showFinanceData}">
+	<aon:if test="#{aonConfiguration.bean.creditor.showFinanceData}">
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
 			<ui:param name="controllerLookupListener" value="#{creditorForm}"/>
 		</ui:include>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

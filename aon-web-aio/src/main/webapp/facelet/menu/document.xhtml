@@ -36,22 +36,22 @@
 										action="batchDocument_form"
 										value="#{bundle.registry_batch_document}"/>
 								</aon:div>					
-								<c:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentMassiveUpload" 
 											action="corporateIdentityAttach_form"
 											actionListener="#{corporateIdentityAttach.onInitMassiveUpload}"
 											value="#{bundle.registry_document_massive_upload}" />
 									</aon:div>
-								</c:if>							
-								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
+								</aon:if>							
+								<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentGlobal" 
 											action="documentGlobal_search"
 											actionListener="#{documentGlobal.onEditSearch}"
 											value="#{bundle.registry_document_global_search}"/>
 									</aon:div>					
-								</c:if>								
+								</aon:if>								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwtDocuments" 
 										action="gwt_documents"
@@ -65,7 +65,7 @@
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
-						<c:if test="#{aonRole.documentManager}">													
+						<aon:if test="#{aonRole.documentManager}">													
 							<aon:panelGrid id="group_documental_utilities"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-utilities aon-direct-access-panel">
@@ -87,7 +87,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelGroup>					
 
 				</h:panelGrid>

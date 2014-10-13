@@ -21,7 +21,7 @@
 						action="auditSession_moreUsed"
 						actionListener="#{sessionMoreUsed.onInit}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" />
-					<c:if test="#{aonRole.sysAdmin}">				
+					<aon:if test="#{aonRole.sysAdmin}">				
 						<aon:confirmButton id="removeSessions"
 							title="#{bundle.aon_key_remove_accelerator}"
 							value="#{bundle.audit_remove_sessions}" immediate="true"
@@ -30,7 +30,7 @@
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{auditSession.onRemoveSessions}"
 							accesskey="#{bundle.aon_key_remove}" />
-					</c:if>						
+					</aon:if>						
 				</ui:define>						
 			</ui:decorate>
 			

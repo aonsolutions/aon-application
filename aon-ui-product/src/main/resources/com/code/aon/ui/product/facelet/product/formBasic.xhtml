@@ -25,27 +25,27 @@
 			<f:selectItems value="#{productCollections.categories}" />
 		</aon:selectOneMenu>
 
-		<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+		<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 			<aon:outputLabel for="Product_brand" styleClass="aon-margin-left aon-margin-right aon-italic"
 				value="#{bundle.tas_make}" />
 			<aon:selectOneMenu id="Product_brand" value="#{controller.to.brand}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{productCollections.brands}" />
 			</aon:selectOneMenu>
-		</c:if>
+		</aon:if>
 	</aon:div>
 	
 	<ui:include src="/com/code/aon/ui/config/facelet/tag/input.xhtml" >
 		<ui:param name="searchController" value="#{productSearch}" />
 	</ui:include>	
 
-	<c:if test="#{aonConfiguration.bean.product.showType}">
+	<aon:if test="#{aonConfiguration.bean.product.showType}">
 		<aon:outputLabel for="Product_type" value="#{bundle.aon_type}" />
 		<aon:selectOneMenu id="Product_type" styleClass="aon-margin-right"
 			value="#{controller.to.type}">
 			<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Product_vat" value="#{bundle.aon_vat}" />
 	<aon:div>
@@ -78,10 +78,10 @@
 		</aon:panelGroup>
 	</aon:div>
 
-	<c:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
+	<aon:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel value="#{bundle.product_info}" />
 		<aon:div id="itemCheckValues">
-			<c:if test="#{aonConfiguration.bean.product.showStock}">
+			<aon:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:selectBooleanCheckbox id="Product_inventoriable"
 					value="#{controller.to.inventoriable}"
 					disabled="#{controller.to.composition or controller.onStock}"
@@ -90,9 +90,9 @@
 					rendered="#{controller.onStock}" />											
 				<aon:outputLabel for="Product_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_inventoriable}" />
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{aonConfiguration.bean.product.showComposition}">
+			<aon:if test="#{aonConfiguration.bean.product.showComposition}">
 				<aon:selectBooleanCheckbox id="Product_composition"
 					value="#{controller.to.composition}"
 					disabled="#{controller.to.inventoriable}"
@@ -107,9 +107,9 @@
 						value="#{bundle.product_composition_price}"
 						rendered="#{controller.to.composition}" />
 				</aon:panelGroup>
-			</c:if>
+			</aon:if>
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Product_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Product_status" value="#{controller.to.status}">

@@ -10,7 +10,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRectificationWindow">
-		<c:if test="#{invoiceController.showRectificationWindow}">
+		<aon:if test="#{invoiceController.showRectificationWindow}">
 			<rich:modalPanel id="rectificationModalPanel"
 				minHeight="260" minWidth="680" zindex="90"
 				showWhenRendered="#{invoiceController.showRectificationWindow}" >
@@ -90,7 +90,7 @@
 										<aon:inputTextarea id="Invoice_rectificationCause" cols="70" rows="4"
 											value="#{invoiceController.rectificationCause}" />
 
-										<c:if test="#{financeController.onePending}">
+										<aon:if test="#{financeController.onePending}">
 											<aon:outputLabel for="Invoice_rectificationSettleFinance"
 												value="#{bundle.finance_charges}" />
 											<aon:div>
@@ -100,7 +100,7 @@
 													value="#{invoiceController.rectificationSettleFinance}" />
 											</aon:div>
 
-										</c:if>
+										</aon:if>
 
 									</aon:panelGrid>
 								</aon:div>
@@ -110,7 +110,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

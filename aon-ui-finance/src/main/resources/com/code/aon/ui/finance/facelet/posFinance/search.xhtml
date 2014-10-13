@@ -32,7 +32,7 @@
 						<a4j:support event="oninputchanged" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{companyCollections.departmentsCount > 0}">
+					<aon:if test="#{companyCollections.departmentsCount > 0}">
 						<aon:outputLabel value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu 
 							value="#{posFinanceSearch.department}">
@@ -41,7 +41,7 @@
 							<a4j:support event="onchange" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
 							<a4j:support event="oninputchanged" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:selectOneMenu>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel value="#{bundle.aon_module_pos}" />
 					<aon:selectOneMenu id="PosFinance_pos"

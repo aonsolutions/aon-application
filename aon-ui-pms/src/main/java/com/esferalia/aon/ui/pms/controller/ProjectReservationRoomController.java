@@ -79,7 +79,7 @@ public class ProjectReservationRoomController extends LinesController {
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			roomAvailability.onInitializeRoomList(reservationRoom, null, null);
 
-			setNew(true);
+			setNevv(true);
 		} catch (ManagerBeanException ex) {
 			String msg = "No es posible asignar Habitación";
 			AonUtil.addErrorMessage(msg);

@@ -14,13 +14,13 @@
 			<aon:div>
 				<aon:inputText id="Amortization_id" value="#{amortization.to.id}"
 					size="5" disabled="true" />
-				<c:if test="#{aonRole.confidentiality}">
+				<aon:if test="#{aonRole.confidentiality}">
 					<aon:selectBooleanCheckbox id="Amortization_securityLevel"
 						styleClass="aon-margin-left"
 						value="#{amortization.to.confidential}"/>
 					<aon:outputLabel for="Amortization" 
 						value="#{bundle.aon_confidential}" />
-				</c:if>
+				</aon:if>
 			</aon:div>
 			
 			<aon:outputLabel for="Amortization_initial_date"
@@ -81,7 +81,7 @@
 				<f:validateLength maximum="64" />
 			</aon:inputText>
 	
-			<c:if test="#{amortization.nevv}">
+			<aon:if test="#{amortization.nevv}">
 				<aon:outputLabel for="Amortization_amortizationType"
 					value="#{bundle.accounting_amortization_type}" />
 				<aon:selectOneMenu id="Amortization_amortizationType"
@@ -92,12 +92,12 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{accountingCollections.amortizationTypes}" />
 				</aon:selectOneMenu>
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{!amortization.nevv}">
+			<aon:if test="#{!amortization.nevv}">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="&#160;"/>
-			</c:if>
+			</aon:if>
 	
 			<aon:outputText value="#{bundle.accounting_fixed_asset_account}" />
 			<aon:panelGroup id="fixedAssetAccount" styleClass="aon-nowrap">

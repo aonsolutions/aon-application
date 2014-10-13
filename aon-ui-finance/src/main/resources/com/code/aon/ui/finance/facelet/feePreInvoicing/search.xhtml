@@ -74,7 +74,7 @@
 							value="#{preInvoicing.invoicingParams.year}" />
 					</aon:panelGrid>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="CustomerFee_Confidential"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="CustomerFee_Confidential" 
@@ -82,7 +82,7 @@
 							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="CustomerFee_WorkPlace"
 						value="#{bundle.purchase_workplace}" />

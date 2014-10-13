@@ -20,7 +20,7 @@
 				,aon-panelGrid-even aon-width-100 aon-text-right
 				,aon-panelGrid-even aon-width-150 aon-text-right">
 	
-			<c:if test="#{controller.modUnit1 != null}">
+			<aon:if test="#{controller.modUnit1 != null}">
 				<aon:outputText value="#{controller.modUnit1.description}" />
 				<aon:outputText value="#{controller.modUnit1.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -28,9 +28,9 @@
 				<aon:outputText value="#{controller.modAmount1.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 	
-			<c:if test="#{controller.modUnit2 != null}">
+			<aon:if test="#{controller.modUnit2 != null}">
 				<aon:outputText value="#{controller.modUnit2.description}" />
 				<aon:outputText value="#{controller.modUnit2.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -38,9 +38,9 @@
 				<aon:outputText value="#{controller.modAmount2.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 		
-			<c:if test="#{controller.modUnit3 != null}">
+			<aon:if test="#{controller.modUnit3 != null}">
 				<aon:outputText value="#{controller.modUnit3.description}" />
 				<aon:outputText value="#{controller.modUnit3.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -48,9 +48,9 @@
 				<aon:outputText value="#{controller.modAmount3.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 		
-			<c:if test="#{controller.modUnit4 != null}">
+			<aon:if test="#{controller.modUnit4 != null}">
 				<aon:outputText value="#{controller.modUnit4.description}" />
 				<aon:outputText value="#{controller.modUnit4.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -58,9 +58,9 @@
 				<aon:outputText value="#{controller.modAmount4.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 		
-			<c:if test="#{controller.modUnit5 != null}">
+			<aon:if test="#{controller.modUnit5 != null}">
 				<aon:outputText value="#{controller.modUnit5.description}" />
 				<aon:outputText value="#{controller.modUnit5.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -68,9 +68,9 @@
 				<aon:outputText value="#{controller.modAmount5.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 	
-			<c:if test="#{controller.modUnit6 != null}">
+			<aon:if test="#{controller.modUnit6 != null}">
 				<aon:outputText value="#{controller.modUnit6.description}" />
 				<aon:outputText value="#{controller.modUnit6.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -78,9 +78,9 @@
 				<aon:outputText value="#{controller.modAmount6.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 	
-			<c:if test="#{controller.modUnit7 != null}">
+			<aon:if test="#{controller.modUnit7 != null}">
 				<aon:outputText value="#{controller.modUnit7.description}" />
 				<aon:outputText value="#{controller.modUnit7.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -88,7 +88,7 @@
 				<aon:outputText value="#{controller.modAmount7.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-			</c:if>
+			</aon:if>
 	
 		</aon:panelGrid>
 		<aon:panelGrid columns="2" styleClass="aon-panelGrid aon-width-all aon-margin-top"
@@ -115,7 +115,7 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			
-			<c:if test="#{controller.modZD != null}">
+			<aon:if test="#{controller.modZD != null}">
 				
 				<aon:div>
 					<aon:outputText value="#{controller.modZDKey}" />
@@ -134,7 +134,7 @@
 					 <a4j:support event="onchange" reRender="modulesGridContainer"
 					 	ajaxSingle="true" actionListener="#{controller.onChangeZD}"/>
 				</aon:inputText>
-			</c:if>
+			</aon:if>
 	
 			<aon:outputText value="#{controller.modEKey}" />
 			<aon:outputText value="#{controller.modE.amount}">

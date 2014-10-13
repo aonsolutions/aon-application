@@ -13,13 +13,13 @@
 		value="#{purchaseOrder.detailModel}" >
 		
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
-			<c:if test="#{aonRole.purchaseOperator}">
+			<aon:if test="#{aonRole.purchaseOperator}">
 				<aon:commandLink  
 					styleClass="aon-table-row-link" value="&#160;"
 					immediate="true" ajaxSingle="true" requestDelay="100"
 					actionListener="#{purchaseOrder.onSelectDetail}">
 				</aon:commandLink>
-			</c:if>
+			</aon:if>
 		</aon:column>
 		
 		<rich:column colspan="3" 

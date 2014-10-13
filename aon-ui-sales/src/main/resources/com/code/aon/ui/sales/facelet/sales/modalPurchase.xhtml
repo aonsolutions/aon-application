@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showPurchaseWindow">
-		<c:if test="#{sales.showPurchaseWindow}">
+		<aon:if test="#{sales.showPurchaseWindow}">
 			<rich:modalPanel id="purchaseModalPanel" minHeight="500"
 				minWidth="950" rendered="#{sales.showPurchaseWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -84,7 +84,7 @@
 								</aon:div>
 
 								<aon:div>
-									<c:if test="#{!sales.purchaseGenerator.generated}">
+									<aon:if test="#{!sales.purchaseGenerator.generated}">
 									
 										<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 											<ui:param name="controller" value="#{sales.purchaseGenerator}" />
@@ -153,9 +153,9 @@
 												
 											</ui:define>
 										</ui:decorate>
-									</c:if>
+									</aon:if>
 									
-									<c:if test="#{sales.purchaseGenerator.generated}">
+									<aon:if test="#{sales.purchaseGenerator.generated}">
 										<aon:dataTable id="purchasesList" value="#{sales.purchaseGenerator.model}" var="to">
 
 											<aon:rowSelector id="purchasesList-select" toggleOnClick="#{false}" />
@@ -200,7 +200,7 @@
 											</aon:column>
 										</aon:dataTable>
 																				
-									</c:if>
+									</aon:if>
 									
 								</aon:div>
 							</aon:div>
@@ -210,7 +210,7 @@
 				</aon:form>
 				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

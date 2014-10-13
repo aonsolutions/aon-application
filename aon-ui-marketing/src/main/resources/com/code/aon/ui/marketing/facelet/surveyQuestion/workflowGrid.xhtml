@@ -7,7 +7,7 @@
 
 
 	<aon:panelGroup id="surveyWorkflowWindow">
-		<c:if test="#{surveyQuestion.showSurveyWorkflowWindow}">
+		<aon:if test="#{surveyQuestion.showSurveyWorkflowWindow}">
 			<rich:modalPanel id="surveyWorkflowModalPanel"
 				showWhenRendered="#{surveyQuestion.showSurveyWorkflowWindow}"
 				minHeight="390" height="390" width="680" zindex="90">
@@ -64,18 +64,18 @@
 									</aon:div>
 									<f:facet name="footer">
 										<aon:div layout="none" rendered="#{formNew}">
-											<c:if test="#{!(empty surveyQuestion.questionValues)}">
+											<aon:if test="#{!(empty surveyQuestion.questionValues)}">
 												<aon:selectOneMenu id="SurveyWorkflow_value-Collection-New"
 													required="true" value="#{controller.to.questionValue.id}">
 													<f:selectItems value="#{surveyQuestion.questionValues}" />
 												</aon:selectOneMenu>
-											</c:if>
-											<c:if test="#{empty surveyQuestion.questionValues}">
+											</aon:if>
+											<aon:if test="#{empty surveyQuestion.questionValues}">
 												<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValue.xhtml">
 													<ui:param name="inputId" value="SurveyWorkflow_value-New" />
 													<ui:param name="valueHolder" value="#{controller.to}" />
 												</ui:include>
-											</c:if>
+											</aon:if>
 										</aon:div>
 									</f:facet>
 								</aon:column>
@@ -109,7 +109,7 @@
 					</aon:div>						
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -11,15 +11,15 @@
 	<ui:define name="content">
 	
 		<aon:form id="invoiceList">
-			<c:if test="#{stat.invoiceType==0}">
+			<aon:if test="#{stat.invoiceType==0}">
 				<ui:param name="toolbarTitle" value="#{bundle.finance_purchase_invoice_management_module}" />
-			</c:if>
-			<c:if test="#{stat.invoiceType==1}">
+			</aon:if>
+			<aon:if test="#{stat.invoiceType==1}">
 				<ui:param name="toolbarTitle" value="#{bundle.finance_sale_invoice_management_module}" />
-			</c:if>
-			<c:if test="#{stat.invoiceType==2}">
+			</aon:if>
+			<aon:if test="#{stat.invoiceType==2}">
 				<ui:param name="toolbarTitle" value="#{bundle.finance_expense_invoice_management_module}" />
-			</c:if>
+			</aon:if>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSearchButton" value="true" />
@@ -79,15 +79,15 @@
 	
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<c:if test="#{stat.invoiceType==1}">
+								<aon:if test="#{stat.invoiceType==1}">
 									<aon:outputText value="#{bundle.aon_customer}" />
-								</c:if>
-								<c:if test="#{stat.invoiceType==0}">
+								</aon:if>
+								<aon:if test="#{stat.invoiceType==0}">
 									<aon:outputText value="#{bundle.aon_supplier}" />
-								</c:if>
-								<c:if test="#{stat.invoiceType==2}">
+								</aon:if>
+								<aon:if test="#{stat.invoiceType==2}">
 									<aon:outputText value="#{bundle.aon_creditor}" />
-								</c:if>
+								</aon:if>
 							</f:facet>
 							<aon:outputText value="#{to.registryName}">
 								<aon:abbreviateConverter maxWidth="50" />

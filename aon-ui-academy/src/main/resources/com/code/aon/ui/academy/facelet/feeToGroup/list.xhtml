@@ -135,12 +135,12 @@
 						<aon:selectBooleanCheckbox id="FeeToGroup_assignToInvoicingGroup"
 							value="#{feeToGroup.assignToInvoicingGroup}" />
 
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:outputLabel for="CustomerFee_securityLevel" value="#{bundle.aon_confidential}"
 								styleClass="aon-margin-right aon-bold" />
 							<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
 								value="#{feeToGroup.fee.confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:panelGrid>
 
 				</aon:panelGrid>

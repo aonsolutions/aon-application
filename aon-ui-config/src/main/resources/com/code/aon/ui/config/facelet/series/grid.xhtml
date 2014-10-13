@@ -73,7 +73,7 @@
 								</f:facet>
 							</aon:column>
 
-							<c:if test="#{aonConfiguration.bean.series.showTasData}">
+							<aon:if test="#{aonConfiguration.bean.series.showTasData}">
 								<aon:column alias="Series.tas" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -90,9 +90,9 @@
 											rendered="#{formNew}" value="#{series.to.tas}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonConfiguration.bean.series.showOfferData}">
+							<aon:if test="#{aonConfiguration.bean.series.showOfferData}">
 								<aon:column alias="Series.offer"
 									styleClass=" aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -109,9 +109,9 @@
 											rendered="#{formNew}" value="#{series.to.offer}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonConfiguration.bean.series.showSalesData}">
+							<aon:if test="#{aonConfiguration.bean.series.showSalesData}">
 								<aon:column alias="Series.sales" 
 								 	styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -128,9 +128,9 @@
 											rendered="#{formNew}" value="#{series.to.sales}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonConfiguration.bean.series.showDeliveryData}">
+							<aon:if test="#{aonConfiguration.bean.series.showDeliveryData}">
 								<aon:column alias="Series.delivery" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -147,9 +147,9 @@
 											rendered="#{formNew}" value="#{series.to.delivery}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonConfiguration.bean.series.showInvoiceData}">
+							<aon:if test="#{aonConfiguration.bean.series.showInvoiceData}">
 								<aon:column alias="Series.invoice" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -166,9 +166,9 @@
 											rendered="#{formNew}" value="#{series.to.invoice}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonConfiguration.bean.series.showInvoiceData}">
+							<aon:if test="#{aonConfiguration.bean.series.showInvoiceData}">
 								<aon:column alias="Series.rectification" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -186,9 +186,9 @@
 											rendered="#{formNew}" value="#{series.to.rectification}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonConfiguration.bean.series.showPosData}">
+							<aon:if test="#{aonConfiguration.bean.series.showPosData}">
 								<aon:column alias="Series.pos" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -205,9 +205,9 @@
 											rendered="#{formNew}" value="#{series.to.pos}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{aonRole.confidentiality}">
+							<aon:if test="#{aonRole.confidentiality}">
 								<aon:column alias="Series.securityLevel" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
@@ -224,7 +224,7 @@
 											rendered="#{formNew}" value="#{series.to.confidential}" />
 									</f:facet>
 								</aon:column>
-							</c:if>
+							</aon:if>
 
 							<aon:column alias="Series.active" 
 								styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">

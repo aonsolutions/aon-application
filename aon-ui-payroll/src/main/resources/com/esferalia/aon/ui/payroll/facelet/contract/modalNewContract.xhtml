@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="#{controller.beanName}ModalContainer">
-		<c:if test="#{controller.showNewContractModal}">
+		<aon:if test="#{controller.showNewContractModal}">
 			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="600"
 				minWidth="900" showWhenRendered="true" >
 				<f:facet name="header">
@@ -66,6 +66,6 @@
 				
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

@@ -14,12 +14,12 @@
 			<ui:insert name="formToolbarContent" />
 			
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{customer.nevv}">
+				<aon:if test="#{customer.nevv}">
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/formNewContent.xhtml" >
 						<ui:param name="controller" value="#{customer}" />
 					</ui:include>								
-				</c:if>			
-				<c:if test="#{!customer.nevv}">
+				</aon:if>			
+				<aon:if test="#{!customer.nevv}">
 					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
@@ -41,7 +41,7 @@
 						styleClass="aon-margin-top aon-width-all" columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
-						<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+						<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
 							<aon:outputLabel for="Customer_tariff_id"
 								value="#{bundle.report_tariff}" />
 							<aon:selectOneMenu id="Customer_tariff_id"
@@ -49,12 +49,12 @@
 								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{configCollections.tariffs}" />
 							</aon:selectOneMenu>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData or aonConfiguration.bean.customer.showDeliveryData}">
+						<aon:if test="#{aonConfiguration.bean.customer.showFinanceFeeData or aonConfiguration.bean.customer.showDeliveryData}">
 							<aon:outputText value="#{bundle.customer_invoicing_info}" />
 							<aon:div>
-								<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
+								<aon:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
 									<aon:outputText	styleClass="aon-margin-left aon-bold"
 										value="#{bundle.config_series_deliveries}:" />
 									<aon:selectBooleanCheckbox id="Customer_deliveryGrouped" styleClass="aon-margin-left"
@@ -65,7 +65,7 @@
 										value="#{customer.to.deliveryValuated}" />
 									<aon:outputLabel for="Customer_deliveryValuated" styleClass="aon-italic"
 										value="#{bundle.customer_printValuated}" />
-								</c:if>
+								</aon:if>
 
 								<aon:outputText	styleClass="aon-margin-left aon-bold"
 									value="#{bundle.aon_module_groupware}:" />
@@ -74,33 +74,33 @@
 								<aon:outputLabel for="Customer_projectGrouped" styleClass="aon-italic"
 										value="#{bundle.customer_invoiceGrouped}" />
 							</aon:div>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{company.EInvoice}">
+						<aon:if test="#{company.EInvoice}">
 							<aon:outputLabel for="Customer_eInvoice"
 								value="#{bundle.customer_eInvoice}" />
 							<aon:selectOneRadio id="Customer_eInvoice" value="#{customer.to.EInvoice}">
 								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 								<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 							</aon:selectOneRadio>
-						</c:if>
+						</aon:if>
 	
-						<c:if test="#{!customer.nevv and customer.to.invoicingGroup.id != null}">
+						<aon:if test="#{!customer.nevv and customer.to.invoicingGroup.id != null}">
 							<aon:outputLabel value="#{bundle.customer_invoicingGroup}" />
 							<aon:div>
 								<aon:outputText	value="#{customer.to.invoicingGroup.description}" />
-								<c:if test="#{customer.invoicingGroupInMyScopes}">
+								<aon:if test="#{customer.invoicingGroupInMyScopes}">
 									<aon:commandLink id="invoicingGroup_link" immediate="true"
 										styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
 										value="&#160;" title="#{bundle.aon_go}"
 										actionListener="#{customer.onLoadInvoicingGroup}"
 										action="invoicingGroup_form"
 										reRender="aonContent" />
-								</c:if>
+								</aon:if>
 							</aon:div>
-						</c:if>
+						</aon:if>
 	
-						<c:if test="#{!customer.nevv and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
+						<aon:if test="#{!customer.nevv and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
 							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
@@ -128,7 +128,7 @@
 									</aon:commandButton>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 
 						<aon:outputLabel for="Observation"
 							value="#{bundle.registry_observation}" />
@@ -149,7 +149,7 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<c:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
+						<aon:if test="#{aonConfiguration.bean.customer.showFinanceData and aonRole.financeOperator}">
 							<aon:panelTab id="finance" label="#{bundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
@@ -170,17 +170,17 @@
 									</ui:include>
 								</aon:panel>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator and customerFee.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator and customerFee.model.rowCount > 0}">
 							<aon:panelTab id="fee" label="#{bundle.finance_fees_module}">
 								<ui:include	src="/com/code/aon/ui/finance/facelet/fee/tab_grid.xhtml" >
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showProjectData and customerProject.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showProjectData and customerProject.model.rowCount > 0}">
 							<aon:panelTab id="projects" label="#{bundle.aon_module_groupware}">
 								<ui:include src="/com/code/aon/ui/project/facelet/project/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerProject}" />
@@ -188,280 +188,280 @@
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showNote and customerNote.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showNote and customerNote.model.rowCount > 0}">
 							<aon:panelTab id="rnotes" label="#{bundle.aon_notes}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rnote/grid.xhtml">
 									<ui:param name="controller" value="#{customerNote}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showRelationship and customerRelationship.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showRelationship and customerRelationship.model.rowCount > 0}">
 							<aon:panelTab id="rrelationship" label="#{bundle.registry_relationship}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rrelationship/grid.xhtml">
 									<ui:param name="controller" value="#{customerRelationship}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showRecordData and customerRecordData.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showRecordData and customerRecordData.model.rowCount > 0}">
 							<aon:panelTab id="recordData" label="#{bundle.registry_rd_module}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
 									<ui:param name="controller" value="#{customerRecordData}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showSegment and customerSegment.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showSegment and customerSegment.model.rowCount > 0}">
 							<aon:panelTab id="segment" label="#{bundle.registry_segment_module}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerSegment}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showAddInfo and customerAddInfo.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showAddInfo and customerAddInfo.model.rowCount > 0}">
 							<aon:panelTab id="addInfo" label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerAddInfo}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showDirStaff and customerDirStaff.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showDirStaff and customerDirStaff.model.rowCount > 0}">
 							<aon:panelTab id="dirStaff" label="#{bundle.registry_dir_staff}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerDirStaff}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{aonRole.document and customerRAttach.model.rowCount > 0}">
+						<aon:if test="#{aonRole.document and customerRAttach.model.rowCount > 0}">
 							<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerRAttach}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>								
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{aonConfiguration.bean.customer.showProduct and customerItem.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showProduct and customerItem.model.rowCount > 0}">
 							<aon:panelTab id="customerItem" label="#{bundle.aon_role_product}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/ritem/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{customerItem}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showSeller and customerSeller.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showSeller and customerSeller.model.rowCount > 0}">
 							<aon:panelTab id="customerSeller" label="#{bundle.aon_module_commercial}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rseller/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{customerSeller}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showProfile and customerProfile.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showProfile and customerProfile.model.rowCount > 0}">
 							<aon:panelTab id="customerProfile" label="#{bundle.registry_profile}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rprofile/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{customerProfile}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{aonConfiguration.bean.customer.showSupplier and customerSupplier.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.customer.showSupplier and customerSupplier.model.rowCount > 0}">
 							<aon:panelTab id="customerSupplier" label="#{bundle.registry_supplier_info}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rsupplier/tab_include.xhtml">
 									<ui:param name="controller" value="#{customerSupplier}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
  							</aon:panelTab>
-						</c:if>						
+						</aon:if>						
 
-						<c:if test="#{customer.showAlumnData}">
-							<c:if test="#{aonConfiguration.bean.customer.showAbsence and customerAbsence.showTab}">
+						<aon:if test="#{customer.showAlumnData}">
+							<aon:if test="#{aonConfiguration.bean.customer.showAbsence and customerAbsence.showTab}">
 								<aon:panelTab id="absence" label="#{bundle.absence_absences}">
 									<ui:include	src="/com/code/aon/ui/academy/facelet/customerAbsence/tab_grid.xhtml">
 										<ui:param name="controller" value="#{customerAbsence}" />
 										<ui:param name="removeButtonReRender" value="customerTab" />
 									</ui:include>
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 	
-							<c:if test="#{aonConfiguration.bean.customer.showLoan and customerLoan.showTab}">
+							<aon:if test="#{aonConfiguration.bean.customer.showLoan and customerLoan.showTab}">
 								<aon:panelTab id="loan" label="#{bundle.academy_loans}">
 									<ui:include	src="/com/code/aon/ui/academy/facelet/customerLoan/tab_grid.xhtml">
 										<ui:param name="controller" value="#{customerLoan}" />
 										<ui:param name="removeButtonReRender" value="customerTab" />
 									</ui:include>
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 	
-							<c:if test="#{aonConfiguration.bean.customer.showCourse and customerCourse.showTab}">
+							<aon:if test="#{aonConfiguration.bean.customer.showCourse and customerCourse.showTab}">
 								<aon:panelTab id="course" label="#{bundle.aon_group}">
 									<ui:include	src="/com/code/aon/ui/academy/facelet/customerCourse/tab_grid.xhtml">
 										<ui:param name="controller" value="#{customerCourse}" />
 										<ui:param name="removeButtonReRender" value="customerTab" />
 									</ui:include>
 								</aon:panelTab>
-							</c:if>
-						</c:if>
+							</aon:if>
+						</aon:if>
 
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{!customer.nevv}">
-			<c:if test="#{aonRole.accountingOperator}">
+		<aon:if test="#{!customer.nevv}">
+			<aon:if test="#{aonRole.accountingOperator}">
 				<aon:lookupButtonPopup lookup="#{accountLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showRelationship}">
 				<aon:lookupButtonPopup lookup="#{registryLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showProfile}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showProfile}">
 				<aon:lookupButtonPopup lookup="#{questionLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showSupplier}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showSupplier}">
 				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showProduct or aonConfiguration.bean.customer.showFinanceFeeData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showProduct or aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
-			</c:if>	
-			<c:if test="#{aonConfiguration.bean.customer.showSeller or aonConfiguration.bean.customer.showFinanceFeeData}">
+			</aon:if>	
+			<aon:if test="#{aonConfiguration.bean.customer.showSeller or aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
+			<aon:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}">
 				<ui:include	src="/com/code/aon/ui/finance/facelet/fee/newFeeModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="feeController" value="#{customerFee}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showProjectData}">
 				<ui:include src="/com/code/aon/ui/project/facelet/project/newProjectModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="projectController" value="#{customerProject}" />
 					<ui:param name="modalReRender" value="customerTab" />
 					<ui:param name="skipRegistryLookup" value="true" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showNote}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showNote}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rnote/newNoteModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="noteController" value="#{customerNote}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showRelationship}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rrelationship/newRelationshipModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="relationshipController" value="#{customerRelationship}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showRecordData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showRecordData}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/record_data/newRecordDataModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="recordDataController" value="#{customerRecordData}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showSegment}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showSegment}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="segmentController" value="#{customerSegment}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showAddInfo}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showAddInfo}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="addInfoController" value="#{customerAddInfo}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showDirStaff}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showDirStaff}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rdirstaff/newDirStaffModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="dirStaffController" value="#{customerDirStaff}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
+			</aon:if>
 			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
 				<ui:param name="controller" value="#{customer}" />
 				<ui:param name="attachmentController" value="#{customerRAttach}" />
 				<ui:param name="modalReRender" value="customerTab" />
 			</ui:include>
-			<c:if test="#{customer.showAlumnData}">
-				<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
+			<aon:if test="#{customer.showAlumnData}">
+				<aon:if test="#{aonConfiguration.bean.customer.showAbsence}">
 					<ui:include src="/com/code/aon/ui/academy/facelet/customerAbsence/newAbsenceModal.xhtml">
 						<ui:param name="absenceController" value="#{customerAbsence}" />
 						<ui:param name="modalReRender" value="customerTab" />
 					</ui:include>
-				</c:if>
-				<c:if test="#{aonConfiguration.bean.customer.showLoan}">
+				</aon:if>
+				<aon:if test="#{aonConfiguration.bean.customer.showLoan}">
 					<ui:include src="/com/code/aon/ui/academy/facelet/customerLoan/newLoanModal.xhtml">
 						<ui:param name="loanController" value="#{customerLoan}" />
 						<ui:param name="modalReRender" value="customerTab" />
 					</ui:include>
-				</c:if>
-				<c:if test="#{aonConfiguration.bean.customer.showCourse}">
+				</aon:if>
+				<aon:if test="#{aonConfiguration.bean.customer.showCourse}">
 					<ui:include src="/com/code/aon/ui/academy/facelet/customerCourse/newCourseModal.xhtml">
 						<ui:param name="courseController" value="#{customerCourse}" />
 						<ui:param name="modalReRender" value="customerTab" />
 					</ui:include>
 					<aon:lookupButtonPopup lookup="#{courseLookup}" />				
-				</c:if>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showProduct}">
+				</aon:if>
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showProduct}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/ritem/newItemModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="registryItemController" value="#{customerItem}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.customer.showProfile}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.customer.showProfile}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rprofile/newProfileModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="registryProfileController" value="#{customerProfile}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.target.showSupplier}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.target.showSupplier}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsupplier/newSupplierModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="registrySupplierController" value="#{customerSupplier}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.target.showSeller}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.target.showSeller}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rseller/newSellerModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="registrySellerController" value="#{customerSeller}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
-			</c:if>			
+			</aon:if>			
 			<ui:include src="/com/code/aon/ui/academy/facelet/alumn/modalAlumnGroupConfirm.xhtml">
 				<ui:param name="controller" value="#{customer}" />
 			</ui:include>
-		</c:if>
+		</aon:if>
 	</ui:define>
 </ui:composition>

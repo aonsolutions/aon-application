@@ -32,16 +32,16 @@
 										<aon:outputText value="#{initialMessage}" />
 									</aon:div>
 									<aon:div styleClass="aon-margin-top">
-										<c:if test="#{!redirect}">
+										<aon:if test="#{!redirect}">
 											<aon:commandButton value="#{startMessage}"
 												actionListener="#{startActionListener}"
 												reRender="progressBarForm" />
-										</c:if>
-										<c:if test="#{redirect}">
+										</aon:if>
+										<aon:if test="#{redirect}">
 											<aon:commandButton value="#{startMessage}"
 												actionListener="#{startActionListener}"
 												action="#{redirectAction}" />
-										</c:if>
+										</aon:if>
 										<aon:commandButton reRender="progressBarForm"
 											styleClass="aon-margin-left"
 											actionListener="#{closeActionListener}"
@@ -49,7 +49,7 @@
 									</aon:div>
 								</aon:div>
 							</f:facet>
-							<c:if test="#{redirect}">
+							<aon:if test="#{redirect}">
 								<f:facet name="complete">
 									<aon:div styleClass="aon-text-center">
 										<aon:div>
@@ -57,8 +57,8 @@
 										</aon:div>
 									</aon:div>
 								</f:facet>
-							</c:if>
-							<c:if test="#{!redirect}">
+							</aon:if>
+							<aon:if test="#{!redirect}">
 								<f:facet name="complete">
 									<aon:div styleClass="aon-text-center">
 										<aon:div>
@@ -71,7 +71,7 @@
 										</aon:div>
 									</aon:div>
 								</f:facet>
-							</c:if>
+							</aon:if>
 						</rich:progressBar>
 					</a4j:outputPanel>
 				</aon:div>

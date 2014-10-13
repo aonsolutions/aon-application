@@ -11,7 +11,7 @@
 	<a4j:loadScript src="#{aonResource.resolveLocal['/com/code/aon/ui/finance/posInvoice.js']}"/>
 
 	<aon:panelGroup id="showPrintTicketWindow">
-		<c:if test="#{invoiceController.showPrintTicketWindow}">
+		<aon:if test="#{invoiceController.showPrintTicketWindow}">
 			<rich:modalPanel id="printTicketModalPanel"
 				minHeight="200" minWidth="420" zindex="90"
 				showWhenRendered="#{invoiceController.showPrintTicketWindow}" >
@@ -82,7 +82,7 @@
 					</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

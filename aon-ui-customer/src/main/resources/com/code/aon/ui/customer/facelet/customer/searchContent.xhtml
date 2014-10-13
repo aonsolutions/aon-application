@@ -30,7 +30,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
-		<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+		<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.registry_finance_data_module}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/searchContent.xhtml">
@@ -38,9 +38,9 @@
 					</ui:include>
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>
+		</aon:if>
 
-		<c:if test="#{aonConfiguration.bean.customer.showSegment}">
+		<aon:if test="#{aonConfiguration.bean.customer.showSegment}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.registry_segment_module}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
@@ -48,39 +48,39 @@
 					</ui:include>
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>
+		</aon:if>
 		
-		<c:if test="#{aonConfiguration.bean.customer.showProduct}">						
+		<aon:if test="#{aonConfiguration.bean.customer.showProduct}">						
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_role_product}" >					
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml" />					
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>
+		</aon:if>
 						
-		<c:if test="#{aonConfiguration.bean.customer.showSeller}">						
+		<aon:if test="#{aonConfiguration.bean.customer.showSeller}">						
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_module_commercial}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
 					<ui:include src="/com/code/aon/ui/registry/facelet/rseller/searchContent.xhtml" />					
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>
+		</aon:if>
 
-		<c:if test="#{aonConfiguration.bean.customer.showProfile}">	
+		<aon:if test="#{aonConfiguration.bean.customer.showProfile}">	
 			<aon:panelCollapsible expanded="false" label="#{bundle.registry_profile}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
 					<ui:include src="/com/code/aon/ui/registry/facelet/rprofile/searchContent.xhtml" />					
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>		
+		</aon:if>		
 				
-		<c:if test="#{aonRole.document}">
+		<aon:if test="#{aonRole.document}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/searchContent.xhtml" />
 				</aon:panelGrid>
 			</aon:panelCollapsible>
-		</c:if>
+		</aon:if>
 						
 	</aon:div>
 

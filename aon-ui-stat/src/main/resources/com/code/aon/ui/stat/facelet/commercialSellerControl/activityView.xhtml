@@ -46,16 +46,16 @@
 
 				<aon:panelGrid columns="4">
 
-					<c:if test="#{commercialStat.controlType==0}">
+					<aon:if test="#{commercialStat.controlType==0}">
 						<aon:outputText value="#{bundle.seller_stat_name}" />
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==1}">
 						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
 
-					</c:if>
+					</aon:if>
 				
 					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">
@@ -88,27 +88,27 @@
 							
 							<aon:column	styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<c:if test="#{commercialStat.commercialActivityStatus}">
+									<aon:if test="#{commercialStat.commercialActivityStatus}">
 										<aon:outputText value="#{bundle.seller_stat_control_donef}" />
-									</c:if>
-									<c:if test="#{!commercialStat.commercialActivityStatus}">
+									</aon:if>
+									<aon:if test="#{!commercialStat.commercialActivityStatus}">
 										<aon:outputText
 											value="#{bundle.seller_stat_control_pending}" />
-									</c:if>
+									</aon:if>
 	
 								</f:facet>
-								<c:if test="#{commercialStat.controlType==0}">
+								<aon:if test="#{commercialStat.controlType==0}">
 									<aon:commandLink styleClass="aon-dataTable-link"
 										actionListener="#{commercialStat.onActivityList}"
 										action="commercial_activity_list" value="#{to.numVisits}"
 										reRender="aonContent" />
-								</c:if>
-								<c:if test="#{commercialStat.controlType==1}">
+								</aon:if>
+								<aon:if test="#{commercialStat.controlType==1}">
 									<aon:commandLink styleClass="aon-dataTable-link"
 										actionListener="#{commercialStat.onTargetActivityList}"
 										action="commercial_activity_list" value="#{to.numVisits}"
 										reRender="aonContent" />
-								</c:if>
+								</aon:if>
 							</aon:column>
 							
 						</ui:define>

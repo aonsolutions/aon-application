@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showProjectTasWindow">
-		<c:if test="#{offer.showProjectTasWindow}">
+		<aon:if test="#{offer.showProjectTasWindow}">
 			<rich:modalPanel id="projectTasModalPanel"
 				minHeight="240" minWidth="740" zindex="90"
 				showWhenRendered="#{offer.showProjectTasWindow}" >
@@ -98,7 +98,7 @@
 				<aon:lookupButtonPopup lookup="#{tasItemLookup}" />
 				<aon:lookupButtonPopup lookup="#{modelLookup}" />
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

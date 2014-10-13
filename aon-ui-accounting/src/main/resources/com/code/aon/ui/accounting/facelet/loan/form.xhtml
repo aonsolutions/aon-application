@@ -27,14 +27,14 @@
 						<aon:inputText id="Loan_id"
 							disabled="true"
 							value="#{loan.to.id}" size="5" />
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="Loan_securityLevel"
 								styleClass="aon-margin-left"
 								value="#{loan.to.confidential}"/>
 							<aon:outputLabel for="Loan_securityLevel" 
 								styleClass="aon-italic aon-margin-right"
 								value="#{bundle.aon_confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 					<aon:outputLabel for="Loan_description"
@@ -86,12 +86,12 @@
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
 						value="#{loan.to.registryBank}">
 						<f:selectItem value="#{null}" itemLabel="-" />
-						<c:if test="#{loan.nevv}">
+						<aon:if test="#{loan.nevv}">
 							<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
-						</c:if>
-						<c:if test="#{!loan.nevv}">
+						</aon:if>
+						<aon:if test="#{!loan.nevv}">
 							<f:selectItems value="#{companyCollections.allCompanyBanks}" />
-						</c:if>
+						</aon:if>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Loan_amount"

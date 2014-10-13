@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFinanceSearchWindow">
-		<c:if test="#{financeList.showFinanceSearchWindow}">
+		<aon:if test="#{financeList.showFinanceSearchWindow}">
 			<rich:modalPanel id="financeSearchModalPanel" minHeight="280"
 				minWidth="580" rendered="#{financeList.showFinanceSearchWindow}"
 				showWhenRendered="true" zindex="100">
@@ -60,7 +60,7 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
-										<c:if test="#{showType}">
+										<aon:if test="#{showType}">
 											<aon:outputLabel for="Finance_payment"
 												value="#{bundle.aon_type}" />
 											<aon:selectOneRadio id="Finance_payment"
@@ -68,7 +68,7 @@
 												<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="false" />
 												<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="true" />
 											</aon:selectOneRadio>				
-										</c:if>
+										</aon:if>
 
 										<aon:outputLabel for="Finance_amount"
 											value="#{bundle.aon_amount}" />
@@ -122,7 +122,7 @@
 											<f:selectItems value="#{payMethodSearchList}" />
 										</aon:selectOneMenu>
 
-										<c:if test="#{aonRole.confidentiality}">
+										<aon:if test="#{aonRole.confidentiality}">
 											<aon:outputLabel for="Finance_securityLevel"
 												value="#{bundle.aon_confidential}" />
 											<aon:selectOneRadio id="Finance_securityLevel"
@@ -130,7 +130,7 @@
 												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 												<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 											</aon:selectOneRadio>				
-										</c:if>
+										</aon:if>
 
 									</aon:panelGrid>
 								</aon:div>
@@ -140,7 +140,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

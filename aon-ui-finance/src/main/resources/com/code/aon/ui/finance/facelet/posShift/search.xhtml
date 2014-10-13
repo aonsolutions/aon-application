@@ -30,7 +30,7 @@
 						<a4j:support event="oninputchanged" reRender="PosShift_pos" ignoreDupResponses="true" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{companyCollections.departmentsCount > 0}">
+					<aon:if test="#{companyCollections.departmentsCount > 0}">
 						<aon:outputLabel value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu 
 							value="#{posShiftSearch.department}">
@@ -39,7 +39,7 @@
 							<a4j:support event="onchange" reRender="PosShift_pos" ignoreDupResponses="true" ajaxSingle="true" />
 							<a4j:support event="oninputchanged" reRender="PosShift_pos" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:selectOneMenu>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel value="#{bundle.aon_module_pos}" />
 					<aon:selectOneMenu id="PosShift_pos"

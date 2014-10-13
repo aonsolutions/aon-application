@@ -77,11 +77,11 @@
 								value="#{posShift.to.shift}"
 								rendered="#{readOnly}" />
 
-							<c:if test="#{!posShift.nevv}">
+							<aon:if test="#{!posShift.nevv}">
 								<aon:outputLabel value="#{bundle.aon_login_user}" />
 								<aon:outputText value="#{posShift.userName}" 
 									styleClass="aon-bold" />
-							</c:if>
+							</aon:if>
 
 							<aon:outputLabel for="PosShift_startTime" value="#{bundle.report_opening}" />
 							<aon:panelGrid columns="2" columnClasses="aon-width-150, aon-width-auto">
@@ -162,7 +162,7 @@
 					</aon:panel>
 
 					<aon:div>
-						<c:if test="#{!posShift.nevv}">
+						<aon:if test="#{!posShift.nevv}">
 							<aon:panel id="totalPosShiftCountPanel">
 								<f:facet name="header">
 									<aon:outputLabel value="#{bundle.finance_total_count}" />
@@ -198,11 +198,11 @@
 									</aon:div>
 								</aon:panelGrid>
 
-								<c:if test="#{posShift.totalShiftCountModel.rowCount > 0}">
+								<aon:if test="#{posShift.totalShiftCountModel.rowCount > 0}">
 									<ui:include src="/com/code/aon/ui/finance/facelet/posShift/totalPosShiftCount.xhtml">
 										<ui:param name="controller" value="#{posShift}" />
 									</ui:include>
-								</c:if>
+								</aon:if>
 							</aon:panel>
 
 							<aon:panel id="posShiftCountPanel">
@@ -215,12 +215,12 @@
 									<ui:param name="countReRender" value="totalPosShiftCountPanel" />
 								</ui:include>
 							</aon:panel>
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 				</aon:panelGrid>
 
-				<c:if test="#{!posShift.nevv and (!readOnly or posShift.financeModel.rowCount > 0)}">
+				<aon:if test="#{!posShift.nevv and (!readOnly or posShift.financeModel.rowCount > 0)}">
 					<aon:panel>
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.aon_invoices}" />
@@ -229,7 +229,7 @@
 							<ui:param name="readOnly" value="#{readOnly}" />
 						</ui:include>
 					</aon:panel>
-				</c:if>
+				</aon:if>
 			</aon:div>
 
 		</aon:form>

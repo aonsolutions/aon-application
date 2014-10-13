@@ -14,20 +14,20 @@
 				<ui:param name="toolbarTitle" value="#{bundle.aon_company}" />
 				<ui:param name="toolbarDescription" value="#{(enterprise.nevv)?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
-					<c:if test="#{enterprise.nevv}" >
+					<aon:if test="#{enterprise.nevv}" >
 						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="home" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
-					</c:if>
-					<c:if test="#{!enterprise.nevv}" >
+					</aon:if>
+					<aon:if test="#{!enterprise.nevv}" >
 						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
-						<c:if test="#{domainSwitcher.domainManagementAvailable}">
+						<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 							<aon:commandButton id="enterprise-back"
 								title="#{bundle.aon_key_cancel_accelerator}"
 								value="#{bundle.aon_back}" 
@@ -36,8 +36,8 @@
 								actionListener="#{enterprise.onBackActionListener}"
 								action="#{enterprise.backAction}"
 								accesskey="#{bundle.aon_key_cancel}" />
-						</c:if>
-					</c:if>
+						</aon:if>
+					</aon:if>
 				</ui:define>				
 			</ui:decorate>
 				
@@ -60,13 +60,13 @@
 						</ui:include>
 					</aon:panelTab>
 					
-					<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+					<aon:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
 						<aon:panelTab id="activities" label="#{bundle.aon_activities}">
 							<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
 								<ui:param name="controller" value="#{enterpriseActivity}" />
 							</ui:include>
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 					
 					<aon:panelTab id="workplace" label="#{bundle.company_workplaces}">
 						<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml">
@@ -75,7 +75,7 @@
 						</ui:include>
 					</aon:panelTab>
 					
-					<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
+					<aon:if test="#{aonConfiguration.bean.company.showRegistryBank}">
 						<aon:panelTab label="#{bundle.registry_banks_module}">
 							<aon:panel>
 								<f:facet name="header">
@@ -97,9 +97,9 @@
 								</ui:include>
 							</aon:panel>
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 									
-					<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
+					<aon:if test="#{aonConfiguration.bean.company.showDirStaff}">
 						<aon:panelTab id="dirStaff"
 							label="#{bundle.registry_dir_staff}">
 							<aon:div rendered="#{true}">
@@ -108,61 +108,61 @@
 								</ui:include>
 							</aon:div>
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 					
-					<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
+					<aon:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
 						<aon:panelTab id="finance" label="#{bundle.registry_finance_data_module}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 					
-					<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+					<aon:if test="#{aonConfiguration.bean.enterprise.showProject}" >
 						<aon:panelTab id="projects" label="#{bundle.aon_module_groupware}">
 							<ui:include	src="/com/code/aon/ui/project/facelet/project/gridContent.xhtml" >
 								<ui:param name="controller" value="#{enterpriseProject}" />
 							</ui:include>
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 										
-					<c:if test="#{aonConfiguration.bean.enterprise.showAddInfo}">
+					<aon:if test="#{aonConfiguration.bean.enterprise.showAddInfo}">
 						<aon:panelTab id="addInfo"
 							label="#{bundle.aon_addInfo}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 								<ui:param name="controller" value="#{enterpriseAddInfo}" />
 							</ui:include>
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 					
-					<c:if test="#{aonRole.document}">
+					<aon:if test="#{aonRole.document}">
 						<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 								<ui:param name="controller" value="#{enterpriseRAttach}" />
 								<ui:param name="allowDocumentEdit" value="#{aonRole.documentManager}" />
 							</ui:include>								
 						</aon:panelTab>
-					</c:if>	
+					</aon:if>	
 								
-					<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+					<aon:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
 						<aon:panelTab id="contractClauses" label="#{bundle.payroll_contract_clauses}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 								<ui:param name="controller" value="#{enterpriseClauses}" />
 								<ui:param name="allowDocumentEdit" value="#{aonRole.documentManager}" />
 							</ui:include>
 						</aon:panelTab>
-					</c:if>		
+					</aon:if>		
 					
 				</aon:panelTabSet>
 				
 			</aon:div>
 		</aon:form>
-		<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+		<aon:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
 			<aon:lookupButtonPopup lookup="#{cnae2009Lookup}" />
 			<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 			<aon:lookupButtonPopup lookup="#{calendarLookup}" />
-		</c:if>
-		<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.enterprise.showProject}" >
 			<aon:lookupButtonPopup lookup="#{registryLookup}" />
-		</c:if>
+		</aon:if>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>

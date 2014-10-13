@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j" >
 
-	<c:if test="#{!skipDeniedContentToolbar}">
+	<aon:if test="#{!skipDeniedContentToolbar}">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:param name="toolbarTitle" value="#{bundle.audit_option_denied_module}" />
 			<ui:param name="toolbarDescription" value="&#160;" />
@@ -24,7 +24,7 @@
 					accesskey="#{bundle.aon_key_save}" />
 			</ui:define>
 		</ui:decorate>
-	</c:if>
+	</aon:if>
 
 	<aon:div styleClass="aon-scroll-area">
 	

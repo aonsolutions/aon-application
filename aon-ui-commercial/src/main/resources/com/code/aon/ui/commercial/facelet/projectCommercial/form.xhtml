@@ -19,12 +19,12 @@
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_operation_module}" />
 				<ui:param name="controller" value="#{projectCommercial}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<c:if test="#{!projectCommercial.nevv}">
+					<aon:if test="#{!projectCommercial.nevv}">
 						<aon:commandButton id="ProjectHistory" 
 							action="project_stats" actionListener="#{projectCommercial.onProjectHistory}"
 							value="#{bundle.aon_history}"
 							styleClass="aon-finding-toolbar-item aon-icon-info" />
-					</c:if>		
+					</aon:if>		
 				</ui:define>
 			</ui:decorate>
 
@@ -38,7 +38,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!projectCommercial.nevv}">
+				<aon:if test="#{!projectCommercial.nevv}">
 					<aon:panelTabSet id="projectCommercialTab" selectedTab="#{projectCommercial.selectedTab}">
 						<aon:panelTab id="tracking" label="#{bundle.commercial_tracking_module}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/grid.xhtml" />
@@ -50,7 +50,7 @@
 							</ui:include>
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />

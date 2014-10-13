@@ -11,7 +11,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:define name="columns">
 		
-			<c:if test="#{controller.enterpriseClause}">
+			<aon:if test="#{controller.enterpriseClause}">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
 					<f:facet name="header">
 						<aon:outputLabel for="ContractClause_general"
@@ -30,7 +30,7 @@
 							reRender="ContractClause_line-New" ajaxSingle="true" />	
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 			
 			<aon:column>
 				<f:facet name="header">
@@ -60,12 +60,12 @@
 					required="true" size="16" maxlength="64" />
 				<f:facet name="footer" >
 					<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
-						<c:if test="#{!controller.enterpriseClause}">
+						<aon:if test="#{!controller.enterpriseClause}">
 							<aon:commandButton ajaxSingle="#{true}"
 								styleClass="aon-editDataTable-button aon-icon-lookup" 
 								actionListener="#{controller.onShowAvailableClauses}" 
 								reRender="showAvailableClauses" />
-						</c:if>
+						</aon:if>
 						<aon:inputText id="ContractClause_name-New"
 							value="#{controller.to.name}" rendered="#{formNew}"
 							reRender="ContractClause_name-New"

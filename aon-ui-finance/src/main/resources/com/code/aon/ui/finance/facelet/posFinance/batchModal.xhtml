@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFinanceBatchWindow">
-		<c:if test="#{controller.showFinanceBatchWindow}">
+		<aon:if test="#{controller.showFinanceBatchWindow}">
 			<rich:modalPanel id="financeBatchModalPanel" 
 				minWidth="580" minHeight="360"  
 				rendered="#{controller.showFinanceBatchWindow}"
@@ -115,7 +115,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

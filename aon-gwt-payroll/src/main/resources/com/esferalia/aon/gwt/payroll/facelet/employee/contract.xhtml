@@ -13,7 +13,7 @@
 
 
 	<aon:form id="contractForm" style="#{ !edit ? 'display:none': ''}" >
-		<c:if test="#{edit}">
+		<aon:if test="#{edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
@@ -57,14 +57,14 @@
 				</ui:define>
 
 			</ui:decorate>
-		</c:if>
-		<c:if test="#{!edit}">
+		</aon:if>
+		<aon:if test="#{!edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.payroll_contract_module}" />
 			</ui:decorate>
-		</c:if>
+		</aon:if>
 
 		<aon:div
 			style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;">
@@ -114,11 +114,11 @@
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
-	<c:if test="#{!edit}">
+	<aon:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="contractForm" />
 			<ui:param name="hide" value="/enterpriseActivities|Contract_contractModel|Agreement_name|quote_group|occupationType|CNO_id|Person_id|Person_alias|Person_gender|Person_address_municipality|Person_telephone|Person_cellular|Person_email|RegistryPayMethod_payment|agreementLevelCategory-content/g" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

@@ -23,18 +23,18 @@
 		<aon:methodParam name="goMethod" value="#{stat.onCategorySelect}" type="actionListener" />
 		<aon:methodParam name="lastColumnAction" value="#{stat.onCategoryRegistryStats}" type="actionListener" />
 		<aon:methodParam  name="customerFacelet" value="category_customer_list" />				
-		<c:if  test="#{stat.invoiceType==1}">
+		<aon:if  test="#{stat.invoiceType==1}">
 			<ui:param name="lastColumnName" value="#{bundle.stat_show_clients}" />
 			<ui:param name="windowTitle" value="#{bundle.stat_menu_category}"/>
-		</c:if>
-		<c:if  test="#{stat.invoiceType==0}">
+		</aon:if>
+		<aon:if  test="#{stat.invoiceType==0}">
 			<ui:param name="lastColumnName" value="#{bundle.stat_show_suppliers}" />
 			<ui:param name="windowTitle" value="#{bundle.stat_menu_category}"/>
-		</c:if>	
-		<c:if  test="#{stat.invoiceType==2}">
+		</aon:if>	
+		<aon:if  test="#{stat.invoiceType==2}">
 			<ui:param name="lastColumnName" value="#{bundle.stat_show_creditors}" />
 			<ui:param name="windowTitle" value="#{bundle.stat_menu_category_expense}"/>
-		</c:if>	 	   
+		</aon:if>	 	   
 	</ui:include>			
 
  </ui:composition>

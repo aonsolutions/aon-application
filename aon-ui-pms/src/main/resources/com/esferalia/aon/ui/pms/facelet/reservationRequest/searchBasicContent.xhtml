@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+	<aon:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel for="ReservationRequest_hotel_id"
 			value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="ReservationRequest_hotel_id"
@@ -15,7 +15,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="ReservationRequest_id" 
 		value="#{bundle.pms_reservation_request_id}" />
@@ -73,7 +73,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<c:if test="#{aonRole.commercialOperator}">
+	<aon:if test="#{aonRole.commercialOperator}">
 		<aon:outputLabel for="ReservationRequest_agency" 
 			value="#{bundle.report_agency}" />
 		<aon:selectOneMenu id="ReservationRequest_agency" 
@@ -82,7 +82,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.agencies}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="ReservationRequest_remarks" 
 		value="#{bundle.aon_remark}" />

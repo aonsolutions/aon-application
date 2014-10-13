@@ -80,13 +80,13 @@
 							<ui:param name="lookupRendered" value="#{(campaignAction.to.mediaType  == 'PHONE') or (campaignAction.to.mediaType  == 'EMAIL')}" />
 						</ui:include>					
 	
-						<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
+						<aon:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
 							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{campaignAction.to.survey}" />
 								<ui:param name="idRequired" value="#{true}" />
 								<ui:param name="lookupRendered" value="#{campaignAction.to.mediaType  == 'PHONE'}" />
 							</ui:include>					
-						</c:if>
+						</aon:if>
 
 						<ui:include src="/com/code/aon/ui/marketing/facelet/newsletter/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{campaignAction.to.newsletter}" />
@@ -168,9 +168,9 @@
 				
 			</aon:div>
 		</aon:form>	
-		<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
+		<aon:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
-		</c:if>
+		</aon:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{newsLookup}" />
 		<aon:lookupButtonPopup lookup="#{userLookup}" />

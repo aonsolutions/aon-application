@@ -85,7 +85,7 @@
 							<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />
 						</aon:selectOneMenu>
 
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:outputLabel for="AccountEntry_securityLevel" 
 								value="#{bundle.aon_confidential}" />
 							<aon:selectOneRadio id="AccountEntry_securityLevel"
@@ -93,7 +93,7 @@
 								value="#{financeEntry.securityLevel}">
 								<f:selectItems value="#{commonCollections.confidentialValues}" />	
 							</aon:selectOneRadio>
-						</c:if>
+						</aon:if>
 					</aon:panelGrid>
 
 				</aon:div>
@@ -171,17 +171,17 @@
 				<aon:div id="financePanelTabSet">
 					<aon:panelTabSet rendered="#{financeEntry.payment != null}">
 
-						<c:if test="#{financeEntry.lines.rowCount > 0}">
+						<aon:if test="#{financeEntry.lines.rowCount > 0}">
 							<aon:panelTab name="lines" label="#{bundle.accounting_finance_record_list}">
 								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_lines.xhtml" />
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{financeEntry.finances.rowCount > 0}">
+						<aon:if test="#{financeEntry.finances.rowCount > 0}">
 							<aon:panelTab name="finances" label="#{bundle.accounting_finance_pending_list}">
 								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_finances.xhtml" />
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
 					</aon:panelTabSet>
 				</aon:div>

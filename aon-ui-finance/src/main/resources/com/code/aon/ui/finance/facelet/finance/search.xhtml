@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (bundle.finance_payment_module) : (bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:define name="additionalToolbarContent">
-					<c:if test="#{controller.payroll}">
+					<aon:if test="#{controller.payroll}">
 						<aon:commandButton id="generateFinances-Popup"
 							value="#{bundle.aon_generate}"
 							title="#{bundle.aon_generate}"
@@ -24,7 +24,7 @@
 							<f:setPropertyActionListener target="#{controller.showFinancePayrollWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-					</c:if>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 

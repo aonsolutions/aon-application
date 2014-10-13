@@ -11,8 +11,8 @@
 	<aon:methodParam name="signActionListener" default="#{signController.onSign}" type="actionListener" />
 	<aon:methodParam name="cancelSignActionListener" default="#{signController.onCancelSign}" type="actionListener" />
 
-	<c:if test="#{company.EInvoice and aonRole.ESignature}">
-		<c:if test="#{!skipSignButton and !certificate.sessionCertificateStored}">
+	<aon:if test="#{company.EInvoice and aonRole.ESignature}">
+		<aon:if test="#{!skipSignButton and !certificate.sessionCertificateStored}">
 			<aon:commandButton id="sign"
 				value="#{bundle.sign_sign}"
 				actionListener="#{certificate.onShowSignWindow}"
@@ -21,8 +21,8 @@
 				<f:setPropertyActionListener
 					target="#{certificate.signerController}" value="#{signController}" />				
 			</aon:commandButton>
-		</c:if>
-		<c:if test="#{!skipSignButton and certificate.sessionCertificateStored}">
+		</aon:if>
+		<aon:if test="#{!skipSignButton and certificate.sessionCertificateStored}">
 			<aon:commandButton id="sign"
 				value="#{bundle.sign_sign}"
 				actionListener="#{signActionListener}"
@@ -30,15 +30,15 @@
 				reRender="#{signButtonReRender}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />									
-		</c:if>
-		<c:if test="#{!skipCancelSignButton}">
+		</aon:if>
+		<aon:if test="#{!skipCancelSignButton}">
 			<aon:commandButton id="cancel_sign"
 				value="#{bundle.sign_cancel_sign}"
 				actionListener="#{cancelSignActionListener}"
 				styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-	     </c:if>
-	</c:if>
+	     </aon:if>
+	</aon:if>
 
 </ui:composition>

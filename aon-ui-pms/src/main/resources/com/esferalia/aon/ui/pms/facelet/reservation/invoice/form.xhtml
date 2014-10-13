@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{service}">
+	<aon:if test="#{service}">
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{controller.projectReservation}" />
 			<ui:param name="skipNewButton" value="#{true}" />
@@ -44,7 +44,7 @@
 			<aon:outputText value="#{controller.reservationInvoiceTo.room.room.asset.name}" styleClass="aon-bold"
 				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1}" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="ProjectReservation_invoiceGuest"
 		value="#{bundle.report_guest}"
@@ -136,7 +136,7 @@
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
 	</aon:div>
 
-	<c:if test="#{service}">
+	<aon:if test="#{service}">
 		<aon:outputLabel for="ProjectReservation_serviceType"
 			value="#{bundle.aon_type}" />
 		<aon:selectOneRadio id="ProjectReservation_serviceType"
@@ -146,6 +146,6 @@
 			reRender="invoiceServicesDiv,invoiceFinancesDiv">
 			<f:selectItems value="#{controller.serviceTypes}" />
 		</aon:selectOneRadio>				
-	</c:if>
+	</aon:if>
 
 </ui:composition>

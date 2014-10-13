@@ -3,7 +3,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
+	<aon:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
 		<aon:div styleClass="aon-footer-box">						
 			 <aon:outputText value="#{bundle.aon_trademark}" />
 			 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
@@ -16,6 +16,6 @@
 				<aon:outputText value="#{bundle.aon_support_send_email}" />
 			</aon:outputLink> 	
 		</aon:div>
-	</c:if>	
+	</aon:if>	
 
 </ui:composition>

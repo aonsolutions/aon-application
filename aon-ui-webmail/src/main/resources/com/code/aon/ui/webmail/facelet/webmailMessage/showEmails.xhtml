@@ -8,7 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:panelGroup id="showEmailWindow#{messageSuffix}">
-		<c:if test="#{webmailMessage.showEmailsWindow}">
+		<aon:if test="#{webmailMessage.showEmailsWindow}">
 			<rich:modalPanel id="showEmailsModalPanel#{messageSuffix}"
 				rendered="#{webmailMessage.showEmailsWindow}" showWhenRendered="true"
 				minHeight="390" height="390" width="650" top="50" zindex="2000">
@@ -100,7 +100,7 @@
 					</aon:div>
 				</aon:form>					
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 	
 </ui:composition>

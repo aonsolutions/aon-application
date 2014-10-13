@@ -110,7 +110,7 @@
 				</f:facet>
 			</aon:column>
 
-			<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >
+			<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >
 				<aon:column
 					styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
 					<f:facet name="header">
@@ -130,7 +130,7 @@
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 			
 		</ui:define>
 	</ui:decorate>

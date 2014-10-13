@@ -67,14 +67,14 @@
 						buttonInactiveStyle="display:none;"
 						buttonStyle="display:none;"/>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="Opening_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneMenu id="Opening_securityLevel"
 							value="#{endPeriodEntries.securityLevel}">
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 						</aon:selectOneMenu>
-					</c:if>
+					</aon:if>
 
 				</aon:panelGrid>
 			</aon:div>

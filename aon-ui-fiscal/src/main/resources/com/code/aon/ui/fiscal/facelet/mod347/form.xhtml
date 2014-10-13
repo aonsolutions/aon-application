@@ -87,7 +87,7 @@
 					</aon:div>
 	
 					<aon:div>
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="mod347_securityLevel"
 								value="#{mod347.to.confidential}" rendered="#{!mod347.to.finished}"/>
 							<aon:outputLabel for="mod347_securityLevel" styleClass="aon-italic"
@@ -95,7 +95,7 @@
 							<aon:outputText styleClass="aon-icon aon-icon-confidential"
 								value="&#160;" title="#{bundle.aon_confidential}"
 								rendered="#{mod347.to.finished and mod347.to.confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 					
 					<aon:outputText value="#{bundle.aon_number}" />
@@ -130,7 +130,7 @@
 										
 				</aon:panelGrid>
 
-				<c:if test="#{mod347.nevv}">
+				<aon:if test="#{mod347.nevv}">
 
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
@@ -149,7 +149,7 @@
 							<aon:outputText value="&#160;" />
 							<aon:outputText value="&#160;" />
 							
-							<c:if test="#{mod347.to.generateLines}">
+							<aon:if test="#{mod347.to.generateLines}">
 								<aon:outputText value="&#160;" />
 								<aon:div>
 									<aon:selectBooleanCheckbox id="mod347_taxDateEnabled"  
@@ -243,12 +243,12 @@
 										<aon:outputLabel for="mod347_input_national_zero_excluded" value="#{bundle.fiscal_mod347_input_national_zero_excluded}" />
 									</aon:div>							
 								</aon:div>							
-							</c:if>
+							</aon:if>
 						</aon:panelGrid>
 					</aon:div>
-				</c:if>
+				</aon:if>
 				
-				<c:if test="#{!mod347.nevv}">
+				<aon:if test="#{!mod347.nevv}">
 
 					<aon:panelTabSet selectedTab="#{vatTax.selectedTab}">
 						<aon:panelTab id="detailTab" label="Declarados">
@@ -259,7 +259,7 @@
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/mod347/asset.xhtml" />
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 		</aon:form>

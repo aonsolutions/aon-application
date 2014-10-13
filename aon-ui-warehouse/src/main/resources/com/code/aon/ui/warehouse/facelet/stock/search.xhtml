@@ -60,12 +60,12 @@
 								<aon:inputText id="Stock_item_product_name" size="50"
 									valueChangeListener="#{controller.addExpression}" />
 							
-								<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+								<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 									<aon:outputLabel for="Stock_item_barcode"
 										value="#{bundle.product_barcode}" />
 									<aon:inputText id="Stock_item_barcode" size="25"
 										valueChangeListener="#{controller.addExpression}" />
-								</c:if>
+								</aon:if>
 
 								<aon:outputLabel for="Stock_item_suppliers_code"
 									value="#{bundle.product_item_supplier_code}" />
@@ -83,7 +83,7 @@
 								<ui:include 
 									src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
 								
-								<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+								<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 									<aon:outputLabel for="Stock_item_product_brand_id"
 										value="#{bundle.tas_make}" />
 									<aon:selectOneMenu id="Stock_item_product_brand_id"
@@ -92,7 +92,7 @@
 										<f:selectItem itemLabel="-" value="#{null}" />
 										<f:selectItems value="#{productCollections.brands}" />
 									</aon:selectOneMenu>
-								</c:if>
+								</aon:if>
 														
 								<aon:outputText for="Stock_item_product_status"
 									value="#{bundle.aon_status}"/>
@@ -101,14 +101,14 @@
 									<f:selectItems value="#{productCollections.productStatuses}"/>
 								</aon:selectManyCheckbox>				
 							
-								<c:if test="#{aonConfiguration.bean.product.showType}">
+								<aon:if test="#{aonConfiguration.bean.product.showType}">
 									<aon:outputLabel for="Stock_item_product_type"
 										value="#{bundle.aon_type}" />
 									<aon:selectManyCheckbox id="Stock_item_product_type"
 										value="#{searchController.types}">
 										<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
 									</aon:selectManyCheckbox>
-								</c:if>	
+								</aon:if>	
 
 
 							</aon:panelGrid>

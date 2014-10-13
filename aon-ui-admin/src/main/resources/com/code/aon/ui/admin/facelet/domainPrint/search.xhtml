@@ -25,7 +25,7 @@
 				<ui:include
 					src="/com/code/aon/ui/admin/facelet/domainPrint/searchContent.xhtml" />			
 				
-				<c:if test="#{domainSearch.showList}">
+				<aon:if test="#{domainSearch.showList}">
 				
 					<aon:methodParam name="rowSelectorAction" value="home" />				
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -38,7 +38,7 @@
 						</ui:define>
 					</ui:decorate>
 
-				</c:if>
+				</aon:if>
 			</aon:div>
 
 		</aon:form>

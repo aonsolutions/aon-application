@@ -7,7 +7,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<c:if test="#{showSearchOption}" >
+	<aon:if test="#{showSearchOption}" >
 		<aon:panelGrid columns="1" style="width: 100%;"
 			columnClasses="aon-panelGrid-even  aon-width-auto">
 			<aon:selectOneRadio value="#{contractDeduction.searchCurrent}">
@@ -18,7 +18,7 @@
 				</a4j:support>
 			</aon:selectOneRadio>
 		</aon:panelGrid>
-	</c:if>
+	</aon:if>
 	
 	<aon:dataTable id="contractDeductionTable" var="to" value="#{controller.model}" rows="0">
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
@@ -44,7 +44,7 @@
 			</f:facet>
 		</aon:column>
 
-		<c:if test="#{!skipStartDateColumn}">
+		<aon:if test="#{!skipStartDateColumn}">
 			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_start_date}" />
@@ -54,9 +54,9 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 			</aon:column>
-		</c:if>
+		</aon:if>
 		
-		<c:if test="#{!skipEndDateColumn}">
+		<aon:if test="#{!skipEndDateColumn}">
 			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_end_date}" />
@@ -66,7 +66,7 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>		
 			</aon:column>
-		</c:if>
+		</aon:if>
 		
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">

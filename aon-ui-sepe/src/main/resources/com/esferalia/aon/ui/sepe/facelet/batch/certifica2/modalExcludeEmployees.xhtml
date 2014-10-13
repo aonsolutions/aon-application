@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showExcludeEmployeeWindow">
-		<c:if test="#{certifica2Batch.showExcludeEmployeeWindow}">
+		<aon:if test="#{certifica2Batch.showExcludeEmployeeWindow}">
 			<rich:modalPanel id="excludeEmployeeModalPanel" minHeight="250" minWidth="350" 
 				rendered="#{certifica2Batch.showExcludeEmployeeWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -70,7 +70,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

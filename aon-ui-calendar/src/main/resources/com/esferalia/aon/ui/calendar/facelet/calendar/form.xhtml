@@ -83,7 +83,7 @@
 
 				</aon:panelGrid>
 				
-				<c:if test="#{!calendar.nevv}">
+				<aon:if test="#{!calendar.nevv}">
 					<aon:panelTabSet id="tabPanel">
 						<aon:panelTab label="#{bundle.aon_dates}">
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
@@ -98,7 +98,7 @@
 								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarPeriod/tab_grid.xhtml" />
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 

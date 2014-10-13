@@ -26,20 +26,20 @@
 						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}"/>
-					<c:if test="#{communicationCenter.actionSelected}">
+					<aon:if test="#{communicationCenter.actionSelected}">
 						<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
 							reRender="aonStatus" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-exit" >
 							<rich:componentControl for="surveyFinishModalPanel"
 								operation="show" event="onclick" />						
 						</aon:commandButton>
-					</c:if>
-					<c:if test="#{!communicationCenter.actionSelected}">
+					</aon:if>
+					<aon:if test="#{!communicationCenter.actionSelected}">
 						<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
 							action="#{communicationCenter.finishedAction}" immediate="true"					
 							styleClass="aon-finding-toolbar-item aon-icon-exit" >
 						</aon:commandButton>
-					</c:if>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>	
 
@@ -94,7 +94,7 @@
 						<aon:outputText value="#{communicationCenter.question.argument}"
 							rendered="#{communicationCenter.question.argument != null}" />
 						
-						<c:if test="#{communicationCenter.question.type != 'INFO'}" >
+						<aon:if test="#{communicationCenter.question.type != 'INFO'}" >
 							<aon:outputLabel for="CommunicationCenter_response_value"
 								value="#{bundle.registry_response}" />							
 							<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >
@@ -103,7 +103,7 @@
 								<ui:param name="questionValueId" value="#{communicationCenter.questionValueId}" />
 								<ui:param name="questionValues" value="#{communicationCenter.questionValues}" />
 							</ui:include>
-						</c:if>
+						</aon:if>
 	
 					</aon:panelGrid>
 	

@@ -8,12 +8,12 @@
 	<aon:div id="#{controller.beanName}Div" >
 		<ui:param name="innerToolbar" value="#{true}" />
 		<ui:param name="skipSearchButton" value="#{true}" />
-		<c:if test="#{controller.to == null}">
+		<aon:if test="#{controller.to == null}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/contact/listContent.xhtml" />
-		</c:if>
-		<c:if test="#{controller.to != null}">
+		</aon:if>
+		<aon:if test="#{controller.to != null}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/contact/formContent.xhtml" />
-		</c:if>
+		</aon:if>
 	</aon:div>
 
 </ui:composition>

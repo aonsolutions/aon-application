@@ -28,30 +28,30 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
-					<c:if test="#{commercialStat.controlType==0}">
+					<aon:if test="#{commercialStat.controlType==0}">
 						<aon:outputText value="#{bundle.seller_stat_name}" />
 						<aon:outputText value="#{commercialStat.sellerName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==1}">
 						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.targetName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==2}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==2}">
 						<aon:outputText value="#{bundle.aon_product}" />
 						<aon:outputText value="#{commercialStat.productName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==3}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==3}">
 						<aon:outputText value="#{bundle.aon_category}" />
 						<aon:outputText value="#{commercialStat.categoryName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==4}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==4}">
 						<aon:outputText value="#{bundle.stat_geozone}" />
 						<aon:outputText value="#{commercialStat.zoneName}"></aon:outputText>
-					</c:if>
+					</aon:if>
 
 					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">

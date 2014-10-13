@@ -124,7 +124,7 @@ public class ProjectReservationServiceController extends LinesController {
 			setTo(reservationService);
 			masterController.getReservationPermission().setReservationService(reservationService);
 
-			setNew(true);
+			setNevv(true);
 			fillReservationServiceValues(reservationService);
 		} catch (ManagerBeanException ex) {
 			String msg = "No es posible asignar Servicio";

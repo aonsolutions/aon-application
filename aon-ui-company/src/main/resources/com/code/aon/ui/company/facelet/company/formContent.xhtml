@@ -14,27 +14,27 @@
 			<ui:param name="controller" value="#{company}" />									
 		</ui:include>							
 		
-		<c:if test="#{domainSwitcher.childDomain and !company.nevv}" >
+		<aon:if test="#{domainSwitcher.childDomain and !company.nevv}" >
 			<aon:outputLabel for="Domain_scope"
 				value="#{bundle.aon_scope}" />
-			<c:if test="#{!(domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin)}">
+			<aon:if test="#{!(domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin)}">
 				<aon:inputText id="Domain_scope" size="60" disabled="true"
 					value="#{company.scope.description}" />
-			</c:if>
-			<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin}">						
+			</aon:if>
+			<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin}">						
 				<aon:selectOneMenu id="Domain_scope" 
 					value="#{company.scope}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{company.domainScopes}" />
 				</aon:selectOneMenu>		
-			</c:if>													
-		</c:if>										
-		<c:if test="#{domainSwitcher.parentDomainUserInChildDomain and !company.nevv}">
+			</aon:if>													
+		</aon:if>										
+		<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain and !company.nevv}">
 			<aon:outputLabel for="Domain_active"
 				value="#{bundle.aon_active}" />
 			<aon:selectBooleanCheckbox id="Domain_active"
 				value="#{company.active}" />										
-		</c:if>
+		</aon:if>
 		
 	</aon:panelGrid>
 

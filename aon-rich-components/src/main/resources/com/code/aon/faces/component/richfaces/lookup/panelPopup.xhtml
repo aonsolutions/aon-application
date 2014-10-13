@@ -11,7 +11,7 @@
 <ui:composition>
 
 	<aon:panelGroup id="#{lookupId}ReRender" styleClass="aon-popupWindow">
-		<c:if test="#{lookup.showWindow}">
+		<aon:if test="#{lookup.showWindow}">
 			<rich:modalPanel id="#{lookupId}" onshow="#{onLookupShow}"
 				showWhenRendered="#{lookup.showWindow}" minWidth="#{lookup.minWidth}" minHeight="#{lookup.minHeight}">
 	
@@ -39,20 +39,20 @@
 							<aon:div style="width:99%">
 								<aon:form id="#{lookup.beanName}Form">
 								
-									<c:if
+									<aon:if
 										test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
 										<ui:include src="listContent.xhtml" />
-									</c:if>
+									</aon:if>
 	
-									<c:if
+									<aon:if
 										test="#{(lookup.searchPagePath != null) and (lookup.selectedPanel == 'search')}">
 										<ui:include src="searchContent.xhtml" />
-									</c:if>
+									</aon:if>
 	
-									<c:if
+									<aon:if
 										test="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'new')}">
 										<ui:include src="formContent.xhtml" />
-									</c:if>
+									</aon:if>
 								</aon:form>
 							</aon:div>
 						</aon:div>
@@ -60,7 +60,7 @@
 				</aon:div>
 			</rich:modalPanel> 
 			<a4j:loadScript src="/aonResource/com/code/aon/faces/component/richfaces/lookup/extendedInput.js" />			
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

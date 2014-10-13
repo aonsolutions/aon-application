@@ -59,7 +59,7 @@
 					<aon:inputText id="CompanyCustomize_separator"
 						value="#{companyCustomize.separator}" maxlength="64" size="10" />						
 						
-					<c:if test="#{aonRole.sysAdmin}">
+					<aon:if test="#{aonRole.sysAdmin}">
 						<aon:outputLabel for="CompanyCustomize_hideTrademark"
 							value="#{bundle.aon_hide_trademark}" />					
 						<aon:selectBooleanCheckbox id="CompanyCustomize_hideTrademark"
@@ -69,7 +69,7 @@
 							value="#{bundle.aon_hide_version}" />					
 						<aon:selectBooleanCheckbox id="CompanyCustomize_hideVersion"
 							value="#{companyCustomize.hideVersion}" />
-					</c:if>						
+					</aon:if>						
 
 				</aon:panelGrid>
 

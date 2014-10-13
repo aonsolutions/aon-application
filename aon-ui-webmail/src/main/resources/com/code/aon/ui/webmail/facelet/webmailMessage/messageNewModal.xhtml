@@ -10,9 +10,9 @@
 
 <ui:composition>
 
-	<c:if test="#{!webmailMessage.included or (messageSuffix != null)}">
+	<aon:if test="#{!webmailMessage.included or (messageSuffix != null)}">
 		<aon:panelGroup id="showNewMessageWindow#{messageSuffix}">
-			<c:if test="#{webmailMessage.showNewMessageWindow}">
+			<aon:if test="#{webmailMessage.showNewMessageWindow}">
 				<aon:valueParam name="windowHeight" default="600" />
 				<rich:modalPanel id="showNewMessageModalPanel#{messageSuffix}"
 					domElementAttachment="parent"
@@ -51,9 +51,9 @@
 					</ui:include>
 	
 				</rich:modalPanel>
-			</c:if>
+			</aon:if>
 		</aon:panelGroup>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>
 

@@ -6,16 +6,16 @@
 
 	<ui:param name="lookup_reRender" value="lookup#{pojoName}#{lookupSuffix}#{(lookupReRender != null)?',':''}#{lookupReRender}"/>
 
-	<c:if test="#{(!skipLabel) and lookupRendered}">
+	<aon:if test="#{(!skipLabel) and lookupRendered}">
 		<aon:outputLabel for="#{pojoName}_id#{lookupSuffix}"
 			value="#{lookupLabel}" />			
-	</c:if>
+	</aon:if>
 	<aon:div id="lookup#{pojoName}#{lookupSuffix}"
 		styleClass="aon-lookup" rendered="#{lookupRendered}" >
 		
 		<ui:insert name="beforeLookupContent"/>
 		
-		<c:if test="#{!skipInputText}">
+		<aon:if test="#{!skipInputText}">
 			<aon:lookupInputText id="#{pojoName}_id#{lookupSuffix}"
 				value="#{lookupInputValue}" property="#{lookupTo}" 
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}" 
@@ -30,13 +30,13 @@
 				windowTitle="#{searchButtonTitle}" >
 				<ui:insert name="lookupInputTextContent"/>
 			</aon:lookupInputText>
-		</c:if>
-		<c:if test="#{!skipGoToButtonEx}">
+		</aon:if>
+		<aon:if test="#{!skipGoToButtonEx}">
 			<aon:goToButton controller="#{controller}" property="#{goToProperty}"
 				backAction="#{goToBackAction}"
 				backActionListener="#{goToBackActionListener}" />
-		</c:if>
-		<c:if test="#{!skipSearchButton}">
+		</aon:if>
+		<aon:if test="#{!skipSearchButton}">
 			<aon:lookupButton id="#{pojoName}_SearchButton#{lookupSuffix}"
 				windowTitle="#{searchButtonTitle}" property="#{lookupTo}"
 				minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
@@ -48,8 +48,8 @@
 				selectReRender="#{lookup_reRender}" >
 				<ui:insert name="searchButtonContent"/>
 			</aon:lookupButton>
-		</c:if>
-		<c:if test="#{!skipClearButton}">
+		</aon:if>
+		<aon:if test="#{!skipClearButton}">
 			<aon:lookupButton id="#{pojoName}_ClearButton#{lookupSuffix}"
 				actionType="clear" disabled="#{lookupDisabled}" 
 				lookup="#{lookupBean}" property="#{lookupTo}"
@@ -57,8 +57,8 @@
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
 				selectReRender="#{lookup_reRender}" />
-		</c:if>			
-		<c:if test="#{!skipNewButtonEx}">
+		</aon:if>			
+		<aon:if test="#{!skipNewButtonEx}">
 			<aon:lookupButton 
 				windowTitle="#{newButtonTitle}"
 				disabled="#{lookupDisabled}" actionType="new"
@@ -71,8 +71,8 @@
 				selectReRender="#{lookup_reRender}" >
 				<ui:insert name="newButtonContent"/>
 			</aon:lookupButton>
-		</c:if>
-		<c:if test="#{!skipSuggestText}">																		
+		</aon:if>
+		<aon:if test="#{!skipSuggestText}">																		
 			<aon:lookupSuggestText id="#{pojoName}_name#{lookupSuffix}"
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
 				lookupChangeListener="#{lookupChangeListener}"
@@ -86,7 +86,7 @@
 				size="#{lookupInputSuggestSize}" disabled="#{lookupDisabled}"
 				minChars="#{lookupInputMinChars}"  focus="#{lookupInputOnFocus}"
 				selectReRender="#{lookup_reRender}" />
-		</c:if>
+		</aon:if>
 
 		<ui:insert name="afterLookupContent"/>
 

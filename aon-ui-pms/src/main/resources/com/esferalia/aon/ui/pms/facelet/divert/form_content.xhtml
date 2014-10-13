@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!skipReservation}">
+	<aon:if test="#{!skipReservation}">
 		<aon:outputLabel for="Divert_projectReservation"
 			value="#{bundle.aon_reservation}" />
 		<aon:div
@@ -31,13 +31,13 @@
 			<ui:param name="skipLabel" value="#{true}" />
 			<ui:param name="lookupRendered" value="#{divert.to.projectReservation.id==null}" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 					
-	<c:if test="#{!skipRequestHotel}">
+	<aon:if test="#{!skipRequestHotel}">
 		<aon:outputLabel for="Divert_hotelRequest_id"
 			value="#{bundle.pms_divert_request}" />
 		<aon:outputText value="#{divert.to.requestHotel.workPlace.description}" />
-	</c:if>
+	</aon:if>
 					
 	<aon:outputLabel for="Divert_hotel_id"
 		value="#{bundle.warehouse_stock_target}" />
@@ -55,10 +55,10 @@
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 
-	<c:if test="#{!skipStatus}">
+	<aon:if test="#{!skipStatus}">
 		<aon:outputLabel for="Divert_status"
 			value="#{bundle.aon_status}" />
 		<aon:outputText value="#{divert.to.status}" />
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

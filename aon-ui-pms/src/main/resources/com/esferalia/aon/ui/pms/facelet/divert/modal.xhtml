@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRoomDetailWindow">
-		<c:if test="#{modalController.showRoomDetailWindow}">
+		<aon:if test="#{modalController.showRoomDetailWindow}">
 			<rich:modalPanel id="roomDetailModalPanel" minHeight="425" minWidth="750" 
 				rendered="#{modalController.showRoomDetailWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -74,7 +74,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

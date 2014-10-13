@@ -39,7 +39,7 @@
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{aonRole.sysAdmin}" >
+					<aon:if test="#{aonRole.sysAdmin}" >
 						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
 							<ui:param name="skipNewButton" value="#{true}" />
@@ -52,7 +52,7 @@
 							<ui:param name="skipGoToButton" value="#{true}" />
 							<ui:param name="skipNewButton" value="#{true}" />
 						</ui:include>
-					</c:if>
+					</aon:if>
 								
 				</ui:define>
 			</ui:decorate>

@@ -7,15 +7,15 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:param name="searchController" value="#{customerSearch}" />
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
-	</c:if>
+	</aon:if>
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
 		<ui:param name="includeRegistryScope" value="#{true}"/>
 	</ui:include>
 		
-	<c:if test="#{company.EInvoice}">
+	<aon:if test="#{company.EInvoice}">
 		<aon:outputLabel for="Customer_EInvoice"
 			value="#{bundle.customer_eInvoice}" />
 		<aon:selectOneMenu id="Customer_EInvoice"
@@ -24,9 +24,9 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneMenu>								
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+	<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
 		<aon:outputLabel for="Customer_tariff_id"
 			value="#{bundle.report_tariff}" />
 		<aon:selectOneMenu id="Customer_tariff_id"
@@ -35,7 +35,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{configCollections.tariffs}" />
 		</aon:selectOneMenu>
-	</c:if>	
+	</aon:if>	
 	
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchProjectContent.xhtml" />
 	

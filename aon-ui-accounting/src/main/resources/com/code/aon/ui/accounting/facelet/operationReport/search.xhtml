@@ -69,7 +69,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:panelGrid>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 	 					<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_securityLevel"
 							value="#{bundle.aon_confidential}" />
@@ -78,7 +78,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all} " />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 					
 					<aon:outputText value="&#160;" />
 					<aon:div>

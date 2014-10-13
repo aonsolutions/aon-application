@@ -30,9 +30,9 @@
 				<aon:commandButton styleClass="aon-popupWindow-close"
 					action="#{closeButtonAction}" actionListener="#{logPanel.onCloseWindow}" immediate="true"
 					reRender="aonStatus,logPanel_poll,logPanel_content#{(closeButtonReRender != null)?',':''}#{closeButtonReRender}">
-					<c:if test="#{closeLogPanelAtionListener != null}">									
+					<aon:if test="#{closeLogPanelAtionListener != null}">									
 						<aon:actionListener method="#{closeLogPanelAtionListener}" />
-					</c:if>					
+					</aon:if>					
 					<rich:componentControl for="logPanel"
 						operation="hide" event="onclick" />
 				</aon:commandButton>

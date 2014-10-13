@@ -6,17 +6,17 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!customize.hideTrademark}">
-	    <c:if test="#{customize.customized}">
+	<aon:if test="#{!customize.hideTrademark}">
+	    <aon:if test="#{customize.customized}">
 	    	<aon:outputText value="#{bundle.aon_powered_by} " />
-	    </c:if>
+	    </aon:if>
 		<aon:outputLink target="_blank" value="#{bundle.aon_solutions_url}" >
 			<aon:outputText value="#{bundle.aon_solutions}" />
 	    </aon:outputLink>
-	    <c:if test="#{!customize.customized}">
+	    <aon:if test="#{!customize.customized}">
 			<aon:outputText value=" #{bundle.aon_trademark}" />
 			<aon:outputText styleClass="aon-footer-company-label"
 				value="#{bundle.aon_esferalia} #{bundle.aon_networks}" />
-		</c:if>
-	</c:if>
+		</aon:if>
+	</aon:if>
  </ui:composition>

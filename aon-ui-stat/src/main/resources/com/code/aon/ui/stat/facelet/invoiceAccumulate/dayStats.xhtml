@@ -14,18 +14,18 @@
     <aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
 	<aon:methodParam  name="customerFacelet" value="customer_stat_list_day" />
 	<aon:methodParam name="lastColumnAction" value="#{stat.onCustomerStats}" type="actionListener" />
-	<c:if  test="#{stat.invoiceType==1}">
+	<aon:if  test="#{stat.invoiceType==1}">
 		<ui:param name="lastColumnName" value="#{bundle.stat_show_clients}" />
 		<ui:param name="windowTitle" value="#{bundle.stat_menu_acumulado}" />
-	</c:if>
-	<c:if  test="#{stat.invoiceType==0}">
+	</aon:if>
+	<aon:if  test="#{stat.invoiceType==0}">
 		<ui:param name="lastColumnName" value="#{bundle.stat_show_suppliers}" />
 		<ui:param name="windowTitle" value="#{bundle.stat_menu_acumulado2}" />
-	</c:if>
-	<c:if  test="#{stat.invoiceType==2}">
+	</aon:if>
+	<aon:if  test="#{stat.invoiceType==2}">
 		<ui:param name="windowTitle" value="#{bundle.stat_menu_expense}" />
 		<ui:param name="lastColumnName" value="#{bundle.stat_show_creditors}" />
-	</c:if>	 
+	</aon:if>	 
 	<ui:decorate template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 		<ui:param name="statController" value="#{stat}" />
 		<ui:param name="clickable" value="#{false}" />

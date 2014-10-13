@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="itemInfoContainer">
-		<c:if test="#{itemInfo.panelVisible}">
+		<aon:if test="#{itemInfo.panelVisible}">
 			<rich:modalPanel id="itemInfoModalPanel" minHeight="420"
 				minWidth="620" rendered="#{itemInfo.panelVisible}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -36,7 +36,7 @@
 					<aon:div styleClass="aon-scroll-area">
 		
 						<aon:panelTabSet id="itemInfoTabSet">
-							<c:if test="#{aonConfiguration.bean.product.showStock and itemInfo.stockVisible}">
+							<aon:if test="#{aonConfiguration.bean.product.showStock and itemInfo.stockVisible}">
 								<aon:panelTab id="itemInfoPanelTab" label="#{bundle.product_stock}">
 			
 									<aon:outputText value="#{bundle.aon_search_no_results}"
@@ -65,9 +65,9 @@
 									</aon:dataTable>
 			
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 		
-							<c:if test="#{aonConfiguration.bean.product.showAlternatives and itemInfo.alternativesVisible}">
+							<aon:if test="#{aonConfiguration.bean.product.showAlternatives and itemInfo.alternativesVisible}">
 								<aon:panelTab id="itemAlternativePanelTab" label="#{bundle.product_alternative_items}">
 			
 									<aon:outputText value="#{bundle.aon_search_no_results}"
@@ -112,13 +112,13 @@
 									</aon:dataTable>
 
 								</aon:panelTab>
-							</c:if>
+							</aon:if>
 						</aon:panelTabSet>
 		
 					</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

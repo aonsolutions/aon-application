@@ -24,59 +24,59 @@
 				columnClasses="#{(desktop.showGraphicsPortlet)?'':'aon-portlets-column1,'}
 					aon-portlets-column2,aon-portlets-column3">
 
-				<c:if test="#{!desktop.showGraphicsPortlet}">
+				<aon:if test="#{!desktop.showGraphicsPortlet}">
 					<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
-				</c:if>
+				</aon:if>
 				<aon:div styleClass="aon-width-all">
-					<c:if test="#{domainSwitcher.childDomain}">
+					<aon:if test="#{domainSwitcher.childDomain}">
 						<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
 						
-						<c:if test="#{desktop.showGraphicsPortlet}">
-							<c:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
+						<aon:if test="#{desktop.showGraphicsPortlet}">
+							<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
-							</c:if>
+							</aon:if>
 	
-							<c:if test="#{desktop.state.fiscalInfoVisibleForPortal}">
+							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
-							</c:if>
+							</aon:if>
 							
-							<c:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
+							<aon:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
-							</c:if>
-							<c:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal}">
+							</aon:if>
+							<aon:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
-							</c:if>
+							</aon:if>
 							<!-- payroll portal -->
-							<c:if test="#{desktop.state.payrollInfoVisibleForPortal}">
+							<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
-							</c:if>
+							</aon:if>
 							<!-- docs -->
-							<c:if test="#{desktop.state.documentalInfoVisibleForPortal}">
+							<aon:if test="#{desktop.state.documentalInfoVisibleForPortal}">
 								<ui:include src="/facelet/homepage/portlet/documentalPortalDashboardPortlet.xhtml" />
-							</c:if>
-						</c:if>
+							</aon:if>
+						</aon:if>
 
-						<c:if test="#{!desktop.showGraphicsPortlet}">
+						<aon:if test="#{!desktop.showGraphicsPortlet}">
 							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
-						</c:if>
+						</aon:if>
 
-					</c:if>
-					<c:if test="#{!domainSwitcher.childDomain}">
-						<c:if test="#{domainSwitcher.domainCount > 0}">
+					</aon:if>
+					<aon:if test="#{!domainSwitcher.childDomain}">
+						<aon:if test="#{domainSwitcher.domainCount > 0}">
 							<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
-						</c:if>
-						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+						</aon:if>
+						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
-						</c:if>
-					</c:if>
+						</aon:if>
+					</aon:if>
 				</aon:div>
 
 				<aon:div>
 					<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 					<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
-					<c:if test="#{desktop.showGraphicsPortlet}">
+					<aon:if test="#{desktop.showGraphicsPortlet}">
 						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
-					</c:if>			
+					</aon:if>			
 					<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
 					<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
 				</aon:div>
@@ -84,12 +84,12 @@
 
 		</aon:div>
 	</aon:form>
-	<c:if test="#{desktop.state.showDehOnline}">	
+	<aon:if test="#{desktop.state.showDehOnline}">	
 		<form id="dehonlineForm" action="https://panel.dehonline.es/login" method="post" target="_blank">
 			<input type="hidden" name="identity" value="#{desktop.state.DEHOnlineUser}"/>
 			<input type="hidden" name="password" value="#{desktop.state.DEHOnlinePassword}"/>
 		</form>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>
 

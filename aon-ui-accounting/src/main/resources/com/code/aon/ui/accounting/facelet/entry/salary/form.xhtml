@@ -49,13 +49,13 @@
 							<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod" focus="date"/>
 						</aon:selectOneMenu>
 
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
 								styleClass="aon-margin-left"
 								value="#{salaryEntry.entry.confidential}"/>
 							<aon:outputText styleClass="aon-italic aon-margin-right"
 								value="#{bundle.aon_confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 					<aon:outputLabel for="date" value="#{bundle.aon_date}" />

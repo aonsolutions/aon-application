@@ -47,7 +47,7 @@
 								<aon:outputText value="#{bundle.aon_invoice_offers}"/>
 							</f:facet>						
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{aonRole.commercialOperator}">
+								<aon:if test="#{aonRole.commercialOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="offer-garage" 
 											action="offer_search-garage"
@@ -66,22 +66,22 @@
 											actionListener="#{seller.onEditSearch}"
 											value="#{bundle.seller_module}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.config}">
+								</aon:if>
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialTerm-garage"
 											action="commercialTerm-garage"
 											actionListener="#{commercialTerm.onSearch}" 
 											value="#{bundle.commercial_term_module}" />
 									</aon:div>
-								</c:if>								
+								</aon:if>								
 							</aon:div>
 						</aon:panelGrid>
 						
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<c:if test="#{aonRole.productOperator or aonRole.config}">
+						<aon:if test="#{aonRole.productOperator or aonRole.config}">
 							<aon:panelGrid id="group_warehouse_general"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
@@ -109,9 +109,9 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{aonRole.statisticsOperator}">
+						<aon:if test="#{aonRole.statisticsOperator}">
 							<aon:panelGrid id="group_sales_reports-garage"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statistics aon-direct-access-panel">
@@ -127,9 +127,9 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>							
+						</aon:if>							
 						
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_audatex"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-audatex aon-direct-access-panel">
@@ -145,7 +145,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelGroup>
 				</h:panelGrid>
 				

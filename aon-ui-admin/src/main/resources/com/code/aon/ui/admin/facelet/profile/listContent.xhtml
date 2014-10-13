@@ -25,16 +25,16 @@
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_permissions}" />
 					</f:facet>
-					<c:if test="#{controller.beanName == 'applicationProfile'}">
+					<aon:if test="#{controller.beanName == 'applicationProfile'}">
 						<aon:outputText value="#{domainApplication.systemRoleList}"/>
-					</c:if>
-					<c:if test="#{controller.beanName == 'domainApplicationProfile'}">
+					</aon:if>
+					<aon:if test="#{controller.beanName == 'domainApplicationProfile'}">
 						<aon:outputText value="#{domainApplication.roleList}"/>
-					</c:if>
+					</aon:if>
 				</aon:column>
 	
 	
-				<c:if test="#{!skipDomainColumn}">
+				<aon:if test="#{!skipDomainColumn}">
 					<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn"
 						alias="Profile.domain.name">
 						<f:facet name="header">
@@ -42,21 +42,21 @@
 						</f:facet>
 						<aon:outputText value="#{to.domain.name}"/>
 					</aon:column>
-				</c:if>				
+				</aon:if>				
 	
-				<c:if test="#{!skipDeniedModulesColumn}">
+				<aon:if test="#{!skipDeniedModulesColumn}">
 					<aon:column styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.admin_modules_denied}" />
 						</f:facet>
-						<c:if test="#{controller.beanName == 'applicationProfile'}">
+						<aon:if test="#{controller.beanName == 'applicationProfile'}">
 							<aon:outputText value="#{domainApplication.systemModuleDeniedList}"/>
-						</c:if>
-						<c:if test="#{controller.beanName == 'domainApplicationProfile'}">
+						</aon:if>
+						<aon:if test="#{controller.beanName == 'domainApplicationProfile'}">
 							<aon:outputText value="#{domainApplication.moduleDeniedList}"/>
-						</c:if>
+						</aon:if>
 					</aon:column>
-				</c:if>
+				</aon:if>
 		
 			</ui:define>
 	

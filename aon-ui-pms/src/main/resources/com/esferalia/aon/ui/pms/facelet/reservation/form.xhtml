@@ -88,11 +88,11 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{reservation.nevv}">
+				<aon:if test="#{reservation.nevv}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formNewContent.xhtml" />
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{!reservation.nevv}">
+				<aon:if test="#{!reservation.nevv}">
 					<aon:panelGrid columns="4" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-400,
 										aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
@@ -124,15 +124,15 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<c:if test="#{reservation.invoiceModel.rowCount > 0}">
+						<aon:if test="#{reservation.invoiceModel.rowCount > 0}">
 							<aon:panelTab id="invoice" label="#{bundle.aon_invoices}">
 								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/tab_grid.xhtml">
 									<ui:param name="skipRectifyButton" value="#{!reservation.reservationPermission.myScope}" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />

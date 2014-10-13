@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRoomDetailWindow">
-		<c:if test="#{modalController.showRoomDetailWindow}">
+		<aon:if test="#{modalController.showRoomDetailWindow}">
 			<rich:modalPanel id="roomDetailModalPanel" minHeight="425" minWidth="750" 
 				rendered="#{modalController.showRoomDetailWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -95,7 +95,7 @@
 												</aon:outputText>
 											</aon:div>
 											
-											<c:if test="#{!modalController.allReallocated}" >
+											<aon:if test="#{!modalController.allReallocated}" >
 												<aon:outputLabel for="ProjectReservationRoom_projectReservation_item"
 													value="#{bundle.pms_room}" />
 												<aon:selectOneMenu id="ProjectReservationRoom_projectReservation_item" styleClass="aon-width-350"
@@ -140,7 +140,7 @@
 														<aon:outputText value=" " />
 													</a4j:repeat>
 												</aon:div>
-											</c:if>
+											</aon:if>
 
 											<aon:outputLabel value="Reasignadas" />
 											<aon:div>
@@ -193,7 +193,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

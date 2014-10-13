@@ -7,13 +7,13 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{showPayrollData}" >
+	<aon:if test="#{showPayrollData}" >
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/gridContent.xhtml" >
 			<ui:param name="controller" value="#{payrollWorkPlace}" />
 		</ui:include>
-	</c:if>	
-	<c:if test="#{!showPayrollData}" >
+	</aon:if>	
+	<aon:if test="#{!showPayrollData}" >
 		<ui:include src="/com/code/aon/ui/company/facelet/workplace/gridContent.xhtml" />
-	</c:if>
+	</aon:if>
 
 </ui:composition>

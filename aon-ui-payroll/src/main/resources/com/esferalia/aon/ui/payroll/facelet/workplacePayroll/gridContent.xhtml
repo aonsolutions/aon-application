@@ -9,7 +9,7 @@
 
 	<aon:div id="#{controller.beanName}Content">
 	
-		<c:if test="#{controller.to != null}" >
+		<aon:if test="#{controller.to != null}" >
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="skipSearchButton" value="true" />
 		
@@ -27,15 +27,15 @@
 				<ui:param name="controller" value="#{payrollWorkPlace}" />
 		
 			</ui:include>
-		</c:if>
+		</aon:if>
 	
-		<c:if test="#{controller.to == null}" >
+		<aon:if test="#{controller.to == null}" >
 			<aon:methodParam name="resetAction" value="" />
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">	
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />		
 			</ui:include>
-		</c:if>
+		</aon:if>
 	
 		<aon:div styleClass="aon-scroll-area">
 			<ui:include src="#{((controller.to != null)?'form.xhtml':'list.xhtml')}" />

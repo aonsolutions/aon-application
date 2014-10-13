@@ -7,7 +7,7 @@
 				
 	<aon:valueParam name="serviceAcceptedReRender" default="#{controller.beanName}Toolbar" />				
 				
-	<c:if test="#{controller.nevv and (!aonRole.sysAdmin)}" >
+	<aon:if test="#{controller.nevv and (!aonRole.sysAdmin)}" >
 		<aon:div styleClass="aon-margin-top">
 			<aon:selectBooleanCheckbox id="termsOfService"
 				reRender="#{serviceAcceptedReRender}" ajaxSingle="true"
@@ -20,6 +20,6 @@
 				<aon:outputText value="#{bundle.admin_service_terms}" />
 			</aon:outputLink>	
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

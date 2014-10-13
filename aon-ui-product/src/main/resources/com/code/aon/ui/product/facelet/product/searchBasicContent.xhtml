@@ -6,10 +6,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
 		<ui:param name="searchController" value="#{productSearch}" />
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Product_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Product_code" size="25"
@@ -32,7 +32,7 @@
 	<ui:include 
 		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
 	
-	<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+	<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="Product_brand_id"
 			value="#{bundle.tas_make}" />
 		<aon:selectOneMenu id="Product_brand_id"
@@ -41,7 +41,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.brands}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 	
 	<aon:outputLabel for="Product_vat" value="#{bundle.aon_vat}" />
 	<aon:div id="Product_vatDiv">
@@ -51,13 +51,13 @@
 			<f:selectItem itemLabel="-" itemValue="" />
 			<f:selectItems value="#{configCollections.vatTaxes}" />
 		</aon:selectOneMenu>
-		<c:if test="#{searchController.vat.id != null}">
+		<aon:if test="#{searchController.vat.id != null}">
 			<aon:outputText styleClass="aon-margin-left aon-italic"
 				value="#{searchController.vat.percentage}">
 				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 			</aon:outputText>
 			<aon:outputLabel value="%" />
-		</c:if>
+		</aon:if>
 	</aon:div>
 	
 	<aon:outputLabel for="Product_retention" value="#{bundle.aon_retention}" />
@@ -67,16 +67,16 @@
 			<f:selectItem itemLabel="-" itemValue="" />
 			<f:selectItems value="#{configCollections.retentionTaxes}" />
 		</aon:selectOneMenu>
-		<c:if test="#{searchController.retention.id != null}">
+		<aon:if test="#{searchController.retention.id != null}">
 			<aon:outputLabel styleClass="aon-margin-left aon-italic"
 				value="#{searchController.retention.percentage}" >
 				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 			</aon:outputLabel>
 			<aon:outputLabel value="%" />
-		</c:if>
+		</aon:if>
 	</aon:div>	
 	
-	<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+	<aon:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 		<aon:outputLabel for="Account_id-Sales"
 			value="#{bundle.aon_sales_account}" />
 		<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
@@ -92,9 +92,9 @@
 			<ui:param name="lookupSuffix" value="-Purchase" />
 			<ui:param name="skipNewButton" value="#{true}" />
 		</ui:include>
-	</c:if>	
+	</aon:if>	
 	
-	<c:if test="#{aonConfiguration.bean.product.showStock}">
+	<aon:if test="#{aonConfiguration.bean.product.showStock}">
 		<aon:outputLabel for="Product_inventoriable"
 			value="#{bundle.product_inventoriable}" />
 		<aon:selectOneRadio id="Product_inventoriable"
@@ -102,9 +102,9 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonConfiguration.bean.product.showComposition}">
+	<aon:if test="#{aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel for="Product_composition"
 			value="#{bundle.product_composite_product}" />
 		<aon:selectOneRadio id="Product_composition"
@@ -112,7 +112,7 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 
 	<aon:outputText for="Product_status"
 		value="#{bundle.aon_status}"/>
@@ -121,12 +121,12 @@
 		<f:selectItems value="#{productCollections.productStatuses}"/>
 	</aon:selectManyCheckbox>				
 
-	<c:if test="#{aonConfiguration.bean.product.showType}">
+	<aon:if test="#{aonConfiguration.bean.product.showType}">
 		<aon:outputLabel for="Product_type" value="#{bundle.aon_type}" />
 		<aon:selectManyCheckbox id="Product_type"
 			value="#{searchController.types}">
 			<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
 		</aon:selectManyCheckbox>
-	</c:if>	
+	</aon:if>	
 
 </ui:composition>

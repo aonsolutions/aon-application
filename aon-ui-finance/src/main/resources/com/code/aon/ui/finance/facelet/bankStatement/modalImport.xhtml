@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showImportFileWindow">
-		<c:if test="#{bankStatement.showImportFileWindow}">
+		<aon:if test="#{bankStatement.showImportFileWindow}">
 			<rich:modalPanel id="importFileModalPanel" minHeight="240"
 				minWidth="550" rendered="#{bankStatement.showImportFileWindow}"
 				showWhenRendered="true" zindex="90">
@@ -105,7 +105,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

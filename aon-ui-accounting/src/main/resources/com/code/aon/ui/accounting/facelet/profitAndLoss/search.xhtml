@@ -81,7 +81,7 @@
 
 					</aon:panelGrid>
 
-					<c:if test="#{profitAndLossReport.anyAccountCostCenterAvailable}">
+					<aon:if test="#{profitAndLossReport.anyAccountCostCenterAvailable}">
 						<aon:outputLabel for="Account_CostCenter"
 								value="#{bundle.account_cost_center}" />
 				 		<rich:listShuttle sourceValue="#{profitAndLossReport.accountCostCenters}"
@@ -99,9 +99,9 @@
 				                <h:outputText value="#{costCenters}"></h:outputText>
 				            </rich:column>
 				        </rich:listShuttle>
-					</c:if>
+					</aon:if>
         
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_securityLevel"
 							value="#{bundle.aon_confidential}" />
@@ -111,7 +111,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all}" />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 
 					<aon:outputText value="&#160;" />
 					<aon:div>

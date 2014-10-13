@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:panelGroup id="showGenericModalPanel">
-		<c:if test="#{webPage.showGenericModalPanel}">
+		<aon:if test="#{webPage.showGenericModalPanel}">
 			<rich:modalPanel id="genericModalPanel"
 				rendered="#{webPage.showGenericModalPanel}" showWhenRendered="true"
 				minHeight="600" height="600" minWidth="770" width="770">
@@ -99,7 +99,7 @@
 				</aon:form>
 									
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -52,22 +52,22 @@
 								<aon:outputText value="#{bundle.company_data_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{aonRole.admin or aonRole.config}">
+								<aon:if test="#{aonRole.admin or aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="globalConfiguration"
 											action="globalConfig_form"
 											actionListener="#{globalConfig.onInit}"
 											value="#{bundle.admin_global_configuration}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.admin}">
+								</aon:if>
+								<aon:if test="#{aonRole.admin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="dump" action="backup_form"
 											actionListener="#{backup.onInit}"
 											value="#{bundle.admin_backup}" />
 									</aon:div>
-								</c:if>
-								<c:if
+								</aon:if>
+								<aon:if
 									test="#{actionDenied.moduleEnabled['hotel'] and aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="hotel" action="hotel_list"
@@ -77,19 +77,19 @@
 										<aon:commandLink id="department" action="department_grid"
 											value="#{bundle.company_department_module}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.sysAdmin}">
+								</aon:if>
+								<aon:if test="#{aonRole.sysAdmin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="applicationParameter"
 											action="applicationParameter_list"
 											actionListener="#{applicationParameter.onSearch}"
 											value="#{bundle.config_app_param_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 
-						<c:if
+						<aon:if
 							test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.productOperator or aonRole.commercialOperator}">
 							<aon:panelGrid id="group_configuration_masters"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -98,9 +98,9 @@
 									<aon:outputText value="#{bundle.aon_master_tables}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if
+									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-										<c:if test="#{aonRole.saleOperator}">
+										<aon:if test="#{aonRole.saleOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="customer-configuration"
 													action="customer_search-configuration"
@@ -112,8 +112,8 @@
 													action="invoicingGroup_list-configuration"
 													value="#{bundle.customer_invoicing_group_module}" />
 											</aon:div>
-										</c:if>
-										<c:if test="#{aonRole.purchaseOperator}">
+										</aon:if>
+										<aon:if test="#{aonRole.purchaseOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="supplier-configuration"
 													action="supplier_search-configuration"
@@ -126,27 +126,27 @@
 													actionListener="#{creditor.onEditSearch}"
 													value="#{bundle.finance_creditor_module}" />
 											</aon:div>
-										</c:if>
-									</c:if>
-									<c:if test="#{aonRole.productOperator}">
+										</aon:if>
+									</aon:if>
+									<aon:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-configuration"
 												action="product_search-configuration"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
 										</aon:div>
-									</c:if>
-									<c:if
+									</aon:if>
+									<aon:if
 										test="#{aonRole.productOperator or aonRole.purchaseOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="expenseItem-configuration"
 												action="expenseItem-configuration"
 												value="#{bundle.aon_expenses}" />
 										</aon:div>
-									</c:if>
-									<c:if
+									</aon:if>
+									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-										<c:if test="#{aonRole.commercialOperator}">
+										<aon:if test="#{aonRole.commercialOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="target-configuration"
 													action="target_search-configuration"
@@ -159,15 +159,15 @@
 													actionListener="#{seller.onEditSearch}"
 													value="#{bundle.seller_module}" />
 											</aon:div>
-										</c:if>
-									</c:if>
+										</aon:if>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_management_tables"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-config">
@@ -181,13 +181,13 @@
 											action="payMethod-configuration"
 											value="#{bundle.config_paymethod_module}" />
 									</aon:div>
-									<c:if test="#{aonRole.accountingOperator}">
+									<aon:if test="#{aonRole.accountingOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="paymethodTypeDetail-configuration"
 												action="paymethodTypeDetail-configuration"
 												value="#{bundle.config_paymethodTypeDetail_module}" />
 										</aon:div>
-									</c:if>
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bankConcept" action="bankConcept"
 											value="#{bundle.finance_bank_concept_module}" />
@@ -219,9 +219,9 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_prodyct_tables"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-config">
@@ -259,9 +259,9 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_utilities" styleClass="aon-width-all"
 								columnClasses="aon-padding"
 								headerClass="aon-icon-accounting aon-direct-access-panel">
@@ -269,14 +269,14 @@
 									<aon:outputText value="#{bundle.finance_conecta_module}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if
+									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aonLoader" action="aonLoader_form"
 												actionListener="#{aonLoader.onStart}"
 												value="#{bundle.aon_loader_module}" />
 										</aon:div>
-										<c:if test="#{aonRole.accountingOperator}">
+										<aon:if test="#{aonRole.accountingOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="invoiceExporter"
 													action="#{exporter.initialAction}"
@@ -299,9 +299,9 @@
 														target="#{exporter.backAction}" />
 												</aon:commandLink>
 											</aon:div>
-										</c:if>
-									</c:if>
-									<c:if test="#{aonRole.payroll}">
+										</aon:if>
+									</aon:if>
+									<aon:if test="#{aonRole.payroll}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="dsi_import" action="dsi_import_form"
 												title="#{bundle.dsi_import_module}">
@@ -309,12 +309,12 @@
 													value="#{bundle.dsi_import_module}" />
 											</aon:commandLink>
 										</aon:div>
-									</c:if>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 
 
-						</c:if>
+						</aon:if>
 					</aon:panelGroup>
 				</h:panelGrid>
 			</aon:div>

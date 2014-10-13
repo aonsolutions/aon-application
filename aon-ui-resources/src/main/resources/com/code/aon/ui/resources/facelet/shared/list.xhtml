@@ -9,8 +9,8 @@
 		<aon:valueParam name="dataModel" default="#{controller.model}" />
 		<aon:valueParam name="rows" default="#{controller.pageLimit}" />
 		<aon:valueParam name="showDataTable" default="#{(dataModel!=null) and (dataModel.rowCount > 0)}" />
-		<aon:valueParam name="showDataScroller" default="true" />
-		<aon:valueParam name="showNote" default="true" />
+		<aon:valueParam name="showDataScroller" default="#{true}" />
+		<aon:valueParam name="showNote" default="#{true}" />
 		<aon:valueParam name="sortMode" default="multi" />
 		
 		<aon:valueParam name="rowSelectorReRender" default="aonContent" />

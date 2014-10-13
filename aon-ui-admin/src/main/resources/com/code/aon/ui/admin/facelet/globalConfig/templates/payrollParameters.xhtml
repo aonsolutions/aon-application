@@ -19,17 +19,17 @@
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
 					<aon:actionListener method="#{enterprise.accept}" />
-					<c:if test="#{aonRole.config}">
+					<aon:if test="#{aonRole.config}">
 						<aon:actionListener method="#{payrollAppParams.onAccept}" />
 						<aon:actionListener method="#{sepeAppParams.onAccept}" />
-					</c:if>
+					</aon:if>
 				</aon:commandButton>					
 			</ui:define>				
 		</ui:decorate>
 	
 		<aon:div styleClass="aon-scroll-area">	
 			
-			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<aon:div styleClass="aon-margin-bottom">
 					<aon:panelGrid  columns="2" style="margin-bottom: 2em;">	
 						<!--  
@@ -39,11 +39,11 @@
 					</aon:panelGrid>
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/params/formContent.xhtml" />
 				</aon:div>
-			</c:if>
+			</aon:if>
 		
-			<c:if test="#{aonRole.config}">
+			<aon:if test="#{aonRole.config}">
 				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
-			</c:if>
+			</aon:if>
 		</aon:div>
 	</aon:form>
 	<aon:lookupButtonPopup lookup="#{agreementLookup}" />

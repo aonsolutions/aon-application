@@ -64,7 +64,7 @@
 					<aon:inputText id="Loan_expenses" size="15"
 						valueChangeListener="#{loan.addExpression}" />
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="Loan_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="Loan_securityLevel"
@@ -73,7 +73,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem  value="#{null}" itemLabel="#{bundle.aon_all}"/>
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 					
 					<aon:outputLabel for="Loan_status"
 						value="#{bundle.aon_status}" />

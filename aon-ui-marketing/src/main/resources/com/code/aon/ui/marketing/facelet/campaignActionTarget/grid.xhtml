@@ -75,7 +75,7 @@
 				</f:facet>
 			</aon:column>		
 			
-			<c:if test="#{showUserColumn}" >
+			<aon:if test="#{showUserColumn}" >
 				<aon:column alias="ActionTarget.user&lt;name"
 					styleClass="aon-editDataTable-textColumn aon-width-200">
 					<f:facet name="header">
@@ -92,9 +92,9 @@
 						<ui:param name="lookupInputSuggestSize" value="20"/>
 					</ui:include>
 				</aon:column>					
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey and showSurveyColumn}" >
+			<aon:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey and showSurveyColumn}" >
 				<aon:column styleClass="aon-text-center aon-width-80">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.marketing_survey_module}" />
@@ -118,7 +118,7 @@
 						</aon:commandButton>
 					</aon:div>
 				</aon:column>
-			</c:if>		
+			</aon:if>		
 
 		</ui:define>
 	</ui:decorate>

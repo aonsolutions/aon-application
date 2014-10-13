@@ -53,19 +53,19 @@
 			</aon:panelGrid>
 			
 			<aon:div id="paramsGrid">
-				<c:if test="#{contractLoader.loader != null}">
+				<aon:if test="#{contractLoader.loader != null}">
 					<aon:panelGrid columns="2" style="width:700px; margin:10px;">
 						
 						<aon:outputText value="Documento detectado" />
 						<aon:outputText value="#{contractLoader.loader.fileTypeDescription}"/>
 						
 					</aon:panelGrid>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		
 		<aon:panelGroup id="showNewMessageWindow-Loader">
-			<c:if test="#{contractLoader.progressionPanelVisible}">
+			<aon:if test="#{contractLoader.progressionPanelVisible}">
 				<aon:valueParam name="windowHeight" default="50" />
 				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
 					showWhenRendered="#{contractLoader.progressionPanelVisible}"
@@ -103,7 +103,7 @@
 				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 					<ui:param name="logPanelTitle" value="#{bundle.payroll_contractLoader_module}" />
 				</ui:include>		
-			</c:if>
+			</aon:if>
 		</aon:panelGroup>
 		
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />

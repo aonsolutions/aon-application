@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showCertificadosCommunicationWindow">
-		<c:if test="#{contractCertificados.showCommunicationWindow}">
+		<aon:if test="#{contractCertificados.showCommunicationWindow}">
 			<rich:modalPanel id="certificadosCommunicationLogModalPanel" minHeight="500"
 				minWidth="800" rendered="#{contractCertificados.showCommunicationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -62,7 +62,7 @@
 				</ui:include>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

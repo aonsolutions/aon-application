@@ -7,7 +7,7 @@
 
 
 	<aon:form id="workplaceForm" style="#{ !edit ? 'display:none': ''}">
-		<c:if test="#{edit}">
+		<aon:if test="#{edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.purchase_workplace}" />
@@ -61,13 +61,13 @@
 
 			</ui:decorate>
 
-		</c:if>
-		<c:if test="#{!edit}">
+		</aon:if>
+		<aon:if test="#{!edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.purchase_workplace}" />
 			</ui:decorate>
-		</c:if>
+		</aon:if>
 
 		<aon:div
 			style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;">
@@ -94,23 +94,23 @@
 
 									<aon:outputLabel for="WorkPlace_address_id"
 										value="#{bundle.aon_address}" />
-									<c:if test="#{edit}">
+									<aon:if test="#{edit}">
 										<aon:selectOneMenu id="WorkPlace_address_id"
 											value="#{payrollWorkPlace.to.workPlace.address}"
 											required="true">
-											<c:if test="#{showEnterpriseData}">
+											<aon:if test="#{showEnterpriseData}">
 												<f:selectItems value="#{enterprise.addresses}" />
-											</c:if>
-											<c:if test="#{!showEnterpriseData}">
+											</aon:if>
+											<aon:if test="#{!showEnterpriseData}">
 												<f:selectItems
 													value="#{companyCollections.companyAddresses}" />
-											</c:if>
+											</aon:if>
 										</aon:selectOneMenu>
-									</c:if>
-									<c:if test="#{!edit}">
+									</aon:if>
+									<aon:if test="#{!edit}">
 										<aon:inputText id="WorkPlace_fulladdress"
 											value="#{payrollWorkPlace.to.workPlace.address.fullAddress}" />
-									</c:if>
+									</aon:if>
 
 									<aon:outputText for="WorkPlace_economicAgreement"
 										value="#{bundle.config_administration}" />
@@ -131,7 +131,7 @@
 						</aon:div>
 					</aon:div>
 
-					<c:if test="#{edit}">
+					<aon:if test="#{edit}">
 						<aon:div styleClass="aon-group">
 							<aon:div styleClass="aon-group-title">
 								<aon:outputText value="#{bundle.company_workplace_payroll_data}" />
@@ -170,7 +170,7 @@
 								</aon:div>
 							</aon:div>
 						</aon:div>
-					</c:if>
+					</aon:if>
 
 				</aon:panelGrid>
 
@@ -195,12 +195,12 @@
 		<ui:param name="lookupDisabled" value="true" />
 	</ui:include>
 
-	<c:if test="#{!edit}">
+	<aon:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="workplaceForm" />
 			<ui:param name="hide"
 				value="/WorkPlace_active|Calendar_id-PayrollWorkPlace|PayrollWorkPlace_enterpriseActivity/g" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

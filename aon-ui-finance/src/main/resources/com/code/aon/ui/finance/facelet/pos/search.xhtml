@@ -28,14 +28,14 @@
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{companyCollections.departmentsCount > 0}">
+					<aon:if test="#{companyCollections.departmentsCount > 0}">
 						<aon:outputLabel value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu id="Pos_department"
 							value="#{posSearch.department}" >
 							<f:selectItem itemLabel=" - " itemValue="null" />
 							<f:selectItems value="#{companyCollections.departments}" />
 						</aon:selectOneMenu>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel value="#{bundle.finance_pos_name}" />
 					<aon:inputText id="Pos_name" 

@@ -6,17 +6,17 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
 		<ui:param name="searchController" value="#{corporateIdentitySearch}" />
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="RegistryAttachment_description"
 		value="#{bundle.aon_name}" />
 	<aon:inputText id="RegistryAttachment_description" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 	
-	<c:if test="#{!controller.serviconvenios}">
+	<aon:if test="#{!controller.serviconvenios}">
 		<aon:outputLabel for="RegistryAttachment_mimeType"
 			value="#{bundle.aon_type}" />
 		<aon:selectOneMenu id="RegistryAttachment_mimeType"
@@ -25,12 +25,12 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{commonCollections.mimeTypes}" />
 		</aon:selectOneMenu>
-	</c:if>		
+	</aon:if>		
 
 	<ui:include 
 		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
 		
-	<c:if test="#{!controller.serviconvenios}">
+	<aon:if test="#{!controller.serviconvenios}">
 		<ui:include
 			src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
 			
@@ -72,7 +72,7 @@
 			<aon:inputText id="RegistryAttachment_size-To" size="10"
 				value="#{searchController.sizeTo}" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 		
 	<aon:outputLabel for="RegistryAttachment_attachDate-From"
 		value="#{bundle.aon_date}" />
@@ -92,8 +92,8 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 			
-	<c:if test="#{!controller.serviconvenios}">
-		<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{!controller.serviconvenios}">
+		<aon:if test="#{aonRole.confidentiality}">
 			<aon:outputLabel for="RegistryAttachment_securityLevel"
 				value="#{bundle.aon_confidential}" />
 			<aon:selectOneRadio id="RegistryAttachment_securityLevel" 
@@ -101,7 +101,7 @@
 				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 			</aon:selectOneRadio>
-		</c:if>
-	</c:if>
+		</aon:if>
+	</aon:if>
 
 </ui:composition>

@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j" >
 
-	<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
+	<aon:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
 		<aon:outputLabel for="Company_print_logo"
 			value="#{bundle.company_print_logo}" />
 		<aon:selectBooleanCheckbox id="Company_print_logo"
@@ -40,6 +40,6 @@
 			value="#{company.printInternetData}">
 			<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

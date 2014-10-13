@@ -47,25 +47,25 @@
 							src="/com/code/aon/ui/stat/facelet/registryStat/pendingInvoicesList.xhtml" />
 					</aon:panelTab>
 
-					<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
+					<aon:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
 					<aon:panelTab id="tab4"
 							label="#{bundle.registry_stat_delivery}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingDeliveriesList.xhtml" />
 						</aon:panelTab>
-				 	</c:if> 
-				 	<c:if test="#{aonConfiguration.bean.customer.showPurchaseData}">	
+				 	</aon:if> 
+				 	<aon:if test="#{aonConfiguration.bean.customer.showPurchaseData}">	
 						<aon:panelTab id="tab5" label="#{bundle.registry_stat_purhase}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingSalesList.xhtml" />
 						</aon:panelTab>
-					</c:if>
-					<c:if test="#{aonConfiguration.bean.customer.showOfferData}">		
+					</aon:if>
+					<aon:if test="#{aonConfiguration.bean.customer.showOfferData}">		
 						<aon:panelTab id="tab6" label="#{bundle.registry_stat_offer}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingOfferList.xhtml" />
 						</aon:panelTab>
-					</c:if>	
+					</aon:if>	
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>

@@ -88,11 +88,11 @@
 					<aon:outputText value="#{bundle.aon_alias}:" rendered="#{trialBalance.parameters.notEmptyAccountAlias}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 					<aon:outputText value="#{trialBalance.parameters.accountAlias}" rendered="#{trialBalance.parameters.notEmptyAccountAlias}" styleClass="aon-margin-left"/>
 					
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputText value="#{bundle.aon_confidential}:" rendered="#{trialBalance.parameters.securityLevel != null}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 						<aon:outputText value="#{bundle.aon_yes}" rendered="#{trialBalance.parameters.securityLevel != null and trialBalance.parameters.confidential}" styleClass="aon-margin-left"/>
 						<aon:outputText value="#{bundle.aon_no}" rendered="#{trialBalance.parameters.securityLevel != null and !trialBalance.parameters.confidential}" styleClass="aon-margin-left"/>
-					</c:if>
+					</aon:if>
 				</aon:div>
 				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >

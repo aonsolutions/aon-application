@@ -122,14 +122,14 @@
 				</aon:selectInputDate>
 			</aon:div>
 
-			<c:if test="#{aonRole.confidentiality}">
+			<aon:if test="#{aonRole.confidentiality}">
 				<aon:outputLabel for="securityLevel"
 					value="#{bundle.aon_confidential}" />
 				<aon:selectOneRadio id="securityLevel"
 					value="#{trialBalance.parameters.securityLevel}">
 					<f:selectItems value="#{commonCollections.confidentialValues}" />
 				</aon:selectOneRadio>
-			</c:if>
+			</aon:if>
 
 			<aon:outputText value="&#160;" rendered="#{trialBalance.parameters.period != null and trialBalance.parameters.period.id != null}" />
 			<aon:div rendered="#{trialBalance.parameters.period != null and trialBalance.parameters.period.id != null}">

@@ -277,7 +277,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.sepe_contrata_contract_apoyoEmprendedores_data}" />
 				</f:facet>
-				<c:if test="#{contractContrata.handler.showColectivoBonificacion}">
+				<aon:if test="#{contractContrata.handler.showColectivoBonificacion}">
 					<aon:panel style="width: 100%;">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
@@ -292,9 +292,9 @@
 								</aon:selectOneMenu>
 						</aon:panelGrid>
 					</aon:panel>
-				</c:if>
+				</aon:if>
 				<aon:panelGrid columns="2" style="width: 100%;">
-					<c:if test="#{contractContrata.handler.showIndEmpleadAutonomo}">
+					<aon:if test="#{contractContrata.handler.showIndEmpleadAutonomo}">
 						<aon:outputText value="&#160;" />
 						<aon:div>
 							<aon:selectBooleanCheckbox id="ind_emplead_autonomo"
@@ -302,7 +302,7 @@
 							<aon:outputLabel for="ind_emplead_autonomo"
 								value="#{bundle.sepe_contrata_contract_ind_emplead_autonomo}" />
 						</aon:div>
-					</c:if> 
+					</aon:if> 
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>

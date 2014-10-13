@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{not empty hide}">
+	<aon:if test="#{not empty hide}">
 		<script type="text/javascript">
 			//<![CDATA[
 				function hideEl(el) {
@@ -80,8 +80,8 @@
 				}
 			//]]>			
 		</script>
-	</c:if>
-	<c:if test="#{empty hide}">
+	</aon:if>
+	<aon:if test="#{empty hide}">
 		<script type="text/javascript">
 			//<![CDATA[
 				function hideEl(el) {
@@ -99,7 +99,7 @@
 				}
 			//]]>
 		</script>
-	</c:if>
+	</aon:if>
 
 	<script type="text/javascript">
             	//<![CDATA[

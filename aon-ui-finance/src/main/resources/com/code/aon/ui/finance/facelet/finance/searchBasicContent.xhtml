@@ -59,13 +59,13 @@
 			value="#{bundle.aon_without} #{bundle.finance_invoice}" />
 	</aon:div>
 
-	<c:if test="#{!controller.payment}">
+	<aon:if test="#{!controller.payment}">
 		<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
 			<ui:param name="aliasPreffix" value="Finance_invoice" />						
 		</ui:include>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!controller.payroll}">
+	<aon:if test="#{!controller.payroll}">
 		<aon:outputLabel for="Finance_invoice_referenceCode"
 			rendered="#{controller.payment}"
 			value="#{bundle.aon_invoice_number}" />
@@ -90,7 +90,7 @@
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 	
 	<aon:outputLabel 
 		value="#{bundle.finance_finance_date}" />
@@ -149,7 +149,7 @@
 		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 	</aon:selectOneRadio>				
 
-	<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Finance_securityLevel"
 			value="#{bundle.aon_confidential}" />
 		<aon:selectOneRadio id="Finance_securityLevel"
@@ -157,9 +157,9 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 		</aon:selectOneRadio>				
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{searchController.skipPayrollFilter and actionDenied.moduleEnabled['payroll']}">
+	<aon:if test="#{searchController.skipPayrollFilter and actionDenied.moduleEnabled['payroll']}">
 		<aon:outputLabel for="Finance_skipPayroll"
 			value="#{bundle.finance_include_payroll}" />
 		<aon:selectOneRadio id="Finance_payroll"
@@ -167,7 +167,7 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>				
-	</c:if>
+	</aon:if>
 
 	<aon:outputText value="#{bundle.aon_status}" />
 	<aon:selectManyCheckbox value="#{searchController.financeStatuses}">

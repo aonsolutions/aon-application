@@ -20,7 +20,7 @@
 					<!--
 						SALARIES 
 					-->
-					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
 								columnClasses="aon-padding"
@@ -29,7 +29,7 @@
 									<aon:outputText value="#{bundle.payroll_salary_menu_group}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
 												value="#{bundle.menu_integral}" target="gwt">
@@ -43,7 +43,7 @@
 												actionListener="#{contractLeave.onEditSearch}"
 												value="#{bundle.payroll_contractLeave_module}" />
 										</aon:div>
-									</c:if>
+									</aon:if>
 									<!--
 									<aon:div styleClass="aon-direct-access-list-element">
 										<a4j:commandLink ajaxSingle="true" immediate="true"
@@ -53,7 +53,7 @@
 									</aon:div>
 									-->
 									<!-- 
-								<c:if test="#{domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_calculator"
 											action="gwt_main_calculator"
@@ -61,13 +61,13 @@
 										</aon:commandLink>
 
 									</aon:div>
-								</c:if>
+								</aon:if>
 								-->
 								</aon:div>
 
 							</aon:panelGrid>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 
 
 					<!--
@@ -177,14 +177,14 @@
 								<aon:outputText value="#{bundle.contrata_main_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contract-payroll"
 											action="contract_search-payroll"
 											actionListener="#{contract.onEditSearch}"
 											value="#{bundle.payroll_contract_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="person-payroll"
 										action="#{person.initialAction}"
@@ -323,14 +323,14 @@
 										actionListener="#{expenseInvoice.onEditSearch}"
 										value="#{bundle.finance_expense_invoice_management_module}" />
 								</aon:div>
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="salaryPrint-payroll"
 											action="salaryPrint_list-payroll"
 											actionListener="#{salaryPrint.onInit}"
 											value="#{bundle.payroll_salaryPrint_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -407,10 +407,10 @@
 
 
 
-					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 
 					<!--
 						Interesting LINKS 

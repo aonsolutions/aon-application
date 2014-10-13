@@ -57,12 +57,12 @@
 									</aon:div>
 									
 									<aon:div >
-										<c:if test="#{aonRole.purchaseOperator}">
+										<aon:if test="#{aonRole.purchaseOperator}">
 											<aon:outputText value="#{bundle.aon_total}: " />
 											<aon:outputText value="#{to.totalAmount}" >
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
-										</c:if>
+										</aon:if>
 									</aon:div>
 								</h:panelGrid>
 							</aon:div>
@@ -113,7 +113,7 @@
 								</aon:outputText>
 							</aon:column>
 							
-							<c:if test="#{aonRole.purchaseOperator}">
+							<aon:if test="#{aonRole.purchaseOperator}">
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 									<f:facet name="header">
 										<aon:outputLabel value="#{bundle.aon_price}" />
@@ -133,7 +133,7 @@
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 									</aon:outputText>
 								</aon:column>
-							</c:if>
+							</aon:if>
 							
 						</aon:dataTable>
 						

@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonMessagesContainer" ajaxRendered="true" styleClass="aon-popupWindow">
-		<c:if test="#{facesContext.maximumSeverity != null}">	
+		<aon:if test="#{facesContext.maximumSeverity != null}">	
 			<aon:form>
 				<rich:modalPanel id="messagesModalPanel" 
 					rendered="#{facesContext.maximumSeverity != null}" 
@@ -33,7 +33,7 @@
 	
 				</rich:modalPanel>
 			</aon:form>
-		</c:if>
+		</aon:if>
 	</aon:div>
 
 </ui:composition>

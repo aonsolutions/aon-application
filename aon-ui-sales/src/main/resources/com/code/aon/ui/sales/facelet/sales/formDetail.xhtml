@@ -77,7 +77,7 @@
 						value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
 				<aon:panelGroup id="salesDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
-					<c:if test="#{aonConfiguration.bean.product.showStock}">
+					<aon:if test="#{aonConfiguration.bean.product.showStock}">
 						<aon:commandButton value="&#160;"
 							title="#{bundle.product_info}"
 							rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
@@ -91,7 +91,7 @@
 							<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
 						</aon:commandButton>															
-					</c:if>
+					</aon:if>
 					<aon:inputTextarea id="SalesDetail_description" 
 						value="#{salesDetail.to.description}"
 						rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null}"
@@ -123,7 +123,7 @@
 								value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
 						<aon:panelGroup id="salesDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
-							<c:if test="#{aonConfiguration.bean.product.showStock}">
+							<aon:if test="#{aonConfiguration.bean.product.showStock}">
 								<aon:commandButton value="&#160;"
 									title="#{bundle.product_info}"
 									rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
@@ -137,7 +137,7 @@
 									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
 								</aon:commandButton>															
-							</c:if>
+							</aon:if>
 							<aon:inputTextarea id="SalesDetail_description-New"
 								value="#{salesDetail.to.description}"
 								rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null}"

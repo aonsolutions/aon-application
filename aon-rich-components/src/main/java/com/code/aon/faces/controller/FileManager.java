@@ -48,7 +48,7 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileManager.class);
 	
-	private boolean _new;
+	private boolean _nevv;
 	
 	private String backActionListener;
 	
@@ -292,11 +292,11 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 	}
 	
 	public boolean isNevv() {
-		return this._new;
+		return this._nevv;
 	}
 	
-	public void setNew( boolean value ) {
-		this._new = true;
+	public void setNevv( boolean value ) {
+		this._nevv = true;
 	}
 	
 	public void accept( ActionEvent event ) {

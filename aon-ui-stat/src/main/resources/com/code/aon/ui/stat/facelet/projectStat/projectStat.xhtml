@@ -63,34 +63,34 @@
 
 				<aon:panelTabSet id="projectHistoryTabSet" selectedTab="#{projectStat.selectedTab}">
 					<aon:panelTab id="chartTab" label="#{bundle.stat_economic_summary}">
-						<c:if test="#{projectStat.selectedTab == 'chartTab' or projectStat.selectedTab == null}">
+						<aon:if test="#{projectStat.selectedTab == 'chartTab' or projectStat.selectedTab == null}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 					<aon:panelTab id="approvedOffersTab" label="#{bundle.stat_offer_amount2}">
-						<c:if test="#{projectStat.selectedTab == 'approvedOffersTab'}">
+						<aon:if test="#{projectStat.selectedTab == 'approvedOffersTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 					<aon:panelTab id="saleInvoiceTab" label="#{bundle.stat_income_amount}">
-						<c:if test="#{projectStat.selectedTab == 'saleInvoiceTab'}">
+						<aon:if test="#{projectStat.selectedTab == 'saleInvoiceTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/saleInvoiceList.xhtml" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 					<aon:panelTab id="costInvoiceTab" label="#{bundle.stat_invoice_cost_amount}">
-						<c:if test="#{projectStat.selectedTab == 'costInvoiceTab'}">
+						<aon:if test="#{projectStat.selectedTab == 'costInvoiceTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 					<aon:panelTab id="dailyTrackingTab" label="#{bundle.tas_labour}">
-						<c:if test="#{projectStat.selectedTab == 'dailyTrackingTab'}">
+						<aon:if test="#{projectStat.selectedTab == 'dailyTrackingTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/dailyTrackingList.xhtml" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 					<aon:panelTab id="ganttTab" label="Gantt">
-						<c:if test="#{projectStat.selectedTab == 'ganttTab'}">
+						<aon:if test="#{projectStat.selectedTab == 'ganttTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
 				</aon:panelTabSet>
 

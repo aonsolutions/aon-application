@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{showEnterpriseColumn}">
+	<aon:if test="#{showEnterpriseColumn}">
 		<aon:column alias="CraBatchDetail.ccc.activity.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -17,7 +17,7 @@
 				<aon:outputText value="#{to.activity.enterprise.registry.fullName}"/>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 			
 	<aon:column alias="EnterpriseCCC.ccc"
 		styleClass="aon-editDataTable-textColumn">

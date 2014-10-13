@@ -7,7 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!skipNameColumn}">
+	<aon:if test="#{!skipNameColumn}">
 		<aon:column alias="Contract.person.firstSurname,Contract.person.registry.name" 
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -17,9 +17,9 @@
 				<aon:outputText value="#{to.person.fullName}"/>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!skipContractCodeColumn}">
+	<aon:if test="#{!skipContractCodeColumn}">
 		<aon:column 
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -32,9 +32,9 @@
 			<aon:outputText value="Becario"
 				rendered="#{contract.rowContractInternship}" />
 		</aon:column>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!skipNssColumn}">
+	<aon:if test="#{!skipNssColumn}">
 		<aon:column alias="Contract.person.socialSecurityNumber" 
 			styleClass="aon-editDataTable-textColumn aon-width-100">
 			<f:facet name="header">
@@ -44,7 +44,7 @@
 				<aon:outputText value="#{to.person.socialSecurityNumber}"/>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column alias="Contract.startDate" 
 		styleClass="aon-editDataTable-dateColumn aon-width-80">
@@ -68,7 +68,7 @@
 		</aon:outputText>		
 	</aon:column>
 
-	<c:if test="#{!skipWorkPlaceColumn}">
+	<aon:if test="#{!skipWorkPlaceColumn}">
 		<aon:column alias="Contract.workPlace.description" 
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -78,9 +78,9 @@
 				<aon:outputText value="#{to.workPlace.description}"/>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!skipEnterpriseColumn}">		
+	<aon:if test="#{!skipEnterpriseColumn}">		
 		<aon:column alias="Contract.workPlace.enterprise.registry.name"	
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -90,7 +90,7 @@
 				<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}"/>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 	
 	<aon:column 
 		styleClass="aon-editDataTable-textColumn aon-width-70">

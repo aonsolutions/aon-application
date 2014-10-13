@@ -47,7 +47,7 @@
 				value="#{controllerList.searchPanelExpanded}" >
 				<aon:panelGrid columns="2">
 				
-					<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{controllerList.enterprise}" />
 							<ui:param name="skipNewButton" value="#{true}" />
@@ -55,7 +55,7 @@
 							<ui:param name="lookupDisabled" value="#{enterpriseLookupDisabled}" />
 							<ui:param name="idRequired" value="#{enterpriseLookupRequired}" />
 						</ui:include>
-					</c:if>
+					</aon:if>
 				
 				 	<ui:insert name="searchContent" />
 				

@@ -8,33 +8,33 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<c:if test="#{product.showDetail}">
+	<aon:if test="#{product.showDetail}">
 		<aon:outputLabel for="Item_product_detail"
 			value="#{product.labelDetail}" />
 		<aon:inputText id="Item_product_detail" 
 			value="#{itemTo.detail}" size="25" maxlength="15" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{product.showDetail2}">
+	<aon:if test="#{product.showDetail2}">
 		<aon:outputLabel for="Item_product_detail2"
 			value="#{product.labelDetail2}" />
 		<aon:inputText id="Item_product_detail2" 
 			value="#{itemTo.detail2}" size="25" maxlength="15" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{product.showDetail3}">
+	<aon:if test="#{product.showDetail3}">
 		<aon:outputLabel for="Item_product_detail3"
 			value="#{product.labelDetail3}" />
 		<aon:inputText id="Item_product_detail3" 
 			value="#{itemTo.detail3}" size="25" maxlength="15" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 		<aon:outputLabel for="Item_barcode"
 			value="#{bundle.product_barcode}" />
 		<aon:inputText id="Item_barcode" 
 			value="#{itemTo.barcode}" size="25" maxlength="32" />
-		</c:if>
+		</aon:if>
 
 	<aon:outputLabel for="Item_description" value="#{bundle.aon_description}" />
  	<aon:div style="margin-bottom: 0.5em;">

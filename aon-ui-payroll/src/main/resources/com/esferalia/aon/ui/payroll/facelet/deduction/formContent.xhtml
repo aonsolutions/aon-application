@@ -25,12 +25,12 @@
 	<aon:outputLabel for="ContractDeduction_month" value="#{bundle.payroll_salary_deduction_month}" />
 	<aon:selectOneMenu id="ContractDeduction_month" value="#{controller.to.month}">
 		<f:selectItem value="#{null}" itemLabel=" - " />
-		<c:if test="#{!skipCurrentMonth}">
+		<aon:if test="#{!skipCurrentMonth}">
 			<f:selectItem value="#{controller.currentMonth}"  />
-		</c:if>
-		<c:if test="#{skipCurrentMonth}">
+		</aon:if>
+		<aon:if test="#{skipCurrentMonth}">
 			<f:selectItems value="#{commonCollections.months}"  />
-		</c:if>
+		</aon:if>
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
@@ -50,18 +50,18 @@
 		<aon:outputLabel for="ContractDeduction_decorateDescription" value="#{bundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 		
-	<c:if test="#{!aonRole.sysAdmin}">
+	<aon:if test="#{!aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractDeduction_amount" value="#{bundle.aon_value}" />
 		<aon:outputText id="ContractDeduction_amount" size="40" maxlength="64"
 			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.deductionConcept.expression)}" />
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{aonRole.sysAdmin}">
+	<aon:if test="#{aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractDeduction_expression" value="#{bundle.aon_value}" />
 		<aon:inputTextarea id="ContractDeduction_expression" cols="38" rows="2" maxlength="128"
 			value="#{controller.to.expression}" >
 			<f:validateLength maximum="128"/>
-			<c:if test="#{!contextDisabled}">
+			<aon:if test="#{!contextDisabled}">
 				<a4j:region>
 					<rich:suggestionbox id="ContractDeduction_expression_suggestion"
 						for="ContractDeduction_expression"
@@ -80,11 +80,11 @@
 						</aon:column>
 					</rich:suggestionbox>
 				</a4j:region>
-			</c:if>
+			</aon:if>
 		</aon:inputTextarea>
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{!skipResult}">
+	<aon:if test="#{!skipResult}">
 		<aon:outputLabel for="ContractDeduction_result" value="#{bundle.aon_result}" />
 		<h:panelGrid columns="4">
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
@@ -107,6 +107,6 @@
 			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
 			</rich:inputNumberSpinner>
 		</h:panelGrid>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

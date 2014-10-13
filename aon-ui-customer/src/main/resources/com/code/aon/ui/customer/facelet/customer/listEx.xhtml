@@ -15,7 +15,7 @@
 				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 				<ui:param name="controller" value="#{customer}" />
 				<ui:define name="additionalToolbarContent">
-					<c:if test="#{customer.showAlumnData}">
+					<aon:if test="#{customer.showAlumnData}">
 						<aon:htmlCommandLink id="alumnReport-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.nevv}"
 							action="#{report.onExecute}"
@@ -34,8 +34,8 @@
 							<f:param name="reportKey" value="alumnList" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-					</c:if>
-					<c:if test="#{!customer.showAlumnData}">
+					</aon:if>
+					<aon:if test="#{!customer.showAlumnData}">
 						<aon:htmlCommandLink id="customerReport-excel-report" value="&#160;" 
 							target="_new" rendered="#{!customer.nevv}"
 							action="#{report.onExecute}"
@@ -54,7 +54,7 @@
 							<f:param name="reportKey" value="customerReport" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-					</c:if>
+					</aon:if>
 					<aon:htmlCommandLink id="customerDetailExcelReport-excel-report" 
 						value="#{bundle.aon_detailed_listing}" 
 						target="_new" rendered="#{!customer.nevv}"

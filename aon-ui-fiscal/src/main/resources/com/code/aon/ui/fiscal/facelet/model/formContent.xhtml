@@ -47,7 +47,7 @@
 					<f:param name="reportKey" value="#{controller.beanName}Report" />
 				</aon:htmlCommandLink>
 				
-				<c:if test="#{!controller.nevv and controller.to.finished and !controller.to.model111 and controller.scriptPresent}">
+				<aon:if test="#{!controller.nevv and controller.to.finished and !controller.to.model111 and controller.scriptPresent}">
 					<aon:htmlCommandLink id="#{toolbarID}-reportAeat"
 						value="AEAT OFICIAL"  
 						action="#{controller.aeatReport}"
@@ -65,7 +65,7 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="#{controller.beanName}Report" />
 					</aon:htmlCommandLink>
-				</c:if>
+				</aon:if>
 				
 				<aon:commandButton id="audit-info"
 					value="#{bundle.aon_audit}"
@@ -98,12 +98,12 @@
 					<aon:selectOneMenu id="controller_period" value="#{controller.declaration.header.period}"
 						style="margin-left: 3px;"
 						required="true" disabled="#{!controller.nevv}">
-						<c:if test="#{quarterPeriods}">
+						<aon:if test="#{quarterPeriods}">
 							<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
-						</c:if>
-						<c:if test="#{!quarterPeriods}">
+						</aon:if>
+						<aon:if test="#{!quarterPeriods}">
 							<f:selectItems value="#{fiscalCollections.periods}" />	
-						</c:if>
+						</aon:if>
 					</aon:selectOneMenu>
 				</aon:div>
 
@@ -128,7 +128,7 @@
 				</aon:div>
 
 
-				<c:if test="#{aonRole.confidentiality}">
+				<aon:if test="#{aonRole.confidentiality}">
 					<aon:div>
 						<aon:selectBooleanCheckbox id="controller_securityLevel"
 							value="#{controller.declaration.header.confidential}" 
@@ -139,10 +139,10 @@
 							value="&#160;" title="#{bundle.aon_confidential}"
 							rendered="#{controller.declaration.header.readOnly and controller.declaration.header.confidential}" />
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</aon:panelGrid>
 			
-			<c:if test="#{!controller.nevv and controller.declaration.header.finished}">
+			<aon:if test="#{!controller.nevv and controller.declaration.header.finished}">
 				
 				<aon:panelGrid id="panelFinance" columns="3" style="width: 100%;" styleClass="aon-margin-top"
 					columnClasses="aon-panelGrid-odd aon-width-70
@@ -215,7 +215,7 @@
 					</aon:div>
 				</aon:panelGrid>
 
-			</c:if>
+			</aon:if>
 			
 			<aon:panelGrid id="panelComments" columns="4" style="width: 100%;" styleClass="aon-margin-top"
 				columnClasses="aon-panelGrid-odd aon-width-70
@@ -268,18 +268,18 @@
 					<ui:include src="/com/code/aon/ui/fiscal/facelet/model/header.xhtml" />
 				</aon:panelTab>
 				
-				<c:if test="#{!controller.nevv}">
+				<aon:if test="#{!controller.nevv}">
 					<aon:panelTab id="#{controller.liquidationTabName}" label="#{bundle.fiscal_liquidation}">
-						<c:if test="#{!skipDetail}">
+						<aon:if test="#{!skipDetail}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
 								<ui:param name="controller" value="#{controller}" />
 							</ui:include>
-						</c:if>
-						<c:if test="#{skipDetail}">
+						</aon:if>
+						<aon:if test="#{skipDetail}">
 							<ui:insert name="customDetail" />
-						</c:if>
+						</aon:if>
 					</aon:panelTab>
-				</c:if>
+				</aon:if>
 			</aon:panelTabSet>
 		</aon:div>
 	</aon:form>

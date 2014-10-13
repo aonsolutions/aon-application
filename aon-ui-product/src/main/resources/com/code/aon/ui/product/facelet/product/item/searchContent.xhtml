@@ -6,41 +6,41 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 		<aon:outputLabel for="Product_items_barcode"
 			value="#{bundle.product_barcode}" />
 		<aon:inputText id="Product_items_barcode" size="25"
 			valueChangeListener="#{controller.addExpression}" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{product.detailLevel &gt; 0}">
+	<aon:if test="#{product.detailLevel &gt; 0}">
 		<aon:outputLabel for="Product_items_detail"
 			value="#{bundle.aon_detail}" />
 		<aon:inputText id="Product_items_detail" size="50"
 			valueChangeListener="#{controller.addExpression}" />
 	
-		<c:if test="#{product.detailLevel &gt; 1}">
+		<aon:if test="#{product.detailLevel &gt; 1}">
 			<aon:outputLabel for="Product_items_detail2"
 				value="#{bundle.product_detail2}" />
 			<aon:inputText id="Product_items_detail2" size="50"
 				valueChangeListener="#{controller.addExpression}" />
 
-			<c:if test="#{product.detailLevel &gt; 2}">
+			<aon:if test="#{product.detailLevel &gt; 2}">
 				<aon:outputLabel for="Product_items_detail3"
 					value="#{bundle.product_detail3}" />
 				<aon:inputText id="Product_items_detail3" size="50"
 					valueChangeListener="#{controller.addExpression}" />
-			</c:if>
-		</c:if>
+			</aon:if>
+		</aon:if>
 	
-	</c:if>
+	</aon:if>
 		
 	<aon:outputLabel for="Product_items_description"
 		value="#{bundle.aon_description}" />
 	<aon:inputText id="Product_items_description" size="50"
 		valueChangeListener="#{controller.addExpression}" />
 		
-	<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+	<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{searchController.supplier}" />
 			<ui:param name="skipNewButton" value="#{true}" />
@@ -51,9 +51,9 @@
 			value="#{bundle.product_item_supplier_code_abbr}" />
 		<aon:inputText id="PRoduct_ittem_supplier_code"
 			value="#{searchController.supplierCode}"  />
-	</c:if>
+	</aon:if>
 		
-	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
+	<aon:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Product_items_internet"
 			value="#{bundle.product_ecommerce}" />
 		<aon:selectOneRadio id="Product_items_internet"
@@ -61,7 +61,7 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
-	</c:if>		
+	</aon:if>		
 	
 	<aon:outputLabel for="Product_items_purchasePrice"
 		value="#{bundle.product_purchase_price}" />

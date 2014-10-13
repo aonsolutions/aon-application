@@ -88,7 +88,7 @@
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="Calculation_Confidential"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="Calculation_Confidential" 
@@ -96,7 +96,7 @@
 							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Calculation_WorkPlace"
 						value="#{bundle.purchase_workplace}" />

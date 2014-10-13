@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFinishTicketWindow">
-		<c:if test="#{invoiceController.showFinishTicketWindow}">
+		<aon:if test="#{invoiceController.showFinishTicketWindow}">
 			<rich:modalPanel id="finishTicketModalPanel" minHeight="340"
 				minWidth="640" rendered="#{invoiceController.showFinishTicketWindow}"
 				showWhenRendered="true" zindex="90">
@@ -95,12 +95,12 @@
 												rendered="#{posFinanceTo == financeController.lastFinance}"
 												reRender="finishTicketForm" ajaxSingle="true">
 												<f:selectItem value="#{null}" />
-												<c:if test="#{!financeController.financesCashAlready}">
+												<aon:if test="#{!financeController.financesCashAlready}">
 													<f:selectItems value="#{configCollections.directPayMethods}" />
-												</c:if>
-												<c:if test="#{financeController.financesCashAlready}">
+												</aon:if>
+												<aon:if test="#{financeController.financesCashAlready}">
 													<f:selectItems value="#{configCollections.noCashDirectPayMethods}" />
-												</c:if>
+												</aon:if>
 											</aon:selectOneMenu>
 											<aon:outputText value="#{posFinanceTo.payMethod.name}"
 												rendered="#{posFinanceTo != financeController.lastFinance}" />
@@ -193,7 +193,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

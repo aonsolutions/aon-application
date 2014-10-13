@@ -130,25 +130,25 @@
 						<ui:param name="lookupTo" value="#{feeAssignment.fee.seller}" />
 					</ui:include>
 
-					<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+					<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 						<aon:outputLabel for="CustomerFee_workPlace" value="#{bundle.purchase_workplace}" />
 						<aon:selectOneMenu id="CustomerFee_workPlace" 
 							value="#{feeAssignment.fee.workPlace}" >
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="FeeAssignment_assignToInvoicingGroup" value="Asignar al Grupo de Facturacion" />
 					<aon:panelGrid columns="3" columnClasses="aon-width-150,aon-width-60,aon-width-auto">
 						<aon:selectBooleanCheckbox id="FeeAssignment_assignToInvoicingGroup"
 							value="#{feeAssignment.assignToInvoicingGroup}" />
 
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:outputLabel for="CustomerFee_securityLevel" value="#{bundle.aon_confidential}"
 								styleClass="aon-margin-right aon-bold" />
 							<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
 								value="#{feeAssignment.fee.confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:panelGrid>
 
 				</aon:panelGrid>

@@ -12,13 +12,13 @@
 
 			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchBasicContent.xhtml" />
 
-			<c:if test="#{showDomainLookup}">		
+			<aon:if test="#{showDomainLookup}">		
 				<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{documentGlobalSearch.domain}" />
 					<ui:param name="skipGoToButton" value="#{true}" />
 					<ui:param name="skipNewButton" value="#{true}" />				
 				</ui:include>			
-			</c:if>			
+			</aon:if>			
 				
 		</ui:define>
 	</ui:decorate>

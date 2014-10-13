@@ -28,12 +28,12 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{supplier.nevv}">
+				<aon:if test="#{supplier.nevv}">
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/formNewContent.xhtml">
 						<ui:param name="controller" value="#{supplier}"/>
 					</ui:include>				
-				</c:if>							
-				<c:if test="#{!supplier.nevv}">
+				</aon:if>							
+				<aon:if test="#{!supplier.nevv}">
 					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
@@ -58,7 +58,7 @@
 								value="#{bundle.supplier_printValuated}" />
 						</aon:div>
 				
-						<c:if test="#{!supplier.nevv and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
+						<aon:if test="#{!supplier.nevv and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
 							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
@@ -86,7 +86,7 @@
 									</aon:commandButton>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					</aon:panelGrid>
 
 					<aon:panelTabSet id="supplierTab" selectedTab="#{supplier.selectedTab}">
@@ -102,7 +102,7 @@
 							</ui:include>
 						</aon:panelTab>
  
- 						<c:if test="#{aonConfiguration.bean.supplier.showFinanceData and aonRole.financeOperator}">
+ 						<aon:if test="#{aonConfiguration.bean.supplier.showFinanceData and aonRole.financeOperator}">
 							<aon:panelTab id="finance"
 								label="#{bundle.registry_finance_data_module}">
 								<aon:panel>
@@ -124,9 +124,9 @@
 									</ui:include>
 								</aon:panel>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.supplier.showSegment and supplierSegment.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.supplier.showSegment and supplierSegment.model.rowCount > 0}">
 							<aon:panelTab id="segment"
 								label="#{bundle.registry_segment_module}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
@@ -134,9 +134,9 @@
 									<ui:param name="removeButtonReRender" value="supplierTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonConfiguration.bean.supplier.showAddInfo and supplierAddInfo.model.rowCount > 0}">
+						<aon:if test="#{aonConfiguration.bean.supplier.showAddInfo and supplierAddInfo.model.rowCount > 0}">
 							<aon:panelTab id="addInfo"
 								label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
@@ -144,46 +144,46 @@
 									<ui:param name="removeButtonReRender" value="supplierTab" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{aonRole.document and supplierRAttach.model.rowCount > 0}">
+						<aon:if test="#{aonRole.document and supplierRAttach.model.rowCount > 0}">
 							<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 									<ui:param name="controller" value="#{supplierRAttach}" />
 									<ui:param name="removeButtonReRender" value="supplierTab" />
 								</ui:include>								
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{aonRole.accountingOperator}">
+		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		</c:if>
-		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
+		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		</c:if>
-		<c:if test="#{!supplier.nevv}">
-			<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
+		</aon:if>
+		<aon:if test="#{!supplier.nevv}">
+			<aon:if test="#{aonConfiguration.bean.supplier.showSegment}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
 					<ui:param name="controller" value="#{supplier}" />
 					<ui:param name="segmentController" value="#{supplierSegment}" />
 					<ui:param name="modalReRender" value="supplierTab" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.supplier.showAddInfo}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.supplier.showAddInfo}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
 					<ui:param name="controller" value="#{supplier}" />
 					<ui:param name="addInfoController" value="#{supplierAddInfo}" />
 					<ui:param name="modalReRender" value="supplierTab" />
 				</ui:include>
-			</c:if>
+			</aon:if>
 			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
 				<ui:param name="controller" value="#{supplier}" />
 				<ui:param name="attachmentController" value="#{supplierRAttach}" />
 				<ui:param name="modalReRender" value="supplierTab" />
 			</ui:include>
-		</c:if>
+		</aon:if>
 	</ui:define>
 </ui:composition>

@@ -8,7 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:panelGroup id="#{aon_cb_id}ReRender" styleClass="aon-popupWindow">
-		<c:if test="#{aon_cb_showWindow}">
+		<aon:if test="#{aon_cb_showWindow}">
 			<rich:modalPanel 
 				id="#{aon_cb_id}"
 				showWhenRendered="#{aon_cb_showWindow}" zindex="95"
@@ -44,18 +44,18 @@
 								onclick="#{aon_cb_confirmOnClick}" oncomplete="#{aon_cb_confirmOnComplete}"
 								styleClass="aon-commandButton" >
 								<aon:actionHotKey key="return" />
-								<c:if test="#{confirmActionListener != null}">									
+								<aon:if test="#{confirmActionListener != null}">									
 									<aon:actionListener method="#{confirmActionListener}" />
-								</c:if>
+								</aon:if>
 								<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />	
 							</aon:commandButton>
 							<aon:commandButton id="#{aon_cb_id}-no" value="#{bundle.aon_no}"
 								action="#{aon_cb_cancelAction}" immediate="true" ajaxSingle="true"
 								reRender="#{aon_cb_id}ReRender#{(aon_cb_cancelReRender != null)?',':''}#{aon_cb_cancelReRender}"
 								styleClass="aon-commandButton" >
-								<c:if test="#{aon_cb_cancelActionListener != null}">									
+								<aon:if test="#{aon_cb_cancelActionListener != null}">									
 									<aon:actionListener method="#{aon_cb_cancelActionListener}" />
-								</c:if>
+								</aon:if>
 								<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />								
 								<rich:componentControl for="#{aon_cb_id}" event="onclick"
 									disableDefault="true" operation="hide"/>
@@ -64,7 +64,7 @@
 					</aon:div>		
 				</aon:div>		
 			</rich:modalPanel>	
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

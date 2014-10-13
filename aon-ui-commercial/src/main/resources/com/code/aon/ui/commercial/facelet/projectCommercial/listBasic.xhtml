@@ -25,7 +25,7 @@
 		<aon:outputText value="#{to.project.name}"/>
 	</aon:column>
 
-	<c:if test="#{!skipTarget}">
+	<aon:if test="#{!skipTarget}">
 		<aon:column styleClass="aon-editDataTable-textColumn"
 			alias="ProjectCommercial.target.registry.name">
 			<f:facet name="header">
@@ -33,6 +33,6 @@
 			</f:facet>
 			<aon:outputText value="#{to.target.registry.fullName}"/>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

@@ -51,7 +51,7 @@
 							<a4j:support event="onchange" ajaxSingle="true"
 								reRender="AccountEntry_accountPeriod,Account_salaryEntry" />
 						</aon:selectOneMenu>
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
 								styleClass="aon-margin-left"
 								disabled="#{socialInsuranceEntry.entry.paymentAdjustable}"
@@ -62,7 +62,7 @@
 							</aon:selectBooleanCheckbox>
 							<aon:outputText styleClass="aon-italic aon-margin-right"
 								value="#{bundle.aon_confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 					<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
@@ -175,7 +175,7 @@
 
 					<aon:outputText value="&#160;" />
 					<aon:div id="StatementContainer">
-						<c:if test="#{!socialInsuranceEntry.paymentAdjustDisabled}">
+						<aon:if test="#{!socialInsuranceEntry.paymentAdjustDisabled}">
 							<aon:outputText
 								value="#{socialInsuranceEntry.socialInsuranceAccount.fullDescription}" />
 							<aon:outputText styleClass="aon-italic"
@@ -251,7 +251,7 @@
 								</aon:column>
 							</aon:editDataTable>
 							
-						</c:if>
+						</aon:if>
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>

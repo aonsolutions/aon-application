@@ -57,7 +57,7 @@
 			</aon:panelGrid>
 			
 			<aon:div id="paramsGrid">
-				<c:if test="#{aonLoader.aonFile.size > 0}">
+				<aon:if test="#{aonLoader.aonFile.size > 0}">
 					<aon:panelGrid  columns="2" style="width:90%; margin:10px;">
 				
 						<aon:outputLabel for="aonLoader_workPlace" value="#{bundle.purchase_workplace}" />
@@ -92,7 +92,7 @@
 							</aon:div>
 						
 	
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:outputText value ="&#160;"/>
 							<aon:div>
 								<aon:selectBooleanCheckbox id="aonLoader_securityLevel"
@@ -101,14 +101,14 @@
 									for="aonLoader_securityLevel"
 									value="#{bundle.aon_confidential}" />
 							</aon:div>
-						</c:if>
+						</aon:if>
 					</aon:panelGrid>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		
 		<aon:panelGroup id="showLoadMessageWindow">
-			<c:if test="#{aonLoader.progressionPanelVisible}">
+			<aon:if test="#{aonLoader.progressionPanelVisible}">
 				<aon:valueParam name="windowHeight" default="50" />
 				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
 					showWhenRendered="#{aonLoader.progressionPanelVisible}"
@@ -147,7 +147,7 @@
 					<ui:param name="logPanelTitle" value="#{bundle.aon_loader_module}" />
 					<ui:param name="pollInterval" value="2000" />
 				</ui:include>		
-			</c:if>
+			</aon:if>
 		</aon:panelGroup>
 		
 	</ui:define>

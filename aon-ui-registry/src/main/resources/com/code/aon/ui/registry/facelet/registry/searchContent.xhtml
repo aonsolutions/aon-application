@@ -56,8 +56,8 @@
 	<aon:inputText id="#{controller.pojoShortName}_registry_id" size="12"
 		valueChangeListener="#{controller.addExpression}" />
 
-	<c:if test="#{includeRegistryScope}">
+	<aon:if test="#{includeRegistryScope}">
 		<ui:include src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />
-	</c:if>
+	</aon:if>
 
 </ui:composition>

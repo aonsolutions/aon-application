@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showListSearchWindow">
-		<c:if test="#{controller.checkHandler.showListSearchWindow}">
+		<aon:if test="#{controller.checkHandler.showListSearchWindow}">
 			<rich:modalPanel id="listSearchModalPanel" minHeight="370"
 				minWidth="650" rendered="#{controller.checkHandler.showListSearchWindow}"
 				showWhenRendered="true" zindex="100">
@@ -62,13 +62,13 @@
 									<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
 										<aon:panelGrid id="menuGrid" columns="2" dir="true" >
 										
-											<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 												<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 													<ui:param name="lookupTo" value="#{controller.enterprise}" />
 													<ui:param name="skipNewButton" value="#{true}" />
 													<ui:param name="skipGoToButton" value="#{true}" />
 												</ui:include>
-											</c:if>
+											</aon:if>
 	
 											<ui:insert name="modalContent" />
 	
@@ -84,12 +84,12 @@
 				
 				<ui:insert name="afterFormContent" />
 				
-				<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+				<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 					<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-				</c:if>
+				</aon:if>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -9,33 +9,33 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	<aon:panelGroup id="investmentContainer">
-		<c:if test="#{invoiceController.nevv}">
+		<aon:if test="#{invoiceController.nevv}">
 			<aon:selectBooleanCheckbox id="Invoice_investment"
 				value="#{invoiceController.to.investment}" ajaxSingle="true" />
 			<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
 				value="#{bundle.invoice_investment}"/>
-		</c:if>
+		</aon:if>
 		
-		<c:if test="#{!invoiceController.nevv}">
-			<c:if test="#{!invoiceController.amortizationForm}">
-				<c:if test="#{!invoiceController.readOnly}">
+		<aon:if test="#{!invoiceController.nevv}">
+			<aon:if test="#{!invoiceController.amortizationForm}">
+				<aon:if test="#{!invoiceController.readOnly}">
 					<aon:selectBooleanCheckbox id="Invoice_investment"
 						reRender="investmentContainer"
 						value="#{invoiceController.to.investment}"/>
-					<c:if test="#{!invoiceController.to.investment}">
+					<aon:if test="#{!invoiceController.to.investment}">
 						<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
 							value="#{bundle.invoice_investment}"/>
-					</c:if>
-				</c:if>
-			</c:if>
+					</aon:if>
+				</aon:if>
+			</aon:if>
 			
-			<c:if test="#{!aonRole.accountingOperator and invoiceController.to.investment}">
+			<aon:if test="#{!aonRole.accountingOperator and invoiceController.to.investment}">
 				<aon:outputText styleClass="aon-italic aon-margin-right aon-margin-left"
 					value="#{bundle.invoice_investment}"/>
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{aonRole.accountingOperator}">
-				<c:if test="#{invoiceController.to.investment}">
+			<aon:if test="#{aonRole.accountingOperator}">
+				<aon:if test="#{invoiceController.to.investment}">
 					<aon:commandLink id="linkAmortization" 
 						value="#{bundle.invoice_investment}" 
 					 	title="#{bundle.finance_create_amortization}" 
@@ -57,8 +57,8 @@
 						styleClass="aon-button-goto aon-italic aon-margin-right"
 						style="padding-left: 16px;padding-top: 2px;">
 					</aon:commandLink>
-				</c:if>
-			</c:if>									
-		</c:if>
+				</aon:if>
+			</aon:if>									
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

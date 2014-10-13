@@ -12,7 +12,7 @@
 	<aon:panelGrid columns="2" id="contract_panel" 
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 			
-		<c:if test="#{contract.nevv}" >
+		<aon:if test="#{contract.nevv}" >
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.to.person}" />
 				<ui:param name="idRequired" value="#{true}" />
@@ -25,7 +25,7 @@
 				value="#{contract.params.retaQuote}" >
 				<a4j:support event="onclick" reRender="contract_panel" ajaxSingle="#{true}" />
 			</aon:selectBooleanCheckbox>	
-		</c:if>
+		</aon:if>
 
 		<aon:outputLabel for="workPlace" 
 			value="#{bundle.purchase_workplace}" />
@@ -39,7 +39,7 @@
 		<aon:outputText value="#{contract.to.workPlace.description}"
 			rendered="#{readOnly}" />
 		
-		<c:if test="#{!contract.params.retaQuote}">
+		<aon:if test="#{!contract.params.retaQuote}">
 			<aon:outputLabel for="enterpriseActivities" value="#{bundle.aon_activity}" 
 				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 			<aon:selectOneMenu id="enterpriseActivities" 
@@ -72,7 +72,7 @@
 					<aon:outputText  value="#{contract.to.enterpriseCCC.fullCcc}"/>
 				</aon:div>
 			</aon:div>
-		</c:if>
+		</aon:if>
 		
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_type}" />
@@ -84,7 +84,7 @@
 					actionListener="#{contract.onUndoContractExtension}" 
 					reRender="contractForm" ajaxSingle="true" />
 			</aon:div>
-			<c:if test="#{contract.nevv}" >
+			<aon:if test="#{contract.nevv}" >
 				<aon:selectOneMenu id="Contract_contractCode" required="true"
 					rendered="#{!contract.readOnly}" 
 					value="#{contract.params.contractCode}">
@@ -92,8 +92,8 @@
 					<f:selectItems value="#{payrollCollections.allContractCodes}" />
 					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
-			</c:if>
-			<c:if test="#{!contract.nevv and !contract.internship}" >
+			</aon:if>
+			<aon:if test="#{!contract.nevv and !contract.internship}" >
 				<aon:selectOneMenu id="Contract_contractCode" required="true"
 					rendered="#{!contract.readOnly and !contract.transformedContract}"
 					value="#{contract.params.contractCode}">
@@ -108,7 +108,7 @@
 					<f:selectItems value="#{payrollCollections.contractTransformCodes}" />
 					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
-			</c:if>
+			</aon:if>
 			<aon:div rendered="#{contract.internship and !contract.nevv}">
 				<aon:outputText value="Becario" />
 			</aon:div>
@@ -136,7 +136,7 @@
 			<aon:outputText value="#{bundle.payroll_contract_reta}" />
 		</aon:div>
 		
-		<c:if test="#{!contract.params.retaQuote and !contract.internship}">
+		<aon:if test="#{!contract.params.retaQuote and !contract.internship}">
 			<aon:outputLabel for="Contract_contractModel"
 				value="#{bundle.payroll_contract_contract_model}" />
 			<aon:div id="Contract_contractModelDiv">
@@ -150,7 +150,7 @@
 				<aon:outputText value="#{contract.params.contractModelOption}"
 					rendered="#{contract.readOnly}" />
 			</aon:div>
-		</c:if>
+		</aon:if>
 		
 		<aon:outputLabel for="Contract_startDate" value="#{bundle.aon_start_date}" />
 		<aon:div>
@@ -169,7 +169,7 @@
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
-			<c:if test="#{!contract.params.retaQuote}">
+			<aon:if test="#{!contract.params.retaQuote}">
 				<aon:outputLabel for="Contract_seniorityDate" 
 					styleClass="aon-italic aon-margin-right aon-margin-left" style="font-size: 0.9em" 
 					value="#{bundle.payroll_salary_seniority_date2}" />
@@ -192,7 +192,7 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText> 
-			</c:if>
+			</aon:if>
 		</aon:div>
 		
 		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
@@ -229,7 +229,7 @@
 			</aon:panelGroup>
 		</aon:div>
 		
-		<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+		<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 			<aon:outputLabel  
 				value="#{bundle.payroll_agreementLevel_category_level}" />
 			<aon:panelGrid id="agreementLevelCategory-content" columns="2" 
@@ -268,7 +268,7 @@
 				</aon:panelGroup>
 			</aon:panelGrid>
 		
-			<c:if test="#{!contract.params.retaQuote and !contract.internship}">
+			<aon:if test="#{!contract.params.retaQuote and !contract.internship}">
 				<aon:outputLabel for="quote_group"
 					value="#{bundle.payroll_contract_quote_group}" />
 				<aon:selectOneMenu id="quote_group"
@@ -290,9 +290,9 @@
 				</aon:selectOneMenu>
 				<aon:outputText value="#{contract.params.occupationType}"
 					rendered="#{contract.readOnly}" />
-			</c:if>
+			</aon:if>
 				
-			<c:if test="#{contract.params.retaQuote}">
+			<aon:if test="#{contract.params.retaQuote}">
 				<aon:outputLabel for="retaQuote-journalTime"
 					value="Tipo jornada" />
 				<aon:selectOneMenu id="retaQuote-journalTime"
@@ -301,7 +301,7 @@
 					<f:selectItem itemLabel="Tiempo Parcial" itemValue="#{true}" />
 					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
-			</c:if>
+			</aon:if>
 			
 			<aon:outputLabel for="workingWeekHours"
 				rendered="#{contract.partiallyTimeContract}"
@@ -426,7 +426,7 @@
 			</aon:div>
 				
 
-		</c:if>
+		</aon:if>
 		
 	</aon:panelGrid>
 

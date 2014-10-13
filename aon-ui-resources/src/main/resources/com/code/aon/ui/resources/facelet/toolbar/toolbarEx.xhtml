@@ -13,17 +13,17 @@
 		<h:panelGrid columns="3" cellspacing="0" cellpadding="0"
 			columnClasses="#{showTitle?'aon-finding-title,':''}#{showDescription?'aon-finding-subtitle,':''}#{showMainStyleClass?'aon-finding-toolbar':''}">
 
-			<c:if test="#{showTitle}">
+			<aon:if test="#{showTitle}">
 				<aon:div styleClass="aon-finding-title-internal">
 					<aon:outputText value="#{toolbarTitle}" />
 				</aon:div>
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{showDescription}">
+			<aon:if test="#{showDescription}">
 				<aon:div styleClass="aon-finding-subtitle-internal">
 					<aon:outputText value="#{toolbarDescription}" />			
 				</aon:div>
-			</c:if>
+			</aon:if>
 			<ui:insert name="toolbarActions"/>
 			<aon:div id="#{toolbarID}" styleClass="aon-finding-toolbar-item-group">
 				<ui:insert name="beforeToolbarContent"/>

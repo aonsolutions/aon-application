@@ -51,7 +51,7 @@ public class CourseMarkController extends DataScrollerState {
 		return isNevv;
 	}
 
-	public void setNew(boolean isNevv) {
+	public void setNevv(boolean isNevv) {
 		this.isNevv = isNevv;
 	}
 	

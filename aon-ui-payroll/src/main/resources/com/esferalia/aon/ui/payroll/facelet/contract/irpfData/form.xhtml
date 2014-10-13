@@ -145,7 +145,7 @@
 				</aon:panelGrid>
 
 			
-				<c:if test="#{!irpfData.nevv}" >
+				<aon:if test="#{!irpfData.nevv}" >
 					<aon:panelTabSet>
 							<aon:panelTab label="#{bundle.payroll_irpfData_descendants_data}">
 								<ui:include 
@@ -156,7 +156,7 @@
 								src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_economic.xhtml" />
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 
 			</aon:div>
 

@@ -6,24 +6,24 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{controller.phone != null}" >
+	<aon:if test="#{controller.phone != null}" >
 		<aon:outputText value="#{controller.phone.mediaType}" />
 		<aon:outputText value="#{controller.phone.value}" />
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{controller.fax != null}" >
+	<aon:if test="#{controller.fax != null}" >
 		<aon:outputText value="#{controller.fax.mediaType}" />
 		<aon:outputText value="#{controller.fax.value}" />
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{controller.email != null}" >
+	<aon:if test="#{controller.email != null}" >
 		<aon:outputText value="#{controller.email.mediaType}" />
 		<aon:outputText value="#{controller.email.value}" />
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{controller.web != null}" >
+	<aon:if test="#{controller.web != null}" >
 		<aon:outputText value="#{controller.web.mediaType}" />
 		<aon:outputText value="#{controller.web.value}" size="64" />				
-	</c:if>	
+	</aon:if>	
 						
 </ui:composition>

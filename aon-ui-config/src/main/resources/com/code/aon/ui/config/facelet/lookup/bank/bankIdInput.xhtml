@@ -47,7 +47,7 @@
 			<aon:outputText rendered="#{entity.name == null}"
 				value="---------------------------------" />
 		</aon:div>
-		<c:if test="#{wizard.visible}">
+		<aon:if test="#{wizard.visible}">
 
 			<rich:modalPanel id="#{id}Panel" minHeight="600"
 				rendered="#{wizard.visible}" showWhenRendered="true" minWidth="650"
@@ -158,7 +158,7 @@
 						rowCount="#{wizard.model.rowCount}" page="#{wizard.page}" />
 				</aon:div>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 
 		<a4j:loadScript src="/js/extendedInput.js" />
 

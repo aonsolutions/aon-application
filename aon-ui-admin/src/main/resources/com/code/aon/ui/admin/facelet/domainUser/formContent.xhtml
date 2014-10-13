@@ -8,9 +8,9 @@
 
 	<aon:form id="domainUserForm">
 	
-		<c:if test="#{userProfileView}" >
+		<aon:if test="#{userProfileView}" >
 			<aon:methodParam name="saveAction" value="domainUser_profile" />
-		</c:if>
+		</aon:if>
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 			<ui:param name="toolbarTitle" value="#{bundle.admin_users}" />
@@ -21,7 +21,7 @@
 			<ui:param name="skipResetButton" value="#{userProfileView or domainUser.skipUserReset}" />
 			<ui:param name="removeConfirmMessage" value="#{bundle.admin_domain_user_remove_confirm}" />
 			<ui:define name="beforeSpinToolbarContent">
-				<c:if test="#{!userProfileView}" >
+				<aon:if test="#{!userProfileView}" >
 					<aon:commandButton id="resetPassword"
 						value="#{bundle.admin_reset_password}"
 						actionListener="#{domainUser.onResetPassword}" immediate="true"
@@ -36,8 +36,8 @@
 						rendered="#{(!domainUser.nevv) and aonRole.sysAdmin}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 					</aon:commandButton>
-				</c:if>
-				<c:if test="#{userProfileView}" >
+				</aon:if>
+				<aon:if test="#{userProfileView}" >
 					<aon:commandButton id="changePassword"
 						value="#{bundle.admin_change_password}"
 						action="changePassword_form"
@@ -46,7 +46,7 @@
 						<f:setPropertyActionListener value="domainUser_profile"
 							target="#{changePassword.backAction}"  />
 					</aon:commandButton>
-				</c:if>
+				</aon:if>
 			</ui:define>								
 		</ui:decorate>
 
@@ -105,7 +105,7 @@
 					<f:selectItems value="#{commonCollections.pageLimits}" />
 				</aon:selectOneMenu>
 				
-				<c:if test="#{!domainUser.nevv}" >
+				<aon:if test="#{!domainUser.nevv}" >
 					<aon:outputText for="User_initAction"
 						value="#{bundle.admin_user_init_action}"/>
 					<h:panelGrid id="userInitActionDiv">
@@ -126,28 +126,28 @@
 								value="#{bundle.admin_user_show_favorites}" />
 						</aon:panelGroup>
 					</h:panelGrid>														
-				</c:if>			
+				</aon:if>			
 												
-				<c:if test="#{!userProfileView}" >
+				<aon:if test="#{!userProfileView}" >
 					<aon:outputLabel for="User_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="User_active"
 						disabled="#{!domainUser.userActivable}" 
 						value="#{domainUser.to.active}" />
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{aonRole.sysAdmin}" >						
+				<aon:if test="#{aonRole.sysAdmin}" >						
 					<aon:outputLabel for="User_passwordExpiration"
 						value="#{bundle.admin_password_expiration}" />
 					<aon:selectInputDate id="User_passwordExpiration" 
 						value="#{domainUser.to.passwordExpiration}"
 						timeZone="#{timeZoneController.timeZone}" inputSize="20"
 						popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
-				</c:if>								
+				</aon:if>								
 			
 			</aon:panelGrid>
 			
-			<c:if test="#{aonRole.sysAdmin}" >
+			<aon:if test="#{aonRole.sysAdmin}" >
 				<aon:div styleClass="aon-margin-top">
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
@@ -167,9 +167,9 @@
 								
 					</aon:panelGrid>
 				</aon:div>
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{!domainUser.nevv}" >
+			<aon:if test="#{!domainUser.nevv}" >
                    
 				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
                    
@@ -218,16 +218,16 @@
 
 				</aon:panelTabSet>					
 
-			</c:if>
+			</aon:if>
 
 		</aon:div>
 	</aon:form>
 
-	<c:if test="#{aonRole.sysAdmin}" >
+	<aon:if test="#{aonRole.sysAdmin}" >
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 		<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" />
-	</c:if>
+	</aon:if>
 	<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />
 		
 </ui:composition>

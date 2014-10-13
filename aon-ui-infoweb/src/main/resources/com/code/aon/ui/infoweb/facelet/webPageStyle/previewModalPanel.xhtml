@@ -9,7 +9,7 @@
 
 	<aon:form id="previewForm">
 		<aon:panelGroup id="showPreviewModalPanel">
-			<c:if test="#{webPageStyle.showPreviewModalPanel}">
+			<aon:if test="#{webPageStyle.showPreviewModalPanel}">
 				<rich:modalPanel id="previewModalPanel"
 					rendered="#{webPageStyle.showPreviewModalPanel}" showWhenRendered="true"
 					minHeight="550" height="550" minWidth="800" width="800">
@@ -49,7 +49,7 @@
 					</h:panelGrid>
 
 				</rich:modalPanel>
-			</c:if>
+			</aon:if>
 		</aon:panelGroup>
 	</aon:form>
 

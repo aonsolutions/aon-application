@@ -26,12 +26,12 @@
 					valueChangeListener="#{controller.addEqualExpression}"
 					converter="aon.EnumConverter">
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<c:if test="#{quarterPeriods}">
+					<aon:if test="#{quarterPeriods}">
 						<f:selectItems value="#{fiscalCollections.quarterPeriods}" />
-					</c:if>
-					<c:if test="#{!quarterPeriods}">
+					</aon:if>
+					<aon:if test="#{!quarterPeriods}">
 						<f:selectItems value="#{fiscalCollections.periods}" />	
-					</c:if>
+					</aon:if>
 				</aon:selectOneMenu>
 
 				<aon:outputLabel for="FiscalModel_status"

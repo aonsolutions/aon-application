@@ -175,7 +175,7 @@
 									style="#{(to.agencyBookingMap[agency].roomAllotment > to.agencyBookingMap[agency].roomBusy) ? ('') : ('color:forestgreen;')}" />
 							</aon:column>				
 
-							<c:if test="#{allotmentBooking.breakdownType != null}">
+							<aon:if test="#{allotmentBooking.breakdownType != null}">
 								<c:forEach items="#{allotmentBooking.agencyBreakdownMap[agency].breakdowns}" var="agencyBreakdown" begin="0" step="1">
 									<aon:column styleClass="aon-editDataTable-numberColumn aon-width-10"
 										style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
@@ -187,7 +187,7 @@
 											value="#{to.agencyBookingMap[agency].occupationBreakdownMap[agencyBreakdown]}" />
 									</aon:column>
 								</c:forEach>
-							</c:if>
+							</aon:if>
 
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
 								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">

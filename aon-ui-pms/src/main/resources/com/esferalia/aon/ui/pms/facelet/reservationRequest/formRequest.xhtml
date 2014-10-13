@@ -92,7 +92,7 @@
 			focus="ReservationRequest_bookingHolder" />
 	</aon:selectInputDate>
 
-	<c:if test="#{aonRole.commercialOperator and !reservationRequest.agencyUser}">
+	<aon:if test="#{aonRole.commercialOperator and !reservationRequest.agencyUser}">
 		<aon:outputLabel for="ReservationRequest_bookingHolder" value="#{bundle.pms_reservation_holder}" />
 		<aon:outputText value="#{reservationRequest.to.bookingHolder}" styleClass="aon-bold" 
 			rendered="#{!reservationRequest.to.active or !aonRole.commercialOperator or reservationRequest.agencyUser}" />
@@ -102,9 +102,9 @@
 			reRender="BookingHolderLabelDiv,BookingHolderContentDiv">
 			<f:selectItems value="#{pmsCollections.bookingHolders}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonRole.commercialOperator or reservationRequest.agencyUser}">
+	<aon:if test="#{aonRole.commercialOperator or reservationRequest.agencyUser}">
 		<aon:div id="BookingHolderLabelDiv">
 			<aon:outputLabel for="ReservationRequest_agency" value="#{bundle.report_agency}"
 				 rendered="#{!reservationRequest.to.companyHolder}" />
@@ -119,9 +119,9 @@
 				required="true" styleClass="aon-width-350"
 				rendered="#{reservationRequest.to.active and !reservationRequest.to.companyHolder}"
 				disabled="#{reservationRequest.to.guestHolder}">
-				<c:if test="#{reservationRequest.to.guestHolder}">
+				<aon:if test="#{reservationRequest.to.guestHolder}">
 					<f:selectItem itemLabel="-" value="#{null}" />		
-				</c:if>
+				</aon:if>
 				<f:selectItems value="#{pmsCollections.agencies}" />
 			</aon:selectOneMenu>
 			<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
@@ -132,14 +132,14 @@
 				<f:selectItems value="#{pmsCollections.companies}" />
 			</aon:selectOneMenu>
 		</aon:div>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!reservationRequest.agencyUser}">
+	<aon:if test="#{!reservationRequest.agencyUser}">
 		<aon:outputLabel for="ReservationRequest_remarks" value="#{bundle.aon_remark}" />
 		<aon:inputTextarea id="ReservationRequest_remarks" value="#{reservationRequest.to.remarks}"
 			rows="4" cols="75" ajaxSingle="true">
 			<f:validateLength maximum="166" />
 		</aon:inputTextarea>
-	</c:if>
+	</aon:if>
 
  </ui:composition>

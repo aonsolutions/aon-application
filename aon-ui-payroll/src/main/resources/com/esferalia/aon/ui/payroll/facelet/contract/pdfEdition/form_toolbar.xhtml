@@ -27,12 +27,12 @@
 				actionListener="#{contractPdf.onChangeContractDocument}"
 				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 		
-			<c:if test="#{!contractPdf.readOnly}">
+			<aon:if test="#{!contractPdf.readOnly}">
 				<aon:commandButton id="accept"
 					value="#{contractPdf.nevv?bundle.aon_accept:bundle.aon_save}"
 					actionListener="#{contractPdf.onDocumentSave}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept" />	
-			</c:if>
+			</aon:if>
 			
 			<aon:commandButton id="cancel" immediate="true"
 				value="#{bundle.aon_back}"
@@ -40,7 +40,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 
 			<!--  
-			<c:if test="#{!contractPdf.readOnly}">
+			<aon:if test="#{!contractPdf.readOnly}">
 				<aon:commandButton id="contract-refresh"
 					value="#{bundle.sepe_reload}"
 					rendered="#{!contractPdf.nevv}"
@@ -49,10 +49,10 @@
 					actionListener="#{contractPdf.onDocumentReload}"
 					onclick="if (!confirm('#{bundle.payroll_refresh_confirm}')) { return false;}"
 					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
-			</c:if>
+			</aon:if>
 			-->
 
-			<c:if test="#{not empty contractPdf.documentType}">
+			<aon:if test="#{not empty contractPdf.documentType}">
 				<aon:htmlCommandLink id="document-download" 
 					value="#{bundle.aon_draft}" target="_blank" 
 					title="#{bundle.payroll_draft_download}"
@@ -161,7 +161,7 @@
 						</aon:commandButton>
 					</aon:div>
 				</aon:div>
-			</c:if>
+			</aon:if>
 			
 		</ui:define>
 	</ui:decorate>

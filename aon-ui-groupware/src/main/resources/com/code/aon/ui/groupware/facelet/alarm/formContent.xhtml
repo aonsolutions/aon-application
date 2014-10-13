@@ -42,31 +42,31 @@
 			cols="60" rows="7" required="true"
 			value="#{alarm.to.description}" />
 		
-		<c:if test="#{!alarm.nevv}" >
+		<aon:if test="#{!alarm.nevv}" >
 			<aon:outputLabel value="#{bundle.aon_source}" />
 			<aon:div>
 				<aon:outputText value="#{alarm.to.source}"/>
-				<c:if test="#{alarm.to.sourceId != null}" >
-					<c:if test="#{aonConfiguration.bean.alarm.showGoToCommercialMarketing and alarm.to.commercialTracking}" >
+				<aon:if test="#{alarm.to.sourceId != null}" >
+					<aon:if test="#{aonConfiguration.bean.alarm.showGoToCommercialMarketing and alarm.to.commercialTracking}" >
 						<aon:goToButton controller="#{commercialTracking}"
 							propertyId="#{alarm.to.sourceId}" />					
-					</c:if>
-					<c:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.callCenter}" >
+					</aon:if>
+					<aon:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.callCenter}" >
 						<aon:commandButton immediate="true"
 							value="&#160;" style="border:0;"
 							title="#{bundle.marketing_survey_start}"
 							action="communicationCenter"
 							actionListener="#{communicationCenter.onGoToActionTarget}"
 							styleClass="aon-finding-toolbar-item aon-icon-telephone" />
-					</c:if>
-				</c:if>
+					</aon:if>
+				</aon:if>
 			</aon:div>
 	
-			<c:if test="#{alarm.sender != null}" >	
+			<aon:if test="#{alarm.sender != null}" >	
 				<aon:outputLabel value="#{bundle.aon_sender}" />
 				<aon:outputText value="#{alarm.sender}" />
-			</c:if>
-		</c:if>
+			</aon:if>
+		</aon:if>
 	</aon:panelGrid>
 
 </ui:composition>

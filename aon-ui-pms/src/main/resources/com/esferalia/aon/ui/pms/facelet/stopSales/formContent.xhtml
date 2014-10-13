@@ -18,9 +18,9 @@
 			rendered="#{stopSales.nevv}" required="true"
 			valueChangeListener="#{stopSales.onHotelChanged}" 
 			reRender="StopSalesItemDiv" ajaxSingle="true">
-			<c:if test="#{stopSales.nevv}">
+			<aon:if test="#{stopSales.nevv}">
 				<f:selectItem itemLabel="-" value="#{null}"/>
-			</c:if>
+			</aon:if>
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
 
@@ -63,9 +63,9 @@
 					valueChangeListener="#{stopSales.onItemChanged}" 
 					reRender="StopSalesItemDiv">
 					<f:selectItem itemLabel="#{(stopSales.itemsSize > 0)?'-':bundle.aon_common_all}" value="#{null}"/>
-					<c:if test="#{stopSales.to.hotel != null and stopSales.to.hotel.id != null}">
+					<aon:if test="#{stopSales.to.hotel != null and stopSales.to.hotel.id != null}">
 						<f:selectItems value="#{stopSales.hotelRoomItems}" />
-					</c:if>
+					</aon:if>
 				</aon:selectOneMenu>
 				<aon:commandButton id="StopSalesItem-add"
 					styleClass="aon-finding-toolbar-item aon-search-add"

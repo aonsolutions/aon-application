@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showSEPAWindow">
-		<c:if test="#{fbatch.showSEPAWindow}">
+		<aon:if test="#{fbatch.showSEPAWindow}">
 			<rich:modalPanel id="fbatchSEPAModalPanel" minHeight="240"
 				minWidth="520" rendered="#{fbatch.showSEPAWindow}"
 				showWhenRendered="true" zindex="90">
@@ -80,7 +80,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

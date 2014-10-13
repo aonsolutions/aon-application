@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showContractEmbargoWindow">
-		<c:if test="#{contract.showContractEmbargoWindow}">
+		<aon:if test="#{contract.showContractEmbargoWindow}">
 			<rich:modalPanel id="embargoModalPanel" minHeight="400"
 				minWidth="500" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -125,6 +125,6 @@
 					</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

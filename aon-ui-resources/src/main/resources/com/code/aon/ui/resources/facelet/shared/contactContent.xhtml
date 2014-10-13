@@ -14,9 +14,9 @@
 			maxlength="128" size="77" required="#{displayNameRequired}"
 			value="#{controller.to.displayName}" />
 
-		<c:if test="#{!skipFullName}">
+		<aon:if test="#{!skipFullName}">
 			<ui:include src="/com/code/aon/ui/resources/facelet/shared/fullNameContent.xhtml" />
-		</c:if>
+		</aon:if>
 
 		<aon:outputLabel for="#{preffix}_address"
 			value="#{bundle.aon_address}" />

@@ -6,7 +6,7 @@
 
 
 	<aon:form id="enterpriseForm" style="#{ !edit ? 'display:none': ''}">
-		<c:if test="#{edit}">
+		<aon:if test="#{edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
@@ -68,14 +68,14 @@
 
 			</ui:decorate>
 
-		</c:if>
-		<c:if test="#{!edit}">
+		</aon:if>
+		<aon:if test="#{!edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.aon_module_enterprise}" />
 			</ui:decorate>
-		</c:if>
+		</aon:if>
 
 
 		<aon:div
@@ -104,13 +104,13 @@
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
-	<c:if test="#{!edit}">
+	<aon:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="enterpriseForm" />
 			<ui:param name="hide"
 				value="/Company_alias|Company_address_municipality|Enterprise_scope_id|salary_model|enterprise_salary_model|salary_sending_method|Agreement_id-enterpriseParam|Calendar_id|Company_email|Company_web|Enterprise_workplace_description/g" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 
 	<img style="display: none;"
 		src="#{aonResource.resolve['/com/esferalia/aon/gwt/payroll/client/blank.png']}"

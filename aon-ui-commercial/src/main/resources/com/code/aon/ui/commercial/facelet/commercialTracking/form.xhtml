@@ -28,14 +28,14 @@
 						action="alarm_form" immediate="true"
 						actionListener="#{commercialTracking.onSelectAlarm}"
 						styleClass="aon-finding-toolbar-item aon-icon-alarm-pending" />
-					<c:if test="#{aonConfiguration.bean.alarm.showNew}">
+					<aon:if test="#{aonConfiguration.bean.alarm.showNew}">
 						<aon:commandButton id="alarm"
 							rendered="#{!formNew}"
 							value="#{bundle.groupware_alarm_new}"
 							reRender="newAlarmWindow" immediate="true"
 							actionListener="#{commercialTracking.onNewAlarm}"
 							styleClass="aon-finding-toolbar-item aon-icon-alarms" />
-					</c:if>
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 
@@ -68,9 +68,9 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
+		<aon:if test="#{aonConfiguration.bean.alarm.showNew}">
 			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
-		</c:if>
+		</aon:if>
 	</ui:define>
 </ui:composition>
 

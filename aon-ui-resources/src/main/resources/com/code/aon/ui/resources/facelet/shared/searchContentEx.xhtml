@@ -20,7 +20,7 @@
 			
 			<aon:panelGrid id="#{searchContentID}" columns="2">
 				<ui:insert name="searchContent" />
-				<c:if test="#{!skipSearchButton}">
+				<aon:if test="#{!skipSearchButton}">
 					<aon:outputText value="" />
 					<aon:div >
 						<aon:commandButton id="#{searchButtonId}"
@@ -30,22 +30,22 @@
 							reRender="#{searchReRender}"
 							onclick="#{searchOnClick}" oncomplete="#{searchOnComplete}"
 							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
-							<c:if test="#{!skipAfterSearch}" >
+							<aon:if test="#{!skipAfterSearch}" >
 								<aon:actionListener method="#{afterSearchActionListener}" />
-							</c:if>
-							<c:if test="#{!disableSearchHotKey}" >
+							</aon:if>
+							<aon:if test="#{!disableSearchHotKey}" >
 								<aon:actionHotKey key="return" />
-							</c:if>
+							</aon:if>
 						</aon:commandButton> 
 					</aon:div>	
-				</c:if>			
+				</aon:if>			
 			</aon:panelGrid>
 			
-			<c:if test="#{!skipFocusFirst}">
+			<aon:if test="#{!skipFocusFirst}">
 				<rich:jQuery timing="onload"
 					selector="##{searchContentID} :input:visible:enabled:first"
 					query="focus()" />
-			</c:if>					
+			</aon:if>					
 			
 		</aon:div>		
 		
@@ -53,8 +53,8 @@
 		
 	</aon:div>
 	
-	<c:if test="#{!skipHelpWindow}">
+	<aon:if test="#{!skipHelpWindow}">
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/searchHelp.xhtml" />
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

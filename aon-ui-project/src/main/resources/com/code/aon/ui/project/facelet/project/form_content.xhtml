@@ -32,14 +32,14 @@
 		renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 	
-	<c:if test="#{!skipRegistryLookup}">  
+	<aon:if test="#{!skipRegistryLookup}">  
 		<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 		<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 			<ui:param name="lookupTo" value="#{controller.to.registry}" />
 			<ui:param name="skipLabel" value="#{true}" />
 			<ui:param name="idRequired" value="#{true}" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 	
 	<aon:outputLabel for="Project_projectType" value="#{bundle.project_project_type}"/>
 	<aon:selectOneMenu id="Project_projectType"

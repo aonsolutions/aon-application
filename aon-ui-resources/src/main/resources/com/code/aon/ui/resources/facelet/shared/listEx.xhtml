@@ -14,7 +14,7 @@
 			toggleOnClick="#{rowSelectorToggleOnClick}" immediate="#{rowSelectorImmediate}"
 			focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
 
-		<c:if test="#{!skipSelectButton}">
+		<aon:if test="#{!skipSelectButton}">
 			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<aon:commandLink id="#{dataTableId}-selectButton" 
 					styleClass="aon-icon2 #{(skipEditSelectedTo)?'aon-icon-shield':'aon-icon-rowSelector'}"
@@ -34,18 +34,18 @@
 					<ui:insert name="selectFooterContent"/>
 				</f:facet>
 			</aon:column>
-		</c:if>
+		</aon:if>
 
 		<ui:insert name="columns"/>
 
 	</aon:dataTable>
 	
-	<c:if test="#{!skipFocusFirst}">
+	<aon:if test="#{!skipFocusFirst}">
 		<rich:jQuery selector="##{dataTableId} .aon-table-row-link:first" timing="onload"
 			query="focus().addClass('keyup-patch').parent().parent().addClass('aon-table-row-hover')" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!skipSelectButton}">
+	<aon:if test="#{!skipSelectButton}">
 		<rich:jQuery name="#{dataTableId}FocusFirst" selector="##{dataTableId} a:first"
 			timing="onJScall" query="focus()" />		
 		<rich:jQuery name="#{dataTableId}SelectRow" timing="onJScall"
@@ -75,13 +75,13 @@
 						}
 					}
 	    		})" />
-	</c:if>
+	</aon:if>
 
 	<ui:insert name="additionalDataTableContent"/>
 
-	<c:if test="#{showDataScroller}">
+	<aon:if test="#{showDataScroller}">
 		<aon:dataScroller for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();"
 			rowCount="#{dataModel.rowCount}" page="#{controller.page}" pageSize="#{rows}" />
-	</c:if>	
+	</aon:if>	
 
 </ui:composition>

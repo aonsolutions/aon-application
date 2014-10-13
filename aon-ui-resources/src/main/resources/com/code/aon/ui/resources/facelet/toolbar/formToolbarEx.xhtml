@@ -11,7 +11,7 @@
 			<aon:outputText value="&#160;" rendered="#{skipEditTo}"
 				title="#{bundle.aon_inherited_row}"
 				styleClass="aon-icon2 aon-icon-shield" />																
-			<c:if test="#{!skipSaveButton and !skipEditTo}">		
+			<aon:if test="#{!skipSaveButton and !skipEditTo}">		
 				<aon:commandButton id="#{toolbarID}-save"
 					title="#{bundle.aon_key_save_accelerator}"
 					value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
@@ -20,8 +20,8 @@
 					onclick="#{saveOnClick}" oncomplete="#{saveOnComplete}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
-			</c:if>
-			<c:if test="#{!skipCancelButton}">			
+			</aon:if>
+			<aon:if test="#{!skipCancelButton}">			
 				<aon:confirmButton id="#{toolbarID}-cancel"
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
@@ -32,8 +32,8 @@
 					confirmActionListener="#{cancelActionListener}"
 					confirmAction="#{cancelAction}"
 					accesskey="#{bundle.aon_key_cancel}" />
-			</c:if>								
-			<c:if test="#{!skipRemoveButton and !skipEditTo}">				
+			</aon:if>								
+			<aon:if test="#{!skipRemoveButton and !skipEditTo}">				
 				<aon:confirmButton id="#{toolbarID}-remove"
 					title="#{bundle.aon_key_remove_accelerator}"
 					value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
@@ -46,8 +46,8 @@
 					confirmOnClick="#{removeOnClick}"
 					confirmOnComplete="#{removeOnComplete}"
 					accesskey="#{bundle.aon_key_remove}" />
-			</c:if>
-			<c:if test="#{!skipSearchButton}">			
+			</aon:if>
+			<aon:if test="#{!skipSearchButton}">			
 				<aon:commandButton id="#{toolbarID}-search" 
 					title="#{bundle.aon_key_search_accelerator}"
 					value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
@@ -55,8 +55,8 @@
 					action="#{searchAction}" actionListener="#{searchActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"
 					accesskey="#{bundle.aon_key_search}" />
-			</c:if>
-			<c:if test="#{!skipResetButton}">								
+			</aon:if>
+			<aon:if test="#{!skipResetButton}">								
 				<aon:commandButton id="#{toolbarID}-reset"
 					title="#{bundle.aon_key_new_accelerator}"
 					value="#{resetLabel}" reRender="#{resetButtonReRender}"
@@ -64,8 +64,8 @@
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
-			</c:if>															
-			<c:if test="#{!skipBackButton}">								
+			</aon:if>															
+			<aon:if test="#{!skipBackButton}">								
 				<aon:commandButton id="#{toolbarID}-back"
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{controller.backAction == null ? bundle.aon_list : bundle.aon_back}" reRender="#{backButtonReRender}"
@@ -74,11 +74,11 @@
 					actionListener="#{backActionListener}"
 					action="#{backAction}"
 					accesskey="#{bundle.aon_key_cancel}" />
-			</c:if>															
+			</aon:if>															
 				
 			<ui:insert name="beforeSpinToolbarContent"/>
 			
-			<c:if test="#{showMoreMenu}">
+			<aon:if test="#{showMoreMenu}">
 				<aon:dropDownMenu value="#{bundle.aon_more2}"
 				 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
 		             <f:facet name="label">
@@ -90,19 +90,19 @@
 		             </f:facet>			
 		             <ui:insert name="moreMenuContent"/>		                
 				</aon:dropDownMenu>			
-			</c:if>				
+			</aon:if>				
 				
-			<c:if test="#{(!skipSpin) and (controller != null)}">
+			<aon:if test="#{(!skipSpin) and (controller != null)}">
 				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}"
 					action="#{saveAction}" rendered="#{!formNew}"
 					style="float:right;margin-right:0;" />
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{!skipFocusFirst}">
+			<aon:if test="#{!skipFocusFirst}">
 				<rich:jQuery timing="onload"
 					selector=":input:visible:enabled:not(:button):not(.aon-skip-focus):first"
 					query="focus()" />
-			</c:if>								
+			</aon:if>								
 		</ui:define>
 	</ui:decorate>
 	

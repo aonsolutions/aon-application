@@ -40,7 +40,7 @@
 							</f:facet>
 						</aon:column>
 						
-						<c:if test="#{company.EInvoice}">
+						<aon:if test="#{company.EInvoice}">
 							<aon:column alias="Offer.signed"
 								styleClass="aon-text-center">
 								<f:facet name="header">
@@ -53,7 +53,7 @@
 									title="#{bundle.sign_sign_pending}"
 									styleClass="aon-icon aon-icon-unsigned" />
 							</aon:column>
-						</c:if>						
+						</aon:if>						
 					</ui:define>
 				</ui:decorate>
 

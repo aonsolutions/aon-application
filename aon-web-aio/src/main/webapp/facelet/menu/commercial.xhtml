@@ -18,7 +18,7 @@
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
 					<aon:panelGroup>	
-						<c:if test="#{aonRole.commercialOperator}">
+						<aon:if test="#{aonRole.commercialOperator}">
 							<aon:panelGrid id="group_commercial_agenda"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-commercial aon-direct-access-panel">
@@ -38,17 +38,17 @@
 											actionListener="#{commercialTracking.onEditSearch}"
 											value="#{bundle.commercial_tracking_module}" />
 									</aon:div>
-									<c:if test="#{aonRole.config}">
+									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="commercialActivity"
 												action="commercialActivity"
 												actionListener="#{commercialActivity.onSearch}" 
 												value="#{bundle.commercial_activity_module}" />
 										</aon:div>
-									</c:if>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 						
 						<aon:panelGrid id="group_commercial_commercial"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -69,14 +69,14 @@
 										actionListener="#{sales.onEditSearch}"
 										value="#{bundle.sales_module}" />
 								</aon:div>
-								<c:if test="#{aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialTerm"
 											action="commercialTerm"
 											actionListener="#{commercialTerm.onSearch}" 
 											value="#{bundle.commercial_term_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -86,7 +86,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_master_tables}" />
 							</f:facet>
-							<c:if test="#{aonRole.commercialOperator}">
+							<aon:if test="#{aonRole.commercialOperator}">
 								<aon:div styleClass="aon-direct-access-list">							
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="target-commercial" 
@@ -108,10 +108,10 @@
 											value="#{bundle.seller_module}" />
 									</aon:div>
 								</aon:div>								
-							</c:if>							
+							</aon:if>							
 						</aon:panelGrid>						
 
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_commercial_survey"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-task">
@@ -139,9 +139,9 @@
 									</aon:div>								
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{aonRole.config}">
+						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_commercial_templates"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
@@ -165,12 +165,12 @@
 									</aon:div>
 								</aon:div>							
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 
 					</aon:panelGroup>					
 
 					<aon:panelGroup>
-						<c:if test="#{aonRole.statisticsOperator}">
+						<aon:if test="#{aonRole.statisticsOperator}">
 							<aon:panelGrid id="group_statistics_mando"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-task aon-direct-access-panel">
@@ -265,9 +265,9 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{aonRole.admin}">
+						<aon:if test="#{aonRole.admin}">
 							<aon:panelGrid id="group_agent_comisiones"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-warehouse aon-direct-access-panel">
@@ -301,7 +301,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>								
+						</aon:if>								
 						
 					</aon:panelGroup>					
 					

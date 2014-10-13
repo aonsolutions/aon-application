@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showAvailableClauses">
-		<c:if test="#{contractClause.showAvailableClauses}">
+		<aon:if test="#{contractClause.showAvailableClauses}">
 			<rich:modalPanel id="showAvailableClausesModalPanel" minHeight="300"
 				minWidth="725" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -68,6 +68,6 @@
 					</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

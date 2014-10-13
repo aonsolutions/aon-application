@@ -14,7 +14,7 @@
 	<aon:outputText value="#{bundle.aon_company_document}" />
 	<aon:outputText value="#{communicationCenter.target.registry.document}" />
 		
-	<c:if test="#{communicationCenter.mainAddress != null}">
+	<aon:if test="#{communicationCenter.mainAddress != null}">
 		<aon:outputText value="#{bundle.aon_address}" />
 		<aon:outputText value="#{communicationCenter.fullAddress}" /> 
 		
@@ -32,7 +32,7 @@
 			rendered="#{communicationCenter.mainAddress.geozone != null}" />
 		<aon:outputText value="#{communicationCenter.mainAddress.geozone.name}"
 			rendered="#{communicationCenter.mainAddress.geozone != null}" />
-	</c:if>
+	</aon:if>
 
 	<aon:outputText value="#{bundle.aon_phone}"
 		rendered="#{communicationCenter.phone != null}" />								

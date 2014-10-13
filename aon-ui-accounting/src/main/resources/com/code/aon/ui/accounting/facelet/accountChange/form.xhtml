@@ -84,14 +84,14 @@
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}" />
 
-							<c:if test="#{aonRole.confidentiality}">
+							<aon:if test="#{aonRole.confidentiality}">
 								<aon:outputLabel for="AccountEntryDetail_accountEntry_securityLevel"
 										value="#{bundle.aon_confidential}" />
 								<aon:selectOneRadio id="AccountEntryDetail_accountEntry_securityLevel"
 									value="#{accountChange.securityLevel}">
 									<f:selectItems value="#{commonCollections.confidentialValues}" />
 								</aon:selectOneRadio>				
-							</c:if>
+							</aon:if>
 
 							<aon:outputLabel for="AccountEntryDetail_accountEntry_concept"
 								value="#{bundle.aon_concept}" />

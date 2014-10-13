@@ -37,7 +37,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!catalogue.nevv}">
+				<aon:if test="#{!catalogue.nevv}">
 					<aon:panelTabSet id="catalogueTab">
 
 						<aon:panelTab id="catalogue_items" label="#{bundle.aon_role_product}">
@@ -52,14 +52,14 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<c:if test="#{aonConfiguration.bean.catalogue.showEcommerceData}">
+						<aon:if test="#{aonConfiguration.bean.catalogue.showEcommerceData}">
 							<aon:panelTab id="ecommerceEccatalogue"   label="#{bundle.product_eccatalogue}" >
 								<ui:include	src="/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/tab_grid.xhtml" />
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 
 			</aon:div>
 		</aon:form>

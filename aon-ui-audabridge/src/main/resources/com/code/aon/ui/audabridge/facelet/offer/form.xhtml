@@ -84,18 +84,18 @@
 
 				</aon:panelGrid>
 				<aon:div id="calculationDataContainer">		
-					<c:if test="#{audabridgeOffer.calculationData != null}">
+					<aon:if test="#{audabridgeOffer.calculationData != null}">
 						<ui:include src="/com/code/aon/ui/audabridge/facelet/offer/assessment.xhtml">
 							<ui:param name="calculationData" value="#{audabridgeOffer.calculationData}" />
 						</ui:include>
-					</c:if>
+					</aon:if>
 				</aon:div>				
 			</aon:div>
 		</aon:form>
 		<aon:div id="offerCreationContainer">
-			<c:if test="#{audabridgeOffer.showOfferCreationPanel}">
+			<aon:if test="#{audabridgeOffer.showOfferCreationPanel}">
 				<ui:include src="/com/code/aon/ui/audabridge/facelet/offer/offer.xhtml" />
-			</c:if>				
+			</aon:if>				
 		</aon:div>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />

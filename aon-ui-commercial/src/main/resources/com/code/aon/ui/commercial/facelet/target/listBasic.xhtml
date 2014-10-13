@@ -8,12 +8,12 @@
 
 <ui:composition>
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="aliasPreffix" value="#{lookup.pojoShortName}"/>
-	</c:if>
-	<c:if test="#{lookup == null}">
+	</aon:if>
+	<aon:if test="#{lookup == null}">
 		<ui:param name="aliasPreffix" value="#{controller.aliasPreffix}"/>
-	</c:if>
+	</aon:if>
 		
 	<aon:column alias="#{aliasPreffix}.id"
 		styleClass="aon-editDataTable-numberColumn aon-width-80">

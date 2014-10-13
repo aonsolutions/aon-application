@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRecoverTicketWindow">
-		<c:if test="#{invoiceController.showRecoverTicketWindow}">
+		<aon:if test="#{invoiceController.showRecoverTicketWindow}">
 			<rich:modalPanel id="recoverTicketModalPanel" 
 				minHeight="200" minWidth="420" zindex="90"
 				showWhenRendered="#{invoiceController.showRecoverTicketWindow}">
@@ -80,7 +80,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

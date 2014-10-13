@@ -34,7 +34,7 @@
 						
 			<aon:div id="backupContent" styleClass="aon-scroll-area">
 		
-				<c:if test="#{!backup.backupAvailable}">
+				<aon:if test="#{!backup.backupAvailable}">
 				
 					<aon:div styleClass="aon-note aon-margin-bottom">
 						<aon:div styleClass="aon-note-internal">
@@ -48,15 +48,15 @@
 										
 					<aon:panelGrid columns="2">
 	
-						<c:if test="#{backup.showIncludeParentDomain}">						
+						<aon:if test="#{backup.showIncludeParentDomain}">						
 							<aon:outputLabel value="#{bundle.admin_backup_include_parent}" 
 								for="Backup_parentDomain"/>
 							<aon:selectBooleanCheckbox id="Backup_parentDomain"
 								value="#{backup.includeParentDomain}" />								
-						</c:if>
+						</aon:if>
 							
 					</aon:panelGrid>
-				</c:if>	
+				</aon:if>	
 		
 				<h:panelGrid styleClass="aon-width-400">
 					<rich:progressBar 
@@ -66,14 +66,14 @@
 						reRender="Backup_progressMessage" reRenderAfterComplete="aonContent">
 						<aon:outputText value="#{backup.progressValuePercent} %"/>
 					</rich:progressBar>
-					<c:if test="#{backup.enabledProgressBar}">
+					<aon:if test="#{backup.enabledProgressBar}">
 						<aon:div styleClass="aon-note-internal">
 							<aon:panelGroup>
 								<aon:outputText id="Backup_progressMessage"
 									 value="#{backup.progressMessage}"/>
 							</aon:panelGroup>
 						</aon:div>
-					</c:if>	
+					</aon:if>	
 				</h:panelGrid>
 			</aon:div>
 			

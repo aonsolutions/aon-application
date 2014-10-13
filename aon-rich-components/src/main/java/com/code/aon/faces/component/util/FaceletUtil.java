@@ -228,4 +228,20 @@ public class FaceletUtil {
 		requestMap.put(key, value);
 	}	
 
+	public static boolean getBoolean(FaceletContext ctx, TagAttribute test) {
+    	boolean b = false;
+        if (test.isLiteral()) {
+            b = Boolean.valueOf(test.getValue()).booleanValue();
+        } else {
+        	Object obj = test.getObject(ctx, Boolean.class);
+    		if (obj == null) {
+    			System.out.println("** ");
+    			System.out.println("** WARNING ** '" + test + "' evaluated to NULL!");
+    			System.out.println("** FIX IT!!");
+    		} else {
+    			b = ((Boolean) obj).booleanValue();
+    		}
+        }
+        return b;
+	}
 }

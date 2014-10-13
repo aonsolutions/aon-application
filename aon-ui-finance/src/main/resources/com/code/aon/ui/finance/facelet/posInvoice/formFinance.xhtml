@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{financeController.rowCount > 0}">
+	<aon:if test="#{financeController.rowCount > 0}">
 		<aon:div id="posFinanceContainer">
 			<aon:panel>
 				<f:facet name="header">
@@ -42,5 +42,5 @@
 				</ui:decorate>
 			</aon:panel>
 		</aon:div>
-	</c:if>
+	</aon:if>
 </ui:composition>

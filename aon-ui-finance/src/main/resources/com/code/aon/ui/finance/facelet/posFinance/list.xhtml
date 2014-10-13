@@ -48,16 +48,16 @@
 					<aon:outputText value="#{bundle.purchase_workplace}:" />
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 						value="#{posFinanceSearch.workPlace.description}" />
-					<c:if test="#{posFinanceSearch.pos.id != null}">
+					<aon:if test="#{posFinanceSearch.pos.id != null}">
 						<aon:outputText value="#{bundle.aon_module_pos}:" />
 						<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 							value="#{posFinanceSearch.pos.name}" />
-					</c:if>
-					<c:if test="#{posFinanceSearch.shift != null}">
+					</aon:if>
+					<aon:if test="#{posFinanceSearch.shift != null}">
 						<aon:outputText value="#{bundle.report_shift}:" />
 						<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 							value="#{posFinanceSearch.shift}" />
-					</c:if>
+					</aon:if>
 					<aon:outputText styleClass="aon-margin-left"
 						value="#{bundle.finance_payMethod}:" />
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
@@ -99,7 +99,7 @@
 								</aon:outputText>
 							</aon:column>
 					
-							<c:if test="#{posFinanceSearch.pos.id == null}">
+							<aon:if test="#{posFinanceSearch.pos.id == null}">
 								<aon:column alias="Finance.invoice&lt;posShift.pos.name" 
 									styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
@@ -107,9 +107,9 @@
 									</f:facet>
 									<aon:outputText value="#{to.invoice.posShift.pos.name}"/>
 								</aon:column>
-							</c:if>
+							</aon:if>
 					
-							<c:if test="#{posFinanceSearch.shift == null}">
+							<aon:if test="#{posFinanceSearch.shift == null}">
 								<aon:column alias="Finance.invoice&lt;posShift.shift"
 									styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
@@ -117,7 +117,7 @@
 									</f:facet>
 									<aon:outputText value="#{to.invoice.posShift.shift}"/>
 								</aon:column>
-							</c:if>
+							</aon:if>
 					
 							<aon:column alias="Finance.invoice&lt;referenceCode"
 								styleClass="aon-editDataTable-textColumn">
@@ -135,7 +135,7 @@
 								<aon:outputText value="#{to.invoice.registryName}" />
 							</aon:column>
 					
-							<c:if test="#{domainSwitcher.type == 'HOTEL'}">
+							<aon:if test="#{domainSwitcher.type == 'HOTEL'}">
 								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_source}" />
@@ -157,7 +157,7 @@
 										reRender="aonContent">
 									</aon:commandLink>
 								</aon:column>
-							</c:if>
+							</aon:if>
 	
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">

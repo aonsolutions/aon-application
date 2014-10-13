@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+	<aon:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel for="Allotment_hotel_id"
 			value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="Allotment_hotel_id"
@@ -15,7 +15,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel  
 		value="#{bundle.aon_start_date}" />
@@ -60,7 +60,7 @@
 		<f:selectItems value="#{pmsCollections.agencies}" />
 	</aon:selectOneMenu>
 
-	<c:if test="#{pmsCollections.agencyGroupsCount > 0}">
+	<aon:if test="#{pmsCollections.agencyGroupsCount > 0}">
 		<aon:outputLabel for="Allotment_agencyGroup" 
 			value="#{bundle.aon_group}" />
 		<aon:selectOneMenu id="Allotment_agencyGroup" 
@@ -69,7 +69,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.agencyGroups}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Allotment_remarks" 
 		value="#{bundle.aon_remark}" />

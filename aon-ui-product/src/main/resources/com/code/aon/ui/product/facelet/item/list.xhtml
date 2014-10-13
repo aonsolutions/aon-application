@@ -40,7 +40,7 @@
 						<ui:include
 							src="/com/code/aon/ui/product/facelet/item/listBasic.xhtml" />
 	
-						<c:if test="#{aonConfiguration.bean.product.showBrand}">
+						<aon:if test="#{aonConfiguration.bean.product.showBrand}">
 							<aon:column alias="Item.product.brand.name"
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
@@ -48,7 +48,7 @@
 								</f:facet>
 								<aon:outputText value="#{to.product.brand.name}" />
 							</aon:column>
-						</c:if>
+						</aon:if>
 	
 						<aon:column alias="Item.status"
 							styleClass="aon-editDataTable-textColumn">
@@ -58,7 +58,7 @@
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
 	
-						<c:if test="#{!aonConfiguration.bean.product.showSalesPrice}">
+						<aon:if test="#{!aonConfiguration.bean.product.showSalesPrice}">
 							<aon:column alias="Item.price"
 								styleClass="aon-editDataTable-numberColumn">
 								<f:facet name="header">
@@ -68,9 +68,9 @@
 									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 								</aon:outputText>
 							</aon:column>
-						</c:if>
+						</aon:if>
 	
-						<c:if test="#{aonConfiguration.bean.product.showSalesPrice}">
+						<aon:if test="#{aonConfiguration.bean.product.showSalesPrice}">
 							<aon:column styleClass="aon-editDataTable-numberColumn">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_sales_price}" />
@@ -79,7 +79,7 @@
 									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 								</aon:outputText>
 							</aon:column>
-						</c:if>
+						</aon:if>
 	
 					</ui:define>
 				</ui:decorate>	

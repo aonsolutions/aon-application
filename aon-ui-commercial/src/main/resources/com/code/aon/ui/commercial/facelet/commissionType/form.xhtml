@@ -26,7 +26,7 @@
 					<aon:inputText id="CommissionType_rate" value="#{commissionType.to.rate}" />
 				</aon:panelGrid>
 
-				<c:if test="#{!commissionType.nevv}">
+				<aon:if test="#{!commissionType.nevv}">
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
 							<aon:outputText value="#{bundle.commercial_commissions}"/>
@@ -63,7 +63,7 @@
 							</aon:div>
 						</aon:div>
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 	</ui:define>

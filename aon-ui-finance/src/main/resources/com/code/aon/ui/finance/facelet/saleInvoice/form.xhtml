@@ -23,14 +23,14 @@
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
 								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 								style="width: 14px;" reRender="showNewMessageWindow">
 							</aon:commandButton>
-						</c:if>
+						</aon:if>
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
@@ -42,7 +42,7 @@
 						</aon:htmlCommandLink>
 					</ui:define>
 					<ui:define name="moreMenuContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+						<aon:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:menuItem id="deliveryTransfer"
 								value="#{bundle.config_series_deliveries}"
 								immediate="#{true}" rendered="#{!saleInvoice.readOnly}"
@@ -52,7 +52,7 @@
 								<f:setPropertyActionListener target="#{saleInvoice.showDeliveryTransferWindow}"
 									value="#{true}" />
 							</aon:menuItem>
-						</c:if>
+						</aon:if>
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
@@ -74,7 +74,7 @@
 							<f:setPropertyActionListener target="#{saleInvoice.showRectificationWindow}"
 								value="#{true}" />
 						</aon:menuItem>
-						<c:if test="#{aonRole.accountingOperator}">
+						<aon:if test="#{aonRole.accountingOperator}">
 							<aon:menuItem id="record"
 								value="#{bundle.finance_record}"
 								actionListener="#{saleInvoice.onRecordInvoice}"
@@ -83,8 +83,8 @@
 								reRender="saleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						</c:if>
-						<c:if test="#{aonRole.accountingManager}">
+						</aon:if>
+						<aon:if test="#{aonRole.accountingManager}">
 							<aon:menuItem id="unrecord"
 								value="#{bundle.finance_unrecord}"
 								actionListener="#{saleInvoice.onUnrecordInvoice}"
@@ -93,7 +93,7 @@
 								reRender="saleInvoiceForm"
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						</c:if>
+						</aon:if>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{saleInvoice.signed or !certificate.signable}" />
@@ -134,7 +134,7 @@
 							<f:setPropertyActionListener target="#{saleInvoice.showRemarksWindow}"
 								value="#{true}" />							
 						</aon:menuItem>		
-						<c:if test="#{aonRole.accountingOperator}">
+						<aon:if test="#{aonRole.accountingOperator}">
 							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
 							<aon:menuItem id="fiscalInformation"
 								value="#{bundle.finance_fiscal_information}"
@@ -143,7 +143,7 @@
 								<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
 									value="#{true}" />							
 							</aon:menuItem>
-						</c:if>
+						</aon:if>
 								
 						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
 
@@ -189,7 +189,7 @@
 								</ui:define>
 							</ui:decorate>
 							<aon:div>
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
 										value="#{saleInvoice.to.confidential}"
 										rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
@@ -199,17 +199,17 @@
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{(saleInvoice.readOnly or !saleInvoiceFinance.allPending) and saleInvoice.to.confidential}" />
-								</c:if>
+								</aon:if>
 
-								<c:if test="#{company.EInvoice}">
+								<aon:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
 										rendered="#{!saleInvoice.nevv and saleInvoice.to.signed}"
 										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
-								</c:if>						
+								</aon:if>						
 
 								<aon:outputText value="#{saleInvoice.to.status}" rendered="#{saleInvoice.recorded}"/>
-								<c:if test="#{aonRole.accountingOperator and saleInvoice.recorded and saleInvoice.backAction != 'accountEntry_form'}">
+								<aon:if test="#{aonRole.accountingOperator and saleInvoice.recorded and saleInvoice.backAction != 'accountEntry_form'}">
 									<aon:commandLink immediate="true"
 											styleClass="aon-button-goto"
 											style="margin-left: 5px; padding-left: 17px;" 
@@ -217,7 +217,7 @@
 											action="accountEntry_form"
 											title="#{bundle.account_account_entry}: #{saleInvoice.accountEntryId}"
 											alt="#{bundle.account_account_entry}: #{saleInvoice.accountEntryId}" />
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
@@ -255,7 +255,7 @@
 					
 					<aon:outputLabel for="Invoice_taxDate" 
 						value="#{bundle.finance_tax_date}" />
-					<c:if test="#{aonRole.accountingOperator}">
+					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:selectInputDate id="Invoice_taxDate"
 							value="#{saleInvoice.to.taxDate}" required="true" 
 							disabled="#{saleInvoice.readOnly}"
@@ -267,10 +267,10 @@
 							<a4j:support ajaxSingle="true" event="onchanged"
 								reRender="Invoice_taxDate" />
 						</aon:selectInputDate>
-					</c:if>
-					<c:if test="#{!aonRole.accountingOperator}">
+					</aon:if>
+					<aon:if test="#{!aonRole.accountingOperator}">
 						<aon:outputText value="#{saleInvoice.to.taxDate}" />
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Customer_registry_document"
 						value="#{bundle.aon_company_document}" />
@@ -371,14 +371,14 @@
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
-						<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+						<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 							<aon:outputLabel for="Invoice_project_id"
 								value="#{bundle.aon_project}" />
-						</c:if>
-						<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
 							<aon:outputLabel for="Invoice_project_id"
 								value="#{bundle.tas_project_tas}" />
-						</c:if>
+						</aon:if>
 						<aon:div>
 							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{saleInvoice.to.project}" />
@@ -386,16 +386,16 @@
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipGoToButton" value="#{true}" />
 							</ui:include>
-							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+							<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
 									value="#{bundle.project_no_project_linked}"
 									rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id == null and saleInvoice.projectCount > 0}" />
-							</c:if>
-							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+							</aon:if>
+							<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
 									value="#{bundle.tas_no_projectTas_linked}"
 									rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id == null and saleInvoice.projectCount > 0}" />
-							</c:if>
+							</aon:if>
 							<aon:outputText styleClass="aon-bold"
 								value="#{saleInvoice.to.project.name}" 
 								rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id != null}" />
@@ -421,9 +421,9 @@
 					<aon:outputLabel value="#{bundle.aon_module_pos}" />
 					<aon:div styleClass="aon-bold">
 						<aon:outputText value="#{saleInvoice.to.posShift.pos.name}" />
-						<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+						<aon:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 							<aon:outputText value=" (#{saleInvoice.to.posShift.pos.workPlace.description})" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 				</aon:panelGrid>
@@ -481,12 +481,12 @@
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formDetail.xhtml">
 					<ui:param name="invoiceController" value="#{saleInvoice}" />
 					<ui:param name="detailController" value="#{saleInvoiceDetail}" />
-					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+					<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 						<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-					</c:if>
-					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+					</aon:if>
+					<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
 						<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-					</c:if>
+					</aon:if>
 				</ui:include>
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/formFinance.xhtml">
@@ -517,12 +517,12 @@
 			<ui:param name="detailReRender" value="invoiceDetails" />
 			<aon:methodParam name="detailActionListener" value="#{saleInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{saleInvoiceDetail.invoiceDetail.project}" />
-			<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+			<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-			</c:if>
+			</aon:if>
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
@@ -532,12 +532,12 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 			<ui:param name="attachmentController" value="#{saleInvoiceAttach}" />
 		</ui:include>
-		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+		<aon:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 			<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/delivery/modalTransfer.xhtml" />
-		</c:if>
-		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+		</aon:if>
+		<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		</c:if>
+		</aon:if>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="saleInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{saleInvoiceSigner.onSign}" type="actionListener" />

@@ -4,7 +4,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<c:if test="#{offer.selectedTab == controller.beanName}">
+	<aon:if test="#{offer.selectedTab == controller.beanName}">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="skipResetButton" value="#{offer.readOnly}" />
 			<ui:param name="skipLineEdition" value="#{offer.readOnly}" />
@@ -76,6 +76,6 @@
 	
 			</ui:define>
 		</ui:decorate>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

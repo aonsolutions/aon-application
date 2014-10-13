@@ -47,7 +47,7 @@
 							<aon:outputText value="#{to.tagList}" />
 						</aon:column>
 	
-						<c:if test="#{aonConfiguration.bean.product.showBrand}">
+						<aon:if test="#{aonConfiguration.bean.product.showBrand}">
 							<aon:column alias="Product.brand.name"
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
@@ -55,7 +55,7 @@
 								</f:facet>
 								<aon:outputText value="#{to.brand.name}" />
 							</aon:column>
-						</c:if>
+						</aon:if>
 	
 						<aon:column alias="Product.status"
 							styleClass="aon-editDataTable-textColumn aon-width-100">

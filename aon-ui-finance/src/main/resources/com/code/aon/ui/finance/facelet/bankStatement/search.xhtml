@@ -106,7 +106,7 @@
 						value="#{bankStatementSearch.lotNumber}"
 						size="5" />
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="BankStatement_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="BankStatement_securityLevel"
@@ -114,7 +114,7 @@
 							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 						</aon:selectOneRadio>				
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="BankStatement_status" 
 						value="#{bundle.aon_status}"/>

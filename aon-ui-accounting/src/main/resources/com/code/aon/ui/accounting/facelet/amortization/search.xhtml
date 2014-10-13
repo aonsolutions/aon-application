@@ -32,7 +32,7 @@
 					<aon:inputText id="Amortization_description" size="50"
 						valueChangeListener="#{amortization.addExpression}" />
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="Amortization_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="Amortization_securityLevel"
@@ -41,7 +41,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem value="#{null}" itemLabel="#{bundle.aon_all}"/>
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Amortization_comment"
 						value="#{bundle.aon_comment}" />

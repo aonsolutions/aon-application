@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showContractSalaryInfoWindow">
-		<c:if test="#{contract.showContractSalaryInfoWindow}">
+		<aon:if test="#{contract.showContractSalaryInfoWindow}">
 			<rich:modalPanel id="salaryInfoModalPanel" 
 				height="600" width="1000"
 				showWhenRendered="true" zindex="90"
@@ -761,6 +761,6 @@
 					</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

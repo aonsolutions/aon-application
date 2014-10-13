@@ -39,7 +39,7 @@
 							<aon:outputText value="#{to.pos.workPlace.description}" />
 						</aon:column>
 
-						<c:if test="#{companyCollections.departmentsCount > 0}">
+						<aon:if test="#{companyCollections.departmentsCount > 0}">
 							<aon:column alias="PosShift.pos.department.name" 
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
@@ -47,7 +47,7 @@
 								</f:facet>
 								<aon:outputText value="#{to.pos.department.name}" />
 							</aon:column>
-						</c:if>
+						</aon:if>
 
 						<aon:column alias="PosShift.pos.name" 
 							styleClass="aon-editDataTable-textColumn">

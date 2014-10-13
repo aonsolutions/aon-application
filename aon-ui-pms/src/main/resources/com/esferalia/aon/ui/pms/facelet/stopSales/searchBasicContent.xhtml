@@ -13,7 +13,7 @@
 		valueChangeListener="#{controller.addExpression}"
 		size="8" />
 
-	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+	<aon:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel for="StopSales_hotel_id"
 			value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="StopSales_hotel_id"
@@ -21,7 +21,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel  
 		value="#{bundle.aon_start_date}" />

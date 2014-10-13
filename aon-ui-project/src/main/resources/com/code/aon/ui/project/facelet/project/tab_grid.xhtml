@@ -18,14 +18,14 @@
 				<aon:outputText value="#{to.name}" />
 			</aon:column>
 
-			<c:if test="#{!skipAssignedColumn}">
+			<aon:if test="#{!skipAssignedColumn}">
 				<aon:column alias="Project.registry.name" styleClass="aon-editDataTable-textColumn aon-width-auto">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.project_assigned}" />
 					</f:facet>
 					<aon:outputText value="#{to.registry.fullName}" />
 				</aon:column>
-			</c:if>
+			</aon:if>
 
 			<aon:column alias="Project.alias" styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">

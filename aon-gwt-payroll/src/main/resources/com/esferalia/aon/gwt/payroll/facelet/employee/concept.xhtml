@@ -62,7 +62,7 @@
 							<ui:param name="rowSelectorReRender" value="#{controller.beanName}ConceptsContent" />
 
 							<ui:define name="columns">
-								<c:if test="#{!skipCode}">
+								<aon:if test="#{!skipCode}">
 									<aon:column alias="#{controller.beanName}.code"
 										styleClass="aon-editDataTable-textColumn">
 										<f:facet name="header">
@@ -70,9 +70,9 @@
 										</f:facet>
 										<aon:outputText value="#{to.code}" />
 									</aon:column>
-								</c:if>
+								</aon:if>
 
-								<c:if test="#{!skipType}">
+								<aon:if test="#{!skipType}">
 									<aon:column alias="#{controller.beanName}.type"
 										styleClass="aon-editDataTable-textColumn">
 										<f:facet name="header">
@@ -80,7 +80,7 @@
 										</f:facet>
 										<aon:outputText value="#{to.type}" />
 									</aon:column>
-								</c:if>
+								</aon:if>
 
 								<aon:column alias="#{controller.beanName}.description"
 									styleClass="aon-editDataTable-textColumn">

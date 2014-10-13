@@ -16,7 +16,7 @@
 			<aon:componentGroup
 				family="javax.faces.Command"
 				method="#{globalConfig.highlightSelectedOption}">	
-				<c:if test="#{aonRole.config}">	
+				<aon:if test="#{aonRole.config}">	
 					<rich:panelBarItem id="general"
 						label="#{bundle.admin_global_panel_general}">
 						<aon:div styleClass="aon-direct-access-list">
@@ -42,7 +42,7 @@
 									actionListener="#{companyAddress.onCancel}"
 									value="#{bundle.registry_addresses}" />
 							</aon:div>
-							<c:if test="#{!((aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata'])}">
+							<aon:if test="#{!((aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata'])}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="workplaces" 
 										reRender="configPanelBar,configContent"
@@ -50,8 +50,8 @@
 										actionListener="#{companyWorkPlace.onCancel}"
 										value="#{bundle.company_workplaces}" />
 								</aon:div>
-							</c:if>
-							<c:if test="#{(aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata']}">
+							</aon:if>
+							<aon:if test="#{(aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata']}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payrollWorkplaces" 
 										reRender="configPanelBar,configContent"
@@ -70,8 +70,8 @@
 										<aon:actionListener method="#{enterpriseActivity.onCancel}" />
 									</aon:commandLink>
 								</aon:div>
-							</c:if>
-							<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
+							</aon:if>
+							<aon:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="digitalCertificates" 
 										reRender="configPanelBar,configContent"
@@ -79,7 +79,7 @@
 										actionListener="#{companyCertificate.onCancel}"
 										value="#{bundle.registry_digital_certificates}" />
 								</aon:div>
-							</c:if>
+							</aon:if>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="recordData" 
 									reRender="configPanelBar,configContent"
@@ -87,7 +87,7 @@
 									actionListener="#{companyRecordData.onCancel}"
 									value="#{bundle.registry_rd_module}" />
 							</aon:div>
-							<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
+							<aon:if test="#{aonConfiguration.bean.company.showDirStaff}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="representatives" 
 										reRender="configPanelBar,configContent"
@@ -95,7 +95,7 @@
 										actionListener="#{companyDirStaff.onCancel}"
 										value="#{bundle.admin_global_mercantile_representatives}" />
 								</aon:div>
-							</c:if>						
+							</aon:if>						
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="email"
 									reRender="configPanelBar,configContent"
@@ -105,18 +105,18 @@
 									<aon:actionListener method="#{adminMain.onInitSignature}" />
 								</aon:commandLink>
 							</aon:div>
-							<c:if test="#{companyCustomize.show}">
+							<aon:if test="#{companyCustomize.show}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="companyCustomize" 
 										action="companyCustomize"
 										actionListener="#{companyCustomize.onInit}"
 										value="#{bundle.aon_oem}" />
 								</aon:div>
-							</c:if>						
+							</aon:if>						
 						</aon:div>
 					</rich:panelBarItem>
-				</c:if>
-				<c:if test="#{aonRole.admin or aonRole.config}">
+				</aon:if>
+				<aon:if test="#{aonRole.admin or aonRole.config}">
 					<rich:panelBarItem id="parameters"
 						label="#{bundle.admin_global_panel_parameters}">
 						<aon:div styleClass="aon-direct-access-list">
@@ -126,7 +126,7 @@
 									action="globalConfig_form"
 									value="#{bundle.admin_global_print_parameters_short}" />
 							</aon:div>
-							<c:if test="#{actionDenied.moduleEnabled['pos']}">
+							<aon:if test="#{actionDenied.moduleEnabled['pos']}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="posParameters" 
 										reRender="configPanelBar,configContent"
@@ -134,9 +134,9 @@
 										actionListener="#{posInvoiceParams.onInit}"
 										value="#{bundle.admin_global_finance_parameters_short}" />
 								</aon:div>
-							</c:if>
-							<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-								<c:if test="#{aonRole.fiscal}">
+							</aon:if>
+							<aon:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{aonRole.fiscal}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fiscalParams"
 											reRender="configPanelBar,configContent"
@@ -144,8 +144,8 @@
 											actionListener="#{fiscalParams.onLoad}"
 											value="#{bundle.admin_global_fiscal_parameters_short}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.accountingManager}">
+								</aon:if>
+								<aon:if test="#{aonRole.accountingManager}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accountingParams"
 											reRender="configPanelBar,configContent"
@@ -153,8 +153,8 @@
 											actionListener="#{accAppParams.onLoad}"
 											value="#{bundle.admin_global_accounting_parameters_short}" />
 									</aon:div>
-								</c:if>
-								<c:if test="#{aonRole.fiscal or aonRole.accountingManager}">
+								</aon:if>
+								<aon:if test="#{aonRole.fiscal or aonRole.accountingManager}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="conectaParams"
 											reRender="configPanelBar,configContent"
@@ -162,9 +162,9 @@
 											actionListener="#{exporter.onConfig}"
 											value="#{bundle.finance_conecta_module}" />
 									</aon:div>
-								</c:if>
-							</c:if>
-							<c:if test="#{(aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata']}">
+								</aon:if>
+							</aon:if>
+							<aon:if test="#{(aonRole.payroll and actionDenied.moduleEnabled['payroll']) or actionDenied.moduleEnabled['contrata']}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payrollParameters" 
 										reRender="configPanelBar,configContent"
@@ -183,8 +183,8 @@
 										<aon:actionListener method="#{enterpriseClause.onCancel}" />
 									</aon:commandLink>
 								</aon:div>						
-							</c:if>
-							<c:if test="#{aonRole.config and (actionDenied.moduleEnabled['infoweb'] or (actionDenied.moduleEnabled['marketing'] and aonRole.commercialOperator))}">
+							</aon:if>
+							<aon:if test="#{aonRole.config and (actionDenied.moduleEnabled['infoweb'] or (actionDenied.moduleEnabled['marketing'] and aonRole.commercialOperator))}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="publishParameters" 
 										reRender="configPanelBar,configContent"
@@ -192,8 +192,8 @@
 										actionListener="#{publishParameter.onInit}"
 										value="#{bundle.infoweb_publish_group}" />
 								</aon:div>
-							</c:if>						
-							<c:if test="#{dehOnline.showConfiguration and (!domainSwitcher.childDomain)}">
+							</aon:if>						
+							<aon:if test="#{dehOnline.showConfiguration and (!domainSwitcher.childDomain)}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="dehOnlineParameters" 
 										reRender="configPanelBar,configContent"
@@ -201,11 +201,11 @@
 										actionListener="#{dehOnline.onInit}"
 										value="#{bundle.aon_external_dehOnline}" />
 								</aon:div>
-							</c:if>						
+							</aon:if>						
 						</aon:div>			
 					</rich:panelBarItem>
-				</c:if>
-				<c:if test="#{aonRole.admin}">
+				</aon:if>
+				<aon:if test="#{aonRole.admin}">
 					<rich:panelBarItem id="security"
 						label="#{bundle.admin_global_panel_security}">
 						<aon:div styleClass="aon-direct-access-list-element">
@@ -217,7 +217,7 @@
 								<aon:actionListener method="#{domainUser.onSearch}" />
 							</aon:commandLink>						
 						</aon:div>					
-						<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or (aonRole.sysAdmin and domainSwitcher.childDomain)}">
+						<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain or (aonRole.sysAdmin and domainSwitcher.childDomain)}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="overloadUsers"
 									action="userOverload_list"
@@ -226,7 +226,7 @@
 									<aon:actionListener method="#{userOverload.onInit}" />
 								</aon:commandLink>						
 							</aon:div>
-						</c:if>					
+						</aon:if>					
 						<aon:div styleClass="aon-direct-access-list-element">
 							<aon:commandLink id="workGroups"
 								reRender="configPanelBar,configContent"
@@ -249,7 +249,7 @@
 								actionListener="#{scope.onSearch}"
 								value="#{bundle.config_scopes}" />
 						</aon:div>
-						<c:if test="#{auditSession.showAudit}">
+						<aon:if test="#{auditSession.showAudit}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="auditSession"
 									action="auditSession_search"
@@ -258,8 +258,8 @@
 									<aon:actionListener method="#{auditSession.onEditSearch}" />
 								</aon:commandLink>
 							</aon:div>
-						</c:if>
-						<c:if test="#{aonRole.sysAdmin}">
+						</aon:if>
+						<aon:if test="#{aonRole.sysAdmin}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="domainApplications"
 									action="domainApplication_list"
@@ -268,20 +268,20 @@
 									<aon:actionListener method="#{domainApplication.onSearch}" />
 								</aon:commandLink>						
 							</aon:div>
-						</c:if>																		
+						</aon:if>																		
 					</rich:panelBarItem>
 				
 					<rich:panelBarItem id="booking"
 						label="#{bundle.admin_global_panel_booking}">
-						<c:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
+						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="adminDomain"
 									action="adminDomain_form"
 									actionListener="#{adminDomain.onInit}"
 									value="#{bundle.admin_domain_management}" />
 							</aon:div>
-						</c:if>
-						<c:if test="#{domainSwitcher.parentDomainUserInChildDomain and globalConfig.portalRegistered}">
+						</aon:if>
+						<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain and globalConfig.portalRegistered}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="portalAccess"
 									action="portalAccess_form"
@@ -289,9 +289,9 @@
 									value="#{bundle.admin_global_portal_access}" >
 								</aon:commandLink>						
 							</aon:div>
-						</c:if>													
+						</aon:if>													
 					</rich:panelBarItem>
-				</c:if>
+				</aon:if>
 			</aon:componentGroup>
 		</rich:panelBar>
 	</aon:form>

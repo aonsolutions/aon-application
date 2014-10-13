@@ -50,13 +50,13 @@
 					<aon:outputLabel for="authorizationKey" 
 						value="Clave autorizacion" />
 					
-					<c:if test="#{payrollAppParams.winsuiteAuthorizationDefined or (!payrollAppParams.winsuiteAuthorizationDefined and !payrollAppParams.parentWinsuiteAuthorizationDefined)}">
+					<aon:if test="#{payrollAppParams.winsuiteAuthorizationDefined or (!payrollAppParams.winsuiteAuthorizationDefined and !payrollAppParams.parentWinsuiteAuthorizationDefined)}">
 						<aon:inputText id="authorizationKey" size="10" maxlength="8"
 							value="#{payrollAppParams.parameters['PAY_authorization_key_PAY'].value}" >
 							<f:validateLength maximum="8" />
 						</aon:inputText>
-					</c:if>						
-					<c:if test="#{!payrollAppParams.winsuiteAuthorizationDefined and payrollAppParams.parentWinsuiteAuthorizationDefined}">
+					</aon:if>						
+					<aon:if test="#{!payrollAppParams.winsuiteAuthorizationDefined and payrollAppParams.parentWinsuiteAuthorizationDefined}">
 						<aon:div>
 							<aon:outputText value="DATOS DEFINIDOS EN EL ENTORNO" styleClass="aon-bold" />
 							<aon:commandButton ajaxSingle="#{true}"
@@ -66,7 +66,7 @@
 								actionListener="#{payrollAppParams.onRedefineWinsuiteAuthorization}" 
 								reRender="Winsuite-authorizationKey" />
 						</aon:div>
-					</c:if>
+					</aon:if>
 						
 				</aon:panelGrid>
 				
@@ -77,7 +77,7 @@
 					<aon:panelGrid columns="2" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-odd aon-width-200, aon-panelGrid-even aon-width-auto">
 						
-						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:outputLabel for="mutual" 
 								value="#{bundle.payroll_mutual_at_ep}" />
 							<aon:selectOneMenu id="mutual"
@@ -93,7 +93,7 @@
 								<f:selectItem itemLabel="Pago electrónico" value="#{null}" />
 								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 							</aon:selectOneMenu>
-						</c:if>
+						</aon:if>
 						
 						<aon:outputText value="Presentación cotizaciones (FAN)" />
 						<aon:div>

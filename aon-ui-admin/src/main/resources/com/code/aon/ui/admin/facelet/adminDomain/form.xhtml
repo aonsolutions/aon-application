@@ -16,14 +16,14 @@
 				<ui:param name="toolbarID" value="adminDomainToolbar" />
 				<ui:param name="toolbarTitle" value="#{bundle.admin_domain_management}" />
 				<ui:define name="toolbarContent">
-					<c:if test="#{adminMain.termsOfServiceAccepted or aonRole.sysAdmin}" >
+					<aon:if test="#{adminMain.termsOfServiceAccepted or aonRole.sysAdmin}" >
 						<aon:commandButton id="contract"
 							title="#{bundle.aon_key_save_accelerator}"
 							value="#{bundle.admin_domain_contract}"
 							action="adminDomain_form" actionListener="#{adminDomain.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />						
-					</c:if>						
+					</aon:if>						
 					<aon:htmlCommandLink id="showTermsOfService"
 						rendered="#{!aonRole.sysAdmin}"
 						value="#{bundle.admin_service_terms}" target="_blank"
@@ -57,27 +57,27 @@
 							
 					<aon:outputLabel for="Domain_type"
 						value="#{bundle.admin_domain_type}" />
-					<c:if test="#{(!aonRole.sysAdmin) or (domainSwitcher.type == 'ADMIN')}">
+					<aon:if test="#{(!aonRole.sysAdmin) or (domainSwitcher.type == 'ADMIN')}">
 						<aon:inputText id="Domain_type" size="60" disabled="true"
 							value="#{adminDomain.to.type}" />
-					</c:if>
-					<c:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">						
+					</aon:if>
+					<aon:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">						
 						<aon:selectOneMenu id="Domain_type" 
 							required="true" value="#{adminDomain.to.type}">
 							<f:selectItems value="#{adminCollections.newDomainTypes}" />
 						</aon:selectOneMenu>		
-					</c:if>				
+					</aon:if>				
 							
-					<c:if test="#{aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain}">							
+					<aon:if test="#{aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain}">							
 						<aon:outputLabel for="Domain_owner"
 							value="#{bundle.admin_new_domain_owner}" />
 						<aon:inputText id="Domain_owner" size="90" maxlength="256"
 							title="#{bundle.admin_new_domain_owner_help}"
 							validator="#{adminDomain.ownerCheck}" required="true"
 							value="#{adminDomain.to.owner}" />
-					</c:if>									
+					</aon:if>									
 							
-					<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') and (!domainSwitcher.childDomain)}">
+					<aon:if test="#{(domainSwitcher.type == 'CONSULTANCY') and (!domainSwitcher.childDomain)}">
 						<aon:outputLabel for="Domain_externalApplications"
 							value="#{bundle.aon_external_applications}" />
 						<aon:div>
@@ -92,37 +92,37 @@
 							<aon:outputLabel for="ExternalApplication_Tirant"
 								value="#{bundle.aon_external_tirant}" />						
 						</aon:div>
-					</c:if>
+					</aon:if>
 					
 					<aon:outputLabel for="Domain_name"
 						value="#{bundle.admin_domain_url}" />
-					<c:if test="#{!aonRole.sysAdmin}">
+					<aon:if test="#{!aonRole.sysAdmin}">
 						<aon:outputLink id="Domain_name" target="_blank" value="http://#{adminDomain.to.name}" >
 							<aon:outputText value="http://#{adminDomain.to.name}" />
 					    </aon:outputLink>
-					</c:if>
-					<c:if test="#{aonRole.sysAdmin}">
+					</aon:if>
+					<aon:if test="#{aonRole.sysAdmin}">
 						<aon:inputText id="Domain_name" required="true"
 							validator="#{adminDomain.domainNameCheck}"
 							size="64" maxlength="#{adminDomain.maxDomainNameLength}" value="#{adminDomain.to.name}" />
 
-						<c:if test="#{!domainSwitcher.childDomain}" >							
+						<aon:if test="#{!domainSwitcher.childDomain}" >							
 							<aon:outputLabel for="Domain_subDomainSuffix"
 								value="#{bundle.admin_domain_subDomainSuffix}" />
 							<aon:inputText id="Domain_subDomainSuffix"
 								validator="#{adminDomain.subDomainSuffixCheck}"
 								size="64" maxlength="#{adminDomain.maxDomainNameLength-2}" value="#{adminDomain.to.subDomainSuffix}" />
-						</c:if>
-					</c:if>					   				
+						</aon:if>
+					</aon:if>					   				
 
-					<c:if test="#{adminDomain.domainApplication != null}" >
+					<aon:if test="#{adminDomain.domainApplication != null}" >
 						<aon:outputLabel for="DomainApplication_auditLevel"
 							value="#{bundle.audit_audit_level}" />
 						<aon:selectOneMenu id="DomainApplication_auditLevel" 
 							value="#{adminDomain.domainApplication.auditLevel}">
 							<f:selectItems value="#{auditCollections.auditLevels}" />
 						</aon:selectOneMenu>
-					</c:if>	
+					</aon:if>	
 
 					<aon:outputLabel for="Domain_productDetailLevel"
 						value="#{bundle.admin_product_detail_level}" />
@@ -134,15 +134,15 @@
 						<f:selectItem itemLabel="3" itemValue="#{3}" />
 					</aon:selectOneMenu>
 					
-					<c:if test="#{domainSwitcher.childDomain}" >
+					<aon:if test="#{domainSwitcher.childDomain}" >
 						<aon:outputLabel for="Domain_enableHeredity"
 							value="#{bundle.admin_domain_enableHeredity}" />
 						<aon:selectBooleanCheckbox id="Domain_enableHeredity"
 							disabled="true"
 							value="#{adminDomain.to.enableHeredity}" />
-					</c:if>								
+					</aon:if>								
 
-					<c:if test="#{aonRole.sysAdmin}" >
+					<aon:if test="#{aonRole.sysAdmin}" >
 						<aon:outputLabel for="Domain_expirationDate"
 							value="#{bundle.admin_domain_expiration}" />
 						<aon:selectInputDate id="Domain_expirationDate" 
@@ -185,7 +185,7 @@
 							<ui:param name="lookupSuffix" value="-HeritableOEM" />
 							<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
 						</ui:include>
-					</c:if>
+					</aon:if>
 					
 				</aon:panelGrid>
 								
@@ -216,13 +216,13 @@
 							action="domainUser_list" rendered="true" />						
 					</aon:div>
 				
-					<c:if test="#{!domainSwitcher.childDomain}" >
+					<aon:if test="#{!domainSwitcher.childDomain}" >
 						<aon:outputLabel for="Domain_domainManagement"
 							value="#{bundle.admin_domain_domainManagement}" />
 						<aon:selectBooleanCheckbox id="Domain_domainManagement"
 							disabled="#{!aonRole.sysAdmin}"
 							value="#{adminDomain.to.domainManagement}" />
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Domain_maxDocumentSize"
 						value="#{bundle.admin_domain_maxDocumentSize}" />
@@ -254,7 +254,7 @@
 
 				</aon:panelGrid>								
 
-				<c:if test="#{adminDomain.showApplications}" >
+				<aon:if test="#{adminDomain.showApplications}" >
 					<aon:div styleClass="aon-form-group-title aon-margin-top">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputText value="#{bundle.admin_modules}"/>
@@ -262,7 +262,7 @@
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
 					
-					<c:if test="#{!aonRole.sysAdmin}" >
+					<aon:if test="#{!aonRole.sysAdmin}" >
 						<aon:div styleClass="aon-note aon-margin-bottom" style="background-color:#FFFFDD;">
 							<aon:div styleClass="aon-note-internal">
 								<aon:panelGroup>
@@ -270,12 +270,12 @@
 								</aon:panelGroup>
 							</aon:div>
 						</aon:div>	
-					</c:if>
+					</aon:if>
 					
 					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
 						<ui:param name="controller" value="#{adminDomain}" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 								
 			</aon:div>
 		</aon:form>

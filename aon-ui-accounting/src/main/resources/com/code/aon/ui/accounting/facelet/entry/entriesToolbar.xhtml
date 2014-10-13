@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 	
-	<c:if test="#{!aonRole.guest}">
+	<aon:if test="#{!aonRole.guest}">
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 			<ui:param name="toolbarID" value="aonToolbarAux" />
@@ -56,6 +56,6 @@
 					
 			</ui:define>
 		</ui:decorate>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

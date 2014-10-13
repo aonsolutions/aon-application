@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showDeliveryTransferWindow">
-		<c:if test="#{saleInvoice.showDeliveryTransferWindow}">
+		<aon:if test="#{saleInvoice.showDeliveryTransferWindow}">
 			<rich:modalPanel id="deliveryTransferModalPanel" minHeight="580"
 				minWidth="760" rendered="#{saleInvoice.showDeliveryTransferWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -205,7 +205,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

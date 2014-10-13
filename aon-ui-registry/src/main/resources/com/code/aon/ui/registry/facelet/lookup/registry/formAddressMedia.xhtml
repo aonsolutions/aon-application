@@ -17,7 +17,7 @@
 		<ui:param name="registryAddress" value="#{controllerLookupListener.mainAddress}" />
 	</ui:include>
 	
-	<c:if test="#{!skipPhone}">
+	<aon:if test="#{!skipPhone}">
 		<aon:outputLabel for="#{pojoName}_telephone" value="#{bundle.aon_phone}" />
 		<aon:div>
 			<aon:inputText id="#{pojoName}_telephone" 
@@ -26,9 +26,9 @@
 			<aon:inputText id="#{pojoName}_telephone_comment"
 				value="#{controllerLookupListener.phone.comment}" size="48" maxlength="64"/>
 		</aon:div>
-	</c:if>
+	</aon:if>
 		
-	<c:if test="#{!skipCellular}">
+	<aon:if test="#{!skipCellular}">
 		<aon:outputLabel for="#{pojoName}_cellular" value="#{bundle.aon_cellular}" />
 		<aon:div>
 			<aon:inputText id="#{pojoName}_cellular" 
@@ -37,9 +37,9 @@
 			<aon:inputText id="#{pojoName}_cellular_comment"
 				value="#{controllerLookupListener.cellular.comment}" size="48" maxlength="64"/>
 		</aon:div>
-	</c:if>
+	</aon:if>
 		
-	<c:if test="#{!skipFax}">
+	<aon:if test="#{!skipFax}">
 		<aon:outputLabel for="#{pojoName}_fax" value="#{bundle.aon_fax}" />
 		<aon:div>
 			<aon:inputText id="#{pojoName}_fax"
@@ -48,18 +48,18 @@
 			<aon:inputText id="#{pojoName}_fax_comment"
 				value="#{controllerLookupListener.fax.comment}" size="48" maxlength="64"/>
 		</aon:div>
-	</c:if>
+	</aon:if>
 		
-	<c:if test="#{!skipEmail}">
+	<aon:if test="#{!skipEmail}">
 		<aon:outputLabel for="#{pojoName}_email" value="#{bundle.registry_email}" />
 		<aon:inputText id="#{pojoName}_email" 
 			value="#{controllerLookupListener.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!skipWeb}">
+	<aon:if test="#{!skipWeb}">
 		<aon:outputLabel for="#{pojoName}_web" value="#{bundle.aon_web}" />
 		<aon:inputText id="#{pojoName}_web"
 			value="#{controllerLookupListener.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-	</c:if>
+	</aon:if>
 			
 </ui:composition>

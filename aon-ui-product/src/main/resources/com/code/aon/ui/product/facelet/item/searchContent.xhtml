@@ -6,33 +6,33 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Item_product_code" size="15"
 		valueChangeListener="#{controller.addExpression}"
 		onblur="toUpperCase(this);" />
 
-	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 		<aon:outputLabel for="Item_barcode" value="#{bundle.product_barcode}" />
 		<aon:inputText id="Item_barcode" size="15"
 			valueChangeListener="#{controller.addExpression}" />
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Item_product_name"
 		value="#{bundle.aon_description}" />
 	<aon:inputText id="Item_product_name" size="50"
 		valueChangeListener="#{controller.addExpression}" />
 
-	<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+	<aon:if test="#{aonConfiguration.bean.product.showSuppliers}">
 		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{itemSearch.supplier}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupSuffix" value="-Item" />
 		</ui:include>	
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Item_product_category_id"
 		value="#{bundle.aon_category}" />
@@ -42,7 +42,7 @@
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
 	
-	<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+	<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="Item_product_brand_id"
 			value="#{bundle.tas_make}" />
 		<aon:selectOneMenu id="Item_product_brand_id"
@@ -51,9 +51,9 @@
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.brands}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonConfiguration.bean.product.showStock}">
+	<aon:if test="#{aonConfiguration.bean.product.showStock}">
 		<aon:outputLabel for="Item_product_inventoriable"
 			value="#{bundle.product_inventoriable}" />
 		<aon:selectOneRadio id="Item_product_inventoriable"
@@ -61,9 +61,9 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonConfiguration.bean.product.showComposition}">
+	<aon:if test="#{aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel for="Item_product_composition"
 			value="#{bundle.product_composite_product}" />
 		<aon:selectOneRadio id="Item_product_composition"
@@ -71,9 +71,9 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
+	<aon:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Item_internet"
 			value="#{bundle.product_ecommerce}" />
 		<aon:selectOneRadio id="Item_internet"
@@ -81,7 +81,7 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{itemSearch.itemStatuses}">

@@ -57,7 +57,7 @@
 					</aon:div>
 					
 					<aon:div id="payroll_portal_chart_div" style="width: 100%; height: 180px;" />
-					<c:if test="#{dashboard.meses}">
+					<aon:if test="#{dashboard.meses}">
 					
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
    						<script type="text/javascript">
@@ -104,9 +104,9 @@
 
 						}
     				</script>
-    				</c:if>
+    				</aon:if>
     				
-    				<c:if test="#{dashboard.años}">
+    				<aon:if test="#{dashboard.años}">
 					
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
    						<script type="text/javascript">
@@ -146,7 +146,7 @@
 
 						}
     				</script>
-    				</c:if>
+    				</aon:if>
     				
     				
 				</aon:div>

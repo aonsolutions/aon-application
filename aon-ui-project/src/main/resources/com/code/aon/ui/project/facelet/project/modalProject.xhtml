@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showProjectWindow">
-		<c:if test="#{controller.showProjectWindow}">
+		<aon:if test="#{controller.showProjectWindow}">
 			<rich:modalPanel id="projectModalPanel" minHeight="150"
 				minWidth="650" rendered="#{controller.showProjectWindow}"
 				showWhenRendered="true" zindex="90">
@@ -36,7 +36,7 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<c:if test="#{!controller.showDetailProjectWindow}">
+									<aon:if test="#{!controller.showDetailProjectWindow}">
 										<aon:commandButton id="project-save"
 											value="#{bundle.aon_save}"
 											reRender="showProjectWindow,#{parentReRender}"
@@ -49,8 +49,8 @@
 												target="#{controller.showProjectWindow}"
 												value="#{false}" />
 										</aon:commandButton>
-									</c:if>
-									<c:if test="#{controller.showDetailProjectWindow}">
+									</aon:if>
+									<aon:if test="#{controller.showDetailProjectWindow}">
 										<aon:commandButton id="project-save"
 											value="#{bundle.aon_save}"
 											reRender="showProjectWindow,#{detailReRender}"
@@ -63,7 +63,7 @@
 												target="#{controller.showProjectWindow}"
 												value="#{false}" />
 										</aon:commandButton>
-									</c:if>
+									</aon:if>
 									<aon:commandButton id="project-cancel"
 										value="#{bundle.aon_cancel}"
 										reRender="showProjectWindow"
@@ -78,35 +78,35 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
 										<aon:outputLabel for="Project_id"
 											value="#{projectLabel}" />
-										<c:if test="#{!controller.showDetailProjectWindow and !showProjectLookup}">
+										<aon:if test="#{!controller.showDetailProjectWindow and !showProjectLookup}">
 											<aon:selectOneMenu id="Project_id"
 												value="#{parentValue}">
 												<f:selectItems value="#{controller.projects}" />
 											</aon:selectOneMenu>
-										</c:if>
-										<c:if test="#{controller.showDetailProjectWindow and !showProjectLookup}">
+										</aon:if>
+										<aon:if test="#{controller.showDetailProjectWindow and !showProjectLookup}">
 											<aon:selectOneMenu id="Project_id"
 												value="#{detailValue}">
 												<f:selectItem itemLabel="-" value="#{null}" />
 												<f:selectItems value="#{controller.projects}" />
 											</aon:selectOneMenu>
-										</c:if>
-										<c:if test="#{!controller.showDetailProjectWindow and showProjectLookup}">
+										</aon:if>
+										<aon:if test="#{!controller.showDetailProjectWindow and showProjectLookup}">
 											<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 												<ui:param name="lookupTo" value="#{parentValue}" />
 												<ui:param name="skipLabel" value="#{true}" />
 												<ui:param name="skipGoToButton" value="#{true}" />
 												<ui:param name="lookupSuffix" value="-Modal" />
 											</ui:include>
-										</c:if>
-										<c:if test="#{controller.showDetailProjectWindow and showProjectLookup}">
+										</aon:if>
+										<aon:if test="#{controller.showDetailProjectWindow and showProjectLookup}">
 											<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 												<ui:param name="lookupTo" value="#{detailValue}" />
 												<ui:param name="skipLabel" value="#{true}" />
 												<ui:param name="skipGoToButton" value="#{true}" />
 												<ui:param name="lookupSuffix" value="-Modal" />
 											</ui:include>
-										</c:if>
+										</aon:if>
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>
@@ -115,7 +115,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

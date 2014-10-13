@@ -88,7 +88,7 @@
 	-->
 			
 				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.nevv}">
-					<c:if test="#{fanBatch.newBatchWizard.selectedModel.rowCount > 0}" >
+					<aon:if test="#{fanBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 						<aon:panelTab id="batchedTab" label="#{bundle.finance_checked}">
 							<aon:div id="detailDataDiv">
 								<aon:div id="detailToolBarDiv" styleClass="aon-toolbar" >
@@ -138,7 +138,7 @@
 							</aon:div>
 							
 						</aon:panelTab>
-					</c:if>
+					</aon:if>
 					<aon:panelTab id="noBatchedTab" label="#{bundle.aon_pending}">
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fan/formNoBatched.xhtml" >
 							<ui:param name="controller" value="#{fanBatch.newBatchWizard}" />

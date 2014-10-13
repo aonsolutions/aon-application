@@ -11,7 +11,7 @@
 	<aon:panelGrid columns="2" style="width: 100%"
 		columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
-		<c:if test="#{!skipProjectData}">
+		<aon:if test="#{!skipProjectData}">
 			<aon:outputLabel for="ProjectCommercial_id" 
 				value="#{bundle.commercial_operation_module}" />
 			<aon:div>
@@ -45,7 +45,7 @@
 					</aon:panelGrid>
 				</aon:div>
 			</aon:div>
-		</c:if>
+		</aon:if>
 	
 		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{commercialTracking.to.seller}" />
@@ -62,7 +62,7 @@
 					timeZone="#{timeZoneController.timeZone}" inputSize="16"
 					popupDateFormat="#{(commercialTracking.to.allDay)?(bundle.aon_date_pattern):(bundle.aon_timestamp2_pattern)}">									
 				</aon:selectInputDate>
-				<c:if test="#{!commercialTracking.to.allDay}" >
+				<aon:if test="#{!commercialTracking.to.allDay}" >
 					<aon:outputLabel for="CommercialTracking_date-To"
 						styleClass="aon-margin-left aon-margin-right aon-italic"
 						value="#{bundle.aon_date_to}:" />
@@ -71,7 +71,7 @@
 						timeZone="#{timeZoneController.timeZone}" inputSize="16"
 						popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
 					</aon:selectInputDate>
-				</c:if>
+				</aon:if>
 				<aon:selectBooleanCheckbox id="CommercialTracking_allDay" 
 					value="#{commercialTracking.to.allDay}" ajaxSingle="false"
 					reRender="CommercialTracking_dateDiv" />						
@@ -99,7 +99,7 @@
 			</aon:div>							
 			<aon:div id="CommercialTracking_activity_offer"
 				styleClass="aon-lookup aon-margin-left">
-				<c:if test="#{commercialTracking.offerChecked}">
+				<aon:if test="#{commercialTracking.offerChecked}">
 					<ui:decorate template="/com/code/aon/ui/commercial/facelet/offer/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{commercialTracking.to.offer}" />
 						<ui:param name="lookupControllerListener" value="#{commercialTracking.offerFilter}" />
@@ -108,7 +108,7 @@
 								value="#{commercialTracking.to.offer.referenceCode}" />
 						</ui:define>
 					</ui:decorate>								
-				</c:if>					
+				</aon:if>					
 			</aon:div>																			
 		</h:panelGrid>
 	

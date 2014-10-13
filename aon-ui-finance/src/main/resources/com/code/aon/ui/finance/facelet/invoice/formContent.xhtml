@@ -12,7 +12,7 @@
 	<aon:div>
 		<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 			<aon:div id="InvoiceReferenceCodeDiv">
-				<c:if test="#{invoiceController.to.sales}">
+				<aon:if test="#{invoiceController.to.sales}">
 					<ui:decorate template="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
 						<ui:param name="controller" value="#{invoiceController}" />
 						<ui:param name="skipSeriesLabel" value="#{true}" />
@@ -29,8 +29,8 @@
 							</aon:commandButton>															
 						</ui:define>
 					</ui:decorate>
-				</c:if>
-				<c:if test="#{!invoiceController.to.sales}">
+				</aon:if>
+				<aon:if test="#{!invoiceController.to.sales}">
 					<aon:inputText id="Invoice_referenceCode" 
 						value="#{invoiceController.to.referenceCode}" 
 						required="true" size="25" maxlength="32"
@@ -40,16 +40,16 @@
 					<aon:outputText styleClass="aon-bold"
 						value="#{invoiceController.to.referenceCode}"
 						rendered="#{invoiceController.readOnly or !financeController.allPending}" />
-				</c:if>
+				</aon:if>
 			</aon:div>
 			<aon:div>
-				<c:if test="#{invoiceController.to.purchase or invoiceController.to.expense}">
+				<aon:if test="#{invoiceController.to.purchase or invoiceController.to.expense}">
 					<ui:include src="/com/code/aon/ui/finance/facelet/invoice/formInvestment.xhtml">
 						<ui:param name="invoiceController" value="#{invoiceController}" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{aonRole.confidentiality}">
+				<aon:if test="#{aonRole.confidentiality}">
 					<aon:selectBooleanCheckbox id="Invoice_securityLevel"
 						value="#{invoiceController.to.confidential}" 
 						rendered="#{!invoiceController.readOnly and financeController.allPending}"
@@ -60,18 +60,18 @@
 					<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 						value="&#160;" title="#{bundle.aon_confidential}"
 						rendered="#{(invoiceController.readOnly or !financeController.allPending) and invoiceController.to.confidential}" />
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{company.EInvoice}">
+				<aon:if test="#{company.EInvoice}">
 					<aon:outputText value="&#160;"
 						title="#{bundle.sign_signed}"
 						styleClass="aon-icon aon-icon-signed" 
 						rendered="#{!invoiceController.nevv and invoiceController.to.signed}" />
-				</c:if>						
+				</aon:if>						
 
 				<aon:outputText value="#{invoiceController.to.status}"
 					rendered="#{!invoiceController.nevv}" />
-				<c:if test="#{aonRole.accountingOperator and invoiceController.recorded and invoiceController.backAction != 'accountEntry_form'}">
+				<aon:if test="#{aonRole.accountingOperator and invoiceController.recorded and invoiceController.backAction != 'accountEntry_form'}">
 					<aon:commandLink immediate="true"
 							styleClass="aon-button-goto"
 							style="margin-left: 5px; padding-left: 17px;" 
@@ -79,7 +79,7 @@
 							action="accountEntry_form"
 							title="#{bundle.account_account_entry}: #{invoiceController.accountEntryId}"
 							alt="#{bundle.account_account_entry}: #{invoiceController.accountEntryId}" />
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:panelGrid>
 	</aon:div>
@@ -99,7 +99,7 @@
 			reRender="Invoice_taxDate" ajaxSingle="true" />
 	</aon:selectInputDate>
 
-	<c:if test="#{invoiceController.to.sales}">
+	<aon:if test="#{invoiceController.to.sales}">
 		<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.registry}" />
 			<ui:param name="lookupForRegistry" value="#{true}" />
@@ -113,8 +113,8 @@
 			<aon:methodParam name="lookupChangeListener"
 				value="#{invoiceController.onCustomerChanged}" type="lookupChangeListener" />
 		</ui:include>
-	</c:if>
-	<c:if test="#{invoiceController.to.expense}">
+	</aon:if>
+	<aon:if test="#{invoiceController.to.expense}">
 		<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.registry}" />
 			<ui:param name="lookupForRegistry" value="#{true}" />
@@ -128,13 +128,13 @@
 			<aon:methodParam name="lookupChangeListener"
 				value="#{invoiceController.onCreditorChanged}" type="lookupChangeListener" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Invoice_taxDate" 
 		value="#{bundle.finance_tax_date}"
 		rendered="#{!invoiceController.nevv}" />
 	<aon:div rendered="#{!invoiceController.nevv}">
-		<c:if test="#{aonRole.accountingOperator}">
+		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:selectInputDate id="Invoice_taxDate"
 				value="#{invoiceController.to.taxDate}" required="true" 
 				disabled="#{invoiceController.readOnly}"
@@ -146,10 +146,10 @@
 				<a4j:support event="onchanged"
 					reRender="Invoice_taxDate" ajaxSingle="true" />
 			</aon:selectInputDate>
-		</c:if>
-		<c:if test="#{!aonRole.accountingOperator}">
+		</aon:if>
+		<aon:if test="#{!aonRole.accountingOperator}">
 			<aon:outputText value="#{invoiceController.to.taxDate}" />
-		</c:if>
+		</aon:if>
 	</aon:div>
 
 	<aon:outputLabel for="Invoice_registry_document"
@@ -194,11 +194,11 @@
 		</aon:panelGroup>
 	</aon:panelGroup>
 
-	<c:if test="#{!invoiceController.nevv}">
+	<aon:if test="#{!invoiceController.nevv}">
 		<aon:outputLabel value="#{bundle.aon_document_number}" />
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.to.documentNumber}" />
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Invoice_registryAddress_id"
 		value="#{bundle.aon_address}" />
@@ -235,7 +235,7 @@
 		</aon:div>
 	</aon:div>
 
-	<c:if test="#{!invoiceController.nevv}">
+	<aon:if test="#{!invoiceController.nevv}">
 		<aon:outputLabel for="Invoice_total" 
 			value="#{bundle.aon_total}" />
 		<aon:div>
@@ -247,6 +247,6 @@
 			<aon:outputLabel styleClass="aon-margin-left aon-italic"
 				value="(#{bundle.aon_tax_included})" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

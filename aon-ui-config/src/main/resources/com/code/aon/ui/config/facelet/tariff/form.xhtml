@@ -55,9 +55,9 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!tariff.nevv}">
+				<aon:if test="#{!tariff.nevv}">
 					<aon:panelTabSet selectedTab="#{tariff.selectedTab}">
-						<c:if test="#{tariffCatalogue.model.rowCount > 0}">
+						<aon:if test="#{tariffCatalogue.model.rowCount > 0}">
 							<aon:panelTab id="tariffCataloguePanelTab"
 								label="#{bundle.product_catalogue_module}">
 								<ui:include	src="/com/code/aon/ui/config/facelet/tariff/catalogue/tab_grid.xhtml">
@@ -65,9 +65,9 @@
 									<ui:param name="removeButtonReRender" value="tariffDiv" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{tariffAddInfo.model.rowCount > 0}">
+						<aon:if test="#{tariffAddInfo.model.rowCount > 0}">
 							<aon:panelTab id="addInfoPanelTab"
 								label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/config/facelet/tariff/addinfo/tab_grid.xhtml">
@@ -75,9 +75,9 @@
 									<ui:param name="removeButtonReRender" value="tariffDiv" />
 								</ui:include>
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 

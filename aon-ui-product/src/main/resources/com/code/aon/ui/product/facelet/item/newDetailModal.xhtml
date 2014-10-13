@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showNew#{detailId}Window">
-		<c:if test="#{showNewDetailWindow}">
+		<aon:if test="#{showNewDetailWindow}">
 		
 			<aon:methodParam name="ndm_saveActionListener"
 				default="#{detailController.onAccept}" type="actionListener" />
@@ -88,6 +88,6 @@
 					</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 </ui:composition>

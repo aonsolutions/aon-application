@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j" >
 
-	<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
+	<aon:if test="#{aonConfiguration.bean.company.showEInvoice}">
 		<aon:outputLabel for="Company_EInvoice"
 			value="#{bundle.company_eInvoice}" />
 		<aon:selectBooleanCheckbox id="Company_EInvoice"
@@ -20,6 +20,6 @@
 		<aon:selectBooleanCheckbox id="Company_smartCard"
 			rendered="#{company.to.EInvoice}"
 			value="#{company.smartCard}" />
-	</c:if>		
+	</aon:if>		
 
 </ui:composition>

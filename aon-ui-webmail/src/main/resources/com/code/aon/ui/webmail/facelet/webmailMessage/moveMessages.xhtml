@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:panelGroup id="folderWindow">
-		<c:if test="#{mailConfig.showFolderWindow}">
+		<aon:if test="#{mailConfig.showFolderWindow}">
 		
 			<aon:methodParam name="moveMessagesAction" default="" />
 			<aon:valueParam name="folderPanelTitle" default="#{bundle.webmail_move_message}" />
@@ -49,7 +49,7 @@
 					</rich:tree>
 				</aon:div>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

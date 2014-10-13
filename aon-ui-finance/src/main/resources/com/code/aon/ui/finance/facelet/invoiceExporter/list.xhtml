@@ -130,7 +130,7 @@
 								</aon:outputText>
 							</aon:column>							
 	
-							<c:if test="#{company.EInvoice}">
+							<aon:if test="#{company.EInvoice}">
 								<aon:column alias="Invoice.signed"
 									styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
@@ -143,7 +143,7 @@
 										title="#{bundle.sign_sign_pending}"
 										styleClass="aon-icon aon-icon-unsigned" />
 								</aon:column>
-							</c:if>
+							</aon:if>
 						</ui:define>
 					</ui:decorate>
 				</aon:div>
@@ -155,7 +155,7 @@
 			<ui:param name="logPanelTitle" value="#{bundle.finance_invoiceExport_module}" />			
 			<ui:param name="pollInterval" value="5000" /> 
 			<ui:define name="additionalLogPanelContent">
-				<c:if test="#{exporter.finished}">
+				<aon:if test="#{exporter.finished}">
 					<aon:div styleClass="aon-margin-bottom">
 						<aon:htmlCommandLink id="downloadExport"
 							value="#{bundle.aon_fileupload_download}" target="_blank"
@@ -165,7 +165,7 @@
 							<rich:componentControl for="logPanel" operation="hide" event="onclick" />
 						</aon:htmlCommandLink>
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</ui:define>
 		</ui:decorate>	
 		

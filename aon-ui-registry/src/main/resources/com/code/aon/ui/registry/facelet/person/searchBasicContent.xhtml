@@ -6,9 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="Person_firstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
 	<aon:inputText id="Person_firstSurname" size="40" valueChangeListener="#{controller.addExpression}" />
@@ -45,7 +45,7 @@
 		<f:selectItems value="#{registryCollections.maritalStatuses}" />
 	</aon:selectOneMenu>
 	
-	<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Person_registry_securityLevel"
 			value="#{bundle.aon_confidential}" />
 		<aon:selectOneRadio id="Person_registry_securityLevel"
@@ -53,6 +53,6 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 		</aon:selectOneRadio>				
-	</c:if>
+	</aon:if>
 
 </ui:composition>

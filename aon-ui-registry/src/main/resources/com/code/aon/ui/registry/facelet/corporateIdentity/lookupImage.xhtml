@@ -18,13 +18,13 @@
 		<ui:param name="skipSuggestText" value="#{lookupTo.id != null}" />
 		<ui:param name="lookupImageKey" value="#{lookupTo.imageKey}" />
 		<ui:define name="afterLookupContent">
-			<c:if test="#{lookupTo.id != null}">
+			<aon:if test="#{lookupTo.id != null}">
 				<a4j:mediaOutput element="img"
 					value="#{lookupTo.id}"
 					title="#{lookupTo.description}"
 					style="vertical-align:top;height:100px;"
 					createContent="#{companyImages.createContent}" />
-			</c:if>
+			</aon:if>
 		</ui:define>		
 	</ui:decorate>
 

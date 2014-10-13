@@ -9,7 +9,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 	
 	<aon:div id="detailDataDiv">
-		<c:if test="#{!controller.recorded}" >
+		<aon:if test="#{!controller.recorded}" >
 			<aon:div id="detailToolBarDiv" styleClass="aon-toolbar" >
 				<aon:commandButton title="#{bundle.aon_check_all}"
 					styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -31,7 +31,7 @@
 					onclick="Richfaces.showModalPanel('waitProccess')" 
 		     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 			</aon:div>
-		</c:if>
+		</aon:if>
 	
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:param name="isRecorded" value="#{controller.recorded}" />
@@ -43,7 +43,7 @@
 			
 				<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
 				
-				<c:if test="#{!isRecorded}" >
+				<aon:if test="#{!isRecorded}" >
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
@@ -54,7 +54,7 @@
 							<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
 						</aon:selectBooleanCheckbox>	
 					</aon:column>
-				</c:if>
+				</aon:if>
 				
 				<ui:insert name="detailDataColumns" />
 				

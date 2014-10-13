@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{!controller.nevv}">
+	<aon:if test="#{!controller.nevv}">
 		<aon:div id="detailContainer" styleClass="aon-width-all aon-margin-top">
 			<aon:dataTable value="#{controller.declaration.keys}" var="key">
 			
@@ -16,5 +16,5 @@
 							
 			</aon:dataTable>
 		</aon:div>
-	</c:if>
+	</aon:if>
 </ui:composition>

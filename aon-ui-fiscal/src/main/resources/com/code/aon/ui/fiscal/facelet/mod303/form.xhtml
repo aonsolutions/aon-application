@@ -17,7 +17,7 @@
 			
 			<ui:define name="afterAll">
 				<aon:div id="activityContainer">
-					<c:if test="#{controller.modulesPanelVisible}">
+					<aon:if test="#{controller.modulesPanelVisible}">
 						<rich:modalPanel id="finalizePanel" minHeight="450" minWidth="700"
 							showWhenRendered="#{controller.modulesPanelVisible}" zindex="90">
 							<f:facet name="header">
@@ -52,8 +52,8 @@
 								</aon:form>
 							</aon:div>
 						</rich:modalPanel>
-					</c:if>
-					<c:if test="#{controller.farmerPanelVisible}">
+					</aon:if>
+					<aon:if test="#{controller.farmerPanelVisible}">
 						<rich:modalPanel id="farmerFinalizePanel" minHeight="450" minWidth="700"
 							showWhenRendered="#{controller.farmerPanelVisible}" zindex="90">
 							<f:facet name="header">
@@ -88,7 +88,7 @@
 								</aon:form>
 							</aon:div>
 						</rich:modalPanel>
-					</c:if>
+					</aon:if>
 				</aon:div>
 			</ui:define>
 		</ui:decorate>

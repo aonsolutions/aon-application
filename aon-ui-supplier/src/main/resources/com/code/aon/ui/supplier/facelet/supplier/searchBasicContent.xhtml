@@ -6,10 +6,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{lookup != null}">
+	<aon:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
 		<ui:param name="searchController" value="#{supplierSearch}" />
-	</c:if>
+	</aon:if>
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml" >
 		<ui:param name="includeRegistryScope" value="#{true}"/>

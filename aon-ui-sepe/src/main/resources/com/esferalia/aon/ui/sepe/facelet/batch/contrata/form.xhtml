@@ -7,11 +7,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<c:if test="#{contrataBatch.nevv}" >
+	<aon:if test="#{contrataBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/form_new.xhtml" />
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{!contrataBatch.nevv}" >
+	<aon:if test="#{!contrataBatch.nevv}" >
 		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.sepe_contrataBatch_module}" />
 			<ui:param name="controller" value="#{contrataBatch}" />
@@ -94,6 +94,6 @@
 			</ui:define>
 			
 		</ui:decorate>
-	</c:if>
+	</aon:if>
 
 </ui:composition>

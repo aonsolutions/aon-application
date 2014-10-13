@@ -13,7 +13,7 @@
 	
 		<aon:panelGrid columns="4" style="width:600px;">
 				
-			<c:if test="#{carrierCollections.carriersCount>0}">
+			<aon:if test="#{carrierCollections.carriersCount>0}">
 				<aon:outputLabel for="Delivery_carrier"
 					value="#{bundle.warehouse_delivery_carrier}" />
 				<aon:selectOneMenu id="Delivery_carrier" 
@@ -24,7 +24,7 @@
 					
 				<aon:outputText value="&#160;" />
 				<aon:outputText value="&#160;" />
-			</c:if>
+			</aon:if>
 				
 			<aon:outputLabel for="Delivery_numberPlate"
 				value="#{bundle.tas_publicCode}" />

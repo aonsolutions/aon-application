@@ -24,7 +24,7 @@
 									aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Customer_id" value="#{bundle.customer_invoicing_group}" />
-					<c:if test="#{invoicingGroup.nevv}">
+					<aon:if test="#{invoicingGroup.nevv}">
 						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{invoicingGroup.to.customer}" />
 							<ui:param name="idRequired" value="#{true}" />						
@@ -33,8 +33,8 @@
 							<aon:methodParam name="lookupChangeListener"
 								value="#{invoicingGroup.onCustomerChanged}" type="lookupChangeListener" />
 						</ui:include>
-					</c:if>
-					<c:if test="#{!invoicingGroup.nevv}">
+					</aon:if>
+					<aon:if test="#{!invoicingGroup.nevv}">
 						<aon:div styleClass="aon-bold">
 							<aon:outputText value="#{invoicingGroup.to.id}" />
 							<aon:outputText value=" - " />
@@ -46,7 +46,7 @@
 								action="customer_form"
 								reRender="aonContent" />
 						</aon:div>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="InvoicingGroup_description" value="#{bundle.aon_description}" />
 					<aon:div>
@@ -62,7 +62,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!invoicingGroup.nevv}">
+				<aon:if test="#{!invoicingGroup.nevv}">
 					<aon:panelTabSet id="invoicingGroupTab" selectedTab="#{invoicingGroup.selectedTab}">
 						<aon:panelTab id="customer" label="#{bundle.customer_invoicing_group_members}">
 							<ui:include	src="/com/code/aon/ui/customer/facelet/invoicingGroup/gridCustomer.xhtml">
@@ -76,7 +76,7 @@
 							</ui:include>
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />

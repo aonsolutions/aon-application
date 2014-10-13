@@ -7,9 +7,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
-		<c:if test="#{aonConfiguration.bean.customer.showPerson}">
+		<aon:if test="#{aonConfiguration.bean.customer.showPerson}">
 			<ui:param name="registryTypeReRender" value="personInfoDiv" />
-		</c:if>
+		</aon:if>
 		<ui:param name="includeRegistryScope" value="#{true}"/>
 	</ui:include>
 
@@ -18,7 +18,7 @@
 		<f:selectItems value="#{customerCollections.customerStatuses}" />
 	</aon:selectOneRadio>
 
-	<c:if test="#{aonConfiguration.bean.customer.showTaxInfoData}">
+	<aon:if test="#{aonConfiguration.bean.customer.showTaxInfoData}">
 		<aon:outputLabel for="Customer_transaction" value="#{bundle.aon_transaction_type}" />
 		<aon:selectOneMenu id="Customer_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
@@ -36,6 +36,6 @@
 			<aon:outputLabel for="Customer_withholding" styleClass="aon-italic"
 				value="#{bundle.aon_retention}" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 	
 </ui:composition>

@@ -30,7 +30,7 @@
 		<aon:outputText value="#{to.invoice.registryName}" />
 	</aon:column>
 
-	<c:if test="#{domainSwitcher.type == 'HOTEL'}">
+	<aon:if test="#{domainSwitcher.type == 'HOTEL'}">
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_source}" />
@@ -48,7 +48,7 @@
 				reRender="aonContent">
 			</aon:commandLink>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
@@ -101,7 +101,7 @@
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
-		<c:if test="#{aonRole.financeOperator}">
+		<aon:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="invoiceLink" immediate="true"
 				styleClass="aon-button-goto" style="padding-right: 15px;" 
 				value="&#160;" title="#{bundle.aon_go}"
@@ -109,16 +109,16 @@
 				actionListener="#{controller.onLoadInvoice}"
 				reRender="aonContent">
 			</aon:commandLink>
-		</c:if>
-		<c:if test="#{aonRole.admin}">
+		</aon:if>
+		<aon:if test="#{aonRole.admin}">
 			<aon:confirmButton id="invoiceUnbind" immediate="true" 
 				styleClass="aon-editDataTable-button aon-icon-delete aon-noborder"
 				title="#{bundle.finance_pos_shift_unbind_invoice}"
 				confirmTitle="#{bundle.aon_confirm_title}"
 				confirmMessage="#{bundle.finance_pos_shift_unbind_invoice_confirm}"
 				confirmActionListener="#{controller.onUnbindInvoice}" />
-		</c:if>
-		<c:if test="#{!aonRole.financeOperator}">
+		</aon:if>
+		<aon:if test="#{!aonRole.financeOperator}">
 			<aon:htmlCommandLink id="invoiceReport" target="_blank"
 				styleClass="aon-icon-pdf"
 				value="&#160;&#160;&#160;&#160;&#160;&#160;" 
@@ -129,7 +129,7 @@
 				<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
 					value="#{company.saleInvoiceTemplateValue}" />
 			</aon:htmlCommandLink>
-		</c:if>
+		</aon:if>
 	</aon:column>
 
 </ui:composition>

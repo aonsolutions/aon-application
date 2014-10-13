@@ -111,10 +111,10 @@
 											validator="#{companyImages.imageNameCheck}"
 											maxlength="50" value="#{companyImages.to.description}" />		
 				
-										<c:if test="#{companyImages.aonFile.mimeType != null}">
+										<aon:if test="#{companyImages.aonFile.mimeType != null}">
 											<aon:outputText value="#{bundle.aon_type}" />
 											<aon:outputText value="#{companyImages.aonFile.mimeType}"/>
-										</c:if>
+										</aon:if>
 											
 										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{bundle.company_image}" />
 										<a4j:region>
@@ -141,7 +141,7 @@
 											</h:panelGrid>
 										</a4j:region>
 
-										<c:if test="#{companyImages.dimensionEditable}">
+										<aon:if test="#{companyImages.dimensionEditable}">
 											<aon:outputLabel for="ratio" value="#{bundle.aon_image_ratio}"/>
 											<aon:selectBooleanCheckbox id="ratio" value="#{companyImages.ratio}" />
 	
@@ -162,14 +162,14 @@
 													requestDelay="1500" reRender="imagePanelGrid"
 													actionListener="#{companyImages.onChangeHeight}" />
 											</rich:inputNumberSlider>
-										</c:if>					
+										</aon:if>					
 										
-										<c:if test="#{!companyImages.nevv}" >
+										<aon:if test="#{!companyImages.nevv}" >
 											<aon:outputText value="#{bundle.aon_document_download_url}" />
 											<aon:outputLink target="_blank" value="#{domainSwitcher.domainURL}#{companyImages.to.downloadURL}" >
 												<aon:outputText value="#{domainSwitcher.domainURL}#{companyImages.to.downloadURL}" />
 										    </aon:outputLink>
-										</c:if>
+										</aon:if>
 															
 									</aon:panelGrid>
 								</aon:div>

@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div id="financeContainer">
-		<c:if test="#{detailController.model.rowCount > 0 or financeController.model.rowCount > 0}">
+		<aon:if test="#{detailController.model.rowCount > 0 or financeController.model.rowCount > 0}">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.finance_checking}" />
@@ -290,6 +290,6 @@
 
 				</ui:decorate>
 			</aon:panel>
-		</c:if>
+		</aon:if>
 	</aon:div>
 </ui:composition>

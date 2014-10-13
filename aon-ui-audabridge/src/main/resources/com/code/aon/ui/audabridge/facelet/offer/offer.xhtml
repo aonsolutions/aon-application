@@ -57,7 +57,7 @@
 											required="true" size="7" />
 									</aon:div>
 									
-									<c:if test="#{aonRole.confidentiality}">
+									<aon:if test="#{aonRole.confidentiality}">
 										<aon:outputText value="&#160;"/>
 										<aon:div id="securityLevelContainer">
 											<aon:selectBooleanCheckbox id="Offer_securityLevel"
@@ -68,7 +68,7 @@
 												value="&#160;" title="#{bundle.aon_confidential}"
 												rendered="#{audabridgeOffer.offer.confidential}" />
 										</aon:div>		
-									</c:if>
+									</aon:if>
 
 									<aon:outputLabel for="Offer_date"
 										value="#{bundle.aon_date}" />

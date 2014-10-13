@@ -10,9 +10,9 @@
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="font-size: 0.9em;">
 		<f:facet name="header">
-			<c:if test="#{!skipHeader}">
+			<aon:if test="#{!skipHeader}">
 				<aon:outputText value="&#160;"/>	
-			</c:if>
+			</aon:if>
 		</f:facet>
 		<aon:div style="margin-left: #{key.level}em;#{(key.title and key.level==0)?'font-weight: bold;':''}">
 			<aon:outputText value="#{key}" rendered="#{!key.descriptionEnabled}"/>
@@ -26,9 +26,9 @@
 	
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 		<f:facet name="header">
-			<c:if test="#{!skipHeader}">
+			<aon:if test="#{!skipHeader}">
 				<aon:outputText value="#{bundle.fiscal_vatTax_accumulated}" />	
-			</c:if>
+			</aon:if>
 		</f:facet>
 		<aon:div rendered="#{!key.title and !key.total}">
 			<aon:outputText value="#{controller.declaration.map[key].accumulatedAmount}">
@@ -37,12 +37,12 @@
 		</aon:div>
 	</aon:column>
 	
-	<c:if test="#{controller.difEnabled}">
+	<aon:if test="#{controller.difEnabled}">
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 			<f:facet name="header">
-				<c:if test="#{!skipHeader}">
+				<aon:if test="#{!skipHeader}">
 					<aon:outputText value="#{bundle.fiscal_vatTax_declared}" />
-				</c:if>
+				</aon:if>
 			</f:facet>
 			<aon:div rendered="#{key.difEnabled}">
 				<aon:outputText value="#{controller.declaration.map[key].declaredAmount}">
@@ -50,14 +50,14 @@
 				</aon:outputText>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{controller.difEnabled}">
+	<aon:if test="#{controller.difEnabled}">
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 			<f:facet name="header">
-				<c:if test="#{!skipHeader}">
+				<aon:if test="#{!skipHeader}">
 					<aon:outputText value="#{bundle.fiscal_result}" />
-				</c:if>
+				</aon:if>
 			</f:facet>
 			<aon:div rendered="#{key.difEnabled}">
 				<aon:outputText value="#{controller.declaration.map[key].resultAmount}">
@@ -65,13 +65,13 @@
 				</aon:outputText>
 			</aon:div>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 		<f:facet name="header">
-			<c:if test="#{!skipHeader}">
+			<aon:if test="#{!skipHeader}">
 				<aon:outputText value="#{bundle.fiscal_vatTax_adjusts}" />
-			</c:if>
+			</aon:if>
 		</f:facet>
 		<aon:div rendered="#{!key.title and !key.total}">
 			<aon:outputText value="#{controller.declaration.map[key].adjustAmount}" 
@@ -86,9 +86,9 @@
 
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 		<f:facet name="header">
-			<c:if test="#{!skipHeader}">
+			<aon:if test="#{!skipHeader}">
 				<aon:outputText value="#{bundle.fiscal_vatTax_to_declare}" />
-			</c:if>
+			</aon:if>
 		</f:facet>
 		<aon:div rendered="#{!key.title}" styleClass="aon-nowrap">
 			<aon:outputText value="#{controller.declaration.map[key].amount}"
@@ -98,7 +98,7 @@
 		</aon:div>
 	</aon:column>
 	
-	<c:if test="#{controller.activityButtonEnabled}">
+	<aon:if test="#{controller.activityButtonEnabled}">
 		<aon:column styleClass="aon-editDataTable-iconColumn" style="font-size: 0.9em;">
 			<aon:commandButton 
 				value="&#160;"
@@ -113,6 +113,6 @@
 					value="#{key}"/>
 			</aon:commandButton>
 		</aon:column>
-	</c:if>	
+	</aon:if>	
 
 </ui:composition>

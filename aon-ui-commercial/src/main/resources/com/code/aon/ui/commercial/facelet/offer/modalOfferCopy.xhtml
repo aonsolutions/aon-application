@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showOfferCopyWindow">
-		<c:if test="#{offer.showOfferCopyWindow}">
+		<aon:if test="#{offer.showOfferCopyWindow}">
 			<rich:modalPanel id="offerCopyModalPanel" 
 				minWidth="740" minHeight="240" zindex="90"
 				showWhenRendered="#{offer.showOfferCopyWindow}">
@@ -99,7 +99,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

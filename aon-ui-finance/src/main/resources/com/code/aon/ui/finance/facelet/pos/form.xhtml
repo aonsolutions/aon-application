@@ -30,21 +30,21 @@
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{companyCollections.departmentsCount > 0}">
+					<aon:if test="#{companyCollections.departmentsCount > 0}">
 						<aon:outputLabel for="Pos_department" value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu id="Pos_department"
 							value="#{pos.to.department}">
 							<f:selectItem itemLabel=" - " itemValue="null" />
 							<f:selectItems value="#{companyCollections.departments}" />
 						</aon:selectOneMenu>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Pos_name" value="#{bundle.finance_pos_name}" />
 					<aon:inputText id="Pos_name" 
 						value="#{pos.to.name}" 
 						size="32" maxlength="32" required="true" />
 
-					<c:if test="#{pos.to.series != null or pos.workPlaceSeriesCount > 1}">
+					<aon:if test="#{pos.to.series != null or pos.workPlaceSeriesCount > 1}">
 						<aon:outputLabel for="Pos_series" value="#{bundle.aon_series}" />
 						<aon:div>
 							<aon:selectOneMenu id="Pos_series"
@@ -63,7 +63,7 @@
 								actionListener="#{pos.onDeleteSeries}"
 								reRender="posForm" />
 						</aon:div>
-					</c:if>
+					</aon:if>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{pos.to.customer}" />
@@ -96,7 +96,7 @@
 						</aon:inputText>
 					</aon:div>
 
-					<c:if test="#{actionDenied.moduleEnabled['hotel']}">
+					<aon:if test="#{actionDenied.moduleEnabled['hotel']}">
 						<aon:outputLabel for="Pos_invoiceable" value="#{bundle.pms_invoiceable}" />
 						<aon:selectOneRadio id="Pos_invoiceable" value="#{pos.to.invoiceable}" >
 							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
@@ -113,7 +113,7 @@
 							<ui:param name="skipNewButton" value="#{true}" />
 							<ui:param name="lookupRendered" value="#{pos.to.invoiceable}" />
 						</ui:include>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Pos_active" value="#{bundle.aon_status}" />
 					<aon:selectOneRadio id="Pos_active"
@@ -124,7 +124,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!pos.nevv and pos.to.touchScreen}">
+				<aon:if test="#{!pos.nevv and pos.to.touchScreen}">
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
 							<aon:outputText value="#{bundle.product_catalogue_module}"/>
@@ -208,7 +208,7 @@
 							</aon:div>
 						</aon:div>
 					</aon:div>
-				</c:if>
+				</aon:if>
 
 
 <!--
@@ -217,7 +217,7 @@
 						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
 					</aon:selectBooleanCheckbox>
 					
-					<c:if test="#{pos.to.pinPad}">
+					<aon:if test="#{pos.to.pinPad}">
 						<aon:outputLabel for="Pos_commerce" value="#{bundle.finance_pos_commerce}" />
 						<aon:inputText id="Pos_commerce" value="#{pos.to.commerce}" 
 							size="20" maxlength="20" required="true" />
@@ -260,7 +260,7 @@
 							<f:selectItem itemLabel="4.1" itemValue="4.1" />
 							<f:selectItem itemLabel="4.2" itemValue="4.2" />
 						</aon:selectOneMenu>						
-					</c:if>
+					</aon:if>
   -->					
 				
 			</aon:div>

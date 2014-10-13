@@ -13,7 +13,7 @@
 	<aon:valueParam name="edit" default="#{true}" />
 	<aon:valueParam name="entryPoint" default="EmployeeTree" />
 
-	<c:if test="#{gwt.entryPoint != entryPoint }">
+	<aon:if test="#{gwt.entryPoint != entryPoint }">
 		<aon:form id="entryPointForm" style="display:none">
 			<aon:inputText id="gwtEntryPointText" value="#{gwt.entryPoint}" />
 			<aon:commandButton id="gwtEntryPointButton" reRender="entryPointForm" />
@@ -24,7 +24,7 @@
            	//]]>
 			</script>
 		</aon:form>
-	</c:if>
+	</aon:if>
 
 	<style>
 	body {

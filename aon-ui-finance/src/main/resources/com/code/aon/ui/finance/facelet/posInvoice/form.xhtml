@@ -61,14 +61,14 @@
 								aon-italic aon-width-80,
 								aon-message-big2 aon-width-160">
 
-							<c:if test="#{posInvoice.nevv}">
+							<aon:if test="#{posInvoice.nevv}">
 								<aon:outputText value="&#160;" />
 								<aon:outputText value="&#160;" />
 								<aon:outputText styleClass="aon-label-error"
 									value="#{bundle.finance_pos_no_current_invoice}" />
-							</c:if>
+							</aon:if>
 
-							<c:if test="#{!posInvoice.nevv}">
+							<aon:if test="#{!posInvoice.nevv}">
 								<aon:outputText value="&#160;" />
 								<aon:outputLabel value="#{bundle.aon_invoice_number}:" />
 								<aon:panelGrid styleClass="aon-width-all" columns="2"
@@ -82,7 +82,7 @@
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 
-								<c:if test="#{posInvoice.to.registryName != posInvoice.defaultCustomer.registry.name}">
+								<aon:if test="#{posInvoice.to.registryName != posInvoice.defaultCustomer.registry.name}">
 									<aon:outputText value="&#160;" />
 									<aon:outputLabel value="#{bundle.aon_customer}:" />
 									<aon:div>
@@ -103,18 +103,18 @@
 									</aon:div>
 									<aon:outputLabel value="#{bundle.aon_company_document}:" />
 									<aon:outputText value="#{posInvoice.to.registryDocument}" />
-								</c:if>
+								</aon:if>
 <!-- 
 								<aon:outputLabel value="#{bundle.finance_pos_seller_label}:" />
 								<aon:div>
-									<c:if test="#{posInvoice.to.seller.registry.id != null}">
+									<aon:if test="#{posInvoice.to.seller.registry.id != null}">
 										<aon:outputText value="#{posInvoice.to.seller.registry.fullName}">
 											<aon:abbreviateConverter maxWidth="20" />
 										</aon:outputText>
 										<rich:toolTip>
 											<aon:outputText value="#{posInvoice.to.seller.registry.fullName}" />
 										</rich:toolTip>
-									</c:if>
+									</aon:if>
 									<aon:commandLink id="invoiceSellerData" immediate="true"
 										value="&#160;" title="#{bundle.aon_edit}"
 										styleClass="aon-icon-edit-add-user" style="margin-left: 5px; padding-right: 12px;"
@@ -125,7 +125,7 @@
 								</aon:div>
  -->
 
-								<c:if test="#{posInvoice.to.registryAddress.id != null or posInvoiceAddress.to.id != null}">
+								<aon:if test="#{posInvoice.to.registryAddress.id != null or posInvoiceAddress.to.id != null}">
 									<aon:outputText value="&#160;" />
 									<aon:outputLabel value="#{bundle.aon_address}:" />
 									<aon:div styleClass="aon-nowrap">
@@ -145,41 +145,41 @@
 											<aon:outputText value="#{posInvoice.location}" />
 										</rich:toolTip>
 									</aon:div>
-								</c:if>
-							</c:if>
+								</aon:if>
+							</aon:if>
 
 						</aon:panelGrid>
 
 						<aon:div id="PosInvoiceDetailWizard" styleClass="aon-margin-bottom">
-							<c:if test="#{posInvoice.posShift.pos.standard}">
+							<aon:if test="#{posInvoice.posShift.pos.standard}">
 								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardStandard.xhtml">
 									<ui:param name="invoiceController" value="#{posInvoice}" />
 									<ui:param name="detailController" value="#{posInvoiceDetail}" />
 									<ui:param name="financeController" value="#{posInvoiceFinance}" />
 								</ui:include>
-							</c:if>
-							<c:if test="#{posInvoice.posShift.pos.touchScreen}">
+							</aon:if>
+							<aon:if test="#{posInvoice.posShift.pos.touchScreen}">
 								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardTouchscreen.xhtml">
 									<ui:param name="invoiceController" value="#{posInvoice}" />
 									<ui:param name="detailController" value="#{posInvoiceDetail}" />
 									<ui:param name="financeController" value="#{posInvoiceFinance}" />
 								</ui:include>
-							</c:if>
+							</aon:if>
  						</aon:div>
 
-						<c:if test="#{!posInvoice.nevv and posInvoiceDetail.rowCount > 0}">
+						<aon:if test="#{!posInvoice.nevv and posInvoiceDetail.rowCount > 0}">
 							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formDetail.xhtml">
 								<ui:param name="invoiceController" value="#{posInvoice}" />
 								<ui:param name="detailController" value="#{posInvoiceDetail}" />
 								<ui:param name="financeController" value="#{posInvoiceFinance}" />
 							</ui:include>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{posInvoice.suspendedInvoiceCount > 0}">
+						<aon:if test="#{posInvoice.suspendedInvoiceCount > 0}">
 							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formSuspended.xhtml">
 								<ui:param name="invoiceController" value="#{posInvoice}" />
 							</ui:include>
-						</c:if>
+						</aon:if>
 
 					</aon:panelGroup>
 
@@ -301,24 +301,24 @@
 
 						</aon:panelGrid>
 
-						<c:if test="#{posInvoice.posShift.pos.touchScreen}">
+						<aon:if test="#{posInvoice.posShift.pos.touchScreen}">
 							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formQuantity.xhtml">
 								<ui:param name="invoiceController" value="#{posInvoice}" />
 								<ui:param name="detailController" value="#{posInvoiceDetail}" />
 							</ui:include>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{!posInvoice.nevv and posInvoiceDetail.rowCount > 0}">
+						<aon:if test="#{!posInvoice.nevv and posInvoiceDetail.rowCount > 0}">
 							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formTotal.xhtml">
 								<ui:param name="invoiceController" value="#{posInvoice}" />
 							</ui:include>
-						</c:if>
+						</aon:if>
 
-						<c:if test="#{!posInvoice.nevv and posInvoiceFinance.rowCount > 0}">
+						<aon:if test="#{!posInvoice.nevv and posInvoiceFinance.rowCount > 0}">
 							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formFinance.xhtml">
 								<ui:param name="financeController" value="#{posInvoiceFinance}" />
 							</ui:include>
-						</c:if>
+						</aon:if>
 
 					</aon:panelGroup>
 				</aon:panelGrid>

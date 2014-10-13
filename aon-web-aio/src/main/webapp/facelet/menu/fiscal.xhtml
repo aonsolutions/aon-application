@@ -60,7 +60,7 @@
 							    <h:panelGrid columns="2" styleClass="aon-width-all"
 							    	columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
 							    	
-											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="vatTax" 
 													action="vatTax_search"
 													styleClass="aon-fiscal-link" 
@@ -117,7 +117,7 @@
 													<aon:outputText styleClass="aon-fiscal-link-box" value="115" />
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_115_module}" />
 												</aon:commandLink>
-											</c:if>
+											</aon:if>
 											
 											<aon:commandLink id="gwt_mod390"
 												action="gwt_mod390"
@@ -126,7 +126,7 @@
 												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_390_module}" />
 											</aon:commandLink>
 
-											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod123" 
 													action="mod123_search"
 													actionListener="#{mod123.onEditSearch}"
@@ -134,7 +134,7 @@
 													<aon:outputText styleClass="aon-fiscal-link-box" value="123" />
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_123_module}" />
 												</aon:commandLink>
-											</c:if>
+											</aon:if>
 
 											<aon:commandLink id="gwt_mod180"
 												action="gwt_mod180"
@@ -143,11 +143,11 @@
 												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_180_module}" />
 											</aon:commandLink>
 
-											<c:if test="#{domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 												<aon:outputText value="&#160;"/>
-											</c:if>
+											</aon:if>
 
-											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod130" 
 													action="mod130_search"
 													actionListener="#{mod130.onEditSearch}"
@@ -155,7 +155,7 @@
 													<aon:outputText styleClass="aon-fiscal-link-box" value="130" />
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_130_module}" />
 												</aon:commandLink>
-											</c:if>
+											</aon:if>
 
 											<aon:commandLink id="gwt_mod190"
 												action="gwt_mod190"
@@ -164,7 +164,7 @@
 												<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_190_module}" />
 											</aon:commandLink>
 
-											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod131" 
 													action="mod131_search"
 													actionListener="#{mod131.onEditSearch}"
@@ -172,18 +172,18 @@
 													<aon:outputText styleClass="aon-fiscal-link-box" value="131" />
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_131_module}" />
 												</aon:commandLink>
-											</c:if>
+											</aon:if>
 
-											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="gwt_mod200"
 													action="gwt_mod200"
 													title="#{bundle.fiscal_model_200_module}">
 													<aon:outputText styleClass="aon-fiscal-link-box" value="200"/>
 													<aon:outputText styleClass="aon-fiscal-link-label" value="#{bundle.fiscal_model_200_module} - 2013" />
 												</aon:commandLink>
-											</c:if>
+											</aon:if>
 												
-											<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 												<aon:commandLink id="mod310-OLD" 
 													action="mod310_search-OLD"
 													actionListener="#{mod310.onEditSearch}"
@@ -202,9 +202,9 @@
 													<aon:outputText styleClass="aon-fiscal-link-label" value="(Antes de 2014) #{bundle.fiscal_model_311_module}"/>
 												</aon:commandLink>
 												<aon:outputText value="&#160;"/>
-											</c:if>
+											</aon:if>
 											
-											<c:if test="#{domainSwitcher.domainManagementAvailable}">
+											<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 												<aon:div styleClass="aon-direct-access-list-element">
 													<aon:commandLink id="fiscalMatrix" 
 														action="fiscalMatrix_list"
@@ -212,7 +212,7 @@
 														title="Matriz de empresas y modelos fiscales"
 														value="Matriz de empresas y modelos fiscales" />
 												</aon:div> 
-											</c:if>
+											</aon:if>
 							    </h:panelGrid>
 							     
 							</aon:div>
@@ -222,7 +222,7 @@
 				
 				<h:panelGrid columns="2" styleClass="aon-width-all" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
-					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 								<aon:panelGrid id="group_fiscal_modules_module"
 									styleClass="aon-width-all" columnClasses="aon-padding"
@@ -240,9 +240,9 @@
 									</aon:div>
 								</aon:panelGrid>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 
-					<c:if test="#{domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{domainSwitcher.domainManagementAvailable}">
 						<aon:panelGrid id="group_fiscal_accounting"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-account-entry aon-direct-access-panel">
@@ -255,7 +255,7 @@
 										action="account_list-fiscal"
 										value="#{bundle.account_module}" />
 								</aon:div>
-								<c:if test="#{aonRole.config}">
+								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="autConcept-fiscal"
 											action="autConcept-fiscal"
@@ -271,13 +271,13 @@
 											action="amortizationType_list-fiscal"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
-					</c:if>
+					</aon:if>
 					
 
-					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 								<aon:panelGrid id="group_fiscal_mercantile_registry"
 									styleClass="aon-width-all" columnClasses="aon-padding"
@@ -331,7 +331,7 @@
 									</aon:div>
 								</aon:panelGrid>
 						</aon:panelGroup>
-					</c:if>
+					</aon:if>
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>

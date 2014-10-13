@@ -43,7 +43,7 @@
 					<aon:div id="documental_chart_div" style="width: 100%; height: 180px;" /> 
 					
 					
-					<c:if test="#{dashboard.pieChart}">
+					<aon:if test="#{dashboard.pieChart}">
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 						<script type="text/javascript"> 
@@ -77,8 +77,8 @@
 								chart.draw(data, options);
 							}
 							</script>
-							</c:if>
-					<c:if test="#{dashboard.columnChart}">
+							</aon:if>
+					<aon:if test="#{dashboard.columnChart}">
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 						<script type="text/javascript">
 								google.load("visualization", "1", {'callback' : 'drawChart' ,'packages':["corechart"], 'language': 'en'});
@@ -108,9 +108,9 @@
 
 							}
     					</script>
-    				</c:if>
+    				</aon:if>
     					
-					<c:if test="#{dashboard.bubbleChart}">
+					<aon:if test="#{dashboard.bubbleChart}">
 
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
     					<script type="text/javascript">
@@ -166,7 +166,7 @@
       						chart.draw(data, options);
     						}   					 	
 							</script>
-					</c:if>
+					</aon:if>
 									
 									
 					

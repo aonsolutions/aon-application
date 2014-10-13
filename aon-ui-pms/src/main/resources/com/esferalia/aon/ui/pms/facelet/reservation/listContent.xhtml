@@ -6,7 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{!skipActivityButton}">
+	<aon:if test="#{!skipActivityButton}">
 		<aon:column styleClass="aon-editDataTable-iconColumn">
 			<f:facet name="header">
 				<aon:outputText value="S" />
@@ -72,7 +72,7 @@
 									(bundle.pms_no_show) : 
 									('')))}" /> 
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column alias="ProjectReservation.hotel.workPlace.description"
 		styleClass="aon-editDataTable-textColumn">
@@ -137,16 +137,16 @@
 		</aon:outputText>
 	</aon:column>
 
-	<c:if test="#{!skipGuest}">
+	<aon:if test="#{!skipGuest}">
 		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.report_guest}" />
 			</f:facet>
 			<aon:outputText value="#{to.guestFullName}" />
 		</aon:column>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!skipAgency}">
+	<aon:if test="#{!skipAgency}">
 		<aon:column alias="ProjectReservation.agency.registry.name"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -154,7 +154,7 @@
 			</f:facet>
 			<aon:outputText value="#{to.agency.registry.fullName}" />
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column alias="ProjectReservation.total"
 		styleClass="aon-editDataTable-numberColumn">

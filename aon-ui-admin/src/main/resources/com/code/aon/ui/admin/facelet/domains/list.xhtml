@@ -19,14 +19,14 @@
 						styleClass="aon-icon-portlet aon-icon-category aon-margin-right" 
 						actionListener="#{domainPrint.onEditSearch}"
 						action="domainPrint_search" />
-					<c:if test="#{aonRole.admin}">
+					<aon:if test="#{aonRole.admin}">
 						<aon:commandLink id="newDomainDesktop" 
 							title="#{bundle.admin_new_domain}"
 							value="&#160;" style="padding-top:2px;padding-bottom:2px;"
 							styleClass="aon-icon-portlet aon-icon-new" 
 							actionListener="#{domains.onNewDomain}"
 							action="newDomain_form"/>
-					</c:if> 
+					</aon:if> 
 				</aon:div>
 				<aon:outputText value="#{bundle.config_domain_module}"
 					styleClass="aon-bold aon-icon aon-icon-company"/>
@@ -79,7 +79,7 @@
 								</f:facet>							
 								<aon:outputText value="#{to.description}" />
 							</aon:column>
-							<c:if test="#{domains.allDomains}">
+							<aon:if test="#{domains.allDomains}">
 								<aon:column styleClass="aon-editDataTable-textColumn  aon-nowrap"
 									alias="Domain.parent&lt;description" >
 									<f:facet name="header">
@@ -87,7 +87,7 @@
 									</f:facet>							
 									<aon:outputText value="#{to.parent.description}" />
 								</aon:column>
-							</c:if>
+							</aon:if>
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80"
 								alias="Domain.type" >
 								<f:facet name="header">
@@ -130,7 +130,7 @@
 								</f:facet>							
 								<aon:outputText value="#{domains.currentDomainChildNumber}" />
 							</aon:column>
-							<c:if test="#{aonRole.admin}">
+							<aon:if test="#{aonRole.admin}">
 								<aon:column styleClass="aon-width-30 aon-vertical-align-top">
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
@@ -145,7 +145,7 @@
 										styleClass="aon-editDataTable-button aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove_line}" />
 								</aon:column>
-							</c:if>
+							</aon:if>
 						</ui:define>
 					</ui:decorate>
 				</aon:div>

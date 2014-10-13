@@ -105,7 +105,7 @@
 						</aon:div>
 					</aon:panelGrid>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="AccountEntry_securityLevel"
@@ -113,7 +113,7 @@
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all}" />
 						</aon:selectOneRadio>
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="Vat_type"
 						value="#{bundle.finance_invoice_order_by}" />

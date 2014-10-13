@@ -30,12 +30,12 @@
 					<aon:selectOneMenu id="CashFlowForecast_registryBank_id"
 						value="#{cashFlowForecast.to.registryBank}">
 						<f:selectItem itemValue="#{null}" itemLabel=" - "/>
-						<c:if test="#{!cashFlowForecast.nevv}">
+						<aon:if test="#{!cashFlowForecast.nevv}">
 							<f:selectItems value="#{companyCollections.allCompanyBanks}" />
-						</c:if>
-						<c:if test="#{cashFlowForecast.nevv}">
+						</aon:if>
+						<aon:if test="#{cashFlowForecast.nevv}">
 							<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
-						</c:if>
+						</aon:if>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="CashFlowForecast_description"

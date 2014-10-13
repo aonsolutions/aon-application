@@ -22,10 +22,10 @@
 		<aon:valueParam name="skipGoToButtonEx" default="#{skipGoToButton}"/>
 		<aon:valueParam name="skipNewButtonEx" default="#{skipNewButton}"/>
 		
-		<c:if test="#{!skipGoToButton}">		
+		<aon:if test="#{!skipGoToButton}">		
 			<aon:valueParam name="goToBackActionListener" default="#{controller.beanName}#{'.onBack'}"/>
 			<aon:valueParam name="goToProperty" default="#{lookupTo}"/>
-		</c:if>
+		</aon:if>
 		
 		<aon:valueParam name="searchButtonWidth" default="650"/>
 		<aon:valueParam name="searchButtonHeight" default="480"/>
@@ -33,9 +33,9 @@
 		<aon:valueParam name="newButtonWidth" default="680"/>
 		<aon:valueParam name="newButtonHeight" default="520"/>
 		
-		<c:if test="#{!skipInputText}">
+		<aon:if test="#{!skipInputText}">
 			<aon:valueParam name="clearButtonFocus" default="#{pojoName}_id#{lookupSuffix}"/>
-		</c:if>
+		</aon:if>
 		
 		<aon:methodParam name="lookupChangeListener" default="" type="lookupChangeListener" />
 		<aon:methodParam name="lookupAction" default="" />

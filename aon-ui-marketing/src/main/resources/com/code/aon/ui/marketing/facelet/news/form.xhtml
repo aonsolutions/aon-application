@@ -36,7 +36,7 @@
 					<aon:inputText id="News_title" required="true"
 						value="#{news.to.title}" size="60" maxlength="128" />
 						
-					<c:if test="#{news.to.type  == 'NEWS'}" >						
+					<aon:if test="#{news.to.type  == 'NEWS'}" >						
 						<aon:outputLabel for="News_category"
 							value="#{bundle.marketing_news_channel}" />
 						<aon:selectOneMenu id="News_category" required="true"
@@ -44,7 +44,7 @@
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{marketingCollections.channels}" />
 						</aon:selectOneMenu>
-					</c:if>												
+					</aon:if>												
 
 					<aon:outputLabel for="News_scope_id"
 						value="#{bundle.aon_scope}" />
@@ -53,7 +53,7 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 					
-					<c:if test="#{news.to.type  == 'NEWS'}" >
+					<aon:if test="#{news.to.type  == 'NEWS'}" >
 						<aon:outputLabel for="News_description"
 							value="#{bundle.aon_description}" />
 						<aon:inputTextarea id="News_description" required="true"
@@ -72,13 +72,13 @@
 							<ui:param name="lookupTo" value="#{news.to.registryAttachment}" />
 							<ui:param name="lookupControllerListener" value="#{newsletter.imageFilter}" />
 						</ui:include>
-					</c:if>
+					</aon:if>
 					
-					<c:if test="#{news.to.type  == 'MESSAGE'}" >
+					<aon:if test="#{news.to.type  == 'MESSAGE'}" >
 						<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{news.to.registryAttachment}" />
 						</ui:include>					
-					</c:if>
+					</aon:if>
 					
 					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{news.to.template}" />
@@ -91,7 +91,7 @@
 						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
 					</aon:selectInputDate>		
 
-					<c:if test="#{news.to.type  == 'NEWS'}" >
+					<aon:if test="#{news.to.type  == 'NEWS'}" >
 						<aon:outputLabel for="News_endDate"
 							value="#{bundle.aon_end_date}" />
 						<aon:selectInputDate id="News_endDate" inputSize="16"
@@ -104,7 +104,7 @@
 						<aon:selectBooleanCheckbox id="News_rss" 
 							reRender="News_url-label,News_url"
 							value="#{news.to.rss}" />
-					</c:if>
+					</aon:if>
 
 					<aon:outputLabel for="News_active"
 						value="#{bundle.aon_active}" />

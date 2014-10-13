@@ -52,7 +52,7 @@
 		</aon:selectOneMenu>
 	</aon:div>
 		
-	<c:if test="#{showMunicipality}">
+	<aon:if test="#{showMunicipality}">
 		<aon:outputLabel for="#{pojoName}_address_municipality" 
 			value="#{bundle.registry_municipality}" />
 		<aon:div>
@@ -66,13 +66,13 @@
 			<aon:inputText id="#{pojoName}_address_city" 
 				value="#{registryAddress.city}" size="30" maxlength="64"/>
 		</aon:div>
-	</c:if>
+	</aon:if>
 		
-	<c:if test="#{!showMunicipality}">
+	<aon:if test="#{!showMunicipality}">
 		<aon:outputLabel for="#{pojoName}_address_city" 
 			value="#{bundle.registry_city}" />
 		<aon:inputText id="#{pojoName}_address_city" 
 			value="#{registryAddress.city}" size="64" maxlength="64"/>
-	</c:if>
+	</aon:if>
 			
 </ui:composition>

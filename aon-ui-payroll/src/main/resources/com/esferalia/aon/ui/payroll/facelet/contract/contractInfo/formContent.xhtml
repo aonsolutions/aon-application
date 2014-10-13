@@ -8,7 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<aon:div id="contractModelFields">
-		<c:if test="#{empty contract.params.contractModelOption}">
+		<aon:if test="#{empty contract.params.contractModelOption}">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="Seleccione la modalidad del contrato para poder introducir los datos" />
@@ -27,9 +27,9 @@
 					</aon:commandButton>
 				</aon:panelGrid>
 			</aon:panel>
-		</c:if>
+		</aon:if>
 		
-		<c:if test="#{not empty contract.params.contractModelOption}">
+		<aon:if test="#{not empty contract.params.contractModelOption}">
 			<a4j:repeat var="to" value="#{controller.contractFieldList}">
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
@@ -48,7 +48,7 @@
 					
 				</aon:panelGrid>
 			</a4j:repeat>
-		</c:if>
+		</aon:if>
 	</aon:div>
 	
 </ui:composition>

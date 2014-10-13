@@ -65,7 +65,7 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputText value ="&#160;"/>
 						<aon:div>
 							<aon:selectBooleanCheckbox id="entryLoader_securityLevel"
@@ -74,7 +74,7 @@
 								for="entryLoader_securityLevel"
 								value="#{bundle.aon_confidential}" />
 						</aon:div>
-					</c:if>
+					</aon:if>
 				</aon:panelGrid>
 			</aon:div>
 

@@ -120,7 +120,7 @@
 				</aon:panelGrid>
  
 				<aon:div id="loanContainer" style="margin-top: 10px;width: 70%;">
-					<c:if test="#{loanFeeEntry.entry.loan != null}">
+					<aon:if test="#{loanFeeEntry.entry.loan != null}">
 						<aon:panelCollapsible label="#{bundle.accounting_loan_data}">
 							<aon:panelGrid columns="2" style="width: 100%; text-align: left;"
 								columnClasses="aon-panelGrid-odd aon-width-150
@@ -132,13 +132,13 @@
 											timeZone="#{timeZoneController.timeZoneId}" />
 									</aon:outputText>
 	
-									<c:if test="#{aonRole.confidentiality and loanFeeEntry.entry.loan.confidential}">
+									<aon:if test="#{aonRole.confidentiality and loanFeeEntry.entry.loan.confidential}">
 										<aon:outputText styleClass="aon-icon aon-icon-confidential"
 											style="margin-left: 30px;" 
 											title="#{bundle.aon_confidential}"/>
 										<aon:outputText styleClass="aon-italic aon-margin-right"
 											value="#{bundle.aon_confidential}" />
-									</c:if>
+									</aon:if>
 								</aon:div>
 								
 	
@@ -198,7 +198,7 @@
 								</aon:outputText>
 							</aon:panelGrid>
 						</aon:panelCollapsible>
-					</c:if>
+					</aon:if>
 				</aon:div>
 
 			</aon:div>

@@ -8,13 +8,13 @@
 
 	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 
-		<c:if test="#{lookup != null}">
+		<aon:if test="#{lookup != null}">
 			<ui:param name="controller" value="#{lookup}"/>
-		</c:if>
+		</aon:if>
 
 		<ui:include src="/com/code/aon/ui/customer/facelet/customer/formContent.xhtml" />
 
-		<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+		<aon:if test="#{aonConfiguration.bean.customer.showTariff}">
 			<aon:outputLabel for="Customer_tariff_id"
 				value="#{bundle.report_tariff}" />
 			<aon:selectOneMenu id="Customer_tariff_id"
@@ -22,7 +22,7 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{configCollections.tariffs}" />
 			</aon:selectOneMenu>
-		</c:if>
+		</aon:if>
 
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
 			<ui:param name="controllerLookupListener" value="#{customerForm}"/>
@@ -30,10 +30,10 @@
 		
 	</aon:panelGrid>
 	
-	<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
+	<aon:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
 			<ui:param name="controllerLookupListener" value="#{customerForm}"/>
 		</ui:include>
-	</c:if>	
+	</aon:if>	
 
 </ui:composition>

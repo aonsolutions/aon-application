@@ -128,7 +128,7 @@
 									value="#{bundle.finance_advance}"
 									rendered="#{!finance.payment}" />
 
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Finance_securityLevel"
 										value="#{finance.to.confidential}"
 										rendered="#{finance.to.emptyInvoice and finance.pending}" />
@@ -138,7 +138,7 @@
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{(!finance.to.emptyInvoice or !finance.pending) and finance.to.confidential}" />
-								</c:if>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 									
@@ -385,12 +385,12 @@
 								valueChangeListener="#{finance.onRegistryBankChanged}"
 								disabled="#{!finance.pending and !finance.returned}">
 								<f:selectItem itemLabel="-" value="#{null}" />
-								<c:if test="#{!finance.nevv}">
+								<aon:if test="#{!finance.nevv}">
 									<f:selectItems value="#{finance.allBanks}" />
-								</c:if>
-								<c:if test="#{finance.nevv}">
+								</aon:if>
+								<aon:if test="#{finance.nevv}">
 									<f:selectItems value="#{finance.activeBanks}" />
-								</c:if>
+								</aon:if>
 							</aon:selectOneMenu>
 							<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
 								rendered="#{!finance.showBankManualInput and (finance.pending or finance.returned)}"  
@@ -430,7 +430,7 @@
 
 				</aon:panelGrid>
 					
-				<c:if test="#{!finance.nevv}">
+				<aon:if test="#{!finance.nevv}">
 					<aon:div styleClass="aon-padding-top">
 						<aon:panel>
 							<f:facet name="header">
@@ -488,7 +488,7 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:div styleClass="aon-nowrap">
-											<c:if test="#{aonRole.accountingOperator}">
+											<aon:if test="#{aonRole.accountingOperator}">
 												<aon:commandButton id="record"
 													title="#{bundle.finance_record}"
 													immediate="true" rendered="#{to.recordable and !to.recorded and to.bankStatementLink == null}"
@@ -497,7 +497,7 @@
 													reRender="financeTrackingData" 
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-											</c:if>
+											</aon:if>
 											<aon:confirmButton id="undo"
 												title="#{bundle.aon_undo}"
 												immediate="true" rendered="#{financeTracking.undoable}"
@@ -530,7 +530,7 @@
 							</ui:decorate>
 						</aon:panel>
 					</aon:div>
-				</c:if>
+				</aon:if>
 			</aon:div>
  		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showLinkWindow">
-		<c:if test="#{bankStatement.showLinkWindow}">
+		<aon:if test="#{bankStatement.showLinkWindow}">
 			<rich:modalPanel id="linkModalPanel" minHeight="600"
 				minWidth="900" rendered="#{bankStatement.showLinkWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -135,7 +135,7 @@
 															</aon:outputText>
 														</aon:column>
 	
-														<c:if test="#{aonRole.confidentiality}">
+														<aon:if test="#{aonRole.confidentiality}">
 															<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 																<f:facet name="header">
 																	<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -145,7 +145,7 @@
 																	styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
 																	style="padding-left:20px" />
 															</aon:column>
-														</c:if>
+														</aon:if>
 	
 														<aon:column styleClass="aon-editDataTable-textColumn">
 															<f:facet name="header">
@@ -255,7 +255,7 @@
 																</aon:outputText>
 															</aon:column>
 	
-															<c:if test="#{aonRole.confidentiality}">
+															<aon:if test="#{aonRole.confidentiality}">
 																<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 																	<f:facet name="header">
 																		<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -265,7 +265,7 @@
 																		styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
 																		style="padding-left:20px" />
 																</aon:column>
-															</c:if>
+															</aon:if>
 	
 															<aon:column alias="Finance.concept" 
 																styleClass="aon-editDataTable-textColumn">
@@ -358,7 +358,7 @@
 																</aon:outputText>
 															</aon:column>
 	
-															<c:if test="#{aonRole.confidentiality}">
+															<aon:if test="#{aonRole.confidentiality}">
 																<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 																	<f:facet name="header">
 																		<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -368,7 +368,7 @@
 																		styleClass="#{to.finance.confidential?'aon-icon-checked':'aon-icon-check'}" 
 																		style="padding-left:20px" />
 																</aon:column>
-															</c:if>
+															</aon:if>
 	
 															<aon:column alias="FinanceTracking.finance.concept"
 																styleClass="aon-editDataTable-textColumn">
@@ -453,7 +453,7 @@
 															</aon:outputText>
 														</aon:column>
 	
-														<c:if test="#{aonRole.confidentiality}">
+														<aon:if test="#{aonRole.confidentiality}">
 															<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 																<f:facet name="header">
 																	<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -463,7 +463,7 @@
 																	styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
 																	style="padding-left:20px" />
 															</aon:column>
-														</c:if>
+														</aon:if>
 	
 														<aon:column alias="FinanceBatch.id"
 															 styleClass="aon-editDataTable-textColumn">
@@ -529,7 +529,7 @@
 													</aon:outputText>
 												</aon:column>
 
-												<c:if test="#{aonRole.confidentiality}">
+												<aon:if test="#{aonRole.confidentiality}">
 													<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 														<f:facet name="header">
 															<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -539,7 +539,7 @@
 															styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
 															style="padding-left:20px" />
 													</aon:column>
-												</c:if>
+												</aon:if>
 
 												<aon:column styleClass="aon-editDataTable-textColumn">
 													<f:facet name="header">
@@ -574,13 +574,13 @@
 												<aon:div>
 													<aon:panelGrid columns="2" style="width:100%;"
 														columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-														<c:if test="#{aonRole.accountingOperator}">
+														<aon:if test="#{aonRole.accountingOperator}">
 															<aon:outputText value="#{bundle.finance_account} " />
 															<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 																<ui:param name="lookupTo" value="#{linkManager.account}" />
 																<ui:param name="lookupSuffix" value="-Link" />
 															</ui:include>
-														</c:if>
+														</aon:if>
 														<aon:outputText value="#{bundle.aon_concept} " />
 														<aon:selectOneMenu value="#{linkManager.bankConcept}">
 															<f:selectItems value="#{financeCollections.bankConcepts}" />
@@ -633,7 +633,7 @@
 													</aon:outputText>
 												</aon:column>
 
-												<c:if test="#{aonRole.confidentiality}">
+												<aon:if test="#{aonRole.confidentiality}">
 													<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 														<f:facet name="header">
 															<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -643,7 +643,7 @@
 															styleClass="#{to.accountEntry.confidential?'aon-icon-checked':'aon-icon-check'}" 
 															style="padding-left:20px" />
 													</aon:column>
-												</c:if>
+												</aon:if>
 
 												<aon:column styleClass="aon-editDataTable-textColumn">
 													<f:facet name="header">
@@ -718,7 +718,7 @@
 					<ui:param name="fractionReRender" value="statementLinkBody" />
 				</ui:include>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

@@ -54,7 +54,7 @@
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
-			<c:if test="#{aonRole.confidentiality}">
+			<aon:if test="#{aonRole.confidentiality}">
 				<aon:column styleClass="aon-editDataTable-iconColumn aon-width-40">
 					<f:facet name="header">
 						<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -71,7 +71,7 @@
 							value="#{controller.to.confidential}" rendered="#{formNew}" />
 					</f:facet>
 				</aon:column>
-			</c:if>		
+			</aon:if>		
 			<aon:column alias="ContractAttachment.attachDate"
 				styleClass="aon-editDataTable-dateColumn aon-width-80">
 				<f:facet name="header">
@@ -91,7 +91,7 @@
 						rendered="#{formNew}" value="#{controller.to.attachDate}" />
 				</f:facet>
 			</aon:column>		
-			<c:if test="#{!skipScopeColumn}"> 
+			<aon:if test="#{!skipScopeColumn}"> 
 				<aon:column alias="ContractAttachment.scope.description"
 					styleClass="aon-editDataTable-textColumn aon-width-120">
 					<f:facet name="header">
@@ -112,7 +112,7 @@
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>
-			</c:if>
+			</aon:if>
 		</ui:define>
 		<ui:define name="additionalDataTableContent" >
 			<aon:div styleClass="aon-margin-top" >

@@ -20,7 +20,7 @@
 					styleClass="aon-icon2 aon-icon-rowSelector" />																
 			</aon:column>
 			
-			<c:if test="#{product.showDetail}">
+			<aon:if test="#{product.showDetail}">
 				<aon:column alias="Item.detail"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
@@ -28,9 +28,9 @@
 					</f:facet>
 					<aon:outputText value="#{to.detail}" />
 				</aon:column>
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{product.showDetail2}">
+			<aon:if test="#{product.showDetail2}">
 				<aon:column alias="Item.detail2"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
@@ -38,9 +38,9 @@
 					</f:facet>
 					<aon:outputText value="#{to.detail2}" />
 				</aon:column>
-			</c:if>
+			</aon:if>
 
-			<c:if test="#{product.showDetail3}">
+			<aon:if test="#{product.showDetail3}">
 				<aon:column alias="Item.detail3"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
@@ -48,7 +48,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.detail3}" />
 				</aon:column>
-			</c:if>
+			</aon:if>
 
 			<aon:column alias="Item.barcode"
 				styleClass="aon-editDataTable-textColumn">

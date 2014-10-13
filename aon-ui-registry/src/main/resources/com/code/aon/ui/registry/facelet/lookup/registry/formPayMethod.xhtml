@@ -19,16 +19,16 @@
 				<f:selectItems value="#{configCollections.payMethods}" />
 			</aon:selectOneMenu>				
 
-			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
+			<aon:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
 				<aon:outputLabel for="RegistryBank_id" value="#{bundle.aon_bank}" />
-				<c:if test="#{controllerLookupListener.showCompanyBanks}">
+				<aon:if test="#{controllerLookupListener.showCompanyBanks}">
 					<aon:selectOneMenu id="RegistryBank_id"
 						value="#{controllerLookupListener.registryBank}">
 						<f:selectItem value="#{null}" />
 						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 					</aon:selectOneMenu>
-				</c:if>
-				<c:if test="#{!controllerLookupListener.showCompanyBanks}">
+				</aon:if>
+				<aon:if test="#{!controllerLookupListener.showCompanyBanks}">
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
 							<ui:param name="bankAccountTo" value="#{controllerLookupListener.registryBank.bankAccount}" />
@@ -52,8 +52,8 @@
 						value="#{controllerLookupListener.registryBank.bic}" 
 						size="12" maxlength="11" required="#{true}">
 					</aon:inputText>
-				</c:if>			
-			</c:if>			
+				</aon:if>			
+			</aon:if>			
 		</aon:panelGrid>
 	</aon:div>
 
@@ -62,7 +62,7 @@
 			columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-160,
 				aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-160">
 					
-			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">				
+			<aon:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">				
 				<aon:outputLabel for="RegistryPayMethod_numberOfPayments" 
 					value="#{bundle.registry_number_of_payments}" />
 				<aon:inputText id="RegistryPayMethod_numberOfPayments"
@@ -84,7 +84,7 @@
 					value="#{bundle.registry_payment_days}" />
 				<aon:inputText id="RegistryPayMethod_paymentDays"
 					value="#{controllerLookupListener.registryPayMethod.paymentDays}" size="5" />
-			</c:if>
+			</aon:if>
 		</aon:panelGrid>
 	</aon:div>
 	

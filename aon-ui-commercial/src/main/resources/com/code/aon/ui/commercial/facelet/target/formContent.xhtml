@@ -15,7 +15,7 @@
 		<f:selectItems value="#{commercialCollections.targetStatuses}" />
 	</aon:selectOneRadio>
 
-	<c:if test="#{aonConfiguration.bean.target.showTaxInfoData}">
+	<aon:if test="#{aonConfiguration.bean.target.showTaxInfoData}">
 		<aon:outputLabel for="Target_transaction" value="#{bundle.aon_transaction_type}" />
 		<aon:selectOneMenu id="Target_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
@@ -32,9 +32,9 @@
 			<aon:outputLabel for="Target_withholding" styleClass="aon-italic"
 				value="#{bundle.aon_retention}" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 	
-	<c:if test="#{aonConfiguration.bean.target.showTariff}">
+	<aon:if test="#{aonConfiguration.bean.target.showTariff}">
 		<aon:outputLabel for="Target_tariff_id"
 			value="#{bundle.report_tariff}" />
 		<aon:selectOneMenu id="Target_tariff_id"
@@ -42,9 +42,9 @@
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{configCollections.tariffs}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
-	<c:if test="#{!controller.nevv and aonConfiguration.bean.target.showSearchOnlyCustomers}">
+	<aon:if test="#{!controller.nevv and aonConfiguration.bean.target.showSearchOnlyCustomers}">
 		<aon:outputLabel for="Target_customer"
 			value="#{bundle.aon_customer}" />
 		<aon:div id="TargetCustomerDiv">
@@ -66,7 +66,7 @@
 				reRender="TargetCustomerDiv">
 			</aon:commandButton>
 		</aon:div>
-	</c:if>
+	</aon:if>
 	
 	<aon:outputLabel for="Target_advertising"
 		value="#{bundle.target_advertising}" />

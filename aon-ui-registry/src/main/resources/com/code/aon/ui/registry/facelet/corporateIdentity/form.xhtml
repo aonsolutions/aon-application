@@ -9,9 +9,9 @@
 
 	<ui:define name="content">
 		<aon:form id="corporateIdentityAttachForm">
-			<c:if test="#{corporateIdentityAttach.massiveUpload}" >
+			<aon:if test="#{corporateIdentityAttach.massiveUpload}" >
 				<aon:methodParam name="saveActionListener" value="#{corporateIdentityAttach.masiveUpload}" type="actionListener" />
-			</c:if>		
+			</aon:if>		
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{(corporateIdentityAttach.massiveUpload)?(bundle.registry_document_massive_upload):(bundle.aon_documents)}" />
@@ -52,12 +52,12 @@
 						<f:selectItems value="#{corporateIdentityAttach.domainScopes}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{!corporateIdentityAttach.nevv}" >
+					<aon:if test="#{!corporateIdentityAttach.nevv}" >
 						<aon:outputText value="#{bundle.aon_document_download_url}" />
 						<aon:outputLink target="_blank" value="#{corporateIdentityAttach.downloadURL}" >
 							<aon:outputText value="#{corporateIdentityAttach.downloadURL}" />
 					    </aon:outputLink>
-					</c:if>
+					</aon:if>
 			
 				</aon:panelGrid>
 			</aon:div>

@@ -39,7 +39,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 						
-	<c:if test="#{aonRole.confidentiality}">
+	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="#{controller.pojoShortName}_documents_securityLevel"
 			value="#{bundle.aon_confidential}" />
 		<aon:selectOneRadio id="#{controller.pojoShortName}_documents_securityLevel" 
@@ -47,7 +47,7 @@
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 		</aon:selectOneRadio>
-	</c:if>
+	</aon:if>
 		
 
 </ui:composition>

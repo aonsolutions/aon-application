@@ -11,11 +11,11 @@
 	<aon:div id="#{controller.beanName}VarContainer"  
 		rendered="#{controller.handler.variablesModel!=null}">
 
-		<c:if test="#{showVariableFilter}" >
+		<aon:if test="#{showVariableFilter}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_filter.xhtml" >
 				<ui:param name="controller" value="#{controller.handler}" />
 			</ui:include>
-		</c:if>
+		</aon:if>
 		
 		<aon:editDataTable id="#{controller.beanName}VariablesList"
 			value="#{controller.handler.variablesModel}" var="to" rows="20" >
@@ -27,7 +27,7 @@
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<c:if test="#{controller.handler.editableSelectedTo}" >
+				<aon:if test="#{controller.handler.editableSelectedTo}" >
 					<aon:outputText value="&#160;&#160;"
 						title="#{bundle.aon_update}" 
 						rendered="#{to.id!=null}"
@@ -36,7 +36,7 @@
 						title="#{bundle.payroll_overwrite}" 
 						rendered="#{to.id==null}"
 						styleClass="aon-editDataTable-button aon-icon-go" />
-				</c:if>
+				</aon:if>
 				<f:facet name="footer">
 					<aon:commandButton
 						id="#{controller.beanName}-reset" 
@@ -113,14 +113,14 @@
 		</aon:editDataTable>
 		<aon:dataScroller for="#{controller.beanName}VariablesList" showNote="false" />
 		
-		<c:if test="#{controller.handler.undefinedVariablesModel.rowCount>0}" >
+		<aon:if test="#{controller.handler.undefinedVariablesModel.rowCount>0}" >
 			<ui:include 
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_undefined.xhtml" >
 				<ui:param name="controller" value="#{controller}" />
 				<aon:valueParam name="formList" value="true" />
 				<aon:valueParam name="saveReRender" value="#{controller.beanName}VarContainer" />
 			</ui:include>
-		</c:if>
+		</aon:if>
 		
 	</aon:div>
 

@@ -9,7 +9,7 @@
 		<aon:graphicImage style="margin-left: 6px;margin-right: 4px;"
 			value="#{customize.toolbarLogo}" />			
 					
-		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 			<aon:commandLink id="menu_garage"
 				value="#{bundle.aon_module_garage}"
 				action="menu_garage" immediate="true"
@@ -24,19 +24,19 @@
 				value="#{bundle.aon_module_hotel}"
 				action="menu_hotel" immediate="true"
 				styleClass="aon-top-menu-item" />
-		</c:if>
+		</aon:if>
 
-		<c:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
-			<c:if test="#{aonRole.admin}">
+		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
+			<aon:if test="#{aonRole.admin}">
 				<aon:commandLink id="menu_enterprise"
 					value="#{bundle.aon_module_enterprise}"
 					action="menu_enterprise" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</c:if>
-		</c:if>
+			</aon:if>
+		</aon:if>
 
-		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-			<c:if test="#{aonRole.commercialOperator}">
+		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			<aon:if test="#{aonRole.commercialOperator}">
 				<aon:commandLink id="menu_marketing"
 					value="#{bundle.aon_module_marketing}"
 					action="menu_marketing" immediate="true"
@@ -45,33 +45,33 @@
 					value="#{bundle.aon_module_commercial}"
 					action="menu_commercial" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</c:if>
+			</aon:if>
 
 			<aon:commandLink id="menu_infoweb"
 				value="#{bundle.aon_module_infoweb}"
 				action="menu_infoweb" immediate="true"
 				styleClass="aon-top-menu-item" />
 			
-			<c:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
+			<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
 				<aon:commandLink id="menu_management"
 					value="#{bundle.aon_module_management}" 
 					action="menu_management" immediate="true"
 					styleClass="aon-top-menu-item"/>
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{aonRole.financeOperator}">
+			<aon:if test="#{aonRole.financeOperator}">
 				<aon:commandLink id="menu_treasury"
 					value="#{bundle.aon_module_finance}"
 					action="menu_treasury" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{aonRole.warehouseOperator}">
+			<aon:if test="#{aonRole.warehouseOperator}">
 				<aon:commandLink id="menu_warehouse"
 					value="#{bundle.aon_module_warehouse}"
 					action="menu_warehouse" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</c:if>
+			</aon:if>
 
 			<aon:commandLink id="menu_pos"
 				value="#{bundle.aon_module_pos}"
@@ -83,53 +83,53 @@
 				action="menu_groupware" immediate="true"
 				styleClass="aon-top-menu-item" />
 
-			<c:if test="#{aonRole.accountingOperator}">
+			<aon:if test="#{aonRole.accountingOperator}">
 				<aon:commandLink id="menu_accounting"
 					value="#{bundle.aon_module_accounting}"
 					action="menu_accounting" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</c:if>
-		</c:if>
+			</aon:if>
+		</aon:if>
 			
 
-		<c:if test="#{aonRole.fiscal}">
+		<aon:if test="#{aonRole.fiscal}">
 			<aon:commandLink id="menu_fiscal"
 				value="#{bundle.aon_module_fiscal}"
 				action="menu_fiscal" immediate="true"
 				styleClass="aon-top-menu-item" />
-		</c:if>
+		</aon:if>
 		
 		<aon:commandLink id="menu_contrata"
 			value="#{bundle.aon_module_contrata}"
 			action="menu_contrata" immediate="true"
 			styleClass="aon-top-menu-item" />
 		
-		<c:if test="#{aonRole.payroll}">
+		<aon:if test="#{aonRole.payroll}">
 			<aon:commandLink id="menu_payroll"
 				value="#{bundle.aon_module_payroll}"
 				action="menu_payroll" immediate="true"
 				styleClass="aon-top-menu-item" />
-			<c:if test="#{!domainSwitcher.domainManagementAvailable}">				
+			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">				
 				<aon:commandLink id="menu_payroll_portal"
 					value="#{bundle.aon_payroll_portal}"
 					action="gwt_enterprise_site" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</c:if>
-		</c:if>
+			</aon:if>
+		</aon:if>
 		
-		<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') or (!domainSwitcher.domainManagementAvailable)}">
+		<aon:if test="#{(domainSwitcher.type == 'CONSULTANCY') or (!domainSwitcher.domainManagementAvailable)}">
 			<aon:commandLink id="menu_document"
 				value="#{bundle.aon_module_document}"
 				action="menu_document" immediate="true"
 				styleClass="aon-top-menu-item" />
-		</c:if>
+		</aon:if>
 		
-		<c:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
+		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:commandLink id="menu_configuration"
 				value="#{bundle.aon_module_configuration}"
 				action="menu_configuration" immediate="true"
 				styleClass="aon-top-menu-item" />
-		</c:if>
+		</aon:if>
 		
 		<rich:jQuery timing="onload"
 			selector="body" query="removeClass('aon-overflow-hidden')" />						
@@ -141,11 +141,11 @@
 			iconClass="aon-icon-favorite"
 			actionListener="#{actionFavorite.onInit}"
 			value="#{bundle.aon_favorites_management}" />
-		<c:if test="#{!aonRole.sysAdmin}">
+		<aon:if test="#{!aonRole.sysAdmin}">
 			<aon:menuItem id="advancedMode" action="advancedMode"
 				rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 				value="#{bundle.admin_advanced_mode}" />
-		</c:if>
+		</aon:if>
 		<aon:menuItem id="config_userProfile" action="domainUser_profile"
 			iconClass="aon-icon-menu-user"
 			actionListener="#{domainUser.onInitUserProfile}"

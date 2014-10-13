@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showEarlyCheckOutWindow">
-		<c:if test="#{controller.showEarlyCheckOutWindow}">
+		<aon:if test="#{controller.showEarlyCheckOutWindow}">
 			<rich:modalPanel id="earlyCheckOutModalPanel" 
 				minHeight="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (520) : (350)}" 
 				minWidth="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (640) : (450)}" 
@@ -112,7 +112,7 @@
 
 									</aon:panelGrid>
 
-									<c:if test="#{controller.chargeCheckOut and !empty controller.reservationFinances}">
+									<aon:if test="#{controller.chargeCheckOut and !empty controller.reservationFinances}">
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_return.xhtml" />
 	
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" >
@@ -121,7 +121,7 @@
 										</ui:include>
 
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_totals.xhtml" />
-									</c:if>
+									</aon:if>
 
 								</aon:div>
 							</aon:div>
@@ -130,7 +130,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

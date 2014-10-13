@@ -13,16 +13,16 @@
 		<ui:param name="controller" value="#{customer}" />
 		<ui:param name="showMoreMenu" value="#{!customer.nevv}" />
 		<ui:define name="moreMenuContent">
-			<c:if test="#{aonConfiguration.bean.customer.showHistory}">
+			<aon:if test="#{aonConfiguration.bean.customer.showHistory}">
 				<aon:menuItem id="CustomerHistory" 
 					action="registry_stats" actionListener="#{customer.onCustomerHistory}"
 					value="#{bundle.aon_history}"
 					iconClass="aon-icon-task-assume">
 				</aon:menuItem>
 				<rich:menuSeparator id="historyMenuSeparator" />
-			</c:if>
-			<c:if test="#{customer.showAlumnData}">
-				<c:if test="#{aonConfiguration.bean.customer.showCourse}">
+			</aon:if>
+			<aon:if test="#{customer.showAlumnData}">
+				<aon:if test="#{aonConfiguration.bean.customer.showCourse}">
 					<aon:menuItem id="course-button"
 						value="#{bundle.course_courses}"
 						iconClass="aon-icon-data"
@@ -30,8 +30,8 @@
 						actionListener="#{customerCourse.onReset}">
 						<f:setPropertyActionListener target="#{customerCourse.showNewWindow}" value="#{true}" />							
 					</aon:menuItem>
-				</c:if>
-				<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
+				</aon:if>
+				<aon:if test="#{aonConfiguration.bean.customer.showAbsence}">
 					<aon:menuItem id="absence-button"
 						value="#{bundle.absence_absences}"
 						iconClass="aon-icon-data"
@@ -39,8 +39,8 @@
 						actionListener="#{customerAbsence.onReset}">
 						<f:setPropertyActionListener target="#{customerAbsence.showNewWindow}" value="#{true}" />							
 					</aon:menuItem>
-				</c:if>
-				<c:if test="#{aonConfiguration.bean.customer.showLoan}">
+				</aon:if>
+				<aon:if test="#{aonConfiguration.bean.customer.showLoan}">
 					<aon:menuItem id="loan-button"
 						value="#{bundle.academy_loans}"
 						iconClass="aon-icon-data"
@@ -48,8 +48,8 @@
 						actionListener="#{customerLoan.onReset}">
 						<f:setPropertyActionListener target="#{customerLoan.showNewWindow}" value="#{true}" />							
 					</aon:menuItem>
-				</c:if>
-			</c:if>
+				</aon:if>
+			</aon:if>
 			<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 				<ui:param name="controller" value="#{customer}" />
 				<ui:param name="showFeeButton" value="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}" />

@@ -137,7 +137,7 @@
 					rendered="#{(to.mediaType == 'EMAIL') or (to.mediaType == 'WEB')}"
 					value="#{controller.currentURL}" target="_blank"
 					 styleClass="aon-icon aon-icon-globe" />
-				<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">			
+				<aon:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">			
 					<aon:commandLink title="#{bundle.webmail_send_email}" 
 						ajaxSingle="true" reRender="showNewMessageWindow"
 						actionListener="#{webmailMessage.onSendEmail}" value="&#160;"
@@ -145,7 +145,7 @@
 						rendered="#{to.mediaType == 'EMAIL'}" >
 						<f:param name="email" value="#{to.value}" />
 					</aon:commandLink>
-				</c:if>
+				</aon:if>
 			</aon:div>
 		</ui:define>
 		

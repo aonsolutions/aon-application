@@ -5,11 +5,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!skipProfileEdit}">
+	<aon:if test="#{!skipProfileEdit}">
 		<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
 			<ui:param name="skipSearchButton" value="#{true}" />
 		</ui:include>
-	</c:if>
+	</aon:if>
 	
 	<ui:include src="/com/code/aon/ui/admin/facelet/profile/listContent.xhtml" >
 		<aon:methodParam name="rowSelectorAction" value="" />

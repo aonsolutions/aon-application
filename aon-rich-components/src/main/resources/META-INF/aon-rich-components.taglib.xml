@@ -648,4 +648,10 @@
 			com.code.aon.faces.component.richfaces.dynamicInclude.DynamicIncludeHandler
 		</handler-class>
 	</tag>
+	<tag>
+		<tag-name>if</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.jstl.IfHandler
+		</handler-class>
+	</tag>
 </facelet-taglib>

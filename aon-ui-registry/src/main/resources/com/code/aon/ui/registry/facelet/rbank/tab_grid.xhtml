@@ -20,7 +20,7 @@
 					<ui:param name="renderBankAccount" value="#{formEdit}" />
 					<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
 				</ui:include>
-				<c:if test="#{!skipBankDataButton}">
+				<aon:if test="#{!skipBankDataButton}">
 					<aon:commandButton id="bankAccountData" value="&#160;"
 						title="#{bundle.aon_bank_data}"
 						styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
@@ -28,7 +28,7 @@
 						actionListener="#{controller.onBankAccountData}"
 						reRender="RegistryBank_alias,RegistryBank_bic" ajaxSingle="true">
 					</aon:commandButton>
-				</c:if>
+				</aon:if>
 				<f:facet name="footer">
 					<aon:div>
 						<ui:include src="bankAccount.xhtml">
@@ -37,7 +37,7 @@
 							<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
 							<ui:param name="bankAccountSuffix" value="-New" />
 						</ui:include>
-						<c:if test="#{!skipBankDataButton}">
+						<aon:if test="#{!skipBankDataButton}">
 							<aon:commandButton id="bankAccountData-New" value="&#160;"
 								title="#{bundle.aon_bank_data}"
 								styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
@@ -45,7 +45,7 @@
 								actionListener="#{controller.onBankAccountData}"
 								reRender="RegistryBank_alias-New,RegistryBank_bic-New" ajaxSingle="true">
 							</aon:commandButton>
-						</c:if>
+						</aon:if>
 					</aon:div>															
 				</f:facet>
 			</aon:column>
@@ -86,7 +86,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<c:if test="#{showSuffix}">
+			<aon:if test="#{showSuffix}">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 					<f:facet name="header">
 						<aon:outputLabel for="RegistryBank_suffix" value="#{bundle.config_bank_sufix}" />
@@ -104,7 +104,7 @@
 					</f:facet>
 				</aon:column>
 				
-				<c:if test="#{aonRole.accountingOperator}">	
+				<aon:if test="#{aonRole.accountingOperator}">	
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 						<f:facet name="header">
 							<aon:outputLabel for="Account_id-rbank" value="#{bundle.account_account}" />
@@ -130,8 +130,8 @@
 							</ui:include>
 						</f:facet>
 					</aon:column>
-				</c:if>
-			</c:if>
+				</aon:if>
+			</aon:if>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">

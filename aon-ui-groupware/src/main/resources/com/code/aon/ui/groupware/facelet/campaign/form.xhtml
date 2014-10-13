@@ -266,9 +266,9 @@
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
 		<aon:div id="addPanelContainer">
-			<c:if test="#{addCampaignProject.addPanelVisible}">
+			<aon:if test="#{addCampaignProject.addPanelVisible}">
 				<ui:include src="/com/code/aon/ui/groupware/facelet/campaign/addProject.xhtml" />
-			</c:if>
+			</aon:if>
 		</aon:div>
 
 	</ui:define>

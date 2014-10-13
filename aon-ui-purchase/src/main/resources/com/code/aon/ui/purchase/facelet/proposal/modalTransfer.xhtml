@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showTransferWindow">
-		<c:if test="#{proposal.showTransferWindow}">
+		<aon:if test="#{proposal.showTransferWindow}">
 			<rich:modalPanel id="transferModalPanel" minHeight="220"
 				minWidth="500" rendered="#{proposal.showTransferWindow}"
 				showWhenRendered="true" zindex="90">
@@ -89,7 +89,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

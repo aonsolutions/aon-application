@@ -89,7 +89,7 @@
 						</aon:commandButton>
 					</aon:div>
 
-					<c:if test="#{posOpening.posShift.id != null}">
+					<aon:if test="#{posOpening.posShift.id != null}">
 						<aon:outputLabel for="PosShift_starTime" value="#{bundle.report_opening}" />
 						<aon:outputText id="PosShift_starTime"
 							styleClass="aon-bold"
@@ -97,7 +97,7 @@
 							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-					</c:if>
+					</aon:if>
 
 				</aon:panelGrid>
 

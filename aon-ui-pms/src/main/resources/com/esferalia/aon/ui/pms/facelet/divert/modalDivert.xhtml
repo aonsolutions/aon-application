@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showDivertWindow">
-		<c:if test="#{controller.showDivertWindow}">
+		<aon:if test="#{controller.showDivertWindow}">
 			<rich:modalPanel id="divertModalPanel" 
 				height="350" width="370"  
 				rendered="#{controller.showDivertWindow}"
@@ -81,7 +81,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

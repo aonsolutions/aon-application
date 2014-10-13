@@ -41,13 +41,13 @@
 							</aon:selectOneMenu>
 						</aon:div>
 						<aon:div id="fiscal_status_div_inner">
-							<c:if test="#{empty dashboard.fiscalInfo}">
+							<aon:if test="#{empty dashboard.fiscalInfo}">
 									<aon:div style="padding-top: 10px;">
 										<aon:outputText value="No se encontraron resultados"/>
 									</aon:div>
-							</c:if>
+							</aon:if>
 							<table style="margin: 10px;margin-left: auto; margin-right: auto; ">
-							<c:if test="#{not empty dashboard.fiscalInfo}">
+							<aon:if test="#{not empty dashboard.fiscalInfo}">
 								<tr>
 									<td></td>
 									<td></td>
@@ -65,7 +65,7 @@
 									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="N"/></td>
 									<td style="width: 20px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="D"/></td>
 								</tr>
-							</c:if>
+							</aon:if>
 							<ui:repeat var="modelConfig" value="#{dashboard.fiscalInfo}">
 								<tr>
 									<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;">

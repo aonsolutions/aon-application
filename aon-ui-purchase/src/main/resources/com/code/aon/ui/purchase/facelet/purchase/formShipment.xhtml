@@ -14,7 +14,7 @@
 		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
 	
 		<aon:panelGrid columns="2" style="width:600px;">
-			<c:if test="#{carrierCollections.carriersCount>0}">
+			<aon:if test="#{carrierCollections.carriersCount>0}">
 				<aon:outputLabel for="Purchase_carrier"
 					value="#{bundle.warehouse_delivery_carrier}" />
 				<aon:selectOneMenu id="Purchase_carrier" 
@@ -25,7 +25,7 @@
 					
 				<aon:outputText value="&#160;" />
 				<aon:outputText value="&#160;" />
-			</c:if>
+			</aon:if>
 				
 			<aon:outputLabel for="Purchase_shippingContact"
 				value="#{bundle.purchase_shipping_contact}" />

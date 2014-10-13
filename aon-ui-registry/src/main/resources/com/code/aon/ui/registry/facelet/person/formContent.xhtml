@@ -20,12 +20,12 @@
 					<aon:outputText value="--------" rendered="#{controller.nevv}" />
 				</aon:div>
 				<aon:div>
-					<c:if test="#{aonRole.confidentiality}">
+					<aon:if test="#{aonRole.confidentiality}">
 						<aon:selectBooleanCheckbox id="Person_securityLevel"
 							value="#{controller.to.registry.confidential}" />
 						<aon:outputText styleClass="aon-italic aon-margin-right"
 							value="#{bundle.aon_confidential}" />
-					</c:if>
+					</aon:if>
 				</aon:div>
 			</aon:panelGrid>
 		</aon:div>

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showFinanceGroupWindow">
-		<c:if test="#{finance.showFinanceGroupWindow}">
+		<aon:if test="#{finance.showFinanceGroupWindow}">
 			<rich:modalPanel id="financeGroupModalPanel" minHeight="670"
 				minWidth="900" rendered="#{finance.showFinanceGroupWindow}"
 				showWhenRendered="true" zindex="100">
@@ -50,7 +50,7 @@
 								<aon:div id="fGroupPanelTabSet" >
 									<aon:panelTabSet >
 					
-										<c:if test="#{financeGroupList.model.rowCount > 0}" >
+										<aon:if test="#{financeGroupList.model.rowCount > 0}" >
 											<aon:panelTab id="groupTab" label="#{bundle.finance_grouped_finances}">
 												<aon:div id="fGroupDetailToolBarDiv" styleClass="aon-toolbar" >
 													<aon:commandButton title="#{bundle.aon_check_all}"
@@ -151,7 +151,7 @@
 
 												</aon:div>
 											</aon:panelTab>
-										</c:if>
+										</aon:if>
 					
 										<aon:panelTab id="financeTab" label="#{bundle.finance_not_grouped_finances}">
 											<aon:div id="financeToolBarDiv" styleClass="aon-toolbar"
@@ -263,7 +263,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

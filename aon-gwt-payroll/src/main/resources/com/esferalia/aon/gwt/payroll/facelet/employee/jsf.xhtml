@@ -109,36 +109,36 @@
 		</aon:form>
 
 		<aon:div id="xhtmlPanel">
-			<c:if test="#{employeeTree.employeeSelected}">
+			<aon:if test="#{employeeTree.employeeSelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/contract.xhtml" />
-			</c:if>
-			<c:if test="#{employeeTree.activitySelected}">
+			</aon:if>
+			<aon:if test="#{employeeTree.activitySelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/activity.xhtml" />
-			</c:if>
-			<c:if test="#{employeeTree.workplaceSelected}">
+			</aon:if>
+			<aon:if test="#{employeeTree.workplaceSelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.xhtml" />
-			</c:if>
-			<c:if test="#{employeeTree.enterpriseSelected}">
+			</aon:if>
+			<aon:if test="#{employeeTree.enterpriseSelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.xhtml">
 					<ui:param name="edit" value="#{edit}" />
 				</ui:include>
-			</c:if>
-			<c:if test="#{employeeTree.bonusConceptsSelected}">
+			</aon:if>
+			<aon:if test="#{employeeTree.bonusConceptsSelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/bonus_concept.xhtml"/>
-			</c:if>
-			<c:if test="#{employeeTree.paymentConceptsSelected}">
+			</aon:if>
+			<aon:if test="#{employeeTree.paymentConceptsSelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/payment_concept.xhtml"/>
-			</c:if>
-			<c:if test="#{employeeTree.deductionConceptsSelected}">
+			</aon:if>
+			<aon:if test="#{employeeTree.deductionConceptsSelected}">
 				<ui:include
 					src="/com/esferalia/aon/gwt/payroll/facelet/employee/deduction_concept.xhtml"/>
-			</c:if>
+			</aon:if>
 		</aon:div>
 		<script type="text/javascript">
            	//<![CDATA[

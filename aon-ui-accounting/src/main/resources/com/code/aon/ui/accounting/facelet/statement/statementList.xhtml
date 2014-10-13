@@ -89,7 +89,7 @@
 						<ui:define name="columns">
 							<f:facet name="header">
 								<rich:columnGroup>
-									<c:if test="#{statement.previousBalancePresent}">
+									<aon:if test="#{statement.previousBalancePresent}">
 										<aon:column breakBefore="true" colspan="3"
 											styleClass="aon-text-right"
 											style="font-size: 1em;background: #FFF;font-weight: normal;">
@@ -132,7 +132,7 @@
 											style="font-size: 1em;background: #FFF;font-weight: normal;">
 											<aon:outputText value="&#160;" />
 										</aon:column>
-									</c:if>							
+									</aon:if>							
 	
 									<aon:column breakBefore="true" colspan="3"
 										styleClass="aon-text-right"

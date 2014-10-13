@@ -11,27 +11,27 @@
 	<ui:define name="content">
 		<aon:form id="sellerViewList">
 
-			<c:if test="#{commercialStat.controlType==0}">
+			<aon:if test="#{commercialStat.controlType==0}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_seller}" />
-			</c:if>
-			<c:if test="#{commercialStat.controlType==1}">
+			</aon:if>
+			<aon:if test="#{commercialStat.controlType==1}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_target}" />
-			</c:if>
-			<c:if test="#{commercialStat.controlType==2}">
+			</aon:if>
+			<aon:if test="#{commercialStat.controlType==2}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_product}" />
-			</c:if>
-			<c:if test="#{commercialStat.controlType==3}">
+			</aon:if>
+			<aon:if test="#{commercialStat.controlType==3}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_category}" />
-			</c:if>
+			</aon:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
 				<ui:define name="beforeToolbarContent">
-		       	<c:if test="#{commercialStat.controlType==0 || commercialStat.controlType==1}">
+		       	<aon:if test="#{commercialStat.controlType==0 || commercialStat.controlType==1}">
 						<aon:commandButton value="#{bundle.aon_back}"
 						action="commercial_search_view"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -55,9 +55,9 @@
 						<f:param name="reportKey" value="controlList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-			       </c:if>
+			       </aon:if>
 			       
-			      	<c:if test="#{commercialStat.controlType==2 || commercialStat.controlType==3}">
+			      	<aon:if test="#{commercialStat.controlType==2 || commercialStat.controlType==3}">
 						<aon:commandButton value="#{bundle.aon_back}"
 						action="commercial_search_view"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -81,7 +81,7 @@
 						<f:param name="reportKey" value="controlList2" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-			       </c:if>
+			       </aon:if>
 				</ui:define>
 			</ui:decorate>
 			<br />
@@ -101,22 +101,22 @@
 								<rich:column colspan="8">
 									<h:panelGrid columns="3">
 										<aon:div>
-											<c:if test="#{commercialStat.controlType==0}">
+											<aon:if test="#{commercialStat.controlType==0}">
 												<aon:outputText
 													value="#{bundle.seller_stat_control_seller}" />
-											</c:if>
-											<c:if test="#{commercialStat.controlType==1}">
+											</aon:if>
+											<aon:if test="#{commercialStat.controlType==1}">
 												<aon:outputText
 													value="#{bundle.seller_stat_control_target}" />
-											</c:if>
-											<c:if test="#{commercialStat.controlType==2}">
+											</aon:if>
+											<aon:if test="#{commercialStat.controlType==2}">
 												<aon:outputText
 													value="#{bundle.seller_stat_control_product}" />
-											</c:if>
-											<c:if test="#{commercialStat.controlType==3}">
+											</aon:if>
+											<aon:if test="#{commercialStat.controlType==3}">
 												<aon:outputText
 													value="#{bundle.seller_stat_control_category}" />
-											</c:if>
+											</aon:if>
 										</aon:div>
 										<aon:div>
 											<aon:outputText value="(" />
@@ -160,18 +160,18 @@
 						</f:facet>
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<c:if test="#{commercialStat.controlType==0}">
+								<aon:if test="#{commercialStat.controlType==0}">
 									<aon:outputText value="#{bundle.seller_stat_name}" />
-								</c:if>
-								<c:if test="#{commercialStat.controlType==1}">
+								</aon:if>
+								<aon:if test="#{commercialStat.controlType==1}">
 									<aon:outputText value="#{bundle.aon_target}" />
-								</c:if>
-								<c:if test="#{commercialStat.controlType==2}">
+								</aon:if>
+								<aon:if test="#{commercialStat.controlType==2}">
 									<aon:outputText value="#{bundle.aon_product}" />
-								</c:if>
-								<c:if test="#{commercialStat.controlType==3}">
+								</aon:if>
+								<aon:if test="#{commercialStat.controlType==3}">
 									<aon:outputText value="#{bundle.aon_category}" />
-								</c:if>
+								</aon:if>
 							</f:facet>
 							<aon:outputText value="#{to.name}" />
 							<f:facet name="footer">
@@ -185,18 +185,18 @@
 								<aon:outputText value="#{bundle.seller_stat_control_donef}" />
 							</f:facet>
 	
-							<c:if test="#{commercialStat.controlType==0}">
+							<aon:if test="#{commercialStat.controlType==0}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onSellerActivities}"
 									action="commercial_activity_view" value="#{to.numVisits}"
 									reRender="aonContent" />
-							</c:if>
-							<c:if test="#{commercialStat.controlType==1}">
+							</aon:if>
+							<aon:if test="#{commercialStat.controlType==1}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onTargetActivities}"
 									action="commercial_activity_view" value="#{to.numVisits}"
 									reRender="aonContent" />
-							</c:if>
+							</aon:if>
 	
 							<f:facet name="footer">
 								<aon:outputText value="#{commercialStat.numVisitsTot}"
@@ -208,18 +208,18 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.seller_stat_control_pending}" />
 							</f:facet>
-							<c:if test="#{commercialStat.controlType==0}">
+							<aon:if test="#{commercialStat.controlType==0}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onPendingSellerActivities}"
 									action="commercial_activity_view" value="#{to.numPendingVisits}"
 									reRender="aonContent" />
-							</c:if>
-							<c:if test="#{commercialStat.controlType==1}">
+							</aon:if>
+							<aon:if test="#{commercialStat.controlType==1}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onPendingTargetActivities}"
 									action="commercial_activity_view" value="#{to.numPendingVisits}"
 									reRender="aonContent" />
-							</c:if>
+							</aon:if>
 	
 							<f:facet name="footer">
 								<aon:outputText value="#{commercialStat.numPendingVisitsTot}"
@@ -271,34 +271,34 @@
 	
 							</f:facet>
 	
-							<c:if test="#{commercialStat.controlType==0}">
+							<aon:if test="#{commercialStat.controlType==0}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onSellerDetail}"
 									action="commercial_seller_stat"
 									value="#{bundle.stat_show_detail}"
 									reRender="aonContent" />
-							</c:if>
-							<c:if test="#{commercialStat.controlType==1}">
+							</aon:if>
+							<aon:if test="#{commercialStat.controlType==1}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onTargetDetail}"
 									action="commercial_seller_stat"
 									value="#{bundle.stat_show_detail}"
 									reRender="aonContent" />
-							</c:if>
-							<c:if test="#{commercialStat.controlType==2}">
+							</aon:if>
+							<aon:if test="#{commercialStat.controlType==2}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onProductDetail}"
 									action="commercial_seller_stat"
 									value="#{bundle.stat_show_detail}"
 									reRender="aonContent" />
-							</c:if>
-							<c:if test="#{commercialStat.controlType==3}">
+							</aon:if>
+							<aon:if test="#{commercialStat.controlType==3}">
 								<aon:commandLink styleClass="aon-dataTable-link"
 									actionListener="#{commercialStat.onCategoryDetail}"
 									action="commercial_seller_stat"
 									value="#{bundle.stat_show_detail}"
 									reRender="aonContent" />
-							</c:if>
+							</aon:if>
 						</aon:column>
 					</ui:define>
 				</ui:decorate>

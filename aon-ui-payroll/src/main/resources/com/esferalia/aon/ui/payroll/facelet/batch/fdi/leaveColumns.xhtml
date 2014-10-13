@@ -20,7 +20,7 @@
 			rendered="#{to.contractLeaveDetail.type=='CONFIRM'}"/>
 	</aon:column>
 
-	<c:if test="#{showEnterpriseColumn}"> 
+	<aon:if test="#{showEnterpriseColumn}"> 
 		<aon:column style="font-size: 0.8em;" styleClass="aon-editDataTable-textColumn aon-width-auto, aon-nowrap">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_company}" />
@@ -29,7 +29,7 @@
 				<aon:abbreviateConverter maxWidth="50" />
 			</aon:outputText>
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">

@@ -98,7 +98,7 @@
 					</aon:panelGrid>					
 				</aon:div>
 
-				<c:if test="#{!course.nevv}">
+				<aon:if test="#{!course.nevv}">
 					<aon:panelTabSet selectedTab="#{course.selectedTab}">
 						<aon:panelTab id="schedule" label="#{bundle.aon_calendar_schedule}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseSchedule/tab_grid.xhtml">
@@ -140,7 +140,7 @@
 						</aon:panelTab>
 						
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 
 			</aon:div>
 		</aon:form>

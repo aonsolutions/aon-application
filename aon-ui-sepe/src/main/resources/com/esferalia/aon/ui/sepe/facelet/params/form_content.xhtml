@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<c:if test="#{aonRole.sysAdmin}">
+	<aon:if test="#{aonRole.sysAdmin}">
 		<aon:panel style="width: 700px; padding:1em 0 1em 0;">
 			<aon:selectBooleanCheckbox id="developmentMode"
 				value="#{sepeAppParams.developmentMode}" />
@@ -16,7 +16,7 @@
 				style="#{(sepeAppParams.developmentMode)?('color: red; font-weight:bold;'):('text-decoration: line-through;')}"
 				value="#{bundle.sepe_devMode}" />
 		</aon:panel>
-	</c:if>
+	</aon:if>
 	
 	<aon:div id="SEPE-data" 
 		styleClass="aon-group" style="width: 700px;">
@@ -33,7 +33,7 @@
 							<aon:outputText value="#{bundle.sepe_contrata} - #{bundle.sepe_loginData}"/>
 					</f:facet>
 				
-					<c:if test="#{!sepeAppParams.contrataLoginDefined and sepeAppParams.parentContrataLoginDefined}">
+					<aon:if test="#{!sepeAppParams.contrataLoginDefined and sepeAppParams.parentContrataLoginDefined}">
 						<aon:outputText value="DATOS DEFINIDOS EN EL ENTORNO" styleClass="aon-bold" />
 						<aon:commandButton ajaxSingle="#{true}"
 							value="&#160;&#160;&#160;"
@@ -41,9 +41,9 @@
 							styleClass="aon-icon-commandButton aon-icon-edit aon-margin-left"
 							actionListener="#{sepeAppParams.onRedefineContrataLogin}" 
 							reRender="Contrata-login-data" />
-					</c:if>
+					</aon:if>
 					
-					<c:if test="#{sepeAppParams.contrataLoginDefined or (!sepeAppParams.contrataLoginDefined and !sepeAppParams.parentContrataLoginDefined)}">
+					<aon:if test="#{sepeAppParams.contrataLoginDefined or (!sepeAppParams.contrataLoginDefined and !sepeAppParams.parentContrataLoginDefined)}">
 						<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
 							<aon:selectBooleanCheckbox id="ssl_enviroment"
 								styleClass="aon-margin-left"
@@ -101,17 +101,17 @@
 							</aon:div>
 								
 						</aon:panelGrid>	
-					</c:if>
+					</aon:if>
 					
 				</aon:panel>		
 			
-				<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+				<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 					<aon:panel id="Certificados-login-data">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.sepe_certificados} - #{bundle.sepe_loginData}"/>
 						</f:facet>
 					
-						<c:if test="#{!sepeAppParams.certifica2LoginDefined and sepeAppParams.parentCertifica2LoginDefined}">
+						<aon:if test="#{!sepeAppParams.certifica2LoginDefined and sepeAppParams.parentCertifica2LoginDefined}">
 							<aon:outputText value="DATOS DEFINIDOS EN EL ENTORNO" styleClass="aon-bold" />
 							<aon:commandButton ajaxSingle="#{true}"
 								value="&#160;&#160;&#160;"
@@ -119,9 +119,9 @@
 								styleClass="aon-icon-commandButton aon-icon-edit aon-margin-left"
 								actionListener="#{sepeAppParams.onRedefineCertificadosLogin}" 
 								reRender="Certificados-login-data" />
-						</c:if>
+						</aon:if>
 						
-						<c:if test="#{sepeAppParams.certifica2LoginDefined or (!sepeAppParams.certifica2LoginDefined and !sepeAppParams.parentCertifica2LoginDefined)}">
+						<aon:if test="#{sepeAppParams.certifica2LoginDefined or (!sepeAppParams.certifica2LoginDefined and !sepeAppParams.parentCertifica2LoginDefined)}">
 							<aon:div style="margin-bottom:1em;" rendered="#{aonRole.sysAdmin}">
 								<aon:selectBooleanCheckbox id="ssl_enviroment-certifica2"
 									styleClass="aon-margin-left"
@@ -179,10 +179,10 @@
 								</aon:div>
 									
 							</aon:panelGrid>	
-						</c:if>
+						</aon:if>
 						
 					</aon:panel>
-				</c:if>		
+				</aon:if>		
 			</aon:div>
 		</aon:div>
 	</aon:div>

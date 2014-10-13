@@ -91,7 +91,7 @@
 					
 
 					<aon:div>
-						<c:if test="#{aonRole.confidentiality}">
+						<aon:if test="#{aonRole.confidentiality}">
 							<aon:selectBooleanCheckbox id="VatTax_securityLevel" disabled="#{vatTax.detailNew}"
 								value="#{vatTax.to.confidential}" rendered="#{!vatTax.to.finished}"/>
 							<aon:outputLabel for="VatTax_securityLevel" styleClass="aon-italic"
@@ -99,7 +99,7 @@
 							<aon:outputText styleClass="aon-icon aon-icon-confidential"
 								value="&#160;" title="#{bundle.aon_confidential}"
 								rendered="#{vatTax.to.finished and vatTax.to.confidential}" />
-						</c:if>
+						</aon:if>
 					</aon:div>
 
 					<aon:div id="adjustContainer" styleClass="aon-text-center">
@@ -159,7 +159,7 @@
 					</aon:div>
 				</aon:panelGrid>
 				
-				<c:if test="#{vatTax.nevv}">
+				<aon:if test="#{vatTax.nevv}">
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText value="#{bundle.fiscal_vat_tax_import_info}" 
@@ -174,24 +174,24 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{!vatTax.nevv}">
+				<aon:if test="#{!vatTax.nevv}">
 					<aon:panelTabSet selectedTab="#{vatTax.selectedTab}">
 						<aon:panelTab id="detailTab" label="LIQUIDACION">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/vatTax/detail.xhtml" />
 						</aon:panelTab>
 
 						<aon:panelTab id="payTab" label="RESULTADO" rendered="#{vatTax.to.finished}">
-							<c:if test="#{!vatTaxDeclaration.nevv and vatTaxDeclaration.to == null}">
+							<aon:if test="#{!vatTaxDeclaration.nevv and vatTaxDeclaration.to == null}">
 								<ui:include src="/com/code/aon/ui/fiscal/facelet/vatTax/declaration_list.xhtml" />
-							</c:if>
-							<c:if test="#{vatTaxDeclaration.nevv or vatTaxDeclaration.to != null}">
+							</aon:if>
+							<aon:if test="#{vatTaxDeclaration.nevv or vatTaxDeclaration.to != null}">
 								<ui:include src="/com/code/aon/ui/fiscal/facelet/vatTax/declaration_form.xhtml" />
-							</c:if>
+							</aon:if>
 						</aon:panelTab>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 		</aon:form>

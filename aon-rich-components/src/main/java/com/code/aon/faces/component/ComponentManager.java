@@ -99,7 +99,7 @@ public class ComponentManager {
 		String disabledClass = getDisabledStyleClass(tag, ctx, c);
 		TagAttribute disabled = FaceletUtil.getAttribute(tag, HTML.DISABLED_ATTR);
 		if ( disabled != null && ! StringUtils.isBlank(disabledClass) ) {
-			if ( disabled.getBoolean(ctx) ) {
+			if ( FaceletUtil.getBoolean(ctx,disabled) ) {
 				FaceletUtil.addStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
 			} else {
 				String styleClass = StringUtils.substringBeforeLast(disabledClass, "-disabled");

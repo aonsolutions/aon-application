@@ -14,21 +14,21 @@
 		<ui:param name="clickable" value="#{true}" />
 		<aon:methodParam name="backAction" value="abc_stats_searchProduct"/>
 		<aon:methodParam name="backMethod" value="#{stat.onReset}" type="actionListener" />
-		<c:if test="#{stat.invoiceType==1}">
+		<aon:if test="#{stat.invoiceType==1}">
 			<ui:param name="windowTitle" value="#{bundle.stat_abc_product}" />
 			<ui:param name="lastColumnName" value="#{bundle.stat_show_clients}" />
 			<ui:param name="categoryLabel" value="#{bundle.aon_product}" />
-		</c:if>
-		<c:if test="#{stat.invoiceType==0}">
+		</aon:if>
+		<aon:if test="#{stat.invoiceType==0}">
 			<ui:param name="windowTitle" value="#{bundle.stat_abc_product}" />
 			<ui:param name="lastColumnName" value="#{bundle.stat_show_suppliers}" />
 			<ui:param name="categoryLabel" value="#{bundle.aon_product}" />
-		</c:if>
-		<c:if test="#{stat.invoiceType==2}">
+		</aon:if>
+		<aon:if test="#{stat.invoiceType==2}">
 			<ui:param name="windowTitle" value="#{bundle.stat_abc_expense}" />
 			<ui:param name="lastColumnName" value="#{bundle.stat_show_creditors}" />
 			<ui:param name="categoryLabel" value="#{bundle.aon_expense}" />
-		</c:if>		
+		</aon:if>		
 		<aon:methodParam name="goAction" value="invoice_list"/>
 		<aon:methodParam name="goMethod" value="#{stat.onProductInvoiceList}" type="actionListener" />
 		<ui:param name="paramName" value="product" />

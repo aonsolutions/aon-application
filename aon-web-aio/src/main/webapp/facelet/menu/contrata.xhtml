@@ -25,14 +25,14 @@
 								<aon:outputText value="#{bundle.contrata_main_menu_group}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contract-contrata"
 											action="contract_search"
 											actionListener="#{contract.onEditSearch}"
 											value="#{bundle.payroll_contract_module}"/>
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="person-contrata"
 										action="#{person.initialAction}"
@@ -55,14 +55,14 @@
 										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
-								<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+								<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="certifica2Batch-contrata"
 											action="certifica2Batch_search-contrata"
 											actionListener="#{certifica2Batch.onEditSearch}"
 											value="#{bundle.sepe_certifica2Batch_module}" />
 									</aon:div>
-								</c:if>
+								</aon:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contractBatch" 
 										action="contractBatch_search"
@@ -92,7 +92,7 @@
 					
 					<aon:panelGroup>
 						
-						<c:if test="#{aonRole.config}">												
+						<aon:if test="#{aonRole.config}">												
 							<aon:panelGrid id="group_contrata_parameters"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-config">
@@ -108,7 +108,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
+						</aon:if>
 					
 						<aon:panelGrid id="group_contrata_auxiliaries"
 							styleClass="aon-width-all" columnClasses="aon-padding"

@@ -81,7 +81,7 @@
 						value="#{deliveryDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
 				<aon:panelGroup id="deliveryDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
-					<c:if test="#{aonConfiguration.bean.product.showStock}">
+					<aon:if test="#{aonConfiguration.bean.product.showStock}">
 						<aon:commandButton value="&#160;"
 							title="#{bundle.product_info}"
 							rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null and deliveryDetail.to.item.product.inventoriable}"
@@ -96,7 +96,7 @@
 							<aon:set var="#{itemInfo.componentId}" value="DeliveryDetail_item_product_code" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="deliveryDetail.onItemChanged" />
 						</aon:commandButton>															
-					</c:if>
+					</aon:if>
 					<aon:inputTextarea id="DeliveryDetail_description" 
 						value="#{deliveryDetail.to.description}"
 						rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null}"
@@ -128,7 +128,7 @@
 								value="#{deliveryDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
 						<aon:panelGroup id="deliveryDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
-							<c:if test="#{aonConfiguration.bean.product.showStock}">
+							<aon:if test="#{aonConfiguration.bean.product.showStock}">
 								<aon:commandButton value="&#160;"
 									title="#{bundle.product_info}"
 									rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null and deliveryDetail.to.item.product.inventoriable}"
@@ -143,7 +143,7 @@
 									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="deliveryDetail.onItemChanged" />
 								</aon:commandButton>															
-							</c:if>
+							</aon:if>
 							<aon:inputTextarea id="DeliveryDetail_description-New" 
 								value="#{deliveryDetail.to.description}"
 								rendered="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null}"

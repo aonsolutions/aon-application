@@ -6,7 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:form>
-		<c:if test="#{edit}">
+		<aon:if test="#{edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
@@ -23,7 +23,7 @@
 					</ui:define>
 	
 			</ui:decorate>
-		</c:if>
+		</aon:if>
 		<aon:div
 			style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;">
 

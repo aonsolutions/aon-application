@@ -37,7 +37,7 @@
 							<f:param name="reportKey" value="purchaseForm" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
-						<c:if test="#{aonRole.purchaseOperator and !purchaseReadOnly}">
+						<aon:if test="#{aonRole.purchaseOperator and !purchaseReadOnly}">
 							<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{bundle.purchase_valued_report}"
 								target="_new" rendered="#{!purchase.nevv and purchaseDetail.model.rowCount > 0}"
 								action="#{purchaseReport.onExecute}"
@@ -47,10 +47,10 @@
 								<f:param name="reportKey" value="purchaseForm" />
 								<f:param name="outputFormat" value="PDF" />
 							</aon:htmlCommandLink>
-						</c:if>
+						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
-						<c:if test="#{aonRole.warehouseOperator}">
+						<aon:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="income"
 								value="#{bundle.aon_invoice_delivery}"
 								immediate="#{true}" rendered="#{purchase.pending and purchaseDetail.model.rowCount > 0}"
@@ -60,8 +60,8 @@
 								<f:setPropertyActionListener target="#{purchase.showIncomeWindow}"
 									value="#{true}" />
 							</aon:menuItem>
-						</c:if>
-						<c:if test="#{aonRole.financeOperator}">
+						</aon:if>
+						<aon:if test="#{aonRole.financeOperator}">
 							<aon:menuItem id="invoice"
 								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{purchase.pending and !purchase.inIncome and purchaseDetail.model.rowCount > 0}"
@@ -71,7 +71,7 @@
 								<f:setPropertyActionListener target="#{purchase.showInvoiceWindow}"
 									value="#{true}" />
 							</aon:menuItem>
-						</c:if>
+						</aon:if>
 						<aon:menuItem id="purchaseReturnRequest"
 							value="#{bundle.purchase_return_request}"
 							rendered="#{!purchase.nevv and !purchase.to.itemReturn}"
@@ -110,7 +110,7 @@
 								<ui:param name="skipSeriesLabel" value="#{true}" />
 							</ui:include>
 							<aon:div>
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Purchase_securityLevel"
 										value="#{purchase.to.confidential}"
 										rendered="#{purchase.pending}" />
@@ -120,7 +120,7 @@
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{!purchase.pending and purchase.to.confidential}" />
-								</c:if>
+								</aon:if>
 								
 								<aon:outputText id="purchase-itemReturn"
 									rendered="#{purchase.to.itemReturn}"
@@ -270,14 +270,14 @@
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
-						<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+						<aon:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 							<aon:outputLabel for="Purchase_project"
 								value="#{bundle.aon_project}" />
-						</c:if>
-						<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.purchase.showTasData}">
 							<aon:outputLabel for="Purchase_project"
 								value="#{bundle.tas_project_tas}" />
-						</c:if>
+						</aon:if>
 						<aon:div>
 							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{purchase.to.project}" />
@@ -323,7 +323,7 @@
 				</aon:panelGrid>
 
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
-					<c:if test="#{purchase.defaultPayMethod != null and !purchase.defaultPayMethod}">
+					<aon:if test="#{purchase.defaultPayMethod != null and !purchase.defaultPayMethod}">
 						<aon:panel>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.finance_payMethod}" />
@@ -398,29 +398,29 @@
 
 							</aon:panelGrid>
 						</aon:panel>
-					</c:if>
+					</aon:if>
 				</aon:div>
 				
-				<c:if test="#{!purchase.nevv}">
+				<aon:if test="#{!purchase.nevv}">
 					<aon:panelTabSet id="purchasePanelTab">
 						<aon:panelTab label="#{bundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
-								<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+								<aon:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 									<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-								</c:if>
-								<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+								</aon:if>
+								<aon:if test="#{aonConfiguration.bean.purchase.showTasData}">
 									<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-								</c:if>
+								</aon:if>
 							</ui:include>
 						</aon:panelTab>
-						<c:if test="#{purchase.shippingDataDefined}">
+						<aon:if test="#{purchase.shippingDataDefined}">
 							<aon:panelTab id="purchaseShipmentTab" 
 								label="#{bundle.carrier_shipment}">
 								<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
 							</aon:panelTab>
-						</c:if>
+						</aon:if>
 					</aon:panelTabSet>
-				</c:if>
+				</aon:if>
 				
 			</aon:div>
 		</aon:form>
@@ -444,12 +444,12 @@
 			<aon:methodParam name="detailActionListener" value="#{purchaseDetail.addPurchaseDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{purchaseDetail.purchaseDetail.project}" />
 			<ui:param name="showProjectLookup" value="#{true}" />
-			<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+			<aon:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.purchase.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-			</c:if>
+			</aon:if>
 		</ui:include>
 	</ui:define>
 </ui:composition>

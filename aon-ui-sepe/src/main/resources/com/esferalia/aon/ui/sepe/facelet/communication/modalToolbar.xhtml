@@ -17,7 +17,7 @@
 		<ui:define name="toolbarContent">
 
 			
-			<c:if test="#{!skipBatchButton}">
+			<aon:if test="#{!skipBatchButton}">
 				<aon:commandButton id="batch-file"
 					value="#{bundle.sepe_contrata_batch}"
 					rendered="#{!controller.communicationIdReceived}"
@@ -25,7 +25,7 @@
 					<f:setPropertyActionListener
 						target="#{controller.showBatchWindow}" value="#{true}" />
 				</aon:commandButton>
-			</c:if>
+			</aon:if>
 				
 			<aon:commandButton id="sepe-communication"
 				value="#{bundle.sepe_communicate}"
@@ -45,7 +45,7 @@
  				oncomplete="Richfaces.hideModalPanel('waitProccess')"
 				styleClass="aon-finding-toolbar-item aon-icon-update" />
 				
-			<c:if test="#{!skipDownloadButton}">
+			<aon:if test="#{!skipDownloadButton}">
 				<aon:dropDownMenu value="#{bundle.aon_more2}"
 				 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
 		            <f:facet name="label">
@@ -75,7 +75,7 @@
 							actionListener="#{controller.onDownloadSepeXml}" />
 		     		</aon:menuItem>
 				</aon:dropDownMenu>			
-			</c:if>
+			</aon:if>
 			
 		</ui:define>
 		

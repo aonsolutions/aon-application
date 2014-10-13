@@ -130,7 +130,7 @@
 							</aon:div>
 						</aon:div>
 
-						<c:if test="#{invoiceEntry.sales}">
+						<aon:if test="#{invoiceEntry.sales}">
 							<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
 								<ui:param name="controller" value="#{saleInvoice}" />
 								<ui:param name="sfc_aliasPreffix" value="Account_invoice_" />
@@ -143,8 +143,8 @@
 								<aon:methodParam name="sfc_onNumberEditable" type="actionListener"
 									value="#{invoiceEntry.onInvoiceNumberEditable}" />
 							</ui:include>
-						</c:if>
-						<c:if test="#{!invoiceEntry.sales}">
+						</aon:if>
+						<aon:if test="#{!invoiceEntry.sales}">
 							<aon:outputLabel for="Account_invoice_referenceCode"
 								value="#{bundle.aon_invoice_number}" />
 							<aon:inputText id="Account_invoice_referenceCode" required="true"
@@ -153,7 +153,7 @@
 								maxlength="25" onblur="toUpperCase(this);">
 								<f:validateLength maximum="32" />
 							</aon:inputText>								
-						</c:if>
+						</aon:if>
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
 							value="#{bundle.aon_financial_year}" />
@@ -166,7 +166,7 @@
 									value="#{accountingCollections.enabledAccountPeriods}" />
 							</aon:selectOneMenu>
 
-							<c:if test="#{aonRole.confidentiality}">
+							<aon:if test="#{aonRole.confidentiality}">
 								<aon:div>
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
 										value="#{invoiceEntry.header.confidential}"
@@ -174,7 +174,7 @@
 									<aon:outputText styleClass="aon-italic aon-margin-right"
 										value="#{bundle.aon_confidential}" />
 								</aon:div>
-							</c:if>
+							</aon:if>
 						</h:panelGrid>
 
 						<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />

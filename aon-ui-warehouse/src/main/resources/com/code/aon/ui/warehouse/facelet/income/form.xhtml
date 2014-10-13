@@ -31,7 +31,7 @@
 							<f:setPropertyActionListener target="#{income.showPurchaseTransferWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<c:if test="#{aonRole.financeOperator}">
+						<aon:if test="#{aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
 								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{income.pending and incomeDetail.model.rowCount > 0}"
@@ -41,7 +41,7 @@
 								<f:setPropertyActionListener target="#{income.showInvoiceWindow}"
 									value="#{true}" />
 							</aon:commandButton>
-						</c:if>
+						</aon:if>
 						<aon:htmlCommandLink id="incomeForm-report" value="#{bundle.aon_invoice_delivery}"
 							target="_new" rendered="#{!income.nevv and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
@@ -76,7 +76,7 @@
 									rendered="#{!income.pending}" />
 							</aon:div>
 							<aon:div>
-								<c:if test="#{aonRole.confidentiality}">
+								<aon:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Income_securityLevel"
 										value="#{income.to.confidential}"
 										rendered="#{income.pending}" />
@@ -86,7 +86,7 @@
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{!income.pending and income.to.confidential}" />
-								</c:if>
+								</aon:if>
 
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{income.to.status}" />
@@ -200,14 +200,14 @@
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
-						<c:if test="#{!aonConfiguration.bean.income.showTasData}">
+						<aon:if test="#{!aonConfiguration.bean.income.showTasData}">
 							<aon:outputLabel for="Project_id"
 								value="#{bundle.aon_project}" />
-						</c:if>
-						<c:if test="#{aonConfiguration.bean.income.showTasData}">
+						</aon:if>
+						<aon:if test="#{aonConfiguration.bean.income.showTasData}">
 							<aon:outputLabel for="Project_id"
 								value="#{bundle.tas_project_tas}" />
-						</c:if>
+						</aon:if>
 						<aon:div>
 							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{income.to.project}" />
@@ -253,7 +253,7 @@
 				</aon:panelGrid>
 
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
-					<c:if test="#{income.defaultPayMethod != null and !income.defaultPayMethod}">
+					<aon:if test="#{income.defaultPayMethod != null and !income.defaultPayMethod}">
 						<aon:panel>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.finance_payMethod}" />
@@ -328,7 +328,7 @@
 
 							</aon:panelGrid>
 						</aon:panel>
-					</c:if>
+					</aon:if>
 				</aon:div>
 
 				<aon:div styleClass="aon-padding-top">
@@ -337,12 +337,12 @@
 							<aon:outputText value="#{bundle.warehouse_income_detail}" />
 						</f:facet>
 						<ui:include src="/com/code/aon/ui/warehouse/facelet/income/formDetail.xhtml">
-							<c:if test="#{!aonConfiguration.bean.income.showTasData}">
+							<aon:if test="#{!aonConfiguration.bean.income.showTasData}">
 								<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-							</c:if>
-							<c:if test="#{aonConfiguration.bean.income.showTasData}">
+							</aon:if>
+							<aon:if test="#{aonConfiguration.bean.income.showTasData}">
 								<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-							</c:if>
+							</aon:if>
 						</ui:include>
 					</aon:panel>
 				</aon:div>
@@ -365,12 +365,12 @@
 			<aon:methodParam name="detailActionListener" value="#{incomeDetail.addIncomeDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{incomeDetail.incomeDetail.project}" />
 			<ui:param name="showProjectLookup" value="#{true}" />
-			<c:if test="#{!aonConfiguration.bean.income.showTasData}">
+			<aon:if test="#{!aonConfiguration.bean.income.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
-			</c:if>
-			<c:if test="#{aonConfiguration.bean.income.showTasData}">
+			</aon:if>
+			<aon:if test="#{aonConfiguration.bean.income.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
-			</c:if>
+			</aon:if>
 		</ui:include>
  	</ui:define>
 </ui:composition>

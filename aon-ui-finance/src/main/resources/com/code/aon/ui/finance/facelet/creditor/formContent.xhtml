@@ -15,7 +15,7 @@
 		<f:selectItems value="#{financeCollections.creditorStatuses}" />
 	</aon:selectOneRadio>
 
-	<c:if test="#{aonConfiguration.bean.creditor.showTaxInfoData}">
+	<aon:if test="#{aonConfiguration.bean.creditor.showTaxInfoData}">
 		<aon:outputLabel for="Creditor_transaction" value="#{bundle.aon_transaction_type}" />
 		<aon:selectOneMenu id="Creditor_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
@@ -33,7 +33,7 @@
 			<aon:outputLabel for="Creditor_withholding" styleClass="aon-italic"
 				value="#{bundle.aon_retention}" />
 		</aon:div>
-	</c:if>
+	</aon:if>
 
 </ui:composition>
 

@@ -9,49 +9,49 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 	<ui:define name="content">
 		<aon:form id="records">
-			<c:if test="#{commercialStat.controlType==0}">
+			<aon:if test="#{commercialStat.controlType==0}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_seller}" />
-			</c:if>
-			<c:if test="#{commercialStat.controlType==1}">
+			</aon:if>
+			<aon:if test="#{commercialStat.controlType==1}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_target}" />
-			</c:if>
-			<c:if test="#{commercialStat.controlType==2}">
+			</aon:if>
+			<aon:if test="#{commercialStat.controlType==2}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_product}" />
-			</c:if>
-			<c:if test="#{commercialStat.controlType==3}">
+			</aon:if>
+			<aon:if test="#{commercialStat.controlType==3}">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.seller_stat_control_category}" />
-			</c:if>
+			</aon:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:define name="beforeToolbarContent">
-					<c:if test="#{commercialStat.controlType==0}">
+					<aon:if test="#{commercialStat.controlType==0}">
 						<aon:commandButton value="#{bundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onSummary}"
 							styleClass="aon-finding-toolbar-item aon-icon-task" />
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==1}">
 						<aon:commandButton value="#{bundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onTargetSummary}"
 							styleClass="aon-finding-toolbar-item aon-icon-task" />
-					</c:if>
-					<c:if test="#{commercialStat.controlType==2}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==2}">
 						<aon:commandButton value="#{bundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onProductSummary}"
 							styleClass="aon-finding-toolbar-item aon-icon-task" />
-					</c:if>
-					<c:if test="#{commercialStat.controlType==3}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==3}">
 						<aon:commandButton value="#{bundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onCategorySummary}"
 							styleClass="aon-finding-toolbar-item aon-icon-task" />
-					</c:if>
+					</aon:if>
 					
 
 
@@ -62,26 +62,26 @@
 
 				<aon:panelGrid columns="4">
 
-					<c:if test="#{commercialStat.controlType==0}">
+					<aon:if test="#{commercialStat.controlType==0}">
 						<aon:outputText value="#{bundle.seller_stat_name}" />
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==1}">
 						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==2}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==2}">
 						<aon:outputText value="#{bundle.aon_product}" />
 						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
 
-					</c:if>
-					<c:if test="#{commercialStat.controlType==3}">
+					</aon:if>
+					<aon:if test="#{commercialStat.controlType==3}">
 						<aon:outputText value="#{bundle.aon_category}" />
 						<aon:outputText value="#{commercialStat.productCategory.name}"></aon:outputText>
 
-					</c:if>
+					</aon:if>
 
 					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">

@@ -23,14 +23,14 @@
 		<aon:outputText value="#{to.referenceCode}" />
 	</aon:column>
 
-	<c:if test="#{showReservation}">
+	<aon:if test="#{showReservation}">
 		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.report_id}" />
 			</f:facet>
 			<aon:outputText value="#{to.project.id}" />
 		</aon:column>
-	</c:if>
+	</aon:if>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
@@ -101,7 +101,7 @@
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
-		<c:if test="#{!skipRectifyButton}">
+		<aon:if test="#{!skipRectifyButton}">
 			<aon:commandButton id="reservationInvoice-rectify"
 				styleClass="aon-icon-removed aon-noborder"
 				value="&#160;" title="#{bundle.pms_to_return_label}"
@@ -120,15 +120,15 @@
 				<f:setPropertyActionListener target="#{controller.showModificationWindow}"
 					value="#{true}" />
 			</aon:commandButton>
-		</c:if>
-		<c:if test="#{showInvoiceLink and aonRole.financeOperator}">
+		</aon:if>
+		<aon:if test="#{showInvoiceLink and aonRole.financeOperator}">
 			<aon:commandLink id="reservationInvoice-link" immediate="true"
 				styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
 				value="&#160;" title="#{bundle.aon_go}"
 				actionListener="#{controller.onLoadInvoice}"
 				action="saleInvoice_form" />
-		</c:if>
-		<c:if test="#{!showInvoiceLink or !aonRole.financeOperator}">
+		</aon:if>
+		<aon:if test="#{!showInvoiceLink or !aonRole.financeOperator}">
 			<aon:htmlCommandLink id="reservationInvoice-report" target="_blank"
 				styleClass="aon-icon-pdf"
 				value="&#160;&#160;&#160;&#160;&#160;&#160;" 
@@ -139,7 +139,7 @@
 				<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
 					value="#{company.saleInvoiceTemplateValue}" />
 			</aon:htmlCommandLink>
-		</c:if>
+		</aon:if>
 	</aon:column>
 
 </ui:composition>

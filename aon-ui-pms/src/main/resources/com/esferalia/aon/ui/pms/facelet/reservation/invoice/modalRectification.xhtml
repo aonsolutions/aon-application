@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showRectificationWindow">
-		<c:if test="#{controller.showRectificationWindow}">
+		<aon:if test="#{controller.showRectificationWindow}">
 			<rich:modalPanel id="rectificationModalPanel" minHeight="260" minWidth="520" 
 				rendered="#{controller.showRectificationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -74,7 +74,7 @@
 				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

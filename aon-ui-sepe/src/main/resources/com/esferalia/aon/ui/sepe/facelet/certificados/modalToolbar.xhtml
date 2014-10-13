@@ -16,7 +16,7 @@
 		
 		<ui:define name="toolbarContent">
 
-			<c:if test="#{!skipBatchButton and empty controller.generatedFile}">
+			<aon:if test="#{!skipBatchButton and empty controller.generatedFile}">
 				<aon:commandButton id="batch-file"
 					value="#{bundle.sepe_contrata_batch}"
 					rendered="#{!controller.communicationIdReceived}"
@@ -24,9 +24,9 @@
 					<f:setPropertyActionListener
 						target="#{controller.showBatchWindow}" value="#{true}" />
 				</aon:commandButton>
-			</c:if>
+			</aon:if>
 			
-			<c:if test="#{empty controller.generatedFile}">
+			<aon:if test="#{empty controller.generatedFile}">
 				<aon:commandButton id="generate-certificados"
 					value="#{bundle.sepe_certificados_generate_certificate}"
 					reRender="showGenerationWindow"
@@ -34,9 +34,9 @@
 					<f:setPropertyActionListener
 						target="#{contractCertificados.showGenerationWindow}" value="#{true}" />
 				</aon:commandButton>
-			</c:if>	
+			</aon:if>	
 			
-			<c:if test="#{not empty controller.generatedFile}">
+			<aon:if test="#{not empty controller.generatedFile}">
 				<aon:commandButton id="sepe-communication"
 					value="#{bundle.sepe_communicate}"
 					disabled="#{controller.communicationIdReceived}"
@@ -78,8 +78,8 @@
 								value="#{bundle.aon_fileupload_download} XML" target="_blank"
 								actionListener="#{controller.onDownloadSepeXml}" />
 			     		</aon:menuItem>
-					<c:if test="#{!skipDownloadButton}">
-					</c:if>
+					<aon:if test="#{!skipDownloadButton}">
+					</aon:if>
 					<aon:menuItem iconClass="aon-icon-file-upload">
 						<aon:htmlCommandLink id="sepeXmlupload" 
 							value="#{bundle.aon_file_upload} XML" target="_blank"
@@ -87,7 +87,7 @@
 		     		</aon:menuItem>
 				</aon:dropDownMenu>			
 				
-			</c:if>
+			</aon:if>
 			
 		</ui:define>
 		

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showGenerationWindow">
-		<c:if test="#{contractCertificados.showGenerationWindow}">
+		<aon:if test="#{contractCertificados.showGenerationWindow}">
 			<rich:modalPanel id="generationModalPanel" minHeight="40"
 				minWidth="200" rendered="#{contractCertificados.showGenerationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -77,7 +77,7 @@
 				</aon:form>
 				
 			</rich:modalPanel>
-		</c:if>
+		</aon:if>
 	</aon:panelGroup>
 
 </ui:composition>

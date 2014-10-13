@@ -79,18 +79,18 @@
 
 		<aon:panelCollapsible expanded="false" label="#{bundle.finance_invoice_lines}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-				<c:if test="#{searchController.sales or searchController.purchase}">
+				<aon:if test="#{searchController.sales or searchController.purchase}">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{searchController.item}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 
-				<c:if test="#{!(searchController.sales or searchController.purchase)}">
+				<aon:if test="#{!(searchController.sales or searchController.purchase)}">
 					<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{searchController.item}" />
 					</ui:include>
-				</c:if>
+				</aon:if>
 
 				<aon:outputLabel for="Invoice_lines_description"
 					value="#{bundle.aon_product_description}" />

@@ -24,9 +24,9 @@
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		<c:if test="#{aonConfiguration.bean.offer.showSeller}">
+		<aon:if test="#{aonConfiguration.bean.offer.showSeller}">
 			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		</c:if>
+		</aon:if>
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />

@@ -71,7 +71,7 @@
 						value="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
 				</ui:include>						
 				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
-					<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+					<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
 						<aon:commandButton value="&#160;"
 							title="#{bundle.product_info}"
 							rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
@@ -84,7 +84,7 @@
 							<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
 						</aon:commandButton>															
-					</c:if>
+					</aon:if>
 					<aon:inputTextarea id="OfferDetail_description"
 						value="#{offerDetail.to.description}" required="true"
 						rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
@@ -109,7 +109,7 @@
 								value="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" />
 						</ui:include>						
 						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
-							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+							<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
 								<aon:commandButton value="&#160;"
 									title="#{bundle.product_info}"
 									rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
@@ -122,7 +122,7 @@
 									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
 								</aon:commandButton>															
-							</c:if>
+							</aon:if>
 							<aon:inputTextarea id="OfferDetail_description-New"
 								value="#{offerDetail.to.description}" required="true"
 								rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"

@@ -52,7 +52,7 @@
 								value="#{allotmentBooking.agencies}" size="10">
 								<f:selectItems value="#{pmsCollections.allotmentAgencies}" />
 							</aon:selectManyListbox>
-							<c:if test="#{pmsCollections.allotmentAgencyGroupsCount > 0}">
+							<aon:if test="#{pmsCollections.allotmentAgencyGroupsCount > 0}">
 								<aon:outputLabel for="AllotmentBooking_agencyGroups" 
 									value="#{bundle.aon_group}" />
 								<aon:selectManyListbox id="AllotmentBooking_agencyGroups"
@@ -60,7 +60,7 @@
 									value="#{allotmentBooking.agencyGroups}" size="10">
 									<f:selectItems value="#{pmsCollections.allotmentAgencyGroups}" />
 								</aon:selectManyListbox>
-							</c:if>
+							</aon:if>
 
 						</aon:panelGrid>
 

@@ -7,7 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+	<aon:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel for="ProjectReservation_hotel_id"
 			value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="ProjectReservation_hotel_id"
@@ -15,7 +15,7 @@
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
-	</c:if>
+	</aon:if>
 
 	<aon:outputLabel for="ProjectReservation_project_id" 
 		value="#{bundle.report_id}" />
@@ -84,7 +84,7 @@
 			size="20" />
 	</aon:div>
 
-	<c:if test="#{!skipStatus}">
+	<aon:if test="#{!skipStatus}">
 		<aon:outputText value="#{bundle.pms_check}"/>
 		<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}">
 			<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
@@ -94,6 +94,6 @@
 		<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
 			<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
 		</aon:selectManyCheckbox>
-	</c:if>
+	</aon:if>
 
 </ui:composition>
