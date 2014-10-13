@@ -6,6 +6,21 @@
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 
+	<!-- Faces Servlet -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+
 	<!-- -Test Servlet -->
 	<servlet>
 		<servlet-name>TestServlet</servlet-name>
@@ -365,21 +380,6 @@
 		<param-value>.xhtml</param-value>
 	</context-param>
 
-	<!-- Faces Servlet -->
-	<servlet>
-		<servlet-name>Faces Servlet</servlet-name>
-		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.jsf</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.jspx</url-pattern>
-	</servlet-mapping>
-
 	<context-param>
 		<param-name>aon.patch.initAction</param-name>
 		<param-value>true</param-value>
@@ -558,13 +558,6 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-	<!-- MBEAN REGISTRATION -->
-	<listener>
-		<listener-class>
-			com.code.aon.aio.servlet.SecurityLifecycleListener
-		</listener-class>
-	</listener>
-	
 	<!-- DOMAIN MANAGER CONFIGURATION -->
 	<listener>
 		<listener-class>

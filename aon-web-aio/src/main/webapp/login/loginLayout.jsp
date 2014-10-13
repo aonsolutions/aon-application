@@ -8,15 +8,14 @@
 <%@page import="java.util.ResourceBundle"%>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<jsp:useBean id="failedLogin" class="com.code.aon.ui.common.controller.FailedLogin" scope="request"/>
 <jsp:useBean id="customize" class="com.code.aon.ui.resources.bean.CustomizeBean" scope="request"/>
 <jsp:useBean id="companyDisplay" class="com.code.aon.ui.company.controller.CompanyDisplay" scope="request"/>
 <%
 try {
-	failedLogin.setShowError("true".equals(request.getParameter("showError")));
+	boolean showError = "true".equals(request.getParameter("showError"));
 	ResourceBundle commonBundle = customize.initMessages(request.getLocale());
 	customize.initResources();
-	customize.initApplicationVersion(application.getResourceAsStream("META-INF/MANIFEST.MF"));
+	customize.initApplicationVersion(application.getResourceAsStream("/META-INF/MANIFEST.MF"));
 	String domainName = AonUtil.getServerName(request);
 	customize.init(domainName);
 	companyDisplay.init(domainName);
@@ -117,15 +116,18 @@ try {
 
 							<div class="aon-login-box">
 								<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
-
-								<c:if test="${failedLogin.showError}">
-									<div id="errorDiv" class="aon-errors" >
-										<div class="aon-error-message">
-											<%=failedLogin.getMessage()%>
-										</div>
+<%
+	if (showError) {
+%>								
+								<jsp:useBean id="failedLogin" class="com.code.aon.ui.common.controller.FailedLogin" scope="request"/>
+								<div id="errorDiv" class="aon-errors" >
+									<div class="aon-error-message">
+										<%=failedLogin.getMessage(request)%>
 									</div>
-								</c:if>
-
+								</div>
+<%
+	}
+%>								
 								<table class="aon-width-all">
 									<tr>
 										<td class="aon-login-box-left">

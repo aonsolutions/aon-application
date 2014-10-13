@@ -8,7 +8,7 @@ package com.code.aon.jaas.auth;
  */
 public interface IConstants {
 	
-	String SESSION_MANAGER_OBJECT_NAME = "jboss.admin:service=AonSessionManager";
+	String AON_LOGIN_EXCEPTION = "aon_login_exception";
 	
 	String ADMIN_IDENTITY_SEPARATOR = "=";
 	

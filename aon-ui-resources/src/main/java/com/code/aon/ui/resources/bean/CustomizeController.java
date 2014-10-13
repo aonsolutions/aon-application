@@ -42,7 +42,7 @@ public class CustomizeController extends CustomizeBean {
 		ResourceResolver resolver = (ResourceResolver) AonUtil.getRegisteredBean(RESOURCE_RESOLVER);
 		initResources(resolver);
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		initApplicationVersion(ec.getResourceAsStream("META-INF/MANIFEST.MF"));
+		initApplicationVersion(ec.getResourceAsStream("/META-INF/MANIFEST.MF"));
 		init(AonUtil.getServerName());
 	}
 	

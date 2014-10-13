@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.FailedLoginException;
@@ -217,10 +214,6 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		}
 	}
 
-	private MBeanServer getMBeanServer() {
-		return (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
-	}	
-		
     /**
      * Set Failed Login Exception.
      * 
@@ -229,8 +222,8 @@ public class LoginModule extends UsernamePasswordLoginModule {
      */
 	private void settingFailedLoginException(AuthenticationLoginException e) {
     	try {
-    		ObjectName name = new ObjectName(IConstants.SESSION_MANAGER_OBJECT_NAME);
-    		getMBeanServer().invoke( name, "fillLastLoginException", new Object[] { e }, new String[] { AuthenticationLoginException.class.getName() } );
+    		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
+    		request.setAttribute(IConstants.AON_LOGIN_EXCEPTION, e);
     	} catch (Throwable th) {
     		log.error( "Error setting FailedLoginException", th );
         }
