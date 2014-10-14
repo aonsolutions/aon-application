@@ -135,7 +135,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
 				profileId = getReservationUtils().obtainCustomerCode(request.getCompany(), REQRES);
 			} else if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
-				profileId = getReservationUtils().obtainCustomerCode(request.getAgency(), PROMO_CODE);
+				profileId = getPromoCodeProfile(request);
 			}
 
 			if (profileId != null) {
@@ -197,6 +197,28 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
 		return document.toString();
+	}
+
+	private String getPromoCodeProfile(ReservationRequest request) throws ManagerBeanException {
+		String profileId = null;
+		for (String profileTmp : getReservationUtils().obtainCustomerCodes(request.getAgency(), PROMO_CODE)) {
+			if (profileTmp.contains("|")) {
+				String[] patterns = {"ddMMyyyy", "dd/MM/yyyy"};
+				try {
+					String period = profileTmp.substring(profileTmp.indexOf("|") + 1);
+					Date startPeriod = DateUtils.parseDateStrictly(period.substring(0, period.indexOf("-")), patterns);
+					Date endPeriod = DateUtils.parseDateStrictly(period.substring(period.indexOf("-") + 1), patterns);
+					if (!request.getStartDate().before(startPeriod) && !request.getStartDate().after(endPeriod)) {
+						profileId = profileTmp.substring(0, profileTmp.indexOf("|"));
+						break;
+					}
+				} catch (Exception ex) {
+				}
+			} else if (profileId == null) {
+				profileId = profileTmp;
+			}
+		}
+		return profileId;
 	}
 
 	private List<ITransferObject> getRequestRatePlans(ReservationRequest request) throws ManagerBeanException {
@@ -456,7 +478,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
 				profileId = getReservationUtils().obtainCustomerCode(request.getCompany(), REQRES);
 			} else if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
-				profileId = getReservationUtils().obtainCustomerCode(request.getAgency(), PROMO_CODE);
+				profileId = getPromoCodeProfile(request);
 			}
 
 			if (profileId != null) {

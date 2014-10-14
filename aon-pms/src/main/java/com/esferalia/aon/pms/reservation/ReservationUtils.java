@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.opentravel.ota.x2003.x05.AmountType;
@@ -558,7 +559,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return null;
 	}
 
-	public String obtainCustomerCode(Customer customer, String context) throws ManagerBeanException {
+	public String[] obtainCustomerCodes(Customer customer, String context) throws ManagerBeanException {
+		String[] customerCodes = ArrayUtils.EMPTY_STRING_ARRAY;
 		if (customer != null) {
 			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 			Criteria criteria = new Criteria();
@@ -567,10 +569,15 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
 			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
 				RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
-				return rAddInfo.getValue();
+				customerCodes = (String[])ArrayUtils.add(customerCodes, rAddInfo.getValue());
 			}
 		}
-		return null;
+		return customerCodes;
+	}
+
+	public String obtainCustomerCode(Customer customer, String context) throws ManagerBeanException {
+		String[] customerCodes = obtainCustomerCodes(customer, context);
+		return customerCodes.length > 0 ? customerCodes[0] : null;
 	}
 
 	public BookingHolder obtainBookingHolder(String bookingHolder) {
