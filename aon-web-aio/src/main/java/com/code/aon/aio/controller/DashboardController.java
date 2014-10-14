@@ -1275,44 +1275,57 @@ public class DashboardController implements Serializable {
 				recentFiles = new Vector<DashboardRecentFiles>();
 				int j=0;
 				for (Record8<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte> record : data) {
-					DashboardRecentFiles drc = new DashboardRecentFiles();
-					String typeName = "-";
-					if (record.value1()!=null) typeName = RegistryAttachmentType.values()[record.value1()].getName(locale);
-					if (!typeName.equals("Logo") && !typeName.equals("Firma")) {
-						drc.setname(record.value3());
-						String category = null;
-						Result<Record1<String>> categoryName; 
-						if(record.value2()!=null){
-							categoryName = getCategoryName(record.value2(), domain);
-							for (Record1<String> record1 : categoryName) {
-								category = record1.value1();
+					if (record.value6() != null
+							|| (record.value6() == null && record.value5() != null)) {
+						DashboardRecentFiles drc = new DashboardRecentFiles();
+						String typeName = "-";
+						if (record.value1() != null)
+							typeName = RegistryAttachmentType.values()[record
+									.value1()].getName(locale);
+						if (!typeName.equals("Logo")
+								&& !typeName.equals("Firma")) {
+							drc.setname(record.value3());
+							String category = null;
+							Result<Record1<String>> categoryName;
+							if (record.value2() != null) {
+								categoryName = getCategoryName(record.value2(),
+										domain);
+								for (Record1<String> record1 : categoryName) {
+									category = record1.value1();
+								}
+							} else
+								category = "otros";
+							drc.setcategory(category);
+
+							String driveId = record.value5();
+							if (driveId != null) {
+								Integer size = Integer
+										.parseInt(record.value7());
+								drc.setsize(size.longValue());
+							} else {
+								drc.setsize(record.value6().longValue());
 							}
+							// Integer s = record.value2();
+							// if (s != null) drc.setsize(s.longValue());
+							if (record.value1() != null)
+								drc.settype(typeName);
+							else
+								drc.settype("otros");
+
+							if (record.value4() != null) {
+								drc.setDate(record.value4().toString());
+
+							}
+							if (record.value8() != null)
+								drc.setIcon(record.value8().intValue());
+							else
+								drc.setIcon(-1);
+							recentFiles.add(drc);
+							j++;
 						}
-						else category = "otros";
-						drc.setcategory(category);
-						
-						String driveId = record.value5();
-						if(driveId!=null){
-							Integer size = Integer.parseInt(record.value7());
-							drc.setsize(size.longValue());
-						}
-						else{
-							drc.setsize(record.value6().longValue());
-						}
-						//Integer s = record.value2();
-						//if (s != null) drc.setsize(s.longValue());
-						if (record.value1()!=null) drc.settype(typeName);
-						else drc.settype("otros");
-						
-						if (record.value4() != null){
-							drc.setDate(record.value4().toString());
-							
-						}
-						if(record.value8()!=null) drc.setIcon(record.value8().intValue()); else drc.setIcon(-1);
-						recentFiles.add(drc);
-						j++;
 					}
-					if (j >= 10 ) return recentFiles;
+					if (j >= 10)
+						return recentFiles;
 				}
 			} finally {
 				if (connection != null)
