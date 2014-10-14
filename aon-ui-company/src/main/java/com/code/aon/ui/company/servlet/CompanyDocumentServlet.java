@@ -27,8 +27,13 @@ import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class CompanyDocumentServlet extends HttpServlet {
 
@@ -69,7 +74,31 @@ public class CompanyDocumentServlet extends HttpServlet {
 		return null;			
 	}
 	
-	private BasicAttachment convert( Object[] values ) {
+	private byte[] getDriveData(String domainName, String driveId) {
+		Drive drive = null;
+		File f = null;
+		byte[] data = null;
+		try {
+			DomainGserviceaccount d = DatabaseSync.getServiceAccount(domainName);
+			drive = DriveUtils.serviceInitialize(d);
+			f = DriveUtils.getFile(driveId);
+		} catch (Throwable e) {
+			LOGGER.error( "Error getting drive file for " + driveId, e);
+		}
+		InputStream in = null;
+		try {
+			in = DriveUtils.downloadFile(drive, f);
+			data = IOUtils.toByteArray(in);
+			return data;
+		} catch (Throwable e) {
+			LOGGER.error( "Error getting data of drive file " + driveId, e);
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
+		return data;
+	}
+	
+	private BasicAttachment convert( Object[] values, String domainName ) {
 		if (! ArrayUtils.isEmpty(values) ) {
 			BasicAttachment logo = new BasicAttachment();
 			logo.setId( (Integer) values[0] );
@@ -78,33 +107,38 @@ public class CompanyDocumentServlet extends HttpServlet {
 				logo.setMimeType( MimeType.values()[(Integer) values[2]] );	
 			}
 			logo.setData( (byte[]) values[3] );
+			logo.setDriveId( (String) values[4] );
+			if (! StringUtils.isEmpty(logo.getDriveId()) ) {
+				byte[] data = getDriveData(domainName, logo.getDriveId());
+				logo.setData(data);
+			}
 			return logo;
 		}
 		return null;
 	}
 	
-	private BasicAttachment getLogo( Connection connection, Integer domainId, Integer companyId ) {
+	private BasicAttachment getLogo( Connection connection, String domainName, Integer domainId, Integer companyId ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Object[]> h = new ArrayHandler();
 			Object[] values = run.query( connection, 
-				    "SELECT id, description, mimeType, data FROM rattach WHERE domain = ? and registry =? and type=0 and data is not null LIMIT 1",
+				    "SELECT id, description, mimeType, data, drive_id FROM rattach WHERE domain = ? and registry =? and type=0 and ((drive_id is not null) or (data is not null)) LIMIT 1",
 				    h, domainId, companyId);
-			return convert(values);
+			return convert(values, domainName);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
 		return null;			
 	}			
 	
-	private BasicAttachment getAttachment( Connection connection, Integer id ) {
+	private BasicAttachment getAttachment( Connection connection, String domainName, Integer id ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Object[]> h = new ArrayHandler();
 			Object[] values = run.query( connection, 
-				    "SELECT id, description, mimeType, data FROM rattach WHERE id = ? and data is not null LIMIT 1",
+				    "SELECT id, description, mimeType, data, drive_id FROM rattach WHERE id = ? and ((drive_id is not null) or (data is not null)) LIMIT 1",
 				    h, id);
-			return convert(values);
+			return convert(values, domainName);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -131,12 +165,12 @@ public class CompanyDocumentServlet extends HttpServlet {
 				String domainName = AonUtil.getServerName(req);
 				connection = DatabaseUtil.getConnection(domainName);
 				if ( connection != null ) {
+					Integer domainId = DatabaseUtil.getDomain(connection, domainName);
 					if ( companyLogo ) {
-						Integer domainId = DatabaseUtil.getDomain(connection, domainName);
 						Integer companyId = getCompanyId(connection, domainId);
-						attachment = getLogo(connection, domainId, companyId);
+						attachment = getLogo(connection, domainName, domainId, companyId);
 					} else {
-						attachment = getAttachment(connection, attachmentId);
+						attachment = getAttachment(connection, domainName, attachmentId);
 					}
 					if ( (attachmentId != null) && (attachment != null) ) {
 						String md5Value = StringUtils.substringAfterLast(value, "-");

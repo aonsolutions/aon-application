@@ -17,6 +17,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -47,6 +49,8 @@ import com.google.api.services.drive.model.File;
 public class CorporateIdentityController extends RegistryAttachController implements ICorporateIdentityController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(CorporateIdentityController.class);
 	
 	public static Integer DOMAIN_0 = 0;
 	
@@ -161,20 +165,18 @@ public class CorporateIdentityController extends RegistryAttachController implem
 		return initialAction;
 	}	
 	
-
 	public String getDownloadURL() throws ManagerBeanException, IOException, SQLException, KeyStoreException, GeneralSecurityException {
 		String url = null;
 		RegistryAttachment ra = (RegistryAttachment) getTo();
-		if ( ra.getDriveId() != null ) {
+		if ( (ra.getDriveId() != null) && (ra.getMD5() == null) ) {
 			String domain = AonUtil.getDomainName();
 			DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);
 			DriveUtils.serviceInitialize(d);
 			File f = DriveUtils.getFile(ra.getDriveId());
-			url= f.getDownloadUrl();//url= f.getAlternateLink();
-		} else {
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-			url = ds.getDomainURL() + ra.getDownloadURL();
+			ra.setMD5(f.getMd5Checksum());
 		}
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		url = ds.getDomainURL() + ra.getDownloadURL();
 		return url;
 	}
 
@@ -184,23 +186,15 @@ public class CorporateIdentityController extends RegistryAttachController implem
         String id = context.getExternalContext().getRequestParameterMap().get("index");
         RegistryAttachment ra = (RegistryAttachment) getManagerBean().get(Integer.valueOf(id));
 		if ( ra.getDriveId() != null ) {
-			String domain = AonUtil.getDomainName();
 			DomainGserviceaccount d;
 			Drive drive = null;
 			File f = null;
 			try {
-				//d = DatabaseSync.getServiceAccount(domain);
 				d = DatabaseSync.getServiceAccount(ra.getDomain());
 				drive = DriveUtils.serviceInitialize(d);
 				f = DriveUtils.getFile(ra.getDriveId());
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (Throwable e) {
+				LOGGER.error( "Error getting drive file for " + ra, e);
 			}
 			InputStream in = DriveUtils.downloadFile(drive, f);
 			long size = f.getFileSize();
