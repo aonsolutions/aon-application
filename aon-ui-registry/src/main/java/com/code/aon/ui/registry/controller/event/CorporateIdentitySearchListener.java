@@ -168,10 +168,12 @@ public class CorporateIdentitySearchListener extends ScopeSearchListener {
     	List<SelectItem> tags = new LinkedList<SelectItem>();
     	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
     	Criteria criteria = new Criteria();
-    	ICorporateIdentityController cic = (ICorporateIdentityController) getController();
-    	if ( cic.isServiconvenios() ) {
-			criteria.setSkipDomainFilter(true);
-			criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_DOMAIN), DOMAIN_0);
+    	if ( getController() instanceof ICorporateIdentityController ) {
+        	ICorporateIdentityController cic = (ICorporateIdentityController) getController();
+        	if ( cic.isServiconvenios() ) {
+    			criteria.setSkipDomainFilter(true);
+    			criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_DOMAIN), DOMAIN_0);
+        	}    		
     	}
     	criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.RATTACH );
     	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));

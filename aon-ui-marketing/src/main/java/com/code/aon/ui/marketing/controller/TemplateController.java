@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -64,6 +65,15 @@ public class TemplateController extends BasicController {
 		addFooter( template, sb );
 		return sb.toString();				
 	}
+	
+	private static void addTemplate( StringBuffer sb, RegistryAttachment ra ) {
+		if ( ra != null && ra.getId()!=null ) {
+			byte[] data = ra.getData();
+			if (! ArrayUtils.isEmpty(data) ) {
+				sb.append( new String(data) );	
+			}	
+		}		
+	}
 
 	public static void addHeader( Template template, StringBuffer sb ) {
 		boolean nullTemplate = template==null || template.getId()==null;
@@ -80,19 +90,13 @@ public class TemplateController extends BasicController {
 		sb.append(";\">");
 		sb.append("<tbody><tr><td align=\"center\">");		
 		if (! nullTemplate ) {
-			RegistryAttachment ht = template.getHeaderTemplate();
-			if ( ht != null && ht.getId()!=null && (ht.getSize() > 0) ) {
-				sb.append( new String(ht.getData()) );	
-			}
+			addTemplate(sb, template.getHeaderTemplate());
 		}		
 	}
 
 	public static void addFooter( Template template, StringBuffer sb ) {
 		if ( template!=null && template.getId()!=null ) {
-			RegistryAttachment ft = template.getFooterTemplate();
-			if ( ft!=null && ft.getId()!=null && (ft.getSize() > 0) ) {
-				sb.append( new String(ft.getData()) );	
-			}
+			addTemplate(sb, template.getFooterTemplate());
 		}
 		sb.append("</td></tr></tbody></table></div>");		
 	}
