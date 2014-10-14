@@ -20,6 +20,8 @@
 				<version>2.6.0</version>
 				<configuration>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
+					<deploy>${project.build.directory}/extra</deploy>
+					<extra>${project.build.directory}/extra</extra>
 				</configuration>
 				<executions>
 					<execution>
