@@ -52,19 +52,6 @@
 			<version>2.3.19</version>
 			<scope>compile</scope>
 		</dependency>
-<!-- 		
-		<dependency>
-			<groupId>xbrl.saxon</groupId>
-			<artifactId>saxon</artifactId>
-			<version>8.2</version>
-			<scope>runtime</scope>
-		</dependency>
- -->
 	</dependencies>
-    <profiles>
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
-    </profiles>
 </project>
  

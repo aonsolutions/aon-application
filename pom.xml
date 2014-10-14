@@ -19,7 +19,6 @@
 		<jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
 		<jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
 		<jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
-		<maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
 
 	<modules>
@@ -369,16 +368,6 @@
 	</pluginRepositories>
 
 	<build>
-
-		<!-- Extension para mostrar las estadisticas de tiempo al final del build -->
-		<extensions>
-			<extension>
-				<groupId>com.github.lkoskela</groupId>
-				<artifactId>maven-build-utils</artifactId>
-				<version>1.4</version>
-			</extension>
-		</extensions>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -570,13 +559,6 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<profiles>
-		<profile>
-			<id>perform-stats</id>
-		</profile>
-	</profiles>
-
-	
 			<!-- The PMD Plugin allows you to automatically run the PMD code analysis 
 				tool on your project's source code. It also supports the separate Copy/Paste 
 				Detector tool (or CPD) distributed with PMD. -->

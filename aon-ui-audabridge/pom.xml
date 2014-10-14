@@ -71,32 +71,6 @@
 			<version>1.5.8</version>
 			<scope>test</scope>
 		</dependency>
-		
-<!-- 		
-		<dependency>
-		    <groupId>wsdl4j</groupId>
-		    <artifactId>wsdl4j</artifactId>
-		    <version>1.6.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>sun-jaxb</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.1.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>sun-jaxb</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.1.4</version>
-			<scope>test</scope>
-		</dependency>
- -->
 	</dependencies>
-    <profiles>
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
-    </profiles>
 </project>
  

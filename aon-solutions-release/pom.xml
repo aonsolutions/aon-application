@@ -1,99 +1,91 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>com.code.aon</groupId>
-    <artifactId>aon.parent</artifactId>
-    <version>8.3-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>8.3-SNAPSHOT</version>
+	</parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>aon-solutions-release</artifactId>
-  <packaging>pom</packaging>
-  <description>This package contains the aon Solutions repository.</description>
-  <name>AON SOLUTIONS RELEASE</name>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>aon-solutions-release</artifactId>
+	<packaging>pom</packaging>
+	<description>This package contains the aon Solutions repository.</description>
+	<name>AON SOLUTIONS RELEASE</name>
 
-  <properties>
-    <maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
-  </properties>
+	<properties>
+		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
+	</properties>
 
-  <scm>
-    <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</developerConnection>
-    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</connection>
-  </scm>
+	<scm>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</connection>
+	</scm>
 
-  <build>
-    <plugins>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+		</plugins>
+	</build>
 
-  <dependencies>
-  </dependencies>
+	<dependencies>
+	</dependencies>
 
-  <profiles>
-    <profile>
-      <id>rpm-release</id>
-     <activation>
-        <property>
-          <name>rpm.release</name>
-          <value>true</value>
-        </property>
-      </activation>
+	<profiles>
+		<profile>
+			<id>rpm-release</id>
+			<activation>
+				<property>
+					<name>rpm.release</name>
+					<value>true</value>
+				</property>
+			</activation>
 
-  <build>
-    <plugins>
+			<build>
+				<plugins>
 
-			<!-- Para construir el RPM -->
-                       <plugin>
+					<!-- Para construir el RPM -->
+					<plugin>
 
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>rpm-maven-plugin</artifactId>
-                                <version>2.0.1</version>
-                                <extensions>true</extensions>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>rpm-maven-plugin</artifactId>
+						<version>2.0.1</version>
+						<extensions>true</extensions>
 
-				<executions>
-					<execution>
-						<goals>
-							<goal>attached-rpm</goal>
-						</goals>
-					</execution>
+						<executions>
+							<execution>
+								<goals>
+									<goal>attached-rpm</goal>
+								</goals>
+							</execution>
 
-				</executions>
+						</executions>
 
-                                <configuration>
-	                            <group>Applications/Aon</group>
-	                            <release>${buildNumber}</release>
-				    <copyright>2009, esferalia Networks S.A</copyright>
-					<requires>
-					</requires>
-                                        <mappings>
-                                                <mapping>
-							<filemode>755</filemode>
-                                                        <directory>/etc/yum.repos.d</directory>
-							<sources>
-								<source>
-									<location>.</location>
-									<includes>
-										<include>*.repo</include>
-									</includes>
-								</source>
-							</sources>
-                                                </mapping>
-					</mappings>
-                                </configuration>
-
-
-                        </plugin>
-
-    </plugins>
-  </build>
-
-
-
-    </profile>
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
- </profiles>
+						<configuration>
+							<group>Applications/Aon</group>
+							<release>${buildNumber}</release>
+							<copyright>2009, esferalia Networks S.A</copyright>
+							<requires>
+							</requires>
+							<mappings>
+								<mapping>
+									<filemode>755</filemode>
+									<directory>/etc/yum.repos.d</directory>
+									<sources>
+										<source>
+											<location>.</location>
+											<includes>
+												<include>*.repo</include>
+											</includes>
+										</source>
+									</sources>
+								</mapping>
+							</mappings>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
  

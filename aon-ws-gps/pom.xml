@@ -258,10 +258,5 @@
 				</pluginManagement>
 			</build>
 		</profile>
-		
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
-
 	</profiles>	
 </project>

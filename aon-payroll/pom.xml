@@ -118,11 +118,5 @@
 			<scope>compile</scope>
 			<version>3.2</version>
 		</dependency>
-		
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>perform-stats</id>
-		</profile>
-	</profiles>
 </project>
