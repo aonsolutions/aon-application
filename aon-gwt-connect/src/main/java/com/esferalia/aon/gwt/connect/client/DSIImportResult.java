@@ -5,10 +5,10 @@ public interface DSIImportResult {
 	
 	String getMessage();
 
-	String getTreeIconStyle();
+	String getResultIconStyle();
 	
-	String getLeafIconStyle();
-
-	String getBranchIconStyle();
+	String getEnterpriseIconStyle();
+	
+	String getEmployeeIconStyle();
 
 }

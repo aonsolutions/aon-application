@@ -32,52 +32,65 @@ public class DSIImportResultsGrid extends CustomDataGrid<DSIImportResult> implem
 		}
 
 		@Override
-		public String getTreeIconStyle() {
+		public String getResultIconStyle() {			
 			return "";
 		}
-
 		@Override
-		public String getLeafIconStyle() {
+		public String getEnterpriseIconStyle() {			
 			return "";
 		}
-
-		@Override
-		public String getBranchIconStyle() {
-			return "";
-		}
-				
-	}
-
-	public static class EnterpriseDSIImportResult extends DefaultDSIImportResult{		
 		
-		public EnterpriseDSIImportResult(String message) {
+		@Override
+		public String getEmployeeIconStyle() {			
+			return "";
+		}
+	}
+	
+	public static class EnterpriseInsertedResult extends DefaultDSIImportResult {
+		
+		public EnterpriseInsertedResult(String message) {
 			super(message);
 		}
-
+		
 		@Override
-		public String getTreeIconStyle() {
-			return AON.AON_ICON_EXPAND;
+		public String getResultIconStyle() {			
+			return AON.AON_ICON_ACCEPT;
 		}
-
+		
 		@Override
-		public String getBranchIconStyle() {
+		public String getEnterpriseIconStyle() {			
 			return AON.AON_CSS.aonIconEnterprise();
 		}
-		
 	}
-
-	public static class EmployeeDSIImportResult extends DefaultDSIImportResult {
-		
-
-		public EmployeeDSIImportResult(String message) {
+	
+	public static class EnterpriseIgnoredResults extends DefaultDSIImportResult {
+		public EnterpriseIgnoredResults(String message) {
 			super(message);
 		}
-
+		
 		@Override
-		public String getLeafIconStyle() {
-			return AON.AON_ICON_EMPLOYEE;
+		public String getResultIconStyle() {
+			return AON.AON_ICON_ERRORWARNING;
 		}
-
+		
+		@Override
+		public String getEnterpriseIconStyle() {			
+			return AON.AON_CSS.aonIconEnterprise();
+		}
+	}
+	
+	public static class EnterpriseUpdatedResults extends DefaultDSIImportResult {
+		public EnterpriseUpdatedResults(String message) {
+			super(message);
+		}
+		@Override
+		public String getResultIconStyle() {			
+			return AON.AON_ICON_VIEW;
+		}
+		@Override
+		public String getEnterpriseIconStyle() {
+			return AON.AON_CSS.aonIconEnterprise();
+		}
 	}
 
 	private static abstract class IconStyleColumn<T extends DSIImportResult> extends TextColumn<T> {
@@ -93,9 +106,8 @@ public class DSIImportResultsGrid extends CustomDataGrid<DSIImportResult> implem
 		}
 
 		public abstract String getIconStyle(Context context, T object);
-
 	}
-
+	
 	public DSIImportResultsGrid() {
 		super();
 
@@ -109,7 +121,7 @@ public class DSIImportResultsGrid extends CustomDataGrid<DSIImportResult> implem
 		// Add a selection model so we can select cells.
 		initializeSelectionModel();
 	}
-
+	
 	@Override
 	public HandlerRegistration addSelectionHandler(
 			SelectionHandler<DSIImportResult> handler) {
@@ -133,7 +145,6 @@ public class DSIImportResultsGrid extends CustomDataGrid<DSIImportResult> implem
 						getSelectedImportResult());
 			}
 		});
-
 	}
 
 	/**
@@ -143,55 +154,30 @@ public class DSIImportResultsGrid extends CustomDataGrid<DSIImportResult> implem
 	 */
 	private void initializeColumns() {
 		int col = 0;
-
-		// Add a icon style column to show the expand/collapse tree icon.
-		addColumn(new IconStyleColumn<DSIImportResult>() {
-			@Override
-			public String getIconStyle(Context context, DSIImportResult result) {
-				return result.getTreeIconStyle();
-			}
-		});
-		setColumnWidth(col++, 18, Unit.PX);
-
-		// Add a icon style column to show the branch tree icon.
+		
 		addColumn(new IconStyleColumn<DSIImportResult>() {
 
 			@Override
-			public String getIconStyle(Context context, DSIImportResult result) {
-					return result.getBranchIconStyle();
-			}
-
+			public String getIconStyle(Context context, DSIImportResult object) {				
+				return object.getResultIconStyle();
+			}			
 		});
 		setColumnWidth(col++, 18, Unit.PX);
-
-		// Add a icon style column to show the leaf tree icon.
-		addColumn(new IconStyleColumn<DSIImportResult>() {
-
-			@Override
-			public String getIconStyle(Context context, DSIImportResult result) {
-					return result.getLeafIconStyle();
-			}
-
-		});
-		setColumnWidth(col++, 18, Unit.PX);
-
-		// Add a text column to show the message.
+		
 		addColumn(new TextColumn<DSIImportResult>() {
 
 			@Override
+			public String getValue(DSIImportResult object) {				
+				return object.getMessage();
+			}
+			
+			@Override
 			public String getCellStyleNames(Context context,
-					DSIImportResult object) {
+					DSIImportResult object) {				
 				return AON.AON_BOLD + " " + AON.AON_BLACK;
 			}
-
-			@Override
-			public String getValue(DSIImportResult result) {
-				return result.getMessage();
-				
-			}
 		});
-		setColumnWidth(col++, 100, Unit.PCT);		
-
+		setColumnWidth(col++, 100, Unit.PX);
 	}
 	
 	// ------------------------------------------------------------------------

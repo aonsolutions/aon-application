@@ -260,4 +260,32 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-dataTable-row-highlight-top")
 	String aonDataTableRowHighlightTop ();
 	*/
+	
+	/*
+	 * ProgressBar
+	 */
+	@ClassName("progressbar-text")
+	String progressbarText();
+	
+	@ClassName("progressbar-remaining")
+	String progressbarRemaining();
+	
+	@ClassName("progressbar-outer")
+	String progressbaOuter();
+	
+	@ClassName("progressbar-inner")
+	String progressbarInner();
+	
+	@ClassName("progressbar-bar")
+	String progressbarBar();
+	
+	@ClassName("progressbar-fullbar")
+	String progressbarFullbar();
+	
+	@ClassName("progressbar-blankbar")
+	String progressbarBlankBar();
+	
+	@ClassName("progressbar-completed")
+	String progressbarCompleted();
+	
 }

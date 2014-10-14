@@ -77,9 +77,6 @@ public class SelectDataGrid<T extends HasId<?> & HasName<String>> extends
 		};
 	}
 
-	/*
-	 * Checkbox column. This table will uses a checkbox column for selection.
-	 */
 	private Column<T, Boolean> newCheckColumn() {
 		return new Column<T, Boolean>(new CheckboxCell()) {
 			@Override

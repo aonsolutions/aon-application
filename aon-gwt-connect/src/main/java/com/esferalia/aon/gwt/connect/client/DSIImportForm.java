@@ -1,12 +1,16 @@
 package com.esferalia.aon.gwt.connect.client;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ProgressBar;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.connect.client.DSIImportClient.DSIImportCallback;
 import com.esferalia.aon.gwt.connect.shared.JsEmployee;
@@ -23,30 +27,67 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class DSIImportForm implements EntryPoint {
 
 	interface Binder extends UiBinder<Widget, DSIImportForm> {
+	}	
+	
+	class EnableButtons implements DSILoadSelectedGrid.Listener {
+
+		private DSILoadSelectedGrid loadsGrid;
+		
+		public EnableButtons(DSILoadSelectedGrid loadsGrid) {
+			this.loadsGrid = loadsGrid;
+			this.loadsGrid.addListener(this);
+			
+			sendButton.setVisible(false);
+		}
+		@Override
+		public void onSelectionChangeHandler(SelectionChangeEvent event) {			
+			setEnableImportButton();
+		}		
+	}
+	
+	class ProgressBarCallBack extends Timer {
+		
+		ProgressBar progressBar = null;				
+		
+		public ProgressBarCallBack() {
+			progressBar = 
+					new ProgressBar(20, ProgressBar.SHOW_TIME_REMAINING + ProgressBar.SHOW_TEXT);
+			this.progressBar.setText("Importando...");
+			barPanel.clear();
+			barPanel.add(progressBar);
+		}
+
+		@Override
+		public void run() {
+			int progress = progressBar.getProgress() + 4;
+			if(progress > 100)
+				cancel();
+			progressBar.setProgress(progress);
+		}
+		
+		private void setText(String text) {
+			progressBar.setCompletedMessage(text);
+		}
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -64,109 +105,90 @@ public class DSIImportForm implements EntryPoint {
 	@UiField
 	MinimizePanel footPanel;
 	@UiField
-	VerticalPanel enterPanel;
-	@UiField
 	FileUpload fileUpload;
 	@UiField
 	Button sendButton;
 	@UiField
-	HorizontalPanel hPanel;
-	@UiField
-	FlexTable layout;
-	@UiField
-	SimplePanel simplePanel;
+	HorizontalPanel barPanel;
+		
+	private final static String URL = "/aon-aio/aon_gwt_connect/dsiimport";
 	
-	@UiField
-	ResultsPanel resultsPanel;
-
+	private EnableButtons enableButtons;
 	private JsArray<JsEmpres> empress;
-
+	
 	private List<DSIImportResult> results;
+	private List<DSILoadSelected> loads;
+	
+	private ProgressBarCallBack progressBarCallback;
+	private DSILoadSelectedGrid loadsGrid;
+	
+	private ResultsPanel importsPanel;
+	private ResultsPanel loadsPanel;
 
 	@Override
 	public void onModuleLoad() {
-
+		
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-
+		
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
-		root.add(ui);		
-		sendButton.setEnabled(false);
-		init();	
+		root.add(ui);	
+		
+		this.importsPanel = new ResultsPanel();
+		this.loadsPanel = new ResultsPanel();
+		
+		this.loadsPanel.clearFlowPanel();
+		
+		this.initParameters();
+		this.initGrid();		
 	}
 
-	protected void init() {
-		
+	protected void initParameters() {
+				
 		dateBox.setFormat(new DateBox.DefaultFormat(AON.DATE_FORMAT));
 		
-		uploadFormPanel.setAction("/aon-aio/aon_gwt_connect/dsiimport");
-		
+		uploadFormPanel.setAction(URL);		
 		uploadFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadFormPanel.setMethod(FormPanel.METHOD_POST);
-
 		uploadFormPanel.getElement().setDraggable("DRAGGABLE_TRUE");
+	}
+	
+	protected void initGrid() {
 		
 		DSIImportResultsGrid resultsGrid = new DSIImportResultsGrid();
-
 		ListDataProvider<DSIImportResult> listDataProvider = new ListDataProvider<DSIImportResult>();
 		listDataProvider.addDataDisplay(resultsGrid);
 		this.results = listDataProvider.getList();
 
-		resultsPanel.setWidget(resultsGrid);
+		importsPanel.setWidget(resultsGrid);		
 
+		this.loadsGrid = new DSILoadSelectedGrid();
+		ListDataProvider<DSILoadSelected> listLoadProvider = new ListDataProvider<DSILoadSelected>();
+		listLoadProvider.addDataDisplay(loadsGrid);		
+		this.loads = listLoadProvider.getList();
+		
+		loadsPanel.setWidget(loadsGrid);
+		
+		enableButtons = new EnableButtons(loadsGrid);
+		
 	}
-
-	private Widget createAdvancedForm(JsArray<JsEmpres> empress) throws Exception {
-		
-		FlexCellFormatter cellFormater = layout.getFlexCellFormatter();
-		layout.clear();
-		layout.getElement().getStyle().setBackgroundColor("#FFFFFF");
-
-		// Create some advanced options
-
-/*		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-		String[] words = { "Vitoria", "Bilbao", "Pamplona", "San Sebastian",
-				"Santander" };
-		oracle.add(words[0]);
-		oracle.add(words[1]);
-		oracle.add(words[2]);
-		oracle.add(words[3]);
-		
-		final SuggestBox suggest = new SuggestBox(oracle);
-		
-		layout.setWidget(0, 1, suggest);*/
-		Grid advancedOptions = new Grid(empress.length(), 2);		
-		advancedOptions.setCellSpacing(6);
-		
-		for(int i = 0; i < empress.length(); i ++) {
-			advancedOptions.setWidget(i, 0, new CheckBox());
-			advancedOptions.setHTML(i, 1, empress.get(i).getRSocial());			
-		}
-
-		// Add advanced options to form in a disclosure panel
-		DisclosurePanel advancedDisclosure = new DisclosurePanel(
-				"Listado de Empresas: ");
-		advancedDisclosure.setOpen(true);
-		advancedDisclosure.setAnimationEnabled(true);
-		advancedDisclosure.setContent(advancedOptions);
-		layout.setWidget(0, 0, advancedDisclosure);
-		cellFormater.setColSpan(3, 0, 2);
-
-		//simplePanel.add(layout);
-		
-		return layout;
-	}
-
+	
 	// ------------------------------------------------------------- UiHandlers
 
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
+	}
+	
 	@UiHandler("fileUpload")
-	void onChangeFileUpload(ChangeEvent event) {
+	void onChangeFileUpload(ChangeEvent event) {	
 		uploadFormPanel.submit();
 	}
 
 	@UiHandler("uploadFormPanel")
 	void onSubmitUpload(SubmitEvent event) {
+		
 	}
 
 	@UiHandler("uploadFormPanel")
@@ -185,28 +207,30 @@ public class DSIImportForm implements EntryPoint {
 					@Override
 					public void onSuccess(JsArray<JsEmpres> empress) {
 						DSIImportForm.this.empress = empress;						
-						// TODO Loads and shows enterprises list.
-					
-						if(empress != null)
-							try {
-								simplePanel.setWidget(createAdvancedForm(empress));
-							}catch(Exception ex) {
-								Window.alert("" + ex.getMessage() + ", " + ex.getCause());
-							}
-							
 						
-						sendButton.setEnabled(true);						
-						DSIImportForm.this.splitLayoutPanel.setWidgetSize(
-								DSIImportForm.this.westTabPanel, Window.getClientWidth() / 3);							
+							try {								
+								loadEmpress(empress);
+								showLoadsPanel();
+							} catch(Exception ex) {						
+								GWT.log(ex.getMessage() + ", " + ex.getCause());
+							}																			
 					}
 				});
 	}
 
 	@UiHandler("sendButton")
 	void onClickSendButton(ClickEvent event) {
-		// TODO I pass all enterprises, you must pass only selected ones.
-		DSIImportClient.imp0rt(empress, new DSIImportCallback<JsImportEvent>() {
-
+		
+		this.progressBarCallback = new ProgressBarCallBack();		
+		results.clear();
+		
+		final Set<DSILoadSelected> selected = loadsGrid.getSelectedObject();
+		final Iterator<DSILoadSelected> iterator = selected.iterator();
+		
+		evalProgressBar(selected.size() * 2);	
+						
+		DSIImportClient.importSelected(selected, empress, new DSIImportCallback<JsImportEvent>() {
+			
 			@Override
 			public void onError(Throwable t) {
 				// TODO Show Dialog, Error at 'resultsPanel' or both. It's up to
@@ -220,69 +244,112 @@ public class DSIImportForm implements EntryPoint {
 
 							@Override
 							public DSIImportResult onCommitted() {
-								// TODO Auto-generated method stub
 								return null;
 							}
 
 							@Override
 							public DSIImportResult onRollbacked() {
-								// TODO Auto-generated method stub
 								return null;
 							}
 
 							@Override
 							public DSIImportResult onEmployeeIgnored(
 									JsEmployee employee) {
-								return new DSIImportResultsGrid.EmployeeDSIImportResult(
-										employee.getFullName());
+								return null;
 							}
 
 							@Override
 							public DSIImportResult onEmployeeUpdated(
 									JsEmployee employee) {
-								return new DSIImportResultsGrid.EmployeeDSIImportResult(
-										employee.getFullName());
+								return null;
 							}
 
 							@Override
 							public DSIImportResult onEmployeeInserted(
 									JsEmployee employee) {
-								return new DSIImportResultsGrid.EmployeeDSIImportResult(
-										employee.getFullName());
+								return null;
 							}
 
 							@Override
 							public DSIImportResult onEnterpriseIgnored(
 									JsEmpres empres) {
-								return new DSIImportResultsGrid.EnterpriseDSIImportResult(
-										empres.getRSocial());
+								
+								return new DSIImportResultsGrid.EnterpriseIgnoredResults(
+										iterator.next().getName());
 							}
 
 							@Override
 							public DSIImportResult onEnterpriseUpdated(
 									JsEmpres empres) {
-								return new DSIImportResultsGrid.EnterpriseDSIImportResult(
-										empres.getRSocial());
+								DSILoadSelected object = iterator.next();
+								removeObject(object);								
+								return new DSIImportResultsGrid.EnterpriseUpdatedResults(
+										object.getName());
 							}
 
 							@Override
 							public DSIImportResult onEnterpriseInserted(
 									JsEmpres empres) {
-								return new DSIImportResultsGrid.EnterpriseDSIImportResult(
-										empres.getRSocial());
+								DSILoadSelected object = iterator.next();
+								removeObject(object);
+								return new DSIImportResultsGrid.EnterpriseInsertedResult(
+										object.getName());
 							}
-
 						});
 				if (result != null) {
-					DSIImportForm.this.splitLayoutPanel.setWidgetSize(
-							DSIImportForm.this.footPanel, Window.getClientHeight() / 3);					
-					results.add(result);
+					results.add(result);					
+					progressBarCallback.setText("Completado");
+					showImportsPanel();					
 				}
 			}
-
 		});
 	}
 
 	// ------------------------------------------------------------------------
 	
+	private void evalProgressBar(int cargaTrabajo) {
+		progressBarCallback.scheduleRepeating(cargaTrabajo);
+	}
+	
+	private void loadEmpress (JsArray<JsEmpres> empress) throws Exception {
+		
+		DSILoadSelected selected;
+		
+		for ( int x = 0; x < empress.length(); x ++) {			
+			String rsocial = empress.get(x).getRSocial();
+			selected = new DSILoadSelectedGrid.EnterpriseDSILoadSelected(rsocial);
+			loads.add(selected);
+		}		
+	}
+	
+	private void setEnableImportButton() {
+		sendButton.setVisible(loadsGrid.getSelectedObject().size() > 0);
+	}
+	
+	private void removeObject(DSILoadSelected object) {
+		loads.remove(object);
+		loadsGrid.clearSelected(object);
+	}
+	
+	private void showLoadsPanel() {
+		InlineLabel tab = new InlineLabel("Empresas");		
+		DSIImportForm.this.westTabPanel.add(DSIImportForm.this.loadsPanel, tab);
+		DSIImportForm.this.splitLayoutPanel.setWidgetSize(
+				DSIImportForm.this.westTabPanel, Window.getClientWidth() / 4);
+	}
+
+	private void showImportsPanel() {
+		
+		Label tab = new Label("Resultados");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		DSIImportForm.this.footTabPanel.add(DSIImportForm.this.importsPanel, tab);
+		DSIImportForm.this.splitLayoutPanel.setWidgetSize(
+				DSIImportForm.this.footPanel, Window.getClientHeight() / 2);
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
 }

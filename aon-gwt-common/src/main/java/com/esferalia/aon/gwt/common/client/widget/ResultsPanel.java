@@ -11,6 +11,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
@@ -93,6 +94,9 @@ public class ResultsPanel extends ResizeComposite implements ProvidesResize {
 
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField 
+	FlowPanel flowPanel;
 
 	public ResultsPanel() {
 		initWidget(binder.createAndBindUi(this));
@@ -113,6 +117,10 @@ public class ResultsPanel extends ResizeComposite implements ProvidesResize {
 
 	public HandlerRegistration addClearHandler(ClearHandler handler) {
 		return addHandler(handler, ClearEvent.TYPE);
+	}
+	
+	public void clearFlowPanel() {
+		flowPanel.clear();
 	}
 
 	// ------------------------------------------------------------- UIHandlers

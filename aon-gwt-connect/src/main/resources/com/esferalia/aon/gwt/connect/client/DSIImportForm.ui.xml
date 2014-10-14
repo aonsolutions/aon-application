@@ -26,6 +26,7 @@
 		.button-bar button:first-of-type {
 		margin-right: 15px;
 		}
+
 	</ui:style>
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
@@ -35,10 +36,6 @@
 				<g:HTMLPanel styleName="aon-panelGrid-search">
 					<div class="aon-panelGrid-search-info ">
 						<span class="aon-panelGrid-search-info-internal">Seleccione la Base de Datos: </span>
-						<a style="font-size:1em;font-weight:bold;float:right;" onclick=""
-							href="#">
-							<span class="aon-outputText">[?]</span>
-						</a>
 					</div>
 
 					<div class="aon-scroll-area">
@@ -49,8 +46,7 @@
 								</td>
 								<td>
 									<datepicker:DateBox ui:field="dateBox"
-										styleName="aon-inputText" width="6em" />
-									<g:Image styleName="aon-cmd-commandButton"></g:Image>
+										styleName="aon-inputText" width="6em" />									
 								</td>
 							</tr>
 							<tr>
@@ -66,7 +62,7 @@
 									<g:Label styleName="aon-outputLabel">Adjuntar archivo</g:Label>
 								</td>
 								<td>
-									<table border="10px" cellpadding="20px">
+									<table border="10px" cellpadding="40px" width="200">
 										<tr>
 											<td>
 												<g:FormPanel ui:field="uploadFormPanel">
@@ -78,81 +74,41 @@
 								</td>
 							</tr>
 							<tr>
-								<td>
+							    <td>
 									<g:Button ui:field="sendButton" styleName="aon-search-lookup-button">Importar</g:Button>
+								</td>
+								<td>
+								    <g:HorizontalPanel ui:field="barPanel"></g:HorizontalPanel>
 								</td>
 							</tr>
 						</table>
 					</div>
-
-					<!--<div class="aon-scroll-area"> </div> -->
-
 				</g:HTMLPanel>
-
 			</g:ScrollPanel>
-
 		</g:center>
 
-		<g:west size="0">
+		<!--g:west size="0">
 			<g:TabLayoutPanel barHeight="26" barUnit="PX"
-				ui:field="westTabPanel">
-				
+				ui:field="westTabPanel" >				
 					<g:tab>
-						<g:header>
+						<g:header>						    
 							<span class="aon-icon-company aon-icon-commandButton">Empresas</span>
 						</g:header>
-						<g:VerticalPanel ui:field="enterPanel"
-							styleName="aon-width-all aon-height-all">
-
-							<g:HorizontalPanel ui:field="hPanel" spacing="10">
-								<g:cell>
-									<g:CheckBox ui:field="all">&nbsp;&nbsp;&nbsp;</g:CheckBox>
-								</g:cell>
-								<g:cell>
-									<g:SuggestBox ui:field="empresas" styleName="aon-inputText" />
-								</g:cell>
-							</g:HorizontalPanel>
-							<g:VerticalPanel>
-								<g:SimplePanel ui:field="simplePanel">
-									<g:FlexTable ui:field="layout"
-										styleName="aon-dataTable-cell-highlight">
-									</g:FlexTable>
-								</g:SimplePanel>
-							</g:VerticalPanel>
-
-						</g:VerticalPanel>
-					</g:tab>
-					<g:tab>
-						<g:header>
-							<span class="aon-icon-employee aon-icon-commandButton">Empleados</span>
-						</g:header>
-						<g:VerticalPanel ui:field="emplPanel">
-
-						</g:VerticalPanel>
+						
+						<g:SimpleLayoutPanel ui:field="loadsPanel" styleName="aon-width-all aon-height-all"/>
+							
 					</g:tab>
 			</g:TabLayoutPanel>
+		</g:west-->
+		
+		<g:west size="0">
+			<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="westTabPanel" />				
 		</g:west>
-
+		
 		<g:south size="0">
 			<aon:MinimizePanel ui:field="footPanel">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX"
-					ui:field="footTabPanel">
-					<g:tab>
-						<g:header>
-							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
-						</g:header>
-						<aon:ResultsPanel ui:field="resultsPanel" />
-					</g:tab>
-					<g:tab>
-						<g:header>
-							<span class="aon-icon-time aon-icon-commandButton">Progreso</span>
-						</g:header>
-						<aon:ResultsPanel ui:field="progressPanel" />
-					</g:tab>
-				</g:TabLayoutPanel>
+				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" />				
 			</aon:MinimizePanel>
 		</g:south>
-
 	</g:SplitLayoutPanel>
-
 </ui:UiBinder>

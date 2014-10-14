@@ -994,6 +994,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private void showResultsPanel() {
+		
 		InlineLabel tab = new InlineLabel("Resultados");
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);

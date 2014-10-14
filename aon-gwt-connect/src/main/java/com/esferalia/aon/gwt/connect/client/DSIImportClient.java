@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.connect.client;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.connect.shared.DSIImportService;
 import com.esferalia.aon.gwt.connect.shared.JsEmpres;
 import com.esferalia.aon.gwt.connect.shared.JsImportEvent;
@@ -12,7 +16,6 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
@@ -43,8 +46,48 @@ public class DSIImportClient implements DSIImportService {
 			cb.onError(e);
 		}
 	}
+	
+	public static void importSelected(Set<DSILoadSelected> selected, 
+			JsArray<JsEmpres> empress, DSIImportCallback<JsImportEvent> cb) {
+		
+		StringBuffer requestDataBuffer = new StringBuffer();
+		requestDataBuffer.append(GET_ACTION_PARAM);
+		requestDataBuffer.append('=');
+		requestDataBuffer.append(GetAction.IMPORT);
+		
+		for ( int x = 0; x < empress.length(); x++) {			
+			if(containsRSocial(selected, empress.get(x).getRSocial())) {
+				JsEmpres empres = empress.get(x);
+				requestDataBuffer.append('&');
+				requestDataBuffer.append(GET_EMPRES_PARAM);
+				requestDataBuffer.append('=');
+				requestDataBuffer.append('{');
+				requestDataBuffer.append("db:\"" + empres.getDB()+ "\","  );
+				requestDataBuffer.append("sscod:\"" + empres.getSScod()+ "\","  );
+				requestDataBuffer.append("ssnum:\"" + empres.getSSnum()+ "\""  );
+				requestDataBuffer.append('}');
+			}			
+		}
+		
+		try {
+			sendX(requestDataBuffer.toString(), cb);
+		} catch (RequestException e) {
+			cb.onError(e);
+		}				
 
-	public static void imp0rt(JsArray<JsEmpres> empress, DSIImportCallback<JsImportEvent> cb) {
+	}
+	
+	private static boolean containsRSocial (Set<DSILoadSelected> selected, String rSocial ) {
+		Iterator<DSILoadSelected> iterator = selected.iterator();
+		while(iterator.hasNext()) {
+			String name = iterator.next().getName();
+			if(StringUtils.equals(name, rSocial))
+				return true;
+		}
+		return false;
+	}
+
+/*	public static void imp0rt(JsArray<JsEmpres> empress, DSIImportCallback<JsImportEvent> cb) {
 		StringBuffer requestDataBuffer = new StringBuffer();
 		requestDataBuffer.append(GET_ACTION_PARAM);
 		requestDataBuffer.append('=');
@@ -67,7 +110,7 @@ public class DSIImportClient implements DSIImportService {
 		} catch (RequestException e) {
 			cb.onError(e);
 		}
-	}
+	}*/
 
 	private static <T extends JavaScriptObject> void send(String requestData,
 			final DSIImportCallback<T> cb) throws RequestException {
@@ -89,9 +132,7 @@ public class DSIImportClient implements DSIImportService {
 				if (200 == response.getStatusCode())
 					cb.onSuccess(JsonUtils.<T> safeEval(response.getText()));
 				// TODO: Handle the error. Can get the status text from response.getStatusText()
-
 			}
-
 		});
 		builder.send();
 

@@ -42,11 +42,11 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 
-	static interface AcceptHandler extends EventHandler {
+	public static interface AcceptHandler extends EventHandler {
 		void onAccept(AcceptEvent event);
 	}
 
-	static class AcceptEvent extends GwtEvent<AcceptHandler> {
+	public static class AcceptEvent extends GwtEvent<AcceptHandler> {
 
 		private static final Type TYPE = new Type<AcceptHandler>();
 
@@ -229,7 +229,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
-	static final int PAGE_SIZE = 25;
+	protected static final int PAGE_SIZE = 25;
 
 	@UiField
 	Button acceptButton;
