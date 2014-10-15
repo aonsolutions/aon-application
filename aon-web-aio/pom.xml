@@ -1122,7 +1122,7 @@
 										sobrescribir la de JBOSS -->
 									<configuration>
 										<group>Applications/Aon</group>
-
+										<name>aon-aio8</name>
 										<!-- Se utiliza el parametro calssifier para diferenciar la ejcución 
 											de la de Jboss web-parent. -->
 										<classifier>TOMCAT8</classifier>
