@@ -1540,7 +1540,7 @@ public class DashboardController implements Serializable {
 
 				if (a.get(year) != null && a.get(year).get(m)!=null)
 					list.add(a.get(year).get(m));
-				else list.add(new DashboardPayrollPortal(0,0,0,0,0,m,year));
+				else list.add(new DashboardPayrollPortal(0,0,0,0,0,m,0));
 			}	
 		}
 		return list;
