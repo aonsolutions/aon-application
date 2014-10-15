@@ -26,7 +26,8 @@ public class AonStartupServletContextListener implements ServletContextListener 
 		initHibernate();
 		initBeanConfiguration(sc);
 		initApplicationOptionController(sc);
-		initFacelets(sc);
+		//TODO A revisar funcionamiento en TOMCAT8 
+		//initFacelets(sc);
 	}
 
 	@Override
