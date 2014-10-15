@@ -63,7 +63,8 @@ public class BatchDocument extends DataScrollerState implements ICorporateIdenti
 		for (IAttachment ra : documents) {
 			String name = DownloadUtil.getFileName(ra.getDescription(), ra.getMimeType());
             zipOut.putNextEntry(new ZipEntry(name));
-            zipOut.write(ra.getData());
+            byte[] data = DownloadUtil.getData(ra);
+            zipOut.write(data);
         	zipOut.closeEntry();
         }
 		zipOut.close();

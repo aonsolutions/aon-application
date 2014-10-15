@@ -5,20 +5,16 @@ import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUMENT_CONTROLLER_NAME;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -40,17 +36,13 @@ import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.event.DomainLoookupListener;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
-import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
 public class CorporateIdentityController extends RegistryAttachController implements ICorporateIdentityController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(CorporateIdentityController.class);
 	
 	public static Integer DOMAIN_0 = 0;
 	
@@ -179,32 +171,6 @@ public class CorporateIdentityController extends RegistryAttachController implem
 		url = ds.getDomainURL() + ra.getDownloadURL();
 		return url;
 	}
-
-	@Override
-	public void downloadAttachment(ActionEvent event) throws NumberFormatException, ManagerBeanException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        String id = context.getExternalContext().getRequestParameterMap().get("index");
-        RegistryAttachment ra = (RegistryAttachment) getManagerBean().get(Integer.valueOf(id));
-		if ( ra.getDriveId() != null ) {
-			DomainGserviceaccount d;
-			Drive drive = null;
-			File f = null;
-			try {
-				d = DatabaseSync.getServiceAccount(ra.getDomain());
-				drive = DriveUtils.serviceInitialize(d);
-				f = DriveUtils.getFile(ra.getDriveId());
-			} catch (Throwable e) {
-				LOGGER.error( "Error getting drive file for " + ra, e);
-			}
-			InputStream in = DriveUtils.downloadFile(drive, f);
-			long size = f.getFileSize();
-			
-			DownloadUtil.downloadAttachment(ra.getDescription(), ra.getMimeType(), in, size);			
-		} else {
-	        DownloadUtil.downloadAttachment(ra);
-		}    	
-	}	
-	
 
 	public boolean isEditable() {
 		return AonUtil.getRoleManager().isDocumentManager() && (!isServiconvenios());

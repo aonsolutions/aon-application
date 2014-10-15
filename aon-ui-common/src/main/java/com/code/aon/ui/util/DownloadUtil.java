@@ -5,6 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -25,6 +28,11 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 /**
  * The Class DownloadUtil.
@@ -46,13 +54,41 @@ public class DownloadUtil {
 	
 	private static final String MODIFY = calcModify();
 	
+	public static byte[] getData(IAttachment attach) {
+		byte[] data = null;
+		if (attach.getDriveId() != null) {
+			InputStream in = null;
+			try {
+				DomainGserviceaccount googleAccount = DatabaseSync
+						.getServiceAccount(attach.getDomain());
+				Drive drive = DriveUtils.serviceInitialize(googleAccount);
+				File file = DriveUtils.getFile(attach.getDriveId());
+				in = DriveUtils.downloadFile(drive, file);
+				data = IOUtils.toByteArray(in);
+			} catch (KeyStoreException e) {
+				LOGGER.error(e.getMessage()); 
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage()); 
+			} catch (GeneralSecurityException e) {
+				LOGGER.error(e.getMessage()); 
+			} catch (SQLException e) {
+				LOGGER.error(e.getMessage()); 
+			} finally {
+				IOUtils.closeQuietly(in);
+			}
+		} else {
+			data = attach.getData();
+		}
+		return data;
+	}
+	
 	/**
 	 * Download attachment.
 	 *
 	 * @param attach the attach
 	 */
 	public static void downloadAttachment(IAttachment attach) {
-		byte[] data = attach.getData();
+		byte[] data = getData(attach);
 		InputStream in = new ByteArrayInputStream(data);
 		long size = ArrayUtils.getLength(data);
 		downloadAttachment(attach.getDescription(), attach.getMimeType(), in, size);
