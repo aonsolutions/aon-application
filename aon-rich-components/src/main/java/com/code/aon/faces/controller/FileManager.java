@@ -37,10 +37,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ZipUtil;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class FileManager extends DataScrollerState implements IRichConstants {
 	

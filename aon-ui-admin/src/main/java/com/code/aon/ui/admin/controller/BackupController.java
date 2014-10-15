@@ -39,10 +39,10 @@ import com.code.aon.config.Domain;
 import com.code.aon.dbutils.AonDomainDump;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.dbutils.IDumpListener;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ui.admin.DumpThread;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class BackupController implements IDumpListener, Serializable {
 	

@@ -27,12 +27,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
-import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CourseController extends CourseListController {

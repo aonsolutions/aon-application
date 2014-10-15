@@ -30,13 +30,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
 public class BatchDocument extends DataScrollerState implements ICorporateIdentityController {

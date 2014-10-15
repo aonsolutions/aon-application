@@ -10,8 +10,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.DownloadUtil;
 
 /**
  * The Class AttachmentController.

@@ -1,4 +1,4 @@
-package com.code.aon.ui.util;
+package com.code.aon.faces.component.util;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;

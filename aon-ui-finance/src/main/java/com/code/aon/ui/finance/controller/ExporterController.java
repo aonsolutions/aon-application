@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.A3Writer;
@@ -35,7 +36,6 @@ import com.code.aon.ui.finance.GeyceWriter;
 import com.code.aon.ui.finance.InvoiceExportConfiguration;
 import com.code.aon.ui.finance.LogicWinWriter;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class ExporterController implements Serializable {
 	

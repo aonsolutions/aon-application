@@ -16,11 +16,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class RecordDataController extends LinesController {
 	

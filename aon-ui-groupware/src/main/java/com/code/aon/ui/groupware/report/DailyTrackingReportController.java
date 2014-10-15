@@ -24,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.enumeration.DailyTrackingReportType;
 import com.code.aon.groupware.report.dailyTracking.DailyTrackingReport;
@@ -41,7 +42,6 @@ import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class DailyTrackingReportController implements ICollectionProvider, Serializable {
 	

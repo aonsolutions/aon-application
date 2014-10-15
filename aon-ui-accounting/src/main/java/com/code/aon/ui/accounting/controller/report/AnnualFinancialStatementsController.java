@@ -21,9 +21,9 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class AnnualFinancialStatementsController implements Serializable {
 	

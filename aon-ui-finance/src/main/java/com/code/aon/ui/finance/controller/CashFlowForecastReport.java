@@ -32,6 +32,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.finance.CashFlowForecast;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -48,7 +49,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CashFlowForecastReport extends DataScrollerState {

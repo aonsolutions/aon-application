@@ -30,6 +30,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
@@ -37,7 +38,6 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.IMailAccount;
 

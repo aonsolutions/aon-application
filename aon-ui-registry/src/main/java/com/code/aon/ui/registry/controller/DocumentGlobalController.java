@@ -11,11 +11,11 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Domain;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class DocumentGlobalController extends BasicController implements ICorporateIdentityController {
 	

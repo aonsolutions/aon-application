@@ -17,10 +17,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class ReportAttachmentController extends BasicController implements IAttachmentController {
 

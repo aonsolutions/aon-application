@@ -31,13 +31,13 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.marketing.News;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.ui.marketing.controller.NewsController;
 import com.code.aon.ui.marketing.controller.RSSController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSServlet extends HttpServlet {
 

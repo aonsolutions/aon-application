@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
-import com.code.aon.ui.util.DownloadUtil;
+import com.code.aon.faces.component.util.DownloadUtil;
 
 /**
  * Servlet class invoked whenever a field form needs a Resource.

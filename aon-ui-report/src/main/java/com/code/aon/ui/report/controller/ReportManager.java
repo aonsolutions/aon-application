@@ -27,6 +27,7 @@ import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.IReportDynamicParamsProvider;
 import com.code.aon.report.OutputFormat;
@@ -35,7 +36,6 @@ import com.code.aon.report.config.ReportConfig;
 import com.code.aon.report.jr.JRReport;
 import com.code.aon.report.jr.JRReportFactory;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.util.DownloadUtil;
 
 /**
  * Bean Manager for running reports.
