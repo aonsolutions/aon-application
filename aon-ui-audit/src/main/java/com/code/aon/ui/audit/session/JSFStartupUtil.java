@@ -192,6 +192,8 @@ public class JSFStartupUtil {
 	}
 	
 	public void init( String host ) {
+		//TODO A revisar funcionamiento en TOMCAT8
+		/*
 		AuthPrincipal principal = getAuthPrincipal(host);
 		if ( principal != null ) {
 			FacesContext fc = getFacesContext(principal);	
@@ -199,6 +201,7 @@ public class JSFStartupUtil {
 				renderView(fc, "/home.xhtml");						
 			}
 		}
+		*/
 		setStarted();
 	}
 	
