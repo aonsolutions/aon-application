@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Hashtable;
@@ -1889,7 +1888,40 @@ public static Vector<String> getPersonEmails(int id, String key) throws SQLExcep
 	}
 
     }
-    public static FileInfo getDriveId(String domain, Integer ref){
+    public static FileInfo getDriveId(String domain, Integer ref) throws SQLException {
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			String sql="SELECT " +SQLConstants.RATTACH+"."+RattachColumns.DRIVE_ID
+					+ ", " + SQLConstants.RATTACH+"."+RattachColumns.TYPE
+					+ ", " + SQLConstants.RATTACH+"."+RattachColumns.DESCRIPTION
+					+" FROM "+SQLConstants.RATTACH+","+SQLConstants.DOMAIN
+					+" WHERE "+SQLConstants.DOMAIN+"."+DomainColumns.NAME+"= ? AND "
+					+ SQLConstants.DOMAIN+"."+DomainColumns.ID + "=" + SQLConstants.RATTACH+"."+ RattachColumns.DOMAIN + " AND "
+					+ SQLConstants.RATTACH+"."+RattachColumns.ID + " = ?";
+			
+			connection = getConnection(domain);
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, domain);
+			stmt.setInt(2, ref);
+			rs = stmt.executeQuery();
+			if ( rs.next() ) {
+				FileInfo fileInfo = new FileInfo();
+				fileInfo.setAonType("registry");
+				fileInfo.setTitle(rs.getString(RattachColumns.DESCRIPTION));
+				fileInfo.setDriveId(rs.getString(RattachColumns.DRIVE_ID));
+				fileInfo.setType(rs.getShort(RattachColumns.TYPE));
+				return fileInfo;				
+			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (connection != null)
+				connection.close();
+		}
 		return null;
     	
     }

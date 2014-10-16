@@ -4,6 +4,7 @@ import static com.code.aon.google.apis.DatabaseSync.getDomains;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +25,7 @@ import javax.mail.MessagingException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -32,12 +34,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.lang.ArrayUtils;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BlobObjectUtil;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
@@ -1278,50 +1282,55 @@ public class DriveUtils implements IBlobManager {
 		DomainGserviceaccount sa = null;
 
 		FileInfo file = null;
-		file = DatabaseSync.getDriveId(domain,
-				(Integer) blobObject.getReference());
-		if (file.getDriveId() != null) {
-			System.out.println("GEEETT BLOB DRIVEEEEEE");
-
-			try {
-				sa = DatabaseSync.getServiceAccount(domain);
-			} catch (SQLException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
+		try {
+			file = DatabaseSync.getDriveId(domain,
+					(Integer) blobObject.getReference());
+			if (file.getDriveId() != null) {
+				System.out.println("GEEETT BLOB DRIVEEEEEE");
+	
+				try {
+					sa = DatabaseSync.getServiceAccount(domain);
+				} catch (SQLException e) {
+					// TODO Bloque catch generado automáticamente
+					e.printStackTrace();
+				}
+	
+				Drive drive = null;
+	
+				try {
+					drive = serviceInitialize(sa);
+				} catch (KeyStoreException e) {
+					// TODO Bloque catch generado automáticamente
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Bloque catch generado automáticamente
+					e.printStackTrace();
+				} catch (GeneralSecurityException e) {
+					// TODO Bloque catch generado automáticamente
+					e.printStackTrace();
+				}
+	
+				File file2 = null;
+	
+				try {
+					file2 = getFile(drive, file.getDriveId());
+				} catch (IOException e) {
+					// TODO Bloque catch generado automáticamente
+					e.printStackTrace();
+				}
+	
+				InputStream data = downloadFile(drive, file2);
+	
+				try {
+					return Utils.InputStreamToByte(data);
+				} catch (IOException e) {
+					// TODO Bloque catch generado automáticamente
+					e.printStackTrace();
+				}
 			}
-
-			Drive drive = null;
-
-			try {
-				drive = serviceInitialize(sa);
-			} catch (KeyStoreException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
-
-			File file2 = null;
-
-			try {
-				file2 = getFile(drive, file.getDriveId());
-			} catch (IOException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
-
-			InputStream data = downloadFile(drive, file2);
-
-			try {
-				return Utils.InputStreamToByte(data);
-			} catch (IOException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
+		} catch (SQLException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
 		}
 
 		return HibernateBlobManager.getInstance().getBlob(blobObject, property);
@@ -1332,9 +1341,9 @@ public class DriveUtils implements IBlobManager {
 	public void setBlobs(IBlobObject blobObject) {
 		// TODO Apéndice de método generado automáticamente
 		System.out.println("lalalaalalalal");
-		HibernateBlobManager.getInstance().setBlobs(blobObject);
+		// HibernateBlobManager.getInstance().setBlobs(blobObject);
 
-		String[] aux = { "LOGO", "DOCUMENT" };
+		String[] aux = { "LOGO", "DOCUMENT", "CORPORATE_IDENTITY" };
 		types = aux;
 		String domain = AonUtil.getDomainName();
 		DomainGserviceaccount sa = null;
@@ -1362,11 +1371,17 @@ public class DriveUtils implements IBlobManager {
 
 		if (blobObject.getReference() != null) {
 
-			FileInfo file = null;
-			file = DatabaseSync.getDriveId(domain,
-					(Integer) blobObject.getReference());
 			try {
-				sync2(drive, file, domain);
+				FileInfo file = DatabaseSync.getDriveId(domain,
+						(Integer) blobObject.getReference());
+				if ( file != null ) {
+					String property = blobObject.getBlobProperties()[0];
+					byte[] data = BlobObjectUtil.getProperty(blobObject, property);
+					if (! ArrayUtils.isEmpty(data) ) {
+						file.setData(new ByteArrayInputStream(data));						
+					}
+					sync2(drive, file, domain);	
+				}
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Bloque catch generado automáticamente
 				e.printStackTrace();

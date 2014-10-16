@@ -19,6 +19,7 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BlobObjectUtil;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
@@ -31,8 +32,6 @@ public class HibernateBlobManager implements IBlobManager {
 
 	private static final HibernateBlobManager SINGLETON = new HibernateBlobManager();
 	
-	private static final String SIZE_PROPERTY = "size";
-
 	private HibernateBlobManager() {
 	}
 
@@ -117,28 +116,6 @@ public class HibernateBlobManager implements IBlobManager {
 		return property;
 	}
 	
-	private Integer getPropertySize( IBlobObject bo, String property ) {
-		try {		
-			String sizeProperty = SIZE_PROPERTY;
-			if (! IBlobObject.DATA_PROPERTY.equals(property) ) {
-				sizeProperty = property + StringUtils.capitalize(SIZE_PROPERTY);
-			}
-			return (Integer) PropertyUtils.getSimpleProperty(bo, sizeProperty);
-		} catch (Throwable e) {
-			LOGGER.error( "Error getting value of " + property, e);
-		}
-		return 0;
-	}
-	
-	private byte[] getProperty( IBlobObject bo, String property ) {
-		try {
-			return (byte[]) PropertyUtils.getSimpleProperty(bo, property);
-		} catch (Throwable e) {
-			LOGGER.error( "Error getting value of " + property, e);
-		}
-		return null;
-	}
-	
 	public void updateBLOB(String table, IBlobObject bo) {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
@@ -156,9 +133,9 @@ public class HibernateBlobManager implements IBlobManager {
 			connection = getConnection(bo);
 			pstmt = connection.prepareStatement(query.toString());
 			for(int i = 0; i < properties.length; i++) {
-				Integer size = getPropertySize(bo, properties[i]);
+				Integer size = BlobObjectUtil.getPropertySize(bo, properties[i]);
 				if ( (size != null) && (size > 0) ) {
-					byte[] data = getProperty(bo, properties[i]);
+					byte[] data = BlobObjectUtil.getProperty(bo, properties[i]);
 					pstmt.setBytes(i+1, data);
 				} else {
 					pstmt.setBytes(i+1, null);
