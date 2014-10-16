@@ -133,6 +133,7 @@ public class AdminUtil {
 		Integer adminDomain = null;
 		try {
 			Query query = getQuery("SELECT id FROM Domain d WHERE d.type = 5");
+			query.setMaxResults(1);
 			adminDomain = (Integer) query.uniqueResult();			
 		} finally {
 			closeSession();	

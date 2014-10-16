@@ -1,12 +1,14 @@
 package com.code.aon.finance.bridge.invoicing;
 
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
@@ -28,7 +30,19 @@ public class SalesInvoicingManager {
 	private IPriceStrategy priceStrategy;
 
 	private FinanceGenerator financeGenerator;
+	
+	private IProgression progression;
+	
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
 
+	private void updateProgress( int current, int total ) {
+		if ( this.progression != null ) {
+			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+		}
+	}
+	
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
@@ -100,9 +114,9 @@ public class SalesInvoicingManager {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
 		criteria.addOrder(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
-		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			SalesDetail salesDetail = (SalesDetail)iterator.next();
+		List<ITransferObject> list = salesDetailBean.getList(criteria);
+		for( int i = 0; i < list.size(); i++ ) {
+			SalesDetail salesDetail = (SalesDetail) list.get(i);
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(sales.getProject());
@@ -117,6 +131,7 @@ public class SalesInvoicingManager {
 			invoiceDetail.setSourceId(salesDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 			invoiceDetailBean.insert(invoiceDetail);
+			updateProgress(i+1, list.size());
 		}
 	}
 

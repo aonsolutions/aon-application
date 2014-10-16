@@ -1,17 +1,39 @@
 package com.code.aon.ui.common.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.domain.IDomainProvider;
 import com.code.aon.common.domain.IDomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 
 public class FacesDomainProvider implements IDomainProvider {
 	
-	private static String DOMAIN_SWITCHER_CONTROLLER = "domainSwitcher"; 
+	public static String DOMAIN_SWITCHER_CONTROLLER = "domainSwitcher";
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(FacesDomainProvider.class);
+	
+	private ThreadLocal<IDomainSwitcher> domainSwitcher = new ThreadLocal<IDomainSwitcher>();
+	
+	public void setDomainSwitcher( IDomainSwitcher ds ) {
+		if ( ds != null ) {
+			domainSwitcher.set(ds);
+		} else {
+			domainSwitcher.remove();
+		}
+	}
+	
+	private IDomainSwitcher getDomainSwitcher() {
+		IDomainSwitcher ds = domainSwitcher.get();
+		if ( ds == null ) {
+			ds = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
+		}
+		return ds;
+	}
 	
 	@Override
 	public synchronized Integer getCurrentDomain() {
-		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
-		return d.getDomainId();
+		return getDomainSwitcher().getDomainId();
 	}
 	
 	@Override
@@ -21,20 +43,17 @@ public class FacesDomainProvider implements IDomainProvider {
 
 	@Override
 	public boolean isDomainManagementAvailable() {
-		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
-		return d.isDomainManagementAvailable();
+		return getDomainSwitcher().isDomainManagementAvailable();
 	}
 
 	@Override
 	public Integer getParentDomain() {
-		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
-		return d.getParentDomainId();
+		return getDomainSwitcher().getParentDomainId();
 	}
 
 	@Override
 	public boolean isEnableHeredity() {
-		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
-		return d.isEnableHeredity();
+		return getDomainSwitcher().isEnableHeredity();
 	}
 	
 }

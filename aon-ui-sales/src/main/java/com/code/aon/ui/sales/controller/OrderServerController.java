@@ -1,27 +1,21 @@
 package com.code.aon.ui.sales.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.AonVersion;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.sales.Sales;
-import com.code.aon.sales.bridge.DeliveryManager;
+import com.code.aon.common.ProgressionState;
+import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.warehouse.Delivery;
+import com.code.aon.ui.warehouse.controller.DeliveryController;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
@@ -29,14 +23,11 @@ public class OrderServerController extends SalesController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(OrderServerController.class);
-	
 	private boolean showDeliveryWindow;
 
 	private boolean salesDateCheck;
-
-	private ArrayList<Sales> checks = new ArrayList<Sales>();
 	
+	private List<Integer> deliveryIds;
 	
 	public boolean isShowDeliveryWindow() {
 		return showDeliveryWindow;
@@ -54,70 +45,6 @@ public class OrderServerController extends SalesController {
 		this.salesDateCheck = salesDateCheck;
 	}
 
-	public void rowSelected(ValueChangeEvent event) {
-		if (event.getNewValue() != null) {
-			setRowChecked(((Boolean) event.getNewValue()).booleanValue());
-		}
-	}
-
-	public boolean getRowChecked() {
-		try {
-			if(this.getModel().isRowAvailable()){
-				return checks.contains(this.getModel().getRowData());
-			}
-			return false;
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on getRowChecked: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-
-	public void setRowChecked(boolean rowChecked) {
-		try {
-			if (rowChecked) {
-				if (!checks.contains(this.getModel().getRowData())) {
-					checks.add((Sales) this.getModel().getRowData());
-				}
-			} else {
-				if (checks.contains(this.getModel().getRowData())) {
-					checks.remove(this.getModel().getRowData());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on setRowChecked: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-
-	public ArrayList<Sales> getCheckedList() {
-		return checks;
-	}
-
-	public int getCheckedCount() {
-		return checks!=null?checks.size():0;
-	}
-
-	public void clearCheckedList() {
-		checks = new ArrayList<Sales>();
-	}
-
-	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator<ITransferObject> iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			Sales o = (Sales) iterator.next();
-			if (!checks.contains(o)) {
-				checks.add(o);
-			}
-		}
-	}
-
-	public void checkNone(ActionEvent event) {
-		clearCheckedList();
-	}
-	
-	
 	public void salesDateCheckChanged(ValueChangeEvent event) {
 		Boolean selected = (Boolean) event.getNewValue();
 		if(selected!=null && selected){
@@ -127,25 +54,63 @@ public class OrderServerController extends SalesController {
 		}
 	}
 	
-	@Override
-	public void onSearch(ActionEvent arg0) {
-		clearCheckedList();
-		super.onSearch(arg0);
-	}
-	
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
 		setDeliverySeries(getDeliveryController().initSeries(false));
 		setDeliveryNumber(0);
 		setDeliveryDate(null);
 		setSalesDateCheck(true);
 		setDeliveryWarehouse(null);
+		setProgressionState(new ProgressionState());
 	}
 	
+	public List<Integer> getDeliveryIds() {
+		return deliveryIds;
+	}
+
+	public void setDeliveryIds(List<Integer> deliveryIds) {
+		this.deliveryIds = deliveryIds;
+	}
+	
+	private void loadDelivery( ActionEvent event ) {
+		if ( getDeliveryIds() != null ) {
+			try {
+				IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER_NAME);
+				deliveryController.onEditSearch(event);
+				deliveryController.getCriteria().addInExpression(deliveryController.getFieldName(IEntityAlias.DELIVERY_ID), deliveryIds);
+				deliveryController.onSearch(event);
+				deliveryController.getModel().setRowIndex(0);
+				deliveryController.onSelect(event);
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(),e);
+			}				
+		}		
+	}
+
+	public void onClosePanel(ActionEvent event) {
+		if ( getProgressionState().isFinish() ) {
+			loadDelivery(event);
+		}
+		setShowDeliveryWindow(false);			
+		getProgressionState().finish();
+	}
+	
+	public String deliveryAction() {
+		return (getDeliveryIds() != null) ? IWarehouseConstants.DELIVERY_LIST_NAME : null;
+	}	
+	
 	public void onDelivery(ActionEvent event) {
+		getProgressionState().start();
+		DeliveryController dc = (DeliveryController) AonUtil.getRegisteredBean(IWarehouseConstants.DELIVERY_CONTROLLER_NAME);
+		SalesDeliveryProcess sdp = new SalesDeliveryProcess(this, dc);
+		LongProcessThread thread = new LongProcessThread(sdp); 
+		thread.start();		
+		/*
 		try {
 			List<Integer> deliveryIds = new LinkedList<Integer>();
 			DeliveryManager deliveryManager = new DeliveryManager();
-			for(Sales sales: checks){
+			for(Serializable id : getCheckList()){
+				Sales sales = (Sales) getManagerBean().get(id);
 				int number = obtainMaxDeliveryNumber(getDeliverySeries());
 				Date date = isSalesDateCheck()?sales.getDate():getDeliveryDate(); 
 				Delivery delivery = deliveryManager.salesDelivery(sales, getDeliverySeries(), number, date, getDeliveryWarehouse());
@@ -162,6 +127,7 @@ public class OrderServerController extends SalesController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
+		*/
 	}	
 	
 	

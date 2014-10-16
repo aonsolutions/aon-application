@@ -20,6 +20,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.marketing.News;
 import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.ui.common.ICommonMessages;
@@ -86,7 +87,8 @@ public class NewsController extends BasicController {
 		String extension = (attach.getMimeType() != null) ? "." + attach.getMimeType().getExtension() : "";
 		try {
 			File file = File.createTempFile(fileName, extension);
-			FileUtils.writeByteArrayToFile(file, attach.getData());
+			byte[] data = DownloadUtil.getData(attach);
+			FileUtils.writeByteArrayToFile(file, data);
 			AonFile aonFile = new AonFile();
 			aonFile.setFile(file);
 			aonFile.setFileName(fileName + extension);

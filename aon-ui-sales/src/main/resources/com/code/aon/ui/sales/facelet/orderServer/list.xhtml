@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -31,7 +32,7 @@
 					<aon:commandButton id="delivery"
 						value="#{bundle.sales_serve}"
 						actionListener="#{orderServer.onDeliveryShow}"
-						rendered="#{orderServer.checkedCount > 0}"
+						rendered="#{fn:length(orderServer.checkList) > 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-open-popup aon-finding-toolbar-item-no-border"
 						reRender="showDeliveryWindow">
 						<f:setPropertyActionListener target="#{orderServer.showDeliveryWindow}" value="#{true}" />
@@ -46,12 +47,17 @@
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
+
 						<aon:column styleClass="aon-editDataTable-iconColumn">
-							<aon:selectBooleanCheckbox value="#{controller.rowChecked}"
-								valueChangeListener="#{controller.rowSelected}" >
-								<a4j:support event="onclick" reRender="orderServerList" />
-							</aon:selectBooleanCheckbox>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{controller.rowChecked}"
+								ajaxSingle="true" reRender="orderServerToolbar" />	
 						</aon:column>
+						
+						
 						<ui:include src="/com/code/aon/ui/sales/facelet/sales/listColumns.xhtml" >
 							<ui:param name="itemReturnInRed" value="#{true}" />
 						</ui:include>
@@ -62,5 +68,13 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/sales/facelet/orderServer/modalDelivery.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/progressBarEx.xhtml">
+			<ui:param name="progressLabel" value="#{bundle.sales_orderServer_module}" />
+			<ui:param name="progressBarBean" value="#{orderServer.progressionState}" />
+			<aon:methodParam name="progressBarCloseActionListener"
+				default="#{orderServer.onClosePanel}" type="actionListener" />
+			<aon:methodParam name="progressBarCloseAction" default="#{orderServer.deliveryAction}"/>
+		</ui:include>		
 	</ui:define>
 </ui:composition>

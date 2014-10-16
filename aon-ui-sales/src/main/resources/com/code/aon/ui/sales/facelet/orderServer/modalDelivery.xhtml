@@ -39,14 +39,8 @@
 									<aon:commandButton id="delivery-accept"
 										value="#{bundle.aon_accept}"
 										actionListener="#{orderServer.onDelivery}"
-										action="delivery_list"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<rich:componentControl for="deliveryModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{orderServer.showDeliveryWindow}"
-											value="#{false}" />
-									</aon:commandButton>
+										reRender="progressBarForm"
+										styleClass="aon-finding-toolbar-item aon-icon-accept" />
 									<aon:commandButton id="delivery-cancel"
 										value="#{bundle.aon_cancel}"
 										reRender="showDeliveryWindow"

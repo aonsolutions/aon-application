@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.CSSUnit;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.marketing.Template;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
@@ -68,7 +69,7 @@ public class TemplateController extends BasicController {
 	
 	private static void addTemplate( StringBuffer sb, RegistryAttachment ra ) {
 		if ( ra != null && ra.getId()!=null ) {
-			byte[] data = ra.getData();
+			byte[] data = DownloadUtil.getData(ra);
 			if (! ArrayUtils.isEmpty(data) ) {
 				sb.append( new String(data) );	
 			}	

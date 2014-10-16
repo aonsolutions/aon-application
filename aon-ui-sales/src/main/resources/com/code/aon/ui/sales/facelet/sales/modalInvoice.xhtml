@@ -39,16 +39,8 @@
 									<aon:commandButton id="invoice-accept"
 										value="#{bundle.aon_key_invoice_description}"
 										actionListener="#{sales.onInvoice}"
-										action="saleInvoice_form"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<rich:componentControl for="invoiceModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{sales.showInvoiceWindow}"
-											value="#{false}" />
-										<ui:include
-											src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />
-									</aon:commandButton>
+										reRender="progressBarForm"
+										styleClass="aon-finding-toolbar-item aon-icon-accept" />
 									<aon:commandButton id="invoice-cancel"
 										value="#{bundle.aon_cancel}"
 										reRender="showInvoiceWindow"

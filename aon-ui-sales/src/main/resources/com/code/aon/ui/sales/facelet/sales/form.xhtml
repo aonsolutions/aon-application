@@ -460,8 +460,14 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
-			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/progressBarEx.xhtml">
+			<ui:param name="progressLabel" value="#{bundle.aon_key_invoice_description}" />
+			<ui:param name="progressBarBean" value="#{sales.progressionState}" />
+			<ui:param name="progressBarCompleteMessage" value="#{bundle.finance_invoicing_complete}"/>
+			<aon:methodParam name="progressBarCloseActionListener"
+				default="#{sales.onClosePanel}" type="actionListener" />
+			<aon:methodParam name="progressBarCloseAction" default="#{sales.invoiceAction}"/>
 		</ui:include>
 	</ui:define>
 </ui:composition>

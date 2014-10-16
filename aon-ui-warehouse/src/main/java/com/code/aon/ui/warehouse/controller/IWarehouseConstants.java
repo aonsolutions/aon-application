@@ -1,5 +1,7 @@
 package com.code.aon.ui.warehouse.controller;
 
+import com.code.aon.ui.form.IController;
+
 public interface IWarehouseConstants {
 
 	
@@ -34,8 +36,10 @@ public interface IWarehouseConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
-	String DELIVERY_FORM_NAME = "delivery_form";
+	String DELIVERY_FORM_NAME = DELIVERY_CONTROLLER_NAME + IController.FORM_SUFFIX;
 	
-	String INCOME_FORM_NAME = "income_form";
+	String DELIVERY_LIST_NAME = DELIVERY_CONTROLLER_NAME + IController.LIST_SUFFIX;
+	
+	String INCOME_FORM_NAME = INCOME_CONTROLLER_NAME + IController.FORM_SUFFIX;
 
 }

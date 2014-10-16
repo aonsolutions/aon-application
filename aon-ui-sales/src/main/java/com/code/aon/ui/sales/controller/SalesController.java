@@ -21,6 +21,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.ProgressionState;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.WorkPlace;
@@ -32,7 +33,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.bridge.invoicing.SalesInvoicingManager;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -49,6 +49,7 @@ import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -99,6 +100,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private String selectedTab;
 	private boolean shippingAlternativeAddress;
 	private boolean showShipmentWindow;
+	private ProgressionState progressionState;
+	private Integer invoiceId;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -606,7 +609,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			deliveryController.getModel().setRowIndex(0);
 			deliveryController.onSelect(event);
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo grabar el albarán. (" + e.getMessage()+ ")";
+			String msg = "No se pudo grabar el albarï¿½n. (" + e.getMessage()+ ")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
@@ -624,6 +627,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
 		setInvoiceNumber(0);
 		setInvoiceDate(new Date());
+		setProgressionState(new ProgressionState());
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -638,31 +642,6 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 
 	private void updateInvoiceNumber(String seriesId) {
 		setInvoiceNumber(getSaleInvoiceController().obtainMaxNumber(seriesId));
-	}
-
-	public void onInvoice(ActionEvent event) {
-		try {
-			Sales to = (Sales)this.getTo();
-	        if ( StringUtils.isBlank(getInvoiceSeries()) ) {
-	        	setInvoiceSeries(null);
-	        }			
-	        if(getInvoiceNumber() == 0) {
-	        	updateInvoiceNumber(getInvoiceSeries());
-			}													
-			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
-			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
-
-			IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-			invoiceController.onEditSearch(event);
-			invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-			invoiceController.onSearch(event);
-			invoiceController.getModel().setRowIndex(0);
-			invoiceController.onSelect(event);
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo grabar la factura. (" + e.getMessage()+ ")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
 	}
 
 	public void onSendByEmail( ActionEvent event ) {
@@ -683,9 +662,13 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
 		if (invoice != null) {
-			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-			invoiceController.onLoad(event, invoice.getId(), SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");
-		}
+			loadInvoice(event, invoice.getId());
+		}		
+	}
+	
+	private void loadInvoice(ActionEvent event, Integer id ) throws ManagerBeanException {
+		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+		invoiceController.onLoad(event, id, SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");		
 	}
 	
 	public void onPurchaseGenerationShow(ActionEvent event) throws ManagerBeanException {
@@ -792,6 +775,48 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getSalesSeriesIds();
+	}
+	
+	public ProgressionState getProgressionState() {
+		return progressionState;
+	}
+
+	public void setProgressionState(ProgressionState progressionState) {
+		this.progressionState = progressionState;
+	}
+	
+	public String invoiceAction() {
+		return (getInvoiceId() != null) ? IFinanceConstants.SALE_INVOICE_FORM_NAME : null;
+	}
+
+	public void onClosePanel(ActionEvent event) {
+		if ( getProgressionState().isFinish() ) {
+			if ( getInvoiceId() != null ) {
+				try {
+					loadInvoice(event, getInvoiceId());
+				} catch (ManagerBeanException e) {
+					AonUtil.addErrorMessage(e.getMessage());
+					throw new AbortProcessingException(e.getMessage(),e);
+				}				
+			}
+		}
+		setShowInvoiceWindow(false);			
+		getProgressionState().finish();
+	}
+	
+	public Integer getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(Integer invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+
+	public void onInvoice(ActionEvent event) {
+		getProgressionState().start();
+		SalesInvoiceProcess sip = new SalesInvoiceProcess(this);
+		LongProcessThread thread = new LongProcessThread(sip); 
+		thread.start();		
 	}
 	
 }
