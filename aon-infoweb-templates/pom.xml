@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.3-SNAPSHOT</version>
+		<version>8.3</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -19,8 +18,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-infoweb-templates</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-infoweb-templates</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/8.3.x/aon-infoweb-templates</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/8.3.x/aon-infoweb-templates</connection>
 	</scm>
 
 	<build>
