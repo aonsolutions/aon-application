@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.2-SNAPSHOT</version>
+		<version>8.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.gwt.document</artifactId>
 	<packaging>jar</packaging>
-	<version>8.2-SNAPSHOT</version>
+	<version>8.4-SNAPSHOT</version>
 	<description>AON GWT DOCUMENT</description>
 	<name>AON GWT DOCUMENT</name>
 	<build>
@@ -37,7 +37,14 @@
 
 
 	<dependencies>
-
+		
+	    <dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.google.apis</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	    
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
@@ -58,4 +65,9 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	<profiles>
+		<profile>
+			<id>perform-stats</id>
+		</profile>
+	</profiles>
 </project>
