@@ -98,17 +98,17 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.isUpdateEnabled()) {
 			checkInvoice(invoice);
-			if (invoice.isSales()) {
-				checkNumber(invoice);
-				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
-				if (!StringUtils.isBlank(invoice.getSeries())) {
-					referenceCode = invoice.getSeries() + "/" + referenceCode;
-				}
-				invoice.setReferenceCode(referenceCode);
-			}
 			if (changeTaxDate(invoice)) {
 				invoice.setTaxDate(invoice.getIssueDate());
 			}
+		}
+		if (invoice.isSales()) {
+			checkNumber(invoice);
+			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+			if (!StringUtils.isBlank(invoice.getSeries())) {
+				referenceCode = invoice.getSeries() + "/" + referenceCode;
+			}
+			invoice.setReferenceCode(referenceCode);
 		}
 	}
 
