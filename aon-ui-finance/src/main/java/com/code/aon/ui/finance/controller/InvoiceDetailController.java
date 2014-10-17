@@ -133,7 +133,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			Tax vat = invoiceDetail.getItem().getProduct().getVat();
-			Tax retention = invoiceDetail.getItem().getProduct().getRetention();
+			Tax retention = (invoice.isWithholding()) ? invoiceDetail.getItem().getProduct().getRetention() : null;
 			invoiceDetail.setVatPercent((vat!=null && vat.getId()!=null) ? getTaxPercent(vat, invoice.getIssueDate(), false) : 0);
 			invoiceDetail.setRetentionPercent((retention!=null && retention.getId()!=null) ? getTaxPercent(retention, invoice.getIssueDate(), false) : 0);
 
