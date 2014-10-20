@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CTX=/usr/share/tomcat6/webapps/aon-aio/META-INF/context.xml
+CTX=$(find /usr/share/tomcat*/webapps/aon-aio/META-INF -name context.xml)
 
 if grep MemcachedBackupSessionManager $CTX &>/dev/null; then
   exit;
