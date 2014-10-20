@@ -99,9 +99,9 @@
 							<requires>
 								<require>slf4j</require>
 								<require>aon-dbutils</require>
-								<require>jakarta-commons-lang</require>
+								<require>apache-commons-lang</require>
 								<require>mysql-connector-java</require>
-								<require>jakarta-commons-logging</require>
+								<require>apache-commons-logging</require>
 							</requires>
 							<mappings>
 								<mapping>
@@ -140,11 +140,6 @@
 								</mapping>
 
 								<mapping>
-									<!-- 
-									<filemode>755</filemode>
-									<username>root</username>
-									<groupname>root</groupname>
-									-->
 									<directory>/etc/cron.daily</directory>
 									<sources>
 										<softlinkSource>
@@ -163,9 +158,6 @@
 
 						</configuration>
 					</plugin>
-
-
-
 				</plugins>
 			</build>
 		</profile>
