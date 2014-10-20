@@ -264,7 +264,10 @@ public class NewDomainController implements Serializable {
 			if ( isLoadDefaultValuesEnabled() ) {
 				Integer newDomain = createDomain(domainFinalName);
 				if (! isEnableHeredity() ) {
-					insertDefaults(newDomain,domainFinalName);	
+					insertScript(newDomain,domainFinalName,IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
+				}
+				if ( getType() == DomainType.GARAGE ) {
+					insertScript(newDomain,domainFinalName,IConstants.INSERT_DOMAIN_GARAGE_DEFAULTS_SCRIPT);
 				}
 				copyCustomizeId(newDomain);
 			} else {
@@ -291,12 +294,12 @@ public class NewDomainController implements Serializable {
 		}		
 	}
 	
-	private void insertDefaults( Integer domain, String domainName ) throws AonSQLException, AonException, IOException {
+	private void insertScript( Integer domain, String domainName, String scriptPath ) throws AonSQLException, AonException, IOException {
 		Connection connection = null;
 		try {			
-			URL script = VersionManager.getScript(IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);
+			URL script = VersionManager.getScript(scriptPath);
 			AonSQLFile file = new AonSQLFile(script.openStream(), CharEncoding.ISO_8859_1);
-			file.setFileName(IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);
+			file.setFileName(scriptPath);
 			connection = DatabaseUtil.getConnection(domainName);
 			AonSQLScript sqlScript = new AonSQLScript(file, connection);
 			sqlScript.setDomain(domain);
