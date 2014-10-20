@@ -599,15 +599,18 @@ public class ActionDeniedController implements Serializable {
 	
 	public void enableOnly( String[] categories, String[] groups, String ... disableOptionIds ) {
 		this.deniedActionsMap.clear();
+		this.deniedModulesMap.clear();
 		for( ApplicationCategory category : getOptionController().getCategories() ) {
 			if ( ArrayUtils.contains(categories, category.getAlias()) ) {
-				for( OptionGroup group : category.getGroups() ) {
-					if (! ArrayUtils.contains(groups, group.getId()) ) {
-						for( ApplicationOption option : group.getOptions() ) {
-							this.deniedActionsMap.put(option.getAction(), option);
+				if (! ArrayUtils.isEmpty(groups) ) {
+					for( OptionGroup group : category.getGroups() ) {
+						if (! ArrayUtils.contains(groups, group.getId()) ) {
+							for( ApplicationOption option : group.getOptions() ) {
+								this.deniedActionsMap.put(option.getAction(), option);
+							}
 						}
-					}
-				}								
+					}													
+				}
 			} else {
 				this.deniedModulesMap.put(category.getAlias(), category);
 			}

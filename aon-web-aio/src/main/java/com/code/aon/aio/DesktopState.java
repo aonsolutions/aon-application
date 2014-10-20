@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -254,7 +255,16 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 	
-	
+	private String[] getPortalEnabledCategories() {
+		String[] categories = new String[0];
+		if ( isPayrollPortal() || isPayrollInfoVisibleForPortal() ) {
+			categories = (String[]) ArrayUtils.add(categories, Module.PAYROLL_PORTAL.getName());
+		}
+		if ( isDocumentalInfoVisibleForPortal() ) {
+			categories = (String[]) ArrayUtils.add(categories, Module.DOCUMENT.getName());
+		}
+		return categories;
+	}
 	
 	private void initPortal( User user, DomainSwitcher ds ) {
 		Integer value = AppParamUtil.getValueAsInteger(AppParam.AON_PORTAL);
@@ -272,15 +282,11 @@ public class DesktopState implements Serializable {
 				properties.put( ICommonConstants.HIDE_MENU_WEB_MAP, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
 				ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-				String[] enabledCategories = null;
 				if ( isPayrollPortal() ) {
 					properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 					properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
-					enabledCategories = new String[]{Module.PAYROLL_PORTAL.getName()};
-				} else {
-					enabledCategories = new String[0];
 				}
-				adc.enableOnly(enabledCategories, new String[0]);				
+				adc.enableOnly(getPortalEnabledCategories(), new String[0], IAuditConstants.USER_PROFILE_ACTION, IAuditConstants.BATCH_DOCUMENT_ACTION);				
 			}
 		} else {
 			portalValue = 0;

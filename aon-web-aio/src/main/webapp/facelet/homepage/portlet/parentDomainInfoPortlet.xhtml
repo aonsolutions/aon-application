@@ -12,7 +12,8 @@
 		columnClasses="aon-width-50 aon-vertical-align-top
 					,aon-width-auto aon-vertical-align-top">
 					
-		<aon:commandLink action="home" actionListener="#{domains.onParentDomain}"
+		<aon:commandLink id="goToParentFromLogo-back" 
+			action="home" actionListener="#{domains.onParentDomain}"
 			reRender="aonHeader,aonContent" 
 			disabled="#{!domainSwitcher.enabledGoToParent}">
 			<a4j:mediaOutput
@@ -25,7 +26,8 @@
 		</aon:commandLink>
 		
 		<h:panelGrid styleClass="aon-padding-left aon-width-all">
-			<aon:commandLink action="home" actionListener="#{domains.onParentDomain}"
+			<aon:commandLink id="goToParentFromName-back"
+				action="home" actionListener="#{domains.onParentDomain}"
 				reRender="aonHeader,aonContent"
 				style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}" 
 				disabled="#{!domainSwitcher.enabledGoToParent}" />

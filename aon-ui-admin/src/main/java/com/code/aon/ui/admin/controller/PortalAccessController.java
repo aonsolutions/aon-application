@@ -303,14 +303,14 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 			ApplicationUserProfile aup = (ApplicationUserProfile) to;
 			if ( aup.getProfile().equals(payrollPortalProfile) ) {
 				profileExists = true;
-				if (! isPayrollPortal() ) {
+				if (! (isPayrollPortal() || isPayrollInfo()) ) {
 					bean.remove(aup);
 					return;
 				}
 				break;
 			}
 		}
-		if (! profileExists && isPayrollPortal()) {
+		if (! profileExists && (isPayrollPortal() || isPayrollInfo())) {
 			ApplicationUserProfile aup = new ApplicationUserProfile();
 			aup.setApplicationUser(appUser);
 			aup.setProfile(payrollPortalProfile);

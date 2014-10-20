@@ -43,5 +43,7 @@ public interface IAuditConstants {
 	
 	String MAIL_ACCOUNT_ACTION = "mailAccount_list-enterprise";	
 	String SIGNATURE_ACTION = "signature_list-enterprise";
+	String USER_PROFILE_ACTION = "domainUser_profile";
+	String BATCH_DOCUMENT_ACTION = "batchDocument_form";
 
 }
