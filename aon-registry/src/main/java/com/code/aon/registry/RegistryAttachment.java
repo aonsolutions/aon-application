@@ -74,18 +74,10 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 		setMD5(DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data)));			
 	}
     
-	@Formula("IFNULL(LENGTH(data),0)")
-	public Integer getSize() {
-		if ( data != null )
-			return size;
-		
-		try {
-			return Integer.parseInt(getDparentId());
-		}
-		catch ( NumberFormatException e ){
-			return 0;
-		}
-	}
+        @Formula("IFNULL(LENGTH(data),IFNULL(dparent_id,0))")
+        public Integer getSize() {
+                return size;
+        }
 
 	public void setSize(Integer size) {
 		this.size = size;
