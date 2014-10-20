@@ -78,7 +78,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		try {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-			invoiceDetail.setInvoice(controller.getInvoice());
+			invoiceDetail.getInvoice().setStatus(controller.getInvoice().getStatus());
 			invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 				fillPosWorkPlace(event, invoiceDetail);
@@ -91,14 +91,6 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		try {
-			//En el before se añade el TO de invoice al invoiceDetail, para que al hacer el updateTotals en el BeanListener no se modifique ninguna otra propiedad.
-			//Luego se vuelve a inicializar ese pojo para evitar subpojos nulos.
-			controller.getMasterController().getManagerBean().initializePOJO(invoiceDetail.getInvoice());
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException(ex.getMessage());
-		}
 		controller.initializeModel();
 		refreshInvoiceData(controller);
 	}
@@ -114,20 +106,12 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		invoiceDetail.setInvoice(controller.getInvoice());
+		invoiceDetail.getInvoice().setStatus(controller.getInvoice().getStatus());
 	}
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
-		try {
-			//En el before se añade el TO de invoice al invoiceDetail, para que al hacer el updateTotals en el BeanListener no se modifique ninguna otra propiedad.
-			//Luego se vuelve a inicializar ese pojo para evitar subpojos nulos.
-			controller.getMasterController().getManagerBean().initializePOJO(invoiceDetail.getInvoice());
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException(ex.getMessage());
-		}
 		refreshInvoiceData(controller);
 	}
 
