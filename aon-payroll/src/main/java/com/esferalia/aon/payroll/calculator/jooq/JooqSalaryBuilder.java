@@ -381,35 +381,37 @@ public class JooqSalaryBuilder implements ISalaryBuilder {
 	public void addPayment(Double amount, Double quote, Double tax,
 			String description, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		InsertSetStep<SalaryPaymentRecord> insertPayment;
 
-		insertPayment = insertMorePayment == null ? dslContext
-				.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
 
 		if (isSiblingOfPrevious(payment)) {
 			tax += prevPayment.getIrpf();
 			quote += prevPayment.getQuote();
 			amount += prevPayment.getAmount();
+			insertMorePayment.set(SALARY_PAYMENT.IRPF, tax);
+			insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote);
+			insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount);
 		} else {
-			prevPayment.setId(((IContractPayment) payment).getId());
+			
+			InsertSetStep<SalaryPaymentRecord>  insertPayment = insertMorePayment == null ? dslContext
+					.insertInto(SALARY_PAYMENT) : insertMorePayment.newRecord();
+			PaymentType type = payment.getType();
+
+			insertMorePayment = insertPayment
+					.set(SALARY_PAYMENT.DOMAIN, this.domainId)
+					.set(SALARY_PAYMENT.SALARY, salaryId)
+					.set(SALARY_PAYMENT.AMOUNT, amount)
+					.set(SALARY_PAYMENT.QUOTE, quote).set(SALARY_PAYMENT.IRPF, tax)
+					.set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName())
+					// .set(SALARY_PAYMENT.EXPRESSION, payment.getExpression())
+					.set(SALARY_PAYMENT.DESCRIPTION, description)
+					.set(SALARY_PAYMENT.TYPE,
+							type != null ? (byte) type.ordinal() : null);
 		}
 
-		PaymentType type = payment.getType();
-
-		insertMorePayment = insertPayment
-				.set(SALARY_PAYMENT.DOMAIN, this.domainId)
-				.set(SALARY_PAYMENT.SALARY, salaryId)
-				.set(SALARY_PAYMENT.AMOUNT, amount)
-				.set(SALARY_PAYMENT.QUOTE, quote).set(SALARY_PAYMENT.IRPF, tax)
-				.set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName())
-				// .set(SALARY_PAYMENT.EXPRESSION, payment.getExpression())
-				.set(SALARY_PAYMENT.DESCRIPTION, description)
-				.set(SALARY_PAYMENT.TYPE,
-						type != null ? (byte) type.ordinal() : null);
-
-		prevPayment.setIrpf(quote);
+		prevPayment.setIrpf(tax);
 		prevPayment.setQuote(quote);
 		prevPayment.setAmount(amount);
+		prevPayment.setId(((IContractPayment) payment).getId());
 
 		putContext(context);
 	}
