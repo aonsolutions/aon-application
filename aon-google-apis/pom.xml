@@ -39,7 +39,7 @@
 
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.sql.google</artifactId>
+			<artifactId>aon.entity</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -270,7 +270,7 @@
 											<!-- aon -->
 											<include>com.code.aon:aon.pool:${project.version}</include>
 											<include>com.code.aon:aon.common:${project.version}</include>
-											<include>com.esferalia.aon:aon.sql.google:${project.version}</include>
+											<include>com.esferalia.aon:aon.entity:${project.version}</include>
 											<include>com.esferalia.aon:aon.master.jooq:${project.version}</include>
 											<include>com.esferalia.aon:aon.entity.common:${project.version}</include>
 

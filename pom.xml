@@ -25,6 +25,8 @@
 		<!-- OBSOLETOS
 		<module>aon-messaging</module>
 		<module>aon-ui-messaging</module>
+		<module>aon-sql-payroll</module>
+		<module>aon-sql-google</module>
 		 -->
 
 		<!-- MAVEN PLUGINS -->
@@ -41,9 +43,7 @@
 		<module>aon-dbutils</module>
 		<module>aon-ui-dbutils</module>
 		<module>aon-ui-db-manager</module>
-		<module>aon-sql-payroll</module>
 		<module>aon-master-jooq</module>
-		<module>aon-sql-google</module>
 		<module>aon-dsi</module>
 
 		<!-- FRAMEWORK -->

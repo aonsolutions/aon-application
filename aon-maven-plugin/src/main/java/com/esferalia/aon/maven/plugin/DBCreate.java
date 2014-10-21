@@ -172,7 +172,7 @@ public class DBCreate extends AbstractMojo {
 	    	getLog().info("Trying to drop database: " + sentence);
 	    	stmt.execute(sentence);
     	}catch (SQLException e) {
-	    	getLog().warn("Database not dropped: " + e.getMessage());
+	    	getLog().info("Database not dropped: " + e.getMessage());
 		}
     	finally{
     		if ( stmt != null )

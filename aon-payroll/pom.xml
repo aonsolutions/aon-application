@@ -26,7 +26,7 @@
 		<!-- We must remove this as soon as possible.-->  
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.sql.payroll</artifactId>
+			<artifactId>aon.entity</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

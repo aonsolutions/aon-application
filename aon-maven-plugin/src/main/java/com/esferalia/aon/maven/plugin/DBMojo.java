@@ -177,13 +177,30 @@ public class DBMojo extends AbstractMojo {
 	    	
 	    	Connection connection = null;
 	        try {
-	        
-	        	connection = getConnection(null);
-		        dropDataBase( connection , dbName );
-		        VersionManager versionManager = new VersionManager();
-		        versionManager.createDatabase(connection, dbName);
-		        connection.close();
-				connection = getConnection(dbName);
+	        	VersionManager versionManager = new VersionManager();
+	        	if ("aon-master".equals(dbName)) {
+	        		getLog().info("Using default database: " + dbName);
+		        	connection = getConnection(null);
+		        	getLog().info("Ensure database structure. Dropping ... ");
+			        dropDataBase( connection , dbName );
+			        getLog().info("Ensure database structure. Creating ... ");
+			        versionManager.createDatabase(connection, dbName);
+			        connection.close();
+			        connection = getConnection(dbName);
+	        	} else {
+	        		try {
+	        			connection = getConnection(dbName);
+	        		} catch ( SQLException e ) {
+	        			getLog().info("Can not connect to " + dbName);
+	        			connection = getConnection(null);
+				        getLog().info("Creating ... " + dbName);
+				        versionManager.createDatabase(connection, dbName);
+				        connection.close();
+				        connection = getConnection(dbName);
+	        		}
+	        	}
+		        
+	        	getLog().info("Ensure database structure. Updating... ");
 		        versionManager.uptodateDatabase(connection);
 		        
 		        DatabaseMetaData dbMetaData = connection.getMetaData(); 
@@ -307,7 +324,7 @@ public class DBMojo extends AbstractMojo {
     }
     
     private Connection getConnection(String dbName)
-        throws MojoExecutionException {
+        throws MojoExecutionException, SQLException {
       
     	try {
     		// first of all load JDBC driver
@@ -318,11 +335,7 @@ public class DBMojo extends AbstractMojo {
     	String url = String.format("jdbc:mysql://%s:%s/%s", 
     			dbHost, dbPort, dbName != null ? dbName : "");
     	
-    	try {
-			return DriverManager.getConnection(url, dbUser, dbPasswd);
-		} catch (SQLException e) {
-    		throw new MojoExecutionException( e.getMessage(), e );
-		}
+		return DriverManager.getConnection(url, dbUser, dbPasswd);
     	
     }
 
