@@ -5,13 +5,10 @@ import static com.code.aon.google.apis.jooq.DBConsults.getCategory;
 import static com.code.aon.google.apis.jooq.DBConsults.getCategoryName;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,7 +22,6 @@ import javax.mail.MessagingException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -34,6 +30,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.jooq.Record1;
 import org.jooq.Record3;
@@ -42,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BlobObjectUtil;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
-import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.jooq.DBConsults;
@@ -105,22 +103,14 @@ public class DriveUtils implements IBlobManager {
 		 * @return valor de la suma de verificación.
 		 */
 		public static String getMD5Checksum(InputStream is) {
-			byte[] textBytes = new byte[1024];
-			MessageDigest md = null;
-			int read = 0;
 			String md5 = null;
 			try {
-				md = MessageDigest.getInstance("MD5");
-				while ((read = is.read(textBytes)) > 0) {
-					md.update(textBytes, 0, read);
-				}
-				is.close();
-				byte[] md5sum = md.digest();
-				md5 = toHexadecimal(md5sum);
-			} catch (FileNotFoundException e) {
-			} catch (NoSuchAlgorithmException e) {
+				byte[] data = IOUtils.toByteArray(is);
+				md5 = DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data));
 			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
 			}
+			
 			return md5;
 		}
 	}
@@ -868,7 +858,15 @@ public class DriveUtils implements IBlobManager {
 				}
 
 				File fileAux = getFile(fileInfo.getDriveId());
-
+				
+				ByteArrayInputStream in = null;
+				if ( fileInfo.getData() instanceof ByteArrayInputStream ) {
+					in = (ByteArrayInputStream) fileInfo.getData();
+				} else {
+					byte[] data = IOUtils.toByteArray(fileInfo.getData());
+					in = new ByteArrayInputStream(data);					
+				}
+				
 				if (!fileAux.getMd5Checksum().equals(
 						CheckSum.getMD5Checksum(fileInfo.getData()))) {
 
@@ -880,16 +878,21 @@ public class DriveUtils implements IBlobManager {
 								type, fileInfo.getTitle());
 						return true;
 					}
+					in.reset();					
 					File file = updateFile(fileInfo);
 					if (file != null) {
 						fileInfo.setDriveId(file.getId());
 						setDriveId(fileInfo, domain, file.getFileSize()
 								.toString());
+						LOGGER.info(
+								"{} '{}': Changed. It was synchronized/uploaded [{}].",
+								type, fileInfo.getTitle(), file.getId());
+						return true;
 					}
-					LOGGER.info(
-							"{} '{}': Changed. It was synchronized/uploaded [{}].",
-							type, fileInfo.getTitle(), file.getId());
-					return true;
+					LOGGER.warn(
+							"{} '{}': Changed. It was NOT synchronized/uploaded",
+							type, fileInfo.getTitle() );
+					return false;
 				} else {
 					LOGGER.debug(
 							"Skip '{}': New data it's the same that at drive ( MD5s are the same ).",
@@ -901,7 +904,7 @@ public class DriveUtils implements IBlobManager {
 		} else {
 			String type = fileInfo.getType() != -1 ? RegistryAttachmentType
 					.values()[fileInfo.getType()].name() : "UNKNOWN";
-			LOGGER.debug("Skip '{}': {} won't be synchronized.",
+			LOGGER.warn("Skip '{}': {} won't be synchronized.",
 					fileInfo.getTitle(), type);
 			return false;
 		}
@@ -1276,73 +1279,63 @@ public class DriveUtils implements IBlobManager {
 
 	@Override
 	public byte[] getBlob(IBlobObject blobObject, String property) {
-		System.out.println("GEEETT BLOB DRIVEEEEEE");
-
 		String domain = AonUtil.getDomainName();
 		DomainGserviceaccount sa = null;
 
-		FileInfo file = null;
-		try {
-			file = DatabaseSync.getDriveId(domain,
-					(Integer) blobObject.getReference());
-			if (file.getDriveId() != null) {
-				System.out.println("GEEETT BLOB DRIVEEEEEE");
-	
-				try {
-					sa = DatabaseSync.getServiceAccount(domain);
-				} catch (SQLException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				}
-	
-				Drive drive = null;
-	
-				try {
-					drive = serviceInitialize(sa);
-				} catch (KeyStoreException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				} catch (GeneralSecurityException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				}
-	
-				File file2 = null;
-	
-				try {
-					file2 = getFile(drive, file.getDriveId());
-				} catch (IOException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				}
-	
-				InputStream data = downloadFile(drive, file2);
-	
-				try {
-					return Utils.InputStreamToByte(data);
-				} catch (IOException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				}
+		String driveId = (String) blobObject.getReference(property);
+		if (driveId != null) {
+
+			try {
+				sa = DatabaseSync.getServiceAccount(domain);
+			} catch (SQLException e) {
+				LOGGER.error(e.getMessage(), e);
 			}
-		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
+
+			Drive drive = null;
+
+			try {
+				drive = serviceInitialize(sa);
+			} catch (KeyStoreException e) {
+				LOGGER.error(e.getMessage(), e);
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+			} catch (GeneralSecurityException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+
+			InputStream data = null;
+
+			try {
+				File file = getFile(drive, driveId);
+				if ( file != null ) {
+					data = downloadFile(drive, file);
+					return Utils.InputStreamToByte(data);
+				}
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);					
+			} finally {
+				IOUtils.closeQuietly(data);
+			}
 		}
-
-		return HibernateBlobManager.getInstance().getBlob(blobObject, property);
-
+		return null;
 	}
 
+	private FileInfo getFileInfo( IBlobObject blobObject ) {
+		FileInfo file = new FileInfo();
+		file.setFileId(blobObject.getId());
+		file.setAonType("registry");
+		file.setType((byte)3);
+		if ( blobObject instanceof IAttachment ) {
+			IAttachment ia = (IAttachment) blobObject;
+			file.setTitle( ia.getDescription() );
+			file.setDriveId( ia.getDriveId() );
+			file.setMimetype( (byte) ia.getMimeType().ordinal() );
+		}
+		return file;
+	}
+	
 	@Override
-	public void setBlobs(IBlobObject blobObject) {
-		// TODO Apéndice de método generado automáticamente
-		System.out.println("lalalaalalalal");
-		// HibernateBlobManager.getInstance().setBlobs(blobObject);
-
+	public void setBlobs(boolean insert, IBlobObject blobObject) {
 		String[] aux = { "LOGO", "DOCUMENT", "CORPORATE_IDENTITY" };
 		types = aux;
 		String domain = AonUtil.getDomainName();
@@ -1350,8 +1343,7 @@ public class DriveUtils implements IBlobManager {
 		try {
 			sa = DatabaseSync.getServiceAccount(domain);
 		} catch (SQLException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);			
 		}
 
 		Drive drive = null;
@@ -1359,54 +1351,82 @@ public class DriveUtils implements IBlobManager {
 		try {
 			drive = serviceInitialize(sa);
 		} catch (KeyStoreException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (IOException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (GeneralSecurityException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
-		if (blobObject.getReference() != null) {
+		if (blobObject.getId() != null) {
 
 			try {
-				FileInfo file = DatabaseSync.getDriveId(domain,
-						(Integer) blobObject.getReference());
+				FileInfo file = getFileInfo(blobObject);
 				if ( file != null ) {
-					String property = blobObject.getBlobProperties()[0];
-					byte[] data = BlobObjectUtil.getProperty(blobObject, property);
-					if (! ArrayUtils.isEmpty(data) ) {
-						file.setData(new ByteArrayInputStream(data));						
-					}
-					sync2(drive, file, domain);	
+					for( String property : blobObject.getBlobProperties() ) {
+						if (! insert) {
+							file.setDriveId((String) blobObject.getReference(property));	
+						}
+						byte[] data = BlobObjectUtil.getProperty(blobObject, property);
+						if (! ArrayUtils.isEmpty(data) ) {
+							file.setData(new ByteArrayInputStream(data));						
+						}
+						try {
+							sync2(drive, file, domain);
+						} catch (AonConnectionException e) {
+							LOGGER.error(e.getMessage(), e);							
+						} catch (IOException e) {
+							LOGGER.error(e.getMessage(), e);							
+						} catch (NamingException e) {
+							LOGGER.error(e.getMessage(), e);							
+						} catch (GeneralSecurityException e) {
+							LOGGER.error(e.getMessage(), e);
+						}							
+					}		
 				}
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
 			} catch (SQLException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (AonConnectionException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (NamingException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (KeyStoreException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
+				LOGGER.error(e.getMessage(), e);
+			}			
 		}
 	}
 
+	@Override
+	public void deleteBlobs(IBlobObject blobObject) {
+		String domain = AonUtil.getDomainName();
+		DomainGserviceaccount sa = null;
+
+		if ( blobObject.getId() != null ) {
+			try {
+				sa = DatabaseSync.getServiceAccount(domain);
+			} catch (SQLException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+
+			Drive drive = null;
+
+			try {
+				drive = serviceInitialize(sa);
+			} catch (KeyStoreException e) {
+				LOGGER.error(e.getMessage(), e);
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+			} catch (GeneralSecurityException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			
+			for( String property : blobObject.getBlobProperties() ) {
+				String driveId = (String) blobObject.getReference(property);
+				if (driveId != null) {
+					try {
+						deleteFile(drive, driveId);
+					} catch (IOException e) {
+						LOGGER.error(e.getMessage(), e);
+					}
+				}
+			}			
+		}
+	}	
+	
 	public static long totalSize(String domain) throws IOException,
 			SQLException, KeyStoreException, GeneralSecurityException {
 		DomainGserviceaccount d = DatabaseSync.getServiceAccount(domain);

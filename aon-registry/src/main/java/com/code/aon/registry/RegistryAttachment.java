@@ -1,5 +1,7 @@
 package com.code.aon.registry;
 
+import static com.code.aon.common.BlobObjectAction.READ;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.hibernate.annotations.Formula;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -65,7 +68,7 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
     	if ( data != null ) {
     		return data;
     	}
-		return getManager().getBlob(this, DATA_PROPERTY);
+		return getManager(READ).getBlob(this, DATA_PROPERTY);
 	}
 
 	public void setData(byte[] data) {
@@ -160,14 +163,13 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 
 	@Override
 	@Transient
-	public Serializable getReference() {
-	
-		return getId();
+	public Serializable getReference( String property ) {
+		return (getDriveId()!=null) ? getDriveId() : getId();
 	}
 
 	@Override
 	@Transient
-	public IBlobManager getManager() {
+	public IBlobManager getManager( BlobObjectAction action ) {
 		if ( getDriveId() != null ) {
 			return DriveUtils.getInstace();
 		}

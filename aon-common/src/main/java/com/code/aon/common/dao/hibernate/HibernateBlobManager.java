@@ -80,7 +80,7 @@ public class HibernateBlobManager implements IBlobManager {
 		try {
 			connection = getConnection(bo);
 			pstmt = connection.prepareStatement(query);
-			pstmt.setObject(1, bo.getReference());
+			pstmt.setObject(1, bo.getId());
 			rs = pstmt.executeQuery();
 			if ( rs.next() ) {
 				Blob blob = rs.getBlob(1);
@@ -89,7 +89,7 @@ public class HibernateBlobManager implements IBlobManager {
 				}				
 			}
 		} catch (Throwable e) {
-			LOGGER.error( "Error retrieving blob: " + query + " - " + bo.getReference(), e);
+			LOGGER.error( "Error retrieving blob: " + query + " - " + bo.getId(), e);
 		} finally {
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(pstmt);
@@ -141,11 +141,11 @@ public class HibernateBlobManager implements IBlobManager {
 					pstmt.setBytes(i+1, null);
 				}
 			}
-			pstmt.setObject(properties.length+1, bo.getReference());
+			pstmt.setObject(properties.length+1, bo.getId());
 			pstmt.executeUpdate();
 			bo.reset();
 		} catch (Throwable e) {
-			LOGGER.error( "Error updating blob: " + query + " - " + bo.getReference(), e);
+			LOGGER.error( "Error updating blob: " + query + " - " + bo.getId(), e);
 		} finally {
 			DbUtils.closeQuietly(pstmt);
 			DbUtils.closeQuietly(connection);
@@ -154,7 +154,7 @@ public class HibernateBlobManager implements IBlobManager {
 	
 	@Override
 	public byte[] getBlob(IBlobObject bo, String property) {
-		if ( bo.getReference() != null ) {
+		if ( bo.getId() != null ) {
 			String tableName = getTableName(bo);
 			if (tableName != null) {
 				return getBLOB(tableName, bo, property);
@@ -162,15 +162,19 @@ public class HibernateBlobManager implements IBlobManager {
 		}
 		return null;
 	}
-
+	
 	@Override
-	public void setBlobs(IBlobObject blobObject) {
-		if ( blobObject.getReference() != null ) {
+	public void setBlobs(boolean insert, IBlobObject blobObject) {
+		if ( blobObject.getId() != null ) {
 			String tableName = getTableName(blobObject);
 			if (tableName != null) {
 				updateBLOB(tableName, blobObject);
 			}			
 		}
+	}
+
+	@Override
+	public void deleteBlobs(IBlobObject blobObject) {
 	}	
 
 }

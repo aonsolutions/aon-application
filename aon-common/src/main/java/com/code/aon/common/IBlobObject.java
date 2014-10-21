@@ -14,9 +14,11 @@ public interface IBlobObject {
 	
 	String[] FILE_BLOB_PROPERTIES = new String[]{INCOME_FILE_PROPERTY, OUTCOME_FILE_PROPERTY};
 		
-	Serializable getReference();
+	Integer getId();
 	
-	IBlobManager getManager();
+	Serializable getReference( String property );
+	
+	IBlobManager getManager( BlobObjectAction action );
 	
 	String[] getBlobProperties();
 	

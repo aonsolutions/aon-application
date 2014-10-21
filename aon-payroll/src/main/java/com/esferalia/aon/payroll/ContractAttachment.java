@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll;
 
 
+import static com.code.aon.common.BlobObjectAction.READ;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
@@ -59,7 +62,7 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
     	if ( data != null ) {
     		return data;
     	}
-		return getManager().getBlob(this, DATA_PROPERTY);
+		return getManager(READ).getBlob(this, DATA_PROPERTY);
 	}
 
 	public void setData(byte[] data) {
@@ -75,13 +78,13 @@ public class ContractAttachment extends ContractAttachmentDB implements IAttachm
 
 	@Override
 	@Transient
-	public Serializable getReference() {
+	public Serializable getReference( String property ) {
 		return getId();
 	}
 
 	@Override
 	@Transient
-	public IBlobManager getManager() {
+	public IBlobManager getManager( BlobObjectAction action ) {
 		return HibernateBlobManager.getInstance();
 	}
 

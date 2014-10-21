@@ -1,5 +1,8 @@
 package com.code.aon.common.dao.hibernate;
 
+import static com.code.aon.common.BlobObjectAction.DELETE;
+import static com.code.aon.common.BlobObjectAction.INSERT;
+
 import org.apache.commons.lang.ClassUtils;
 import org.hibernate.event.PostDeleteEvent;
 import org.hibernate.event.PostDeleteEventListener;
@@ -25,8 +28,8 @@ public class BlobEntityListener implements PostInsertEventListener,
 		Object to = event.getEntity();
 		if ( to instanceof IBlobObject ) {
 			IBlobObject bo = (IBlobObject) to;
-			LOGGER.info("postInsert - {}, {}", ClassUtils.getShortClassName(to.getClass()), bo.getReference());
-			bo.getManager().setBlobs(bo);
+			LOGGER.info("postInsert - {}, {}", ClassUtils.getShortClassName(to.getClass()), bo.getId());
+			bo.getManager(INSERT).setBlobs(true, bo);
 		}
 	}
 	
@@ -35,7 +38,8 @@ public class BlobEntityListener implements PostInsertEventListener,
 		Object to = event.getEntity();
 		if ( to instanceof IBlobObject ) {
 			IBlobObject bo = (IBlobObject) to;
-			LOGGER.info("postDelete - {}, {}", ClassUtils.getShortClassName(to.getClass()), bo.getReference());
+			LOGGER.info("postDelete - {}, {}", ClassUtils.getShortClassName(to.getClass()), bo.getId());
+			bo.getManager(DELETE).deleteBlobs(bo);
 		}
 	}
 
@@ -44,8 +48,8 @@ public class BlobEntityListener implements PostInsertEventListener,
 		Object to = event.getEntity();
 		if ( to instanceof IBlobObject ) {
 			IBlobObject bo = (IBlobObject) to;
-			LOGGER.info("postUpdate - {}, {}", ClassUtils.getShortClassName(to.getClass()), bo.getReference());
-			bo.getManager().setBlobs(bo);
+			LOGGER.info("postUpdate - {}, {}", ClassUtils.getShortClassName(to.getClass()), bo.getId());
+			bo.getManager(INSERT).setBlobs(false, bo);
 		}
 	} 
 	

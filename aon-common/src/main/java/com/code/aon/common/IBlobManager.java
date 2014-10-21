@@ -4,6 +4,8 @@ public interface IBlobManager {
 
 	byte[] getBlob( IBlobObject blobObject, String property );
 	
-	void setBlobs(IBlobObject blobObject);
+	void setBlobs(boolean insert, IBlobObject blobObject);
+	
+	void deleteBlobs(IBlobObject blobObject);
 	
 }

@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll;
 
+import static com.code.aon.common.BlobObjectAction.READ;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -8,9 +10,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.common.BlobObjectAction;
 import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
@@ -45,7 +49,7 @@ public class LeaveBatch extends LeaveBatchDB implements IBlobObject {
     	if ( outcomeFile != null ) {
     		return outcomeFile;
     	}
-		return getManager().getBlob(this, OUTCOME_FILE_PROPERTY);
+		return getManager(READ).getBlob(this, OUTCOME_FILE_PROPERTY);
 	}
 
 	public void setOutcomeFile(byte[] outcomeFile) {
@@ -59,7 +63,7 @@ public class LeaveBatch extends LeaveBatchDB implements IBlobObject {
     	if ( incomeFile != null ) {
     		return incomeFile;
     	}
-		return getManager().getBlob(this, INCOME_FILE_PROPERTY);    	
+		return getManager(READ).getBlob(this, INCOME_FILE_PROPERTY);    	
 	}
 
 	public void setIncomeFile(byte[] incomeFile) {
@@ -84,13 +88,13 @@ public class LeaveBatch extends LeaveBatchDB implements IBlobObject {
 
 	@Override
 	@Transient
-	public Serializable getReference() {
+	public Serializable getReference( String property ) {
 		return getId();
 	}
 
 	@Override
 	@Transient
-	public IBlobManager getManager() {
+	public IBlobManager getManager( BlobObjectAction action ) {
 		return HibernateBlobManager.getInstance();
 	}
 
