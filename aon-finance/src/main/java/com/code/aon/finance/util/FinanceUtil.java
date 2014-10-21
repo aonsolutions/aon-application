@@ -29,6 +29,7 @@ public class FinanceUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceUtil.class.getName());
 
 	private static final String OLD_COMPANY = "OLD_COMPANY";
+	private static final String WP_EXTENSION = "_WP_";
 	
 	public static String getDocumentNumber(InvoiceType type, String series, int number) {
 		String documentNumber = ((InvoiceType.SALES == type) ? "E" : (InvoiceType.UNDEDUCTIBLE == type) ? "G" : "R") + "-";
@@ -76,28 +77,38 @@ public class FinanceUtil {
 		Enterprise enterprise = invoiceDetail.getWorkPlace().getEnterprise();
 		if (!FinanceUtil.isValidLimitDate(invoiceDetail.getInvoice())) {
 			try {
-				IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), enterprise.getId());
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), OLD_COMPANY);
-				for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-					Integer oldCompanyId = null;
-					try {
-						oldCompanyId = Integer.valueOf(((RegistryAddInfo)ito).getValue());
-					} catch (NumberFormatException ex) {
+				Enterprise oldEnterprise = getOldEnterprise(enterprise.getId(), OLD_COMPANY + WP_EXTENSION + invoiceDetail.getWorkPlace().getId());
+				if (oldEnterprise != null) {
+					enterprise = oldEnterprise;
+				} else {
+					oldEnterprise = getOldEnterprise(enterprise.getId(), OLD_COMPANY);
+					if (oldEnterprise != null) {
+						enterprise = oldEnterprise;
 					}
-					if (oldCompanyId != null) {
-						Enterprise oldEnterprise = (Enterprise) BeanManager.getManagerBean(Enterprise.class).get(oldCompanyId);
-						if (oldEnterprise != null) {
-							enterprise = oldEnterprise;
-						}
-					}
-				}				
+				}
 			} catch ( ManagerBeanException e ) {
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return enterprise;
+	}
+
+	private static Enterprise getOldEnterprise(Integer currentEnterpriseId, String oldEnterpriseParam) throws ManagerBeanException {
+		IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), currentEnterpriseId);
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), oldEnterpriseParam);
+		for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
+			Integer oldEnterpriseId = null;
+			try {
+				oldEnterpriseId = Integer.valueOf(((RegistryAddInfo)ito).getValue());
+			} catch (NumberFormatException ex) {
+			}
+			if (oldEnterpriseId != null) {
+				return (Enterprise)BeanManager.getManagerBean(Enterprise.class).get(oldEnterpriseId);
+			}
+		}
+		return null;
 	}
 
 }
