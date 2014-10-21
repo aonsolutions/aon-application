@@ -371,6 +371,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
+
 	static interface Factory<T, V> {
 		T create(V v);
 	}
@@ -588,7 +589,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox();
+			TextListBox textListBox = new TextListBox(){
+				@Override
+				public String getValue() {
+					return getValue(getSelectedIndex());
+				}
+			};
 			// textListBox.setC
 			textListBox.addItem("SI", String.valueOf(true));
 			textListBox.addItem("NO", String.valueOf(false));
