@@ -40,13 +40,7 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 			final Date start = Period.max(leaveStart, startDate);
 			Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
 			final Date end = Period.min(leaveEnd, endDate);
-			/*
-			 * final Object regBase =
-			 * rs.getObject(ContractLeaveColumns.DAILY_REG_BASE) != null ?
-			 * rs.getDouble(ContractLeaveColumns.DAILY_REG_BASE) :
-			 * exprCtx.eval(String.format("%s(%s)", ContextVariable.BR,
-			 * ContextVariable.IT_START) , start, end );
-			 */
+
 			final long parentDays = rs
 					.getLong(SQLContractSalaryCalculatorContext.CLEAVE_SQL_PARENT_DAYS)
 					+ (leaveStart.before(startDate) ? CommonUtil

@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_START;
@@ -156,7 +157,8 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 
-public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCalculatorContext implements
+public class SQLContractSalaryCalculatorContext extends
+		AbstractContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext, NotFoundHandler,
 		ISQLContractSalaryCalculatorContext {
 
@@ -338,7 +340,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected static class GuarenteeException extends SalaryException {
-		
+
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 		private double guarentee;
@@ -386,33 +388,43 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
 				@Override
-				public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd,
-						long parentDays, LeaveType type, Double dailyRegBase,
-						ExpressionContext exprCtx) throws ExpressionException {
+				public void loadContractLeave(Integer id, Date leaveStart,
+						Date leaveEnd, long parentDays, LeaveType type,
+						Double dailyRegBase, ExpressionContext exprCtx)
+						throws ExpressionException {
+					
+					Period leavePeriod  = new Period(leaveStart, leaveEnd);
+					
+					Calendar leaveCalendar = Calendar.getInstance();
+					leaveCalendar.setTime(leaveStart);
+					leaveCalendar.add(Calendar.DATE, start - (int)parentDays );
+					Date guarenteeStart = leaveCalendar.getTime();
+					leaveCalendar.add(Calendar.DATE, end - start );
+					Date guarenteeEnd = leaveCalendar.getTime();
 
-					final long leaveDays = CommonUtil.getDaysBetweenDates(
-							leaveStart, leaveEnd) + 1;
-
-					if (start > 0 && start < leaveDays) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(leaveStart);
-						calendar.add(Calendar.DATE, start - 1);
-
-						super.loadContractLeave(id, leaveStart, calendar.getTime(),
-								parentDays, type, dailyRegBase, exprCtx);
-
+					Period guarenteePeriod = new Period(guarenteeStart, guarenteeEnd);
+					
+					List<Period> leavePeriods = leavePeriod.sub(guarenteePeriod);
+					for ( Period p : leavePeriods ) {
+						long leaveParentDays = CommonUtil.getDaysBetweenDates(leaveStart, p.getStart());
+						super.loadContractLeave(id, p.getStart(),
+								p.getEnd(), parentDays + leaveParentDays, type,
+								dailyRegBase, exprCtx);
 					}
 
-					if (end < leaveDays) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(leaveStart);
-						calendar.add(Calendar.DATE, end + 1);
-
-						parentDays += end;
-
-						super.loadContractLeave(id, calendar.getTime(), leaveEnd,
-								parentDays, type, dailyRegBase, exprCtx);
+					
+					if (dailyRegBase != null) {
+						exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
+								new TimedObject<Double>(dailyRegBase,
+										leaveStart, leaveEnd));
+					} else {
+						ExpressionImpl exp = new ExpressionImpl();
+						exp.setName(ContextVariable.REGULATORY_BASE.getName());
+						exp.setExpression(String.format("SELF.br(%s)",
+								ContextVariable.IT_START));
+						exprCtx.addLazyExpression(exp, leaveStart, leaveEnd);
 					}
+
 				}
 			};
 		}
@@ -1200,7 +1212,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-
 	public String getString(String tableLabel, String columnLabel) {
 		try {
 			return this.resultSet.getString(tableLabel + "." + columnLabel);
@@ -1271,24 +1282,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd,
 			long parentDays, LeaveType type, Double dailyRegBase,
 			ExpressionContext exprCtx) throws ExpressionException {
-		leaveLoader.loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
-				dailyRegBase, exprCtx);
+		leaveLoader.loadContractLeave(id, leaveStart, leaveEnd, parentDays,
+				type, dailyRegBase, exprCtx);
 	}
 
 	public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd,
 			long parentDays, LeaveType type, String dailyRegBase,
 			ExpressionContext exprCtx) throws ExpressionException {
-		leaveLoader.loadContractLeave(id, leaveStart, leaveEnd, parentDays, type,
-				dailyRegBase, exprCtx);
+		leaveLoader.loadContractLeave(id, leaveStart, leaveEnd, parentDays,
+				type, dailyRegBase, exprCtx);
 	}
-	
+
 	public void clean(ExpressionContext exprCtx, Leave leave) {
 		leaveLoader.clean(exprCtx, leave);
-	}	
+	}
 
 	public SortedSet<Leave> getLeaves() {
 		return leaveLoader.getLeaves();
-	}	
+	}
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double x) {
 
@@ -1378,7 +1389,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.cleaveStmt.setDate(2, toSqlDate(this.endDate));
 		this.cleaveStmt.setDate(3, toSqlDate(this.startDate));
 	}
-	
+
 	private Integer getDomain() {
 		Object value = getObject(SQLConstants.CONTRACT, ContractColumns.DOMAIN);
 		return value == null ? null : (Integer) value;
@@ -1519,7 +1530,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return calendars.get((Integer) calendarId); // (Integer) null devuelve
 													// null, perfecto.
 	}
-	
+
 	public static Date resetTime(Date date) {
 		if (date == null)
 			return null;
@@ -1536,26 +1547,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		// Put iterator back in the Date object
 		return cal.getTime();
 	}
-	
-	public Object getNoItSalary (Connection conn, Date date, SalaryType type, Integer contractId) {
-		
+
+	public Object getNoItSalary(Connection conn, Date date, SalaryType type,
+			Integer contractId) {
+
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 				+ ContractColumns.ID, getId());
 		SQLNoItContractSalaryCalculatorContext ctx;
-		
+
 		try {
-			
-			ctx = new SQLNoItContractSalaryCalculatorContext(connection, startDate, endDate, 
-					issueDate, contractCriteria, 0, Integer.MAX_VALUE-1);
+
+			ctx = new SQLNoItContractSalaryCalculatorContext(connection,
+					startDate, endDate, issueDate, contractCriteria, 0,
+					Integer.MAX_VALUE - 1);
 			ctx.next();
 			return ctx;
-			
-		}catch ( ExpressionException ex) {
+
+		} catch (ExpressionException ex) {
 			throw new ExpressionExceptionWrapper(ex);
-			
-		}catch(SQLException ex) {
+
+		} catch (SQLException ex) {
 			throw new ExpressionExceptionWrapper(new ExpressionException());
 		}
 	}
@@ -1624,7 +1637,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if (leaveLoader.isEmpty())
 			throw new UndefinedContextVariablesException(
 					ContextVariable.LEAVE_DAYS);
-
+		
+		// Assert all PREST_IT payments have been calculated. 
+		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT,
+				Double.class);
+		if (totalPayment == null)
+			throw new UndefinedTotalPaymentException();
+		
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
@@ -1634,7 +1653,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ctx = getNoItCalculatorContext(connection, startDate, endDate,
 					issueDate, contractCriteria, start - 1, end - 1);
 		} catch (RuntimeException e) {
-			e.printStackTrace();
 			throw e;
 		}
 
@@ -1952,8 +1970,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		return (totalPayment + extraPayProration) * 12 / 365;
 
-	}	
-	
+	}
+
 	private long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
 		workedDays += 1;
@@ -2058,9 +2076,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return Math.max(1, Math.round(salaryMonths));
 	}
 
-	private int getSeniorityYears() {
+	private int getSeniorityYears(Period period) {
 		Date start = getSeniorityDate();
-		Date end = getStartDate();
+		Date end = period.getStart();
 		return getYears(start, end);
 	}
 
@@ -2094,50 +2112,54 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return years + months / 12d;
 
 	}
-	
+
 	public Object br(Date startDate) throws ExpressionException, SQLException,
-	SalaryException {
-		
-		Date contractStartDate = getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);		
-		//Date prevStartDate = prevMonth(leaveStart);
+			SalaryException {
+
+		Date contractStartDate = getDate(SQLConstants.CONTRACT,
+				ContractColumns.START_DATE);
+		// Date prevStartDate = prevMonth(leaveStart);
 		Date prevMonth = resetTime(prevMonth(startDate));
-		
+
 		ISalary salary = getDbSalary(connection, prevMonth, SalaryType.SALARY,
 				getId());
-		
-		if( salary == null ) {
-		
-			if(contractStartDate.before(CommonUtil.getMonthFirstDay(startDate)))	{				
+
+		if (salary == null) {
+
+			if (contractStartDate
+					.before(CommonUtil.getMonthFirstDay(startDate))) {
 				throw new Error(ContextVariable.REGULATORY_BASE.getName());
 			}
-				
-				//	throw new UndefinedContextVariablesException(ContextVariable.REGULATORY_BASE);  // TODO: Alert somebody that we																				   
-																								// can't calculate proper BR.
-			
-			//El comienzo del contrato es el mismo mes que la fecha de baja
+
+			// throw new
+			// UndefinedContextVariablesException(ContextVariable.REGULATORY_BASE);
+			// // TODO: Alert somebody that we
+			// can't calculate proper BR.
+
+			// El comienzo del contrato es el mismo mes que la fecha de baja
 			Date prevDay = resetTime(prev(startDate));
-			
+
 			SQLNoItContractSalaryCalculatorContext ctx;
-			
+
 			try {
-				ctx = (SQLNoItContractSalaryCalculatorContext) getNoItSalary
-						(connection, prevDay, SalaryType.SALARY, getId());
-				
+				ctx = (SQLNoItContractSalaryCalculatorContext) getNoItSalary(
+						connection, prevDay, SalaryType.SALARY, getId());
+
 				SalaryBuilder salaryBuilder = new SalaryBuilder();
 				ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 				calculator.setSalaryBuilder(salaryBuilder);
-				
+
 				salary = calculator.calculate(ctx);
-				
-			}catch(RuntimeException ex) {
+
+			} catch (RuntimeException ex) {
 				ex.printStackTrace();
 				throw ex;
 			}
-			
+
 		}
-	
+
 		int days = salary.getTimeUnits();
-		return salary.getCommonBase() / days;		
+		return salary.getCommonBase() / days;
 	}
 
 	private double getAdvanceNoticeDays() {
@@ -2317,6 +2339,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		Period period = new Period(startDate, endDate);
 
+		ActiveTimedVariable<Double> cgcBase = new ActiveTimedVariable<Double>() {
+			@Override
+			public Double getValue(Period p) {
+				throw new ExpressionExceptionWrapper(
+						new UndefinedTotalPaymentException());
+			}
+		};
+
 		ActiveTimedVariable<Double> salaryDays = new ActiveTimedVariable<Double>() {
 			@Override
 			public Double getValue(Period p) {
@@ -2413,11 +2443,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.implicitExpressionContext.putVariable(SALARY_DAYS, salaryDays);
 
+		this.implicitExpressionContext.putVariable(CGC_BASE, cgcBase);
+
 		this.implicitExpressionContext.putVariable(SENIORITY,
-				new LazyTimedVariable<Integer>() {
+				new ActiveTimedVariable<Integer>() {
 					@Override
-					public Integer create() {
-						return getSeniorityYears();
+					public Integer getValue(Period period) {
+						return getSeniorityYears(period);
 					}
 				});
 
@@ -2847,7 +2879,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			SalaryType type, Integer contractID) throws SQLException,
 			ExpressionException, SalaryException {
 		Date startDate = CommonUtil.getMonthFirstDay(date);
-	 
+
 		// Se calcula un dia anterior a la fecha de baja.
 		Date endDate = prev(date);
 
@@ -2887,12 +2919,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-		calculator.setSalaryBuilder(salaryBuilder);			
-			 
+		calculator.setSalaryBuilder(salaryBuilder);
+
 		return calculator.calculate(ctx);
 
 	}
-	
+
 	public static ISalary getDbSalary(Connection connection, Date date,
 			SalaryType type, Integer contractID) throws SQLException {
 
@@ -2902,7 +2934,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			@Override
 			public Double visitCommonDisease(LeaveType leaveType) {
 				// TODO Apéndice de método generado automáticamente
-				
+
 				return null;
 			}
 
@@ -3005,11 +3037,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public static Date prev(Date date) {
 		return addDays2Date(date, -1);
 	}
-	
+
 	protected static Date next(Date date) {
 		return addDays2Date(date, 1);
 	}
-	
+
 	protected static Date addDays2Date(Date date, int days) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);

@@ -80,7 +80,6 @@ public class ContractLeaveLoader {
 		this.leaves = new TreeSet<Leave>();
 	}
 
-	
 	public boolean isEmpty() {
 		return leaves.isEmpty();
 	}
@@ -125,25 +124,24 @@ public class ContractLeaveLoader {
 		return days;
 	}
 
-	
 	public void loadContractLeave(final Integer id, final Date leaveStart,
 			final Date leaveEnd, final long parentDays, final LeaveType type,
 			String dailyRegBase, final ExpressionContext exprCtx)
 			throws ExpressionException {
-		
-		final Date start = Period.max(leaveStart, startDate); 
+
+		final Date start = Period.max(leaveStart, startDate);
 		final Date end = Period.min(leaveEnd, endDate);
 
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
-		
+
 		exprCtx.setVariable(ContextVariable.IT_START, leaveStart, start, end);
-		
+
 		ExpressionImpl exp = new ExpressionImpl();
 		exp.setName(ContextVariable.REGULATORY_BASE.getName());
 		if (dailyRegBase != null) {
 			exp.setExpression(dailyRegBase);
 		} else {
-			exp.setExpression(String.format("SELF.br(%s)", 
+			exp.setExpression(String.format("SELF.br(%s)",
 					ContextVariable.IT_START));
 		}
 		exprCtx.addLazyExpression(exp, start, end);
@@ -155,13 +153,16 @@ public class ContractLeaveLoader {
 			@Override
 			public Void visitCommonDisease(LeaveType leaveType) {
 				for (DaysRange range : RANGES) {
-					long days = range.getDays(parentDays, leaveDays);
-
-					// if ( days == 0 )
-					// continue;
-
+					
 					String name = range
 							.getName(ContextVariable.COMMON_DISEASE_DAYS);
+
+					long days = range.getDays(parentDays, leaveDays);
+
+					if (days == 0) {
+						//exprCtx.setVariable(name, days, start, end);
+						continue;
+					}
 
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(leaveStart);
@@ -170,11 +171,12 @@ public class ContractLeaveLoader {
 					Date rangeStart = Period.max(calendar.getTime(), start);
 
 					calendar.setTime(rangeStart);
-					calendar.add(Calendar.DATE, (int) days);
+					calendar.add(Calendar.DATE, (int) days - 1);
 					Date rangeEnd = calendar.getTime();
-
+					
+					Date varStart = Period.max(rangeStart, start);
 					exprCtx.setVariable(name, days,
-							Period.max(rangeStart, start), rangeEnd);
+							varStart, rangeEnd);
 				}
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
@@ -188,7 +190,7 @@ public class ContractLeaveLoader {
 				long days = parentDays == 0 ? leaveDays - 1 : leaveDays;
 				if (days <= 0)
 					return null;
-				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, 
+				exprCtx.setVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
 						days, start, end);
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
@@ -197,7 +199,7 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitMaternity(LeaveType leaveType) {
-				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays, 
+				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
 						start, end);
 				// exprCtx.addVariable(ContextVariable.REGULATORY_BASE,
 				// regBase, start, end );
@@ -206,19 +208,19 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitPaternity(LeaveType leaveType) {
-				exprCtx.setVariable(ContextVariable.PATERNITY_DAYS, 
-						leaveDays, start, end);				
+				exprCtx.setVariable(ContextVariable.PATERNITY_DAYS, leaveDays,
+						start, end);
 				return null;
 			}
 
 			@Override
-			public Void visitPregnacyRisk(LeaveType leaveType) {				
+			public Void visitPregnacyRisk(LeaveType leaveType) {
 				return null;
 			}
 
 			@Override
 			public Void visitBreastFeedingRisk(LeaveType leaveType) {
-				
+
 				return null;
 			}
 
@@ -230,7 +232,7 @@ public class ContractLeaveLoader {
 		});
 		add(new Leave(id, start, end, type));
 	}
-	
+
 	protected void clear() {
 		leaves.clear();
 	}
@@ -242,7 +244,7 @@ public class ContractLeaveLoader {
 	protected void remove(Leave leave) {
 		leaves.remove(leave);
 	}
-	
+
 	public SortedSet<Leave> getLeaves() {
 		return leaves;
 	}
@@ -251,22 +253,27 @@ public class ContractLeaveLoader {
 	public void clean(ExpressionContext exprCtx, Leave leave) {
 		exprCtx.removeVariable(ContextVariable.IT_START, leave.getStart(),
 				leave.getEnd());
-		
-		for (DaysRange range : RANGES) {
-			
-			String common = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
-			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());			
-		}
-		
-		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS,	leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE.getName(), leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.BR, leave.getStart(), leave.getEnd());
-		
-		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
-		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
-		
-	}
 
+		for (DaysRange range : RANGES) {
+
+			String common = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
+			exprCtx.removeVariable(common, leave.getStart(), leave.getEnd());
+		}
+
+		exprCtx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS,
+				leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.REGULATORY_BASE.getName(),
+				leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.BR, leave.getStart(),
+				leave.getEnd());
+
+		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(),
+				leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS,
+				leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS,
+				leave.getStart(), leave.getEnd());
+
+	}
 
 }

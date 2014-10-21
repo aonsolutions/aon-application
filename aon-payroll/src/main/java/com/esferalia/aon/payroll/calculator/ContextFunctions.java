@@ -326,21 +326,12 @@ public class ContextFunctions {
 	// Private methods
 	// ------------------------------------------------------------------------
 
-	private static <T> T getVariable(ExpressionContext context,
-			ContextVariable var) {
-		List<ITimedVariable<?>> variables = context.getTimedVariables(var
-				.getName());
-		if (variables == null || variables.isEmpty())
-			return null;
-		ITimedVariable<?> variable = variables.get(0);
-		return (T) variable.getValue(variable.getPeriod());
-	}
-
 	private static double getDouble(ExpressionContext context,
 			ContextVariable var) {
-		Number value = getVariable(context, var);
-		return value == null ? 0.00 : value.doubleValue();
+		Object value = context.getCurrentBindings().get(var.getName());
+		return value == null ? 0.00 : ((Number)value).doubleValue();
 	}
+
 
 	// ------------------------------------------------------------------------
 	// Private Static methods (library)

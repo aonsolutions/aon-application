@@ -55,6 +55,8 @@ public class ExpressionContext {
 				throws ExpressionException;
 
 	}
+	
+	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>(); 
 
 	private static final Pattern VARIABLE_PATTERN = Pattern
 			.compile("[A-Za-z_][A-Za-z0-9_]*");
@@ -531,6 +533,7 @@ public class ExpressionContext {
 		List<ITimedResult<T>> values = new LinkedList<ITimedResult<T>>();
 		for (PeriodMap bindings : bindingsList) {
 			try {
+				setCurrentBindings(bindings);
 				T value = MVEL.eval(script, bindings, toType);
 				values.add(new TimedResult<T>(value, bindings.getPeriod(),
 						bindings.getRead()));
@@ -598,6 +601,19 @@ public class ExpressionContext {
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
+	
+	public static Period getCurrentPeriod() {
+		return currentBindings.get().getPeriod();
+	}
+
+	public static PeriodMap getCurrentBindings() {
+		return currentBindings.get();
+	}
+	
+	private static void setCurrentBindings(PeriodMap  map) {
+		currentBindings.set(map);
+	}
+
 	public static Set<String> getVariableSet(String script) {
 		ParserContext ctx = new ParserContext();
 		MVEL.analysisCompile(script, ctx);
