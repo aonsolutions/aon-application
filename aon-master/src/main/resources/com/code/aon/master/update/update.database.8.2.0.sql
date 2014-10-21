@@ -13,7 +13,7 @@ INSERT INTO system_payment
 ( SELECT domain, type, payment_concept, description, description_decorable, irpf_expression, quote_expression, start_date, end_date, salary_type, 'DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75'  
  FROM system_payment 
  WHERE domain= 0 AND expression='DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60'
-)
+);
 
 UPDATE `db_version` SET `version_number` = '8.4.0';
 
