@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.jdo.identity.ByteIdentity;
 import javax.mail.MessagingException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -52,6 +53,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.google.sql.AbstractSQL.Rattach;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
@@ -113,6 +115,12 @@ public class DriveUtils implements IBlobManager {
 			
 			return md5;
 		}
+		public static String getMD5Checksum(byte[] data) {
+			String md5 = null;
+			md5 = DigestUtils.md5Hex(ArrayUtils.nullToEmpty(data));
+			return md5;
+		}
+
 	}
 
 	public static class View {
@@ -433,7 +441,9 @@ public class DriveUtils implements IBlobManager {
 		//java.io.File fileContent = Utils.InputStreamToFile(fileInfo);
 		// FileContent mediaContent = new FileContent(file.getMimeType(),
 		// fileContent);
-		InputStreamContent mediaContent = new InputStreamContent(
+		
+		
+		ByteArrayContent  mediaContent = new ByteArrayContent (
 				file.getMimeType(), fileInfo.getData());
 
 		try {
@@ -800,8 +810,13 @@ public class DriveUtils implements IBlobManager {
 			GeneralSecurityException, NamingException {
 		// HAY QUE CONVERTIR EL RATTACH EN FILEINFO PARA LLAMAR A
 		// PRINCIPAL!!!!!!
+		
+		InputStream is = rattach.getData();
+		byte data [] = Utils.InputStreamToByte(is);
+		is.close();
+		
 		FileInfo fileInfo = new FileInfo("registry", rattach.getType(),
-				rattach.getData(), rattach.getDriveId(), rattach.getId(),
+				data, rattach.getDriveId(), rattach.getId(),
 				rattach.getDescription(),
 				rattach.getMimeType() != null ? rattach.getMimeType()
 						.byteValue() : null);
@@ -859,13 +874,6 @@ public class DriveUtils implements IBlobManager {
 
 				File fileAux = getFile(fileInfo.getDriveId());
 				
-				ByteArrayInputStream in = null;
-				if ( fileInfo.getData() instanceof ByteArrayInputStream ) {
-					in = (ByteArrayInputStream) fileInfo.getData();
-				} else {
-					byte[] data = IOUtils.toByteArray(fileInfo.getData());
-					in = new ByteArrayInputStream(data);					
-				}
 				
 				if (!fileAux.getMd5Checksum().equals(
 						CheckSum.getMD5Checksum(fileInfo.getData()))) {
@@ -878,7 +886,6 @@ public class DriveUtils implements IBlobManager {
 								type, fileInfo.getTitle());
 						return true;
 					}
-					in.reset();					
 					File file = updateFile(fileInfo);
 					if (file != null) {
 						fileInfo.setDriveId(file.getId());
@@ -981,7 +988,7 @@ public class DriveUtils implements IBlobManager {
 				FileInfo attach = dd.getAttachs().get(j);
 
 				if (attach.getAonType().equals("registry")) {
-					InputStream i = DatabaseSync.getFileData(
+					byte data []  = DatabaseSync.getFileData(
 							attach.getFileId(), domain);
 					Vector<String> emails = DatabaseSync.getEmails(
 							attach.getFileId(), domain);
@@ -989,7 +996,7 @@ public class DriveUtils implements IBlobManager {
 							attach.getFileId(), domain);
 					emails.addAll(pemails);
 					attach.setEmails(emails);
-					attach.setData(i);
+					attach.setData(data);
 				} else if (attach.getAonType().equals("contract")) {
 					attach = DBConsults.getDataContractAttach(domain, attach);
 					attach = DBConsults.getEmailsContractAttach(domain, attach);
@@ -1369,7 +1376,7 @@ public class DriveUtils implements IBlobManager {
 						}
 						byte[] data = BlobObjectUtil.getProperty(blobObject, property);
 						if (! ArrayUtils.isEmpty(data) ) {
-							file.setData(new ByteArrayInputStream(data));						
+							file.setData(data);						
 						}
 						try {
 							sync2(drive, file, domain);

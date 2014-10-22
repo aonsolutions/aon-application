@@ -202,8 +202,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {
@@ -271,8 +270,6 @@ public class DBConsults {
 
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
-			String aux = null;
-			
 			String sql = "UPDATE contract_attach SET driveId = NULL WHERE driveId = "+id+";";
 			dslContext.fetch(sql);
 		} finally {
@@ -382,8 +379,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {
@@ -527,8 +523,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {
@@ -704,8 +699,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {
@@ -853,8 +847,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {
@@ -1002,8 +995,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {
@@ -1182,8 +1174,7 @@ public class DBConsults {
 					.fetch();
 			
 			for (Record1<byte[]> record1 : data) {
-				InputStream is =  new ByteArrayInputStream(record1.value1());
-				fileInfo.setData(is);
+				fileInfo.setData(record1.value1());
 			}
 			return fileInfo;
 		} finally {

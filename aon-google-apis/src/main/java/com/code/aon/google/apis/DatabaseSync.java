@@ -1,5 +1,6 @@
 package com.code.aon.google.apis;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,6 +42,7 @@ import com.esferalia.aon.google.sql.SQLConstants.TaskColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserWorkgroupColumns;
+import com.google.api.client.util.IOUtils;
 
 
 /**
@@ -1495,7 +1497,7 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 		}
 	}
 	
-	public static InputStream getFileData(int id,String key) throws SQLException{
+	public static byte[] getFileData(int id,String key) throws IOException, SQLException{
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -1508,14 +1510,18 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 			rs = stmt.executeQuery();
 			
 			
-			InputStream data;
+			InputStream is;
 			if (rs.next())
-				data = rs.getAsciiStream(RattachColumns.DATA);
+				is = rs.getAsciiStream(RattachColumns.DATA);
 			else
-				data = null;
+				is = null;
 			
 			
 	
+			byte data [] =  Utils.InputStreamToByte(is);
+			
+			is.close();
+			
 			return data;
 		
 		} finally {

@@ -68,7 +68,7 @@ public class Utils{
 	public static File InputStreamToFile(FileInfo fileInfo) throws IOException{
 		System.out.println(fileInfo.getData());
 		
-		byte[] data = IOUtils.toByteArray(fileInfo.getData());
+		byte[] data = fileInfo.getData();
 
 		File aux = new File("/tmp/"+ fileInfo.getTitle());		
 		

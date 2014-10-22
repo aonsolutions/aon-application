@@ -39,7 +39,7 @@ public class FileInfo {
 
 	private String aonType;
 	private short type;
-	private InputStream data;
+	private byte [] data;
 	private String driveId;
 	private int fileId;
 	private String title;
@@ -52,7 +52,7 @@ public class FileInfo {
 		// TODO Apéndice de constructor generado automáticamente
 	}
 
-	public FileInfo(String aonType, short type, InputStream data,
+	public FileInfo(String aonType, short type, byte [] data,
 			String driveId, int fileId, String title, Byte mimetype) {
 		// TODO Apéndice de constructor generado automáticamente
 		this.type = type;
@@ -103,11 +103,11 @@ public class FileInfo {
 		this.mimetype = mimetype;
 	}
 
-	public InputStream getData() {
+	public byte[] getData() {
 		return data;
 	}
 
-	public void setData(InputStream data) {
+	public void setData(byte[] data) {
 		this.data = data;
 	}
 

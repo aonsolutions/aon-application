@@ -5,7 +5,6 @@ import static com.code.aon.google.apis.DriveUtils.sync2;
 import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
@@ -32,6 +31,7 @@ import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.google.api.services.drive.Drive;
 
 public class SynchronizeFiles {
@@ -87,8 +87,8 @@ public class SynchronizeFiles {
 			for (int j = 0; j < dd.getAttachs().size(); j++) {
 				FileInfo attach = dd.getAttachs().get(j);
 				if (attach.getAonType().equals("registry")) {
-					InputStream i = DatabaseSync.getFileData(
-							attach.getFileId(), domain);
+					byte data[] = DatabaseSync.getFileData(attach.getFileId(),
+							domain);
 
 					Vector<String> emails = DatabaseSync.getEmails(
 							attach.getFileId(), domain);
@@ -96,7 +96,7 @@ public class SynchronizeFiles {
 							attach.getFileId(), domain);
 					emails.addAll(pemails);
 					attach.setEmails(emails);
-					attach.setData(i);
+					attach.setData(data);
 				} else if (attach.getAonType().equals("contract")) {
 					attach = DBConsults.getDataContractAttach(domain, attach);
 					attach = DBConsults.getEmailsContractAttach(domain, attach);
@@ -116,16 +116,13 @@ public class SynchronizeFiles {
 					attach = DBConsults.getDataSepeAttach(domain, attach);
 				}
 
-				if (sync2(drive, attach, domain)){
+				if (sync2(drive, attach, domain)) {
 					numero++;
 				}
 
-				InputStream is = attach.getData();
-				if (is != null)
-					is.close();
 				attach.setData(null);
-				
-				if ( numero >= num )
+
+				if (numero >= num)
 					return;
 
 			}
@@ -139,44 +136,57 @@ public class SynchronizeFiles {
 	public static DriveData getAttachsSF(String domain) throws SQLException,
 			AonConnectionException {
 		HashMap<String, String> map = new HashMap<String, String>();
-		for (String s : b) {
-			map.put(s, s);
+		for (String s : types) {
+			try {
+				Enum.valueOf(RegistryAttachmentType.class, s);
+				map.put("registry", "registry");
+			} catch (IllegalArgumentException e) {
+				map.put(s, s);
+			}
 		}
 
 		DriveData dd = new DriveData();
-
 		dd.setDomain(domain);
-		// de momento solo se sincroniza con Rattach
-		// REGISTRY ATTACH
-		if (map.containsKey("registry") || b[0].equals("all"))
+		dd.setGservice(DatabaseSync.getServiceAccount(domain));
+		dd.setAttachs(new Vector<FileInfo>());
+
+		// REGISTRY ATTACHins
+		if (map.containsKey("registry")) {
 			dd = DatabaseSync.getDomainFiles(domain);
+		}
 
 		// CONTRACT ATTACH
-		if (map.containsKey("contract") || b[0].equals("all"))
+		if (map.containsKey("contract")) {
 			dd.setAttachs(DBConsults.getContractAttach(domain, dd.getAttachs()));
+		}
 
 		// ITEM ATTACH
-		if (map.containsKey("item") || b[0].equals("all"))
+		if (map.containsKey("item")) {
 			dd.setAttachs(DBConsults.getIattach(domain, dd.getAttachs()));
+		}
 
 		// INVOICE ATTACH
-		if (map.containsKey("invoice") || b[0].equals("all"))
+		if (map.containsKey("invoice")) {
 			dd.setAttachs(DBConsults.getInvoiceAttach(domain, dd.getAttachs()));
+		}
 
 		// OFFER ATTACH
-		if (map.containsKey("offer") || b[0].equals("all"))
+		if (map.containsKey("offer")) {
 			dd.setAttachs(DBConsults.getOfferAttach(domain, dd.getAttachs()));
+		}
 
 		// PAYROLL ATTACH
-		if (map.containsKey("payroll") || b[0].equals("all"))
+		if (map.containsKey("payroll")) {
 			dd.setAttachs(DBConsults.getPayrollAttach(domain, dd.getAttachs()));
+		}
 
 		// PROJECT ATTACH
-		if (map.containsKey("project") || b[0].equals("all"))
+		if (map.containsKey("project")) {
 			dd.setAttachs(DBConsults.getProjectAttach(domain, dd.getAttachs()));
+		}
 
 		// SEPE ATTACH
-		if (map.containsKey("sepe") || b[0].equals("all"))
+		if (map.containsKey("sepe"))
 			dd.setAttachs(DBConsults.getSepeAttach(domain, dd.getAttachs()));
 
 		return dd;
@@ -206,7 +216,6 @@ public class SynchronizeFiles {
 	private static String action;
 	private static String values[];
 	private static String out;
-	private static String[] b;
 	private static Integer num;
 	private static boolean dryRun;
 
@@ -283,7 +292,6 @@ public class SynchronizeFiles {
 				return false;
 			}
 			out = "normally";
-			b = new String[] { "all" };
 
 			num = Integer.valueOf(line.getOptionValue(countOption.getOpt(),
 					String.valueOf(Integer.MAX_VALUE)));
@@ -305,6 +313,7 @@ public class SynchronizeFiles {
 				values = new String[] {};
 
 			action = line.getOptionValue(actionOption.getOpt(), "all");
+
 
 		} catch (ParseException e) {
 			System.out.print(e.getMessage());

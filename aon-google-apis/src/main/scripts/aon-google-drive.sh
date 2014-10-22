@@ -40,13 +40,13 @@ case $1 in
   	echo "For additional information, see http://www.aonsolutions.es/"
     ;;
   sync) 
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SynchronizeFiles ${*:2} 
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SynchronizeFiles "${@:2}" 
     ;;
   delete) 
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.DeleteFiles ${*:2} 
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.DeleteFiles "${@:2}" 
     ;;
   search) 
-    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SearchFiles ${*:2}
+    $JAVA -classpath $CLASSPATH com.code.aon.google.apis.drive.SearchFiles "${@:2}"
     ;;
   *) 
     [[ -n $1 ]] && echo "Unknown subcommand: '$1'"
