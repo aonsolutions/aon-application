@@ -23,6 +23,7 @@
 						type="reset" ajaxSingle="true"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 					<aon:commandButton id="deliveryInvoicing"
+						reRender="progressBarForm"
 						value="#{bundle.aon_key_invoice_description}"
 						actionListener="#{deliveryInvoicing.onShowPanel}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" />
@@ -154,16 +155,16 @@
 		<ui:include
 			src="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
 			<ui:param name="progressLabel" value="#{bundle.finance_delivery_invoicing_module}" />
-			<ui:param name="progressBarBean" value="#{deliveryInvoicing}" />
-			<ui:param name="panelVisible" value="#{deliveryInvoicing.progressionPanelVisible}"/>
-			<ui:param name="initialMessage" value="#{bundle.finance_invoicing_initial}"/>
-			<ui:param name="startMessage" value="#{bundle.aon_confirm}"/>
-			<ui:param name="completeMessage" value="#{bundle.finance_invoicing_complete}"/>
-			<aon:methodParam name="startActionListener" default="#{deliveryInvoicing.onInvoice}" type="actionListener" />
-			<aon:methodParam name="closeActionListener" default="#{deliveryInvoicing.onClosePanel}" type="actionListener" />
-			<ui:param name="redirect" value="true" />
-			<ui:param name="redirectMessage" value="#{bundle.finance_invoicing_wait}"/>
-			<aon:methodParam name="redirectAction" default="#{deliveryInvoicing.invoice}"/>
+			<ui:param name="progressBarBean" value="#{deliveryInvoicing.progressionState}" />
+			<ui:param name="progressBarInitialMessage" value="#{bundle.finance_invoicing_initial}"/>
+			<ui:param name="progressBarStartMessage" value="#{bundle.aon_confirm}"/>
+			<ui:param name="progressBarCompleteMessage"
+				value="#{(deliveryInvoicing.invoiceIds!=null)?bundle.finance_invoicing_complete:bundle.finance_invoicing_no_invoice}"/>
+			<aon:methodParam name="progressBarStartActionListener"
+				default="#{deliveryInvoicing.onInvoice}" type="actionListener" />
+			<aon:methodParam name="progressBarCloseActionListener"
+				default="#{deliveryInvoicing.onClosePanel}" type="actionListener" />
+			<aon:methodParam name="progressBarCloseAction" default="#{deliveryInvoicing.invoiceAction}"/>
 		</ui:include>
 	</ui:define>
 </ui:composition>

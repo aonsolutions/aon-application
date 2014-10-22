@@ -53,19 +53,22 @@ public class ProgressionState implements IProgression, Serializable {
 	public boolean isFinish() {
 		return getProgressionCurrentValue() == IProgression.FINISH_VALUE;	
 	}
-	
+
 	public void start() {
-		setProgress(true);
+		start(true);
+	}
+
+	public void start( boolean inmediately ) {
+		setProgress(true, inmediately?START_VALUE:CANCEL_VALUE);
 	}
 	
 	public void finish() {
-		setProgress(false);
+		setProgress(false, CANCEL_VALUE);
 	}
 	
-	private void setProgress( boolean enabled ) {
+	private void setProgress( boolean enabled, long value ) {
 		setProgressionPanelVisible(enabled);
 		setProgressionEnabled(enabled);
-		long value = (enabled?START_VALUE:CANCEL_VALUE);
 		setProgressionCurrentValue(value);		
 		if ( enabled ) {
 			setProgressionErrorMessage(null);

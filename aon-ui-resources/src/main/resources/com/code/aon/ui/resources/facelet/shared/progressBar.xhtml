@@ -8,9 +8,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+	<aon:methodParam name="progressBarStartAction" default=""/>
+	<aon:methodParam name="progressBarCloseAction" default=""/>
+	<aon:valueParam name="progressBarCompleteMessage"
+		default="#{bundle.marketing_action_addTargets_finish }"/>
+
 	<aon:form id="progressBarForm">
 		<rich:modalPanel id="progressBarPanel" minWidth="325" autosized="true"
-			showWhenRendered="true" zindex="2000" rendered="#{panelVisible}">
+			showWhenRendered="#{progressBarBean.progressionPanelVisible}">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="#{progressLabel}" />
@@ -20,7 +25,7 @@
 			<aon:div styleClass="aon-popupWindow-content">
 				<aon:div styleClass="aon-popupWindow-content-internal">
 					<a4j:outputPanel id="progressPanel" layout="block">
-						<rich:progressBar id="progressBarComponent" style="width:100%"
+						<rich:progressBar id="progressBarComponent" 
 							value="#{progressBarBean.progressionCurrentValue}"
 							enabled="#{progressBarBean.progressionEnabled}" interval="2000"
 							label="#{progressBarBean.progressionCurrentValue} %"
@@ -29,49 +34,39 @@
 							<f:facet name="initial">
 								<aon:div styleClass="aon-text-center">
 									<aon:div>
-										<aon:outputText value="#{initialMessage}" />
+										<aon:outputText value="#{progressBarInitialMessage}" />
 									</aon:div>
 									<aon:div styleClass="aon-margin-top">
-										<aon:if test="#{!redirect}">
-											<aon:commandButton value="#{startMessage}"
-												actionListener="#{startActionListener}"
-												reRender="progressBarForm" />
-										</aon:if>
-										<aon:if test="#{redirect}">
-											<aon:commandButton value="#{startMessage}"
-												actionListener="#{startActionListener}"
-												action="#{redirectAction}" />
-										</aon:if>
-										<aon:commandButton reRender="progressBarForm"
-											styleClass="aon-margin-left"
-											actionListener="#{closeActionListener}"
+										<aon:commandButton value="#{progressBarStartMessage}"
+											actionListener="#{progressBarStartActionListener}"
+											action="#{progressBarStartAction}" />
+										<aon:div styleClass="aon-margin-right aon-margin-left" layout="inline">
+											<aon:commandButton reRender="progressBarForm"
+												actionListener="#{progressBarCloseActionListener}"
+												value="#{bundle.aon_close}" />
+										</aon:div>
+									</aon:div>
+								</aon:div>
+							</f:facet>
+							<f:facet name="complete">
+								<aon:div styleClass="aon-text-center">
+									<aon:div>
+										<c:if test="#{progressBarBean.progressionErrorMessage == null}">
+											<aon:outputText value="#{progressBarCompleteMessage}" />
+										</c:if>
+										<c:if test="#{progressBarBean.progressionErrorMessage != null}">
+											<aon:outputText style="color: red;font-weight:bold;"
+												value="#{progressBarBean.progressionErrorMessage}" />
+										</c:if>
+									</aon:div>
+									<aon:div styleClass="aon-margin-top">
+										<aon:commandButton
+											action="#{progressBarCloseAction}"
+											actionListener="#{progressBarCloseActionListener}"
 											value="#{bundle.aon_close}" />
 									</aon:div>
 								</aon:div>
 							</f:facet>
-							<aon:if test="#{redirect}">
-								<f:facet name="complete">
-									<aon:div styleClass="aon-text-center">
-										<aon:div>
-											<aon:outputText value="#{redirectMessage}" />
-										</aon:div>
-									</aon:div>
-								</f:facet>
-							</aon:if>
-							<aon:if test="#{!redirect}">
-								<f:facet name="complete">
-									<aon:div styleClass="aon-text-center">
-										<aon:div>
-											<aon:outputText value="#{completeMessage}" />
-										</aon:div>
-										<aon:div styleClass="aon-margin-top">
-											<aon:commandButton reRender="progressBarForm"
-												actionListener="#{closeActionListener}"
-												value="#{bundle.aon_close}" />
-										</aon:div>
-									</aon:div>
-								</f:facet>
-							</aon:if>
 						</rich:progressBar>
 					</a4j:outputPanel>
 				</aon:div>

@@ -1,9 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.NO_INVOICE_KEY;
-
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
@@ -11,57 +8,36 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.ProgressionState;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.invoicing.IInvoicingFeedBack;
-import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
-import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
-import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
-import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
-import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingDAO;
-import com.code.aon.finance.invoicing.engine.delivery.DeliveryInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.common.LongProcessThread;
+import com.code.aon.ui.finance.util.DeliveryInvoicingProcess;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class DeliveryInvoicingController implements IProgression, IFinanceConstants, Serializable {
+public class DeliveryInvoicingController implements IFinanceConstants, Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryInvoicingController.class.getName());
-
 	private InvoicingParameters invoicingParams;
-	private IInvoicingEngine engine;
-	private AccountEntryInvoiceWriter accountWriter;
-	private IInvoicingFeedBack feedBack;
 
-	private boolean progressionPanelVisible;
-	private boolean progressionEnabled;
-	private Long progressionValue;
-	private boolean progressStart;
-	private boolean recording;
-	private boolean redirect;
-	private int invoicesToRecord;
-	private int recordingInvoice;
+	private Integer[] invoiceIds;
+	
+	private ProgressionState progressionState;
 
 	public InvoicingParameters getParams() {
 		return invoicingParams;
@@ -69,28 +45,6 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 
 	public void setParams(InvoicingParameters invoicingParams) {
 		this.invoicingParams = invoicingParams;
-	}
-
-	public IInvoicingEngine getEngine() throws InvoicingException {
-		if (engine == null) {
-			InvoicingEngineFactory.register(InvoicingEngineFactory.DELIVERY_ENGINE_KEY, new DeliveryInvoicingEngine());
-			engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.DELIVERY_ENGINE_KEY);
-		}
-		return engine;
-	}
-
-	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
-		if (accountWriter == null) {
-			accountWriter = new AccountEntryInvoiceWriter();
-		}
-		return accountWriter;
-	}
-
-	private IInvoicingFeedBack getInvoicingFeedBack() {
-		if (feedBack == null) {
-			feedBack = new ProgressionInvoicingFeedBack(); 
-		}
-		return feedBack;
 	}
 
 	private SaleInvoiceController getSaleInvoiceController() {
@@ -109,14 +63,7 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 		params.setInvoiceDate(new Date());
 		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
 		setParams(params);
-
-		setProgressionPanelVisible(false);
-		setProgressionEnabled(false);
-		setProgressionValue(-1L);
-		progressStart = false;
-		recording = false;
-		invoicesToRecord = 0;
-		recordingInvoice = 0;
+		setProgressionState(new ProgressionState());
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -152,7 +99,7 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 		return 1;
 	}
 
-	private void updateSeries() throws ManagerBeanException {
+	public void updateSeries() throws ManagerBeanException {
 		Series series = getParams().getInvoiceSeries();
         if ( (series!=null) && StringUtils.isBlank(series.getCode()) ) {
         	series = null; 
@@ -171,162 +118,58 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 	}
 
 	public void onInvoice(ActionEvent event) {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
+		getProgressionState().start();
+		DeliveryInvoicingProcess dip = new DeliveryInvoicingProcess(this);
+		LongProcessThread thread = new LongProcessThread(dip); 
+		thread.start();		
+	}
 
-			progressStart = true;
-			recording = false;
-			setProgressionEnabled(true);
-
-			getEngine().setInvoicingDAO(new DeliveryInvoicingDAO());
-			getEngine().setInvoicingFeedBack(getInvoicingFeedBack());
-			getEngine().setHibernateSession(HibernateUtil.getSession(sessionName));
-			
-			HibernateUtil.beginTransaction(sessionName);
-			updateSeries();
-			getEngine().invoice(getParams());
-			HibernateUtil.commitTransaction(sessionName);
-
-			Collection<Invoice> invoicedList = getEngine().getInvoicingDAO().getCollection();
-			if (invoicedList.size() > 0) {
-				if (getParams().isInvoiceRecordable()) {
-					HibernateUtil.beginTransaction(sessionName);
-					recording = true;
-					invoicesToRecord = invoicedList.size();
-					recordingInvoice = 0;
-					for (Invoice invoice : invoicedList) {
-						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
-						getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice);
-						recordingInvoice++;
-						if (recordingInvoice % 20 == 0) {
-							HibernateUtil.getSession(sessionName).flush();
-							HibernateUtil.getSession(sessionName).clear();
-						}
-					}
-					HibernateUtil.getSession(sessionName).flush();
-					HibernateUtil.commitTransaction(sessionName);
-				}
-
-				Invoice firstInvoice = (Invoice)invoicedList.toArray()[0];
-				Invoice lastInvoice = (Invoice)invoicedList.toArray()[invoicedList.size()-1];
-				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-				Criteria criteria = new Criteria();
-				criteria.addBetweenExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), firstInvoice.getId(), lastInvoice.getId());
-				invoiceController.onEditSearch(event);
-				invoiceController.setCriteria(criteria);
-				invoiceController.onSearch(event);
-				setRedirect(true);
-			} else {
-				setRedirect(false);
-				AonUtil.addInfoMessageFromBundle(NO_INVOICE_KEY);
-			}
-		} catch (Exception e) {
-			setRedirect(false);
+	public String invoiceAction() {
+		return (getInvoiceIds() != null) ? IFinanceConstants.SALE_INVOICE_LIST_NAME : null;
+	}
+	
+	private void loadInvoices( ActionEvent event ) {
+		if ( getInvoiceIds() != null ) {
 			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg =  "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
-			String msg =  "Error invoicing deliveries. " + e.getMessage();
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			setProgressionPanelVisible(false);
-			setProgressionEnabled(false);
-			setProgressionValue(101L);
-		}
+				IController controller = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+				Criteria criteria = new Criteria();
+				criteria.addBetweenExpression(controller.getFieldName(IEntityAlias.INVOICE_ID), getInvoiceIds()[0], getInvoiceIds()[1]);
+				controller.onEditSearch(event);
+				controller.setCriteria(criteria);
+				controller.onSearch(event);
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(),e);
+			}				
+		}		
 	}
-
-	public String invoice() {
-		return isRedirect()?"saleInvoice_list":null;	
-	}
-
+	
 	public void onShowPanel(ActionEvent event) {
-		setProgressionPanelVisible(true);
-		setProgressionEnabled(true);
-		setProgressionValue(-1L);
-		progressStart = false;
-		recording = false;
-		invoicesToRecord = 0;
-		recordingInvoice = 0;
+		getProgressionState().start(false);		
 	}
+	
 	public void onClosePanel(ActionEvent event) {
-		setProgressionPanelVisible(false);
-		setProgressionEnabled(false);
-		setProgressionValue(-101L);
-		progressStart = false;
-		recording = false;
-		invoicesToRecord = 0;
-		recordingInvoice = 0;
-	}
-
-	public boolean isProgressionPanelVisible() {
-		return progressionPanelVisible;
-	}
-
-	public void setProgressionPanelVisible(boolean progressionPanelVisible) {
-		this.progressionPanelVisible = progressionPanelVisible;
-	}
-
-	@Override
-	public boolean isProgressionEnabled() {
-		return progressionEnabled;
-	}
-	@Override
-	public void setProgressionEnabled(boolean enabled) {
-		this.progressionEnabled = enabled;
-	}
-
-	@Override
-	public Long getProgressionCurrentValue() {
-		if (progressStart) {
-			if (!recording) {
-				int row = getInvoicingFeedBack().getCurrentRow();
-				int count = getInvoicingFeedBack().getRowCount();
-				if (count > 0) {
-					int pro = (int) CommonUtil.round(row * 100 / count);
-					if (getParams().isInvoiceRecordable()) {
-						pro = pro / 2;
-					}
-					setProgressionValue(new Long(pro));
-				}
-			} else {
-				if (invoicesToRecord > 0) {
-					int pro = (int) CommonUtil.round(((recordingInvoice * 100 / invoicesToRecord) / 2)+50);
-					setProgressionValue(new Long(pro));
-				}
-			}
+		if ( getProgressionState().isFinish() ) {
+			loadInvoices(event);
 		}
-		return getProgressionValue();
+		getProgressionState().finish();
+		getParams().setInvoiceNumber(0);
 	}
 
-	@Override
-	public void setProgressionCurrentValue(Long currentValue) {
+	public ProgressionState getProgressionState() {
+		return progressionState;
 	}
 
-	public Long getProgressionValue() {
-		return progressionValue;
+	public void setProgressionState(ProgressionState progressionState) {
+		this.progressionState = progressionState;
 	}
 
-	public void setProgressionValue(Long progressionValue) {
-		this.progressionValue = progressionValue;
+	public Integer[] getInvoiceIds() {
+		return invoiceIds;
 	}
 
-	public boolean isRedirect() {
-		return redirect;
-	}
-
-	public void setRedirect(boolean redirect) {
-		this.redirect = redirect;
-	}
-
+	public void setInvoiceIds(Integer[] invoiceIds) {
+		this.invoiceIds = invoiceIds;
+	}	
+	
 }

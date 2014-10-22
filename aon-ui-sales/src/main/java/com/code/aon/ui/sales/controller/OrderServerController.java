@@ -105,30 +105,6 @@ public class OrderServerController extends SalesController {
 		SalesDeliveryProcess sdp = new SalesDeliveryProcess(this, dc);
 		LongProcessThread thread = new LongProcessThread(sdp); 
 		thread.start();		
-		/*
-		try {
-			List<Integer> deliveryIds = new LinkedList<Integer>();
-			DeliveryManager deliveryManager = new DeliveryManager();
-			for(Serializable id : getCheckList()){
-				Sales sales = (Sales) getManagerBean().get(id);
-				int number = obtainMaxDeliveryNumber(getDeliverySeries());
-				Date date = isSalesDateCheck()?sales.getDate():getDeliveryDate(); 
-				Delivery delivery = deliveryManager.salesDelivery(sales, getDeliverySeries(), number, date, getDeliveryWarehouse());
-				deliveryIds.add(delivery.getId());
-			}
-			IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER_NAME);
-			deliveryController.onEditSearch(event);
-			deliveryController.getCriteria().addInExpression(deliveryController.getFieldName(IEntityAlias.DELIVERY_ID), deliveryIds);
-			deliveryController.onSearch(event);
-			deliveryController.getModel().setRowIndex(0);
-			deliveryController.onSelect(event);
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo grabar el albarán. (" + e.getMessage()+ ")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-		*/
-	}	
-	
+	}		
 	
 }
