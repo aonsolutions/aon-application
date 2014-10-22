@@ -494,17 +494,21 @@ public class SQLSalaryDraft {
 					+ AgreementLevelColumns.AGREEMENT + " =  PAYMENT."
 					+ AgreementPaymentColumns.AGREEMENT + " AND PAYMENT."
 					+ AgreementPaymentColumns.PAYMENT_CONCEPT + " =  ? "
-					+ " AND PAYMENT." + AgreementPaymentColumns.START_DATE
-					+ " <= ? " + " AND ( PAYMENT."
+					+ " AND ( PAYMENT."
 					+ AgreementPaymentColumns.END_DATE + " >= ? "
 					+ " OR PAYMENT." + AgreementPaymentColumns.END_DATE
-					+ " IS NULL )";
+					+ " IS NULL )" ;
+					if ( payment.getEndDate() != null )
+						sql += " AND PAYMENT." + AgreementPaymentColumns.START_DATE
+						+ " <= ? " ;
 
 			queryStmt = conn.prepareStatement(sql);
 			queryStmt.setInt(1, contract);
 			queryStmt.setInt(2, payment.getConceptId());
-			queryStmt.setDate(3, SQLUtils.date2sql(payment.getEndDate()));
-			queryStmt.setDate(4, SQLUtils.date2sql(payment.getStartDate()));
+			queryStmt.setDate(3, SQLUtils.date2sql(payment.getStartDate()));
+			
+			if ( payment.getEndDate() != null )
+				queryStmt.setDate(4, SQLUtils.date2sql(payment.getEndDate()));
 
 			rs = queryStmt.executeQuery();
 
