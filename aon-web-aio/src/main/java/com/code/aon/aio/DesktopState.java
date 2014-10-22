@@ -101,6 +101,7 @@ public class DesktopState implements Serializable {
     private int externalApplicationsValue;
 	
     public DesktopState() {
+    	initCompany();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		this.adminDomain = ds.getType() == DomainType.ADMIN;
 		if ( this.adminDomain ) {
@@ -118,10 +119,20 @@ public class DesktopState implements Serializable {
 		checkSerialization();
 	}
 
+    private void initCompany() {
+    	CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+    	controller.obtainCompany();
+    }
+    
 	private void initAdminDomain() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		String[] categories = new String[]{IAuditConstants.CONFIGURATION_CATEGORY};
-		String[] groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY};
+		String[] groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY,
+				};
+		if (! adc.isDeniedModule(Module.DOCUMENT.getName()) ) {
+			categories = (String[]) ArrayUtils.add(categories, IAuditConstants.DOCUMENT_CATEGORY);
+			groups = (String[]) ArrayUtils.addAll(groups, new String[]{IAuditConstants.GROUP_DOCUMENT, IAuditConstants.GROUP_DOCUMENT_UTILITIES});
+		}
 		adc.enableOnly(categories, groups, IAuditConstants.MAIL_ACCOUNT_ACTION, IAuditConstants.SIGNATURE_ACTION);
 	}
 	

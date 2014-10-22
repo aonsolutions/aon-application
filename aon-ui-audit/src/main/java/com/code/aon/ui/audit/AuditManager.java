@@ -247,8 +247,8 @@ public class AuditManager implements IAuditConstants {
 					}
 				}			
 			}
-			list.add(Module.DOCUMENT);
 		}
+		list.add(Module.DOCUMENT);
 		return list;
 	}
 	
