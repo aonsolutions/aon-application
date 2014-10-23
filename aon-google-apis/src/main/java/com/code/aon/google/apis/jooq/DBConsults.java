@@ -495,7 +495,8 @@ public class DBConsults {
 				fileInfo.setFileId(record5.value1());
 				fileInfo.setMimetype(record5.value2());
 				fileInfo.setTitle(record5.value3());
-				fileInfo.setType(record5.value4());
+				if ( record5.value4() != null )
+					fileInfo.setType(record5.value4());
 				fileInfo.setCategory(-2);
 				fileInfo.setDriveId(record5.value5());
 				attachs.add(fileInfo);
