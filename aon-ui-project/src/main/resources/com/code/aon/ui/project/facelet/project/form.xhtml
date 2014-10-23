@@ -17,7 +17,7 @@
 
 				<ui:param name="skipRemoveButton" value="#{project.to != null and project.to.extended}" />
 				<ui:param name="skipSaveButton" value="#{project.to != null and project.to.extended}" />
-				
+
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="importDossier"
 						value="#{bundle.project_import}" reRender="importContainer"
@@ -35,16 +35,20 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:panelGrid columns="2" dir="true" style="width: 100%;">
-				
-					<ui:include src="/com/code/aon/ui/project/facelet/project/form_content.xhtml" >
+				<aon:if test="#{project.nevv}">
+					<ui:include src="/com/code/aon/ui/project/facelet/project/formNewContent.xhtml">
 						<ui:param name="controller" value="#{project}" />
-					</ui:include>
-				
-				</aon:panelGrid>
+					</ui:include>				
+				</aon:if>							
+				<aon:if test="#{!project.nevv}">			
+					<aon:panelGrid columns="2" dir="true" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 
-				<aon:if test="#{!project.nevv}">
+						<ui:include src="/com/code/aon/ui/project/facelet/project/formContent.xhtml">
+							<ui:param name="controller" value="#{project}" />
+						</ui:include>
+					</aon:panelGrid>
+
 					<aon:panelTabSet id="projectTabSet" selectedTab="#{project.selectedTab}">
 						<aon:panelTab id="project_activities" label="#{bundle.aon_activities}">
 							<aon:if test="#{project.selectedTab == 'project_activities' or project.selectedTab == null}">
@@ -72,7 +76,7 @@
 						</aon:panelTab>						
 					</aon:panelTabSet>
 				</aon:if>
-				
+
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/import.xhtml" />

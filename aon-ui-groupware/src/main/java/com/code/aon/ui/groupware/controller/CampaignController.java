@@ -106,41 +106,7 @@ public class CampaignController extends BasicController {
     }
     
 	public void onStartCampaign(ActionEvent event) {
-//        Campaign campaign = (Campaign)this.getTo();
-//        if (!campaign.isManual()) {
-//            startCampaign(campaign);
-//        }
         changeStatus(CampaignStatus.IN_PROGRESS);
     }
-    /*
 
-    @SuppressWarnings("unchecked")
-	private void startCampaign(Campaign campaign) {
-        try {
-            IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
-
-            IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
-            Integer activityType = campaign.getActivityType().getId();
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_ACTIVITY_TYPE_ID), activityType);
-            criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_DOSSIER_STATUS), DossierStatus.ACTIVE);
-            Iterator iterator = activityBean.getList(criteria).iterator();
-            while (iterator.hasNext()) {
-                Activity activity = (Activity)iterator.next();
-
-                CampaignDossier campaignDossier = new CampaignDossier();
-                campaignDossier.setCampaign(campaign);
-                campaignDossier.setDossier(activity.getDossier());
-                campaignDossier = (CampaignDossier)campaignDossierBean.insert(campaignDossier);
-
-                getCampaignTaskManager().addCampaignTask(campaignDossier, 0, null, null);
-            }
-            CampaignDossierController campaignDossierController = (CampaignDossierController)FormUtil.getController("campaignDossier");
-            campaignDossierController.setSortColumn(null);
-            campaignDossierController.onSearch(null);
-        } catch (ManagerBeanException e) {
-            LOGGER.error("Error creating campaign dossier in campaign with id=" + campaign.getId(), e);
-        }
-    }
-*/
 }

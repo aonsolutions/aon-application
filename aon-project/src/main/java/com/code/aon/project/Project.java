@@ -29,7 +29,7 @@ public class Project extends ProjectDB {
 
 	@Transient
 	public boolean isExtended() {
-		return isCommercial() || isTas();
+		return isCommercial() || isTas() || isReservation();
 	}
 	
 	@OneToMany(mappedBy = "project", cascade={CascadeType.REMOVE})

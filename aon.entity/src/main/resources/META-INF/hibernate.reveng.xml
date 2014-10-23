@@ -39,7 +39,7 @@
 	<table-filter match-name="fs_model200_detail" exclude="true" />
 	<table-filter match-name="fs_model200_registry" exclude="true" />
 	<table-filter match-name="fs_model390" exclude="true" />
-	
+
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
 	<!--  ***************** -->
@@ -159,13 +159,13 @@
 		<foreign-key constraint-name="FK_APPLICATION_USER_DOMAIN_APPLICATION">
 			<many-to-one property="domainApplication"/>
 		</foreign-key>
-  </table>  
+	</table>  
 
 	<table name="application_user_profile" >
 		<foreign-key constraint-name="FK_APPLICATION_USER_PROFILE_APPLICATION_USER">
 			<many-to-one property="applicationUser"/>
 		</foreign-key>
-  </table>  
+	</table>  
 
 	<table name="asset_activity">
 		<column name="status" type="com.code.aon.asset.enumeration.ActivityStatus"/>
@@ -877,7 +877,6 @@
 		<column name="minimun_ascendents" type="java.lang.Double"/>
 		<column name="minimun_descendents" type="java.lang.Double"/>
 		<column name="minimun_disability" type="java.lang.Double"/>
-
 	</table>
 
 	<table name="item">
@@ -1178,15 +1177,19 @@
 		<column name="module" type="com.code.aon.audit.enumeration.Module"/>	
 	</table>
 
-  <table name="profile_role" >
+	<table name="profile_role" >
 		<foreign-key constraint-name="FK_PROFILE_ROLE_APPLICATION_ROLE">
 			<many-to-one property="applicationRole"/>
 		</foreign-key>
-  </table>    
+	</table>    
 	
 	<table name="project_attach" class="com.esferalia.aon.entity.master.ProjectAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 		<column name="data" exclude="true" />
+	</table>
+
+	<table name="project">
+		<column name="dossier" exclude="true" />
 	</table>
 
 	<table name="project_commercial">

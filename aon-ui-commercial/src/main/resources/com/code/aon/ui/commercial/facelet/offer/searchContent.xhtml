@@ -29,6 +29,7 @@
 	
 	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{offerSearch.project}" />
+		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 
 	<aon:outputLabel value="#{bundle.aon_date}" />

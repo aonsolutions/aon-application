@@ -44,7 +44,7 @@ public class AddCampaignProjectController extends DataScrollerState {
 	
 	private boolean addPanelVisible;
 	private List<CampaignProject> checked;
-	private List<CampaignProject> dossiers;
+	private List<CampaignProject> projects;
 	private List<SelectItem> availableProjects;
 	
 	private TaskManager taskManager;
@@ -72,13 +72,13 @@ public class AddCampaignProjectController extends DataScrollerState {
 	}
 
 	public List<CampaignProject> getProjects() {
-		if (dossiers == null) {
+		if (projects == null) {
 			setProjects( new LinkedList<CampaignProject>());
 		}
-		return dossiers;
+		return projects;
 	}
-	public void setProjects(List<CampaignProject> dossiers) {
-		this.dossiers = dossiers;
+	public void setProjects(List<CampaignProject> projects) {
+		this.projects = projects;
 	}
 
 	public DataModel getModel() {
@@ -149,15 +149,15 @@ public class AddCampaignProjectController extends DataScrollerState {
 	public Project getProject() {
 		return project;
 	}
-	public void setProject(Project dossier) {
-		this.project = dossier;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public ProjectType getProjectType() {
 		return projectType;
 	}
-	public void setProjectType(ProjectType dossierType) {
-		this.projectType = dossierType;
+	public void setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
 	}
 
 	public ActivityType getActivityType() {
@@ -260,7 +260,7 @@ public class AddCampaignProjectController extends DataScrollerState {
 	}
     
 	private void addProject(Campaign campaign,Project project) throws ManagerBeanException {
-		// Si el dossier ya está añadido en la campaña, se excluye.
+		// Si el project ya está añadido en la campaña, se excluye.
 		IManagerBean cdBean = BeanManager.getManagerBean(CampaignProject.class);
 		Criteria c = new Criteria();
 		c.addEqualExpression(cdBean.getFieldName(IEntityAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());

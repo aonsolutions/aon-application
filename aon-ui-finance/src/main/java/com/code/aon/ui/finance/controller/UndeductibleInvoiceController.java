@@ -54,7 +54,6 @@ public class UndeductibleInvoiceController extends InvoiceController {
 			getInvoice().setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(creditor.getRegistry());
 			loadAddresses(creditor.getId());
-			loadProjects(creditor.getId());
 			validateInvoice();
 		} else {
 			Invoice invoice = getInvoice();
@@ -62,7 +61,6 @@ public class UndeductibleInvoiceController extends InvoiceController {
 			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 
 			setAddresses(null);	
-			setProjects(null);	
 		}
 	}
 

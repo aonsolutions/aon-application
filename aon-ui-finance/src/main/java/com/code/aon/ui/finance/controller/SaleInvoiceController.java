@@ -143,9 +143,10 @@ public class SaleInvoiceController extends InvoiceController {
 		invoice.setSurcharge(customer.isSurcharge());
 		invoice.setWithholding(customer.isWithholding() && getCompany().isWithholding());
 		loadAddresses(customer.getId());
-		loadProjects(customer.getId());
 
 		if (isNevv()) {
+			loadProjects(customer.getId());
+
 			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
 			Finance finance = (Finance)financeController.getTo();
 			if (finance != null) {

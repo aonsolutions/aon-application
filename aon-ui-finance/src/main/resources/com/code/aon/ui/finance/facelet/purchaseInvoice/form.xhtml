@@ -103,15 +103,14 @@
 
 						<rich:menuSeparator id="actionMenuSeparator" />
 
-						<aon:menuItem id="newProject-button"
-							value="#{(projectButtonLabel!=null)?(projectButtonLabel):(bundle.aon_project)}"
+						<aon:menuItem id="projects"
+							value="#{bundle.aon_project}"
 							iconClass="aon-icon-statistics"
-							reRender="showNewProjectWindow"
-							actionListener="#{project.onReset}">
-							<f:setPropertyActionListener target="#{purchaseInvoice.showNewProjectWindow}" 
+							reRender="showProjectWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showProjectWindow}" 
 								value="#{true}" />							
-							<f:setPropertyActionListener target="#{project.to.registry}" 
-								value="#{purchaseInvoice.to.registry}" />							
+							<f:setPropertyActionListener target="#{purchaseInvoice.showDetailProjectWindow}"
+								value="#{false}" />
 						</aon:menuItem>
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
@@ -366,45 +365,37 @@
 				</aon:panelGrid>
 
 				<aon:div id="InvoiceProject">
-					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{purchaseInvoice.to.project.id != null or purchaseInvoice.to.registry.id != null}"
+					<aon:panelGrid columns="2" styleClass="aon-width-all"
+						rendered="#{(purchaseInvoice.nevv and purchaseInvoice.to.registry.id != null and projectCollections.activeProjectsCount > 0) 
+										or purchaseInvoice.savedProject.id != null}"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
 						<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-							<aon:outputLabel for="Invoice_project_id"
+							<aon:outputLabel for="Project_id"
 								value="#{bundle.aon_project}" />
 						</aon:if>
 						<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
-							<aon:outputLabel for="Invoice_project_id"
+							<aon:outputLabel for="Project_id"
 								value="#{bundle.tas_project_tas}" />
 						</aon:if>
 						<aon:div>
-							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{purchaseInvoice.to.project}" />
-								<ui:param name="lookupRendered" value="#{!purchaseInvoice.readOnly}" />
-								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipGoToButton" value="#{true}" />
-							</ui:include>
-							<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-								<aon:outputLabel styleClass="aon-italic"
-									value="#{bundle.project_no_project_linked}"
-									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
-							</aon:if>
-							<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
-								<aon:outputLabel styleClass="aon-italic"
-									value="#{bundle.tas_no_projectTas_linked}"
-									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
-							</aon:if>
+							<aon:div rendered="#{!purchaseInvoice.readOnly}">
+								<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{purchaseInvoice.to.project}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="skipGoToButton" value="#{true}" />
+								</ui:include>
+							</aon:div>
 							<aon:outputText styleClass="aon-bold"
 								value="#{purchaseInvoice.to.project.name}" 
-								rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id != null}" />
+								rendered="#{purchaseInvoice.readOnly}" />
 						</aon:div>
 
 					</aon:panelGrid>
 				</aon:div>
 
-				<aon:panelGrid columns="2" style="width: 100%;"
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-auto">
 
@@ -478,7 +469,6 @@
 			<ui:param name="detailReRender" value="invoiceDetails" />
 			<aon:methodParam name="detailActionListener" value="#{purchaseInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{purchaseInvoiceDetail.invoiceDetail.project}" />
-			<ui:param name="showProjectLookup" value="#{true}" />
 			<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 			</aon:if>
@@ -506,12 +496,6 @@
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="purchaseInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{purchaseInvoiceSigner.onSign}" type="actionListener" />
-		</ui:include>
-		
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalNewProject.xhtml">
-			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
-			<ui:param name="projectController" value="#{project}" />
-			<ui:param name="skipRegistryLookup" value="true" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{purchaseInvoice}" />

@@ -25,7 +25,7 @@ public class ProjectCollectionsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	public List<SelectItem> getProjects( Integer registryId ) throws ManagerBeanException {
+	public List<SelectItem> getProjects(Integer registryId) throws ManagerBeanException {
 		List<SelectItem> projects = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
@@ -41,6 +41,13 @@ public class ProjectCollectionsController implements Serializable {
 			projects.add(item);
 		}
 		return projects;
+	}
+
+	public int getActiveProjectsCount() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
+		return bean.getCount(criteria);
 	}
 
 	public List<SelectItem> getActivityTypes(Integer projectTypeId) throws ManagerBeanException {

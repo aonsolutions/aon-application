@@ -76,37 +76,21 @@
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
 										<aon:outputLabel for="Project_id"
 											value="#{projectLabel}" />
-										<aon:if test="#{!controller.showDetailProjectWindow and !showProjectLookup}">
-											<aon:selectOneMenu id="Project_id"
-												value="#{parentValue}">
-												<f:selectItems value="#{controller.projects}" />
-											</aon:selectOneMenu>
-										</aon:if>
-										<aon:if test="#{controller.showDetailProjectWindow and !showProjectLookup}">
-											<aon:selectOneMenu id="Project_id"
-												value="#{detailValue}">
-												<f:selectItem itemLabel="-" value="#{null}" />
-												<f:selectItems value="#{controller.projects}" />
-											</aon:selectOneMenu>
-										</aon:if>
-										<aon:if test="#{!controller.showDetailProjectWindow and showProjectLookup}">
-											<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+										<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+											<aon:if test="#{!controller.showDetailProjectWindow}">
 												<ui:param name="lookupTo" value="#{parentValue}" />
-												<ui:param name="skipLabel" value="#{true}" />
-												<ui:param name="skipGoToButton" value="#{true}" />
-												<ui:param name="lookupSuffix" value="-Modal" />
-											</ui:include>
-										</aon:if>
-										<aon:if test="#{controller.showDetailProjectWindow and showProjectLookup}">
-											<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+											</aon:if>
+											<aon:if test="#{controller.showDetailProjectWindow}">
 												<ui:param name="lookupTo" value="#{detailValue}" />
-												<ui:param name="skipLabel" value="#{true}" />
-												<ui:param name="skipGoToButton" value="#{true}" />
-												<ui:param name="lookupSuffix" value="-Modal" />
-											</ui:include>
-										</aon:if>
+											</aon:if>
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="skipGoToButton" value="#{true}" />
+											<ui:param name="lookupSuffix" value="-Modal" />
+										</ui:include>
+
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

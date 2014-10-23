@@ -7,8 +7,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.ui.finance.controller.InvoiceController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -33,10 +31,12 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 			invoice.setTaxDate(invoice.getIssueDate());
 
-			invoiceController.loadAddresses(null);
-			invoiceController.loadProjects(null);
-			invoiceController.setFinanceGenerationMode(0);
 			invoiceController.initSeries();
+			invoiceController.loadAddresses(null);
+			invoiceController.setProjects(null);
+			invoiceController.setSavedProject(null);
+			invoiceController.setShowProjectLookup(false);
+			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -48,21 +48,32 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			InvoiceController invoiceController = (InvoiceController)this.getController(); 
 			Invoice invoice = (Invoice)invoiceController.getTo();
 
-			invoiceController.loadAddresses(invoice.getRegistry().getId());
-			invoiceController.loadProjects(invoice.getRegistry().getId());
 			invoiceController.initSeries(false);
+			invoiceController.loadAddresses(invoice.getRegistry().getId());
+			invoiceController.setProjects(null);
+			invoiceController.setSavedProject(invoice.getProject());
+			invoiceController.setShowProjectLookup(true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
 	}
 	
 	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceController invoiceController = (InvoiceController)this.getController();
 		Invoice invoice = (Invoice)invoiceController.getTo();
-		if (invoice.getProject() != null && invoice.getProject().getId() != null) {
-			IController invoiceDetailController = FormUtil.getController(invoiceController.getInvoiceDetailControllerName());
-			invoiceDetailController.onSearch(null);
+
+		invoiceController.setSavedProject(invoice.getProject());
+		invoiceController.setShowProjectLookup(true);
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceController invoiceController = (InvoiceController)this.getController();
+		try {
+			invoiceController.linkProject(invoiceController.getInvoice(), true);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
 		}
 	}
 	

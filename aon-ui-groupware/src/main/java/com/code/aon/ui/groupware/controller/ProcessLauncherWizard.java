@@ -404,9 +404,9 @@ public class ProcessLauncherWizard implements Serializable {
 		}
 	}
 
-	private void addProject(Project dossier) throws ManagerBeanException {
+	private void addProject(Project project) throws ManagerBeanException {
 		CampaignProject cd = new CampaignProject();
-		cd.setProject(dossier);
+		cd.setProject(project);
 		if (validate(cd)) {
 			getProjects().add(cd);
 			setRegistry( (Registry) BeanManager.getManagerBean(Registry.class).createNewTo() );

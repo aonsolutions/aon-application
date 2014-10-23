@@ -149,7 +149,7 @@ public class ImportActivitiesController implements Serializable {
 				list.add(ca);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error loading dossiers", e);
+			LOGGER.error("Error loading projects", e);
 		}
 		setModel(new SerializableListDataModel(list));
 	}

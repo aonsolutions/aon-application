@@ -66,8 +66,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.tas.ProjectTas;
-import com.code.aon.tas.enumeration.ProjectStatus;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
@@ -76,6 +75,8 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.project.controller.IProjectConstants;
+import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
@@ -98,11 +99,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
 	private boolean showRegistryDataWindow;
-	private boolean showSellerDataWindow;
 	private boolean showInvoiceAddressWindow;
+	private Project savedProject;
+	private boolean showProjectLookup;
 	private boolean showProjectWindow;
-	private boolean showNewProjectWindow;
 	private boolean showDetailProjectWindow;
+	private Seller savedSeller;
+	private boolean showSellerDataWindow;
 	private boolean showDocumentWindow;
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
@@ -253,30 +256,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 		return 0;
 	}
-	
+
+	public boolean isProjectListEnabled() {
+		return getProjectCount() > 0 && getProjectCount() <= 20;
+	}
+
 	public void loadProjects(Integer registryId) throws ManagerBeanException {
 		this.projects = new LinkedList<SelectItem>();
 		if (registryId != null) {
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			Criteria criteria = new Criteria();
-			if (getInvoice().getType() == InvoiceType.SALES) {
-				criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), registryId);
-			}
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
-			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
-			for (ITransferObject ito : projectBean.getList(criteria)) {
-				Project project = (Project)ito;
-				SelectItem item = new SelectItem(project, project.getName());
-				projects.add(item);
-			}
+			ProjectCollectionsController projectColls = (ProjectCollectionsController)AonUtil.getRegisteredBean(IProjectConstants.PROJECT_COLLECTIONS_CONTROLLER_NAME);
+			projects.addAll(projectColls.getProjects(registryId));
 		}
 	}
-
-	public void loadInvoiceProjects(ActionEvent event) throws ManagerBeanException {
-		Invoice invoice = (Invoice) this.getTo();
-		loadProjects(invoice.getRegistry().getId());
-	}
-	
 
 	public boolean isShowPaymentDataInListView() {
 		return showPaymentDataInListView;
@@ -292,14 +283,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	public void setShowRegistryDataWindow(boolean value) {
 		this.showRegistryDataWindow = value;
-	}
-
-	public boolean isShowSellerDataWindow() {
-		return showSellerDataWindow;
-	}
-
-	public void setShowSellerDataWindow(boolean value) {
-		this.showSellerDataWindow = value;
 	}
 
 	public boolean isShowInvoiceAddressWindow() {
@@ -318,20 +301,32 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 	}
 
+	public Project getSavedProject() {
+		return savedProject;
+	}
+
+	public void setSavedProject(Project savedProject) {
+		this.savedProject = null;
+		if (savedProject != null && savedProject.getId() != null) {
+			this.savedProject = new Project();
+			this.savedProject.setId(savedProject.getId());
+		}
+	}
+
+	public boolean isShowProjectLookup() {
+		return showProjectLookup;
+	}
+
+	public void setShowProjectLookup(boolean value) {
+		this.showProjectLookup = value;
+	}
+
 	public boolean isShowProjectWindow() {
 		return showProjectWindow;
 	}
 
 	public void setShowProjectWindow(boolean value) {
 		this.showProjectWindow = value;
-	}
-
-	public boolean isShowNewProjectWindow() {
-		return showNewProjectWindow;
-	}
-
-	public void setShowNewProjectWindow(boolean showNewProjectWindow) {
-		this.showNewProjectWindow = showNewProjectWindow;
 	}
 
 	public boolean isShowDetailProjectWindow() {
@@ -342,56 +337,70 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.showDetailProjectWindow = value;
 	}
 
-	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
-		linkProject(getInvoice().getProject(), true);
-
-		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
-		invoiceDetailController.onSearch(null);
+	public Seller getSavedSeller() {
+		return savedSeller;
 	}
 
-	public void removeInvoiceProject(ActionEvent event) throws ManagerBeanException {
-		Project project = getInvoice().getProject();
-		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
-			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
-			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
-			if (projectTas.getStatus() == ProjectStatus.CLOSED) {
-				projectTas.setStatus(ProjectStatus.PENDING);
-				projectTasBean.update(projectTas);
+	public void setSavedSeller(Seller savedSeller) {
+		this.savedSeller = null;
+		if (savedSeller != null && savedSeller.getId() != null) {
+			this.savedSeller = new Seller();
+			this.savedSeller.setId(savedSeller.getId());
+		}
+	}
+
+	public boolean isShowSellerDataWindow() {
+		return showSellerDataWindow;
+	}
+
+	public void setShowSellerDataWindow(boolean value) {
+		this.showSellerDataWindow = value;
+	}
+
+	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
+		linkProject(getInvoice(), false);
+	}
+
+	public void linkProject(Invoice invoice, boolean onlyDetails) throws ManagerBeanException {
+		boolean detailsChanged = false;
+		Project project = (invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null;
+		setSavedProject((getSavedProject() != null && getSavedProject().getId() != null) ? getSavedProject() : null);
+		if ((project == null && getSavedProject() != null) || (project != null && !project.equals(getSavedProject()))) {
+			if (!onlyDetails) {
+				invoice.setUpdateEnabled(false);
+				getManagerBean().restoreNullSubPOJOs(invoice);
+				getManagerBean().update(invoice);
+				getManagerBean().initializePOJO(invoice);
+			}
+
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			if (project == null) {
+				criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT));
+			} else {
+				if (getSavedProject() == null) {
+					criteria.addNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT));
+				} else {
+					criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT_ID), getSavedProject().getId());
+				}
+			}
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				invoiceDetail.setProject(project);
+				invoiceDetail.setUpdateEnabled(false);
+				invoiceDetailBean.update(invoiceDetail);
+				detailsChanged = true;
 			}
 		}
-		linkProject(project, false);
+		setSavedProject(invoice.getProject());
 
-		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
-		invoiceDetailController.onSearch(null);
-	}
-
-	private void linkProject(Project project, boolean link) throws ManagerBeanException {
-		Invoice to = getInvoice();
-		to.setProject((link) ? project : null);
-		to.setUpdateEnabled(false);
-		getManagerBean().restoreNullSubPOJOs(to);
-		getManagerBean().update(to);
-
-		to.setUpdateEnabled(true);
-		getManagerBean().initializePOJO(to);
-		loadProjects(to.getRegistry().getId());
-
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), to.getId());
-		if (link) {
-			criteria.addNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT));
-		} else {
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PROJECT_ID), project.getId());
-		}
-		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-			invoiceDetail.setProject((link) ? project : null);
-			invoiceDetail.setUpdateEnabled(false);
-			invoiceDetailBean.update(invoiceDetail);
+		if (detailsChanged) {
+			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+			invoiceDetailController.onSearch(null);
 		}
 	}
-	
+
 	public boolean isShowDocumentWindow() {
 		return showDocumentWindow;
 	}
@@ -905,10 +914,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	private boolean isRegistryReadOnly(Invoice invoice) throws ManagerBeanException {
-		if (invoice.getType() == InvoiceType.SALES && invoice.getProject() != null && invoice.getProject().getId() != null) {
-			return true;
-		}
-
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
@@ -1132,7 +1137,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public String showAmortization() {
 		try {
-			IController controller = (IController) AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
+			IController controller = (IController)AonUtil.getRegisteredBean(AMORTIZATION_CONTROLLER_NAME);
 			controller.onEditSearch(null);
 			Criteria criteria = controller.getCriteria();
 		
@@ -1188,7 +1193,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public void onViewAccountEntry(ActionEvent event) {
 		try {
-			BasicController entryController = (BasicController) FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
+			BasicController entryController = (BasicController)FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), getAccountEntryId());
 			entryController.setCriteria(criteria);
@@ -1210,7 +1215,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 	@Override
 	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
-		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		ConfigCollectionsController ccc = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		if ( (getInvoice() != null) && isRectifier() ) {
 			return ccc.getRectificationSeriesIds();
 		} else {

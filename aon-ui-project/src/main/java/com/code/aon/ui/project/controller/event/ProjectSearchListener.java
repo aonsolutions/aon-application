@@ -16,6 +16,7 @@ public class ProjectSearchListener extends ControllerSearchListener {
 	
 	private Registry registry;
     private ProjectType projectType;
+    private boolean active;
 	
 	public Registry getRegistry() {
 		return registry;
@@ -30,21 +31,30 @@ public class ProjectSearchListener extends ControllerSearchListener {
 	public void setProjectType(ProjectType projectType) {
 		this.projectType = projectType;
 	}
-	
+
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setProjectType((ProjectType)BeanManager.getManagerBean(ProjectType.class).createNewTo());
+		setActive(true);
 	}
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), getRegistry().getId());
-		}		
+		}
 		if ((getProjectType() != null) && (getProjectType().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
-		}		
+		}
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.valueOf(active));
 	}	
 
 }

@@ -364,7 +364,6 @@
 			<ui:param name="detailReRender" value="incomeDetails" />
 			<aon:methodParam name="detailActionListener" value="#{incomeDetail.addIncomeDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{incomeDetail.incomeDetail.project}" />
-			<ui:param name="showProjectLookup" value="#{true}" />
 			<aon:if test="#{!aonConfiguration.bean.income.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 			</aon:if>

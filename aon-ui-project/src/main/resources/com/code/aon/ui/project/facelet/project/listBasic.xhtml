@@ -12,18 +12,18 @@
 		<aon:outputText value="#{to.name}" />
 	</aon:column>
 
-	<aon:column alias="Project.registry.name" styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-auto">
+	<aon:column alias="Project.alias" styleClass="aon-editDataTable-textColumn aon-width-120">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.project_assigned}" />
+			<aon:outputText value="#{bundle.aon_alias}" />
 		</f:facet>
-		<aon:outputText value="#{to.registry.fullName}" />
+		<aon:outputText value="#{to.alias}" />
 	</aon:column>
 
-	<aon:column alias="Project.projectType" styleClass="aon-editDataTable-textColumn aon-width-150">
+	<aon:column alias="Project.registry.name" styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.project_project_type}" />
+			<aon:outputText value="#{bundle.aon_holder}" />
 		</f:facet>
-		<aon:outputText value="#{to.projectType.description}" />
+		<aon:outputText value="#{to.registry.fullName}" />
 	</aon:column>
 
 </ui:composition>

@@ -78,14 +78,12 @@ public class PurchaseInvoiceController extends InvoiceController {
 			invoice.setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
 			invoice.setRegistry(supplier.getRegistry());
 			loadAddresses(supplier.getId());
-			loadProjects(supplier.getId());
 			validateInvoice();
 		} else {
 			invoice.setRegistryAddress(null);
 			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 
 			setAddresses(null);	
-			setProjects(null);
 		}
 	}
 

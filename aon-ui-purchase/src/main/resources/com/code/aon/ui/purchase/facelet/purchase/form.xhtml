@@ -443,7 +443,6 @@
 			<ui:param name="detailReRender" value="purchaseDetailData" />
 			<aon:methodParam name="detailActionListener" value="#{purchaseDetail.addPurchaseDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{purchaseDetail.purchaseDetail.project}" />
-			<ui:param name="showProjectLookup" value="#{true}" />
 			<aon:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 			</aon:if>
