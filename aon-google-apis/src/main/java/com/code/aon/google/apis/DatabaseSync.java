@@ -1510,14 +1510,13 @@ public static void addTaskId(String taskId,int id, String domain) throws SQLExce
 			rs = stmt.executeQuery();
 			
 			
+			if (!rs.next())
+				return null;
+
 			InputStream is;
-			if (rs.next())
-				is = rs.getAsciiStream(RattachColumns.DATA);
-			else
-				is = null;
-			
-			
-	
+			is = rs.getAsciiStream(RattachColumns.DATA);
+			if ( is == null )
+				return null;
 			byte data [] =  Utils.InputStreamToByte(is);
 			
 			is.close();
