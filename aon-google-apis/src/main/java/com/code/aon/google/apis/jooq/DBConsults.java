@@ -164,6 +164,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(CONTRACT_ATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record5<Integer, Byte, String, Byte, String> record5 : contract_attach) {
@@ -340,6 +341,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(IATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record5<Integer, Byte, String, Byte, String> record5 : iattach) {
@@ -484,6 +486,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(INVOICE_ATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record5<Integer, Byte, String, Byte, String> record5 : invoiceAttach) {
@@ -661,6 +664,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(OFFER_ATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record4<Integer, Byte, String, String> record4 : offerAttach) {
@@ -806,6 +810,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(PAYROLL_BATCH_ATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record5<Integer, Byte, String, Byte, String> record5 : payrollAttach) {
@@ -954,6 +959,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(PROJECT_ATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record4<Integer, Byte, String, String> record4 : projectAttach) {
@@ -1135,6 +1141,7 @@ public class DBConsults {
 							.eq(domain)
 							.or(DOMAIN.PARENT.in(dslContext.select(DOMAIN.ID)
 									.from(DOMAIN).where(DOMAIN.NAME.eq(domain)))))
+					.and(SEPE_BATCH_ATTACH.DATA.isNotNull())
 					.fetch();
 
 			for (Record5<Integer, Byte, String, Byte, String> record5 : sepeAttach) {
