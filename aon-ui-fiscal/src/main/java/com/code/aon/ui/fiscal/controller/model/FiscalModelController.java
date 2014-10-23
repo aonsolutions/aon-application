@@ -169,7 +169,7 @@ public abstract class FiscalModelController extends BasicController implements I
 		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil
 				.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 		String defYear = fiscalParams.getDefaultYear();
-		to.setYear(defYear == null ? null : Integer.parseInt(defYear));
+		to.setYear(StringUtils.isEmpty(defYear) ? null : Integer.parseInt(defYear));
 		Administration admon = fiscalParams.getDefaultAdministration();
 		if (admon == null) {
 			to.setAdministration(Administration.COMMON_TERRITORY);

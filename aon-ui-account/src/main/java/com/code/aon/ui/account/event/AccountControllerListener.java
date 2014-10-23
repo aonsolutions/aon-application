@@ -1,5 +1,7 @@
 package com.code.aon.ui.account.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.common.ManagerBeanException;
@@ -29,8 +31,8 @@ public class AccountControllerListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			AccountController ac = (AccountController) event.getController();
-			if ( ac.getOrderAlias() == null ) {
-					ac.getCriteria().addOrder( ac.getFieldName(IEntityAlias.ACCOUNT_CODE) );
+			if ( StringUtils.isEmpty(ac.getOrderAlias()) ) {
+				ac.getCriteria().addOrder( ac.getFieldName(IEntityAlias.ACCOUNT_CODE) );
 			} else {
 				ac.getCriteria().addOrder( ac.getOrderAlias() );
 			}

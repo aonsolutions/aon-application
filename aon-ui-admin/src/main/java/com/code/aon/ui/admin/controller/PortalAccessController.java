@@ -126,7 +126,7 @@ public class PortalAccessController implements IAdminConstants, Serializable {
 				resetTo();
 			} else {
 				updateScopes();
-				if ( this.user.getInitAction() != null ) {
+				if ( StringUtils.isNotEmpty(this.user.getInitAction()) ) {
 					setPayrollPortal(true);
 				}
 			}

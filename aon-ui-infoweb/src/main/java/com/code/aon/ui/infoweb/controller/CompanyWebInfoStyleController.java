@@ -23,6 +23,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,7 +227,7 @@ public class CompanyWebInfoStyleController extends BasicController {
     }
 
 	public String getTemplate() {
-		if (template == null) {
+		if ( StringUtils.isEmpty(template) ) {
 			ApplicationParameter ap = AppParamUtil.getParameter(AppParam.WEBINFO_TEMPLATE_NAME);
 			if ( ap != null ) {
 				template = ap.getValue();				
@@ -342,7 +343,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 	}
 
 	public boolean isTemplateSelected() {
-		return template != null;
+		return StringUtils.isNotEmpty(template);
 	}
 	
 	public List<SelectItem> getImages() throws ManagerBeanException {

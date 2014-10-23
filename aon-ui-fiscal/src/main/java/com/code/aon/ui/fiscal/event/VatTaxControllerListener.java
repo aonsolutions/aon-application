@@ -1,5 +1,7 @@
 package com.code.aon.ui.fiscal.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -19,7 +21,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 		VatTaxController c = (VatTaxController) event.getController();		
 		VatTax vatTax = (VatTax) c.getTo();
 		String defYear = c.getFiscalParams().getDefaultYear();
-		vatTax.setYear( defYear==null?null:Integer.parseInt(defYear) );
+		vatTax.setYear(StringUtils.isEmpty(defYear)?null:Integer.parseInt(defYear) );
 		vatTax.setStatus( VatTaxStatus.PENDING);
 		vatTax.setComplementary(false);
 		vatTax.setReplacement(false);

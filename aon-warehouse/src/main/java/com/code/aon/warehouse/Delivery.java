@@ -159,7 +159,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 		return null;
 	}
 	public void setStatusModificationHour(String hour){
-		if(this.getStatusModificationDate()!=null && hour!=null){
+		if(this.getStatusModificationDate()!=null && StringUtils.isNotEmpty(hour)){
 			this.setStatusModificationDate(DateUtils.setHours(this.getStatusModificationDate(), Integer.parseInt(hour)));
 		}
 	}
@@ -172,7 +172,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 		return null;
 	}
 	public void setStatusModificationMinute(String minute){
-		if(this.getStatusModificationDate()!=null && minute!=null){
+		if(this.getStatusModificationDate()!=null && StringUtils.isNotEmpty(minute)){
 			this.setStatusModificationDate(DateUtils.setMinutes(this.getStatusModificationDate(), Integer.parseInt(minute)));
 		}
 	}
