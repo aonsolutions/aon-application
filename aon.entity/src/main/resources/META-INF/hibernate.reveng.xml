@@ -1188,6 +1188,10 @@
 		<column name="data" exclude="true" />
 	</table>
 
+	<table name="project">
+		<column name="dossier" exclude="true" />
+	</table>
+
 	<table name="project_commercial">
 		<primary-key>
 			<key-column name="project" property="id" type="java.lang.Integer"/>

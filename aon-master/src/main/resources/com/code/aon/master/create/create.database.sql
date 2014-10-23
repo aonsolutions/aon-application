@@ -847,6 +847,7 @@ CREATE TABLE `project` (
   `project_type` int(4) default NULL COMMENT 'Tipo de Proyecto',
   `tas` tinyint(1) default '0' COMMENT 'Indica si se trata de una Orden de Reparacion o Fabricacion',
   `commercial` tinyint(1) default '0' COMMENT 'Indica si se trata de una Operacion Comercial',
+  `dossier` tinyint(1) default '0' COMMENT 'Indica si se trata de un Expediente de Cliente',
   `reservation` tinyint(1) default '0' COMMENT 'Indica si se trata de una Reserva',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Proyecto esta activo o no',
   PRIMARY KEY  (`id`),

@@ -5,8 +5,6 @@
 
 BEGIN;
 
-ALTER TABLE `project` DROP `dossier`;
-
 UPDATE `project`, `project_reservation` SET `active` = 1 
 	WHERE `project_reservation`.`project` = `project`.`id` AND `project_reservation`.`status` = 0;
 UPDATE `project`, `project_reservation` SET `active` = 0 
