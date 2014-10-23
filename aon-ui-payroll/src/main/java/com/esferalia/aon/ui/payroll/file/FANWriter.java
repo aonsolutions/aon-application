@@ -870,7 +870,7 @@ public class FANWriter implements Serializable {
 		if(bonus.getType()==BonusType.DISTANCE_FORMATION){
 			EDL edl = dat.getEdlSegment("CD11");
 			Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
-			Integer days = obtainFormationDays();
+			Integer days = obtainFormationDays(bonus.getSalary().getContract());
 			createEDLRecord(edl, "CD", 11, days, amount);
 		}
 	}
@@ -883,7 +883,7 @@ public class FANWriter implements Serializable {
 		if(bonus.getType()==BonusType.CLASSROOM_FORMATION){
 			EDL edl = dat.getEdlSegment("CD10");
 			Integer amount = new Double(CommonUtil.round((bonus).getAmount())*100).intValue();
-			Integer days = obtainFormationDays();
+			Integer days = obtainFormationDays(bonus.getSalary().getContract());
 			createEDLRecord(edl, "CD", 10, days, amount);
 		}
 	}
@@ -1421,9 +1421,9 @@ public class FANWriter implements Serializable {
 	 * numero de horas destinadas a formacion para las bonificaciones por formacion
 	 * @return
 	 */
-	private Integer obtainFormationDays() {
+	private Integer obtainFormationDays(Contract contract) {
 		// TODO how obtain formation hours count
-		return (int)getAvailableDays(getStartDate(), getEndDate());
+		return getContractDaysOrHours(contract);
 	}
 	
 	/**

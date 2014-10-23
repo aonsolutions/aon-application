@@ -33,7 +33,7 @@
 					<a4j:support 
 						event="onchange"
 						actionListener="#{cnaeRate.onReloadModel}"
-						reRender="cnaeRateTable"
+						reRender="cnaeRateTable, occupationTable"
 						eventsQueue="cnaeRateFilterKeyUp"
 						requestDelay="500"
 						ajaxSingle="true"
@@ -42,6 +42,94 @@
 	   			</rich:inputNumberSpinner>
 			</aon:panelGrid>	
 		</aon:div>
+		
+		<aon:panel id="occupationTable" style="width: 750px; margin-top: 20px;">
+			<aon:panelGrid columns="4" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-even aon-text-center aon-nopadding aon-width-80,
+									aon-panelGrid-even aon-nopadding aon-width-auto,
+									aon-panelGrid-even aon-text-center aon-nopadding aon-width-120,
+									aon-panelGrid-even aon-text-center aon-nopadding aon-width-120">
+				<f:facet name="header">
+					<aon:outputText value="Tipos aplicables a ocupaciones y situaciones en todas las actividades " />
+				</f:facet>
+	
+				<aon:div style="background-color: #f0f0f0;">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div style="background-color: #f0f0f0;">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div style="background-color: #f0f0f0;">
+					<aon:outputText value="IT" />
+				</aon:div>
+				<aon:div style="background-color: #f0f0f0;">
+					<aon:outputText value="IMS" />
+				</aon:div>
+				
+				<aon:outputText value="a" />
+				<aon:outputText value="Personal en trabajos exclusivos de oficina." />
+				<aon:outputText value="#{cnaeRate.itValues['a']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['a']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="b" />
+				<aon:outputText value="Representantes de Comercio." />
+				<aon:outputText value="#{cnaeRate.itValues['b']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['b']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="d" />
+				<aon:outputText value="Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcción en general." />
+				<aon:outputText value="#{cnaeRate.itValues['d']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['d']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="e" />
+				<aon:outputText value="&#160;" />
+				<aon:outputText value="#{cnaeRate.itValues['e']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['e']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="f" />
+				<aon:outputText value="Conductores de vehículo automóvil de transporte de mercancías que tenga una capacidad de carga útil superior a 3,5 Tm." />
+				<aon:outputText value="#{cnaeRate.itValues['f']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['f']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="g" />
+				<aon:outputText value="Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles." />
+				<aon:outputText value="#{cnaeRate.itValues['g']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['g']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				
+				<aon:outputText value="h" />
+				<aon:outputText value="Vigilantes, guardas, guardas jurados y personal de seguridad. " />
+				<aon:outputText value="#{cnaeRate.itValues['h']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:outputText value="#{cnaeRate.imsValues['h']}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:panelGrid>
+		</aon:panel>
 	
 		<aon:dataTable id="cnaeRateTable" value="#{cnaeRate.model}" var="to">
 

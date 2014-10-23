@@ -212,6 +212,9 @@ public class CertificadosWriter implements Serializable {
 			o.setApellido1(createApellidoSimpleType(ap1));
 			o.setApellido2(StringUtils.isBlank(ap2)?null:ap2);
 			o.setCargo(cargo);
+		} else {
+			LOGGER.error("No se han definido los datos del representante laboral");
+			AonUtil.addErrorMessage("No se han definido los datos del representante laboral");
 		}
 		return o;
 	}

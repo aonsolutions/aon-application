@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.IPayrollTablesEnum;
 import com.esferalia.aon.payroll.enumeration.ss.SSCodeTables;
 import com.esferalia.aon.ui.sepe.controller.SepeTablesController;
@@ -21,13 +22,17 @@ public class PayrollCodeTablesController extends SepeTablesController {
 
 	final static String SS_ENUMERATIONS_PACKAGE_NAME 		= "com.esferalia.aon.payroll.enumeration.ss";
 	
+	final static String SS_TAB_NAME 						= "ss";
+
+	final static String QUOTE_TAB_NAME 						= "quote";
+	
 	private DataModel ssTablesModel;
 
 	private SSCodeTables ssTable;
 
 	
 	private boolean isSSSelected(){
-		return StringUtils.equals(getSelectedTab(),"ss");
+		return StringUtils.equals(getSelectedTab(), SS_TAB_NAME);
 	}
 	
 	public DataModel getSsTablesModel() {
@@ -68,7 +73,9 @@ public class PayrollCodeTablesController extends SepeTablesController {
 		
 	@Override
 	public void onInit(ActionEvent event){
-		setSelectedTab("ss");
+		setSelectedTab(QUOTE_TAB_NAME);
+		QuoteValuesController quoteValues = (QuoteValuesController) AonUtil.getRegisteredBean("quoteValues");
+		quoteValues.onInitialize(event);
 		super.onSelectTab(event);
 	}
 	

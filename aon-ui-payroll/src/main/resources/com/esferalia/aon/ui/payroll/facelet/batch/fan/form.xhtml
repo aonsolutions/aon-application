@@ -20,10 +20,10 @@
 			<ui:param name="controllerAttach" value="#{fanBatchAttach}" />
 			
 			<ui:define name="moreToolbarContent" >
-				<aon:htmlCommandLink id="fan-excel-report"
+				<aon:htmlCommandLink id="quote-excel-report"
 					rendered="#{fanBatch.recorded}"
 					value="#{bundle.aon_listing}"
-					target="_blank" action="#{fanBatch.onExcelReport}"
+					target="_blank" action="#{fanBatch.onQuoteExcelReport}"
 					styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 				</aon:htmlCommandLink>
 			</ui:define>

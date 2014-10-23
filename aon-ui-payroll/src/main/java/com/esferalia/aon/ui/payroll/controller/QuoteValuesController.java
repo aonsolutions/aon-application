@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
@@ -36,6 +35,8 @@ public class QuoteValuesController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuoteValuesController.class.getName());
+	
+	private final Integer GENERAL_QUOTE_DOMAIN_ID = 0;
 	
 	private Integer year;
 	private String filter;
@@ -67,18 +68,18 @@ public class QuoteValuesController implements Serializable {
 		this.values = values;
 	}
 	
-	public void onInitialize(ActionEvent event) throws ManagerBeanException{
+	public void onInitialize(ActionEvent event) {
 		setFilter(null);
 		setYear(CommonUtil.getYear(new Date()));
 		setValues(null);
 		initializeModel();
 	}
 	
-	public void onReloadModel(ActionEvent event) throws ManagerBeanException{
+	public void onReloadModel(ActionEvent event) {
 		initializeModel();
 	}
 	
-	private void initializeModel() throws ManagerBeanException {
+	private void initializeModel() {
 		values = new HashMap<String, Double>();
 		
 		Result<Record4<String, String, java.sql.Date, java.sql.Date>> record = getGeneralRegimeQuoteValues();
@@ -385,7 +386,7 @@ public class QuoteValuesController implements Serializable {
 			Result<Record4<String, String, java.sql.Date, java.sql.Date>> record = ctx
 					.select(SYSTEM_DATA.NAME, SYSTEM_DATA.EXPRESSION, SYSTEM_DATA.START_DATE, SYSTEM_DATA.END_DATE)
 					.from(SYSTEM_DATA)
-					.where(SYSTEM_DATA.DOMAIN.equal(0))
+					.where(SYSTEM_DATA.DOMAIN.equal(GENERAL_QUOTE_DOMAIN_ID))
 					.and(SYSTEM_DATA.START_DATE.lessOrEqual(getSqlEndDate(getYear())))
 					.and(SYSTEM_DATA.END_DATE.greaterOrEqual(getSqlStartDate(getYear())).or(SYSTEM_DATA.END_DATE.isNull()))
 					.orderBy(SYSTEM_DATA.START_DATE.asc())
@@ -411,7 +412,7 @@ public class QuoteValuesController implements Serializable {
 			Result<Record4<String, String, java.sql.Date, java.sql.Date>> record = ctx
 					.select(SYSTEM_DEDUCTION.DESCRIPTION, SYSTEM_DEDUCTION.EXPRESSION, SYSTEM_DEDUCTION.START_DATE, SYSTEM_DEDUCTION.END_DATE)
 					.from(SYSTEM_DEDUCTION)
-					.where(SYSTEM_DEDUCTION.DOMAIN.equal(0))
+					.where(SYSTEM_DEDUCTION.DOMAIN.equal(GENERAL_QUOTE_DOMAIN_ID))
 					.and(SYSTEM_DEDUCTION.EXPRESSION.like("%PORCENTAJE_DESMPL%"))
 					.and(SYSTEM_DEDUCTION.START_DATE.lessOrEqual(getSqlEndDate(getYear())))
 					.and(SYSTEM_DEDUCTION.END_DATE.greaterOrEqual(getSqlStartDate(getYear())).or(SYSTEM_DEDUCTION.END_DATE.isNull()))
@@ -427,6 +428,8 @@ public class QuoteValuesController implements Serializable {
 		return null;
 	}
 	
+	
+	
 	private Result<Record4<String, String, java.sql.Date, java.sql.Date>> getGeneralRegimeUnemploymentEnterpriseValues() {
 		Connection connection = null;
 		try {
@@ -438,7 +441,7 @@ public class QuoteValuesController implements Serializable {
 			Result<Record4<String, String, java.sql.Date, java.sql.Date>> record = ctx
 					.select(SYSTEM_COST.CODE, SYSTEM_COST.EXPRESSION, SYSTEM_COST.START_DATE, SYSTEM_COST.END_DATE)
 					.from(SYSTEM_COST)
-					.where(SYSTEM_COST.DOMAIN.equal(0))
+					.where(SYSTEM_COST.DOMAIN.equal(GENERAL_QUOTE_DOMAIN_ID))
 					.and(SYSTEM_COST.CODE.equal("DESMPL_E"))
 					.and(SYSTEM_COST.START_DATE.lessOrEqual(getSqlEndDate(getYear())))
 					.and(SYSTEM_COST.END_DATE.greaterOrEqual(getSqlStartDate(getYear())).or(SYSTEM_COST.END_DATE.isNull()))

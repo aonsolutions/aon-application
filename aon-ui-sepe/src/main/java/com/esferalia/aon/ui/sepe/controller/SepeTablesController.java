@@ -23,6 +23,10 @@ public class SepeTablesController implements Serializable {
 	
 	final static String CERTIFICADOS_ENUMERATIONS_PACKAGE_NAME 	= "com.esferalia.aon.payroll.enumeration.certificados";
 	
+	final static String CONTRATA_TAB_NAME 						= "contrata";
+	
+	final static String CERTIFICADOS_TAB_NAME 					= "certificados";
+	
 	private DataModel contrataTablesModel;
 
 	private DataModel certificadosTablesModel;
@@ -115,11 +119,11 @@ public class SepeTablesController implements Serializable {
 	}
 	
 	private boolean isContrataSelected(){
-		return StringUtils.equals(getSelectedTab(),"contrata");
+		return StringUtils.equals(getSelectedTab(), CONTRATA_TAB_NAME);
 	}
 
 	private boolean isCertificadosSelected(){
-		return StringUtils.equals(getSelectedTab(),"certificados");
+		return StringUtils.equals(getSelectedTab(), CERTIFICADOS_TAB_NAME);
 	}
 
 	public String getSelectedTableLabel(){
@@ -132,7 +136,7 @@ public class SepeTablesController implements Serializable {
 	}
 	
 	public void onInit(ActionEvent event){
-		setSelectedTab("ss");
+//		setSelectedTab("ss");
 		onSelectTab(event);
 	}
 	public void onSelectTab(ActionEvent event){

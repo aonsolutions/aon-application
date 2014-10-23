@@ -55,6 +55,7 @@ import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANReportWriter;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
+import com.esferalia.aon.ui.payroll.file.QuoteReportWriter;
 
 
 public class FanBatchController extends BasicController {
@@ -252,6 +253,49 @@ public class FanBatchController extends BasicController {
 		} catch (AonConnectionException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn);
+		}
+	}
+
+	public String onQuoteExcelReport() {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat();
+		Connection conn = null; 
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Locale locale = AonUtil.getCurrentLocale();
+			QuoteReportWriter writer = new QuoteReportWriter();
+			
+			FanBatch batch = (FanBatch) getTo();
+			batch.setStatus(FileStatus.PENDING);
+			batch.setLiquidationType(LiquidationType.L00);
+			
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			String fileName = batch.getLiquidationType().getValue() + "_";
+			fileName += batch.getMonth().getName(locale) + "_";
+			fileName += batch.getYear();
+			dateFormatter.applyPattern("yyyy/MM/dd_HH:mm:ss");
+			fileName += " - " + dateFormatter.format(new Date());
+			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+			ServletOutputStream output = response.getOutputStream();
+			
+			List<Integer> cccList = new LinkedList<Integer>();
+			for(EnterpriseCCC ccc: this.getEnterpriseCCCList()){
+				cccList.add(ccc.getId());
+			}
+			writer.excelReport(batch.getYear(), batch.getMonth(), null, cccList, output);
+			
+			response.flushBuffer();
+			faces.responseComplete();
+			return null;
+		} catch (ReportException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
 			DatabaseUtil.closeQuietly(conn);

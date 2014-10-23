@@ -99,7 +99,7 @@ public enum PdfFieldIndefinite implements IContractFieldName{
 	 */
 	PROFESSION,
 	CATEGORY,
-//	FUNCTIONS
+	FUNCTIONS(Boolean.TRUE),
 	WORKPLACE_FULL_ADDRESS,
 	WORKPLACE_FULL_ADDRESS_MORE,
 	EMPLOYEE_CONTRACT_DISTANCE(Boolean.TRUE, Boolean.TRUE),

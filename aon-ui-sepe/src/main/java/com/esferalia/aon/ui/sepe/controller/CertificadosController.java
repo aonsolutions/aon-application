@@ -470,9 +470,12 @@ public class CertificadosController implements ISepeHandler, Serializable {
 			if(getResponseFile()!=null && getResponseFile().getId()!=null){
 				bean.remove(getResponseFile());
 			}
+			if(getGeneratedFile()!=null && getGeneratedFile().getId()!=null){
+				bean.remove(getGeneratedFile());
+			}
 			initialize(getContract());
 		} catch (ManagerBeanException e) {
-			String msg = "No se han podido guardar los datos de respuesta de Certific@2";
+			String msg = "No se han podido borrar los datos de Certific@2";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());

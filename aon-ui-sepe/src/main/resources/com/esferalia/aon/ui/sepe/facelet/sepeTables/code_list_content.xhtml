@@ -17,7 +17,7 @@
 			</ui:define>
 		</ui:decorate>			
 
-		<aon:div styleClass="aon-scroll-area">
+		<aon:div styleClass="aon-scroll-area" id="codesPanel">
 		
 			<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
 				<aon:div styleClass="aon-panelGrid-search-info">
@@ -35,12 +35,12 @@
 							ignoreDupResponses="true"
 							limitToList="true"/>
 					</aon:inputText>
-					<aon:outputText value="#{bundle.aon_active}:" styleClass="aon-margin-left"/>
+					<aon:outputText value="#{bundle.payroll_current}" styleClass="aon-margin-left"/>
 					<aon:selectBooleanCheckbox value="#{controller.activeCodes}" >
 						<a4j:support 
 							event="onclick"
 							actionListener="#{controller.onInitCodesModels}"
-							reRender="codeList"
+							reRender="codeList, codesPanel"
 							eventsQueue="codeListKeyUp"
 							requestDelay="500"
 							ajaxSingle="true"

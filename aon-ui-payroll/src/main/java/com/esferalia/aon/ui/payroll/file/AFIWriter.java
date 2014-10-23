@@ -245,7 +245,8 @@ public class AFIWriter implements Serializable {
 			if(weekHours!=null && NumberUtils.isNumber(weekHours)){
 				Double hoursPercent = Double.parseDouble(weekHours) * 2.5;
 				int percent = (int)CommonUtil.ceil(hoursPercent, 0);
-				fab.setCoeficienteTiempoParcial( autoComplete(String.valueOf(percent), 3, "0", false) );
+				String percentValue = autoComplete(String.valueOf(percent), 2, "0", true);
+				fab.setCoeficienteTiempoParcial( autoComplete(percentValue, 3, "0", false) );
 			}
 		}
 		fab.setColectivoTrabajador(null);	// TODO
