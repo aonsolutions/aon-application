@@ -22,7 +22,7 @@
 		<g:center>
 			<g:ScrollPanel styleName="aon-scroll-area {style.options-scroll-panel}">
 
-				<g:HTMLPanel styleName="aon-panelGrid-search aon-height-all">
+				<g:HTMLPanel styleName="aon-panelGrid-search">
 					<div class="aon-panelGrid-search-info ">
 						<span class="aon-panelGrid-search-info-internal">Introduzca los parámetros de cálculo:</span>
 						<a style="font-size:1em;font-weight:bold;float:right;" onclick=""
@@ -78,7 +78,7 @@
 								<g:Button ui:field="calcButton" enabled="false">Calcular</g:Button>
 							</td>
 						</tr>
-						<tr style="height:90%;">
+						<!--tr style="height:90%;">
 							<td class="aon-panelGrid-odd aon-height-all ">
 								<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
 							</td>
@@ -86,7 +86,7 @@
 								<aon:SelectDataGrid nameLabel="Empresa"
 									ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
 							</td>
-						</tr>
+						</tr-->
 					</table>
 
 
@@ -95,6 +95,9 @@
 			</g:ScrollPanel>
 
 		</g:center>
+		<g:west size="0">
+		    <g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="westTabPanel" />
+		</g:west>
 
 		<g:south size="0">
 			<aon:MinimizePanel ui:field="footPanel">

@@ -40,6 +40,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
@@ -135,6 +136,81 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			// TODO Auto-generated method stub
 
+		}
+	}
+
+	class CopyEmployeeCommand implements ScheduledCommand {
+
+		private Employee employeeCopy;
+
+		@Override
+		public void execute() {
+			employeeCopy = employee;
+			setPasteItemVisible(true);
+		}
+
+		private void setEmployeeCopy(Employee employee) {
+			this.employeeCopy = employee;
+		}
+
+		private void setPasteItemVisible(boolean visible) {
+			pasteItem.setVisible(visible);
+		}
+
+		public Employee getEmployeeCopy() {
+			return this.employeeCopy;
+		}
+	}
+
+	class PasteEmployeeCommand implements ScheduledCommand,
+			EmployeePopupCopy.Listener {
+		
+		private Employee employeePaste;
+
+		public PasteEmployeeCommand() {
+			paste = new EmployeePopupCopy();
+			paste.addListener(this);
+		}
+
+		@Override
+		public void execute() {
+			setEmployeePaste(singlenton.employeeContextMenu.getEmployeeCopy());
+			showPopUpPanel();
+		}
+		
+		private void showPopUpPanel() {
+			paste.showPopUpPanel();
+		}
+
+		@Override
+		public void onAcceptButtonClickButton(ClickEvent event) {
+			
+			if (paste.getStartDateWidget().getValue() == null) {
+				paste.getStartDateWidget().setStyleName(AON.AON_ICON_WARN);
+				paste.getStartDateWidget().setTitle("Campo obligatorio");
+				
+			} else {			
+
+				employeePaste.setStartDate(paste.getStartDateWidget().getValue());
+				employeePaste.setEndDate(paste.getEndDateWidget().getValue());
+				pasteContract(employeePaste, paste.getEspecificoValue(), null);
+				
+				paste.hide();				
+			}
+		}
+		
+		private void setEmployeePaste(Employee employee) {
+			this.employeePaste = employee;
+			paste.setFullName(employeePaste.getFullname());
+		}
+	}
+
+	class DeleteEmployeeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+
+			deleteContractConfirm(employee);
 		}
 	}
 
@@ -412,7 +488,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				Workplace getWorkplace() {
 					return workplace;
 				}
-
 			};
 
 			calcDialog.setDataProvider(employeeProvider);
@@ -496,6 +571,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class WorkplaceContextMenu extends ContextMenu {
 
 		CalcWorkplaceCommand calcCmd;
+		PasteEmployeeCommand pasteCmd;
 
 		public WorkplaceContextMenu() {
 
@@ -509,6 +585,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			MenuItem newItem = addItem("Nuevo", newPopup, AON.AON_ICON_RESET,
 					AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
+			pasteItem = addItem("Pegar", pasteCmd = new PasteEmployeeCommand(),
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+			pasteItem.setVisible(false);
 			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(),
 					AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
 			saveItem.setEnabled(false);
@@ -518,11 +597,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
-
 		}
 
 		public void setWorkplace(Workplace workplace) {
 			calcCmd.setWorkplace(workplace);
+		}
+		
+		private void setEmployee(Employee employee) {
+			pasteCmd.setEmployeePaste(employee);
+		}
+
+		private void showPastePanel() {
+			pasteCmd.showPopUpPanel();
 		}
 	}
 
@@ -557,7 +643,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
-
 		}
 
 		void setEnterprise(Enterprise enterprise) {
@@ -569,12 +654,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class EmployeeContextMenu extends ContextMenu {
 
 		private CalcEmployeeCommand calcCmd;
+		private CopyEmployeeCommand copyCmd;
 
 		public EmployeeContextMenu() {
 
 			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(),
 					AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
 			saveItem.setEnabled(false);
+			addSeparator();
+			addItem("Copiar", copyCmd = new CopyEmployeeCommand(), AON.AON_ICON_COPY,
+					AON.AON_ICON_CMD_BUTTON);
+
+			addItem("Eliminar", new DeleteEmployeeCommand(),
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			MenuItem runItem = addItem("Calcular",
 					calcCmd = new CalcEmployeeCommand(),
@@ -588,6 +680,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			calcCmd.setEmployee(employee);
 		}
 
+		public void setCopyEmployee(Employee employee) {
+			copyCmd.setEmployeeCopy(employee);
+		}
+		
+		public Employee getEmployeeCopy() {
+			return copyCmd.getEmployeeCopy();
+		}
 	}
 
 	abstract class AsyncEmployeeProvider extends AsyncDataProvider<Employee> {
@@ -667,6 +766,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private BonusEditor bonusEditor;
 	private PaymentEditor paymentEditor;
 	private DeductionEditor deductionEditor;
+	private EmployeePopupCopy paste;
 
 	private ResultsPanel resultsPanel;
 
@@ -680,6 +780,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private ShareResultsGrid shareResultsGrid;
 	private ListDataProvider<JsShareResult> shareResultsProvider;
+
+	private MenuItem pasteItem;
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -707,7 +809,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
-
 		jsf = new JSF();
 		cost = new Cost();
 		irpf = new Irpf();
@@ -868,10 +969,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onITDataSelected(ITDataObject dataObject) {
-
 		employeeDetail.setWidget(it);
 		it.setITEditor(dataObject);
-
 	}
 
 	@Override
@@ -948,7 +1047,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
 		employeeDetail.setWidget(eventsDraft);
 		eventsDraft.setEventsDraftObject(eventsDraftObject);
+	}
 
+	@Override
+	public void onCtrlCPressed(Employee employee) {
+		singlenton.employeeContextMenu.setCopyEmployee(employee);
+		pasteItem.setVisible(true);
+	}
+
+	@Override
+	public void onCtrlVPressed(Workplace workplace) {
+		Employee employee = singlenton.employeeContextMenu.getEmployeeCopy();
+		singlenton.workplaceContextMenu.setEmployee(employee);
+		singlenton.workplaceContextMenu.showPastePanel();
+	}
+
+	public void onCtrlXPress(Employee employee) {
+//		Window.alert("Ctrl X (...");
+	}
+
+	@Override
+	public void onSuprPress(Employee employee) {
+		deleteContractConfirm(employee);
 	}
 
 	// ---------------------------------------------- MetaData.Listener methods
@@ -994,7 +1114,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private void showResultsPanel() {
-		
+
 		InlineLabel tab = new InlineLabel("Resultados");
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
@@ -1003,13 +1123,60 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 	}
 
+	private void deleteContractConfirm(Employee employee) {
+
+		if (Window.confirm("\u00BFDesea eliminar a " + employee.getFullname()
+				+ "\u003F")) {
+			
+		}
+			deleteContract(employee, null);
+
+	}
+
+	private void pasteContract(Employee employee, boolean check,
+			final AsyncCallback<Employee> callback) {
+
+		employees.getEmployeesService().pasteContract(employee, check,
+				new AsyncCallback<Employee>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(Employee result) {
+
+						employees.load();
+						callback.onSuccess(result);				
+					}
+				});
+	}
+
+	private void deleteContract(Employee employee, final AsyncCallback<Void> callback) {
+
+		employees.getEmployeesService().deleteContract(employee,
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						employees.load();
+						callback.onSuccess(result);
+					}
+				});
+	}
+
 	// --------------------------------------------------------- Private methods
 
 	private static void showSalaryDraft(int employeeId, int workplaceId,
 			Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, true);
-
 	}
 
 	private static EmployeeTree getEmployeeTree() {

@@ -122,6 +122,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
+import com.esferalia.aon.gwt.payroll.sql.SQLEmployee;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
@@ -201,6 +202,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * The server side implementation of the RPC service.
@@ -210,7 +212,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService, StatisticsService {
 
 	public static final String REMOVE = "REMOVE()";
-	
 
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
 		{
@@ -355,8 +356,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqEmployees.getEmployees(conn, workplaceId, fromDate, pattern, offset,
-					limit);
+			return JooqEmployees.getEmployees(conn, workplaceId, fromDate,
+					pattern, offset, limit);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -865,6 +866,64 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public Employee pasteContract(Employee employee, boolean check)
+			throws IllegalArgumentException {
+		
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			SQLEmployee.save(conn, getDomainID(), employee.getId(), 
+					employee.getStartDate(), employee.getEndDate(), check);
+			commit(conn);
+			return employee;
+		} catch (SQLException ex) {
+			rollback(conn);
+			ex.printStackTrace();
+			throw new IllegalArgumentException(ex);
+		} finally {
+			enableAutoCommit(conn);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+				}
+			}
+			releaseFacesContext();
+		}	
+	}
+	
+	@Override
+	public void deleteContract(Employee employee)
+			throws IllegalArgumentException {
+		
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			SQLEmployee.delete(conn, employee.getId());
+			commit(conn);
+		} catch (SQLException ex) {
+			rollback(conn);
+			ex.printStackTrace();
+			throw new IllegalArgumentException(ex);
+		} finally {
+			enableAutoCommit(conn);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+				}
+			}
+			releaseFacesContext();
+		}	
+
+	}
+
+	
+	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -1085,8 +1144,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			int domainId = getDomainID();
 
-			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(conn, domainId,
-					getParentDomainID());
+			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(
+					conn, domainId, getParentDomainID());
 			List<Payment> employeePayments = Collections.emptyList();
 			/* getEmployeePayments(conn, employeeId); */
 			List<Payment> enterprisePayments = Collections.emptyList();
@@ -1383,17 +1442,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
 					workplaces);
 
-			//@formatter:off
-			ReportData reportData = new ReportData(
-					new ReportData.StringColumn("NIF"),
-					new ReportData.StringColumn("NOMBRE TRABAJADOR"),
+			// @formatter:off
+			ReportData reportData = new ReportData(new ReportData.StringColumn(
+					"NIF"), new ReportData.StringColumn("NOMBRE TRABAJADOR"),
 					new ReportData.DoubleColumn("PLUS TURNICIDAD"),
 					new ReportData.DoubleColumn("INCENTIVOS"),
 					new ReportData.DoubleColumn("EMBARGOS"),
 					new ReportData.DoubleColumn("ATRASOS"),
-					new ReportData.StringColumn("OBSERVACIONES")
-					);
-			//@formatter:on
+					new ReportData.StringColumn("OBSERVACIONES"));
+			// @formatter:on
 
 			int cecoCols = 0;
 
@@ -1420,9 +1477,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					values.add(ceco.getValue());
 				}
 
-				//@formatter:off
+				// @formatter:off
 				reportData.addRow(values.toArray());
-				//@formatter:on
+				// @formatter:on
 			}
 
 			return reportData;
@@ -1450,10 +1507,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 
-			//@formatter:off
-			ReportData reportData = new ReportData(
-					new ReportData.StringColumn("HOTEL"),
-					new ReportData.StringColumn("DEPARTAMENTO"),
+			// @formatter:off
+			ReportData reportData = new ReportData(new ReportData.StringColumn(
+					"HOTEL"), new ReportData.StringColumn("DEPARTAMENTO"),
 					new ReportData.StringColumn("PUESTO"),
 					new ReportData.IntColumn("SEMANA"),
 					new ReportData.DateColumn("FECHA"),
@@ -1461,29 +1517,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					new ReportData.BooleanColumn("CIERRE"),
 					new ReportData.IntColumn("HORAS"),
 					new ReportData.IntColumn("PERSONAL"),
-					new ReportData.DoubleColumn("PERSONAL EFECTIVO")
-					);
-			//@formatter:on
+					new ReportData.DoubleColumn("PERSONAL EFECTIVO"));
+			// @formatter:on
 
 			Report<FTELine> fteReport = JooqGPSReports.getFTEReport(conn,
 					SQLUtils.date2sql(start), SQLUtils.date2sql(end),
 					workplaces);
 
 			for (FTELine fteLine : fteReport) {
-				//@formatter:off
-				reportData.addRow(
-						fteLine.getHotel(),
-						fteLine.getSection(),
-						fteLine.getJob(),
-						fteLine.getWeek(),
-						fteLine.getDay(),
-						fteLine.getPerson(),
-						fteLine.isClosed(),
-						fteLine.getHours(),
-						fteLine.getStaff(),
-						fteLine.getRealStaff()
-						);
-				//@formatter:on
+				// @formatter:off
+				reportData.addRow(fteLine.getHotel(), fteLine.getSection(),
+						fteLine.getJob(), fteLine.getWeek(), fteLine.getDay(),
+						fteLine.getPerson(), fteLine.isClosed(),
+						fteLine.getHours(), fteLine.getStaff(),
+						fteLine.getRealStaff());
+				// @formatter:on
 			}
 
 			return reportData;
@@ -1512,50 +1560,39 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 
-			//@formatter:off
-			ReportData reportData = new ReportData(
-					new ReportData.StringColumn("HOTEL"),
-					new ReportData.StringColumn("DEPARTAMENTO"),
+			// @formatter:off
+			ReportData reportData = new ReportData(new ReportData.StringColumn(
+					"HOTEL"), new ReportData.StringColumn("DEPARTAMENTO"),
 					new ReportData.StringColumn("PUESTO"),
 					new ReportData.IntColumn("SEMANA"),
 					new ReportData.DateColumn("FECHA"),
 					new ReportData.StringColumn("PERSONA"),
 					new ReportData.BooleanColumn("CIERRE"),
-					new ReportData.IntColumn("V"),
-					new ReportData.IntColumn("FT"),
-					new ReportData.IntColumn("FR"),
-					new ReportData.IntColumn("LT"),
-					new ReportData.IntColumn("LL"),
-					new ReportData.IntColumn("LL-LT"),
-					new ReportData.IntColumn("HE"),
-					new ReportData.IntColumn("HFD-HE")
-					);
-			//@formatter:on
+					new ReportData.IntColumn("V"), new ReportData.IntColumn(
+							"FT"), new ReportData.IntColumn("FR"),
+					new ReportData.IntColumn("LT"), new ReportData.IntColumn(
+							"LL"), new ReportData.IntColumn("LL-LT"),
+					new ReportData.IntColumn("HE"), new ReportData.IntColumn(
+							"HFD-HE"));
+			// @formatter:on
 
 			Report<HolidayLine> holidayReport = JooqGPSReports
 					.getHolidayReport(conn, SQLUtils.date2sql(start),
 							SQLUtils.date2sql(end), workplaces);
 
 			for (HolidayLine holidayLine : holidayReport) {
-				//@formatter:off
-				reportData.addRow(
-						holidayLine.getHotel(),
-						holidayLine.getSection(),
-						holidayLine.getJob(),
-						holidayLine.getWeek(),
-						holidayLine.getDay(),
-						holidayLine.getPerson(),
-						holidayLine.isClosed(),
-						holidayLine.getV(),
-						holidayLine.getFT(),
-						holidayLine.getFR(),
-						holidayLine.getLT(),
-						holidayLine.getLL() ,
+				// @formatter:off
+				reportData.addRow(holidayLine.getHotel(),
+						holidayLine.getSection(), holidayLine.getJob(),
+						holidayLine.getWeek(), holidayLine.getDay(),
+						holidayLine.getPerson(), holidayLine.isClosed(),
+						holidayLine.getV(), holidayLine.getFT(),
+						holidayLine.getFR(), holidayLine.getLT(),
+						holidayLine.getLL(),
 						holidayLine.getLL() - holidayLine.getLT(),
 						holidayLine.getHE(),
-						holidayLine.getHFD() - holidayLine.getHE() 
-						);
-				//@formatter:on
+						holidayLine.getHFD() - holidayLine.getHE());
+				// @formatter:on
 			}
 
 			return reportData;
@@ -1880,8 +1917,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	// Note that below methods can be moved to another place safely.
 
-
-
 	private ICollectionProvider getSalariesProvider(Cost cost,
 			SalaryType types[]) throws ManagerBeanException {
 		boolean asEnterpriseSite = isAtEnterpriseSite();
@@ -2181,7 +2216,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-
 
 	private static List<Cost> getEnterpriseCosts(Connection connection,
 			Integer enterpriseId) throws SQLException {
@@ -2783,7 +2817,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// Filter ContextVariable
 			List<String> contextVariables = new LinkedList<String>();
 			for (ContextVariable ctxVar : ContextVariable.values())
-				if ( ctxVar.isInternal() )
+				if (ctxVar.isInternal())
 					contextVariables.add(ctxVar.getName());
 			variables.removeAll(contextVariables);
 
@@ -2794,12 +2828,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					privateVariables.add(var);
 			}
 			variables.removeAll(privateVariables);
-			
-			/* Clean system variables.
-			Set<String> systemVars = getSystemVariables(connection,
-					draft.getStartDate(), draft.getEndDate());
-			variables.removeAll(systemVars);
-			*/
+
+			/*
+			 * Clean system variables. Set<String> systemVars =
+			 * getSystemVariables(connection, draft.getStartDate(),
+			 * draft.getEndDate()); variables.removeAll(systemVars);
+			 */
 
 			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
 					draft.getId());
@@ -3212,8 +3246,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = PayrollServletUtils.getContract(draft.getEmployee()
-					.getId());
+			Contract contract = PayrollServletUtils.getContract(draft
+					.getEmployee().getId());
 
 			salary.setContract(contract);
 
@@ -3768,7 +3802,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria,
-							start, end);					
+							start, end);
 					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
 							sqlCtx);
 					draftCtx.next();
@@ -3916,8 +3950,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = PayrollServletUtils.getContract(draft.getEmployee()
-					.getId());
+			Contract contract = PayrollServletUtils.getContract(draft
+					.getEmployee().getId());
 
 			salary.setContract(contract);
 

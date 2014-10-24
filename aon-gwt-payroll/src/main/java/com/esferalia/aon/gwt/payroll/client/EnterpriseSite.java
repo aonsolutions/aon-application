@@ -4,14 +4,15 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -215,9 +216,28 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 	@Override
 	public void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
+	@Override
+	public void onCtrlCPressed(Employee employee) {
+		// TODO Apéndice de método generado automáticamente		
+	}
+
+	@Override
+	public void onCtrlVPressed(Workplace workplace) {
+		// TODO Apéndice de método generado automáticamente		
+	}
+
+	@Override
+	public void onCtrlXPress(Employee employee) {
+		// TODO Apéndice de método generado automáticamente		
+	}
+
+	@Override
+	public void onSuprPress(Employee employee) {
+		// TODO Apéndice de método generado automáticamente
+		
+	}
 	
 }

@@ -27,7 +27,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * The async counterpart of <code>EmployeesService</code>.
  */
-public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSReportsServiceAsync{
+public interface EmployeesServiceAsync extends StatisticsServiceAsync,
+		GPSReportsServiceAsync {
 	void getEnterprise(AsyncCallback<Enterprise> callback)
 			throws IllegalArgumentException;
 
@@ -79,8 +80,7 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSRepor
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
-	void calculateIrpf(SalaryDraft salaryDraft,
-			AsyncCallback<Double> callback)
+	void calculateIrpf(SalaryDraft salaryDraft, AsyncCallback<Double> callback)
 			throws IllegalArgumentException;
 
 	void calculateSalaryDraft(SalaryDraft salaryDraft,
@@ -92,12 +92,12 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSRepor
 			throws IllegalArgumentException;
 
 	void eval(String expression, SalaryDraft salaryDraft,
-			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
-			EvalException;
+			AsyncCallback<List<Result>> callback)
+			throws IllegalArgumentException, EvalException;
 
-	void eval(String expression, AgreementDraft agreementDraft ,int levelId,
-			AsyncCallback<List<Result>> callback) throws IllegalArgumentException,
-			EvalException;
+	void eval(String expression, AgreementDraft agreementDraft, int levelId,
+			AsyncCallback<List<Result>> callback)
+			throws IllegalArgumentException, EvalException;
 
 	void getContext(SalaryDraft salaryDraft,
 			AsyncCallback<ContextDescriptor> callback)
@@ -114,8 +114,8 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSRepor
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
-			int levelId, Salary.Type type, int zoom, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
+			int levelId, Salary.Type type, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
@@ -147,10 +147,13 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync , GPSRepor
 
 	void delete(Salary salaries[], AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
-	
+
 	void getChanges(Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
-	throws IllegalArgumentException;
-
+			throws IllegalArgumentException;
 	
-
+	void pasteContract(Employee employee, boolean check, AsyncCallback<Employee> callback) 
+			throws IllegalArgumentException; 
+	
+	void deleteContract(Employee employee, AsyncCallback<Void> callback)
+			throws IllegalArgumentException;
 }

@@ -29,7 +29,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("employees")
-public interface EmployeesService extends RemoteService, StatisticsService, GPSReportsService {
+public interface EmployeesService extends RemoteService, StatisticsService,
+		GPSReportsService {
 	Enterprise getEnterprise() throws IllegalArgumentException;
 
 	Enterprise[] getEnterprises() throws IllegalArgumentException;
@@ -45,7 +46,7 @@ public interface EmployeesService extends RemoteService, StatisticsService, GPSR
 
 	List<Cost> getEnterpriseCosts(int enterpriseId)
 			throws IllegalArgumentException;
-	
+
 	List<Salary> getSalaries(Employee employee) throws IllegalArgumentException;
 
 	List<Irpf> getIrpfs(Employee employee) throws IllegalArgumentException;
@@ -82,8 +83,8 @@ public interface EmployeesService extends RemoteService, StatisticsService, GPSR
 	List<Result> eval(String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException;
 
-	List<Result> eval(String expression, AgreementDraft agreementDraft, int levelId)
-			throws IllegalArgumentException, EvalException;
+	List<Result> eval(String expression, AgreementDraft agreementDraft,
+			int levelId) throws IllegalArgumentException, EvalException;
 
 	Double calculateIrpf(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
@@ -131,6 +132,12 @@ public interface EmployeesService extends RemoteService, StatisticsService, GPSR
 			throws IllegalArgumentException;
 
 	SortedSet<Date> getChanges(Agreement agreement)
+			throws IllegalArgumentException;
+	
+	Employee pasteContract(Employee employee, boolean check) 
+			throws IllegalArgumentException;
+	
+	void deleteContract(Employee employee)
 			throws IllegalArgumentException;
 
 	void delete(Salary salaries[]) throws IllegalArgumentException;

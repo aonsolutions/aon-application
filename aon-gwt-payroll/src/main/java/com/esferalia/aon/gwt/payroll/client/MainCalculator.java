@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -33,9 +34,12 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -46,7 +50,7 @@ import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCalculator extends MainEntryPoint implements CalculateService {
-
+	
 	private static DateTimeFormat MONTH_DATE_TIME_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH);
 
@@ -61,6 +65,9 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
 	@UiField
+	TabLayoutPanel westTabPanel;
+	
+	@UiField
 	Button calcButton;
 
 	@UiField
@@ -71,6 +78,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	@UiField
 	MonthListBox monthListBox;
+	
 	@UiField
 	ListBox dbMonthListBox;
 
@@ -79,10 +87,11 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	
 	@UiField
 	RadioButton saveRadioButton;
+	
+	//MIO
+	private SimpleLayoutPanel simplePanel;
 
-	@UiField
-	SelectDataGrid<Enterprise> enterpriseDataGrid;
-
+	private SelectDataGrid<Enterprise> enterpriseDataGrid;
 	private EnterprisesServiceAsync enterprisesService;
 
 	private List<Cost> costs;
@@ -96,26 +105,39 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		GWT.<AonResources> create(
 				AonResources.class).css().ensureInjected();
 
-		// Create the UI defined in MainCalculator.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 
-		// Add the outer panel to the RootLayoutPanel, so that it will be
-		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
+		
+		this.enterpriseDataGrid = new SelectDataGrid<Enterprise>();
+		this.enterpriseDataGrid.setNameLabel("");
 
 		// Create a remote service proxy to talk to the server-side Enterprises
 		// service.
 		EnterprisesServiceAsync gwtEnterprisesService = GWT
 				.create(EnterprisesService.class);
+		
 		enterprisesService = new EnterprisesServiceAsyncDecorator(
 				gwtEnterprisesService);
-
+		
 		initAsyncEnterprisesProvider();
 		initEnterprisesSelectionHandler();
 
 		clearDbMonthsListBox();
 		monthListBox.setSelectedMonth(new Date());
+		
+		showEnterprisesPanel();
+	}
+	
+	private void showEnterprisesPanel() {
+		InlineLabel tab = new InlineLabel("Empresas");
+		tab.setStyleName(AON.AON_ICON_COMPANY);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		MainCalculator.this.westTabPanel.add(
+				MainCalculator.this.enterpriseDataGrid, tab);
+		MainCalculator.this.splitLayoutPanel.setWidgetSize(
+				MainCalculator.this.westTabPanel, Window.getClientWidth() / 3);
 	}
 
 	// -------------------------------------------------------------------------
@@ -185,13 +207,13 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	}
 
 	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
 	}
 
 	private boolean isResultsPanelVisible() {
 		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
 	}
-
+		
 	private void initAsyncEnterprisesProvider() {
 		// It's a bit tricky, you're free to change, but look it it's pretty
 		// isn't it.
@@ -216,13 +238,12 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 							public void onSuccess(List<Enterprise> enterprises) {
 								// Push the data to the displays.
 								// AsyncDataProvider will only update
-								// displays that are within range of the data.
+								// displays that are within range of the data.								
 								updateRowData(range.getStart(), enterprises);
 							}
 						});
 			}
 		}).addDataDisplay(enterpriseDataGrid);
-
 	}
 
 	private void onSelectionChange() {
@@ -371,5 +392,5 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 			}
 
 		});
-	}
+	}	
 }

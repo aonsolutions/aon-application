@@ -38,6 +38,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -67,7 +70,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem>, ScrollHandler,
-		ContextMenuHandler {
+		ContextMenuHandler, KeyDownHandler {
 
 	interface Listener {
 		void onEmployeeSelected(Employee employee);
@@ -110,6 +113,14 @@ public class Employees extends ResizeComposite implements
 
 		void onEnterpriseContextMenu(Enterprise enterprise,
 				ContextMenuEvent event);
+		
+		void onCtrlCPressed(Employee employee);
+		
+		void onCtrlVPressed(Workplace workplace);
+		
+		void onCtrlXPress(Employee employee);
+		
+		void onSuprPress(Employee employee);
 	}
 
 	interface Binder extends UiBinder<Widget, Employees> {
@@ -179,10 +190,11 @@ public class Employees extends ResizeComposite implements
 				employeesServiceRaw);
 
 		initWidget(binder.createAndBindUi(this));
-
+		
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
+		tree.addKeyDownHandler(this);
 
 		collapseAllButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -192,7 +204,7 @@ public class Employees extends ResizeComposite implements
 		});
 
 		// employeesService.getEnterprise(this);
-		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+/*		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -207,7 +219,9 @@ public class Employees extends ResizeComposite implements
 
 		});
 
-		scrollPanel.addScrollHandler(this);
+		scrollPanel.addScrollHandler(this);*/
+		
+		load();
 
 	}
 
@@ -456,6 +470,7 @@ public class Employees extends ResizeComposite implements
 
 		TreeItem item = event.getSelectedItem();
 		Object userObject = item.getUserObject();
+		
 		// TODO : I know that's so ugly and not Object oriented. But
 		// it's much more clear than anything else. I promise
 		// to change ( even improve ) it soon.
@@ -496,8 +511,28 @@ public class Employees extends ResizeComposite implements
 		} else if (userObject instanceof AgreementDraftObject) {
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
 		}
-
 	}
+	
+	@Override
+	public void onKeyDown(KeyDownEvent event) {
+		int keyCode = event.getNativeKeyCode();
+		int charCode = event.getNativeEvent().getCharCode();
+		Object object = tree.getSelectedItem().getUserObject();
+				
+		if ( ( event.isControlKeyDown() && keyCode == KeyCodes.KEY_C ) 
+				&& ( keyCode == KeyCodes.KEY_C ) && ( object instanceof Employee )) {
+			onCtrlCPressed( (Employee) object);
+		} else if (event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_V 
+				&& object instanceof Workplace) {
+			onCtrlVPressed((Workplace) object);
+		} else if ( event.getNativeEvent().getCtrlKey() && keyCode == KeyCodes.KEY_X 
+				&& object instanceof Employee) {
+			onCtrlXPressed((Employee) object);
+		} else if ( keyCode == KeyCodes.KEY_DELETE && object instanceof Employee) {
+			onSuprPressed((Employee) object);
+		}		
+	}
+
 
 	@Override
 	public void onScroll(ScrollEvent event) {
@@ -514,7 +549,41 @@ public class Employees extends ResizeComposite implements
 			if (elementInViewport(employeeItem.getElement())) {
 
 				final int limit = getEmployeeLimit();
+				
+				final TreeItem workplaceItem = employeeItem.getParentItem();
 
+				loadEmployees(workplaceItem, limit);
+
+				employeeCentinels.remove(employeeItem);
+			}
+		}
+	}
+
+	public void load () {
+		tree.clear();	
+		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+			@Override
+			public void onSuccess(Enterprise[] enterprises) {
+				for (Enterprise enterprise : enterprises)
+					Employees.this.onEnterprise(enterprise);
+			}
+
+		});
+
+		scrollPanel.addScrollHandler(this);
+		
+		for (TreeItem employeeItem : employeeCentinels) {
+
+			if (elementInViewport(employeeItem.getElement())) {
+
+				final int limit = getEmployeeLimit();
+				
 				final TreeItem workplaceItem = employeeItem.getParentItem();
 
 				loadEmployees(workplaceItem, limit);
@@ -908,6 +977,30 @@ public class Employees extends ResizeComposite implements
 			listener.onITDataSelected(dataObject);
 		}
 	}
+	
+	private void onCtrlCPressed(Employee employee) {
+		for (Listener listener : listeners) {
+			listener.onCtrlCPressed(employee);
+		}
+	}
+	
+	private void onCtrlVPressed(Workplace workplace) {
+		for (Listener listener : listeners) {
+			listener.onCtrlVPressed(workplace);
+		}
+	}
+
+	private void onCtrlXPressed(Employee employee) {
+		for (Listener listener : listeners) {
+			listener.onCtrlXPress(employee);
+		}
+	}
+	
+	private void onSuprPressed(Employee employee) {
+		for (Listener listener : listeners) {
+			listener.onSuprPress(employee);
+		}
+	}
 
 	private void onSalariesSelected(final TreeItem salariesItem) {
 		TreeItem employeeItem = salariesItem.getParentItem();
@@ -931,7 +1024,6 @@ public class Employees extends ResizeComposite implements
 						}
 					}
 				});
-
 	}
 
 	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
@@ -998,7 +1090,7 @@ public class Employees extends ResizeComposite implements
 			listener.onAgreementDraftSelected(agreementDraftObject);
 		}
 	}
-
+	
 	private void loadEmployess(TreeItem workplaceItem,
 			List<Employee> employees, int limit) {
 
@@ -1478,5 +1570,4 @@ public class Employees extends ResizeComposite implements
 	private static ITDataObject getITDataObject(TreeItem workplaceItem) {		
 		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
 	}
-
 }

@@ -393,6 +393,22 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.saveITDataPerson(inserts, deletes, updates, 
 				new AsyncCallbackWrapper<ITData>(callback));		
 	}
+
+	@Override
+	public void pasteContract(Employee employee, boolean check,
+			AsyncCallback<Employee> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.pasteContract(employee, check,
+				new AsyncCallbackWrapper<Employee>(callback));		
+	}
+	
+	@Override
+	public void deleteContract(Employee employee, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.deleteContract(employee, 
+				new AsyncCallbackWrapper<Void>(callback));			
+	}
 	// ------------------------------------------------- GPSReportsServiceAsync
 	@Override
 	public void getA3Report(Date month, int[] workplaces,
@@ -417,5 +433,4 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getHolidayReport(start, end, workplaces,
 				new AsyncCallbackWrapper<ReportData>(callback));
 	}
-
 }
