@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.4</version>
+		<version>8.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon-msm</artifactId>
@@ -14,8 +14,8 @@
 		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
 	</properties>
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/8.4.x/aon-solutions-release</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/8.4.x/aon-solutions-release</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</connection>
 	</scm>
 	<build>
 		<plugins>
