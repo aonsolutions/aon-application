@@ -72,7 +72,6 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.project.controller.IProjectConstants;
@@ -367,7 +366,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		setSavedProject((getSavedProject() != null && getSavedProject().getId() != null) ? getSavedProject() : null);
 		if ((project == null && getSavedProject() != null) || (project != null && !project.equals(getSavedProject()))) {
 			if (!onlyDetails) {
-				invoice.setUpdateEnabled(false);
+				invoice.setUpdateEnabled(!invoice.isRecorded());
 				getManagerBean().restoreNullSubPOJOs(invoice);
 				getManagerBean().update(invoice);
 				getManagerBean().initializePOJO(invoice);
@@ -760,7 +759,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
-		Invoice invoice = getInvoice();
+		Invoice invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).get(getInvoice().getId());
 		if (invoice.isInvestment() && !isAmortizationForm()) {
 			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
 			throw new AbortProcessingException(message);
@@ -778,9 +777,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			getManagerBean().restoreNullSubPOJOs(invoice);
 			getAccountWriter().recordAndUpdateInvoice(invoice);
+
 			HibernateUtil.commitTransaction(sessionName);
+
+			setTo(invoice);
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
@@ -788,9 +789,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				String msg = "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
-			// --- Si se ha producido algún error, se carga de nuevo la factura de la BD.
-			synchronizeErrorPojo(invoice);		
-			// ---
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
@@ -798,6 +796,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+
+			refresh(event);
 		}
 	}
 
@@ -815,11 +815,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			getManagerBean().restoreNullSubPOJOs(invoice);
 			getAccountWriter().unrecordAndUpdateInvoice(invoice);
 
 			HibernateUtil.commitTransaction(sessionName);
-			getManagerBean().initializePOJO(invoice);
 
 			// En el caso de que se haya accedido al mantenimiento de facturas desde el mantenimiento de apuntes,
 			// hay que tener en cuenta que al descontabilizar la factura, se está borrando el apunte del que 
@@ -837,9 +835,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				String msg = "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
-			// --- Si se ha producido algún error, se carga de nuevo la factura de la BD.
-			synchronizeErrorPojo(invoice);		
-			// ---
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
@@ -847,25 +842,10 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-		}
-	}
 
-	@SuppressWarnings("unchecked")
-	private void synchronizeErrorPojo(Invoice errorInvoice) throws ManagerBeanException {
-		Invoice restoredInvoice = (Invoice) getManagerBean().get(errorInvoice.getId()) ; 
-		setTo(restoredInvoice);
-		if (getModel() instanceof ExtendedPageDataModel) {
-			List<ITransferObject> list = (List<ITransferObject>)getModel().getWrappedData();
-			for (int i=0; i < list.size(); i++) {
-				Invoice listInvoice = (Invoice) list.get(i);
-				if (listInvoice.getId().equals(restoredInvoice.getId())) {
-					list.set(i,restoredInvoice);
-					break;
-				}
-			}
+			refresh(event);
 		}
 	}
-	
 
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = getInvoice();
