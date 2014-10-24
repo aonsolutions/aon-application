@@ -151,8 +151,8 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getChanges(Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
 			throws IllegalArgumentException;
 	
-	void pasteContract(Employee employee, boolean check, AsyncCallback<Employee> callback) 
-			throws IllegalArgumentException; 
+	void pasteContract(int workplaceId, Employee employee, boolean check, 
+			AsyncCallback<Employee> callback) throws IllegalArgumentException; 
 	
 	void deleteContract(Employee employee, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;

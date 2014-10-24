@@ -395,10 +395,10 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	}
 
 	@Override
-	public void pasteContract(Employee employee, boolean check,
+	public void pasteContract(int workplaceId, Employee employee, boolean check,
 			AsyncCallback<Employee> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.pasteContract(employee, check,
+		employeesServiceAsync.pasteContract(workplaceId, employee, check,
 				new AsyncCallbackWrapper<Employee>(callback));		
 	}
 	

@@ -193,7 +193,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 				employeePaste.setStartDate(paste.getStartDateWidget().getValue());
 				employeePaste.setEndDate(paste.getEndDateWidget().getValue());
-				pasteContract(employeePaste, paste.getEspecificoValue(), null);
+				pasteContract(workplace.getId(), employeePaste, paste.getEspecificoValue(), null);
 				
 				paste.hide();				
 			}
@@ -1133,10 +1133,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	private void pasteContract(Employee employee, boolean check,
+	private void pasteContract(int workplaceId, Employee employee, boolean check,
 			final AsyncCallback<Employee> callback) {
 
-		employees.getEmployeesService().pasteContract(employee, check,
+		employees.getEmployeesService().pasteContract(workplaceId, employee, check,
 				new AsyncCallback<Employee>() {
 
 					@Override

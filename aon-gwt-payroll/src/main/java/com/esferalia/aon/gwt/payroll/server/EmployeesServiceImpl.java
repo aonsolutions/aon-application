@@ -866,7 +866,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Employee pasteContract(Employee employee, boolean check)
+	public Employee pasteContract(int workplaceId, Employee employee, boolean check)
 			throws IllegalArgumentException {
 		
 		Connection conn = null;
@@ -874,9 +874,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			SQLEmployee.save(conn, getDomainID(), employee.getId(), 
+			SQLEmployee.save(conn, getDomainID(), workplaceId, employee.getId(), 
 					employee.getStartDate(), employee.getEndDate(), check);
 			commit(conn);
+
 			return employee;
 		} catch (SQLException ex) {
 			rollback(conn);

@@ -134,7 +134,7 @@ public interface EmployeesService extends RemoteService, StatisticsService,
 	SortedSet<Date> getChanges(Agreement agreement)
 			throws IllegalArgumentException;
 	
-	Employee pasteContract(Employee employee, boolean check) 
+	Employee pasteContract(int workplaceId, Employee employee, boolean check) 
 			throws IllegalArgumentException;
 	
 	void deleteContract(Employee employee)

@@ -71,7 +71,7 @@ public class SQLEmployee implements Serializable {
 
 	private static Settings SETTINGS = null;
 
-	public static void save(Connection conn, int domain, int personId,
+	public static void save(Connection conn, int domain, int workplaceId, int personId,
 			Date startDate, Date endDate, boolean check) {
 		
 		DSLContext create = DSL.using(conn, SQLDialect.MYSQL,
@@ -79,7 +79,7 @@ public class SQLEmployee implements Serializable {
 		
 		try {
 
-			insertPasteContract(create, conn, domain, personId, startDate, endDate);
+			insertPasteContract(create, conn, domain, workplaceId, personId, startDate, endDate);
 			
 			if(check) 
 				insertDependCheck(create, conn, domain, personId, startDate, endDate); 
@@ -101,13 +101,13 @@ public class SQLEmployee implements Serializable {
 	}
 	
 	private static void insertPasteContract(DSLContext create, Connection conn, int domain,
-			int personId, Date startDate, Date endDate) throws Exception {
+			int workplaceId, int personId, Date startDate, Date endDate) throws Exception {
 
 		ContractRecord contract = create.selectFrom(CONTRACT)
 				.where(CONTRACT.ID.eq(personId)).fetchAny();
 		
 		if(contract != null)
-			paste2Contract(create, contract, domain, personId, startDate, endDate);
+			paste2Contract(create, contract, domain, workplaceId, personId, startDate, endDate);
 		
 		// --------------------------------------------------------------------------
 		
@@ -261,14 +261,14 @@ public class SQLEmployee implements Serializable {
 	}
 	
 	protected static void paste2Contract(DSLContext create, ContractRecord contract, 
-			int domain, int personId, Date startDate, Date endDate) {
+			int domain, int workplaceId, int personId, Date startDate, Date endDate) {
 		
 		InsertSetMoreStep<ContractRecord> insertContract = create
 				.insertInto(CONTRACT)
 
 				.set(CONTRACT.DOMAIN, domain)
 				.set(CONTRACT.PERSON, contract.getValue(CONTRACT.PERSON))
-				.set(CONTRACT.WORKPLACE, contract.getValue(CONTRACT.WORKPLACE))
+				.set(CONTRACT.WORKPLACE, workplaceId)
 				.set(CONTRACT.ENTERPRISE_CCC,
 						contract.getValue(CONTRACT.ENTERPRISE_CCC))
 				.set(CONTRACT.START_DATE,
