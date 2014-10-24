@@ -32,13 +32,28 @@
 										<f:selectItem itemValue="false" itemLabel="#{bundle.fiscal_mod111_import_salary}" />
 										<f:selectItem itemValue="true" itemLabel="#{bundle.fiscal_mod111_import_entry}" />
 									</aon:selectOneRadio>
-									<aon:div id="receiverCountContainer" style="margin-left: 25px;">									
-										<aon:outputLabel for="mod111_input_imports"
-											styleClass="aon-margin-left" 
-											value="#{bundle.fiscal_model111_receiver_count}" />
-										<aon:inputText id="mod111_input_imports"
-											disabled="#{!mod111.to.readRetentionFromAccount}" 
-											value="#{mod111.to.receiverCount}" size="5" />
+									<aon:div id="receiverCountContainer">
+										<aon:div  style="margin-left: 25px;" rendered="#{mod111.to.readRetentionFromAccount}">
+											<aon:div>
+												<aon:outputLabel for="mod111_input_imports"
+													styleClass="aon-margin-left" 
+													value="#{bundle.fiscal_model111_receiver_count}" />
+												<aon:inputText id="mod111_input_imports"
+													value="#{mod111.to.receiverCount}" size="5" />
+											</aon:div>
+											<aon:div>
+												<aon:outputLabel for="mod111_input_importsInKind"
+													styleClass="aon-margin-left" 
+													value="#{bundle.fiscal_model111_receiver_in_kind_count}" />
+												<aon:inputText id="mod111_input_importsInKind"
+													 value="#{mod111.to.receiverInKindCount}" size="5" />
+											</aon:div>
+											<aon:div
+												styleClass="aon-italic" 
+												style="margin-top: 5px; margin-left: 5px;margin-right: 50px; padding: 5px; border: solid red 1px;">
+												<aon:outputText value="#{mod111.infoMessage}"/>
+											</aon:div>
+										</aon:div>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

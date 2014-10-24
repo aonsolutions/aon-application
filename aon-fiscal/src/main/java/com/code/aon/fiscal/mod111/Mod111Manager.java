@@ -221,6 +221,8 @@ public class Mod111Manager extends FiscalModelManager {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
+			Integer retentionInKindAccount = AppParamUtil.getValueAsInteger(AppParam.ACC_SALARY_CHARGED_RET_IK_ACC);
+			Integer salaryInKindAccount = AppParamUtil.getValueAsInteger(AppParam.ACC_DEFAULT_SALARY_IK_ACC);
 			Integer retentionAccount = AppParamUtil.getValueAsInteger(AppParam.ACC_SALARY_CHARGED_RET_ACC);
 			if ( retentionAccount != null ) {
 				Integer salaryAccount = AppParamUtil.getValueAsInteger(AppParam.ACC_DEFAULT_SALARY_ACC);
@@ -233,6 +235,7 @@ public class Mod111Manager extends FiscalModelManager {
 					ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 					rs = ps.executeQuery();
 					boolean found = false;
+					boolean inKindFound = false;
 					while (rs.next()) {
 						int acc = rs.getInt(1);
 						double deb = rs.getDouble(2);
@@ -240,15 +243,24 @@ public class Mod111Manager extends FiscalModelManager {
 						if (acc == retentionAccount) {
 							found = true;
 							addAccumulatedAmont(mod111, calculator.getKeyForWorkWitholding(), cre);
-						}
-						if (acc == salaryAccount) {
+						} else if (acc == salaryAccount) {
 							found = true;
 							addAccumulatedAmont(mod111, calculator.getKeyForWorkPerception(), deb);
+						} else if (retentionInKindAccount != null && acc == retentionInKindAccount) {
+							inKindFound = true;
+							addAccumulatedAmont(mod111, calculator.getKeyForWorkInKindWitholding(), cre);
+						} else if (salaryInKindAccount != null && acc == salaryInKindAccount) {
+							inKindFound = true;
+							addAccumulatedAmont(mod111, calculator.getKeyForWorkInKindPerception(), deb);
 						}
 					}
 					if (found) {
 						addAccumulatedAmont(mod111, calculator.getKeyForWorkReceivers(), fiscalModel.getReceiverCount());
 					}
+					if (inKindFound) {
+						addAccumulatedAmont(mod111, calculator.getKeyForWorkInKindReceivers(), fiscalModel.getReceiverInKindCount());
+					}
+					
 				}
 			}
 		} catch (SQLException e) {

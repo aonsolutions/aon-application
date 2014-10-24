@@ -88,6 +88,7 @@ public class Mod111Controller extends FiscalModelController {
 				i = Integer.parseInt( appParam.getValue() );
 				to.setReadRetentionFromAccount(true);
 				to.setReceiverCount(i);
+				to.setReceiverInKindCount(1);
 			} catch (NumberFormatException e) {
 				// Nothing;
 			}
@@ -98,5 +99,14 @@ public class Mod111Controller extends FiscalModelController {
 	@Override
 	protected String getFormPage() {
 		return "mod111_form";
-	}	
+	}
+
+	public String getInfoMessage() {
+		return "Para la generación del modelo, se leerán los apuntes de tipo nómina, y de ellos, "
+			 + "las líneas de percepciones monetarias (y en especie) computarán el saldo de las "
+			 + "diferentes percepciones  y las líneas de las retenciones monetarias (y en especie) "
+			 + "computarán el saldo de las diferentes retenciones.  Para identificar las percepciones"
+			 + " y retenciones del apunte, las cuentas deberán coincidir con las indicadas en los "
+			 + "parámetros contables a tal efecto.";
+	}
 }

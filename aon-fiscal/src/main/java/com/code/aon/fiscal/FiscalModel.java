@@ -23,6 +23,7 @@ public class FiscalModel extends FiscalModelDB implements IAuditable {
 	private Double participationPercent;
 	private boolean readRetentionFromAccount;
 	private int receiverCount;
+	private int receiverInKindCount;
 	
 	public FiscalModel() {
 		setStatus(FiscalModelStatus.PENDING);
@@ -107,6 +108,15 @@ public class FiscalModel extends FiscalModelDB implements IAuditable {
 		this.receiverCount = receiverCount;
 	}
 	
+	@Transient
+	public int getReceiverInKindCount() {
+		return receiverInKindCount;
+	}
+
+	public void setReceiverInKindCount(int receiverInKindCount) {
+		this.receiverInKindCount = receiverInKindCount;
+	}
+
 	@Transient
 	public boolean isFromCommonTerritory() {
 		return (getAdministration() == Administration.COMMON_TERRITORY);

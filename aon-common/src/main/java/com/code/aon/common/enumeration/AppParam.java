@@ -208,7 +208,12 @@ public enum AppParam {
 	
 	POS_INVOICE_WIDTH,
 	
-	SALES_ACTIVE_MARKETPLACE;
+	SALES_ACTIVE_MARKETPLACE,
+	
+	ACC_DEFAULT_SALARY_IK_ACC,
+	
+	ACC_SALARY_CHARGED_RET_IK_ACC
+	;
 
 	public String getValue() {
 		return toString();

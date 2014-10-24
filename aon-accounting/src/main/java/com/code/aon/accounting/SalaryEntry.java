@@ -17,10 +17,12 @@ public class SalaryEntry implements ITransferObject {
 	private RegistryBank registryBank;
 	private String concept;
 	private SecurityLevel securityLevel;
-	private double grossSalary;
+	private double grossSalaryInKind;
+	private double grossSalaryMonetary;
 	private double allowance;
 	private double compensation;
 	private double retention;
+	private double retentionInKind;
 	private double employeeSocialInsurance1;
 	private double employeeSocialInsurance2;
 	private double employeeSocialInsurance3;
@@ -68,13 +70,18 @@ public class SalaryEntry implements ITransferObject {
 		setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL );
 	}
 
-	public double getGrossSalary() {
-		return grossSalary;
+	public double getGrossSalaryMonetary() {
+		return grossSalaryMonetary;
 	}
-	public void setGrossSalary(double grossSalary) {
-		this.grossSalary = grossSalary;
+	public void setGrossSalaryMonetary(double grossSalaryMonetary) {
+		this.grossSalaryMonetary = grossSalaryMonetary;
 	}
-
+	public double getGrossSalaryInKind() {
+		return grossSalaryInKind;
+	}
+	public void setGrossSalaryInKind(double grossSalaryInKind) {
+		this.grossSalaryInKind = grossSalaryInKind;
+	}
 	public double getAllowance() {
 		return allowance;
 	}
@@ -96,6 +103,12 @@ public class SalaryEntry implements ITransferObject {
 		this.retention = retention;
 	}
 
+	public double getRetentionInKind() {
+		return retentionInKind;
+	}
+	public void setRetentionInKind(double retentionInKind) {
+		this.retentionInKind = retentionInKind;
+	}
 	public double getEmployeeSocialInsurance1() {
 		return employeeSocialInsurance1;
 	}
@@ -138,13 +151,13 @@ public class SalaryEntry implements ITransferObject {
 	}
 
 	public double getAccruedTotal(){
-		return CommonUtil.round(grossSalary + allowance + compensation);
+		return CommonUtil.round(grossSalaryMonetary + grossSalaryInKind + allowance + compensation);
 	}
 	public void setAccruedTotal(double a) {
 	}
 
 	public double getNetSalary(){
-		return CommonUtil.round(getAccruedTotal() - retention - getEmployeeSocialInsurance());
+		return CommonUtil.round(getAccruedTotal() - retention - retentionInKind - getEmployeeSocialInsurance());
 	}
 	public void setNetSalary(double a) {
 	}

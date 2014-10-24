@@ -1,7 +1,11 @@
 package com.code.aon.ui.accounting.controller;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +17,8 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.Account;
 import com.code.aon.AonVersion;
+import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,6 +26,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -29,10 +34,55 @@ public class AccountAppParamsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private static String DATE_PATTERN = AonUtil.getMessage(ICommonMessages.DATE_PATTERN);
+	private static SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_PATTERN);
+
+	private static Map<String, String> DEFAULT_PARAMETERS;
+	static {
+		
+		
+		DEFAULT_PARAMETERS = new HashMap<String, String>();
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_SALES_ACC.getValue(),"700000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_PURCHASE_ACC.getValue(),"600000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC.getValue(),"477000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_PAID_VAT_ACC.getValue(),"472000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_PAID_RET_ACC.getValue(),"473000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_CHARGED_RET_ACC.getValue(),"475100000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_CASH_ACC.getValue(),"570000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_FINAN_EXPENSES_ACC.getValue(),"669000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_PREPAYMENT_ACC.getValue(),"555900000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_ASSET_LOST_ACC.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_ASSET_PROFIT_ACC.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_VAT_PERCENT.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_RETENTION_PERCENT.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_INVOICE_SERIES.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_PERIOD.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_OPERATIONS_DEADLINE.getValue(),null);
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEADLINE_INCL_RECTIFICATIONS.getValue(),"false");
+		
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_SALARY_ACC.getValue(),"640000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_SALARY_IK_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC.getValue(),"465000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_CHARGED_RET_ACC.getValue(),"475100000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_CHARGED_RET_IK_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_ALLOWANCE_ACC.getValue(),"629000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_COMPENSATION_ACC.getValue(),"641000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC.getValue(),"476000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC.getValue(),"642000000");
+	}
+	
 	private Map<String, ApplicationParameter> parameters;
 
-	private Map<String, String> defaultParameters;
-	
+	private Date accOperationsDeadline;
+	private Account accDefaultSalaryAccount;
+	private Account accDefaultSalaryIKAccount;
+	private Account accDefaultAllowanceAccount;
+	private Account accDefaultCompensationAccount;
+	private Account accSalaryChargedRetAccount;
+	private Account accSalaryChargedRetIKAccount;
+	private Account accDefaultSocialInsuranceAccount;
+	private Account accDefaultPendingSalaryAccount;
+	private Account accDefaultCompanySocInsAccount;
 
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
@@ -40,22 +90,6 @@ public class AccountAppParamsController implements Serializable {
 
 	public void setParameters(Map<String, ApplicationParameter> parameters) {
 		this.parameters = parameters;
-	}
-
-	public Map<String, String> getDefaultParameters() {
-		return defaultParameters;
-	}
-
-	public void setDefaultParameters(Map<String, String> defaultParameters) {
-		this.defaultParameters = defaultParameters;
-		if (defaultParameters != null) {
-			for (String key : defaultParameters.keySet()) {
-				String value = defaultParameters.get(key);
-				if ("[NULL]".equals(value)) {
-					defaultParameters.put(key,null);	
-				}
-			}
-		}
 	}
 
 	public void onAccept(ActionEvent event) throws ManagerBeanException{
@@ -72,7 +106,7 @@ public class AccountAppParamsController implements Serializable {
 		try {
 			loadParameters();
 		} catch (ManagerBeanException e) {
-			String msg = "Unable to load defaultParameters";
+			String msg = "No se pueden cargar los parámetros contables";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -88,12 +122,17 @@ public class AccountAppParamsController implements Serializable {
 			ApplicationParameter appParam = (ApplicationParameter) iter.next();
 			parameters.put(appParam.getName(), appParam);
 		}
-		Set<String> keys = defaultParameters.keySet();
+		Set<String> keys = DEFAULT_PARAMETERS.keySet();
 		for (String key : keys) {
 			if (!parameters.containsKey(key)) {
 				ApplicationParameter p = new ApplicationParameter();
 				p.setName(key);
-				String value = defaultParameters.get(key); 
+				String value = DEFAULT_PARAMETERS.get(key);
+				System.out.println(
+						key+"="+AppParam.ACC_OPERATIONS_DEADLINE.getValue()
+												
+						);
+				
 				if (StringUtils.endsWith(key, "_ACC")) {
 					Criteria c = new Criteria();
 					c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), value);
@@ -110,6 +149,16 @@ public class AccountAppParamsController implements Serializable {
 				parameters.put(p.getName(), p);
 			}
 		}
+		initializeAccOperationsDeadline();
+		initializeAccDefaultSalaryAccount();
+		initializeAccDefaultSalaryIKAccount();
+		initializeAccDefaultAllowanceAccount();
+		initializeAccDefaultCompensationAccount();
+		initializeAccSalaryChargedRetAccount();
+		initializeAccSalaryChargedRetIKAccount();
+		initializeAccDefaultSocialInsuranceAccount();
+		initializeAccDefaultPendingSalaryAccount();
+		initializeAccDefaultCompanySocInsAccount();
 	}
 	
 	public ApplicationParameter getParameter(AppParam param) throws ManagerBeanException {
@@ -118,4 +167,204 @@ public class AccountAppParamsController implements Serializable {
 		}
 		return parameters.get(param.getValue()); 		
 	}
+
+	private void initializeAccOperationsDeadline() {
+		String value = parameters.get(AppParam.ACC_OPERATIONS_DEADLINE.getValue()).getValue();
+		setAccOperationsDeadline(null);
+		if (StringUtils.isNotEmpty(value)) {
+			try {
+				setAccOperationsDeadline( FORMATTER.parse(value) );
+			} catch (ParseException e) {
+				AonUtil.addErrorMessage("Formato de fecha de operaciones incorrecto. (\"" + value + "\")");
+				setAccOperationsDeadline( null);
+			}
+		}
+	}
+	public Date getAccOperationsDeadline() {
+		return accOperationsDeadline;
+	}
+	public void setAccOperationsDeadline(Date accOperationsDeadline) {
+		this.accOperationsDeadline = accOperationsDeadline;
+		ApplicationParameter appParam = parameters.get(AppParam.ACC_OPERATIONS_DEADLINE.getValue());
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(AppParam.ACC_OPERATIONS_DEADLINE.getValue());
+		}
+		appParam.setValue(accOperationsDeadline==null?null:FORMATTER.format(accOperationsDeadline));
+		parameters.put(AppParam.ACC_OPERATIONS_DEADLINE.getValue(), appParam);
+	}
+
+	private Account initializeAccount(AppParam param) throws ManagerBeanException {
+		Account account = new Account();
+		IManagerBean bean = BeanManager.getManagerBean(Account.class);		
+		String value = parameters.get(param.getValue()).getValue();
+		if (StringUtils.isNotEmpty(value)) {
+			try {
+				account = (Account) bean.get(Integer.parseInt(value));
+			} catch (NumberFormatException e) {
+				// nothing. Appears empty.
+			}
+		}
+		return account;	
+	}
+	private void putAccount(AppParam param,Account account) {
+		ApplicationParameter appParam = parameters.get(param.getValue());
+		if (appParam == null) {
+			appParam = new ApplicationParameter();
+			appParam.setName(param.getValue());
+		}
+		appParam.setValue(account == null || account.getId() == null
+				?null
+				:account.getId().toString());
+		parameters.put(param.getValue(), appParam);
+	}
+
+	private void initializeAccDefaultSalaryAccount() {
+		try {
+			setAccDefaultSalaryAccount( initializeAccount(AppParam.ACC_DEFAULT_SALARY_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultSalaryAccount(  new Account() );	
+		}
+	}
+	public Account getAccDefaultSalaryAccount() {
+		return accDefaultSalaryAccount;
+	}
+	public void setAccDefaultSalaryAccount(Account accDefaultSalaryAccount) {
+		this.accDefaultSalaryAccount = accDefaultSalaryAccount;
+		putAccount(AppParam.ACC_DEFAULT_SALARY_ACC,accDefaultSalaryAccount);
+	}
+
+	private void initializeAccDefaultSalaryIKAccount() {
+		try {
+			setAccDefaultSalaryIKAccount( initializeAccount(AppParam.ACC_DEFAULT_SALARY_IK_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultSalaryIKAccount( new Account() );	
+		}
+	}
+	public Account getAccDefaultSalaryIKAccount() {
+		return accDefaultSalaryIKAccount;
+	}
+	public void setAccDefaultSalaryIKAccount(Account accDefaultSalaryIKAccount) {
+		this.accDefaultSalaryIKAccount = accDefaultSalaryIKAccount;
+		putAccount(AppParam.ACC_DEFAULT_SALARY_IK_ACC,accDefaultSalaryIKAccount);
+	}
+	
+	private void initializeAccDefaultAllowanceAccount() {
+		try {
+			setAccDefaultAllowanceAccount( initializeAccount(AppParam.ACC_DEFAULT_ALLOWANCE_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultAllowanceAccount( new Account() );	
+		}
+	}
+	public Account getAccDefaultAllowanceAccount() {
+		return accDefaultAllowanceAccount;
+	}
+	public void setAccDefaultAllowanceAccount(Account accDefaultAllowanceAccount) {
+		this.accDefaultAllowanceAccount = accDefaultAllowanceAccount;
+		putAccount(AppParam.ACC_DEFAULT_ALLOWANCE_ACC,accDefaultAllowanceAccount);
+	}
+	
+	private void initializeAccDefaultCompensationAccount() {
+		try {
+			setAccDefaultCompensationAccount( initializeAccount(AppParam.ACC_DEFAULT_COMPENSATION_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultCompensationAccount( new Account() );	
+		}
+	}
+	public Account getAccDefaultCompensationAccount() {
+		return accDefaultCompensationAccount;
+	}
+	public void setAccDefaultCompensationAccount(Account accDefaultCompensationAccount) {
+		this.accDefaultCompensationAccount = accDefaultCompensationAccount;
+		putAccount(AppParam.ACC_DEFAULT_COMPENSATION_ACC,accDefaultCompensationAccount);
+	}
+	
+	private void initializeAccSalaryChargedRetAccount() {
+		try {
+			setAccSalaryChargedRetAccount( initializeAccount(AppParam.ACC_SALARY_CHARGED_RET_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccSalaryChargedRetAccount( new Account() );	
+		}
+	}
+	public Account getAccSalaryChargedRetAccount() {
+		return accSalaryChargedRetAccount;
+	}
+	public void setAccSalaryChargedRetAccount(Account accSalaryChargedRetAccount) {
+		this.accSalaryChargedRetAccount = accSalaryChargedRetAccount;
+		putAccount(AppParam.ACC_SALARY_CHARGED_RET_ACC,accSalaryChargedRetAccount);
+	}
+	
+	private void initializeAccSalaryChargedRetIKAccount() {
+		try {
+			setAccSalaryChargedRetIKAccount( initializeAccount(AppParam.ACC_SALARY_CHARGED_RET_IK_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccSalaryChargedRetIKAccount( new Account() );	
+		}
+	}
+	public Account getAccSalaryChargedRetIKAccount() {
+		return accSalaryChargedRetIKAccount;
+	}
+	public void setAccSalaryChargedRetIKAccount(Account accSalaryChargedRetIKAccount) {
+		this.accSalaryChargedRetIKAccount = accSalaryChargedRetIKAccount;
+		putAccount(AppParam.ACC_SALARY_CHARGED_RET_IK_ACC,accSalaryChargedRetIKAccount);
+	}
+	
+	private void initializeAccDefaultSocialInsuranceAccount() {
+		try {
+			setAccDefaultSocialInsuranceAccount( initializeAccount(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultSocialInsuranceAccount( new Account() );	
+		}
+	}
+	public Account getAccDefaultSocialInsuranceAccount() {
+		return accDefaultSocialInsuranceAccount;
+	}
+	public void setAccDefaultSocialInsuranceAccount(
+			Account accDefaultSocialInsuranceAccount) {
+		this.accDefaultSocialInsuranceAccount = accDefaultSocialInsuranceAccount;
+		putAccount(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC,accDefaultSocialInsuranceAccount);
+	}
+	
+	private void initializeAccDefaultPendingSalaryAccount() {
+		try {
+			setAccDefaultPendingSalaryAccount( initializeAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultPendingSalaryAccount( new Account() );	
+		}
+	}
+	public Account getAccDefaultPendingSalaryAccount() {
+		return accDefaultPendingSalaryAccount;
+	}
+	public void setAccDefaultPendingSalaryAccount(
+			Account accDefaultPendingSalaryAccount) {
+		this.accDefaultPendingSalaryAccount = accDefaultPendingSalaryAccount;
+		putAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC,accDefaultPendingSalaryAccount);
+	}
+	
+	private void initializeAccDefaultCompanySocInsAccount() {
+		try {
+			setAccDefaultCompanySocInsAccount( initializeAccount(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefaultCompanySocInsAccount( new Account() );	
+		}
+	}
+	public Account getAccDefaultCompanySocInsAccount() {
+		return accDefaultCompanySocInsAccount;
+	}
+	public void setAccDefaultCompanySocInsAccount(
+			Account accDefaultCompanySocInsAccount) {
+		this.accDefaultCompanySocInsAccount = accDefaultCompanySocInsAccount;
+		putAccount(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC,accDefaultCompanySocInsAccount);
+	}
+	
+	
 }
