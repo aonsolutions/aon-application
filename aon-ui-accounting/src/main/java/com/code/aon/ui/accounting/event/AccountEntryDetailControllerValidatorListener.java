@@ -35,10 +35,10 @@ public class AccountEntryDetailControllerValidatorListener extends ControllerAda
             throw new ControllerListenerException("La Cuenta y la Contrapartida no pueden ser iguales.");
         }
         if (!validateAccountIsEntryEnabled(entryDetail.getAccount())) {
-            throw new ControllerListenerException("La Cuenta " + entryDetail.getAccount().getId() + " no permite apuntes.");
+            throw new ControllerListenerException("La Cuenta " + entryDetail.getAccount().getCode() + " no permite apuntes.");
         }
         if (!isAccountEmpty(entryDetail.getBalancingAccount()) && !validateAccountIsEntryEnabled(entryDetail.getBalancingAccount())) {
-            throw new ControllerListenerException("La Cuenta " + entryDetail.getBalancingAccount().getId() + " no permite apuntes.");
+            throw new ControllerListenerException("La Cuenta " + entryDetail.getBalancingAccount().getCode() + " no permite apuntes.");
         }
         if (!validateDebitAndCreditWithValue(entryDetail)) {
             throw new ControllerListenerException("Debe y Haber no pueden ser ambos diferentes de cero.");
