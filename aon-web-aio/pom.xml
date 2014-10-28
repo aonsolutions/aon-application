@@ -14,11 +14,6 @@
 		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
 	</properties>
 
-	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/8.4.x/aon-web-aio</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/releases/8.4.x/aon-web-aio</connection>
-	</scm>
-
 	<build>
 		<finalName>aon-aio</finalName>
 
