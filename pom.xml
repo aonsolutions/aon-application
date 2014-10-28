@@ -175,8 +175,8 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk</connection>
-		<url>http://dev.esferalia.net/repos/aon-application/trunk</url>
+		<connection>scm:git:git://github.com/aonsolutions/aon-application.git</connection>
+		<url>https://github.com/aonsolutions/aon-application</url>
 	</scm>
 
 	<organization>
@@ -487,6 +487,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<shortRevisionLength>5</shortRevisionLength>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
                                 </configuration>
