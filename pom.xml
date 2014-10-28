@@ -489,22 +489,7 @@
 				<configuration>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
-                                        <providerImplementations>
-                                                <svn>javasvn</svn>
-                                        </providerImplementations>
                                 </configuration>
-                                <dependencies>
-                                        <dependency>
-                                                <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-                                                <artifactId>maven-scm-provider-svnjava</artifactId>
-                                                <version>2.0.2</version>
-                                        </dependency>
-                                        <dependency>
-                                                <groupId>org.tmatesoft.svnkit</groupId>
-                                                <artifactId>svnkit</artifactId>
-                                                <version>${svnkitVersion}</version>
-                                        </dependency>
-                                </dependencies>
 			</plugin>
 		</plugins>
 	</build>
