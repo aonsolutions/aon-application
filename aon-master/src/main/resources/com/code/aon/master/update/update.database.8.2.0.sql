@@ -2,6 +2,8 @@
 # Created by: rtrepiana
 # Creation Date: 09/10/2014 
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
 BEGIN;
 
 UPDATE system_payment SET expression='DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60' 
@@ -18,3 +20,5 @@ INSERT INTO system_payment
 UPDATE `db_version` SET `version_number` = '8.4.0';
 
 COMMIT;
+
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
