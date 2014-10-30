@@ -533,14 +533,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		setRectificationNumber(obtainMaxNumber(seriesId));
 	}	
 
-	@Override
-	protected Criteria getSeriesCriteria() {
-    	Criteria criteria = new Criteria();
-    	InvoiceType type = (getInvoice() != null) ? getInvoice().getType() : InvoiceType.SALES;
-    	criteria.addEqualExpression(getTableName().toLowerCase()+".type", type.ordinal());    	
-    	return criteria;
-	}
-
 	public void onRectify(ActionEvent event) throws ManagerBeanException {
 		RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
 		if ( getRectificationNumber() == 0 ) {
@@ -584,6 +576,30 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	
+	public void acceptInvoice(ActionEvent event) {
+		Invoice invoice = getInvoice();
+		invoice.setUpdateEnabled(!invoice.isRecorded());
+		super.accept(event);
+	}
+
+	@Override
+	protected Criteria getSeriesCriteria() {
+    	Criteria criteria = new Criteria();
+    	InvoiceType type = (getInvoice() != null) ? getInvoice().getType() : InvoiceType.SALES;
+    	criteria.addEqualExpression(getTableName().toLowerCase() + ".type", type.ordinal());    	
+    	return criteria;
+	}
+
+	@Override
+	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
+		ConfigCollectionsController configCollections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
+		if (getInvoice() != null && isRectifier()) {
+			return configCollections.getRectificationSeriesIds();
+		} else {
+			return configCollections.getInvoiceSeriesIds();
+		}
+	}
+
 	public void onReferenceCodeChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			getInvoice().setReferenceCode((String)event.getNewValue());
@@ -1040,16 +1056,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return null;
 	}
 	
-	public void onAcceptFiscalInformation(ActionEvent event) {
-		Invoice invoice = getInvoice();
-		
-		// Solo se puede modificar service e investment, que no afectan a los totales
-		// por lo tanto no es necesario recalcular.
-		invoice.setUpdateEnabled(false);
-		
-		super.accept(event);
-	}
-
 	public boolean isAmortizationForm () {
 		if (!isNevv() && getInvoice().isInvestment()) { 
 			try {
@@ -1193,14 +1199,4 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return super.getPojoShortName();
 	}
 
-	@Override
-	public List<SelectItem> getSeriesCodes() throws ManagerBeanException {
-		ConfigCollectionsController ccc = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-		if ( (getInvoice() != null) && isRectifier() ) {
-			return ccc.getRectificationSeriesIds();
-		} else {
-			return ccc.getInvoiceSeriesIds();
-		}
-	}
-	
 }
