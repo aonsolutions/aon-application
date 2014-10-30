@@ -1,15 +1,14 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class Extra implements Serializable, HasId<Integer> {
+public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {
 
 	private Integer id;
 
+	private Integer domain;
 	
 	private Integer paymentId;
 	
@@ -25,6 +24,15 @@ public class Extra implements Serializable, HasId<Integer> {
 		this.id = id;
 	}
 	
+	@Override
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public void setDomain(Integer domain) {
+		this.domain = domain;
+	}
+
 	public Integer getPaymentId() {
 		return paymentId;
 	}

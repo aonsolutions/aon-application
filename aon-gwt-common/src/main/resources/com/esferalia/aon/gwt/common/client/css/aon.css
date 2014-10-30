@@ -393,6 +393,10 @@
         gwt-image: "aon_icon_row_c" ;
 }
 
+@sprite .aon-icon-rowSelector-Parent {
+        gwt-image: "aon_icon_row_parent" ;
+}
+
 @sprite .aon-icon-rowSelector-Changed {
         gwt-image: "aon_icon_row_changed" ;
 }

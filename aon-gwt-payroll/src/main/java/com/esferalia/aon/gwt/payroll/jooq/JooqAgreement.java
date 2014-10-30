@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
@@ -8,20 +9,33 @@ import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSet
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jooq.AggregateFunction;
+import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
+import org.jooq.Record2;
+import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -145,11 +159,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, extra.getPaymentId())
 		.execute();
 		//@formatter:on
-		
-		if ( extra.getPaymentId() == null )
+
+		if (extra.getPaymentId() == null)
 			return;
-		
-		
+
 		//@formatter:off
 		dslContext.update(AGREEMENT_PAYMENT)
 		.set(AGREEMENT_PAYMENT.MONTH, getExtraMonth(extra.getIssueDate()))
@@ -157,13 +170,15 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.execute();
 		//@formatter:on
 	}
-	
-	public static void updateExtra(Connection conn, Extra extra) throws SQLException {
+
+	public static void updateExtra(Connection conn, Extra extra)
+			throws SQLException {
 		updateExtra(DSL.using(conn, getDefaultSettings()), extra);
 	}
-	
-	public static void updateExtra(DSLContext dslContext, Extra extra) throws SQLException {
-		
+
+	public static void updateExtra(DSLContext dslContext, Extra extra)
+			throws SQLException {
+
 		//@formatter:off
 		dslContext.update(AGREEMENT_EXTRA)
 		.set(AGREEMENT_EXTRA.START_DATE, extra.getStartDate())
@@ -173,10 +188,10 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.where(AGREEMENT_EXTRA.ID.eq(extra.getId()))
 		.execute();
 		//@formatter:on
-		
-		if ( extra.getPaymentId() == null )
+
+		if (extra.getPaymentId() == null)
 			return;
-		
+
 		//@formatter:off
 		dslContext.update(AGREEMENT_PAYMENT)
 		.set(AGREEMENT_PAYMENT.MONTH, getExtraMonth(extra.getIssueDate()))
@@ -190,7 +205,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			throws SQLException {
 		removeExtra(DSL.using(conn, getDefaultSettings()), extraId);
 	}
-	
+
 	public static void removeExtra(DSLContext dslContext, Integer extraId)
 			throws SQLException {
 		//@formatter:off
@@ -199,8 +214,44 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		.execute();
 		//@formatter:on
 	}
+
+	public static List<Agreement> getAgreements(Connection conn, int offset,
+			int limit, Integer... domains) throws SQLException {
+		return getAgreements(DSL.using(conn, getDefaultSettings()), offset, limit,
+				domains);
+	}
+
+	public static List<Agreement> getAgreements(DSLContext dslContext,
+			int offset, int limit, Integer... domains) throws SQLException {
+
+		//@formatter:off
+			Result<AgreementRecord> result = dslContext
+			.select()
+			.from(AGREEMENT)
+			.where(AGREEMENT.DOMAIN.in(domains))
+			.orderBy(AGREEMENT.DESCRIPTION)
+			.fetchInto(AGREEMENT)
+			;
+			//@formatter:on
+
+		List<Agreement> agreements = new LinkedList<Agreement>();
+		for (AgreementRecord record : result) {
+			Agreement agreement = new Agreement();
+
+			agreement.setId(record.getId()); // Not NULL
+			agreement.setDomain(record.getDomain());
+			agreement.setDescription(record.getDescription());
+			// agreement.setLevelsWithoutCategories(false);
+			// agreement.setEmployees(rs.getInt("EMPLOYEEs"));
+			// agreement.setRedefined(rs.getInt("REDEFINED"));
+			agreements.add(agreement);
+
+		}
+		return agreements;
+	}
+
 	// ------------------------------------------------------------------------
-	
+
 	private static void insertAgreementPayment(DSLContext dslContext,
 			Integer domainId, Integer agreementId, Integer paymentId,
 			Payment payment) throws SQLException {
@@ -339,29 +390,15 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		return min == null ? 0 : min; // null if the query returned no records.
 	}
-	
-	private static Byte getExtraMonth (String extraDate ) {
+
+	private static Byte getExtraMonth(String extraDate) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("d/M");
 		try {
 			Date date = dateFormat.parse(extraDate);
-			return (byte ) date.getMonth();
+			return (byte) date.getMonth();
 		} catch (ParseException e) {
 			return null;
 		}
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException,
-			SQLException {
-
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection connection = DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1:3306/pro-aonsolutions-net", "aon",
-				"40n");
-		Settings settings = new Settings();
-		settings.setRenderSchema(false);
-		DSLContext dslContext = DSL.using(connection, settings);
-
-	}
-	
-	
 }

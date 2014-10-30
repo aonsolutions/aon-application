@@ -5,17 +5,16 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
 
-public class Agreement implements Serializable, HasId<Integer> {
+public class Agreement implements Serializable, HasId<Integer>, HasDomain<Integer> {
 
 	private int id;
+	private Integer domain;
 	private String description;
 
 	private int redefined;
 	private int employees;
 	
-	//private boolean extraWithOutPayment;
 	private boolean levelsWithoutCategories;
-	
 
 	@Override
 	public Integer getId() {
@@ -24,6 +23,15 @@ public class Agreement implements Serializable, HasId<Integer> {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	@Override
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public void setDomain(Integer domain) {
+		this.domain = domain;
 	}
 	
 	public String getDescription() {

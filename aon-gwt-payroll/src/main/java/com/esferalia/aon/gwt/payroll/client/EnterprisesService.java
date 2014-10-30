@@ -18,6 +18,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("enterprises")
 public interface EnterprisesService extends RemoteService {
 	
+	Integer getDomain();
+
 	ContextDescriptor getContext();
 
 	Bonus saveBonusConcept(Bonus bonus);

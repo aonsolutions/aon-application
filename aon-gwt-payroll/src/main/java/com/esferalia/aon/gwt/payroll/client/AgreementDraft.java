@@ -1258,6 +1258,7 @@ public class AgreementDraft extends ResizeComposite implements
 		// TODO: When null it will be desirable warn user.
 		String description = this.agreementDraftObject.getDescription();
 		descriptionTextBox.setText(description == null ? "" : description);
+		descriptionTextBox.setEnabled(isMine());
 
 	}
 
@@ -1854,6 +1855,8 @@ public class AgreementDraft extends ResizeComposite implements
 		Button editButton = new Button();
 		editButton.setStyleName(getIconRowStyle(payment));
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		
+
 		paymentsTable.setWidget(row, 0, editButton);
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(
@@ -2311,6 +2314,10 @@ public class AgreementDraft extends ResizeComposite implements
 					+ "' it's not a valid extra date");
 		}
 	}
+	
+	private boolean isMine() {
+		return agreementDraftObject.isMine();
+	}
 
 	private boolean isDraftLevel(Level level) {
 		return agreementDraftObject.isDraftLevel(level);
@@ -2318,6 +2325,10 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private boolean isDraftExtra(Extra extra) {
 		return agreementDraftObject.isDraftExtra(extra);
+	}
+
+	private boolean isNotMine(Payment payment) {
+		return !agreementDraftObject.isMine(payment);
 	}
 
 	private boolean isDraftPayment(Payment payment) {
@@ -2338,8 +2349,12 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private String getIconRowStyle(Payment payment) {
-		return isDraftPayment(payment) ? AON.AON_ICON_ROW_SELECTOR_CHANGED
-				: AON.AON_ICON_ROW_SELECTOR;
+		if ( isDraftPayment(payment) )
+			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
+		if ( isNotMine(payment)) {
+			return AON.AON_ICON_ROW_SELECTOR_PARENT ;
+		}
+		return AON.AON_ICON_ROW_SELECTOR;
 	}
 
 	// ------------------------------------------------------------------------

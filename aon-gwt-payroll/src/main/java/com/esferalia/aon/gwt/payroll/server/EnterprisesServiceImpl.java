@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -30,9 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
@@ -54,6 +52,17 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 @SuppressWarnings("serial")
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
+	
+	
+	@Override
+	public Integer getDomain() {
+		try {
+			initFacesContext();
+			return getDomainID();
+		} finally {
+			releaseFacesContext();
+		}
+	}
 
 	@Override
 	public ContextDescriptor getContext() {
@@ -80,7 +89,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			Integer domainID = getDomainID();
 
-			if (bonus.getId() != null && domainID.equals(bonus.getDomainId())) {
+			if (bonus.getId() != null && domainID.equals(bonus.getDomain())) {
 				updateBonusConcept(connection, bonus);
 			} else {
 				int bonusID = insertBonusConcept(connection, bonus, domainID);
@@ -89,7 +98,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} // end if: Update all bonuses of this domain that references
 					// old concept.
 				bonus.setId(bonusID);
-				bonus.setDomainId(domainID);
+				bonus.setDomain(domainID);
 			}
 
 			return bonus;
@@ -117,7 +126,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainID = getDomainID();
 
 			if (payment.getId() != null
-					&& domainID.equals(payment.getDomainId())) {
+					&& domainID.equals(payment.getDomain())) {
 				updatePaymentConcept(connection, payment);
 			} else {
 				int paymentID = insertPaymentConcept(connection, payment,
@@ -128,7 +137,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} // end if: Update all payments of this domain that references
 					// old concept.
 				payment.setId(paymentID);
-				payment.setDomainId(domainID);
+				payment.setDomain(domainID);
 			}
 
 			return payment;
@@ -156,7 +165,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainID = getDomainID();
 
 			if (deduction.getId() != null
-					&& domainID.equals(deduction.getDomainId())) {
+					&& domainID.equals(deduction.getDomain())) {
 				updateDeductionConcept(connection, deduction);
 			} else {
 				int deductionID = insertDeductionConcept(connection, deduction,
@@ -167,7 +176,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				} // end if: Update all deductions of this domain that
 					// references old concept.
 				deduction.setId(deductionID);
-				deduction.setDomainId(domainID);
+				deduction.setDomain(domainID);
 			}
 
 			return deduction;
@@ -275,7 +284,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainID = getDomainID();
 			Integer parentDomainID = getParentDomainID();
 
-			return getAgreements(connection, offset, limit, domainID,
+			return JooqAgreement.getAgreements(connection, offset, limit, domainID,
 					parentDomainID);
 
 		} catch (SQLException e) {
@@ -837,8 +846,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			while (rs.next()) {
 				Enterprise enterprise = new Enterprise();
 				enterprise.setId(rs.getInt(EnterpriseColumns.REGISTRY)); // Not
-																			// NULL
 				enterprise.setName(rs.getString(RegistryColumns.NAME));
+				enterprise.setDomain(rs.getInt(EnterpriseColumns.DOMAIN));
 				enterprises.add(enterprise);
 			}
 
@@ -850,69 +859,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			if (stmt != null)
 				stmt.close();
 
-		}
-
-	}
-
-	private static String LEVELS_WITHOUT_CATEGORIES = "LEVELS_WO";
-
-	private static List<Agreement> getAgreements(Connection connection,
-			int offset, int limit, Integer domainID, Integer parentDomainID)
-			throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-		try {
-
-			//@formatter:off
-			stmt = connection.prepareStatement("SELECT "
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID 
-					+ ", " + SQLConstants.AGREEMENT + "." + AgreementColumns.DESCRIPTION 
-					+ ", ( SELECT count(*)"
-						+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
-						+ " WHERE " + SQLConstants.AGREEMENT_LEVEL +"."+ AgreementLevelColumns.AGREEMENT + " = " + SQLConstants.AGREEMENT +"."+ AgreementColumns.ID 
-						+ " AND " + SQLConstants.AGREEMENT_LEVEL +"."+ AgreementLevelColumns.ID + " NOT IN"
-							+ " ( SELECT " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL 
-							+ " FROM " + SQLConstants.AGREEMENT_LEVEL_CATEGORY 
-							+ " WHERE " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = " + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + "))"
-					+ " AS " + LEVELS_WITHOUT_CATEGORIES
-					+ " FROM " + SQLConstants.AGREEMENT 
-					+ " WHERE " + SQLConstants.AGREEMENT + "." + AgreementColumns.DOMAIN + " IN ( ? " + (parentDomainID != null ? ",?" : "") + ")" 
-					+ " ORDER BY " + SQLConstants.AGREEMENT + "." + AgreementColumns.DESCRIPTION 
-					// + " LIMIT ?, ?"
-					);
-			//@formatter:on
-
-			int i = 1;
-
-			stmt.setInt(i++, domainID);
-			if (parentDomainID != null)
-				stmt.setInt(i++, parentDomainID);
-			// stmt.setInt(i++, offset);
-			// stmt.setInt(i++, limit);
-
-			rs = stmt.executeQuery();
-
-			List<Agreement> agreements = new LinkedList<Agreement>();
-			while (rs.next()) {
-				Agreement agreement = new Agreement();
-				agreement.setId(rs.getInt(SQLConstants.AGREEMENT + "."
-						+ AgreementColumns.ID)); // Not NULL
-				agreement.setDescription(rs.getString(SQLConstants.AGREEMENT
-						+ "." + AgreementColumns.DESCRIPTION));
-				agreement.setLevelsWithoutCategories(rs
-						.getInt(LEVELS_WITHOUT_CATEGORIES) > 0);
-				// agreement.setEmployees(rs.getInt("EMPLOYEEs"));
-				// agreement.setRedefined(rs.getInt("REDEFINED"));
-				agreements.add(agreement);
-			}
-
-			return agreements;
-
-		} finally {
-			if (rs != null)
-				rs.close();
-			if (stmt != null)
-				stmt.close();
 		}
 
 	}
@@ -945,7 +891,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Bonus bonus = new Bonus();
 
 				bonus.setId(rs.getInt(BonusConceptColumns.ID)); // not null
-				bonus.setDomainId(rs.getInt(BonusConceptColumns.DOMAIN));
+				bonus.setDomain(rs.getInt(BonusConceptColumns.DOMAIN));
 				bonus.setDescription(rs
 						.getString(BonusConceptColumns.DESCRIPTION));
 				bonus.setExpression(rs
@@ -998,7 +944,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 				deduction.setId(rs.getInt(DeductionConceptColumns.ID));
 				deduction
-						.setDomainId(rs.getInt(DeductionConceptColumns.DOMAIN));
+						.setDomain(rs.getInt(DeductionConceptColumns.DOMAIN));
 				deduction.setName(rs.getString(DeductionConceptColumns.CODE));
 				deduction.setDescription(rs
 						.getString(DeductionConceptColumns.DESCRIPTION));

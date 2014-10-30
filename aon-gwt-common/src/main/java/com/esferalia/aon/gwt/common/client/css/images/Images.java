@@ -62,11 +62,15 @@ public interface Images extends ClientBundle, Tree.Resources {
 	@Source("noimage.png")
 	ImageResource treeLeaf();
 	
+	ImageResource parent();
+
 	ImageResource agreement();
 	
 	ImageResource agreement_warn();
 
 	ImageResource agreement_error();
+
+	ImageResource agreement_parent();
 
 	ImageResource agreement_changed();
 
@@ -115,6 +119,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource undo();
 
 	ImageResource aon_icon_row_s();
+
+	ImageResource aon_icon_row_parent();
 
 	ImageResource aon_icon_row_changed();
 	
