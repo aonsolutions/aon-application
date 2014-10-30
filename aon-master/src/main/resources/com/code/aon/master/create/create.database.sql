@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.4.1
+# Version: 8.5.0
 # Created by: girazu
-# Creation Date: 23/10/2014 19:35
+# Creation Date: 30/10/2014 12:05
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -847,7 +847,6 @@ CREATE TABLE `project` (
   `project_type` int(4) default NULL COMMENT 'Tipo de Proyecto',
   `tas` tinyint(1) default '0' COMMENT 'Indica si se trata de una Orden de Reparacion o Fabricacion',
   `commercial` tinyint(1) default '0' COMMENT 'Indica si se trata de una Operacion Comercial',
-  `dossier` tinyint(1) default '0' COMMENT 'Indica si se trata de un Expediente de Cliente',
   `reservation` tinyint(1) default '0' COMMENT 'Indica si se trata de una Reserva',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Proyecto esta activo o no',
   PRIMARY KEY  (`id`),
@@ -7594,7 +7593,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.4.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.5.0');
 
 COMMIT;
 
