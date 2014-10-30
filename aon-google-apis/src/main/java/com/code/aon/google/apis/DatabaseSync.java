@@ -772,7 +772,6 @@ public static void setEventId(String eventId,int id, String domain) throws SQLEx
 				project.setProjectType(rs.getInt(ProjectColumns.PROJECT_TYPE));
 				project.setTas(rs.getBoolean(ProjectColumns.TAS));
 				project.setCommercial(rs.getBoolean(ProjectColumns.COMMERCIAL));
-				project.setDossier(rs.getBoolean(ProjectColumns.DOSSIER));
 				project.setReservation(rs
 						.getBoolean(ProjectColumns.RESERVATION));
 				project.setActive(rs.getBoolean(ProjectColumns.ACTIVE));
@@ -1286,7 +1285,6 @@ public static void setEventId(String eventId,int id, String domain) throws SQLEx
 				project.setProjectType(rs.getInt(ProjectColumns.PROJECT_TYPE));
 				project.setTas(rs.getBoolean(ProjectColumns.TAS));
 				project.setCommercial(rs.getBoolean(ProjectColumns.COMMERCIAL));
-				project.setDossier(rs.getBoolean(ProjectColumns.DOSSIER));
 				project.setReservation(rs
 						.getBoolean(ProjectColumns.RESERVATION));
 				project.setActive(rs.getBoolean(ProjectColumns.ACTIVE));
