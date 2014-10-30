@@ -132,12 +132,13 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 			com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = new com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
 
 			draft.setId(agreement.getId());
+			draft.setDomain(agreement.getDomain());
 			draft.setDescription(agreement.getDescription());
 
 			draft.setStartDate(DateUtils.getFirstDayOfMonth());
 			draft.setEndDate(DateUtils.getLastDayOfMonth());
 
-			agreementDraftObject = new AgreementDraftObject(draft,
+			agreementDraftObject = new AgreementDraftObject(agreements.getDomain(),draft,
 					employeesServiceAsync);
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);
 

@@ -20,9 +20,10 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 
 public class AgreementDraft extends Agreement {
 	
-	public static class Level implements Serializable, HasId<Integer> {
+	public static class Level implements Serializable, HasId<Integer>, HasDomain<Integer> {
 
 		private Integer id;
+		private Integer domain;
 		private String description;
 
 		@Override
@@ -32,6 +33,15 @@ public class AgreementDraft extends Agreement {
 
 		public void setId(Integer id) {
 			this.id = id;
+		}
+		
+		@Override
+		public Integer getDomain() {
+			return domain;
+		}
+		
+		public void setDomain(Integer domain) {
+			this.domain = domain;
 		}
 
 		public String getDescription() {
@@ -81,9 +91,10 @@ public class AgreementDraft extends Agreement {
 
 		}
 
-		public static class Entry implements Serializable {
+		public static class Entry implements Serializable{
 			int level;
 			Variable variable;
+			
 
 			public Entry(int level, Variable variable) {
 				this.level = level;
@@ -93,7 +104,7 @@ public class AgreementDraft extends Agreement {
 			public int getLevel() {
 				return level;
 			}
-
+			
 			public Variable getVariable() {
 				return variable;
 			}
@@ -198,7 +209,7 @@ public class AgreementDraft extends Agreement {
 
 	private Date startDate;
 	private Date endDate;
-
+	
 	private boolean hasChanges;
 
 	private SortedSet<Date> datesWithChanges;
@@ -426,7 +437,7 @@ public class AgreementDraft extends Agreement {
 	}
 
 	// ------------------------------------------------------------------------
-
+	
 	// ------------------------------------------------------------------------
 	private Set<Extra> getAllExtras() {
 		Set<Extra> all = new HashSet<Extra>(draftExtras.values());

@@ -7,7 +7,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.common.shared.HasName;
 
-public class Enterprise implements Serializable, HasId<Integer>, HasName<String> {
+public class Enterprise implements Serializable, HasId<Integer>, HasName<String>, HasDomain<Integer>{
 	
 	
 	/**
@@ -17,6 +17,8 @@ public class Enterprise implements Serializable, HasId<Integer>, HasName<String>
 	
 	private int			id;
 	
+	private Integer		domain; 
+	
 	private String 			name;
 	private List<Activity>	activities;
 	private List<Workplace> workplaces;
@@ -24,13 +26,23 @@ public class Enterprise implements Serializable, HasId<Integer>, HasName<String>
 	public Enterprise() {
 		workplaces = new LinkedList<Workplace>();
 	}
-	
+
+	@Override
 	public Integer getId() {
 		return id;
 	}
 	
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	@Override
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public void setDomain(Integer domain) {
+		this.domain = domain;
 	}
 	
 	public String getName() {

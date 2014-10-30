@@ -6,7 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
-public abstract class Variable implements HasStartAndEndDate, Serializable {
+public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>, Serializable {
 
 	String name;
 	Date startDate;
@@ -14,6 +14,7 @@ public abstract class Variable implements HasStartAndEndDate, Serializable {
 	boolean implicit;
 	Scope scope;
 	String expression;
+	Integer domain;
 
 	boolean[] defined;
 
@@ -24,7 +25,16 @@ public abstract class Variable implements HasStartAndEndDate, Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	@Override
+	public Integer getDomain() {
+		return domain;
+	}
+	
+	public void setDomain(Integer domain) {
+		this.domain = domain;
+	}
+	
 	public Date getStartDate() {
 		return startDate;
 	}

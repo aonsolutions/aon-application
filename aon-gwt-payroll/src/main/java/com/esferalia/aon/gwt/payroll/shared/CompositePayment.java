@@ -107,8 +107,8 @@ public class CompositePayment extends Payment {
 	}
 
 	@Override
-	public Integer getDomainId() {
-		return childs.isEmpty() ? null : childs.peek().domainId;
+	public Integer getDomain() {
+		return childs.isEmpty() ? null : childs.peek().domain;
 	}
 
 	@Override
