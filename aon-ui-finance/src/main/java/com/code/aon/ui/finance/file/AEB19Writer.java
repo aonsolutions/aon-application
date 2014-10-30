@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
@@ -39,18 +40,22 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB19Writer implements IFinanceConstants {
+
+	private IProgression progression;
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public FileOutput createAEB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createAEB19(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
+
+	private void updateProgress( int current, int total ) {
+		if ( this.progression != null ) {
+			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+		}
 	}
 	
 	public Lot getLot(Company company, FinanceBatch fbatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
@@ -83,9 +88,11 @@ public class AEB19Writer implements IFinanceConstants {
 		orderer.setSufix(companyRBank.getSufix());
 		orderer.setOrganisation(company.getRegistry().getType()==RegistryType.LEGAL);
 
+		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), lot.getType());
-			orderer.addIndividual(individual);			
+			orderer.addIndividual(individual);
+			updateProgress(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);		
 		return lot;

@@ -39,11 +39,9 @@
 						<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
 							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}">
-							<ui:include
-								src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />
-				     	</aon:commandButton>
-				     </aon:if>	
+							reRender="progressBarForm"
+							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />
+					</aon:if>	
 					<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')}" >
 						<aon:commandButton id="sepaCreateDisk" value="#{bundle.finance_create_disk}"
 							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
@@ -205,5 +203,12 @@
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
 		</ui:include>
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
+			<ui:param name="progressLabel" value="#{bundle.finance_create_disk}" />
+			<ui:param name="progressBarBean" value="#{fbatch.progressionState}" />
+			<aon:methodParam name="progressBarCloseActionListener"
+				default="#{fbatch.onClosePanel}" type="actionListener" />
+		</ui:include>		
 	</ui:define>
 </ui:composition>

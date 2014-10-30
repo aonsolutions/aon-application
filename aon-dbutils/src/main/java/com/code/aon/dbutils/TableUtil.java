@@ -219,7 +219,10 @@ public class TableUtil implements Constants {
 	
 	public static void updateBaseIds( Connection connection, Collection<TableInfo> tables, Integer[] domains ) throws SQLException {
 		for( TableInfo ti : tables ) {
-			updateBaseId(connection, domains, ti);
+			ColumnInfo pk = ti.getPkColumn();
+			if ( (pk != null) && pk.isInteger() ) {
+				updateBaseId(connection, domains, ti);	
+			}
 		}
 	}
 

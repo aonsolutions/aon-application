@@ -55,7 +55,7 @@ public class MenuParser {
 	
 	private static final String F_SET_PROPERTY_ACTION_LISTENER = "f:setPropertyActionListener";
 
-	private static final String C_IF = "c:if";
+	private static final String AON_IF = "aon:if";
 	
 	private static final String UI_INCLUDE = "ui:include";
 	
@@ -164,7 +164,7 @@ public class MenuParser {
 		String value = null;
 		Element parent = element.getParent();
 		while ( parent != null ) {
-			if ( C_IF.equals(parent.getQualifiedName()) ) {
+			if ( AON_IF.equals(parent.getQualifiedName()) ) {
 				value = getAndExpression(value, parent.attributeValue(TEST_ATTRIBUTE));
 			}
 			parent = parent.getParent();

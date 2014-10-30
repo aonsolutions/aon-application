@@ -303,7 +303,11 @@ public class AonDomainDump implements Constants {
 						values[i] = getReferenceValue(t, fkId, ci, ci.getFkTableName());	
 					}					
 				} else if ( ci == t.getPkColumn() ) {
-					values[i] = t.getRelativeId((Integer) value);
+					if ( ci.isInteger() ) {
+						values[i] = t.getRelativeId((Integer) value);	
+					} else {
+						values[i] = format(value, ci.getType());
+					}
 				} else {
 					values[i] = format(value, ci.getType());
 					if ( TableUtil.isInternalReference(t) ) {

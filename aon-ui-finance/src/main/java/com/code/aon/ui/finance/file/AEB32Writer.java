@@ -2,13 +2,13 @@ package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.file.bank.model.CSB32.CSB32;
@@ -28,21 +28,24 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB32Writer implements IFinanceConstants {
 
-	@SuppressWarnings("rawtypes")
-	public FileOutput createAEB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createAEB32(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
-	}
+	private IProgression progression;
 	
-	@SuppressWarnings("rawtypes")
-	public FileOutput createAEB32(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
+
+	private void updateProgress( int current, int total ) {
+		if ( this.progression != null ) {
+			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+		}
+	}
+
+	public FileOutput createAEB32(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = new Lot();
 		RegistryBank companyRBank = fBatch.getRegistryBank();
 		lot.setEntity(new Integer(companyRBank.getBankAccount().getBban1()));
@@ -64,11 +67,11 @@ public class AEB32Writer implements IFinanceConstants {
 		delivery.setPaymentAccount(ccc3);
 		delivery.setTruncatedEffects(new Integer(1));
 
-		Iterator iterator = fbatchDetailCollection.iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+		int current = 0;
+		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual = createIndividual(company, fBatchDetail.getFinance(), fBatch.getIssueDate());
 			delivery.addIndividual(individual);
+			updateProgress(++current, fbatchDetails.size());
 		}
 		lot.addDelivery(delivery);
 

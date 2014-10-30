@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERROR;
 
 import java.io.FileInputStream;
@@ -19,18 +18,18 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.ProgressionState;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
@@ -49,15 +48,11 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
-import com.code.aon.ui.finance.file.AEB19Writer;
-import com.code.aon.ui.finance.file.AEB32Writer;
-import com.code.aon.ui.finance.file.AEB34Writer;
-import com.code.aon.ui.finance.file.AEB58Writer;
-import com.code.aon.ui.finance.file.SEPA19_14CoreXmlWriter;
-import com.code.aon.ui.finance.file.SEPA34_14XmlWriter;
+import com.code.aon.ui.finance.util.FBatchCreateDiskProcess;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -80,6 +75,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean showFbatchRecordWindow;
 	private boolean showSEPAWindow;
 	private AccountEntryFinanceWriter writer;
+	private ProgressionState progressionState;
 
 	public Company getCompany() {
 		if (company == null) {
@@ -417,7 +413,13 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
+		setProgressionState(new ProgressionState());
+		getProgressionState().start();
+		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this);
+		LongProcessThread thread = new LongProcessThread(fcdp); 
+		thread.start();		
+		/*
+		FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
     	this.mimeType = MimeType.MIME_TXT;
     	List<FinanceBatchDetail> fbatchDetailCollection = obtainDetailsCollection(fbatch);
@@ -466,17 +468,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 getManagerBean().update(fbatch);
         	}
         }
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<FinanceBatchDetail> obtainDetailsCollection(FinanceBatch fbatch) {
-		String select = "select fbatchDetail " +
-    					"from FinanceBatchDetail as fbatchDetail " +
-    					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
-    					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.registry.id";
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-    	Query query = session.createQuery(select);
-    	return query.list(); 
+        */
 	}
 
 	public boolean isDiskOk() {
@@ -567,6 +559,23 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onShowSEPAWindow( ActionEvent event ) {
 		setBankDate(new Date());
 		setShowSEPAWindow(true);
+	}
+
+	public ProgressionState getProgressionState() {
+		return progressionState;
+	}
+
+	public void setProgressionState(ProgressionState progressionState) {
+		this.progressionState = progressionState;
+	}
+
+	public void setMimeType(MimeType mimeType) {
+		this.mimeType = mimeType;
+	}
+
+	public void onClosePanel(ActionEvent event) {
+		setShowSEPAWindow(false);
+		getProgressionState().finish();
 	}
 	
 }

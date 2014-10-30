@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.file.bank.model.CSB19.data.Individual;
@@ -29,8 +30,15 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SEPA19_14CoreXmlWriter {
 
+	private IProgression progression;
+	
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
+	
 	public FileOutput createXml(Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB19Writer aeb19Writer = new AEB19Writer();
+		aeb19Writer.setProgression(progression);
 		Lot lot = aeb19Writer.getLot(company, fBatch, fbatchDetails);
 		updateLot(lot, company, bankDate, fBatch, fbatchDetails);
 		try {

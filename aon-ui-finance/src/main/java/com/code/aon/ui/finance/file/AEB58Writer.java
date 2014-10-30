@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
@@ -39,21 +39,24 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB58Writer implements IFinanceConstants {
 
-	@SuppressWarnings("rawtypes")
-	public FileOutput createAEB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createAEB58(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
+	private IProgression progression;
+	
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
+
+	private void updateProgress( int current, int total ) {
+		if ( this.progression != null ) {
+			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+		}
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public FileOutput createAEB58(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createAEB58(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = new Lot();
 		if (fBatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58)) {
 			lot.setType(Lot.RESUMED);
@@ -80,11 +83,11 @@ public class AEB58Writer implements IFinanceConstants {
 		orderer.setSufix(companyRBank.getSufix());
 		orderer.setCodeINE(new Integer(1));
 
-		Iterator iterator = fbatchDetailCollection.iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+		int current = 0;
+		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), fBatch.getIssueDate(), lot.getType());
 			orderer.addIndividual(individual);
+			updateProgress(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);
 
