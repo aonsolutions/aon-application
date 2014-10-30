@@ -396,11 +396,12 @@ public class Employees extends ResizeComposite implements
 
 				AgreementDraft agreementDraft = new AgreementDraft();
 				agreementDraft.setId(agreement.getId());
+				agreementDraft.setDomain(agreement.getDomain());
 				agreementDraft.setDescription(agreement.getDescription());
 				agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 				agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
 				final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-						agreementDraft, employeesService);
+						enterprise.getDomain(), agreementDraft, employeesService);
 
 				employeesService.getChanges(agreement,
 						new AsyncCallback<SortedSet<Date>>() {
@@ -1150,7 +1151,7 @@ public class Employees extends ResizeComposite implements
 				// Agreement Category
 				if ( category == null  )
 					continue;
-				
+
 				Agreement agreement = category.getAgreement();
 				Agreement workplaceAgreement = ((Workplace) workplaceItem
 						.getUserObject()).getAgreement();
@@ -1158,6 +1159,9 @@ public class Employees extends ResizeComposite implements
 				if ( workplaceAgreement != null && 
 						workplaceAgreement.getId() == agreement.getId() )
 					continue;
+
+				TreeItem enterpriseItem = workplaceItem.getParentItem();
+				Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
 
 				TreeItem categoryItem = addImageItem(employeeItem,
 						category.getLevel() + ". " + category.getDescription(),
@@ -1170,7 +1174,7 @@ public class Employees extends ResizeComposite implements
 				categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 				categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
 				CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
-						categoryDraft, employeesService);
+						enterprise.getDomain(), categoryDraft, employeesService);
 				categoryItem.setUserObject(categoryDraftObject);
 				
 			}
@@ -1566,8 +1570,9 @@ public class Employees extends ResizeComposite implements
 		return DateUtils.isAfterOrEquals(employee.getEndDate(), firsDayOfMonth);
 
 	}
-	
-	private static ITDataObject getITDataObject(TreeItem workplaceItem) {		
-		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
+
+	private static ITDataObject getITDataObject(TreeItem workplaceItem) {
+		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX)
+				.getUserObject();
 	}
 }

@@ -91,6 +91,7 @@ public class AON {
 	public static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
 	public static final String AON_ICON_ROW_SELECTOR_S = AON_CSS.aonIconRowSelectorSystem();// "aon-icon-rowSelector-S";
 	public static final String AON_ICON_ROW_SELECTOR_C = AON_CSS.aonIconRowSelectorAgreement(); // "aon-icon-rowSelector-C";
+	public static final String AON_ICON_ROW_SELECTOR_PARENT = AON_CSS.aonIconRowSelectorParent(); // "aon-icon-rowSelector-Parent";
 	public static final String AON_ICON_ROW_SELECTOR_CHANGED = AON_CSS.aonIconRowSelectorChanged(); // "aon-icon-rowSelector-Changed";
 	public static final String AON_ICON_EXCEPTION = "aon-icon-exception";
 	public static final String AON_ICON_WARN = AON_CSS.aonIconWarn(); // "aon-icon-warn";

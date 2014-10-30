@@ -1,21 +1,30 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -31,7 +40,6 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Agreements extends ResizeComposite {
-
 
 	private static final Images IMAGES = GWT.create(Images.class);
 
@@ -65,8 +73,8 @@ public class Agreements extends ResizeComposite {
 	Button viewButton;
 	@UiField
 	Button collapseAllButton;
-	
-	
+
+	private Integer domain;
 	private List<Listener> listeners;
 	private EnterprisesServiceAsync enterprisesService;
 
@@ -81,6 +89,23 @@ public class Agreements extends ResizeComposite {
 		enterprisesService = new EnterprisesServiceAsyncDecorator(
 				enterprisesServiceRaw);
 
+		enterprisesService.getDomain(new AsyncCallback<Integer>() {
+
+			@Override
+			public void onSuccess(Integer result) {
+				Agreements.this.domain = result;
+				getAgreements();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+
+		initContextMenu();
+	}
+
+	private void getAgreements() {
 		enterprisesService.getAgreements(0, 100,
 				new AsyncCallback<List<Agreement>>() {
 
@@ -116,7 +141,10 @@ public class Agreements extends ResizeComposite {
 					}
 
 				});
-		initContextMenu();
+	}
+
+	public Integer getDomain() {
+		return domain;
 	}
 
 	public void addListener(Listener listener) {
@@ -126,7 +154,6 @@ public class Agreements extends ResizeComposite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-
 
 	// ------------------------------------------------------------- UiHandlers
 
@@ -159,16 +186,15 @@ public class Agreements extends ResizeComposite {
 			description = "*" + description;
 		}
 
-		TreeItem treeItem = new TreeItem(imageItemSafeHtml(
-				getImageResource(agreement), description));
-		treeItem.setUserObject(agreement);
+		List<ImageResource> marks = new ArrayList<ImageResource>();
+		if ( NumberUtils.notEquals(domain, agreement.getDomain()))
+			marks.add(IMAGES.parent());
 
-		if (agreement.isRedefined()) {
-			treeItem.addStyleName("gwt-TreeItem-highlight");
-		}
-		if (agreement.hasEmployees()) {
-			treeItem.addStyleName("gwt-TreeItem-highlight");
-		}
+		TreeItem treeItem = new TreeItem(imageItemSafeHtml(description,
+				getImageResource(agreement),
+				marks.toArray(new ImageResource[marks.size()])));
+
+		treeItem.setUserObject(agreement);
 
 		tree.addItem(treeItem);
 
@@ -187,31 +213,31 @@ public class Agreements extends ResizeComposite {
 				: null;
 	}
 
-	private void initContextMenu () {
-		
-		
+	private void initContextMenu() {
+
 		class AgreementContextMenu extends ContextMenu {
 
-			ScheduledCommand newCommand = new ScheduledCommand(){
+			ScheduledCommand newCommand = new ScheduledCommand() {
 				public void execute() {
 					Agreement agreement = Agreements.newAgreement();
-					Agreements.this.tree.setSelectedItem(addAgreementItem(agreement));
+					Agreements.this.tree
+							.setSelectedItem(addAgreementItem(agreement));
 				};
 			};
-			ScheduledCommand copyCommand = new ScheduledCommand(){
+			ScheduledCommand copyCommand = new ScheduledCommand() {
 				public void execute() {
 				};
 			};
-			ScheduledCommand pasteCommand = new ScheduledCommand(){
+			ScheduledCommand pasteCommand = new ScheduledCommand() {
 				public void execute() {
 				};
 			};
-			ScheduledCommand deleteCommand = new ScheduledCommand(){
+			ScheduledCommand deleteCommand = new ScheduledCommand() {
 				public void execute() {
 					deleteAgreement(getSelectedAgreement());
 				};
 			};
-			
+
 			private MenuItem pasteItem;
 			private MenuItem deleteItem;
 
@@ -220,33 +246,34 @@ public class Agreements extends ResizeComposite {
 				addItem("Nuevo", newCommand, AON.AON_ICON_RESET,
 						AON.AON_ICON_CMD_BUTTON);
 				addSeparator();
-				addItem("Copiar", copyCommand ,
-						AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
-				pasteItem = addItem("Pegar", pasteCommand ,
+				addItem("Copiar", copyCommand, AON.AON_ICON_COPY,
+						AON.AON_ICON_CMD_BUTTON);
+				pasteItem = addItem("Pegar", pasteCommand,
 						AON.AON_ICON_CLIPBOARD, AON.AON_ICON_CMD_BUTTON);
 				pasteItem.setEnabled(false);
-				deleteItem = addItem("Borrar", deleteCommand ,
+				deleteItem = addItem("Borrar", deleteCommand,
 						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 				deleteItem.setEnabled(false);
 
 			}
-			
+
 			@Override
 			public void show() {
 				sync();
 				super.show();
 			}
-			
-			private void sync(){
+
+			private void sync() {
 				Agreement agreement = Agreements.this.getSelectedAgreement();
 				deleteItem.setEnabled(agreement.canDelete());
 			}
-			
-		};
-		
+
+		}
+		;
+
 		final AgreementContextMenu contextMenu = new AgreementContextMenu();
-		
-		ContextMenuHandler contextMenuHandler = new  ContextMenuHandler(){
+
+		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 			@Override
 			public void onContextMenu(ContextMenuEvent event) {
 				// stop the browser from opening the context menu
@@ -258,14 +285,13 @@ public class Agreements extends ResizeComposite {
 						nativeEvent.getClientY());
 				contextMenu.show();
 			}
-			
+
 		};
-		
+
 		tree.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
-		
-		
+
 	}
-	
+
 	private void deleteAgreement(Agreement agreement) {
 		deleteTreeItem(getSelectedItem());
 	}
@@ -283,7 +309,7 @@ public class Agreements extends ResizeComposite {
 			boolean errors, boolean warns) {
 		return RESOURCES[changes ? 1 : 0][errors ? 1 : 0][warns ? 1 : 0];
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 	/**
@@ -297,10 +323,25 @@ public class Agreements extends ResizeComposite {
 		return builder.toSafeHtml();
 	}
 
-	// ------------------------------------------------------------------------
-	
-	
+	static SafeHtml imageItemSafeHtml(String title, ImageResource imageProto,
+			ImageResource... imageMarks) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
+		List<SafeUri> uris = new ArrayList<SafeUri>();
+		uris.add(imageProto.getSafeUri());
+		for (ImageResource imageMark : imageMarks)
+			uris.add(imageMark.getSafeUri());
+
+		builder.append(OverlayImagesImpl.getSafeHtml(imageProto.getLeft(),
+				imageProto.getTop(), imageProto.getWidth(),
+				imageProto.getHeight(), uris.toArray(new SafeUri[uris.size()])));
+
+		if (title != null)
+			builder.appendEscaped(" " + title);
+		return builder.toSafeHtml();
+	}
+
+	// ------------------------------------------------------------------------
 
 	private static synchronized Agreement newAgreement() {
 		Agreement agreement = new Agreement();
@@ -310,9 +351,60 @@ public class Agreements extends ResizeComposite {
 		return agreement;
 	}
 
- 	private static ImageResource getImageResource(Agreement agreement) {
+	private static ImageResource getImageResource(Agreement agreement) {
 		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
 	}
 
+	public static class OverlayImagesImpl {
+
+		interface Template extends SafeHtmlTemplates {
+			@SafeHtmlTemplates.Template("<img onload='this.__gwtLastUnhandledEvent=\"load\";' src='{0}' "
+					+ "style='{1}' border='0'>")
+			SafeHtml image(SafeUri clearImage, SafeStyles style);
+		}
+
+		interface DraggableTemplate extends SafeHtmlTemplates {
+			@SafeHtmlTemplates.Template("<img onload='this.__gwtLastUnhandledEvent=\"load\";' src='{0}' "
+					+ "style='{1}' border='0' draggable='true'>")
+			SafeHtml image(SafeUri clearImage, SafeStyles style);
+		}
+
+		private static final SafeUri CLEARIMAGE = UriUtils
+				.fromTrustedString(GWT.getModuleBaseURL() + "clear.cache.gif");
+		private static final Template TEMPLATE = GWT.create(Template.class);
+		private static final DraggableTemplate DRAGGABLE_TEMPLATE = GWT
+				.create(DraggableTemplate.class);
+
+		public static SafeHtml getSafeHtml(int left, int top, int width,
+				int height, SafeUri... uris) {
+			return getSafeHtml(left, top, width, height, false, uris);
+		}
+
+		public static SafeHtml getSafeHtml(int left, int top, int width,
+				int height, boolean isDraggable, SafeUri... uris) {
+
+			StringBuffer background = new StringBuffer();
+			for (SafeUri uri : uris) {
+				if (background.length()>0)
+					background.append(", ");
+				background.append("url(" + uri.asString() + ") " + "no-repeat "
+						+ (-left + "px ") + (-top + "px") );
+			}
+
+			SafeStylesBuilder builder = new SafeStylesBuilder();
+
+			builder.width(width, Unit.PX).height(height, Unit.PX)
+					.trustedNameAndValue("background", background.toString());
+
+			if (!isDraggable) {
+				return TEMPLATE.image(CLEARIMAGE, SafeStylesUtils
+						.fromTrustedString(builder.toSafeStyles().asString()));
+			} else {
+				return DRAGGABLE_TEMPLATE.image(CLEARIMAGE, SafeStylesUtils
+						.fromTrustedString(builder.toSafeStyles().asString()));
+			}
+		}
+
+	}
 
 }

@@ -28,6 +28,14 @@ public class EnterprisesServiceAsyncDecorator implements
 			EnterprisesServiceAsync enterprisesServiceAsync) {
 		this.enterprisesServiceAsync = enterprisesServiceAsync;
 	}
+	
+	@Override
+	public void getDomain(AsyncCallback<Integer> callback) {
+		AON.start();
+		enterprisesServiceAsync
+				.getDomain(new AsyncCallbackWrapper<Integer>(
+						callback));
+	}
 
 	@Override
 	public void getContext(AsyncCallback<ContextDescriptor> callback) {

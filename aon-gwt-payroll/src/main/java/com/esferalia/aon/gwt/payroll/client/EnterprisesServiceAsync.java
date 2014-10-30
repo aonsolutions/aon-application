@@ -15,6 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>EnterprisesService</code>.
  */
 public interface EnterprisesServiceAsync {
+	void getDomain(AsyncCallback<Integer> callback);
 	void getContext(AsyncCallback<ContextDescriptor> callback);
 	void saveBonusConcept(Bonus bonus, AsyncCallback<Bonus> callback);
 	void savePaymentConcept(Payment payment, AsyncCallback<Payment> callback);

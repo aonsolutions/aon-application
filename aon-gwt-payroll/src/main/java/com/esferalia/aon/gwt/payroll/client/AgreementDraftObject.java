@@ -14,6 +14,7 @@ import java.util.SortedSet;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -28,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -189,10 +191,12 @@ public class AgreementDraftObject {
 		}
 
 	}
-
+	
 	private Date draftEndDate;
 	private Date draftStartDate;
 
+	private Integer draftDomain;
+	
 	private int nextDraftLevelId = 0;
 	private int nextDraftExtraId = 0;
 	private int nextDraftPaymentId = 0;
@@ -201,14 +205,25 @@ public class AgreementDraftObject {
 	private AgreementDraft oldAgreementDraft;
 	private UndoManager<Undoable> undoManager;
 	private EmployeesServiceAsync employeesServiceAsync;
+	
+	
 
-	public AgreementDraftObject(AgreementDraft agreementDraft,
+	public AgreementDraftObject(Integer draftDomain, AgreementDraft agreementDraft,
 			EmployeesServiceAsync employeesServiceAsync) {
 		this.oldAgreementDraft = null;
 		this.agreementDraft = agreementDraft;
 		this.undoManager = new UndoManager<Undoable>();
 		this.employeesServiceAsync = employeesServiceAsync;
 		this.shownVariables = new HashSet<String>();
+		this.draftDomain = draftDomain;
+	}
+
+	public boolean isMine(){
+		return NumberUtils.equals(draftDomain, agreementDraft.getDomain());
+	}
+
+	public boolean isMine(Payment payment){
+		return NumberUtils.equals(draftDomain, payment.getDomain());
 	}
 
 	public Level newLevel() {
@@ -231,7 +246,15 @@ public class AgreementDraftObject {
 		return payment;
 
 	}
+	
+	public Integer getDraftDomain() {
+		return draftDomain;
+	}
 
+	public void setDraftDomain(Integer draftDomain) {
+		this.draftDomain = draftDomain;
+	}
+	
 	public Date getDraftEndDate() {
 		if (draftEndDate == null)
 			return agreementDraft.getEndDate();
@@ -259,6 +282,7 @@ public class AgreementDraftObject {
 		this.draftStartDate = draftStartDate;
 		this.draftEndDate = draftEndDate;
 	}
+	
 
 	// ------------------------------------------
 	// AgreeementDraft delegates
@@ -609,7 +633,8 @@ public class AgreementDraftObject {
 		AgreementDraft draft = new AgreementDraft();
 
 		draft.setId(src.getId());
-
+		draft.setDomain(src.getDomain());
+		
 		draft.setStartDate(src.getStartDate());
 		draft.setEndDate(src.getEndDate());
 
@@ -728,5 +753,6 @@ public class AgreementDraftObject {
 			draft.addDraftVariable(level, variable);
 		}
 	}
+	
 
 }

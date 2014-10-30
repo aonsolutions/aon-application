@@ -236,6 +236,9 @@ public interface AonCSS extends  CssResource {
 	@ClassName("aon-icon-view")
 	String aonIconView();
 
+	@ClassName("aon-icon-rowSelector-Parent")
+	String aonIconRowSelectorParent();
+
 	@ClassName("aon-icon-rowSelector-Changed")
 	String aonIconRowSelectorChanged();
 

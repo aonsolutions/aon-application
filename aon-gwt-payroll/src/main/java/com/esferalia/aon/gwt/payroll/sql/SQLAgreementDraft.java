@@ -61,11 +61,19 @@ public class SQLAgreementDraft {
 	}
 
 	public static Set<Payment> getPayments(Connection connection,
-			int agreementId, Date startDate, Date endDate) throws SQLException {
+			int agreementId, Date startDate, Date endDate, Integer... domains)
+			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-
+			
+			List<Integer> domainList = new ArrayList<Integer>(domains.length);
+			for (Integer domain : domains) { 
+				if ( domain != null) {
+					domainList.add(domain);
+				}
+			}
+			
 			java.sql.Date sqlEndDate = SQLUtils.date2sql(endDate);
 			java.sql.Date sqlStartDate = SQLUtils.date2sql(startDate);
 
@@ -83,11 +91,17 @@ public class SQLAgreementDraft {
 					+ SQLConstants.AGREEMENT_PAYMENT + "."
 					+ AgreementPaymentColumns.END_DATE + " >= ?  ) " + " AND "
 					+ SQLConstants.AGREEMENT_PAYMENT + "."
-					+ AgreementPaymentColumns.START_DATE + " <= ? ");
+					+ AgreementPaymentColumns.START_DATE + " <= ? " + " AND "
+					+ SQLConstants.AGREEMENT_PAYMENT + "."
+					+ AgreementColumns.DOMAIN + " IN ("
+					+ StringUtils.repeat("?", ",", domainList.size()) + ")");
 
-			stmt.setInt(1, agreementId);
-			stmt.setDate(2, sqlStartDate);
-			stmt.setDate(3, sqlEndDate);
+			int i = 1;
+			stmt.setInt(i++, agreementId);
+			stmt.setDate(i++, sqlStartDate);
+			stmt.setDate(i++, sqlEndDate);
+			for (Integer domain : domainList)
+				stmt.setInt(i++, domain);
 
 			rs = stmt.executeQuery();
 
@@ -101,6 +115,9 @@ public class SQLAgreementDraft {
 
 				payment.setId(rs.getInt(SQLConstants.AGREEMENT_PAYMENT + "."
 						+ AgreementPaymentColumns.ID));
+
+				payment.setDomain(rs.getInt(SQLConstants.AGREEMENT_PAYMENT
+						+ "." + AgreementPaymentColumns.DOMAIN));
 
 				// bellow payment's properties may be inherit from concept
 				payment.setExpression(get(rs,
@@ -278,16 +295,19 @@ public class SQLAgreementDraft {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = connection.prepareStatement(
-					"SELECT * " 
-					+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
-					+ " ," + SQLConstants.AGREEMENT_LEVEL_CATEGORY 
-					+ " WHERE " + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT + "= ? " 
-					+ " AND (" + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID 
-					+ " =  " + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + ")"
-					+ " ORDER BY " + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.ID);
-			//@formatter:on
+			// @formatter:off
+			stmt = connection.prepareStatement("SELECT * " + " FROM "
+					+ SQLConstants.AGREEMENT_LEVEL + " ,"
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " WHERE "
+					+ SQLConstants.AGREEMENT_LEVEL + "."
+					+ AgreementLevelColumns.AGREEMENT + "= ? " + " AND ("
+					+ SQLConstants.AGREEMENT_LEVEL + "."
+					+ AgreementLevelColumns.ID + " =  "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + ")"
+					+ " ORDER BY " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
+					+ "." + AgreementLevelCategoryColumns.ID);
+			// @formatter:on
 
 			stmt.setInt(1, agreementId);
 
@@ -329,14 +349,14 @@ public class SQLAgreementDraft {
 
 			SortedSet<Date> months = new TreeSet<Date>();
 
-			//@formatter:off
-			stmt = connection.prepareStatement(
-					"SELECT " + AgreementPaymentColumns.START_DATE 
-					+ " FROM " + SQLConstants.AGREEMENT_PAYMENT 
-					+ " WHERE "  + AgreementPaymentColumns.AGREEMENT + " = ? " 
-					+ " AND " + AgreementPaymentColumns.DOMAIN + " IN ( "+ in +" )" 
+			// @formatter:off
+			stmt = connection.prepareStatement("SELECT "
+					+ AgreementPaymentColumns.START_DATE + " FROM "
+					+ SQLConstants.AGREEMENT_PAYMENT + " WHERE "
+					+ AgreementPaymentColumns.AGREEMENT + " = ? " + " AND "
+					+ AgreementPaymentColumns.DOMAIN + " IN ( " + in + " )"
 					+ " GROUP BY 1");
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, agreementId);
 			for (int i = 0; i < domainIds.length; i++)
 				stmt.setInt(2 + i, domainIds[i]);
@@ -346,14 +366,14 @@ public class SQLAgreementDraft {
 			rs.close();
 			stmt.close();
 
-			//@formatter:off
-			stmt = connection.prepareStatement(
-					"SELECT " + AgreementDataColumns.START_DATE 
-					+ " FROM " + SQLConstants.AGREEMENT_DATA
-					+ " WHERE "  + AgreementDataColumns.AGREEMENT + " = ? " 
-					+ " AND " + AgreementDataColumns.DOMAIN + " IN ( "+ in +" )" 
+			// @formatter:off
+			stmt = connection.prepareStatement("SELECT "
+					+ AgreementDataColumns.START_DATE + " FROM "
+					+ SQLConstants.AGREEMENT_DATA + " WHERE "
+					+ AgreementDataColumns.AGREEMENT + " = ? " + " AND "
+					+ AgreementDataColumns.DOMAIN + " IN ( " + in + " )"
 					+ " GROUP BY 1");
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, agreementId);
 			for (int i = 0; i < domainIds.length; i++)
 				stmt.setInt(2 + i, domainIds[i]);
@@ -363,16 +383,20 @@ public class SQLAgreementDraft {
 			rs.close();
 			stmt.close();
 
-			//@formatter:off
-			stmt = connection.prepareStatement(
-					"SELECT " + AgreementLevelDataColumns.START_DATE 
-					+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
-					+ " LEFT JOIN " + SQLConstants.AGREEMENT_LEVEL_DATA 
-						+ " ON ( " +  SQLConstants.AGREEMENT_LEVEL_DATA + "." + AgreementLevelDataColumns.AGREEMENT_LEVEL + " = " + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + ")" 
-					+ " WHERE "  + AgreementLevelColumns.AGREEMENT + " = ? " 
-					+ " AND " + SQLConstants.AGREEMENT_LEVEL_DATA + "." + AgreementLevelDataColumns.DOMAIN + " IN ( " + in + " )" 
+			// @formatter:off
+			stmt = connection.prepareStatement("SELECT "
+					+ AgreementLevelDataColumns.START_DATE + " FROM "
+					+ SQLConstants.AGREEMENT_LEVEL + " LEFT JOIN "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ON ( "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
+					+ AgreementLevelDataColumns.AGREEMENT_LEVEL + " = "
+					+ SQLConstants.AGREEMENT_LEVEL + "."
+					+ AgreementLevelColumns.ID + ")" + " WHERE "
+					+ AgreementLevelColumns.AGREEMENT + " = ? " + " AND "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
+					+ AgreementLevelDataColumns.DOMAIN + " IN ( " + in + " )"
 					+ " GROUP BY 1");
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, agreementId);
 			for (int i = 0; i < domainIds.length; i++)
 				stmt.setInt(2 + i, domainIds[i]);
@@ -411,6 +435,7 @@ public class SQLAgreementDraft {
 			while (rs.next()) {
 				Extra extra = new Extra();
 				extra.setId(rs.getInt(AgreementExtraColumns.ID));
+				extra.setDomain(rs.getInt(AgreementExtraColumns.DOMAIN));
 				extra.setPaymentId(rs
 						.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
 				extra.setStartDate(rs
@@ -563,7 +588,8 @@ public class SQLAgreementDraft {
 		for (Extra extra : draft.getDraftExtras()) {
 			if (extra.getId() < 0) {
 				if (!isRemove(extra)) {
-					JooqAgreement.insertExtra(conn, domainId, draft.getId(), extra);
+					JooqAgreement.insertExtra(conn, domainId, draft.getId(),
+							extra);
 				}
 			} else {
 				if (!isRemove(extra)) {
@@ -592,13 +618,12 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " + SQLConstants.AGREEMENT 
-					+ " ( " + AgreementColumns.DOMAIN + ", " + AgreementColumns.DESCRIPTION + ")"
-					+ " VALUES ( ?,?)", 
-					new String[] { AgreementColumns.ID });
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
+					+ SQLConstants.AGREEMENT + " ( " + AgreementColumns.DOMAIN
+					+ ", " + AgreementColumns.DESCRIPTION + ")"
+					+ " VALUES ( ?,?)", new String[] { AgreementColumns.ID });
+			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setString(2, draft.getDescription());
 			stmt.executeUpdate();
@@ -619,12 +644,11 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"UPDATE " + SQLConstants.AGREEMENT
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT
 					+ " SET " + AgreementColumns.DESCRIPTION + " = ? "
 					+ " WHERE " + AgreementColumns.ID + " = ? ");
-			//@formatter:on
+			// @formatter:on
 			stmt.setString(1, draft.getDescription());
 			stmt.setInt(2, draft.getId());
 			stmt.executeUpdate();
@@ -641,9 +665,8 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_EXTRA + " ( "
 					+ AgreementExtraColumns.DOMAIN + ", "
 					+ AgreementExtraColumns.AGREEMENT + ", "
@@ -653,7 +676,7 @@ public class SQLAgreementDraft {
 					+ AgreementExtraColumns.AGREEMENT_PAYMENT + ")"
 					+ " VALUES (?,?,?,?,?,?)",
 					new String[] { AgreementExtraColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, agreementId);
 			stmt.setString(3, extra.getStartDate());
@@ -678,15 +701,15 @@ public class SQLAgreementDraft {
 			Integer agreementId, Extra extra) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"UPDATE " +SQLConstants.AGREEMENT_EXTRA 
-					+" SET " + AgreementExtraColumns.START_DATE+ " = ? ,"
-					+ AgreementExtraColumns.END_DATE+ " = ? ,"
-					+ AgreementExtraColumns.ISSUE_DATE+ " = ? ,"
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_EXTRA + " SET "
+					+ AgreementExtraColumns.START_DATE + " = ? ,"
+					+ AgreementExtraColumns.END_DATE + " = ? ,"
+					+ AgreementExtraColumns.ISSUE_DATE + " = ? ,"
 					+ AgreementExtraColumns.AGREEMENT_PAYMENT + " = ?"
 					+ " WHERE " + AgreementExtraColumns.ID + " = ? ");
-			//@formatter:on
+			// @formatter:on
 			stmt.setString(1, extra.getStartDate());
 			stmt.setString(2, extra.getEndDate());
 			stmt.setString(3, extra.getIssueDate());
@@ -710,11 +733,11 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"DELETE FROM " +SQLConstants.AGREEMENT_EXTRA 
-					+ " WHERE " + AgreementExtraColumns.ID + " = ? ");
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_EXTRA + " WHERE "
+					+ AgreementExtraColumns.ID + " = ? ");
+			// @formatter:on
 			stmt.setInt(1, extraId);
 			stmt.executeUpdate();
 
@@ -731,16 +754,15 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_LEVEL + " ( "
 					+ AgreementLevelColumns.DOMAIN + ", "
 					+ AgreementLevelColumns.AGREEMENT + ", "
 					+ AgreementLevelColumns.DESCRIPTION + ")"
 					+ " VALUES (?,?,?)",
 					new String[] { AgreementLevelColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, agreementId);
 			stmt.setString(3, level.getDescription());
@@ -762,20 +784,18 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_DATA + " ( "
-					+ AgreementDataColumns.DOMAIN 
-					+ ", " + AgreementDataColumns.AGREEMENT 
-					+ ", " + AgreementDataColumns.NAME 
-					+ ", " + AgreementDataColumns.EXPRESSION  
-					+ ", " + AgreementDataColumns.START_DATE  
-					+ ", " + AgreementDataColumns.END_DATE  
-					+ ")"
+					+ AgreementDataColumns.DOMAIN + ", "
+					+ AgreementDataColumns.AGREEMENT + ", "
+					+ AgreementDataColumns.NAME + ", "
+					+ AgreementDataColumns.EXPRESSION + ", "
+					+ AgreementDataColumns.START_DATE + ", "
+					+ AgreementDataColumns.END_DATE + ")"
 					+ " VALUES (?,?,?,?,?,?)",
 					new String[] { AgreementLevelDataColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, agreementId);
 			stmt.setString(3, variable.getName());
@@ -803,20 +823,18 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ( "
-					+ AgreementLevelDataColumns.DOMAIN 
-					+ ", " + AgreementLevelDataColumns.AGREEMENT_LEVEL 
-					+ ", " + AgreementLevelDataColumns.NAME 
-					+ ", " + AgreementLevelDataColumns.EXPRESSION  
-					+ ", " + AgreementLevelDataColumns.START_DATE  
-					+ ", " + AgreementLevelDataColumns.END_DATE  
-					+ ")"
+					+ AgreementLevelDataColumns.DOMAIN + ", "
+					+ AgreementLevelDataColumns.AGREEMENT_LEVEL + ", "
+					+ AgreementLevelDataColumns.NAME + ", "
+					+ AgreementLevelDataColumns.EXPRESSION + ", "
+					+ AgreementLevelDataColumns.START_DATE + ", "
+					+ AgreementLevelDataColumns.END_DATE + ")"
 					+ " VALUES (?,?,?,?,?,?)",
 					new String[] { AgreementLevelDataColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, levelId);
 			stmt.setString(3, variable.getName());
@@ -923,12 +941,12 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"UPDATE " + SQLConstants.AGREEMENT_LEVEL
-					+" SET " + AgreementLevelColumns.DESCRIPTION + " = ? "
-					+ " WHERE " + AgreementLevelColumns.ID + " = ? ");
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_LEVEL + " SET "
+					+ AgreementLevelColumns.DESCRIPTION + " = ? " + " WHERE "
+					+ AgreementLevelColumns.ID + " = ? ");
+			// @formatter:on
 			stmt.setString(1, level.getDescription());
 			stmt.setInt(2, level.getId());
 			stmt.executeUpdate();
@@ -945,29 +963,29 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
-					+ " WHERE " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " WHERE "
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
+			// @formatter:on
 			stmt.setInt(1, levelId);
 			stmt.executeUpdate();
 			stmt.close();
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_DATA
-					+ " WHERE " + AgreementLevelDataColumns.AGREEMENT_LEVEL + " = ? ");
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " WHERE "
+					+ AgreementLevelDataColumns.AGREEMENT_LEVEL + " = ? ");
+			// @formatter:on
 			stmt.setInt(1, levelId);
 			stmt.executeUpdate();
 			stmt.close();
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL
-					+ " WHERE " + AgreementLevelColumns.ID + " = ? ");
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_LEVEL + " WHERE "
+					+ AgreementLevelColumns.ID + " = ? ");
+			// @formatter:on
 			stmt.setInt(1, levelId);
 			stmt.executeUpdate();
 
@@ -984,28 +1002,26 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_PAYMENT + " ( "
 					+ AgreementPaymentColumns.DOMAIN + ", "
 					+ AgreementPaymentColumns.AGREEMENT + ", "
-					
+
 					+ AgreementPaymentColumns.PAYMENT_CONCEPT + ", "
-					+ AgreementPaymentColumns.TYPE +", "
-					+ AgreementPaymentColumns.DESCRIPTION +", "
+					+ AgreementPaymentColumns.TYPE + ", "
+					+ AgreementPaymentColumns.DESCRIPTION + ", "
 					+ AgreementPaymentColumns.EXPRESSION + ", "
 					+ AgreementPaymentColumns.IRPF_EXPRESSION + ", "
 					+ AgreementPaymentColumns.QUOTE_EXPRESSION + ", "
-					
+
 					+ AgreementPaymentColumns.MONTH + ", "
 					+ AgreementPaymentColumns.SALARY_TYPE + ", "
 					+ AgreementPaymentColumns.START_DATE + ", "
-					+ AgreementPaymentColumns.END_DATE 
-					+ ")"
+					+ AgreementPaymentColumns.END_DATE + ")"
 					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 					new String[] { AgreementPaymentColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, agreementId);
 
@@ -1132,14 +1148,13 @@ public class SQLAgreementDraft {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("SELECT " 
-			+ AgreementPaymentColumns.START_DATE
-			+ ", " + AgreementPaymentColumns.END_DATE
-			+ " FROM " + SQLConstants.AGREEMENT_PAYMENT 
-			+ " WHERE " + AgreementPaymentColumns.ID + " = ? "
-			);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("SELECT "
+					+ AgreementPaymentColumns.START_DATE + ", "
+					+ AgreementPaymentColumns.END_DATE + " FROM "
+					+ SQLConstants.AGREEMENT_PAYMENT + " WHERE "
+					+ AgreementPaymentColumns.ID + " = ? ");
+			// @formatter:on
 
 			stmt.setInt(1, paymentId);
 
@@ -1166,15 +1181,25 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 			Date endDate = variable.getEndDate();
-			//@formatter:off
+			// @formatter:off
 			stmt = conn.prepareStatement("SELECT *"
-			+ " FROM " + SQLConstants.AGREEMENT_DATA 
-			+ " WHERE " + AgreementDataColumns.AGREEMENT + " = ? "
-			+ " AND " + AgreementDataColumns.NAME + " = ?  "
-			+ " AND ( " + AgreementDataColumns.END_DATE + " >= ?  "
-			+ " OR  " + AgreementDataColumns.END_DATE +  " IS NULL )" 
-			+ ( endDate != null ? " AND " +  AgreementDataColumns.START_DATE  + " <= ? " : "" ));
-			//@formatter:on
+					+ " FROM "
+					+ SQLConstants.AGREEMENT_DATA
+					+ " WHERE "
+					+ AgreementDataColumns.AGREEMENT
+					+ " = ? "
+					+ " AND "
+					+ AgreementDataColumns.NAME
+					+ " = ?  "
+					+ " AND ( "
+					+ AgreementDataColumns.END_DATE
+					+ " >= ?  "
+					+ " OR  "
+					+ AgreementDataColumns.END_DATE
+					+ " IS NULL )"
+					+ (endDate != null ? " AND "
+							+ AgreementDataColumns.START_DATE + " <= ? " : ""));
+			// @formatter:on
 
 			stmt.setInt(1, agreementId);
 			stmt.setString(2, variable.getName());
@@ -1214,15 +1239,26 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 			Date endDate = variable.getEndDate();
-			//@formatter:off
+			// @formatter:off
 			stmt = conn.prepareStatement("SELECT *"
-			+ " FROM " + SQLConstants.AGREEMENT_LEVEL_DATA 
-			+ " WHERE " + AgreementLevelDataColumns.AGREEMENT_LEVEL + " = ? "
-			+ " AND " + AgreementLevelDataColumns.NAME + " = ?  "
-			+ " AND ( " + AgreementLevelDataColumns.END_DATE + " >= ?  "
-			+ " OR  " + AgreementLevelDataColumns.END_DATE +  " IS NULL )" 
-			+ ( endDate != null ? " AND " +  AgreementLevelDataColumns.START_DATE  + " <= ? " : "" ));
-			//@formatter:on
+					+ " FROM "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA
+					+ " WHERE "
+					+ AgreementLevelDataColumns.AGREEMENT_LEVEL
+					+ " = ? "
+					+ " AND "
+					+ AgreementLevelDataColumns.NAME
+					+ " = ?  "
+					+ " AND ( "
+					+ AgreementLevelDataColumns.END_DATE
+					+ " >= ?  "
+					+ " OR  "
+					+ AgreementLevelDataColumns.END_DATE
+					+ " IS NULL )"
+					+ (endDate != null ? " AND "
+							+ AgreementLevelDataColumns.START_DATE + " <= ? "
+							: ""));
+			// @formatter:on
 
 			stmt.setInt(1, levelId);
 			stmt.setString(2, variable.getName());
@@ -1260,20 +1296,20 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_PAYMENT 
-					+ " SET " + AgreementPaymentColumns.START_DATE + " = ?"
-					+ " ," + AgreementPaymentColumns.END_DATE + " = ?"
-					+ " ," + AgreementPaymentColumns.MONTH + " = ?"
-					+ " ," + AgreementPaymentColumns.TYPE+ " = ?"
-					+ " ," + AgreementPaymentColumns.SALARY_TYPE+ " = ?"
-					+ " ," + AgreementPaymentColumns.DESCRIPTION + " = ?"
-					+ " ," + AgreementPaymentColumns.EXPRESSION + " = ?"
-					+ " ," + AgreementPaymentColumns.IRPF_EXPRESSION + " = ?"
-					+ " ," + AgreementPaymentColumns.QUOTE_EXPRESSION + " = ?"
-					+ " WHERE " + AgreementPaymentColumns.ID + "= ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_PAYMENT + " SET "
+					+ AgreementPaymentColumns.START_DATE + " = ?" + " ,"
+					+ AgreementPaymentColumns.END_DATE + " = ?" + " ,"
+					+ AgreementPaymentColumns.MONTH + " = ?" + " ,"
+					+ AgreementPaymentColumns.TYPE + " = ?" + " ,"
+					+ AgreementPaymentColumns.SALARY_TYPE + " = ?" + " ,"
+					+ AgreementPaymentColumns.DESCRIPTION + " = ?" + " ,"
+					+ AgreementPaymentColumns.EXPRESSION + " = ?" + " ,"
+					+ AgreementPaymentColumns.IRPF_EXPRESSION + " = ?" + " ,"
+					+ AgreementPaymentColumns.QUOTE_EXPRESSION + " = ?"
+					+ " WHERE " + AgreementPaymentColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(payment.getStartDate().getTime()));
 			Date endDate = payment.getEndDate();
@@ -1317,13 +1353,13 @@ public class SQLAgreementDraft {
 			Period period) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_PAYMENT 
-					+ " SET " + AgreementPaymentColumns.START_DATE + " = ?"
-					+ " ," + AgreementPaymentColumns.END_DATE + " = ?"
-					+ " WHERE " + AgreementPaymentColumns.ID + "= ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_PAYMENT + " SET "
+					+ AgreementPaymentColumns.START_DATE + " = ?" + " ,"
+					+ AgreementPaymentColumns.END_DATE + " = ?" + " WHERE "
+					+ AgreementPaymentColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
 			Date endDate = period.getEnd();
@@ -1347,10 +1383,11 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("DELETE FROM " + SQLConstants.AGREEMENT_PAYMENT 
-					+ " WHERE " + AgreementPaymentColumns.ID + "= ? " );
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_PAYMENT + " WHERE "
+					+ AgreementPaymentColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setInt(1, paymentId);
 
@@ -1367,43 +1404,38 @@ public class SQLAgreementDraft {
 			Period period) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_PAYMENT + " ( "
 					+ AgreementPaymentColumns.DOMAIN + ", "
 					+ AgreementPaymentColumns.AGREEMENT + ", "
-					
+
 					+ AgreementPaymentColumns.PAYMENT_CONCEPT + ", "
-					+ AgreementPaymentColumns.TYPE +", "
-					+ AgreementPaymentColumns.DESCRIPTION +", "
+					+ AgreementPaymentColumns.TYPE + ", "
+					+ AgreementPaymentColumns.DESCRIPTION + ", "
 					+ AgreementPaymentColumns.EXPRESSION + ", "
 					+ AgreementPaymentColumns.IRPF_EXPRESSION + ", "
 					+ AgreementPaymentColumns.QUOTE_EXPRESSION + ", "
-					
+
 					+ AgreementPaymentColumns.MONTH + ", "
 					+ AgreementPaymentColumns.SALARY_TYPE + ", "
 					+ AgreementPaymentColumns.START_DATE + ", "
-					+ AgreementPaymentColumns.END_DATE 
-					+ ")"
-					+ " ( SELECT " + AgreementPaymentColumns.DOMAIN 
-					+ ", " + AgreementPaymentColumns.AGREEMENT 
+					+ AgreementPaymentColumns.END_DATE + ")" + " ( SELECT "
+					+ AgreementPaymentColumns.DOMAIN + ", "
+					+ AgreementPaymentColumns.AGREEMENT
 
-					+ ", " + AgreementPaymentColumns.PAYMENT_CONCEPT 
-					+ ", " + AgreementPaymentColumns.TYPE 
-					+ ", " + AgreementPaymentColumns.DESCRIPTION 
-					+ ", " + AgreementPaymentColumns.EXPRESSION 
-					+ ", " + AgreementPaymentColumns.IRPF_EXPRESSION 
-					+ ", " + AgreementPaymentColumns.QUOTE_EXPRESSION 
+					+ ", " + AgreementPaymentColumns.PAYMENT_CONCEPT + ", "
+					+ AgreementPaymentColumns.TYPE + ", "
+					+ AgreementPaymentColumns.DESCRIPTION + ", "
+					+ AgreementPaymentColumns.EXPRESSION + ", "
+					+ AgreementPaymentColumns.IRPF_EXPRESSION + ", "
+					+ AgreementPaymentColumns.QUOTE_EXPRESSION
 
-					+ ", " + AgreementPaymentColumns.MONTH 
-					+ ", " + AgreementPaymentColumns.SALARY_TYPE
-					+ ",  ? "
-					+ ",  ? "
-					+ " WHERE " + AgreementPaymentColumns.ID + " = ? "
-					+")",
+					+ ", " + AgreementPaymentColumns.MONTH + ", "
+					+ AgreementPaymentColumns.SALARY_TYPE + ",  ? " + ",  ? "
+					+ " WHERE " + AgreementPaymentColumns.ID + " = ? " + ")",
 					new String[] { AgreementPaymentColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
 
 			Date endDate = period.getEnd();
@@ -1428,11 +1460,11 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
-					+ " WHERE " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " WHERE "
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
+			// @formatter:on
 			stmt.setInt(1, levelId);
 			stmt.executeUpdate();
 			stmt.close();
@@ -1440,14 +1472,14 @@ public class SQLAgreementDraft {
 			if (categories == null || categories.isEmpty())
 				return;
 
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
-					+ "( " + AgreementLevelCategoryColumns.DOMAIN 
-					+ " , " +  AgreementLevelCategoryColumns.AGREEMENT_LEVEL 
-					+ " , " +  AgreementLevelCategoryColumns.DESCRIPTION + ") " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "( "
+					+ AgreementLevelCategoryColumns.DOMAIN + " , "
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " , "
+					+ AgreementLevelCategoryColumns.DESCRIPTION + ") "
 					+ " VALUES (?, ?, ?) ");
-			//@formatter:on
+			// @formatter:on
 
 			for (String category : categories) {
 				stmt.setInt(1, domainId);
@@ -1466,11 +1498,11 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("DELETE FROM " + SQLConstants.AGREEMENT_DATA 
-					+ " WHERE " + AgreementDataColumns.ID + "= ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_DATA + " WHERE "
+					+ AgreementDataColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setInt(1, dataId);
 
@@ -1487,11 +1519,11 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_DATA 
-					+ " WHERE " + AgreementLevelDataColumns.ID + "= ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("DELETE FROM "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " WHERE "
+					+ AgreementLevelDataColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setInt(1, dataId);
 
@@ -1508,31 +1540,26 @@ public class SQLAgreementDraft {
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_DATA + " ( "
 					+ AgreementDataColumns.DOMAIN + ", "
 					+ AgreementDataColumns.AGREEMENT + ", "
-					
+
 					+ AgreementDataColumns.NAME + ", "
 					+ AgreementDataColumns.EXPRESSION + ", "
 
 					+ AgreementDataColumns.START_DATE + ", "
-					+ AgreementDataColumns.END_DATE 
-					+ ")"
-					+ " ( SELECT " + AgreementDataColumns.DOMAIN 
-					+ ", " + AgreementDataColumns.AGREEMENT
+					+ AgreementDataColumns.END_DATE + ")" + " ( SELECT "
+					+ AgreementDataColumns.DOMAIN + ", "
+					+ AgreementDataColumns.AGREEMENT
 
-					+ ", " + AgreementDataColumns.NAME 
-					+ ", " + AgreementDataColumns.EXPRESSION 
-					+ ",  ? "
-					+ ",  ? "
-					+ " FROM " + SQLConstants.AGREEMENT_DATA
-					+ " WHERE " + AgreementDataColumns.ID + " = ? "
-					+")",
+					+ ", " + AgreementDataColumns.NAME + ", "
+					+ AgreementDataColumns.EXPRESSION + ",  ? " + ",  ? "
+					+ " FROM " + SQLConstants.AGREEMENT_DATA + " WHERE "
+					+ AgreementDataColumns.ID + " = ? " + ")",
 					new String[] { AgreementDataColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
 
 			Date endDate = period.getEnd();
@@ -1556,31 +1583,26 @@ public class SQLAgreementDraft {
 			Period period) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement(
-					"INSERT INTO " 
+			// @formatter:off
+			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ( "
 					+ AgreementLevelDataColumns.DOMAIN + ", "
 					+ AgreementLevelDataColumns.AGREEMENT_LEVEL + ", "
-					
+
 					+ AgreementLevelDataColumns.NAME + ", "
 					+ AgreementLevelDataColumns.EXPRESSION + ", "
 
 					+ AgreementLevelDataColumns.START_DATE + ", "
-					+ AgreementLevelDataColumns.END_DATE 
-					+ ")"
-					+ " ( SELECT " + AgreementLevelDataColumns.DOMAIN 
-					+ ", " + AgreementLevelDataColumns.AGREEMENT_LEVEL 
+					+ AgreementLevelDataColumns.END_DATE + ")" + " ( SELECT "
+					+ AgreementLevelDataColumns.DOMAIN + ", "
+					+ AgreementLevelDataColumns.AGREEMENT_LEVEL
 
-					+ ", " + AgreementLevelDataColumns.NAME 
-					+ ", " + AgreementLevelDataColumns.EXPRESSION 
-					+ ",  ? "
-					+ ",  ? "
-					+ " FROM " + SQLConstants.AGREEMENT_LEVEL_DATA
-					+ " WHERE " + AgreementLevelDataColumns.ID + " = ? "
-					+")",
+					+ ", " + AgreementLevelDataColumns.NAME + ", "
+					+ AgreementLevelDataColumns.EXPRESSION + ",  ? " + ",  ? "
+					+ " FROM " + SQLConstants.AGREEMENT_LEVEL_DATA + " WHERE "
+					+ AgreementLevelDataColumns.ID + " = ? " + ")",
 					new String[] { AgreementLevelDataColumns.ID });
-			//@formatter:on
+			// @formatter:on
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
 
 			Date endDate = period.getEnd();
@@ -1604,13 +1626,13 @@ public class SQLAgreementDraft {
 			Period period) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_DATA 
-					+ " SET " + AgreementDataColumns.START_DATE + " = ? "
-					+ ", " + AgreementDataColumns.END_DATE + " = ? "
-					+ " WHERE " + AgreementDataColumns.ID + "= ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_DATA + " SET "
+					+ AgreementDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementDataColumns.END_DATE + " = ? " + " WHERE "
+					+ AgreementDataColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
 			Date endDate = period.getEnd();
@@ -1634,13 +1656,13 @@ public class SQLAgreementDraft {
 			Period period) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			//@formatter:off
-			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_LEVEL_DATA 
-					+ " SET " + AgreementLevelDataColumns.START_DATE + " = ? "
-					+ ", " + AgreementLevelDataColumns.END_DATE + " = ? "
-					+ " WHERE " + AgreementLevelDataColumns.ID + "= ? "
-					);
-			//@formatter:on
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " SET "
+					+ AgreementLevelDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementLevelDataColumns.END_DATE + " = ? " + " WHERE "
+					+ AgreementLevelDataColumns.ID + "= ? ");
+			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
 			Date endDate = period.getEnd();
