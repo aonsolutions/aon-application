@@ -2,8 +2,8 @@ package com.code.aon.ui.tas.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.code.aon.commercial.Target;
 import com.code.aon.AonVersion;
+import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.TaskHolder;
@@ -11,10 +11,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.enumeration.ProjectStatus;
-import com.code.aon.ui.project.controller.event.ProjectSearchListener;
+import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ProjectTasSearchListener extends ProjectSearchListener {
+public class ProjectTasSearchListener extends ControllerSearchListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -57,7 +57,6 @@ public class ProjectTasSearchListener extends ProjectSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		super.init();
 		setTarget((Target)BeanManager.getManagerBean(Target.class).createNewTo());
 		setTasItem((TasItem)BeanManager.getManagerBean(TasItem.class).createNewTo());
 		setTaskHolder((TaskHolder)BeanManager.getManagerBean(TaskHolder.class).createNewTo());
@@ -67,7 +66,6 @@ public class ProjectTasSearchListener extends ProjectSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		super.completeCriteria(criteria);
 		if ((getTarget() != null) && (getTarget().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_TAS_TARGET_ID), getTarget().getId());			
 		}

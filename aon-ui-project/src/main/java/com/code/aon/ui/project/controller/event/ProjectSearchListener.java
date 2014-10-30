@@ -54,7 +54,7 @@ public class ProjectSearchListener extends ControllerSearchListener {
 		if ((getProjectType() != null) && (getProjectType().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
 		}
-		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.valueOf(active));
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.valueOf(isActive()));
 	}	
 
 }
