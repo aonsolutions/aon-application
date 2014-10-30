@@ -1,19 +1,31 @@
 package com.code.aon.ui.accounting.controller.report;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.ss.usermodel.Font;
 
+import com.code.aon.AonVersion;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.AonVersion;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
@@ -248,5 +260,91 @@ public class LedgerReportController extends BasicController implements IAccounti
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	public String onExcelReport() {
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			String filename = "MayorDeCuentas";
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, filename, MimeType.MIME_MS_EXCEL);
+			ExcelReportExporter exporter = new ExcelReportExporter();
+			exporter.startExport(filename);
+			
+			HSSFFont font = exporter.createFont();
+			font.setFontHeightInPoints((short) 8);
+
+			HSSFFont boldFont = exporter.createFont();
+			boldFont.setFontHeightInPoints((short) 8);
+			boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+			HSSFCellStyle headerCellStyle = exporter.createCellStyle();
+		    headerCellStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		    headerCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER );
+		    headerCellStyle.setFont(boldFont);
+		    
+			exporter.addHeaderCell("Cuenta", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Descripción.", exporter.getWidth(60), headerCellStyle);
+			exporter.addHeaderCell("Asiento", exporter.getWidth(5), headerCellStyle);
+			exporter.addHeaderCell("Fecha", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Concepto", exporter.getWidth(50), headerCellStyle);
+			exporter.addHeaderCell("Debe", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Haber", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Contrapartida", exporter.getWidth(10), headerCellStyle);
+			exporter.addHeaderCell("Descripción contrapartida.", exporter.getWidth(60), headerCellStyle);
+			
+			
+			HSSFCellStyle defaultStyle = exporter.createCellStyle();
+			defaultStyle.setFont(font);
+
+			HSSFCellStyle dateStyle = exporter.createCellStyle();
+			dateStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DATE_PATTERN));
+			dateStyle.setFont(font);
+
+			HSSFCellStyle amountStyle = exporter.createCellStyle();
+			amountStyle.setFont(font);
+			amountStyle.setDataFormat( exporter.getDataFormat().getFormat(ExcelReportExporter.DECIMAL_PATTERN));
+			
+			List<ITransferObject> list = search(0, getRowCount());
+			for ( ITransferObject to : list ) {
+				AccountEntryDetail ae = (AccountEntryDetail) to;
+				exporter.startLine();
+				exporter.addStringCell( ae.getAccount().getCode() , defaultStyle );
+				exporter.addStringCell( ae.getAccount().getDescription() , defaultStyle );
+				exporter.addNumberCell( ae.getAccountEntry().getId(), defaultStyle );
+				exporter.addDateCell( ae.getAccountEntry().getEntryDate() , dateStyle );
+				exporter.addStringCell( ae.getConcept() , defaultStyle );
+				exporter.addDecimalCell( ae.getDebit(),amountStyle );
+				exporter.addDecimalCell( ae.getCredit(),amountStyle );
+				exporter.addStringCell( ae.getBalancingAccount() != null
+							?ae.getBalancingAccount().getCode():"" 
+						, defaultStyle );
+				exporter.addStringCell( ae.getBalancingAccount() != null
+							?ae.getBalancingAccount().getDescription():""
+						, defaultStyle );
+				exporter.endLine();
+			}
+			exporter.endExport(out);
+			
+		} catch (ReportException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
+		return null;
 	}
 }
