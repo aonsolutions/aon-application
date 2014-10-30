@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -31,17 +32,21 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB34Writer implements IFinanceConstants {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public FileOutput createAEB34(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createAEB34(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
+	private IProgression progression;
+	
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
+
+	private void updateProgress( int current, int total ) {
+		if ( this.progression != null ) {
+			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+		}
 	}
 	
 	public Master getMaster(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
@@ -61,9 +66,11 @@ public class AEB34Writer implements IFinanceConstants {
 		master.setOrderDate(fBatch.getIssueDate());
 		master.setDetail("0");
 
+		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Detail detail = createDetail(fBatchDetail.getFinance());
 			master.addReceiver(detail);
+			updateProgress(++current, fbatchDetails.size());
 		}
 		return master;
 	}

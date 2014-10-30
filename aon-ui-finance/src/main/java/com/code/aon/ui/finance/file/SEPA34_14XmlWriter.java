@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
@@ -35,9 +36,16 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.util.AonUtil;
 
 public class SEPA34_14XmlWriter {
+	
+	private IProgression progression;
+	
+	public void setProgression(IProgression progression) {
+		this.progression = progression;
+	}
 
 	public FileOutput createXml(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB34Writer aeb34Writer = new AEB34Writer();
+		aeb34Writer.setProgression(progression);
 		Master master = aeb34Writer.getMaster(company, fBatch, fbatchDetails);
 		updateMaster(master, company, fBatch, fbatchDetails);
 		try {

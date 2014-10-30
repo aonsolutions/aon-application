@@ -165,5 +165,17 @@ public class ColumnInfo implements Constants {
 	public boolean isProfileReference() {
 		return PROFILE_TABLE_NAME.equals(fkTableName);
 	}
+	
+	public boolean isInteger() {
+		switch (type) {
+			case Types.INTEGER:
+			case Types.TINYINT:
+			case Types.BIT:
+			case Types.SMALLINT:
+				return true;
+			default:
+				return false;
+		}
+	}
 
 }
