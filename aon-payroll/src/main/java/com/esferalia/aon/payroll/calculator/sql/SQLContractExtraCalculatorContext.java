@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -118,12 +119,13 @@ public class SQLContractExtraCalculatorContext extends
 
 	private void initMonthVariables(ExpressionContext ctx ) {
 		List<ITimedVariable<?>> monthDaysList = 
-				ctx.getTimedVariables(ContextVariable.MONTH_DAYS.getName());
+				ctx.getTimedVariables(MONTH_DAYS.getName());
 		int months = monthDaysList.size();
 		for (ITimedVariable<?> monthDays : monthDaysList) {
 			Period month = monthDays.getPeriod();
 			Number days = (Number) monthDays.getValue( month);
-			ctx.setVariable(ContextVariable.MONTH_DAYS, days.doubleValue() * months, month.getStart(), month.getEnd() );
+			ctx.setVariable(MONTH_DAYS, days.doubleValue() * months, month.getStart(), month.getEnd() );
+			ctx.setVariable(PAY_DAYS, days.doubleValue() * months, month.getStart(), month.getEnd() );
 		}
 
 	}

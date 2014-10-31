@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.YEAR_DAYS;
@@ -21,6 +22,7 @@ import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -240,6 +242,7 @@ public class SQLAgreementContextFactory implements
 			Date monthEnd = startCalendar.getTime();
 
 			ctx.setVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
+			ctx.setVariable(PAY_DAYS, monthDays, monthStart, monthEnd);
 			
 			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
 			startCalendar.add(Calendar.MONTH, 1);

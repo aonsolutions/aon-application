@@ -2470,11 +2470,6 @@ public class SQLContractSalaryCalculatorContext extends
 					};
 				});
 
-		List<ITimedVariable<Number>> monthDays = this.implicitExpressionContext
-				.getVariables(MONTH_DAYS);
-		for (ITimedVariable<Number> monthDay : monthDays)
-			this.implicitExpressionContext.putVariable(PAY_DAYS,
-					getExtraDays(monthDay));
 
 		this.implicitExpressionContext.putVariable(SALARY_HOURS,
 				new LazyTimedVariable<Double>() {
