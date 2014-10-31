@@ -401,7 +401,12 @@ public abstract class BasicExporter implements Serializable {
 	}	
 	
 	private List<TaxBreakDown> obtainTaxBreakDowns() {
-		List<TaxBreakDown> list = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
+		List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
+		for( TaxBreakDown tbd : getPriceStrategy().getTaxBreakDowns(invoice, invoice) ) {
+			if ( tbd.getBase() > 0 ) {
+				list.add(tbd);
+			}
+		}		
 		Comparator<TaxBreakDown> comparator = new Comparator<TaxBreakDown>() {
 
 			@Override
@@ -413,7 +418,7 @@ public abstract class BasicExporter implements Serializable {
 		};
 		Collections.sort( list, comparator );
 		return list;
-	}
+	}	
 	
 	protected Enterprise getEnterprise() {
 		for( InvoiceDetail id : getInvoice().getLines() ) {
