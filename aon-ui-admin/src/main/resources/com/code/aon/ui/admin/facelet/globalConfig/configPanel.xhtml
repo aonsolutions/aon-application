@@ -291,6 +291,20 @@
 							</aon:div>
 						</aon:if>													
 					</rich:panelBarItem>
+		
+					
+					<rich:panelBarItem id="service_account"
+						label="#{bundle.admin_global_panel_service_accounts}">
+						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="adminGoogle"
+									action="adminGoogle_form"
+									value="#{bundle.admin_domain_google}" />
+							</aon:div>
+						</aon:if>		
+														
+					</rich:panelBarItem>
+					
 				</aon:if>
 			</aon:componentGroup>
 		</rich:panelBar>

@@ -1,0 +1,267 @@
+package com.esferalia.aon.gwt.document.shared;
+
+
+import java.util.Date;
+import java.util.Vector;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
+
+
+
+	public class FileInfo implements IsSerializable{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7311059692227227973L;
+
+		public static final ProvidesKey<FileInfo> PROVIDES_KEY = new ProvidesKey<FileInfo>() {
+			@Override
+			public Object getKey(FileInfo fileInfo) {
+				return fileInfo == null ? null : fileInfo.getFileId();
+			}
+		};
+		
+		private String aonType;
+		private short type;
+		
+		private String driveId;
+		private Integer fileId;
+		private String title;
+		private Byte mimetype;
+		private Integer category;
+		private Vector<String> emails= new Vector<String>();
+
+
+		private Boolean isNomina = false;
+		private Vector<Tag> tags;
+		private String tagsStr;
+		private Date date;
+		private java.sql.Date dateSql;
+		private String dateStr;
+
+		private Integer size;
+		private String sizeStr;
+		private String categoryStr;
+		
+		private String icon;
+		private Boolean confidential;
+		private Byte conf;
+		private Scope scope;
+		
+		private String domain;
+		private Integer domainId;
+		
+		private byte[] data;
+		
+		public FileInfo() {
+			// TODO Apéndice de constructor generado automáticamente
+		}
+		
+		public FileInfo(String aonType,Byte type,String driveId, int fileId , String title,Byte mimetype) {
+			// TODO Apéndice de constructor generado automáticamente
+			this.type=type;
+			this.driveId=driveId;
+			this.fileId=fileId;
+			this.title=title;
+			this.mimetype=mimetype;
+		}
+		
+		public String getAonType(){
+			return aonType;
+		}
+		
+		public void setAonType(String aonType){
+			this.aonType=aonType;
+		}
+		
+		public short getType(){
+			return type;
+		}
+		
+		public void setType(short type){
+			this.type=type;
+		}
+		
+		public int getCategory(){
+			return category;
+		}
+		
+		public void setCategory(int category){
+			this.category=category;
+		}
+		
+		public String getTitle(){
+			return title;
+		}
+		
+		public void setTitle(String title){
+			this.title=title;
+		}
+		
+		public Byte getMimetype(){
+			return mimetype;
+		}
+		
+		public void setMimetype(Byte mimetype){
+			this.mimetype=mimetype;
+		}
+		
+		public String getDriveId(){
+			return driveId;
+		}
+		
+		public void setDriveId(String driveId){
+			this.driveId=driveId;
+		}
+		
+		public int getFileId(){
+			return fileId;
+		}
+		
+		public void setFileId(int fileId){
+			this.fileId=fileId;
+		}
+		
+		public Vector<String> getEmails(){
+			return emails;
+		}
+		
+		public void setEmails(Vector<String> emails){
+			this.emails=emails;
+		}
+
+		public Boolean getIsNomina(){
+			return isNomina;
+		}
+		
+		public void setIsNomina(Boolean isNomina){
+			this.isNomina=isNomina;
+		}
+
+		public Date getDate() {
+			return date;
+		}
+
+		public void setDate(Date date) {
+			this.date = date;
+		}
+		
+		public Integer getSize() {
+			return size;
+		}
+
+		public void setSize(Integer size) {
+			this.size = size;
+		}
+
+		public String getSizeStr() {
+			return sizeStr;
+		}
+
+		public void setSizeStr(String sizeStr) {
+			this.sizeStr = sizeStr;
+		}
+
+		public String getCategoryStr() {
+			return categoryStr;
+		}
+
+		public void setCategoryStr(String categoryStr) {
+			this.categoryStr = categoryStr;
+		}	
+		
+		public Vector<Tag> getTags() {
+			return tags;
+		}
+
+		public void setTags(Vector<Tag> tags) {
+			this.tags = tags;
+		}
+
+		public String getTagsStr() {
+			return tagsStr;
+		}
+
+		public void setTagsStr(String tagsStr) {
+			this.tagsStr = tagsStr;
+		}
+		
+		public String getDateStr(){
+			
+			return dateStr;
+		}
+		
+		public void setDateStr(String dateStr){
+		
+			this.dateStr=dateStr;
+		}
+
+		public String getIcon() {
+			return icon;
+		}
+
+		public void setIcon(String icon) {
+			this.icon = icon;
+		}
+
+		public Boolean getConfidential() {
+			return confidential;
+		}
+
+		public void setConfidential(Boolean confidential) {
+			this.confidential = confidential;
+		}
+
+		public Scope getScope() {
+			return scope;
+		}
+
+		public void setScope(Scope scope) {
+			this.scope = scope;
+		}
+
+		public String getDomain() {
+			return domain;
+		}
+
+		public void setDomain(String domain) {
+			this.domain = domain;
+		}
+		public Integer getDomainId() {
+			return domainId;
+		}
+
+		public void setDomainId(Integer domainId) {
+			this.domainId = domainId;
+		}
+
+		public byte[] getData() {
+			return data;
+		}
+
+		public void setData(byte[] data) {
+			this.data = data;
+		}
+
+		public Byte getConf() {
+			return conf;
+		}
+
+		public void setConf(Byte conf) {
+			this.conf = conf;
+		}
+
+		public java.sql.Date getDateSql() {
+			return dateSql;
+		}
+
+		public void setDateSql(java.sql.Date dateSql) {
+			this.dateSql = dateSql;
+		}
+		
+		
+		
+	}
+

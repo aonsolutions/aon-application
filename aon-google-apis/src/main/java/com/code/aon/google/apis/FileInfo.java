@@ -1,9 +1,10 @@
 package com.code.aon.google.apis;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Vector;
 
-public class FileInfo {
+public class FileInfo{
 	
 	static enum AonType {
 		REGISTRY{
@@ -47,7 +48,12 @@ public class FileInfo {
 	private int category;
 	private Vector<String> emails = new Vector<String>();
 	private Boolean isNomina = false;
-
+	private Date date;
+	private java.sql.Date dateSql;
+	private String tag;
+	private Integer scopeId;
+	private Byte securityLevel;
+	private Integer domainId;
 	public FileInfo() {
 		// TODO Apéndice de constructor generado automáticamente
 	}
@@ -142,6 +148,56 @@ public class FileInfo {
 	public void setIsNomina(Boolean isNomina) {
 		this.isNomina = isNomina;
 	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public java.sql.Date getDateSql() {
+		return dateSql;
+	}
+
+	public void setDateSql(java.sql.Date dateSql) {
+		this.dateSql = dateSql;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public Integer getScopeId() {
+		return scopeId;
+	}
+
+	public void setScopeId(Integer scopeId) {
+		this.scopeId = scopeId;
+	}
+
+	public Byte getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(Byte securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+
+	public Integer getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(Integer domainId) {
+		this.domainId = domainId;
+	}
+	
+	
 	
 }
 

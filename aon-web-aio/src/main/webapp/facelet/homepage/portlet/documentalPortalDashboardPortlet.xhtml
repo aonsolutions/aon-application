@@ -30,9 +30,9 @@
 				<!--  CONTAINER 2 -->
 
 				<aon:div id="recentsFileGraphContainer"
-					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
+					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
 					<aon:div styleClass="aon-bold">
-						<aon:outputText value="Archivos recientes" />
+						<aon:outputText value="bundle.recent_files" />
 						<!-- <aon:selectOneMenu id="Dashboard_recentsFilePeriod"
 							style="border: none;" value="#{dashboard.salaryYear}">
 							<a4j:support event="onchange"
@@ -44,7 +44,7 @@
 							<f:selectItems value="#{dashboard.salaryYears}" />
 						</aon:selectOneMenu>-->
 					</aon:div>
-					<aon:div id="table_div"
+					<aon:div id="table_div-recent_files"
 						style="width: 100%; height: 180px;" />
 
 					<script type='text/javascript' src='https://www.google.com/jsapi'></script>
@@ -53,10 +53,10 @@
       			
       				function drawTable() {
         				var data = new google.visualization.DataTable();
-        				data.addColumn('string', 'Fecha');
-        				data.addColumn('string', 'Nombre');
-        				data.addColumn('string', 'Categoria');
-        				data.addColumn('string', 'Tamaño');
+        				data.addColumn('string', 'bundle.doc_date');
+        				data.addColumn('string', 'bundle.aon_name');
+        				data.addColumn('string', 'bundle.aon_category');
+        				data.addColumn('string', 'bundle.doc_size');
 
         				<!--data.addRow(['Mike',  1, true]);
         				data.addRow(['Jim',   2,  false]);
@@ -75,8 +75,7 @@
         						showRowNumber: false,
         						allowHtml: true,
 						      };
-						
-        				var table = new google.visualization.Table(document.getElementById('aonContent:mainForm:table_div'));
+        				var table = new google.visualization.Table(document.getElementById('aonContent:mainForm:table_div-recent_files'));
            				table.draw(data, options);
            				
            				

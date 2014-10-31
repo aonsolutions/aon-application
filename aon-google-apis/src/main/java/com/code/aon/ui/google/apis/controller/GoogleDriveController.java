@@ -33,6 +33,10 @@ public class GoogleDriveController implements Serializable {
 	
 	public boolean google= isGoogle();
 	
+	public static Boolean gconnection;
+	
+	public static Drive dconnection;
+	
 	public Drive getClientSession(){
 		Drive drive=null;
 		
@@ -46,6 +50,7 @@ public class GoogleDriveController implements Serializable {
 		if (SessionInfo.table.containsKey(domain) && SessionInfo.table.get(domain).getUsers().containsKey(username)){
 			drive= SessionInfo.table.get(domain).getUsers().get(username).getGoogleUsers().get(email).getDrive();
 		}
+		dconnection= drive;
 		return drive;
 	}
 	
@@ -56,7 +61,11 @@ public class GoogleDriveController implements Serializable {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ExternalContext ec = ctx.getExternalContext();
 		Object session=((HttpSession) ec.getSession(false)).getAttribute("isGoogle");
-		if (session == null) return false;
+		if (session == null){
+			gconnection= false;
+			return false;
+		}
+		else gconnection =  (Boolean) session;
 		return (Boolean) session;
 		/*if(getClientSession()!=null) return true;
 		else return false;

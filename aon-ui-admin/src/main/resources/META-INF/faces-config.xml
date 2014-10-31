@@ -118,6 +118,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<managed-bean>  
+		<managed-bean-name>adminGoogle</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.controller.GoogleController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		
+	</managed-bean>
+		
 	<!-- ************* DOMAIN ***************** -->
 	<managed-bean>
 		<managed-bean-name>adminDomain</managed-bean-name>
@@ -438,6 +447,15 @@
 		<managed-bean-class>com.code.aon.ui.admin.controller.ProfileActionDeniedController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+
+		<managed-bean>
+		<managed-bean-name>serviceAccount</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.ServiceAccountController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
 
 	<!-- ************* USER OVERLOAD ***************** -->
 	<managed-bean>
@@ -507,6 +525,20 @@
 			<to-view-id>/com/code/aon/ui/admin/facelet/adminMain/advancedMode.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
+	
+	<!-- =================== Service Account ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>adminGoogle_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formGoogle.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		<navigation-rule>
+		<navigation-case>
+			<from-outcome>adminGoogle_formSA</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formNew.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- =================== Domain ================= -->
 	<navigation-rule>
@@ -604,7 +636,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Bakcup ================= -->
+	<!-- =================== Backup ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>backup_form</from-outcome>

@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+
+
+
+	<ui:define name="configContent">
+
+		<aon:form id="googleForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarID" value="adminDomainToolbar" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_domain_google}" />
+				<ui:define name="toolbarContent">
+					
+					<h:outputLink target="_blank" value="https://console.developers.google.com" >		
+						<aon:outputText value="#{bundle.admin_google_console}" styleClass="aon-finding-toolbar-item aon-icon-google-console2" />	
+					</h:outputLink>	
+					
+					<!--  BOTÓN GUARDAR  
+					<aon:commandButton id="userGoogle-store"
+				title="#{bundle.aon_key_save_accelerator}"
+				value="#{bundle.aon_save}"
+				actionListener="#{userWorkGroupEx.accept}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				accesskey="#{bundle.aon_key_save}" /-->
+				
+	
+				
+				<aon:commandButton id="tracking-newgoogle" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+				styleClass="aon-finding-toolbar-item aon-icon-reset"
+				value="#{bundle.aon_reset}"
+				accesskey="#{bundle.aon_key_new_line}" 
+				action="adminGoogle_formSA"/>
+				
+				<script>
+
+				</script>
+					
+	
+				</ui:define>	
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+			
+		<script type="text/javascript"
+			src="http://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
+	
+	
+				
+					
+				<!--  CONTAINER 2 -->
+
+			
+					<aon:div id="table_div2"
+						style="width: 100%; height: 180px;" />
+						
+					<aon:div id="table_div3"
+						style="display:none" />
+						
+					<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+					<script type='text/javascript'>
+					google.load("visualization", "1", {'callback' : 'drawTable' ,'packages':["table"], 'language': 'en'});
+      			
+      				function drawTable() {
+      					
+      					var data = new google.visualization.DataTable();
+        				data.addColumn('string', '#{bundle.dominio}');
+        				data.addColumn('string', '#{bundle.client_id}');
+        				data.addColumn('string', '#{bundle.sa_size}');
+        				data.addColumn('string', '#{bundle.limit}');
+
+						
+      					var data2 = new google.visualization.DataTable();
+        				data2.addColumn('string', 'email');
+        				data2.addColumn('string', 'public_key');
+        				data2.addColumn('string', 'limite');
+
+        				<c:forEach var="account" items="#{serviceAccount.accounts}">		
+						
+							data.addRow(['#{account.domain}',
+						             '#{account.client_id}',
+					             	'#{account.sizestr}',
+					             	'#{account.limitstr}']);	
+						
+							data2.addRow(['#{account.email_address}',
+							             '#{account.public_key}',
+						             	'#{account.limit}']);
+							
+
+						</c:forEach>
+						
+						var options = {
+        						showRowNumber: false,
+						      };
+        				var table = new google.visualization.Table(#{rich:element('table_div2')});
+        				var table2 = new google.visualization.Table(#{rich:element('table_div3')});
+
+           				table.draw(data, options);
+           				table2.draw(data2, options);
+
+           				// Every time the table fires the "select" event, it should call your
+           				// selectHandler() function.
+           				
+           				google.visualization.events.addListener(table, 'select', selectHandler);
+
+           				function selectHandler(e) {
+           					var client_id = data.getValue(table.getSelection()[0].row, 1);
+           					var domain = data.getValue(table.getSelection()[0].row, 0);
+           					var email = data2.getValue(table.getSelection()[0].row, 0);
+           					var public_key = data2.getValue(table.getSelection()[0].row, 1);
+           					var limite = data2.getValue(table.getSelection()[0].row, 2);
+    						document.getElementById('aonContent:googleForm:domain_hidden').value = domain;
+    						document.getElementById('aonContent:googleForm:client_id_hidden').value = client_id;
+    						document.getElementById('aonContent:googleForm:limit_hidden').value = limite;
+    						document.getElementById('aonContent:googleForm:public_key_hidden').value = public_key;
+    						document.getElementById('aonContent:googleForm:email_hidden').value = email;
+    						document.getElementById('aonContent:googleForm:tracking-editgoogle').click();
+    				
+           				}
+      				}
+    				</script>
+    				
+
+    				
+			<aon:div style="display:none">
+			
+			<aon:inputText id="public_key_hidden" size="90" required="false"
+							value="#{serviceAccount.public_key}" />
+			
+			<aon:inputText id="limit_hidden" size="90" required="false"
+							value="#{serviceAccount.limit}" />
+			
+			<aon:inputText id="email_hidden" size="90" required="false"
+							value="#{serviceAccount.email_address}" />
+			
+			<aon:inputText id="domain_hidden" size="90" required="false"
+							value="#{serviceAccount.domain}" />
+			
+			<aon:inputText id="client_id_hidden" size="90" required="false"
+							value="#{serviceAccount.client_id}" />
+			
+			<aon:commandButton  name="formedit" id="tracking-editgoogle" 
+				action="adminGoogle_formSA"/>
+			
+			</aon:div>
+			<!-- ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{domainUser}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="User.login" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_login_user}" />
+							</f:facet>
+							<aon:outputText value="#{to.login}"/>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="User.name" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"/>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.admin_profiles}" />
+							</f:facet>
+							<aon:outputText value="#{controller.profileList}"/>
+						</aon:column>
+
+						<aon:column styleClass="aon-width-50 aon-editDataTable-textColumn"
+							alias="User.active" >
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_active}" />
+							</f:facet>
+							<aon:outputText value="&#160;"
+								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />							
+						</aon:column>
+							
+					</ui:define>
+					<ui:define name="additionalDataTableContent" >
+						<aon:div styleClass="aon-margin-top" >
+							<aon:outputText value="#{controller.detailMessage}" />
+							<aon:div styleClass="aon-margin-left" layout="inline"
+								rendered="#{adminDomain.to.maxDefinedUsers &gt; domainUser.numberOfActiveUsers}">
+								<aon:outputText value="&#160;" styleClass="aon-icon-warning"
+									style="padding-left:12px" />
+								<rich:toolTip value="#{bundle.admin_domain_user_warning}" />
+							</aon:div>
+						</aon:div>
+					</ui:define>			
+				</ui:decorate-->
+			
+			</aon:div>
+		</aon:form>
+			
+	</ui:define>
+</ui:composition>

@@ -5,6 +5,7 @@ public interface IAdminConstants {
 	// Controllers
 	String ADMIN_CONTROLLER_NAME = "adminMain";
 	String DOMAIN_CONTROLLER_NAME = "adminDomain";
+	String SERVICE_ACCOUNT_CONTROLLER_NAME = "serviceAccount";
 	String APPLICATION_PROFILE_CONTROLLER_NAME = "applicationProfile";
 	String DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME = "domainApplicationProfile";
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";

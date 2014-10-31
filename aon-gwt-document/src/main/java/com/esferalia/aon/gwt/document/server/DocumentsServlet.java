@@ -1,0 +1,435 @@
+package com.esferalia.aon.gwt.document.server;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.Locale;
+import java.util.Vector;
+
+import javax.mail.MessagingException;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.google.apis.controller.GoogleDriveController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
+import com.esferalia.aon.gwt.document.client.IDocument;
+import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.gwt.document.shared.Document;
+import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.gwt.document.shared.Lists;
+import com.esferalia.aon.gwt.document.shared.SearchInfo;
+import com.esferalia.aon.gwt.document.shared.Tags;
+import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
+import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.About;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+
+public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
+
+	private static final long serialVersionUID = 6871016881549113129L;
+
+	private static InputStream file;
+	private static String mimetype;
+	
+	public static String getMimetype() {
+		return mimetype;
+	}
+
+	public static void setMimetype(String mimetype) {
+		DocumentsServlet.mimetype = mimetype;
+	}
+
+	public InputStream getFile() {
+		return file;
+	}
+
+	public static void setFile(InputStream file2) {
+		file = file2;
+	}
+
+	public Document getAllFiles(){
+		String domain = AonUtil.getDomainName();
+		Document docs = new Document();
+		try {
+			DBConsults.getAllRattach(domain);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		docs.setFiles(DBConsults.getFilesGwt());
+		docs.setNames(DBConsults.getNames());
+		return docs;
+	}
+	
+	public Vector<FileInfo> getServiConveniosFiles(){
+		String domain = AonUtil.getDomainName();
+		Vector<FileInfo> v = new Vector<FileInfo>();
+		try {
+			v= DBConsults.getServiConvenios(domain);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return v;
+	}
+	
+	Vector<String> types;
+	public Vector<String> getTypes(){
+		Locale locale = AonUtil.getCurrentLocale();
+		Vector<String> vector = new Vector<String>();
+		for (int i = 0 ; i<RegistryAttachmentType.values().length ; i++){
+			String type = RegistryAttachmentType.values()[i].getName(locale);
+			vector.add(type);
+		}
+		return vector;
+	}
+	
+	public Vector<FileInfo> searchFile(String searchStr, Vector<FileInfo> files){
+		Vector<FileInfo> vector = new Vector<FileInfo>();
+		for (FileInfo fileInfo : files) {
+			if(StringUtils.contains(fileInfo.getTitle(), searchStr)){
+				
+				vector.add(fileInfo);
+			}
+		}
+		return vector;
+	}
+	
+	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files){
+		Vector<FileInfo> vector = new Vector<FileInfo>();
+		for (FileInfo fileInfo : files) {
+			if(filter(si, fileInfo)){
+				vector.add(fileInfo);
+			}
+		}
+		return vector;
+		
+	}
+	
+	public Boolean filter(SearchInfo si,FileInfo fi){
+		if(si.getName() != null){
+			if(!StringUtils.contains(fi.getTitle(), si.getName())){
+				return false;
+			}
+		}
+		if(si.getConfidential()!=null && fi.getConfidential()!=null){
+			if(!si.getConfidential().equals(fi.getConfidential())){
+				return false;
+			}
+		}
+		if(si.getDate()!=null){
+			
+			if(!si.getDate().replace('/', '-').equals(fi.getDateStr())){
+				return false;
+			}
+		}
+		if(si.getCategory()!=null){
+			if(!si.getCategory().equals(fi.getCategoryStr())){
+				return false;
+			}
+		}
+		if(si.getTag()!=null){
+			Vector<String> v = si.getTag();
+			Vector<String> ops = si.getYoTag();
+			Boolean b = Tags.contain(v.get(0),fi.getTags());
+			for(int i =1;i<v.size();i++){
+				if(ops.get(i-1).equals("Y")){		
+					if(!(b && Tags.contain(v.get(i),fi.getTags()))){
+						b = false;
+					}
+				}
+				else{
+					if(b){
+						i=v.size();
+					}
+					else{
+						b= Tags.contain(v.get(i),fi.getTags());
+					}
+				}
+			}
+			if(!b) 
+				return false;
+		}
+		if(si.getScope()!=null){
+			if(!si.getScope().equals(fi.getScope().getName())){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public Vector<String> getSons(){
+		String domain = AonUtil.getDomainName();
+		
+		Vector<String> vector = new Vector<String>();
+		try {
+			vector = DBConsults.getSons(domain);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return vector;
+		
+		
+		
+	}
+	
+	public Lists getLists(){
+		String domain = AonUtil.getDomainName();
+		Lists lists= new Lists();
+		
+		try {
+			lists.setCategoryList(DBConsults.getCategoryList(domain));
+			lists.setScopeList(DBConsults.getScopeList(domain));
+			lists.setTagList(DBConsults.getTagList(domain));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return lists;
+	}
+	
+	public void removeFile(FileInfo fi){
+		
+		String domain = AonUtil.getDomainName();
+		try {
+			DBConsults.removeFile(domain, fi.getFileId());
+			if(fi.getDriveId()!=null){
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+				Drive d = DriveUtils.serviceInitialize(g);
+				d.files().delete(fi.getDriveId()).execute();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+
+	}
+	public static ByteArrayOutputStream out;
+	
+	
+	public static ByteArrayOutputStream getOut() {
+		return out;
+	}
+
+	public static void setOut(ByteArrayOutputStream out2) {
+		out = out2;
+	}
+
+	public Boolean newFile(FileInfo fi) {
+		if (!getMimetype().equals("application/octet-stream")
+				&& !fi.getTitle().equals("") && !fi.getDomain().equals("false")) {
+			Date date = null;
+			if (fi.getDate() != null)
+				date = new Date(fi.getDate().getYear(),
+						fi.getDate().getMonth(), fi.getDate().getDay());
+
+			String domain = AonUtil.getDomainName();
+			// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
+			com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
+			fileInfo.setAonType("registry");
+			if ((Integer) fi.getCategory() != null)
+				fileInfo.setCategory(fi.getCategory());
+			fileInfo.setDateSql(date);
+			fileInfo.setMimetype((byte) MimeType.get(getMimetype()).ordinal());
+			fileInfo.setTitle(fi.getTitle());
+			fileInfo.setType((short) 5);// TODO tipo correcto!!
+			if (fi.getScope().getId() != null)
+				fileInfo.setScopeId(fi.getScope().getId());
+			Byte conf;
+			if (fi.getConfidential())
+				conf = 1;
+			else
+				conf = 0;
+			fileInfo.setSecurityLevel(conf);
+			String dom;
+			if (fi.getDomain().equals(""))
+				dom = domain;
+			else
+				dom = fi.getDomain();
+			try {
+				Integer domainId = DBConsults.getDomainId(domain, dom);
+				fileInfo.setDomainId(domainId);
+				Integer id = DBConsults.insertFile(domain, fileInfo);
+				DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
+				//InputStream file = getFile();
+				byte[] b = getOut().toByteArray();
+				fileInfo.setFileId(id);
+				fileInfo.setData(b);
+				DomainGserviceaccount g = DatabaseSync
+						.getServiceAccount(domain);
+				//Drive d = DriveUtils.serviceInitialize(g);
+				String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
+				DriveUtils.types = types;
+				
+				DBConsults.insertFileData(domain, id, b );
+				//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}/* catch (KeyStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			} catch (AonConnectionException e) {
+				e.printStackTrace();
+			} catch (MessagingException e) {
+				// TODO Bloque catch generado automáticamente
+				e.printStackTrace();
+			}*/
+			return true;
+		}
+		return false;
+
+	}
+	
+	public static com.google.api.services.drive.model.File insertFile(Drive drive, com.code.aon.google.apis.FileInfo fileInfo,byte[] array) throws SQLException, AonConnectionException,
+			IOException, MessagingException, KeyStoreException,
+			GeneralSecurityException {
+		// File's metadata.
+		com.google.api.services.drive.model.File file = newFile((byte)fileInfo.getMimetype(), fileInfo.getTitle());
+		file.setModifiedDate(new DateTime(new java.util.Date()));
+		
+		ByteArrayContent mediaContent = new ByteArrayContent(file.getMimeType(), array);
+
+		try {
+			
+			long start = System.currentTimeMillis();
+			file = drive.files().insert(file, mediaContent).execute();
+
+			long time = System.currentTimeMillis() - start;
+			
+			
+			return file;
+		} catch (IOException e) {
+			
+			return null;
+		}
+	}
+	
+	public static com.google.api.services.drive.model.File newFile(Byte mimetype, String title) {
+
+		com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
+
+		file.setShared(true);
+		file.setTitle(title);
+		if (mimetype != null)
+			file.setMimeType(MimeType.values()[mimetype].getName());
+
+		// file.setAppDataContents(true);// Indica que es un archivo de la
+		// aplicación, por lo tanto, el usuario no podrá borrar el archivo.
+		return file;
+	}
+	
+	public Boolean check(){
+		return getMimetype().equals("application/octet-stream");
+			
+		
+	}
+	
+	public void editFile(FileInfo fi){
+		String domain = AonUtil.getDomainName();
+		//Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
+		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
+		fileInfo.setFileId(fi.getFileId());
+		fileInfo.setAonType("registry");
+		fileInfo.setCategory(fi.getCategory());
+		fileInfo.setDate(fi.getDate());
+		if(!getMimetype().equals("application/octet-stream"))fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+		else fileInfo.setMimetype(fi.getMimetype());
+		fileInfo.setTitle(fi.getTitle());
+		fileInfo.setScopeId(fi.getScope().getId());
+		Byte conf;if(fi.getConfidential())conf=1; else conf=0;
+		fileInfo.setSecurityLevel(conf);
+		try {
+			DBConsults.updateFile(domain, fileInfo);
+			if(!getMimetype().equals("application/octet-stream")){
+				//InputStream file = getFile();
+				byte[] b = getOut().toByteArray();
+				fileInfo.setData(b);
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+				Drive d = DriveUtils.serviceInitialize(g);
+				//DriveUtils.sync2(d, fileInfo, domain);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public Boolean isGconnection() {
+		return GoogleDriveController.gconnection;
+		
+		
+	}
+	
+
+public Vector<TreeDriveInfo> myDrive(String id){
+		Drive drive = GoogleDriveController.dconnection;
+		FileList fl = null;
+		About about;
+		try {
+			if(id.equals("")){
+				about = drive.about().get().execute();
+				id = "'" + about.getRootFolderId() + "'";
+			}
+			else id = "'"+id+"'";
+			
+			fl = drive.files().list().setQ(id+" in parents and mimeType = 'application/vnd.google-apps.folder'").execute();
+			
+		} catch (IOException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
+		}
+		
+		Vector<TreeDriveInfo> v = new Vector<TreeDriveInfo>();
+		
+		 if(fl!=null){
+		 for (File f : fl.getItems()) {
+			TreeDriveInfo tdi = new TreeDriveInfo();
+			FileInfo fi = new FileInfo();
+			fi.setTitle(f.getTitle());
+			fi.setDriveId(f.getId());
+			tdi.setParent(fi);
+			tdi.setSons(myDrive(fi.getDriveId()));
+
+		}
+		}
+		 return v;
+	
+	}
+	
+
+
+}

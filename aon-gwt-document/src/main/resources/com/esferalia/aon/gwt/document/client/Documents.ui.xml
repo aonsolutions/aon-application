@@ -1,29 +1,360 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
 
+	>
 
 	<ui:style>
+
+	.cellTable {
+		border-bottom: 1px solid #ccc;
+		text-align: left;
+		margin-bottom: 4px;
+	}
 	
+	.stackHeader {
+		padding: .4em .5em .3em 2em;
+		
+	}
+
+	.aon-icon-google-search2 {
+		background: transparent url(aon-icon-google-search.png) scroll left center no-repeat;
+	}
+	
+	.aon-search-box{
+		width: 800px;
+		margin-left:32px;
+		padding:3px 3px 3px 3px;
+ 		border:solid 1px #DEDEDE;
+ 		font-size: 16px;
+		height:16px;
+	}
+	
+	.aon-search-box-popup{
+		border:solid 1px #DEDEDE;
+		background: #FFF;
+	
+	}
+	
+	.aon-search-box-popup .item {
+		text-align: center;
+	}
+	
+	.aon-search-box-popup .item-selected {
+  		background: #D5E2FF;	
+	}
+	
+	.aon-border{
+		border:0 !important;
+	}
+
+.hpanel{
+	top:5px !important;
+	background-color: #f6f5e3;
+	border:#d8d37a 1px solid;	
+	width:100%;
+	
+}
+
+.searchPanel{
+	bottom:0.5em !important;
+	border-bottom:1px solid #D8D27A !important;
+}
+
+.vpanel{
+	border:0px !important;
+	margin-left:5px !important;
+}
+
+    .scrollable {
+      height: 100%;
+      width:100%;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+	
+	.stackBorder {
+		border-left: 1px solid #BBB;
+		border-top: 1px solid #BBB;
+		border-bottom:1px solid #BBB;
+		border-right: 0px !important;
+	}
+
+@external .gwt-SplitLayoutPanel-HDragger;
+@external .gwt-SplitLayoutPanel-VDragger;
+@external .gwt-DisclosurePanel .content;
+@external .aon-editDataTable-button;
+@external .gwt-StackLayoutPanelHeader;
+@external .gwt-SuggestBoxPopup .item-selected; 
+@external .gwt-PopupPanel;
+@external .gwt-DialogBox;
+@external .gwt-DialogBox .Caption;
+@external .gwt-DialogBox .dialogTopCenter;
+@external .gwt-StackLayoutPanel;
+
+
+
+
+.gwt-StackLayoutPanelHeader{
+	border-right:0px !important;
+}
+
+.gwt-StackLayoutPanel{
+	border-right:1px solid #BBB;
+}
+
+.gwt-DialogBox .dialogTopCenter{
+background: none repeat scroll 0% 0% rgb(255, 255, 255);
+padding: 1px;
+}
+
+.gwt-DialogBox .Caption{
+background-color:#D4CFC7;
+	border-color:#D4CFC7;
+	background-image:url(/aon-aio/a4j/g/3_3_3.Finalorg.richfaces.renderkit.html.GradientA/DATB/eAF79urt8fNXmAAXoQUq.jspx);
+}
+
+
+.gwt-SuggestBoxPopup .item-selected {
+  background: #BFBFBF !important;
+}
+
+.gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-HDragger { 
+	background-color: #FFF  !important;
+  }
+
+.gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-VDragger {   
+	background: #FFF !important;
+  }
+
+.gwt-DisclosurePanel .content {
+  border-left: 3px solid #FFF !important;
+  padding: 4px 8px 4px 0px !important;
+  margin-left: 20px !important;
+}
+
+
+.aon-editDataTable-button{
+	margin-rigth:0px !important;
+}
+
+
+.gwt-StackLayoutPanelHeader {
+   background: none repeat scroll 0% 0% #EBEBEF !important;
+}
+
+.button-west{
+	font-size:15px !important;
+}
+.gwt-PopupPanel{
+	top:40% !important;
+	left:40% !important;
+}
+
+.gwt-DialogBox{
+	top:30% !important;
+	left:40% !important;
+}
+
+.aon-gwt-panelGrid table{
+	border-collapse:collapse;
+}
+
+.aon-vertical-popup{
+	padding-bottom: 5px;
+}
+
+
+.aon-gwt-panelGrid col:first-child{
+	border:#c4c4c4 1px solid;
+	font-weight:bold;
+	background-color:#f2f2f2;
+	white-space: nowrap;
+	padding:1px 0.5em 1px 0.5em;
+	vertical-align:top;
+}
+.aon-gwt-panelGrid col:nth-child(2){
+	border:#c4c4c4 1px solid;
+	padding:2px 5px 2px 2px;
+	padding:1px 0.5em 1px 0.5em;
+}
 	</ui:style>
 
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel"
+		styleName="{style.gwt-SplitLayoutPanel}">
+		<!-- **************************** WEST ***************************** -->
 		<g:west size='275'>
-			<g:VerticalPanel>
-				<g:Button ui:field="newButton" styleName="aon-editDataTable-button aon-icon-edit-add" >Crear</g:Button>
-				<g:Label>Compartido conmigo</g:Label>
-				<g:Label>Destacado</g:Label>
-			</g:VerticalPanel>		
+			<g:StackLayoutPanel ui:field="stack1"  unit='EM'>
+
+				<g:stack>
+					<g:header size='3'>
+
+						<div class='{style.stackHeader} aon-documental-docs'>
+							Documentos
+						</div>
+					</g:header>
+					<g:AbsolutePanel styleName="{style.stackBorder}">
+
+						<g:VerticalPanel styleName="{style.vpanel}">
+							<g:AbsolutePanel styleName="{style.vpanel}">
+								<g:Button styleName="aon-editDataTable-button aon-icon-attach-file"
+									ui:field="allButton">
+									Todos
+								</g:Button>
+							</g:AbsolutePanel>
+							<g:AbsolutePanel styleName="{style.vpanel}">
+								<g:Button styleName="aon-editDataTable-button aon-icon-serviconvenios"
+									ui:field="serviConveniosButton">
+									ServiConvenios
+								</g:Button>
+							</g:AbsolutePanel>
+
+							<g:DisclosurePanel ui:field="dpanel" styleName="gwt-DisclosurePanel">
+						
+							</g:DisclosurePanel>
+
+							<g:DisclosurePanel ui:field="epanel" styleName="gwt-DisclosurePanel">
+
+							</g:DisclosurePanel>
+						</g:VerticalPanel>
+					</g:AbsolutePanel>
+				</g:stack>
+				<g:stack>
+					<g:header size='3'>
+						<div class='{style.stackHeader} aon-google-drive'>
+							
+							    Mi Drive
+	
+						</div>
+					</g:header>
+					<g:AbsolutePanel styleName="{style.stackBorder}">
+						<g:ScrollPanel ui:field="treepanel">
+						    
+						    
+						</g:ScrollPanel>
+						<!--g:VerticalPanel styleName="{style.vpanel}">
+							<g:AbsolutePanel styleName="{style.vpanel}">
+								<g:Button
+									styleName="aon-editDataTable-button aon-icon-google-drive-folder">Mi Unidad</g:Button>
+							</g:AbsolutePanel>
+							<g:AbsolutePanel styleName="{style.vpanel}">
+								<g:Button
+									styleName="aon-editDataTable-button aon-icon-google-drive-folder">Compartido</g:Button>
+							</g:AbsolutePanel>
+						</g:VerticalPanel-->
+						<!--g:Tree ui:field="tree"/ -->
+					</g:AbsolutePanel>
+				</g:stack>
+			</g:StackLayoutPanel>
 		</g:west>
 
+		<!-- **************************** FIN WEST **************************** -->
+		<!-- **************************** CENTER **************************** -->
 		<g:center>
-			<g:VerticalPanel ui:field="documentsList">
-				<g:HorizontalPanel>
-					<g:CheckBox  /><g:Label>XXXXX</g:Label>
-				</g:HorizontalPanel>
-			</g:VerticalPanel>		
+			<g:DockLayoutPanel unit="EM">
+				<g:north size="2">
+					<g:FlowPanel styleName="aon-finding-title-toolbar">
+						<g:HorizontalPanel>
+							<g:HTMLPanel styleName="aon-finding-title">
+								<g:HTMLPanel styleName="aon-finding-title-internal">
+									<g:Label styleName="aon-outputText">Documentos</g:Label>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-subtitle">
+								<g:HTMLPanel styleName="aon-finding-aubtitle-internal">
+									<g:Label styleName="aon-outputText" text=" " />
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HorizontalPanel styleName="aon-finding-toolbar">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field="newFile" styleName='aon-finding-toolbar-item aon-icon-new'
+										text="Nuevo" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field="editFile" styleName='aon-finding-toolbar-item aon-icon-edit'
+										text="Editar" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field="delFile" styleName='aon-finding-toolbar-item aon-icon-delete'
+										text="Borrar" />
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
+						</g:HorizontalPanel>
+					</g:FlowPanel>
+			
+				</g:north>
+				<g:center>
+					<g:DockLayoutPanel unit="EM">
+						<!-- Search & Options -->
+
+						<g:north size="8">
+
+							<g:HTMLPanel styleName="aon-panelGrid-search {style.searchPanel}">
+								<div class="aon-panelGrid-search-info">
+									<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
+									<a style="font-size:10px;font-weight:bold;float:right;"
+										onclick="" href="#">
+										<span class="aon-outputText">
+										    <g:Button ui:field="advanceSearch" styleName="aon-editDataTable-button aon-icon-search">
+										        
+										    </g:Button>
+										    
+										</span>
+									</a>
+								</div>
+								<table class="aon-panelGrid">
+									<tr>
+										<td class="aon-panelGrid-odd">
+										    
+											<g:SuggestBox ui:field="searchBox" styleName="{style.aon-search-box}"
+												autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
+
+											</g:SuggestBox>
+												
+										</td>
+										<td><g:Button visible="false" ui:field="searchButton" styleName="aon-editDataTable-button"> </g:Button> 
+												</td>
+									</tr>
+								</table>
+
+
+							</g:HTMLPanel>
+							<!--g:AbsolutePanel styleName="{style.hpanel}"> <g:HorizontalPanel> 
+								<g:Label>Filtrar:</g:Label> <g:SuggestBox ui:field="searchBox" styleName="{style.aon-search-box}" 
+								autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}"> </g:SuggestBox> 
+								<g:Button ui:field="searchButton" >Buscar </g:Button> </g:HorizontalPanel> 
+								</g:AbsolutePanel -->
+
+
+						</g:north>
+						<g:center>
+
+							<c:DataGrid ui:field='dataGrid'>
+							    
+							    
+							</c:DataGrid>
+
+
+
+							<!-- g:HTMLPanel> <table cellspacing='15' cellpadding='15' style='width:100%;'> 
+								<tr> <td valign='top'> <g:ScrollPanel pixelSize="800, 800"> <c:CellTable 
+								addStyleNames='{style.cellTable}' pageSize='30' ui:field='cellTable'/> <c:DataGrid 
+								ui:field='dataGrid' /> </g:ScrollPanel> <s2:ShowMorePagerPanel addStyleNames='{style.scrollable}' 
+								ui:field='pagerPanel'/> <s:RangeLabelPager ui:field='rangeLabelPager' /> 
+								</td> </tr> </table> </g:HTMLPanel -->
+						</g:center>
+
+					</g:DockLayoutPanel>
+
+				</g:center>
+				<g:east size="1">
+					<g:AbsolutePanel></g:AbsolutePanel>
+				</g:east>
+			</g:DockLayoutPanel>
+
 		</g:center>
+		<!-- **************************** FIN CENTER **************************** -->
 
 	</g:SplitLayoutPanel>
 

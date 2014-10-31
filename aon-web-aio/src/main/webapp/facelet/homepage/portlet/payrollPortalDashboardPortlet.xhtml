@@ -37,7 +37,7 @@
     					</script>
 
 					<aon:div styleClass="aon-bold">
-						<aon:outputText value="Salarios" />
+						<aon:outputText value="bundle.payroll_agreementLevel_payment" />
 						<aon:selectOneMenu id="Dashboard_payrollPortalPeriod"
 							style="border: none;" value="#{dashboard.option}">
 							<a4j:support event="onchange"
@@ -94,13 +94,6 @@
 						  	var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:payroll_portal_chart_div'));
 
   							chart.draw(data, options);
-  							
-  							
-  							google.visualization.events.addListener(table, 'select', selectHandler);
-
-  							function selectHandler(e) {
-  							  alert('A table row was selected');
-  							}
 
 						}
     				</script>
@@ -151,9 +144,6 @@
     				
 				</aon:div>
 
-
-
-					
 				
 			</aon:panelGrid>
 		</aon:div>
