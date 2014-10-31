@@ -152,7 +152,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		return null;
 	}
 
-	private double obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
+	public double obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		return controller.getPriceStrategy().getBasePrice(invoiceDetail);
 	}
