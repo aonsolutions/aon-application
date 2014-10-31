@@ -6,10 +6,17 @@ import java.util.Date;
 
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
+import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
+import org.jooq.SelectSelectStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Certifica2Batch;
+import com.esferalia.aon.jooq.tables.Certifica2BatchDetail;
 import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.ContractAttach;
 import com.esferalia.aon.jooq.tables.ContractBatch;
@@ -24,6 +31,15 @@ import com.esferalia.aon.jooq.tables.ContractInfo;
 import com.esferalia.aon.jooq.tables.ContractLeave;
 import com.esferalia.aon.jooq.tables.ContractLeaveDetail;
 import com.esferalia.aon.jooq.tables.ContractPayment;
+import com.esferalia.aon.jooq.tables.FsModel190;
+import com.esferalia.aon.jooq.tables.FsModel190Detail;
+import com.esferalia.aon.jooq.tables.IrpfData;
+import com.esferalia.aon.jooq.tables.IrpfDataAscendants;
+import com.esferalia.aon.jooq.tables.IrpfDataDescendients;
+import com.esferalia.aon.jooq.tables.IrpfRegularization;
+import com.esferalia.aon.jooq.tables.IrpfResult;
+import com.esferalia.aon.jooq.tables.LeaveBatch;
+import com.esferalia.aon.jooq.tables.LeaveBatchDetail;
 import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.SalaryCost;
@@ -60,7 +76,19 @@ public class SQLEmployee implements Serializable {
 	private static final ContractLeave CONTRACT_LEAVE = ContractLeave.CONTRACT_LEAVE;
 	private static final ContractLeaveDetail CONTRACT_LEAVE_DETAIL = ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 	private static final ContractPayment CONTRACT_PAYMENT = ContractPayment.CONTRACT_PAYMENT; //segun check 
-
+	
+	private static final IrpfData IRPF_DATA = IrpfData.IRPF_DATA;
+	private static final IrpfDataAscendants IRPF_DATA_ASCENDANTS = IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
+	private static final IrpfDataDescendients IRPF_DATA_DESCENDIENTS = IrpfDataDescendients.IRPF_DATA_DESCENDIENTS;
+	private static final IrpfRegularization IRPF_REGULARIZATION = IrpfRegularization.IRPF_REGULARIZATION;
+	private static final IrpfResult IRPF_RESULT = IrpfResult.IRPF_RESULT;
+	
+	private static final Certifica2Batch CERTIFICA2_BATCH = Certifica2Batch.CERTIFICA2_BATCH;
+	private static final Certifica2BatchDetail CERTIFICA2_BATCH_DETAIL = Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
+	
+	private static final LeaveBatch LEAVE_BATCH = LeaveBatch.LEAVE_BATCH;
+	private static final LeaveBatchDetail LEAVE_BATCH_DETAIL = LeaveBatchDetail.LEAVE_BATCH_DETAIL;	
+	
 	private static final Salary SALARY = Salary.SALARY;
 	private static final SalaryBonus SALARY_BONUS = SalaryBonus.SALARY_BONUS;
 	private static final SalaryCost SALARY_COST = SalaryCost.SALARY_COST;
@@ -87,8 +115,8 @@ public class SQLEmployee implements Serializable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
+	}	
+	
 	public static void delete(Connection conn, int personId) {
 
 		try {
@@ -136,130 +164,110 @@ public class SQLEmployee implements Serializable {
 		if(payment != null)
 			paste2ContractPayment(create, deduction, domain, personId, startDate, endDate);	
 		
-	}
-
-/*	SQL [delete from `salary` where `salary`.`contract` = ?]; Cannot delete or update a parent row: 
-		a foreign key constraint fails (`pro-aonsolutions-net`.`salary_cost`, CONSTRAINT `FK_SALARY_COST_SALARY` 
-				FOREIGN KEY (`salary`) REFERENCES `salary` (`id`))
-*/	
-	private static void deleteContract(Connection conn, int personId)
+	}		     
+		     
+	private static void deleteContract(Connection conn, Integer ...personIds)
 			throws Exception {
-
+		
 		DSLContext create = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
 		
+		// ----------------------------------IRPF-------------------------------------------
+		
+		SelectConditionStep<Record1<Integer>> irpfSelect= create
+		//formatter:off
+		.select(IRPF_DATA.ID)
+		.from(IRPF_DATA)
+		.where(IRPF_DATA.CONTRACT.in(personIds));
+		//formatter:on
+		
+		create.delete(IRPF_DATA_ASCENDANTS).where(IRPF_DATA_ASCENDANTS.IRPF_DATA.in(irpfSelect)).execute();
+		create.delete(IRPF_DATA_DESCENDIENTS).where(IRPF_DATA_DESCENDIENTS.IRPF_DATA.in(irpfSelect)).execute();
+		
+		create.delete(IRPF_REGULARIZATION).where(IRPF_REGULARIZATION.CONTRACT.in(personIds)).execute();
+		create.delete(IRPF_RESULT).where(IRPF_RESULT.CONTRACT.in(personIds)).execute();
+		create.delete(IRPF_DATA).where(IRPF_DATA.CONTRACT.in(personIds)).execute();
+		
+		
 		// ----------------------------------Salary------------------------------------------
+		
+		SelectConditionStep<Record1<Integer>> salariesSelect= create
+		//formatter:off
+		.select(SALARY.ID)
+		.from(SALARY)
+		.where(SALARY.CONTRACT.in(personIds));
+		//formatter:on		
+		
+		create.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salariesSelect)).execute();		
+		create.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salariesSelect)).execute();		
+		create.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salariesSelect)).execute();		
+		create.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salariesSelect)).execute();		
+		create.delete(SALARY_COST).where(SALARY_COST.SALARY.in(salariesSelect)).execute();		
+		create.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salariesSelect)).execute();		
+		
+		create.delete(SALARY).where(SALARY.CONTRACT.in(personIds)).execute();
+		
+		// --------------------------------CERTIFICA2_BATCH------------------------------------
+		
+		Result<Record1<Integer>> certifica2DetailSelect= create
+		//formatter:off
+		.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
+		.from(CERTIFICA2_BATCH_DETAIL)
+		.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.in(personIds)).fetch();
+		//formatter:on
+		
+		create.delete(CERTIFICA2_BATCH_DETAIL).where(CERTIFICA2_BATCH_DETAIL.CONTRACT.in(personIds)).execute();
+		create.delete(CERTIFICA2_BATCH).where(CERTIFICA2_BATCH_DETAIL.ID.in(certifica2DetailSelect)).execute();
+		
+		// ----------------------------------LEAVE_BATCH--------------------------------------
+		
+		 Result<Record1<Integer>> leaveBatchDetail = create.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+		.from(LEAVE_BATCH_DETAIL.join(CONTRACT_LEAVE_DETAIL)
+				.on(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(CONTRACT_LEAVE_DETAIL.ID))
+				.join(CONTRACT_LEAVE).on(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.in(personIds))).fetch();
+		 
+		 create.delete(LEAVE_BATCH_DETAIL).where(LEAVE_BATCH_DETAIL.LEAVE_BATCH.in(leaveBatchDetail)).execute();
+		 create.delete(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(leaveBatchDetail)).execute();
+		 
+		 
+		
+		// ----------------------------------Contract------------------------------------------
+		
+		create.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.in(personIds)).execute();
+		
+		Result<Record1<Integer>> batchDetailSelect = create.select(
+				CONTRACT_BATCH_DETAIL.CONTRACT_BATCH)
+				.from(CONTRACT_BATCH_DETAIL)
+				.where(CONTRACT_BATCH_DETAIL.CONTRACT.in(personIds)).fetch();
 
-		SalaryRecord salary = create.selectFrom(SALARY)
-				.where(SALARY.CONTRACT.eq(personId)).fetchAny();
+		create.delete(CONTRACT_BATCH_DETAIL).where(CONTRACT_BATCH_DETAIL.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_BATCH).where(CONTRACT_BATCH.ID.in(batchDetailSelect)).execute();
+		
+		create.delete(CONTRACT_BONUS).where(CONTRACT_BONUS.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_CALENDAR_EVENT).where(CONTRACT_CALENDAR_EVENT.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_CLAUSE).where(CONTRACT_CLAUSE.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_DEDUCTION).where(CONTRACT_DEDUCTION.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_EMBARGO).where(CONTRACT_EMBARGO.CONTRACT.in(personIds)).execute();
+		create.delete(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.in(personIds)).execute();
+		
+		SelectConditionStep<Record1<Integer>> leaveDetailSelect = create.select(
+				CONTRACT_LEAVE.ID)
+				.from(CONTRACT_LEAVE)
+				.where(CONTRACT_LEAVE.CONTRACT.in(personIds));
+		
+		create.delete(CONTRACT_LEAVE_DETAIL).where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.in(leaveDetailSelect)).execute();
+		create.delete(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.in(personIds)).execute();
+		
+		create.delete(CONTRACT_PAYMENT).where(CONTRACT_PAYMENT.CONTRACT.in(personIds)).execute();
 
-		if (salary != null) {
-			
-			create.delete(SALARY_PAYMENT)
-					.where(SALARY_PAYMENT.SALARY.eq(salary.getId())).execute();
-			
-			create.delete(SALARY_EMBARGO)
-					.where(SALARY_EMBARGO.SALARY.eq(salary.getId())).execute();
-
-			create.delete(SALARY_DEDUCTION)
-					.where(SALARY_DEDUCTION.SALARY.eq(salary.getId()))
-					.execute();
-
-			create.delete(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salary.getId())).execute();
-
-			create.delete(SALARY_COST)
-					.where(SALARY_COST.SALARY.eq(salary.getId())).execute();
-
-			create.delete(SALARY_BONUS)
-					.where(SALARY_BONUS.SALARY.eq(salary.getId())).execute();
-			
-			create.delete(SALARY).where(SALARY.CONTRACT.eq(personId)).execute();
-
-		}
+		create.delete(CONTRACT).where(Contract.CONTRACT.ID.in(personIds)).execute();
+		
 		// ----------------------------------------------------------------------------------
-
-
-		create.delete(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-
-		ContractBatchDetailRecord batchDetail = create
-				.selectFrom(CONTRACT_BATCH_DETAIL)
-				.where(CONTRACT_BATCH_DETAIL.CONTRACT.eq(personId)).fetchAny();
-
-		if (batchDetail != null) {
-			create.delete(CONTRACT_BATCH_DETAIL)
-					.where(CONTRACT_BATCH_DETAIL.CONTRACT.eq(personId))
-					.execute();
-
-			create.delete(CONTRACT_BATCH)
-					.where(CONTRACT_BATCH.ID.eq(batchDetail.getContractBatch()))
-					.execute();
-		}
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_BONUS)
-				.where(CONTRACT_BONUS.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_CALENDAR_EVENT)
-				.where(CONTRACT_CALENDAR_EVENT.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_CLAUSE)
-				.where(CONTRACT_CLAUSE.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(personId))
-				.execute();
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_DEDUCTION)
-				.where(CONTRACT_DEDUCTION.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_EMBARGO)
-				.where(CONTRACT_EMBARGO.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(personId))
-				.execute();
-
-		// ----------------------------------------------------------------------------------
-
-		ContractLeaveRecord leave = create.selectFrom(CONTRACT_LEAVE)
-				.where(CONTRACT_LEAVE.CONTRACT.eq(personId)).fetchAny();
-
-		if (leave != null) {
-			create.delete(CONTRACT_LEAVE_DETAIL)
-					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(leave
-							.getContract())).execute();
-
-			create.delete(CONTRACT_LEAVE)
-					.where(CONTRACT_LEAVE.CONTRACT.eq(personId)).execute();
-		}
-
-		// ----------------------------------------------------------------------------------
-
-		create.delete(CONTRACT_PAYMENT)
-				.where(CONTRACT_PAYMENT.CONTRACT.eq(personId)).execute();
-
-		// ----------------------------------------------------------------------------------
-	
-		create.delete(CONTRACT).where(Contract.CONTRACT.ID.eq(personId))
-				.execute();
-
+		
+		
 	}
-	
+		
 	protected static void paste2Contract(DSLContext create, ContractRecord contract, 
 			int domain, int workplaceId, int personId, Date startDate, Date endDate) {
 		
