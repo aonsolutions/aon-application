@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -35,6 +37,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +54,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
@@ -65,6 +70,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -77,11 +83,13 @@ import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.file.EnterpriseCostProvider;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class SalaryPrintController extends BasicController implements ICollectionProvider, IPayrollConstants {
@@ -90,7 +98,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
 	
-	private static final String SALARY_PATTERN = "{0} {1} ({2,date,dd.MM.yyyy}-{3,date,dd.MM.yyyy})";
+	private static final String SALARY_NAME_PATTERN = "{0} {1} ({2,date,dd.MM.yyyy}-{3,date,dd.MM.yyyy})";
 	
 	private static final String SALARIES_ZIP_NAME = "nominas";
 
@@ -99,16 +107,30 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	private static final String TP_CONTRACT_HOURS_FILE_NAME = "horas_contratos_tp";
 	
 	private List<SelectItem> availableWorkPlaces;
+
+	private List<SelectItem> availableCCCs;
 	
 	private boolean showWorkPlaces;
+
+	private boolean showCCCs;
+	
+	private Enterprise enterprise;
 	
 	private WorkPlace workPlace;
+
+	private EnterpriseCCC enterpriseCCC;
 	
 	private String[] types;
 	
 	private boolean includeEnterpriseCost;
 
 	private boolean includeTPhours;
+	
+	private Month month;
+
+	private Integer year;
+
+	private boolean betweenDatesEnabled;
 	
 	private Date fromDate;
 	
@@ -133,6 +155,30 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.includeEnterpriseCost = includeEnterpriseCost;
 	}
 
+	public Month getMonth() {
+		return month;
+	}
+
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public boolean isBetweenDatesEnabled() {
+		return betweenDatesEnabled;
+	}
+
+	public void setBetweenDatesEnabled(boolean betweenDatesEnabled) {
+		this.betweenDatesEnabled = betweenDatesEnabled;
+	}
+
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -149,12 +195,28 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.toDate = toDate;
 	}
 
+	public EnterpriseCCC getEnterpriseCCC() {
+		return enterpriseCCC;
+	}
+
+	public void setEnterpriseCCC(EnterpriseCCC enterpriseCCC) {
+		this.enterpriseCCC = enterpriseCCC;
+	}
+
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
 
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
+	}
+
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
 	}
 
 	public Set<Integer> getChecked() {
@@ -172,9 +234,17 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	public boolean isShowWorkPlaces() {
 		return showWorkPlaces;
 	}
+	
+	public boolean isShowCCCs() {
+		return showCCCs;
+	}
 
 	public List<SelectItem> getAvailableWorkPlaces() {
 		return availableWorkPlaces;
+	}
+
+	public List<SelectItem> getAvailableCCCs() {
+		return availableCCCs;
 	}
 	
 	public String[] getTypes() {
@@ -190,11 +260,10 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
 		setIncludeEnterpriseCost(false);
 		setIncludeTPhours(false);
-		loadWorkPlaces();
-		this.resetCriteria();
 		clearFilters();
+		loadWorkPlaces(getEnterprise());
 		resetCriteria();
-		onFilter(event);
+		clearChecked();
 	}
 
 	public void onClearFilter( ActionEvent event ) throws ManagerBeanException {
@@ -203,9 +272,38 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.initializeModel();
 	}
 	
+	public void onChangePeriod( ActionEvent event ) throws ManagerBeanException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.YEAR, getYear());
+		cal.set(Calendar.MONTH, getMonth().getValue());
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		this.fromDate = cal.getTime();
+		
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.YEAR, getYear());
+		cal.set(Calendar.MONTH, getMonth().getValue());
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		this.toDate = cal.getTime();
+	}
+	
+	public void onChangeEnterprise( LookupChangeEvent event ) throws ManagerBeanException {
+		loadWorkPlaces((Enterprise) event.getNewValue());
+	}
+
+	public void onChangeWorkplace( ActionEvent event ) throws ManagerBeanException {
+		loadCCCs(getEnterprise());
+	}
+	
 	@Override
 	public void onSearch(ActionEvent arg0) {
 		try {
+			super.onSearch(arg0);
 			onFilter(arg0);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("No se ha podido procesar la búsqueda.");
@@ -252,11 +350,18 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		if ((getWorkPlace() != null) && (getWorkPlace().getId() !=null)) {
 			String alias = this.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID);
 			criteria.addEqualExpression(alias, getWorkPlace().getId());
-		}		
+		}
+		if ((getEnterpriseCCC() != null) && (getEnterpriseCCC().getId() !=null)) {
+//			String alias = this.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID);
+			String alias = "Salary.contract.enterpriseCCC.id";
+			criteria.addEqualExpression(alias, getEnterpriseCCC().getId());
+		}
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(this.getFieldName(IEntityAlias.SALARY_DOMAIN), getEnterprise().getDomain());
 		this.initializeModel();
+		checkAll(event);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException {
 		String id = this.getFieldName(IEntityAlias.SALARY_ID);
 		ProjectionList pl = new ProjectionList( Projection.property(id) );
@@ -272,8 +377,11 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	private void clearFilters() {
 		this.fromDate = new Date();
 		this.toDate = new Date();
+		this.enterprise = null;
 		this.workPlace = null;
 		this.types = null;
+		this.month = Month.getMonthByValue(CommonUtil.getMonth(new Date()));
+		this.year = CommonUtil.getYear(new Date());
 		Date lastSalaryDate = null;
 		try {
 			lastSalaryDate = obtainLastSalaryDate();
@@ -299,10 +407,21 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			this.fromDate = startCal.getTime();
 			this.toDate = endCal.getTime();
+			
+			if(DomainManager.isDomainManagementAvailable()){
+				setEnterprise((Enterprise)BeanManager.getManagerBean(Enterprise.class).createNewTo());
+			} else {
+				setEnterprise(PayrollUtils.getInstance().getCurrentDomainEnterprise());
+			}
 		} catch (AonConnectionException e) {
-			// NADA. no se precarga ningun periodo 
+			LOGGER.error("No se han podido limpiar los criterios de busqueda.");
+			throw new AbortProcessingException(e.getMessage());
 		} catch (SQLException e) {
-			// NADA. no se precarga ningun periodo 
+			LOGGER.error("No se han podido limpiar los criterios de busqueda.");
+			throw new AbortProcessingException(e.getMessage());
+		} catch (ManagerBeanException e) {
+			LOGGER.error("No se han podido limpiar los criterios de busqueda.");
+			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 	
@@ -324,12 +443,10 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	}
 
 	private void resetCriteria() throws ManagerBeanException {
-		Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
-		clearChecked();
 		this.clearCriteria();
 		Criteria criteria = this.getCriteria();
-		String alias = this.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-		criteria.addEqualExpression(alias, enterprise.getId());		
+		String alias = this.getFieldName(IEntityAlias.SALARY_DOMAIN);
+		criteria.addEqualExpression(alias, getEnterprise().getDomain());		
 	}
 
 	public boolean getRowChecked() throws ManagerBeanException {
@@ -350,24 +467,51 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		}
 	}
 	
-	private void loadWorkPlaces() throws ManagerBeanException {
-		Enterprise enterprise = PayrollUtils.getInstance().getCurrentDomainEnterprise();
+	private void loadWorkPlaces(Enterprise enterprise) throws ManagerBeanException {
 		this.availableWorkPlaces = null;
 		this.showWorkPlaces = false;
-		
-		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-		Criteria criteria = new Criteria();
-		String enterpriseId = bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID);
-		criteria.addEqualExpression(enterpriseId, enterprise.getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
-		if ( bean.getCount(criteria) > 1 ) {
-			List<ITransferObject> list = bean.getList(criteria);
-			this.availableWorkPlaces = new LinkedList<SelectItem>();
-			for (ITransferObject to : list) {
-				WorkPlace workPlace = (WorkPlace)to;
-				availableWorkPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
+		if(enterprise!=null && enterprise.getId()!=null){
+			IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_DOMAIN), enterprise.getDomain());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
+			if ( bean.getCount(criteria) > 1 ) {
+				List<ITransferObject> list = bean.getList(criteria);
+				this.availableWorkPlaces = new LinkedList<SelectItem>();
+				for (ITransferObject to : list) {
+					WorkPlace workPlace = (WorkPlace)to;
+					availableWorkPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
+				}
+				this.showWorkPlaces = true;
 			}
-			this.showWorkPlaces = true;
+		}
+		loadCCCs(enterprise);
+	}	
+
+	private void loadCCCs(Enterprise enterprise) throws ManagerBeanException {
+		this.availableCCCs = null;
+		this.showCCCs = false;
+		if(enterprise!=null && enterprise.getId()!=null){
+			IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_DOMAIN), enterprise.getDomain());
+			if(getWorkPlace()!=null && getWorkPlace().getId()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), getWorkPlace().getAddress().getGeozone().getId());
+			}
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE));
+			if ( bean.getCount(criteria) > 1 ) {
+				List<ITransferObject> list = bean.getList(criteria);
+				this.availableCCCs = new LinkedList<SelectItem>();
+				for (ITransferObject to : list) {
+					EnterpriseCCC enterpriseCCC = (EnterpriseCCC)to;
+					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+					String label = enterpriseCCC.getType().getName(locale) +" ("+ enterpriseCCC.getFullCcc()+")";
+					availableCCCs.add(new SelectItem(enterpriseCCC, label));
+				}
+				this.showCCCs = true;
+			}
 		}
 	}	
 	
@@ -391,41 +535,26 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			return false;
 		}
 	}
+	
 	public boolean isContainsSalary(){
-		try {
-			Criteria criteria = new Criteria();
-			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
-			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
-			return this.getManagerBean().getCount(criteria)>0;
-		} catch (ManagerBeanException e) {
-			return false;
-		}
+		return containsSalary(SalaryType.SALARY);
 	}
 	public boolean isContainsExtra(){
-		try {
-			Criteria criteria = new Criteria();
-			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
-			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.EXTRA);
-			return this.getManagerBean().getCount(criteria)>0;
-		} catch (ManagerBeanException e) {
-			return false;
-		}
+		return containsSalary(SalaryType.EXTRA);
 	}
 	public boolean isContainsSettle(){
-		try {
-			Criteria criteria = new Criteria();
-			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
-			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
-			return this.getManagerBean().getCount(criteria)>0;
-		} catch (ManagerBeanException e) {
-			return false;
-		}
+		return containsSalary(SalaryType.SETTLE);
 	}
 	public boolean isContainsDelay(){
+		return containsSalary(SalaryType.DELAY);
+	}
+	private boolean containsSalary(SalaryType type){
 		try {
 			Criteria criteria = new Criteria();
 			criteria.addInExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_ID), checks);
-			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.DELAY);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_TYPE), type);
+			criteria.addEqualExpression(this.getManagerBean().getFieldName(IEntityAlias.SALARY_DOMAIN), getEnterprise().getDomain());
+			criteria.setSkipDomainFilter(true);
 			return this.getManagerBean().getCount(criteria)>0;
 		} catch (ManagerBeanException e) {
 			return false;
@@ -675,7 +804,44 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	
 	private String getFileName( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
-		return MessageFormat.format(SALARY_PATTERN, salary.getType().getName(AonUtil.getCurrentLocale()), name, salary.getStartDate(), salary.getEndDate());
+		return MessageFormat.format(SALARY_NAME_PATTERN, salary.getType().getName(AonUtil.getCurrentLocale()), name, salary.getStartDate(), salary.getEndDate());
+	}
+	
+	public String onQuoteExcelReport() {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat();
+		Connection connection = null; 
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Locale locale = AonUtil.getCurrentLocale();
+			EnterpriseCostProvider provider = new EnterpriseCostProvider();
+			
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			String fileName = "";
+			fileName += month.getName(locale) + "_";
+			fileName += year;
+			dateFormatter.applyPattern("yyyy/MM/dd_HH:mm:ss");
+			fileName += " - " + dateFormatter.format(new Date());
+			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+			ServletOutputStream output = response.getOutputStream();
+
+			if(!provider.excelReport(year, month, null, null, null, new LinkedList<Integer>(checks), output)){
+				AonUtil.addErrorMessage("No existen datos para generar el informe.");
+			}
+			
+			response.flushBuffer();
+			faces.responseComplete();
+			return null;
+		} catch (ReportException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(connection);
+		}
 	}
 	
 	public class PartialContractProvider implements ICollectionProvider {

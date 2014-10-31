@@ -10,9 +10,9 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="contractSearch">
+		<aon:form id="salarySearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="Impresion / eMail de Nominas" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_salaryPrint_module}" />
 				<ui:param name="controller" value="#{salaryPrint}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
@@ -22,44 +22,60 @@
 				<ui:param name="controller" value="#{salaryPrint}" />
 				<ui:define name="searchContent">
 					
+				<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{salaryPrint.enterprise}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="skipGoToButton" value="#{true}" />
+						<ui:param name="lookupReRender" value="salarySearch" />
+						<aon:methodParam name="lookupChangeListener" 
+							value="#{salaryPrint.onChangeEnterprise}" type="lookupChangeListener" />
+					</ui:include>
+				</aon:if>
 					
-					<!--  
 				<aon:outputLabel value="#{bundle.payroll_salary_period}" />
 				<h:panelGrid columns="6" >
-					<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}" >
+					<aon:selectOneMenu id="Salary_month" value="#{salaryPrint.month}"
+						disabled="#{salaryPrint.betweenDatesEnabled}" >
 						<f:selectItems value="#{commonCollections.months}"  />
-						<a4j:support event="onchange" reRender="searchPanel" ajaxSingle="true" />
+						<a4j:support event="onchange" reRender="salarySearch" ajaxSingle="true"
+							actionListener="#{salaryPrint.onChangePeriod}" />
 					</aon:selectOneMenu>
 					<rich:inputNumberSpinner id="FanBatch_year" value="#{salaryPrint.year}"
+						disabled="#{salaryPrint.betweenDatesEnabled}"
 		   				inputSize="4" minValue="2013" maxValue="2020">
-		   			</rich:inputNumberSpinner>
-					-->
-					<!--  
-					<aon:outputText value="del" />
-					<rich:inputNumberSpinner value="#{salaryPrint.year}"
-		   				inputSize="2" minValue="2013" maxValue="2020">
-		   			</rich:inputNumberSpinner>
-					<aon:outputText value="al" />
-					<rich:inputNumberSpinner  value="#{salaryPrint.year}"
-		   				inputSize="2" minValue="2013" maxValue="2020">
+						<a4j:support event="onchange" reRender="salarySearch" ajaxSingle="true"
+							actionListener="#{salaryPrint.onChangePeriod}" />
 		   			</rich:inputNumberSpinner>
 				</h:panelGrid>
-					-->
 				
-				<aon:outputLabel value="#{bundle.payroll_salary_period}" />
+				<aon:outputText value="&#160;" />
 				<aon:div>
-					<aon:outputLabel value="#{bundle.aon_date_from}" styleClass="aon-italic"/>
-					<aon:selectInputDate id="Salary_fromDate"
-						value="#{salaryPrint.fromDate}" 
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-					<aon:outputLabel value="#{bundle.aon_date_to}" styleClass="aon-italic"/>
-					<aon:selectInputDate id="Salary_toDate"
-						value="#{salaryPrint.toDate}" 
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
+					<aon:selectBooleanCheckbox id="Salary_period_betweenDates" 
+						value="#{salaryPrint.betweenDatesEnabled}" >
+						<a4j:support event="onchange" reRender="salarySearch" ajaxSingle="true"
+							actionListener="#{salaryPrint.onChangePeriod}" />
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="Salary_period_betweenDates" value="entre fechas" />
+					<aon:panel style="background-color: transparent; padding-top: 10px; margin: 0;">
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_date_from}" styleClass="aon-italic, aon-margin-right"/>
+							<aon:selectInputDate id="Salary_fromDate"
+								disabled="#{!salaryPrint.betweenDatesEnabled}"
+								value="#{salaryPrint.fromDate}" 
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" />
+							<aon:outputLabel value="#{bundle.aon_date_to}" styleClass="aon-italic, aon-margin-right"/>
+							<aon:selectInputDate id="Salary_toDate"
+								disabled="#{!salaryPrint.betweenDatesEnabled}"
+								value="#{salaryPrint.toDate}" 
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" />
+						</aon:div>
+					</aon:panel>
 				</aon:div>
 					
 				<aon:outputLabel for="Salary_type"
@@ -79,14 +95,29 @@
 						value="#{salaryPrint.workPlace}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{salaryPrint.availableWorkPlaces}" />
+						<a4j:support event="onchange" reRender="salarySearch" ajaxSingle="true"
+							actionListener="#{salaryPrint.onChangeWorkplace}" />
 					</aon:selectOneMenu>		
-					<!-- add more minus buttons -->	
+					<!-- add more and minus buttons -->	
+				</aon:if>
+					
+				<aon:if test="#{salaryPrint.showCCCs}">
+					<aon:outputLabel for="Salary_contract_enterpriseCCC_id"
+						value="#{bundle.company_enterprise_ccc}" />
+					<aon:selectOneMenu id="Salary_contract_enterpriseCCC_id"
+						value="#{salaryPrint.enterpriseCCC}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{salaryPrint.availableCCCs}" />
+					</aon:selectOneMenu>		
+					<!-- add more and minus buttons -->	
 				</aon:if>
 					
 				</ui:define>
 			</ui:decorate>
 			
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		
 	</ui:define>
 </ui:composition>

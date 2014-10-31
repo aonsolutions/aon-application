@@ -54,7 +54,7 @@ public class Person extends PersonDB implements IRegistry {
 	@Transient
 	public Integer getAge() {
 		if(getBirthDate()!=null){
-			return (int) (CommonUtil.getDaysBetweenDates(getBirthDate(), new Date(), true) / 365);
+			return (int) (CommonUtil.getDaysBetweenDates(getBirthDate(), new Date(), false) / 365);
 		}
 		return null;
 	}

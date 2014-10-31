@@ -14,7 +14,7 @@
 		<aon:form id="salaryPrintList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="Impresion / eMail de Nominas" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_salaryPrint_module}" />
 				<ui:param name="controller" value="#{salaryPrint}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				
@@ -52,6 +52,12 @@
 			                </rich:menuItem>
 						</rich:dropDownMenu>
 					</aon:div>
+					<aon:htmlCommandLink id="quote-excel-report"
+						rendered="#{!salaryPrint.selectionEmpty}"
+						value="&#160;"
+						target="_blank" action="#{salaryPrint.onQuoteExcelReport}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="salary-report"
 						rendered="#{!salaryPrint.selectionEmpty and salaryPrint.containsSalary}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
@@ -86,7 +92,7 @@
 						style="display:inline-block;font-size:0.8em;margin-right:4px;" >
 						<f:facet name="label">
 							<aon:panelGroup>
-			            		<aon:outputText value="#{bundle.aon_more2} listados" /> 
+			            		<aon:outputText value="#{bundle.aon_other}s" /> 
 			                    <aon:graphicImage style="vertical-align:middle;"
 			                    	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
 							</aon:panelGroup>
@@ -98,12 +104,6 @@
 								value="Costes de empresa"
 								actionListener="#{enterprise.onSelectFirst}"
 								action="#{report.onExecute}">
-								<!--  
-								<f:setPropertyActionListener
-									target="#{salaryExpense.year}" value="#{salaryPrint.year}" />
-								<f:setPropertyActionListener
-									target="#{salaryExpense.month}" value="#{salaryPrint.month}" />
-								-->
 								<f:setPropertyActionListener
 									target="#{salaryExpense.startDate}" value="#{salaryPrint.fromDate}" />
 								<f:setPropertyActionListener
