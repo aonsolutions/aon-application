@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
@@ -147,6 +149,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void execute() {
 			employeeCopy = employee;
 			setPasteItemVisible(true);
+			
 		}
 
 		private void setEmployeeCopy(Employee employee) {
@@ -1127,9 +1130,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		if (Window.confirm("\u00BFDesea eliminar a " + employee.getFullname()
 				+ "\u003F")) {
-			
+			deleteContract(employee, null);			
 		}
-			deleteContract(employee, null);
+
 
 	}
 
