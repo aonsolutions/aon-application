@@ -175,7 +175,7 @@
 	</modules>
 
 	<scm>
-		<connection>scm:git:git://github.com/aonsolutions/aon-application.git</connection>
+		<connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
 		<url>https://github.com/aonsolutions/aon-application</url>
 	</scm>
 
