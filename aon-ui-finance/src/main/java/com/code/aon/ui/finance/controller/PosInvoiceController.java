@@ -633,9 +633,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setQuantity(invoiceDetail.getQuantity() * (-1));
 			invoiceDetail.setTaxableBase(invoiceDetail.getTaxableBase() * (-1));
-			invoiceDetail.setTaxDataInDetail(true);
-			invoiceDetail.setVatQuota(invoiceDetail.getVatQuota() * (-1));
-			invoiceDetail.setRetentionQuota(invoiceDetail.getRetentionQuota() * (-1));
 			invoiceDetailBean.insert(invoiceDetail);
 		}
 
@@ -687,9 +684,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 				returnDetail.setLine(++line);
 				returnDetail.setQuantity(CommonUtil.round(returnDetail.getQuantity() * (-1), 3));
 				returnDetail.setTaxableBase(CommonUtil.round(returnDetail.getTaxableBase() * (-1), 4));
-				returnDetail.setTaxDataInDetail(true);
-				returnDetail.setVatQuota(returnDetail.getVatQuota() * (-1));
-				returnDetail.setRetentionQuota(returnDetail.getRetentionQuota() * (-1));
 				returnDetail.setUpdateEnabled(line == detailController.getCheckedCount());
 				detailController.getManagerBean().restoreNullSubPOJOs(returnDetail);
 				detailController.getManagerBean().insert(returnDetail);
