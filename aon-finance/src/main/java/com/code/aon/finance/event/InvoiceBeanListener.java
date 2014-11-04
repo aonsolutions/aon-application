@@ -3,19 +3,15 @@ package com.code.aon.finance.event;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
-import com.code.aon.ql.Criteria;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -37,23 +33,6 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 		}
 
 		if (invoice.isUpdateEnabled()) {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
-			for (ITransferObject ito : financeBean.getList(criteria)) {
-				Finance finance = (Finance)ito;
-				finance.setRegistry(invoice.getRegistry());
-				if (finance.isPending() || finance.isReturned()) {
-					finance.setRegistryName(invoice.getRegistryName());
-					finance.setRegistryDocument(invoice.getRegistryDocument());
-					finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
-					finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
-				}
-				finance.setConcept(invoice.getDocumentNumber());
-				finance.setSecurityLevel(invoice.getSecurityLevel());
-				financeBean.update(finance);
-			}
-
 			updateTotals(invoice);
 		}
 		invoice.setUpdateEnabled(true);

@@ -17,6 +17,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -70,7 +71,15 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		refreshInvoiceData((InvoiceDetailController)event.getController());
+		try {
+			InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
+			refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
+
+			InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
+			invoiceController.autoGenerateFinances();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -90,9 +99,16 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		controller.initializeModel();
-		refreshInvoiceData(controller);
+		try {
+			InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
+			detailController.initializeModel();
+			refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
+
+			InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
+			invoiceController.autoGenerateFinances();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -111,8 +127,15 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		refreshInvoiceData(controller);
+		try {
+			InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
+			refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
+
+			InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
+			invoiceController.autoGenerateFinances();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
@@ -157,13 +180,12 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		return controller.getPriceStrategy().getBasePrice(invoiceDetail);
 	}
 
-	private void refreshInvoiceData(InvoiceDetailController controller) {
-		Invoice invoice = (Invoice)controller.getInvoice();
-		invoice.setTaxableBase(((InvoiceDetail)controller.getTo()).getInvoice().getTaxableBase());
-		invoice.setVatQuota(((InvoiceDetail)controller.getTo()).getInvoice().getVatQuota());
-		invoice.setRetentionQuota(((InvoiceDetail)controller.getTo()).getInvoice().getRetentionQuota());
-		invoice.setTotal(((InvoiceDetail)controller.getTo()).getInvoice().getTotal());
-		invoice.setService(((InvoiceDetail)controller.getTo()).getInvoice().isService());
+	private void refreshInvoiceData(Invoice invoice, InvoiceDetail invoiceDetail) {
+		invoice.setTaxableBase(invoiceDetail.getInvoice().getTaxableBase());
+		invoice.setVatQuota(invoiceDetail.getInvoice().getVatQuota());
+		invoice.setRetentionQuota(invoiceDetail.getInvoice().getRetentionQuota());
+		invoice.setTotal(invoiceDetail.getInvoice().getTotal());
+		invoice.setService(invoiceDetail.getInvoice().isService());
 	}
 
 }

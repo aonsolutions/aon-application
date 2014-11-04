@@ -65,7 +65,7 @@
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
-							actionListener="#{purchaseInvoice.generateFinances}"
+							actionListener="#{purchaseInvoice.onGenerateFinances}"
 							rendered="#{purchaseInvoice.toInvoiceTotalPrice != 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">

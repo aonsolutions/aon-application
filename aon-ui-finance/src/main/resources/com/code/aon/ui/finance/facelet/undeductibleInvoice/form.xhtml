@@ -26,7 +26,7 @@
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
-							actionListener="#{undeductibleInvoice.generateFinances}"
+							actionListener="#{undeductibleInvoice.onGenerateFinances}"
 							rendered="#{undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">

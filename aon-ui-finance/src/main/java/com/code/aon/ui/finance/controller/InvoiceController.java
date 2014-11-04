@@ -740,15 +740,19 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		invoiceDetailController.onSearch(null);
 	}
 
-	public void generateFinances(ActionEvent event) throws ManagerBeanException {
+	public void onGenerateFinances(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
 		try {
-			IController invoiceFinanceController = FormUtil.getController(invoiceFinanceControllerName);
+			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
 			List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
 			for (ITransferObject ito : financeList) {
 				Finance finance = (Finance)ito;
-				if (!finance.isAdvance() && finance.isPending()) {
-					invoiceFinanceController.getManagerBean().remove(finance);
+				if (finance.isPending()) {
+					if (!finance.isAdvance()) {
+						invoiceFinanceController.getManagerBean().remove(finance);
+					} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
+						invoiceFinanceController.excludeAdvance(finance);
+					}
 				}
 			}
 
@@ -763,7 +767,35 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			throw new AbortProcessingException(msg,e);
 		}
 	}
-	
+
+	public void autoGenerateFinances() throws ManagerBeanException {
+		if (getInvoice().getRegistry().getPayMethod() != null) {
+			onGenerateFinances(null);
+		} else {
+			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
+			List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
+			for (ITransferObject ito : financeList) {
+				Finance finance = (Finance)ito;
+				if (finance.isPending() || finance.isReturned()) {
+					Invoice invoice = getInvoice();
+					if (!finance.isAdvance()) {
+						finance.setRegistry(invoice.getRegistry());
+						finance.setRegistryName(invoice.getRegistryName());
+						finance.setRegistryDocument(invoice.getRegistryDocument());
+						finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+						finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+						finance.setConcept(invoice.getDocumentNumber());
+						finance.setSecurityLevel(invoice.getSecurityLevel());
+						invoiceFinanceController.getManagerBean().update(finance);
+					} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
+						invoiceFinanceController.excludeAdvance(finance);
+					}
+				}
+			}
+			invoiceFinanceController.onSearch(null);
+		}
+	}
+
 	public double getPendingAmount() {
 		return CommonUtil.round(getToInvoiceTotalPrice() - getToInvoiceFinanceTotal());
 	}

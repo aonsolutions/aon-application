@@ -58,7 +58,7 @@
 							title="#{bundle.aon_key_finance_accelerator}"
 							rendered="#{saleInvoice.toInvoiceTotalPrice != 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
 							iconClass="aon-icon-tree"
-							actionListener="#{saleInvoice.generateFinances}"
+							actionListener="#{saleInvoice.onGenerateFinances}"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{saleInvoice.backActionListener}"
 								value="#{null}" />
@@ -175,7 +175,7 @@
 								<ui:param name="skipSeriesLabel" value="#{true}" />
 								<ui:param name="seriesChangedReRender" value="Invoice_securityLevel" />
 								<ui:param name="sfc_seriesValid" value="#{saleInvoice.seriesValid}" />
-								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}" />
+								<ui:param name="sfc_editable" value="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
 								<ui:param name="sfc_numberReset" value="#{saleInvoice.nevv}" />								
 								<ui:define name="additionalSeriesContent">
 									<aon:commandButton id="invoiceNextNumber" immediate="#{true}"

@@ -224,7 +224,8 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	}
 
 	public void onImportAdvances(ActionEvent event) throws ManagerBeanException {
-		Invoice invoice = (Invoice)getMasterController().getTo();
+		InvoiceController invoiceController = (InvoiceController)getMasterController();
+		Invoice invoice = invoiceController.getInvoice();
 
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
@@ -239,21 +240,27 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 			finance.setRemarks("[" + finance.getConcept() + "]" + "\n" + ((finance.getRemarks() == null) ? "" : finance.getRemarks()));
 			financeBean.update(finance);
 		}
-		onSearch(event);
+		
+		invoiceController.autoGenerateFinances();
 	}
 
 	public void onExcludeAdvance(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {  
 			Finance finance = (Finance)getModel().getRowData();
-			finance.setInvoice(null);
-			if (finance.getRemarks() != null && finance.getRemarks().indexOf("[") >= 0 && finance.getRemarks().indexOf("]") >= 0) {
-				finance.setConcept(finance.getRemarks().substring(finance.getRemarks().indexOf("[")+1, finance.getRemarks().indexOf("]")));
-				finance.setRemarks(finance.getRemarks().substring(finance.getRemarks().indexOf("]")+1));
-			}
-			getManagerBean().update(finance);
+			excludeAdvance(finance);
 
-			onSearch(event);
+			InvoiceController invoiceController = (InvoiceController)getMasterController();
+			invoiceController.autoGenerateFinances();
 		}
+	}
+
+	public void excludeAdvance(Finance finance) throws ManagerBeanException {
+		finance.setInvoice(null);
+		if (finance.getRemarks() != null && finance.getRemarks().indexOf("[") >= 0 && finance.getRemarks().indexOf("]") >= 0) {
+			finance.setConcept(finance.getRemarks().substring(finance.getRemarks().indexOf("[")+1, finance.getRemarks().indexOf("]")));
+			finance.setRemarks(finance.getRemarks().substring(finance.getRemarks().indexOf("]")+1));
+		}
+		getManagerBean().update(finance);
 	}
 
 	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
