@@ -188,7 +188,7 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 		if (getVatQuota() == 0 && getRetentionQuota() == 0) {
 			fillTaxDataInDetail();
 		}
-		return CommonUtil.round(getTaxableBase() + getVatQuota() + getSurchargeQuota() - getRetentionQuota());
+		return CommonUtil.round(getTaxableBase() * (1 + getVatPercent() / 100 + getSurchargePercent() / 100 - getRetentionPercent() / 100));
 	}
 
 	@Transient

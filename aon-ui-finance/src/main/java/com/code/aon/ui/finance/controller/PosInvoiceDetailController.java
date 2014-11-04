@@ -50,7 +50,7 @@ public class PosInvoiceDetailController extends SaleInvoiceDetailController {
 
 	@Override
 	public void onAccept(ActionEvent event) {
-		fillTaxDataInDetail(true, true);
+		fillTaxDataInDetail(true, false);
 		super.onAccept(event);
 		onReset(event);
 	}
