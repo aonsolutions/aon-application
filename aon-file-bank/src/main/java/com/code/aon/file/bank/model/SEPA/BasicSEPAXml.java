@@ -324,6 +324,13 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 		addBic(creditorAgent, account.getBic());
 	}	
 	
+	protected void addChargeBearer( Element parent, String value ) {
+		Element chargeBearer = createElement(CHARGE_BEARER);
+		parent.appendChild(chargeBearer);		
+		
+		addValue(chargeBearer, value);
+	}	
+	
 	protected void addPaymentTypeInformation( Element parent, String localInstrumentCode, String sequenceType ) {
 		addPaymentTypeInformation(parent, null, localInstrumentCode, sequenceType);
 	}

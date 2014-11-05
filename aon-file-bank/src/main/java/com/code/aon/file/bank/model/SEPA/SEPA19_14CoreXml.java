@@ -119,6 +119,7 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 		addCreditor(paymentInformation, lot.getOrderer());
 		addCreditorAccount(paymentInformation, lot.getPresenter().getAccount());
 		addCreditorAgent(paymentInformation, lot.getPresenter().getAccount());
+		addChargeBearer(paymentInformation, FOLLOWING_SERVICE_LEVEL);
 		addCreditorIdentification(paymentInformation);
 		
 		Iterator<Individual> ii = lot.getOrderer().getIndividualsIterator();

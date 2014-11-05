@@ -138,4 +138,8 @@ public interface ISEPAConstants {
 
 	String DATE_OF_SIGNATURE_MIGRATION_VALUE = "2009-10-31";
 
+	String CHARGE_BEARER = "ChrgBr";
+	
+	String FOLLOWING_SERVICE_LEVEL = "SLEV";
+	
 }
