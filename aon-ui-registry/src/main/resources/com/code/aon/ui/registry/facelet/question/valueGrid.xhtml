@@ -10,18 +10,6 @@
 			<ui:param name="controller" value="#{questionValue}" />
 			<ui:define name="columns">
 
-				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60"
-					alias="QuestionValue.id" >				
-					<f:facet name="header">
-						<aon:outputLabel
-							value="#{bundle.aon_id}" />
-					</f:facet>
-					<aon:outputText value="#{to.id}" />
-					<f:facet name="footer">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-				</aon:column>
-	
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="QuestionValue_value"

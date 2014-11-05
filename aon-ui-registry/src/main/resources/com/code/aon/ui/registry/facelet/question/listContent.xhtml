@@ -27,14 +27,16 @@
 		<aon:outputText value="#{to.text}"/>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-iconColumn"
-		alias="Question.active" >
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_active}" />
-		</f:facet>
-		<aon:outputText
-			styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
-			value="&#160;" />
-	</aon:column>
+	<aon:if test="#{lookup == null}">
+		<aon:column styleClass="aon-editDataTable-iconColumn"
+			alias="Question.active" >
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_active}" />
+			</f:facet>
+			<aon:outputText
+				styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+				value="&#160;" />
+		</aon:column>
+	</aon:if>
 
 </ui:composition>
