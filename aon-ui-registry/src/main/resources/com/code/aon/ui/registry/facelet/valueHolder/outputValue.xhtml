@@ -11,7 +11,7 @@
 		rendered="#{(!valueHolder.notFilled) and (valueHolder.question.type == 'NUMBER')}"/>
 
 	<aon:outputText value="&#160;"
-		styleClass="#{(valueHolder.boolean)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+		styleClass="#{(valueHolder.booleanValue)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
 		rendered="#{(!valueHolder.notFilled) and (valueHolder.question.type == 'BOOLEAN')}"/>
 
 	<aon:outputText value="#{valueHolder.date}"

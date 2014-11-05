@@ -13,6 +13,9 @@ public interface IValueHolder {
 	public Double getNumber();
 	public void setNumber(Double number);
 	
+	public Boolean getBooleanValue();
+	public void setBooleanValue(Boolean b);
+	
 	public void copyValues( IValueHolder vh );
 	
 }

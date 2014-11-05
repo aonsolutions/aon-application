@@ -18,18 +18,14 @@ public class SurveyResponseDetail extends SurveyResponseDetailDB implements IVal
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	@Transient
-	private Boolean getBooleanValue() {
+	public Boolean getBooleanValue() {
 		if ( getNumber() != null ) {
 			return (getNumber() != 0);
 		}
 		return null;
 	}
 	
-	@Transient
-	public boolean isBoolean() {
-		return (getNumber() != null) && (getNumber() != 0);
-	}
-	public void setBoolean(boolean b) {
+	public void setBooleanValue(Boolean b) {
 		setNumber(b ? 1.0 : 0);
 	}
 

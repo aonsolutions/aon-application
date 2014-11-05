@@ -15,7 +15,7 @@
 		<aon:inputText id="#{inputId}" value="#{valueHolder.number}" required="true" size="45" maxlength="64" />
 	</aon:if>
 	<aon:if test="#{valueHolder.question.type == 'BOOLEAN'}" >
-		<aon:selectBooleanCheckbox id="#{inputId}" value="#{valueHolder.boolean}" required="true" />
+		<aon:selectBooleanCheckbox id="#{inputId}" value="#{valueHolder.booleanValue}" required="true" />
 	</aon:if>
 	<aon:if test="#{valueHolder.question.type == 'DATE'}" >
 		<aon:selectInputDate  id="#{inputId}" value="#{valueHolder.date}"
