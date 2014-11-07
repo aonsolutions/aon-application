@@ -2,11 +2,15 @@ package com.esferalia.aon.gwt.document.jooq;
 
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -15,6 +19,8 @@ import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.jooq.Record10;
+import org.jooq.Record11;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
@@ -24,8 +30,10 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.JooqSettings;
+import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Scope;
@@ -33,6 +41,8 @@ import com.esferalia.aon.gwt.document.shared.ScopeList;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.Tags;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class DBConsults {
 	private static Vector<com.esferalia.aon.gwt.document.shared.FileInfo> filesGwt;
@@ -58,10 +68,10 @@ public class DBConsults {
 						JooqSettings.getDefaultSettings());
 				Byte sh = 5;
 				
-				Result<Record9<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte>> username = dslContext
+				Result<Record11<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String>> username = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DATA.length(),RATTACH.DPARENT_ID)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -72,7 +82,7 @@ public class DBConsults {
 										.where(DOMAIN.NAME.eq(domain))))))
 						.fetch();
 
-				for (Record9<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte> record : username) {
+				for (Record11<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String> record : username) {
 					FileInfo fi = new FileInfo();
 					fi.setAonType("registry");
 					if (record.value1() != null) {
@@ -97,6 +107,7 @@ public class DBConsults {
 					if (record.value7() != null) {
 						fi.setCategory(record.value7());
 					}
+
 					Tags tags = getTags(domain , fi.getFileId());
 					files.add(fi);
 					com.esferalia.aon.gwt.document.shared.FileInfo fi2 = new com.esferalia.aon.gwt.document.shared.FileInfo();
@@ -116,8 +127,6 @@ public class DBConsults {
 					fi2.setType(fi.getType());
 					fi2.setTitle(fi.getTitle());
 					fi2.setMimetype(fi.getMimetype());
-					fi2.setSize(0);
-					fi2.setSizeStr(FileUtils.byteCountToDisplaySize(fi2.getSize()!=null?fi2.getSize():0));
 					fi2.setCategory(fi.getCategory());
 					if(record.value7() != null) fi2.setCategoryStr(dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
 					
@@ -134,6 +143,15 @@ public class DBConsults {
 						if(val ==0 ) fi2.setConfidential(false);
 						else fi2.setConfidential(true);
 					}
+					System.out.println(record.value10());
+					if (record.value10() != null) fi2.setSize(record.value10());
+					else if (fi2.getDriveId() != null && record.value11() != null){
+						String s = record.value11();
+						fi2.setSize(Integer.valueOf(s));
+					}
+					else fi2.setSize(0);
+					fi2.setSizeStr(FileUtils.byteCountToDisplaySize(fi2.getSize()!=null?fi2.getSize():0));
+					
 					
 					fi2.setIcon(getmType(fi2));
 					
@@ -541,8 +559,16 @@ public class DBConsults {
 			connection = DatabaseSync.getConnection(domain);
 			DSLContext dslContext = DSL.using(connection,
 					JooqSettings.getDefaultSettings());
+			
+			
+			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
+				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
+				.where(DOMAIN.NAME.eq(domain)).fetch();
+			
+			//System.out.println(reg.get(0).value1());
+			
 			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
-						.values(1,fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,null).returning(RATTACH.ID).fetchOne().getId();
+						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,null).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
 			if (connection != null)

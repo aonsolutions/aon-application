@@ -91,9 +91,18 @@
 @external .gwt-DialogBox .Caption;
 @external .gwt-DialogBox .dialogTopCenter;
 @external .gwt-StackLayoutPanel;
+@external .gwt-MenuBarPopup;
 
 
-
+.gwt-MenuBarPopup {
+    margin: 0px !important;
+    background: none repeat scroll 0% 0% #FFF !important;
+    border-right: 1px solid #EBEBEF !important;
+    border-left: 1px solid #EBEBEF !important;
+    border-bottom: 1px solid #EBEBEF !important;
+    padding: 4px 0px !important;
+    box-shadow: 2px 2px 5px 1px #EBEBEF !important;
+}
 
 .gwt-StackLayoutPanelHeader{
 	border-right:0px !important;
@@ -164,7 +173,6 @@ background-color:#D4CFC7;
 	padding-bottom: 5px;
 }
 
-
 .aon-gwt-panelGrid col:first-child{
 	border:#c4c4c4 1px solid;
 	font-weight:bold;
@@ -173,7 +181,8 @@ background-color:#D4CFC7;
 	padding:1px 0.5em 1px 0.5em;
 	vertical-align:top;
 }
-.aon-gwt-panelGrid col:nth-child(2){
+
+.aon-gwt-panelGrid col:nth-child{
 	border:#c4c4c4 1px solid;
 	padding:2px 5px 2px 2px;
 	padding:1px 0.5em 1px 0.5em;
@@ -329,12 +338,14 @@ background-color:#D4CFC7;
 
 						</g:north>
 						<g:center>
-
+							
+							    
 							<c:DataGrid ui:field='dataGrid'>
 							    
 							    
 							</c:DataGrid>
-
+							
+							
 
 
 							<!-- g:HTMLPanel> <table cellspacing='15' cellpadding='15' style='width:100%;'> 

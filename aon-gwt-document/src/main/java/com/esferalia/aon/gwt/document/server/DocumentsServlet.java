@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 import javax.mail.MessagingException;
+import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -36,8 +37,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -229,14 +228,14 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		}
 
 	}
-	public static ByteArrayOutputStream out;
+	public static byte[] out;
 	
 	
-	public static ByteArrayOutputStream getOut() {
+	public static byte[] getOut() {
 		return out;
 	}
 
-	public static void setOut(ByteArrayOutputStream out2) {
+	public static void setOut(byte[] out2) {
 		out = out2;
 	}
 
@@ -277,20 +276,22 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				Integer id = DBConsults.insertFile(domain, fileInfo);
 				DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
 				//InputStream file = getFile();
-				byte[] b = getOut().toByteArray();
+				byte[] b = getOut();//.toByteArray();
 				fileInfo.setFileId(id);
 				fileInfo.setData(b);
 				DomainGserviceaccount g = DatabaseSync
 						.getServiceAccount(domain);
-				//Drive d = DriveUtils.serviceInitialize(g);
-				String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
-				DriveUtils.types = types;
-				
-				DBConsults.insertFileData(domain, id, b );
+				if (g!=null){
+					Drive d = DriveUtils.serviceInitialize(g);
+					String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
+					DriveUtils.types = types;
+					DriveUtils.sync2(d, fileInfo, domain);
+				}
+				else DBConsults.insertFileData(domain, id, b );
 				//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
 			} catch (SQLException e) {
 				e.printStackTrace();
-			}/* catch (KeyStoreException e) {
+			} catch (KeyStoreException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -298,10 +299,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				e.printStackTrace();
 			} catch (AonConnectionException e) {
 				e.printStackTrace();
-			} catch (MessagingException e) {
+			} catch (NamingException e) {
 				// TODO Bloque catch generado automáticamente
 				e.printStackTrace();
-			}*/
+			}
 			return true;
 		}
 		return false;
@@ -347,7 +348,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 	public Boolean check(){
-		return getMimetype().equals("application/octet-stream");
+		return getMimetype()==null;//.equals("application/octet-stream");
 			
 		
 	}
@@ -370,7 +371,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			DBConsults.updateFile(domain, fileInfo);
 			if(!getMimetype().equals("application/octet-stream")){
 				//InputStream file = getFile();
-				byte[] b = getOut().toByteArray();
+				byte[] b = getOut();//.toByteArray();
 				fileInfo.setData(b);
 				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
 				Drive d = DriveUtils.serviceInitialize(g);
@@ -395,23 +396,22 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 	
 
-public Vector<TreeDriveInfo> myDrive(String id){
+	public Vector<TreeDriveInfo> myDrive(String id){
 		Drive drive = GoogleDriveController.dconnection;
 		FileList fl = null;
 		About about;
-		try {
-			if(id.equals("")){
-				about = drive.about().get().execute();
-				id = "'" + about.getRootFolderId() + "'";
+			try {
+				if(id.equals("")){
+					about = drive.about().get().execute();
+					id = "'" + about.getRootFolderId() + "'";
+				}
+				else id = "'"+id+"'";
+			
+				fl = drive.files().list().setQ(id+" in parents and mimeType = 'application/vnd.google-apps.folder'").execute();
+			
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			else id = "'"+id+"'";
-			
-			fl = drive.files().list().setQ(id+" in parents and mimeType = 'application/vnd.google-apps.folder'").execute();
-			
-		} catch (IOException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
-		}
 		
 		Vector<TreeDriveInfo> v = new Vector<TreeDriveInfo>();
 		

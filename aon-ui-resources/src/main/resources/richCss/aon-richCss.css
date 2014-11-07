@@ -3035,3 +3035,8 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background: none repeat scroll 0% 0% #FFF;
 }
 
+.aon-dataGrid-dragOver{
+	opacity:0.4 !important;	
+}
+
+}

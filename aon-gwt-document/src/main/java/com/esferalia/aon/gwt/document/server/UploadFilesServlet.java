@@ -1,71 +1,50 @@
 package com.esferalia.aon.gwt.document.server;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import gwtupload.server.UploadAction;
+import gwtupload.server.exceptions.UploadActionException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import java.io.File;
+import java.util.Hashtable;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.FileItem;
 
 
-public class UploadFilesServlet extends HttpServlet {
+public class UploadFilesServlet extends UploadAction{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7293524876320817731L;
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		System.out.println("SERVLET SUBIDA");
-		ServletFileUpload upload = new ServletFileUpload();
-		
-		 try {
-			FileItemIterator iter = upload.getItemIterator(req);
-			
-			
-			while(iter.hasNext()){
-				 FileItemStream item = iter.next();
-				 String name = item.getFieldName();
-				 InputStream stream = item.openStream();
-				 String mimetype = item.getContentType();
-				 if(stream!=null){
-					 DocumentsServlet.setFile(stream);
-					 DocumentsServlet.setMimetype(mimetype);
-				 }
-				
-				 
-	                ByteArrayOutputStream out = new ByteArrayOutputStream();
-	                int len;
-	                byte[] buffer = new byte[8192];
-	                while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
-	                    out.write(buffer, 0, len);
-	                }
+	  private static final long serialVersionUID = 1L;
+	  
 
-	                int maxFileSize = 10*(1024*1024); //10 megs max 
-	                if (out.size() > maxFileSize) { 
-	                    throw new RuntimeException("File is > than " + maxFileSize);
-	                }
-	                
-					DocumentsServlet.setOut(out);
-					
-				 // TODO Subir archivo a Drive
-			}
-		} catch (FileUploadException e) {
-			// TODO Bloque catch generado automáticamente
-			e.printStackTrace();
-		}
-		//super.doPost(req, resp);
-	}
+	  @Override
+	  public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
+	    
+		  String response = "";
+	    for (FileItem item : sessionFiles) {
+	    	System.out.println(item.isFormField());
+	      if (false == item.isFormField()) {
+	        
+	          
+	          String mimetype = item.getContentType();
+
+	  
+	          DocumentsServlet.setOut(item.get());
+	          DocumentsServlet.setMimetype(mimetype);
+	        
+	        
+	      }
+	    }
+	    
+	    /// Remove files from session because we have a copy of them
+	    super.removeSessionFileItems(request);
+	    
+	    /// Send your customized message to the client.
+	    return response;
+	  }
+	  
+	 
 	
 	
 }

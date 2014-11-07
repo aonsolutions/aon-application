@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Tree;
 
 public interface IDocumentAsync {
 

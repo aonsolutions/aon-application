@@ -9,6 +9,13 @@
 	<!--inherits name='com.smartgwt.SmartGwt'/-->
 	
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
+	
+	<!-- Include GWTUpload library -->
+  	<inherits name="gwtupload.GWTUpload"/>
+  	
+ 	<!-- Load dinamically predefined styles in the library when the application starts -->
+  	<stylesheet src="Upload.css"/>
+	
 
 	<extend-property name="locale" values="es" />
 	

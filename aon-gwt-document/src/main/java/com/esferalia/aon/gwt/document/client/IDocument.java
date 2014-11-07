@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.google.gwt.user.client.ui.Tree;
 
 @RemoteServiceRelativePath("gwt_document")
 public interface IDocument extends RemoteService{

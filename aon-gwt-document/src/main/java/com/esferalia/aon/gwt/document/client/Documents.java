@@ -1,7 +1,20 @@
 package com.esferalia.aon.gwt.document.client;
 
+import gwtupload.client.DecoratedFileUpload.FileUploadWithMouseEvents;
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnCancelUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.OnStatusChangedHandler;
+import gwtupload.client.SingleUploader;
+
+import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -19,6 +32,8 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -26,6 +41,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragLeaveHandler;
+import com.google.gwt.event.dom.client.DragOverEvent;
+import com.google.gwt.event.dom.client.DragOverHandler;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -37,11 +58,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -51,17 +72,20 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
@@ -75,12 +99,102 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 
 public class Documents extends Composite implements EntryPoint {
 
+	private void initContextMenu() {
+
+		class DocumentContextMenu extends ContextMenu {
+
+			ScheduledCommand newCommand = new ScheduledCommand() {
+				public void execute() {
+
+				};
+			};		
+
+			ScheduledCommand editCommand = new ScheduledCommand() {
+				public void execute() {
+					editFile();
+				};
+			};
+			ScheduledCommand removeCommand = new ScheduledCommand() {
+				public void execute() {
+					removeFile();
+				};
+			};
+			
+			ScheduledCommand downloadCommand = new ScheduledCommand() {
+				public void execute() {
+
+				};
+			};
+			
+			ScheduledCommand shareCommand = new ScheduledCommand() {
+				public void execute() {
+
+				};
+			};
+			
+			ScheduledCommand infoCommand = new ScheduledCommand() {
+				public void execute() {
+					editFile();
+				};
+			};
+
+			private MenuItem editItem;
+			private MenuItem removeItem;
+
+			public DocumentContextMenu() {
+				
+				editItem = addItem("Editar", editCommand,
+						AON.AON_ICON_EDIT_ADD, AON.AON_ICON_CMD_BUTTON);
+				editItem.setEnabled(true);
+				removeItem = addItem("Borrar", removeCommand,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				removeItem.setEnabled(true);
+
+			}
+
+			@Override
+			public void show() {
+				//sync();
+				super.show();
+			}
+
+			//private void sync() {
+				//Agreement agreement = Agreements.this.getSelectedAgreement();
+				
+				//deleteItem.setEnabled(agreement.canDelete());
+			//}
+
+		}
+		;
+
+		final DocumentContextMenu contextMenu = new DocumentContextMenu();
+
+		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
+			@Override
+			public void onContextMenu(ContextMenuEvent event) {
+				// stop the browser from opening the context menu
+				event.preventDefault();
+				event.stopPropagation();
+
+				NativeEvent nativeEvent = event.getNativeEvent();
+				contextMenu.setPopupPosition(nativeEvent.getClientX(),
+						nativeEvent.getClientY());
+				contextMenu.show();
+			}
+
+		};
+
+		dataGrid.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
+
+	}
+	
 	Document docs = new Document();
 	final IDocumentAsync idoc = GWT.create(IDocument.class);
 
@@ -167,13 +281,17 @@ public class Documents extends Composite implements EntryPoint {
 	// Button buttons;
 	Boolean gConnection;
 	private void init() {
-		myDrive();
+		
 		
 		
 		idoc.isGconnection(new AsyncCallback<Boolean>() {
 			@Override
 			public void onSuccess(Boolean result) {
 				gConnection = result;
+				
+				if(result){
+					myDrive();
+				}
 			}
 			
 			@Override
@@ -342,15 +460,60 @@ public class Documents extends Composite implements EntryPoint {
 		// dataGrid = new DataGrid<FileInfo>(FileInfo.PROVIDES_KEY);
 		dataGrid = new DataGrid<FileInfo>(Integer.MAX_VALUE, resources,
 				FileInfo.PROVIDES_KEY);
+		dataGrid.addBitlessDomHandler(new DragOverHandler() {
+			
+			@Override
+			public void onDragOver(DragOverEvent event) {
+				event.preventDefault();
+				dataGrid.addStyleName("aon-dataGrid-dragOver");
+				dataGrid.redraw();
+			}
+		}, DragOverEvent.getType());
+		
+		dataGrid.addBitlessDomHandler(new DragLeaveHandler() {
+			
+			@Override
+			public void onDragLeave(DragLeaveEvent event) {
+				 
+				dataGrid.removeStyleName("aon-dataGrid-dragOver");
+				dataGrid.redraw();				
+			}
+		}, DragLeaveEvent.getType());
+		
+		
+	
+		dataGrid.addBitlessDomHandler(new DropHandler() {
+			
+			@Override
+			public void onDrop(DropEvent event) {
+				event.preventDefault();
+				
+				Window.alert("subir archivo");
+			
+				
+			/*	FileUpload fu = FileUpload();
+				JavaScriptObject jso = event.getNativeEvent().cast();
+				//fu.onBrowserEvent((Event) event.getNativeEvent());
+				
+				SingleUploader si = new SingleUploader();
+				si.onBrowserEvent((Event) event.getNativeEvent());
+				newFile2(si);
+				*/
+			}
+		}, DropEvent.getType());
+		
 		dataGrid.setWidth("100%");
 		
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ningún archivo."));
 		
-		ListHandler<FileInfo> sortHandler = new ListHandler<FileInfo>(
-				docs.getFiles());
+		addDataDisplay(dataGrid);
+		
+		ListHandler<FileInfo> sortHandler = getSortHandler();
+				//docs.getFiles());
 		dataGrid.addColumnSortHandler(sortHandler);
+		
 		
 		final SingleSelectionModel<FileInfo> selectionModel = new SingleSelectionModel<FileInfo>(
 				FileInfo.PROVIDES_KEY);
@@ -359,7 +522,7 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setSelectionModel(selectionModel);
 		
 		initTableColumns(selectionModel, sortHandler);
-		addDataDisplay(dataGrid);
+		
 		
 		
 
@@ -376,8 +539,6 @@ public class Documents extends Composite implements EntryPoint {
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-		Window.alert("Google Connection: "+gConnection.toString()
-				+"\n Widget Stack Number: "+stack1.getWidgetCount());
 		if(gConnection){
 			stack1.getHeaderWidget(1).setVisible(true);
 			stack1.getWidget(1).setVisible(true);
@@ -386,6 +547,29 @@ public class Documents extends Composite implements EntryPoint {
 			stack1.getHeaderWidget(1).setVisible(false);
 			stack1.getWidget(1).setVisible(false);
 		}		
+	}
+	
+	private ListHandler<FileInfo> getSortHandler() {
+		return new ListHandler<FileInfo>(dataProvider.getList()){
+	
+			
+			@Override
+			public void onColumnSort(ColumnSortEvent event) {
+				// TODO Apéndice de método generado automáticamente
+				super.setList(dataProvider.getList());
+				super.onColumnSort(event);
+				List<FileInfo> aux  = super.getList();
+				List<FileInfo> aux2 = new Vector<FileInfo>();
+ 				for(Integer i = 0 ; i< aux.size()-1;i++){
+ 					
+ 					aux2.set(i, aux.get(aux.size()-1-i ));
+ 					Window.alert(aux.get(aux.size()-1-i).getTitle()+" - "+ aux2.get(i).getTitle() );
+ 				} 				
+				dataProvider.setList(aux2);
+				
+			}
+
+		};
 	}
 
 	private ListDataProvider<FileInfo> dataProvider = new ListDataProvider<FileInfo>();
@@ -433,6 +617,10 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("editFile")
 	void edit(ClickEvent event){
+		editFile();
+	}
+	
+	public void editFile() {
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
 		
@@ -472,7 +660,7 @@ public class Documents extends Composite implements EntryPoint {
 	        FileUpload upload = new FileUpload();
 	        upload.setName("uploadFormElement");
 	        panel.add(upload);
-
+	      
 	        uploadForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler(){
 	            public void onSubmitComplete(SubmitCompleteEvent event) {
 	            	FileInfo fi = new  FileInfo();
@@ -572,7 +760,7 @@ public class Documents extends Composite implements EntryPoint {
 	        uploadForm.setWidget(panel);
 		
 		grid = new FlexTable();
-
+		
 		grid.setStyleName("aon-panelGrid");
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
@@ -619,20 +807,45 @@ public class Documents extends Composite implements EntryPoint {
 		}
 		else{
 			Integer size = fi.getTags().size();
+			
 			if(size>1){
-			//	for(Integer k = 0; k< size ; k++){
-				
-			//	}
-					h2 = new HorizontalPanel();
-					for (int i = 0; i<lb2.getItemCount();i++) {
-						if(lb2.getItemText(i).equals(fi.getTags().get(0).getName())){
-							lb2.setItemSelected(i, true);
+				ListBox[] lbs = new ListBox[size];
+				for(Integer k = 0; k< size ; k++){
+					lbs[k] = new ListBox();
+					lbs[k].addItem("-");
+					for (Tag t : lists.getTagList().getList()) {
+						lbs[k].addItem(t.getName());
+					}
+					HorizontalPanel hp = new HorizontalPanel();
+					for (int i = 0; i<lbs[k].getItemCount();i++) {
+						if(lbs[k].getItemText(i).equals(fi.getTags().get(k).getName())){
+							lbs[k].setItemSelected(i, true);
 						}
 					}
-					h2.add(lb2);
-		
-					vertical.add(h2);
-			
+					
+					
+					if(k== size-1){
+						hp.add(lbs[k]);
+						Button bMenos = new Button();
+						bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
+						bMenos.addClickHandler(menosHandler2());
+						hp.add(bMenos);
+						if(size < lists.getTagList().getList().size()){
+							Button mas = new Button("");
+							mas.setStyleName("aon-finding-toolbar-item aon-search-add");
+							mas.addClickHandler(masHandler2());
+							hp.add(mas);
+						}
+					}
+					else{
+						lbs[k].setEnabled(false);
+						hp.add(lbs[k]);
+					}
+					hp.addStyleName("aon-gwt-tags-popup");
+
+					vertical.add(hp);
+					
+				}
 
 			}
 			else{
@@ -716,8 +929,13 @@ public class Documents extends Composite implements EntryPoint {
 		popup.show();
 	}
 	
+	
 	@UiHandler("delFile")
 	void del(ClickEvent event){
+		removeFile();
+	}
+	
+	public void removeFile(){
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
 		Boolean bool = Window.confirm("Estas seguro de eliminar el archivo "+fi.getTitle());
@@ -754,9 +972,6 @@ public class Documents extends Composite implements EntryPoint {
 					dataGrid.redraw();
 				}
 			} );
-
-
-			
 		}
 	}
 	
@@ -782,9 +997,15 @@ public class Documents extends Composite implements EntryPoint {
 	
 	Vector<String> sons = null;
 	FileUpload fuchange;
+	SingleUploader fuchange2;
 	@UiHandler("newFile")
 	void XXXXXX(ClickEvent event) {
+		newFile2(null);
+	}
 
+	
+	private void newFile(FileUpload fupload) {
+		// TODO Apéndice de método generado automáticamente
 		ListBox lb1 = new ListBox();
 		lb1.addItem("-");
 		ListBox lb2 = new ListBox();
@@ -816,7 +1037,9 @@ public class Documents extends Composite implements EntryPoint {
 		  
 	        VerticalPanel panel = new VerticalPanel();
 	       
-	        FileUpload upload = new FileUpload();
+	        FileUpload upload;
+	        if(fupload != null) upload = fupload;
+	        else upload = new FileUpload();
 	        upload.setName("uploadFormElement");
 	        panel.add(upload);
 
@@ -824,13 +1047,13 @@ public class Documents extends Composite implements EntryPoint {
 				
 				@Override
 				public void onSubmit(SubmitEvent event) {
-					Window.alert("onsubmit");
+
 				}
 			});
 	        uploadForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler(){
 	            public void onSubmitComplete(SubmitCompleteEvent event) {
 	            	FileInfo fi = new  FileInfo();
-	            	Window.alert("onsubmitcomplete");
+
 	            	// Descripción - Description
 	            	TextBox tb = (TextBox)grid.getWidget(0, 1);
 	            	
@@ -1029,9 +1252,7 @@ public class Documents extends Composite implements EntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("delante");
 				uploadForm.submit();
-				Window.alert("detras");
 
 			}
 		});
@@ -1051,7 +1272,334 @@ public class Documents extends Composite implements EntryPoint {
 		 */
 		popup.show();
 	}
+	
+	
+	long progress = 10;
+	
+	private void newFile2(SingleUploader up) {
+		// TODO Apéndice de método generado automáticamente
+		ListBox lb1 = new ListBox();
+		lb1.addItem("-");
+		ListBox lb2 = new ListBox();
+		lb2.addItem("-");
+		ListBox lb3 = new ListBox();
+		lb3.addItem("-");
 
+		for (Scope s : lists.getScopeList().getList()) {
+			lb3.addItem(s.getName());
+		}
+		for (Tag t : lists.getTagList().getList()) {
+			lb2.addItem(t.getName());
+		}
+		for (Category c : lists.getCategoryList().getList()) {
+			lb1.addItem(c.getName());
+		}
+		lb2.addChangeHandler(OneHandler2());
+		
+		popup = new DialogBox();
+		//popup.getCaption().setText("NUEVO ARCHIVO");
+		popup.getCaption().setHTML("<div  class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">NUEVO ARCHIVO</span></div>");
+		VerticalPanel v = new VerticalPanel();
+		v.setSpacing(6);
+		final SingleUploader upload;
+	       	if(up==null){
+	       		 upload=  new SingleUploader(FileInputType.BROWSER_INPUT.with(FileInputType.LABEL.getInstance()));
+	       	}
+	       	else{
+	       		 upload = up;
+	       	}
+	       	upload.setAutoSubmit(true);
+	        upload.setServletPath(GWT.getModuleBaseURL() + "/gwt_upload3");
+	        
+	        upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
+	        upload.getForm().setAction(GWT.getModuleBaseURL() + "/gwt_upload3");
+	        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
+	        upload.getForm().setMethod(FormPanel.METHOD_POST);
+	        upload.setTitle("uploadFormElement");
+	        upload.avoidEmptyFiles(true);
+	        
+	        FileUploadWithMouseEvents a = new FileUploadWithMouseEvents(){
+	      
+	        };
+	        
+	        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
+			
+				@Override
+				public void onStatusChanged(IUploader uploader) {
+					if(upload.getStatus() != Status.SUCCESS){
+				
+						upload.getStatusWidget().setProgress(progress, 100);
+				
+					}
+					else{
+						upload.getStatusWidget().setProgress(100, 100);
+					}
+					
+					progress=progress+20;
+					
+
+					//upload.addStatusBar(uploader.getStatusWidget());
+				}
+			});
+
+	        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
+				
+				@Override
+				public void onStart(IUploader uploader) {
+					upload.getStatusWidget().setVisible(true);
+
+					//Window.alert("start");
+				}
+			});
+	        
+	        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+				
+				@Override
+				public void onFinish(IUploader uploader) {
+					upload.getStatusWidget().setProgress(100, 100);
+
+					//Window.alert("finish");
+					upload.getStatusWidget().setStatus(Status.DONE);
+					upload.getStatusWidget().setVisible(true);
+					progress = 0;
+					
+				}
+			});
+	        upload.getForm().addFormHandler(new FormHandler() {
+				
+				@Override
+				public void onSubmitComplete(FormSubmitCompleteEvent event) {
+
+					upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
+				}
+				
+				@Override
+				public void onSubmit(FormSubmitEvent event) {
+					// TODO Apéndice de método generado automáticamente
+					
+				}
+			});
+	        
+	        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
+				
+				@Override
+				public void onCancel(IUploader uploader) {
+					upload.reset();
+				}
+			});
+		grid = new FlexTable();
+
+		grid.setStyleName("aon-panelGrid");
+		grid.setWidth("400px");
+		grid.setBorderWidth(1);
+		grid.setCellSpacing(0);
+
+		TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
+		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
+		grid.setWidget(0, 1, tb1);
+
+		grid.setWidget(1, 0, new Label("Archivo"));
+		grid.setWidget(1, 1, upload);
+		
+		CheckBox checkBox = new CheckBox();
+		grid.setWidget(2, 0, new Label("Confidencial"));
+		grid.setWidget(2, 1, checkBox);
+		
+	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
+	    DateBox dateBox = new DateBox();
+	    dateBox.setStyleName("aon-inputText");
+	    dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
+	    dateBox.getDatePicker().setYearArrowsVisible(true);
+		grid.setWidget(3, 0, new Label("Fecha"));
+		grid.setWidget(3, 1, dateBox);
+
+		grid.setWidget(4, 0, new Label("Categor\u00eda"));
+		grid.setWidget(4, 1, lb1);
+
+		if(lb2.getItemCount() <= 2){
+			grid.setWidget(5, 0, new Label("Etiqueta"));
+			grid.setWidget(5, 1, lb2);	
+		}
+		else{
+			
+			h2 = new HorizontalPanel();
+			
+			h2.add(lb2);
+		
+			vertical.add(h2);
+			grid.setWidget(5, 0, new Label("Etiqueta"));
+			grid.setWidget(5, 1, vertical);
+			
+		}
+		
+		grid.setWidget(6, 0, new Label("\u00c1mbito"));
+		grid.setWidget(6, 1, lb3);
+		
+		if(getSons().size() != 0){
+			SuggestBox sb = new SuggestBox(createOracle(getSons()));
+			sb.setStyleName("aon-inputText");
+			grid.setWidget(7, 0, new Label("Empresas"));
+			grid.setWidget(7, 1, sb);
+		}
+		for (int i = 0; i < grid.getRowCount(); i++) {
+			for (int j = 0; j < grid.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					grid.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					grid.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+		v.add(grid);
+		Label l = new Label("");
+		v.add(l);
+		HorizontalPanel h = new HorizontalPanel();
+
+		Button b = new Button("CANCELAR");
+		b.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				popup.hide();
+				vertical = new VerticalPanel();
+			}
+		});
+		
+		Button b2 = new Button("GUARDAR");
+		b2.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				//upload.getForm().submit();
+				
+				FileInfo fi = new  FileInfo();
+
+            	// Descripción - Description
+            	TextBox tb = (TextBox)grid.getWidget(0, 1);
+            	
+            	fi.setTitle(tb.getText());
+            	
+            	// Confidencial - Confidential
+            	CheckBox cb = (CheckBox)grid.getWidget(2, 1);
+            	fi.setConfidential(cb.getValue());
+            	
+            	// Fecha - Date
+            	DateBox db = (DateBox)grid.getWidget(3, 1);
+            	fi.setDate(db.getValue());
+            	
+            	// Categoria - Category
+            	ListBox lb1 = (ListBox)grid.getWidget(4, 1);
+            	for (Category c : lists.getCategoryList().getList()) {
+					if(c.getName().equals(lb1.getItemText(lb1.getSelectedIndex()))){
+						fi.setCategory(c.getId());
+					}
+				}
+            	// Ambito - Scope
+            	ListBox lb3 = (ListBox)grid.getWidget(6, 1);
+            	for (Scope s : lists.getScopeList().getList()) {
+					if(s.getName().equals(lb3.getItemText(lb3.getSelectedIndex()))){
+						fi.setScope(s);
+					}
+				}	
+            	
+            	// Etiquetas - Tags
+            	Vector<Tag> tags = new Vector<Tag>();
+            	VerticalPanel vp = (VerticalPanel)grid.getWidget(5, 1);
+            	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
+            		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
+            		ListBox lb = (ListBox)hp.getWidget(0);
+            		for (Tag t : lists.getTagList().getList()) {
+						if(t.getName().equals(lb.getValue(lb.getSelectedIndex()))){
+			            	tags.add(t);
+						}
+					}
+            	}
+            	fi.setTags(tags);
+
+            	// Dominio - Domain
+            	SuggestBox sb = (SuggestBox)grid.getWidget(7, 1);
+            	if(!esta(sb.getText())){
+	            	fi.setDomain("false"); 
+            	}
+            	else fi.setDomain(sb.getText()); 
+
+                idoc.newFile(fi,new AsyncCallback<Boolean>() {
+					
+					@Override
+					public void onSuccess(Boolean result) {
+						if(result){
+							popup.hide();
+							vertical = new VerticalPanel();
+						}
+						else{
+							TextBox tb =(TextBox) grid.getWidget(0, 1);
+							SuggestBox sb =(SuggestBox) grid.getWidget(7, 1);
+							if(tb.getText().equals("")) grid.getWidget(0, 1).addStyleName("dateBoxFormatError");
+							else grid.getWidget(0, 1).setStyleName("aon-inputText");
+							if(!esta(sb.getText())) grid.getWidget(7, 1).addStyleName("dateBoxFormatError");
+							else grid.getWidget(7, 1).setStyleName("aon-inputText");
+							idoc.check(new AsyncCallback<Boolean>() {
+								
+								@Override
+								public void onSuccess(Boolean result) {
+									if(result){
+
+										upload.addBitlessDomHandler(new ChangeHandler() {
+											
+											@Override
+											public void onChange(ChangeEvent event) {
+												upload.setStyleName("aon-inputTextBackground");
+											}
+										},ChangeEvent.getType());
+										upload.addStyleName("dateBoxFormatError");
+										
+										grid.setWidget(1, 1, upload);
+									}
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Apéndice de método generado automáticamente
+									
+								}
+							});
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
+              docs.getFiles().add(fi);
+                dataProvider.getList().add(fi);
+                MultiWordSuggestOracle multiWordOracle = (MultiWordSuggestOracle)searchBox.getSuggestOracle();
+				 multiWordOracle.clear();
+				 for (FileInfo fileInfo : dataProvider.getList()) {
+					 multiWordOracle.add(fileInfo.getTitle());
+				}
+                dataGrid.redraw();
+
+			}
+		});
+		b.setStyleName("aon-commandButton");
+		b2.setStyleName("aon-commandButton");
+		h.add(b);
+		h.add(b2);
+		v.add(h);
+		v.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_RIGHT);
+		popup.setGlassEnabled(true);
+		popup.add(v);
+
+		/*
+		 * HorizontalPanel hp = new HorizontalPanel(); Button b = new
+		 * Button("Cancelar"); Button b2 = new Button("Guardar");
+		 * hp.add(b);hp.add(b2); popup.add(hp);
+		 */
+		popup.show();
+	}
+	
 	Lists lists = new Lists();
 	FlexTable grid;
 	HorizontalPanel h2;
@@ -1659,6 +2207,7 @@ public class Documents extends Composite implements EntryPoint {
 				 
 				  
 				//addDataDisplay(dataGrid);
+				 
 				dataGrid.redraw();
 			}
 
@@ -1685,25 +2234,31 @@ public class Documents extends Composite implements EntryPoint {
 	private void initTableColumns(
 			final SelectionModel<FileInfo> selectionModel,
 			ListHandler<FileInfo> sortHandler) {
-			dataGrid.sinkEvents(Event.ONCONTEXTMENU);
+			/*dataGrid.sinkEvents(Event.ONCONTEXTMENU);
 					
 			dataGrid.addDomHandler(new ContextMenuHandler() {
 	    
 	        @Override
 	        public void onContextMenu(ContextMenuEvent evt) {
-	        	
+	            ContextMenu cm = new ContextMenu();
+	            
 	        	evt.preventDefault();
-	        	evt.stopPropagation();
+	        	//evt.stopPropagation();
 	        	
-	        	Integer n = dataGrid.getKeyboardSelectedRow();
-	            PopupPanel contextMenu = new PopupPanel(true);
-	            contextMenu.add(new Label("Editar"));
-	            contextMenu.add(new Label("Borrar"));
-	            contextMenu.setPopupPosition(evt.getNativeEvent().getClientX(), evt.getNativeEvent().getClientY());
-	            contextMenu.show();
+	        	//Integer n = dataGrid.getKeyboardSelectedRow();
+	        	MenuBar contextMenu = new MenuBar();
+	        	cm.addItem("Editar", contextMenu);
+	        	cm.addItem("Borrar", contextMenu);
+	        	cm.setPopupPosition(evt.getNativeEvent().getClientX(), evt.getNativeEvent().getClientY());
+
+	        	cm.show();
+	        	
 	        }
 
-	    }, ContextMenuEvent.getType());
+	    }, ContextMenuEvent.getType());*/
+		
+		initContextMenu();
+		
 		/** Mimetype Column **/
 		
 		Column<FileInfo, String> idColumn = new Column<FileInfo, String>(
@@ -1721,11 +2276,10 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		};
 		idColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-		
 		idColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 			@Override
 			public void update(int index, FileInfo object, String value) {
-		        Window.alert("You clicked " );
+//		        Window.alert("You clicked " );
 			}
 		});
 		dataGrid.addColumn(idColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
@@ -1739,14 +2293,17 @@ public class Documents extends Composite implements EntryPoint {
 				return object.getTitle();
 			}
 		};
-		/*
-		 * nameColumn.setSortable(true); sortHandler.setComparator(nameColumn,
-		 * new Comparator<FileInfo>() {
-		 * 
-		 * @Override public int compare(FileInfo o1, FileInfo o2) { return
-		 * o1.getTitle().compareTo(o2.getTitle()); } });
-		 */
-		// dataGrid.getColumnSortList().push(nameColumn);
+		
+		 nameColumn.setSortable(true); 
+		 sortHandler.setComparator(nameColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				return o1.getTitle().compareTo(o2.getTitle());
+			}
+		});
+		 
+		dataGrid.getColumnSortList().push(nameColumn);
 		dataGrid.addColumn(nameColumn, "Descripci\u00f3n");
 
 		dataGrid.setColumnWidth(nameColumn, 30, Unit.PCT);
@@ -1760,6 +2317,17 @@ public class Documents extends Composite implements EntryPoint {
 				return object.getCategoryStr();
 			}
 		};
+		 categoryColumn.setSortable(true); 
+		 sortHandler.setComparator(categoryColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				return o1.getCategoryStr().compareTo(o2.getCategoryStr());
+			}
+		});
+
+		dataGrid.getColumnSortList().push(categoryColumn);
+		
 		dataGrid.addColumn(categoryColumn, "Categor\u00eda");
 
 		dataGrid.setColumnWidth(categoryColumn, 16, Unit.PCT);
@@ -1773,6 +2341,22 @@ public class Documents extends Composite implements EntryPoint {
 				return object.getDateStr();
 			}
 		};
+		
+		 dateColumn.setSortable(true); 
+		 sortHandler.setComparator(dateColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				String date1;
+				String date2;
+				if(o1.getDate() == null) date1 = "-";
+				else date1 = o1.getDate().toString();
+				if(o2.getDate() == null) date2 = "-";
+				else date2 = o2.getDate().toString();
+				return date1.compareTo(date2);
+			}
+		});
+		dataGrid.getColumnSortList().push(dateColumn);
 		dataGrid.addColumn(dateColumn, "Fecha");
 
 		dataGrid.setColumnWidth(dateColumn, 10, Unit.PCT);
@@ -1785,6 +2369,16 @@ public class Documents extends Composite implements EntryPoint {
 				return object.getSizeStr();
 			}
 		};
+		 sizeColumn.setSortable(true); 
+		 sortHandler.setComparator(sizeColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				return o1.getSize().compareTo(o2.getSize());
+			}
+		});
+
+		dataGrid.getColumnSortList().push(sizeColumn);
 		dataGrid.addColumn(sizeColumn, "Tama\u00f1o");
 
 		dataGrid.setColumnWidth(sizeColumn, 10, Unit.PCT);
@@ -1797,6 +2391,18 @@ public class Documents extends Composite implements EntryPoint {
 				return object.getTagsStr();
 			}
 		};
+		
+		 tagColumn.setSortable(true); 
+		 
+		 sortHandler.setComparator(tagColumn,new Comparator<FileInfo>() {
+			
+			@Override
+			public int compare(FileInfo o1, FileInfo o2) {
+				return o1.getTagsStr().compareTo(o2.getTagsStr());
+			}
+		});
+
+		dataGrid.getColumnSortList().push(tagColumn);
 		dataGrid.addColumn(tagColumn, "Etiquetas");
 		
 		
@@ -1844,7 +2450,7 @@ public class Documents extends Composite implements EntryPoint {
 		
 		dataGrid.addColumn(downloadColumn, "Archivo");
 		dataGrid.setColumnWidth(downloadColumn, 3, Unit.PX);
-
+		
 	}
 	Vector<TreeDriveInfo> vtree;
 	
@@ -1862,7 +2468,6 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			public void onSuccess(Vector<TreeDriveInfo> result) {
-				Window.alert("hola");
 				 Tree tree = new Tree();
 			
 				 for (TreeDriveInfo f : result) {		
