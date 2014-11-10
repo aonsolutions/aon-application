@@ -21,6 +21,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractEmbargoColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
@@ -46,7 +47,7 @@ public class SQLSalaryDraft {
 			if (!"REMOVE_VARIABLE()".equals(expression)
 					|| inAgreement(conn, variable, contract)
 					|| inSystem(conn, variable, domain, parentDomain)) {
-				insert(conn, variable, contract, domain);
+				insertData(conn, variable, contract, domain);
 			} // end-if : If it's not REMOVE() or is at agreement or system.
 		}
 
@@ -61,7 +62,7 @@ public class SQLSalaryDraft {
 			if (!"REMOVE()".equals(expression)
 					|| inAgreement(conn, payment, contract)
 					|| inSystem(conn, payment, domain, parentDomain)) {
-				insert(conn, payment, contract, domain);
+				insertPayment(conn, payment, contract, domain);
 			} // end-if : If it's not REMOVE() or is at agreement or system.
 		}
 
@@ -70,7 +71,15 @@ public class SQLSalaryDraft {
 			String expression = deduction.getExpression();
 			if (!"REMOVE()".equals(expression)
 					|| inSystem(conn, deduction, domain, parentDomain)) {
-				insert(conn, deduction, contract, domain);
+				insertDeduction(conn, deduction, contract, domain);
+			}
+		} 
+		for (Deduction embargo : draft.getDraftEmbargos()) {
+			makeRoom(conn, embargo, contract);
+			String expression = embargo.getExpression();
+			if (!"REMOVE()".equals(expression)
+					|| inSystem(conn, embargo, domain, parentDomain)) {
+				insertEmbargo(conn, embargo, contract, domain);
 			}
 		}
 	}
@@ -341,7 +350,7 @@ public class SQLSalaryDraft {
 		}
 	}
 
-	private static void insert(Connection conn, Variable variable,
+	private static void insertData(Connection conn, Variable variable,
 			Integer contract, Integer domain) throws SQLException {
 		PreparedStatement insertStmt = null;
 		try {
@@ -561,7 +570,7 @@ public class SQLSalaryDraft {
 		}
 	}
 
-	private static void insert(Connection conn, Payment payment,
+	private static void insertPayment(Connection conn, Payment payment,
 			Integer contract, Integer domain) throws SQLException {
 		PreparedStatement insertStmt = null;
 		try {
@@ -650,6 +659,16 @@ public class SQLSalaryDraft {
 			+ ContractDeductionColumns.END_DATE + ", "
 			+ ContractDeductionColumns.DEDUCTION_CONCEPT
 			+ " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	private static final String CONTRACT_EMARGO_INSERT = "INSERT INTO "
+			+ SQLConstants.CONTRACT_EMBARGO + "( "
+			+ ContractEmbargoColumns.DOMAIN + ", "
+			+ ContractEmbargoColumns.CONTRACT + ", "
+			+ ContractEmbargoColumns.DESCRIPTION + ", "
+			+ ContractEmbargoColumns.EXPRESSION + ", "
+			+ ContractEmbargoColumns.START_DATE + ", "
+			+ ContractEmbargoColumns.END_DATE 
+			+ " ) VALUES (?, ?, ?, ?, ?, ?)";
 
 	private static final String CONTRACT_DEDUCTION_DELETE_SQL = "DELETE FROM "
 			+ SQLConstants.CONTRACT_DEDUCTION + " WHERE "
@@ -773,7 +792,7 @@ public class SQLSalaryDraft {
 		}
 	}
 
-	private static void insert(Connection conn, Deduction deduction,
+	private static void insertDeduction(Connection conn, Deduction deduction,
 			Integer contract, Integer domain) throws SQLException {
 		PreparedStatement insertStmt = null;
 		try {
@@ -792,6 +811,27 @@ public class SQLSalaryDraft {
 			SQLUtils.setDate(insertStmt, 8, SQLUtils.date2sql(deduction.getEndDate()));
 
 			SQLUtils.setInt(insertStmt, 9, deduction.getConceptId());
+
+			insertStmt.execute();
+
+		} finally {
+			if (insertStmt != null)
+				insertStmt.close();
+		}
+	}
+
+	private static void insertEmbargo(Connection conn, Deduction deduction,
+			Integer contract, Integer domain) throws SQLException {
+		PreparedStatement insertStmt = null;
+		try {
+			insertStmt = conn.prepareStatement(CONTRACT_EMARGO_INSERT);
+
+			SQLUtils.setInt(insertStmt, 1, domain);
+			SQLUtils.setInt(insertStmt, 2, contract);
+			SQLUtils.setString(insertStmt, 3, deduction.getDescription());
+			SQLUtils.setString(insertStmt, 4, deduction.getExpression());
+			SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(deduction.getStartDate()));
+			SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(deduction.getEndDate()));
 
 			insertStmt.execute();
 
