@@ -565,7 +565,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void setDiscountExpression(String discountExpression) {
-		this.discountExpression = discountExpression;
+		this.discountExpression = StringUtils.trimToNull(discountExpression);
 	}
 
 	public Double getTotalInvoiceAmount() {

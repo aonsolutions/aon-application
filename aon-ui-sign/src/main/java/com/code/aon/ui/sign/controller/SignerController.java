@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 
 import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public class SignerController implements ISignConstants, Serializable {
 	}
 
 	public void setReportKey(String reportKey) {
-		this.reportKey = reportKey;
+		this.reportKey = StringUtils.trimToNull(reportKey);
 	}
 	
 	public IAttachment getReport( ITransferObject to ) {
