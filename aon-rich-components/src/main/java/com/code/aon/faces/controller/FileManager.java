@@ -128,7 +128,7 @@ public class FileManager extends DataScrollerState implements IRichConstants {
 	}
 
 	public void setFolderName(String folderName) {
-		this.folderName = folderName;
+		this.folderName = StringUtils.trimToNull(folderName);
 	}
 	
 	public String getZipName() {

@@ -176,7 +176,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @return the back action
 	 */
 	public String backAction() {
-		if ( this.backAction == null ) {
+		if ( StringUtils.isEmpty(this.backAction) ) {
 			return listAction();
 		}
 		return backAction;
@@ -248,7 +248,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param backAction the new back action
 	 */
 	public void setBackAction(String backAction) {
-		this.backAction = backAction;
+		this.backAction = StringUtils.trimToNull(backAction);
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param expression the new back action listener
 	 */
 	public void setBackActionListener(String expression) {
-		this.backActionListener = expression;
+		this.backActionListener = StringUtils.trimToNull(expression);
 	}
 
 	/**
