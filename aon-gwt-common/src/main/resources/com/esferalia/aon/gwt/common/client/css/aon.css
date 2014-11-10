@@ -385,6 +385,11 @@
 	gwt-image: 'maximize';
 }
 
+@sprite .rich-calendar-button {
+	float: right;
+	gwt-image: 'rich_calendar_button';
+}
+
 @sprite .aon-icon-rowSelector-S {
         gwt-image: "aon_icon_row_s" ;
 }
