@@ -46,6 +46,9 @@
 		<module>aon-master-jooq</module>
 		<module>aon-dsi</module>
 
+		<!-- SQL MODULES -->
+		<module>aon.master.impl</module>
+		
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>
 		<module>aon-audit</module>
@@ -171,7 +174,6 @@
 		<module>aon-msm</module>
 		<module>aon-solutions-release</module>
 		<module>aon-common-resources</module>
-		
 	</modules>
 
 	<scm>
