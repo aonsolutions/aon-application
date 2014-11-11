@@ -8,6 +8,7 @@
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.master.impl</artifactId>
+	<description>AON MASTER IMPL</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -48,4 +49,16 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+     <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
 </project>
