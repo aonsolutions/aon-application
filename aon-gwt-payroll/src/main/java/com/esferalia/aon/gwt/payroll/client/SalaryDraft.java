@@ -2006,6 +2006,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 							+ "\u20A0 ha sido "
 							+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
 									: "ampliada al m\u00ednimo obligatorio"));
+			//TODO : Too many literals here ???
+		} else {
+			cgcBaseLabel.removeStyleName(AON.AON_ICON_WARN);
+			cgcBaseLabel.removeStyleName(AON.AON_PADDING_LEFT);
+			cgcBaseLabel.setTitle("");
 		}
 
 		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()),

@@ -4,8 +4,21 @@ import com.google.gwt.user.client.ui.HasText;
 
 public interface ValueLabel extends HasText {
 
+	  /**
+	   * Add a style name. 
+	   * 
+	   * @param the style name to be removed
+	   */
 	void addStyleName(String style);
 
+	  /**
+	   * Removes a style name. 
+	   * 
+	   * @param the style name to be removed
+	   * @see #addStyleName(String)
+	   */
+	void removeStyleName(String style);
+	
 	/**
 	 * Sets the title associated with this object. The title is the 'tool-tip'
 	 * displayed to users when they hover over the object.
