@@ -340,7 +340,7 @@
 			<id>aon.external.free</id>
 			<url>http://dev.esferalia.net/maven2_repositories/external_free</url>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
 			<releases>
 				<enabled>true</enabled>
@@ -368,6 +368,7 @@
 				<enabled>true</enabled>
 			</releases>
 		</pluginRepository>
+
 	</pluginRepositories>
 
 	<build>
@@ -485,9 +486,10 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
+				<!--groupId>org.codehaus.mojo</groupId-->
+				<groupId>cz.atomsoft.maven</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.2</version>
+				<!--version>1.2</version-->
 				<executions>
 					<execution>
 						<phase>validate</phase>
