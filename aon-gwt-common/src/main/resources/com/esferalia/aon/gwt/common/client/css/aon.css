@@ -354,6 +354,10 @@
         gwt-image: "employee" ;
 }
 
+@sprite .aon-icon-agreement {
+        gwt-image: "agreement" ;
+}
+
 @sprite .aon-icon-segsocial-small{
 	width: auto; 
 	height: auto;
