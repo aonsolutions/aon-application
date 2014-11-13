@@ -47,8 +47,8 @@
 		<module>aon-dsi</module>
 
 		<!-- CORE  -->
-		<module>aon-core-commons</module>
-		<module>aon-core-api</module>
+		<module>aon-watson</module>
+		<module>aon-occam</module>
 		
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>
