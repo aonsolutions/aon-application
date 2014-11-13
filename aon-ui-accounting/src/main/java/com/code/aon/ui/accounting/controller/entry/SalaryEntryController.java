@@ -8,7 +8,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
@@ -35,6 +34,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -443,7 +443,7 @@ public class SalaryEntryController implements Serializable {
 		try {
 			AccountEntry entry = getAccountEntry();
 			List<AccountEntryDetail> details = getAccountEntryDetails(entry);
-			model = new ListDataModel(details);
+			model = new SerializableListDataModel(details);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error al refrescar la vista previa.", e);
 			model = null;

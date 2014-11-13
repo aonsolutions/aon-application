@@ -26,7 +26,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -34,7 +33,7 @@ public class AccountAppParamsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static String DATE_PATTERN = AonUtil.getMessage(ICommonMessages.DATE_PATTERN);
+	private static String DATE_PATTERN = "dd/MM/yyyy";
 	private static SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_PATTERN);
 
 	private static Map<String, String> DEFAULT_PARAMETERS;
