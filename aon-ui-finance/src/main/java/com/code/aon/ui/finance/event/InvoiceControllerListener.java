@@ -53,6 +53,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setProjects(null);
 			invoiceController.setSavedProject(invoice.getProject());
 			invoiceController.setShowProjectLookup(true);
+			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

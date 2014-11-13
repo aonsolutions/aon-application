@@ -2373,8 +2373,8 @@
 				<value>#{invoiceScopeListener}</value>
 				<value>#{expenseInvoiceControllerListener}</value>
 				<value>#{expenseInvoiceAddressListener}</value>
-				<value>#{expenseInvoiceDetailListener}</value>
 				<value>#{expenseInvoiceFinanceListener}</value>
+				<value>#{expenseInvoiceDetailListener}</value>
 				<value>#{expenseInvoiceAttachListener}</value>
 			</list-entries>
 		</managed-property>
