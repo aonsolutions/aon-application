@@ -191,27 +191,35 @@ public class SalaryEntryController implements Serializable {
 
 	private void resetDefaultSalary() throws ManagerBeanException {
 		accDefaultSalary = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SALARY_ACC);
+		if (accDefaultSalary == null) accDefaultSalary = new Account();
 	}
 	private void resetDefaultSalaryInKind() throws ManagerBeanException {
 		accDefaultSalaryInKind = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SALARY_IK_ACC);
+		if (accDefaultSalaryInKind == null) accDefaultSalaryInKind = new Account();
 	}
 	private void resetAllowanceSalary() throws ManagerBeanException {
 		accDefaultAllowance = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_ALLOWANCE_ACC);
+		if (accDefaultAllowance == null) accDefaultAllowance = new Account();
 	}
 	private void resetCompensation() throws ManagerBeanException {
 		accDefaultCompensation = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_COMPENSATION_ACC);
+		if (accDefaultCompensation == null) accDefaultCompensation = new Account();
 	}
 	private void resetSalaryChargedRetAccount() throws ManagerBeanException {
 		accSalaryChargedRet = AccountingUtil.obtainDefaultAccount(AppParam.ACC_SALARY_CHARGED_RET_ACC);	
+		if (accSalaryChargedRet == null) accSalaryChargedRet = new Account();
 	}
 	private void resetSalaryChargedRetInKindAccount() throws ManagerBeanException {
 		accSalaryChargedRetInKind = AccountingUtil.obtainDefaultAccount(AppParam.ACC_SALARY_CHARGED_RET_IK_ACC);	
+		if (accSalaryChargedRetInKind == null) accSalaryChargedRetInKind = new Account();
 	}
 	private void resetCompanySocInsAccount() throws ManagerBeanException {
 		accDefaultCompanySocIns = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC);
+		if (accDefaultCompanySocIns == null) accDefaultCompanySocIns = new Account();
 	}
 	private void resetSocialInsuranceAccount() throws ManagerBeanException {
 		accDefaultSocialInsurance = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC);
+		if (accDefaultSocialInsurance == null) accDefaultSocialInsurance = new Account();
 	}
 
 	public String accept() {
@@ -270,6 +278,48 @@ public class SalaryEntryController implements Serializable {
 	}
 	
 	private List<AccountEntryDetail> getAccountEntryDetails(AccountEntry entry) throws ManagerBeanException {
+		
+		if (getEntry().getGrossSalaryMonetary() != 0 && (getSalaryAccount() == null ||  getSalaryAccount().getId() == null)) {
+			String msg = "Debe indicar una cuenta contable para el valor 'Remuneraciones monetarias'";
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getGrossSalaryInKind()   != 0 && (getSalaryInKindAccount() == null || getSalaryInKindAccount().getId() == null)) {
+			String msg = "Debe indicar una cuenta contable para el valor 'Remuneraciones en especie'";		
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getAllowance() != 0 	&& (getAllowanceAccount() == null || getAllowanceAccount().getId() == null)) {
+			String msg = "Debe indicar una cuenta contable para el valor 'Dietas'";
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getCompensation() != 0 && (getCompensationAccount() == null || getCompensationAccount().getId() == null)) {
+			String msg = "Debe indicar una cuenta contable para el valor 'Indemnizaciones'";		
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getCompanySocialInsurance() != 0	&& (getCompanySocInsAccount() == null || getCompanySocInsAccount().getId() == null)) {
+			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empresa'";			
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getRetention() != 0	&& (getSalaryChargedRetAccount() == null || getSalaryChargedRetAccount().getId() == null)) {	
+			String msg = "Debe indicar una cuenta contable para el valor 'I.R.P.F.'";
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getRetentionInKind() != 0 && (getSalaryChargedRetInKindAccount() == null || getSalaryChargedRetInKindAccount().getId() == null)) {
+			String msg = "Debe indicar una cuenta contable para el valor 'I.R.P.F. en especie'";		
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		if (getEntry().getTotalSocialInsurance() != 0 && (getSocialInsuranceAccount() == null || getSocialInsuranceAccount().getId() == null)) {	
+			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empleado'";
+			AonUtil.addErrorMessage(msg);
+			throw new ManagerBeanException(msg);
+		}
+		
 		List<AccountEntryDetail> list = new LinkedList<AccountEntryDetail>();
 		
 		AccountEntryDetail detail = new AccountEntryDetail();

@@ -53,7 +53,7 @@
 							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 							<a4j:support event="onchange" ajaxSingle="true"
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" focus="date"/>
+								reRender="entryContainer,save"/>
 						</aon:selectOneMenu>
 
 						<aon:if test="#{aonRole.confidentiality}">
@@ -74,11 +74,11 @@
 						<a4j:support ajaxSingle="true" event="oninputchange"
 							actionListener="#{salaryEntry.onRefresh}"
 							reRender="entryContainer,save"
-							focus="Account_registryBank"/>
+							/>
 						<a4j:support ajaxSingle="true" event="onchanged"
 							actionListener="#{salaryEntry.onRefresh}"
 							reRender="entryContainer,save"
-							focus="Account_registryBank"/>
+							/>
 					</aon:selectInputDate>
 					<aon:outputText value="&#160;" />
 					
@@ -97,7 +97,7 @@
 						buttonStyle="display:none;">
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_gross_salary"/>
+							reRender="entryContainer,save" />
 					</rich:comboBox>
 					<aon:outputText value="&#160;" />
 
@@ -106,10 +106,10 @@
 					<aon:inputText id="Account_gross_salary_monetary" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.grossSalaryMonetary}" size="15"
-						focus="Account_gross_salary_in_kind">
+						>
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_gross_salary_in_kind"/>
+							reRender="entryContainer,save" />
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -117,19 +117,18 @@
 							<ui:param name="lookupSuffix" value="GrossSalaryMonetary" />
 							<ui:param name="lookupTo" value="#{salaryEntry.salaryAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 						
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameSalaryAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.salaryAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 							/>		
  					</aon:div>
 
@@ -138,10 +137,10 @@
 					<aon:inputText id="Account_gross_salary_in_kind" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.grossSalaryInKind}" size="15"
-						focus="Account_Allowance">
+						>
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_Allowance"/>
+							reRender="entryContainer,save" />
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -149,19 +148,18 @@
 							<ui:param name="lookupSuffix" value="GrossSalaryInKind" />
 							<ui:param name="lookupTo" value="#{salaryEntry.salaryInKindAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 						
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameSalaryInKindAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.salaryInKindAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 							/>		
  					</aon:div>
 
@@ -170,10 +168,10 @@
 					<aon:inputText id="Account_Allowance" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.allowance}" size="15"
-						focus="Account_Compensation">
+						>
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_Compensation"/>
+							reRender="entryContainer,save" />
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -181,19 +179,18 @@
 							<ui:param name="lookupSuffix" value="Allowance" />
 							<ui:param name="lookupTo" value="#{salaryEntry.allowanceAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 						
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameAllowanceAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.allowanceAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 							/>		
  					</aon:div>
 
@@ -202,10 +199,10 @@
 					<aon:inputText id="Account_Compensation" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.compensation}" size="15"
-						focus="Account_retention">
+						>
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_retention"/>
+							reRender="entryContainer,save" />
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -213,19 +210,18 @@
 							<ui:param name="lookupSuffix" value="Compensation" />
 							<ui:param name="lookupTo" value="#{salaryEntry.compensationAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 						
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameCompensationAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.compensationAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 							/>		
 					</aon:div>
 
@@ -242,10 +238,10 @@
 					<aon:inputText id="Account_retention" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.retention}" size="15"
-						focus="Account_retention_in_kind">
+						>
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_retention_in_kind"/>
+							reRender="entryContainer,save" />
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -253,19 +249,18 @@
 							<ui:param name="lookupSuffix" value="Retention" />
 							<ui:param name="lookupTo" value="#{salaryEntry.salaryChargedRetAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 						
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameSalaryChargedRetAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.salaryChargedRetAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 							/>		
 						
 					</aon:div>
@@ -275,10 +270,10 @@
 					<aon:inputText id="Account_retention_in_kind" required="true"
 						styleClass="aon-inputText aon-margin-right"
 						value="#{salaryEntry.entry.retentionInKind}" size="15"
-						focus="Account_employee_social_insurance1">
+						>
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{salaryEntry.onRefresh}" 
-							reRender="entryContainer,save" focus="Account_employee_social_insurance1"/>
+							reRender="entryContainer,save" />
 					</aon:inputText>
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
@@ -286,19 +281,18 @@
 							<ui:param name="lookupSuffix" value="RetentionInKind" />
 							<ui:param name="lookupTo" value="#{salaryEntry.salaryChargedRetInKindAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 						
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameSalaryChargedRetInKindAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.salaryChargedRetInKindAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 							/>		
 						
 					</aon:div>
@@ -315,40 +309,40 @@
 						<aon:inputText id="Account_employee_social_insurance1" required="true"
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance1}" size="10"
-							focus="Account_employee_social_insurance2">
+							>
 							<a4j:support event="onchange" ajaxSingle="true"
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" focus="Account_employee_social_insurance2"/>
+								reRender="entryContainer,save" />
 						</aon:inputText>
 	
 						<aon:outputText value="+" style="font-size: 1.2em; font-weight: bold;" styleClass="aon-margin-right"/>	
 						<aon:inputText id="Account_employee_social_insurance2" required="true"
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance2}" size="10"
-							focus="Account_employee_social_insurance3">
+							>
 							<a4j:support event="onchange" ajaxSingle="true"
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" focus="Account_employee_social_insurance3"/>
+								reRender="entryContainer,save" />
 						</aon:inputText>
 
 						<aon:outputText value="+" style="font-size: 1.2em; font-weight: bold;" styleClass="aon-margin-right"/>	
 						<aon:inputText id="Account_employee_social_insurance3" required="true"
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance3}" size="10"
-							focus="Account_employee_social_insurance4">
+							>
 							<a4j:support event="onchange" ajaxSingle="true"
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" focus="Account_employee_social_insurance4"/>
+								reRender="entryContainer,save" />
 						</aon:inputText>
 
 						<aon:outputText value="+" style="font-size: 1.2em; font-weight: bold;" styleClass="aon-margin-right"/>	
 						<aon:inputText id="Account_employee_social_insurance4" required="true"
 							styleClass="aon-inputText aon-margin-right"
 							value="#{salaryEntry.entry.employeeSocialInsurance4}" size="10"
-							focus="Account_company_social_insurance">
+							>
 							<a4j:support event="onchange" ajaxSingle="true"
 								actionListener="#{salaryEntry.onRefresh}" 
-								reRender="entryContainer,save" focus="Account_company_social_insurance"/>
+								reRender="entryContainer,save" />
 						</aon:inputText>
 					</aon:div>
 							
@@ -360,19 +354,18 @@
 							<ui:param name="lookupSuffix" value="socialInsurance" />
 							<ui:param name="lookupTo" value="#{salaryEntry.socialInsuranceAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameSocialInsuranceAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.socialInsuranceAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}" 
 						/>		
 					</aon:div>
 
@@ -389,7 +382,7 @@
 							<a4j:support event="onchange" ajaxSingle="true" 
 								reRender="entryContainer,save"
 								actionListener="#{salaryEntry.onChangeBank}" 
-								focus="Account_concept"/>
+								/>
 						</aon:selectOneMenu>
 					</aon:div>
 
@@ -408,19 +401,20 @@
 							<ui:param name="lookupSuffix" value="CompanySocIns" />
 							<ui:param name="lookupTo" value="#{salaryEntry.companySocInsAccount}" />
 							<ui:param name="lookupReRender" value="entryContainer,save" />
-							<ui:param name="idRequired" value="true" />				
 						</ui:include>
 
 						<aon:commandButton
-							title="Actualizar valor por defecto"
-							alt="Actualizar valor por defecto"
+							title="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
+							alt="Pulse para fijar el valor introducido como valor por defecto en par&#225;metros contables."
 							styleClass="aon-icon-refresh aon-noborder aon-margin-left"
 							value="&#160;"
 							actionListener="#{salaryEntry.onSameCompanySocInsAccount}"
 							immediate="true" 
 							rendered="#{salaryEntry.companySocInsAccountUpdatable}"
 							reRender="entryContainer,save"
-							onclick="if (!confirm('Actualizar el valor por defecto?')){return false;}" 
+							onclick="if (!confirm('Desea fijar el valor introducido como valor por defecto en par&#225;metros contables?')){return false;}"
+							
+							
 							/>		
 					</aon:div>
 				</aon:panelGrid>
