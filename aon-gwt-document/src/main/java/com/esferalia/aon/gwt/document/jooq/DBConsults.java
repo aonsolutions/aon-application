@@ -15,9 +15,13 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Vector;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.FileUtils;
+import org.jooq.Converter;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record10;
 import org.jooq.Record11;
@@ -25,7 +29,12 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
 import org.jooq.Record9;
+import org.jooq.RecordMapper;
 import org.jooq.Result;
+import org.jooq.Row11;
+import org.jooq.Table;
+import org.jooq.exception.DataTypeException;
+import org.jooq.exception.MappingException;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
@@ -236,7 +245,7 @@ public class DBConsults {
 				Tag tag = new Tag();
 				if(record.value1() != null){
 					tag.setName(record.value1());
-					if(string!=null) string= string+","+record.value1();
+					if(string!=null) string= string+", "+record.value1();
 					else string= record.value1();
 				}
 				if(record.value2()!=null){
@@ -571,6 +580,88 @@ public class DBConsults {
 						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,null).returning(RATTACH.ID).fetchOne().getId();
 	
 		} finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+	
+	public static com.esferalia.aon.gwt.document.shared.FileInfo getFile(String domain,Integer id) throws SQLException{
+		Connection connection = null;
+		try {
+			connection = DatabaseSync.getConnection(domain);
+
+			DSLContext dslContext = DSL.using(connection,
+					JooqSettings.getDefaultSettings());
+			
+			Result<Record11<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String>> record = dslContext
+					.select(RATTACH.ID, RATTACH.DESCRIPTION,
+							RATTACH.MIMETYPE, RATTACH.TYPE,
+							RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DATA.length(),RATTACH.DPARENT_ID)
+					.from(RATTACH)
+					.where(RATTACH.ID.eq(id))
+					.fetch();
+			com.esferalia.aon.gwt.document.shared.FileInfo fi = new com.esferalia.aon.gwt.document.shared.FileInfo();
+			
+			record.stream().forEach(r->{
+				fi.setAonType("registry");
+				if (r.value1() != null) 
+					fi.setFileId(r.value1());
+				if (r.value2() != null) 
+					fi.setTitle(r.value2());
+				if (r.value3() != null) 
+					fi.setMimetype(r.value3());
+				if (r.value4() != null) 
+					fi.setType(r.value4());
+				if (r.value5() != null) 
+					fi.setDate(r.value5());
+				if (r.value6() != null) 
+					fi.setDriveId(r.value6());
+				if (r.value7() != null) 
+					fi.setCategory(r.value7());
+				Tags tags=null;
+				try {
+					tags = getTags(domain , fi.getFileId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(fi.getDate()!=null){
+					String dateStr = fi.getDate().toString();
+					Integer pos = dateStr.indexOf("-");
+					Integer pos2 = dateStr.substring(pos+1).indexOf("-");
+					String aux = dateStr.substring(pos2+pos+2)+"-"+dateStr.substring(pos+1, pos2+pos+1)+"-"+dateStr.substring(0,pos);
+					fi.setDateStr(aux); 
+				}
+				else fi.setDateStr("-");
+				if(r.value7() != null) fi.setCategoryStr(dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((r.value7()))).fetch().get(0).value1());
+				else fi.setCategoryStr("-");
+				fi.setTags(tags.getTags().getList());
+				if(tags.getTagsStr()!=null)fi.setTagsStr(tags.getTagsStr()); else fi.setTagsStr("-");
+				if(r.value8()!=null) {
+					Scope s = null;
+					try {
+						s = getScope(domain,record.get(0).value8());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					fi.setScope(s);
+				}
+				if(r.value9()!=null){
+					Byte val = r.value9();
+					if(val ==0 ) fi.setConfidential(false);
+					else fi.setConfidential(true);
+				}
+				if (r.value10() != null) fi.setSize(r.value10());
+				else if (fi.getDriveId() != null && r.value11() != null){
+					String s = r.value11();
+					fi.setSize(Integer.valueOf(s));
+				}
+				else fi.setSize(0);
+				fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()!=null?fi.getSize():0));
+				
+				fi.setIcon(getmType(fi));
+			});
+			return fi;
+		}finally {
 			if (connection != null)
 				connection.close();
 		}

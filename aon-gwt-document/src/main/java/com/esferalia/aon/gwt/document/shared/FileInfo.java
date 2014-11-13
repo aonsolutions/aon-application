@@ -260,8 +260,6 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setDateSql(java.sql.Date dateSql) {
 			this.dateSql = dateSql;
 		}
-		
-		
-		
+
 	}
 

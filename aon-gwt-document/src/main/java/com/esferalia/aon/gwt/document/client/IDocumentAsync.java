@@ -37,6 +37,8 @@ public interface IDocumentAsync {
 
 	void myDrive(String id, AsyncCallback<Vector<TreeDriveInfo>> callback);
 
+	void insertFile(FileInfo fi, AsyncCallback<FileInfo> callback);
+
 
 
 

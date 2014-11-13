@@ -240,111 +240,79 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 	}
 
 	public Boolean newFile(FileInfo fi) {
-		if (!getMimetype().equals("application/octet-stream")
+		if (getMimetype()!=null
 				&& !fi.getTitle().equals("") && !fi.getDomain().equals("false")) {
-			Date date = null;
-			if (fi.getDate() != null)
-				date = new Date(fi.getDate().getYear(),
-						fi.getDate().getMonth(), fi.getDate().getDay());
-
-			String domain = AonUtil.getDomainName();
-			// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
-			com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
-			fileInfo.setAonType("registry");
-			if ((Integer) fi.getCategory() != null)
-				fileInfo.setCategory(fi.getCategory());
-			fileInfo.setDateSql(date);
-			fileInfo.setMimetype((byte) MimeType.get(getMimetype()).ordinal());
-			fileInfo.setTitle(fi.getTitle());
-			fileInfo.setType((short) 5);// TODO tipo correcto!!
-			if (fi.getScope().getId() != null)
-				fileInfo.setScopeId(fi.getScope().getId());
-			Byte conf;
-			if (fi.getConfidential())
-				conf = 1;
-			else
-				conf = 0;
-			fileInfo.setSecurityLevel(conf);
-			String dom;
-			if (fi.getDomain().equals(""))
-				dom = domain;
-			else
-				dom = fi.getDomain();
-			try {
-				Integer domainId = DBConsults.getDomainId(domain, dom);
-				fileInfo.setDomainId(domainId);
-				Integer id = DBConsults.insertFile(domain, fileInfo);
-				DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
-				//InputStream file = getFile();
-				byte[] b = getOut();//.toByteArray();
-				fileInfo.setFileId(id);
-				fileInfo.setData(b);
-				DomainGserviceaccount g = DatabaseSync
-						.getServiceAccount(domain);
-				if (g!=null){
-					Drive d = DriveUtils.serviceInitialize(g);
-					String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
-					DriveUtils.types = types;
-					DriveUtils.sync2(d, fileInfo, domain);
-				}
-				else DBConsults.insertFileData(domain, id, b );
-				//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (KeyStoreException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (GeneralSecurityException e) {
-				e.printStackTrace();
-			} catch (AonConnectionException e) {
-				e.printStackTrace();
-			} catch (NamingException e) {
-				// TODO Bloque catch generado automáticamente
-				e.printStackTrace();
-			}
+		
 			return true;
 		}
 		return false;
 
 	}
 	
-	public static com.google.api.services.drive.model.File insertFile(Drive drive, com.code.aon.google.apis.FileInfo fileInfo,byte[] array) throws SQLException, AonConnectionException,
-			IOException, MessagingException, KeyStoreException,
-			GeneralSecurityException {
-		// File's metadata.
-		com.google.api.services.drive.model.File file = newFile((byte)fileInfo.getMimetype(), fileInfo.getTitle());
-		file.setModifiedDate(new DateTime(new java.util.Date()));
-		
-		ByteArrayContent mediaContent = new ByteArrayContent(file.getMimeType(), array);
+	public FileInfo insertFile(FileInfo fi){
+		Date date = null;
+		if (fi.getDate() != null)
+			date = new Date(fi.getDate().getYear(),
+					fi.getDate().getMonth(), fi.getDate().getDate());
 
+		String domain = AonUtil.getDomainName();
+		// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
+		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
+		fileInfo.setAonType("registry");
+		if ((Integer) fi.getCategory() != null)
+			fileInfo.setCategory(fi.getCategory());
+		fileInfo.setDateSql(date);
+		fileInfo.setMimetype((byte) MimeType.get(getMimetype()).ordinal());
+		fileInfo.setTitle(fi.getTitle());
+		fileInfo.setType((short) 5);// TODO tipo correcto!!
+		if (fi.getScope().getId() != null)
+			fileInfo.setScopeId(fi.getScope().getId());
+		Byte conf;
+		if (fi.getConfidential())
+			conf = 1;
+		else
+			conf = 0;
+		fileInfo.setSecurityLevel(conf);
+		String dom;
+		if (fi.getDomain().equals(""))
+			dom = domain;
+		else
+			dom = fi.getDomain();
 		try {
-			
-			long start = System.currentTimeMillis();
-			file = drive.files().insert(file, mediaContent).execute();
+			Integer domainId = DBConsults.getDomainId(domain, dom);
+			fileInfo.setDomainId(domainId);
+			Integer id = DBConsults.insertFile(domain, fileInfo);
+			DBConsults.insertTagsFile(id, fi.getTags(), domain, domainId);
+			byte[] b = getOut();//.toByteArray();
+			fileInfo.setFileId(id);
+			fileInfo.setData(b);
+			DomainGserviceaccount g = DatabaseSync
+					.getServiceAccount(domain);
+			if (g!=null){
+				Drive d = DriveUtils.serviceInitialize(g);
+				String[] types = { RegistryAttachmentType.DOCUMENT.toString() };// TODO
+				DriveUtils.types = types;
+				DriveUtils.sync2(d, fileInfo, domain);
+			}
+			else DBConsults.insertFileData(domain, id, b );
+			//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
+			fi = DBConsults.getFile(domain, id);
 
-			long time = System.currentTimeMillis() - start;
-			
-			
-			return file;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
-			
-			return null;
+			e.printStackTrace();
+		} catch (GeneralSecurityException e) {
+			e.printStackTrace();
+		} catch (AonConnectionException e) {
+			e.printStackTrace();
+		} catch (NamingException e) {
+			// TODO Bloque catch generado automáticamente
+			e.printStackTrace();
 		}
-	}
-	
-	public static com.google.api.services.drive.model.File newFile(Byte mimetype, String title) {
-
-		com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
-
-		file.setShared(true);
-		file.setTitle(title);
-		if (mimetype != null)
-			file.setMimeType(MimeType.values()[mimetype].getName());
-
-		// file.setAppDataContents(true);// Indica que es un archivo de la
-		// aplicación, por lo tanto, el usuario no podrá borrar el archivo.
-		return file;
+		return fi;
 	}
 	
 	public Boolean check(){
@@ -361,7 +329,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		fileInfo.setAonType("registry");
 		fileInfo.setCategory(fi.getCategory());
 		fileInfo.setDate(fi.getDate());
-		if(!getMimetype().equals("application/octet-stream"))fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
+		if(getMimetype()!=null)fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 		else fileInfo.setMimetype(fi.getMimetype());
 		fileInfo.setTitle(fi.getTitle());
 		fileInfo.setScopeId(fi.getScope().getId());
@@ -369,13 +337,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		fileInfo.setSecurityLevel(conf);
 		try {
 			DBConsults.updateFile(domain, fileInfo);
-			if(!getMimetype().equals("application/octet-stream")){
+			if(getMimetype()!=null){
 				//InputStream file = getFile();
 				byte[] b = getOut();//.toByteArray();
 				fileInfo.setData(b);
 				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
 				Drive d = DriveUtils.serviceInitialize(g);
-				//DriveUtils.sync2(d, fileInfo, domain);
+				DriveUtils.sync2(d, fileInfo, domain);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -384,6 +352,12 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (GeneralSecurityException e) {
+			e.printStackTrace();
+		} catch (AonConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

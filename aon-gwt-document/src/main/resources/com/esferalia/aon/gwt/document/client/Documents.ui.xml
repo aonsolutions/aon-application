@@ -315,11 +315,13 @@ background-color:#D4CFC7;
 								<table class="aon-panelGrid">
 									<tr>
 										<td class="aon-panelGrid-odd">
-										    
-											<g:SuggestBox ui:field="searchBox" styleName="{style.aon-search-box}"
+										    <g:TextBox ui:field="searchBox" styleName="{style.aon-search-box}">
+
+											</g:TextBox>
+											<!--g:SuggestBox ui:field="searchBox" styleName="{style.aon-search-box}"
 												autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
 
-											</g:SuggestBox>
+											</g:SuggestBox-->
 												
 										</td>
 										<td><g:Button visible="false" ui:field="searchButton" styleName="aon-editDataTable-button"> </g:Button> 
