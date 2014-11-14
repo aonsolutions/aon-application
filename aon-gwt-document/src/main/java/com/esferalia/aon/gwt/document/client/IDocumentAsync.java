@@ -39,6 +39,8 @@ public interface IDocumentAsync {
 
 	void insertFile(FileInfo fi, AsyncCallback<FileInfo> callback);
 
+	void share(FileInfo object, AsyncCallback<Void> callback);
+
 
 
 

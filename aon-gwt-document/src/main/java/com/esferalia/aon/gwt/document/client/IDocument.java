@@ -38,5 +38,7 @@ public interface IDocument extends RemoteService{
 	public Vector<TreeDriveInfo> myDrive(String id);
 	
 	public FileInfo insertFile(FileInfo fi);
+	
+	public void share(FileInfo object); 
 
 }

@@ -8,41 +8,26 @@ import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Vector;
-import java.util.function.Consumer;
 
 import org.apache.commons.io.FileUtils;
-import org.jooq.Converter;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record10;
 import org.jooq.Record11;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record7;
-import org.jooq.Record9;
-import org.jooq.RecordMapper;
 import org.jooq.Result;
-import org.jooq.Row11;
-import org.jooq.Table;
-import org.jooq.exception.DataTypeException;
-import org.jooq.exception.MappingException;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
-import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.FileInfo;
 import com.code.aon.google.apis.jooq.JooqSettings;
-import com.esferalia.aon.google.sql.AbstractSQL.DomainGserviceaccount;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Scope;
@@ -50,12 +35,9 @@ import com.esferalia.aon.gwt.document.shared.ScopeList;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TagList;
 import com.esferalia.aon.gwt.document.shared.Tags;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 
 public class DBConsults {
 	private static Vector<com.esferalia.aon.gwt.document.shared.FileInfo> filesGwt;
-	private static Vector<String> names;
 	private static Vector<FileInfo> files;
 	private static String atype=null;
 	private static String domain1=null;
@@ -64,23 +46,22 @@ public class DBConsults {
 		Connection connection = null;
 		try {
 			
-			if ((domain1==null || domain1!=domain)||(atype == null || atype != "all")||(files == null && names == null)) {
+			if ((domain1==null || domain1!=domain)||(atype == null || atype != "all")||(files == null)) {
 				
 					domain1=domain;
 				atype="all";
 				files = new Vector<FileInfo>();
 				filesGwt = new Vector<com.esferalia.aon.gwt.document.shared.FileInfo>();
-				names=new Vector<String>();
 				connection = DatabaseSync.getConnection(domain);
 
 				DSLContext dslContext = DSL.using(connection,
 						JooqSettings.getDefaultSettings());
 				Byte sh = 5;
 				
-				Result<Record11<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String>> username = dslContext
+				Result<Record10<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String>> username = dslContext
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
 								RATTACH.MIMETYPE, RATTACH.TYPE,
-								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DATA.length(),RATTACH.DPARENT_ID)
+								RATTACH.ATTACH_DATE, RATTACH.DRIVE_ID,RATTACH.CATEGORY,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.DPARENT_ID)
 						.from(RATTACH)
 						.join(DOMAIN)
 						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
@@ -91,7 +72,7 @@ public class DBConsults {
 										.where(DOMAIN.NAME.eq(domain))))))
 						.fetch();
 
-				for (Record11<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, Integer, String> record : username) {
+				for (Record10<Integer, String, Byte, Byte, Date, String, Integer, Integer, Byte, String> record : username) {
 					FileInfo fi = new FileInfo();
 					fi.setAonType("registry");
 					if (record.value1() != null) {
@@ -137,7 +118,12 @@ public class DBConsults {
 					fi2.setTitle(fi.getTitle());
 					fi2.setMimetype(fi.getMimetype());
 					fi2.setCategory(fi.getCategory());
-					if(record.value7() != null) fi2.setCategoryStr(dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch().get(0).value1());
+					if(record.value7() != null) {
+						Result<Record1<String>> a = dslContext.select(CATEGORY.NAME).from(CATEGORY).where(CATEGORY.ID.eq((record.value7()))).fetch();
+						a.stream().forEach(r-> {
+							fi2.setCategoryStr(r.value1());
+						});
+					}
 					
 					else fi2.setCategoryStr("-");
 					
@@ -152,10 +138,9 @@ public class DBConsults {
 						if(val ==0 ) fi2.setConfidential(false);
 						else fi2.setConfidential(true);
 					}
-					System.out.println(record.value10());
-					if (record.value10() != null) fi2.setSize(record.value10());
-					else if (fi2.getDriveId() != null && record.value11() != null){
-						String s = record.value11();
+					
+					if (record.value10() != null){
+						String s = record.value10();
 						fi2.setSize(Integer.valueOf(s));
 					}
 					else fi2.setSize(0);
@@ -165,7 +150,6 @@ public class DBConsults {
 					fi2.setIcon(getmType(fi2));
 					
 					filesGwt.add(fi2);
-					names.add(fi.getTitle());
 				}
 			
 			}
@@ -205,25 +189,24 @@ public class DBConsults {
 		
 	}
 	
-	public static String getmType(com.esferalia.aon.gwt.document.shared.FileInfo fi2){
-		if(fi2.getMimetype()!=null){
-		MimeType t = MimeType.values()[fi2.getMimetype()];
-		if(MimeType.MIME_PDF.getName().equals(t.getName())){
-			return "aon-icon-google-drive-pdf-sinfondo";
-		}
-		else if(MimeType.MIME_JPEG.getName().equals(t.getName()) 
-				|| MimeType.MIME_BMP.getName().equals(t.getName())
-				|| MimeType.MIME_PNG.getName().equals(t.getName())){
-			return "aon-icon-google-drive-image";
-		}
-		else if(MimeType.MIME_MS_WORD.getName().equals(t.getName())
-				|| MimeType.MIME_MS_WORD_2007.getName().equals(t.getName())){
-			return "aon-icon-google-drive-word";
-		}
-		else return "aon-icon-google-drive-unknown";
+	public static String getmType(
+			com.esferalia.aon.gwt.document.shared.FileInfo fi2) {
+		if (fi2.getMimetype() != null) {
+			MimeType t = MimeType.values()[fi2.getMimetype()];
+			if (MimeType.MIME_PDF.getName().equals(t.getName())) {
+				return "aon-icon-google-drive-pdf-sinfondo";
+			} else if (MimeType.MIME_JPEG.getName().equals(t.getName())
+					|| MimeType.MIME_BMP.getName().equals(t.getName())
+					|| MimeType.MIME_PNG.getName().equals(t.getName())) {
+				return "aon-icon-google-drive-image";
+			} else if (MimeType.MIME_MS_WORD.getName().equals(t.getName())
+					|| MimeType.MIME_MS_WORD_2007.getName().equals(t.getName())) {
+				return "aon-icon-google-drive-word";
+			} else
+				return "aon-icon-google-drive-unknown";
 
-		}
-		else return "aon-icon-google-drive-unknown";
+		} else
+			return "aon-icon-google-drive-unknown";
 	}
 
 	private static Tags getTags(String domain,int fileId) throws SQLException {
@@ -378,12 +361,11 @@ public class DBConsults {
 		try {
 			Vector<com.esferalia.aon.gwt.document.shared.FileInfo> vector = new Vector<com.esferalia.aon.gwt.document.shared.FileInfo>();
 
-			if ((domain1==null || domain1!=domain)||(atype == null || atype != "serviConvenios")||files == null && names == null) {
+			if ((domain1==null || domain1!=domain)||(atype == null || atype != "serviConvenios")||files == null /*&& names == null*/) {
 					domain1=domain;
 				atype= "serviConvenios";
 				files = new Vector<FileInfo>();
 				filesGwt = new Vector<com.esferalia.aon.gwt.document.shared.FileInfo>();
-				names=new Vector<String>();
 				connection = DatabaseSync.getConnection(domain);
 
 				DSLContext dslContext = DSL.using(connection,
@@ -441,7 +423,6 @@ public class DBConsults {
 					fi2.setIcon(getmType(fi2));
 					vector.add(fi2);
 					filesGwt.add(fi2);
-					names.add(fi.getTitle());
 				}
 			}
 			return vector;
@@ -488,14 +469,6 @@ public class DBConsults {
 
 	public static void setFiles(Vector<FileInfo> files) {
 		DBConsults.files = files;
-	}
-
-	public static Vector<String> getNames() {
-		return names;
-	}
-
-	public static void setNames(Vector<String> names) {
-		DBConsults.names = names;
 	}
 
 	public static Vector<com.esferalia.aon.gwt.document.shared.FileInfo> getFilesGwt() {
@@ -573,9 +546,7 @@ public class DBConsults {
 			Result<Record1<Integer>> reg = dslContext.select(ENTERPRISE.REGISTRY)
 				.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
 				.where(DOMAIN.NAME.eq(domain)).fetch();
-			
-			//System.out.println(reg.get(0).value1());
-			
+						
 			return dslContext.insertInto(RATTACH,RATTACH.REGISTRY,RATTACH.DOMAIN,RATTACH.CATEGORY,RATTACH.MIMETYPE,RATTACH.DESCRIPTION,RATTACH.TYPE,RATTACH.SCOPE,RATTACH.SECURITY_LEVEL,RATTACH.ATTACH_DATE,RATTACH.DATA,RATTACH.DRIVE_ID,RATTACH.DPARENT_ID)
 						.values(reg.get(0).value1(),fi.getDomainId(),fi.getCategory(),fi.getMimetype(),fi.getTitle(),(byte)fi.getType(),fi.getScopeId(),fi.getSecurityLevel(),fi.getDateSql(),null,null,null).returning(RATTACH.ID).fetchOne().getId();
 	

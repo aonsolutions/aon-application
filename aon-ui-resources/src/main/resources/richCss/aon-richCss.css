@@ -106,7 +106,7 @@ color:#000;
 .aon-overflow-auto			{overflow:auto;}
 
 .aon-uppercase				{text-transform:uppercase;}
-
+if(r.value1()!=null) 
 .aon-noborder{border:0 !important;}
 .aon-border{border:#ccc 1px solid;}
 .aon-border-left{border-left:#ccc 1px solid;}
@@ -2991,7 +2991,7 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  
      .aon-icon-google-drive-pdf-sinfondo{
     
-	background:transparent url(images/aon-icon/aon-icon-google-drive-pdf-sinfondo.png) scroll  center no-repeat;	
+	background:transparent url(images/aon-icon/aon-icon-google-drive-pdf-sinfondo.png) scroll left center no-repeat;	
  }
  
  .aon-icon-google-drive-word{
@@ -3011,8 +3011,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
       .aon-icon-serviconvenios{
 	background:transparent url(images/aon-icon/aon-icon-serviconvenios.png) scroll left center no-repeat;	
  }
+
+ .aon-icon-share{
+	background:transparent url(images/aon-icon/aon-icon-share.png) scroll left center no-repeat;	
+ }
  
-       .aon-google-drive{
+.aon-google-drive{
 	background:transparent url(images/aon-icon-big/aon-google-drive.png) scroll left center no-repeat;	
  }
         .aon-documental-docs{

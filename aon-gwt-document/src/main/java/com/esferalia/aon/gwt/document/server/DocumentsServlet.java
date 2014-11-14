@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.document.server;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -10,7 +9,6 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Vector;
 
-import javax.mail.MessagingException;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,8 +29,6 @@ import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tags;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.File;
@@ -69,11 +65,11 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		try {
 			DBConsults.getAllRattach(domain);
 			
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		docs.setFiles(DBConsults.getFilesGwt());
-		docs.setNames(DBConsults.getNames());
 		return docs;
 	}
 	
@@ -403,7 +399,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		 return v;
 	
 	}
-	
+	public void share(FileInfo object) {
+		// TODO 
+		
+	}
 
 
 }

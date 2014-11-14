@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.document.client;
 
-import gwtupload.client.DecoratedFileUpload.FileUploadWithMouseEvents;
 import gwtupload.client.IFileInput.FileInputType;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
@@ -10,7 +9,6 @@ import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -30,13 +28,12 @@ import com.esferalia.aon.gwt.document.shared.Tag;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -51,22 +48,16 @@ import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
-import com.google.gwt.event.dom.client.KeyCodeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyEvent;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.AbstractCellTable.CellTableKeyboardSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -80,21 +71,15 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.DisclosurePanelImages;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -103,17 +88,16 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestBox.SuggestionDisplay;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -124,7 +108,7 @@ public class Documents extends Composite implements EntryPoint {
 
 		class DocumentContextMenu extends ContextMenu {
 
-			ScheduledCommand newCommand = new ScheduledCommand() {
+			ScheduledCommand viewCommand = new ScheduledCommand() {
 				public void execute() {
 
 				};
@@ -142,35 +126,55 @@ public class Documents extends Composite implements EntryPoint {
 			};
 			
 			ScheduledCommand downloadCommand = new ScheduledCommand() {
-				public void execute() {
-
+				public void execute() {	
+					FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					download(object);
 				};
 			};
 			
 			ScheduledCommand shareCommand = new ScheduledCommand() {
 				public void execute() {
-
+					FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					share(object);
 				};
 			};
 			
 			ScheduledCommand infoCommand = new ScheduledCommand() {
 				public void execute() {
-
+					FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					info(object);
 				};
 			};
 
+			private MenuItem viewItem;
 			private MenuItem editItem;
 			private MenuItem removeItem;
+			private MenuItem shareItem;
+			private MenuItem downloadItem;
+			private MenuItem infoItem;
 
 			public DocumentContextMenu() {
 				
+				viewItem = addItem("Visualizar",viewCommand,
+						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
+				viewItem.setEnabled(true);
+				addSeparator();
 				editItem = addItem("Editar", editCommand,
-						AON.AON_ICON_EDIT_ADD, AON.AON_ICON_CMD_BUTTON);
+						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
 				editItem.setEnabled(true);
 				removeItem = addItem("Borrar", removeCommand,
 						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 				removeItem.setEnabled(true);
-
+				addSeparator();
+				shareItem = addItem("Compartir",shareCommand,
+						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
+				shareItem.setEnabled(true);
+				downloadItem = addItem("Descargar",downloadCommand,
+						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
+				downloadItem.setEnabled(true);
+				infoItem = addItem("Detalles",infoCommand,
+						"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
+				infoItem.setEnabled(true);
 			}
 
 			@Override
@@ -193,11 +197,14 @@ public class Documents extends Composite implements EntryPoint {
 		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 			@Override
 			public void onContextMenu(ContextMenuEvent event) {
-				// stop the browser from opening the context menu
+				
 				event.preventDefault();
 				event.stopPropagation();
-
+				
 				NativeEvent nativeEvent = event.getNativeEvent();
+				
+				// TODO Si se clicka muy abajo cambiar posicion del popup, direccion arriba 
+				
 				contextMenu.setPopupPosition(nativeEvent.getClientX(),
 						nativeEvent.getClientY());
 				contextMenu.show();
@@ -470,10 +477,30 @@ public class Documents extends Composite implements EntryPoint {
 					searchButton.click();
 				}
 			}
-		});		
-
-		dataGrid = new DataGrid<FileInfo>(Integer.MAX_VALUE, resources,
+		});
+		
+		CellTableKeyboardSelectionHandler<FileInfo> selHandler = new CellTableKeyboardSelectionHandler<FileInfo>(dataGrid){
+		
+			@Override
+			public void onCellPreview(CellPreviewEvent<FileInfo> event) {
+				 
+				
+				if(BrowserEvents.CONTEXTMENU.equals(event.getNativeEvent().getType())){
+     				int relRow = event.getIndex() - dataGrid.getPageStart();
+   			        int subrow = event.getContext().getSubIndex();
+   			      
+   			        dataGrid.setKeyboardSelectedRow(relRow, subrow, true);
+     			 }
+     		     super.onCellPreview(event);	
+			}
+		};
+		
+ 		dataGrid = new DataGrid<FileInfo>(Integer.MAX_VALUE, resources,
 				FileInfo.PROVIDES_KEY);
+		
+ 		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
+
+ 		
 		dataGrid.addBitlessDomHandler(new DragOverHandler() {
 			
 			@Override
@@ -1274,10 +1301,7 @@ public class Documents extends Composite implements EntryPoint {
         upload.getForm().setMethod(FormPanel.METHOD_POST);
         upload.setTitle("uploadFormElement");
         upload.avoidEmptyFiles(true);
-        
-        FileUploadWithMouseEvents a = new FileUploadWithMouseEvents(){
-      
-        };
+     
         
         upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
 		
@@ -2118,14 +2142,8 @@ public class Documents extends Composite implements EntryPoint {
 		downloadColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 			@Override
 			public void update(int index, FileInfo object, String value) {
-				String driveId="";
-				if(object.getDriveId()!=null)driveId= object.getDriveId();
-				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download"
-                        + "?file_id=" + Integer.toString(object.getFileId())
-                        + "&drive_id=" +URL.encode(driveId);
-		        Window.open( fileDownloadURL, "_blank","status=0,toolbar=0,menubar=0,location=0");
-		      
-		       
+
+		       download(object);
 			}
 		});
 		
@@ -2135,6 +2153,153 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	Vector<TreeDriveInfo> vtree;
 	
+	private void download(FileInfo object){
+		String driveId="";
+		if(object.getDriveId()!=null)driveId= object.getDriveId();
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download"
+                + "?file_id=" + Integer.toString(object.getFileId())
+                + "&drive_id=" +URL.encode(driveId);
+        Window.open( fileDownloadURL, "_blank","status=0,toolbar=0,menubar=0,location=0");
+      
+	}
+	private void share(FileInfo object){
+
+		popup = new DialogBox();
+		//popup.getCaption().setText("EDITAR ARCHIVO");
+		popup.getCaption().setHTML("<div id=\"aonContent:corporateIdentityAttachForm:j_id3147\" class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">COMPARTIR ARCHIVO</span></div>");
+		VerticalPanel vp = new VerticalPanel();
+		FlexTable shareTable = new FlexTable();
+		
+		shareTable.setStyleName("aon-panelGrid");
+		shareTable.setWidth("300px");
+		shareTable.setBorderWidth(1);
+		shareTable.setCellSpacing(0);
+		TextBox email = new TextBox();
+		email.setStyleName("aon-inputText");
+		shareTable.setWidget(0, 0, new Label("Email"));
+		shareTable.setWidget(0, 1, email);
+		
+		for (int i = 0; i < shareTable.getRowCount(); i++) {
+			for (int j = 0; j < shareTable.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					shareTable.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					shareTable.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+		
+		Label l = new Label(" ");
+
+		HorizontalPanel hp = new HorizontalPanel();
+		Button share = new Button("Compartir");
+		Button cancel = new Button("Cancelar");
+		share.setStyleName("aon-commandButton");
+		cancel.setStyleName("aon-commandButton");
+		share.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				// TODO check correct email syntax
+				
+				/*idoc.share(object, new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void result) {}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});	*/			
+			}
+		});
+		cancel.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				popup.hide();
+			}
+		});
+
+		hp.add(cancel);
+		hp.add(share);
+		vp.add(shareTable);
+		vp.add(l);
+		vp.add(hp);
+		vp.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_RIGHT);
+		popup.setGlassEnabled(true);
+		popup.add(vp);
+		popup.show();
+	}
+	
+	private void info(FileInfo object) {
+		popup = new DialogBox();
+		//popup.getCaption().setText("EDITAR ARCHIVO");
+		popup.getCaption().setHTML("<div id=\"aonContent:corporateIdentityAttachForm:j_id3147\" class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">DETALLES ARCHIVO</span></div>");
+		
+		VerticalPanel vp = new VerticalPanel();
+		FlexTable infoTable = new FlexTable();
+		
+		infoTable.setStyleName("aon-panelGrid");
+		infoTable.setWidth("300px");
+		infoTable.setBorderWidth(1);
+		infoTable.setCellSpacing(0);
+
+		infoTable.setWidget(0, 0, new Label("Descripci\u00f3n"));
+		infoTable.setWidget(0, 1, new Label(object.getTitle()));
+		
+		infoTable.setWidget(1, 0, new Label("Confidencial"));
+		infoTable.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
+		
+		infoTable.setWidget(2, 0, new Label("Fecha"));
+		infoTable.setWidget(2, 1, new Label(object.getDateStr()));
+		
+		infoTable.setWidget(3, 0, new Label("Categoria"));
+		infoTable.setWidget(3, 1, new Label(object.getCategoryStr()));
+		
+		infoTable.setWidget(4, 0, new Label("Etiquetas"));
+		infoTable.setWidget(4, 1, new Label(object.getTagsStr()));
+	
+		infoTable.setWidget(5, 0, new Label("Ambito"));
+		infoTable.setWidget(5, 1, new Label(object.getScope().getName()));
+		
+		infoTable.setWidget(6, 0, new Label("Tamaño"));
+		infoTable.setWidget(6, 1, new Label(object.getSizeStr()));
+		
+		infoTable.setWidget(7, 0, new Label("Mime Type"));
+		infoTable.setWidget(7, 1, new Label(""));//MimeType.values()[object.getMimetype()].getName()));
+				
+		for (int i = 0; i < infoTable.getRowCount(); i++) {
+			for (int j = 0; j < infoTable.getCellCount(i); j++) {
+				if ((j % 2) == 0) {
+					infoTable.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-odd");
+				} else {
+					infoTable.getCellFormatter().setStyleName(i, j,
+							"aon-panelGrid-even");
+				}
+			}
+		}
+		
+		Label l = new Label(" ");
+		
+		Button exit = new Button("Salir");
+		exit.setStyleName("aon-commandButton");
+
+		exit.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				popup.hide();
+			}
+		});
+
+		vp.add(infoTable);
+		vp.add(l);
+		vp.add(exit);
+		vp.setCellHorizontalAlignment(exit, HasHorizontalAlignment.ALIGN_RIGHT);
+		popup.setGlassEnabled(true);
+		popup.add(vp);
+		popup.show();
+	}
 	
 	private void sons(TreeItem parent,Vector<TreeDriveInfo> sons) {
 		Window.alert("sons");
