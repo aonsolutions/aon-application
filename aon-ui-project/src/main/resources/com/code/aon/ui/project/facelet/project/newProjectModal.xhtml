@@ -10,14 +10,14 @@
 	
 	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/newDetailModal.xhtml">
 		<ui:param name="detailId" value="Project" />
-		<ui:param name="minWidth" value="900" />
-		<ui:param name="minHeight" value="450" />
+		<ui:param name="minWidth" value="640" />
+		<ui:param name="minHeight" value="400" />
 		<ui:param name="modalTitle" value="#{bundle.aon_project}" />
 		<ui:param name="showNewDetailWindow" value="#{controller.showNewProjectWindow}" />
 		<ui:param name="detailController" value="#{projectController}" />
 	
 		<ui:define name="content">
-			<ui:include src="/com/code/aon/ui/project/facelet/project/form_content.xhtml" >
+			<ui:include src="/com/code/aon/ui/project/facelet/project/formContent.xhtml" >
 				<ui:param name="controller" value="#{projectController}" />
 			</ui:include>
 		</ui:define>
