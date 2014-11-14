@@ -59,7 +59,7 @@ public class AdvanceInvoicing {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
 				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
 					Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
-					double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent());
+					double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
 					createAdvanceInvoiceAddress(invoice, reservation);
 					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
 					recordInvoice(invoice);
@@ -110,8 +110,11 @@ public class AdvanceInvoicing {
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
-	private double createAdvanceInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advancePercent) throws ManagerBeanException {
-		double advanceAmount = (reservation.isGuestHolder()) ? reservation.getAdvance() : CommonUtil.round(reservation.getTotal() * advancePercent / 100);
+	private double createAdvanceInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advancePercent, double advanceAmount) 
+			throws ManagerBeanException {
+		if (advanceAmount == 0) {
+			advanceAmount = (reservation.isGuestHolder()) ? reservation.getAdvance() : CommonUtil.round(reservation.getTotal() * advancePercent / 100);
+		}
 
 		ReservationUtils reservationUtils = new ReservationUtils();
 		double vatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());

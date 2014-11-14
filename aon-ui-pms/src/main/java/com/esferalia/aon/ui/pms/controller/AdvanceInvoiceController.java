@@ -28,7 +28,9 @@ public class AdvanceInvoiceController extends BasicController{
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Date advanceDate;
+	private boolean percent;
 	private double advancePercent;
+	private double advanceAmount;
 	private PayMethod advancePayMethod;
 	private RegistryBank advanceBank;
 	private int advanceDaysToPayment;
@@ -41,11 +43,25 @@ public class AdvanceInvoiceController extends BasicController{
 		this.advanceDate = advanceDate;
 	}
 
+	public boolean getPercent() {
+		return percent;
+	}
+	public void setPercent(boolean percent) {
+		this.percent = percent;
+	}
+	
 	public double getAdvancePercent() {
 		return advancePercent;
 	}
 	public void setAdvancePercent(double advancePercent) {
 		this.advancePercent = advancePercent;
+	}
+	
+	public double getAdvanceAmount() {
+		return advanceAmount;
+	}
+	public void setAdvanceAmount(double advanceAmount) {
+		this.advanceAmount = advanceAmount;
 	}
 	
 	public PayMethod getAdvancePayMethod() {
@@ -79,12 +95,24 @@ public class AdvanceInvoiceController extends BasicController{
 
 	public void onAdvanceInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		setAdvanceDate(new Date());
+		setPercent(false);
 		setAdvancePercent(0);
+		setAdvanceAmount(0);
 		setAdvancePayMethod(null);
 		setAdvanceBank(null);
 		setAdvanceDaysToPayment(0);
 	}
-	
+
+	public void onAdvancePercentMode(ActionEvent event) {
+		setPercent(true);
+		setAdvanceAmount(0);
+	}
+
+	public void onAdvanceAmountMode(ActionEvent event) {
+		setPercent(false);
+		setAdvancePercent(0);
+	}
+
 	public boolean isBankRequired() {
 		return (advancePayMethod != null && (advancePayMethod.getType() == PayMethodType.BANK_TRANSFER || advancePayMethod.getType() == PayMethodType.CHEQUE)); 		 
 	}
@@ -101,6 +129,7 @@ public class AdvanceInvoiceController extends BasicController{
 				advanceInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 				advanceInvoiceTo.setIssueDate(getAdvanceDate());
 				advanceInvoiceTo.setPercent(getAdvancePercent());
+				advanceInvoiceTo.setAmount(getAdvanceAmount());
 				advanceInvoiceTo.setPayMethod(getAdvancePayMethod());
 				advanceInvoiceTo.setRegistryBank(getAdvanceBank());
 				advanceInvoiceTo.setFinanceDate(getAdvancePaymentDate());

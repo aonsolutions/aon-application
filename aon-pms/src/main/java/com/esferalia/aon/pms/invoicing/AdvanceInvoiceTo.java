@@ -12,6 +12,7 @@ public class AdvanceInvoiceTo implements IReservationConstants {
 	private boolean guestReservation;
 	private Date issueDate;
 	private double percent;
+	private double amount;
 	private PayMethod payMethod;
 	private RegistryBank registryBank;
 	private Date financeDate;
@@ -36,6 +37,13 @@ public class AdvanceInvoiceTo implements IReservationConstants {
 	}
 	public void setPercent(double percent) {
 		this.percent = percent;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 
 	public PayMethod getPayMethod() {

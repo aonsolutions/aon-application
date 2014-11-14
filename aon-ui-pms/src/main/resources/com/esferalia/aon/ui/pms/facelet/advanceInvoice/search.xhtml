@@ -24,7 +24,7 @@
 				<ui:define name="searchContent">
 					<aon:outputText value="&#160;"/>
 					<aon:div>
-						<aon:selectBooleanCheckbox for="ProjectReservation_guestReservationSearch" 
+						<aon:selectBooleanCheckbox id="ProjectReservation_guestReservationSearch" 
 							value="#{advanceInvoiceSearch.guestReservationSearch}" >
 							<a4j:support event="onclick" reRender="advanceInvoiceSearch" ignoreDumpResponses="true" ajaxSingle="true" />
 						</aon:selectBooleanCheckbox>

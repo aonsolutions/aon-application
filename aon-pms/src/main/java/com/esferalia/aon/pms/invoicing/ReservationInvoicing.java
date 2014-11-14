@@ -495,6 +495,8 @@ public class ReservationInvoicing implements IReservationConstants {
 	}
 
 	private void updateInvoiceDate(Invoice invoice) throws ManagerBeanException {
+		//La Factura se graba inicialmente con la fecha de inicio de la Reserva, para que los impuestos se apliquen a esa fecha, y la fecha de iva igual. Pero 
+		//posteriormente se modifica esa fecha si no coincide con la fecha actual, para mantener la correlatividad fecha - serie/numero.
 		if (!DateUtils.isSameDay(invoice.getIssueDate(), new Date())) {
 			invoice.setIssueDate(new Date());
 		}
