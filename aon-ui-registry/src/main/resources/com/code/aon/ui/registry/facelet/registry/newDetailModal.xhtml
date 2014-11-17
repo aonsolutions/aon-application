@@ -20,13 +20,13 @@
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
-						<aon:commandButton type="close-button"
+						<aon:commandButton id="#{detailId}-close" immediate="true"
+							type="close-button"
 							styleClass="aon-popupWindow-close"
 							actionListener="#{detailController.onCancel}"
-							reRender="showNew#{detailId}Window" immediate="true">
+							reRender="showNew#{detailId}Window,#{modalReRender}">
 							<aon:actionHotKey key="esc" />
-							<f:setPropertyActionListener
-								target="#{showNewDetailWindow}"
+							<f:setPropertyActionListener target="#{showNewDetailWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
