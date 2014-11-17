@@ -88,10 +88,11 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
+		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		try {
-			insertProjectReservationGuest((ProjectReservation)controller.getTo(), controller.getGuestName(), controller.getGuestSurname());
+			insertProjectReservationGuest(reservation, controller.getGuestName(), controller.getGuestSurname());
 			if (controller.getRoomItem() != null) {
-				insertProjectReservationRoom((ProjectReservation)controller.getTo(), controller.getRoomItem(), controller.getRoomTariff());
+				insertProjectReservationRoom(reservation, controller.getRoomItem(), controller.getRoomTariff());
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

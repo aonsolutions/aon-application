@@ -419,20 +419,17 @@ public class BasicController extends AbstractPojoController implements IControll
 			accept();
 			if (updateModel) {
 				resetBackProccess();
-				if (updateModel) {
-					resetBackProccess();
-					if (!isQueryOnStartUP() && !(this instanceof LinesController)) {
-						if (!onlySearchNewValues) {
-							searchNewValuesIndex = getManagerBean().getId(getTo());
-							onlySearchNewValues = true;
-						}
-						clearCriteria();
-						Criteria criteria = getCriteria();
-						criteria.addGreaterThanOrEqualExpression(getIdAlias(), searchNewValuesIndex);
+				if (!isQueryOnStartUP() && !(this instanceof LinesController)) {
+					if (!onlySearchNewValues) {
+						searchNewValuesIndex = getManagerBean().getId(getTo());
+						onlySearchNewValues = true;
 					}
-					initializeModel();
-					synchronizeAddedPojo();
+					clearCriteria();
+					Criteria criteria = getCriteria();
+					criteria.addGreaterThanOrEqualExpression(getIdAlias(), searchNewValuesIndex);
 				}
+				initializeModel();
+				synchronizeAddedPojo();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onAccept",e);
@@ -454,7 +451,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * in the model too.
 	 */
 	@SuppressWarnings("unchecked")
-	private void synchronizeAddedPojo() throws ManagerBeanException {
+	protected void synchronizeAddedPojo() throws ManagerBeanException {
 		if (getModel() instanceof ExtendedPageDataModel) {
 			List<ITransferObject> list = (List<ITransferObject>)getModel().getWrappedData();
 			for (ITransferObject to : list) {

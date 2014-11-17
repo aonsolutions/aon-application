@@ -292,6 +292,12 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	@Override
+	protected void synchronizeAddedPojo() throws ManagerBeanException {
+		super.synchronizeAddedPojo();
+		getReservationPermission().setReservation((ProjectReservation)getTo());
+	}
+
+	@Override
 	public Object getSelectedTO() {
 		try {
 			return getManagerBean().get(((ProjectReservation)this.model.getRowData()).getId());
