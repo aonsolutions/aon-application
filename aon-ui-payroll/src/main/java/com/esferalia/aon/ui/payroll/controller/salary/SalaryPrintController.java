@@ -303,7 +303,6 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	@Override
 	public void onSearch(ActionEvent arg0) {
 		try {
-			super.onSearch(arg0);
 			onFilter(arg0);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("No se ha podido procesar la búsqueda.");
@@ -380,6 +379,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		this.enterprise = null;
 		this.workPlace = null;
 		this.types = null;
+		this.betweenDatesEnabled = false;
 		this.month = Month.getMonthByValue(CommonUtil.getMonth(new Date()));
 		this.year = CommonUtil.getYear(new Date());
 		Date lastSalaryDate = null;
@@ -826,7 +826,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
 			ServletOutputStream output = response.getOutputStream();
 
-			if(!provider.excelReport(year, month, null, null, null, new LinkedList<Integer>(checks), output)){
+			if(!provider.excelReport(getFromDate(), getToDate(), null, null, null, new LinkedList<Integer>(checks), output)){
 				AonUtil.addErrorMessage("No existen datos para generar el informe.");
 			}
 			

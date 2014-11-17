@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Types;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,6 +26,8 @@ import javax.faces.event.AbortProcessingException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.jooq.DSLContext;
 import org.jooq.JoinType;
 import org.jooq.Record;
@@ -40,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
@@ -79,26 +79,22 @@ public class EnterpriseCostProvider implements Serializable {
 		this.salaryConceptsMap = salaryConceptsMap;
 	}
 	
-		
-	public boolean excelReport(Integer year, Month month, Integer domain, OutputStream output) throws IOException, ReportException, AonConnectionException {
-		return excelReport(year, month, domain, null, null, null, output);
-	}
-	public boolean excelReport(Integer year, Month month, Integer domain, List<Integer> cccList, OutputStream output) throws IOException, ReportException, AonConnectionException {
-		return excelReport(year, month, domain, cccList, null, null, output);
-	}
-	public boolean excelReport(Integer year, Month month, Integer domain, List<Integer> cccList, List<Integer> workPlaceList, List<Integer> salaryList, OutputStream output) throws IOException, ReportException, AonConnectionException {
+	public boolean excelReport(Date startDate, Date endDate, Integer domain, List<Integer> cccList, List<Integer> workPlaceList, List<Integer> salaryList, OutputStream output) throws IOException, ReportException, AonConnectionException {
 		Connection conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-		int salaryCount = initSalaryContext(conn, year, month, domain, cccList, workPlaceList, salaryList);
+		int salaryCount = initSalaryContext(conn, startDate, endDate, domain, cccList, workPlaceList, salaryList);
 		if(salaryCount<=0){
 			return false;
 		}
 		
 		CustomExcelReportExporter exporter = new CustomExcelReportExporter();
 		
-		exporter.startExport("Conceptos");
-		ReportMetadata conceptColumnMetadata = getConceptColumnMetadata();
-		exporter.exportHeader(conceptColumnMetadata);
-		excelReportByConcept(exporter, conceptColumnMetadata);
+		// MS EXCEL 97 not support more than 256 columns 
+		if(salaryCount<256){
+			exporter.startExport("Conceptos");
+			ReportMetadata conceptColumnMetadata = getConceptColumnMetadata();
+			exporter.exportHeader(conceptColumnMetadata);
+			excelReportByConcept(exporter, conceptColumnMetadata);
+		}
 
 		exporter.startSheet("Trabajadores");
 		ReportMetadata contractColumnMetadata = getContractColumnMetadata();
@@ -109,20 +105,13 @@ public class EnterpriseCostProvider implements Serializable {
 		output.flush();
 		return true;
 	}
-
-	private int initSalaryContext(Connection connection, Integer year,
-			Month month, Integer domain, List<Integer> cccIds,
+	
+	private int initSalaryContext(Connection connection, Date startDate, Date endDate, Integer domain, List<Integer> cccIds,
 			List<Integer> workPlaceIds, List<Integer> salaryIds) throws AonConnectionException {
-	if(domain==null && cccIds==null && workPlaceIds==null && salaryIds==null){
+		
+		if(domain==null && cccIds==null && workPlaceIds==null && salaryIds==null){
 			throw new AbortProcessingException("One of 'domain' or 'cccIdList' or 'workPlaceIds' or 'salaryIdList' is expected.");
 		}
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month.getValue());
-		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
-		Date startDate = cal.getTime();
-		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-		Date endDate = cal.getTime();
 		
 		Result<Record> salaryRecords = (Result<Record>) getSalaryRecords(connection, startDate, endDate, domain, cccIds, workPlaceIds, salaryIds);
 		
@@ -139,6 +128,17 @@ public class EnterpriseCostProvider implements Serializable {
 			salaryList = new LinkedList<Integer>();
 			salaryConceptsMap = new HashMap<String, Object>();
 			
+			for (Record salaryPayment : salaryPaymentRecords) {
+				Integer salaryId = salaryPayment.getValue(SALARY_PAYMENT.SALARY);
+				Integer type = salaryPayment.getValue(SALARY_PAYMENT.TYPE).intValue();
+				Double amount = salaryPayment.getValue(SALARY_PAYMENT.AMOUNT);
+				if(salaryConceptsMap.containsKey(type + "_" + salaryId)){
+					salaryConceptsMap.put(type + "_" + salaryId, ((Double)salaryConceptsMap.get(type + "_" + salaryId)) + amount);
+				} else {
+					salaryConceptsMap.put(type + "_" + salaryId, amount);
+				}
+			}
+			
 			for (Record salaryDeduction : salaryDeductionRecords) {
 				Integer salaryId = salaryDeduction.getValue(SALARY_DEDUCTION.SALARY);
 				String concept = salaryDeduction.getValue(SALARY_DEDUCTION.DEDUCTION_CONCEPT);
@@ -153,9 +153,30 @@ public class EnterpriseCostProvider implements Serializable {
 				salaryConceptsMap.put(concept + "_" + salaryId, amount);
 			}
 
+			for (Record salaryBonus : salaryBonusRecords) {
+				Integer salaryId = salaryBonus.getValue(SALARY_BONUS.SALARY);
+				Double amount = salaryBonus.getValue(SALARY_BONUS.AMOUNT);
+				if(salaryConceptsMap.containsKey(QuoteConcept.BONUS.name()+"_" + salaryId)){
+					salaryConceptsMap.put(QuoteConcept.BONUS.name()+"_" + salaryId, ((Double)salaryConceptsMap.get(QuoteConcept.BONUS.name()+"_" + salaryId)) + amount);
+				} else {
+					salaryConceptsMap.put(QuoteConcept.BONUS.name()+"_" + salaryId, amount);
+				}
+			}
+			
+			for (Record salaryEmbargo : salaryEmbargoRecords) {
+				Integer salaryId = salaryEmbargo.getValue(SALARY_EMBARGO.SALARY);
+				Double amount = salaryEmbargo.getValue(SALARY_EMBARGO.AMOUNT);
+				if(salaryConceptsMap.containsKey(QuoteConcept.EMBARGO.name()+"_" + salaryId)){
+					salaryConceptsMap.put(QuoteConcept.EMBARGO.name()+"_" + salaryId, ((Double)salaryConceptsMap.get(QuoteConcept.EMBARGO.name()+"_" + salaryId)) + amount);
+				} else {
+					salaryConceptsMap.put(QuoteConcept.EMBARGO.name()+"_" + salaryId, amount);
+				}
+			}
+
 			for (Record salary : salaryRecords) {
 				Integer salaryId = salary.getValue(SALARY.ID);
 				salaryList.add(salaryId);
+				salaryConceptsMap.put(QuoteConcept.DATE.name() + "_" + salaryId,salary.getValue(SALARY.END_DATE));
 				salaryConceptsMap.put(QuoteConcept.ENTERPRISE_CCC.name() + "_" + salaryId,salary.getValue(SALARY.CCC));
 				salaryConceptsMap.put(QuoteConcept.EMPLOYEE_NAME.name() + "_" + salaryId,salary.getValue(SALARY.EMPLOYEE_NAME));
 				salaryConceptsMap.put(QuoteConcept.REMUNERATION.name() + "_" + salaryId,salary.getValue(SALARY.REMUNERATION));
@@ -186,6 +207,7 @@ public class EnterpriseCostProvider implements Serializable {
 		ReportMetadata metadata = new ReportMetadata();
 		// salary
 //		metadata.getColumns().add(new ReportColumnMetadata("salary",Types.INTEGER,"cod. nomina",5));
+		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.DATE.name(),Types.DATE,"Periodo liquidacion",15));
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.ENTERPRISE_CCC.name(),Types.VARCHAR,"Cuenta de cotiz.",15));
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.EMPLOYEE_NAME.name(),Types.VARCHAR,"Trabajador",30));
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.TOTAL_PAYMENT.name(),Types.DOUBLE,"Total devengos",10));
@@ -205,6 +227,10 @@ public class EnterpriseCostProvider implements Serializable {
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.SOCIAL_SECURITY_CONTRIBUTIONS.name(),Types.DOUBLE,"Contribucion a la S.S.",10));
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.TOTAL_ENTERPRISE.name(),Types.DOUBLE,"Total empresa",10));
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.TOTAL_IRPF.name(),Types.DOUBLE,"Total Irpf",10));
+		// salary_bonus
+		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.BONUS.name(),Types.DOUBLE,"Bonificado",10));
+		// salary_embargo
+		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.EMBARGO.name(),Types.DOUBLE,"Embargado",10));
 		// salary_deduction
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.CGC.name()+"_PERCENT",Types.DOUBLE,"%",4));
 		metadata.getColumns().add(new ReportColumnMetadata(QuoteConcept.CGC.name(),Types.DOUBLE,"Cont. comunes",10));
@@ -283,6 +309,16 @@ public class EnterpriseCostProvider implements Serializable {
 //		exportSalaryAllColumns(exporter, metadata, "PAYMENT");
 		
 		// ****************************
+		// salary_bonus
+		// ****************************
+		exporter.startLine();
+		exportSalaryAllColumns(exporter, metadata, QuoteConcept.BONUS.name(), "Bonificado");
+		// ****************************
+		// salary_embargo
+		// ****************************
+		exporter.startLine();
+		exportSalaryAllColumns(exporter, metadata, QuoteConcept.EMBARGO.name(), "Embargado");
+		// ****************************
 		// salary_deduction
 		// ****************************
 		exporter.startLine();
@@ -308,18 +344,6 @@ public class EnterpriseCostProvider implements Serializable {
 		exportSalaryAllColumns(exporter, metadata, QuoteConcept.DESMPL_E.name(),  "Desempleo (empresa)");
 		exportSalaryAllColumns(exporter, metadata, QuoteConcept.ATEP_E.name(), "IT A.T. o E.P.");
 		exportSalaryAllColumns(exporter, metadata, QuoteConcept.ECSS_E.name(), "IT Enfermedad comun");
-		
-		// ****************************
-		// salary_bonus
-		// ****************************
-//		exporter.startLine();
-//		exportSalaryAllColumns(exporter, metadata, "BONUS");
-		
-		// ****************************
-		// salary_embargo
-		// ****************************
-//		exporter.startLine();
-//		exportSalaryAllColumns(exporter, metadata, "EMBARGO");
 		
 	}
 	
@@ -360,6 +384,7 @@ public class EnterpriseCostProvider implements Serializable {
 			exporter.startLine();
 			// salary
 //			exporter.exportColumn(metadata.getColumns().get(column++), salary);
+			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.DATE.name()+"_"+ salary));
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.ENTERPRISE_CCC.name()+"_"+ salary));
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.EMPLOYEE_NAME.name()+"_" + salary));
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.TOTAL_PAYMENT.name()+"_" + salary));
@@ -379,7 +404,10 @@ public class EnterpriseCostProvider implements Serializable {
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.SOCIAL_SECURITY_CONTRIBUTIONS.name()+"_" + salary));
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.TOTAL_ENTERPRISE.name()+"_" + salary));
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.TOTAL_IRPF.name()+"_" + salary));
-			
+			// salary_bonus
+			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.BONUS.name()+"_" + salary));
+			// salary_embargo
+			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.EMBARGO.name()+"_" + salary));
 			// salary_deduction
 			exporter.exportColumn(metadata.getColumns().get(column++), getPercent((Double) salaryConceptsMap.get(QuoteConcept.CGC.name()+"_" + salary), cgcBase));
 			exporter.exportColumn(metadata.getColumns().get(column++), salaryConceptsMap.get(QuoteConcept.CGC.name()+"_" + salary));
@@ -433,7 +461,7 @@ public class EnterpriseCostProvider implements Serializable {
 	// SQL
 	// /////////////////////////
 
-	public Result<?> getSalaryRecords(Connection connection, Date startDate, Date endDate,
+	public Result<Record> getSalaryRecords(Connection connection, Date startDate, Date endDate,
 			Integer domainId, List<Integer> cccIds, List<Integer> workPlaceIds, List<Integer> salaryIds) {
 		DSLContext ctx = DSL.using(connection, getDefaultSettings());
 		SelectQuery<Record> query = ctx.selectQuery();
@@ -441,7 +469,7 @@ public class EnterpriseCostProvider implements Serializable {
 		query.addJoin(CONTRACT, JoinType.LEFT_OUTER_JOIN, SALARY.CONTRACT.equal(CONTRACT.ID));
 		query.addConditions(SALARY.END_DATE.greaterOrEqual(new java.sql.Date(startDate.getTime())));
 		query.addConditions(SALARY.END_DATE.lessOrEqual(new java.sql.Date(endDate.getTime())));
-		query.addOrderBy(SALARY.CCC, SALARY.EMPLOYEE_NAME);
+		query.addOrderBy(SALARY.END_DATE.desc(), SALARY.CCC.asc(), SALARY.EMPLOYEE_NAME.asc());
 		if (domainId != null) {
 			query.addConditions(SALARY.DOMAIN.equal(domainId));
 		}
@@ -457,35 +485,35 @@ public class EnterpriseCostProvider implements Serializable {
 		return query.fetch();
 	}
 
-	public Result<?> getSalaryPaymentRecords(Connection connection, Date startDate, Date endDate,
+	public Result<Record> getSalaryPaymentRecords(Connection connection, Date startDate, Date endDate,
 			Integer domainId, List<Integer> cccIds, List<Integer> workPlaceIds, List<Integer> salaryIds, boolean onlyHeaders) {
 		SelectQuery<Record> query = obtainSalaryLinesQuery(connection, startDate, endDate,
 				domainId, cccIds, workPlaceIds, salaryIds, SALARY_PAYMENT, SALARY_PAYMENT.SALARY, SALARY_PAYMENT.PAYMENT_CONCEPT);
 		return query.fetch();
 	}
 
-	public Result<?> getSalaryDeductionRecords(Connection connection, Date startDate, Date endDate,
+	public Result<Record> getSalaryDeductionRecords(Connection connection, Date startDate, Date endDate,
 			Integer domainId, List<Integer> cccIds, List<Integer> workPlaceIds, List<Integer> salaryIds, boolean onlyHeaders) {
 		SelectQuery<Record> query = obtainSalaryLinesQuery(connection, startDate, endDate,
 				domainId, cccIds, workPlaceIds, salaryIds, SALARY_DEDUCTION, SALARY_DEDUCTION.SALARY, SALARY_DEDUCTION.DEDUCTION_CONCEPT);
 		return query.fetch();
 	}
 
-	public Result<?> getSalaryCostRecords(Connection connection, Date startDate, Date endDate,
+	public Result<Record> getSalaryCostRecords(Connection connection, Date startDate, Date endDate,
 			Integer domainId, List<Integer> cccIds, List<Integer> workPlaceIds, List<Integer> salaryIds, boolean onlyHeaders) {
 		SelectQuery<Record> query = obtainSalaryLinesQuery(connection, startDate, endDate,
 				 domainId, cccIds, workPlaceIds, salaryIds, SALARY_COST, SALARY_COST.SALARY, SALARY_COST.COST_CONCEPT);
 		return query.fetch();
 	}
 	
-	public Result<?> getSalaryBonusRecords(Connection connection, Date startDate, Date endDate,
+	public Result<Record> getSalaryBonusRecords(Connection connection, Date startDate, Date endDate,
 			Integer domainId, List<Integer> cccIds, List<Integer> workPlaceIds, List<Integer> salaryIds) {
 		SelectQuery<Record> query = obtainSalaryLinesQuery(connection, startDate, endDate,
 				 domainId, cccIds, workPlaceIds, salaryIds, SALARY_BONUS, SALARY_BONUS.SALARY);
 		return query.fetch();
 	}
 	
-	public Result<?> getSalaryEmbargoRecords(Connection connection, Date startDate, Date endDate,
+	public Result<Record> getSalaryEmbargoRecords(Connection connection, Date startDate, Date endDate,
 			Integer domainId, List<Integer> cccIds, List<Integer> workPlaceIds, List<Integer> salaryIds) {
 		SelectQuery<Record> query = obtainSalaryLinesQuery(connection, startDate, endDate,
 				 domainId, cccIds, workPlaceIds, salaryIds, SALARY_EMBARGO, SALARY_EMBARGO.SALARY);
@@ -544,26 +572,11 @@ public class EnterpriseCostProvider implements Serializable {
 		return SETTINGS;
 	}
 
-	private String completeLenght(Double value, int lenght) {
-		return completeLenght(value != null ? value.toString() : null, lenght);
-	}
-
-	private String completeLenght(Integer value, int lenght) {
-		return completeLenght(value != null ? value.toString() : null, lenght);
-	}
-
-	private String completeLenght(String value, int lenght) {
-		value = value == null ? "" : value;
-		while (value.length() < lenght) {
-			value = " " + value;
-		}
-		return value;
-	}
-	
 	public class CustomExcelReportExporter extends ExcelReportExporter {
+		
 		public void startSheet(String name){
-			Field sheetField = null;
 			Field workbookField = null;
+			Field sheetField = null;
 			Field columnCountField = null;
 			Field rowCountField = null;
 			Field cellCountField = null;
@@ -587,7 +600,7 @@ public class EnterpriseCostProvider implements Serializable {
 			    cellCountField = ExcelReportExporter.class.getDeclaredField("cellCount");
 			    cellCountField.setAccessible(true);
 			    cellCountField.set(this, 0);
-				
+			    
 			} catch (SecurityException e) {
 				LOGGER.error(e.getMessage());
 			} catch (NoSuchFieldException e) {
@@ -598,11 +611,13 @@ public class EnterpriseCostProvider implements Serializable {
 				LOGGER.error(e.getMessage());
 			}
 		}
+		
 	}
 	
 	public enum QuoteConcept {
 		
 		// salary
+		DATE,
 		ENTERPRISE_CCC,
 		EMPLOYEE_NAME,
 		REMUNERATION,
@@ -622,6 +637,8 @@ public class EnterpriseCostProvider implements Serializable {
 		MONEY_IRPF_BASE,
 		INKIND_IRPF_BASE,
 		IRPF_BASE,
+		
+		// salary_payment
 		
 		// salary_deduction
 		CGC,
@@ -643,6 +660,12 @@ public class EnterpriseCostProvider implements Serializable {
 		DESMPL_E,
 		ATEP_E,
 		ECSS_E,
+		
+		// salary_bonus
+		BONUS,
+		
+		// salary_embargo
+		EMBARGO,
 		;
 	}
 	
