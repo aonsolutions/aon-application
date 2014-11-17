@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf.basicCopy;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -12,6 +13,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldIndefinite;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldTemporary;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
@@ -35,11 +37,9 @@ public class BasicCopy extends AbstractContractBasicCopy {
 	
 	public void loadPdfFieldValues(ContractCode code, Contract contract, List<IContrataParams> contrataParams) throws UnsupportedContractDocumentException{
 		
-		
 		try {
 			PdfReader reader = new PdfReader(getContractBasicCopyUrl(documentName+".pdf"));
 			readPdfFields(reader);
-//			super.loadPdfCommonFields(contract);
 
 			ContrataContratoParams contrata = null;
 			if(contrataParams!=null && contrataParams.size()>0){
@@ -62,14 +62,13 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
 			setPdfFieldValue(BasicCopyField.ENTERPRISE_ADDRESS.getValue(),address.getFullAddress());
 			try {
-				// TODO: Must include enterprise municipality name in the contract basic copy?
-//				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
-//				setPdfFieldValue(ENTERPRISE_MUNICIPALITY_NAME,bundle.getString(address.getMunicipalityCode()));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE1.getValue(),address.getMunicipalityCode().substring(0, 1));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE2.getValue(),address.getMunicipalityCode().substring(1, 2));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE3.getValue(),address.getMunicipalityCode().substring(2, 3));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE4.getValue(),address.getMunicipalityCode().substring(3, 4));
 				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_CODE5.getValue(),address.getMunicipalityCode().substring(4, 5));
+				ResourceBundle bundle = ResourceBundle.getBundle(MUNICIPALITIES_BUNDLE_BASE_NAME);
+				setPdfFieldValue(BasicCopyField.ENTERPRISE_MUNICIPALITY_NAME.getValue(),bundle.getString(address.getMunicipalityCode()));
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -107,13 +106,6 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(BasicCopyField.SALARY_AMOUNT.toString()))){
 				setPdfFieldValue(BasicCopyField.SALARY_AMOUNT.getValue(), getContractInfoMap(contract).get(BasicCopyField.SALARY_AMOUNT.toString()));
 			}
-//			setPdfFieldValue(CONTRACT_REMUNERATION_EURO, "euros brutos");
-			setPdfFieldValue(BasicCopyField.SALARY_AMOUNT_EURO.getValue(), "");
-			
-//			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(BasicCopyField.SALARY_PERIOD.toString()))){
-//				setPdfFieldValue(BasicCopyField.SALARY_PERIOD.getValue(), getContractInfoMap(contract).get(BasicCopyField.SALARY_PERIOD.toString()));
-//			}
-			setPdfFieldValue(BasicCopyField.SALARY_PERIOD.getValue(), "");
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(BasicCopyField.HOLIDAYS.toString()))){
 				setPdfFieldValue(BasicCopyField.HOLIDAYS.getValue(), getContractInfoMap(contract).get(BasicCopyField.HOLIDAYS.toString()));
@@ -130,13 +122,15 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			boolean isFullTimeDiscontinuous = code.getValue().startsWith("3") && StringUtils.isBlank(weekHours);
 			boolean isPartialTimeDiscontinuous = code.getValue().startsWith("3") && StringUtils.isNotBlank(weekHours);
 			if(code.getValue().startsWith("1") || code.getValue().startsWith("4") || isFullTimeDiscontinuous){
-				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
-					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL_HOURS_1.getValue()).setValue(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()));				
-					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL_HOURS_2).setValue(String.valueOf(""));
-				}
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_START_TIME.toString()))
 					&& StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString()))){
-					String journalPeriod = "HORAS";
+					String journalPeriod = "";
+					if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
+						journalPeriod += getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());				
+						if(!StringUtils.containsIgnoreCase(journalPeriod,"HORAS")){
+							journalPeriod += " HORAS";
+						}
+					}
 					journalPeriod += " (" + getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_START_TIME.toString()) + " - ";
 					journalPeriod += getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString()) + ")";
 					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue(journalPeriod);
@@ -145,18 +139,33 @@ public class BasicCopy extends AbstractContractBasicCopy {
 				if(contrata!=null){
 					String horasJornada = contrata.getHorasJornada();
 					if(horasJornada!=null){
-						getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL_HOURS_1.getValue()).setValue(String.valueOf(Integer.parseInt(horasJornada)));				
-						getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL_HOURS_2).setValue(String.valueOf(""));
+						horasJornada = String.valueOf(Integer.parseInt(contrata.getHorasJornada()));
+						horasJornada += " HORA" + (Integer.parseInt(contrata.getHorasJornada())==1?"":"S");
 						if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
-							getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS ANUALES");
+							horasJornada += " ANUAL";
+							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
 						} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
-							getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS DIARIAS");
+							horasJornada += " DIARIA";
+							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"S";
 						} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
-							getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS MENSUALES");
+							horasJornada += " MENSUAL";
+							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
 						} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
-							getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue("HORAS SEMANALES");
+							horasJornada += " SEMANAL";
+							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
+						}
+					} else if(weekHours!=null){
+						horasJornada = "";
+						if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
+							horasJornada += getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());				
+							if(!StringUtils.containsIgnoreCase(horasJornada,"HORAS")){
+								horasJornada = " HORAS";
+							}
 						}
 					}
+					horasJornada += " (" + getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_START_TIME.toString()) + " - ";
+					horasJornada += getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_END_TIME.toString()) + ")";
+					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue(horasJornada);
 				}
 			}
 			
@@ -167,8 +176,6 @@ public class BasicCopy extends AbstractContractBasicCopy {
 		}
 	}
 	
-	
-
 }
 	
 	

@@ -1,10 +1,8 @@
 package com.esferalia.aon.file.payroll.contract.pdf.basicCopy;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -152,6 +150,7 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument<
 		ENTERPRISE_MUNICIPALITY_CODE3("codmuniem3"),
 		ENTERPRISE_MUNICIPALITY_CODE4("codmuniem4"),
 		ENTERPRISE_MUNICIPALITY_CODE5("codmuniem5"),
+		ENTERPRISE_MUNICIPALITY_NAME("nombre_muniem"),
 		ENTERPRISE_DIR_STAFF_NAME("nomrepr"),
 		
 		/*
@@ -166,14 +165,13 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument<
 		CONTRACT_TYPE("cto"),
 		CONTRACT_TOTAL_DURATION("totaldura1"),
 		CONTRACT_CATEGORY("catetraba"),
-		CONTRACT_JOURNAL_HOURS_1("horasjorna1"),
-		CONTRACT_JOURNAL_HOURS_2("horasjorna2"),
 		CONTRACT_JOURNAL("jornada"),
 		SALARY_AMOUNT("retribu"),
-		SALARY_AMOUNT_EURO("euros"),
-		SALARY_PERIOD("perioretri"),
 		HOLIDAYS("vacaciones"),
 		
+		/*
+		 * Date & Sign
+		 */
 		CONTRACT_SIGN_TOWN("munifirma"),
 		CONTRACT_SING_DAY("diafirma"),
 		CONTRACT_SIGN_MONTH("mesfirma"),
