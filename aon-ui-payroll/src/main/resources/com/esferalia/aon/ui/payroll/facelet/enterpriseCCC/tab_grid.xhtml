@@ -9,6 +9,14 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		
+		<ui:define name="beginFormListContent">
+			<aon:outputText  title="No existe ningún centro de trabajo en la provincia indicada en esta cuenta."
+				rendered="#{!controller.validGeozone}"
+				styleClass="aon-icon-exception"
+				style="padding-left: 15px;"
+				value="&#160;" />
+		</ui:define>
+		
 		<ui:define name="columns">
 		
 			<aon:column alias="EnterpriseCCC.type"
