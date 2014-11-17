@@ -58,6 +58,7 @@ public class AccountEntryDAO {
 			, int offset
 			, int numberOfRows
 			, Function<ResultSet, AccountEntry> function) {
+		ctx.checkRead();
 		String sql = ctx.getDslContext()
 			.selectFrom( ACCOUNT_ENTRY )
 			.where(condition)
@@ -82,6 +83,7 @@ public class AccountEntryDAO {
 			, Condition condition
 			, int offset
 			, int numberOfRows) {
+		ctx.checkRead();
 		return ctx.getDslContext()
 			.selectFrom( ACCOUNT_ENTRY )
 			.where(condition)
@@ -94,6 +96,7 @@ public class AccountEntryDAO {
 	}
 
 	public static void insert(AONContext ctx, AccountEntry ae) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			if (ae.getAccountPeriod() == null && ae.isPeriodCreationEnabled()) {
 				LOGGER.info(MessageFormat.format(
@@ -154,6 +157,7 @@ public class AccountEntryDAO {
 	}
 
 	public static void update(AONContext ctx, AccountEntry ae) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction( configuration -> {
 			AccountEntryValidation.validateEntry(ctx, ae);
 			ctx.getDslContext()
@@ -172,6 +176,7 @@ public class AccountEntryDAO {
 	}
 
 	public static void delete(AONContext ctx, AccountEntry accountEntry) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction( configuration -> {
 			AccountEntryDetailDAO.deleteEntry(ctx,accountEntry.getId());
 			ctx.getDslContext()
@@ -183,6 +188,7 @@ public class AccountEntryDAO {
 	}
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {
+		ctx.checkRead();
 		int count = ctx.getDslContext()
 				.selectFrom(ACCOUNT_ENTRY)
 				.where(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(period))

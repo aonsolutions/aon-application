@@ -17,6 +17,7 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 public class AccountPeriodDAO {
 
 	public static AccountPeriod fetchOne(AONContext ctx, Date date) {
+		ctx.checkRead();
 		Condition condition = ACCOUNT_PERIOD.DOMAIN.equal(ctx.getDomainId())
 				.and(ACCOUNT_PERIOD.INITIATION_DATE.lessOrEqual(AonDateUtils.toSql(date)))
 				.and(ACCOUNT_PERIOD.DEADLINE.greaterOrEqual(AonDateUtils.toSql(date)) );
@@ -24,11 +25,13 @@ public class AccountPeriodDAO {
 	}
 
 	public static AccountPeriod fetchOne(AONContext ctx, Integer id) {
+		ctx.checkRead();
 		return populateRecord(ctx.getDslContext().
 				fetchOne(ACCOUNT_PERIOD,ACCOUNT_PERIOD.ID.equal(id)));
 	}
 
 	public static AccountPeriod fetchOne(AONContext ctx, Condition condition) {
+		ctx.checkRead();
 		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT_PERIOD, condition));
 	}
 
@@ -50,6 +53,7 @@ public class AccountPeriodDAO {
 	}
 
 	public static void insert(AONContext ctx, AccountPeriod ap) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			AccountPeriodValidation.validatePeriod(ctx, ap);
 			AccountPeriodRecord record = ctx.getDslContext()
@@ -69,6 +73,7 @@ public class AccountPeriodDAO {
 	}
 
 	public static void update(AONContext ctx, AccountPeriod ap) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			AccountPeriodValidation.validatePeriod(ctx, ap);
 			ctx.getDslContext()
@@ -87,6 +92,7 @@ public class AccountPeriodDAO {
 	}
 
 	public static void delete(AONContext ctx, AccountPeriod ap) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
 				.delete(ACCOUNT_PERIOD)

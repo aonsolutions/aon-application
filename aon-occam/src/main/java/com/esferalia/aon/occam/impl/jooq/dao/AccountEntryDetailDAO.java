@@ -29,6 +29,7 @@ public class AccountEntryDetailDAO {
 	private static final Account BALANCING_ACCOUNT = ACCOUNT.as(BALANCING_ACCOUNT_NAME);
 
 	public static Seq<AccountEntryDetail> fetch(AONContext ctx, Integer accountEntryId) {
+		ctx.checkRead();
 		Condition condition = ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(accountEntryId); 
 		Function<ResultSet, AccountEntryDetail> function = Unchecked.function(rs -> new AccountEntryDetail(
 			 rs.getInt(ACCOUNT_ENTRY_DETAIL.ID.getName())
@@ -53,6 +54,7 @@ public class AccountEntryDetailDAO {
 	public static Seq<AccountEntryDetail> fetch(AONContext ctx, Condition condition
 			, int offset, int numberOfRows
 			, Function<ResultSet, AccountEntryDetail> function) {
+		ctx.checkRead();
 		String sql = ctx.getDslContext()
 				.select()
 				.from( ACCOUNT_ENTRY_DETAIL )
@@ -82,6 +84,7 @@ public class AccountEntryDetailDAO {
 	}
 
 	public static void insert(AONContext ctx, AccountEntryDetail detail) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			AccountEntryValidation.validateDetail(ctx, detail);
 			AccountEntryDetailRecord record =ctx.getDslContext()
@@ -102,6 +105,7 @@ public class AccountEntryDetailDAO {
 	}
 
 	public static void insertNoTransaction(AONContext ctx, AccountEntryDetail detail) {
+		ctx.checkWrite();
 		AccountEntryValidation.validateDetail(ctx, detail);
 		ctx.getDslContext()
 			.insertInto(ACCOUNT_ENTRY_DETAIL)
@@ -140,6 +144,7 @@ public class AccountEntryDetailDAO {
 	}
 
 	public static void update(AONContext ctx, AccountEntryDetail detail) {
+		ctx.checkWrite();
 		ctx.getDslContext().transaction( configuration -> {
 			AccountEntryValidation.validateDetail(ctx, detail);
 			ctx.getDslContext()
@@ -158,6 +163,7 @@ public class AccountEntryDetailDAO {
 	}
 
 	public static void delete(AONContext ctx, AccountEntryDetail detail) {
+		ctx.checkWrite();
 		ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY_DETAIL)
 			.where(ACCOUNT_ENTRY_DETAIL.ID.equal(detail.getId()))
@@ -165,6 +171,7 @@ public class AccountEntryDetailDAO {
 	}
 
 	public static void deleteEntry(AONContext ctx, Integer accountEntryId) {
+		ctx.checkWrite();
 		ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY_DETAIL)
 			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(accountEntryId))
