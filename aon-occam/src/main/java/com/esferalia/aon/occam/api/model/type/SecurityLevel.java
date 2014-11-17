@@ -2,8 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.core.commons.AonCoreException;
-import com.esferalia.aon.core.commons.AonError;
+import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.AonError;
 
 
 public enum SecurityLevel implements Serializable{

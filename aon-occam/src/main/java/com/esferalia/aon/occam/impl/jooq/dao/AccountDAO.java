@@ -4,10 +4,10 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
 import org.jooq.Condition;
 
-import com.esferalia.aon.core.commons.util.AonEnumUtils;
 import com.esferalia.aon.jooq.tables.records.AccountRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class AccountDAO {
 	

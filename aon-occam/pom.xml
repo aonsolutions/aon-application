@@ -38,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.core.commons</artifactId>
+			<artifactId>aon.watson</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

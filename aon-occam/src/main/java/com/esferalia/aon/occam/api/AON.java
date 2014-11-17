@@ -27,6 +27,7 @@ public class AON {
 	
 	// ------------------------------------ ACCOUNT
 	public static Account fetchAccount(AONContext ctx,Integer accountId) {
+		System.out.println("fetchAccount");
 		return getAccounting().fetchAccount(ctx, accountId);
 	}
 

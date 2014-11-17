@@ -39,6 +39,8 @@ public class AccountEntry implements Serializable {
 	private String comments;
 	private Collection<AccountEntryDetail> details;
 
+	private boolean periodCreationEnabled;
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -119,6 +121,13 @@ public class AccountEntry implements Serializable {
 		if (this.details == null) {
 			this.details = new LinkedList<AccountEntryDetail>();
 		}
+	}
+
+	public boolean isPeriodCreationEnabled() {
+		return periodCreationEnabled;
+	}
+	public void setPeriodCreationEnabled(boolean periodCreationEnabled) {
+		this.periodCreationEnabled = periodCreationEnabled;
 	}
 	
 }

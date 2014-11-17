@@ -6,10 +6,6 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import com.esferalia.aon.core.commons.AonCoreException;
-import com.esferalia.aon.core.commons.AonError;
-import com.esferalia.aon.core.commons.util.AonDateUtils;
-import com.esferalia.aon.core.commons.util.AonStringUtils;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -19,6 +15,10 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryValidation {
 
@@ -42,7 +42,7 @@ public class AccountEntryValidation {
 	 * El periodod del asiento es un dato obligatorio.
 	 */
 	public static BiConsumer<AccountEntry,AONContext> EMPTY_PERIOD = (ae,ctx) -> {
-		if (ae.getAccountPeriod() == null)
+		if (ae.getAccountPeriod() == null) 
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_PERIOD);
 	};
 	

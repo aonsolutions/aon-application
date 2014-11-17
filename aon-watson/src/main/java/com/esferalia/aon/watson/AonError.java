@@ -2,13 +2,15 @@ package com.esferalia.aon.watson;
 
 
 public enum AonError {
+	 READ_FORBIDDEN("El acceso de lectura al recurso solicitado, ha sido denegado.")
+	,WRITE_FORBIDDEN("El acceso de escritura al recurso solicitado, ha sido denegado.")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------
 	// -----------------------------------------------------------
-	  SECURITY_LEVEL_INVALID("Valor incorrecto para el enumerado 'Nivel de seguridad - Confidencial' ({0})")
-	  ,ACCOUNT_PERIOD_TYPE_INVALID("Valor incorrecto para el enumerado 'Estado' ({0})")
-	  ,ACCOUNT_ENTRY_TYPE_INVALID("Valor incorrecto para el enumerado 'Tipo de asiento' ({0})")
+	, SECURITY_LEVEL_INVALID("Valor incorrecto para el enumerado 'Nivel de seguridad - Confidencial' ({0})")
+	,ACCOUNT_PERIOD_TYPE_INVALID("Valor incorrecto para el enumerado 'Estado' ({0})")
+	,ACCOUNT_ENTRY_TYPE_INVALID("Valor incorrecto para el enumerado 'Tipo de asiento' ({0})")
 	// -----------------------------------------------------------
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
@@ -38,6 +40,7 @@ public enum AonError {
 	,ACCOUNT_ENTRY_SALARY_NO_LINES("No se han definido líneas en el apunte de nóminas.")
 	// -----------------------------------------------------------
 	// -----------------------------------------------------------
+
 
 	
 	;

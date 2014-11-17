@@ -6,13 +6,13 @@ import java.util.Date;
 
 import org.jooq.Condition;
 
-import com.esferalia.aon.core.commons.util.AonDateUtils;
-import com.esferalia.aon.core.commons.util.AonEnumUtils;
 import com.esferalia.aon.jooq.tables.records.AccountPeriodRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountPeriodValidation;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class AccountPeriodDAO {
 

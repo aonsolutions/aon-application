@@ -16,8 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.core.commons.AonCoreException;
-import com.esferalia.aon.core.commons.util.AonDateUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -25,6 +23,8 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 
 public class AccountingTest {

@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.core.commons.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountEntryDetail implements Serializable {
 

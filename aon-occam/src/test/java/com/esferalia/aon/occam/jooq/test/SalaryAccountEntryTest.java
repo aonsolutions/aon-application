@@ -3,12 +3,12 @@ package com.esferalia.aon.occam.jooq.test;
 
 import org.junit.Test;
 
-import com.esferalia.aon.core.commons.util.AonDateUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLine;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 
 public class SalaryAccountEntryTest {

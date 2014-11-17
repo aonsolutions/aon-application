@@ -16,12 +16,12 @@ import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
 import org.jooq.types.UInteger;
 
-import com.esferalia.aon.core.commons.AonCoreException;
 import com.esferalia.aon.jooq.tables.Account;
 import com.esferalia.aon.jooq.tables.records.AccountEntryDetailRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
+import com.esferalia.aon.watson.AonCoreException;
 
 public class AccountEntryDetailDAO {
 	

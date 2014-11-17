@@ -5,7 +5,9 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -16,9 +18,6 @@ import org.jooq.lambda.SQL;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.Unchecked;
 
-import com.esferalia.aon.core.commons.AonCoreException;
-import com.esferalia.aon.core.commons.util.AonDateUtils;
-import com.esferalia.aon.core.commons.util.AonEnumUtils;
 import com.esferalia.aon.jooq.tables.records.AccountEntryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -28,8 +27,13 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
+import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class AccountEntryDAO {
+	
+	private final static Logger LOGGER = Logger.getLogger(AccountEntryDAO.class.getName()); 
 
 	public static Seq<AccountEntry> fetch(AONContext ctx
 				, Condition condition
@@ -73,7 +77,7 @@ public class AccountEntryDAO {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
-
+	
 	public static String fetchCSV(AONContext ctx
 			, Condition condition
 			, int offset
@@ -91,6 +95,21 @@ public class AccountEntryDAO {
 
 	public static void insert(AONContext ctx, AccountEntry ae) {
 		ctx.getDslContext().transaction(configuration -> {
+			if (ae.getAccountPeriod() == null && ae.isPeriodCreationEnabled()) {
+				LOGGER.info(MessageFormat.format(
+					"Creación automática de periodo contable para la fecha {0,date,dd/MM/yyy}: "
+					,ae.getEntryDate()));
+				AccountPeriod accountPeriod = new AccountPeriod();
+				accountPeriod.setDomain( ae.getDomain() );
+				accountPeriod.setName( Integer.toString( AonDateUtils.getYear(ae.getEntryDate())));
+				accountPeriod.setInitiationDate(AonDateUtils.getYearFirstDay(ae.getEntryDate()));
+				accountPeriod.setDeadline(AonDateUtils.getYearLastDay(ae.getEntryDate()));
+				AccountPeriodDAO.insert(ctx, accountPeriod);
+				LOGGER.info( MessageFormat.format(
+					"Periodo contable creado ID:{0}; DOMAIN:{1}: "
+					,accountPeriod.getId(),accountPeriod.getDomain()));
+				ae.setAccountPeriod(accountPeriod.getId());
+			}
 			AccountEntryValidation.validateEntry(ctx, ae);
 			increaseJournal(ctx, ae);
 			AccountEntryRecord record = ctx.getDslContext()
@@ -114,6 +133,7 @@ public class AccountEntryDAO {
 			}
 		});
 	}
+
 
 	private static AccountEntry populateRecord(AccountEntryRecord record) {
 		if (record == null) return null;

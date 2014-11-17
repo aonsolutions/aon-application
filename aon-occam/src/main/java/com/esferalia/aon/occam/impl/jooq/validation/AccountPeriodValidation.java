@@ -9,10 +9,10 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.core.commons.AonCoreException;
-import com.esferalia.aon.core.commons.AonError;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.AonError;
 
 public class AccountPeriodValidation {
 

@@ -8,8 +8,6 @@ import java.util.function.Function;
 import org.jooq.Condition;
 import org.jooq.lambda.Seq;
 
-import com.esferalia.aon.core.commons.AonCoreException;
-import com.esferalia.aon.core.commons.AonError;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.model.Account;
@@ -22,6 +20,8 @@ import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
+import com.esferalia.aon.watson.AonCoreException;
+import com.esferalia.aon.watson.AonError;
 
 public class AccountingImpl implements IAccounting {
 
