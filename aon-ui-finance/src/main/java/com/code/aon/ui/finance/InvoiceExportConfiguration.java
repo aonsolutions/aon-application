@@ -1,18 +1,35 @@
 package com.code.aon.ui.finance;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class InvoiceExportConfiguration implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceExportConfiguration.class.getName());
+	
+	private static final Tax EMPTY_TAX = new Tax();
 	
 	private String enterpriseCode;
 	
@@ -28,6 +45,10 @@ public class InvoiceExportConfiguration implements Serializable {
 	
 	private Integer accountSize;
 	
+	private Integer[] vats;
+	
+	private Tax[] taxs;
+	
 	public InvoiceExportConfiguration() {
 		this.type = obtainType();
 		if ( this.type != null ) {
@@ -38,9 +59,86 @@ public class InvoiceExportConfiguration implements Serializable {
 			this.expensesJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_EXPENSES);
 			this.accountSize = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_ACCOUNT_SIZE);
 			initAccountSize();
+			initVats();
 		}
 	}
 	
+	private Tax getTax( String idValue ) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Tax.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TAX_TYPE), TaxType.VAT);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TAX_ID), NumberUtils.toInt(idValue));
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (Tax) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	public void initVats() {
+		if ( this.type == InvoiceExportType.DSI_GESTION ) {
+			String value = AppParamUtil.getValue(AppParam.AON_EXPORT_VATS);
+			this.vats = new Integer[0];
+			if ( value != null ) {				
+				String values[] = StringUtils.split(value, ',');
+				if (! ArrayUtils.isEmpty(values) ) {
+					for( int i = 0; i < values.length; i++) {
+						String taxIdValue = values[i++];
+						if ( NumberUtils.isDigits(taxIdValue) ) {
+							Tax tax = getTax(taxIdValue);
+							if ( tax != null ) {
+								this.taxs = (Tax[]) ArrayUtils.add(this.taxs, tax);
+								Integer vat = NumberUtils.toInt(values[i]);
+								this.vats = (Integer[]) ArrayUtils.add(this.vats, vat);
+							}
+						}
+					}
+				}
+			}
+			if ( ArrayUtils.isEmpty(this.vats) ) {
+				addEmptyTax();
+			}
+		}
+	}
+
+	public void saveVats() {
+		StringBuffer sb = new StringBuffer();
+		for( int i = 0; i < vats.length; i++ ) {
+			if ( vats[i] != null ) {
+				if ( sb.length() > 0 ) {
+					sb.append(',');
+				}
+				sb.append(this.taxs[i].getId()).append(',').append(this.vats[i]);
+			}
+		}
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_VATS, sb.toString());
+	}
+	
+	public void addEmptyTax() {
+		this.taxs = (Tax[]) ArrayUtils.add(this.taxs, EMPTY_TAX);
+		this.vats = (Integer[]) ArrayUtils.add(this.vats, null);				
+	}
+	
+	public void removeTax( int index ) {
+		this.taxs = (Tax[]) ArrayUtils.remove(this.taxs, index);
+		this.vats = (Integer[]) ArrayUtils.remove(this.vats, index);
+		if ( ArrayUtils.isEmpty(this.taxs) ) {
+			addEmptyTax();
+		}
+	}
+	
+	public Tax[] getTaxs() {
+		return taxs;
+	}
+	
+	public Integer[] getVats() {
+		return vats;
+	}
+
 	public void initAccountSize() {
 		if (this.accountSize == null) {
 			switch (this.type) {
@@ -51,6 +149,8 @@ public class InvoiceExportConfiguration implements Serializable {
 				case DSI_GESTION:
 					this.accountSize = 9;
 					break;
+				default:
+					this.accountSize = null;
 			}
 		}		
 	}
@@ -59,11 +159,26 @@ public class InvoiceExportConfiguration implements Serializable {
 		String value = String.valueOf(getType().ordinal()); 
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_TYPE, value);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_ENTERPRISE_ID, this.enterpriseCode);
-		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL, this.generalJournal);
-		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_SALES, this.salesJournal);
-		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_PURCHASE, this.purchaseJournal);
-		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_EXPENSES, this.expensesJournal);		
+		if ( (type == InvoiceExportType.GEYCE) || (type == InvoiceExportType.DSI_GESTION) ) {
+			AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL, this.generalJournal);
+			AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_SALES, this.salesJournal);
+			AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_PURCHASE, this.purchaseJournal);			
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_EXPORT_JOURNAL);
+			AppParamUtil.removeParameter(AppParam.AON_EXPORT_JOURNAL_SALES);
+			AppParamUtil.removeParameter(AppParam.AON_EXPORT_JOURNAL_PURCHASE);			
+		}
+		if ( this.type == InvoiceExportType.GEYCE ) {
+			AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_EXPENSES, this.expensesJournal);
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_EXPORT_JOURNAL_EXPENSES);			
+		}
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_ACCOUNT_SIZE, this.accountSize);
+		if ( this.type == InvoiceExportType.DSI_GESTION ) {
+			saveVats();
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_EXPORT_VATS);
+		}
 	}
 	
 	public boolean isConfigured() {
@@ -153,7 +268,7 @@ public class InvoiceExportConfiguration implements Serializable {
 	}
 	
 	public InvoiceExportType obtainType() {
-		InvoiceExportType type = null;
+		InvoiceExportType type = InvoiceExportType.EXCEL;
 		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_TYPE);
 		if ( ordinal!=null && ordinal<InvoiceExportType.values().length ) {
 			type = InvoiceExportType.values()[ordinal];
@@ -179,15 +294,35 @@ public class InvoiceExportConfiguration implements Serializable {
 				case A3:
 					length = 5;
 					break;
-				case APLIFISA:
-				case LOGIC_WIN:
-				case EXCEL:
 				case DSI_GESTION:
-					length = 0;
+					length = 3;
 					break;
+				default:
+					length = 0;
 			}
 		}
 		return length;
+	}
+	
+	public boolean isShowEnterpriseCode() {
+		switch ( getType() ) {		
+			case GEYCE:
+			case A3:
+			case DSI_GESTION:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	public boolean isShowAccountSize() {
+		switch ( getType() ) {		
+			case A3:
+			case EXCEL:
+				return true;
+			default:
+				return false;
+		}
 	}
 	
 }

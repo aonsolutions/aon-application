@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:form id="globalConfigConectaParamsForm">
@@ -37,7 +38,7 @@
 					<f:selectItems value="#{financeCollections.invoiceExportTypes}" />
 				</aon:selectOneMenu>
 	
-				<aon:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'GEYCE')}">
+				<aon:if test="#{exporter.configuration.showEnterpriseCode}">
 					<aon:outputLabel for="Exporter_enterpriseCode"
 						value="#{bundle.aon_company_id}" />
 					<aon:inputText id="Exporter_enterpriseCode"
@@ -46,7 +47,7 @@
 						required="true" />
 				</aon:if> 
 				
-				<aon:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'EXCEL') or (exporter.configuration.type == 'DSI_GESTION')}">
+				<aon:if test="#{exporter.configuration.showAccountSize}">
 					<aon:outputLabel for="Exporter_accountSize"
 						value="#{bundle.finance_exporter_account_size}" />
 					<aon:selectOneMenu id="Exporter_accountSize"
@@ -59,7 +60,7 @@
 						<f:selectItem itemLabel="10" itemValue="#{10}" />
 						<f:selectItem itemLabel="11" itemValue="#{11}" />
 						<f:selectItem itemLabel="12" itemValue="#{12}" />
-						<aon:if test="#{(exporter.configuration.type == 'EXCEL') or (exporter.configuration.type == 'DSI_GESTION')}">
+						<aon:if test="#{exporter.configuration.type == 'EXCEL'}">
 							<f:selectItem itemLabel="13" itemValue="#{13}" />
 							<f:selectItem itemLabel="14" itemValue="#{14}" />
 							<f:selectItem itemLabel="15" itemValue="#{15}" />
@@ -91,7 +92,56 @@
 					<aon:inputText id="Geyce_journal_expenses"
 						size="2" maxlength="2"
 						value="#{exporter.configuration.expensesJournal}" />
-						
+				</aon:if>												
+
+				<aon:if test="#{exporter.configuration.type == 'DSI_GESTION'}">
+					<aon:outputLabel for="Dsi_defaultPortfolio"
+						value="#{bundle.finance_exporter_portfolio_default}" />
+					<aon:inputText id="Dsi_defaultPortfolio"
+						size="3" maxlength="3" required="true"
+						value="#{exporter.configuration.generalJournal}" />	
+					<aon:outputLabel for="Dsi_chargesPortfolio"
+						value="#{bundle.finance_exporter_portfolio_charges}" />
+					<aon:inputText id="Dsi_chargesPortfolio"
+						size="3" maxlength="3" required="true"
+						value="#{exporter.configuration.salesJournal}" />	
+					<aon:outputLabel for="Dsi_paymentsPortfolio"
+						value="#{bundle.finance_exporter_portfolio_payments}" />
+					<aon:inputText id="Dsi_paymentsPortfolio"
+						size="3" maxlength="3" required="true"
+						value="#{exporter.configuration.purchaseJournal}" />	
+					<aon:outputLabel for="Dsi_vats"
+						value="#{bundle.finance_exporter_vats}" />
+					<aon:div id="vatsDiv">
+						<a4j:region>
+							<a4j:repeat value="#{exporter.configuration.taxs}" rowKeyVar="index" var="tax">
+								<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+									<aon:outputLabel for="Dsi_vatId" 
+										styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_id}" />
+									<aon:inputText id="Dsi_vatId"
+										size="2" maxlength="2"
+										value="#{exporter.configuration.vats[index]}" />	
+									<aon:selectOneMenu id="Dsi_taxIds"
+										style="margin-left: 5px;" 
+										value="#{exporter.configuration.taxs[index]}">
+										<f:selectItem itemLabel="-" value="#{null}"/>
+										<f:selectItems value="#{exporter.selectableTaxs}" />
+										<a4j:support event="onchange" reRender="vatsDiv"
+											ajaxSingle="true" process="Dsi_vatId"/>
+									</aon:selectOneMenu>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="vatsDiv"
+										actionListener="#{exporter.onRemoveVat}" value="&#160;"
+										rendered="#{tax != null}" immediate="true">
+										<f:param name="index" value="#{index}" />
+									</aon:commandButton>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="vatsDiv"
+										actionListener="#{exporter.onAddVat}" value="&#160;"
+										rendered="#{(tax != null) and (index == (fn:length(exporter.configuration.vats)-1))}"/>					
+								</aon:div>						
+							</a4j:repeat>
+						</a4j:region>
+					</aon:div>			
 				</aon:if>												
 					
 			</aon:panelGrid>

@@ -10,12 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -24,18 +29,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.A3Writer;
 import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
+import com.code.aon.ui.finance.DsiWriter;
 import com.code.aon.ui.finance.ExcelWriter;
 import com.code.aon.ui.finance.GeyceWriter;
 import com.code.aon.ui.finance.InvoiceExportConfiguration;
 import com.code.aon.ui.finance.LogicWinWriter;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ExporterController implements Serializable {
 	
@@ -112,8 +126,10 @@ public class ExporterController implements Serializable {
 				exporter = new LogicWinWriter(this.configuration);
 				break;
 			case EXCEL:
-			case DSI_GESTION:
 				exporter = new ExcelWriter(this.configuration);
+				break;
+			case DSI_GESTION:				
+				exporter = new DsiWriter(this.configuration);
 				break;
 		}
 		this.fileName = exporter.getFileName();
@@ -186,6 +202,7 @@ public class ExporterController implements Serializable {
 
 	public void onTypeChanged( ActionEvent event ) {
     	getConfiguration().initAccountSize();
+    	getConfiguration().initVats();
 	}
 
 	public void setDataMap(Map<String,File> dataMap) {
@@ -195,5 +212,30 @@ public class ExporterController implements Serializable {
 	public boolean isDataEmpty() {
 		return (dataMap == null) || dataMap.isEmpty();		
 	}
+
+	public List<SelectItem> getSelectableTaxs() throws ManagerBeanException {
+		List<SelectItem> taxs = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Tax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TAX_TYPE), TaxType.VAT);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.TAX_NAME));
+		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			Tax tax = (Tax)iter.next();
+			SelectItem item = new SelectItem(tax, tax.getName() + " (" + tax.getPercentage() + "%)");
+			taxs.add(item);
+		}
+		return taxs;
+	}		
+	
+	public void onAddVat(ActionEvent event) {
+		getConfiguration().addEmptyTax();
+	}
+	
+	public void onRemoveVat(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));
+		getConfiguration().removeTax(index);
+	}			
 	
 }

@@ -606,17 +606,6 @@ public class A3Writer extends BasicExporter {
 		}		
 	}
 	
-	private RegistryBank getRegistryBank() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getRegistry().getId());
-		List<ITransferObject> list = bean.getList(criteria);
-		if ( !list.isEmpty() ) {
-			return (RegistryBank) list.get(0); 
-		}
-		return null;		
-	}
-	
 	private void writeRegistryBank( RegistryBank rbank, RegistryDocument rd ) throws IOException, ManagerBeanException {
 		initLine();
 		// Tipo de Registro

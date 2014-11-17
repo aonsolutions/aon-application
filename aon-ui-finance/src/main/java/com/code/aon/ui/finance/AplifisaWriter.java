@@ -200,7 +200,7 @@ public class AplifisaWriter extends BasicExporter {
 				// Poblacion		
 				appendString(sb, address.getCity(), 40);
 				// Provincia					
-				appendString(sb, (address.getGeozone() != null)?address.getGeozone().getName():null, 40);
+				appendString(sb, address.getProvince(), 40);
 			}
 		}
 
@@ -212,8 +212,8 @@ public class AplifisaWriter extends BasicExporter {
 	public Map<String, File> getDataMap() {
 		Map<String, File> map = new HashMap<String, File>();
 		try {
-			addData(map, "asientos", ".txt", writer.toString().getBytes("ISO-8859-1"));
-			addData(map, "subcuentas", ".txt", accountWriter.toString().getBytes("ISO-8859-1"));
+			addData(map, "asientos", TXT_SUFFIX, writer.toString().getBytes(OUTPUT_ENCODING));
+			addData(map, "subcuentas", TXT_SUFFIX, accountWriter.toString().getBytes(OUTPUT_ENCODING));
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
 		}

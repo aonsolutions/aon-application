@@ -18,13 +18,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,12 +41,12 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryDocument;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -57,9 +57,19 @@ public abstract class BasicExporter implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	public static final String OUTPUT_ENCODING = "ISO-8859-1";
+	
+	public static final String TXT_SUFFIX = ".txt";
+	
 	public static final String NEW_LINE = "\r\n";
+	
+	private static final String RETENTION_PREFFIX_1 = "473";
+	
+	private static final String RETENTION_PREFFIX_2 = "4751";
 
-	private static final String[] SKIP_ACCOUNTS = new String[] { "477", "472", "473", "4751" };
+	private static final String[] SKIP_ACCOUNTS = new String[] { "477", "472", RETENTION_PREFFIX_1, RETENTION_PREFFIX_2 };
+	
+	private static final String[] RETENTION_ACCOUNTS = new String[] { RETENTION_PREFFIX_1, RETENTION_PREFFIX_2 };
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
@@ -111,7 +121,7 @@ public abstract class BasicExporter implements Serializable {
 	
 	private boolean investment;
 	
-	private IPriceStrategy priceStrategy;
+	private InvoicePriceStrategy priceStrategy;
 	
 	private double total;
 	
@@ -374,6 +384,15 @@ public abstract class BasicExporter implements Serializable {
 		return false;
 	}	
 	
+	protected boolean isRetention( Account account ) {
+		for( String preffix : RETENTION_ACCOUNTS ) {
+			if ( StringUtils.startsWith(account.getCode(), preffix) ) {
+				return true;
+			}
+		}
+		return false;		
+	}
+	
 	private List<AccountEntryDetail> obtainDetails( AccountEntry accountEntry ) {
 		List<AccountEntryDetail> list = new LinkedList<AccountEntryDetail>();
 		for( AccountEntryDetail aed : accountEntry.getDetail() ) {
@@ -393,7 +412,7 @@ public abstract class BasicExporter implements Serializable {
 		return list;
 	}
 	
-	public IPriceStrategy getPriceStrategy() {
+	public InvoicePriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
 		}
@@ -418,7 +437,7 @@ public abstract class BasicExporter implements Serializable {
 		};
 		Collections.sort( list, comparator );
 		return list;
-	}	
+	}
 	
 	protected Enterprise getEnterprise() {
 		for( InvoiceDetail id : getInvoice().getLines() ) {
@@ -511,6 +530,17 @@ public abstract class BasicExporter implements Serializable {
 		getDetails().remove(detail);
 		return detail;
 	}
+	
+	protected RegistryBank getRegistryBank() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getRegistry().getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if ( !list.isEmpty() ) {
+			return (RegistryBank) list.get(0); 
+		}
+		return null;		
+	}	
 	
 	protected void setString( String value, int offset, int maxLength ) {
 		if (! StringUtils.isEmpty(value) ) {
@@ -617,7 +647,7 @@ public abstract class BasicExporter implements Serializable {
 			}			
 		}
 	}
-	
+
 	public abstract void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException;
 	
 	public abstract Map<String,File> getDataMap();
