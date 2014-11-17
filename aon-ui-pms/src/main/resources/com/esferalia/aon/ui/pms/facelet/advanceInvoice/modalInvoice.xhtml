@@ -122,20 +122,11 @@
 
 										<aon:outputLabel for="AdvanceInvoice_payMethod"
 											value="#{bundle.finance_payMethod}" />
-										<aon:if test="#{searchListener.guestReservationSearch}">
-											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
-												value="#{controller.advancePayMethod}" required="true" 
-												ajaxSingle="true">
-												<f:selectItems value="#{configCollections.directPayMethods}" />
-											</aon:selectOneMenu>
-										</aon:if>
-										<aon:if test="#{!searchListener.guestReservationSearch}">
-											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
-												value="#{controller.advancePayMethod}" required="true"
-												reRender="invoiceModalContent" ajaxSingle="true">
-												<f:selectItems value="#{configCollections.payMethods}" />
-											</aon:selectOneMenu>
-										</aon:if>
+										<aon:selectOneMenu id="AdvanceInvoice_payMethod"
+											value="#{controller.advancePayMethod}" required="true"
+											reRender="invoiceModalContent" ajaxSingle="true">
+											<f:selectItems value="#{configCollections.payMethods}" />
+										</aon:selectOneMenu>
 
 										<aon:outputLabel for="AdvanceInvoice_bank"
 											rendered="#{controller.bankRequired}"
