@@ -182,61 +182,6 @@
 
 	<profiles>
 		<profile>
-			<id>tomcat-rpm-release</id>
-			<activation>
-				<property>
-					<name>tomcat.rpm.release</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.codehaus.mojo</groupId>
-							<artifactId>rpm-maven-plugin</artifactId>
-							<version>2.1-alpha-2</version>
-							<extensions>true</extensions>
-							<executions>
-								<execution>
-									<id>tomcat-rpm-build</id>
-									<goals>
-										<goal>attached-rpm</goal>
-									</goals>
-									<configuration>
-										<group>Applications/Aon</group>
-										<classifier>TOMCAT</classifier>
-										<release>tomcat_${buildNumber}</release>
-										<copyright>2013, esferalia Networks S.A</copyright>
-										<requires>
-											<require>tomcat6</require>
-											<require>java-1.7.0-openjdk</require>
-											<require>mysql-connector-java</require>
-											<require>slf4j</require>
-										</requires>
-										<mappings>
-											<mapping>
-												<directory>/var/lib/tomcat6/webapps/aon-ws-gps</directory>
-												<filemode>755</filemode>
-												<username>tomcat</username>
-												<groupname>tomcat</groupname>
-												<directoryIncluded>false</directoryIncluded>
-												<sources>
-													<source>
-														<location>target/aon-ws-gps</location>
-													</source>
-												</sources>
-											</mapping>
-										</mappings>
-									</configuration>
-								</execution>
-							</executions>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
-		<profile>
 			<id>tomcat8-rpm-release</id>
 			<activation>
 				<property>
