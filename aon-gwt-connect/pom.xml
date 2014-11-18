@@ -48,13 +48,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.2.2</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.dsi</artifactId>
 			<version>${project.version}</version>

@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.connect.server;
 
 import static com.esferalia.aon.dsi.jooq.tables.Fnempres.FNEMPRES;
 import static java.lang.String.format;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static org.apache.commons.fileupload.servlet.ServletFileUpload.isMultipartContent;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,8 +12,6 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -227,69 +219,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		}
 	}
 
-	/**
-	 * The post method is used to receive the file and import/load it .
-	 */
-	protected void __doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		File tempDir = null;
-
-		OutputStream out = null;
-		PrintStream print = null;
-
-		try {
-			out = resp.getOutputStream();
-			print = new PrintStream(out, false, "UTF-8");
-			// resp.setContentType("application/json;charset=UTF-8");
-			resp.setContentType("text/html;charset=UTF-8");
-
-			ServletContext context = getServletContext();
-			AonServletUtils.initFacesContext(context, req, resp);
-
-			// checks if the request actually contains upload file
-			if (!isMultipartContent(req)) {
-				// if not, we stop here(?:X
-				resp.sendError(SC_BAD_REQUEST,
-						"Petición erronea, no es 'multipart/form-data'");
-				return;
-			}
-
-			// Create a factory for disk-based file items
-			DiskFileItemFactory factory = new DiskFileItemFactory();
-
-			// Set factory constraints
-			factory.setSizeThreshold(MAX_MEM_SIZE);
-			tempDir = Files.createTempDir();
-			factory.setRepository(tempDir);
-
-			// Create a new file upload handler
-			ServletFileUpload upload = new ServletFileUpload(factory);
-			// No limit for maximum allowed size of a complete request
-
-			List<File> dbs = new ArrayList<File>();
-			// Parse the request
-			List<FileItem> fileItems = upload.parseRequest(req);
-			for (FileItem fileItem : fileItems) {
-				if (fileItem.isFormField()) {
-					processFormField(fileItem);
-				} else {
-					dbs.add(processUploadFile(fileItem));
-				}
-			}
-
-			print(print, dbs);
-
-		} catch (FileUploadException e) {
-
-		} finally {
-			if (tempDir != null)
-				tempDir.delete();
-			if (print != null)
-				print.close();
-
-			AonServletUtils.releaseFacesContext();
-		}
-	}
 
 	// ------------------------------------------------------------------------
 
@@ -435,38 +364,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 		return map;
 	}
 
-	/**
-	 * Mark the current process to be canceled.
-	 * 
-	 * @param request
-	 */
-	private void cancel(HttpServletRequest request) {
-	}
-
-	private void processFormField(FileItem fileItem) {
-
-	}
-
-	private File processUploadFile(FileItem fileItem) throws IOException {
-		InputStream in = null;
-		ZipInputStream zipin = null;
-		try {
-
-			in = fileItem.getInputStream();
-			zipin = new ZipInputStream(in);
-			File parent = Files.createTempDir();
-			unzip(parent, zipin);
-			return parent;
-
-		} finally {
-			if (zipin != null)
-				zipin.close();
-		}
-	}
-
-	private void saveBDs(List<File> file) {
-
-	}
 
 	// ------------------------------------------------------------------------
 
@@ -491,31 +388,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				}
 			;
 		}
-	}
-
-	private static void print(PrintStream print, List<File> dbs) {
-		print.print('[');
-		for (int i = 0; i < dbs.size(); i++) {
-			if (i > 0)
-				print.print(',');
-			print.printf("\"%s\"", dbs.get(i).getAbsolutePath());
-		}
-		print.print(']');
-	}
-
-	private static <R extends Record> void print(PrintStream print, R record,
-			Field<?>... fields) {
-		for (int i = 0; i < fields.length; i++) {
-			if (i > 0)
-				print.print(',');
-
-			String name = fields[i].getName();
-			print.printf("\"%s\":\"%s\"", name, record.getValue(fields[i]));
-		}
-	}
-
-	private static Connection getDSIConn(File db) throws SQLException {
-		return getDSIConn(db.getAbsolutePath());
 	}
 
 	private static Connection getDSIConn(String path) throws SQLException {
@@ -546,25 +418,6 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 
 		}
 
-	}
-
-	private static Connection getConnection() throws SQLException {
-		try {
-			String domainName = AonUtil.getDomainName();
-			Connection connection = DatabaseUtil.getConnection(domainName);
-			return connection;
-		} catch (AonConnectionException e) {
-			throw new SQLException(e.getMessage(), e);
-		}
-	}
-
-	private static String getRemoteUser() {
-
-		return AonUtil.getRemoteUser();
-	}
-
-	private static String getDomainName() {
-		return AonUtil.getDomainName();
 	}
 
 	private static Properties getProperties(String json) {
