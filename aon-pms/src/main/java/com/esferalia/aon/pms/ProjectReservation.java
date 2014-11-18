@@ -409,6 +409,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public double getPendingAmount() throws ManagerBeanException {
+		return getTotal() - getAdvancedAmount();
+	}
+
+	@Transient
 	public Date getDate() {
 		return getStartDate();
 	}

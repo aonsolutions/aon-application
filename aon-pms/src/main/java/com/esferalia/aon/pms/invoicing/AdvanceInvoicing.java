@@ -44,6 +44,24 @@ public class AdvanceInvoicing {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvanceInvoicing.class.getName());
 
 	public int invoice(AdvanceInvoiceTo advanceInvoiceTo, List<Integer> reservations) throws ManagerBeanException {
+		try {
+			int count = 0;
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			for (Integer reservationId : reservations) {
+				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
+				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
+					invoice(advanceInvoiceTo, reservation);
+					++count;
+				}
+			}
+			return count;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(),e);
+		}
+	}
+
+	public Invoice invoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -53,24 +71,16 @@ public class AdvanceInvoicing {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			int count = 0;
-			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-			for (Integer reservationId : reservations) {
-				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
-					Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
-					double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
-					createAdvanceInvoiceAddress(invoice, reservation);
-					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
-					recordInvoice(invoice);
-					++count;
-				}
-			}
+			Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
+			double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
+			createAdvanceInvoiceAddress(invoice, reservation);
+			createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
+			recordInvoice(invoice);
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
 
-			return count;
+			return invoice;
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);

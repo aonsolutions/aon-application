@@ -277,9 +277,9 @@
 			<aon:outputLabel for="ProjectReservation_advance"
 				value="#{bundle.finance_money_advance}:" 
 				styleClass="aon-margin-right aon-italic" />
-			<aon:outputText value="#{reservation.to.advancedAmount}" 
-				rendered="#{!reservation.reservationPermission.advanceEditable}"	
-				styleClass="aon-bold" >
+			<aon:outputText value="#{reservation.to.advancedAmount}"
+				styleClass="aon-bold" 
+				rendered="#{!reservation.reservationPermission.advanceEditable}">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
 			<aon:commandButton id="enable-Advance" value="&#160;"

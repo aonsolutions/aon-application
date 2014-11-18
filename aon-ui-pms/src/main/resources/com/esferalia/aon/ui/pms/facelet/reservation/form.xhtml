@@ -37,8 +37,16 @@
 						<f:setPropertyActionListener target="#{earlyCheckOut.showEarlyCheckOutWindow}"
 							value="#{true}" />
 					</aon:menuItem>
+					<aon:menuItem id="reservation-AdvanceInvoice"
+						value="#{bundle.pms_advance_invoice}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.advanceInvoiceAllowed}"
+						iconClass="aon-icon-prices"
+						actionListener="#{reservation.onAdvanceInvoiceShow}">
+						<f:setPropertyActionListener target="#{reservation.showAdvanceInvoiceWindow}"
+							value="#{true}" />
+					</aon:menuItem>
 					<aon:menuItem id="reservation-Invoice"
-						value="#{bundle.aon_key_invoice_description}"	immediate="#{true}" 
+						value="#{bundle.aon_key_invoice_description}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.invoiceAllowed}"
 						iconClass="aon-icon-favorite"
 						actionListener="#{reservation.onInvoiceShow}">
@@ -65,7 +73,7 @@
 						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
 							value="#{false}" />
 					</aon:menuItem>
-					<aon:menuItem id="reservation-divert"
+					<aon:menuItem id="reservation-Divert"
 						value="#{bundle.pms_divert_reservation}" immediate="true" 
 						rendered="#{reservation.reservationPermission.divertAllowed}"
 						iconClass="aon-icon-transfer"
@@ -148,6 +156,9 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{reservation}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalAdvance.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{reservation}" />

@@ -59,6 +59,8 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
+import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
@@ -83,6 +85,8 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showConfirmWindow;
 	private boolean confirmNoShow;
 	private boolean showAuditInfoWindow;
+	private boolean showAdvanceInvoiceWindow;
+	private AdvanceInvoiceTo advanceInvoiceTo;
 	private boolean showInvoiceWindow;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
@@ -225,6 +229,22 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}	
+
+	public boolean isShowAdvanceInvoiceWindow() {
+		return showAdvanceInvoiceWindow;
+	}
+
+	public void setShowAdvanceInvoiceWindow(boolean showAdvanceInvoiceWindow) {
+		this.showAdvanceInvoiceWindow = showAdvanceInvoiceWindow;
+	}
+
+	public AdvanceInvoiceTo getAdvanceInvoiceTo() {
+		return advanceInvoiceTo;
+	}
+
+	public void setAdvanceInvoiceTo(AdvanceInvoiceTo advanceInvoiceTo) {
+		this.advanceInvoiceTo = advanceInvoiceTo;
+	}
 
 	public boolean isShowInvoiceWindow() {
 		return showInvoiceWindow;
@@ -541,6 +561,83 @@ public class ProjectReservationController extends BasicController implements IPm
     	reservationRoomController.onSearch(event);
 		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
+	}
+
+	public void onAdvanceInvoiceShow(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		try {
+			if (!PosUtils.isUserPosShiftOpened()) {
+				setShowAdvanceInvoiceWindow(false);
+				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (isReservationAlreadyInvoiced(reservation)) {
+				reservation.setStatus(ReservationStatus.INVOICED);
+				accept(event);
+				setSelectedTab(INVOICE);
+
+				setShowAdvanceInvoiceWindow(false);
+				String msg = "La Reserva ya estaba Facturada.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (reservation.getHotelReservation().getItemAdvance() == null || reservation.getHotelReservation().getItemAdvance().getId() == null) {
+				setShowAdvanceInvoiceWindow(false);
+				String msg = "No se puede Facturar. El Hotel no tiene definido un Producto para Anticipos.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			setAdvanceInvoiceTo(new AdvanceInvoiceTo());
+			getAdvanceInvoiceTo().setGuestReservation(reservation.isGuestHolder());
+			getAdvanceInvoiceTo().setIssueDate(new Date());
+			getAdvanceInvoiceTo().setAmount(reservation.getAdvance());
+			getAdvanceInvoiceTo().setFinanceDate(getAdvanceInvoiceTo().getIssueDate());
+			getAdvanceInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	public void onAdvanceInvoice(ActionEvent event) {
+		setInvoiceModel(null);
+		try {
+			if (validateAdvanceInvoice()) {
+				ProjectReservation reservation = (ProjectReservation)this.getTo();
+				AdvanceInvoicing advanceInvoicing = new AdvanceInvoicing();
+				advanceInvoicing.invoice(getAdvanceInvoiceTo(), reservation);
+
+				reservation.setAdvanceInvoiced(true);
+				reservation.setAdvance(0);
+				accept(event);
+				setSelectedTab(INVOICE);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	private boolean validateAdvanceInvoice() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if (getAdvanceInvoiceTo().getAmount() <= 0) {
+			String msg = "No se puede generar Anticipo. Importe incorrecto.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (getAdvanceInvoiceTo().getAmount() > reservation.getPendingAmount()) {
+			String msg = "No se puede generar Anticipo. El importe no puede ser superior al Total pendiente de Facturar.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (getAdvanceInvoiceTo().getPayMethod() == null) {
+			String msg = "La Forma de Pago es obligatoria.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		return true;
 	}
 
 	public void onInvoiceShow(ActionEvent event) {

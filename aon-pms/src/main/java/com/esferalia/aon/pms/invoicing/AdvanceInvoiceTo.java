@@ -1,13 +1,17 @@
 package com.esferalia.aon.pms.invoicing;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.AonVersion;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.PosShift;
 import com.code.aon.registry.RegistryBank;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
 
-public class AdvanceInvoiceTo implements IReservationConstants {
+public class AdvanceInvoiceTo implements IReservationConstants, Serializable {
+
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean guestReservation;
 	private Date issueDate;

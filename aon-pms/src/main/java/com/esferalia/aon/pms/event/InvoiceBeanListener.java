@@ -65,6 +65,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
        			reservation.setStatus((invoiced) ? ReservationStatus.INVOICED : (reservation.isNoShow()) ? ReservationStatus.CANCELLED : ReservationStatus.ACTIVE);
     		} else {
         		reservation.setAdvanceInvoiced(invoiced);
+        		reservation.setAdvance(0);
     		}
     		reservationBean.update(reservation);
     	}

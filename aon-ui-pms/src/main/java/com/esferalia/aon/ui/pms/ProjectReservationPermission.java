@@ -159,6 +159,12 @@ public class ProjectReservationPermission implements Serializable {
 		return roleAllowed && reservation.isInvoiced() && reservation.isCheckIn();
 	}
 
+	public boolean isAdvanceInvoiceAllowed() throws ManagerBeanException {
+		Date now = new Date();
+		boolean roleAllowed = isRoleAdmin() || (isInHouse(now) && !isPendingAssignation()) || (isRoleFinance() && !isAfterCheckOut(now));
+		return roleAllowed && reservation.isActive() && reservation.isGuestHolder();
+	}
+
 	public boolean isInvoiceAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = isInHouse(now) || (isRoleFinance() && isAfterCheckOut(now));
@@ -268,7 +274,7 @@ public class ProjectReservationPermission implements Serializable {
 	public boolean isAdvanceEnable() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = isRoleAdmin() || (isRoleFinance() && !isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && reservation.isAdvanceInvoiced() && (reservation.getAdvancedAmount() < reservation.getTotal());
+		return roleAllowed && reservation.isActive() && reservation.isAdvanceInvoiced() && reservation.isGuestHolder() && reservation.getPendingAmount() > 0;
 	}
 
 	public boolean isSellerEditable() throws ManagerBeanException {
