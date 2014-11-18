@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -126,5 +128,28 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	public void setStatus(int status, String errorMessage) {
 	}
+  
+  // --------------------------------------------------------------------------
+  // Since Servlet API 3.1.0
+
+  public int getStatus(){
+    return SC_NOT_IMPLEMENTED ;
+  }
+
+  public String getHeader(String name){
+    return null;
+  }
+
+  public Collection<String> getHeaderNames(){
+    return Collections.emptyList();
+  }
+
+  public Collection<String> getHeaders(String name){
+    return Collections.emptyList();
+  }
+
+  public void setContentLengthLong(long len){
+  }
+
 
 }

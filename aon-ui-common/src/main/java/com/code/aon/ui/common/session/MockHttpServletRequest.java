@@ -1,18 +1,28 @@
 package com.code.aon.ui.common.session;
 
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletException;
+import javax.servlet.http.Part;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -259,8 +269,79 @@ public class MockHttpServletRequest implements HttpServletRequest {
 		return false;
 	}
 
+
 	public boolean isRequestedSessionIdFromUrl() {
 		return false;
 	}
+
+  // --------------------------------------------------------------------------
+  // Since Servlet API 3.1.0
+
+  public long getContentLengthLong(){
+    return -1L;  
+  }
+
+  public ServletContext getServletContext(){
+    return null;
+  }
+
+  public AsyncContext startAsync() throws IllegalStateException{
+    throw new IllegalStateException();
+  }
+
+  public AsyncContext startAsync(ServletRequest servletRequest,
+                                   ServletResponse servletResponse)
+            throws IllegalStateException{
+    throw new IllegalStateException();
+  }
+
+  public boolean isAsyncStarted(){
+    return false;
+  }
+
+  public boolean isAsyncSupported(){
+    return false;
+  }
+
+  public AsyncContext getAsyncContext(){
+    return null;
+  }
+  
+  public DispatcherType getDispatcherType() {
+    return null;
+  }
+
+  public String changeSessionId(){
+    throw new IllegalStateException();
+  }
+
+  public boolean authenticate(HttpServletResponse response) 
+	throws IOException,ServletException{
+    throw new ServletException();
+  }
+
+  public void logout() throws ServletException{
+    throw new ServletException();
+  }
+
+  public void login(String username, String password) 
+	throws ServletException{
+    throw new ServletException();
+  }
+
+  public Part getPart(String name) throws IOException, ServletException{
+    throw new ServletException();
+  }
+
+  public Collection<Part> getParts() throws IOException, ServletException{
+    throw new ServletException();
+  }
+
+  public <T extends HttpUpgradeHandler> T  upgrade(Class<T> handlerClass)
+        throws IOException, ServletException {
+    throw new ServletException();
+  }
+
+
 
 }
