@@ -7,8 +7,8 @@ import static com.esferalia.aon.jooq.tables.FsMod349.FS_MOD349;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
-import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
+import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
@@ -26,7 +26,6 @@ import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
-import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.util.AccountingUtil;
@@ -96,7 +95,7 @@ public class ModelManager {
 	
 	private void fillModel303(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M303_RG || params.getModel() == Model.M390_HF ) {
-			SelectSeekStep1<Record5<Byte, Byte, Byte, Integer, String>, Byte> select = ctx
+			Result<Record5<Byte,Byte,Byte,Integer,String>> models = ctx
 					.select(FS_VAT.STATUS, FS_VAT.PERIOD,FS_VAT_DECLARATION.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 					.from(FS_VAT)
 					.join(DOMAIN).on( FS_VAT.DOMAIN.equal(DOMAIN.ID))
@@ -110,9 +109,8 @@ public class ModelManager {
 								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
 								)))
 						.and(FS_VAT.YEAR.equal(params.getYear()))
-					.orderBy(FS_VAT.PERIOD);
-			System.out.println( select.getSQL() );
-			Result<Record5<Byte,Byte,Byte,Integer,String>> models = select.fetch();
+					.orderBy(FS_VAT.PERIOD)
+					.fetch();
 			for (Record5<Byte,Byte,Byte,Integer,String> mod : models) {
 				Byte adm = mod.getValue(FS_VAT_DECLARATION.ADMINISTRATION);
 				byte per = mod.getValue(FS_VAT.PERIOD);
