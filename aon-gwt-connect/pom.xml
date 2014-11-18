@@ -28,7 +28,7 @@
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>compile</goal>
-							<!--goal>generateAsync</goal -->
+							<!--goal>generateAsync</goal-->
 							<!--goal>test</goal -->
 						</goals>
 					</execution>
@@ -39,6 +39,13 @@
 
 
 	<dependencies>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>

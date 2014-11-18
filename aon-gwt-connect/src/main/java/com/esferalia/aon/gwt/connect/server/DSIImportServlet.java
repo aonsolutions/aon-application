@@ -14,12 +14,15 @@ import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,6 +32,7 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -57,6 +61,21 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.google.gwt.thirdparty.guava.common.io.Files;
+
+//@MultipartConfig(location="/tmp", fileSizeThreshold=1024*1024, 
+//maxFileSize=1024*1024*5, maxRequestSize=1024*1024*5*5)
+//
+//Instead of using the @MultipartConfig annotation to hard-code these attributes
+//in your file upload servlet, you could add the following as a child element of 
+// the servlet configuration element in the web.xml file.
+//
+//<multipart-config>
+//	<location>/tmp</location>
+//	<max-file-size>20848820</max-file-size>
+//	<max-request-size>418018841</max-request-size>
+//	<file-size-threshold>1048576</file-size-threshold>
+//</multipart-config>
+//
 
 @MultipartConfig
 public class DSIImportServlet extends HttpServlet implements DSIImportService,
@@ -159,8 +178,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 				PersonRecord person) {
 			return format(
 					"{\"name\":\"%s\", \"firstSurName\":\"%s\", \"secondSurName\":\"%s\" }",
-					person.getName(), 
-					person.getFirstSurname(),
+					person.getName(), person.getFirstSurname(),
 					person.getSecondSurname());
 		}
 	}
@@ -181,6 +199,38 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		PrintStream print = new PrintStream(resp.getOutputStream(), false,
+				"UTF-8");
+
+		try {
+
+			ServletContext context = getServletContext();
+			AonServletUtils.initFacesContext(context, req, resp);
+
+			resp.setContentType("text/html;charset=UTF-8");
+
+			// @formatter:off
+			print.print(req.getParts().stream()
+					.map(DSIImportServlet::processPart)
+					.map(f->String.format("\"%s\"", f.getAbsolutePath()))
+					.collect(Collectors.joining(",", "[", "]")));
+			// @formatter:on
+
+		} finally {
+
+			if (print != null)
+				print.close();
+
+			AonServletUtils.releaseFacesContext();
+		}
+	}
+
+	/**
+	 * The post method is used to receive the file and import/load it .
+	 */
+	protected void __doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		File tempDir = null;
 
@@ -267,11 +317,12 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 
 					Condition condition = DSL.condition(true);
 					for (Properties empres : empresMap.get(db)) {
-						//@formatter:off
-							condition = condition
-							.or(FNEMPRES.F20SSCOD.eq(empres.getProperty("sscod"))
-							.and(FNEMPRES.F20SSNUM.eq(empres.getProperty("ssnum"))));
-						//@formatter:on
+						// @formatter:off
+						condition = condition.or(FNEMPRES.F20SSCOD.eq(
+								empres.getProperty("sscod")).and(
+								FNEMPRES.F20SSNUM.eq(empres
+										.getProperty("ssnum"))));
+						// @formatter:on
 					}
 
 					boolean commit = getCommit(req);
@@ -279,15 +330,11 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 					PrintListener listener = new PrintListener(print);
 
 					Connection dsiConn = getDSIConn(db);
-					//@formatter:off
-					new DSI2AON(dsiConn, aonConn)
-					.setCommit(commit)
-					.setReplace(replace)
-					.addListener(listener)
-					.run(domain, 
-						owner, 
-						condition);
-					//@formatter:on
+					// @formatter:off
+					new DSI2AON(dsiConn, aonConn).setCommit(commit)
+							.setReplace(replace).addListener(listener)
+							.run(domain, owner, condition);
+					// @formatter:on
 
 				} catch (SQLException e) {
 					throw new IOException(e);
@@ -321,7 +368,7 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 					conn = getDSIConn(db);
 					List<FnempresRecord> empress = DSIUtils.getEmpress(conn);
 
-					//@formatter:off
+					// @formatter:off
 					print.print('[');
 					for (int i = 0; i < empress.size(); i++) {
 						if (i > 0)
@@ -329,13 +376,16 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 						FnempresRecord empres = empress.get(i);
 						print.print("{");
 						print.print(format("\"db\":\"%s\",", db));
-						print.print(format("\"sscod\":\"%s\",", empres.getF20sscod()));
-						print.print(format("\"ssnum\":\"%s\",", empres.getF20ssnum()));
-						print.print(format("\"rsocial\":\"%s\"", empres.getF20rsocial()));
+						print.print(format("\"sscod\":\"%s\",",
+								empres.getF20sscod()));
+						print.print(format("\"ssnum\":\"%s\",",
+								empres.getF20ssnum()));
+						print.print(format("\"rsocial\":\"%s\"",
+								empres.getF20rsocial()));
 						print.print("}");
 					}
 					print.print(']');
-					//@formatter:on
+					// @formatter:on
 
 				} catch (SQLException e) {
 					throw new IOException(e);
@@ -419,6 +469,29 @@ public class DSIImportServlet extends HttpServlet implements DSIImportService,
 	}
 
 	// ------------------------------------------------------------------------
+
+	private static File processPart(Part part) {
+		InputStream in = null;
+		ZipInputStream zipin = null;
+		try {
+
+			in = part.getInputStream();
+			zipin = new ZipInputStream(in);
+			File parent = Files.createTempDir();
+			unzip(parent, zipin);
+			return parent;
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (zipin != null)
+				try {
+					zipin.close();
+				} catch (IOException e) {
+				}
+			;
+		}
+	}
 
 	private static void print(PrintStream print, List<File> dbs) {
 		print.print('[');
