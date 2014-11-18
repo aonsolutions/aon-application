@@ -19,6 +19,7 @@ public class ModelManagerParams implements Serializable {
 	private String domainName;
 	private String document;
 	private String name;
+	private Integer userId;
 	private boolean showOnlyConfiguratedModels;
 	
 	public ModelManagerParams(int masterDomain) {
@@ -78,5 +79,11 @@ public class ModelManagerParams implements Serializable {
 	public void setShowOnlyConfiguratedModels(boolean showOnlyConfiguratedModels) {
 		this.showOnlyConfiguratedModels = showOnlyConfiguratedModels;
 	}
-	
+
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 }

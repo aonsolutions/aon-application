@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDeclaration.FS_VAT_DECLARATION;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Connection;
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
 import com.code.aon.accounting.util.AccountingUtil;
@@ -37,9 +39,10 @@ public class ModelManager {
 	public static final String PARAM_PREFIX = "FS_MODEL_CFG_";
 	public static final String PARAM_PREFIX_LIKE = PARAM_PREFIX + "%";
 
-	public List<ModelConfig> getModelsPanel(Connection conn, int domainId,int year) {
+	public List<ModelConfig> getModelsPanel(Connection conn, int domainId,int year,int userId) {
 		ModelManagerParams params = new ModelManagerParams(domainId);
 		params.setYear(year);
+		params.setUserId(userId);
 		return getModelsPanel(conn, params);
 	}
 	
@@ -67,9 +70,10 @@ public class ModelManager {
 		}
 	}
 	
-	public List<ModelConfig> getAvailableModels(Connection conn, int domain, int year) {
+	public List<ModelConfig> getAvailableModels(Connection conn, int domain, int year, int userId) {
 		ModelManagerParams params = new ModelManagerParams(domain);
 		params.setYear(year);
+		params.setUserId(userId);
 		return getAvailableModels(conn, params);
 	}
 	
@@ -92,16 +96,23 @@ public class ModelManager {
 	
 	private void fillModel303(DSLContext ctx, List<ModelConfig> list,ModelManagerParams params) {
 		if (params.getModel() == null || params.getModel() == Model.M303_RG || params.getModel() == Model.M390_HF ) {
-			Result<Record5<Byte,Byte,Byte,Integer,String>> models = ctx
+			SelectSeekStep1<Record5<Byte, Byte, Byte, Integer, String>, Byte> select = ctx
 					.select(FS_VAT.STATUS, FS_VAT.PERIOD,FS_VAT_DECLARATION.ADMINISTRATION,DOMAIN.ID,DOMAIN.DESCRIPTION)
 					.from(FS_VAT)
 					.join(DOMAIN).on( FS_VAT.DOMAIN.equal(DOMAIN.ID))
 					.leftOuterJoin(FS_VAT_DECLARATION).on( FS_VAT.ID.equal(FS_VAT_DECLARATION.FS_VAT))
 					.where(FS_VAT.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+						.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+								ctx.select(USER_SCOPE.SCOPE)
+								.from(USER_SCOPE)
+								.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+								)))
 						.and(FS_VAT.YEAR.equal(params.getYear()))
-					.orderBy(FS_VAT.PERIOD)
-					.fetch();
+					.orderBy(FS_VAT.PERIOD);
+			System.out.println( select.getSQL() );
+			Result<Record5<Byte,Byte,Byte,Integer,String>> models = select.fetch();
 			for (Record5<Byte,Byte,Byte,Integer,String> mod : models) {
 				Byte adm = mod.getValue(FS_VAT_DECLARATION.ADMINISTRATION);
 				byte per = mod.getValue(FS_VAT.PERIOD);
@@ -129,7 +140,13 @@ public class ModelManager {
 				.join(DOMAIN).onKey()
 				.where(FS_MODEL.DOMAIN.equal(params.getMasterDomain()))
 					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
-				.and(FS_MODEL.YEAR.equal(params.getYear()));
+				.and(FS_MODEL.YEAR.equal(params.getYear()))
+				.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+								ctx.select(USER_SCOPE.SCOPE)
+								.from(USER_SCOPE)
+								.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+								)));
 		if (params.getModel() != null) {
 			select = select.and(FS_MODEL.MODEL.equal(params.getModel().getName()));
 		}
@@ -170,6 +187,12 @@ public class ModelManager {
 					.where(FS_MOD349.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 					.and(FS_MOD349.YEAR.equal(params.getYear()))					
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
 					.orderBy(FS_MOD349.YEAR)
 					.fetch();
 			for (Record6<Byte,Integer,Byte,Byte,Integer,String> mod : models) {
@@ -193,6 +216,12 @@ public class ModelManager {
 					.where(FS_MOD347.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 					.and(FS_MOD347.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
 					.orderBy(FS_MOD347.YEAR)
 					.fetch();
 			for (Record5<Byte,Integer,Byte,Integer,String> mod : models) {
@@ -214,6 +243,12 @@ public class ModelManager {
 					.where(FS_MODEL180.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 					.and(FS_MODEL180.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
 					.orderBy(FS_MODEL180.YEAR)
 					.fetch();
 			for (Record5<Byte,Integer,Byte,Integer,String> mod : models) {
@@ -235,6 +270,12 @@ public class ModelManager {
 					.where(FS_MODEL190.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 					.and(FS_MODEL190.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
 					.orderBy(FS_MODEL190.YEAR)
 					.fetch();
 			for (Record5<Byte, Integer, Byte, Integer, String> mod : models) {
@@ -256,6 +297,12 @@ public class ModelManager {
 					.where(FS_MODEL390.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 					.and(FS_MODEL390.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
 					.orderBy(FS_MODEL390.YEAR)
 					.fetch();
 			for (Record5<Byte, Integer, Byte, Integer, String> mod : models) {
@@ -277,6 +324,12 @@ public class ModelManager {
 					.where(FS_MODEL200.DOMAIN.equal(params.getMasterDomain()))
 						.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
 					.and(FS_MODEL200.YEAR.equal(params.getYear()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)))
 					.orderBy(FS_MODEL200.YEAR)
 					.fetch();
 			for (Record4<Integer, Byte, Integer, String> mod : models) {
@@ -326,9 +379,10 @@ public class ModelManager {
 		return modelConfig;
 	}
 	
-	public void fillConfiguratedModels(DSLContext ctx, int domain, List<ModelConfig> list, int year) {
+	public void fillConfiguratedModels(DSLContext ctx, int domain, List<ModelConfig> list, int year, int userId) {
 		ModelManagerParams params = new  ModelManagerParams(domain);
 		params.setYear(year);
+		params.setUserId(userId);
 		fillConfiguratedModels(ctx, list, params);	
 	}
 
@@ -353,7 +407,13 @@ public class ModelManager {
 				.from(APP_PARAM)
 				.join(DOMAIN).onKey()
 				.where(APP_PARAM.DOMAIN.equal(params.getMasterDomain()))
-					.or(DOMAIN.PARENT.equal(params.getMasterDomain()));
+					.or(DOMAIN.PARENT.equal(params.getMasterDomain()))
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.equal(
+							ctx.select(USER_SCOPE.SCOPE)
+							.from(USER_SCOPE)
+							.where(USER_SCOPE.USER_ID.equal(params.getUserId()))
+							.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
+							)));
 		if (params.getModel() == null) {
 			select = select.and(APP_PARAM.NAME.like(PARAM_PREFIX_LIKE));
 		} else {

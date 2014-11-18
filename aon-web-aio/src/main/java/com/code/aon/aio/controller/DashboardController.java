@@ -294,7 +294,8 @@ public class DashboardController implements Serializable {
 				ModelManager mm = new ModelManager();
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 				int domainId = DomainManager.getCurrentDomain();
-				fiscalConfig = mm.getModelsPanel(c, domainId, getFiscalYear());
+				int userId = AonUtil.getAuthPrincipal().getUserId();
+				fiscalConfig = mm.getModelsPanel(c, domainId, getFiscalYear(), userId);
 			} catch (Throwable e) {
 				// Nothing. Se mostrara array vacio. Pero se podrá usar la aplicación.
 				LOGGER.error(e.getMessage());
