@@ -13,12 +13,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -69,17 +72,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
-		int currentYear = CommonUtil.getYear(new Date());
-		if (CommonUtil.getYear(reservation.getStartDate()) > (currentYear + 1) || CommonUtil.getYear(reservation.getStartDate()) < (currentYear - 1)) {
-			throw new ControllerListenerException("Fecha de Entrada de la Reserva incorrecta.");
-		}
-		if (!reservation.getStartDate().before(reservation.getEndDate())) {
-			throw new ControllerListenerException("Fecha de Salida de la Reserva incorrecta.");
-		}
-		if (CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()) > 90) {
-			throw new ControllerListenerException("La Estancia no puede ser superior a 90 días.");
-		}
-
+		validateReservation(reservation);
 		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
 		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
 		reservation.setHotelReservation(reservation.getHotel());
@@ -103,8 +96,49 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
+		validateReservation(reservation);
 		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
 		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
+	}
+
+	private void validateReservation(ProjectReservation reservation) throws ControllerListenerException {
+		int currentYear = CommonUtil.getYear(new Date());
+		if (CommonUtil.getYear(reservation.getStartDate()) > (currentYear + 1) || CommonUtil.getYear(reservation.getStartDate()) < (currentYear - 1)) {
+			throw new ControllerListenerException("Fecha de Entrada de la Reserva incorrecta.");
+		}
+		if (!reservation.getStartDate().before(reservation.getEndDate())) {
+			throw new ControllerListenerException("Fecha de Salida de la Reserva incorrecta.");
+		}
+		if (CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()) > 90) {
+			throw new ControllerListenerException("La Estancia no puede ser superior a 90 días.");
+		}
+		try {
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			Criteria criteria = new Criteria();
+			if (reservation.getId() != null) {
+				criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
+			}
+			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservation.getCode());
+			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), reservation.getStartDate());
+			criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+			if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), reservation.getAgency().getId());
+			} else {
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
+			}
+			if (reservationBean.getCount(criteria) > 0) {
+				StringBuffer message = new StringBuffer();
+				message.append("Ya existe una Reserva con ese Localizador y Fecha de Entrada para ");
+				if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+					message.append("la Agencia " + reservation.getAgency().getRegistry().getFullName() + ".");
+				} else {
+					message.append("un Cliente Directo.");
+				}
+				throw new ControllerListenerException(message.toString());
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	private Date obtainDateTime(Date date, String time) {

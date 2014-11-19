@@ -17,18 +17,13 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
-import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestController extends BasicController implements IPmsConstants {
@@ -167,31 +162,7 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	@Override
 	public void accept(ActionEvent event) {
-		ReservationRequest request = (ReservationRequest)getTo();
-		if (validateRequest(request)) {
-			if (isNevv() && reservationExists(request)) {
-				setShowConfirmWindow(true);
-			} else {
-				acceptRequest(event);
-			}
-		}
-	}
-
-	private boolean validateRequest(ReservationRequest request) {
-		Date yesterday = DateUtils.truncate(DateUtils.addDays(new Date(), -1), Calendar.DATE);
-		String yesterdayStr = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN)).format(yesterday);
-		if (request.getStartDate().before(yesterday)) {
-			String msg = "La Fecha de Entrada no puede ser anterior a " + yesterdayStr + ".";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		if (!request.getEndDate().after(request.getStartDate())) {
-			String msg = "La Fecha de Salida deber ser posterior a la de Entrada.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-
-		return true;
+		acceptRequest(event);
 	}
 
 	public void acceptRequest(ActionEvent event) {
@@ -200,23 +171,6 @@ public class ReservationRequestController extends BasicController implements IPm
 			ReservationRequestRoomController requestRoomController = (ReservationRequestRoomController)AonUtil.getRegisteredBean(RESERVATION_REQUEST_ROOM_CONTROLLER_NAME);
 			requestRoomController.setAvailableRoomStayMap(null);
 		}
-	}
-
-	private boolean reservationExists(ReservationRequest request) {
-		if (request.isAgencyHolder()) {
-			try {
-				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), request.getCode());
-				criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-				return (reservationBean.getCount(criteria) > 0);
-			} catch (ManagerBeanException ex) {
-				String msg = "Se produjo un error al buscar si ya existe la Reserva. [" + ex.getMessage() + "]";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg, ex);
-			}
-		}
-		return false;
 	}
 
 }
