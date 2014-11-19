@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -212,7 +213,7 @@ public class TaskManager implements Serializable {
 					}
 					String msg = "Error al modificar la tarea. (" + e.getMessage() + ")";
 					LOGGER.error(msg, e);
-					throw new ManagerBeanException(msg);
+					throw new ManagerBeanException(msg,e);
 				} finally {
 					HibernateUtil.closeSession(sessionName);
 				}
@@ -257,10 +258,15 @@ public class TaskManager implements Serializable {
 			ProcessDetail processDetail;
 			if (pdt != null && pdt.getId() != null) {
 				processDetail = pdt.getNextProcessDetail();
+				addProcessTask(processTask.getTask(),processTask.getCampaign(),processDetail,null);
 			} else {
-				processDetail = getNextProcessDetail(processTask.getProcessDetail());
+				List<ProcessDetail> processDetails = getNextProcessDetail(processTask.getProcessDetail(),processTask.getCampaign());
+				if (processDetails != null && processDetails.size() > 0) {
+					for (ProcessDetail pd : processDetails) {
+						addProcessTask(processTask.getTask(),processTask.getCampaign(),pd,null);	
+					}
+				}
 			}
-			addProcessTask(processTask.getTask(),processTask.getCampaign(),processDetail,null);
 		}
 	}
 	
@@ -314,17 +320,47 @@ public class TaskManager implements Serializable {
 		}
 	}
 
-	private ProcessDetail getNextProcessDetail(ProcessDetail processDetail) throws ManagerBeanException {
+	private List<ProcessDetail> getNextProcessDetail(ProcessDetail processDetail, Campaign campaign) throws ManagerBeanException {
 		IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 		Criteria criteria = new Criteria();
+		if (campaign != null) {
+			criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID), processDetail.getProcess().getId());
+			criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
+			criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION), processDetail.getPosition());
+			boolean isForkedTask = (processDetailBean.getCount(criteria) > 1);
+
+			IManagerBean processTaskBean = BeanManager.getManagerBean(ProcessTask.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(processTaskBean.getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), campaign.getId());
+			criteria.addEqualExpression("ProcessTask.processDetail.position", processDetail.getPosition());
+			criteria.addInExpression(processTaskBean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS),
+					new TaskStatus[]{TaskStatus.IN_PROGRESS,TaskStatus.PENDING}  );
+			int count = processTaskBean.getCount(criteria);
+			boolean existsForkPositionActiveTask = (count > 0);
+			if (isForkedTask && existsForkPositionActiveTask) {
+				return null;
+			}
+		}
+		criteria = new Criteria();
 		criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID), processDetail.getProcess().getId());
 		criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
 		criteria.addGreaterThanExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION), processDetail.getPosition());
 		criteria.addOrder(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
 		criteria.setSkipDomainFilter(true);
 		List<ITransferObject>  list = processDetailBean.getList(criteria);
-		if (list.size() > 0) {
-			return (ProcessDetail) list.get(0);
+		List<ProcessDetail> pds = new LinkedList<ProcessDetail>();
+		int firstPosition = Integer.MIN_VALUE;
+		if (list != null && list.size() > 0) {
+			for (ITransferObject to : list) {
+				ProcessDetail pd = (ProcessDetail) to;
+				if (firstPosition == Integer.MIN_VALUE) {
+					firstPosition = pd.getPosition();
+				}
+				if (firstPosition == pd.getPosition()) {
+					pds.add(pd);
+				}
+			}
+			return pds;
 		}
 		return null;
 	}
@@ -423,19 +459,23 @@ public class TaskManager implements Serializable {
 		}
 	}
 
-	public Task finishCampaignTask(CampaignProject cp, TaskHolder taskHolder) throws ManagerBeanException {
-		Task currentTask = getCurrentTask(cp);
-		if (currentTask != null) {
-			currentTask.setEndDate(new Date());
-			currentTask.setStatus(TaskStatus.FINISHED);
-			currentTask.setTaskHolder( taskHolder );
-			currentTask = (Task) getManagerBean().update(currentTask);
-			finishTaskAlarm(currentTask, taskHolder.getUser() );
+	public List<Task> finishCampaignTask(CampaignProject cp, TaskHolder taskHolder) throws ManagerBeanException {
+		List<Task> tasks = getCurrentTask(cp);
+		if (tasks != null && tasks.size() > 0) {
+			for (Task task : tasks) {
+				if (task != null) {
+					task.setEndDate(new Date());
+					task.setStatus(TaskStatus.FINISHED);
+					task.setTaskHolder( taskHolder );
+					task = (Task) getManagerBean().update(task);
+					finishTaskAlarm(task, taskHolder.getUser() );
+				}
+			}
 		}
-		return currentTask;
+		return tasks;
 	}
 
-	public Task getCurrentTask(CampaignProject cp) throws ManagerBeanException {
+	public List<Task> getCurrentTask(CampaignProject cp) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), cp.getCampaign().getId());
@@ -443,25 +483,32 @@ public class TaskManager implements Serializable {
 		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
 		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
 		List<ITransferObject> list = bean.getList(criteria);
+		List<Task> tasks = new LinkedList<Task>();
 		if (list != null && list.size() > 0) {
-			ProcessTask processTask = (ProcessTask) list.get(0);
-			return processTask.getTask();
+			for ( ITransferObject to : list) {
+				ProcessTask processTask = (ProcessTask) to;
+				tasks.add(processTask.getTask());
+			}
 		}
-		return null;
+		return tasks;
 	}
 
 	public void removeCampaignTask(CampaignProject cp, TaskHolder taskHolder) throws ManagerBeanException {
-		Task currentTask = getCurrentTask(cp);
-		if (currentTask != null) {
-			currentTask.setEndDate(new Date());
-			currentTask.setStatus(TaskStatus.DELETED);
-			currentTask.setTaskHolder(taskHolder);
-			updateTask(currentTask);
-			finishTaskAlarm(currentTask, taskHolder.getUser() );
+		List<Task> tasks = getCurrentTask(cp);
+		if (tasks != null && tasks.size() > 0) {
+			for (Task currentTask : tasks) {
+				if (currentTask != null) {
+					currentTask.setEndDate(new Date());
+					currentTask.setStatus(TaskStatus.DELETED);
+					currentTask.setTaskHolder(taskHolder);
+					updateTask(currentTask);
+					finishTaskAlarm(currentTask, taskHolder.getUser() );
+				}
+			}
 		}
 	}
 	
-	public ProcessTask getCurrentProcessTask(CampaignProject cp) throws ManagerBeanException {
+	public List<ProcessTask> getCurrentProcessTask(CampaignProject cp) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), cp.getCampaign().getId());
@@ -470,8 +517,12 @@ public class TaskManager implements Serializable {
 		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list != null && list.size() > 0) {
-			ProcessTask processTask = (ProcessTask) list.get(0);
-			return processTask;
+			List<ProcessTask> pts = new LinkedList<ProcessTask>();
+			for (ITransferObject to : list) {
+				ProcessTask processTask = (ProcessTask) to;
+				pts.add(processTask);
+			}
+			return pts;
 		}
 		return null;
 	}

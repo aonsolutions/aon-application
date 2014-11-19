@@ -302,7 +302,7 @@ public class TaskController extends BasicController {
 			String msg = e.getMessage();
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+			throw new AbortProcessingException(msg,e);
 		}
 	}
 	

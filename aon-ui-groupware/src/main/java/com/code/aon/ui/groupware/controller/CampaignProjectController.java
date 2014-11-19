@@ -202,25 +202,39 @@ public class CampaignProjectController extends LinesController {
 			throws ManagerBeanException {
 		double d = 100.0;
 		cpe.setCampaignProject(cp);
-		ProcessTask processTask  = getTaskManager().getCurrentProcessTask(cp);
 		ProcessDetail processDetail = null;
-		if (processTask != null) {
-			processDetail = processTask.getProcessDetail(); 
-			if (processDetail != null) {
-				int pos = 0;
-				for (SelectItem si : getProcessDetailList()) {
-					ProcessDetail a = (ProcessDetail) si.getValue();
-					if (a.getId().equals(processDetail.getId())) {
-						break;
+		List<ProcessTask> processTasks  = getTaskManager().getCurrentProcessTask(cp);
+		if (processTasks != null && processTasks.size() > 0) {
+			int processCount = 0;
+			List<String> sb = new LinkedList<String>();
+			for (ProcessTask processTask:processTasks) {
+				processDetail = processTask.getProcessDetail(); 
+				if (processDetail != null) {
+					sb.add("[" + processDetail.getDescription()+"]");
+					int pos = 0;
+					for (SelectItem si : getProcessDetailList()) {
+						ProcessDetail a = (ProcessDetail) si.getValue();
+						if (a.getId().equals(processDetail.getId())) {
+							break;
+						}
+						pos++;
 					}
-					pos++;
+					d = CommonUtil.round((pos * 100) / getProcessCount());
 				}
-				d = CommonUtil.round((pos * 100) / getProcessCount());
+				cpe.setProcessDetail(processDetail);
+				if (processCount == 0) {
+					Task task = processTask.getTask();
+					cpe.setTask(task);
+				} else {
+					cpe.setTask(null);
+				}
+				processCount++;
 			}
+			if (processCount > 1) {
+				cpe.setForked(true);
+				cpe.setForkDescription(sb);
+			} 
 		}
-		cpe.setProcessDetail(processDetail);
-		Task task = getTaskManager().getCurrentTask(cp);
-		cpe.setTask(task);
 		cpe.setProcessDetailPercent(d);
 		cpe.setColor(null);
 		cpe.setPercentImage(null);
@@ -285,7 +299,8 @@ public class CampaignProjectController extends LinesController {
 			CampaignProjectExtended to = (CampaignProjectExtended) getExtendedModel().getRowData();
 			CampaignProject cp = to.getCampaignProject();
 			ProcessDetail pd = to.getProcessDetail();
-			Task previousTask = getTaskManager().finishCampaignTask(cp,getGroupwareUtils().getCurrentTaskHolder());
+			List<Task> tasks = getTaskManager().finishCampaignTask(cp,getGroupwareUtils().getCurrentTaskHolder());
+			Task previousTask = (tasks != null && tasks.size() == 1)?tasks.get(0):null; 
 			if (pd != null && pd.getId() != null) {
 				getTaskManager().addProcessTask(previousTask,to.getCampaignProject().getCampaign(),pd,cp);
 			}

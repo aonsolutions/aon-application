@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -37,6 +38,8 @@ public class CampaignProjectExtended implements ITransferObject {
 	private Double processDetailPercent;
 	private Task task;
 	private byte[] percentImage;
+	private boolean forked;
+	private List<String> forkDescription;
 	private Color color;
 
 	
@@ -106,7 +109,18 @@ public class CampaignProjectExtended implements ITransferObject {
 		}
 		return null;
 	}
-
+	public boolean isForked() {
+		return forked;
+	}
+	public void setForked(boolean forked) {
+		this.forked = forked;
+	}
+	public List<String> getForkDescription() {
+		return forkDescription;
+	}
+	public void setForkDescription(List<String> sb) {
+		this.forkDescription = sb;
+	}
 	public Color getColor() {
 		if (color == null) {
 			int p = (int) CommonUtil.round(getProcessDetailPercent(),0);
@@ -132,6 +146,16 @@ public class CampaignProjectExtended implements ITransferObject {
 	}
 	
 	public String getAbbreviatedProcessDetailDescription() {
+		if (isForked()) {
+			StringBuilder sb = new StringBuilder();
+			for (String desc : getForkDescription()) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(desc);
+			}
+			return sb.toString();
+		}
 		String s = null;
 		if (getProcessDetail() != null) {
 			s = StringUtils.abbreviate(getProcessDetail().getDescription(), 35);

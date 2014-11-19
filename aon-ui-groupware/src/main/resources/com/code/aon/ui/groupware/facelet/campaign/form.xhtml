@@ -17,6 +17,7 @@
 				<ui:param name="controller" value="#{campaign}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipRemoveButton" value="#{campaign.to.deleted or campaign.to.finished}" />
+				<ui:param name="showMoreMenu" value="false" />
 					
 				<ui:define name="beforeSpinToolbarContent">
 						<aon:htmlCommandLink id="campaignMonitorReport-report"
@@ -188,6 +189,7 @@
 							<rich:inplaceSelect value="#{to.processDetail}"
 								styleClass="aon-inplace-select" showControls="true"
 								defaultLabel="........." layout="block" selectWidth="165"
+								rendered="#{!to.forked}"
 								listWidth="165" id="inplaceSelect">
 								<f:facet name="controls">
 									<aon:div>
@@ -209,6 +211,16 @@
 									actionListener="#{campaignProject.onChangeProcessDetail}"
 									reRender="CampaignProjectDataList" />
 							</rich:inplaceSelect>
+							<aon:div style="padding-left: 35px;"
+								styleClass="aon-icon-tree-root" 
+								rendered="#{to.forked}">
+								<rich:dataList value="#{to.forkDescription}" var="desc">
+									<aon:outputText value="#{desc}" />
+								</rich:dataList>
+							</aon:div>
+							<!-- 
+								<aon:abbreviateConverter maxWidth="25" />
+							-->
 						</aon:column>
 	
 						<aon:column styleClass="aon-width-150">
@@ -263,7 +275,9 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="false" />
+		</ui:include>
 
 		<aon:div id="addPanelContainer">
 			<aon:if test="#{addCampaignProject.addPanelVisible}">
