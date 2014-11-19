@@ -153,7 +153,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		
 	}
 
-	private static class TemplateMarkDetail implements ITransferObject {
+	public static class TemplateMarkDetail implements ITransferObject {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
