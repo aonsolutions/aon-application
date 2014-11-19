@@ -112,7 +112,8 @@ public class AccountEntryValidation {
 	 */
 	public static BiConsumer<AccountEntryDetail,AONContext> EMPTY_ACCOUNT = (detail,ctx) -> {
 		if (detail.getAccount() == null )
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT);
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT,detail.getLine()
+				,detail.getConcept(),detail.getDebit(),detail.getCredit());
 	};
 	
 

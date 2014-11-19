@@ -7,9 +7,11 @@ import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DET
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.function.Function;
 
 import org.jooq.Condition;
+import org.jooq.InsertValuesStep9;
 import org.jooq.exception.DataAccessException;
 import org.jooq.lambda.SQL;
 import org.jooq.lambda.Seq;
@@ -83,42 +85,52 @@ public class AccountEntryDetailDAO {
 		return populateRecord(ctx.getDslContext().fetchOne(ACCOUNT_ENTRY_DETAIL, condition));
 	}
 
-	public static void insert(AONContext ctx, AccountEntryDetail detail) {
-		ctx.checkWrite();
-		ctx.getDslContext().transaction(configuration -> {
+	public static void batchInsert(AONContext ctx,
+			Collection<AccountEntryDetail> details) {
+		InsertValuesStep9<AccountEntryDetailRecord, Integer, Integer, Integer, UInteger, String, Double, 
+			Double, Integer, String> insert = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL
+				,ACCOUNT_ENTRY_DETAIL.DOMAIN
+				,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY
+				,ACCOUNT_ENTRY_DETAIL.ACCOUNT 
+				,ACCOUNT_ENTRY_DETAIL.LINE
+				,ACCOUNT_ENTRY_DETAIL.CONCEPT 
+				,ACCOUNT_ENTRY_DETAIL.DEBIT
+				,ACCOUNT_ENTRY_DETAIL.CREDIT
+				,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT
+				,ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);				
+		for (AccountEntryDetail detail : details) {
 			AccountEntryValidation.validateDetail(ctx, detail);
-			AccountEntryDetailRecord record =ctx.getDslContext()
-				.insertInto(ACCOUNT_ENTRY_DETAIL)
-				.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,detail.getDomain())
-				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,detail.getAccountEntry())
-				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, detail.getAccount())
-				.set(ACCOUNT_ENTRY_DETAIL.LINE, UInteger.valueOf( detail.getLine()))
-				.set(ACCOUNT_ENTRY_DETAIL.CONCEPT, detail.getConcept()) 
-				.set(ACCOUNT_ENTRY_DETAIL.DEBIT, detail.getDebit())
-				.set(ACCOUNT_ENTRY_DETAIL.CREDIT, detail.getCredit())
-				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, detail.getBalancingAccount())
-				.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER, detail.getDocumentNumber())
-				.returning()
-				.fetchOne();
-			populateRecord(record, detail);
-		});
+			insert.values(
+				detail.getDomain()
+				,detail.getAccountEntry()
+				,detail.getAccount()
+				,UInteger.valueOf( detail.getLine())
+				,detail.getConcept() 
+				,detail.getDebit()
+				,detail.getCredit()
+				,detail.getBalancingAccount()
+				,detail.getDocumentNumber()			
+			);
+		}
+		insert.execute();
 	}
 
-	public static void insertNoTransaction(AONContext ctx, AccountEntryDetail detail) {
+	public static void insert(AONContext ctx, AccountEntryDetail detail) {
 		ctx.checkWrite();
 		AccountEntryValidation.validateDetail(ctx, detail);
-		ctx.getDslContext()
-			.insertInto(ACCOUNT_ENTRY_DETAIL)
-			.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,detail.getDomain())
-			.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,detail.getAccountEntry())
-			.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, detail.getAccount())
+		AccountEntryDetailRecord record = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL)
+			.set(ACCOUNT_ENTRY_DETAIL.DOMAIN, detail.getDomain())
+			.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY, detail.getAccountEntry())
+			.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, detail.getAccount()) 
 			.set(ACCOUNT_ENTRY_DETAIL.LINE, UInteger.valueOf( detail.getLine()))
 			.set(ACCOUNT_ENTRY_DETAIL.CONCEPT, detail.getConcept()) 
 			.set(ACCOUNT_ENTRY_DETAIL.DEBIT, detail.getDebit())
 			.set(ACCOUNT_ENTRY_DETAIL.CREDIT, detail.getCredit())
 			.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, detail.getBalancingAccount())
-			.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER, detail.getDocumentNumber())
-			.execute();
+			.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER, detail.getDocumentNumber())				
+			.returning()
+			.fetchOne();
+		populateRecord(record, detail);
 	}
 
 	private static AccountEntryDetail populateRecord(AccountEntryDetailRecord record) {
@@ -127,7 +139,8 @@ public class AccountEntryDetailDAO {
 		return populateRecord(record, detail);
 	}
 
-	private static AccountEntryDetail populateRecord(AccountEntryDetailRecord record, AccountEntryDetail detail) {
+	private static AccountEntryDetail populateRecord(AccountEntryDetailRecord record
+			, AccountEntryDetail detail) {
 		detail.setId(record.getId());
 		detail.setDomain(record.getDomain());
 		detail.setAccountEntry(record.getAccountEntry());
@@ -177,4 +190,5 @@ public class AccountEntryDetailDAO {
 			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(accountEntryId))
 			.execute();
 	}
+
 }

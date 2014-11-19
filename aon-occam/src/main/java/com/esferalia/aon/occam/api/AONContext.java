@@ -9,6 +9,7 @@ import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.TableField;
+import org.jooq.TransactionalRunnable;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -80,18 +81,6 @@ public class AONContext {
 		return new AONContext(DSL.using(configuration), getDomainName(), getDomainId());
 	}
 
-	public Condition getDomainInheritanceCondition(Integer domainId,
-			TableField<? extends Record, java.lang.Integer> field) {
-		DomainRecord record = dslContext.fetchOne(DOMAIN,
-				DOMAIN.ID.equal(domainId));
-		if (AonEnumUtils.getBoolean(record.getValue(DOMAIN.ENABLEHEREDITY))) {
-			Integer parentDomain = record.getValue(DOMAIN.PARENT);
-			return (field.equal(domainId)).or(field.equal(parentDomain));
-		} else {
-			return (field.equal(domainId));
-		}
-	}
-
 	public boolean canWrite() {
 		return true;
 	}
@@ -108,4 +97,22 @@ public class AONContext {
 			throw new SecurityException( AonError.READ_FORBIDDEN.getMessage() );	
 	}
 	
+	public void transaction(TransactionalRunnable transactional) {
+		getDslContext().transaction(transactional);
+	}
+	
+	
+	// TODO here?
+	public Condition getDomainInheritanceCondition(Integer domainId,
+			TableField<? extends Record, java.lang.Integer> field) {
+		DomainRecord record = dslContext.fetchOne(DOMAIN,
+				DOMAIN.ID.equal(domainId));
+		if (AonEnumUtils.getBoolean(record.getValue(DOMAIN.ENABLEHEREDITY))) {
+			Integer parentDomain = record.getValue(DOMAIN.PARENT);
+			return (field.equal(domainId)).or(field.equal(parentDomain));
+		} else {
+			return (field.equal(domainId));
+		}
+	}
+
 }

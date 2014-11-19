@@ -83,7 +83,7 @@ public class AonMathUtils {
 	}
 	
 	/**
-	 * Devuleve el valor absoluto redondeado a 2 dígitos.
+	 * Devuelve el valor absoluto redondeado a 2 dígitos.
 	 * 
 	 * @param value
 	 *            el valor a truncar
@@ -93,4 +93,25 @@ public class AonMathUtils {
 		return round( Math.abs(value) );
 	}
 
+	/**
+	 * Devuleve verdadero si el valor es igual a cero. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return boolean verdadero si el valor es igual a cero.
+	 */
+	public static boolean isZero(double value) {
+		return round( value ) == 0.0;
+	}
+
+	/**
+	 * Devuleve verdadero si el valor es diferente de cero. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return boolean verdadero si el valor es diferente de cero.
+	 */
+	public static boolean isNotZero(double value) {
+		return !isZero(value);
+	}
 }

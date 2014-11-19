@@ -33,7 +33,7 @@ public enum AonError {
 	,ACCOUNT_ENTRY_PERIOD_OPERATING("No se permite la introducción o modificación de asientos en el ejercicio {0}, porque ya se ha realizado el asiento de explotación.")
 	,ACCOUNT_ENTRY_PERIOD_CLOSING("No se permite la introducción o modificación de asientos en el ejercicio {0} porque ya se ha realizado el asiento de cierre.")
 	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vacio.")
-	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vacio. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
 	,ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND("Cuenta contable no encontrada en el dominio del asiento. (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de último nivel (9 dígitos). (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable está desactivada. (ID={0}, [{1} - {2}])")

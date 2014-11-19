@@ -8,13 +8,16 @@ import java.util.function.Function;
 import org.jooq.Condition;
 import org.jooq.lambda.Seq;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAccounting;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
+import com.esferalia.aon.occam.api.model.SalaryAccountEntry.SalaryAccountEntryLineType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
@@ -22,6 +25,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.AonCoreException;
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingImpl implements IAccounting {
 
@@ -49,17 +55,23 @@ public class AccountingImpl implements IAccounting {
 
 	@Override
 	public void insert(AONContext ctx, AccountPeriod ap) {
-		AccountPeriodDAO.insert(ctx, ap);
+		ctx.getDslContext().transaction(configuration -> {
+			AccountPeriodDAO.insert(ctx, ap);
+		} );		
 	}
 
 	@Override
 	public void update(AONContext ctx, AccountPeriod ap) {
-		AccountPeriodDAO.update(ctx, ap);
+		ctx.getDslContext().transaction(configuration -> {
+			AccountPeriodDAO.update(ctx, ap);
+		} );		
 	}
 
 	@Override
 	public void delete(AONContext ctx, AccountPeriod ap) {
-		AccountPeriodDAO.delete(ctx, ap);
+		ctx.getDslContext().transaction(configuration -> {
+			AccountPeriodDAO.delete(ctx, ap);
+		} );		
 	}
 	
 	// --------- ACCOUNT ENTRY -------------------------------------------
@@ -96,28 +108,32 @@ public class AccountingImpl implements IAccounting {
 
 	@Override
 	public void insert(AONContext ctx, AccountEntry ae) {
-		AccountEntryDAO.insert(ctx, ae);
+		ctx.getDslContext().transaction(configuration -> {
+			AccountEntryDAO.insert(ctx, ae);
+		} );		
 	}
 
 	@Override
 	public void update(AONContext ctx, AccountEntry ae) {
-		AccountEntryDAO.update(ctx, ae);
+		ctx.getDslContext().transaction(configuration -> {
+			AccountEntryDAO.update(ctx, ae);
+		} );		
 	}
 
 	@Override
 	public void delete(AONContext ctx, AccountEntry ae) {
-		AccountEntryDAO.delete(ctx, ae);
+		ctx.getDslContext().transaction(configuration -> {
+			AccountEntryDAO.delete(ctx, ae);
+		} );		
 	}
 	
 	@Override
 	public AccountEntry insertSalaryEntry(AONContext ctx, SalaryAccountEntry sae) {
-		try {
-			AccountEntry ae = getAccountEntry(ctx, sae);
+		AccountEntry ae = getAccountEntry(ctx, sae);
+		ctx.getDslContext().transaction(configuration -> {
 			AccountEntryDAO.insert(ctx, ae);
-			return ae;
-		} finally {
-			if (ctx != null) ctx.finalize();
-		}
+		} );		
+		return ae;
 	}
 
 	private AccountEntry getAccountEntry(AONContext ctx, SalaryAccountEntry sae) {
@@ -125,7 +141,7 @@ public class AccountingImpl implements IAccounting {
 		AccountEntry ae = new AccountEntry();
 		ae.setDomain(ctx.getDomainId());
 		ae.setEntryDate(sae.getDate());
-		ae.setConfidential(false);
+		ae.setSecurityLevel(sae.getSecurityLevel());
 		ae.setEntryType(AccountEntryType.SALARY);
 		AccountPeriod period = AccountPeriodDAO.fetchOne(ctx, sae.getDate());
 		if (period == null) 
@@ -143,13 +159,31 @@ public class AccountingImpl implements IAccounting {
 		sae.getLines()
 			.stream()
 			.forEach( line -> {
-				AccountEntryDetail aed = new AccountEntryDetail();
-				// TODO
-				// aed.setAccount(2632936);
-				aed.setConcept( sae.getConcept() );
-				line.getType().visit(aed, line);
-				ae.addDetail( aed );				
+				if (AonMathUtils.isNotZero(line.getAmount())) {
+					AccountEntryDetail aed = new AccountEntryDetail();
+					ApplicationParameter param = AON.fetchApplicationParameter(ctx, line.getType().getParam());
+					if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
+						Integer account = AonNumberUtils.toInteger(param.getValue()); 
+						aed.setAccount( account );
+					}
+					aed.setConcept( sae.getConcept() );
+					line.getType().visitFillAccountEntry(aed,sae,line);
+					ae.addDetail( aed );				
+				}
 			});
+		if (sae.getRegistryBank() != null) {
+			// TODO seek bank account and add amount
+		} else {
+			AccountEntryDetail aed = new AccountEntryDetail();
+			ApplicationParameter param = AON.fetchApplicationParameter(ctx, SalaryAccountEntryLineType.DEFAULT_PENDING_SALARY.getParam());
+			if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
+				Integer account = AonNumberUtils.toInteger(param.getValue()); 
+				aed.setAccount( account );
+			}
+			aed.setConcept( sae.getConcept() );
+			aed.setCredit(sae.getNetAmount());
+			ae.addDetail( aed );				
+		}
 		return ae;
 	}
 	

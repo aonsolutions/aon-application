@@ -97,44 +97,42 @@ public class AccountEntryDAO {
 
 	public static void insert(AONContext ctx, AccountEntry ae) {
 		ctx.checkWrite();
-		ctx.getDslContext().transaction(configuration -> {
-			if (ae.getAccountPeriod() == null && ae.isPeriodCreationEnabled()) {
-				LOGGER.info(MessageFormat.format(
-					"Creación automática de periodo contable para la fecha {0,date,dd/MM/yyy}: "
-					,ae.getEntryDate()));
-				AccountPeriod accountPeriod = new AccountPeriod();
-				accountPeriod.setDomain( ae.getDomain() );
-				accountPeriod.setName( Integer.toString( AonDateUtils.getYear(ae.getEntryDate())));
-				accountPeriod.setInitiationDate(AonDateUtils.getYearFirstDay(ae.getEntryDate()));
-				accountPeriod.setDeadline(AonDateUtils.getYearLastDay(ae.getEntryDate()));
-				AccountPeriodDAO.insert(ctx, accountPeriod);
-				LOGGER.info( MessageFormat.format(
-					"Periodo contable creado ID:{0}; DOMAIN:{1}: "
-					,accountPeriod.getId(),accountPeriod.getDomain()));
-				ae.setAccountPeriod(accountPeriod.getId());
-			}
-			AccountEntryValidation.validateEntry(ctx, ae);
-			increaseJournal(ctx, ae);
-			AccountEntryRecord record = ctx.getDslContext()
-				.insertInto(ACCOUNT_ENTRY)
-					.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
-					.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getAccountPeriod())
-					.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
-					.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
-					.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
-					.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
-					.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
-					.returning()
-					.fetchOne();
-			populateRecord(record, ae);
-			int line = 0;
-			for (AccountEntryDetail detail : ae.getDetails() ) {
-				detail.setAccountEntry(ae.getId());
-				detail.setDomain(ae.getDomain());
-				detail.setLine(++line);
-				AccountEntryDetailDAO.insertNoTransaction(ctx, detail);
-			}
-		});
+		if (ae.getAccountPeriod() == null && ae.isPeriodCreationEnabled()) {
+			LOGGER.info(MessageFormat.format(
+				"Creación automática de periodo contable para la fecha {0,date,dd/MM/yyy}: "
+				,ae.getEntryDate()));
+			AccountPeriod accountPeriod = new AccountPeriod();
+			accountPeriod.setDomain( ae.getDomain() );
+			accountPeriod.setName( Integer.toString( AonDateUtils.getYear(ae.getEntryDate())));
+			accountPeriod.setInitiationDate(AonDateUtils.getYearFirstDay(ae.getEntryDate()));
+			accountPeriod.setDeadline(AonDateUtils.getYearLastDay(ae.getEntryDate()));
+			AccountPeriodDAO.insert(ctx, accountPeriod);
+			LOGGER.info( MessageFormat.format(
+				"Periodo contable creado ID:{0}; DOMAIN:{1}: "
+				,accountPeriod.getId(),accountPeriod.getDomain()));
+			ae.setAccountPeriod(accountPeriod.getId());
+		}
+		AccountEntryValidation.validateEntry(ctx, ae);
+		increaseJournal(ctx, ae);
+		AccountEntryRecord record = ctx.getDslContext()
+			.insertInto(ACCOUNT_ENTRY)
+				.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
+				.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getAccountPeriod())
+				.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
+				.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
+				.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
+				.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
+				.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
+				.returning()
+				.fetchOne();
+		populateRecord(record, ae);
+		int line = 0;
+		for (AccountEntryDetail detail : ae.getDetails() ) {
+			detail.setAccountEntry(ae.getId());
+			detail.setDomain(ae.getDomain());
+			detail.setLine(++line);
+		}
+		AccountEntryDetailDAO.batchInsert(ctx, ae.getDetails());
 	}
 
 
@@ -158,33 +156,29 @@ public class AccountEntryDAO {
 
 	public static void update(AONContext ctx, AccountEntry ae) {
 		ctx.checkWrite();
-		ctx.getDslContext().transaction( configuration -> {
-			AccountEntryValidation.validateEntry(ctx, ae);
-			ctx.getDslContext()
-				.update(ACCOUNT_ENTRY)
-				.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
-				.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getAccountPeriod())
-				.set(ACCOUNT_ENTRY.ENTRY_DATE, 
-						AonDateUtils.toSql(ae.getEntryDate()))
-				.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
-				.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
-				.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
-				.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
-				.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
-				.execute();
-		});
+		AccountEntryValidation.validateEntry(ctx, ae);
+		ctx.getDslContext()
+			.update(ACCOUNT_ENTRY)
+			.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
+			.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getAccountPeriod())
+			.set(ACCOUNT_ENTRY.ENTRY_DATE, 
+					AonDateUtils.toSql(ae.getEntryDate()))
+			.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
+			.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
+			.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
+			.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
+			.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
+			.execute();
 	}
 
 	public static void delete(AONContext ctx, AccountEntry accountEntry) {
 		ctx.checkWrite();
-		ctx.getDslContext().transaction( configuration -> {
-			AccountEntryDetailDAO.deleteEntry(ctx,accountEntry.getId());
-			ctx.getDslContext()
-				.delete(ACCOUNT_ENTRY)
-				.where(ACCOUNT_ENTRY.ID.equal(accountEntry.getId()))
-				.execute();
-			afterRemove(ctx, accountEntry);
-		});
+		AccountEntryDetailDAO.deleteEntry(ctx,accountEntry.getId());
+		ctx.getDslContext()
+			.delete(ACCOUNT_ENTRY)
+			.where(ACCOUNT_ENTRY.ID.equal(accountEntry.getId()))
+			.execute();
+		afterRemove(ctx, accountEntry);
 	}
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {

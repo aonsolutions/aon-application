@@ -10,15 +10,30 @@ import org.jooq.lambda.Seq;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
+import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 
 public class AON {
 
+	private static ICommon getCommon() {
+		return new CommonImpl();
+	}
 
 	private static IAccounting getAccounting() {
 		return new AccountingImpl();
+	}
+	
+	// ********************************************
+	// ********************************** COMMON **
+	// ********************************************
+	
+	// --------------------- APPLICATION PARAMETERS
+	public static ApplicationParameter fetchApplicationParameter(AONContext ctx,AppParam param) {
+		return getCommon().fetchOne(ctx, param);
 	}
 	
 	// ********************************************
