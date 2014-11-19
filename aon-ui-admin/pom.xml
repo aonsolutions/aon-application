@@ -72,9 +72,14 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>2.1</version>
+      <artifactId>javax.servlet.jsp-api</artifactId>
+      <version>2.3.0</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.el</groupId>
+        <artifactId>javax.el-api</artifactId>
+        <version>3.0.0</version>
     </dependency>
   </dependencies>
 </project>
