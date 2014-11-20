@@ -121,10 +121,9 @@ public class SQLAccounting {
 
 	public static String getAccountName(Connection conn, int domainId, String code) throws AccMiningException {
 		String SELECT_ACCOUNT_NAME = 
-				"SELECT a.description"
-				+" FROM account a, domain d"
-				+" WHERE a.domain = d.id"
-				+ "  AND (a.domain = ? or d.parent= ?)"
+				"SELECT a.description "
+				+" FROM account a"
+				+" WHERE (a.domain = ? or a.domain=(SELECT d.parent from domain d where d.id = ?))"
 				+" AND code = ?";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -133,6 +132,7 @@ public class SQLAccounting {
 			ps.setInt(1, domainId);
 			ps.setInt(2, domainId);
 			ps.setString(3, code);
+			
 			rs = ps.executeQuery();
 			String account = null;
 			if (rs.next()) {
