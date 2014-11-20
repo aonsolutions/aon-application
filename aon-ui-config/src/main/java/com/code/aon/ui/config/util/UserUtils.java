@@ -42,10 +42,10 @@ public class UserUtils implements Serializable {
 	private User loggedUser;
 
 	public boolean isPasswordExpired() {
-		if ( passwordExpired == null ) {
+		if (passwordExpired == null) {
 			passwordExpired = Boolean.FALSE;
 			User user = getLoggedUser();
-			if ( user!=null && user.getPasswordExpiration()!=null ) {
+			if (user!=null && user.getPasswordExpiration()!=null) {
 				passwordExpired = new Date().after(user.getPasswordExpiration());
 			}		
 		}
@@ -60,8 +60,8 @@ public class UserUtils implements Serializable {
 		return loggedUser;
 	}
 
-	private void updateUser( User user ) {
-		if ( user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL ) {
+	private void updateUser(User user) {
+		if (user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL) {
 			user.setToolbar(Toolbar.ACENS);
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(User.class);
@@ -98,7 +98,7 @@ public class UserUtils implements Serializable {
                 expression = ExpressionUtilities.getOrExpression(expression, ExpressionUtilities.getEqualExpression(alias, userWorkGroup.getWorkGroup().getId()));
             }
         } catch (ManagerBeanException e) {
-            LOGGER.error( "Error obtaining the employee groups related with the logged in user", e);
+            LOGGER.error("Error obtaining the employee groups related with the logged in user", e);
         }
         return expression;
     }
@@ -124,7 +124,7 @@ public class UserUtils implements Serializable {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);
+			LOGGER.error("Error scopes related with the user" + getLoggedUser().getLogin(), e);
 		}
 		return scopes;
 	}
@@ -133,8 +133,12 @@ public class UserUtils implements Serializable {
 		return getCurrentUserScopes().contains(scope);
 	}
 
+	public List<Integer> getCurrentUserScopeIds() {
+		return getUserScopeIds(getLoggedUser());
+	}
+
 	@SuppressWarnings("unchecked")
-	private List<Integer> getCurrentUserScopeIds(User user) {
+	private List<Integer> getUserScopeIds(User user) {
 		List<Integer> scopes = null;
 		try {		
 			if (DomainManager.isParentDomainUserInChildDomain()) {
@@ -150,7 +154,7 @@ public class UserUtils implements Serializable {
 				scopes = userScopeBean.getList(new ProjectionList(projection), criteria);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);
+			LOGGER.error("Error scopes related with the user" + user.getLogin(), e);
 		}		
 		return scopes;
 	}
@@ -170,16 +174,16 @@ public class UserUtils implements Serializable {
 		}
 	}	
 
-	public Expression getNullableScopeExpression( String resolvedAlias ) {
-		User user = UserUtils.getInstance().getLoggedUser();
+	public Expression getNullableScopeExpression(String resolvedAlias) {
+		User user = getLoggedUser();
 		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
 		if (user != null) {
-			List<Integer> list = getCurrentUserScopeIds(user);
-			if (list!= null && !list.isEmpty() ) {
+			List<Integer> list = getUserScopeIds(user);
+			if (list!= null && !list.isEmpty()) {
 				String ljAlias = getLeftJoinAlias(resolvedAlias);
 				Expression scopeExp = null;
-				if ( list.size() == 1 ) {
+				if (list.size() == 1) {
 					scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, list.get(0));
 				} else {
 					scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
@@ -190,10 +194,10 @@ public class UserUtils implements Serializable {
 		return exp;
 	}
 
-	private String getLeftJoinAlias( String alias ) {
+	private String getLeftJoinAlias(String alias) {
 		String ljAlias = alias;
 		int index = StringUtils.lastIndexOf(alias, '.');
-		if ( index != -1 ) {
+		if (index != -1) {
 			ljAlias = StringUtils.substring(alias, 0, index) + "<" + StringUtils.substring(alias, index+1); 
 		}
 		return ljAlias;

@@ -28,57 +28,74 @@
 						value="#{posFinanceSearch.workPlace}" required="true">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-						<a4j:support event="onchange" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
-						<a4j:support event="oninputchanged" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
+						<a4j:support event="onchange" reRender="PosFinance_pos,PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+						<a4j:support event="oninputchanged" reRender="PosFinance_pos,PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
-					<aon:if test="#{companyCollections.departmentsCount > 0}">
-						<aon:outputLabel value="#{bundle.purchase_department}" />
-						<aon:selectOneMenu 
-							value="#{posFinanceSearch.department}">
-							<f:selectItem itemLabel=" - " itemValue="null" />
-							<f:selectItems value="#{companyCollections.departments}" />
-							<a4j:support event="onchange" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
-							<a4j:support event="oninputchanged" reRender="PosFinance_pos" ignoreDupResponses="true" ajaxSingle="true" />
-						</aon:selectOneMenu>
-					</aon:if>
+					<aon:outputLabel for="PosFinance_payMethod" value="#{bundle.finance_payMethod}" />
+					<aon:selectOneMenu id="PosFinance_payMethod"
+						value="#{posFinanceSearch.payMethod}" required="true">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
+						<a4j:support event="onchange" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+						<a4j:support event="oninputchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="PosFinance_fromDueDate"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="PosFinance_fromDueDate"
+							value="#{posFinanceSearch.fromDueDate}" required="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="onchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+						</aon:selectInputDate>
+
+						<aon:outputLabel for="PosFinance_toDueDate"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="PosFinance_toDueDate"
+							value="#{posFinanceSearch.toDueDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="onchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+						</aon:selectInputDate>
+					</aon:div>
 
 					<aon:outputLabel value="#{bundle.aon_module_pos}" />
 					<aon:selectOneMenu id="PosFinance_pos"
 						value="#{posFinanceSearch.pos}" >
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{posFinanceSearch.workPlacePos}" />
+						<a4j:support event="onchange" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+						<a4j:support event="oninputchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{bundle.report_shift}" />
 					<aon:selectOneMenu value="#{posFinanceSearch.shift}">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{financeCollections.shifts}" />
+						<a4j:support event="onchange" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
+						<a4j:support event="oninputchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:outputLabel for="PosFinance_dueDate-from"
-							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="PosFinance_dueDate-from"
-							valueChangeListener="#{posFinance.addGreaterThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputLabel for="PosFinance_dueDate-to"
-							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="PosFinance_dueDate-to"
-							valueChangeListener="#{posFinance.addLessThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</aon:div>
+					<aon:outputLabel value="#{bundle.finance_pos_shift_list}" />
+					<aon:selectManyListbox id="PosFinance_posShifts"
+						style="width:300px;"
+						value="#{posFinanceSearch.posShifts}" size="10">
+						<f:selectItems value="#{posFinanceSearch.workPlacePosShift}" />
+					</aon:selectManyListbox>
 
-					<aon:outputLabel value="#{bundle.finance_payMethod}" />
-					<aon:selectOneMenu value="#{posFinanceSearch.payMethod}">
-						<f:selectItems value="#{configCollections.payMethods}" />
-					</aon:selectOneMenu>
+					<aon:outputText value="" />
+					<aon:outputText value="* #{bundle.finance_pos_shift_pending_charge_message}" 
+						styleClass="aon-italic aon-margin-left" style="font-size: 11px;" />
 
 				</ui:define>
-			</ui:decorate>				
+
+			</ui:decorate>
+
 		</aon:form>
 
 	</ui:define>
