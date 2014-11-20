@@ -19,9 +19,10 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <version>2.6.0</version>
         <configuration>
-          <webappDirectory>${project.build.outputDirectory}</webappDirectory>
           <deploy>${project.build.directory}/extra</deploy>
           <extra>${project.build.directory}/extra</extra>
+          <webappDirectory>${project.build.outputDirectory}</webappDirectory>
+          <module>com.esferalia.aon.gwt.connect.Connect</module>
         </configuration>
         <executions>
           <execution>
@@ -84,4 +85,27 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+    <id>dev</id>
+    <activation>
+      <property>
+        <name>gwt.working</name>
+        <value>true</value>
+      </property>
+    </activation>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>gwt-maven-plugin</artifactId>
+          <configuration>
+            <draftCompile>true</draftCompile>
+	    <module>com.esferalia.aon.gwt.connect.WorkingConnect</module>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+    </profile>
+  </profiles>
 </project>

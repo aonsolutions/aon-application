@@ -20,6 +20,7 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.6.0</version>
 				<configuration>
+					<module>com.esferalia.aon.gwt.document.Document</module>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 				</configuration>
 				<executions>
@@ -27,8 +28,6 @@
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>compile</goal>
-							<!--goal>generateAsync</goal -->
-							<!--goal>test</goal -->
 						</goals>
 					</execution>
 				</executions>
@@ -95,9 +94,28 @@
 
 
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>perform-stats</id>
-		</profile>
-	</profiles>
+  <profiles>
+    <profile>
+    <id>dev</id>
+    <activation>
+      <property>
+        <name>gwt.working</name>
+        <value>true</value>
+      </property>
+    </activation>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>gwt-maven-plugin</artifactId>
+          <configuration>
+            <draftCompile>true</draftCompile>
+	    <module>com.esferalia.aon.gwt.document.WorkingDocument</module>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+    </profile>
+  </profiles>
+
 </project>

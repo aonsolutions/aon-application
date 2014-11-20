@@ -18,9 +18,10 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.6.0</version>
 				<configuration>
-					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<deploy>${project.build.directory}/extra</deploy>
 					<extra>${project.build.directory}/extra</extra>
+          <module>com.esferalia.aon.gwt.fiscal.Fiscal</module>
+					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.accounting.mining</compileSourcesArtifact>
@@ -157,4 +158,27 @@
 		</dependency>
 		-->
 	</dependencies>
+  <profiles>
+    <profile>
+    <id>dev</id>
+    <activation>
+      <property>
+        <name>gwt.working</name>
+        <value>true</value>
+      </property>
+    </activation>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+            <artifactId>gwt-maven-plugin</artifactId>
+            <configuration>
+              <draftCompile>true</draftCompile>
+					    <module>com.esferalia.aon.gwt.fiscal.WorkingFiscal</module>
+            </configuration>
+        </plugin>
+      </plugins>
+    </build>
+    </profile>
+  </profiles>
 </project>
