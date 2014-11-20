@@ -100,7 +100,8 @@
 						</aon:if>
 	
 						<f:facet name="footer">
-							<aon:outputText value="#{bundle.report_totals}">
+							<aon:outputText value="#{bundle.report_totals}"
+								styleClass="aon-bold">
 							</aon:outputText>
 						</f:facet>
 					</aon:column>
@@ -122,7 +123,8 @@
 						</aon:outputText>
 	
 						<f:facet name="footer">
-							<aon:outputText value="#{stat.totalAmount}" style="float:right">
+							<aon:outputText value="#{stat.totalAmount}" 
+								styleClass="aon-bold" style="float:right">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</f:facet>
@@ -137,7 +139,8 @@
 						</aon:outputText>
 	
 						<f:facet name="footer">
-							<aon:outputText value="#{stat.numInvoices}" style="float:right">
+							<aon:outputText value="#{stat.numInvoices}"
+								styleClass="aon-bold" style="float:right">
 								<f:convertNumber type="number" maxFractionDigits="0"></f:convertNumber>
 							</aon:outputText>
 						</f:facet>
@@ -152,7 +155,8 @@
 								<f:convertNumber type="number" maxFractionDigits="0"/>
 							</aon:outputText>
 							<f:facet name="footer">
-								<aon:outputText value="#{stat.numProducts}" style="float:right">
+								<aon:outputText value="#{stat.numProducts}"
+									styleClass="aon-bold" style="float:right">
 									<f:convertNumber type="number" maxFractionDigits="0"></f:convertNumber>
 								</aon:outputText>
 							</f:facet>
@@ -168,7 +172,8 @@
 						</aon:outputText>
 	
 						<f:facet name="footer">
-							<aon:outputText value="#{stat.promAmount}" style="float:right">
+							<aon:outputText value="#{stat.promAmount}"
+								styleClass="aon-bold" style="float:right">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</f:facet>

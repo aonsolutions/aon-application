@@ -158,9 +158,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -234,9 +232,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -386,8 +382,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -467,9 +462,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -553,9 +546,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -635,9 +626,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -791,9 +780,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -867,9 +854,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1016,14 +1001,12 @@ public class StatEngine implements Serializable {
 			} else {
 				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
-			stmt.append(" GROUP BY p.id,p.name");
+			stmt.append(" GROUP BY p.id,p.code,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1041,12 +1024,12 @@ public class StatEngine implements Serializable {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2)+" - "+rs.getString(3));
-				int count = rs.getInt(4);
-				stat.setNumInvoice(count);
+				stat.setNumInvoice(rs.getInt(4));
 				double amount = rs.getDouble(5);
 				stat.setAmount(amount);
-				stat.setProductCount(rs.getInt(6));
-				stat.setAverageAmount(CommonUtil.round(amount / count));
+				int count = rs.getInt(6);
+				stat.setProductCount(count);
+				stat.setAverageAmount((count == 0) ? 0 : CommonUtil.round(amount / count));
 				stats.add(stat);
 			}
 			return stats;
@@ -1098,9 +1081,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1262,9 +1243,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1340,9 +1319,7 @@ public class StatEngine implements Serializable {
 
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1503,9 +1480,7 @@ public class StatEngine implements Serializable {
 			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC");
 			ps = conn.prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
