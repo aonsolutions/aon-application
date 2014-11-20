@@ -523,22 +523,4 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<profiles>
-		<profile>
-<id>dev</id>
-<build>
-<plugins>
-<plugin>
-<groupId>org.codehaus.mojo</groupId>
-     <artifactId>gwt-maven-plugin</artifactId>
-     <configuration>
-      <module>ro.lmn.maven.recipe.gwtdev.ProfileDemoDev</module>
-      <draftCompile>true</draftCompile>
-     </configuration>
-    </plugin>
-   </plugins>
-  </build>
- </profile>
-</profiles>
-
 </project>
