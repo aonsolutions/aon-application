@@ -63,14 +63,20 @@ public class ReservationRequestControllerListener extends ControllerAdapter impl
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ReservationRequest request = (ReservationRequest)event.getController().getTo();
-		validateRequest(request);
+		ReservationRequestController controller = (ReservationRequestController)event.getController();
+		if (!controller.isSkipResetAvailabilityMap()) {
+			ReservationRequest request = (ReservationRequest)controller.getTo();
+			validateRequest(request);
+		}
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		ReservationRequest request = (ReservationRequest)event.getController().getTo();
-		validateRequest(request);
+		ReservationRequestController controller = (ReservationRequestController)event.getController();
+		if (!controller.isSkipResetAvailabilityMap()) {
+			ReservationRequest request = (ReservationRequest)controller.getTo();
+			validateRequest(request);
+		}
 	}
 
 	private void validateRequest(ReservationRequest request) throws ControllerListenerException {

@@ -66,6 +66,9 @@ public class ReservationRequestController extends BasicController implements IPm
 		this.requestGuest = requestGuest;
 	}
 
+	public boolean isSkipResetAvailabilityMap() {
+		return skipResetAvailabilityMap;
+	}
 	public void setSkipResetAvailabilityMap(boolean value) {
 		this.skipResetAvailabilityMap = value;
 	}
@@ -167,7 +170,7 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	public void acceptRequest(ActionEvent event) {
 		super.accept(event);
-		if (!skipResetAvailabilityMap) {
+		if (!isSkipResetAvailabilityMap()) {
 			ReservationRequestRoomController requestRoomController = (ReservationRequestRoomController)AonUtil.getRegisteredBean(RESERVATION_REQUEST_ROOM_CONTROLLER_NAME);
 			requestRoomController.setAvailableRoomStayMap(null);
 		}
