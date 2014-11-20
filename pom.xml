@@ -523,45 +523,22 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-			<!-- The PMD Plugin allows you to automatically run the PMD code analysis 
-				tool on your project's source code. It also supports the separate Copy/Paste 
-				Detector tool (or CPD) distributed with PMD. -->
-<!-- 				
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-							<goal>cpd-check</goal>
-						</goals>
-						<configuration>
-							<failOnViolation>false</failOnViolation>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<targetJdk>${compileSource}</targetJdk>
-					<sourceEncoding>ISO-8859-1</sourceEncoding>
-				</configuration>
-			</plugin>
-		
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.3-SNAPSHOT</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<failOnError>false</failOnError>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
- -->
+	<profiles>
+		<profile>
+<id>dev</id>
+<build>
+<plugins>
+<plugin>
+<groupId>org.codehaus.mojo</groupId>
+     <artifactId>gwt-maven-plugin</artifactId>
+     <configuration>
+      <module>ro.lmn.maven.recipe.gwtdev.ProfileDemoDev</module>
+      <draftCompile>true</draftCompile>
+     </configuration>
+    </plugin>
+   </plugins>
+  </build>
+ </profile>
+</profiles>
+
 </project>
