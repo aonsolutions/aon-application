@@ -71,13 +71,11 @@ public class SynchronizeFiles {
 			try {
 				drive = DriveUtils.serviceInitialize(dd.getGservice());
 			} catch (IOException e) {
-				LOGGER.error("I/O Error connecting to Drive: {}, {}. {}",
-						domain, dd.getGservice().getEmailAddress(),
+				LOGGER.error("I/O Error connecting to Drive: {}",
 						e.getMessage());
 				throw e;
 			} catch (GeneralSecurityException e) {
-				LOGGER.error("Security Error connecting to Drive: {}, {}. {}",
-						domain, dd.getGservice().getEmailAddress(),
+				LOGGER.error("Security Error connecting to Drive: {}",
 						e.getMessage());
 				throw e;
 			}

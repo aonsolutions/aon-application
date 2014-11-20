@@ -454,8 +454,8 @@ public class DriveUtils implements IBlobManager {
 
 			long time = System.currentTimeMillis() - start;
 			
-			LOGGER.info("Document uploaded: {}-{} ({}s)",
-					file.getId() , file.getTitle() , (time/1000d) );
+			LOGGER.info("Uploading document: {}-{} ({}s)", file.getId()
+					+ file.getTitle(), (time/1000d));
 			return file;
 		} catch (IOException e) {
 			LOGGER.error("Error uploading document: {}-{}. {}", file.getId()
@@ -862,8 +862,8 @@ public class DriveUtils implements IBlobManager {
 					setDriveId(fileInfo, domain, file.getFileSize().toString());
 				}
 				LOGGER.info(
-						"{} '{}': Not at Drive. It was created & uploaded [{}].",
-						type, fileInfo.getTitle(), file.getId());
+						"'{}': Not at Drive. It was created & uploaded [{}].",
+						fileInfo.getTitle(), file.getId());
 				return true;
 			} else {
 
@@ -882,8 +882,8 @@ public class DriveUtils implements IBlobManager {
 							.getType()].name();
 					if (dryRun) {
 						LOGGER.info(
-								"Dry Run {} '{}': Changed. It will be synchronized/uploaded.",
-								type, fileInfo.getTitle());
+								"Dry Run '{}': Changed. It will be synchronized/uploaded.",
+								fileInfo.getTitle());
 						return true;
 					}
 					File file = updateFile(fileInfo);
@@ -892,8 +892,8 @@ public class DriveUtils implements IBlobManager {
 						setDriveId(fileInfo, domain, file.getFileSize()
 								.toString());
 						LOGGER.info(
-								"{} '{}': Changed. It was synchronized/uploaded [{}].",
-								type, fileInfo.getTitle(), file.getId());
+								"'{}': Changed. It was synchronized/uploaded [{}].",
+								fileInfo.getTitle(), file.getId());
 						return true;
 					}
 					LOGGER.warn(
