@@ -7,6 +7,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="scopeList" default="#{configCollections.currentUserScopes}"/>
+
 	<aon:outputLabel for="#{controller.pojoShortName}_scope_id"
 		value="#{bundle.aon_scope}" />
 	<aon:div id="scopeDiv">
@@ -15,7 +17,7 @@
 				<aon:selectOneMenu id="#{controller.pojoShortName}_scope_id"
 					value="#{searchController.scopes[index]}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{configCollections.currentUserScopes}" />
+					<f:selectItems value="#{scopeList}" />
 					<a4j:support event="onchange" reRender="scopeDiv"/>
 				</aon:selectOneMenu>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"

@@ -31,8 +31,9 @@
 		src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
 		
 	<aon:if test="#{!showServiconvenios}">
-		<ui:include
-			src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
+		<ui:include src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" >
+			<ui:param name="scopeList" value="#{corporateIdentityAttach.currentUserScopes}"/>
+		</ui:include>		
 			
 		<aon:outputLabel for="RegistryAttachment_category"
 			value="#{bundle.aon_category}" />
@@ -43,7 +44,7 @@
 						<aon:selectOneMenu id="RegistryAttachment_category"
 							value="#{searchController.categories[index]}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{registryCollections.categories}" />
+							<f:selectItems value="#{corporateIdentityAttach.categories}" />
 							<a4j:support event="onchange" reRender="categoryDiv"/>
 						</aon:selectOneMenu>
 						<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="categoryDiv"

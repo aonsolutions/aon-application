@@ -29,6 +29,7 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -104,6 +105,10 @@ public class UserUtils implements Serializable {
     }
 	
 	public List<Scope> getCurrentUserScopes() {
+		return getCurrentUserScopes(false);
+	}
+	
+	public List<Scope> getCurrentUserScopes( boolean forceHeredity ) {
 		List<Scope> scopes = new LinkedList<Scope>();
 		try {
 			// Si el usuario pertenece a un dominio padre, pero el dominio activo es hijo,
@@ -111,6 +116,9 @@ public class UserUtils implements Serializable {
 			if (DomainManager.isParentDomainUserInChildDomain()) {
 				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
 				Criteria criteria = new Criteria();
+				if ( forceHeredity ) {
+					UserUtils.getInstance().addForceHeredityDomainCondition(criteria, scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN) );
+				}
 				for (ITransferObject ito : scopeBean.getList(criteria)) {
 					scopes.add((Scope) ito);
 				}
@@ -203,4 +211,15 @@ public class UserUtils implements Serializable {
 		return ljAlias;
 	}
 
+	public void addForceHeredityDomainCondition( Criteria criteria, String alias ) {
+		criteria.setSkipDomainFilter(true);
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		if ( ds.isChildDomain() ) {
+			Object[] values = new Object[]{ds.getParentDomainId(), ds.getDomainId()};
+			criteria.addInExpression(alias, values);
+		} else {
+			criteria.addEqualExpression(alias, ds.getDomainId());	
+		}
+	}
+	
 }

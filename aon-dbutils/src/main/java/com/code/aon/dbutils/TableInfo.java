@@ -29,6 +29,7 @@ public class TableInfo implements Constants {
 	private boolean recursive;
 	private Map<Integer,Integer> keys;
 	private Integer baseId;
+	private boolean heredity;
 	private boolean forceHeredity;
 	private TableInfoListener listener;
 	private ColumnInfo cyclicColumn;
@@ -46,6 +47,7 @@ public class TableInfo implements Constants {
 		initColumns(metaData);
 		initPrimaryKeys(metaData);
 		initForeignKeys(metaData);
+		setHeredity(ArrayUtils.contains(TableUtil.HEREDITY_TABLES, name));
 		setForceHeredity(ArrayUtils.contains(TableUtil.FORCE_HEREDITY_TABLES, name));
 	}
 	
@@ -271,11 +273,7 @@ public class TableInfo implements Constants {
 		buf.append(" FROM ");
 		buf.append(getStrictName());
 		buf.append(" WHERE ");
-		if ( DOMAIN_TABLE_NAME.equals(getName()) ) {
-			buf.append( getPkColumn().getStrictName() );	
-		} else {
-			buf.append( TableUtil.getStrictName(DOMAIN_COLUMN_NAME) );
-		}
+		buf.append( getDomainColumn() );
 		if ( domains.length == 1 ) {
 			buf.append(" = ");
 			buf.append( domains[0] );			
@@ -292,6 +290,14 @@ public class TableInfo implements Constants {
 		return buf.toString();
 	}
 
+	public String getDomainColumn() {
+		if ( DOMAIN_TABLE_NAME.equals(getName()) ) {
+			return getPkColumn().getStrictName();	
+		} else {
+			return TableUtil.getStrictName(DOMAIN_COLUMN_NAME);
+		}		
+	}
+	
 	public Integer getBaseId() {
 		return baseId;
 	}
@@ -362,6 +368,14 @@ public class TableInfo implements Constants {
 
 	public void setForceHeredity(boolean forceHeredity) {
 		this.forceHeredity = forceHeredity;
+	}
+
+	public boolean isHeredity() {
+		return heredity;
+	}
+
+	public void setHeredity(boolean heredity) {
+		this.heredity = heredity;
 	}
 
 	public Integer[] getDomains( Connection connection, Integer[] domains ) {

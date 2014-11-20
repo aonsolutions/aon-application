@@ -4,6 +4,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="lookupForRegistry" default="#{false}"/>
+
 	<aon:if test="#{lookupForRegistry}">
 		<aon:valueParam name="lookupProperty" default="registry"/>
 		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>

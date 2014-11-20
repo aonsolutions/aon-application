@@ -36,12 +36,14 @@ public class DomainCommandLine {
 	
 	public static final String PARENT_ARGUMENT = "parent";
 
+	public static final String INCLUDE_PARENT_ARGUMENT = "includeParent";
+
 	private static final String PASSWORD_ARGUMENT = "password";
 
 	private static final String USER_ARGUMENT = "user";
 
 	private static final String URL_ARGUMENT = "url";
-
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainCommandLine.class);
 	
 	private Options options;
@@ -107,6 +109,10 @@ public class DomainCommandLine {
 
 	public String getValue(String argument) {
 		return line.getOptionValue(argument);
+	}	
+
+	public boolean hasOption(String argument) {
+		return line.hasOption(argument);
 	}	
 	
 	private String getUrl() {

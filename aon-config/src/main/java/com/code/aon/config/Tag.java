@@ -12,7 +12,7 @@ import com.esferalia.aon.entity.master.TagDB;
 
 @Entity
 @Table(name="tag")
-@Heritable
+@Heritable(force=true)
 public class Tag extends TagDB {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

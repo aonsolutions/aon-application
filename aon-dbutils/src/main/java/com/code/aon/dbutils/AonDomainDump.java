@@ -1,6 +1,8 @@
 package com.code.aon.dbutils;
 
+import static com.code.aon.dbutils.DomainCommandLine.DOMAIN_ARGUMENT;
 import static com.code.aon.dbutils.DomainCommandLine.FILE_ARGUMENT;
+import static com.code.aon.dbutils.DomainCommandLine.INCLUDE_PARENT_ARGUMENT;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -43,7 +45,8 @@ public class AonDomainDump implements Constants {
 	private Map<String,TableInfo> tables;
 	private Map<String,TableDumpInfo> dumpInfos;
 	private Connection connection;
-	private Integer[] domains;
+	private DomainInfo domainInfo;
+	private boolean includeParent;
 	private BufferedWriter writer;
 	private IDumpListener listener;
 	
@@ -66,11 +69,26 @@ public class AonDomainDump implements Constants {
 		writer.newLine();
 	}
 	
+	private Integer[] getDomains() {
+		if ( this.domainInfo.getParent() != null ) {
+			return new Integer[]{this.domainInfo.getId(),this.domainInfo.getParent()};
+		}
+		return new Integer[]{this.domainInfo.getId()};
+	}
+	
+	private Integer[] getDomains( TableInfo t ) {
+		if ( t.isForceHeredity() || this.includeParent ) {
+			return getDomains();
+		}
+		return new Integer[]{this.domainInfo.getId()};
+	}
+	
 	private void writeInfo() throws IOException, SQLException {
 		writeLine("# Database: " + connection.getCatalog() );
-		for( Integer domainId : domains ) {
-			String name = TableUtil.getDomainName(connection, domainId);
-			writeLine("# Domain: " +  name + " (" + domainId + ")" );
+		writeLine("# Domain: " +  this.domainInfo.getName() + " (" + this.domainInfo.getId() + ")" );
+		if ( this.domainInfo.getParent() != null ) {
+			DomainInfo parentInfo = TableUtil.getDomainInfo(connection, this.domainInfo.getParent());
+			writeLine("#Parent Domain: " +  parentInfo.getName() + " (" + parentInfo.getId() + ")" );
 		}
 		String version = TableUtil.getVersion(connection);
 		writeLine("# Version: " + version );
@@ -81,25 +99,29 @@ public class AonDomainDump implements Constants {
 		}
 	}
 
-	private void updateForceHeredity( boolean reset ) {
+	private void updateTableInfos() throws SQLException {
+		boolean onlyOneDomain = this.domainInfo.getParent() == null;
 		for( TableInfo ti : tables.values() ) {
-			boolean fh = (!reset) && ArrayUtils.contains(TableUtil.FORCE_HEREDITY_TABLES, ti.getName());
+			boolean fh = (!onlyOneDomain) && ArrayUtils.contains(TableUtil.FORCE_HEREDITY_TABLES, ti.getName());
 			ti.setForceHeredity( fh );
+			TableUtil.updateBaseId(connection, ti, getDomains(ti));
 		}
 	}
 	
-	public void execute(Integer[] domains, Writer writer) throws AonSQLException {
+	public void execute(Integer domain, boolean includeParent, Writer writer) throws AonSQLException {
 		try {
-			LOGGER.info("Database {}, domains {}", connection.getMetaData().getURL(), ArrayUtils.toString(domains) );
-			
-			this.domains = domains;
+			this.includeParent = includeParent;
+			LOGGER.info("Database {}", connection.getMetaData().getURL());
+			this.domainInfo = TableUtil.getDomainInfo(connection, domain);
+			LOGGER.info("{}", domainInfo);
+			LOGGER.info("Include parent: {}", this.includeParent);
+
 			this.writer = new BufferedWriter(writer);
 
 			writeInfo();
 			writeLine(SET_FOREIGN_KEY_CHECKS_0);
 
-			TableUtil.updateBaseIds(connection, tables.values(), this.domains);
-			updateForceHeredity(domains.length > 1);
+			updateTableInfos();
 
 			dumpActionTable();
 			
@@ -138,7 +160,7 @@ public class AonDomainDump implements Constants {
 	
 	private void dumpActionTable() throws IOException, AonSQLException {
 		Set<Integer> usedActions = new HashSet<Integer>();
-		Integer[] allDomains = TableUtil.getAllDomains(connection, this.domains);
+		Integer[] allDomains = getDomains();
 		usedActions.addAll( getUsedActions(ACTION_DENIED_TABLE_NAME, allDomains) );
 		usedActions.addAll( getUsedActions(ACTION_FAVORITE_TABLE_NAME, allDomains) );
 		usedActions.addAll( getUsedActions(PROFILE_ACTION_DENIED_TABLE_NAME, allDomains) );
@@ -198,7 +220,7 @@ public class AonDomainDump implements Constants {
 				this.listener.startDumpTable(t.getName());
 			}						
 			writeLine("");
-			String sentence = t.getSelectStatement(t.getDomains(connection, domains), where);
+			String sentence = t.getSelectStatement(t.getDomains(connection, getDomains(t)), where);
 			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
@@ -297,8 +319,8 @@ public class AonDomainDump implements Constants {
 					Integer fkId = (Integer) value;
 					if ( ci.isActionReference() ) {
 						values[i] = getActionReference( fkId );
-					} else if ( t.isForceHeredity() && DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {
-						values[i] = this.tables.get(DOMAIN_TABLE_NAME).getRelativeId(this.domains[0]);
+					} else if ( t.isForceHeredity() && (!includeParent) && DOMAIN_COLUMN_NAME.equals(ci.getName()) ) {
+						values[i] = this.tables.get(DOMAIN_TABLE_NAME).getRelativeId(this.domainInfo.getId());
 					} else {
 						values[i] = getReferenceValue(t, fkId, ci, ci.getFkTableName());	
 					}					
@@ -385,11 +407,17 @@ public class AonDomainDump implements Constants {
 	public static void main(String[] arguments) {
 		
 		DomainCommandLine dcl = new DomainCommandLine();
+		
+		dcl.getOption(DOMAIN_ARGUMENT).setRequired(true);
 
 		Option fileOption = OptionBuilder.withDescription( "output sql file in ISO-8859-1" )
 				.withArgName( "sqlFile" ).hasArg().create(FILE_ARGUMENT);
 		fileOption.setRequired(true);
 		dcl.addOption(fileOption);					
+
+		Option includeParentOption = OptionBuilder.withDescription( "include parent domain" )
+				.withArgName(INCLUDE_PARENT_ARGUMENT).create(INCLUDE_PARENT_ARGUMENT);
+		dcl.addOption(includeParentOption);					
 		
 		dcl.parse(AonDomainDump.class.getName(), arguments);
 				
@@ -434,7 +462,8 @@ public class AonDomainDump implements Constants {
 					}
 					
 				});
-				dump.execute(domains, writer);				
+				boolean includeParent = dcl.hasOption(INCLUDE_PARENT_ARGUMENT);
+				dump.execute(domains[0], includeParent, writer);				
 			}
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );

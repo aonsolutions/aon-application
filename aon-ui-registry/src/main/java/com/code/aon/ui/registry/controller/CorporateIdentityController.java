@@ -1,6 +1,5 @@
 package com.code.aon.ui.registry.controller;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_COLLECTIONS;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUMENT_CONTROLLER_NAME;
 
@@ -8,6 +7,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,17 +22,18 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Category;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.event.DomainLoookupListener;
 import com.code.aon.ui.util.AonUtil;
@@ -107,9 +108,8 @@ public class CorporateIdentityController extends RegistryAttachController implem
 	}
 
 	public List<SelectItem> getDomainScopes() throws ManagerBeanException {
-		if ( DomainManager.getCurrentDomain().equals(this.domain.getId()) ) {
-			ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(CONFIG_COLLECTIONS);
-			return ccc.getCurrentUserScopes();
+		if ( !isMassiveUpload() ) {
+			return getCurrentUserScopes();
 		}
 		List<SelectItem> scopes = new LinkedList<SelectItem>();
 		if ( this.domain.getId() != null ) {
@@ -118,7 +118,7 @@ public class CorporateIdentityController extends RegistryAttachController implem
 			criteria.setSkipDomainFilter(true);
 			List<Integer> list = new LinkedList<Integer>();
 			list.add(this.domain.getId());
-			if ( this.domain.isEnableHeredity() ) {
+			if ( (this.domain.getParent() != null) && (this.domain.getParent().getId() != null) ) {
 				list.add(this.domain.getParent().getId());
 			}
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.SCOPE_DOMAIN), list );
@@ -222,6 +222,30 @@ public class CorporateIdentityController extends RegistryAttachController implem
 		}
 		return super.getRegistryId();
 	}
+	
+	public List<SelectItem> getCategories() throws ManagerBeanException {
+		List<SelectItem> users = new LinkedList<SelectItem>();
+		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
+		Criteria criteria = new Criteria();
+		UserUtils.getInstance().addForceHeredityDomainCondition(criteria, categoryBean.getFieldName(IEntityAlias.CATEGORY_DOMAIN) );
+		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.REGISTRY_ATTACHMENT);
+		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
+		Iterator<?> iter = categoryBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			Category category = (Category) iter.next();
+			SelectItem item = new SelectItem(category, category.getName());
+			users.add(item);
+		}
+		return users;
+	}	
 
+	public List<SelectItem> getCurrentUserScopes() {
+		List<SelectItem> currentUserScopes = new LinkedList<SelectItem>();
+		for (Scope scope : UserUtils.getInstance().getCurrentUserScopes(true)) {
+			SelectItem item = new SelectItem(scope, scope.getDescription());
+			currentUserScopes.add(item);
+		}
+		return currentUserScopes;
+	}	
 	
 }

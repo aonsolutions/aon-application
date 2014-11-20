@@ -12,8 +12,6 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.sql.Connection;
 import java.text.MessageFormat;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -104,17 +102,6 @@ public class BackupController implements IDumpListener, Serializable {
 		}			
 	}
 	
-	private Integer[] getDomains() throws ManagerBeanException {
-		List<Integer> domains = new LinkedList<Integer>();
-		domains.add(this.domain.getId());
-		if ( domain.getParent() != null ) {
-			if (this.domain.isEnableHeredity() || isIncludeParentDomain()) {
-				domains.add(domain.getParent().getId());
-			}
-		}
-		return domains.toArray(new Integer[domains.size()]);
-	}
-	
 	private String getBackupName() {
 		return StringUtils.replace(domain.getName(), ".", "-");
 	}
@@ -148,7 +135,8 @@ public class BackupController implements IDumpListener, Serializable {
 			Writer writer = new OutputStreamWriter(zipOut, CharEncoding.ISO_8859_1);
 			AonDomainDump dump = new AonDomainDump(connection);
 			dump.setListener(this);
-			dump.execute(getDomains(), writer);
+			boolean includeParent = this.domain.isEnableHeredity() || isIncludeParentDomain();
+			dump.execute(this.domain.getId(), includeParent, writer);
 			
            	zipOut.closeEntry();
         } catch (Throwable e) {
@@ -248,7 +236,10 @@ public class BackupController implements IDumpListener, Serializable {
 	
 	public boolean isShowIncludeParentDomain() {
 		Domain parent = domain.getParent();
-		return parent != null && parent.getId() != null;
+		if ( (parent != null) && (parent.getId() != null) ) {
+			return ! this.domain.isEnableHeredity();			
+		}
+		return false;
 	}
 	
 }
