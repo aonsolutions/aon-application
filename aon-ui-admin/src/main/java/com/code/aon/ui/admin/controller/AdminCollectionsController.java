@@ -15,9 +15,14 @@ import com.code.aon.ui.util.AonUtil;
 public class AdminCollectionsController implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private static final DomainType[] VALID_CHILD_DOMAIN_TYPES = {
+		DomainType.ENTERPRISE, DomainType.ACADEMY, DomainType.GARAGE
+	};
 
 	private List<SelectItem> domainTypes;
 	private List<SelectItem> newDomainTypes;
+	private List<SelectItem> newChildDomainTypes;
 
 	public List<SelectItem> getDomainTypes() {
 		if ( domainTypes == null ) {
@@ -45,6 +50,19 @@ public class AdminCollectionsController implements Serializable {
 			}		
 		}
 		return newDomainTypes;
+	}	
+
+	public List<SelectItem> getNewChildDomainTypes() {
+		if ( newChildDomainTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			newChildDomainTypes = new LinkedList<SelectItem>();
+			for (DomainType type : VALID_CHILD_DOMAIN_TYPES) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				newChildDomainTypes.add(item);					
+			}		
+		}
+		return newChildDomainTypes;
 	}	
 	
 	public Domain getDomain() {

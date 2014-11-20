@@ -14,13 +14,13 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.admin.ApplicationRole;
 import com.code.aon.admin.Profile;
 import com.code.aon.admin.ProfileRole;
 import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.ProfileModuleDenied;
 import com.code.aon.audit.enumeration.Module;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -258,6 +258,18 @@ public class ApplicationProfileController extends LinesController {
 		FormUtil.remove(ProfileRole.class, profile.getId(), IEntityAlias.PROFILE_ROLE_PROFILE_ID);
 		FormUtil.remove(ProfileModuleDenied.class, profile.getId(), IEntityAlias.PROFILE_MODULE_DENIED_PROFILE_ID);
 		FormUtil.remove(ProfileActionDenied.class, profile.getId(), IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID);		
+	}
+
+	@Override
+	public boolean isEditableSelectedTo() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Profile profile = (Profile) getModel().getRowData();
+			if ( profile.getDomain() == null ) {
+				return false;
+			} 
+			return DomainManager.getCurrentDomain().equals(profile.getDomain().getId());
+		}
+		return true;
 	}
 	
 }

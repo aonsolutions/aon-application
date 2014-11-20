@@ -110,6 +110,12 @@
 											<f:selectItem itemLabel="-" value="#{null}"/>
 											<f:selectItems value="#{company.domainScopes}" />
 										</aon:selectOneMenu>
+										<aon:outputLabel for="Domain_type" style="margin-left:1em;"
+											value="#{bundle.admin_domain_type}" />
+										<aon:selectOneMenu id="Domain_type" 
+											value="#{adminNewDomain.type}" required="true" >
+											<f:selectItems value="#{adminCollections.newChildDomainTypes}" />
+										</aon:selectOneMenu>										
 									</aon:if>		
 								</a4j:region>
 							</aon:div>										

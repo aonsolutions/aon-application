@@ -19,6 +19,9 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -55,6 +58,7 @@ public class UserScopeController implements Serializable {
 		try {
 			IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
 			Criteria criteria = new Criteria();
+			UserUtils.getInstance().addForceHeredityDomainCondition(criteria, scopeBean.getFieldName(IEntityAlias.SCOPE_DOMAIN) );			
 			criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
 			return (List) scopeBean.getList(criteria);
 		} catch (ManagerBeanException e) {

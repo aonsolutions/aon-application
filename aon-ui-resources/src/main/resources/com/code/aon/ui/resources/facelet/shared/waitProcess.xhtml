@@ -8,6 +8,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="addWaitProcessPoll" default="#{false}"/>
+
 	<aon:if test="#{addWaitProcessPoll}">
 		<aon:valueParam name="waitProcessPollInterval" default="2000" />
 	

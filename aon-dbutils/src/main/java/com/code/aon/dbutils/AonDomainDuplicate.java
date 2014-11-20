@@ -31,7 +31,7 @@ public class AonDomainDuplicate implements Constants {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AonDomainDuplicate.class);
 	
 	public static final String[] SKIP_FORCE_HEREDITY_TABLES = new String[] {
-		DOMAIN_TABLE_NAME, COMPANY_TABLE_NAME, APP_PARAM_TABLE_NAME, ACCOUNT_PERIOD_TABLE_NAME,
+		DOMAIN_TABLE_NAME, COMPANY_TABLE_NAME, APP_PARAM_TABLE_NAME, 
 		DOMAIN_APPLICATION_TABLE_NAME, DOMAIN_APPLICATION_MODULE_TABLE_NAME
 	};	
 	
@@ -43,7 +43,8 @@ public class AonDomainDuplicate implements Constants {
 	private Integer newParentDomain;
 	private String description;
 	private String owner;
-	private Map<TableInfo,List<UnresolvedReference>> unresolvedReferences; 
+	private Map<TableInfo,List<UnresolvedReference>> unresolvedReferences;
+	private boolean enableForceHeredity;
 	private boolean forceFullHeredity;
 	
 	public AonDomainDuplicate(Connection connection) throws AonSQLException {
@@ -67,21 +68,24 @@ public class AonDomainDuplicate implements Constants {
 		this.owner = owner;
 	}
 	
-	private boolean isForceFullHeredity( DomainInfo di) {
-		return (di.getParent() != null) && di.isEnableHeredity() && (!di.getParent().equals(newParentDomain));
+	private void calculateForceHeredity( DomainInfo di) {
+		this.enableForceHeredity = (di.getParent() != null) && (!di.getParent().equals(newParentDomain));
+		this.forceFullHeredity = this.enableForceHeredity && di.isEnableHeredity();
 	}
 	
 	private void initDomainInfo() {
 		DomainInfo di = TableUtil.getDomainInfo(connection, sourceDomain);
 		LOGGER.info("{}", di);
 		this.sourceParentDomain = di.getParent();
-		this.forceFullHeredity = isForceFullHeredity(di);
+		calculateForceHeredity(di);
 		if ( this.forceFullHeredity ) {
 			for( TableInfo ti : tables.values() ) {
 				if (! ArrayUtils.contains(SKIP_FORCE_HEREDITY_TABLES, ti.getName()) ) {
 					ti.setForceHeredity(true);	
 				}
 			}
+			TableInfo ti = this.tables.get(ACCOUNT_PERIOD_TABLE_NAME);
+			ti.setListener(new AccountingPeriodTableInfoListener(this.sourceParentDomain));
 		}
 	}
 	
@@ -105,11 +109,11 @@ public class AonDomainDuplicate implements Constants {
 				if ( newValue != null ) {
 					StringBuffer sb = new StringBuffer();
 					sb.append("UPDATE ").append(ur.getTableInfo().getName());
-					sb.append( " SET ").append(ur.getColumnInfo().getName());
-					sb.append( '=').append(newValue);
-					sb.append( " WHERE ").append(ur.getColumnInfo().getName());
-					sb.append( '=').append(ur.getSourceValue());
-					sb.append(" AND DOMAIN = ").append(this.newDomain);
+					sb.append(" SET ").append(ur.getColumnInfo().getName());
+					sb.append('=').append(newValue);
+					sb.append(" WHERE ").append(ur.getColumnInfo().getName());
+					sb.append('=').append(ur.getSourceValue()).append(" AND ");
+					sb.append(ur.getTableInfo().getDomainColumn()).append('=').append(this.newDomain);
 					int rows = TableUtil.executeUpdate(connection, sb.toString());
 					if ( rows > 0 ) {
 						LOGGER.warn( "Updated {} rows in {}.{} ({}->{})",
@@ -146,7 +150,7 @@ public class AonDomainDuplicate implements Constants {
             int i = 0;
             for (TableInfo table: tables) {
             	LOGGER.info( "{}-Merging table {}",++i,table.getName() );
-            	if ( table.getName().equals("bank_statement_link") ) {
+            	if ( table.getName().equals("account_period") ) {
             		LOGGER.info(table.getName());
             	}
             	merge(table);
@@ -184,7 +188,7 @@ public class AonDomainDuplicate implements Constants {
 	}
 	
 	private Integer[] getDomains( TableInfo ti ) {
-		if ( ti.isForceHeredity() && (this.sourceParentDomain != null) ) {
+		if ( this.enableForceHeredity && ti.isForceHeredity() ) {
 			return new Integer[]{this.sourceDomain, this.sourceParentDomain};
 		}
 		return new Integer[]{this.sourceDomain};
@@ -270,10 +274,13 @@ public class AonDomainDuplicate implements Constants {
 		}
 	}
 
-	private Integer insert(PreparedStatement insert,ResultSet rs, TableInfo t) throws SQLException {
-		int id = rs.getInt( t.getPkColumn().getName() );
-		Integer newId = null;
-		boolean notFound = (t.getNewKey(id) == null);
+	private void insert(PreparedStatement insert,ResultSet rs, TableInfo t) throws SQLException {
+		int id = -1;
+		boolean notFound = false;
+		if ( t.getPkColumn().isInteger() ) {
+			id = rs.getInt( t.getPkColumn().getName() );
+			notFound = (t.getNewKey(id) == null);			
+		}
 		if (notFound) {
 			ColumnInfo[] insertColumns = t.getInsertColumns();
 			for (int i = 0; i < insertColumns.length; i++) {
@@ -313,7 +320,6 @@ public class AonDomainDuplicate implements Constants {
 		} else {
 			LOGGER.error( "ID ya existe {}-{}", t.getName(), id );
 		}
-		return newId;
 	}
 
 	private Integer getInteger(Object value) {
@@ -343,7 +349,7 @@ public class AonDomainDuplicate implements Constants {
 			}
 		}
 		Integer newValue = ensureValueId(fkTableInfo.getName(), fkTableInfo.getPkColumn().getName(), value, condition);
-		if ( (newValue == null) || this.forceFullHeredity ) {
+		if ( (newValue == null) || (this.enableForceHeredity && fkTableInfo.isForceHeredity()) ) {
 			List<UnresolvedReference> list = unresolvedReferences.get(fkTableInfo);
 			if ( list == null ) {
 				list = new LinkedList<UnresolvedReference>();

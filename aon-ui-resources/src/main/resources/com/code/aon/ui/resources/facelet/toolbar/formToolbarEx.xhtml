@@ -6,6 +6,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="showMoreMenu" default="#{false}"/>
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
 			<aon:outputText value="&#160;" rendered="#{skipEditTo}"

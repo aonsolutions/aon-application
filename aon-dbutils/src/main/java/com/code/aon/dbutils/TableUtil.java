@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -40,11 +39,21 @@ public class TableUtil implements Constants {
 		SESSION_TABLE_NAME, ACTION_ENTRY_TABLE_NAME, DOMAIN_TABLE_NAME
 	};
 
+	public static final String[] HEREDITY_TABLES = new String[] {
+		ACCOUNT_TABLE_NAME, AGREEMENT_TABLE_NAME, GEOTREE_TABLE_NAME, GEOZONE_TABLE_NAME, 
+		PRODUCT_CATEGORY_TABLE_NAME, TAX_TABLE_NAME
+	};
+	
 	public static final String[] FORCE_HEREDITY_TABLES = new String[] {
 		PROFILE_TABLE_NAME, PROFILE_ROLE_TABLE_NAME,
-		PROFILE_MODULE_DENIED_TABLE_NAME, PROFILE_ACTION_DENIED_TABLE_NAME
+		PROFILE_MODULE_DENIED_TABLE_NAME, PROFILE_ACTION_DENIED_TABLE_NAME,
+		SCOPE_TABLE_NAME, CATEGORY_TABLE_NAME, TAG_TABLE_NAME
 	};
 
+	public static final String[] DOMAIN_0_TABLES = new String[] {
+		BONUS_CONCEPT_TABLE_NAME, HOLIDAY_TABLE_NAME, PAYMENT_CONCEPT_TABLE_NAME
+	};
+	
 	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCES = new AonInternalReference(
 			BANK_STATEMENT_LINK_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
 			, new Integer[] {0,1,2,3}
@@ -217,12 +226,10 @@ public class TableUtil implements Constants {
 		}					
 	}	
 	
-	public static void updateBaseIds( Connection connection, Collection<TableInfo> tables, Integer[] domains ) throws SQLException {
-		for( TableInfo ti : tables ) {
-			ColumnInfo pk = ti.getPkColumn();
-			if ( (pk != null) && pk.isInteger() ) {
-				updateBaseId(connection, domains, ti);	
-			}
+	public static void updateBaseId( Connection connection, TableInfo ti, Integer[] domains ) throws SQLException {
+		ColumnInfo pk = ti.getPkColumn();
+		if ( (pk != null) && pk.isInteger() ) {
+			updateBaseId(connection, domains, ti);	
 		}
 	}
 
@@ -341,7 +348,7 @@ public class TableUtil implements Constants {
 			DbUtils.closeQuietly(rs);
 		}
 		LOGGER.debug("Numero de tablas: ", tables.size() );
-		return this.tables;
+																																																																																																																										return this.tables;
 	}
 
 	public static String getVersion( Connection connection ) throws SQLException {

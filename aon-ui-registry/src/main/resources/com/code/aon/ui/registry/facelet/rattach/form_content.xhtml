@@ -9,6 +9,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	<aon:valueParam name="descriptionInputSize" default="40"/>
+	<aon:valueParam name="categoryList" default="#{registryCollections.categories}"/>
 	
 	<aon:outputLabel for="#{controller.beanName}_description" value="#{bundle.aon_description}" />
 	<aon:div id="#{controller.beanName}_descriptionDiv">
@@ -72,7 +73,7 @@
 	<aon:selectOneMenu id="#{controller.beanName}_category" 
 		value="#{controller.to.category}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{registryCollections.categories}" />
+		<f:selectItems value="#{categoryList}" />
 	</aon:selectOneMenu>						
 
 </ui:composition>
