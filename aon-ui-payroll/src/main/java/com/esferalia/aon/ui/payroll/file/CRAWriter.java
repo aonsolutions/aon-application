@@ -97,7 +97,9 @@ public class CRAWriter {
 						dde.getTrbList().add(trb);
 					}
 					CRE cre = createCRERecord(String.valueOf(type), amount);
-					trb.getCreList().add(cre);
+					if(cre!=null){
+						trb.getCreList().add(cre);
+					}
 				}
 			}
 			return eti;
@@ -159,15 +161,18 @@ public class CRAWriter {
 	 */
 	private CRE createCRERecord(String code, Double amount) {
 		// TODO
-		CRE cre = new CRE();
-		cre.setConcepto(autoComplete(code, 4, "0", true));		
-//		Valores posibles: (IndicativoConcepto)
-//		E=concepto excluido de la base; 
-//		I=concepto incluido de la base.
-		cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
-		cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
-		cre.setIndicativoTipoActuacion("");
-		return cre;
+		if(amount!=0.0d){
+			CRE cre = new CRE();
+			cre.setConcepto(autoComplete(code, 4, "0", true));		
+//			Valores posibles: (IndicativoConcepto)
+//			E=concepto excluido de la base; 
+//			I=concepto incluido de la base.
+			cre.setIndicativoConcepto(( Integer.parseInt(code)==35 || Integer.parseInt(code)>=42 ) ? "E" : "I");
+			cre.setImporte(String.valueOf((int)(CommonUtil.round(amount, 2)*100)));
+			cre.setIndicativoTipoActuacion("");
+			return cre;
+		}
+		return null;
 	}
 	
 	//////////////////////////
