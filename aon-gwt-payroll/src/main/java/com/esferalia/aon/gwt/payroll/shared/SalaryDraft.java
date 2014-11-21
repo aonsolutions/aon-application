@@ -69,7 +69,7 @@ public class SalaryDraft extends SalaryPreview {
 		}
 	}
 
-	private boolean hasDbSalary;
+	private Integer dbId;
 	
 
 	private String enterpriseName;
@@ -155,7 +155,6 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	public void clearDb() {
-		hasDbSalary = false ;
 		dbGgcBase = null;
 		dbGgpBase = null;
 		dbHExtraBase = null;
@@ -437,6 +436,10 @@ public class SalaryDraft extends SalaryPreview {
 	public void clearBonuses() {
 		bonuses.clear();
 	}
+	
+	public Integer getDbId() {
+		return dbId;
+	}
 
 	public String getEmployeeSS() {
 		return employeeSS;
@@ -712,11 +715,11 @@ public class SalaryDraft extends SalaryPreview {
 	}
 
 	public boolean hasDbSalary() {
-		return hasDbSalary;
+		return dbId != null;
 	}
 
-	public void setHasDbSalary(boolean hasDbSalary) {
-		this.hasDbSalary = hasDbSalary;
+	public void setDbId(Integer dbId) {
+		this.dbId = dbId;
 	}
 	
 	

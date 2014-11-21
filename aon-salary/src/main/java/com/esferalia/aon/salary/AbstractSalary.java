@@ -10,9 +10,17 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 
 public abstract class AbstractSalary implements ISalary {
-
+	
+	
+	
 	public AbstractSalary() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public Integer getId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

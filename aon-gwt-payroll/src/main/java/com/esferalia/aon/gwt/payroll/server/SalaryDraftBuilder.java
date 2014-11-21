@@ -76,7 +76,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	}
 
 	public void setDbSalary(ISalary dbSalary) throws SalaryException {
-		salaryDraft.setHasDbSalary(true);
+
+		salaryDraft.setDbId(dbSalary.getId());
 
 		salaryDraft.setDbIrpfBase(dbSalary.getIrpfBase());
 		salaryDraft.setDbInkindIrpfBase(dbSalary.getInKindIrpfBase());

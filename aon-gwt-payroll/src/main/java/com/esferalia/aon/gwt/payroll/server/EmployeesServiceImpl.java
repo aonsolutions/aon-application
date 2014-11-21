@@ -2922,7 +2922,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
 			throws SQLException {
-		SQLSalaryDraft.removeSalary(conn, draft);
+		deleteSalaries(conn, draft.getDbId());
 
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(conn);
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());

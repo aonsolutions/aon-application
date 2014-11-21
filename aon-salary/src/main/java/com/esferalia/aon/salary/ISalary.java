@@ -10,7 +10,9 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 
 public interface ISalary {
-
+	
+	Integer getId();
+	
 	// DATOS DE EMPRESA
 	String getEnterpriseName();
 	String getEnterpriseAddress();
