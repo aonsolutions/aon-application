@@ -43,20 +43,20 @@
 
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:outputLabel for="PosFinance_fromDueDate"
+						<aon:outputLabel for="PosFinance_fromDate"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="PosFinance_fromDueDate"
-							value="#{posFinanceSearch.fromDueDate}" required="true"
+						<aon:selectInputDate id="PosFinance_fromDate"
+							value="#{posFinanceSearch.fromDate}" required="true"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="onchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
 							<a4j:support event="oninputchange" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:selectInputDate>
 
-						<aon:outputLabel for="PosFinance_toDueDate"
+						<aon:outputLabel for="PosFinance_toDate"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="PosFinance_toDueDate"
-							value="#{posFinanceSearch.toDueDate}"
+						<aon:selectInputDate id="PosFinance_toDate"
+							value="#{posFinanceSearch.toDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="onchanged" reRender="PosFinance_posShifts" ignoreDupResponses="true" ajaxSingle="true" />

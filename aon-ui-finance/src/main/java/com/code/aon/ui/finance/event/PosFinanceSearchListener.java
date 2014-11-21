@@ -50,8 +50,8 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 	private Pos pos;
 	private Shift shift;
 	private PayMethod payMethod;
-	private Date fromDueDate;
-	private Date toDueDate;
+	private Date fromDate;
+	private Date toDate;
 	private Integer[] posShifts;
 
 	public WorkPlace getWorkPlace() {
@@ -94,20 +94,20 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 		this.payMethod = payMethod;
 	}
 
-	public Date getFromDueDate() {
-		return fromDueDate;
+	public Date getFromDate() {
+		return fromDate;
 	}
 
-	public void setFromDueDate(Date fromDueDate) {
-		this.fromDueDate = fromDueDate;
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
 	}
 
-	public Date getToDueDate() {
-		return toDueDate;
+	public Date getToDate() {
+		return toDate;
 	}
 
-	public void setToDueDate(Date toDueDate) {
-		this.toDueDate = toDueDate;
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
 	}
 
 	public Integer[] getPosShifts() {
@@ -124,8 +124,8 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 		setPos((Pos)BeanManager.getManagerBean(Pos.class).createNewTo());
 		setShift(null);
 		setPayMethod((PayMethod)BeanManager.getManagerBean(PayMethod.class).createNewTo());
-		setFromDueDate(DateUtils.truncate(DateUtils.addDays(new Date(), -1), Calendar.DATE));
-		setToDueDate(DateUtils.truncate(new Date(), Calendar.DATE));
+		setFromDate(DateUtils.truncate(DateUtils.addDays(new Date(), -1), Calendar.DATE));
+		setToDate(DateUtils.truncate(new Date(), Calendar.DATE));
 		setPosShifts(null);
 	}
 
@@ -151,7 +151,7 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 
 	public List<SelectItem> getWorkPlacePosShift() throws ManagerBeanException {
 		List<SelectItem> posShiftList = new LinkedList<SelectItem>();
-		if (getWorkPlace() != null && getWorkPlace().getId() != null && getPayMethod() != null && getPayMethod().getId() != null && getFromDueDate() != null) {
+		if (getWorkPlace() != null && getWorkPlace().getId() != null && getPayMethod() != null && getPayMethod().getId() != null && getFromDate() != null) {
 			Connection connection = null;
 			PreparedStatement queryStmt = null;
 			ResultSet queryRs = null;
@@ -172,9 +172,10 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 					query.append(" AND finance.status = " + FinanceStatus.PENDING.ordinal());
 					query.append(" AND finance.pay_method = " + getPayMethod().getId());
 					query.append(" AND finance.scope IN " + scopeList);
-					query.append(" AND finance.due_date >= ?");
-					if (getToDueDate() != null) {
-						query.append(" AND finance.due_date <= ?");
+					query.append(" AND pos_shift.end_time IS NOT NULL");
+					query.append(" AND pos_shift.start_time >= ?");
+					if (getToDate() != null) {
+						query.append(" AND pos_shift.start_time < ?");
 					}
 					if (getPos() != null && getPos().getId() != null) {
 						query.append(" AND pos.id = " + getPos().getId());
@@ -189,13 +190,12 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 					if (getShift() != null) {
 						query.append(" AND pos_shift.shift = " + getShift().ordinal());
 					}
-					query.append(" AND pos_shift.end_time IS NOT NULL");
 					query.append(" ORDER BY pos_shift.start_time DESC, pos.name, pos_shift.shift");
 	
 					queryStmt = connection.prepareStatement(query.toString());
-					queryStmt.setDate(1, new java.sql.Date(fromDueDate.getTime()));
-					if (getToDueDate() != null) {
-						queryStmt.setDate(2, new java.sql.Date(toDueDate.getTime()));
+					queryStmt.setDate(1, new java.sql.Date(getFromDate().getTime()));
+					if (getToDate() != null) {
+						queryStmt.setDate(2, new java.sql.Date(DateUtils.addDays(getToDate(), 1).getTime()));
 					}
 					queryRs = queryStmt.executeQuery();
 					while (queryRs.next()) {
@@ -242,11 +242,11 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 		if (getPayMethod() != null && getPayMethod().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), getPayMethod().getId());
 		}
-		if (getFromDueDate() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.FINANCE_DUE_DATE), getFromDueDate());
+		if (getFromDate() != null) {
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_START_TIME), getFromDate());
 		}
-		if (getToDueDate() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.FINANCE_DUE_DATE), getToDueDate());
+		if (getToDate() != null) {
+			criteria.addLessThanExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_START_TIME), DateUtils.addDays(getToDate(), 1));
 		}
 		if (ArrayUtils.nullToEmpty(getPosShifts()).length > 0) {
 			criteria.addInExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_ID), ArrayUtils.nullToEmpty(getPosShifts()));
