@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div style="display:inline; cursor:pointer;"
+		rendered="#{auditableTO.creationDate != null}">
+		<aon:outputText value="&#160;" styleClass="aon-icon-audit"
+			style="padding-left:12px" />
+		<rich:toolTip showEvent="onclick" hideEvent="onmouseout">
+			<aon:panelGrid columns="2" dir="true"
+				columnClasses="aon-panelGrid-even aon-noborder aon-bold, 
+					aon-panelGrid-even aon-noborder aon-bold">
+
+				<aon:outputLabel value="#{bundle.aon_creation_user}:" />
+				<aon:outputText value="#{auditableTO.creationUser}" />
+
+				<aon:outputLabel value="#{bundle.aon_creation_date}:" />
+				<aon:outputText value="#{auditableTO.creationDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+
+				<aon:outputLabel value="#{bundle.aon_modification_user}:" />
+				<aon:outputText value="#{auditableTO.modificationUser}" />
+
+				<aon:outputLabel value="#{bundle.aon_modification_date}:" />
+				<aon:outputText value="#{auditableTO.modificationDate}">
+					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+					
+			</aon:panelGrid>
+		</rich:toolTip>
+	</aon:div>
+
+</ui:composition>

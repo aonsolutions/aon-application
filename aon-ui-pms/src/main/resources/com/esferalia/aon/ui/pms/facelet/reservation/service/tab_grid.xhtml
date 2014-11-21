@@ -92,36 +92,9 @@
 					rendered="#{to.showServiceDetail}" 
 					actionListener="#{controller.onHideServiceDetails}"
 					reRender="#{dataTableId}" />
-				<aon:div style="display:inline; cursor:pointer;"
-					rendered="#{to.creationDate != null}">
-					<aon:outputText value="&#160;" styleClass="aon-icon-audit"
-						style="padding-left:12px" />
-					<rich:toolTip showEvent="onclick" hideEvent="onmouseout">
-						<aon:panelGrid columns="2" dir="true"
-							columnClasses="aon-panelGrid-even aon-noborder aon-bold, 
-								aon-panelGrid-even aon-noborder aon-bold">
-
-							<aon:outputLabel value="#{bundle.aon_creation_user}:" />
-							<aon:outputText value="#{to.creationUser}" />
-
-							<aon:outputLabel value="#{bundle.aon_creation_date}:" />
-							<aon:outputText value="#{to.creationDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-
-							<aon:outputLabel value="#{bundle.aon_modification_user}:" />
-							<aon:outputText value="#{to.modificationUser}" />
-
-							<aon:outputLabel value="#{bundle.aon_modification_date}:" />
-							<aon:outputText value="#{to.modificationDate}">
-								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-								
-						</aon:panelGrid>
-					</rich:toolTip>
-				</aon:div>
+				<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+					<ui:param name="auditableTO" value="#{to}" />
+				</ui:include>
 			</aon:div>
 			<rich:subTable id="serviceDetailTable" 
 				rendered="#{controller.showServiceDetail}"

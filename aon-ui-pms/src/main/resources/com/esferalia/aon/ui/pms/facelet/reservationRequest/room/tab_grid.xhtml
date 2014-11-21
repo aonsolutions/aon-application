@@ -151,6 +151,9 @@
 					reRender="aonContent"
 					onclick="Richfaces.showModalPanel('waitProccess')"
 					oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+					<ui:param name="auditableTO" value="#{to}" />
+				</ui:include>
 			</aon:div>
 			<rich:subTable id="availableRoomStayTable"
 				value="#{controller.availableRoomStayList}" var="availableRoomStay"

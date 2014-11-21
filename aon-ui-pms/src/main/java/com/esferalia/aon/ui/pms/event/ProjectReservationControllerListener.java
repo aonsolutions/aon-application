@@ -120,7 +120,6 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 				if (reservation.getId() != null) {
 					criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
 				}
-					
 				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservation.getCode());
 				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), reservation.getStartDate());
 				criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
