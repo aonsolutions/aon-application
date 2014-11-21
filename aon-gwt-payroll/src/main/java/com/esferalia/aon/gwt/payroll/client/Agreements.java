@@ -219,7 +219,7 @@ public class Agreements extends ResizeComposite {
 
 			ScheduledCommand newCommand = new ScheduledCommand() {
 				public void execute() {
-					Agreement agreement = Agreements.newAgreement();
+					Agreement agreement = Agreements.this.newAgreement();
 					Agreements.this.tree
 							.setSelectedItem(addAgreementItem(agreement));
 				};
@@ -341,15 +341,16 @@ public class Agreements extends ResizeComposite {
 		return builder.toSafeHtml();
 	}
 
-	// ------------------------------------------------------------------------
-
-	private static synchronized Agreement newAgreement() {
+	private synchronized Agreement newAgreement() {
 		Agreement agreement = new Agreement();
 		int newId = newsIdCounter--;
 		agreement.setId(newId);
 		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
+		agreement.setDomain(getDomain());
 		return agreement;
 	}
+	// ------------------------------------------------------------------------
+
 
 	private static ImageResource getImageResource(Agreement agreement) {
 		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
