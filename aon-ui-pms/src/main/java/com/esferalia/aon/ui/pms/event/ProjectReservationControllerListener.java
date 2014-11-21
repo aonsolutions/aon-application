@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
@@ -112,32 +113,35 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		if (CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()) > 90) {
 			throw new ControllerListenerException("La Estancia no puede ser superior a 90 días.");
 		}
-		try {
-			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-			Criteria criteria = new Criteria();
-			if (reservation.getId() != null) {
-				criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
-			}
-			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservation.getCode());
-			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), reservation.getStartDate());
-			criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-			if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
-				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), reservation.getAgency().getId());
-			} else {
-				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
-			}
-			if (reservationBean.getCount(criteria) > 0) {
-				StringBuffer message = new StringBuffer();
-				message.append("Ya existe una Reserva con ese Localizador y Fecha de Entrada para ");
-				if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
-					message.append("la Agencia " + reservation.getAgency().getRegistry().getFullName() + ".");
-				} else {
-					message.append("un Cliente Directo.");
+		if (StringUtils.isEmpty(reservation.getCrsCode())) {
+			try {
+				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+				Criteria criteria = new Criteria();
+				if (reservation.getId() != null) {
+					criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
 				}
-				throw new ControllerListenerException(message.toString());
+					
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservation.getCode());
+				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), reservation.getStartDate());
+				criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+				if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+					criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), reservation.getAgency().getId());
+				} else {
+					criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
+				}
+				if (reservationBean.getCount(criteria) > 0) {
+					StringBuffer message = new StringBuffer();
+					message.append("Ya existe una Reserva con ese Localizador y Fecha de Entrada para ");
+					if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+						message.append("la Agencia " + reservation.getAgency().getRegistry().getFullName() + ".");
+					} else {
+						message.append("un Cliente Directo.");
+					}
+					throw new ControllerListenerException(message.toString());
+				}
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e.getMessage(), e);
 			}
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
