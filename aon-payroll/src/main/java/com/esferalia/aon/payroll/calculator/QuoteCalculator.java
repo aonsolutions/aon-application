@@ -179,6 +179,9 @@ public abstract class QuoteCalculator {
 				return 0.00;
 			}
 
+			this.cgcBase = null;
+			this.cgpBase = null;
+
 			PaymentType paymentType = payment.getType();
 
 			paymentType.accept(new PaymentTypeVisitor() {
