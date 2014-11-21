@@ -225,6 +225,17 @@ public class PdfModelHandler implements Serializable {
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return (RegistryDirStaff) list.get(0);
+		} else {
+			bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), registry.getId());
+			exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+			exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (RegistryDirStaff) list.get(0);
+			}
 		}
 		return null;
 	}

@@ -36,8 +36,9 @@
 			<f:selectItems value="#{contract.workPlaces}" />
 			<a4j:support event="onchange" actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" reRender="contract_panel" />
 		</aon:selectOneMenu>
-		<aon:outputText value="#{contract.to.workPlace.description}"
-			rendered="#{readOnly}" />
+		<aon:div rendered="#{readOnly}" >
+			<aon:outputText value="#{contract.to.workPlace.description}"/>
+		</aon:div>
 		
 		<aon:if test="#{!contract.params.retaQuote}">
 			<aon:outputLabel for="enterpriseActivities" value="#{bundle.aon_activity}" 
@@ -64,7 +65,6 @@
 					rendered="#{!readOnly}"
 					value="#{contract.to.enterpriseCCC}" >
 					<f:selectItems value="#{contract.enterpriseCCCs}" />
-					<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 				</aon:selectOneMenu>
 				<aon:div rendered="#{readOnly}" >
 					<aon:outputText value="#{contract.to.enterpriseCCC.type}" />
@@ -258,7 +258,7 @@
 						value="#{contract.to.agreementLevelCategory}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contract.agreementLevelCategories}" />
-						<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
+						<a4j:support event="onchange" reRender="agreementLevelCategory-content" ajaxSingle="#{true}" />
 					</aon:selectOneMenu>
 					<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left aon-margin-right" 
 						value="#{bundle.payroll_display_as}" />
@@ -277,8 +277,9 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{payrollCollections.quoteGroups}" />
 				</aon:selectOneMenu>
-				<aon:outputText value="#{contract.params.quoteGroup}"
-					rendered="#{contract.readOnly}" />
+				<aon:div rendered="#{readOnly}" >
+					<aon:outputText value="#{contract.params.quoteGroup}" />
+				</aon:div>
 				
 				<aon:outputLabel value="#{bundle.report_occupation}"
 					for="occupationType"/>
@@ -288,8 +289,9 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{payrollCollections.occupationTypes}" />
 				</aon:selectOneMenu>
-				<aon:outputText value="#{contract.params.occupationType}"
-					rendered="#{contract.readOnly}" />
+				<aon:div rendered="#{readOnly}" >
+					<aon:outputText value="#{contract.params.occupationType}" />
+				</aon:div>
 			</aon:if>
 				
 			<aon:if test="#{contract.params.retaQuote}">
