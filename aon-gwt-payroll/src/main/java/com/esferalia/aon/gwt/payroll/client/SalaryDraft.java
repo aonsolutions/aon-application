@@ -199,9 +199,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		
 		"CONTEXT", "SELF",	"THIS",								// context
 		
-		"OCUPACION_IT", "OCUPACION_IMS", 
-		"_PORCENTAJE_DESMPL", "_PORCENTAJE_DESMPL_E", 			// constants 
-		"_PORCENTAJE_IMS", "_PORCENTAJE_IT"						// constants 
+		"OCUPACION_IT", "OCUPACION_IMS"
 	};
 	//@formatter:on
 
@@ -3643,10 +3641,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private Variable getContextVariable(String name) {
-		List<Variable> ctx = salaryDraftObject.getContext();
-		for (Variable var : ctx)
-			if (StringUtils.equals(var.getName(), PORCENTAJE_IRPF))
+		for (Variable var : salaryDraftObject.getDrafContext())
+			if (StringUtils.equals(var.getName(), name))
 				return var;
+
+		for (Variable var : salaryDraftObject.getContext())
+			if (StringUtils.equals(var.getName(), name))
+				return var;
+		
 		return null;
 	}
 

@@ -536,6 +536,10 @@ public class SalaryDraftObject implements IContextProvider {
 				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
 						salaryDraft);
 	}
+	
+	public List<Variable> getDrafContext() {
+		return salaryDraft.getDraftContext();
+	}
 
 	// ------------------------------------------
 	//
