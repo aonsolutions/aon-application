@@ -2474,7 +2474,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		List<PaymentChangeHandler<?>> handlers = new ArrayList<PaymentChangeHandler<?>>(
 				payments.size());
 
-		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
 
 			// if (!displayNow(payment))
@@ -2484,13 +2483,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
 						payment);
-				dumpPayment(payment, row++, getIconRowStyle(payment), handler);
+				dumpPayment(payment, paymentsTable.getRowCount(), getIconRowStyle(payment), handler);
 
 				handlers.add(handler);
 
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
-				dumpDbItem(payment, row++, styles[0], styles[1],
+				dumpDbItem(payment, paymentsTable.getRowCount(), styles[0], styles[1],
 						new RecoverPaymentHandler(payment), false);
 			}
 		}

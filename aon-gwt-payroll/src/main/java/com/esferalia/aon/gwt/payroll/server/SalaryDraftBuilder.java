@@ -444,7 +444,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		draftPayment.setType(getPaymentType(payment.getType()));
 		draftPayment.setStartDate(startDate);
 		draftPayment.setEndDate(endDate);
-
+		
+		
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
 
 		if (compositePayment != null)
@@ -783,7 +784,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		List<Payment> payments = salaryDraft.getPayments();
 		for (int i = 0; i < payments.size(); i++) {
 			Payment payment = payments.get(i);
-			if (payment.getId() == id) {
+			if ( payment.getId().equals(id)) {
 				if (payment instanceof CompositePayment)
 					return (CompositePayment) payment;
 
