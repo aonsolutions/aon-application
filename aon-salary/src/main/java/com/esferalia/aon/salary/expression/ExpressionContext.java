@@ -55,8 +55,8 @@ public class ExpressionContext {
 				throws ExpressionException;
 
 	}
-	
-	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>(); 
+
+	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>();
 
 	private static final Pattern VARIABLE_PATTERN = Pattern
 			.compile("[A-Za-z_][A-Za-z0-9_]*");
@@ -459,7 +459,10 @@ public class ExpressionContext {
 			Class<T> toType) throws ExpressionException,
 			UndefinedVariablesException {
 		if (script == null) {
-			return Collections.emptyList();
+			ITimedResult<T> result = (new TimedResult<T>((T) null, new Period(
+					start, end), Collections
+					.<String, ITimedVariable<?>> emptyMap()));
+			return Collections.singletonList(result);
 		}
 		Set<String> inputs = getVarNames(script);
 		List<PeriodMap> bindingsList = variables
@@ -601,7 +604,7 @@ public class ExpressionContext {
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
-	
+
 	public static Period getCurrentPeriod() {
 		return currentBindings.get().getPeriod();
 	}
@@ -609,8 +612,8 @@ public class ExpressionContext {
 	public static PeriodMap getCurrentBindings() {
 		return currentBindings.get();
 	}
-	
-	private static void setCurrentBindings(PeriodMap  map) {
+
+	private static void setCurrentBindings(PeriodMap map) {
 		currentBindings.set(map);
 	}
 
@@ -647,6 +650,5 @@ public class ExpressionContext {
 	}
 
 	// ------------------------------------------------------------------------
-
 
 }
