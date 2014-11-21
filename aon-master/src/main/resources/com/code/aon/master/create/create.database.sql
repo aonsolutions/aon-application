@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.5.0
+# Version: 8.9.0
 # Created by: girazu
-# Creation Date: 30/10/2014 12:05
+# Creation Date: 21/11/2014 10:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -459,6 +459,10 @@ CREATE TABLE `account_entry` (
   `journal` int(4) default NULL COMMENT 'Numero de diario del Asiento',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Asiento',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Asiento',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_ACCOUNT_PERIOD` (`account_period`),
   KEY `IDX_ACCOUNT_ENTRY_DOMAIN` (`domain`),
@@ -551,6 +555,10 @@ CREATE TABLE `account_entry_detail` (
   `debit` double default '0' COMMENT 'Debe del Apunte',
   `credit` double default '0' COMMENT 'Haber del Apunte',
   `document_number` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de documento asociado',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_DETAIL_ACCOUNT` (`account`),
   KEY `IDX_ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY` (`account_entry`),
@@ -7593,7 +7601,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.5.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.9.0');
 
 COMMIT;
 

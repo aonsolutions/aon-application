@@ -6,12 +6,13 @@ import javax.persistence.Transient;
 
 import com.code.aon.account.IAccount;
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.AccountEntryDetailDB;
 
 @Entity
 @Table(name="account_entry_detail")
-public class AccountEntryDetail extends AccountEntryDetailDB implements IAccount {
+public class AccountEntryDetail extends AccountEntryDetailDB implements IAccount, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

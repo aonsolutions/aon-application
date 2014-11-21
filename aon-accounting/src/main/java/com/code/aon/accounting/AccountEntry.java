@@ -9,11 +9,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.esferalia.aon.entity.master.AccountEntryDB;
 
 @Entity
 @Table(name="account_entry")
-public class AccountEntry extends AccountEntryDB {
+public class AccountEntry extends AccountEntryDB implements IAuditable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -26,4 +27,5 @@ public class AccountEntry extends AccountEntryDB {
 	public void setDetail(Set<AccountEntryDetail> detail) {
 		this.detail = detail;
 	}
+
 }
