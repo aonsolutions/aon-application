@@ -39,6 +39,7 @@ public class ServiceAccountController extends BasicController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	Boolean console;
 	String aux_client_id;
 	String client_id;
 	String domain;
@@ -47,6 +48,11 @@ public class ServiceAccountController extends BasicController {
 	String limit;
 	String public_key;
 	byte[] data;
+	
+	public Boolean getConsole(){
+		String domain = AonUtil.getDomainName();
+		return domain.contains("console-pro");
+	}	
 	
 	public void initialize2(ActionEvent event){
 		 aux_client_id="";

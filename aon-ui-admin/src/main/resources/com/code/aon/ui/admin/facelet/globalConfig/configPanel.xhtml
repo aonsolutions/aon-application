@@ -292,7 +292,7 @@
 						</aon:if>													
 					</rich:panelBarItem>
 		
-					
+					<aon:if test="#{serviceAccount.console}">
 					<rich:panelBarItem id="service_account"
 						label="#{bundle.admin_global_panel_service_accounts}">
 						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
@@ -304,7 +304,7 @@
 						</aon:if>		
 														
 					</rich:panelBarItem>
-					
+					</aon:if>
 				</aon:if>
 			</aon:componentGroup>
 		</rich:panelBar>
