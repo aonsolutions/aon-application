@@ -410,6 +410,7 @@ public class AgreementDraftObject {
 	}
 
 	public void addDraftPayment(Payment payment) {
+		payment.setDomain(draftDomain); // TODO: Here???
 		Payment oldPayment = agreementDraft.addDraftPayment(payment);
 		undoManager.add(new UndoablePaymentEdit(oldPayment, payment));
 	}

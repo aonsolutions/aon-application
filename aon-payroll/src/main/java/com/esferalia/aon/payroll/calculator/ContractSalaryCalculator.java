@@ -68,6 +68,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		public void onCompileError(String variableName, String message);
 
+		public void onRemove(IContractPayment payment);
+
 		public void onCheckError(IContractPayment payment, String message);
 
 		public void onCompileError(IContractPayment payment, String message);
@@ -458,6 +460,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					}
 				}
 				try {
+
 					Double deduction = resolveDeduction(expressionContext,
 							contractDeduction, deductionStart, deductionEnd);
 					totalDeduction += deduction;
@@ -695,7 +698,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
-
 			for (ITimedResult<Double> result : results) {
 
 				Date resultStart = result.getPeriod().getStart();
@@ -703,6 +705,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 				Double resultDouble = result.getValue();
 				double resultValue = resultDouble != null ? resultDouble : 0.00;
+
 
 				if (!StringUtils.isEmpty(name)) {
 					Date valueStart = resultStart;
@@ -769,7 +772,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			// paymentEnd, total);
 
 		} catch (RemoveException e) {
-			// TODO: Something ??? It's really necessary...
+			onRemove(contractPayment);
 		} catch (InvalidVariables e) {
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
 		} catch (CheckException e) {
@@ -785,7 +788,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		} catch (CompileException e) {
 			e.printStackTrace();
 			onCompileError(contractPayment, e.getMessage());
-		}
+		} 
 
 	}
 
@@ -924,6 +927,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		}
 	}
 
+	private void onRemove(IContractPayment payment) {
+		if (listener != null) {
+			listener.onRemove(payment);
+		}
+	}
+
 	private void onCheckError(IContractPayment payment, String message) {
 		if (listener != null) {
 			listener.onCheckError(payment, message);
@@ -978,47 +987,4 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		return calendar.getTime();
 	}
 
-	/*
-	 * public static int Undefined() throws UndefinedContextVariablesException{
-	 * throw new
-	 * UndefinedContextVariablesException(ContextVariable.REGULATORY_BASE);
-	 * //return 10; } public static void main(String[] args) throws
-	 * ExpressionException, NoSuchMethodException, SecurityException { Calendar
-	 * calendar = Calendar.getInstance(); calendar.set(Calendar.DAY_OF_MONTH,
-	 * 1); Date startDate = calendar.getTime();
-	 * 
-	 * calendar.set(Calendar.DAY_OF_MONTH,
-	 * calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); Date endDate =
-	 * calendar.getTime();
-	 * 
-	 * ExpressionContext ctx = new ExpressionContext();
-	 * ctx.setVariable("DIAS_ENFERMEDAD_COMUN_16_20", "0", startDate, endDate);
-	 * ctx.setVariable("DIAS_ENFERMEDAD_COMUN_21", "1", startDate, endDate);
-	 * 
-	 * MethodStub methodStub = new
-	 * MethodStub(ContractSalaryCalculator.class.getMethod("Undefined"));
-	 * 
-	 * ctx.setVariable("LANZAR", methodStub, startDate, endDate);
-	 * 
-	 * 
-	 * //ctx.setVariable("BASE_REGULADORA", "1", startDate, endDate);
-	 * ExpressionImpl expression = new ExpressionImpl();
-	 * expression.setName("BASE_REGULADORA");
-	 * expression.setExpression("LANZAR()"); ctx.addLazyExpression(expression,
-	 * startDate, endDate);
-	 * 
-	 * 
-	 * try { System.out.println(ctx.eval(
-	 * "ECSS=(DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60 + DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75)"
-	 * , startDate,endDate).get(0).getValue()); } catch (
-	 * UndefinedVariablesException e ) {
-	 * //System.err.println(e.getClass().getName() +","
-	 * +e.getVariableNames()[0]); }
-	 * 
-	 * //ctx.getVariable("BASE_REGULADORA", startDate, endDate);
-	 * 
-	 * System.out.println(ctx.eval(
-	 * "ECSS=(DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60 + DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75)"
-	 * , startDate,endDate).get(0).getValue()); }
-	 */
 }

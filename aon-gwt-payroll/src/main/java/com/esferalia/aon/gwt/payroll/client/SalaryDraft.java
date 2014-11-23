@@ -925,7 +925,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		// --------------------------------------------------------------------
-
 		private Payment getConcept() {
 			if (item.getName() == null)
 				return null;
@@ -2487,6 +2486,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 				handlers.add(handler);
 
+			} else if ( payment.getId() != null ){
+				int row = paymentsTable.getRowCount();
+				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
+						payment);
+				String styles[] = eventStyles.get(Event.Type.WARNING);
+				dumpPayment(payment, row, styles[0], handler);
+				handlers.add(handler);
+				addStyle(paymentsTable, row, styles[1]);
+
+
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
 				dumpDbItem(payment, paymentsTable.getRowCount(), styles[0], styles[1],
@@ -2790,7 +2799,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		buttonsPanel.add(deleteButton);
-		enable(deleteButton, isEditable);
+		enable(deleteButton, !isRemove(item) && isEditable);
 
 		handler.setDeleteButton(deleteButton);
 
@@ -3484,7 +3493,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return paymentsTable.getRowFormatter().getElement(idx);
 
 	}
-
+	
 	private Element showDeduction(Deduction deduction, String iconStyleName,
 			String textStyleName) {
 
@@ -4063,4 +4072,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						.format(childEnd);
 
 	}
+	
+	private static void addStyle(FlexTable table, int row , String style) {
+		CellFormatter fomatter = table.getCellFormatter();
+		for (int col = 0; col < table.getCellCount(row); col++)
+			fomatter.addStyleName(row, col, style);
+	}
+	
+	private static <T extends Item<?>> boolean  isRemove(T item) {
+		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
+	}
+
+	
 }

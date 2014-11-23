@@ -518,7 +518,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	@Override
+	public void onRemove(IContractPayment payment) {
+		Payment draftPayment = newPayment((IContractPayment) payment);
+		salaryDraft.addPayment(draftPayment);
+	}
+	
 	@Override
 	public void onCheckError(IContractPayment payment, String message) {
 		PaymentEvent paymentEvent = new PaymentEvent();

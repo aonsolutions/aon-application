@@ -31,6 +31,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasDescription;
+import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -68,6 +69,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.CssResource.ClassName;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -180,6 +182,8 @@ public class AgreementDraft extends ResizeComposite implements
 
 		String highlight();
 
+		@ClassName("text-warn")
+		String textWarn();
 	}
 
 	interface Binder extends UiBinder<Widget, AgreementDraft> {
@@ -685,7 +689,7 @@ public class AgreementDraft extends ResizeComposite implements
 			button.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					payment.setExpression("REMOVE()");
+					payment.setExpression(isRemove(payment) ? "PARENT()" :"REMOVE()");
 					AgreementDraft.this.agreementDraftObject
 							.addDraftPayment(payment);
 					AgreementDraft.this.calculate();
@@ -1906,6 +1910,9 @@ public class AgreementDraft extends ResizeComposite implements
 					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		}
 
+		if ( isRemove(payment))
+			addStyle(paymentsTable, row, style.textWarn());
+
 		return paymentEditor;
 	}
 
@@ -2349,6 +2356,8 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private String getIconRowStyle(Payment payment) {
+		if ( isRemove(payment))
+			return AON.AON_ICON_WARN ;
 		if ( isDraftPayment(payment) )
 			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
 		if ( isNotMine(payment)) {
@@ -2938,6 +2947,18 @@ public class AgreementDraft extends ResizeComposite implements
 			}
 		});
 		return viewButton;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	private static <T extends Item<?>> boolean  isRemove(T item) {
+		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
+	}
+
+	private static void addStyle(FlexTable table, int row , String style) {
+		CellFormatter fomatter = table.getCellFormatter();
+		for (int col = 0; col < table.getCellCount(row); col++)
+			fomatter.addStyleName(row, col, style);
 	}
 
 }

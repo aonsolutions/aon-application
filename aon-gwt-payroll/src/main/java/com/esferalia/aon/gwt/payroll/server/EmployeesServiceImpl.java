@@ -211,7 +211,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService, StatisticsService {
 
 	public static final String REMOVE = "REMOVE()";
-	
 
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
 		{
@@ -356,8 +355,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return JooqEmployees.getEmployees(conn, workplaceId, fromDate, pattern, offset,
-					limit);
+			return JooqEmployees.getEmployees(conn, workplaceId, fromDate,
+					pattern, offset, limit);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -866,16 +865,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Employee pasteContract(int workplaceId, Employee employee, boolean check)
-			throws IllegalArgumentException {
-		
+	public Employee pasteContract(int workplaceId, Employee employee,
+			boolean check) throws IllegalArgumentException {
+
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
 			disableAutoCommit(conn);
-			SQLEmployee.save(conn, getDomainID(), workplaceId, employee.getId(), 
-					employee.getStartDate(), employee.getEndDate(), check);
+			SQLEmployee.save(conn, getDomainID(), workplaceId,
+					employee.getId(), employee.getStartDate(),
+					employee.getEndDate(), check);
 			commit(conn);
 
 			return employee;
@@ -892,13 +892,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 			releaseFacesContext();
-		}	
+		}
 	}
-	
+
 	@Override
 	public void deleteContract(Employee employee)
 			throws IllegalArgumentException {
-		
+
 		Connection conn = null;
 		try {
 			initFacesContext();
@@ -919,11 +919,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 			releaseFacesContext();
-		}	
+		}
 
 	}
 
-	
 	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
@@ -1145,8 +1144,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			int domainId = getDomainID();
 
-			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(conn, domainId,
-					getParentDomainID());
+			List<Payment> paymentConcepts = JooqPayments.getPaymentConcepts(
+					conn, domainId, getParentDomainID());
 			List<Payment> employeePayments = Collections.emptyList();
 			/* getEmployeePayments(conn, employeeId); */
 			List<Payment> enterprisePayments = Collections.emptyList();
@@ -1940,8 +1939,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	// Note that below methods can be moved to another place safely.
 
-
-
 	private ICollectionProvider getSalariesProvider(Cost cost,
 			SalaryType types[]) throws ManagerBeanException {
 		boolean asEnterpriseSite = isAtEnterpriseSite();
@@ -2241,7 +2238,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-
 
 	private static List<Cost> getEnterpriseCosts(Connection connection,
 			Integer enterpriseId) throws SQLException {
@@ -2809,7 +2805,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							draft.getId(), domainId, parentDomainId);
 
 			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
-					draft.getId(), draft.getStartDate(), draft.getEndDate(), domainId, parentDomainId);
+					draft.getId(), draft.getStartDate(), draft.getEndDate(),
+					domainId, parentDomainId);
 
 			Collection<Payment> payments = new CompositeItems<Payment>(
 					draft.getDraftPayments(), dbPayments);
@@ -2820,7 +2817,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Set<Payment> allPayments = new HashSet<Payment>();
 			for (Payment payment : payments) {
 
-				if (StringUtils.equals(REMOVE, payment.getExpression()))
+				if (hide(payment, dbPayments ))
 					continue;
 
 				try {
@@ -2843,7 +2840,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// Filter ContextVariable
 			List<String> contextVariables = new LinkedList<String>();
 			for (ContextVariable ctxVar : ContextVariable.values())
-				if ( ctxVar.isInternal() )
+				if (ctxVar.isInternal())
 					contextVariables.add(ctxVar.getName());
 			variables.removeAll(contextVariables);
 
@@ -2854,12 +2851,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					privateVariables.add(var);
 			}
 			variables.removeAll(privateVariables);
-			
-			/* Clean system variables.
-			Set<String> systemVars = getSystemVariables(connection,
-					draft.getStartDate(), draft.getEndDate());
-			variables.removeAll(systemVars);
-			*/
+
+			/*
+			 * Clean system variables. Set<String> systemVars =
+			 * getSystemVariables(connection, draft.getStartDate(),
+			 * draft.getEndDate()); variables.removeAll(systemVars);
+			 */
 
 			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
 					draft.getId());
@@ -2918,6 +2915,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			if (connection != null)
 				connection.close();
 		}
+	}
+
+	private static boolean hide(Payment payment, Set<Payment> parents) {
+		if (payment.getConceptId() == null)
+			return false;
+		if (!StringUtils.equals(REMOVE, payment.getExpression()))
+			return false;
+		
+		if ( payment.getId() < 0 )
+			return true;
+
+		return parents
+				.stream()
+				.filter(parent -> parent.getConceptId().equals(payment
+						.getConceptId())
+						&& parent.getDomain().equals(payment.getDomain())).findAny()
+				.isPresent();
 	}
 
 	private static void calculateAndSave(Connection conn, SalaryDraft draft)
@@ -3272,8 +3286,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = PayrollServletUtils.getContract(draft.getEmployee()
-					.getId());
+			Contract contract = PayrollServletUtils.getContract(draft
+					.getEmployee().getId());
 
 			salary.setContract(contract);
 
@@ -3828,7 +3842,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				try {
 					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(
 							conn, startDate, endDate, issueDate, criteria,
-							start, end);					
+							start, end);
 					draftCtx = new SQLSalaryDraftCalculatorContext(draft,
 							sqlCtx);
 					draftCtx.next();
@@ -3976,8 +3990,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
-			Contract contract = PayrollServletUtils.getContract(draft.getEmployee()
-					.getId());
+			Contract contract = PayrollServletUtils.getContract(draft
+					.getEmployee().getId());
 
 			salary.setContract(contract);
 
@@ -4128,7 +4142,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			enterprise.setId(rs.getInt(tableCol(REGISTRY, RegistryColumns.ID)));
 			enterprise.setName(rs.getString(tableCol(REGISTRY,
 					RegistryColumns.NAME)));
-			enterprise.setDomain(rs.getInt(tableCol(ENTERPRISE, RegistryColumns.DOMAIN)));
+			enterprise.setDomain(rs.getInt(tableCol(ENTERPRISE,
+					RegistryColumns.DOMAIN)));
 
 		}
 
