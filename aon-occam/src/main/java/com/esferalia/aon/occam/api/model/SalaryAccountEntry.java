@@ -75,9 +75,33 @@ public class SalaryAccountEntry implements Serializable {
 				, (sael,sae,netAmount) -> netAmount.setValue(AonMathUtils.round(netAmount.getValue() + sael.getAmount()))
 				, (sael,socialInsAmount) -> socialInsAmount.setValue(AonMathUtils.round(socialInsAmount.getValue() + sael.getAmount()))
 				)
+		,DED_ADVANCE_PAYMENT (
+				AppParam.ACC_SALARY_DED_ADVANCE_PAYMENT_ACC
+				, (aed,sae,sael) -> aed.setDebit( sae.getNetAmount() )
+				, null 
+				, null 
+				)
+		,DED_SEIZE (
+				AppParam.ACC_SALARY_DED_SEIZE_ACC
+				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, null 
+				, null 
+				)
+		,DED_IN_KIND (
+				AppParam.ACC_SALARY_DED_IK_ACC
+				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, null 
+				, null 
+				)
+		,DED_OTHER (
+				AppParam.ACC_SALARY_DED_OTHER_ACC
+				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
+				, null 
+				, null 
+				)
 		,DEFAULT_PENDING_SALARY(
 				AppParam.ACC_DEFAULT_PENDING_SALARY_ACC
-				, (aed,sae,sael) -> aed.setDebit( sae.getNetAmount() )
+				, (aed,sae,sael) -> aed.setCredit( sael.getAmount() )
 				, null 
 				, null 
 				)

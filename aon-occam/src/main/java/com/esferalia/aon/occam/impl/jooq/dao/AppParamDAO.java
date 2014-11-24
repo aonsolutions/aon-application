@@ -13,14 +13,13 @@ public class AppParamDAO {
 
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		ctx.checkRead();
-		Condition condition = APP_PARAM.DOMAIN.equal(ctx.getDomainId())
-				.and(APP_PARAM.NAME.equal(param.getValue()));
-		return populateRecord(ctx.getDslContext().
-				fetchOne(APP_PARAM,condition));
+		Condition condition = APP_PARAM.DOMAIN.equal(ctx.getDomainId()).and(APP_PARAM.NAME.equal(param.getValue()));
+		return populateRecord(ctx.getDslContext().fetchOne(APP_PARAM,condition));
 	}
 
 	private static ApplicationParameter populateRecord(AppParamRecord record) {
-		// TODO Auto-generated method stub
+		if (record == null) return null;
+		
 		ApplicationParameter app = new ApplicationParameter();
 		app.setId(record.getId());
 		app.setDomain(record.getDomain());

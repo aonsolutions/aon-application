@@ -68,6 +68,11 @@ public class AccountAppParamsController implements Serializable {
 		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_COMPENSATION_ACC.getValue(),"641000000");
 		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC.getValue(),"476000000");
 		DEFAULT_PARAMETERS.put(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC.getValue(),"642000000");
+		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_SEIZE_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_IN_KIND_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_OTHER_ACC.getValue(), null );
+
 	}
 	
 	private Map<String, ApplicationParameter> parameters;
@@ -82,6 +87,10 @@ public class AccountAppParamsController implements Serializable {
 	private Account accDefaultSocialInsuranceAccount;
 	private Account accDefaultPendingSalaryAccount;
 	private Account accDefaultCompanySocInsAccount;
+	private Account accSalaryDedAdvPaymentAccount;
+	private Account accSalaryDedSeizeAccount;
+	private Account accSalaryDedInKindAccount;
+	private Account accSalaryDedOtherAccount;
 
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
@@ -107,7 +116,7 @@ public class AccountAppParamsController implements Serializable {
 		} catch (ManagerBeanException e) {
 			String msg = "No se pueden cargar los parámetros contables";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+			throw new AbortProcessingException(msg,e);
 		}
 	}
 
@@ -158,6 +167,11 @@ public class AccountAppParamsController implements Serializable {
 		initializeAccDefaultSocialInsuranceAccount();
 		initializeAccDefaultPendingSalaryAccount();
 		initializeAccDefaultCompanySocInsAccount();
+		initializeAccSalaryDedAdvPaymentAccount();
+		initializeAccSalaryDedSeizeAccount();
+		initializeAccSalaryDedInKindAccount();
+		initializeAccSalaryDedOtherAccount();
+		
 	}
 	
 	public ApplicationParameter getParameter(AppParam param) throws ManagerBeanException {
@@ -364,6 +378,73 @@ public class AccountAppParamsController implements Serializable {
 		this.accDefaultCompanySocInsAccount = accDefaultCompanySocInsAccount;
 		putAccount(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC,accDefaultCompanySocInsAccount);
 	}
+
+	private void initializeAccSalaryDedAdvPaymentAccount() {
+		try {
+			setAccSalaryDedAdvPaymentAccount( initializeAccount(AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccSalaryDedAdvPaymentAccount( new Account() );	
+		}
+	}
+	public Account getAccSalaryDedAdvPaymentAccount() {
+		return accSalaryDedAdvPaymentAccount;
+	}
+	public void setAccSalaryDedAdvPaymentAccount(
+			Account accSalaryDedAdvPaymentAccount) {
+		this.accSalaryDedAdvPaymentAccount = accSalaryDedAdvPaymentAccount;
+		putAccount(AppParam.ACC_SALARY_DED_ADV_PAYMENT_ACC,accSalaryDedAdvPaymentAccount);
+	}
 	
+	private void initializeAccSalaryDedSeizeAccount() {
+		try {
+			setAccSalaryDedSeizeAccount( initializeAccount(AppParam.ACC_SALARY_DED_SEIZE_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccSalaryDedSeizeAccount( new Account() );	
+		}
+	}
+	public Account getAccSalaryDedSeizeAccount() {
+		return accSalaryDedSeizeAccount;
+	}
+	public void setAccSalaryDedSeizeAccount(
+			Account accSalaryDedSeizeAccount) {
+		this.accSalaryDedSeizeAccount = accSalaryDedSeizeAccount;
+		putAccount(AppParam.ACC_SALARY_DED_SEIZE_ACC,accSalaryDedSeizeAccount);
+	}
+	
+	private void initializeAccSalaryDedInKindAccount() {
+		try {
+			setAccSalaryDedInKindAccount( initializeAccount(AppParam.ACC_SALARY_DED_IN_KIND_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccSalaryDedInKindAccount( new Account() );	
+		}
+	}
+	public Account getAccSalaryDedInKindAccount() {
+		return accSalaryDedInKindAccount;
+	}
+	public void setAccSalaryDedInKindAccount(
+			Account accSalaryDedInKindAccount) {
+		this.accSalaryDedInKindAccount = accSalaryDedInKindAccount;
+		putAccount(AppParam.ACC_SALARY_DED_IN_KIND_ACC,accSalaryDedInKindAccount);
+	}
+
+	private void initializeAccSalaryDedOtherAccount() {
+		try {
+			setAccSalaryDedOtherAccount( initializeAccount(AppParam.ACC_SALARY_DED_OTHER_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccSalaryDedOtherAccount( new Account() );	
+		}
+	}
+	public Account getAccSalaryDedOtherAccount() {
+		return accSalaryDedOtherAccount;
+	}
+	public void setAccSalaryDedOtherAccount(
+			Account accSalaryDedOtherAccount) {
+		this.accSalaryDedOtherAccount = accSalaryDedOtherAccount;
+		putAccount(AppParam.ACC_SALARY_DED_OTHER_ACC,accSalaryDedOtherAccount);
+	}
 	
 }

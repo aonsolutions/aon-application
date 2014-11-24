@@ -38,11 +38,12 @@ public enum AonError {
 	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de último nivel (9 dígitos). (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable está desactivada. (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_SALARY_NO_LINES("No se han definido líneas en el apunte de nóminas.")
+	,ACCOUNT_ENTRY_SALARY_NO_ACCOUNT("Línea de apunte de nóminas sin cuenta contable y la cuenta asignada al tipo no se puede recuperar. (TIPO={0}, CANTIDAD={1,number}). Revise el valor del parámetro {2}.")
 	// -----------------------------------------------------------
 	// -----------------------------------------------------------
-
-
-	
+	,EMPTY_ENTERPRISE("No se ha indicado una empresa.")
+	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
+	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
 	;
 	
 	

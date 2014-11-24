@@ -161,29 +161,37 @@ public class AccountingImpl implements IAccounting {
 			.forEach( line -> {
 				if (AonMathUtils.isNotZero(line.getAmount())) {
 					AccountEntryDetail aed = new AccountEntryDetail();
-					ApplicationParameter param = AON.fetchApplicationParameter(ctx, line.getType().getParam());
-					if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
-						Integer account = AonNumberUtils.toInteger(param.getValue()); 
-						aed.setAccount( account );
+					if (line.getAccount() != null) {
+						aed.setAccount( line.getAccount() );
+					} else {
+						if (line.getType() != null && line.getType().getParam() != null) {
+							ApplicationParameter param = AON.fetchApplicationParameter(ctx, line.getType().getParam());
+							if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
+								Integer account = AonNumberUtils.toInteger(param.getValue()); 
+								aed.setAccount( account );
+							}
+						}
+						if (aed.getAccount() == null)
+							throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_ACCOUNT,line.getType(),line.getAmount(),line.getType().getParam() );				
 					}
 					aed.setConcept( sae.getConcept() );
 					line.getType().visitFillAccountEntry(aed,sae,line);
-					ae.addDetail( aed );				
+					ae.addDetail( aed );
 				}
 			});
-		if (sae.getRegistryBank() != null) {
-			// TODO seek bank account and add amount
-		} else {
-			AccountEntryDetail aed = new AccountEntryDetail();
-			ApplicationParameter param = AON.fetchApplicationParameter(ctx, SalaryAccountEntryLineType.DEFAULT_PENDING_SALARY.getParam());
-			if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
-				Integer account = AonNumberUtils.toInteger(param.getValue()); 
-				aed.setAccount( account );
-			}
-			aed.setConcept( sae.getConcept() );
-			aed.setCredit(sae.getNetAmount());
-			ae.addDetail( aed );				
-		}
+//		if (sae.getRegistryBank() != null) {
+//			// TODO seek bank account and add amount
+//		} else {
+//			AccountEntryDetail aed = new AccountEntryDetail();
+//			ApplicationParameter param = AON.fetchApplicationParameter(ctx, SalaryAccountEntryLineType.DEFAULT_PENDING_SALARY.getParam());
+//			if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
+//				Integer account = AonNumberUtils.toInteger(param.getValue()); 
+//				aed.setAccount( account );
+//			}
+//			aed.setConcept( sae.getConcept() );
+//			aed.setCredit(sae.getNetAmount());
+//			ae.addDetail( aed );				
+//		}
 		return ae;
 	}
 	

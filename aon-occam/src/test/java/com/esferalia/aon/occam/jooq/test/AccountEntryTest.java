@@ -218,7 +218,8 @@ public class AccountEntryTest {
 	}
 
 	@Test
-	public void testSalaryEntry() {
+	@Ignore
+	public void testSalaryAccountEntry() {
 		
 		SalaryAccountEntry sae = new SalaryAccountEntry();
 		sae.setDate( AonDateUtils.getDate(2014, 0, 1));
@@ -239,10 +240,26 @@ public class AccountEntryTest {
 		sae.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.RETENTION_IN_KIND,null,15));
 		sae.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.EMPLOYEE_SOC_INS,null,758.86));
 		sae.addLine(new SalaryAccountEntryLine(SalaryAccountEntryLineType.COMPANY_SOC_INS,null,617.42));
-		
 		AON.insertSalaryEntry(ctx , sae);
 	}
 
+	@Test
+	public void testSalaryAccountEntryFromSalary() {
+		String domainName = "escolaglobal-equipu.ecastellano.dev";
+		Integer domainId = 1051;
+		AONContext salaryCTX = AONContext.getAONContext(domainName, domainId);
+		try {
+			Integer enterprise = 147499;
+			Date from = AonDateUtils.getDate(2014, 9, 01);
+			Date to = AonDateUtils.getDate(2014, 9, 31);
+			String concept = "Nóminas OCTUBRE";
+			Integer registryBank = null;
+			AON.insertSalaryEntry(salaryCTX,enterprise,from,to,concept,registryBank);
+		} finally {
+			salaryCTX.finalize();
+		}
+	}
+	
 	@AfterClass
 	public static void afterClass() {
 		ctx.finalize();

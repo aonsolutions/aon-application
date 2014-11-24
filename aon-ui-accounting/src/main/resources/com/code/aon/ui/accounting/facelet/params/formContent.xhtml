@@ -216,6 +216,36 @@
 					<ui:param name="lookupSuffix" value="ACC_DEFAULT_COMPANY_SOC_INS_ACC" />
 					<ui:param name="lookupTo" value="#{accAppParams.accDefaultCompanySocInsAccount}" />
 				</ui:include>
+				
+				
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_advance_payment_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_ADV_PAYMENT_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedAdvPaymentAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_seize_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_SEIZE_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedSeizeAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_in_kind_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_IN_KIND_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedInKindAccount}" />
+				</ui:include>
+
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_salary_ded_other_acc}" />
+					<ui:param name="lookupSuffix" value="ACC_SALARY_DED_OTHER_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accSalaryDedOtherAccount}" />
+				</ui:include>
+				
 			</aon:panelGrid>
 		</aon:div>
 		
