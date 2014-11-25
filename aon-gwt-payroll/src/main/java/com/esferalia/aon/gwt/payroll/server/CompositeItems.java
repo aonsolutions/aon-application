@@ -19,8 +19,8 @@ public class CompositeItems<T extends Item<?>> extends CompositeCollection<T> {
 	private class MyPredicate implements Predicate {
 
 		Set<Integer> ids = new HashSet<Integer>();
-		Set<Integer> concepts = new HashSet<Integer>();
 		Map<Integer, Integer> parent = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> concepts = new HashMap<Integer, Integer>();
 
 		@SuppressWarnings("unchecked")
 		@Override
@@ -40,8 +40,12 @@ public class CompositeItems<T extends Item<?>> extends CompositeCollection<T> {
 				return false;
 			}
 
-			if (conceptId != null && !concepts.add(conceptId))
+			if (conceptId != null && concepts.containsKey(conceptId)
+					&& !concepts.get(conceptId).equals(t.getDomain())){
 				return false;
+			}
+			if ( conceptId != null ) 
+				concepts.put(conceptId, t.getDomain());
 
 			if (!ids.add(t.getId()))
 				return false;
