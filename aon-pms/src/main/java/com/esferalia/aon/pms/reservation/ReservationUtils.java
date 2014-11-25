@@ -914,6 +914,16 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return messageId;
 	}
 
+	public String obtainUrl(String urlParam) throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), urlParam);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return ((ApplicationParameter)ito).getValue();
+		}
+		return null;
+	}
+
 	public Seller obtainCrsSeller() throws ManagerBeanException {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();

@@ -69,7 +69,8 @@ public interface IReservationConstants {
 	String CUST_PROFILE = "CustProfile";
 	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
 	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";
-	String SOAP_SERVER_URL = "PMS_SOAP_SERVER_URL";
+	String CRS_SIMPLE_AVAILABILITY_URL = "PMS_SIMPLE_AVAILABILITY_URL";
+	String CRS_BOOKING_URL = "PMS_BOOKING_URL";
 
 	String ROOM_CATEGORY = "PMS_ROOM_CATEGORY";
 

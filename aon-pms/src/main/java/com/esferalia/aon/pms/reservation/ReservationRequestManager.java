@@ -27,7 +27,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
@@ -243,7 +242,7 @@ public class ReservationRequestManager implements IReservationConstants {
 
 	private String sendAvailabilityQuery(String message, List<AvailableRoomStay> availableRoomStayList) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
+			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_SIMPLE_AVAILABILITY_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
@@ -257,16 +256,6 @@ public class ReservationRequestManager implements IReservationConstants {
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());
 			availableRoomStayList.add(availableRoomStay);
-		}
-		return null;
-	}
-
-	private String obtainSoapServerUrl() throws ManagerBeanException {
-		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), SOAP_SERVER_URL);
-		for (ITransferObject ito : appParamBean.getList(criteria)) {
-			return ((ApplicationParameter)ito).getValue();
 		}
 		return null;
 	}
@@ -503,7 +492,7 @@ public class ReservationRequestManager implements IReservationConstants {
 
 	private AvailableRoomStay sendBookingQuery(String message, AvailableRoomStay availableRoomStay) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
+			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_BOOKING_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
@@ -584,7 +573,7 @@ public class ReservationRequestManager implements IReservationConstants {
 
 	private boolean sendBookingCancelQuery(String message) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
+			Endpoint endpoint = new URLEndpoint(new URL(getReservationUtils().obtainUrl(CRS_BOOKING_URL)).toString());
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 
