@@ -13,6 +13,8 @@ public class SearchInfo implements IsSerializable{
 	private String scope;
 	private Vector<String> yoTag;
 	
+	private String domain;
+	
  	public SearchInfo() {
 
 	}
@@ -61,7 +63,15 @@ public class SearchInfo implements IsSerializable{
 	public void setYoTag(Vector<String> yoTag) {
 		this.yoTag = yoTag;
 	}
-	
 
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	
+	
 	
 }

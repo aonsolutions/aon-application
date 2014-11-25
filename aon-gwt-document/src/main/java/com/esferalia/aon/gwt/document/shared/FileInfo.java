@@ -52,7 +52,7 @@ import com.google.gwt.view.client.ProvidesKey;
 		
 		private String domain;
 		private Integer domainId;
-		
+		private String domainDescription;
 		private byte[] data;
 		
 		public FileInfo() {
@@ -84,11 +84,11 @@ import com.google.gwt.view.client.ProvidesKey;
 			this.type=type;
 		}
 		
-		public int getCategory(){
+		public Integer getCategory(){
 			return category;
 		}
 		
-		public void setCategory(int category){
+		public void setCategory(Integer category){
 			this.category=category;
 		}
 		
@@ -260,6 +260,15 @@ import com.google.gwt.view.client.ProvidesKey;
 		public void setDateSql(java.sql.Date dateSql) {
 			this.dateSql = dateSql;
 		}
+
+		public String getDomainDescription() {
+			return domainDescription;
+		}
+
+		public void setDomainDescription(String domainDescription) {
+			this.domainDescription = domainDescription;
+		}
+		
 
 	}
 

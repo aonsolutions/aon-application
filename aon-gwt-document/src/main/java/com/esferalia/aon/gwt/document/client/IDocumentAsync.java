@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.TreeDriveInfo;
@@ -20,8 +21,8 @@ public interface IDocumentAsync {
 
 	void getLists(AsyncCallback<Lists> callback);
 
-	void searchFile(SearchInfo si, Vector<FileInfo> files,
-			AsyncCallback<Vector<FileInfo>> callback);
+	//void searchFile(SearchInfo si, Vector<FileInfo> files,
+		//	AsyncCallback<Vector<FileInfo>> callback);
 
 	void getSons(AsyncCallback<Vector<String>> callback);
 
@@ -39,7 +40,16 @@ public interface IDocumentAsync {
 
 	void insertFile(FileInfo fi, AsyncCallback<FileInfo> callback);
 
-	void share(FileInfo object, AsyncCallback<Void> callback);
+	void share(String email,String driveId, AsyncCallback<Void> callback);
+
+	void eSearchFile(Vector<FileInfo> v, String s,
+			AsyncCallback<Vector<FileInfo>> callback);
+
+	void searchFile2(SearchInfo si, Vector<FileInfo> files,
+			AsyncCallback<FilterUtil> callback);
+
+	void searchFile(SearchInfo si, Vector<FileInfo> files,
+			Vector<FileInfo> allFiles, AsyncCallback<Vector<FileInfo>> callback);
 
 
 

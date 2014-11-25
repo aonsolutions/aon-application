@@ -45,7 +45,7 @@ public class FileInfo{
 	private int fileId;
 	private String title;
 	private Byte mimetype;
-	private int category;
+	private Integer category;
 	private Vector<String> emails = new Vector<String>();
 	private Boolean isNomina = false;
 	private Date date;
@@ -85,11 +85,11 @@ public class FileInfo{
 		this.type = type;
 	}
 
-	public int getCategory() {
+	public Integer getCategory() {
 		return category;
 	}
 
-	public void setCategory(int category) {
+	public void setCategory(Integer category) {
 		this.category = category;
 	}
 

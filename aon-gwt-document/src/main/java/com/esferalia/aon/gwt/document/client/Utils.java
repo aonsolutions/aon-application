@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.document.client;
 
+import java.util.Vector;
+
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 
 public class Utils {
 
@@ -50,4 +53,15 @@ public class Utils {
 	        return false;
 	    }
 	  }
+
+	static MultiWordSuggestOracle createOracle(Vector<String> l) {
+		MultiWordSuggestOracle oracleSons = new MultiWordSuggestOracle();
+
+		for (String s : l) {
+			oracleSons.add(s);
+		}
+		return oracleSons;
+	}
+
 }
+

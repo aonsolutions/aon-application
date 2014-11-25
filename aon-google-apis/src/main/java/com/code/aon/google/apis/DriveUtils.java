@@ -467,13 +467,16 @@ public class DriveUtils implements IBlobManager {
 	private static List<Property> setProperties(Drive drive, FileInfo fileInfo, String domain) throws AonConnectionException,
 			SQLException, IOException {
 		String name = "otros";
+		if(fileInfo.getCategory()!= null){
 		Result<Record1<String>> categoryName = getCategoryName(
 				fileInfo.getCategory(), domain);
 		for (Record1<String> record1 : categoryName) {
 			name = record1.value1();
 		}
+		}else name = "";
 		Property property1 = new Property();
 		property1.setValue(name);
+		
 		// property1.setEtag("category");
 		property1.setKey("category");
 

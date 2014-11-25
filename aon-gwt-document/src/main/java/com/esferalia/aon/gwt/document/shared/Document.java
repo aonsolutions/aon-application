@@ -12,8 +12,8 @@ public class Document implements IsSerializable{
 	private static final long serialVersionUID = 1136921611726297915L;
 	Vector<FileInfo> files = new Vector<FileInfo>();
 	Vector<FileInfo> serviconvenios = new Vector<FileInfo>();
-	Vector<String> names = new Vector<String>();
-	Vector<String> types = new Vector<String>();
+	Vector<FileInfo> filter = new Vector<FileInfo>();
+	Vector<FileInfo> efiles = new Vector<FileInfo>();
 	
 	public Vector<FileInfo> getFiles() {
 		return files;
@@ -21,25 +21,26 @@ public class Document implements IsSerializable{
 	public void setFiles(Vector<FileInfo> files) {
 		this.files = files;
 	}
-	public Vector<String> getNames() {
-		return names;
-	}
-	public void setNames(Vector<String> names) {
-		this.names = names;
-	}
 	
-	public Vector<String> getTypes() {
-		return types;
-	}
-	public void setTypes(Vector<String> types) {
-		this.types = types;
-	}
 	public Vector<FileInfo> getServiconvenios() {
 		return serviconvenios;
 	}
 	public void setServiconvenios(Vector<FileInfo> serviconvenios) {
 		this.serviconvenios = serviconvenios;
 	}
+	public Vector<FileInfo> getFilter() {
+		return filter;
+	}
+	public void setFilter(Vector<FileInfo> filter) {
+		this.filter = filter;
+	}
+	public Vector<FileInfo> getEfiles() {
+		return efiles;
+	}
+	public void setEfiles(Vector<FileInfo> efiles) {
+		this.efiles = efiles;
+	}
+	
 	
 	
  

@@ -8,6 +8,8 @@ public class Category implements IsSerializable{
 	Integer id;
 	String name;
 	String domain;
+	Boolean isSon;
+	Boolean isParent;
 	
 	public Category() {
 	
@@ -30,6 +32,22 @@ public class Category implements IsSerializable{
 	}
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public Boolean getIsSon() {
+		return isSon;
+	}
+
+	public void setIsSon(Boolean isSon) {
+		this.isSon = isSon;
+	}
+
+	public Boolean getIsParent() {
+		return isParent;
+	}
+
+	public void setIsParent(Boolean isParent) {
+		this.isParent = isParent;
 	}
 	
 	

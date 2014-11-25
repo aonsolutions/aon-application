@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.google.apis.DatabaseSync;
 import com.code.aon.google.apis.DriveUtils;
+import com.code.aon.google.apis.drive.ShareFiles;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.google.apis.controller.GoogleDriveController;
@@ -25,6 +26,7 @@ import com.esferalia.aon.gwt.document.client.IDocument;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tags;
@@ -63,13 +65,13 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		String domain = AonUtil.getDomainName();
 		Document docs = new Document();
 		try {
-			DBConsults.getAllRattach(domain);
+			docs  = DBConsults.getAllRattach(domain);
 			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		docs.setFiles(DBConsults.getFilesGwt());
+		//docs.setFiles(DBConsults.getFilesGwt());
 		return docs;
 	}
 	
@@ -108,7 +110,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		return vector;
 	}
 	
-	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files){
+	public Vector<FileInfo> searchFile(SearchInfo si, Vector<FileInfo> files, Vector<FileInfo> allFiles){
+		if(si.getDomain()!=null){
+			files = eSearchFile(allFiles, si.getDomain());
+		}
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 		for (FileInfo fileInfo : files) {
 			if(filter(si, fileInfo)){
@@ -116,6 +121,19 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			}
 		}
 		return vector;
+		
+	}
+	
+	public FilterUtil searchFile2(SearchInfo si, Vector<FileInfo> files){
+
+		Vector<FileInfo> vector = new Vector<FileInfo>();
+		for (FileInfo fileInfo : files) {
+			if(filter(si, fileInfo)){
+				vector.add(fileInfo);
+			}
+		}
+		
+		return new FilterUtil(vector,si.getCategory()!=null?si.getCategory():"",si.getTag()!=null?si.getTag().get(0):"");
 		
 	}
 	
@@ -168,6 +186,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 				return false;
 			}
 		}
+		if(si.getDomain() != null){
+			if(!si.getDomain().equals(fi.getDomain()))
+				return false;;
+		}
 		return true;
 	}
 	
@@ -180,6 +202,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		vector.add(domain);
 		return vector;
 		
 		
@@ -192,8 +215,11 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		
 		try {
 			lists.setCategoryList(DBConsults.getCategoryList(domain));
+			lists.setCategoryListSon(DBConsults.getCategoryListSon(domain));
 			lists.setScopeList(DBConsults.getScopeList(domain));
+			lists.setScopeListSon(DBConsults.getScopeListSon(domain));
 			lists.setTagList(DBConsults.getTagList(domain));
+			lists.setTagListSon(DBConsults.getTagListSon(domain));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -255,14 +281,16 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		// Integer registry = AdminUtil.getCompanyId(fi.getDomainId());
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 		fileInfo.setAonType("registry");
-		if ((Integer) fi.getCategory() != null)
+		if (fi.getCategory() != -1)
 			fileInfo.setCategory(fi.getCategory());
+		else fileInfo.setCategory(null);
 		fileInfo.setDateSql(date);
 		fileInfo.setMimetype((byte) MimeType.get(getMimetype()).ordinal());
 		fileInfo.setTitle(fi.getTitle());
 		fileInfo.setType((short) 5);// TODO tipo correcto!!
-		if (fi.getScope().getId() != null)
+		if (fi.getScope().getId() != -1)
 			fileInfo.setScopeId(fi.getScope().getId());
+		else fileInfo.setScopeId(null);
 		Byte conf;
 		if (fi.getConfidential())
 			conf = 1;
@@ -270,8 +298,10 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			conf = 0;
 		fileInfo.setSecurityLevel(conf);
 		String dom;
-		if (fi.getDomain().equals(""))
+		if (fi.getDomain().equals("")){
 			dom = domain;
+			fi.setDomain(domain);
+		}
 		else
 			dom = fi.getDomain();
 		try {
@@ -293,6 +323,7 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 			else DBConsults.insertFileData(domain, id, b );
 			//insertFile(d, fileInfo,b);//DriveUtils.insertFile(d, fileInfo, new Vector<ParentReference>(), new Vector<String>(), domain);
 			fi = DBConsults.getFile(domain, id);
+			if(fi.getDomain()==null) fi.setDomain(domain);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -399,10 +430,36 @@ public class DocumentsServlet extends RemoteServiceServlet implements IDocument{
 		 return v;
 	
 	}
-	public void share(FileInfo object) {
-		// TODO 
-		
-	}
 
+	public void share(String email, String driveId) {
+		String domain = AonUtil.getDomainName();
+		if (driveId != null) {
+			try {
+				DomainGserviceaccount g = DatabaseSync.getServiceAccount(domain);
+				Drive d = DriveUtils.serviceInitialize(g);
+				ShareFiles.setPermission(d, driveId, email);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (KeyStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GeneralSecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String str) {
+		Vector<FileInfo> aux = new Vector<FileInfo>();//=  filesGwt.stream().filter(d -> d.getDomain().equalsIgnoreCase(domain));
+		v.stream().forEach(f -> {
+			if(f.getDomain().equalsIgnoreCase(str))
+				aux.add(f);
+		});
+		return aux;
+	}
 
 }

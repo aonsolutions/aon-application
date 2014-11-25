@@ -1,3 +1,7 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
@@ -17,13 +21,42 @@
 		
 	}
 
+	.aon-filter{
+		border-radius: 5px 5px 5px 5px;
+		-moz-border-radius: 5px 5px 5px 5px;
+		-webkit-border-radius: 5px 5px 5px 5px;
+		border: 1px solid #BBB;
+		background-color:#fbfcc2;
+		width: 50px;
+	}
+	
+	.aon-filter2{
+		padding-left: 20px;
+	}
+
 	.aon-icon-google-search2 {
 		background: transparent url(aon-icon-google-search.png) scroll left center no-repeat;
 	}
 	
+	.aon-panelGrid-search-info-internal2{
+	background:transparent url(images/aon-icon/aon-icon-search-title-item.png) scroll left 8px no-repeat;
+	padding-left:8px;
+	font-weight:bold;
+	margin-left:5px;
+	}
+	
 	.aon-search-box{
-		width: 800px;
-		margin-left:32px;
+		width: 600px;
+		margin-left:5px;
+		padding:3px 3px 3px 3px;
+ 		border:solid 1px #DEDEDE;
+ 		font-size: 16px;
+		height:16px;
+	}
+	
+	.aon-search-box2{
+		width: 350px;
+		margin-left:5px;
 		padding:3px 3px 3px 3px;
  		border:solid 1px #DEDEDE;
  		font-size: 16px;
@@ -299,13 +332,40 @@ background-color:#D4CFC7;
 
 						<g:north size="8">
 
-							<g:HTMLPanel styleName="aon-panelGrid-search {style.searchPanel}">
+							<g:HTMLPanel  styleName="aon-panelGrid-search {style.searchPanel}">
 								<div class="aon-panelGrid-search-info">
 									<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
+								<g:InlineHTML ui:field="html" visible="false">
+									
+								</g:InlineHTML>
+								<g:Button ui:field="filterButton" visible="false" text="&nbsp;" styleName="aon-editDataTable-button aon-icon-close">
+								
+								</g:Button> 
+									
+									<!--span class="{style.aon-filter}">
+										<button  class="aon-editDataTable-button aon-icon-exclude">
+										     
+										 </button>
+										<span class="aon-icon-category">
+											<g:InlineLabel styleName="{style.aon-filter2}">Fiscal</g:InlineLabel>
+										</span>
+										
+									</span-->
+										<!-- span class="{style.aon-filter}" >
+											
+										    <g:Button ui:field="filter" visible="false" styleName="aon-editDataTable-button aon-icon-search">
+										        
+										    </g:Button>
+										    <g:Button ui:field="close" text="" visible="false" styleName="aon-editDataTable-button aon-icon-close">
+										        
+										    </g:Button>
+										    
+										</span-->
+									
 									<a style="font-size:10px;font-weight:bold;float:right;"
 										onclick="" href="#">
 										<span class="aon-outputText">
-										    <g:Button ui:field="advanceSearch" styleName="aon-editDataTable-button aon-icon-search">
+										    <g:Button ui:field="advanceSearch" text="Búsqueda Avanzada" styleName="aon-editDataTable-button aon-icon-search">
 										        
 										    </g:Button>
 										    
@@ -314,18 +374,26 @@ background-color:#D4CFC7;
 								</div>
 								<table class="aon-panelGrid">
 									<tr>
-										<td class="aon-panelGrid-odd">
-										    <g:TextBox ui:field="searchBox" styleName="{style.aon-search-box}">
-
-											</g:TextBox>
-											<!--g:SuggestBox ui:field="searchBox" styleName="{style.aon-search-box}"
-												autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
-
-											</g:SuggestBox-->
-												
+										<td>
+											<span class="{style.aon-panelGrid-search-info-internal2}">Nombre:</span>
 										</td>
+										<td>
+											<g:TextBox ui:field="searchBox" styleName="{style.aon-search-box}">
+											</g:TextBox>
+										</td>
+										<td>
+											<span class="{style.aon-panelGrid-search-info-internal2}">Empresa:</span>
+										</td>
+										<td>
+											<g:SuggestBox ui:field="enterpriseSearchBox" styleName="{style.aon-search-box2}"
+													autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}">
+											</g:SuggestBox>
+										</td>    
+							
 										<td><g:Button visible="false" ui:field="searchButton" styleName="aon-editDataTable-button"> </g:Button> 
-												</td>
+										</td>
+										<td><g:Button visible="false" ui:field="eSearchButton" styleName="aon-editDataTable-button"> </g:Button> 
+										</td>
 									</tr>
 								</table>
 

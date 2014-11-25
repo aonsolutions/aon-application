@@ -1,12 +1,5 @@
 package com.esferalia.aon.gwt.document.client;
 
-import gwtupload.client.IFileInput.FileInputType;
-import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader;
-import gwtupload.client.IUploader.OnCancelUploaderHandler;
-import gwtupload.client.IUploader.OnFinishUploaderHandler;
-import gwtupload.client.IUploader.OnStartUploaderHandler;
-import gwtupload.client.IUploader.OnStatusChangedHandler;
 import gwtupload.client.SingleUploader;
 
 import java.util.Comparator;
@@ -18,9 +11,11 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.document.shared.Category;
+import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.DisclosureImages;
 import com.esferalia.aon.gwt.document.shared.Document;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
@@ -35,6 +30,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -51,13 +47,14 @@ import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.AbstractCellTable.CellTableKeyboardSelectionHandler;
+import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -69,17 +66,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormHandler;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -88,11 +81,15 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestionEvent;
+import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
@@ -104,110 +101,99 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Documents extends Composite implements EntryPoint {
 
-	private void initContextMenu() {
+	class DocumentContextMenu extends ContextMenu {
 
-		class DocumentContextMenu extends ContextMenu {
+		ScheduledCommand viewCommand = new ScheduledCommand() {
+			public void execute() {
 
-			ScheduledCommand viewCommand = new ScheduledCommand() {
-				public void execute() {
-
-				};
-			};		
-
-			ScheduledCommand editCommand = new ScheduledCommand() {
-				public void execute() {
-					editFile(null);
-				};
 			};
-			ScheduledCommand removeCommand = new ScheduledCommand() {
-				public void execute() {
-					removeFile();
-				};
+		};		
+
+		ScheduledCommand editCommand = new ScheduledCommand() {
+			public void execute() {
+				editFile(null);
 			};
+		};
+		ScheduledCommand removeCommand = new ScheduledCommand() {
+			public void execute() {
+				removeFile();
+			};
+		};
+		
+		ScheduledCommand downloadCommand = new ScheduledCommand() {
+			public void execute() {	
+				FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				download(object);
+			};
+		};
+		
+		ScheduledCommand shareCommand = new ScheduledCommand() {
+			public void execute() {
+				FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				share(object);
+			};
+		};
+		
+		ScheduledCommand infoCommand = new ScheduledCommand() {
+			public void execute() {
+				FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				info(object);
+			};
+		};
+
+		private MenuItem viewItem;
+		private MenuItem editItem;
+		private MenuItem removeItem;
+		private MenuItem shareItem;
+		private MenuItem downloadItem;
+		private MenuItem infoItem;
+
+		public DocumentContextMenu() {
 			
-			ScheduledCommand downloadCommand = new ScheduledCommand() {
-				public void execute() {	
-					FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-					download(object);
-				};
-			};
-			
-			ScheduledCommand shareCommand = new ScheduledCommand() {
-				public void execute() {
-					FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-					share(object);
-				};
-			};
-			
-			ScheduledCommand infoCommand = new ScheduledCommand() {
-				public void execute() {
-					FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-					info(object);
-				};
-			};
-
-			private MenuItem viewItem;
-			private MenuItem editItem;
-			private MenuItem removeItem;
-			private MenuItem shareItem;
-			private MenuItem downloadItem;
-			private MenuItem infoItem;
-
-			public DocumentContextMenu() {
-				
-				viewItem = addItem("Visualizar",viewCommand,
-						"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
-				viewItem.setEnabled(true);
-				addSeparator();
-				editItem = addItem("Editar", editCommand,
-						"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
-				editItem.setEnabled(true);
-				removeItem = addItem("Borrar", removeCommand,
-						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
-				removeItem.setEnabled(true);
-				addSeparator();
-				shareItem = addItem("Compartir",shareCommand,
-						"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
-				shareItem.setEnabled(true);
-				downloadItem = addItem("Descargar",downloadCommand,
-						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
-				downloadItem.setEnabled(true);
-				infoItem = addItem("Detalles",infoCommand,
-						"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
-				infoItem.setEnabled(true);
-			}
-
-			@Override
-			public void show() {
-				//sync();
-				super.show();
-			}
-
-			//private void sync() {
-				//Agreement agreement = Agreements.this.getSelectedAgreement();
-				
-				//deleteItem.setEnabled(agreement.canDelete());
-			//}
-
+			viewItem = addItem("Visualizar",viewCommand,
+					"aon-icon-open-popup",AON.AON_ICON_CMD_BUTTON);
+			viewItem.setEnabled(true);
+			addSeparator();
+			editItem = addItem("Editar", editCommand,
+					"aon-icon-edit", AON.AON_ICON_CMD_BUTTON);
+			editItem.setEnabled(true);
+			removeItem = addItem("Borrar", removeCommand,
+					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+			removeItem.setEnabled(true);
+			addSeparator();
+			shareItem = addItem("Compartir",shareCommand,
+					"aon-icon-google-drive",AON.AON_ICON_CMD_BUTTON);
+			shareItem.setEnabled(true);
+			downloadItem = addItem("Descargar",downloadCommand,
+					"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
+			downloadItem.setEnabled(true);
+			infoItem = addItem("Detalles",infoCommand,
+					"aon-icon-info",AON.AON_ICON_CMD_BUTTON);
+			infoItem.setEnabled(true);
 		}
-		;
 
-		final DocumentContextMenu contextMenu = new DocumentContextMenu();
+		@Override
+		public void show() {
+			//sync();
+			super.show();
+		}
 
+		//private void sync() {
+			//Agreement agreement = Agreements.this.getSelectedAgreement();
+			
+			//deleteItem.setEnabled(agreement.canDelete());
+		//}
+
+	}
+	
+	DocumentContextMenu contextMenu = new DocumentContextMenu();
+	
+	private void initContextMenu() {
 		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 			@Override
 			public void onContextMenu(ContextMenuEvent event) {
-				
 				event.preventDefault();
 				event.stopPropagation();
-				
-				NativeEvent nativeEvent = event.getNativeEvent();
-				
-				// TODO Si se clicka muy abajo cambiar posicion del popup, direccion arriba 
-				
-				contextMenu.setPopupPosition(nativeEvent.getClientX(),
-						nativeEvent.getClientY());
-				contextMenu.show();
 			}
 
 		};
@@ -243,6 +229,11 @@ public class Documents extends Composite implements EntryPoint {
 	 * @UiField RangeLabelPager rangeLabelPager;
 	 */
 
+	@UiField
+	InlineHTML html;
+	
+	@UiField
+	Button filterButton;
 	
 	@UiField
 	Button advanceSearch;
@@ -283,14 +274,19 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField(provided = true)
 	TextBox searchBox;
 	
+	@UiField(provided = true)
+	SuggestBox enterpriseSearchBox;
+	
 	@UiField
 	Button searchButton;
+	
+	@UiField
+	Button eSearchButton;
 
 	Boolean gConnection;
 	
 	private void init() {
-		
-		
+		getSons();
 		
 		idoc.isGconnection(new AsyncCallback<Boolean>() {
 			@Override
@@ -308,7 +304,7 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});
 
-		if(docs.getFiles()==null||docs.getFiles().isEmpty()){
+		if(docs.getEfiles()==null||docs.getEfiles().isEmpty()){
 			idoc.getAllFiles(new AsyncCallback<Document>() {
 			
 			@Override
@@ -362,7 +358,15 @@ public class Documents extends Composite implements EntryPoint {
 	public void Load() {
 		getSons();
 		/** CATEGORIES **/
-		
+	/*	filterButton = new Button();
+	filterButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				close();
+			}
+		});
+		*/
 		VerticalPanel vcat =  new VerticalPanel();
 		for(Category c : lists.getCategoryList().getList()){
 			cAux= c;
@@ -374,14 +378,24 @@ public class Documents extends Composite implements EntryPoint {
 					public void onClick(ClickEvent event) {
 						SearchInfo si = new SearchInfo();
 						si.setCategory(c.getName());
-						idoc.searchFile(si, docs.getFiles(),
-								new AsyncCallback<Vector<FileInfo>>() {
+						idoc.searchFile2(si, docs.getEfiles(),
+								new AsyncCallback<FilterUtil>() {
 									@Override
-									public void onSuccess(Vector<FileInfo> result) {
-										searchs = result;
+									public void onSuccess(FilterUtil result) {
+										// TODO AÑADIR IU FILTER
+										searchs = result.getFiles();
+										docs.setFilter(result.getFiles());
 										dataProvider = new ListDataProvider<FileInfo>(
 												searchs);
 										dataProvider.addDataDisplay(dataGrid);
+										isServiconvenios=false;
+										/*filterLabel= new Label();
+										filterLabel.setStyleName("aon-icon-category");
+										filterLabel.setText(cAux.getName());
+										*/
+										html.setText(result.getCategory());
+										html.setVisible(true);
+										filterButton.setVisible(true);
 										dataGrid.redraw();
 									}
 									@Override
@@ -407,14 +421,26 @@ public class Documents extends Composite implements EntryPoint {
 						Vector<String> v = new Vector<String>();
 						v.add(t.getName());
 						si.setTag(v);
-						idoc.searchFile(si, docs.getFiles(),
-								new AsyncCallback<Vector<FileInfo>>() {
+						idoc.searchFile2(si, docs.getEfiles(),
+								new AsyncCallback<FilterUtil>() {
 									@Override
-									public void onSuccess(Vector<FileInfo> result) {
-										searchs = result;
+									public void onSuccess(FilterUtil result) {
+										// TODO AÑADIR IU FILTER
+										searchs = result.getFiles();
+										docs.setFilter(result.getFiles());
 										dataProvider = new ListDataProvider<FileInfo>(
 												searchs);
 										dataProvider.addDataDisplay(dataGrid);
+										isServiconvenios=false;
+										/*filterLabel= new Label();
+										filterLabel.setStyleName("aon-icon-tag");
+										filterLabel.setText(tAux.getName());
+										*/
+										html.setText(result.getTag());
+										html.setVisible(true);
+										
+										filterButton.setVisible(true);
+
 										dataGrid.redraw();
 									}
 									@Override
@@ -479,19 +505,47 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});
 		
-		CellTableKeyboardSelectionHandler<FileInfo> selHandler = new CellTableKeyboardSelectionHandler<FileInfo>(dataGrid){
+		enterpriseSearchBox = new SuggestBox(Utils.createOracle(getSons()));
+		if (getSons().size() == 1) enterpriseSearchBox.setEnabled(false);
+		enterpriseSearchBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				eSearchButton.click();
+			}
+		});
+
+		DefaultKeyboardSelectionHandler<FileInfo> selHandler = new DefaultKeyboardSelectionHandler<FileInfo>(dataGrid){
 		
 			@Override
 			public void onCellPreview(CellPreviewEvent<FileInfo> event) {
 				 
 				
 				if(BrowserEvents.CONTEXTMENU.equals(event.getNativeEvent().getType())){
-     				int relRow = event.getIndex() - dataGrid.getPageStart();
-   			        int subrow = event.getContext().getSubIndex();
-   			      
+					Integer relRow = event.getIndex() - dataGrid.getPageStart();
+   			        Integer subrow = event.getContext().getSubIndex();
    			        dataGrid.setKeyboardSelectedRow(relRow, subrow, true);
-     			 }
-     		     super.onCellPreview(event);	
+
+   					NativeEvent nativeEvent = event.getNativeEvent();
+   					
+   					if(nativeEvent.getClientY()>590){
+   						if(nativeEvent.getClientX()>994)
+   							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
+   								nativeEvent.getClientY()-140);
+   						else contextMenu.setPopupPosition(nativeEvent.getClientX(),
+   								nativeEvent.getClientY()-140);
+   					}
+   					else{
+   						if(nativeEvent.getClientX()>994)
+   							contextMenu.setPopupPosition(nativeEvent.getClientX()-120,
+   								nativeEvent.getClientY());
+   						else contextMenu.setPopupPosition(nativeEvent.getClientX(),
+   								nativeEvent.getClientY());
+   					}
+   			        contextMenu.show();
+				}
+				//else super.onCellPreview(event);	
+				
 			}
 		};
 		
@@ -548,12 +602,12 @@ public class Documents extends Composite implements EntryPoint {
 		
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
-		dataGrid.setEmptyTableWidget(new Label("No hay ningún archivo."));
+		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
 		
 		addDataDisplay(dataGrid);
 		
 		ListHandler<FileInfo> sortHandler = getSortHandler();
-				//docs.getFiles());
+				//docs.getFil());
 		dataGrid.addColumnSortHandler(sortHandler);
 		
 		
@@ -604,9 +658,7 @@ public class Documents extends Composite implements EntryPoint {
 				List<FileInfo> aux  = super.getList();
 				List<FileInfo> aux2 = new Vector<FileInfo>();
  				for(Integer i = 0 ; i< aux.size()-1;i++){
- 					
  					aux2.set(i, aux.get(aux.size()-1-i ));
- 					Window.alert(aux.get(aux.size()-1-i).getTitle()+" - "+ aux2.get(i).getTitle() );
  				} 				
 				dataProvider.setList(aux2);
 				
@@ -618,7 +670,7 @@ public class Documents extends Composite implements EntryPoint {
 	private ListDataProvider<FileInfo> dataProvider = new ListDataProvider<FileInfo>();
 
 	public void addDataDisplay(HasData<FileInfo> display) {
-		dataProvider = new ListDataProvider<FileInfo>(docs.getFiles());
+		dataProvider = new ListDataProvider<FileInfo>(docs.getEfiles());
 		dataProvider.addDataDisplay(display);
 		
 	}
@@ -648,197 +700,18 @@ public class Documents extends Composite implements EntryPoint {
 	void edit(ClickEvent event){
 		editFile(null);
 	}
-	
+
 	public void editFile(SingleUploader up) {
 		Integer n =dataGrid.getKeyboardSelectedRow();
 		FileInfo fi = dataProvider.getList().get(n);
-		
-		ListBox lb1 = new ListBox();
-		lb1.addItem("-");
-		ListBox lb2 = new ListBox();
-		lb2.addItem("-");
-		ListBox lb3 = new ListBox();
-		lb3.addItem("-");
+		Dialog d = new Dialog("edit", "Editar Archivo", "Cancelar", true, "Editar", true);
+		d.setLists(lists);
+		d.setFileInfo(fi);
 
-		for (Scope s : lists.getScopeList().getList()) {
-			lb3.addItem(s.getName());
-		}
-		for (Tag t : lists.getTagList().getList()) {
-			lb2.addItem(t.getName());
-		}
-		for (Category c : lists.getCategoryList().getList()) {
-			lb1.addItem(c.getName());
-		}
-		lb2.addChangeHandler(OneHandler2());
-		
-		popup = new DialogBox();
-		//popup.getCaption().setText("EDITAR ARCHIVO");
-		popup.getCaption().setHTML("<div id=\"aonContent:corporateIdentityAttachForm:j_id3147\" class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">EDITAR ARCHIVO</span></div>");
-
-		VerticalPanel v = new VerticalPanel();
-		v.setSpacing(6);
-		
-		final SingleUploader upload = newUploader(up);
-        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
-        	
+		popup2 = new DocumentsDialog(d){
 			@Override
-			public void onCancel(IUploader uploader) {
-				final SingleUploader upload3 = newUploader(null) ;
-				grid.setWidget(1, 1, upload3);
-			}
-		});
-	    		
-		grid = new FlexTable();
-		
-		grid.setStyleName("aon-panelGrid");
-		grid.setWidth("400px");
-		grid.setBorderWidth(1);
-		grid.setCellSpacing(0);
-
-		TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
-		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
-		tb1.setText(fi.getTitle());
-		grid.setWidget(0, 1, tb1);
-
-		grid.setWidget(1, 0, new Label("Archivo"));
-		grid.setWidget(1, 1, upload);
-		
-		CheckBox checkBox = new CheckBox();
-		grid.setWidget(2, 0, new Label("Confidencial"));
-		checkBox.setValue(fi.getConfidential());
-		grid.setWidget(2, 1, checkBox);
-		
-	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
-	    DateBox dateBox = new DateBox();
-	    dateBox.setStyleName("aon-inputText");
-	    dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
-	    dateBox.getDatePicker().setYearArrowsVisible(true);
-		grid.setWidget(3, 0, new Label("Fecha"));
-		dateBox.setValue(fi.getDate());
-		grid.setWidget(3, 1, dateBox);
-
-		grid.setWidget(4, 0, new Label("Categor\u00eda"));
-		for (int i = 0; i<lb1.getItemCount();i++) {
-			if(lb1.getItemText(i).equals(fi.getCategoryStr())){
-				lb1.setItemSelected(i, true);
-			}
-		}
-		grid.setWidget(4, 1, lb1);
-
-		if(lb2.getItemCount() <= 2){
-			grid.setWidget(5, 0, new Label("Etiqueta"));
-			for (int i = 0; i<lb2.getItemCount();i++) {
-				if(lb2.getItemText(i).equals(fi.getTagsStr())){
-					lb2.setItemSelected(i, true);
-				}
-			}
-			grid.setWidget(5, 1, lb2);	
-		}
-		else{
-			Integer size = fi.getTags().size();
-			
-			if(size>1){
-				ListBox[] lbs = new ListBox[size];
-				for(Integer k = 0; k< size ; k++){
-					lbs[k] = new ListBox();
-					lbs[k].addItem("-");
-					for (Tag t : lists.getTagList().getList()) {
-						lbs[k].addItem(t.getName());
-					}
-					HorizontalPanel hp = new HorizontalPanel();
-					for (int i = 0; i<lbs[k].getItemCount();i++) {
-						if(lbs[k].getItemText(i).equals(fi.getTags().get(k).getName())){
-							lbs[k].setItemSelected(i, true);
-						}
-					}
-					
-					
-					if(k== size-1){
-						hp.add(lbs[k]);
-						Button bMenos = new Button();
-						bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
-						bMenos.addClickHandler(menosHandler2());
-						hp.add(bMenos);
-						if(size < lists.getTagList().getList().size()){
-							Button mas = new Button("");
-							mas.setStyleName("aon-finding-toolbar-item aon-search-add");
-							mas.addClickHandler(masHandler2());
-							hp.add(mas);
-						}
-					}
-					else{
-						lbs[k].setEnabled(false);
-						hp.add(lbs[k]);
-					}
-					hp.addStyleName("aon-gwt-tags-popup");
-
-					vertical.add(hp);
-					
-				}
-
-			}
-			else{
-				h2 = new HorizontalPanel();
-				for (int i = 0; i<lb2.getItemCount();i++) {
-					if(lb2.getItemText(i).equals(fi.getTagsStr())){
-						lb2.setItemSelected(i, true);
-					}
-				}
-				h2.add(lb2);
-				if(lb2.getSelectedIndex()!=0){
-					Button mas = new Button("");
-					mas.setStyleName("aon-finding-toolbar-item aon-search-add");
-					mas.addClickHandler(masHandler2());
-					h2.add(mas);
-				}
-				vertical.add(h2);
-			}
-			grid.setWidget(5, 0, new Label("Etiqueta"));
-			grid.setWidget(5, 1, vertical);
-		}
-		
-		grid.setWidget(6, 0, new Label("\u00c1mbito"));
-		if(fi.getScope()!=null){
-		for (int i = 0; i<lb3.getItemCount();i++) {
-			if(lb3.getItemText(i).equals(fi.getScope().getName())){
-				lb3.setItemSelected(i, true);
-			}
-		}
-		}
-		grid.setWidget(6, 1, lb3);
-
-		for (int i = 0; i < grid.getRowCount(); i++) {
-			for (int j = 0; j < grid.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					grid.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					grid.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
-		v.add(grid);
-		Label l = new Label("");
-		v.add(l);
-		HorizontalPanel h = new HorizontalPanel();
-
-		Button b = new Button("CANCELAR");
-		
-		b.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				popup.hide();
-				vertical = new VerticalPanel();
-			}
-		});
-		
-		Button b2 = new Button("EDITAR");
-		b2.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-        		Integer n =dataGrid.getKeyboardSelectedRow();
+			protected void onAccept() {
+				Integer n =dataGrid.getKeyboardSelectedRow();
         		FileInfo fileInfo = dataProvider.getList().get(n);
             	
             	// Descripción - Description
@@ -858,7 +731,11 @@ public class Documents extends Composite implements EntryPoint {
             	// Categoria - Category
             	ListBox lb1 = (ListBox)grid.getWidget(4, 1);
             	for (Category c : lists.getCategoryList().getList()) {
-					if(c.getName().equals(lb1.getItemText(lb1.getSelectedIndex()))){
+            		
+            		String s1 = lb1.getItemText(lb1.getSelectedIndex());
+            		if(s1.substring(0, 1).equals(Character.toString((char)9650)) || s1.substring(0, 1).equals(Character.toString((char)9660)) )
+            			s1 = s1.substring(1);
+            		if(c.getName().equals(s1)){
 						fileInfo.setCategory(c.getId());
 					}
 				}
@@ -866,7 +743,10 @@ public class Documents extends Composite implements EntryPoint {
             	// Ambito - Scope
             	ListBox lb3 = (ListBox)grid.getWidget(6, 1);
             	for (Scope s : lists.getScopeList().getList()) {
-					if(s.getName().equals(lb3.getItemText(lb3.getSelectedIndex()))){
+            		String s3 = lb3.getItemText(lb1.getSelectedIndex());
+            		if(s3.substring(0, 1).equals(Character.toString((char)9650)) || s3.substring(0, 1).equals(Character.toString((char)9660)) )
+            			s3 = s3.substring(1);
+					if(s.getName().equals(s3)){
 						fileInfo.setScope(s);
 					}
 				}	            	
@@ -878,7 +758,10 @@ public class Documents extends Composite implements EntryPoint {
             		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
             		ListBox lb = (ListBox)hp.getWidget(0);
             		for (Tag t : lists.getTagList().getList()) {
-						if(t.getName().equals(lb.getValue(lb.getSelectedIndex()))){
+                		String s2 = lb.getItemText(lb.getSelectedIndex());
+                		if(s2.substring(0, 1).equals(Character.toString((char)9650)) || s2.substring(0, 1).equals(Character.toString((char)9660)) )
+                			s2 = s2.substring(1);
+						if(t.getName().equals(s2)){
 							fileInfo.setTags(tags);
 						}
 					}
@@ -896,7 +779,7 @@ public class Documents extends Composite implements EntryPoint {
 						
 					}
 				});
-				popup.hide();
+				hide();
 				vertical = new VerticalPanel();
 				Vector<FileInfo> aux = new Vector<FileInfo>();
 				for (FileInfo f : docs.getFiles()) {
@@ -905,6 +788,20 @@ public class Documents extends Composite implements EntryPoint {
 					else aux.add(f);		
 				}
 				docs.setFiles(aux);
+				aux = new Vector<FileInfo>();
+				for (FileInfo f : docs.getEfiles()) {
+					if(f.getFileId() == fileInfo.getFileId())
+						aux.add(fileInfo);
+					else aux.add(f);		
+				}
+				docs.setEfiles(aux);
+				aux = new Vector<FileInfo>();
+				for (FileInfo f : docs.getFilter()) {
+					if(f.getFileId() == fileInfo.getFileId())
+						aux.add(fileInfo);
+					else aux.add(f);		
+				}
+				docs.setFilter(aux);
 				aux= new Vector<FileInfo>();
 				for (FileInfo f : dataProvider.getList()) {
 					if(f.getFileId() == fileInfo.getFileId()){
@@ -917,65 +814,87 @@ public class Documents extends Composite implements EntryPoint {
 				dataProvider = new ListDataProvider<FileInfo>(aux);
 				dataProvider.addDataDisplay(dataGrid); 
 				dataGrid.redraw();
-			}      
-		});
-		b.setStyleName("aon-commandButton");
-		b2.setStyleName("aon-commandButton");
-		h.add(b);
-		h.add(b2);
-		v.add(h);
-		v.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_RIGHT);
-		popup.setGlassEnabled(true);
-		popup.add(v);
-
-		/*
-		 * HorizontalPanel hp = new HorizontalPanel(); Button b = new
-		 * Button("Cancelar"); Button b2 = new Button("Guardar");
-		 * hp.add(b);hp.add(b2); popup.add(hp);
-		 */
-		popup.show();
+			}
+			@Override
+			protected void onCancel() {
+				hide();
+				vertical = new VerticalPanel();				
+			}
+		};
+		popup2.setGlassEnabled(true);
+		popup2.show();
 	}
-	
-	
+
 	@UiHandler("delFile")
 	void del(ClickEvent event){
 		removeFile();
 	}
 	
+	
 	public void removeFile(){
 		Integer n =dataGrid.getKeyboardSelectedRow();
-		FileInfo fi = dataProvider.getList().get(n);
-		Boolean bool = Window.confirm("Estas seguro de eliminar el archivo "+fi.getTitle());
-		if(bool){
-			idoc.removeFile(fi, new AsyncCallback<Void>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
-				@Override
-				public void onSuccess(Void result) {
-					Integer n =dataGrid.getKeyboardSelectedRow();
-					FileInfo fi = dataProvider.getList().get(n);
-					Vector<FileInfo> l = new Vector<FileInfo>();
-					for (Integer i = 0; i<docs.getFiles().size();i++) {
-						if(docs.getFiles().get(i).getFileId() != fi.getFileId()){
-							l.add(docs.getFiles().get(i));
-						}
+		FileInfo fi  = dataProvider.getList().get(n);
+		Dialog d = new Dialog("delete", "Borrar Archivo", "Cancelar", true, "Borrar", true);
+		d.setFileInfo(fi);
+		
+		popup2 = new DocumentsDialog(d) {
+			
+			@Override
+			protected void onCancel() {
+				hide();				
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				idoc.removeFile(getFileInfo(), new AsyncCallback<Void>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						
 					}
-					docs.setFiles(l);
-					l = new Vector<FileInfo>();
-					for(Integer j = 0 ; j<dataProvider.getList().size();j++){
-						if(dataProvider.getList().get(j).getFileId() != fi.getFileId()){
-							l.add(dataProvider.getList().get(j));
+					@Override
+					public void onSuccess(Void result) {
+						Integer n =dataGrid.getKeyboardSelectedRow();
+						FileInfo fi = dataProvider.getList().get(n);
+						Vector<FileInfo> l = new Vector<FileInfo>();
+						for (Integer i = 0; i<docs.getFiles().size();i++) {
+							if(docs.getFiles().get(i).getFileId() != fi.getFileId()){
+								l.add(docs.getFiles().get(i));
+							}
 						}
+						docs.setFiles(l);
+						l = new Vector<FileInfo>();
+						for (Integer i = 0; i<docs.getEfiles().size();i++) {
+							if(docs.getEfiles().get(i).getFileId() != fi.getFileId()){
+								l.add(docs.getEfiles().get(i));
+							}
+						}
+						docs.setEfiles(l);
+						l = new Vector<FileInfo>();
+						for (Integer i = 0; i<docs.getFilter().size();i++) {
+							if(docs.getFilter().get(i).getFileId() != fi.getFileId()){
+								l.add(docs.getFilter().get(i));
+							}
+						}
+						docs.setFilter(l);
+						l = new Vector<FileInfo>();
+						for(Integer j = 0 ; j<dataProvider.getList().size();j++){
+							if(dataProvider.getList().get(j).getFileId() != fi.getFileId()){
+								l.add(dataProvider.getList().get(j));
+							}
+						}
+						dataProvider = new ListDataProvider<FileInfo>(l);
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
 					}
-					dataProvider = new ListDataProvider<FileInfo>(l);
-					dataProvider.addDataDisplay(dataGrid);
-					dataGrid.redraw();
-				}
-			} );
-		}
+				} );
+			}
+		};
+		popup2.setGlassEnabled(true);
+		popup2.show();
+	
 	}
+	
 	
 	public Vector<String> getSons() {
 		if(sons==null){
@@ -995,208 +914,128 @@ public class Documents extends Composite implements EntryPoint {
 		return sons;
 	}
 	
-	DialogBox popup;
+	
 	
 	Vector<String> sons = null;
 	FileUpload fuchange;
 	SingleUploader fuchange2;
+	
 	@UiHandler("newFile")
 	void XXXXXX(ClickEvent event) {
-		newFile2(null);
+		newFile(null);
 	}
 	
-	long progress = 10;
 	FileInfo finsert;
-	private void newFile2(SingleUploader up) {
-		ListBox lb1 = new ListBox();
-		lb1.addItem("-");
-		ListBox lb2 = new ListBox();
-		lb2.addItem("-");
-		ListBox lb3 = new ListBox();
-		lb3.addItem("-");
-
-		for (Scope s : lists.getScopeList().getList()) {
-			lb3.addItem(s.getName());
-		}
-		for (Tag t : lists.getTagList().getList()) {
-			lb2.addItem(t.getName());
-		}
-		for (Category c : lists.getCategoryList().getList()) {
-			lb1.addItem(c.getName());
-		}
-		lb2.addChangeHandler(OneHandler2());
-		
-		popup = new DialogBox();
-		//popup.getCaption().setText("NUEVO ARCHIVO");
-		popup.getCaption().setHTML("<div  class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">NUEVO ARCHIVO</span></div>");
-		VerticalPanel v = new VerticalPanel();
-		v.setSpacing(6);
-		
-		final SingleUploader upload = newUploader(up);
-        upload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
-        	
+	DocumentsDialog popup2;
+	
+	private void newFile(SingleUploader up) {	
+		Dialog d = new Dialog("new","Nuevo Archivo","Cancelar",true,"Guardar",true);
+		d.setBaseUrl(GWT.getModuleBaseURL());
+		d.setLists(lists);
+		d.setSons(getSons());
+		d.setUpload(up);
+		popup2 = new DocumentsDialog(d){ 
 			@Override
-			public void onCancel(IUploader uploader) {
-				final SingleUploader upload3 = newUploader(null) ;
-				grid.setWidget(1, 1, upload3);
-			}
-		});
-		
-		grid = new FlexTable();
-
-		grid.setStyleName("aon-panelGrid");
-		grid.setWidth("400px");
-		grid.setBorderWidth(1);
-		grid.setCellSpacing(0);
-
-		final TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
-		tb1.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				tb1.setStyleName("aon-inputText");
-			}
-		});
-		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
-		grid.setWidget(0, 1, tb1);
-
-		grid.setWidget(1, 0, new Label("Archivo"));
-		grid.setWidget(1, 1, upload);
-		
-		CheckBox checkBox = new CheckBox();
-		grid.setWidget(2, 0, new Label("Confidencial"));
-		grid.setWidget(2, 1, checkBox);
-		
-	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
-	    DateBox dateBox = new DateBox();
-	    dateBox.setStyleName("aon-inputText");
-	    dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
-	    dateBox.getDatePicker().setYearArrowsVisible(true);
-		grid.setWidget(3, 0, new Label("Fecha"));
-		grid.setWidget(3, 1, dateBox);
-
-		grid.setWidget(4, 0, new Label("Categor\u00eda"));
-		grid.setWidget(4, 1, lb1);
-
-		if(lb2.getItemCount() <= 2){
-			grid.setWidget(5, 0, new Label("Etiqueta"));
-			grid.setWidget(5, 1, lb2);	
-		}
-		else{
-			
-			h2 = new HorizontalPanel();
-			
-			h2.add(lb2);
-		
-			vertical.add(h2);
-			grid.setWidget(5, 0, new Label("Etiqueta"));
-			grid.setWidget(5, 1, vertical);
-			
-		}
-		
-		grid.setWidget(6, 0, new Label("\u00c1mbito"));
-		grid.setWidget(6, 1, lb3);
-		
-		if(getSons().size() != 0){
-			final SuggestBox sb = new SuggestBox(createOracle(getSons()));
-			sb.setStyleName("aon-inputText");
-			sb.addBitlessDomHandler(new ChangeHandler() {
-				@Override
-				public void onChange(ChangeEvent event) {
-					sb.setStyleName("aon-inputText");
-				}
-			},ChangeEvent.getType());
-			grid.setWidget(7, 0, new Label("Empresas"));
-			grid.setWidget(7, 1, sb);
-		}
-		for (int i = 0; i < grid.getRowCount(); i++) {
-			for (int j = 0; j < grid.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					grid.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					grid.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
-		v.add(grid);
-		Label l = new Label("");
-		v.add(l);
-		HorizontalPanel h = new HorizontalPanel();
-
-		Button b = new Button("CANCELAR");
-		b.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				popup.hide();
-				vertical = new VerticalPanel();
-			}
-		});
-		
-		Button b2 = new Button("GUARDAR");
-		b2.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				//upload.getForm().submit();
+			protected void onAccept() {				
+	//upload.getForm().submit();
 				
 				FileInfo fi = new  FileInfo();
 
             	// Descripción - Description
-            	TextBox tb = (TextBox)grid.getWidget(0, 1);
+            	TextBox tb = (TextBox)grid.getWidget(1, 1);
             	
             	fi.setTitle(tb.getText());
             	
             	// Confidencial - Confidential
-            	CheckBox cb = (CheckBox)grid.getWidget(2, 1);
+            	CheckBox cb = (CheckBox)grid.getWidget(3, 1);
             	fi.setConfidential(cb.getValue());
             	            	
             	// Fecha - Date
-            	DateBox db = (DateBox)grid.getWidget(3, 1);
+            	DateBox db = (DateBox)grid.getWidget(4, 1);
             	fi.setDate(db.getValue());
             	
             	// Categoria - Category
-            	ListBox lb1 = (ListBox)grid.getWidget(4, 1);
+            	fi.setCategory(-1);
+            	ListBox lb1 = (ListBox)grid.getWidget(5, 1);
             	for (Category c : lists.getCategoryList().getList()) {
-					if(c.getName().equals(lb1.getItemText(lb1.getSelectedIndex()))){
+            		String s1 = lb1.getItemText(lb1.getSelectedIndex());
+            		if(s1.substring(0, 1).equals(Character.toString((char)9650)))
+            			s1 = s1.substring(1);
+					if(c.getName().equals(s1)){
 						fi.setCategory(c.getId());
 					}
 				}
+            	for (Category c : lists.getCategoryListSon().getList()) {
+            		String s1 = lb1.getItemText(lb1.getSelectedIndex());
+					if(s1.substring(0, 1).equals(Character.toString((char)9660))){
+						s1= s1.substring(1);
+						if(c.getName().equals(s1))
+							fi.setCategory(c.getId());
+					}
+				}
+            	
             	// Ambito - Scope
-            	ListBox lb3 = (ListBox)grid.getWidget(6, 1);
+            	fi.setScope(new Scope(-1));
+            	ListBox lb3 = (ListBox)grid.getWidget(7, 1);
             	for (Scope s : lists.getScopeList().getList()) {
-					if(s.getName().equals(lb3.getItemText(lb3.getSelectedIndex()))){
+            		String s3 = lb3.getItemText(lb3.getSelectedIndex());
+            		if(s3.substring(0, 1).equals(Character.toString((char)9650)))
+            			s3 = s3.substring(1);
+					if(s.getName().equals(s3)){
 						fi.setScope(s);
 					}
-				}	
+				}
+            	for (Scope scope : lists.getScopeListSon().getList()) {
+            		String s3 = lb3.getItemText(lb3.getSelectedIndex());
+					if(s3.substring(0, 1).equals(Character.toString((char)9660))){
+						s3= s3.substring(0);
+						if(scope.getName().equals(s3))
+							fi.setScope(scope);
+					}
+				}
             	
             	// Etiquetas - Tags
             	Vector<Tag> tags = new Vector<Tag>();
-            	VerticalPanel vp = (VerticalPanel)grid.getWidget(5, 1);
+            	VerticalPanel vp = (VerticalPanel)grid.getWidget(6, 1);
             	for(Integer i = 0 ;i<vp.getWidgetCount();i++){
             		HorizontalPanel hp = (HorizontalPanel)vp.getWidget(i);
             		ListBox lb = (ListBox)hp.getWidget(0);
             		for (Tag t : lists.getTagList().getList()) {
-						if(t.getName().equals(lb.getValue(lb.getSelectedIndex()))){
+                		String s2 = lb.getItemText(lb.getSelectedIndex());
+                		if(s2.substring(0, 1).equals(Character.toString((char)9650)))
+                			s2 = s2.substring(1);
+						if(t.getName().equals(s2)){
 			            	tags.add(t);
 						}
 					}
+                	for (Tag t : lists.getTagListSon().getList()) {
+                		String s2 = lb.getItemText(lb.getSelectedIndex());
+    					if(s2.substring(0, 1).equals(Character.toString((char)9660))){
+    						s2= s2.substring(0);
+    						if(t.getName().equals(s2))
+    							tags.add(t);
+    					}
+    				}
             	}
             	fi.setTags(tags);
-
+            	SuggestBox sb = null;
             	// Dominio - Domain
-            	SuggestBox sb = (SuggestBox)grid.getWidget(7, 1);
-            	if(!esta(sb.getText())){
-	            	fi.setDomain("false"); 
-            	}
-            	else fi.setDomain(sb.getText()); 
+            	if (getSons().size()!=1){
+            		 sb = (SuggestBox)grid.getWidget(0, 1);
+            		if(!esta(sb.getText())){
+            			fi.setDomain("false"); 
+            		}
+            		else fi.setDomain(sb.getText());
+				}
+            	else fi.setDomain("");
+            	
             	finsert= fi;
                 idoc.newFile(fi,new AsyncCallback<Boolean>() {
 					
 					@Override
 					public void onSuccess(Boolean result) {
 						if(result){
-							popup.hide();
+							hide();
 							idoc.insertFile(finsert, new AsyncCallback<FileInfo>() {
 
 								@Override
@@ -1210,14 +1049,55 @@ public class Documents extends Composite implements EntryPoint {
 									}
 									aux.add(result);
 									docs.setFiles(aux);
-									aux= new Vector<FileInfo>();
-									for (FileInfo f : dataProvider.getList()) {
-										aux.add(f);
+									if(result.getDomain().equals(docs.getFilter().get(0).getDomain())){
+										aux = new Vector<FileInfo>();
+										for (FileInfo f : docs.getEfiles()) {
+											aux.add(f);		
+										}
+										aux.add(result);
+										docs.setEfiles(aux);
+
+										
+										if(html.isVisible()){
+											Integer i = 0;
+											
+											while(i<result.getTags().size() && !html.getText().equals(result.getTags().get(i).getName())){
+												i++;
+											}
+											if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.getCategoryStr()) || result.getTags().size()>i))){
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : docs.getFilter()) {
+													aux.add(f);
+												}
+												aux.add(result);
+												docs.setFilter(aux);
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : dataProvider.getList()) {
+													aux.add(f);
+												}
+												aux.add(result);
+												dataProvider = new ListDataProvider<FileInfo>(aux);
+												dataProvider.addDataDisplay(dataGrid); 
+												dataGrid.redraw();
+											}
+										}
+										else{
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : docs.getFilter()) {
+												aux.add(f);
+											}
+											aux.add(result);
+											docs.setFilter(aux);
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : dataProvider.getList()) {
+												aux.add(f);
+											}
+											aux.add(result);
+											dataProvider = new ListDataProvider<FileInfo>(aux);
+											dataProvider.addDataDisplay(dataGrid); 
+											dataGrid.redraw();
+										}
 									}
-									aux.add(result);
-									dataProvider = new ListDataProvider<FileInfo>(aux);
-									dataProvider.addDataDisplay(dataGrid); 
-									dataGrid.redraw();
 								}
 							});
 							vertical = new VerticalPanel();
@@ -1235,7 +1115,7 @@ public class Documents extends Composite implements EntryPoint {
 								@Override
 								public void onSuccess(Boolean result) {
 									if(result){
-										final SingleUploader upload2 = newUploader(null);
+										final SingleUploader upload2 = newUploader(null,GWT.getModuleBaseURL());
 										upload2.addBitlessDomHandler(new ChangeHandler() {
 											
 											@Override
@@ -1262,96 +1142,16 @@ public class Documents extends Composite implements EntryPoint {
 						
 					}
 				});
-               
-				
-                
-			}
-		});
-		b.setStyleName("aon-commandButton");
-		b2.setStyleName("aon-commandButton");
-		h.add(b);
-		h.add(b2);
-		v.add(h);
-		v.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_RIGHT);
-		popup.setGlassEnabled(true);
-		popup.add(v);
-
-		/*
-		 * HorizontalPanel hp = new HorizontalPanel(); Button b = new
-		 * Button("Cancelar"); Button b2 = new Button("Guardar");
-		 * hp.add(b);hp.add(b2); popup.add(hp);
-		 */
-		popup.show();
-	}
-	
-	public SingleUploader newUploader(SingleUploader up){
-		final SingleUploader upload;
-       	if(up==null){
-       		 upload=  new SingleUploader(FileInputType.BROWSER_INPUT.with(FileInputType.LABEL.getInstance()));
-       	}
-       	else{
-       		 upload = up;
-       	}
-       	upload.setAutoSubmit(true);
-        upload.setServletPath(GWT.getModuleBaseURL() + "/gwt_upload");
-        
-        upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
-        upload.getForm().setAction(GWT.getModuleBaseURL() + "/gwt_upload");
-        upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
-        upload.getForm().setMethod(FormPanel.METHOD_POST);
-        upload.setTitle("uploadFormElement");
-        upload.avoidEmptyFiles(true);
-     
-        
-        upload.addOnStatusChangedHandler(new OnStatusChangedHandler() {
-		
-			@Override
-			public void onStatusChanged(IUploader uploader) {
-				if(upload.getStatus() != Status.SUCCESS){
-			
-					upload.getStatusWidget().setProgress(progress, 100);
-			
-				}
-				else{
-					upload.getStatusWidget().setProgress(100, 100);
-				}	
-				progress=progress+20;
-				//upload.addStatusBar(uploader.getStatusWidget());
-			}
-		});
-
-        upload.addOnStartUploadHandler(new OnStartUploaderHandler() {
-			
-			@Override
-			public void onStart(IUploader uploader) {
-				upload.getStatusWidget().setVisible(true);
-				//Window.alert("start");
-			}
-		});
-        
-        upload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
-			
-			@Override
-			public void onFinish(IUploader uploader) {
-				upload.getStatusWidget().setProgress(100, 100);
-				//Window.alert("finish");
-				upload.getStatusWidget().setStatus(Status.DONE);
-				upload.getStatusWidget().setVisible(true);
-				progress = 0;		
-			}
-		});
-        upload.getForm().addFormHandler(new FormHandler() {
-			
-			@Override
-			public void onSubmitComplete(FormSubmitCompleteEvent event) {
-				upload.getForm().getWidget().getElement().getChild(0).removeFromParent();
 			}
 			
 			@Override
-			public void onSubmit(FormSubmitEvent event) {}
-		});
-        
-        return upload;
+			protected void onCancel() {
+				hide();
+				vertical = new VerticalPanel();			
+			}
+		};
+		popup2.setGlassEnabled(true);
+		popup2.show();
 	}
 	
 	Lists lists = new Lists();
@@ -1360,520 +1160,23 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("advanceSearch")
 	void advancedSearch(ClickEvent event) {
-		ListBox lb1 = new ListBox();
-		lb1.addItem("-");
-		ListBox lb2 = new ListBox();
-		lb2.addItem("-");
-		ListBox lb3 = new ListBox();
-		lb3.addItem("-");
-
-		for (Scope s : lists.getScopeList().getList()) {
-			lb3.addItem(s.getName());
-		}
-		for (Tag t : lists.getTagList().getList()) {
-			lb2.addItem(t.getName());
-		}
-		for (Category c : lists.getCategoryList().getList()) {
-			lb1.addItem(c.getName());
-		}
-		lb2.addChangeHandler(OneHandler());
-		
-		popup = new DialogBox();
-		popup.getCaption().setHTML("<div id=\"aonContent:corporateIdentityAttachForm:j_id3147\" class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">B&Uacute;SQUEDA AVANZADA</span></div>");
-
-		VerticalPanel v = new VerticalPanel();
-		v.setSpacing(6);
-		grid = new FlexTable();
-
-		grid.setStyleName("aon-panelGrid");
-		grid.setWidth("400px");
-		grid.setBorderWidth(1);
-		grid.setCellSpacing(0);
-
-		TextBox tb1 = new TextBox();tb1.setStyleName("aon-inputText");
-		grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
-		grid.setWidget(0, 1, tb1);
-
-		grid.setWidget(2, 0, new Label("Confidencial"));
-		grid.setWidget(2, 1, new CheckBox());
-		
-	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
-	    DateBox dateBox = new DateBox();
-	    dateBox.setStyleName("aon-inputText");
-	    dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
-	    dateBox.getDatePicker().setYearArrowsVisible(true);
-		grid.setWidget(3, 0, new Label("Fecha"));
-		grid.setWidget(3, 1, dateBox);
-
-		grid.setWidget(4, 0, new Label("Categor\u00eda"));
-		grid.setWidget(4, 1, lb1);
-
-		if(lb2.getItemCount() <= 2){
-			grid.setWidget(5, 0, new Label("Etiqueta"));
-			grid.setWidget(5, 1, lb2);	
-		}
-		else{
-			
-			h2 = new HorizontalPanel();
-			
-			h2.add(lb2);
-			
-			vertical.add(h2);
-			grid.setWidget(5, 0, new Label("Etiqueta"));
-			grid.setWidget(5, 1, vertical);
-			
-		}
-		grid.setWidget(6, 0, new Label("\u00c1mbito"));
-		grid.setWidget(6, 1, lb3);
-
-		for (int i = 0; i < grid.getRowCount(); i++) {
-			for (int j = 0; j < grid.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					grid.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					grid.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
-		v.add(grid);
-		Label l = new Label("");
-		v.add(l);
-		HorizontalPanel h = new HorizontalPanel();
-
-		Button b = new Button("CANCELAR");
-		b.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				popup.hide();
-				vertical = new VerticalPanel();
-			}
-		});
-
-		Button b2 = new Button("BUSCAR");
-		b2.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				SearchInfo si = new SearchInfo();
-				TextBox tb = (TextBox) grid.getWidget(0, 1);
-				if ("".equals(tb.getText()))
-					si.setName(null);
-				else
-					si.setName(tb.getText());
-
-				CheckBox cb = (CheckBox) grid.getWidget(2, 1);
-				;
-				si.setConfidential(cb.getValue());
-
-				DateBox tb2 = (DateBox) grid.getWidget(3, 1);			
-				if ("".equals(tb2.getTextBox().getText()))
-					si.setDate(null);
-				else
-					si.setDate(tb2.getTextBox().getText());
-
-				ListBox lb1 = (ListBox) grid.getWidget(4, 1);
-				String s1 = null;
-				for (int i = 0; i < lb1.getItemCount(); i++) {
-					if (lb1.isItemSelected(i)) {
-						s1 = lb1.getValue(i);
-					}
-				}
-				if ("-".equals(s1) || s1 == null)
-					si.setCategory(null);
-				else
-					si.setCategory(s1);
-
-				VerticalPanel vp = (VerticalPanel) grid.getWidget(5,1);
-				
-				Vector<String> v = new Vector<String>();
-				Vector<String> v2 = new Vector<String>();
- 				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(0);
-				ListBox lb2 = (ListBox) hp.getWidget(0);
-				
-				String s2 = null;
-				for (int i = 0; i < lb2.getItemCount(); i++) {
-					if (lb2.isItemSelected(i)) {
-						s2 = lb2.getValue(i);
-					}
-				}
-				if ("-".equals(s2) || s2 == null)
-					si.setTag(null);
-				else {
-					v.add(s2);
-
-					for (int i = 1; i < vp.getWidgetCount(); i++) {
-						HorizontalPanel hp2 = (HorizontalPanel) vp.getWidget(i);
-						ListBox lbyo = (ListBox) hp2.getWidget(0);
-						ListBox lb = (ListBox) hp2.getWidget(1);
-
-						String s= null;
-						for (int j = 0; j < lb.getItemCount(); j++) {
-							if (lb.isItemSelected(j)) {
-								s = lb.getValue(j);
-							}
-						}
-						String ss= null;
-						for (int k = 0; k < lbyo.getItemCount(); k++) {
-							if (lbyo.isItemSelected(k)) {
-								ss = lbyo.getValue(k);
-							}
-						}
-						if(!s.equals("-")){
-							v2.add(ss);
-							v.add(s);
-						}
-					}
-					si.setTag(v);
-					si.setYoTag(v2);
-				}
-				ListBox lb3 = (ListBox) grid.getWidget(6, 1);
-				String s3 = null;
-				for (int i = 0; i < lb3.getItemCount(); i++) {
-					if (lb3.isItemSelected(i)) {
-						s3 = lb3.getValue(i);
-					}
-				}
-				if ("-".equals(s3) || s3 == null)
-					si.setScope(null);
-				else
-					si.setScope(s3);
-				idoc.searchFile(si, docs.getFiles(),
-						new AsyncCallback<Vector<FileInfo>>() {
-
-							@Override
-							public void onSuccess(Vector<FileInfo> result) {
-								searchs = result;
-								dataProvider = new ListDataProvider<FileInfo>(
-										searchs);
-								dataProvider.addDataDisplay(dataGrid);
-								dataGrid.redraw();
-
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-						
-
-							}
-						});
-				
-				popup.hide();
-				vertical = new VerticalPanel();
-			}
-		});
-		b.setStyleName("aon-commandButton");
-		b2.setStyleName("aon-commandButton");
-		h.add(b);
-		h.add(b2);
-		v.add(h);
-		v.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_RIGHT);
-		popup.setGlassEnabled(true);
-		popup.add(v);
-
-		/*
-		 * HorizontalPanel hp = new HorizontalPanel(); Button b = new
-		 * Button("Cancelar"); Button b2 = new Button("Guardar");
-		 * hp.add(b);hp.add(b2); popup.add(hp);
-		 */
-		popup.show();
-
+		search();
+//		html.setVisible(false);
+//		filterButton.setVisible(false);
 	}
 
 	VerticalPanel vertical = new VerticalPanel();
-
-	public ChangeHandler OneHandler(){
-		ChangeHandler ch = new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				ListBox lb = (ListBox) h2.getWidget(0);
-				String s = null;
-				for (int i = 0; i < lb.getItemCount(); i++) {
-					if (lb.isItemSelected(i)) {
-						s = lb.getValue(i);
-					}
-				}
-				if(h2.getWidgetCount() == 1){
-					Button mas = new Button("");
-					mas.setStyleName("aon-finding-toolbar-item aon-search-add");
-					mas.addClickHandler(masHandler());
-					h2.add(mas);
-				}
-				if(s.equals("-")){
-					h2.remove(1);
-				}				
-			}
-		};
-		return ch;
-
-	}
-	
-	public ChangeHandler OneHandler2(){
-		ChangeHandler ch = new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				ListBox lb = (ListBox) h2.getWidget(0);
-				String s = null;
-				for (int i = 0; i < lb.getItemCount(); i++) {
-					if (lb.isItemSelected(i)) {
-						s = lb.getValue(i);
-					}
-				}
-				if(h2.getWidgetCount() == 1){
-					Button mas = new Button("");
-					mas.setStyleName("aon-finding-toolbar-item aon-search-add");
-					mas.addClickHandler(masHandler2());
-					h2.add(mas);
-				}
-				if(s.equals("-")){
-					h2.remove(1);
-				}				
-			}
-		};
-		return ch;
-
-	}
-	
-	public ChangeHandler TwoHandler(){
-		ChangeHandler ch = new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				ListBox lb = (ListBox) h2.getWidget(1);
-				String s = null;
-				for (int i = 0; i < lb.getItemCount(); i++) {
-					if (lb.isItemSelected(i)) {
-						s = lb.getValue(i);
-					}
-				}
-				if(h2.getWidgetCount() == 3){
-					Button bMas = new Button();
-					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
-					bMas.addClickHandler(masHandler());
-					
-					if(vertical.getWidgetCount()<lists.getTagList().getLength()){
-						h2.add(bMas);
-					}
-				}
-				if(s.equals("-")){
-					h2.remove(3);
-				}
-			}
-		};
-		return ch;
-
-	}
-	
-	public ChangeHandler TwoHandler2(){
-		ChangeHandler ch = new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				ListBox lb = (ListBox) h2.getWidget(0);
-				String s = null;
-				for (int i = 0; i < lb.getItemCount(); i++) {
-					if (lb.isItemSelected(i)) {
-						s = lb.getValue(i);
-					}
-				}
-				if(h2.getWidgetCount() == 2){
-					Button bMas = new Button();
-					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
-					bMas.addClickHandler(masHandler2());
-					
-					if(vertical.getWidgetCount()<lists.getTagList().getLength()){
-						h2.add(bMas);
-					}
-				}
-				if(s.equals("-")){
-					h2.remove(2);
-				}
-			}
-		};
-		return ch;
-
-	}
-	
-	public ClickHandler masHandler() {
-		ClickHandler ch = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				ListBox lb2 = new ListBox();
-				
-				lb2.addChangeHandler(TwoHandler());
-				
-				lb2.addItem("-");
-				
-				for (Tag t : lists.getTagList().getList()) {
-					lb2.addItem(t.getName());
-				}
-				ListBox AndOr = new ListBox();
-				AndOr.addItem("Y");
-				AndOr.addItem("O");
-				h2 = new HorizontalPanel();
-				h2.add(AndOr);
-				h2.add(lb2);
-				
-				Button bMenos = new Button();
-				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
-				bMenos.addClickHandler(menosHandler());
-				h2.add(bMenos);
-				
-				vertical.add(h2);
-				VerticalPanel p = (VerticalPanel)grid.getWidget(5,1);
-				HorizontalPanel hp =(HorizontalPanel)p.getWidget(p.getWidgetCount()-2);
-				if(p.getWidgetCount()==2){
-					ListBox l = (ListBox)hp.getWidget(0);
-					l.setEnabled(false);
-					hp.remove(1);
-				}
-				else {
-					ListBox l = (ListBox)hp.getWidget(1);
-					l.setEnabled(false);
-					hp.remove(3);
-					hp.remove(2);
-				}
-				h2.addStyleName("aon-gwt-tags-popup");
-				p.add(h2);
-				
-				grid.setWidget(5, 1, p);
-				popup.show();
-			}
-		};
-		
-		return ch;
-	}
-	
-	public ClickHandler masHandler2() {
-		ClickHandler ch = new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				ListBox lb2 = new ListBox();
-				
-				lb2.addChangeHandler(TwoHandler2());
-				
-				lb2.addItem("-");
-				
-				for (Tag t : lists.getTagList().getList()) {
-					lb2.addItem(t.getName());
-				}
-				
-				h2 = new HorizontalPanel();
-				h2.add(lb2);
-				
-				Button bMenos = new Button();
-				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
-				bMenos.addClickHandler(menosHandler2());
-				h2.add(bMenos);
-				
-				vertical.add(h2);
-				VerticalPanel p = (VerticalPanel)grid.getWidget(5,1);
-				HorizontalPanel hp =(HorizontalPanel)p.getWidget(p.getWidgetCount()-2);
-				
-					ListBox l = (ListBox)hp.getWidget(0);
-					l.setEnabled(false);
-					if(p.getWidgetCount()==2){
-						hp.remove(1);
-					}
-					else {
-						hp.remove(2);
-						hp.remove(1);
-					}
-				
-				h2.addStyleName("aon-gwt-tags-popup");
-				p.add(h2);
-				
-				grid.setWidget(5, 1, p);
-				popup.show();
-			}
-		};
-		
-		return ch;
-	}
-	
-	public ClickHandler menosHandler() {
-		ClickHandler ch = new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-			
-				Button bMas = new Button();
-				bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
-				bMas.addClickHandler(masHandler());
-				Button bMenos = new Button();
-				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
-				bMenos.addClickHandler(menosHandler());
-				
-				VerticalPanel p = (VerticalPanel)grid.getWidget(5,1);
-				HorizontalPanel hp =(HorizontalPanel)p.getWidget(p.getWidgetCount()-2);
-		
-				if(p.getWidgetCount()==2){
-						ListBox l = (ListBox)hp.getWidget(0);
-						l.setEnabled(true);
-						hp.add(bMas);
-				}
-				else {
-					ListBox l = (ListBox)hp.getWidget(1);
-					l.setEnabled(true);
-					hp.add(bMenos);
-					hp.add(bMas);		
-				}
-				p.remove(p.getWidgetCount()-1);
-				//vertical.remove(vertical.getWidgetCount()-1);
-				grid.setWidget(5, 1, p);
-				popup.show();
-				
-			}
-		};
-		
-		return ch;
-	}
-
-	public ClickHandler menosHandler2() {
-		ClickHandler ch = new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-			
-				Button bMas = new Button();
-				bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
-				bMas.addClickHandler(masHandler2());
-				Button bMenos = new Button();
-				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
-				bMenos.addClickHandler(menosHandler2());
-				
-				VerticalPanel p = (VerticalPanel)grid.getWidget(5,1);
-				HorizontalPanel hp =(HorizontalPanel)p.getWidget(p.getWidgetCount()-2);
-		
-				ListBox l = (ListBox)hp.getWidget(0);
-				l.setEnabled(true);
-				if(p.getWidgetCount()==2){
-						hp.add(bMas);
-				}
-				else {
-					hp.add(bMenos);
-					hp.add(bMas);		
-				}
-				p.remove(p.getWidgetCount()-1);
-				//vertical.remove(vertical.getWidgetCount()-1);
-				grid.setWidget(5, 1, p);
-				popup.show();
-				
-			}
-		};
-		
-		return ch;
-	}
-
 	Vector<FileInfo> searchs;
 
 	@UiHandler("searchButton")
 	void XXXXX(ClickEvent event) {
 		String searchStr = searchBox.getText();
-		idoc.searchFile(searchStr, docs.getFiles(),
+		Vector<FileInfo> vaux = new Vector<FileInfo>();
+		if(isServiconvenios) vaux = docs.getServiconvenios();
+		else vaux = docs.getFilter();
+		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
+ 		
+		idoc.searchFile(searchStr, vaux,
 				new AsyncCallback<Vector<FileInfo>>() {
 
 					@Override
@@ -1889,20 +1192,48 @@ public class Documents extends Composite implements EntryPoint {
 
 					}
 				});
-
-		
-		
 	}
+	
+	
+	@UiHandler("eSearchButton")
+	void sbutton(ClickEvent event) {
+		html.setVisible(false);
+		filterButton.setVisible(false);
+		String searchStr = enterpriseSearchBox.getText();
+		
+		idoc.eSearchFile(docs.getFiles(),searchStr,
+				new AsyncCallback<Vector<FileInfo>>() {
+
+					@Override
+					public void onSuccess(Vector<FileInfo> result) {
+						docs.setEfiles(result);
+						docs.setFilter(result);
+						searchs = result;
+						dataProvider = new ListDataProvider<FileInfo>(result);
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+
+					}
+				});
+	}
+	
 
 	@UiHandler("allButton")
 	void getAllAttach(ClickEvent event) {
-		if(docs.getFiles()==null){
+		html.setVisible(false);
+		filterButton.setVisible(false);
+		if(docs.getEfiles()==null){
 		idoc.getAllFiles(new AsyncCallback<Document>() {
 
 			@Override
 			public void onSuccess(Document result) {
 				docs = result;
 				addDataDisplay(dataGrid);
+				isServiconvenios=false;
 				dataGrid.redraw();
 			}
 
@@ -1916,13 +1247,19 @@ public class Documents extends Composite implements EntryPoint {
 		}
 		else{
 			addDataDisplay(dataGrid);
+			isServiconvenios=false;
 			dataGrid.redraw();
 		}
+		docs.setFilter(docs.getEfiles());
+
 	}
 
+	Boolean isServiconvenios=false;
 	@UiHandler("serviConveniosButton")
 	void getServiConveniosAttach(ClickEvent event) {
-		
+		isServiconvenios= true;
+		html.setVisible(false);
+		filterButton.setVisible(false);
 		if(docs.getServiconvenios().isEmpty()){
 			idoc.getServiConveniosFiles(new AsyncCallback<Vector<FileInfo>>() {
 			
@@ -1946,43 +1283,14 @@ public class Documents extends Composite implements EntryPoint {
 			dataProvider.addDataDisplay(dataGrid);
 			dataGrid.redraw();
 		}
+		docs.setFilter(docs.getServiconvenios());
 	}
 
 	private void initTableColumns(
 			final SelectionModel<FileInfo> selectionModel,
 			ListHandler<FileInfo> sortHandler) {
-			/*dataGrid.sinkEvents(Event.ONCONTEXTMENU);
-					
-			dataGrid.addDomHandler(new ContextMenuHandler() {
-	    
-	        @Override
-	        public void onContextMenu(ContextMenuEvent evt) {
-	            ContextMenu cm = new ContextMenu();
-	            
-	        	evt.preventDefault();
-	        	//evt.stopPropagation();
-	        	
-	        	//Integer n = dataGrid.getKeyboardSelectedRow();
-	        	MenuBar contextMenu = new MenuBar();
-	        	cm.addItem("Editar", contextMenu);
-	        	cm.addItem("Borrar", contextMenu);
-	        	cm.setPopupPosition(evt.getNativeEvent().getClientX(), evt.getNativeEvent().getClientY());
-
-	        	cm.show();
-	        	
-	        }
-
-	    }, ContextMenuEvent.getType());*/
-		
 		initContextMenu();
 		/** Name Column **/
-		/*Column<FileInfo, String> nameColumn = new Column<FileInfo, String>(
-				new TextCell()) {
-			@Override
-			public String getValue(FileInfo object) {
-				return object.getTitle();
-			}
-		};*/
 		Column<FileInfo, String> nameColumn = new Column<FileInfo, String>(
 				new ButtonCell()) {
 
@@ -2008,6 +1316,13 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});
 		 
+			nameColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
+				@Override
+				public void update(int index, FileInfo object, String value) {
+					
+				}
+				
+			});
 		dataGrid.getColumnSortList().push(nameColumn);
 		dataGrid.addColumn(nameColumn, "Descripci\u00f3n");
 
@@ -2121,9 +1436,14 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void render(Context context, FileInfo object,
 					SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<g:Button id=\"downloadFile\" class=\"aon-editDataTable-button aon-icon-mail-save\" >"
-				/*+ "</g:Button><g:Button id=\"editFile\" class=\"aon-editDataTable-button aon-icon-edit\"></g:Button>"
-			+ "<g:Button id=\"removeFile\" class=\"aon-editDataTable-button aon-icon-delete\"></g:Button>"*/);
+				   sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-mail-save\" tabindex=\"-1\">");
+				    /*if (data != null) {
+				      sb.append(data);
+				    }*/
+				    sb.appendHtmlConstant("</button>");				
+				/*sb.appendHtmlConstant("<button id=\"downloadFile\" class=\"aon-editDataTable-button aon-icon-mail-save\" >"
+				+ "</g:Button><g:Button id=\"editFile\" class=\"aon-editDataTable-button aon-icon-edit\"></g:Button>"
+			+ "<g:Button id=\"removeFile\" class=\"aon-editDataTable-button aon-icon-delete\"></g:Button>");*/
 			}
 			
 			@Override
@@ -2142,13 +1462,12 @@ public class Documents extends Composite implements EntryPoint {
 		downloadColumn.setFieldUpdater(new FieldUpdater<FileInfo, String>() {
 			@Override
 			public void update(int index, FileInfo object, String value) {
-
-		       download(object);
+				download(object);
 			}
 		});
 		
 		dataGrid.addColumn(downloadColumn, "Archivo");
-		dataGrid.setColumnWidth(downloadColumn, 3, Unit.PX);
+		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
 		
 	}
 	Vector<TreeDriveInfo> vtree;
@@ -2160,176 +1479,265 @@ public class Documents extends Composite implements EntryPoint {
                 + "?file_id=" + Integer.toString(object.getFileId())
                 + "&drive_id=" +URL.encode(driveId);
         Window.open( fileDownloadURL, "_blank","status=0,toolbar=0,menubar=0,location=0");
-      
-	}
-	private void share(FileInfo object){
-
-		popup = new DialogBox();
-		//popup.getCaption().setText("EDITAR ARCHIVO");
-		popup.getCaption().setHTML("<div id=\"aonContent:corporateIdentityAttachForm:j_id3147\" class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">COMPARTIR ARCHIVO</span></div>");
-		VerticalPanel vp = new VerticalPanel();
-		FlexTable shareTable = new FlexTable();
-		
-		shareTable.setStyleName("aon-panelGrid");
-		shareTable.setWidth("300px");
-		shareTable.setBorderWidth(1);
-		shareTable.setCellSpacing(0);
-		TextBox email = new TextBox();
-		email.setStyleName("aon-inputText");
-		shareTable.setWidget(0, 0, new Label("Email"));
-		shareTable.setWidget(0, 1, email);
-		
-		for (int i = 0; i < shareTable.getRowCount(); i++) {
-			for (int j = 0; j < shareTable.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					shareTable.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					shareTable.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
-		
-		Label l = new Label(" ");
-
-		HorizontalPanel hp = new HorizontalPanel();
-		Button share = new Button("Compartir");
-		Button cancel = new Button("Cancelar");
-		share.setStyleName("aon-commandButton");
-		cancel.setStyleName("aon-commandButton");
-		share.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				
-				// TODO check correct email syntax
-				
-				/*idoc.share(object, new AsyncCallback<Void>() {
-					@Override
-					public void onSuccess(Void result) {}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});	*/			
-			}
-		});
-		cancel.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				popup.hide();
-			}
-		});
-
-		hp.add(cancel);
-		hp.add(share);
-		vp.add(shareTable);
-		vp.add(l);
-		vp.add(hp);
-		vp.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_RIGHT);
-		popup.setGlassEnabled(true);
-		popup.add(vp);
-		popup.show();
 	}
 	
-	private void info(FileInfo object) {
-		popup = new DialogBox();
-		//popup.getCaption().setText("EDITAR ARCHIVO");
-		popup.getCaption().setHTML("<div id=\"aonContent:corporateIdentityAttachForm:j_id3147\" class=\"aon-popupWindow-title\"><span class=\"aon-outputText\">DETALLES ARCHIVO</span></div>");
-		
-		VerticalPanel vp = new VerticalPanel();
-		FlexTable infoTable = new FlexTable();
-		
-		infoTable.setStyleName("aon-panelGrid");
-		infoTable.setWidth("300px");
-		infoTable.setBorderWidth(1);
-		infoTable.setCellSpacing(0);
-
-		infoTable.setWidget(0, 0, new Label("Descripci\u00f3n"));
-		infoTable.setWidget(0, 1, new Label(object.getTitle()));
-		
-		infoTable.setWidget(1, 0, new Label("Confidencial"));
-		infoTable.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
-		
-		infoTable.setWidget(2, 0, new Label("Fecha"));
-		infoTable.setWidget(2, 1, new Label(object.getDateStr()));
-		
-		infoTable.setWidget(3, 0, new Label("Categoria"));
-		infoTable.setWidget(3, 1, new Label(object.getCategoryStr()));
-		
-		infoTable.setWidget(4, 0, new Label("Etiquetas"));
-		infoTable.setWidget(4, 1, new Label(object.getTagsStr()));
-	
-		infoTable.setWidget(5, 0, new Label("Ambito"));
-		infoTable.setWidget(5, 1, new Label(object.getScope().getName()));
-		
-		infoTable.setWidget(6, 0, new Label("Tamaño"));
-		infoTable.setWidget(6, 1, new Label(object.getSizeStr()));
-		
-		infoTable.setWidget(7, 0, new Label("Mime Type"));
-		infoTable.setWidget(7, 1, new Label(""));//MimeType.values()[object.getMimetype()].getName()));
-				
-		for (int i = 0; i < infoTable.getRowCount(); i++) {
-			for (int j = 0; j < infoTable.getCellCount(i); j++) {
-				if ((j % 2) == 0) {
-					infoTable.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-odd");
-				} else {
-					infoTable.getCellFormatter().setStyleName(i, j,
-							"aon-panelGrid-even");
-				}
-			}
-		}
-		
-		Label l = new Label(" ");
-		
-		Button exit = new Button("Salir");
-		exit.setStyleName("aon-commandButton");
-
-		exit.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				popup.hide();
-			}
-		});
-
-		vp.add(infoTable);
-		vp.add(l);
-		vp.add(exit);
-		vp.setCellHorizontalAlignment(exit, HasHorizontalAlignment.ALIGN_RIGHT);
-		popup.setGlassEnabled(true);
-		popup.add(vp);
-		popup.show();
-	}
-	
-	private void sons(TreeItem parent,Vector<TreeDriveInfo> sons) {
-		Window.alert("sons");
-		for (TreeDriveInfo f : sons) {
-			 TreeItem ti = new TreeItem();
-			 ti = parent.addTextItem(f.getParent().getTitle());
-			 sons(ti,f.getSons());
-		}
-	}
-	public void myDrive(){
-		idoc.myDrive("", new AsyncCallback<Vector<TreeDriveInfo>>() {
+	private void search() {
+		Dialog d = new Dialog("search", "Busqueda Avanzada", "Cancelar", true,
+				"Buscar", true);
+		d.setLists(lists);
+		d.setSons(getSons());
+		popup2 = new DocumentsDialog(d) {
 			
+			@Override
+			protected void onCancel() {
+				hide();
+				vertical = new VerticalPanel();
+			}
+			
+			@Override
+			protected void onAccept() {
+				html.setVisible(false);
+				filterButton.setVisible(false);
+				SearchInfo si = new SearchInfo();
+				if(getSons().size()!=1){
+					SuggestBox tb0 = (SuggestBox) grid.getWidget(0, 1);
+					if ("".equals(tb0.getText()))
+						si.setDomain(null);
+					else
+						si.setDomain(tb0.getText());
+				}else si.setDomain(null);
+				
+				TextBox tb1 = (TextBox) grid.getWidget(1, 1);
+				if ("".equals(tb1.getText()))
+					si.setName(null);
+				else
+					si.setName(tb1.getText());
+
+				CheckBox cb = (CheckBox) grid.getWidget(2, 1);
+				;
+				si.setConfidential(cb.getValue());
+
+				DateBox tb2 = (DateBox) grid.getWidget(3, 1);
+				if ("".equals(tb2.getTextBox().getText()))
+					si.setDate(null);
+				else
+					si.setDate(tb2.getTextBox().getText());
+
+				ListBox lb1 = (ListBox) grid.getWidget(4, 1);
+				String s1 = null;
+				for (int i = 0; i < lb1.getItemCount(); i++) {
+					if (lb1.isItemSelected(i)) {
+						s1 = lb1.getValue(i);
+						if(s1.substring(0, 1).equals(Character.toString((char)9660)) || s1.substring(0, 1).equals(Character.toString((char)9650)))
+							s1= s1.substring(1);
+					}
+				}
+				if ("-".equals(s1) || s1 == null)
+					si.setCategory(null);
+				else
+					si.setCategory(s1);
+
+				VerticalPanel vp = (VerticalPanel) grid.getWidget(5, 1);
+
+				Vector<String> v = new Vector<String>();
+				Vector<String> v2 = new Vector<String>();
+				HorizontalPanel hp = (HorizontalPanel) vp.getWidget(0);
+				ListBox lb2 = (ListBox) hp.getWidget(0);
+
+				String s2 = null;
+				for (int i = 0; i < lb2.getItemCount(); i++) {
+					if (lb2.isItemSelected(i)) {
+						s2 = lb2.getValue(i);
+						if(s2.substring(0, 1).equals(Character.toString((char)9660))|| s2.substring(0, 1).equals(Character.toString((char)9650)))
+							s2= s2.substring(1);
+					}
+				}
+				if ("-".equals(s2) || s2 == null)
+					si.setTag(null);
+				else {
+					v.add(s2);
+
+					for (int i = 1; i < vp.getWidgetCount(); i++) {
+						HorizontalPanel hp2 = (HorizontalPanel) vp.getWidget(i);
+						ListBox lbyo = (ListBox) hp2.getWidget(0);
+						ListBox lb = (ListBox) hp2.getWidget(1);
+
+						String s = null;
+						for (int j = 0; j < lb.getItemCount(); j++) {
+							if (lb.isItemSelected(j)) {
+								s = lb.getValue(j);
+							}
+						}
+						String ss = null;
+						for (int k = 0; k < lbyo.getItemCount(); k++) {
+							if (lbyo.isItemSelected(k)) {
+								ss = lbyo.getValue(k);
+							}
+						}
+						if (!s.equals("-")) {
+							v2.add(ss);
+							v.add(s);
+						}
+					}
+					si.setTag(v);
+					si.setYoTag(v2);
+				}
+				ListBox lb3 = (ListBox) grid.getWidget(6, 1);
+				String s3 = null;
+				for (int i = 0; i < lb3.getItemCount(); i++) {
+					if (lb3.isItemSelected(i)) {
+						s3 = lb3.getValue(i);
+						if(s3.substring(0, 1).equals(Character.toString((char)9660)) || s3.substring(0, 1).equals(Character.toString((char)9650)))
+							s3= s3.substring(1);
+					}
+				}
+				if ("-".equals(s3) || s3 == null)
+					si.setScope(null);
+				else
+					si.setScope(s3);
+				Vector<FileInfo> vaux = new Vector<FileInfo>();
+				if (isServiconvenios)
+					vaux = docs.getServiconvenios();
+				else
+					vaux = docs.getEfiles();
+				
+				idoc.searchFile(si, vaux,docs.getFiles(),
+							new AsyncCallback<Vector<FileInfo>>() {
+
+							@Override
+							public void onSuccess(Vector<FileInfo> result) {
+								if(!docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
+									idoc.eSearchFile(docs.getFiles(), result.get(0).getDomain(), new AsyncCallback<Vector<FileInfo>>() {
+										
+										@Override
+										public void onSuccess(Vector<FileInfo> result) {
+											docs.setEfiles(result);
+											docs.setFilter(result);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+										
+										}
+									});
+								}
+								searchs = result;
+								dataProvider = new ListDataProvider<FileInfo>(
+										searchs);
+								dataProvider.addDataDisplay(dataGrid);
+								dataGrid.redraw();
+
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+
+							}
+						});
+
+				hide();
+				vertical = new VerticalPanel();
+			}
+		};
+		popup2.setGlassEnabled(true);
+		popup2.show();
+
+	}
+	
+	String dId;
+
+	private void share(FileInfo object) {
+		Dialog d = new Dialog("share", "Compartir Archivo", "Cancelar", true,
+				"Compartir", true);
+		dId = object.getDriveId();
+		popup2 = new DocumentsDialog(d) {
+			@Override
+			protected void onAccept() {
+				TextBox tb = (TextBox) grid.getWidget(0, 1);
+				// TODO CHECK EMAIL
+				hide();
+				idoc.share(tb.getText(), dId, new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void result) {
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
+			}
+
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+		};
+		popup2.setGlassEnabled(true);
+		popup2.show();
+	}
+
+	private void info(FileInfo object) {
+		Dialog d = new Dialog("info", "Detalles Archivo", "Cancelar", false,
+				"Salir", true);
+		d.setFileInfo(object);
+		popup2 = new DocumentsDialog(d) {
+
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+
+			@Override
+			protected void onAccept() {
+				hide();
+			}
+		};
+		popup2.setGlassEnabled(true);
+		popup2.setAnimationEnabled(false);
+		popup2.setModal(false);
+		popup2.show();
+	}
+
+	private void sons(TreeItem parent, Vector<TreeDriveInfo> sons) {
+		for (TreeDriveInfo f : sons) {
+			TreeItem ti = new TreeItem();
+			ti = parent.addTextItem(f.getParent().getTitle());
+			sons(ti, f.getSons());
+		}
+	}
+
+	public void myDrive() {
+		idoc.myDrive("", new AsyncCallback<Vector<TreeDriveInfo>>() {
+
 			@Override
 			public void onSuccess(Vector<TreeDriveInfo> result) {
-				 Tree tree = new Tree();
-			
-				 for (TreeDriveInfo f : result) {		
-					 TreeItem ti = new TreeItem();
-					 ti = tree.addTextItem(f.getParent().getTitle());
-					 sons(ti,f.getSons());
-				}			
-				 treepanel.add(tree);
+				Tree tree = new Tree();
+
+				for (TreeDriveInfo f : result) {
+					TreeItem ti = new TreeItem();
+					ti = tree.addTextItem(f.getParent().getTitle());
+					sons(ti, f.getSons());
+				}
+				treepanel.add(tree);
 			}
-			
+
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+			}
 		});
 
-		 
-
+	}
+	@UiHandler("filterButton")
+	void close(ClickEvent event){
+		html.setVisible(false);
+		filterButton.setVisible(false);
+		if(!isServiconvenios)
+			addDataDisplay(dataGrid);
+		else {
+			dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
+			dataProvider.addDataDisplay(dataGrid); 
+		}
+		dataGrid.redraw();
 	}
 
 
