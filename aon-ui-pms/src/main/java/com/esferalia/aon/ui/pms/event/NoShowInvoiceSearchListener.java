@@ -73,12 +73,12 @@ public class NoShowInvoiceSearchListener extends ControllerSearchListener {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
 		} else {
 			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
-			if (getAgency() != null && getAgency().getId() != null) {
-				criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
-			}
-			if (getTariff() != null && getTariff().getId() != null) {
-				criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
-			}
+		}
+		if (getAgency() != null && getAgency().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
+		}
+		if (getTariff() != null && getTariff().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
 		}
 	}
 

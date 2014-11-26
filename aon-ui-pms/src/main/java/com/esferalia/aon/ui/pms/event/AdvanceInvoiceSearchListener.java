@@ -74,12 +74,12 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ADVANCE), 0.0);		
 		} else {
 			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
-			if (getAgency() != null && getAgency().getId() != null) {
-				criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
-			}
-			if (getTariff() != null && getTariff().getId() != null) {
-				criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
-			}
+		}
+		if (getAgency() != null && getAgency().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
+		}
+		if (getTariff() != null && getTariff().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
 		}
 	}
 
