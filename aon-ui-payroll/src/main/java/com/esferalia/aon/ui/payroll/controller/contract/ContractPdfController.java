@@ -57,6 +57,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractClause;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
@@ -694,6 +695,9 @@ public class ContractPdfController implements Serializable {
 			}
 			
 			if(getContract().getEndDate()!=null && StringUtils.isNotBlank(getContractSuspensionCause())){
+//				suspension_notice_letter
+//				item = new SelectItem(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
+//				availableDocumentList.add(item);
 				item = new SelectItem(ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT, ContractAttachmentType.ENTERPRISE_CERTIFICATE_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
 			}
@@ -764,31 +768,25 @@ public class ContractPdfController implements Serializable {
 		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT) 
 				&& generatedDocumentMap.containsKey(ContractAttachmentType.CONTRACT_DOC_DRAFT)){
 			try {
-				setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
-				loadDocument(true);
-
 				List<IAttachment> attachList = new LinkedList<IAttachment>();
 				ContractAttachment contractAttach = new ContractAttachment();
 				contractAttach.setData(generatedDocumentMap.get(ContractAttachmentType.CONTRACT_DOC_DRAFT));
 				contractAttach.setMimeType(MimeType.MIME_PDF);
 				attachList.add(contractAttach);
+				
 				ContractAttachment clausesAttach = new ContractAttachment();
-				clausesAttach.setData(getContractPdfWriter().buildPdf(true));
+				clausesAttach.setData(getReport(IPayrollConstants.CONTRACT_CLAUSES_REPORT_KEY));
 				clausesAttach.setMimeType(MimeType.MIME_PDF);
 				attachList.add(clausesAttach);
 				
 				generatedDocumentMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, PdfUtils.mergePdf(attachList));
-			} catch (IOException e) {
+			} catch (ReportException e) {
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
+				AonUtil.addErrorMessage("No se han podido generar las clausulas del contrato");
 				AonUtil.addErrorMessage(e.getMessage());
-			} catch (UnsupportedContractDocumentException e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (Exception e){
-				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
+				AonUtil.addErrorMessage("No se han podido generar las clausulas del contrato");
 				AonUtil.addErrorMessage(e.getMessage());
 			}
 		}
@@ -951,6 +949,31 @@ public class ContractPdfController implements Serializable {
 		} else {
 			AonUtil.addErrorMessageFromBundle(ICommonMessages.NOT_MAIL_ACCOUNTS);
 		}
+	}
+	
+	public String obtainClausesContent() throws ManagerBeanException {
+		Contract contract = getContract();
+		IManagerBean bean = BeanManager.getManagerBean(ContractClause.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_CONTRACT_ID), contract.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_LINE));
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			StringBuffer bf = new StringBuffer();
+			int line = 0;
+			for(ITransferObject to: list){
+				line++;
+				ContractClause clause = (ContractClause) to;
+				bf.append(line);
+				bf.append(". ");
+				bf.append(clause.getName());
+				bf.append("\n");
+				bf.append(clause.getDescription());
+				bf.append("\n\n");
+			}
+			return bf.toString();
+		}
+		return null;
 	}
 	
 }
