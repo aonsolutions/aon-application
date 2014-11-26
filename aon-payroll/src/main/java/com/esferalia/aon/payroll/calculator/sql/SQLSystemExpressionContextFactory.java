@@ -136,12 +136,6 @@ public class SQLSystemExpressionContextFactory implements
 
 		initMonthVariables(systemExpressionContext, startDate, endDate);
 
-		try {
-			loadSystemData(connection, startDate, endDate,
-					systemExpressionContext, cccCtxKey);
-		} catch (ExpressionException | SQLException e) {
-			// TODO:
-		}
 
 		systemExpressionContext.setVariable(SALARY_START, startDate, startDate,
 				endDate);
@@ -156,6 +150,12 @@ public class SQLSystemExpressionContextFactory implements
 			// TODO:
 		}
 
+		try {
+			loadSystemData(connection, startDate, endDate,
+					systemExpressionContext, cccCtxKey);
+		} catch (ExpressionException | SQLException e) {
+			// TODO:
+		}
 		return systemExpressionContext;
 	}
 

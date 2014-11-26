@@ -1,7 +1,9 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
@@ -19,6 +21,7 @@ import org.mvel2.MVEL;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
@@ -427,6 +430,9 @@ public abstract class QuoteCalculator {
 	protected double getLimitedCgcBase(double rawCgcBase,
 			ExpressionContext ctx, Date start, Date end)
 			throws ExpressionException {
+		
+		ctx.setVariable(CGC_BASE, rawCgcBase, start, end);
+		
 		Double minLimit = getLimit(CGC_BASE_MIN.getName(), ctx, start, end);
 		
 
@@ -446,6 +452,8 @@ public abstract class QuoteCalculator {
 	protected double getLimitedCgpBase(double rawCgpBase,
 			ExpressionContext ctx, Date start, Date end)
 			throws ExpressionException {
+
+		ctx.setVariable(CGP_BASE, rawCgpBase, start, end);
 
 		Double minLimit = getLimit(CGP_BASE_MIN.getName(), ctx, start, end);
 

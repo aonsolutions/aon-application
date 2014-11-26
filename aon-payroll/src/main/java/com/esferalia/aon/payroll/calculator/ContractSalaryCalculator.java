@@ -31,6 +31,7 @@ import net.sf.cglib.transform.impl.AddDelegateTransformer;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
+import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -600,6 +601,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 						}
 					}
 					total += cost;
+				} catch (RemoveException | RemoveVariableError e) {
+					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
 					// costStart > costEnd, ignore .
 				}
@@ -985,6 +988,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, days);
 		return calendar.getTime();
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(MVEL.eval("($ in [[172.05,147.86],[268.80,244.62],[365.60,341.40],[462.40,438.17],[559.10,534.95],[655.90,631.73],[753.00,753.00],[Double.MAX_VALUE,790.65]] if $[0] >= 312 )[0][1]"));
 	}
 
 }
