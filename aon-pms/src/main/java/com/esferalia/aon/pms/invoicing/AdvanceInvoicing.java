@@ -49,8 +49,7 @@ public class AdvanceInvoicing {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
-					invoice(advanceInvoiceTo, reservation);
+				if (invoice(advanceInvoiceTo, reservation) != null) {
 					++count;
 				}
 			}
@@ -62,39 +61,44 @@ public class AdvanceInvoicing {
 	}
 
 	public Invoice invoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName();
-		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-
-			HibernateUtil.beginTransaction(sessionName);
-
-			Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
-			double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
-			createAdvanceInvoiceAddress(invoice, reservation);
-			createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
-			recordInvoice(invoice);
-
-			HibernateUtil.getSession(sessionName).flush();
-			HibernateUtil.commitTransaction(sessionName);
-
-			return invoice;
-		} catch (Exception e) {
+		if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
 			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg,daoe);
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+	
+				HibernateUtil.beginTransaction(sessionName);
+	
+				Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
+				double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent(), advanceInvoiceTo.getAmount());
+				createAdvanceInvoiceAddress(invoice, reservation);
+				if (advanceAmount != 0) {
+					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
+				}
+				recordInvoice(invoice);
+	
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+	
+				return invoice;
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.error(msg,daoe);
+				}
+				LOGGER.error(e.getMessage());
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
 			}
-			LOGGER.error(e.getMessage());
-			throw new ManagerBeanException(e.getMessage(),e);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+		return null;
 	}
 
 	private Invoice createAdvanceInvoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
@@ -135,7 +139,7 @@ public class AdvanceInvoicing {
 		invoiceDetail.setProject(reservation.getProject());
 		invoiceDetail.setLine(1);
 		invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
-		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getProduct().getName()));
+		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(taxableBase);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,49 +46,61 @@ public class NoShowInvoicing {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NoShowInvoicing.class.getName());
 
 	public int invoice(NoShowInvoiceTo noShowInvoiceTo, List<Integer> reservations) throws ManagerBeanException {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-
-			HibernateUtil.beginTransaction(sessionName);
-
 			int count = 0;
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (reservation.getHotelReservation().getItemNoShow() != null && reservation.getHotelReservation().getItemNoShow().getId() != null) {
-					Invoice invoice = createNoShowInvoice(noShowInvoiceTo, reservation);
-					double noShowAmount = createNoShowInvoiceDetails(invoice, reservation, noShowInvoiceTo);
-					createNoShowInvoiceAddress(invoice, reservation);
-					if (noShowAmount != 0) {
-						createNoShowInvoiceFinances(invoice, noShowInvoiceTo, noShowAmount);
-					}
-					recordInvoice(invoice);
+				if (invoice(noShowInvoiceTo, reservation) != null) {
 					++count;
 				}
 			}
-
-			HibernateUtil.getSession(sessionName).flush();
-			HibernateUtil.commitTransaction(sessionName);
-
 			return count;
 		} catch (Exception e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg,daoe);
-			}
 			LOGGER.error(e.getMessage());
 			throw new ManagerBeanException(e.getMessage(),e);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+	}
+
+	public Invoice invoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
+		if (reservation.getHotelReservation().getItemNoShow() != null && reservation.getHotelReservation().getItemNoShow().getId() != null) {
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+	
+				HibernateUtil.beginTransaction(sessionName);
+	
+				Invoice invoice = createNoShowInvoice(noShowInvoiceTo, reservation);
+				double noShowAmount = createNoShowInvoiceDetails(invoice, reservation, noShowInvoiceTo);
+				createNoShowInvoiceAddress(invoice, reservation);
+				if (noShowAmount != 0) {
+					createNoShowInvoiceFinances(invoice, noShowInvoiceTo, noShowAmount);
+				}
+				recordInvoice(invoice);
+	
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+	
+				return invoice;
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.error(msg,daoe);
+				}
+				LOGGER.error(e.getMessage());
+				throw new ManagerBeanException(e.getMessage(),e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			}
+		}
+		return null;
 	}
 
 	private Invoice createNoShowInvoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
@@ -120,11 +133,26 @@ public class NoShowInvoicing {
 		double advancedAmount = reservation.getAdvancedAmount();
 		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100));
 
-		double penaltyVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemNoShow().getProduct().getVat(), invoice.getIssueDate());
-		double penaltyTaxableBase = (noShowInvoiceTo.isKeepAdvance()) ? CommonUtil.round(advancedAmount / (1 + penaltyVatPercent / 100)) : getPenaltyTaxableBase(reservation, noShowInvoiceTo.getPenaltyDays());
-		double penaltyAmount = (noShowInvoiceTo.isKeepAdvance()) ? advancedAmount : CommonUtil.round(penaltyTaxableBase * (1 + penaltyVatPercent / 100));
-
+		double penaltyVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemNoShow().getVat(), invoice.getIssueDate());
+		double penaltyTaxableBase = CommonUtil.round(advancedAmount / (1 + penaltyVatPercent / 100));
+		double penaltyAmount = advancedAmount;
+		if (!noShowInvoiceTo.isKeepAdvance()) {
+			penaltyTaxableBase = getPenaltyTaxableBase(reservation, noShowInvoiceTo.getPenaltyDays());
+			penaltyAmount = CommonUtil.round(penaltyTaxableBase * (1 + penaltyVatPercent / 100));
+		}
+		double firstNightPenaltyTaxableBase = penaltyTaxableBase;
+		double firstNightPenaltyAmount = penaltyAmount;
+		double secondNightPenaltyTaxableBase = 0;
+		double secondNightPenaltyAmount = 0;
+		if (noShowInvoiceTo.getPenaltyDays() > 1) {
+			firstNightPenaltyTaxableBase = reservation.getOneNightNoShowTaxableBase();
+			firstNightPenaltyAmount = CommonUtil.round(firstNightPenaltyTaxableBase * (1 + penaltyVatPercent / 100));
+			secondNightPenaltyTaxableBase = CommonUtil.round(penaltyTaxableBase - firstNightPenaltyTaxableBase);
+			secondNightPenaltyAmount = CommonUtil.round(penaltyAmount - firstNightPenaltyAmount);
+		}
 		double invoiceTotal = CommonUtil.round(penaltyAmount - advancedAmount);
+
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		if (advancedAmount > 0) {
 			taxDataInDetail = (invoiceTotal != CommonUtil.round((penaltyTaxableBase - advanceTaxableBase) * (1 + penaltyVatPercent / 100)));
 
@@ -133,7 +161,7 @@ public class NoShowInvoicing {
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(1);
 			invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
-			invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getProduct().getName()));
+			invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 			invoiceDetail.setQuantity(-1);
 			invoiceDetail.setPrice(advanceTaxableBase);
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
@@ -145,8 +173,7 @@ public class NoShowInvoicing {
 				invoiceDetail.setVatPercent(advanceVatPercent);
 				invoiceDetail.setVatQuota(CommonUtil.round((advancedAmount - advanceTaxableBase) * (-1)));
 			}
-
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			invoiceDetail.setUpdateEnabled(false);
 			invoiceDetailBean.insert(invoiceDetail);
 		}
 
@@ -155,21 +182,41 @@ public class NoShowInvoicing {
 		invoiceDetail.setProject(reservation.getProject());
 		invoiceDetail.setLine((advancedAmount <= 0) ? 1 : 2);
 		invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
-		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getProduct().getName()));
+		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getFullName()));
 		invoiceDetail.setQuantity(1);
-		invoiceDetail.setPrice(penaltyTaxableBase);
+		invoiceDetail.setPrice(firstNightPenaltyTaxableBase);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		invoiceDetail.setTaxableBase(penaltyTaxableBase);
+		invoiceDetail.setTaxableBase(firstNightPenaltyTaxableBase);
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 		if (taxDataInDetail) {
 			invoiceDetail.setTaxDataInDetail(true);
 			invoiceDetail.setVatPercent(penaltyVatPercent);
-			invoiceDetail.setVatQuota(CommonUtil.round((penaltyAmount - penaltyTaxableBase)));
+			invoiceDetail.setVatQuota(CommonUtil.round((firstNightPenaltyAmount - firstNightPenaltyTaxableBase)));
 		}
-
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		invoiceDetail.setUpdateEnabled(noShowInvoiceTo.getPenaltyDays() <= 1);
 		invoiceDetailBean.insert(invoiceDetail);
+
+		if (noShowInvoiceTo.getPenaltyDays() > 1) {
+			invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(reservation.getProject());
+			invoiceDetail.setLine((advancedAmount <= 0) ? 2 : 3);
+			invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
+			invoiceDetail.setDescription(obtainDetailDescription(DateUtils.addDays(reservation.getStartDate(), 1), null, invoiceDetail.getItem().getFullName()));
+			invoiceDetail.setQuantity(1);
+			invoiceDetail.setPrice(secondNightPenaltyTaxableBase);
+			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			invoiceDetail.setTaxableBase(secondNightPenaltyTaxableBase);
+			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
+			if (taxDataInDetail) {
+				invoiceDetail.setTaxDataInDetail(true);
+				invoiceDetail.setVatPercent(penaltyVatPercent);
+				invoiceDetail.setVatQuota(CommonUtil.round((secondNightPenaltyAmount - secondNightPenaltyTaxableBase)));
+			}
+			invoiceDetailBean.insert(invoiceDetail);
+		}
 
 		if (advancedAmount > 0 && invoiceTotal != 0) {
 			Finance finance = getAdvancedFinance(reservation);

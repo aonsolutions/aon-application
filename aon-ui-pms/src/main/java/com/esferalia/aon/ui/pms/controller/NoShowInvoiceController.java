@@ -161,9 +161,6 @@ public class NoShowInvoiceController extends BasicController{
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
 				double advancedAmount = reservation.getAdvancedAmount();
 				if (advancedAmount > 0) {
-					List<Integer> reservations = new LinkedList<Integer>();
-					reservations.add(reservationId);
-
 					NoShowInvoiceSearchListener search = (NoShowInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.NO_SHOW_INVOICE_SEARCH_LISTENER_NAME);
 					NoShowInvoiceTo noShowInvoiceTo = new NoShowInvoiceTo();
 					noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
@@ -172,7 +169,7 @@ public class NoShowInvoiceController extends BasicController{
 					noShowInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 
 					NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
-					noShowInvoicing.invoice(noShowInvoiceTo, reservations);
+					noShowInvoicing.invoice(noShowInvoiceTo, reservation);
 				}
 
 				reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE);
