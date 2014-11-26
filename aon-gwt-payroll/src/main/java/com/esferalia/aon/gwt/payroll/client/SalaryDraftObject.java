@@ -580,9 +580,6 @@ public class SalaryDraftObject implements IContextProvider {
 		List<Payment> payments = new LinkedList<Payment>();
 		payments.addAll(getTopPayments(payment));
 		addDraftPayments(payments);
-		//Payment oldPayment = salaryDraft.addDraftPayment(payment);
-		//undoManager.add(new UndoablePaymentEdit(oldPayment, payment));
-		//return oldPayment;
 	}
 
 	public Deduction addDraftDeduction(Deduction deduction) {
@@ -715,11 +712,9 @@ public class SalaryDraftObject implements IContextProvider {
 
 	private List<Payment> getTopPayments(Payment payment) {
 
-
-		
 		List<Payment> twins = new LinkedList<Payment>();
 		twins.add(payment);
-		
+
 		String name = payment.getName();
 		if ( StringUtils.isBlank(name))
 			return twins;

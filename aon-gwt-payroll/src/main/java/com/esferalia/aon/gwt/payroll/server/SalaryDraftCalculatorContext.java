@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
@@ -401,9 +403,9 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	private IContractPayment getDraftPayment(Payment payment) {
 		if (StringUtils.equals("CONVENIO()", payment.getExpression()))
 			for (IContractPayment agreementPayment : getAgreementPayments())
-				if (StringUtils.equals(agreementPayment.getName(),
-						payment.getName()))
-					return agreementPayment;
+				//if (StringUtils.equals(agreementPayment.getName(),
+				if (payment.getId().equals(agreementPayment.getId()))
+					return newDraftPayment(agreementPayment);
 
 		return newDraftPayment(payment);
 	}
@@ -478,6 +480,34 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		draftPayment.setExpression(payment.getExpression());
 		draftPayment.setIrpfExpression(payment.getIrpfExpression());
 		draftPayment.setQuoteExpression(payment.getQuoteExpression());
+
+		PaymentConcept concept = new PaymentConcept();
+		concept.setId(payment.getConceptId());
+		draftPayment.setPaymentConcept(concept);
+
+		return draftPayment;
+	}
+
+	private static DraftPayment newDraftPayment(IContractPayment payment) {
+		DraftPayment draftPayment = new DraftPayment();
+
+		draftPayment.setId(payment.getId());
+		draftPayment.setName(payment.getName());
+		draftPayment.setType(payment.getType());
+		draftPayment.setSalaryType(payment.getSalaryType());
+
+		draftPayment.setStartDate(resetTime(payment.getStartDate()));
+		draftPayment.setEndDate(resetTime(payment.getEndDate()));
+		draftPayment.setMonth(payment.getMonth());
+		draftPayment.setDescription(payment.getDescription());
+
+		draftPayment.setExpression(payment.getExpression());
+		draftPayment.setIrpfExpression(payment.getIrpfExpression());
+		draftPayment.setQuoteExpression(payment.getQuoteExpression());
+
+		PaymentConcept concept = new PaymentConcept();
+		concept.setId(payment.getConceptId());
+		draftPayment.setPaymentConcept(concept);
 
 		return draftPayment;
 	}

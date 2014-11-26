@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class SalaryDraft extends SalaryPreview {
 
@@ -68,6 +69,7 @@ public class SalaryDraft extends SalaryPreview {
 			this.deduction = deduction;
 		}
 	}
+	
 
 	private Integer dbId;
 	
@@ -135,12 +137,11 @@ public class SalaryDraft extends SalaryPreview {
 		bonuses = new LinkedList<Bonus>();
 		embargos = new LinkedList<Deduction>();
 
-		draftContext = new LinkedList<Variable>();
-		draftPayments = new LinkedList<Payment>();
-		draftDeductions = new LinkedList<Deduction>();
-		draftEmbargos = new LinkedList<Deduction>();
-		
-		draftLeaveIts = new LinkedList<ITDataPerson>();
+		draftContext = new Stack<Variable>();
+		draftPayments = new Stack<Payment>();
+		draftDeductions = new Stack<Deduction>();
+		draftEmbargos = new Stack<Deduction>();
+		draftLeaveIts = new Stack<ITDataPerson>();
 	}
 
 	public void clear() {
@@ -721,6 +722,5 @@ public class SalaryDraft extends SalaryPreview {
 	public void setDbId(Integer dbId) {
 		this.dbId = dbId;
 	}
-	
 	
 }
