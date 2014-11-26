@@ -21,10 +21,15 @@ UPDATE system_data SET expression=CONCAT(expression, '[GRUPO_COTIZACION]') WHERE
 # Bases for Training & Learning contract. 
 INSERT INTO system_data 
 ( domain, name				, expression	, start_date	, end_date		, read_only , comments )  VALUES 
-(-101	, 'BASE_CGC_MIN'	, 'BASE_CGP_MIN', '2013-01-01'	, NULL			, 1			, NULL )
-(-101	, 'BASE_CGC_MAX'	, 'BASE_CGP_MIN', '2013-01-01'	, NULL			, 1			, NULL )
+(-101	, 'BASE_CGC_MIN'	, 'BASE_CGP_MIN', '2013-01-01'	, NULL			, 1			, NULL ),
+(-101	, 'BASE_CGC_MAX'	, 'BASE_CGP_MIN', '2013-01-01'	, NULL			, 1			, NULL ),
 (-101	, 'BASE_CGP_MAX'	, 'BASE_CGP_MIN', '2013-01-01'	, NULL			, 1			, NULL )
 ;
+
+INSERT IGNORE INTO `app_param` (`domain`, `name`, `value`) 
+	SELECT `domain`, 'PMS_SIMPLE_AVAILABILITY_URL', NULL FROM `app_param` WHERE `name` = 'PMS_SOAP_SERVER_URL';
+UPDATE `app_param` SET `name` = 'PMS_BOOKING_URL' WHERE `name` = 'PMS_SOAP_SERVER_URL';
+
 
 UPDATE `db_version` SET `version_number` = '8.10.0';
 
