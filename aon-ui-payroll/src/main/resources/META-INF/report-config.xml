@@ -234,4 +234,17 @@
 		</params>
 	</report>
 	
+	<!--  CARTA DE AVISO DE FIN DE CONTRATO -->
+	<report id="contractClauses" description="Contract clauses report">
+		<template path="/com/esferalia/aon/ui/payroll/report/contractClauses.jasper" />
+		<collection provider="#{contract}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="signatureImageFile" value="#{company.getSignatureAttachAsInputStream}" />
+			<param id="clausesContent" value="#{contractPdf.obtainClausesContent}" />
+		</params>
+	</report>
+	
 </report-config>
