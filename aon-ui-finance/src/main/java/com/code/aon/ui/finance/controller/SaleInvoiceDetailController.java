@@ -9,6 +9,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class SaleInvoiceDetailController extends InvoiceDetailController {
@@ -36,6 +37,9 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 				customer = (Customer)BeanManager.getManagerBean(Customer.class).get(invoice.getRegistry().getId());
 			} catch (ManagerBeanException e) {
 			}
+		}
+		if (item.getProduct().getType() == ProductType.INCREASE) {
+			invoiceDetail.getDiscountExpression().setDiscountExpr(Double.toString(item.getProfitPercent()));
 		}
 		invoiceDetail.setPrice(getPriceStrategy().getUnitPrice(invoiceDetail, invoice.getIssueDate(), customer));
 	}	

@@ -422,4 +422,18 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return false;
 	}
 
+	@Transient
+	public List<ITransferObject> getIncreaseDetails() {
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.INCREASE);
+			return invoiceDetailBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return null;
+	}
+
 }

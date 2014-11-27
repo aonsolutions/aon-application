@@ -61,12 +61,12 @@ public class ProductCollectionsController implements Serializable {
 		return productTypes;
 	}
 	
-	public List<SelectItem> getNoExpenseProductTypes() {
+	public List<SelectItem> getCommonProductTypes() {
 		if (productTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			productTypes = new LinkedList<SelectItem>();
 			for (ProductType type : ProductType.values()) {
-				if (type != ProductType.EXPENSE) {
+				if (type != ProductType.EXPENSE && type != ProductType.INCREASE) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
 					productTypes .add(item);
@@ -152,6 +152,10 @@ public class ProductCollectionsController implements Serializable {
 
 	public List<SelectItem> getPrepaymentItems() throws ManagerBeanException {
 		return getItemsByType(ProductType.PREPAYMENT);
+	}
+
+	public List<SelectItem> getIncreaseItems() throws ManagerBeanException {
+		return getItemsByType(ProductType.INCREASE);
 	}
 
 	private List<SelectItem> getItemsByType(ProductType type) throws ManagerBeanException {

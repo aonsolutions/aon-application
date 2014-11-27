@@ -80,7 +80,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Product_type</key>
-					<value>! 4</value>
+					<value>0|1|2|3|5</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -128,7 +128,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Product_type</key>
-					<value>! 4</value>
+					<value>!4</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -218,7 +218,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Item_product_type</key>
-					<value>! 4</value>
+					<value>0|1|2|3|5</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -887,7 +887,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Item_product_type</key>
-					<value>! 4</value>
+					<value>!4</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -939,7 +939,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Item_product_type</key>
-					<value>! 4</value>
+					<value>!4</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -1064,6 +1064,53 @@
 		</managed-property>		
 	</managed-bean>
 
+	<!--  **** INCREASE ITEM ****	-->
+	<managed-bean>
+		<managed-bean-name>increaseItem</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController 
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>increaseItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Item_product_type</key>
+					<value>6</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Item_product_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{increaseItemControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>increaseItemControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.IncreaseItemControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ****** CATALOGUE ****** -->
 	<managed-bean>
 		<managed-bean-name>catalogue</managed-bean-name>
@@ -1285,6 +1332,10 @@
 	    <navigation-case>
 	      <from-outcome>expenseItem</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/expenseItem/grid.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>increaseItem</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/increaseItem/grid.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>catalogue_form</from-outcome>

@@ -73,6 +73,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		InvoiceController invoiceController = (InvoiceController)this.getController();
 		try {
 			invoiceController.linkProject(invoiceController.getInvoice(), true);
+			invoiceController.autoGenerateIncreases();
 			invoiceController.autoGenerateFinances();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());

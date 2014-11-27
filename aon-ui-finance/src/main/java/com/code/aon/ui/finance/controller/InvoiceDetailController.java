@@ -24,6 +24,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -124,13 +125,23 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		return true;
 	}	
 
+	public boolean isIncreaseDetail() {
+		if (getInvoice().isSales()) {
+			Item item = (getTo() != null) ? ((InvoiceDetail)getTo()).getItem() : null;
+			return item != null && item.getId() != null && item.getProduct().getType() == ProductType.INCREASE;
+		}
+		return false;
+	}
+
 	public double getTaxableBase() {
-		return getPriceStrategy().getBasePrice((ICalculable)getTo());
+		ICalculable calculable = (ICalculable)getTo();
+		double taxableBase = getPriceStrategy().getBasePrice(calculable);
+		return (!isIncreaseDetail()) ? taxableBase : CommonUtil.round(calculable.getPrice() - taxableBase);
 	}
 
 	public void fillTaxDataInDetail(boolean workWithSalesPrice, boolean includeQuotas) {
-		Invoice invoice = (Invoice)getMasterController().getTo();
-		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		Invoice invoice = getInvoice();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			Tax vat = invoiceDetail.getItem().getProduct().getVat();
 			Tax retention = (invoice.isWithholding()) ? invoiceDetail.getItem().getProduct().getRetention() : null;
@@ -156,31 +167,28 @@ public class InvoiceDetailController extends LinesController implements IFinance
 	}
 
 	public double getVatPercent() {
-		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null && item.getProduct().getVat() != null && item.getProduct().getVat().getId() != null) {
-			return getTaxPercent(item.getProduct().getVat(), invoice.getIssueDate(), false);
+			return getTaxPercent(item.getProduct().getVat(), getInvoice().getIssueDate(), false);
 		}
 		return 0;
 	}
 
 	public double getSurchargePercent() {
-		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null && item.getProduct().getVat() != null && item.getProduct().getVat().getId() != null) {
-			return getTaxPercent(item.getProduct().getVat(), invoice.getIssueDate(), true);
+			return getTaxPercent(item.getProduct().getVat(), getInvoice().getIssueDate(), true);
 		}
 		return 0;
 	}
 
 	public double getRetentionPercent() {
-		Invoice invoice = (Invoice)getMasterController().getTo();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
 		Item item = invoiceDetail.getItem();
 		if (item != null && item.getId() != null && item.getProduct().isWithholding()) {
-			return getTaxPercent(item.getProduct().getRetention(), invoice.getIssueDate(), false);
+			return getTaxPercent(item.getProduct().getRetention(), getInvoice().getIssueDate(), false);
 		}
 		return 0;
 	}

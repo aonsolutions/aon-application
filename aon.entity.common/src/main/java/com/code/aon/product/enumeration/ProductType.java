@@ -15,35 +15,13 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum ProductType implements IResourceable {
 	
-	/**
-     * Labour
-     */
 	LABOUR,
-	
-    /**
-     * Service
-     */
     SERVICE,
-
-	/**
-     * Commercial product
-     */
 	COMMERCIAL_PRODUCT,
-
-    /**
-     * External work
-     */
 	EXTERNAL_WORK,
-	
-    /**
-     * Expense
-     */
 	EXPENSE,
-   
-    /**
-     * Prepayment
-     */
-	PREPAYMENT;
+	PREPAYMENT,
+	INCREASE;
 
 	/**
      * Message key prefix. 

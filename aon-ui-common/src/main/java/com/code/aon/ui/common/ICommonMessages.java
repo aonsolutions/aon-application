@@ -265,6 +265,7 @@ public interface ICommonMessages {
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "customer_invalid_invoicing_group_detail_child";
 	
 	String VALIDATE_FINANCES_GENERATION_ERROR_KEY = "finance_validate_finances_generation_error";
+	String GENERATE_INCREASES_ERROR_KEY = "finance_generate_increases_error";
 	String GENERATE_FINANCES_ERROR_KEY = "finance_generate_finances_error";
 	String CALCULATE_FINANCES_AMOUNT_ERROR_KEY = "finance_calculate_finances_amount_error";
 	String CALCULATE_INVOICE_QUANTITY_ERROR_KEY = "finance_calculate_invoice_quantity_error";

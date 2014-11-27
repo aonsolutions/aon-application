@@ -7,6 +7,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_PURCHASE_
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_UNRECORD_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.GENERATE_FINANCES_ERROR_KEY;
+import static com.code.aon.ui.common.ICommonMessages.GENERATE_INCREASES_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
@@ -726,22 +727,52 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public void applyDiscounts(ActionEvent event) throws ManagerBeanException {
-		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
 		List<ITransferObject> detailList = getInvoice().getDetailList();
-		for (ITransferObject ito : detailList) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-			invoiceDetail.getDiscountExpression().setDiscountExpr(getDiscountExpression());
-			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-			invoiceDetail.setSkipServiceProcess(true);
-			invoiceDetail.setUpdateEnabled(detailList.lastIndexOf(invoiceDetail) == detailList.size()-1);
-			invoiceDetailController.getManagerBean().update(invoiceDetail);
+		if (detailList.size() > 0) {
+			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+			for (ITransferObject ito : detailList) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				invoiceDetail.getDiscountExpression().setDiscountExpr(getDiscountExpression());
+				invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+				invoiceDetail.setSkipServiceProcess(true);
+				invoiceDetail.setUpdateEnabled(detailList.lastIndexOf(invoiceDetail) == detailList.size()-1);
+				invoiceDetailController.getManagerBean().update(invoiceDetail);
+			}
+			refresh(null);
+			invoiceDetailController.onSearch(null);
 		}
-		refresh(null);
-		invoiceDetailController.onSearch(null);
 	}
 
-	public void onGenerateFinances(ActionEvent event) throws ManagerBeanException {
-		Invoice invoice = getInvoice();
+	public void autoGenerateIncreases() {
+		if (getInvoice().isSales()) {
+			try {
+				List<ITransferObject> increaseDetails = getInvoice().getIncreaseDetails();
+				if (increaseDetails.size() > 0) {
+					IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+					double taxableBase = getInvoice().getTaxableBase();
+					for (ITransferObject ito : increaseDetails) {
+						InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+						taxableBase = CommonUtil.round(taxableBase - invoiceDetail.getTaxableBase());
+					}
+					for (ITransferObject ito : increaseDetails) {
+						InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+						invoiceDetail.setPrice(taxableBase);
+						invoiceDetail.setTaxableBase(CommonUtil.round(taxableBase - getPriceStrategy().getBasePrice(invoiceDetail)));
+						invoiceDetail.setUpdateEnabled(increaseDetails.lastIndexOf(invoiceDetail) == increaseDetails.size()-1);
+						invoiceDetailController.getManagerBean().update(invoiceDetail);
+					}
+					refresh(null);
+					invoiceDetailController.setModel(null);
+				}
+			} catch (ManagerBeanException e) {
+				String msg = AonUtil.getMessage(GENERATE_INCREASES_ERROR_KEY) + ". " + e.getMessage();
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg,e);
+			}
+		}
+	}
+
+	public void onGenerateFinances(ActionEvent event) {
 		try {
 			InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
 			List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
@@ -750,7 +781,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 				if (finance.isPending()) {
 					if (!finance.isAdvance()) {
 						invoiceFinanceController.getManagerBean().remove(finance);
-					} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
+					} else if (!getInvoice().getRegistry().equals(finance.getRegistry())) {
 						invoiceFinanceController.excludeAdvance(finance);
 					}
 				}
@@ -758,7 +789,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 
 			double pendingAmount = getPendingAmount();
 			if (pendingAmount != 0) {
-				getFinanceGenerator().generateFinances(invoice, pendingAmount);
+				getFinanceGenerator().generateFinances(getInvoice(), pendingAmount);
 			}
 			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
@@ -768,32 +799,38 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 	}
 
-	public void autoGenerateFinances() throws ManagerBeanException {
+	public void autoGenerateFinances() {
 		if (getFinanceGenerationMode() == 0) {
-			if (getInvoice().getRegistry().getPayMethod() != null) {
-				onGenerateFinances(null);
-			} else {
-				InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
-				List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
-				for (ITransferObject ito : financeList) {
-					Finance finance = (Finance)ito;
-					if (finance.isPending() || finance.isReturned()) {
-						Invoice invoice = getInvoice();
-						if (!finance.isAdvance()) {
-							finance.setRegistry(invoice.getRegistry());
-							finance.setRegistryName(invoice.getRegistryName());
-							finance.setRegistryDocument(invoice.getRegistryDocument());
-							finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
-							finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
-							finance.setConcept(invoice.getDocumentNumber());
-							finance.setSecurityLevel(invoice.getSecurityLevel());
-							invoiceFinanceController.getManagerBean().update(finance);
-						} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
-							invoiceFinanceController.excludeAdvance(finance);
+			try {
+				if (getInvoice().getRegistry().getPayMethod() != null) {
+					onGenerateFinances(null);
+				} else {
+					InvoiceFinanceController invoiceFinanceController = (InvoiceFinanceController)FormUtil.getController(invoiceFinanceControllerName);
+					List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
+					for (ITransferObject ito : financeList) {
+						Finance finance = (Finance)ito;
+						if (finance.isPending() || finance.isReturned()) {
+							Invoice invoice = getInvoice();
+							if (!finance.isAdvance()) {
+								finance.setRegistry(invoice.getRegistry());
+								finance.setRegistryName(invoice.getRegistryName());
+								finance.setRegistryDocument(invoice.getRegistryDocument());
+								finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+								finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+								finance.setConcept(invoice.getDocumentNumber());
+								finance.setSecurityLevel(invoice.getSecurityLevel());
+								invoiceFinanceController.getManagerBean().update(finance);
+							} else if (!invoice.getRegistry().equals(finance.getRegistry())) {
+								invoiceFinanceController.excludeAdvance(finance);
+							}
 						}
 					}
+					invoiceFinanceController.onSearch(null);
 				}
-				invoiceFinanceController.onSearch(null);
+			} catch (ManagerBeanException e) {
+				String msg = AonUtil.getMessage(GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg,e);
 			}
 		}
 	}

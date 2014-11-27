@@ -15,6 +15,12 @@ public class PosInvoiceDetailController extends SaleInvoiceDetailController {
 
 	private ArrayList<InvoiceDetail> checks = new ArrayList<InvoiceDetail>();
 
+	@Override
+	public void onReset(ActionEvent event) {
+		super.onReset(event);
+		clearCheckedDetails();
+	}
+
 	public void itemChanged(Item item) {
 		super.itemChanged(item);
 		fillTaxDataInDetail(true, false);
@@ -43,9 +49,8 @@ public class PosInvoiceDetailController extends SaleInvoiceDetailController {
 	}
 
 	@Override
-	public void onReset(ActionEvent event) {
-		super.onReset(event);
-		clearCheckedDetails();
+	public double getTaxableBase() {
+		return ((InvoiceDetail)getTo()).getTaxableBase();
 	}
 
 	@Override

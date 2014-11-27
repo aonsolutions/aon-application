@@ -46,9 +46,4 @@ public class PosInvoiceDetailControllerListener extends InvoiceDetailControllerL
 		invoiceDetail.fillTaxDataInDetail();
 	}
 
-	@Override
-	public double obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
-		return invoiceDetail.getTaxableBase();
-	}
-
 }

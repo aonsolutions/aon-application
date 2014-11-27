@@ -57,10 +57,11 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
+			invoiceDetail.setTaxableBase(controller.getTaxableBase());
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 				fillPosWorkPlace(event, invoiceDetail);
 			}
@@ -71,24 +72,21 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		try {
-			InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
-			refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
+		InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
+		refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
 
-			InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
-			invoiceController.autoGenerateFinances();
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
+		invoiceController.autoGenerateIncreases();
+		invoiceController.autoGenerateFinances();
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 			invoiceDetail.getInvoice().setStatus(controller.getInvoice().getStatus());
-			invoiceDetail.setTaxableBase(obtainTaxableBase(event, invoiceDetail));
+			invoiceDetail.setTaxableBase(controller.getTaxableBase());
 			if (invoiceDetail.getWorkPlace() == null || invoiceDetail.getWorkPlace().getId() == null) {
 				fillPosWorkPlace(event, invoiceDetail);
 			}
@@ -99,16 +97,13 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		try {
-			InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
-			detailController.initializeModel();
-			refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
+		InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
+		detailController.initializeModel();
+		refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
 
-			InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
-			invoiceController.autoGenerateFinances();
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
+		invoiceController.autoGenerateIncreases();
+		invoiceController.autoGenerateFinances();
 	}
 
 	@Override
@@ -127,15 +122,12 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
-		try {
-			InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
-			refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
+		InvoiceDetailController detailController = (InvoiceDetailController)event.getController();
+		refreshInvoiceData(detailController.getInvoice(), (InvoiceDetail)detailController.getTo());
 
-			InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
-			invoiceController.autoGenerateFinances();
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		InvoiceController invoiceController = (InvoiceController)detailController.getMasterController();
+		invoiceController.autoGenerateIncreases();
+		invoiceController.autoGenerateFinances();
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
@@ -173,11 +165,6 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 			return ((InvoiceDetail)ito).getWorkPlace();
 		}
 		return null;
-	}
-
-	public double obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
-		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
-		return controller.getPriceStrategy().getBasePrice(invoiceDetail);
 	}
 
 	private void refreshInvoiceData(Invoice invoice, InvoiceDetail invoiceDetail) {
