@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1"/>
+	<property name="ireport.y" value="634"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -27,7 +27,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" size="7" isBold="false" pdfFontName="Helvetica"/>
+					<font fontName="SansSerif" size="7" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
 				<text><![CDATA[http://www.sepe.es]]></text>
 			</staticText>
