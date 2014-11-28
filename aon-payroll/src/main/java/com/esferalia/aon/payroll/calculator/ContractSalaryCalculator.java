@@ -61,6 +61,23 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class ContractSalaryCalculator implements ISalaryCalculator {
 
+	private static final String PAYMENT_VARIABLE = "CONCEPTO";
+	private static final String BUILDER_VARIABLE = "BUILDER";
+	
+	public static class PaymentVariable {
+		
+		private IContractPayment payment; 
+		
+		public PaymentVariable(IContractPayment payment) {
+			this.payment = payment;
+		}
+		
+		public Integer getMES() {
+			return payment.getMonth() != null ? payment.getMonth().getValue()+1 : null; 
+		}
+
+	}
+
 	public interface IListener {
 
 		public void onCheckError(String message);
@@ -182,10 +199,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		salaryBuilder.createNewSalary();
 		salaryBuilder.setContract(contractSalaryCalculatorContext
 				.getSalaryProxy());
-		
-		
-		expressionContext.setVariable("BUILDER", salaryBuilder, start, end);
-		
+
+		expressionContext.setVariable(BUILDER_VARIABLE, salaryBuilder, start,
+				end);
+
 		fillEnterpriseData(contractSalaryCalculatorContext);
 		fillEmployeeData(contractSalaryCalculatorContext);
 		fillSalaryData(contractSalaryCalculatorContext);
@@ -703,6 +720,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		String name = contractPayment.getName();
 
 		try {
+
+			expressionContext.setVariable(PAYMENT_VARIABLE, new PaymentVariable(contractPayment),
+					paymentStart, paymentEnd);
+
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
@@ -713,7 +734,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 				Double resultDouble = result.getValue();
 				double resultValue = resultDouble != null ? resultDouble : 0.00;
-
 
 				if (!StringUtils.isEmpty(name)) {
 					Date valueStart = resultStart;
@@ -796,7 +816,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		} catch (CompileException e) {
 			e.printStackTrace();
 			onCompileError(contractPayment, e.getMessage());
-		} 
+		}
 
 	}
 
@@ -1000,9 +1020,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		calendar.add(Calendar.DATE, days);
 		return calendar.getTime();
 	}
-	
+
 	public static void main(String[] args) {
-		System.out.println(MVEL.eval("($ in [[172.05,147.86],[268.80,244.62],[365.60,341.40],[462.40,438.17],[559.10,534.95],[655.90,631.73],[753.00,753.00],[Double.MAX_VALUE,790.65]] if $[0] >= 312 )[0][1]"));
+		System.out
+				.println(MVEL
+						.eval("($ in [[172.05,147.86],[268.80,244.62],[365.60,341.40],[462.40,438.17],[559.10,534.95],[655.90,631.73],[753.00,753.00],[Double.MAX_VALUE,790.65]] if $[0] >= 312 )[0][1]"));
 	}
 
 }
