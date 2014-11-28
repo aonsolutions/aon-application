@@ -87,7 +87,7 @@ public class ProjectReservationPermission implements Serializable {
 		return getRoleManager().isFinanceOperator();
 	}
 
-	private boolean isRoleUser() {
+	public boolean isRoleUser() {
 		return !isRoleAdmin() && !isRoleConfig() && !isRoleCommercial() && !isRoleFinance();
 	}
 

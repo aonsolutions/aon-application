@@ -621,22 +621,30 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private boolean validateAdvanceInvoice() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		if (getAdvanceInvoiceTo().getAmount() <= 0) {
-			String msg = "No se puede generar Anticipo. Importe incorrecto.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		if (getAdvanceInvoiceTo().getAmount() > reservation.getPendingAmount()) {
-			String msg = "No se puede generar Anticipo. El importe no puede ser superior al Total pendiente de Facturar.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
 		if (getAdvanceInvoiceTo().getPayMethod() == null) {
 			String msg = "La Forma de Pago es obligatoria.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
+		if (getAdvanceInvoiceTo().getAmount() <= 0) {
+			String msg = "No se puede generar Anticipo. Importe incorrecto.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		double pendingAmount = reservation.getPendingAmount();
+		if (getAdvanceInvoiceTo().getAmount() > pendingAmount) {
+			String msg = "No se puede generar Anticipo. El importe supera el Total pendiente de Facturar.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (getReservationPermission().isRoleUser()) {
+			double advanceAmountAllowed = CommonUtil.round(reservation.getTotal() * 0.9 - (reservation.getTotal() - pendingAmount));
+			if (getAdvanceInvoiceTo().getAmount() > advanceAmountAllowed) {
+				String msg = "No se puede generar Anticipo. El importe supera el 90% del Total de la Reserva.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		}
 		return true;
 	}
 

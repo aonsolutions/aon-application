@@ -73,8 +73,7 @@
 											value="#{controller.advanceInvoiceTo.amount}"
 											required="true" size="10"
 											rendered="#{controller.to.advance == 0 or controller.reservationPermission.advanceEditable}"
-											ajaxSingle="true">
-										</aon:inputText>
+											ajaxSingle="true" />
 
 										<aon:outputLabel for="AdvanceInvoice_payMethod"
 											value="#{bundle.finance_payMethod}" />
