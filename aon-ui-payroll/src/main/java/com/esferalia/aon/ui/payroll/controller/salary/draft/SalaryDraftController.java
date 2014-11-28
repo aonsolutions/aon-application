@@ -470,6 +470,10 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	}
 
 	@Override
+	public void onRemove(IContractDeduction deduction) {
+	}
+
+	@Override
 	public void onCheckError(IContractDeduction deduction, String message) {
 		Warning warning = new Warning();
 		warning.title = AonUtil.getMessage(PAYROLL_SALARY_DEDUCTIONS);
